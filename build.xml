@@ -1,0 +1,704 @@
+<?xml version="1.0"?>
+<project name="signserver" default="build" basedir=".">
+
+	<property name="app.name" value="signserver" />
+    <property name="app.name.cap" value="Sign Server" />
+	<property name="app.version" value="${app.name.cap} 2.0 Beta1" />
+	
+    <property environment="env" />
+
+    <!-- Give user a chance to override without editing this file
+       (and without typing -D each time it compiles it).
+       First it checks your home directory for signserver_build.properties
+       net it checks the properties file here. -->
+    <property file="${user.home}/${app.name}_build.properties" />
+    <property file="${app.name}_build.properties" />
+	
+
+    <import file="bin/jboss.xml" />
+
+    <!-- set global properties for this build -->
+	<property name="tmp" value="./tmp" />
+    <property name="bin" value="./${tmp}/bin" />
+    <property name="build" value="${bin}/classes" />
+    <property name="lib" value="lib" />
+	<property name="preprocessed" value="${tmp}/preprocessed"/>
+
+    <property name="src" value="${preprocessed}" />
+    <property name="src.java" value="${src}/java" />
+    <property name="src.appserver" value="${src}/appserver/jboss" />
+    <property name="src.gen" value="${bin}/gensrc" />
+    <property name="src.dd" value="${bin}/dd" />
+	<property name="src.external" location="${tmp}/external"/>
+    <property name="resources.dir"  location="./src/resources"/>	
+    
+    <property name="server.java.target" value="1.5" />
+    <property name="client.java.target" value="1.5" />
+<!-- the ejbca.target could have any valid value. no PrimeCard code dependent of ejbca is used -->
+    <property name="ejbca.target" value="3.2"/>
+
+    <property name="test.dir" value="${bin}/junit" />
+    <property name="test.src.dir" location="${src}/test" />
+    <property name="server.dist.dir" location="dist-server" />
+    <property name="client.dist.dir" location="dist-client" />
+    <property name="apidoc" value="./doc/api" />
+    
+    <property name="java.trustpassword" value="changeit" />
+    <property name="java.trustcert" value="p12/rootcert.cer" />
+    <property name="httpsserver.password" value="serverpwd" />
+
+
+    <property name="ejbdd.src" value="${src}/deploy/ejb" />
+
+    <property name="eardd.src" value="${src}/deploy/ear" />
+    <property name="caear" value="${server.dist.dir}/${app.name}.ear" />
+
+    <property name="jar.extclasspath" value="lib/${server.java.target}/bcmail-jdk.jar lib/${server.java.target}/bcprov-jdk.jar lib/${server.java.target}/bctsp-jdk.jar lib/log4j-1.2.7.jar lib/ejbca-util.jar lib/caToken.jar lib/commons-lang-2.0.jar"/>
+
+    <property name="rmiclientsslsignservice.build" location="${tmp}/rmiclientsslsignservice"/>
+    <property name="rmiclientsslsignservice.jar" location="${server.dist.dir}/rmiclientsslsignservice.jar"/>
+	
+
+    <property name="signRMIClientBuild" location="${bin}/signRMIClient"/>
+    <property name="signRMIClientJar" location="${client.dist.dir}/signRMIClient.jar"/>
+    <property name="timeStampClientBuild" location="${bin}/timeStampClient"/>
+    <property name="timeStampClientJar" location="${client.dist.dir}/timeStampClient.jar"/>
+    <property name="server.primeCard.dist" location="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
+    <property name="server.primeCard.catoken" location="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
+    <property name="client.primeCard.dist" location="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
+
+    <property name="web.src" value="${src}/web/pub" />
+    <property name="webwar" value="${server.dist.dir}/web.war" />
+	
+    <property name="healthcheck.src" value="${src}/web/healthcheck" />
+    <property name="healthcheckwar" value="${server.dist.dir}/healthcheck.war" />
+
+    <path id="ext.classpath">
+        <fileset dir="lib/ext" includes="*.jar" />
+    </path>
+
+    <path id="compile.classpath">
+        <path refid="ext.classpath" />
+        <fileset dir="lib" includes="*.jar" />
+    	<fileset dir="lib/${server.java.target}" includes="*.jar" />    	
+        <path refid="j2ee.classpath" />
+    </path>
+
+    <path id="server.compile.classpath">
+        <path refid="compile.classpath" />
+    </path>
+	
+    <path id="rmiserver.compile.classpath">
+        <fileset dir="${server.primeCard.dist}" includes="*.jar" />
+    	<fileset dir="${server.primeCard.catoken}" includes="*.jar" />
+        <path refid="server.compile.classpath" />
+    </path>
+	
+    <path id="client.compile.classpath">
+        <fileset dir="${client.primeCard.dist}" includes="*.jar" />
+        <path refid="compile.classpath" />
+    </path>
+
+    <path id="j2ee.classpath">
+        <fileset dir="${jboss.home}/lib">
+            <include name="jboss-system.jar" />
+        </fileset>
+        <fileset dir="${jboss.home}/client">
+            <include name="jbossall-client.jar" />
+            <include name="jboss-j2ee.jar" />
+        </fileset>
+    </path>
+
+    <path id="xdoclet.classpath">
+        <fileset dir="lib" includes="*.jar" />
+        <fileset dir="lib/ext" includes="*.jar" />
+        <fileset dir="lib/xdoclet/lib" includes="*.jar" />
+        <fileset dir="${jboss.home}/client">
+            <include name="jboss-j2ee.jar" />
+        </fileset>
+    </path>
+
+    <path id="test.compile.classpath">
+    	<fileset dir="lib/ext" includes="mysql-connector-java-3.1.10-bin.jar" />
+        <path refid="server.compile.classpath" />
+        <path location="${build}" />
+        <path refid="j2ee.classpath" />
+    </path>
+
+    <!-- those are the default values used within JBoss for easy startup -->
+    <property name="web.contentencoding" value="ISO-8859-1" />
+    <property name="datasource.jndi-name" value="SignServerDS" />
+    <property name="datasource.jndi-name-prefix" value="java:/" />
+    <property name="database.name" value="hsqldb" />
+    <property name="datasource.mapping" value="Hypersonic SQL" />
+    <property name="database.url" value="jdbc:hsqldb:$${jboss.server.data.dir}$${/}hypersonic$${/}localDB" />
+    <property name="database.driver" value="org.hsqldb.jdbcDriver" />
+    <property name="database.username" value="sa" />
+    <property name="database.password" value="" />
+    <property name="httpserver.pubhttp" value="8080" />
+    <property name="httpserver.pubhttps" value="8442" />
+    <property name="httpserver.privhttps" value="8443" />
+    <property name="httpsserver.password" value="serverpwd" />
+    <property name="web.contentencoding" value="ISO-8859-1" />
+
+	
+
+    <!-- =================================================================== -->
+    <!-- Build ALL                                                           -->
+    <!-- =================================================================== -->
+    <target name="build" depends="signserverwithrmi.ear, signservernormi.ear"/>
+
+    <!-- =================================================================== -->
+    <!-- Create the time stamp and build directory -->
+    <!-- =================================================================== -->
+    <target name="init" depends="j2ee:check">
+        <echo>
+---------- CONFIGURATION PROPERTIES ----------
+jboss.home             = ${jboss.home}
+web.contentencoding    = ${web.contentencoding}
+datasource.jndi-name   = ${datasource.jndi-name}
+datasource.jndi-name-prefix = ${datasource.jndi-name-prefix}
+database.name          = ${database.name}
+datasource.mapping     = ${datasource.mapping}
+database.url           = ${database.url}
+database.driver        = ${database.driver}
+database.username      = ${database.username}
+database.password      = ${database.password}
+
+      </echo>
+        <!-- Create the time stamp -->
+        <tstamp/>
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build}"/>
+        <mkdir dir="${server.dist.dir}/${lib}"/>
+        <mkdir dir="${client.dist.dir}/${lib}"/>
+    </target>
+
+    <!-- =================================================================== -->
+    <!-- Clean ALL                                                           -->
+    <!-- =================================================================== -->
+    <target name="clean">
+        <!-- Delete the ${build} and ${server.dist.dir} directory trees -->
+        <delete dir="${build}" />
+        <delete dir="${server.dist.dir}" />
+        <delete dir="${client.dist.dir}" />
+        <delete dir="${src.gen}" />
+        <delete dir="${src.dd}" />
+        <delete dir="${apidoc}" />
+        <delete dir="${tmp}"/>
+    </target>
+
+    <!-- =================================================================== -->
+    <!-- Autogenerate all ejb interfaces and deployment descriptors          -->
+    <!-- =================================================================== -->
+    <target name="run-xdoc" depends="init, preprocess">
+        <taskdef name="ejbdoclet" classname="xdoclet.modules.ejb.EjbDocletTask">
+            <classpath refid="xdoclet.classpath" />
+        </taskdef>
+        <taskdef name="webdoclet" classname="xdoclet.modules.web.WebDocletTask">
+            <classpath refid="xdoclet.classpath" />
+        </taskdef>
+    	<!-- Copy XDoclet merge files to handle database specific settings -->
+        <ejb-merge-copy database="${database.name}" overwrite="true" />
+        <ejbdoclet force="false" destdir="${src.gen}" ejbspec="2.0" excludedtags="@version,@author">
+            <fileset dir="${src.java}">
+                <include name="**/*Bean.java" />
+                <exclude name="**/BaseEntityBean.java" />
+                <exclude name="**/BaseSessionBean.java" />            	
+            </fileset>
+            <remoteinterface />
+            <homeinterface />
+            <localinterface />
+            <localhomeinterface />
+            <entitypk />
+            <session />
+            <deploymentdescriptor destdir="${src.dd}/META-INF" validatexml="false" />
+             <jboss version="3.2" 
+                unauthenticatedPrincipal="nobody" 
+                xmlencoding="UTF-8" 
+                validatexml="false" 
+                destdir="${src.dd}/META-INF" 
+                mergedir="${ejbdd.src}/merge"
+                datasource="java:/${datasource.jndi-name}" 
+                datasourcemapping="${datasource.mapping}" />
+            <jonas version="3.0" 
+                xmlencoding="UTF-8" 
+                destdir="${src.dd}/META-INF" 
+                validatexml="false" />
+            <weblogic version="7.0" 
+                xmlencoding="UTF-8" 
+                destdir="${src.dd}/META-INF" 
+                validatexml="false" 
+                datasource="${datasource.jndi-name}" 
+                persistence="weblogic" />
+            <sunone version="7.0" 
+                xmlencoding="UTF-8" 
+                destdir="${src.dd}/META-INF" 
+                validatexml="false" />
+        </ejbdoclet>
+    </target>
+	
+	<!--
+	  Preprocesses Sign Server by replacing tags with correct version and application texts.
+	-->
+	<target name="preprocess">
+        <copy todir="${preprocessed}">
+            <fileset dir="src">
+              <include name="**"/>
+              <exclude name="**/*.java"/>
+              <exclude name="**/*.html"/>
+              <exclude name="**/*.htm"/>            	
+              <exclude name="**/*.xml"/>
+              <exclude name="**/*.jsp"/>
+              <exclude name="**/*.jspf"/>
+              <exclude name="**/*.properties"/>
+            </fileset>	      
+	    </copy>
+        <copy todir="${preprocessed}">
+            <fileset dir="src">
+                <include name="**/*.java"/>
+                <include name="**/*.html"/>
+                <include name="**/*.htm"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.jsp"/>
+                <include name="**/*.jspf"/>
+                <include name="**/*.properties"/>
+            </fileset>	   
+
+			<filterchain>
+			<tokenfilter>			    
+		        <replacestring from="@signserver@" to="${app.name}"/>
+		    	<replacestring from="@SIGNSERVER@" to="${app.name.cap}"/>
+			</tokenfilter>
+			</filterchain>
+	    </copy>
+		<replace file="${preprocessed}/java/org/signserver/common/GlobalConfiguration.java" token="@signserver.version@" value="${app.version}"/>	
+		<replace file="${preprocessed}/web/healthcheck/WEB-INF/web.xml" token="@datasource.jndi-name-prefix@" value="${datasource.jndi-name-prefix}"/>	
+		<replace file="${preprocessed}/web/healthcheck/WEB-INF/web.xml" token="@datasource.jndi-name@" value="${datasource.jndi-name}"/>	
+		<!-- Make a copy of the signserver_cli.properties in bin dir -->
+		<copy file="signserver_cli.properties" todir="bin" />
+	</target>
+
+
+    <!-- =================================================================== -->
+    <!-- Compile java sources                                                -->
+    <!-- =================================================================== -->
+    <target name="compile" depends="run-xdoc">
+        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
+            <classpath refid="server.compile.classpath" />
+            <src path="${src.java}" />
+            <src path="${src.gen}" />
+        	<exclude name="org/signserver/rmiClient/**"/> 
+        	<exclude name="org/signserver/rmi/**"/> 
+        	<exclude name="org/signserver/appserver/**"/> 
+        	<exclude name="org/signserver/server/signtokens/PrimeCardHSMSignToken.*"/> 
+        	<exclude name="org/signserver/server/signtokens/PrimeCardHSMSignToken.*"/>
+        	<exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>
+        </javac>
+        <copy todir="${build}">
+            <fileset dir="src/java">
+                <include name="profilemappings.properties"/>
+            </fileset>	   
+	    </copy>
+    </target>
+	
+    <target name="compilewithrmi" depends="run-xdoc" if="primeCard.home">
+        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
+            <classpath refid="rmiserver.compile.classpath" />
+            <src path="${src.java}" />
+            <src path="${src.gen}" />
+        </javac>
+    </target>
+
+	
+	
+    <!-- =================================================================== -->
+    <!-- Build signserver ejb part                                           -->
+    <!-- =================================================================== -->
+    <target name="signserver-ejb.jar" depends="signRMIClient, timeStampTestClient, compile" description="Creates master ejb.jar">
+		<mkdir dir="${src.external}"/>
+        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
+            <manifest>
+                <!-- todo: autogenerate this from a fileset -->
+                <attribute name="Class-Path" value="${jar.extclasspath}" />
+            </manifest>
+        	<fileset dir="." includes="signserver_server.properties"/>
+        	<fileset dir="src/java" includes="profilemappings.properties"/>
+            <fileset dir="${src.dd}"/>
+            <fileset dir="${build}">
+        	  <include name="org/signserver/ejb/**" />
+          	  <include name="org/signserver/common/**" />
+          	  <include name="org/signserver/server/**" />
+              <include name="org/signserver/web/**" />
+        	</fileset>
+            <fileset dir="${src.external}"/>
+        </jar>
+    </target>
+       
+     <!-- =================================================================== -->
+     <!-- Build JBOSS RMI Client SSL Service part                             -->
+     <!-- =================================================================== -->        	
+     <target name="rmiclientsslsignservice.jar" depends="compilewithrmi" if="primeCard.home">
+      	    <mkdir dir="${rmiclientsslsignservice.build}"/>
+      	    <javac destdir="${rmiclientsslsignservice.build}" debug="on" target="${server.java.target}" source="${server.java.target}">
+      	      <src path="${src.java}"/>
+                <src path="${src.gen}"/>
+      	      <include name="org/signserver/**"/> 
+      	      <exclude name="org/signserver/cli/**"/> 
+        	  <exclude name="org/signserver/client/**"/> 
+      	      <exclude name="org/signserver/rmiClient/**"/> 
+      	      <classpath refid="rmiserver.compile.classpath"/> 
+      	    </javac>
+      	    <rmic base="${rmiclientsslsignservice.build}" stubversion="1.2">
+      	      <include name="org/signserver/rmi/impl/ServerImpl.class"/>
+      		  <classpath refid="rmiserver.compile.classpath"/> 
+      	    </rmic>
+     	    <copy todir="${rmiclientsslsignservice.build}" >
+       	       <fileset dir="${lib}/${server.java.target}">
+      	        <include name="bcprov-jdk.jar"/>
+      	      </fileset>
+      		  <!-- <fileset dir="${server.primeCard.dist}">
+           		<include name="utilsForRMISSL.jar"/>
+               </fileset> -->
+               <fileset dir="${src.appserver}">  
+                   <include name="server.jks" />
+               </fileset> 
+      	    </copy>  
+      	    <jar destfile="${rmiclientsslsignservice.jar}" basedir="${rmiclientsslsignservice.build}"/>
+     </target>
+    
+    <!-- =================================================================== -->
+    <!-- Build external web part                                                                                                                             -->
+    <!-- =================================================================== -->
+    <target if="ext.web.src" name="ext.web.war" depends="compile">
+        <war destfile="${webwar}" webxml="${ext.web.src}/WEB-INF/web.xml">
+            <fileset dir="${ext.web.src}" excludes="WEB-INF/web.xml" />
+        </war>
+    </target>
+	
+    <!-- =================================================================== -->
+    <!-- Build web part                                                                                                                             -->
+    <!-- =================================================================== -->
+    <target unless="ext.web.src" name="web.war" depends="ext.web.war">
+        <war destfile="${webwar}" webxml="${web.src}/WEB-INF/web.xml">
+            <fileset dir="${web.src}" excludes="WEB-INF/web.xml" />
+        </war>
+    </target>
+	
+    <!-- =================================================================== -->
+    <!-- Build health check part                                                                                                                             -->
+    <!-- =================================================================== -->
+    <target name="healthcheck.war" depends="compile">
+        <war destfile="${healthcheckwar}" webxml="${healthcheck.src}/WEB-INF/web.xml">
+            <fileset dir="${healthcheck.src}" excludes="WEB-INF/web.xml" />
+
+        </war>
+    </target>
+	
+    <!-- =================================================================== -->
+    <!-- Build signserver.ear                                                        -->
+    <!-- =================================================================== -->
+    <target name="signserverwithrmi.ear" depends="signserver-ejb.jar, rmiclientsslsignservice.jar, web.war, healthcheck.war" if="primeCard.home">
+    	<copy todir="${tmp}/lib" overwrite="true">
+            <fileset dir="${server.primeCard.dist}">     
+                <include name="base-core.jar" />
+                <include name="base-opt.jar" />
+                <include name="pcscOCFTerminal.jar" />
+                <include name="pkcs15.jar" />
+                <include name="securityProvider.jar" />
+                <include name="smartCard.jar" />
+                <include name="caTokenCard.jar" />
+            	<include name="keyStoreContainer.jar" />
+            	<include name="utilsForRMISSL.jar" />
+            </fileset>        	
+    	</copy>
+        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/applicationwithrmi.xml">         		
+            <fileset dir="${eardd.src}">
+                <exclude name="META-INF/application.xml" />
+                <exclude name="META-INF/normiapplication.xml" />            	
+            </fileset>
+            <fileset dir=".">
+                <include name="${lib}/${server.java.target}/bcmail-jdk.jar" />
+                <include name="${lib}/${server.java.target}/bcprov-jdk.jar" />
+                <include name="${lib}/${server.java.target}/bctsp-jdk.jar" />
+                <include name="${lib}/log4j-1.2.7.jar" />
+                <include name="${lib}/ejbca-util.jar" />     
+            	<include name="${lib}/commons-lang-2.0.jar" /> 
+            </fileset>
+            <fileset dir="${server.dist.dir}">
+                <include name="*-ejb.jar" />
+                <include name="*.war" />
+            </fileset>
+        	<!-- PrimeCAToken Specific Libs -->
+            <fileset dir="${tmp}">     
+                <include name="lib/caTokenCard.jar" />
+            </fileset>  
+		</ear>
+    </target>
+	
+    <!-- =================================================================== -->
+    <!-- Build signserver.ear                                                        -->
+    <!-- =================================================================== -->
+    <target name="signservernormi.ear" depends="signserver-ejb.jar, rmiclientsslsignservice.jar, web.war, healthcheck.war" unless="primeCard.home">
+        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/applicationnormi.xml">         		
+            <fileset dir="${eardd.src}">
+                <exclude name="META-INF/applicationwithrmi.xml" />
+            	<exclude name="META-INF/applicationnormi.xml" />
+            </fileset>
+            <fileset dir=".">
+                <include name="${lib}/${server.java.target}/bcmail-jdk.jar" />
+                <include name="${lib}/${server.java.target}/bcprov-jdk.jar" />
+                <include name="${lib}/${server.java.target}/bctsp-jdk.jar" />
+                <include name="${lib}/log4j-1.2.7.jar" />
+                <include name="${lib}/ejbca-util.jar" />   
+            	<include name="${lib}/commons-lang-2.0.jar" />
+            </fileset>
+            <fileset dir="${server.dist.dir}">
+                <include name="*-ejb.jar" />
+                <include name="*.war" />
+            </fileset> 
+		</ear>
+    </target>
+	
+    
+    <!-- =================================================================== -->
+    <!-- Build Javadoc part                                                  -->
+    <!-- =================================================================== -->
+    <target name="javadoc" depends="">
+        <mkdir dir="${apidoc}" />
+        <javadoc packagenames="se.primeKey.*" maxmemory="256m" sourcepath="${src.java}" destdir="${apidoc}" extdirs="${lib}" classpath="server.compile.classpath" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005 PrimeKey Solutions AB.">
+        </javadoc>
+    </target>
+
+    <!-- ======================================================================= -->
+    <!-- Deploy Sign Server ear to JBoss                                               -->
+    <!-- ======================================================================= -->
+    <target name="deploy" depends="signserverwithrmi.ear, signservernormi.ear">
+        <antcall target="j2ee:deploy" />
+    </target>
+	
+    <target name="install"  description="Install">
+        <echo message="Removing old cacerts and addsg root cert to be trusted  ..."/>
+        <echo message="Make sure you have write access to JAVA_HOME/jre/lib/security/cacerts  ..."/>
+        <delete file="${java.home}/lib/security/cacerts"/>
+        <keytool arg="-v -alias SIGNSERVER -import -file '${java.trustcert}' -keystore '${java.home}/lib/security/cacerts' -storepass ${java.trustpassword} -noprompt"/>
+    </target>
+	
+    <macrodef name="keytool">
+       <attribute name="arg"/>
+         <sequential>
+         <exec executable="keytool">
+            <arg line="@{arg}"/>
+         </exec>
+         </sequential>
+    </macrodef>
+
+    <!--
+        this macro is a specialized copy for deployment descriptors (dd).
+        In the wonderful world of J2EE nothing it is always painful
+        Basically it is copying the appropriate DD for each J2EE server
+        and selected database:
+        @database.name
+    -->
+    <macrodef name="ejb-merge-copy">
+        <attribute name="database" />
+        <attribute name="overwrite" default="false" />
+        <sequential>
+            <!-- Remove old possible files -->
+        	<delete dir="${ejbdd.src}/merge/se"/>
+            <!-- jboss configuration -->
+            <copy todir="${ejbdd.src}/merge" overwrite="@{overwrite}" failonerror="false">
+                <fileset dir="${ejbdd.src}/merge/${database.name}" includes="**/*.xml" />
+            </copy>
+        </sequential>
+    </macrodef>
+
+	<!--
+        this macro is a specialized copy for deployment descriptors (dd).
+        In the wonderful world of J2EE nothing it is always painful
+    -->
+    <macrodef name="ejb-dd-copy">
+        <attribute name="todir" />
+        <attribute name="dir" />
+        <attribute name="overwrite" default="false" />
+        <sequential>
+        </sequential>
+    </macrodef>
+
+ 
+    <target name="test:compile" depends="signRMIClient" description="compile JUnit testcases">
+        <mkdir dir="${test.dir}" />
+        <javac srcdir="${test.src.dir}" destdir="${test.dir}" debug="on" includeantruntime="no" encoding="iso8859-1"  target="${server.java.target}" source="${server.java.target}">
+            <classpath refid="test.compile.classpath" />
+        </javac>
+        <!-- jndi.properties needs to be in the classpath -->
+        <copy file="${src.java}/jndi.properties" todir="${test.dir}" />
+    </target>
+
+    <target name="test:run" depends="test:compile" description="run JUnit testcases">
+        <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
+        <delete dir="${test.dir}/reports" />
+        <mkdir dir="${test.dir}/reports/html" />
+        <junit printsummary="yes" haltonfailure="no">
+            <classpath>
+                <path refid="test.compile.classpath" />
+                <path location="${test.dir}" />
+            </classpath>
+            <formatter type="xml" />
+            <batchtest fork="yes" todir="${test.dir}/reports">
+                <fileset dir="${test.dir}">                  
+                    <include name="**/ejb/Test*" /> 
+                    <include name="**/server/Test*" /> 
+                    <exclude name="**/*Continously*" />
+                    <exclude name="**/TestRunner*" />
+                	<exclude name="**/db/*" />
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <junitreport todir="${test.dir}/reports">
+            <fileset dir="${test.dir}/reports">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${test.dir}/reports/html" />
+        </junitreport> 
+
+    </target>
+
+	<!--	
+    <target name="test:runContinously" depends="test:compile" description="run JUnit tests continously">
+        <junit printsummary="yes" haltonfailure="no">
+            <classpath>
+                <path refid="test.compile.classpath" />
+                <path location="${test.dir}" />
+            </classpath>
+            <formatter type="xml" />
+            <batchtest fork="yes" todir="${test.dir}/reports">
+                <fileset dir="${test.dir}">
+                    <include name="**/*Continously*" />
+                    <exclude name="**/TestRunner*" />
+                	<exclude name="**/db/*" />
+                </fileset>
+            </batchtest>
+        </junit>
+    </target> -->
+<!--
+    <target name="test:db" depends="test:compile" description="run simple db testcases">
+        <delete dir="${test.dir}/reports" />
+        <mkdir dir="${test.dir}/reports/html" />
+        <junit printsummary="yes" haltonfailure="no">
+            <classpath>
+                <path refid="test.compile.classpath" />
+                <path location="${test.dir}" />
+            </classpath>
+            <formatter type="xml" />
+            <batchtest fork="yes" todir="${test.dir}/reports">
+                <fileset dir="${test.dir}">
+                    <include name="**/db/Test*" />
+                    <exclude name="**/db/*Continously*" />
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport todir="${test.dir}/reports">
+            <fileset dir="${test.dir}/reports">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${test.dir}/reports/html" />
+        </junitreport> 
+    </target> -->
+	
+<!--    <target name="test:dbContinously" depends="test:compile" description="run JUnit tests continously">
+        <junit printsummary="yes" haltonfailure="no">
+            <classpath>
+                <path refid="test.compile.classpath" />
+                <path location="${test.dir}" />
+            </classpath>
+            <formatter type="xml" />
+            <batchtest fork="yes" todir="${test.dir}/reports">
+                <fileset dir="${test.dir}">
+                    <include name="**/db/*Continously*" />
+                </fileset>
+            </batchtest>
+        </junit>
+    </target> -->
+	
+	 <!--                                                   -->
+	 <!-- Target Used to test the TimeStamp communication     -->
+	 <!--                                                   -->
+	  <target name="timeStampTestClient" depends="compile" >
+	    <mkdir dir="${timeStampClientBuild}"/>
+	    <javac srcdir="${src.java}" destdir="${timeStampClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
+		   <include name="org/signserver/client/TimeStampClient.java"/> 	       
+		   <classpath refid="compile.classpath"/> 
+	    </javac>
+
+	    <copy todir="${client.dist.dir}" >
+	      <fileset dir="${lib}/${client.java.target}">
+	        <include name="bcprov-jdk.jar"/>
+	        <include name="bctsp-jdk.jar"/>
+	      	<include name="bcmail-jdk.jar"/>
+	      </fileset>
+	    </copy>
+        <copy todir="${client.dist.dir}/lib" >
+          <fileset dir="${lib}/ext">
+            <include name="commons-cli-1.0.jar"/>
+          </fileset>
+        </copy>
+	    <jar destfile="${timeStampClientJar}" basedir="${timeStampClientBuild}">
+	      <manifest>
+	        <attribute name="Class-Path" value="bctsp-jdk.jar bcprov-jdk.jar bcmail-jdk.jar lib/commons-cli-1.0.jar"/>
+	        <attribute name="Main-Class" value="org.signserver.client.TimeStampClient"/>
+	      </manifest>
+	    </jar>
+	  </target>
+
+	 <!--                                                   -->
+	 <!-- Target Used to test the SSL-RMI communication     -->
+	 <!--                                                   -->
+	  <target name="signRMIClient" depends="rmiclientsslsignservice.jar" if="primeCard.home">
+	    <mkdir dir="${signRMIClientBuild}"/>
+	    <javac srcdir="${src.java}" destdir="${signRMIClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
+		   <include name="org/signserver/rmiClient/SignerFactory.java"/> 
+	       <include name="org/signserver/common/MRTDSignResponse.java"/>
+           <include name="org/signserver/common/SignTokenOfflineException.java"/>
+	       <include name="org/signserver/common/SignTokenAuthenticationFailureException.java"/>
+	       <include name="org/signserver/common/SignServerException.java"/>
+	       <include name="org/signserver/common/InvalidSignerIdException.java"/>
+	       <include name="org/signserver/common/IllegalSignRequestException.java"/>
+		   <classpath refid="client.compile.classpath"/> 
+	    </javac>
+	    <copy todir="${signRMIClientBuild}" >
+	      <fileset dir="${rmiclientsslsignservice.build}" >
+	        <include name="**/*_Stub.class"/>
+	      </fileset>
+		  <fileset dir="${resources.dir}">
+		    <include name="org/signserver/**"/>
+		    <exclude name="org/signserver/rmi/**"/>
+		  </fileset>
+	    </copy>
+	    <copy todir="${client.dist.dir}" >
+	      <fileset dir="${lib}/${client.java.target}">
+	        <include name="bcprov-jdk.jar"/>
+	      </fileset>
+		  <fileset dir="${client.primeCard.dist}">
+     		<include name="utilsForRMISSL.jar"/>
+		  	<!-- uncomment when smart card should be used
+     		<include name="pkcs15.jar"/>
+     		<include name="securityProvider.jar"/>
+     		<include name="smartCard.jar"/>
+     		<include name="pcscOCFTerminal.jar"/>
+     		<include name="SetOCF.jar"/>
+     		<include name="base-core.jar"/>
+     		<include name="base-opt.jar"/>
+     		-->
+          </fileset>
+	    </copy>
+	    <jar destfile="${signRMIClientJar}" basedir="${signRMIClientBuild}">
+	      <manifest>
+	        <attribute name="Class-Path" value="utilsForRMISSL.jar bcprov-jdk.jar
+	        	pkcs15.jar securityProvider.jar securityProvider.jar"/>
+	        <attribute name="Main-Class" value="se.primeKey.signserver.rmiClient.SignerFactory"/>
+	      </manifest>
+	    </jar>
+	  </target>
+</project>

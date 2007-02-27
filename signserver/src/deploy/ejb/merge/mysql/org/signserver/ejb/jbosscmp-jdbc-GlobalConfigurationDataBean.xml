@@ -1,0 +1,8 @@
+<cmp-field>
+  <field-name>propertyKey</field-name>
+</cmp-field>
+<cmp-field>
+  <field-name>propertyValue</field-name>
+  <jdbc-type>LONGVARCHAR</jdbc-type>
+  <sql-type>TEXT</sql-type>
+</cmp-field>

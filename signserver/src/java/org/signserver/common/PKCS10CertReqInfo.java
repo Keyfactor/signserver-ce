@@ -1,0 +1,71 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
+
+package org.signserver.common;
+
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.x509.X509Name;
+
+/**
+ * Class containing information needed to for a signer to create
+ * a PKCS10 certificate request, contains the subject dn 
+ * and ASN1 set of extensions
+ * 
+ * 
+ * @author Philip Vendil 2007 feb 19
+ *
+ * @version $Id: PKCS10CertReqInfo.java,v 1.1 2007-02-27 16:18:11 herrvendil Exp $
+ */
+
+public class PKCS10CertReqInfo implements ISignerCertReqInfo {
+
+	private static final long serialVersionUID = 1L;
+	private String   signatureAlgorithm = null;
+    private X509Name subjectDN = null;
+    private ASN1Set attributes = null;
+    
+    /**
+     * @param signatureAlgorithm used to sign the PKCS10
+     * @param subjectDN used in the request
+     * @param attributes, might be null
+     */	
+	public PKCS10CertReqInfo(String signatureAlgorithm, X509Name subjectDN, ASN1Set attributes) {
+		super();
+		this.signatureAlgorithm = signatureAlgorithm;
+		this.subjectDN = subjectDN;
+		this.attributes = attributes;
+	}
+
+	/**
+	 * 
+	 * @return used to sign the PKCS10
+	 */
+	public String getSignatureAlgorithm() {
+		return signatureAlgorithm;
+	}
+	
+	/**
+	 *
+	 * @return used in the request
+	 */
+	public X509Name getSubjectDN() {
+		return subjectDN;
+	}
+	
+	/**
+	 * @return attributes, might be null
+	 */
+	public ASN1Set getAttributes() {
+		return attributes;
+	}
+}

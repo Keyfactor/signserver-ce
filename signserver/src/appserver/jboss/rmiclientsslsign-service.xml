@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server>
+<!-- $Id: rmiclientsslsign-service.xml,v 1.1 2007-02-27 16:18:16 herrvendil Exp $ -->
+
+<server>
+
+  <classpath codebase="." archives="rmiclientsslsignservice.jar"/> 
+
+  <!-- ==================================================================== -->
+  <!-- RMI CLient SSL Sign Service                                         -->
+  <!-- ==================================================================== -->
+
+  <mbean code="se.primeKey.signserver.appserver.jboss.RMIClientSSLSignService"
+         name="user:service=RMIClientSSLSignService">
+
+   <attribute name="StartPortRMI">47002</attribute>
+   <attribute name="RegistryPortRMI">47001</attribute>
+   <attribute name="KeyFileName">/server.jks</attribute>
+   <attribute name="KeyPassword">foo123</attribute>
+   <attribute name="StorePassword">foo123</attribute>
+   <attribute name="HandshakeInterval">8</attribute> 
+   <!--attribute name="Address">localhost</attribute--> 
+   <depends>jboss.j2ee:module=signserver-ejb.jar,service=EjbModule</depends>
+   <depends>jboss.j2ee:service=EJB,jndiName=SignServerSession</depends> 
+  </mbean>
+
+</server>

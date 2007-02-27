@@ -1,0 +1,29 @@
+<cmp-field>
+  <field-name>uniqueId</field-name>
+</cmp-field>
+<cmp-field>
+  <field-name>time</field-name>
+</cmp-field>
+<cmp-field>
+  <field-name>type</field-name>
+</cmp-field>
+<cmp-field>
+  <field-name>signerid</field-name>
+</cmp-field>
+<cmp-field>
+  <field-name>archiveid</field-name>
+</cmp-field>
+<cmp-field>
+  <field-name>requestIssuerDN</field-name>
+</cmp-field>
+<cmp-field>
+  <field-name>requestCertSerialnumber</field-name>
+</cmp-field>
+<cmp-field>
+  <field-name>requestIP</field-name>
+</cmp-field>
+<cmp-field>
+  <field-name>archiveData</field-name>
+  <jdbc-type>LONGVARCHAR</jdbc-type>
+  <sql-type>IMAGE</sql-type>
+</cmp-field>

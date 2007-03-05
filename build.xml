@@ -722,7 +722,7 @@ database.password      = ${database.password}
 		    	<exclude name=".project" />
 		    	<exclude name=".eclipse/**" />
 		    	<exclude name="**/.cvsignore" />
-		    	<exclude name="**/.sh" />
+		    	<exclude name="**/*.sh" />
 		    </zipfileset>
 		    <zipfileset dir="." prefix="signserver_${signserver.zipversion}" filemode="700" dirmode="700"> 
 		    	<include name="**/*.sh" />

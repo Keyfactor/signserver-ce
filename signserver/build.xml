@@ -53,7 +53,7 @@
     <property name="eardd.src" value="${src}/deploy/ear" />
     <property name="caear" value="${server.dist.dir}/${app.name}.ear" />
 
-    <property name="jar.extclasspath" value="lib/${server.java.target}/bcmail-jdk.jar lib/${server.java.target}/bcprov-jdk.jar lib/${server.java.target}/bctsp-jdk.jar lib/log4j-1.2.7.jar lib/ejbca-util.jar lib/caToken.jar lib/commons-lang-2.0.jar"/>
+    <property name="jar.extclasspath" value="lib/${server.java.target}/bcmail-jdk.jar lib/${server.java.target}/bcprov-jdk.jar lib/${server.java.target}/bctsp-jdk.jar lib/log4j-1.2.7.jar lib/ejbca-util.jar lib/caToken.jar lib/commons-lang-2.0.jar lib/ldap.jar"/>
 
     <property name="rmiclientsslsignservice.build" location="${tmp}/rmiclientsslsignservice"/>
     <property name="rmiclientsslsignservice.jar" location="${server.dist.dir}/rmiclientsslsignservice.jar"/>
@@ -422,7 +422,8 @@ database.password      = ${database.password}
                 <include name="${lib}/${server.java.target}/bcprov-jdk.jar" />
                 <include name="${lib}/${server.java.target}/bctsp-jdk.jar" />
                 <include name="${lib}/log4j-1.2.7.jar" />
-                <include name="${lib}/ejbca-util.jar" />     
+                <include name="${lib}/ejbca-util.jar" />
+            	<include name="${lib}/ldap.jar" />
             	<include name="${lib}/commons-lang-2.0.jar" /> 
             </fileset>
             <fileset dir="${server.dist.dir}">
@@ -451,6 +452,7 @@ database.password      = ${database.password}
                 <include name="${lib}/${server.java.target}/bctsp-jdk.jar" />
                 <include name="${lib}/log4j-1.2.7.jar" />
                 <include name="${lib}/ejbca-util.jar" />   
+                <include name="${lib}/ldap.jar" />
             	<include name="${lib}/commons-lang-2.0.jar" />
             </fileset>
             <fileset dir="${server.dist.dir}">
@@ -701,4 +703,30 @@ database.password      = ${database.password}
 	      </manifest>
 	    </jar>
 	  </target>
+	
+	<target name="ziprelease" description="Make a zip file for EJBCA release">
+		<antcall  target="clean"/>
+        <input message="Version tag for zipfile (ex 2_0):" addproperty="signserver.zipversion" /> 
+		<zip destfile="../signserver_${signserver.zipversion}.zip">
+		    <zipfileset dir="." prefix="signserver_${signserver.zipversion}" filemode="600" dirmode="700"> 
+		    	<include name="**/**" />
+		    	<exclude name="**/CVS/**" />
+		    	<exclude name="tmp/**" />
+		    	<exclude name="dist/**" />
+		    	<exclude name="dist-client/**" />
+		    	<exclude name="dist-server/**" />
+		    	<exclude name="out/**" />
+		    	<exclude name="eclipseBuild/**" />
+		    	<exclude name="**/*.class" />
+		    	<exclude name=".classpath" />
+		    	<exclude name=".project" />
+		    	<exclude name=".eclipse/**" />
+		    	<exclude name="**/.cvsignore" />
+		    	<exclude name="**/.sh" />
+		    </zipfileset>
+		    <zipfileset dir="." prefix="signserver_${signserver.zipversion}" filemode="700" dirmode="700"> 
+		    	<include name="**/*.sh" />
+		    </zipfileset>
+		</zip>
+	</target>
 </project>

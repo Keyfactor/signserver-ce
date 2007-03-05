@@ -137,9 +137,9 @@ public class ServiceTimerSessionBean extends BaseSessionBean implements javax.ej
 			UserTransaction ut = getSessionContext().getUserTransaction();
 			try{
 				ut.begin();
-				serviceConfig = (ServiceConfig) WorkerFactory.getWorker(timerInfo.intValue(), workerConfigHome, globalConfigurationSession).getStatus().getActiveSignerConfig();
+				serviceConfig = new ServiceConfig( WorkerFactory.getWorker(timerInfo.intValue(), workerConfigHome, getGlobalConfigurationSession()).getStatus().getActiveSignerConfig());
 				if(serviceConfig != null){					
-					service = (IService) WorkerFactory.getWorker(timerInfo.intValue(), workerConfigHome, globalConfigurationSession);
+					service = (IService) WorkerFactory.getWorker(timerInfo.intValue(), workerConfigHome, getGlobalConfigurationSession());
 					getSessionContext().getTimerService().createTimer(service.getNextInterval()*1000, timerInfo);
 					if(!service.isSingleton()){
 						run=true;						
@@ -188,7 +188,7 @@ public class ServiceTimerSessionBean extends BaseSessionBean implements javax.ej
 							log.info("Service " + timerInfo.intValue() +  " executed successfully.");							
 						}
 					}catch (ServiceExecutionFailedException e) {
-						log.error("Service" + timerInfo.intValue() + " execution failed.");						
+						log.error("Service" + timerInfo.intValue() + " execution failed. ",e);						
 					}
 				} else {
 					log.error("Service with id " + timerInfo.intValue() + " not found.");																

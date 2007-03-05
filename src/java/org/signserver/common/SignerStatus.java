@@ -21,7 +21,7 @@ import java.security.cert.Certificate;
  * the status of a specific signer
  * @author Philip Vendil
  *
- * $Id: SignerStatus.java,v 1.1 2007-02-27 16:18:10 herrvendil Exp $
+ * $Id: SignerStatus.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
 
 public class SignerStatus extends WorkerStatus{
@@ -38,7 +38,7 @@ public class SignerStatus extends WorkerStatus{
 	 * Main constuctor
 	 */
 	public SignerStatus(int tokenStatus, SignerConfig config, Certificate signerCertificate){
-		super(config);
+		super(config.getWorkerConfig());
 		this.tokenStatus = tokenStatus;
 	    this.signerCertificate = signerCertificate;
 	}

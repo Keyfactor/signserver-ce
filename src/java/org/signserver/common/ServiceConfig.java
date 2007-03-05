@@ -22,14 +22,13 @@ import java.util.Date;
  * 
  * @author Philip Vendil 2007 jan 23
  *
- * @version $Id: ServiceConfig.java,v 1.1 2007-02-27 16:18:11 herrvendil Exp $
+ * @version $Id: ServiceConfig.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
  
-public class ServiceConfig extends WorkerConfig {
+public class ServiceConfig {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final float LATEST_VERSION = 2;
 	
 	/**
 	 * Property if set to the value "TRUE" is runned as active.
@@ -52,27 +51,28 @@ public class ServiceConfig extends WorkerConfig {
      */
     private static final String LASTRUNTIMESTAMP = "LASTRUNTIMESTAMP";
     
-	public ServiceConfig(){
+	private WorkerConfig workerConfig;
+	
+	public ServiceConfig(WorkerConfig workerConfig){
 		super();
-		data.put(CLASS, this.getClass().getName());
+		this.workerConfig = workerConfig;
+		put(WorkerConfig.CLASS, this.getClass().getName());
+	}
+	
+	private void put(Object key,Object value){
+		workerConfig.getData().put(key, value);
+	}
+	
+	private Object get(Object key){
+		return workerConfig.getData().get(key);
 	}
 	
 
-	public float getLatestVersion() {		
-		return LATEST_VERSION;
-	}
 
-	public void upgrade() {
-		if(data.get(CLASS) == null){
-			data.put(CLASS, this.getClass().getName());
-		}
-
-		data.put(VERSION, new Float(LATEST_VERSION));
-	}
 
 
 	public Date getLastRunTimestamp() {
-		String time = (String) data.get(LASTRUNTIMESTAMP);
+		String time = (String) get(LASTRUNTIMESTAMP);
 		if(time == null){
 			return null;
 		}
@@ -85,9 +85,11 @@ public class ServiceConfig extends WorkerConfig {
 
 	public void setLastRunTimestamp(Date LastRunDate) {
 		long timeStamp = LastRunDate.getTime();
-		data.put(LASTRUNTIMESTAMP, "" +timeStamp);
+		put(LASTRUNTIMESTAMP, "" +timeStamp);
 	}
 
-
+	public WorkerConfig getWorkerConfig() {
+		return workerConfig;
+	}
 
 }

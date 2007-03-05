@@ -23,7 +23,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Sets a property for a given workerid
  *
- * @version $Id: SetPropertyCommand.java,v 1.1 2007-02-27 16:18:08 herrvendil Exp $
+ * @version $Id: SetPropertyCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
 public class SetPropertyCommand extends BaseCommand {
 	
@@ -70,7 +70,7 @@ public class SetPropertyCommand extends BaseCommand {
 
         			}else{
         				// named worker is requested
-        				int id = getSignSession(hostname).getSignerName(workerid);
+        				int id = getSignSession(hostname).getSignerId(workerid);
                 		if(id == 0){
                 			throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
                 		}

@@ -28,7 +28,7 @@ import org.signserver.common.WorkerConfig;
  * Gets the current configuration of the given signer, this might not be the same as
  * the active configuration.
  *
- * @version $Id: GetConfigCommand.java,v 1.1 2007-02-27 16:18:08 herrvendil Exp $
+ * @version $Id: GetConfigCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
 public class GetConfigCommand extends BaseCommand {
 	
@@ -69,7 +69,7 @@ public class GetConfigCommand extends BaseCommand {
         			
         		}else{
         			// named worker is requested
-        			int id = getSignSession(hostname).getSignerName(workerid);
+        			int id = getSignSession(hostname).getSignerId(workerid);
             		if(id == 0){
             			throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
             		}
@@ -100,7 +100,7 @@ public class GetConfigCommand extends BaseCommand {
 	private void displayWorkerConfig(int workerId, String hostname) throws RemoteException, Exception{
        	WorkerConfig config = this.getSignSession(hostname).getCurrentSignerConfig(workerId);
     	
-    	boolean isSigner = config instanceof SignerConfig;
+    	boolean isSigner = config.isSigner();
     	        	
     	this.getOutputStream().println(
     			                       "OBSERVE that this command displays the current configuration which\n"+
@@ -126,11 +126,11 @@ public class GetConfigCommand extends BaseCommand {
     	
     	
     	if(isSigner){
-    		if(((SignerConfig) config).getSignerCertificate() == null){
+    		if( new SignerConfig(config).getSignerCertificate() == null){
     			this.getOutputStream().println(" No Signer Certificate have been uploaded to this signer.\n");	
     		}else{
     			this.getOutputStream().println("The current configuration use the following signer certificate : \n");
-    			printCert(((SignerConfig) config).getSignerCertificate());
+    			printCert(new SignerConfig(config).getSignerCertificate());
     		}  
     	}
 	}

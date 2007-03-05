@@ -23,7 +23,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * removes a property for a given signer
  *
- * @version $Id: RemovePropertyCommand.java,v 1.1 2007-02-27 16:18:07 herrvendil Exp $
+ * @version $Id: RemovePropertyCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
 public class RemovePropertyCommand extends BaseCommand {
 	
@@ -67,7 +67,7 @@ public class RemovePropertyCommand extends BaseCommand {
 
         			}else{
         				// named worker is requested
-        				int id = getSignSession(hostname).getSignerName(workerid);
+        				int id = getSignSession(hostname).getSignerId(workerid);
                 		if(id == 0){
                 			throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
                 		}

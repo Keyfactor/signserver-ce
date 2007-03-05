@@ -98,9 +98,9 @@ public abstract class BaseSigner extends BaseWorker implements ISigner {
 		SignerStatus retval = null;
 		
         try {
-			retval = new SignerStatus(getSignToken().getSignTokenStatus(), (SignerConfig) config, getSigningCertificate());
+			retval = new SignerStatus(getSignToken().getSignTokenStatus(), new SignerConfig( config), getSigningCertificate());
 		} catch (SignTokenOfflineException e) {
-			retval = new SignerStatus(getSignToken().getSignTokenStatus(), (SignerConfig) config, null);
+			retval = new SignerStatus(getSignToken().getSignTokenStatus(), new SignerConfig( config), null);
 		}
 		
 		
@@ -147,7 +147,7 @@ public abstract class BaseSigner extends BaseWorker implements ISigner {
 		if(cert==null){
 			cert = (X509Certificate) getSignToken().getCertificate(ISignToken.PURPOSE_SIGN);
 			if(cert==null){
-			  cert=((SignerConfig) config).getSignerCertificate();
+			  cert=( new SignerConfig( config)).getSignerCertificate();
 			}
 		}		
 		return cert;
@@ -163,7 +163,7 @@ public abstract class BaseSigner extends BaseWorker implements ISigner {
 		if(certChain==null){
 			certChain =  getSignToken().getCertificateChain(ISignToken.PURPOSE_SIGN);
 			if(certChain==null){
-				certChain=((SignerConfig) config).getSignerCertificateChain();
+				certChain=(new SignerConfig(config)).getSignerCertificateChain();
 			}
 		}		
 		return certChain;

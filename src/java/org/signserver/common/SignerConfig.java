@@ -33,28 +33,47 @@ import org.ejbca.util.CertTools;
  * 
  * @author Philip Vendil 2007 jan 23
  *
- * @version $Id: SignerConfig.java,v 1.1 2007-02-27 16:18:11 herrvendil Exp $
+ * @version $Id: SignerConfig.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
 
-public class SignerConfig extends WorkerConfig {
+public class SignerConfig  {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final float LATEST_VERSION = 2;
+
 	
 	private static final String AUTHORIZED_CLIENTS = "AUTHORIZED_CLIENTS";
 	private static final String SIGNERCERT = "SIGNERCERT";
 	private static final String SIGNERCERTCHAIN = "SIGNERCERTCHAIN";
 	
 	public static final String NAME = "NAME";
+
+	private WorkerConfig workerConfig;
 	
 	 
-	public SignerConfig(){
+	public SignerConfig(WorkerConfig workerConfig){
 		super();
-		data.put(AUTHORIZED_CLIENTS,new HashSet());
-		data.put(SIGNERCERT,"");
-		data.put(SIGNERCERTCHAIN,"");
-		data.put(CLASS, this.getClass().getName());
+		this.workerConfig = workerConfig;
+		if(get(AUTHORIZED_CLIENTS) == null){
+			put(AUTHORIZED_CLIENTS,new HashSet());
+		}
+		if(get(SIGNERCERT) == null){
+			put(SIGNERCERT,"");
+		}
+		if(get(SIGNERCERTCHAIN) == null){
+			put(SIGNERCERTCHAIN,"");
+		}
+			
+		put(WorkerConfig.CLASS, this.getClass().getName());
+	}
+	
+	
+	private void put(Object key,Object value){
+		workerConfig.getData().put(key, value);
+	}
+	
+	private Object get(Object key){
+		return workerConfig.getData().get(key);
 	}
 	
 	/**
@@ -63,7 +82,7 @@ public class SignerConfig extends WorkerConfig {
 	 * @param the AuthorizedClient to add
 	 */
 	public void addAuthorizedClient(AuthorizedClient client){
-		((HashSet) data.get(AUTHORIZED_CLIENTS)).add(client);				
+		((HashSet) get(AUTHORIZED_CLIENTS)).add(client);				
 	}
 
 	/**
@@ -73,11 +92,11 @@ public class SignerConfig extends WorkerConfig {
 	 */
 
 	public boolean removeAuthorizedClient(AuthorizedClient client){
-		Iterator iter  = ((HashSet) data.get(AUTHORIZED_CLIENTS)).iterator();
+		Iterator iter  = ((HashSet) get(AUTHORIZED_CLIENTS)).iterator();
 		while(iter.hasNext()){
 			AuthorizedClient next = (AuthorizedClient) iter.next();
 			if(next.getCertSN().equals(client.getCertSN()) && next.getIssuerDN().equals(client.getIssuerDN())){				
-				return ((HashSet) data.get(AUTHORIZED_CLIENTS)).remove(next);				
+				return ((HashSet) get(AUTHORIZED_CLIENTS)).remove(next);				
 			}
 		}
 		return false;
@@ -92,7 +111,7 @@ public class SignerConfig extends WorkerConfig {
 	
 	public Collection getAuthorizedClients(){
 		ArrayList result = new ArrayList();
-		Iterator iter = ((HashSet) data.get(AUTHORIZED_CLIENTS)).iterator();
+		Iterator iter = ((HashSet) get(AUTHORIZED_CLIENTS)).iterator();
 		while(iter.hasNext()){
 			result.add(iter.next());
 		}
@@ -110,20 +129,10 @@ public class SignerConfig extends WorkerConfig {
 	public boolean isClientAuthorized(X509Certificate clientCertificate){	  
 	  AuthorizedClient client = new AuthorizedClient(clientCertificate.getSerialNumber().toString(16),clientCertificate.getIssuerDN().toString()); 
 	  
-	  return ((HashSet) data.get(AUTHORIZED_CLIENTS)).contains(client);	  
+	  return ((HashSet) get(AUTHORIZED_CLIENTS)).contains(client);	  
 	}
 
-	public float getLatestVersion() {		
-		return LATEST_VERSION;
-	}
 
-	public void upgrade() {
-		if(data.get(CLASS) == null){
-			data.put(CLASS, this.getClass().getName());
-		}
-
-		data.put(VERSION, new Float(LATEST_VERSION));
-	}
 	
 	/**
 	 * Method used to fetch a signers certificate from the config
@@ -132,7 +141,7 @@ public class SignerConfig extends WorkerConfig {
 	 */
 	public X509Certificate getSignerCertificate() {
 		X509Certificate result = null;
-		String stringcert = (String) data.get(SIGNERCERT);
+		String stringcert = (String) get(SIGNERCERT);
 		if(!stringcert.equals("")){
 			Collection certs;
 			try {
@@ -174,7 +183,7 @@ public class SignerConfig extends WorkerConfig {
 		list.add(signerCert);
 		try {
 			String stringcert = new String(CertTools.getPEMFromCerts(list));
-			data.put(SIGNERCERT,stringcert);	
+			put(SIGNERCERT,stringcert);	
 		} catch (CertificateException e) {
 			throw new EJBException(e);
 		}
@@ -188,7 +197,7 @@ public class SignerConfig extends WorkerConfig {
 	 */
 	public Collection getSignerCertificateChain() {
 		Collection result = null;
-		String stringcert = (String) data.get(SIGNERCERTCHAIN);
+		String stringcert = (String) get(SIGNERCERTCHAIN);
 		if(!stringcert.equals("")){
 			try {
 				result = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));				
@@ -211,11 +220,15 @@ public class SignerConfig extends WorkerConfig {
 	public void setSignerCertificateChain(Collection signerCertificateChain) {
 		try {
 			String stringcert = new String(CertTools.getPEMFromCerts(signerCertificateChain));
-			data.put(SIGNERCERTCHAIN,stringcert);	
+			put(SIGNERCERTCHAIN,stringcert);	
 		} catch (CertificateException e) {
 			throw new EJBException(e);
 		}
 		
+	}
+
+	public WorkerConfig getWorkerConfig() {
+		return workerConfig;
 	}
 
 }

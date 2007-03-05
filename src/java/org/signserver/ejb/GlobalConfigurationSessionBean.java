@@ -48,7 +48,7 @@ import org.signserver.server.signers.ISigner;
  *           view-type="both"
  *           transaction-type="Container"
  *
- * @ejb.transaction type="Supports"                  
+ * @ejb.transaction type="Required"                  
  *           
  * @ejb.ejb-external-ref
  *   description="GlobalConfigurationFileParser Entity Bean"
@@ -116,6 +116,7 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 	 * @param scope, one of the GlobalConfiguration.SCOPE_ constants
 	 * @param key of the property should not have any scope prefix, never null
 	 * @param value the value, never null.
+	 * @ejb.transaction type="Required" 
 	 * @ejb.interface-method
 	 */
 	public void setProperty(String scope, String key, String value) {				
@@ -151,6 +152,7 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 	 * @param scope, one of the GlobalConfiguration.SCOPE_ constants
 	 * @param key of the property should start with either glob. or node., never null
 	 * @return true if removal was successful, othervise false.
+	 * @ejb.transaction type="Required" 
 	 * @ejb.interface-method
 	 */
 	public boolean removeProperty(String scope, String key){
@@ -160,7 +162,10 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 			GlobalConfigurationCache.getCachedGlobalConfig().remove(propertyKeyHelper(scope, key));
 		}else{				
 			try {
-				globalConfigHome.remove(propertyKeyHelper(scope, key));
+				try {
+					GlobalConfigurationDataLocal globalConfigLocal = globalConfigHome.findByPrimaryKey(propertyKeyHelper(scope, key));
+					globalConfigLocal.remove();
+				} catch (FinderException e) {}				
 				GlobalConfigurationCache.setCachedGlobalConfig(null);
 				retval = true;
 			}catch (RemoveException e) {

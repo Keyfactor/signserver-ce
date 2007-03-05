@@ -124,7 +124,7 @@ public class TestSignSessionBean extends TestCase {
 	
 	
 	public void test04NameMapping() throws Exception{	
-		   int id = sSSession.getSignerName("testWorker");
+		   int id = sSSession.getSignerId("testWorker");
 		   assertTrue(""+ id , id == 3);
 	}
 
@@ -155,7 +155,7 @@ public class TestSignSessionBean extends TestCase {
 		AuthorizedClient authClient = new AuthorizedClient("123456","CN=testca");
 		sSSession.addAuthorizedClient(3,authClient);
 		
-		Collection result = ((SignerConfig) sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
+		Collection result = new SignerConfig(sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
 		boolean exists = false;
 		Iterator iter =result.iterator();
 		while(iter.hasNext()){
@@ -169,11 +169,11 @@ public class TestSignSessionBean extends TestCase {
 	 * Test method for 'org.signserver.ejb.SignSessionBean.RemoveAuthorizedClient(int, AuthorizedClient)'
 	 */
 	public void test08RemoveAuthorizedClient() throws Exception{		
-		int initialsize = ((SignerConfig) sSSession.getCurrentSignerConfig(3)).getAuthorizedClients().size();
+		int initialsize = new SignerConfig( sSSession.getCurrentSignerConfig(3)).getAuthorizedClients().size();
 		AuthorizedClient authClient = new AuthorizedClient("123456","CN=testca");
 		assertTrue(sSSession.removeAuthorizedClient(3,authClient));
 		
-		Collection result = ((SignerConfig) sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
+		Collection result = new SignerConfig( sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
 		assertTrue(result.size() == initialsize-1);
 		
 		boolean exists = false;

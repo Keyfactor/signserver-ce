@@ -14,6 +14,7 @@
 
 package org.signserver.common;
 
+import java.util.HashMap;
 import java.util.Properties;
 
 import org.ejbca.core.model.UpgradeableDataHashMap;
@@ -28,9 +29,11 @@ import org.ejbca.core.model.UpgradeableDataHashMap;
  * 
  * 
  * @author Philip Vendil
- * $Id: WorkerConfig.java,v 1.1 2007-02-27 16:18:10 herrvendil Exp $
+ * $Id: WorkerConfig.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
-public abstract class WorkerConfig extends UpgradeableDataHashMap {
+public  class WorkerConfig extends UpgradeableDataHashMap {
+	
+	private static final float LATEST_VERSION = 2;
 	
     // Constants that can be used to configure a Signer
 	public static final String SIGNERPROPERTY_SIGNATUREALGORITHM =".signaturealgorithm";
@@ -96,7 +99,32 @@ public abstract class WorkerConfig extends UpgradeableDataHashMap {
 	public Properties getProperties(){		
 		return ((Properties) data.get(PROPERTIES));
 	}
+	
+	/**
+	 * Method returning this WorkerConfig belongs to a signer
+	 */
+	public boolean isSigner(){
+		return data.get(CLASS).equals(SignerConfig.class.getName());
+	}
+	
+	/**
+	 * Special method to ge access to the complete data field
+	 */
+    HashMap getData(){
+    	return data;
+    }
 
+	public float getLatestVersion() {		
+		return LATEST_VERSION;
+	}
+
+	public void upgrade() {
+		if(data.get(WorkerConfig.CLASS) == null){
+			data.put(WorkerConfig.CLASS, this.getClass().getName());
+		}
+
+		data.put(WorkerConfig.VERSION, new Float(LATEST_VERSION));
+	}
 
 
 	

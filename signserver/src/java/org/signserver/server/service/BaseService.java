@@ -81,7 +81,7 @@ public abstract class BaseService extends BaseWorker implements IService {
 
 
     public WorkerStatus getStatus() {
-		ServiceStatus retval = new ServiceStatus( (ServiceConfig) config);
+		ServiceStatus retval = new ServiceStatus( new ServiceConfig( config));
 		
 		return retval;
 	}

@@ -20,7 +20,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * Gets the current configurations list of authorized clients
  *
- * @version $Id: ListAuthorizedClientsCommand.java,v 1.1 2007-02-27 16:18:07 herrvendil Exp $
+ * @version $Id: ListAuthorizedClientsCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
 public class ListAuthorizedClientsCommand extends BaseCommand {
 	
@@ -58,7 +58,7 @@ public class ListAuthorizedClientsCommand extends BaseCommand {
         			                       "Configurations are activated with the reload command. \n\n" +
         			                       "The current list of authorized clients to " + signerid + " are :\n");
         	
-        	if(((SignerConfig) config).getAuthorizedClients().size() == 0){
+        	if(new SignerConfig(config).getAuthorizedClients().size() == 0){
         		this.getOutputStream().println("  No authorized clients exists-\n");
         	}
         	

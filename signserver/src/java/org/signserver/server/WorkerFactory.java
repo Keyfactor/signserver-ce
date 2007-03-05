@@ -107,14 +107,16 @@ public class WorkerFactory {
 	 * @return the id of the signer or null if no worker with the name is found.
 	 */
 	public static int getSignerIdFromName(String signerName, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
-	   		 	   
+	   int retval = 0;		 	   
 	   loadWorkers(workerConfigHome,gCSession);
 		
 	   if(nameToIdMap.get(signerName) == null){
-		   return 0;
+		   return retval;
 	   }
 	   
-	   return ((Integer)nameToIdMap.get(signerName)).intValue();
+	   retval = ((Integer)nameToIdMap.get(signerName)).intValue();
+	   log.debug("getSignerIdFromName : returning " + retval); 
+	   return retval;
 	}
 	
 	/**
@@ -138,13 +140,13 @@ public class WorkerFactory {
 						  
 						  WorkerConfig config = null;
 						  if(obj instanceof ISigner){
-							  config = getWorkerProperties(nextId.intValue(), workerConfigHome, SignerConfig.class.getName());
+							  config = getWorkerProperties(nextId.intValue(), workerConfigHome);
 							  if(config.getProperties().getProperty(SignerConfig.NAME) != null){
 								  nameToIdMap.put(config.getProperties().getProperty(SignerConfig.NAME).toUpperCase(), nextId); 
 							  }  
 						  }
 						  if(obj instanceof IService){
-							  config = getWorkerProperties(nextId.intValue(), workerConfigHome, ServiceConfig.class.getName());
+							  config = getWorkerProperties(nextId.intValue(), workerConfigHome);
 						  }
 
 						  ((IWorker) obj).init(nextId.intValue(), config);						  
@@ -175,17 +177,19 @@ public class WorkerFactory {
 			workerStore = null;
 			nameToIdMap = null;			
 		}
+		
+		
 
 	}
 	
-	private static WorkerConfig getWorkerProperties(int workerId, WorkerConfigDataLocalHome workerConfigHome, String configClassPath){
+	private static WorkerConfig getWorkerProperties(int workerId, WorkerConfigDataLocalHome workerConfigHome){
 		
 		WorkerConfigDataLocal workerConfig = null;
 	    try {	    	
 			workerConfig = workerConfigHome.findByPrimaryKey(new WorkerConfigDataPK(workerId));
 		} catch (FinderException e) {
 			try {				
-				workerConfig = workerConfigHome.create(workerId,  configClassPath);
+				workerConfig = workerConfigHome.create(workerId,  WorkerConfig.class.getName());
 			} catch (CreateException e1) {
                throw new EJBException(e1);
 			}

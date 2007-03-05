@@ -23,7 +23,7 @@ import java.util.Date;
  * the status of a specific service
  * @author Philip Vendil
  *
- * $Id: ServiceStatus.java,v 1.1 2007-02-27 16:18:11 herrvendil Exp $
+ * $Id: ServiceStatus.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
 
 public class ServiceStatus extends WorkerStatus{
@@ -35,7 +35,7 @@ public class ServiceStatus extends WorkerStatus{
 	 * Main constuctor
 	 */
 	public ServiceStatus(ServiceConfig config){
-		super(config);
+		super(config.getWorkerConfig());
 
 	}
 
@@ -44,7 +44,7 @@ public class ServiceStatus extends WorkerStatus{
 	 * @return returning the date this service was last run
 	 */
 	public String getLastRunDate(){
-		Date lastRun = ((ServiceConfig) activeconfig).getLastRunTimestamp();
+		Date lastRun = new ServiceConfig(activeconfig).getLastRunTimestamp();
 		
 		if(lastRun == null){
 			return "Service doesn't seem to have been runned since start or reload of the server.";

@@ -32,7 +32,7 @@ import org.signserver.common.WorkerStatus;
 /**
  * Gets the current status of the given worker
  *
- * @version $Id: GetStatusCommand.java,v 1.1 2007-02-27 16:18:08 herrvendil Exp $
+ * @version $Id: GetStatusCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
 public class GetStatusCommand extends BaseCommand {
 	
@@ -160,7 +160,7 @@ public class GetStatusCommand extends BaseCommand {
     		this.getOutputStream().println("\n");
     		
     		this.getOutputStream().println("Active Authorized Clients are are (Cert DN, IssuerDN):");
-           	Iterator iter =  ((SignerConfig) status.getActiveSignerConfig()).getAuthorizedClients().iterator();
+           	Iterator iter =  new SignerConfig(status.getActiveSignerConfig()).getAuthorizedClients().iterator();
         	while(iter.hasNext()){
         		AuthorizedClient client = (AuthorizedClient) iter.next();
         		this.getOutputStream().println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");

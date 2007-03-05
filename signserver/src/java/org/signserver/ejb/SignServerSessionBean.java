@@ -168,7 +168,7 @@ public class SignServerSessionBean extends BaseSessionBean {
         	if(clientCert == null){
         		throw new IllegalSignRequestException("Error, client authentication is required.");   
         	}else{
-        		if(!authorizedToRequestSignature(clientCert, ((SignerConfig) signer.getStatus().getActiveSignerConfig()).getAuthorizedClients())){        	                
+        		if(!authorizedToRequestSignature(clientCert, new SignerConfig (signer.getStatus().getActiveSignerConfig()).getAuthorizedClients())){        	                
         			
         			throw new IllegalSignRequestException("Error, client '" + clientCert.getSubjectDN().toString() + "' requesting signature from signer with id : " + 
         					signerId + " isn't an authorized client. ");   
@@ -250,7 +250,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 	 *  
 	 * @ejb.interface-method
 	 */
-	public int getSignerName(String signerName) {
+	public int getSignerId(String signerName) {
 		return WorkerFactory.getSignerIdFromName(signerName.toUpperCase(), workerConfigHome, getGlobalConfigurationSession());		
 	}
 	 
@@ -409,7 +409,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 	 * @ejb.interface-method
 	 */
 	public Collection getAuthorizedClients(int signerId){
-		return ((SignerConfig) getSignerConfigBean(signerId).getWorkerConfig()).getAuthorizedClients();
+		return new SignerConfig( getSignerConfigBean(signerId).getWorkerConfig()).getAuthorizedClients();
 	}
 	
 	/**
@@ -425,7 +425,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 		WorkerConfigDataLocal signerconfigdata = getSignerConfigBean(signerId);
 		
 		WorkerConfig config = signerconfigdata.getWorkerConfig();
-		((SignerConfig) config).addAuthorizedClient(authClient);
+		(new SignerConfig(config)).addAuthorizedClient(authClient);
 		signerconfigdata.setWorkerConfig(config);		
 	}
 
@@ -443,7 +443,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 		WorkerConfigDataLocal signerconfigdata = getSignerConfigBean(signerId);
 		
 		WorkerConfig config = signerconfigdata.getWorkerConfig();
-		result = ((SignerConfig) config).removeAuthorizedClient(authClient);
+		result = (new SignerConfig(config)).removeAuthorizedClient(authClient);
 		signerconfigdata.setWorkerConfig(config);
 		return result;
 	}
@@ -486,7 +486,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 		WorkerConfigDataLocal signerconfigdata = getSignerConfigBean(signerId);
 		
 		WorkerConfig config = signerconfigdata.getWorkerConfig();
-		((SignerConfig) config).setSignerCertificate(signerCert);
+		( new SignerConfig(config)).setSignerCertificate(signerCert);
 		signerconfigdata.setWorkerConfig(config);
 	}
 	
@@ -503,7 +503,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 		WorkerConfigDataLocal signerconfigdata = getSignerConfigBean(signerId);
 		
 		WorkerConfig config = signerconfigdata.getWorkerConfig();
-		((SignerConfig) config).setSignerCertificateChain(signerCerts);
+		(new SignerConfig( config)).setSignerCertificateChain(signerCerts);
 		signerconfigdata.setWorkerConfig(config);
 	}
 	
@@ -606,7 +606,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 			signerConfig = workerConfigHome.findByPrimaryKey(new WorkerConfigDataPK(signerId));
 		} catch (FinderException e) {
 			try {				
-				signerConfig = workerConfigHome.create(signerId,SignerConfig.class.getName());
+				signerConfig = workerConfigHome.create(signerId,WorkerConfig.class.getName());
 			} catch (CreateException e1) {
                throw new EJBException(e1);
 			}

@@ -39,7 +39,7 @@ import org.signserver.ejb.SignServerSessionHome;
 /**
  * Base for Commands, contains useful functions
  *
- * @version $Id: BaseCommand.java,v 1.1 2007-02-27 16:18:07 herrvendil Exp $
+ * @version $Id: BaseCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
 public abstract class BaseCommand implements IAdminCommand{
 	
@@ -83,7 +83,7 @@ public abstract class BaseCommand implements IAdminCommand{
     }
     
     protected void printAuthorizedClients(WorkerConfig config){
-    	Iterator iter = ((SignerConfig) config).getAuthorizedClients().iterator();
+    	Iterator iter = new SignerConfig(config).getAuthorizedClients().iterator();
     	while(iter.hasNext()){
     		AuthorizedClient client = (AuthorizedClient) iter.next();
     		this.getOutputStream().println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");
@@ -251,7 +251,7 @@ public abstract class BaseCommand implements IAdminCommand{
     	if(workerIdOrName.substring(0, 1).matches("\\d")){
     		retval = Integer.parseInt(workerIdOrName);    		
     	}else{
-    		retval = getSignSession(hostname).getSignerName(workerIdOrName);
+    		retval = getSignSession(hostname).getSignerId(workerIdOrName);
     		if(retval == 0){
     			throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
     		}

@@ -28,7 +28,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Sets a property for a given workerid with byte data from file set as a BASE94 encoded string
  *
- * @version $Id: SetPropertyFromFileCommand.java,v 1.1 2007-02-27 16:18:08 herrvendil Exp $
+ * @version $Id: SetPropertyFromFileCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
  */
 public class SetPropertyFromFileCommand extends BaseCommand {
 	
@@ -76,7 +76,7 @@ public class SetPropertyFromFileCommand extends BaseCommand {
 
         			}else{
         				// named worker is requested
-        				int id = getSignSession(hostname).getSignerName(workerid);
+        				int id = getSignSession(hostname).getSignerId(workerid);
                 		if(id == 0){
                 			throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
                 		}

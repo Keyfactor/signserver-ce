@@ -17,7 +17,7 @@ package org.signserver.cli;
 /**
  * Factory for General signserver Commands.
  *
- * @version $Id: SignServerCommandFactory.java,v 1.1 2007-02-27 16:18:09 herrvendil Exp $
+ * @version $Id: SignServerCommandFactory.java,v 1.2 2007-03-07 07:41:19 herrvendil Exp $
  */
 public class SignServerCommandFactory {
     /**
@@ -59,6 +59,9 @@ public class SignServerCommandFactory {
         }
         if (args[0].equalsIgnoreCase("removeproperty")) {
             return new RemovePropertyCommand(args);
+        }
+        if (args[0].equalsIgnoreCase("dumpproperties")) {
+            return new DumpPropertiesCommand(args);
         }
         if (args[0].equalsIgnoreCase("listauthorizedclients")) {
             return new ListAuthorizedClientsCommand(args);

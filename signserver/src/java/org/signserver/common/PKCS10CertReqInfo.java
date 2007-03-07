@@ -24,14 +24,14 @@ import org.bouncycastle.asn1.x509.X509Name;
  * 
  * @author Philip Vendil 2007 feb 19
  *
- * @version $Id: PKCS10CertReqInfo.java,v 1.1 2007-02-27 16:18:11 herrvendil Exp $
+ * @version $Id: PKCS10CertReqInfo.java,v 1.2 2007-03-07 07:41:20 herrvendil Exp $
  */
 
 public class PKCS10CertReqInfo implements ISignerCertReqInfo {
 
 	private static final long serialVersionUID = 1L;
 	private String   signatureAlgorithm = null;
-    private X509Name subjectDN = null;
+    private String subjectDN = null;
     private ASN1Set attributes = null;
     
     /**
@@ -39,7 +39,7 @@ public class PKCS10CertReqInfo implements ISignerCertReqInfo {
      * @param subjectDN used in the request
      * @param attributes, might be null
      */	
-	public PKCS10CertReqInfo(String signatureAlgorithm, X509Name subjectDN, ASN1Set attributes) {
+	public PKCS10CertReqInfo(String signatureAlgorithm, String subjectDN, ASN1Set attributes) {
 		super();
 		this.signatureAlgorithm = signatureAlgorithm;
 		this.subjectDN = subjectDN;
@@ -58,7 +58,7 @@ public class PKCS10CertReqInfo implements ISignerCertReqInfo {
 	 *
 	 * @return used in the request
 	 */
-	public X509Name getSubjectDN() {
+	public String getSubjectDN() {
 		return subjectDN;
 	}
 	

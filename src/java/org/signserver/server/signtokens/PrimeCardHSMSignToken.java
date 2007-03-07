@@ -31,6 +31,7 @@ import org.ejbca.core.model.ca.catoken.CATokenAuthenticationFailedException;
 import org.ejbca.core.model.ca.catoken.CATokenOfflineException;
 import org.ejbca.core.model.ca.catoken.IHardCAToken;
 import org.ejbca.util.Base64;
+import org.ejbca.util.CertTools;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
@@ -48,7 +49,7 @@ import se.primeKey.caToken.card.PrimeCAToken;
  * 
  * @see org.signserver.server.signtokens.ISignToken
  * @author Philip Vendil
- * @version $Id: PrimeCardHSMSignToken.java,v 1.1 2007-02-27 16:18:26 herrvendil Exp $
+ * @version $Id: PrimeCardHSMSignToken.java,v 1.2 2007-03-07 07:41:20 herrvendil Exp $
  */
 
 public class PrimeCardHSMSignToken  implements ISignToken{
@@ -168,7 +169,7 @@ public class PrimeCardHSMSignToken  implements ISignToken{
 			PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info; 
 			PKCS10CertificationRequest pkcs10;
 			try {
-				pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(),reqInfo.getSubjectDN(),getPublicKey(PURPOSE_SIGN),reqInfo.getAttributes(),getPrivateKey(PURPOSE_SIGN));
+				pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(),CertTools.stringToBcX509Name(reqInfo.getSubjectDN()),getPublicKey(PURPOSE_SIGN),reqInfo.getAttributes(),getPrivateKey(PURPOSE_SIGN));
 				retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
 			} catch (InvalidKeyException e) {
 				log.error(e);

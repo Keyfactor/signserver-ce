@@ -26,7 +26,7 @@ import org.signserver.server.WorkerFactory;
 /**
  * Implements the signserver command line interface
  *
- * @version $Id: signserver.java,v 1.1 2007-02-27 16:18:08 herrvendil Exp $
+ * @version $Id: signserver.java,v 1.2 2007-03-07 07:41:19 herrvendil Exp $
  */
 public class signserver {
     /**
@@ -72,7 +72,7 @@ public class signserver {
                 
             } else {
                 System.out.println("Usage: signserver < getstatus | getconfig | reload | setproperty | setproperties | setpropertyfromfile | removeproperty " +
-                		           "| listauthorizedclients | addauthorizedclient | removeauthorizedclient | uploadsignercertificate " +
+                		           "| dumpproperties | listauthorizedclients | addauthorizedclient | removeauthorizedclient | uploadsignercertificate " +
                 		           "| uploadsignercertificatechain | activatesigntoken | deactivatesigntoken | generatecertreq | archive > \n");
                 System.out.println("Available archive commands : Usage: signserver archive < findfromarchiveid | findfromrequestip | findfromrequestcert > \n");
                 System.out.println("Each basic command give more help");

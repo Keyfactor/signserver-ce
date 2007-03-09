@@ -23,10 +23,14 @@ import org.signserver.common.PKCS10CertReqInfo;
  /**
   * Commands that requests a signer to generate a PKCS10 certificate request 
   *
-  * @version $Id: GenerateCertReqCommand.java,v 1.2 2007-03-07 07:41:20 herrvendil Exp $
+  * @version $Id: GenerateCertReqCommand.java,v 1.3 2007-03-09 11:26:38 herrvendil Exp $
   */
  public class GenerateCertReqCommand extends BaseCommand {
      
+		protected static final int HELP = 0;
+		protected static final int FAIL = 1;
+		protected static final int SUCCESS = 2;
+	 
      /**
       * Creates a new instance of SetPropertyCommand
       *
@@ -42,11 +46,10 @@ import org.signserver.common.PKCS10CertReqInfo;
       * @throws IllegalAdminCommandException Error in command args
       * @throws ErrorAdminCommandException Error running command
       */
-     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
-         if (args.length != 5)
-             throw new IllegalAdminCommandException("Usage: signserver generatecertreq <-host hostname (optional)> <workerid> <dn> <signature algorithm>  <cert-req-filename>\n" +
-                                                    "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem\n\n" );
-
+     protected void execute(String hostname, String[] resources) throws IllegalAdminCommandException, ErrorAdminCommandException {
+         if (args.length != 5){
+             throw new IllegalAdminCommandException( resources[HELP]);
+         }
          try{
         	 
         	 final String workerid = args[1];        	        	
@@ -62,7 +65,7 @@ import org.signserver.common.PKCS10CertReqInfo;
         		 // named worker is requested
         		 id = getSignSession(hostname).getSignerId(workerid);
         		 if(id == 0){
-        			 throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
+        			 throw new IllegalAdminCommandException(resources[FAIL]);
         		 }
         	 }
         	 
@@ -73,11 +76,19 @@ import org.signserver.common.PKCS10CertReqInfo;
         	 fos.write(reqData.getBase64CertReq());
         	 fos.close();
          
-        	 getOutputStream().println("PKCS10 Request successfully written to file " + filename);
+        	 getOutputStream().println(resources[SUCCESS] + filename);
          
          } catch (Exception e) {             
              throw new ErrorAdminCommandException(e);            
          }
+     }
+     
+     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
+     	String[] resources =  {"Usage: signserver generatecertreq <-host hostname (optional)> <workerid> <dn> <signature algorithm>  <cert-req-filename>\n" +
+                               "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem\n\n",
+                               "Error: No worker with the given name could be found",
+                               "PKCS10 Request successfully written to file "};
+         execute(hostname,resources);   
      }
  
  	public int getCommandType() {

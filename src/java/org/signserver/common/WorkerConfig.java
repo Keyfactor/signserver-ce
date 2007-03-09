@@ -17,6 +17,7 @@ package org.signserver.common;
 import java.util.HashMap;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.ejbca.core.model.UpgradeableDataHashMap;
 
 
@@ -29,11 +30,18 @@ import org.ejbca.core.model.UpgradeableDataHashMap;
  * 
  * 
  * @author Philip Vendil
- * $Id: WorkerConfig.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * $Id: WorkerConfig.java,v 1.3 2007-03-09 11:26:38 herrvendil Exp $
  */
 public  class WorkerConfig extends UpgradeableDataHashMap {
 	
+	public static transient Logger log = Logger.getLogger(WorkerConfig.class);
+	
 	private static final float LATEST_VERSION = 2;
+	
+	/**
+	 * Environment variable pointing to the node id.
+	 */
+	private static final String NODEID_ENVVAR = "SIGNSERVER_NODEID";
 	
     // Constants that can be used to configure a Signer
 	public static final String SIGNERPROPERTY_SIGNATUREALGORITHM =".signaturealgorithm";
@@ -126,7 +134,23 @@ public  class WorkerConfig extends UpgradeableDataHashMap {
 		data.put(WorkerConfig.VERSION, new Float(LATEST_VERSION));
 	}
 
-
+	/**
+	 * @return Method retreving the Node id from the SIGNSERVER_NODEID environment
+	 * valiable
+	 * 
+	 */
+	public static String getNodeId(){
+		if(nodeId != null){
+			nodeId = System.getenv(NODEID_ENVVAR);
+			
+			if(nodeId == null){
+				log.error("Error, required environment variable " + NODEID_ENVVAR + " isn't set.");
+			}
+		}
+		
+		return nodeId;
+	}
+    private static String nodeId = null;
 	
 
 }

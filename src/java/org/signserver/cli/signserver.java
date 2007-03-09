@@ -26,77 +26,92 @@ import org.signserver.server.WorkerFactory;
 /**
  * Implements the signserver command line interface
  *
- * @version $Id: signserver.java,v 1.2 2007-03-07 07:41:19 herrvendil Exp $
+ * @version $Id: signserver.java,v 1.3 2007-03-09 11:26:38 herrvendil Exp $
  */
 public class signserver {
+	
+	
+	protected signserver(String[] args){
+	       try {
+	        	String hostname = checkHostParameter(args);
+	        	if(hostname != null){
+	        		args = removeHostParameters(args);
+	        	}
+	        	
+	        	
+	            IAdminCommand cmd = SignServerCommandFactory.getCommand(args);
+
+	            
+	            if (cmd != null) {
+	            	                                                    
+	                if(cmd.getCommandType() == IAdminCommand.TYPE_EXECUTEONMASTER){
+	                	if(hostname == null){
+	                	  hostname = getMasterHostname();
+	                	}
+	                	System.out.println("===========================================");
+	                	System.out.println("  Executing Command on host : " + hostname);
+	                	System.out.println("===========================================\n\n");
+	                	cmd.execute(hostname);
+	                }else{
+	                    if(cmd.getCommandType() == IAdminCommand.TYPE_EXECUTEONALLNODES){
+	                    	String[] hostnames = getAllHostnames();
+	                    	for(int i=0;i<hostnames.length;i++){
+	                    	  IAdminCommand c = getCommand(args);
+	                          System.out.println("===========================================");
+	                    	  System.out.println("Executing Command on host : " + hostnames[i]);
+	                      	  System.out.println("===========================================\n\n");
+	                    	  c.execute(hostnames[i]);
+	                    	}  
+	                    }else{
+	                    	cmd.execute(null);
+	                    }
+	                }
+	                
+	            } else {
+	            	outputHelp();
+	            }
+	        } catch (Exception e) {
+	            System.out.println(e.getMessage());            
+	            System.exit(-1);
+	        }		
+	}
+	
     /**
      * Main
      *
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        try {
-        	String hostname = checkHostParameter(args);
-        	if(hostname != null){
-        		args = removeHostParameters(args);
-        	}
-        	
-        	
-            IAdminCommand cmd = SignServerCommandFactory.getCommand(args);
-
-            
-            if (cmd != null) {
-            	                                                    
-                if(cmd.getCommandType() == IAdminCommand.TYPE_EXECUTEONMASTER){
-                	if(hostname == null){
-                	  hostname = signserver.getMasterHostname();
-                	}
-                	System.out.println("===========================================");
-                	System.out.println("  Executing Command on host : " + hostname);
-                	System.out.println("===========================================\n\n");
-                	cmd.execute(hostname);
-                }else{
-                    if(cmd.getCommandType() == IAdminCommand.TYPE_EXECUTEONALLNODES){
-                    	String[] hostnames = signserver.getAllHostnames();
-                    	for(int i=0;i<hostnames.length;i++){
-                    	  IAdminCommand c = SignServerCommandFactory.getCommand(args);
-                          System.out.println("===========================================");
-                    	  System.out.println("Executing Command on host : " + hostnames[i]);
-                      	  System.out.println("===========================================\n\n");
-                    	  c.execute(hostnames[i]);
-                    	}  
-                    }else{
-                    	cmd.execute(null);
-                    }
-                }
-                
-            } else {
-                System.out.println("Usage: signserver < getstatus | getconfig | reload | setproperty | setproperties | setpropertyfromfile | removeproperty " +
-                		           "| dumpproperties | listauthorizedclients | addauthorizedclient | removeauthorizedclient | uploadsignercertificate " +
-                		           "| uploadsignercertificatechain | activatesigntoken | deactivatesigntoken | generatecertreq | archive > \n");
-                System.out.println("Available archive commands : Usage: signserver archive < findfromarchiveid | findfromrequestip | findfromrequestcert > \n");
-                System.out.println("Each basic command give more help");
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());            
-            System.exit(-1);
-        }
+        new signserver(args);
     }
     
-    private static String getMasterHostname()throws IOException{
+    protected void outputHelp() {
+    	System.out.println("Usage: signserver < getstatus | getconfig | reload | setproperty | setproperties | setpropertyfromfile | removeproperty " +
+    			"| dumpproperties | listauthorizedclients | addauthorizedclient | removeauthorizedclient | uploadsignercertificate " +
+    	"| uploadsignercertificatechain | activatesigntoken | deactivatesigntoken | generatecertreq | archive > \n");
+    	System.out.println("Available archive commands : Usage: signserver archive < findfromarchiveid | findfromrequestip | findfromrequestcert > \n");
+    	System.out.println("Each basic command give more help");
+
+    }
+
+	protected IAdminCommand getCommand(String[] args) {
+		return SignServerCommandFactory.getCommand(args);
+	}
+
+	private String getMasterHostname()throws IOException{
     	Properties props = getProperties();
     	String hostname = props.getProperty("hostname.masternode");
     	return hostname;
     }
     
-    private static String[] getAllHostnames()throws IOException{
+    private String[] getAllHostnames()throws IOException{
     	Properties props = getProperties();
     	String hosts = props.getProperty("hostname.allnodes");
     	
     	return hosts.split(";");
     }
     
-    private static Properties getProperties() throws IOException{
+    private Properties getProperties() throws IOException{
         String propsfile = "signserver_cli.properties";
         InputStream is = new FileInputStream(propsfile);
         Properties properties = new Properties();

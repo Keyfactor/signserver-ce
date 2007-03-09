@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.ejbca.util.CertTools;
+import org.signserver.common.GlobalConfiguration;
 
   
 
@@ -26,11 +27,14 @@ import org.ejbca.util.CertTools;
 /**
  * Commands that uploads a PEM certificate to a singers config.
  *
- * @version $Id: UploadSignerCertificateChainCommand.java,v 1.1 2007-02-27 16:18:07 herrvendil Exp $
+ * @version $Id: UploadSignerCertificateChainCommand.java,v 1.2 2007-03-09 11:26:38 herrvendil Exp $
  */
 public class UploadSignerCertificateChainCommand extends BaseCommand {
 	
-	
+	protected static final int HELP = 0;
+	protected static final int TRYING = 1;
+	protected static final int BADPEM = 2;
+	protected static final int FAIL = 3;
 	
     /**
      * Creates a new instance of SetPropertyCommand
@@ -47,25 +51,36 @@ public class UploadSignerCertificateChainCommand extends BaseCommand {
      * @throws IllegalAdminCommandException Error in command args
      * @throws ErrorAdminCommandException Error running command
      */
-    public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
-        if (args.length != 3) {
-	       throw new IllegalAdminCommandException("Usage: signserver uploadsignercertificatechain <signerid> <filename>\n" + 
-	       		                                  "Example: signserver uploadsignercertificatechain 1 /home/user/signercertchain.pem\n\n");	       
+    protected void execute(String hostname, String[] resources) throws IllegalAdminCommandException, ErrorAdminCommandException {
+        if (args.length != 4) {
+	       throw new IllegalAdminCommandException(resources[HELP]);	       
 	    }	
         try {            
         	
         	int signerid = getWorkerId(args[1], hostname);
         	checkThatWorkerIsSigner(signerid,hostname);
         	
-        	String filename = args[2];
+        	String scope = args[2];
+        	
+        	if(scope.equalsIgnoreCase("NODE")){
+        		scope = GlobalConfiguration.SCOPE_NODE;
+        	}else{
+        		if(scope.equalsIgnoreCase("GLOB")){
+            		scope = GlobalConfiguration.SCOPE_GLOBAL;
+            	}else{
+         	       throw new IllegalAdminCommandException(resources[FAIL]);
+            	}
+        	}
+        	
+        	String filename = args[3];
             Collection certs = CertTools.getCertsFromPEM(filename);
             if(certs.size() == 0){
-            	throw new IllegalAdminCommandException("Invalid PEM file, couldn't find any certificate");
+            	throw new IllegalAdminCommandException(resources[BADPEM]);
             }
             
                     	
         	        	        
-        	this.getOutputStream().println("Uploading the following signer certificates  : \n");
+        	this.getOutputStream().println(resources[FAIL]);
         	
         	Iterator iter = certs.iterator();
         	while(iter.hasNext()){
@@ -74,7 +89,7 @@ public class UploadSignerCertificateChainCommand extends BaseCommand {
               this.getOutputStream().println("\n");
         	}
         	
-        	getSignSession(hostname).uploadSignerCertificateChain(signerid, certs);
+        	getSignSession(hostname).uploadSignerCertificateChain(signerid, certs, scope);
 
         	
         } catch (Exception e) {
@@ -82,6 +97,15 @@ public class UploadSignerCertificateChainCommand extends BaseCommand {
         }
     }
 
+    public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
+    	String[] resources =  {"Usage: signserver uploadsignercertificatechain <-host hostname (optional)> <signerid | name> <NODE | GLOB> <filename> \n" + 
+                               "Example: signserver uploadsignercertificatechain 1 GLOB /home/user/signercertchain.pem\n\n",
+                               "Uploading the following signer certificates  : \n",
+                               "Error: scope must be one of 'glob' or 'node'",
+                               "Invalid PEM file, couldn't find any certificate"};
+        execute(hostname,resources);   
+    }
+    
     // execute
     
 	public int getCommandType() {

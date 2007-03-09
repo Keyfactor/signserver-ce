@@ -31,6 +31,7 @@ import org.ejbca.core.ejb.BaseSessionBean;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ResyncException;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerConfig;
 import org.signserver.server.GlobalConfigurationCache;
 import org.signserver.server.GlobalConfigurationFileParser;
 import org.signserver.server.service.IService;
@@ -88,10 +89,7 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 	}
 	
 
-	/**
-	 * Environment variable pointing to the node id.
-	 */
-	private static final String NODEID_ENVVAR = "SIGNSERVER_NODEID";
+
 
 
 	/** Log4j instance for actual implementation class */
@@ -133,7 +131,7 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 		String tempKey = key.toUpperCase();
 		
 		if(scope.equals(GlobalConfiguration.SCOPE_NODE)){            
-			retval = GlobalConfiguration.SCOPE_NODE + getNodeId() + "." + tempKey;
+			retval = GlobalConfiguration.SCOPE_NODE + WorkerConfig.getNodeId() + "." + tempKey;
 		}else{
 			if(scope.equals(GlobalConfiguration.SCOPE_GLOBAL)){
 				retval = GlobalConfiguration.SCOPE_GLOBAL + tempKey;
@@ -198,7 +196,7 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 					GlobalConfigurationDataLocal data = (GlobalConfigurationDataLocal) iter.next();
 					String rawkey = data.getPropertyKey();
 					if(rawkey.startsWith(GlobalConfiguration.SCOPE_NODE)){
-						String key = rawkey.replaceFirst(getNodeId() + ".", "");
+						String key = rawkey.replaceFirst(WorkerConfig.getNodeId() + ".", "");
 						properties.setProperty(key, data.getPropertyValue());
 					}else{
 						if(rawkey.startsWith(GlobalConfiguration.SCOPE_GLOBAL)){
@@ -320,7 +318,7 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 		  throw new ResyncException(message);
 		}
 		
-		String thisNodeConfig = GlobalConfiguration.SCOPE_NODE+getNodeId()+".";
+		String thisNodeConfig = GlobalConfiguration.SCOPE_NODE+WorkerConfig.getNodeId()+".";
 		// remove all global and node specific properties
 		try {
 			Collection allProperties = ((GlobalConfigurationDataLocalHome) getLocator().getLocalHome(GlobalConfigurationDataLocalHome.COMP_NAME)).findAll();
@@ -424,23 +422,7 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 		
 	}
 
-	/**
-	 * @return Method retreving the Node id from the SIGNSERVER_NODEID environment
-	 * valiable
-	 * 
-	 */
-	private String getNodeId(){
-		if(nodeId != null){
-			nodeId = System.getenv(NODEID_ENVVAR);
-			
-			if(nodeId == null){
-				log.error("Error, required environment variable " + NODEID_ENVVAR + " isn't set.");
-			}
-		}
-		
-		return nodeId;
-	}
-    private static String nodeId = null;
+
 
 	
 

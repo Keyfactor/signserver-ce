@@ -14,7 +14,6 @@
 package org.signserver.common;
 
 import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.x509.X509Name;
 
 /**
  * Class containing information needed to for a signer to create
@@ -24,7 +23,7 @@ import org.bouncycastle.asn1.x509.X509Name;
  * 
  * @author Philip Vendil 2007 feb 19
  *
- * @version $Id: PKCS10CertReqInfo.java,v 1.2 2007-03-07 07:41:20 herrvendil Exp $
+ * @version $Id: PKCS10CertReqInfo.java,v 1.3 2007-03-09 11:26:38 herrvendil Exp $
  */
 
 public class PKCS10CertReqInfo implements ISignerCertReqInfo {

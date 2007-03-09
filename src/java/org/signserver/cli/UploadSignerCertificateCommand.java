@@ -18,6 +18,7 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 
 import org.ejbca.util.CertTools;
+import org.signserver.common.GlobalConfiguration;
 
 
  
@@ -25,7 +26,7 @@ import org.ejbca.util.CertTools;
 /**
  * Commands that uploads a PEM certificate to a singers config.
  *
- * @version $Id: UploadSignerCertificateCommand.java,v 1.1 2007-02-27 16:18:07 herrvendil Exp $
+ * @version $Id: UploadSignerCertificateCommand.java,v 1.2 2007-03-09 11:26:38 herrvendil Exp $
  */
 public class UploadSignerCertificateCommand extends BaseCommand {
 	
@@ -48,15 +49,27 @@ public class UploadSignerCertificateCommand extends BaseCommand {
      */
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
         if (args.length != 3) {
-	       throw new IllegalAdminCommandException("Usage: signserver uploadsignercertificate <signerid> <filename>\n" + 
-	       		                                  "Example: signserver uploadsignercertificate 1 /home/user/singercert.pem\n\n");	       
+	       throw new IllegalAdminCommandException("Usage: signserver uploadsignercertificate <-host hostname (optional)> <signerid or name>  <NODE | GLOB> <filename>\n" + 
+	       		                                  "Example: signserver uploadsignercertificate 1 GLOB /home/user/singercert.pem\n\n");	       
 	    }	
         try {            
         	
         	int signerid = getWorkerId(args[1], hostname);
         	checkThatWorkerIsSigner(signerid,hostname);
         	
-        	String filename = args[2];
+        	String scope = args[2];
+        	
+        	if(scope.equalsIgnoreCase("NODE")){
+        		scope = GlobalConfiguration.SCOPE_NODE;
+        	}else{
+        		if(scope.equalsIgnoreCase("GLOB")){
+            		scope = GlobalConfiguration.SCOPE_GLOBAL;
+            	}else{
+         	       throw new IllegalAdminCommandException("Error: scope must be one of 'glob' or 'node'");
+            	}
+        	}
+        	
+        	String filename = args[3];
             Collection certs = CertTools.getCertsFromPEM(filename);
             if(certs.size() == 0){
             	throw new IllegalAdminCommandException("Invalid PEM file, couldn't find any certificate");
@@ -67,7 +80,7 @@ public class UploadSignerCertificateCommand extends BaseCommand {
         	this.getOutputStream().println("Uploading the following signer certificate  : \n");
             printCert(cert);        			                       
         	
-        	getSignSession(hostname).uploadSignerCertificate(signerid, cert);
+        	getSignSession(hostname).uploadSignerCertificate(signerid, cert, scope);
 
         	
         } catch (Exception e) {

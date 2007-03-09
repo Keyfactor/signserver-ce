@@ -25,6 +25,7 @@ import java.util.Iterator;
 
 import javax.ejb.EJBException;
 
+import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 
 /**
@@ -33,13 +34,14 @@ import org.ejbca.util.CertTools;
  * 
  * @author Philip Vendil 2007 jan 23
  *
- * @version $Id: SignerConfig.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * @version $Id: SignerConfig.java,v 1.3 2007-03-09 11:26:38 herrvendil Exp $
  */
 
 public class SignerConfig  {
 
+	public static transient Logger log = Logger.getLogger(SignerConfig.class);
+	
 	private static final long serialVersionUID = 1L;
-
 
 	
 	private static final String AUTHORIZED_CLIENTS = "AUTHORIZED_CLIENTS";
@@ -142,7 +144,11 @@ public class SignerConfig  {
 	public X509Certificate getSignerCertificate() {
 		X509Certificate result = null;
 		String stringcert = (String) get(SIGNERCERT);
-		if(!stringcert.equals("")){
+		if(stringcert == null || stringcert.equals("")){
+			stringcert = (String) get(WorkerConfig.getNodeId() + "." + SIGNERCERT);
+		}
+		
+		if(stringcert != null && !stringcert.equals("")){
 			Collection certs;
 			try {
 				certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
@@ -156,6 +162,7 @@ public class SignerConfig  {
 			}
 
 		}
+	
 		if(result==null){
 			// try fetch certificate from certificate chain
 			Collection chain = getSignerCertificateChain();
@@ -178,14 +185,23 @@ public class SignerConfig  {
 	 * @param signerCert
 	 * 
 	 */
-	public void setSignerCertificate(X509Certificate signerCert) {
+	public void setSignerCertificate(X509Certificate signerCert, String scope) {
 		ArrayList list = new ArrayList();
 		list.add(signerCert);
-		try {
-			String stringcert = new String(CertTools.getPEMFromCerts(list));
-			put(SIGNERCERT,stringcert);	
-		} catch (CertificateException e) {
-			throw new EJBException(e);
+		if(scope.equals(GlobalConfiguration.SCOPE_GLOBAL)){
+			try {
+				String stringcert = new String(CertTools.getPEMFromCerts(list));
+				put(SIGNERCERT,stringcert);	
+			} catch (CertificateException e) {
+				throw new EJBException(e);
+			}
+		}else{
+			try {
+				String stringcert = new String(CertTools.getPEMFromCerts(list));
+				put(WorkerConfig.getNodeId() + "." + SIGNERCERT,stringcert);	
+			} catch (CertificateException e) {
+				throw new EJBException(e);
+			}			
 		}
 		
 	}
@@ -198,7 +214,11 @@ public class SignerConfig  {
 	public Collection getSignerCertificateChain() {
 		Collection result = null;
 		String stringcert = (String) get(SIGNERCERTCHAIN);
-		if(!stringcert.equals("")){
+		if(stringcert == null || stringcert.equals("")){
+			stringcert = (String) get(WorkerConfig.getNodeId() +"."+ SIGNERCERTCHAIN);
+		}
+
+		if(stringcert != null && !stringcert.equals("")){
 			try {
 				result = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));				
 			} catch (CertificateException e) {
@@ -206,8 +226,8 @@ public class SignerConfig  {
 			} catch (IOException e) {
 				throw new EJBException(e);
 			}
-
 		}
+
 		return result;
 		
 	}
@@ -217,12 +237,21 @@ public class SignerConfig  {
 	 * @param signerCert
 	 * 
 	 */
-	public void setSignerCertificateChain(Collection signerCertificateChain) {
-		try {
-			String stringcert = new String(CertTools.getPEMFromCerts(signerCertificateChain));
-			put(SIGNERCERTCHAIN,stringcert);	
-		} catch (CertificateException e) {
-			throw new EJBException(e);
+	public void setSignerCertificateChain(Collection signerCertificateChain, String scope) {
+		if(scope.equals(GlobalConfiguration.SCOPE_GLOBAL)){
+			try {
+				String stringcert = new String(CertTools.getPEMFromCerts(signerCertificateChain));
+				put(SIGNERCERTCHAIN,stringcert);	
+			} catch (CertificateException e) {
+				throw new EJBException(e);
+			}
+		}else{
+			try {
+				String stringcert = new String(CertTools.getPEMFromCerts(signerCertificateChain));
+				put(WorkerConfig.getNodeId() +"." + SIGNERCERTCHAIN,stringcert);	
+			} catch (CertificateException e) {
+				throw new EJBException(e);
+			}			
 		}
 		
 	}
@@ -230,5 +259,7 @@ public class SignerConfig  {
 	public WorkerConfig getWorkerConfig() {
 		return workerConfig;
 	}
+	
+
 
 }

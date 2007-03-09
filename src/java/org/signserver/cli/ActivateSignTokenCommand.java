@@ -21,10 +21,14 @@ import org.signserver.common.SignerStatus;
 /**
  * Command used to activate a Sign Token
  *
- * @version $Id: ActivateSignTokenCommand.java,v 1.1 2007-02-27 16:18:08 herrvendil Exp $
+ * @version $Id: ActivateSignTokenCommand.java,v 1.2 2007-03-09 11:26:38 herrvendil Exp $
  */
 public class ActivateSignTokenCommand extends BaseCommand {
 	
+	protected static final int HELP = 0;
+	protected static final int TRYING = 1;
+	protected static final int SUCCESS = 2;
+	protected static final int FAIL = 3;
 	
     /**
      * Creates a new instance of ActivateSignTokenCommand
@@ -33,19 +37,17 @@ public class ActivateSignTokenCommand extends BaseCommand {
      */
     public ActivateSignTokenCommand(String[] args) {
         super(args);
-    }
-
+    }    
+    
     /**
      * Runs the command
      *
      * @throws IllegalAdminCommandException Error in command args
      * @throws ErrorAdminCommandException Error running command
      */
-    public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
+    protected void execute(String hostname,String[] resources) throws IllegalAdminCommandException, ErrorAdminCommandException {
         if (args.length != 3) {
-	       throw new IllegalAdminCommandException("Usage: signserver activatesigntoken <signerid | signerName> <authentication code> \n" + 
-	       		                                  "Example 1 : signserver activatesigntoken 1 123456 \n\n" +
-	    		                                  "Example 2 : signserver activatesigntoken mySigner 123456 \n\n");	       
+	       throw new IllegalAdminCommandException(resources[HELP]);	       
 	    }	
         try {            
         	
@@ -54,13 +56,13 @@ public class ActivateSignTokenCommand extends BaseCommand {
         	String authCode = args[2];
         	        	
         	
-        	this.getOutputStream().println("Trying to activate sign token of signer with id : " + signerid + "\n");
+        	this.getOutputStream().println( resources[TRYING]+ signerid + "\n");
         	this.getSignSession(hostname).activateSigner(signerid, authCode);
         	
         	if(((SignerStatus) getSignSession(hostname).getStatus(signerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE){
-        		this.getOutputStream().println("Activation of signer was successful\n\n");
+        		this.getOutputStream().println(resources[SUCCESS]);
         	}else{
-        		this.getOutputStream().println("Activation of signer FAILED\n\n");
+        		this.getOutputStream().println(resources[FAIL]);
         	}
         	
         	  
@@ -69,6 +71,17 @@ public class ActivateSignTokenCommand extends BaseCommand {
         	throw new ErrorAdminCommandException(e);            
         }
     }
+    
+    public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
+    	String[] resources =  {"Usage: signserver activatesigntoken <signerid | signerName> <authentication code> \n" + 
+                               "Example 1 : signserver activatesigntoken 1 123456 \n\n" +
+                               "Example 2 : signserver activatesigntoken mySigner 123456 \n\n",
+                               "Trying to activate sign token of signer with id : ",
+                               "Activation of signer was successful\n\n",
+                               "Activation of signer FAILED\n\n"};
+        execute(hostname,resources);   
+    }
+    
 
 	public int getCommandType() {
 		return TYPE_EXECUTEONALLNODES;

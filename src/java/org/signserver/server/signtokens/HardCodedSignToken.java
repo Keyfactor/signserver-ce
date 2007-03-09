@@ -41,7 +41,7 @@ import org.signserver.common.SignerStatus;
 /**
  * Class used for testing purposes, contains soft dummy key and certificates 
  * @author Philip Vendil
- * @version $Id: HardCodedSignToken.java,v 1.1 2007-02-27 16:18:27 herrvendil Exp $
+ * @version $Id: HardCodedSignToken.java,v 1.2 2007-03-09 09:27:32 herrvendil Exp $
  */
 
 public class HardCodedSignToken implements ISignToken {
@@ -201,6 +201,13 @@ public class HardCodedSignToken implements ISignToken {
 	 */
 	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException {		
 		return null;
+	}
+
+	/**
+	 * Method not supported
+	 */
+	public boolean destroyKey(int purpose) {		
+		return false;
 	}
 
 }

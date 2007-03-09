@@ -52,7 +52,7 @@ import org.signserver.common.SignerStatus;
  * KEYSTOREPASSWORD : The password that locks the keystore.
  * 
  * @author philip
- * $Id: P12SignToken.java,v 1.1 2007-02-27 16:18:27 herrvendil Exp $
+ * $Id: P12SignToken.java,v 1.2 2007-03-09 09:27:32 herrvendil Exp $
  */
 public class P12SignToken implements ISignToken {
 	
@@ -258,6 +258,13 @@ public class P12SignToken implements ISignToken {
 	 */
 	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException {		
 		return null;
+	}
+	
+	/**
+	 * Method not supported
+	 */
+	public boolean destroyKey(int purpose) {		
+		return false;
 	}
 
 }

@@ -178,5 +178,12 @@ public abstract class BaseSigner extends BaseWorker implements ISigner {
 		 
 	}
 	
+	/**
+	 * Method sending the removal request to the signtoken
+	 */
+	public boolean destroyKey(int purpose) {
+		return getSignToken().destroyKey(purpose);
+	}
+	
 	
 }

@@ -474,19 +474,44 @@ public class SignServerSessionBean extends BaseSessionBean {
 	}
 	
 	/**
-	 * Method used to upload a certificate to a signers active configuration
+	 * Method used to remove a key from a signer.
 	 * 
 	 * @param signerId id of the signer
-	 * @param signerCert the certificate used to sign signature requests
+	 * @param purpose on of ISignToken.PURPOSE_ constants
+	 * @return true if removal was successful.
 	 * 
      * @ejb.transaction type="Required"
 	 * @ejb.interface-method
 	 */
-	public void uploadSignerCertificate(int signerId, X509Certificate signerCert){		
+	public boolean destroyKey(int signerId, int purpose) throws	InvalidSignerIdException {
+			IWorker worker = WorkerFactory.getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
+			if(worker == null){
+				throw new InvalidSignerIdException("Given SignerId " + signerId + " doesn't exist");
+			}
+			
+	        if(!(worker instanceof ISigner)){
+	        	throw new InvalidSignerIdException("Worker exists but isn't a signer.");
+	        }
+			ISigner signer = (ISigner) worker;
+			
+			return signer.destroyKey(purpose);
+	}
+	
+	/**
+	 * Method used to upload a certificate to a signers active configuration
+	 * 
+	 * @param signerId id of the signer
+	 * @param signerCert the certificate used to sign signature requests
+	 * @param scope one of GlobalConfiguration.SCOPE_ constants
+	 *  
+     * @ejb.transaction type="Required"
+	 * @ejb.interface-method
+	 */
+	public void uploadSignerCertificate(int signerId, X509Certificate signerCert, String scope){		
 		WorkerConfigDataLocal signerconfigdata = getSignerConfigBean(signerId);
 		
 		WorkerConfig config = signerconfigdata.getWorkerConfig();
-		( new SignerConfig(config)).setSignerCertificate(signerCert);
+		( new SignerConfig(config)).setSignerCertificate(signerCert,scope);
 		signerconfigdata.setWorkerConfig(config);
 	}
 	
@@ -495,15 +520,15 @@ public class SignServerSessionBean extends BaseSessionBean {
 	 * 
 	 * @param signerId id of the signer
 	 * @param signerCerts the certificatechain used to sign signature requests
-	 * 
+	 * @param scope one of GlobalConfiguration.SCOPE_ constants
      * @ejb.transaction type="Required"
 	 * @ejb.interface-method
 	 */
-	public void uploadSignerCertificateChain(int signerId, Collection signerCerts){		
+	public void uploadSignerCertificateChain(int signerId, Collection signerCerts, String scope){		
 		WorkerConfigDataLocal signerconfigdata = getSignerConfigBean(signerId);
 		
 		WorkerConfig config = signerconfigdata.getWorkerConfig();
-		(new SignerConfig( config)).setSignerCertificateChain(signerCerts);
+		(new SignerConfig( config)).setSignerCertificateChain(signerCerts, scope);
 		signerconfigdata.setWorkerConfig(config);
 	}
 	

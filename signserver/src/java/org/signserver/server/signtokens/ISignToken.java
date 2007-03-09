@@ -29,7 +29,7 @@ import org.signserver.common.SignTokenOfflineException;
  *  All SignToken plug-ins must implement this interface.
  * 
  * @author Philip Vendil
- * @version $Id: ISignToken.java,v 1.1 2007-02-27 16:18:27 herrvendil Exp $
+ * @version $Id: ISignToken.java,v 1.2 2007-03-09 09:27:33 herrvendil Exp $
  */
 
 
@@ -119,5 +119,10 @@ public interface ISignToken {
 	 */
 	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException;
 	
-	
+	/**
+	 * Method used to remove a key in the signer that shouldn't be used any more
+	 * @param purpose on of ISignToken.PURPOSE_ constants
+	 * @return true if removal was successfull.
+	 */
+	public boolean destroyKey(int purpose);
 }

@@ -32,7 +32,7 @@ import org.signserver.server.IWorker;
  * 
  * 
  * @author Philip Vendil
- * $Id: ISigner.java,v 1.1 2007-02-27 16:18:26 herrvendil Exp $
+ * $Id: ISigner.java,v 1.2 2007-03-09 09:27:33 herrvendil Exp $
  */
 public interface ISigner extends IWorker{
 
@@ -71,6 +71,13 @@ public interface ISigner extends IWorker{
 	 * Returns one of the AUTHTYPE_ constants
 	 */
 	public int getAuthenticationType();
+	
+	/**
+	 * Method used to remove a key in the signer that shouldn't be used any more
+	 * @param purpose on of ISignToken.PURPOSE_ constants
+	 * @return true if removal was successful.
+	 */
+	public boolean destroyKey(int purpose);
 	
 	
 	

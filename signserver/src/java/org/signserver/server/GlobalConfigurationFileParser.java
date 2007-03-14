@@ -32,7 +32,7 @@ import org.signserver.common.GlobalConfiguration;
  * through the global configuration session bean.
  * 
  *
- * @version $Id: GlobalConfigurationFileParser.java,v 1.2 2007-03-14 10:37:54 herrvendil Exp $
+ * @version $Id: GlobalConfigurationFileParser.java,v 1.3 2007-03-14 12:52:30 primelars Exp $
  */
 public class GlobalConfigurationFileParser  implements java.io.Serializable {
    
@@ -50,9 +50,7 @@ public class GlobalConfigurationFileParser  implements java.io.Serializable {
 	// Initialize the 
 	private GlobalConfigurationFileParser(Properties testproperties){
 		 log = Logger.getLogger(this.getClass());
-		if(testproperties == null){
-		  reloadConfiguration();
-		}else{
+		if(testproperties != null){
 			properties = testproperties;
 		}
 		

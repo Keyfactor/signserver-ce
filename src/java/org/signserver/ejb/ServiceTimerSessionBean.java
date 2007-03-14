@@ -137,9 +137,9 @@ public class ServiceTimerSessionBean extends BaseSessionBean implements javax.ej
 			UserTransaction ut = getSessionContext().getUserTransaction();
 			try{
 				ut.begin();
-				serviceConfig = new ServiceConfig( WorkerFactory.getWorker(timerInfo.intValue(), workerConfigHome, getGlobalConfigurationSession()).getStatus().getActiveSignerConfig());
+				serviceConfig = new ServiceConfig( WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigHome, getGlobalConfigurationSession()).getStatus().getActiveSignerConfig());
 				if(serviceConfig != null){					
-					service = (IService) WorkerFactory.getWorker(timerInfo.intValue(), workerConfigHome, getGlobalConfigurationSession());
+					service = (IService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigHome, getGlobalConfigurationSession());
 					getSessionContext().getTimerService().createTimer(service.getNextInterval()*1000, timerInfo);
 					if(!service.isSingleton()){
 						run=true;						
@@ -224,7 +224,7 @@ public class ServiceTimerSessionBean extends BaseSessionBean implements javax.ej
 			while(iter.hasNext()){
 				Integer serviceId = (Integer) iter.next();								
 				if(!existingTimers.contains(serviceId)){					
-					IService service = (IService) WorkerFactory.getWorker(serviceId.intValue(), workerConfigHome, globalConfigurationSession);
+					IService service = (IService) WorkerFactory.getInstance().getWorker(serviceId.intValue(), workerConfigHome, globalConfigurationSession);
 					if(service != null && service.isActive()  && service.getNextInterval() != IService.DONT_EXECUTE){
 					  getSessionContext().getTimerService().createTimer((service.getNextInterval()) *1000, serviceId);
 					}

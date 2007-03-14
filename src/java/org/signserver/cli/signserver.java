@@ -18,15 +18,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import org.signserver.server.WorkerFactory;
  
 
 
 /**
  * Implements the signserver command line interface
  *
- * @version $Id: signserver.java,v 1.4 2007-03-14 08:17:21 herrvendil Exp $
+ * @version $Id: signserver.java,v 1.5 2007-03-14 10:37:53 herrvendil Exp $
  */
 public class signserver {
 	
@@ -122,7 +120,6 @@ public class signserver {
         InputStream is = new FileInputStream(propsfile);
         Properties properties = new Properties();
         properties.load(is);
-        WorkerFactory.flush();
         is.close();
         return properties;
     }

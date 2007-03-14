@@ -153,7 +153,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 	                              X509Certificate clientCert, String requestIP) throws IllegalSignRequestException,
 		SignTokenOfflineException {
 		log.debug(">signData " + request.getRequestID());
-		IWorker worker = WorkerFactory.getWorker(signerId, workerConfigHome, getGlobalConfigurationSession());
+		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigHome, getGlobalConfigurationSession());
 		
         if(worker == null){
         	throw new IllegalSignRequestException("Non-existing signerId");
@@ -233,7 +233,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 	 * @ejb.interface-method
 	 */
 	public WorkerStatus getStatus(int workerId) throws InvalidSignerIdException{
-		IWorker worker = WorkerFactory.getWorker(workerId, workerConfigHome, getGlobalConfigurationSession());
+		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigHome, getGlobalConfigurationSession());
 		if(worker == null){
 			throw new InvalidSignerIdException("Given SignerId " + workerId + " doesn't exist");
 		}
@@ -251,7 +251,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 	 * @ejb.interface-method
 	 */
 	public int getSignerId(String signerName) {
-		return WorkerFactory.getSignerIdFromName(signerName.toUpperCase(), workerConfigHome, getGlobalConfigurationSession());		
+		return WorkerFactory.getInstance().getSignerIdFromName(signerName.toUpperCase(), workerConfigHome, getGlobalConfigurationSession());		
 	}
 	 
 	
@@ -287,7 +287,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 	public void activateSigner(int signerId, String authenticationCode)
 		throws SignTokenAuthenticationFailureException,
 		SignTokenOfflineException, InvalidSignerIdException {
-		IWorker worker = WorkerFactory.getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
+		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
 		if(worker == null){
 			throw new InvalidSignerIdException("Given SignerId " + signerId + " doesn't exist");
 		}
@@ -316,7 +316,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 	 */
 	public void deactivateSigner(int signerId)
 		throws SignTokenOfflineException, InvalidSignerIdException {
-		IWorker worker = WorkerFactory.getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
+		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
 		if(worker == null){
 			throw new InvalidSignerIdException("Given SignerId " + signerId + " doesn't exist");
 		}
@@ -460,7 +460,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 	 */
 	public ISignerCertReqData getCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws		
 		SignTokenOfflineException, InvalidSignerIdException {
-			IWorker worker = WorkerFactory.getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
+			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
 			if(worker == null){
 				throw new InvalidSignerIdException("Given SignerId " + signerId + " doesn't exist");
 			}
@@ -484,7 +484,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 	 * @ejb.interface-method
 	 */
 	public boolean destroyKey(int signerId, int purpose) throws	InvalidSignerIdException {
-			IWorker worker = WorkerFactory.getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
+			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
 			if(worker == null){
 				throw new InvalidSignerIdException("Given SignerId " + signerId + " doesn't exist");
 			}

@@ -25,12 +25,7 @@ import org.signserver.ejb.IGlobalConfigurationSessionLocalHome;
 public abstract class BaseWorker implements IWorker {
 	
 	//Private Property constants
-	/**
-	 * Property indicating that the signserver shouldn't be used.
-	 * Set propery to TRUE to disable the signer.
-	 */
-	public static final String DISABLED          = "DISABLED";
-	
+
     protected int workerId =0;
     
     protected WorkerConfig config = null; 

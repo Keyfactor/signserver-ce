@@ -26,7 +26,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Commands that uploads a PEM certificate to a singers config.
  *
- * @version $Id: UploadSignerCertificateCommand.java,v 1.2 2007-03-09 11:26:38 herrvendil Exp $
+ * @version $Id: UploadSignerCertificateCommand.java,v 1.3 2007-03-14 08:17:07 herrvendil Exp $
  */
 public class UploadSignerCertificateCommand extends BaseCommand {
 	
@@ -48,7 +48,7 @@ public class UploadSignerCertificateCommand extends BaseCommand {
      * @throws ErrorAdminCommandException Error running command
      */
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
-        if (args.length != 3) {
+        if (args.length != 4) {
 	       throw new IllegalAdminCommandException("Usage: signserver uploadsignercertificate <-host hostname (optional)> <signerid or name>  <NODE | GLOB> <filename>\n" + 
 	       		                                  "Example: signserver uploadsignercertificate 1 GLOB /home/user/singercert.pem\n\n");	       
 	    }	

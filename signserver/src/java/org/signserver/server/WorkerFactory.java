@@ -44,10 +44,16 @@ public class WorkerFactory {
 	/** Log4j instance for actual implementation class */
 	public static transient Logger log = Logger.getLogger(WorkerFactory.class);
   
-	private static HashMap workerStore = null;
-	private static HashMap nameToIdMap = null;
+	private static WorkerFactory instance = new WorkerFactory();
 	
-	private WorkerFactory(){}
+	public static WorkerFactory getInstance(){
+		return instance;
+	}
+	
+	private HashMap workerStore = null;
+	private HashMap nameToIdMap = null;
+	
+	
 	
 	/**
 	 * Method returning a worker given it's id. The signer should be defined in 
@@ -62,7 +68,7 @@ public class WorkerFactory {
 	 * @return A ISigner as defined in the configuration file, or null if no configuration
 	 * for the specified signerId could be found.
 	 */
-	public static IWorker getWorker(int workerId, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
+	public IWorker getWorker(int workerId, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
 	   Integer id = new Integer(workerId);	
 			
 	   loadWorkers(workerConfigHome,gCSession);
@@ -83,7 +89,7 @@ public class WorkerFactory {
 	 * @return A ISigner as defined in the configuration file, or null if no configuration
 	 * for the specified signerId could be found.
 	 */
-	public static ISigner getSigner(String signerName, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
+	public ISigner getSigner(String signerName, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
 	   ISigner retval = null;
 	   			   
 	   loadWorkers(workerConfigHome,gCSession);
@@ -105,7 +111,7 @@ public class WorkerFactory {
 	 * @param workerConfigHome The home interface of the signer config entity bean
 	 * @return the id of the signer or null if no worker with the name is found.
 	 */
-	public static int getSignerIdFromName(String signerName, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
+	public int getSignerIdFromName(String signerName, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
 	   int retval = 0;		 	   
 	   loadWorkers(workerConfigHome,gCSession);
 		
@@ -121,9 +127,11 @@ public class WorkerFactory {
 	/**
 	 * Method to load all available signers
 	 */
-	private static void loadWorkers(WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){
+	private void loadWorkers(WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){
 		   if(workerStore == null){
-
+              workerStore = new HashMap();
+              nameToIdMap = new HashMap();
+			   
 			  Collection workers = gCSession.getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
 			  GlobalConfiguration gc = gCSession.getGlobalConfiguration();
 			  Iterator iter = workers.iterator();
@@ -170,7 +178,7 @@ public class WorkerFactory {
 	 * Should be called from the GlobalConfigurationFileParser.reloadConfiguration() method
 	 *
 	 */
-	public static void flush(){
+	public void flush(){
 		if(workerStore != null){
 			workerStore = null;
 			nameToIdMap = null;			
@@ -180,7 +188,7 @@ public class WorkerFactory {
 
 	}
 	
-	private static WorkerConfig getWorkerProperties(int workerId, WorkerConfigDataLocalHome workerConfigHome){
+	private WorkerConfig getWorkerProperties(int workerId, WorkerConfigDataLocalHome workerConfigHome){
 		
 		WorkerConfigDataLocal workerConfig = null;
 	    try {	    	
@@ -196,7 +204,7 @@ public class WorkerFactory {
 		return workerConfig.getWorkerConfig();
 	}
 	
-	private static HashMap getNameToIdMap(){
+	private HashMap getNameToIdMap(){
 		if(nameToIdMap == null){
 			nameToIdMap = new HashMap();
 		}
@@ -204,7 +212,7 @@ public class WorkerFactory {
 		
 	}
 	
-	private static HashMap getWorkerStore(){
+	private HashMap getWorkerStore(){
 		if(workerStore == null){
 			workerStore = new HashMap();
 		}

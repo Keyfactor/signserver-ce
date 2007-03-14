@@ -32,7 +32,7 @@ import org.signserver.common.GlobalConfiguration;
  * through the global configuration session bean.
  * 
  *
- * @version $Id: GlobalConfigurationFileParser.java,v 1.1 2007-02-27 16:18:12 herrvendil Exp $
+ * @version $Id: GlobalConfigurationFileParser.java,v 1.2 2007-03-14 10:37:54 herrvendil Exp $
  */
 public class GlobalConfigurationFileParser  implements java.io.Serializable {
    
@@ -102,7 +102,7 @@ public class GlobalConfigurationFileParser  implements java.io.Serializable {
         String propsfile = "/signserver_server.properties";
         InputStream is = this.getClass().getResourceAsStream(propsfile);
         try{
-        	WorkerFactory.flush(); 
+        	WorkerFactory.getInstance().flush(); 
         	if(is != null){
         		properties.load(is);        		
         		is.close();

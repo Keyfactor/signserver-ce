@@ -18,7 +18,7 @@ package org.signserver.cli;
 /**
  * Command used to deactivate a Sign Token
  *
- * @version $Id: DeactivateSignTokenCommand.java,v 1.2 2007-03-09 11:26:38 herrvendil Exp $
+ * @version $Id: DeactivateSignTokenCommand.java,v 1.3 2007-03-14 20:38:32 primelars Exp $
  */
 public class DeactivateSignTokenCommand extends BaseCommand {
 	protected static final int HELP = 0;
@@ -53,11 +53,14 @@ public class DeactivateSignTokenCommand extends BaseCommand {
         	this.getOutputStream().println(resources[TRYING] + signerid + "\n");
         	this.getSignSession(hostname).deactivateSigner(signerid);        			                
         	this.getOutputStream().println(resources[SUCCESS]);
-        	  
-        	
+
+        } catch( IllegalAdminCommandException e ) {
+            throw e;
+        } catch( ErrorAdminCommandException e ) {
+            throw e;
         } catch (Exception e) {
-        	throw new ErrorAdminCommandException(e);            
-        }
+            throw new ErrorAdminCommandException(e);
+        }  
     }
     
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {

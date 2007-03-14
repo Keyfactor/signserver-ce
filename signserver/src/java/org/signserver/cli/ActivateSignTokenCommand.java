@@ -21,7 +21,7 @@ import org.signserver.common.SignerStatus;
 /**
  * Command used to activate a Sign Token
  *
- * @version $Id: ActivateSignTokenCommand.java,v 1.2 2007-03-09 11:26:38 herrvendil Exp $
+ * @version $Id: ActivateSignTokenCommand.java,v 1.3 2007-03-14 20:38:32 primelars Exp $
  */
 public class ActivateSignTokenCommand extends BaseCommand {
 	
@@ -64,12 +64,13 @@ public class ActivateSignTokenCommand extends BaseCommand {
         	}else{
         		this.getOutputStream().println(resources[FAIL]);
         	}
-        	
-        	  
-        	
+        } catch( IllegalAdminCommandException e ) {
+            throw e;
+        } catch( ErrorAdminCommandException e ) {
+            throw e;
         } catch (Exception e) {
-        	throw new ErrorAdminCommandException(e);            
-        }
+            throw new ErrorAdminCommandException(e);
+        }  
     }
     
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {

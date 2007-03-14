@@ -27,7 +27,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Commands that uploads a PEM certificate to a singers config.
  *
- * @version $Id: UploadSignerCertificateChainCommand.java,v 1.2 2007-03-09 11:26:38 herrvendil Exp $
+ * @version $Id: UploadSignerCertificateChainCommand.java,v 1.3 2007-03-14 08:16:49 herrvendil Exp $
  */
 public class UploadSignerCertificateChainCommand extends BaseCommand {
 	
@@ -80,7 +80,7 @@ public class UploadSignerCertificateChainCommand extends BaseCommand {
             
                     	
         	        	        
-        	this.getOutputStream().println(resources[FAIL]);
+        	this.getOutputStream().println(resources[TRYING]);
         	
         	Iterator iter = certs.iterator();
         	while(iter.hasNext()){

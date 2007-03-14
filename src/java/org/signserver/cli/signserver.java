@@ -26,7 +26,7 @@ import org.signserver.server.WorkerFactory;
 /**
  * Implements the signserver command line interface
  *
- * @version $Id: signserver.java,v 1.3 2007-03-09 11:26:38 herrvendil Exp $
+ * @version $Id: signserver.java,v 1.4 2007-03-14 08:17:21 herrvendil Exp $
  */
 public class signserver {
 	
@@ -39,7 +39,7 @@ public class signserver {
 	        	}
 	        	
 	        	
-	            IAdminCommand cmd = SignServerCommandFactory.getCommand(args);
+	            IAdminCommand cmd = getCommand(args);
 
 	            
 	            if (cmd != null) {
@@ -71,6 +71,7 @@ public class signserver {
 	            	outputHelp();
 	            }
 	        } catch (Exception e) {
+	        	//e.printStackTrace();
 	            System.out.println(e.getMessage());            
 	            System.exit(-1);
 	        }		
@@ -113,6 +114,11 @@ public class signserver {
     
     private Properties getProperties() throws IOException{
         String propsfile = "signserver_cli.properties";
+        
+        if(System.getenv("SIGNSERVER_HOME") != null){
+        	propsfile = System.getenv("SIGNSERVER_HOME") + "/bin/" + propsfile;
+        }
+        
         InputStream is = new FileInputStream(propsfile);
         Properties properties = new Properties();
         properties.load(is);

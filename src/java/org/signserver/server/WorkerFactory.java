@@ -23,7 +23,6 @@ import javax.ejb.FinderException;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ServiceConfig;
 import org.signserver.common.SignerConfig;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.IGlobalConfigurationSessionLocal;
@@ -124,9 +123,7 @@ public class WorkerFactory {
 	 */
 	private static void loadWorkers(WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){
 		   if(workerStore == null){
-			  workerStore = new HashMap();
-			  nameToIdMap = new HashMap();
-			   
+
 			  Collection workers = gCSession.getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
 			  GlobalConfiguration gc = gCSession.getGlobalConfiguration();
 			  Iterator iter = workers.iterator();
@@ -142,7 +139,8 @@ public class WorkerFactory {
 						  if(obj instanceof ISigner){
 							  config = getWorkerProperties(nextId.intValue(), workerConfigHome);
 							  if(config.getProperties().getProperty(SignerConfig.NAME) != null){
-								  nameToIdMap.put(config.getProperties().getProperty(SignerConfig.NAME).toUpperCase(), nextId); 
+								  
+								  getNameToIdMap().put(config.getProperties().getProperty(SignerConfig.NAME).toUpperCase(), nextId); 
 							  }  
 						  }
 						  if(obj instanceof IService){
@@ -150,7 +148,7 @@ public class WorkerFactory {
 						  }
 
 						  ((IWorker) obj).init(nextId.intValue(), config);						  
-						  workerStore.put(nextId,obj);
+						  getWorkerStore().put(nextId,obj);
 					  }  
 				  }catch(ClassNotFoundException e){
 					  throw new EJBException(e);
@@ -196,6 +194,22 @@ public class WorkerFactory {
 		}
 		
 		return workerConfig.getWorkerConfig();
+	}
+	
+	private static HashMap getNameToIdMap(){
+		if(nameToIdMap == null){
+			nameToIdMap = new HashMap();
+		}
+		return nameToIdMap;
+		
+	}
+	
+	private static HashMap getWorkerStore(){
+		if(workerStore == null){
+			workerStore = new HashMap();
+		}
+		return workerStore;
+		
 	}
 
 }

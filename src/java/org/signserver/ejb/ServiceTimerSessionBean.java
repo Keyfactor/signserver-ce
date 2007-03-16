@@ -82,6 +82,14 @@ import org.signserver.server.service.IService;
  *   home="org.signserver.ejb.IGlobalConfigurationSessionLocalHome"
  *   business="org.signserver.ejb.IGlobalConfigurationSessionLocal"
  *   link="GlobalConfigurationSession"
+ *   
+ * @ejb.ejb-external-ref description="The Sign Session Bean"
+ *   view-type="local"
+ *   ref-name="ejb/SignServerSessionLocal"
+ *   type="Session"
+ *   home="org.signserver.ejb.ISignServerSessionSessionLocalHome"
+ *   business="org.signserver.ejb.ISignServerSessionSessionLocal"
+ *   link="SignServerSession"
  *
  * @ejb.ejb-external-ref
  *   description="The Worker Config Bean"

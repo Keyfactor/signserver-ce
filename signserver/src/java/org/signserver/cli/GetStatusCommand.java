@@ -32,7 +32,7 @@ import org.signserver.common.WorkerStatus;
 /**
  * Gets the current status of the given worker
  *
- * @version $Id: GetStatusCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * @version $Id: GetStatusCommand.java,v 1.3 2007-03-16 11:07:52 herrvendil Exp $
  */
 public class GetStatusCommand extends BaseCommand {
 	
@@ -84,7 +84,7 @@ public class GetStatusCommand extends BaseCommand {
         		if(complete){
         		  displayGlobalConfiguration(hostname);
         		}
-        		List workers = getGlobalConfigurationSession(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+        		List workers = getGlobalConfigurationSession(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_SIGNERS);
         		Collections.sort(workers);
         		
         		Iterator iter = workers.iterator();

@@ -24,7 +24,7 @@ import java.util.Properties;
 /**
  * Implements the signserver command line interface
  *
- * @version $Id: signserver.java,v 1.6 2007-03-15 03:29:12 primelars Exp $
+ * @version $Id: signserver.java,v 1.7 2007-03-26 10:04:16 herrvendil Exp $
  */
 public class signserver {
 	
@@ -72,7 +72,8 @@ public class signserver {
                 System.out.println(e.getMessage());            
                 System.exit(-1);
             } catch (ErrorAdminCommandException e) {
-                e.printStackTrace();
+            	System.out.println(e.getMessage()); 
+                //e.printStackTrace();
                 System.exit(-2);
             } catch (IOException e) {
                 e.printStackTrace();

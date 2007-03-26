@@ -19,7 +19,7 @@ package org.signserver.cli;
 /**
  * Reloads the current configuration
  *
- * @version $Id: ReloadCommand.java,v 1.1 2007-02-27 16:18:09 herrvendil Exp $
+ * @version $Id: ReloadCommand.java,v 1.2 2007-03-26 06:06:49 herrvendil Exp $
  */
 public class ReloadCommand extends BaseCommand {
     /**
@@ -38,12 +38,24 @@ public class ReloadCommand extends BaseCommand {
      * @throws ErrorAdminCommandException Error running command
      */
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
-        if (args.length != 1) {
-	       throw new IllegalAdminCommandException("Usage: signserver reload  \n\n"  );	       
+        if (args.length != 2) {
+	       throw new IllegalAdminCommandException("Usage: signserver reload <worker id or name | all> \n\n"+
+	    		                                  "Example 1 : signserver reload all \n" +
+	    		                                  "Example 2 : signserver reload myWorker \n" +
+	    		                                  "Example 1 : signserver reload 1 \n");
+	       
 	    }	
         try {            
+        	int workerId = 0;
         	
-            this.getSignSession(hostname).reloadConfiguration();
+        	if(!args[1].equalsIgnoreCase("all")){        	  
+        		workerId = getWorkerId(args[1], hostname);
+        		if(workerId == 0){
+        			throw new IllegalAdminCommandException("Error: Worker Id cannot be 0.");
+        		}
+          	}  
+        	
+            this.getSignSession(hostname).reloadConfiguration(workerId);
         	
         	this.getOutputStream().println("SignServer reloaded successfully\n");
         	this.getOutputStream().println("Current configuration is now activated.\n");

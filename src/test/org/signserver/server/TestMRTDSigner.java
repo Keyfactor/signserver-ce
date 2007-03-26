@@ -55,7 +55,7 @@ public class TestMRTDSigner extends TestCase {
 		
 		  
 		  sSSession.setWorkerProperty(3, "AUTHTYPE", "NOAUTH");
-		  sSSession.reloadConfiguration();	
+		  sSSession.reloadConfiguration(3);	
 	}
 	
 
@@ -132,7 +132,7 @@ public class TestMRTDSigner extends TestCase {
 		  sSSession.removeWorkerProperty(3, "AUTHTYPE");
 		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.CLASSPATH");
 		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.SIGNERTOKEN.CLASSPATH");
-		  sSSession.reloadConfiguration();
+		  sSSession.reloadConfiguration(3);
 	}
 	 
     /**

@@ -14,6 +14,7 @@
 package org.signserver.ejb;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -137,7 +138,7 @@ public class ServiceTimerSessionBean extends BaseSessionBean implements javax.ej
 		if(timerInfo.equals(SERVICELOADER_ID)){
 			log.debug("Running the internal Service loader.");
 			getSessionContext().getTimerService().createTimer(SERVICELOADER_PERIOD, SERVICELOADER_ID);
-			load();
+			load(0);
 		}else{		
 			ServiceConfig serviceConfig = null;
 			IService service = null;
@@ -208,12 +209,13 @@ public class ServiceTimerSessionBean extends BaseSessionBean implements javax.ej
 	}    
 
     /**
-     * Loads and activates all the services from database that are active
+     * Loads and activates one or all the services from database that are active
      *
+     * @param serviceId 0 indicates all services othervise is just the specified service loaded.
      * @throws EJBException             if a communication or other error occurs.
      * @ejb.interface-method view-type="both"
      */
-	public void load(){
+	public void load(int serviceId){
     	// Get all services
 		    SessionContext context = getSessionContext();
 		    TimerService timerService = context.getTimerService();
@@ -225,16 +227,20 @@ public class ServiceTimerSessionBean extends BaseSessionBean implements javax.ej
     			existingTimers.add(timer.getInfo());    			
     		}
 
- 
-    		
-    		Collection serviceIds = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES);    		
+    		Collection serviceIds = null;
+            if(serviceId == 0){    		
+    		    serviceIds = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES);
+            }else{
+            	serviceIds = new ArrayList();
+            	serviceIds.add(new Integer(serviceId));
+            }
 			iter = serviceIds.iterator();
 			while(iter.hasNext()){
-				Integer serviceId = (Integer) iter.next();								
-				if(!existingTimers.contains(serviceId)){					
-					IService service = (IService) WorkerFactory.getInstance().getWorker(serviceId.intValue(), workerConfigHome, globalConfigurationSession);
+				Integer nextId = (Integer) iter.next();								
+				if(!existingTimers.contains(nextId)){					
+					IService service = (IService) WorkerFactory.getInstance().getWorker(nextId.intValue(), workerConfigHome, globalConfigurationSession);
 					if(service != null && service.isActive()  && service.getNextInterval() != IService.DONT_EXECUTE){
-					  getSessionContext().getTimerService().createTimer((service.getNextInterval()) *1000, serviceId);
+					  getSessionContext().getTimerService().createTimer((service.getNextInterval()) *1000, nextId);
 					}
 				}
 			}
@@ -248,18 +254,27 @@ public class ServiceTimerSessionBean extends BaseSessionBean implements javax.ej
 	}
 	
     /**
-     * Cancels all existing timers a unload
+     * Cancels one or all existing timers 
      *
+     * @param serviceId indicates all services othervise is just the specified service unloaded.
      * @throws EJBException             if a communication or other error occurs.
      * @ejb.interface-method view-type="both"
      */
-	public void unload(){
+	public void unload(int serviceId){
 		// Get all servicess
 		Collection currentTimers = getSessionContext().getTimerService().getTimers();
 		Iterator iter = currentTimers.iterator();
 		while(iter.hasNext()){
-			Timer timer = (Timer) iter.next();			
-			timer.cancel(); 			
+			Timer timer = (Timer) iter.next();	
+			if(serviceId == 0){
+			   timer.cancel();
+			}else{
+				if(timer.getInfo() instanceof Integer){
+					if(((Integer) timer.getInfo()).intValue() == serviceId){
+						timer.cancel();
+					}
+				}
+			}
 		}
 	}
 	

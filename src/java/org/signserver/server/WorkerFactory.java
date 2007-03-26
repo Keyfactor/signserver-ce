@@ -188,6 +188,52 @@ public class WorkerFactory {
 
 	}
 	
+	/**
+	 * Method used to force a reload of worker. 
+	 * @param id of worker
+	 */
+	public void reloadWorker(int id,WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){
+		if(workerStore == null){
+			workerStore = new HashMap();
+			nameToIdMap = new HashMap();
+		}
+
+		GlobalConfiguration gc = gCSession.getGlobalConfiguration();
+
+		try{	
+			String classpath = gc.getWorkerClassPath(id);						
+			if(classpath != null){					
+				Class implClass = Class.forName(classpath);
+				Object obj = implClass.newInstance();
+
+				WorkerConfig config = null;
+				if(obj instanceof ISigner){
+					config = getWorkerProperties(id, workerConfigHome);
+					if(config.getProperties().getProperty(SignerConfig.NAME) != null){
+						getNameToIdMap().put(config.getProperties().getProperty(SignerConfig.NAME).toUpperCase(), new Integer(id)); 
+					}  
+				}
+				if(obj instanceof IService){
+					config = getWorkerProperties(id, workerConfigHome);
+				}
+
+				((IWorker) obj).init(id, config);						  
+				getWorkerStore().put(new Integer(id),obj);
+			}  
+		}catch(ClassNotFoundException e){
+			throw new EJBException(e);
+		}
+		catch(IllegalAccessException iae){
+			throw new EJBException(iae);
+		}
+		catch(InstantiationException ie){
+			throw new EJBException(ie);
+		} 
+	}		
+
+
+
+	
 	private WorkerConfig getWorkerProperties(int workerId, WorkerConfigDataLocalHome workerConfigHome){
 		
 		WorkerConfigDataLocal workerConfig = null;

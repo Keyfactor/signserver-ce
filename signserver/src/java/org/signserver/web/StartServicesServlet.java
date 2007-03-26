@@ -31,7 +31,7 @@ import org.signserver.ejb.IServiceTimerSessionLocalHome;
  *
  * 
  * 
- * @version $Id: StartServicesServlet.java,v 1.1 2007-02-27 16:18:21 herrvendil Exp $
+ * @version $Id: StartServicesServlet.java,v 1.2 2007-03-26 06:06:49 herrvendil Exp $
  */
 public class StartServicesServlet extends HttpServlet {
 
@@ -47,7 +47,7 @@ public class StartServicesServlet extends HttpServlet {
         
         log.debug(">destroy calling ServiceSession.unload");
         try {
-			getServiceHome().create().unload();
+			getServiceHome().create().unload(0);
 		} catch (CreateException e) {
 			log.error(e);
 		} catch (IOException e) {
@@ -78,7 +78,7 @@ public class StartServicesServlet extends HttpServlet {
 
         log.debug(">init calling ServiceSession.load");
         try {
-			getServiceHome().create().load();
+			getServiceHome().create().load(0);
 		} catch (CreateException e) {
 			log.error("Error init ServiceSession: ", e);
 		} catch (IOException e) {

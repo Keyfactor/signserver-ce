@@ -258,16 +258,23 @@ public class SignServerSessionBean extends BaseSessionBean {
 	/**
 	 * Method used when a configuration have been updated. And should be
 	 * called from the commandline.
+	 *	  
 	 *
-	 * Forces a reload of all available signers
-	 *
-	 *  
+	 * @param workerId of the worker that should be reloaded, or 0 to reload
+	 * reload of all available workers 
 	 * @ejb.interface-method
 	 */
-	public void reloadConfiguration() {
-		getGlobalConfigurationSession().reload();
-		getServiceTimerSession().unload();
-		getServiceTimerSession().load();
+	public void reloadConfiguration(int workerId) {
+		if(workerId == 0){
+		  getGlobalConfigurationSession().reload();
+		}else{
+			WorkerFactory.getInstance().reloadWorker(workerId, workerConfigHome, getGlobalConfigurationSession());
+		}
+		
+		if(getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES).contains(new Integer(workerId))){
+		  getServiceTimerSession().unload(workerId);
+		  getServiceTimerSession().load(workerId);
+		}
 	}
 
 	/**

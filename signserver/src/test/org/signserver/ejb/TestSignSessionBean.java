@@ -60,7 +60,7 @@ public class TestSignSessionBean extends TestCase {
 		  
 		  sSSession.setWorkerProperty(3, "AUTHTYPE", "NOAUTH");
 		  sSSession.setWorkerProperty(3, "NAME", "testWorker");
-		  sSSession.reloadConfiguration();	
+		  sSSession.reloadConfiguration(3);	
 	}
     
 	/*
@@ -119,7 +119,7 @@ public class TestSignSessionBean extends TestCase {
 	 * Test method for 'org.signserver.ejb.SignSessionBean.reloadConfiguration()'
 	 */
 	public void test03ReloadConfiguration() throws Exception{		   
-		   sSSession.reloadConfiguration();
+		   sSSession.reloadConfiguration(0);
 	}
 	
 	
@@ -191,7 +191,7 @@ public class TestSignSessionBean extends TestCase {
 		  sSSession.removeWorkerProperty(3, "NAME");
 		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.CLASSPATH");
 		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.SIGNERTOKEN.CLASSPATH");
-		  sSSession.reloadConfiguration();
+		  sSSession.reloadConfiguration(3);
 	}
 	 
   /**

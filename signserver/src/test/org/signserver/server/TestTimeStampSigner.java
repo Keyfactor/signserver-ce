@@ -65,7 +65,7 @@ public class TestTimeStampSigner extends TestCase {
 		  sSSession.setWorkerProperty(4,TimeStampSigner.DEFAULTTSAPOLICYOID,"1.0.1.2.33");
 		  sSSession.setWorkerProperty(4,TimeStampSigner.TSA,"CN=TimeStampTest1");
 		  
-		  sSSession.reloadConfiguration();	
+		  sSSession.reloadConfiguration(4);	
 	}
 
 
@@ -119,7 +119,7 @@ public class TestTimeStampSigner extends TestCase {
 		  sSSession.removeWorkerProperty(4,TimeStampSigner.DEFAULTTSAPOLICYOID);
 		  sSSession.removeWorkerProperty(4,TimeStampSigner.TSA);
 		  
-		  sSSession.reloadConfiguration();
+		  sSSession.reloadConfiguration(4);
 	}
 	 
   /**

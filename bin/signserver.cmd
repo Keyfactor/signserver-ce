@@ -37,11 +37,16 @@ if not "%JBOSS_HOME%" == ""  (
 rem echo J2EE directory is %J2EE_DIR%
 
 rem library classpath
-set SIGNSERVER_HOME=..
-rem It must work to call both as bin\signserver.cmd or from within bin
-if not exist signserver.cmd set SIGNSERVER_HOME=.
-set SIGNSERVER_CP=%SIGNSERVER_HOME%\lib\log4j-1.2.7.jar;%SIGNSERVER_HOME%\lib\1.5\bcprov-jdk.jar;%SIGNSERVER_HOME%\lib\1.5\bcmail-jdk.jar;%SIGNSERVER_HOME%\lib\ejbca-util.jar;%SIGNSERVER_HOME%\lib\commons-lang-2.0.jar;%SIGNSERVER_HOME%\tmp\lib\base-core.jar;%SIGNSERVER_HOME%\tmp\lib\base-opt.jar;%SIGNSERVER_HOME%\tmp\lib\caTokenCard.jar;%SIGNSERVER_HOME%\tmp\lib\pcscOCFTerminal.jar;%SIGNSERVER_HOME%\tmp\lib\pkcs15.jar.jar;%SIGNSERVER_HOME%\tmp\lib\securityProvider.jar;%SIGNSERVER_HOME%\tmp\lib\smartCard.jar
-set CP=%SIGNSERVER_HOME%\tmp\bin\classes
+if "%SIGNSERVER_HOME%" == "" (
+  set SIGNSRV_HOME=..
+  rem It must work to call both as bin\signserver.cmd or from within bin
+  if not exist signserver.cmd set SIGNSRV_HOME=.
+ ) else (
+    set SIGNSRV_HOME="%SIGNSERVER_HOME%"
+) 
+  
+set SIGNSERVER_CP=%SIGNSRV_HOME%\lib\log4j-1.2.7.jar;%SIGNSRV_HOME%\lib\1.5\bcprov-jdk.jar;%SIGNSRV_HOME%\lib\1.5\bcmail-jdk.jar;%SIGNSRV_HOME%\lib\ejbca-util.jar;%SIGNSRV_HOME%\lib\commons-lang-2.0.jar;%SIGNSRV_HOME%\tmp\lib\base-core.jar;%SIGNSRV_HOME%\tmp\lib\base-opt.jar;%SIGNSRV_HOME%\tmp\lib\caTokenCard.jar;%SIGNSRV_HOME%\tmp\lib\pcscOCFTerminal.jar;%SIGNSRV_HOME%\tmp\lib\pkcs15.jar.jar;%SIGNSRV_HOME%\tmp\lib\securityProvider.jar;%SIGNSRV_HOME%\tmp\lib\smartCard.jar
+set CP=%SIGNSRV_HOME%\tmp\bin\classes
 
 rem check that we have built the classes
 if not exist %CP% (
@@ -55,10 +60,10 @@ rem
 rem SETLOCAL ENABLEDELAYEDEXPANSION
 rem IF ERRORLEVEL 1 echo Unable to enable extensions
 rem for %%i in (%J2EE_DIR%\*.jar) do set J2EE_CP=%%i;!J2EE_CP!
-rem for %%i in (%SIGNSERVER_HOME%\lib\*.jar) do set CP=%%i;!CP!
-rem for %%i in (%SIGNSERVER_HOME%\dist\*.jar) do set CP=%%i;!CP!
+rem for %%i in (%SIGNSRV_HOME%\lib\*.jar) do set CP=%%i;!CP!
+rem for %%i in (%SIGNSRV_HOME%\dist\*.jar) do set CP=%%i;!CP!
 
-set CLASSPATH=%J2EE_CP%;%SIGNSERVER_CP%;%CP%;%SIGNSERVER_HOME%\bin
+set CLASSPATH=%J2EE_CP%;%SIGNSERVER_CP%;%CP%;%SIGNSRV_HOME%\bin
 rem echo %CLASSPATH%
 
 rem Fixup arguments, we have to do this since windows normally only 

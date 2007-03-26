@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.ejbca.core.ejb.ServiceLocator;
@@ -46,7 +47,7 @@ import org.signserver.ejb.SignServerSessionLocalHome;
  * Use the request parameter 'signerId' to specify the timestamp signer.
  * 
  * @author Philip Vendil
- * @version $Id: TSAHTTPServlet.java,v 1.1 2007-02-27 16:18:21 herrvendil Exp $
+ * @version $Id: TSAHTTPServlet.java,v 1.2 2007-03-26 06:06:21 herrvendil Exp $
  */
 
 public class TSAHTTPServlet extends HttpServlet {
@@ -124,7 +125,19 @@ public class TSAHTTPServlet extends HttpServlet {
 		if(signResponse.getRequestID() != requestId){
 			throw new ServletException("Error in signing operation, response id didn't match request id");
 		}
-		TimeStampResponse timeStampResponse = (TimeStampResponse) signResponse.getSignedData(); 
+		Object response =  signResponse.getSignedData();
+		
+		TimeStampResponse timeStampResponse = null;
+		if(response instanceof byte[]){
+			
+			try {
+				timeStampResponse = new TimeStampResponse((byte[]) response);
+			} catch (TSPException e) {
+				throw new ServletException(e);
+			}
+		}else{
+			timeStampResponse = (TimeStampResponse) response;
+		}
 
 		res.setContentType("application/timestamp-reply");
 		res.setContentLength(timeStampResponse.getEncoded().length);

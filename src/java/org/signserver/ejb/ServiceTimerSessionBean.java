@@ -35,6 +35,7 @@ import javax.transaction.UserTransaction;
 import org.ejbca.core.ejb.BaseSessionBean;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceConfig;
+import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.service.IService;
@@ -146,23 +147,26 @@ public class ServiceTimerSessionBean extends BaseSessionBean implements javax.ej
 			UserTransaction ut = getSessionContext().getUserTransaction();
 			try{
 				ut.begin();
-				serviceConfig = new ServiceConfig( WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigHome, getGlobalConfigurationSession()).getStatus().getActiveSignerConfig());
-				if(serviceConfig != null){					
-					service = (IService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigHome, getGlobalConfigurationSession());
-					getSessionContext().getTimerService().createTimer(service.getNextInterval()*1000, timerInfo);
-					if(!service.isSingleton()){
-						run=true;						
-					}else{
-						GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
-						Date nextRunDate = new Date();
-						if(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL,"SERVICENEXTRUNDATE"+ timerInfo.intValue()) != null){
-							nextRunDate = new Date(Long.parseLong(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL,"SERVICENEXTRUNDATE"+ timerInfo.intValue())));
-						}						
-						Date currentDate = new Date();
-						if(currentDate.after(nextRunDate)){
-							nextRunDate = new Date(currentDate.getTime() + service.getNextInterval());							
-							getGlobalConfigurationSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE"+ timerInfo.intValue(), "" +nextRunDate.getTime());
-							run=true;
+				IWorker worker = WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigHome, getGlobalConfigurationSession());
+				if(worker != null){
+					serviceConfig = new ServiceConfig( WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigHome, getGlobalConfigurationSession()).getStatus().getActiveSignerConfig());
+					if(serviceConfig != null){					
+						service = (IService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigHome, getGlobalConfigurationSession());
+						getSessionContext().getTimerService().createTimer(service.getNextInterval()*1000, timerInfo);
+						if(!service.isSingleton()){
+							run=true;						
+						}else{
+							GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
+							Date nextRunDate = new Date();
+							if(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL,"SERVICENEXTRUNDATE"+ timerInfo.intValue()) != null){
+								nextRunDate = new Date(Long.parseLong(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL,"SERVICENEXTRUNDATE"+ timerInfo.intValue())));
+							}						
+							Date currentDate = new Date();
+							if(currentDate.after(nextRunDate)){
+								nextRunDate = new Date(currentDate.getTime() + service.getNextInterval());							
+								getGlobalConfigurationSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE"+ timerInfo.intValue(), "" +nextRunDate.getTime());
+								run=true;
+							}
 						}
 					}
 				}

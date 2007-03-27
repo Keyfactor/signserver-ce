@@ -198,6 +198,17 @@ public class WorkerFactory {
 			nameToIdMap = new HashMap();
 		}
 
+		if(id != 0){
+			workerStore.put(new Integer(id),null);
+			Iterator iter = nameToIdMap.keySet().iterator();
+			while(iter.hasNext()){
+				String next = (String) iter.next();
+				if(nameToIdMap.get(next) != null && 
+				   ((Integer) nameToIdMap.get(next)).intValue() == id){
+					nameToIdMap.remove(next);
+				}
+			}
+		}
 		GlobalConfiguration gc = gCSession.getGlobalConfiguration();
 
 		try{	

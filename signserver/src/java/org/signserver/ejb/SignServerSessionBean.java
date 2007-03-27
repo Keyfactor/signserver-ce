@@ -271,7 +271,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 			WorkerFactory.getInstance().reloadWorker(workerId, workerConfigHome, getGlobalConfigurationSession());
 		}
 		
-		if(getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES).contains(new Integer(workerId))){
+		if(workerId == 0 || getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES).contains(new Integer(workerId))){
 		  getServiceTimerSession().unload(workerId);
 		  getServiceTimerSession().load(workerId);
 		}

@@ -35,9 +35,31 @@
 	</target>
 
 
+    <target name="j2ee:compile-ds" depends="j2ee:compile-nocluster-ds, j2ee:compile-cluster-ds"/>	
 
-
-
+    <target name="j2ee:compile-nocluster-ds" unless="database.use.mysqlcluster">
+    	<copy todir="${tmp}" overwrite="true">
+            <fileset dir="src/appserver/jboss">
+            	<include name="signserver-ds.xml"/>
+            </fileset>
+            <filterchain>
+                <expandproperties/>
+            </filterchain> 		
+        </copy>	
+	</target>
+	
+    <target name="j2ee:compile-cluster-ds" if="database.use.mysqlcluster">
+    	<copy todir="${tmp}" overwrite="true">
+            <fileset dir="src/appserver/jboss">
+            	<include name="signserver-mysql-cluster-ds.xml"/>
+            </fileset>
+            <filterchain>
+                <expandproperties/>
+            </filterchain> 		
+        </copy>
+    	<move tofile="${tmp}/signserver-mysql-cluster-ds.xml" file="${tmp}/signserver-ds.xml"/>
+	</target>
+	
 	<target name="j2ee:web-configure"  unless="j2ee.web-nohttps" description="Configure the servlet container">
         <echo message="Using JBoss deploy directory ${jboss.deploy.dir}"/>
 
@@ -96,19 +118,128 @@
     	</copy>	
 	</target>
 
-	<target name="j2ee:deploy" description="Deploy the application"  depends="j2ee:configure, j2ee:copyPrimeCardJars"  >
+	
+	<target name="j2ee:deploy" description="Deploy the application"  depends="j2ee:compile-ds" >
+    	<antcall target="j2ee:deploy:locally" inheritall="true"/>
+    	<antcall target="j2ee:deploy:cluster" inheritall="true"/>
+	</target>
+	
+	<target name="j2ee:deploy:cluster" description="Deploy the application" if="deploy.hostname.node1" >
+		<input addproperty="tmp.passphrase" message="Enter passphrase for ssh authentication:"/>
+    	<antcall target="j2ee:deploy:node1" inheritall="true"/>
+    	<antcall target="j2ee:deploy:node2" inheritall="true"/>
+    	<antcall target="j2ee:deploy:node3" inheritall="true"/>
+    	<antcall target="j2ee:deploy:node4" inheritall="true"/>
+    	<antcall target="j2ee:deploy:node5" inheritall="true"/>
+       	<antcall target="j2ee:deploy:node6" inheritall="true"/>		
+	</target>
+	
+	<target name="j2ee:deploy:locally" description="Deploy the application" unless="deploy.hostname.node1" depends="j2ee:configure, j2ee:copyPrimeCardJars"  >
     	<copy todir="${jboss.deploy.dir}" overwrite="true">
-            <fileset dir="src/appserver/jboss">
+            <fileset dir="${tmp}">
             	<include name="signserver-ds.xml"/>
-            </fileset>
-            <filterchain>
-                <expandproperties/>
-            </filterchain> 		
+            </fileset>	
         </copy>
     	<copy todir="${jboss.deploy.dir}">	
     		<fileset dir="${server.dist.dir}" includes="*.ear"/>    		
     	</copy>
+	</target>
+	
+	<target name="j2ee:deploy:node1" if="deploy.hostname.node1" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node1}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>
 
+	<target name="j2ee:deploy:node2" if="deploy.hostname.node2" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node2}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>
+			
+	<target name="j2ee:deploy:node3" if="deploy.hostname.node3" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node3}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>
+	
+	<target name="j2ee:deploy:node4" if="deploy.hostname.node4" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node4}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>
+			
+	<target name="j2ee:deploy:node5" if="deploy.hostname.node5" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node5}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>
+	
+	<target name="j2ee:deploy:node6" if="deploy.hostname.node6" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node6}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>	
+	
+	<target name="j2ee:deploy:remotely" depends="j2ee:web-configure:remotely, j2ee:copyPrimeCardJars:remotely">
+       <echo>Deploying Sign Server Application to host: ${tmp.hostname}</echo>		
+	   <scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+	   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${jboss.deploy}" passphrase="${tmp.passphrase}">
+            <fileset dir="${tmp}">
+            	<include name="signserver-ds.xml"/>
+            </fileset>	
+    		<fileset dir="${server.dist.dir}" includes="*.ear"/>    		
+	   </scp>
+	</target>
+	
+	<target name="j2ee:copyPrimeCardJars:remotely" description="Deploy the application"  if="primeCard.home"  >
+		   <scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${jboss.deploy}" passphrase="${tmp.passphrase}">
+		     	<fileset dir="${server.dist.dir}" includes="rmiclientsslsignservice.jar"/>   		
+  		   	    <fileset dir="${src.appserver}" includes="rmiclientsslsign-service.xml"/> 
+		   </scp>
+		   <scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/lib" passphrase="${tmp.passphrase}">
+              <fileset dir="${tmp}/lib">     
+                <include name="base-core.jar" />
+                <include name="base-opt.jar" />
+                <include name="pcscOCFTerminal.jar" />
+                <include name="pkcs15.jar" />
+                <include name="securityProvider.jar" />
+                <include name="smartCard.jar" />
+                <include name="keyStoreContainer.jar" />
+            	<include name="utilsForRMISSL.jar" />
+              </fileset>
+		   </scp>	
+	</target>
+	
+	<target name="j2ee:web-configure:remotely"  unless="j2ee.web-nohttps" description="Configure the servlet container">
+		<!-- copy the keystore file to the server -->
+		<available file="p12/tomcat.jks" property="keystore.file.present"/>
+		<fail message="Missing JKS keystore file in '${basedir}/p12/tomcat.jks'" unless="keystore.file.present"/>
+		<condition property="httpsserver.password.present">
+			<isset property="httpsserver.password"/> 
+		</condition>
+		<fail message="Missing JKS password '${httpsserver.password}'" unless="httpsserver.password.present"/>
+		<scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${keystore.file}" passphrase="${tmp.passphrase}">
+		     	<fileset dir="p12" includes="tomcat.jks"/>   		
+		   </scp>
+        <!-- detect jboss web version -->
+		
+		<!-- configure the tomcat bundle -->
+        <copy todir="${tmp/tomcat}" overwrite="true">
+			<fileset dir="src/appserver/jboss/${deploy.tomcat.version}"/>
+			<filterchain>
+			<tokenfilter>
+		    	<replacestring from="@keystore.file@" to="${keystore.file}"/>
+		    	<replacestring from="@httpsserver.password@" to="${httpsserver.password}"/>
+		    	<replacestring from="@httpserver.pubhttp@" to="${httpserver.pubhttp}"/>
+		    	<replacestring from="@httpserver.pubhttps@" to="${httpserver.pubhttps}"/>
+		    	<replacestring from="@httpserver.privhttps@" to="${httpserver.privhttps}"/>
+		    	<replacestring from="@web.contentencoding@" to="${web.contentencoding}"/>
+			</tokenfilter>
+			</filterchain>
+        </copy>
+		<scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${jboss.deploy}/jbossweb-${deploy.tomcat.version}.sar" passphrase="${tmp.passphrase}"  >
+		     	<fileset dir="${tmp/tomcat}" includes="*.xml"/>   		
+		   </scp>
+		
 	</target>
 
 	<target name="j2ee:assert-run" description="Check that the server is running">

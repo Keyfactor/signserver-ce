@@ -14,7 +14,8 @@
     <property file="${user.home}/${app.name}_build.properties" />
     <property file="${app.name}_build.properties" />
 	
-
+	<property name="ant.home" value="${env.ANT_HOME}"/>
+	
     <import file="bin/jboss.xml" />
 
     <!-- set global properties for this build -->
@@ -140,8 +141,11 @@
     <property name="httpserver.privhttps" value="8443" />
     <property name="httpsserver.password" value="serverpwd" />
     <property name="web.contentencoding" value="ISO-8859-1" />
-
-	
+    <property name="deploy.ssh.user" value="jboss" />
+    <property name="deploy.ssh.keyfilepath" value="/home/jboss/.ssh/id_rsa" />
+    <property name="deploy.ssh.knownhostsfile" value="/home/jboss/.ssh/known_hosts" />
+    <property name="deploy.ssh.appsrvhome" value="/home/jboss/jboss" />
+    <property name="deploy.tomcat.version" value="tomcat55" />
 
     <!-- =================================================================== -->
     <!-- Build ALL                                                           -->
@@ -173,6 +177,18 @@ database.password      = ${database.password}
         <mkdir dir="${server.dist.dir}/${lib}"/>
         <mkdir dir="${client.dist.dir}/${lib}"/>
     </target>
+	
+	<target name="ant:configure" description="Copies required libraries to ant directory">
+        <fail message="Please set the environment variable 'ANT_HOME' before running this task." unless="ant.home"/>
+        <available file="${ant.home}/lib" property="ant.home.valid"/>
+        <fail message="'ant.home' (${ant.home}) does not seem to be a valid ant home directory" unless="ant.home.valid"/>
+		<copy todir="${ant.home}/lib">
+		   <fileset dir="lib/ext">
+			 <include name="junit-3.8.1.jar"/>
+			 <include name="jsch-0.1.32.jar"/>
+		   </fileset>
+		</copy>
+	</target>
 
     <!-- =================================================================== -->
     <!-- Clean ALL                                                           -->

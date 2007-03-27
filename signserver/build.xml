@@ -434,9 +434,6 @@ database.password      = ${database.password}
                 <exclude name="META-INF/normiapplication.xml" />            	
             </fileset>
             <fileset dir=".">
-                <include name="${lib}/${server.java.target}/bcmail-jdk.jar" />
-                <include name="${lib}/${server.java.target}/bcprov-jdk.jar" />
-                <include name="${lib}/${server.java.target}/bctsp-jdk.jar" />
                 <include name="${lib}/log4j-1.2.7.jar" />
                 <include name="${lib}/ejbca-util.jar" />
             	<include name="${lib}/ldap.jar" />
@@ -463,9 +460,6 @@ database.password      = ${database.password}
             	<exclude name="META-INF/applicationnormi.xml" />
             </fileset>
             <fileset dir=".">
-                <include name="${lib}/${server.java.target}/bcmail-jdk.jar" />
-                <include name="${lib}/${server.java.target}/bcprov-jdk.jar" />
-                <include name="${lib}/${server.java.target}/bctsp-jdk.jar" />
                 <include name="${lib}/log4j-1.2.7.jar" />
                 <include name="${lib}/ejbca-util.jar" />   
                 <include name="${lib}/ldap.jar" />

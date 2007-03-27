@@ -1,5 +1,5 @@
 #
-# $Id: signserver_build.properties.sample,v 1.1 2007-02-27 16:18:15 herrvendil Exp $
+# $Id: signserver_build.properties.sample,v 1.2 2007-03-27 12:35:14 herrvendil Exp $
 #
 # File containting the build properties of the sign server
 # 
@@ -84,7 +84,7 @@
 
 # jndi name of the datasource to use in deployment descriptors of ejbs.
 # default: SignServerDS
-datasource.jndi-name=SignServerDS
+#datasource.jndi-name=SignServerDS
 
 # Prefix for the jndi name of the datasource to use in deployment descriptors of ejbs. 
 # JBoss requires 'java:/' as prefix, while weblogic does not want anything ('')
@@ -122,12 +122,15 @@ datasource.jndi-name=SignServerDS
 # Mysql standard
 #database.url=jdbc:mysql://127.0.0.1:3306/signserver
 #Mysql Clusters should use something like
-#database.url=jdbc:mysql://host1,host2/signserver?autoReconnect=true&failOverReadOnly=false&roundRobinLoadBalance=true
-#atabase.url=jdbc:mysql://192.168.1.15,192.168.1.18/signserver
+#database.url=jdbc:mysql://host1,host2/signserver
+#database.url=jdbc:mysql://192.168.1.15,192.168.1.18/signserver
 #database.url=jdbc:postgresql://127.0.0.1/signserver
 #database.url=jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=signserver
 #database.url=jdbc:oracle:thin:@127.0.0.1:1521:signserver
 #database.url=jdbc:datadirect:oracle://127.0.0.1:1521;SID=signserver
+
+#Uncomment the follwing setting if you are using mysql cluster. Leave it commented othervise
+#database.use.mysqlcluster=true
 
 # JDBC driver classname.
 # The J2EE server needs to be configured with the appropriate JDBC driver for the selected database
@@ -148,7 +151,49 @@ datasource.jndi-name=SignServerDS
 #database.password=foo123
 #database.password=postgres
 
+# ------------- Cluster Deployment Configuration ------------------------
+# Configuration used to centraly deploy the application server in a 
+# clustered environment. Currently are up to 6 nodes supported to 
+# were the application is deployed.
+# 
+# Each node should run ssh with a trusting the key defined in deploy.ssh.keyfilepath
+# Each node should have a mirrored Jboss installation at the same place as
+# the current node.
+# 
+# To add a node, uncomment the deploy.hostname.nodeX property and set it's property
+# If no node is defined will JBOSS_HOME at localhost be used as deploy dir.
 
+#deploy.hostname.node1=
+#deploy.hostname.node2=
+#deploy.hostname.node3=
+#deploy.hostname.node4=
+#deploy.hostname.node5=
+#deploy.hostname.node6=
+
+# User to use for the ssh session
+# Default: jboss
+#deploy.ssh.user=jboss
+
+# Path to the id_rsa (or ekvivalient) file for ssh authentication
+# Default: /home/jboss/.ssh/id_rsa
+#deploy.ssh.keyfilepath=
+
+# Path to the known hosts file
+# Default: /home/jboss/.ssh/known_hosts
+#deploy.ssh.knownhostsfile=
+
+# Path to the location where the jboss instance is located at the jboss services.
+# Default: /home/jboss/jboss
+#deploy.ssh.jbosshome=
+
+# Tomcat version. If the sign server should use a https interface it will
+# deploy a keystore to all nodes in the cluster. Depending on the version
+# of tomcat is the files placed a little different.
+# Available options are: tomcat41, tomcat50, tomcat55
+# Default: tomcat55
+#deploy.tomcat.version=
+
+# ------------- Custom Code Configuration ------------------------
 # alternative servlet definition
 #ext.web.src=../needles/src/web/signserver
 # the location of external code to be included

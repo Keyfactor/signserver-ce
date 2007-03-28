@@ -57,7 +57,7 @@
                 <expandproperties/>
             </filterchain> 		
         </copy>
-    	<move tofile="${tmp}/signserver-mysql-cluster-ds.xml" file="${tmp}/signserver-ds.xml"/>
+    	<move file="${tmp}/signserver-mysql-cluster-ds.xml" tofile="${tmp}/signserver-ds.xml"/>
 	</target>
 	
 	<target name="j2ee:web-configure"  unless="j2ee.web-nohttps" description="Configure the servlet container">

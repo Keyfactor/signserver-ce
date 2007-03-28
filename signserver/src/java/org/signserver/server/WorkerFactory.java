@@ -14,8 +14,10 @@
 package org.signserver.server;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -40,7 +42,7 @@ import org.signserver.server.signers.ISigner;
  * @author Philip Vendil
  *
  */
-public class WorkerFactory {
+public  class WorkerFactory {
 	/** Log4j instance for actual implementation class */
 	public static transient Logger log = Logger.getLogger(WorkerFactory.class);
   
@@ -50,8 +52,8 @@ public class WorkerFactory {
 		return instance;
 	}
 	
-	private HashMap workerStore = null;
-	private HashMap nameToIdMap = null;
+	private Map workerStore = null;
+	private Map nameToIdMap = null;
 	
 	
 	
@@ -72,8 +74,10 @@ public class WorkerFactory {
 	   Integer id = new Integer(workerId);	
 			
 	   loadWorkers(workerConfigHome,gCSession);
-		
-	   return (IWorker) workerStore.get(id);
+	   synchronized(workerStore){			   
+		   return (IWorker) workerStore.get(id);
+	   }
+
 	}
 	
 	/**
@@ -91,10 +95,15 @@ public class WorkerFactory {
 	 */
 	public ISigner getSigner(String signerName, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
 	   ISigner retval = null;
-	   			   
+
 	   loadWorkers(workerConfigHome,gCSession);
-	   if(nameToIdMap.get(signerName) != null){
-		   retval = (ISigner) workerStore.get(nameToIdMap.get(signerName));
+		
+	   synchronized(nameToIdMap){	
+		   synchronized(workerStore){
+			   if(nameToIdMap.get(signerName) != null){
+				   retval = (ISigner) workerStore.get(nameToIdMap.get(signerName));
+			   }
+		   }
 	   }
 		
 	   return retval;
@@ -114,12 +123,15 @@ public class WorkerFactory {
 	public int getSignerIdFromName(String signerName, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
 	   int retval = 0;		 	   
 	   loadWorkers(workerConfigHome,gCSession);
-		
-	   if(nameToIdMap.get(signerName) == null){
-		   return retval;
+	   synchronized(nameToIdMap){	
+		   synchronized(workerStore){
+			   if(nameToIdMap.get(signerName) == null){
+				   return retval;
+			   }
+
+			   retval = ((Integer)nameToIdMap.get(signerName)).intValue();
+		   }
 	   }
-	   
-	   retval = ((Integer)nameToIdMap.get(signerName)).intValue();
 	   log.debug("getSignerIdFromName : returning " + retval); 
 	   return retval;
 	}
@@ -183,9 +195,6 @@ public class WorkerFactory {
 			workerStore = null;
 			nameToIdMap = null;			
 		}
-		
-		
-
 	}
 	
 	/**
@@ -193,53 +202,57 @@ public class WorkerFactory {
 	 * @param id of worker
 	 */
 	public void reloadWorker(int id,WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){
-		if(workerStore == null){
-			workerStore = new HashMap();
-			nameToIdMap = new HashMap();
-		}
 
-		if(id != 0){
-			workerStore.put(new Integer(id),null);
-			Iterator iter = nameToIdMap.keySet().iterator();
-			while(iter.hasNext()){
-				String next = (String) iter.next();
-				if(nameToIdMap.get(next) != null && 
-				   ((Integer) nameToIdMap.get(next)).intValue() == id){
-					nameToIdMap.remove(next);
+		if(workerStore == null){
+			workerStore = Collections.synchronizedMap(new HashMap());
+			nameToIdMap = Collections.synchronizedMap(new HashMap());
+		}
+		synchronized(nameToIdMap){	
+			synchronized(workerStore){
+				if(id != 0){
+					workerStore.put(new Integer(id),null);
+					Iterator iter = nameToIdMap.keySet().iterator();
+					while(iter.hasNext()){
+						String next = (String) iter.next();
+						if(nameToIdMap.get(next) != null && 
+								((Integer) nameToIdMap.get(next)).intValue() == id){
+							iter.remove();
+						}
+					}
 				}
+				GlobalConfiguration gc = gCSession.getGlobalConfiguration();
+
+				try{	
+					String classpath = gc.getWorkerClassPath(id);						
+					if(classpath != null){					
+						Class implClass = Class.forName(classpath);
+						Object obj = implClass.newInstance();
+
+						WorkerConfig config = null;
+						if(obj instanceof ISigner){
+							config = getWorkerProperties(id, workerConfigHome);
+							if(config.getProperties().getProperty(SignerConfig.NAME) != null){
+								getNameToIdMap().put(config.getProperties().getProperty(SignerConfig.NAME).toUpperCase(), new Integer(id)); 
+							}  
+						}
+						if(obj instanceof IService){
+							config = getWorkerProperties(id, workerConfigHome);
+						}
+
+						((IWorker) obj).init(id, config);						  
+						getWorkerStore().put(new Integer(id),obj);
+					}  
+				}catch(ClassNotFoundException e){
+					throw new EJBException(e);
+				}
+				catch(IllegalAccessException iae){
+					throw new EJBException(iae);
+				}
+				catch(InstantiationException ie){
+					throw new EJBException(ie);
+				} 
 			}
 		}
-		GlobalConfiguration gc = gCSession.getGlobalConfiguration();
-
-		try{	
-			String classpath = gc.getWorkerClassPath(id);						
-			if(classpath != null){					
-				Class implClass = Class.forName(classpath);
-				Object obj = implClass.newInstance();
-
-				WorkerConfig config = null;
-				if(obj instanceof ISigner){
-					config = getWorkerProperties(id, workerConfigHome);
-					if(config.getProperties().getProperty(SignerConfig.NAME) != null){
-						getNameToIdMap().put(config.getProperties().getProperty(SignerConfig.NAME).toUpperCase(), new Integer(id)); 
-					}  
-				}
-				if(obj instanceof IService){
-					config = getWorkerProperties(id, workerConfigHome);
-				}
-
-				((IWorker) obj).init(id, config);						  
-				getWorkerStore().put(new Integer(id),obj);
-			}  
-		}catch(ClassNotFoundException e){
-			throw new EJBException(e);
-		}
-		catch(IllegalAccessException iae){
-			throw new EJBException(iae);
-		}
-		catch(InstantiationException ie){
-			throw new EJBException(ie);
-		} 
 	}		
 
 
@@ -261,17 +274,17 @@ public class WorkerFactory {
 		return workerConfig.getWorkerConfig();
 	}
 	
-	private HashMap getNameToIdMap(){
+	private Map getNameToIdMap(){
 		if(nameToIdMap == null){
-			nameToIdMap = new HashMap();
+			nameToIdMap =  Collections.synchronizedMap(new HashMap());
 		}
 		return nameToIdMap;
 		
 	}
 	
-	private HashMap getWorkerStore(){
+	private Map getWorkerStore(){
 		if(workerStore == null){
-			workerStore = new HashMap();
+			workerStore = Collections.synchronizedMap(new HashMap());
 		}
 		return workerStore;
 		

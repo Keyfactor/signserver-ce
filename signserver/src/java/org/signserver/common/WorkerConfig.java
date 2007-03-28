@@ -30,7 +30,7 @@ import org.ejbca.core.model.UpgradeableDataHashMap;
  * 
  * 
  * @author Philip Vendil
- * $Id: WorkerConfig.java,v 1.3 2007-03-09 11:26:38 herrvendil Exp $
+ * $Id: WorkerConfig.java,v 1.4 2007-03-28 21:08:45 herrvendil Exp $
  */
 public  class WorkerConfig extends UpgradeableDataHashMap {
 	
@@ -140,7 +140,7 @@ public  class WorkerConfig extends UpgradeableDataHashMap {
 	 * 
 	 */
 	public static String getNodeId(){
-		if(nodeId != null){
+		if(nodeId == null){
 			nodeId = System.getenv(NODEID_ENVVAR);
 			
 			if(nodeId == null){

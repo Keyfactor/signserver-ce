@@ -24,7 +24,7 @@ import java.util.Properties;
 /**
  * Implements the signserver command line interface
  *
- * @version $Id: signserver.java,v 1.7 2007-03-26 10:04:16 herrvendil Exp $
+ * @version $Id: signserver.java,v 1.8 2007-03-29 17:57:34 herrvendil Exp $
  */
 public class signserver {
 	
@@ -120,7 +120,7 @@ public class signserver {
         String propsfile = "signserver_cli.properties";
         
         if(System.getenv("SIGNSERVER_HOME") != null){
-        	propsfile = System.getenv("SIGNSERVER_HOME") + "/bin/" + propsfile;
+        	propsfile = System.getenv("SIGNSERVER_HOME") + "/"+ propsfile;
         }
         
         InputStream is = new FileInputStream(propsfile);

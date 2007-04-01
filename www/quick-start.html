@@ -1,0 +1,62 @@
+<div id="content">
+			  
+			     <h3>Quick Install</h3>
+				 <p>
+This section will show how to set up a quick and simple standalone time-stamp server, accepting time-stamp requests over plain HTTP.
+<h4>Required Software</h4>
+
+<ul>
+<li>Java 1.5 (or 1.4) (http://java.sun.com)
+<li>Jboss-4.0.4.GA (http://www.jboss.org)
+<li>ant version 1.6.5 (http://ant.apache.org)
+<li>SignServer-1.0-Beta1 (http://www.ejbca.org)
+<li>1 web-server key-store in Java key-store format (JKS), (make sure that the server certificate have the right hostname in it's CN)
+<li>1 Root certificate of the web-server in DER encoding
+<li>1 Time-stamp key-store in PKCS12 format
+</ul>
+
+
+<h4>Installation Steps</h4>
+
+<ol>
+<li>First make sure that ant, Java and Jboss is installed properly.
+<li>Set the JAVA_HOME and JBOSS_HOME environment variables.
+<li>Unzip the SignServer package and go to it's home directory.
+<li>Rename the web server keystore to  tomcat.jks at put  it in a 'p12' subdirectory. Also place the webserver root certificate in DER encoding in the same directory, call it rootcert.cer
+<li>Then edit the signserver_build.properties file. At least configure the httpsserver.password property.
+<li>Do 'ant deploy' and then start Jboss (JBOSS_HOME\bin\run.sh) in another console. 
+<li>Edit the signserver_cli.properties and set the hostname.* properties.
+<li>Use the signserver cli to set the following properties:
+(if it's not executive use chmod +x bin/signserver.sh)
+bin\signserver.sh setProperty 1 DEFAULTTSAPOLICYOID "<default policyid>"
+bin\signserver.sh setProperty 1 KEYSTOREPATH "<path to time stamp P12>"
+bin\signserver.sh setProperty 1 KEYSTOREPASSWORD "<keystore password>"
+bin\signserver.sh setProperty 1 AUTHTYPE NOAUTH
+
+(In the path section, use '\\' for '\' in windows environment.)
+
+
+Then run 
+bin\signserver.sh getConfig 1 
+And double-check the configuration with the propety reference. (Important, the properties are case sensitive).
+
+Finally run
+ bin\signserver.sh reload
+To activate the configuration.
+
+
+<li>Run the test-client to see that everything is up.
+
+cd dist-client
+java -jar timeStampClient.jar "http://localhost:8080/signserver/tsa?signerId=1"
+
+The message "TimeStampRequest Validated" should appear once a second.
+Also check JBOSS_HOME/server/default/log/server.log that successful messages appear.
+
+</ol>
+
+
+			</p>
+		 					     
+  
+</div> 

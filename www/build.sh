@@ -2,7 +2,7 @@
 
 PAGES="admin.html building.html develop.html ha.html index.html misc.html quick-start.html ref.html signers.html test.html tokens.html"
 LAYOUT="images style"
-OUTDIR=../htdocs
+OUTDIR=/home/groups/s/si/signserver/htdocs/
 
 
 mkdir ${OUTDIR}

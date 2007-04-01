@@ -2,19 +2,17 @@
 			  
 			     <h3>What's the SignServer?</h3>
 				 <p>
-The EJBCA SignServer is an application framework performing signatures for other applications. It's intended to be used in environments where keys are supposed to be protected in hardware but there isn't possible to connect such hardware to existing enterprise applications. Another usage is to provide a simplified method to provide signatures in different application managed from one location  in the company.
+The SignServer is an application for automatic signatures called by other systems not able to connect to crytographic hardware. It is a framework that can be customized to specific needs. The SignServer have a ready to use TimeStamp Authority (RFC 3161 compliant) and a MRTD Signer. 
+Another usage is to provide a simplified method to provide signatures in different application managed from one location  in the company.
 </p>
 <p>
 The SignServer have been designed for high-availability and can be clustered for maximum reliability.
 </p>
-<p>
-The SignServer comes with a RFC 3161 compliant TimeStamp signer serving requests through http or client-authenticated https.
-				 </p>
-				 <br/>
 			
 			<h3>Architecture</h3>
 			<p> 
-The SignServer is an application for automatic signatures called by other systems not able to connect to crytographic hardware. It is a framework that can be customized to specific needs. The SignServer have a ready to use TimeStamp and MRTD Signer. 
+The SignServer is a framework designed to perform different kind of digital signatures for different applications. 
+
 </p>
 <p>
 <a href="images/architecture.png"><img src="images/architecture.png" align="middle" border="0" width="523" height="359" ALT="architecture"></a>

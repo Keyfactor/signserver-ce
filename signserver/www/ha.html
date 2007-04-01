@@ -1,0 +1,151 @@
+<div id="content">
+			  
+			     <h3>Making the SignServer highly-available</h3>
+				 <p>
+
+
+<h4>HTTP access requires a load balancer</h4>
+
+HTTP based signers like the TSA can be clustered using a healthcheck servlet returning the state of the signserver. The healthcheck servlet can be configured in the file src/web/healthcheck/WEB-INF/web.xml. With the default settings will the servlet return the text 'ALLOK' when accessing the url http://localhost:8080/signserver/healthcheck/signserverhealth. If something is wrong with the sign server will and error message be sent back instead.
+<p>
+The healthcheck servlet can also be used to monitor the signs erver by creating a script that monitors the url periodically for error messages.
+<p>
+Tip, heartbeat with ldirectord is a good solution for a load balancer and works well with the sign server.
+<p>
+<h4>Setting up a MySQL Cluster</h4>
+
+Here comes some notes about configuring a MySQL cluster and
+perfoming the testscripts used to set it up.
+<p>
+Much of this HOWTO is taken from http://dev.mysql.com/tech-resources/articles/mysql-cluster-for-two-servers.html
+written by Alex Davies.
+<p>
+A minimal cluster consists of three nodes, 2 datanodes and 
+one management station.
+<p>
+Tested with MySQL 4.1.11 and JDBC connector 3.1.10
+<p>
+First install mysql ('apt-get install mysql-server' on debian)
+<p>
+Start with the management station:
+mkdir /var/lib/mysql-cluster 
+cd /var/lib/mysql-cluster 
+vi [or emacs or any other editor] config.ini 
+<p>
+Insert the following (Without BEGIN and END):
+<pre>
+-----BEGIN----
+NDBD DEFAULT]
+NoOfReplicas=2
+[MYSQLD DEFAULT]
+[NDB_MGMD DEFAULT]
+[TCP DEFAULT]
+# Managment Server
+[NDB_MGMD]
+HostName=192.168.0.3		# the IP of THIS SERVER
+# Storage Engines
+[NDBD]
+HostName=192.168.0.1		# the IP of the FIRST SERVER
+DataDir= /var/lib/mysql-cluster
+[NDBD]
+HostName=192.168.0.2		# the IP of the SECOND SERVER
+DataDir=/var/lib/mysql-cluster
+# 2 MySQL Clients
+# I personally leave this blank to allow rapid changes of the mysql clients;
+# you can enter the hostnames of the above two servers here. I suggest you dont.
+[MYSQLD]
+[MYSQLD]
+-----END----
+</pre>
+Now, start the managment server:
+<p>
+ndb_mgmd
+<p>
+
+Next is to setup the datanodes, 
+<p>
+vi /etc/my.cnf (or /etc/mysql/my.cnf on debian)
+<p>
+Append the following:
+
+<pre>
+-----BEGIN----
+[mysqld]
+ndbcluster
+ndb-connectstring=192.168.0.3	# the IP of the MANAGMENT (THIRD) SERVER
+default-storage-engine=NDBCLUSTER
+[mysql_cluster]
+ndb-connectstring=192.168.0.3	# the IP of the MANAGMENT (THIRD) SERVER
+-----END-----
+</pre>
+
+If you are going to use the mysql in a JBOSS cluster you should also 
+disable the bind-address variable so the database can be connected 
+from the network.
+#bind-address           = 127.0.0.1
+<p>
+The default storage variable should be set so JBOSS automatically can
+create it's tables.
+<p>
+Now, we make the data directory and start the storage engine:
+<p>
+mkdir /var/lib/mysql-cluster 
+cd /var/lib/mysql-cluster 
+ndbd --initial 
+/etc/rc.d/init.d/mysql.server start 
+<p>
+Note: you should ONLY use --initial if you are either starting from scratch or 
+have changed the config.ini file on the managment otherwise just use ndbd.
+<p>
+Do the exact same thing for the other node.
+<p>
+Next step is to check that everything is working. This is done on the 
+management station with the command ndbd_mgm.
+In the console print 'show' and you will get something like:
+<pre>
+----BEGIN-----
+Cluster Configuration
+---------------------
+[ndbd(NDB)]     2 node(s)
+id=2    @192.168.115.4  (Version: 4.1.11, Nodegroup: 0)
+id=3    @192.168.115.5  (Version: 4.1.11, Nodegroup: 0, Master)
+
+[ndb_mgmd(MGM)] 1 node(s)
+id=1    @192.168.115.6  (Version: 4.1.11)
+
+[mysqld(API)]   2 node(s)
+id=4    @192.168.115.4  (Version: 4.1.11)
+id=5    @192.168.115.5  (Version: 4.1.11)
+----END-----
+</pre>
+Which indicates that everything is ok.
+<p>
+TIP If you experience problems after a Mysql data node going down and
+complaining about not able to connect to a socket, issue this command
+on the managment concole:
+PURGE STALE SESSIONS
+<p>
+To do a test of the setup using JDBC there is two small test script.
+<p>
+First create a test database on and a table 'ctest' with the following
+commands:
+<p>
+use test; 
+CREATE TABLE ctest (i INT)
+<p>
+Also add permissions in the database.
+<p>
+GRANT ALL ON test.* TO 'user'@'<yourtestscripthost>' IDENTIFIED BY 'foo123'
+<p>
+To test the cluster there is two small test scripts
+ant test:db that does basic functionality tests
+and test:dbContiously that adds an integer every second and checks 
+that it really have been added. It outputs it's data to test_out.txt 
+which you can tail to see what's happening when one of the servers
+is brought down.
+
+
+		</p>
+		 					     
+  
+</div> 

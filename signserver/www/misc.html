@@ -1,0 +1,25 @@
+<div id="content">
+			  
+			     <h3>Setting Authorization Type</h3>
+				 <p>
+By default is client-certificate authentication required for a signature request to be processed. This can be changed with the AUTHTYPE property.
+
+<ul>
+<li>AUTHTYPE =  NOAUTH, sets the server to not require any authentication.
+
+<li>AUTHTYPE =  CLIENTCERT (default) requires a certificate of all the clients. The certificates must be in the signers access control list and be trusted by the Java distribution, i.e imported in JAVA_HOME/jre/lib/security/cacerts.
+</ul>
+
+<h3>Disabling a Signer</h3>
+A signer can be disabled, which means that it won't perform any signature requests or be included in the health check. 
+
+To disable a signer set the property "DISABLED" to "TRUE"
+
+<h3>Archiving Responses</h3>
+If there is a need to save all generated responses, then set the property "ARCHIVE" to "TRUE" and all generated responses for that signer will be saved to database.
+
+The archived responses can later be extracted from data base using the CLI interface. See the CLI section for more information.
+		</p>
+		 					     
+  
+</div> 

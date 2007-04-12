@@ -52,7 +52,7 @@ import org.signserver.common.SignerStatus;
  * KEYSTOREPASSWORD : The password that locks the keystore.
  * 
  * @author philip
- * $Id: P12SignToken.java,v 1.2 2007-03-09 09:27:32 herrvendil Exp $
+ * $Id: P12SignToken.java,v 1.3 2007-04-12 04:01:09 herrvendil Exp $
  */
 public class P12SignToken implements ISignToken {
 	
@@ -215,7 +215,7 @@ public class P12SignToken implements ISignToken {
 	 * Always returns BC
 	 * @see org.signserver.server.signtokens.ISignToken#getProvider()
 	 */
-	public String getProvider() {
+	public String getProvider(int providerUsage) {
 		return "BC";
 	}
 

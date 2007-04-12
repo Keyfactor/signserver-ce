@@ -41,7 +41,7 @@ import org.signserver.server.signtokens.ISignToken;
  * Class used to sign MRTD Document Objects.
  * 
  * @author Philip Vendil
- * @version $Id: MRTDSigner.java,v 1.2 2007-03-09 09:27:33 herrvendil Exp $
+ * @version $Id: MRTDSigner.java,v 1.3 2007-04-12 04:01:12 herrvendil Exp $
  */
 
 public class MRTDSigner extends BaseSigner {
@@ -88,7 +88,7 @@ public class MRTDSigner extends BaseSigner {
         	
         	Cipher c;
 			try {
-				c = Cipher.getInstance("RSA", getSignToken().getProvider());
+				c = Cipher.getInstance("RSA", getSignToken().getProvider(ISignToken.PROVIDERUSAGE_SIGN));
 			} catch (NoSuchAlgorithmException e) {
 				throw new EJBException(e);
 			} catch (NoSuchProviderException e) {

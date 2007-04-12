@@ -69,7 +69,7 @@ import org.signserver.server.signtokens.ISignToken;
  * TSA = General name of the Time Stamp Authority.
  * 
  * @author philip
- * $Id: TimeStampSigner.java,v 1.1 2007-02-27 16:18:25 herrvendil Exp $
+ * $Id: TimeStampSigner.java,v 1.2 2007-04-12 04:01:11 herrvendil Exp $
  */
 public class TimeStampSigner extends BaseSigner{
 	
@@ -194,7 +194,7 @@ public class TimeStampSigner extends BaseSigner{
             
 		    timeStampRequest.validate(this.getAcceptedAlgorithms(), this.getAcceptedPolicies(), this.getAcceptedExtensions(), "BC");
 		    
-		    TimeStampResponse timeStampResponse = timeStampResponseGen.generate(timeStampRequest,getSerialNumber(),getTimeSource().getGenTime(),getSignToken().getProvider());
+		    TimeStampResponse timeStampResponse = timeStampResponseGen.generate(timeStampRequest,getSerialNumber(),getTimeSource().getGenTime(),getSignToken().getProvider(ISignToken.PROVIDERUSAGE_SIGN));
 			if(returnbytearray){
 				signResponse = new GenericSignResponse(signRequest.getRequestID(),timeStampResponse.getEncoded(),getSigningCertificate(),
                         timeStampResponse.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16), new ArchiveData(timeStampResponse.getEncoded()));				

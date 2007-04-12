@@ -41,7 +41,7 @@ import org.signserver.common.SignerStatus;
 /**
  * Class used for testing purposes, contains soft dummy key and certificates 
  * @author Philip Vendil
- * @version $Id: HardCodedSignToken.java,v 1.2 2007-03-09 09:27:32 herrvendil Exp $
+ * @version $Id: HardCodedSignToken.java,v 1.3 2007-04-12 04:01:08 herrvendil Exp $
  */
 
 public class HardCodedSignToken implements ISignToken {
@@ -181,7 +181,7 @@ public class HardCodedSignToken implements ISignToken {
 		return cert.getPublicKey();
 	}
 
-	public String getProvider() {
+	public String getProvider(int providerUsage) {
 		return "BC";
 	}
 

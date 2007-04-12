@@ -29,7 +29,7 @@ import org.signserver.common.SignTokenOfflineException;
  *  All SignToken plug-ins must implement this interface.
  * 
  * @author Philip Vendil
- * @version $Id: ISignToken.java,v 1.2 2007-03-09 09:27:33 herrvendil Exp $
+ * @version $Id: ISignToken.java,v 1.3 2007-04-12 04:01:10 herrvendil Exp $
  */
 
 
@@ -37,6 +37,9 @@ public interface ISignToken {
 
 	
 	public static final int PURPOSE_SIGN = 1;
+	
+	public static final int PROVIDERUSAGE_SIGN    = 1;
+	public static final int PROVIDERUSAGE_DECRYPT = 2;
 	
    /** 
     * Method called after creation of instance.
@@ -87,9 +90,11 @@ public interface ISignToken {
     
     /** Returns the signature Provider that should be used to sign things with
      *  the PrivateKey object returned by this signingdevice implementation.
+     *  @param providerUsage should be one if the ISignToken.PROVIDERUSAGE_ constants
+     *  specifying the usage of the privatekey. 
      * @return String the name of the Provider
      */
-    public abstract String getProvider();
+    public abstract String getProvider(int providerUsage);
     
     /**
      * Method returning the signertokens certificate if it's included in the token.

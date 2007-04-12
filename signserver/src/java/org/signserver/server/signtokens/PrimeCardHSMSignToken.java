@@ -49,7 +49,7 @@ import se.primeKey.caToken.card.PrimeCAToken;
  * 
  * @see org.signserver.server.signtokens.ISignToken
  * @author Philip Vendil
- * @version $Id: PrimeCardHSMSignToken.java,v 1.3 2007-03-09 09:27:32 herrvendil Exp $
+ * @version $Id: PrimeCardHSMSignToken.java,v 1.4 2007-04-12 04:01:10 herrvendil Exp $
  */
 
 public class PrimeCardHSMSignToken  implements ISignToken{
@@ -148,7 +148,7 @@ public class PrimeCardHSMSignToken  implements ISignToken{
 	/**
 	 * Returns the providername that should be used.
 	 */
-	public String getProvider() {
+	public String getProvider(int providerUsage) {
        return catoken.getProvider();
 	}
 

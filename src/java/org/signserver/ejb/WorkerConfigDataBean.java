@@ -41,7 +41,7 @@ import org.signserver.common.WorkerConfig;
  * signerConfigData (WorkerConfig in xml-encoding, String)
  * </pre>
  *
- * @version $Id: WorkerConfigDataBean.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * @version $Id: WorkerConfigDataBean.java,v 1.3 2007-04-26 08:23:35 herrvendil Exp $
  * 
  * @ejb.bean description="Entity Bean storing each signer configuration"
  * display-name="WorkerConfigDataBean"
@@ -157,7 +157,7 @@ public abstract class WorkerConfigDataBean extends BaseEntityBean {
         	workerConf.upgrade();        	
         }else{        	
         	try {
-				workerConf = (WorkerConfig) this.getClass().getClassLoader().loadClass(WorkerConfig.class.getName()).newInstance();				
+				workerConf = new WorkerConfig();
         	    workerConf.loadData(data);
         	    workerConf.upgrade();
 			} catch (Exception e) {

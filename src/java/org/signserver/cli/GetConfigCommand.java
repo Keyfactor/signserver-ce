@@ -28,7 +28,7 @@ import org.signserver.common.WorkerConfig;
  * Gets the current configuration of the given signer, this might not be the same as
  * the active configuration.
  *
- * @version $Id: GetConfigCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * @version $Id: GetConfigCommand.java,v 1.3 2007-04-26 08:24:37 herrvendil Exp $
  */
 public class GetConfigCommand extends BaseCommand {
 	
@@ -100,7 +100,6 @@ public class GetConfigCommand extends BaseCommand {
 	private void displayWorkerConfig(int workerId, String hostname) throws RemoteException, Exception{
        	WorkerConfig config = this.getSignSession(hostname).getCurrentSignerConfig(workerId);
     	
-    	boolean isSigner = config.isSigner();
     	        	
     	this.getOutputStream().println(
     			                       "OBSERVE that this command displays the current configuration which\n"+
@@ -108,11 +107,6 @@ public class GetConfigCommand extends BaseCommand {
     			                       "Configurations are activated with the reload command. \n\n" +
     			                       "The current configuration of worker with id : " + workerId + " is :");
     	
-    	if(isSigner){
-    		this.getOutputStream().println("  This is a configuration for a Signer.\n\n");
-    	}else{
-    		this.getOutputStream().println("  This is a configuration for a Service.\n\n");
-    	}
     	
     	if(config.getProperties().size() == 0){
     		this.getOutputStream().println("  No properties exists in the current configuration\n");
@@ -125,13 +119,11 @@ public class GetConfigCommand extends BaseCommand {
     	}
     	
     	
-    	if(isSigner){
-    		if( new SignerConfig(config).getSignerCertificate() == null){
-    			this.getOutputStream().println(" No Signer Certificate have been uploaded to this signer.\n");	
-    		}else{
-    			this.getOutputStream().println("The current configuration use the following signer certificate : \n");
-    			printCert(new SignerConfig(config).getSignerCertificate());
-    		}  
+    	if(config.getProperties().getProperty("SIGNERCERT") !=null){
+    		this.getOutputStream().println(" The current configuration use the following signer certificate : \n");
+    		printCert(new SignerConfig(config).getSignerCertificate()); 
+    	}else{
+    		this.getOutputStream().println(" Either this isn't a Signer or no Signer Certificate have been uploaded to it.\n");    		
     	}
 	}
 	

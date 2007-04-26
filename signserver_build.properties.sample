@@ -1,5 +1,5 @@
 #
-# $Id: signserver_build.properties.sample,v 1.3 2007-03-28 11:00:01 herrvendil Exp $
+# $Id: signserver_build.properties.sample,v 1.4 2007-04-26 08:25:20 herrvendil Exp $
 #
 # File containting the build properties of the sign server
 # 
@@ -60,6 +60,10 @@
 
 # The password used to protect the web servers SSL keystore.
 #httpsserver.password=serverpwd
+
+# The password used to protect the web servers SSL keystore.
+# Default: p12/tomcat.jks
+#httpsserver.keystore=p12/tomcat.jks
 
 
 # The public port JBoss will listen to http on

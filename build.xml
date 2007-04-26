@@ -140,6 +140,7 @@
     <property name="httpserver.pubhttps" value="8442" />
     <property name="httpserver.privhttps" value="8443" />
     <property name="httpsserver.password" value="serverpwd" />
+    <property name="httpsserver.keystore" value="p12/tomcat.jks" />	
     <property name="web.contentencoding" value="ISO-8859-1" />
     <property name="deploy.ssh.user" value="jboss" />
     <property name="deploy.ssh.keyfilepath" value="/home/jboss/.ssh/id_rsa" />
@@ -495,7 +496,7 @@ database.password      = ${database.password}
         <delete file="${java.home}/lib/security/cacerts"/>
         <keytool arg="-v -alias SIGNSERVER -import -file '${java.trustcert}' -keystore '${java.home}/lib/security/cacerts' -storepass ${java.trustpassword} -noprompt"/>
     </target>
-	
+		
     <macrodef name="keytool">
        <attribute name="arg"/>
          <sequential>

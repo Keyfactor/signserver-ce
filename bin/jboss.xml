@@ -64,14 +64,14 @@
         <echo message="Using JBoss deploy directory ${jboss.deploy.dir}"/>
 
 		<!-- copy the keystore file to the server -->
-		<available file="p12/tomcat.jks" property="keystore.file.present"/>
-		<fail message="Missing JKS keystore file in '${basedir}/p12/tomcat.jks'" unless="keystore.file.present"/>
+		<available file="${httpsserver.keystore}" property="keystore.file.present"/>
+		<fail message="Missing JKS keystore file in '${basedir}/${httpsserver.keystore}'" unless="keystore.file.present"/>
 		<condition property="httpsserver.password.present">
 			<isset property="httpsserver.password"/> 
 		</condition>
 		<fail message="Missing JKS password '${httpsserver.password}'" unless="httpsserver.password.present"/>
 
-		<copy file="p12/tomcat.jks" tofile="${jboss.server.home.dir}/${keystore.file}"/>
+		<copy file="${httpsserver.keystore}" tofile="${jboss.server.home.dir}/${keystore.file}"/>
         <!-- detect jboss web version -->
         <available file="${jboss.deploy.dir}/jbossweb-tomcat41.sar" type="dir" property="jboss.web" value="tomcat41"/>
         <available file="${jboss.deploy.dir}/jbossweb-tomcat50.sar" type="dir" property="jboss.web" value="tomcat50"/>
@@ -224,15 +224,15 @@
 	
 	<target name="j2ee:web-configure:remotely"  unless="j2ee.web-nohttps" description="Configure the servlet container">
 		<!-- copy the keystore file to the server -->
-		<available file="p12/tomcat.jks" property="keystore.file.present"/>
-		<fail message="Missing JKS keystore file in '${basedir}/p12/tomcat.jks'" unless="keystore.file.present"/>
+		<available file="${httpsserver.keystore}" property="keystore.file.present"/>
+		<fail message="Missing JKS keystore file in '${basedir}/${httpsserver.keystore}'" unless="keystore.file.present"/>
 		<condition property="httpsserver.password.present">
 			<isset property="httpsserver.password"/> 
 		</condition>
 		<fail message="Missing JKS password '${httpsserver.password}'" unless="httpsserver.password.present"/>
 		<scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
 		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${keystore.file}" passphrase="${tmp.passphrase}">
-		     	<fileset dir="p12" includes="tomcat.jks"/>   		
+		     	<fileset dir="p12" includes="${httpsserver.keystore}"/>   		
 		   </scp>
         <!-- detect jboss web version -->
 		

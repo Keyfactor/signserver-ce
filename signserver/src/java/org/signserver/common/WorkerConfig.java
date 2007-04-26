@@ -30,7 +30,7 @@ import org.ejbca.core.model.UpgradeableDataHashMap;
  * 
  * 
  * @author Philip Vendil
- * $Id: WorkerConfig.java,v 1.4 2007-03-28 21:08:45 herrvendil Exp $
+ * $Id: WorkerConfig.java,v 1.5 2007-04-26 08:23:50 herrvendil Exp $
  */
 public  class WorkerConfig extends UpgradeableDataHashMap {
 	
@@ -108,12 +108,7 @@ public  class WorkerConfig extends UpgradeableDataHashMap {
 		return ((Properties) data.get(PROPERTIES));
 	}
 	
-	/**
-	 * Method returning this WorkerConfig belongs to a signer
-	 */
-	public boolean isSigner(){
-		return data.get(CLASS).equals(SignerConfig.class.getName());
-	}
+
 	
 	/**
 	 * Special method to ge access to the complete data field

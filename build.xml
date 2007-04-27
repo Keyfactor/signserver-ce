@@ -491,7 +491,7 @@ database.password      = ${database.password}
     </target>
 	
     <target name="install"  description="Install">
-        <echo message="Removing old cacerts and addsg root cert to be trusted  ..."/>
+        <echo message="Removing old cacerts and add root cert to be trusted  ..."/>
         <echo message="Make sure you have write access to JAVA_HOME/jre/lib/security/cacerts  ..."/>
         <delete file="${java.home}/lib/security/cacerts"/>
         <keytool arg="-v -alias SIGNSERVER -import -file '${java.trustcert}' -keystore '${java.home}/lib/security/cacerts' -storepass ${java.trustpassword} -noprompt"/>

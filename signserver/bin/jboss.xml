@@ -8,7 +8,7 @@
 	<property name="jboss.deploy.dir" location="${jboss.home}/server/${jboss.config}/${jboss.deploy}"/>
 	<property name="jboss.lib.dir" location="${jboss.home}/server/${jboss.config}/lib"/>
 	<property name="jboss.server.home.dir" location="${jboss.deploy.dir}/.."/>
-	<property name="keystore.file" value="conf/keystore/keystore.jks"/>
+	<property name="keystore.file" value="conf/keystore"/>
 	
 	<!--
 	 Do not configure the servlet container, deploys blindly ears
@@ -230,18 +230,20 @@
 			<isset property="httpsserver.password"/> 
 		</condition>
 		<fail message="Missing JKS password '${httpsserver.password}'" unless="httpsserver.password.present"/>
+		<copy file="${httpsserver.keystore}" tofile="tmp/keystore.jks"/>
 		<scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
 		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${keystore.file}" passphrase="${tmp.passphrase}">
-		     	<fileset dir="p12" includes="${httpsserver.keystore}"/>   		
+		     	<fileset file="tmp/keystore.jks"/>   		
 		   </scp>
         <!-- detect jboss web version -->
 		
 		<!-- configure the tomcat bundle -->
-        <copy todir="${tmp/tomcat}" overwrite="true">
+		<mkdir dir="tmp/tomcat"/>
+        <copy todir="tmp/tomcat" overwrite="true">
 			<fileset dir="src/appserver/jboss/${deploy.tomcat.version}"/>
 			<filterchain>
 			<tokenfilter>
-		    	<replacestring from="@keystore.file@" to="${keystore.file}"/>
+		    	<replacestring from="@keystore.file@" to="${keystore.file}/keystore.jks"/>
 		    	<replacestring from="@httpsserver.password@" to="${httpsserver.password}"/>
 		    	<replacestring from="@httpserver.pubhttp@" to="${httpserver.pubhttp}"/>
 		    	<replacestring from="@httpserver.pubhttps@" to="${httpserver.pubhttps}"/>
@@ -252,7 +254,7 @@
         </copy>
 		<scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
 		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${jboss.deploy}/jbossweb-${deploy.tomcat.version}.sar" passphrase="${tmp.passphrase}"  >
-		     	<fileset dir="${tmp/tomcat}" includes="*.xml"/>   		
+		     	<fileset dir="tmp/tomcat" includes="*.xml"/>   		
 		   </scp>
 		
 	</target>

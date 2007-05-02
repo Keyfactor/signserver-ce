@@ -30,8 +30,9 @@
 
 
 
-	<target name="j2ee:configure" depends="j2ee:check, j2ee:web-configure" description="Configure the J2EE server with appropriate settings">
-		
+	<target name="j2ee:configure"  unless="deploy.hostname.node1" description="Configure the J2EE server with appropriate settings">
+    	<antcall target="j2ee:check" inheritall="true"/>
+    	<antcall target="j2ee:web-configure" inheritall="true"/>
 	</target>
 
 
@@ -60,7 +61,7 @@
     	<move file="${tmp}/signserver-mysql-cluster-ds.xml" tofile="${tmp}/signserver-ds.xml"/>
 	</target>
 	
-	<target name="j2ee:web-configure"  unless="j2ee.web-nohttps" description="Configure the servlet container">
+	<target name="j2ee:web-configure"  unless="j2ee.web-nohttps"  description="Configure the servlet container">
         <echo message="Using JBoss deploy directory ${jboss.deploy.dir}"/>
 
 		<!-- copy the keystore file to the server -->

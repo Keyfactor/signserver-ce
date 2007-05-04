@@ -85,7 +85,7 @@
 			<fileset dir="src/appserver/jboss/${jboss.web}"/>
 			<filterchain>
 			<tokenfilter>
-		    	<replacestring from="@keystore.file@" to="${keystore.file}"/>
+		    	<replacestring from="@keystore.file@" to="${keystore.file}/keystore.jks"/>
 		    	<replacestring from="@httpsserver.password@" to="${httpsserver.password}"/>
 		    	<replacestring from="@httpserver.pubhttp@" to="${httpserver.pubhttp}"/>
 		    	<replacestring from="@httpserver.pubhttps@" to="${httpserver.pubhttps}"/>

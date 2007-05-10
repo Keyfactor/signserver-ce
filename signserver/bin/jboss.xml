@@ -9,7 +9,7 @@
 	<property name="jboss.lib.dir" location="${jboss.home}/server/${jboss.config}/lib"/>
 	<property name="jboss.server.home.dir" location="${jboss.deploy.dir}/.."/>
 	<property name="keystore.file" value="conf/keystore/keystore.jks"/>
-	<property name="keystore.path" value="conf/keystore"/>
+	<property name="remote.keystore.path" value="conf"/>
 	
 	<!--
 	 Do not configure the servlet container, deploys blindly ears
@@ -234,7 +234,7 @@
 		<fail message="Missing JKS password '${httpsserver.password}'" unless="httpsserver.password.present"/>
 		<copy file="${httpsserver.keystore}" tofile="tmp/keystore.jks"/>
 		<scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
-		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${keystore.path}" passphrase="${tmp.passphrase}">
+		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${remote.keystore.path}" passphrase="${tmp.passphrase}">
 		     	<fileset file="tmp/keystore.jks"/>   		
 		   </scp>
         <!-- detect jboss web version -->
@@ -245,7 +245,7 @@
 			<fileset dir="src/appserver/jboss/${deploy.tomcat.version}"/>
 			<filterchain>
 			<tokenfilter>
-		    	<replacestring from="@keystore.file@" to="${keystore.file}"/>
+		    	<replacestring from="@keystore.file@" to="${remote.keystore.path}/keystore.jks"/>
 		    	<replacestring from="@httpsserver.password@" to="${httpsserver.password}"/>
 		    	<replacestring from="@httpserver.pubhttp@" to="${httpserver.pubhttp}"/>
 		    	<replacestring from="@httpserver.pubhttps@" to="${httpserver.pubhttps}"/>

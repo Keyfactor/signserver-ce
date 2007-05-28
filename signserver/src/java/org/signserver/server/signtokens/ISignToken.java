@@ -29,7 +29,7 @@ import org.signserver.common.SignTokenOfflineException;
  *  All SignToken plug-ins must implement this interface.
  * 
  * @author Philip Vendil
- * @version $Id: ISignToken.java,v 1.3 2007-04-12 04:01:10 herrvendil Exp $
+ * @version $Id: ISignToken.java,v 1.4 2007-05-28 02:04:05 herrvendil Exp $
  */
 
 
@@ -37,6 +37,7 @@ public interface ISignToken {
 
 	
 	public static final int PURPOSE_SIGN = 1;
+	public static final int PURPOSE_DECRYPT = 2;
 	
 	public static final int PROVIDERUSAGE_SIGN    = 1;
 	public static final int PROVIDERUSAGE_DECRYPT = 2;

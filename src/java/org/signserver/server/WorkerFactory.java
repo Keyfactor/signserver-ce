@@ -118,7 +118,7 @@ public  class WorkerFactory {
 	 * 
 	 * @param signerName the name of a named signer.
 	 * @param workerConfigHome The home interface of the signer config entity bean
-	 * @return the id of the signer or null if no worker with the name is found.
+	 * @return the id of the signer or 0 if no worker with the name is found.
 	 */
 	public int getSignerIdFromName(String signerName, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
 	   int retval = 0;		 	   

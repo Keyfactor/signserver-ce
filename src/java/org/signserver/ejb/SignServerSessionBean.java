@@ -246,7 +246,7 @@ public class SignServerSessionBean extends BaseSessionBean {
 	 * Returns the Id of a signer given a name 
 	 *
 	 * @param signerName of the signer cannot be null
-	 * @return The Id of a named signer or null if no such name exists
+	 * @return The Id of a named signer or 0 if no such name exists
 	 *  
 	 * @ejb.interface-method
 	 */

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>Welcome</title>
+  </properties>
+
+<body>
+  <section name="Latest News">
+    <note>
+    Version 2 of the SignServer and the first official open source release is going to be released within a few weeks. Stay tuned...    
+    </note>
+   </section>
+
+<section name="What's the SignServer?">
+<p>
+The SignServer is an application for automatic signatures called by other systems not able to connect to cryptographic hardware. It is a framework that can be customized to specific needs. The SignServer have a ready to use TimeStamp Authority (RFC 3161 complaint) and a MRTD Signer. 
+Another usage is to provide a simplified method to provide signatures in different application managed from one location  in the company.
+</p>
+<p>
+The SignServer have been designed for high-availability and can be clustered for maximum reliability.
+</p>
+</section>
+<section name="What's new for SignServer 2.0?">
+<p>
+Some of the new features for version 2.0 are: dynamic configuration of available signers, improved CLI interface, global store used to store information inside a cluster and improved deployment in a clustered environment. 
+</p>
+<p>
+More information can be found in the manual
+</p>
+</section>
+<section name="Open Source">
+<p>
+This software is OSI Certified Open Source Software.
+OSI Certified is a certification mark of the Open Source Initiative.
+</p>
+<p>
+The source code of the SignServer is hosted on <a href="http://www.sf.net/">Sourceforge.net</a> and all downloads include the complete source code.
+</p>
+</section>
+
+
+
+
+</body>
+</document>
+

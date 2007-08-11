@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+  <properties>
+    <title>SignServer Installation Guide</title>
+  </properties>
+
+  <body>
+    <section name="SignServer 2.0 CentOS 4.4 Installation Guide">
+<p>
+Installation guide describing step-by-step how to setup a SignServer cluster on CentOS 4.4. Even if the document
+is specific for this OS is should be quite easy to adopt it to other environments as well. It 
+be downloaded here either as <a href="docs/SignServer_2_0_Installation_Guide.pdf">PDF</a> or viewed as 
+<a href="docs/SignServer_2_0_Installation_Guide.html">HTML</a> 
+</p>
+
+
+
+</section>
+
+  </body>
+</document>

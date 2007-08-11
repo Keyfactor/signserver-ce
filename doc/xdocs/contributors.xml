@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+  <properties>
+    <title>Contributors to the Project</title>
+  </properties>
+
+  <body>
+
+<section name="Contributors">
+<p>
+ Here's a list of contributors of the SignServer project.
+</p>
+<ul>
+<li>Henrik Anreasson, han(at)han.pp.se, Project Manager and Initiator.</li>
+<li>Philip Vendil, philip(at)primekey.se, Project Manager, Main developer of the framework.</li>
+<li>Lars Silvèn, lars(at)primekey.se, SSL-RMI parts and the possibility to have custom web front end.</li>
+<li>Tomas Gustavsson, tomas(at)primekey.se, Improved the TSA client with more arguments.</li>
+</ul>
+</section>
+</body>
+</document>

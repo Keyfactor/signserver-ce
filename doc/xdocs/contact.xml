@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+  <properties>
+    <title>Contacts and Support</title>
+  </properties>
+
+  <body>
+<section name="Support">
+<p>
+If you need commercial support or professional services contact the project administrators below.
+</p>
+</section>
+
+<section name="Documentation">
+    <p>
+    First you should look at the documentation resources on this site.
+    </p><p>
+    Second you should see if there is something interesting in the <a href="faq.html">FAQ</a>.
+    </p>
+</section>
+
+<section name="Mailing Lists">
+<p>
+ The SignServer project has two public mailing lists hosted on Sourceforge. To subscribe to any of the lists or
+ browse archived messages, click the links below.
+</p>
+<p>
+<a href="http://lists.sourceforge.net/mailman/listinfo/signserver-announce">signserver-announce</a> A low traffic
+ list about new releases and patches.
+</p>
+<p>
+<a href="http://lists.sourceforge.net/mailman/listinfo/signserver-develop">signserver-develop</a> is used for development
+discussions of a more technical nature. 
+</p>
+</section>
+
+
+<section name="Project Administrators">
+<p> 
+You can always reach the project administrators by email through <a href="http://sourceforge.net/projects/signserver/">Sourceforge</a>.
+</p>
+</section>
+
+  </body>
+</document>

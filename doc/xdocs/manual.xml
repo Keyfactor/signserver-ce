@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+  <properties>
+    <title>SignServer Manual 2.0</title>
+  </properties>
+
+  <body>
+    <section name="Sign Server Manual">
+<p>
+The SignServer manual describing how to configure, use and develop plug-ins can can
+be downloaded here either as <a href="docs/SignServer_Manual_2_0.pdf">PDF</a> or viewed as 
+<a href="docs/SignServer_Manual_2_0.html">HTML</a> 
+</p>
+
+
+</section>
+
+  </body>
+</document>

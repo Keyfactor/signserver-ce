@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="SignServer" href="http://signserver.sourceforge.net/">
+
+    <title>SignServer 2.0</title>
+    <!--logo href="images/ant_logo_large.gif">Hard Token Management Framework</logo-->
+
+    <body>
+       <menusection name="Home" index="0"         href="/index.html">
+            <menu name="General Information">
+                <item name="Home"                  href="/index.html"/>
+                <item name="Architecture"          href="/architecture.html"/>                
+                <item name="License"               href="/license.html"/>
+                <item name="Contact &amp; Support" href="/contact.html"/>
+                <item name="Credits"               href="/credits.html"/>
+                <item name="Reference installations" href="/installations.html"/>
+                <item name="Required software"  href="/required.html"/>
+                <item name="Sourceforge project" href="http://www.sf.net/projects/signserver/"/>
+            </menu>
+
+            <menu name="Documentation">
+                <item name="Manual"	 href="/manual.html"/>
+                <item name="Installation Guide"	 href="/installationguide.html"/>                
+                <item name="Wiki" href="http://signserver.wiki.sourceforge.net/"/>                
+                <item name="FAQ"		  href="/faq.html"/>
+                <item name="Changelog"    href="http://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel"/>
+            </menu>
+
+            <menu name="Download">
+                <item name="Latest releases" href="http://sourceforge.net/project/showfiles.php?group_id=190195"/>
+            </menu>
+
+            <menu name="Contributing">
+                <item name="Contributors"          href="/contributors.html"/>
+                <item name="Bug Database"          href="http://jira.primekey.se/"/>
+                <item name="CVN Repositories"      href="http://signserver.cvs.sourceforge.net/signserver/"/>
+            </menu>
+
+        </menusection>
+
+    </body>
+</project>

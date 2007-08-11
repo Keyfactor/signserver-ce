@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>Architecture</title>
+  </properties>
+
+<body>
+  <section name="Overview">
+<p> 
+The SignServer is a framework designed to perform different kind of digital signatures for different applications. 
+</p>
+<p>
+<a href="images/architecture.png"><img src="images/architecture.png" align="middle" border="0" width="523" height="359" ALT="architecture"/></a>
+</p>
+<p>
+To access the SignServer there are different options depending on the signer used. The time-stamp signer uses HTTP for remote access and the MRDT Signer uses RMI-SSL.
+</p>
+<p>
+There are two main concepts to the SignServer and that is Signers (which performs the actual signature and are identified by a signerId) and SignToken which is an entity that keeps track of the signing keys (can be either software or hardware based).
+</p>
+<p>
+The applications are administrated through a command-line interface, where the properties and access control can be configured.
+</p>
+<p>
+The currently exists two authentication modes, one using client authenticated SSL where the serial number of each signer client have to be in the signers access list for the signature to be performed. The other is an unauthenticated mode where there isn't any requirements on who requests a signature.
+</p>
+<p>
+One SignServer can have multiple signers for different purposes.
+</p>
+  </section>
+
+</body>
+</document>
+

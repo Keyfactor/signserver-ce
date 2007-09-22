@@ -61,7 +61,7 @@ import org.signserver.server.signtokens.ISignToken;
  * ACCEPTEDPOLICIES =  A ';' separated string containing accepted policies, can be null if it shouldn't be used. (OPTIONAL)
  * ACCEPTEDEXTENSIONS = A ';' separated string containing accepted extensions, can be null if it shouldn't be used. (OPTIONAL)
  * DIGESTOID = The Digenst OID to be used in the timestamp
- * TSAPOLICYOID = The policy ID of the time stamp authority
+ * DEFAULTTSAPOLICYOID = The default policy ID of the time stamp authority
  * ACCURACYMICROS = Accuraty in micro seconds, Only decimal number format, only one of the accuracy properties should be set (OPTIONAL)
  * ACCURACYMILLIS = Accuraty in milli seconds, Only decimal number format, only one of the accuracy properties should be set (OPTIONAL)
  * ACCURACYSECONDS = Accuraty in seconds. Only decimal number format, only one of the accuracy properties should be set (OPTIONAL)
@@ -69,7 +69,7 @@ import org.signserver.server.signtokens.ISignToken;
  * TSA = General name of the Time Stamp Authority.
  * 
  * @author philip
- * $Id: TimeStampSigner.java,v 1.2 2007-04-12 04:01:11 herrvendil Exp $
+ * $Id: TimeStampSigner.java,v 1.3 2007-09-22 11:36:29 anatom Exp $
  */
 public class TimeStampSigner extends BaseSigner{
 	
@@ -144,7 +144,7 @@ public class TimeStampSigner extends BaseSigner{
 	    
 		defaultTSAPolicyOID = config.getProperties().getProperty(DEFAULTTSAPOLICYOID);
 		if(defaultTSAPolicyOID == null){
-			log.error( "Error: No required TSA Policy OID have been configured");
+			log.error( "Error: No default TSA Policy OID have been configured");
 		}	
 		
 		
@@ -203,18 +203,25 @@ public class TimeStampSigner extends BaseSigner{
 					                               timeStampResponse.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16), new ArchiveData(timeStampResponse.getEncoded()));
 			}
 		} catch (InvalidAlgorithmParameterException e) {
+			log.error("InvalidAlgorithmParameterException: ", e);
 			throw new IllegalSignRequestException("InvalidAlgorithmParameterException: " + e.getMessage());
 		} catch (NoSuchAlgorithmException e) {
+			log.error("NoSuchAlgorithmException: ", e);
 			throw new IllegalSignRequestException("NoSuchAlgorithmException: " + e.getMessage());
 		} catch (NoSuchProviderException e) {
+			log.error("NoSuchProviderException: ", e);
 			throw new IllegalSignRequestException("NoSuchProviderException: " + e.getMessage());
 		} catch (SignTokenOfflineException e) {
+			log.error("SignTokenOfflineException: ", e);
 			throw new IllegalSignRequestException("SignTokenOfflineException: " + e.getMessage());
 		} catch (CertStoreException e) {
+			log.error("CertStoreException: ", e);
 			throw new IllegalSignRequestException("CertStoreException: " + e.getMessage());
 		} catch (IOException e) {
+			log.error("IOException: ", e);
 			throw new IllegalSignRequestException("IOException: " + e.getMessage());
 		}catch(TSPException e){
+			log.error("TSPException: ", e);
 			throw new IllegalSignRequestException(e.getMessage());
 		} 
 		
@@ -359,8 +366,10 @@ public class TimeStampSigner extends BaseSigner{
 				timeStampTokenGen.setCertificatesAndCRLs(certStore);	
 				
 			} catch (IllegalArgumentException e) {
+				log.error("IllegalArgumentException: ", e);
 				throw new IllegalSignRequestException(e.getMessage());
 			} catch (TSPException e) {
+				log.error("TSPException: ", e);
 				throw new IllegalSignRequestException(e.getMessage());
 			} 		
 		return timeStampTokenGen;
@@ -418,7 +427,7 @@ public class TimeStampSigner extends BaseSigner{
      * Not supported yet
      */
 	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException{
-		log.error("Error : genCertificateRequest called for TimeStampSigner which isn't supportet yet");
+		log.error("Error : genCertificateRequest called for TimeStampSigner which isn't supported yet");
 		return null;
 	}
 }

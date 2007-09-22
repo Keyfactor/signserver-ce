@@ -52,7 +52,7 @@ import org.signserver.common.SignerStatus;
  * KEYSTOREPASSWORD : The password that locks the keystore.
  * 
  * @author philip
- * $Id: P12SignToken.java,v 1.3 2007-04-12 04:01:09 herrvendil Exp $
+ * $Id: P12SignToken.java,v 1.4 2007-09-22 11:37:01 anatom Exp $
  */
 public class P12SignToken implements ISignToken {
 	
@@ -103,6 +103,7 @@ public class P12SignToken implements ISignToken {
 
 		try {
 			KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
+			log.debug("Reading keystore from: "+keystorepath);
 			InputStream in = new FileInputStream(keystorepath);
 			ks.load(in, authenticationcode.toCharArray());
 			in.close();
@@ -138,18 +139,25 @@ public class P12SignToken implements ISignToken {
 			
 			cert = (X509Certificate) chain[0];
 			} catch (KeyStoreException e1) {
+				log.error("Error :", e1);
 				throw new SignTokenAuthenticationFailureException("KeyStoreException " + e1.getMessage());
 			} catch (NoSuchProviderException e1) {
+				log.error("Error :", e1);
 				throw new SignTokenAuthenticationFailureException("NoSuchProviderException " + e1.getMessage());
 			} catch (FileNotFoundException e) {
+				log.error("Error :", e);
 				throw new SignTokenAuthenticationFailureException( "Keystore file not found : " + e.getMessage());
 			} catch (NoSuchAlgorithmException e) {
+				log.error("Error :", e);
 				throw new SignTokenAuthenticationFailureException("NoSuchAlgorithmException " + e.getMessage());
 			} catch (CertificateException e) {
+				log.error("Error :", e);
 				throw new SignTokenAuthenticationFailureException("CertificateException " + e.getMessage());
 			} catch (IOException e) {
+				log.error("Error :", e);
 				throw new SignTokenAuthenticationFailureException("IOException " + e.getMessage());
 			} catch (UnrecoverableKeyException e) {
+				log.error("Error :", e);
 				throw new SignTokenAuthenticationFailureException("UnrecoverableKeyException " + e.getMessage());
 			}
             

@@ -6,7 +6,11 @@
         <servlet-name>TSAHTTPServlet</servlet-name>
         <display-name>Time Stamp Server Servlet</display-name>
         <servlet-class>org.signserver.web.TSAHTTPServlet</servlet-class>
-  
+    </servlet> 
+    <servlet>
+        <servlet-name>PDFHTTPServlet</servlet-name>
+        <display-name>PDF Signer Servlet</display-name>
+        <servlet-class>org.signserver.web.PDFHTTPServlet</servlet-class>
     </servlet> 
     <servlet>
         <servlet-name>StartServiceServlet</servlet-name>
@@ -17,6 +21,10 @@
     <servlet-mapping>
         <servlet-name>TSAHTTPServlet</servlet-name>
         <url-pattern>/tsa</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PDFHTTPServlet</servlet-name>
+        <url-pattern>/pdf</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StartServiceServlet</servlet-name>

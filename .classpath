@@ -5,7 +5,7 @@
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/jbossall-client.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.7.jar"/>
+	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/ext/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/ext/commons-cli-1.0.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/lib/jboss-system.jar"/>
@@ -15,6 +15,7 @@
 	<classpathentry kind="lib" path="lib/1.5/bcmail-jdk.jar"/>
 	<classpathentry kind="lib" path="lib/1.5/bcprov-jdk.jar"/>
 	<classpathentry kind="lib" path="lib/1.5/bctsp-jdk.jar"/>
+	<classpathentry kind="lib" path="lib/itext/itext.jar"/>
 	<classpathentry kind="var" path="PRIMECARD_DIST/base-core.jar" sourcepath="/PRIMECARD_SRC"/>
 	<classpathentry kind="var" path="PRIMECARD_DIST/utilsForRMISSL.jar" sourcepath="/PRIMECARD_SRC"/>
 	<classpathentry kind="var" path="PRIMECARD_DIST/pkcs15.jar" sourcepath="/PRIMECARD_SRC"/>

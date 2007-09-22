@@ -14,7 +14,13 @@
 
 <section name="What's the SignServer?">
 <p>
-The SignServer is an application for automatic signatures called by other systems not able to connect to cryptographic hardware. It is a framework that can be customized to specific needs. The SignServer have a ready to use TimeStamp Authority (RFC 3161 complaint) and a MRTD Signer. 
+The SignServer is an application for automatic signatures called by other systems not able to connect to cryptographic hardware. It is a framework that can be customized to specific needs. 
+The SignServer have a ready to use:
+<ul>
+<li>TimeStamp Authority (RFC 3161 complaint)</li>
+<li>PDF Signer</li>
+<li>MRTD Signer</li>
+</ul> 
 Another usage is to provide a simplified method to provide signatures in different application managed from one location  in the company.
 </p>
 <p>

@@ -46,7 +46,7 @@ import org.signserver.ejb.SignServerSessionLocalHome;
  * Use the request parameter 'signerId' to specify the PDF signer.
  * 
  * @author Tomas Gustavsson, based on TSAHTTPServlet by Philip Vendil
- * @version $Id: PDFHTTPServlet.java,v 1.1 2007-09-22 11:52:34 anatom Exp $
+ * @version $Id: PDFHTTPServlet.java,v 1.2 2007-09-24 11:37:52 anatom Exp $
  */
 
 public class PDFHTTPServlet extends HttpServlet {
@@ -92,7 +92,13 @@ public class PDFHTTPServlet extends HttpServlet {
        	Certificate[] certificates = (X509Certificate[]) req.getAttribute( "javax.servlet.request.X509Certificate" );
     	if(certificates != null){
     		clientCertificate = certificates[0];
-    	}        
+    	}
+    	// Limit the maximum size of input to 100MB (100*1024*1024)
+    	log.debug("Received a request with length: "+req.getContentLength());
+		if (req.getContentLength() > 104857600){
+			log.error("Content length exceeds 100MB, not processed: "+req.getContentLength());
+			throw new ServletException("Error. Maximum content lenght is 100MB.");
+		}
 
     	// Get an input stream and read the pdf bytes from the stream
         InputStream in = req.getInputStream();

@@ -46,7 +46,7 @@ import org.signserver.ejb.SignServerSessionLocalHome;
  * Use the request parameter 'signerId' to specify the PDF signer.
  * 
  * @author Tomas Gustavsson, based on TSAHTTPServlet by Philip Vendil
- * @version $Id: PDFHTTPServlet.java,v 1.2 2007-09-24 11:37:52 anatom Exp $
+ * @version $Id: PDFHTTPServlet.java,v 1.3 2007-09-24 12:56:44 anatom Exp $
  */
 
 public class PDFHTTPServlet extends HttpServlet {
@@ -130,7 +130,7 @@ public class PDFHTTPServlet extends HttpServlet {
 		}
 		byte[] pdfbytes =  (byte[])signResponse.getSignedData();
 		
-		res.setContentType("application/pdf'");
+		res.setContentType("application/pdf");
 		res.setContentLength(pdfbytes.length);
 		res.getOutputStream().write(pdfbytes);
 		res.getOutputStream().close();

@@ -47,7 +47,7 @@ import org.signserver.ejb.SignServerSessionLocalHome;
  * Use the request parameter 'signerId' to specify the timestamp signer.
  * 
  * @author Philip Vendil
- * @version $Id: TSAHTTPServlet.java,v 1.2 2007-03-26 06:06:21 herrvendil Exp $
+ * @version $Id: TSAHTTPServlet.java,v 1.3 2007-09-24 11:37:52 anatom Exp $
  */
 
 public class TSAHTTPServlet extends HttpServlet {
@@ -107,6 +107,12 @@ public class TSAHTTPServlet extends HttpServlet {
     	if(certificates != null){
     		clientCertificate = certificates[0];
     	}        
+    	// Limit the maximum size of input to 100MB (100*1024*1024)
+    	log.debug("Received a request with length: "+req.getContentLength());
+		if (req.getContentLength() > 104857600){
+			log.error("Content length exceeds 100MB, not processed: "+req.getContentLength());
+			throw new ServletException("Error. Maximum content lenght is 100MB.");
+		}
 
         TimeStampRequest timeStampRequest = new TimeStampRequest(req.getInputStream());
         

@@ -26,6 +26,14 @@ Another usage is to provide a simplified method to provide signatures in differe
 <p>
 The SignServer have been designed for high-availability and can be clustered for maximum reliability.
 </p>
+<p>
+Different kinds of sign tokens exist:
+<ul>
+<li>Soft token using PKCS12 files.</li>
+<li>PKCS#11 HSM tokens, such as the Utimaco CryptoServer or nCipher nShield.</li>
+<li>PrimeCardHSM using smart cards.</li>
+</ul>
+</p>
 </section>
 <section name="What's new for SignServer 2.0?">
 <p>

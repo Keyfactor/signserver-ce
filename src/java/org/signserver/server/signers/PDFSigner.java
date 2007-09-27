@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
@@ -49,7 +50,7 @@ import com.lowagie.text.pdf.PdfStamper;
  * RECTANGLE = The location of the visible signature field (llx, lly, urx, ury)
  * 
  * @author Tomas Gustavsson
- * @version $Id: PDFSigner.java,v 1.1 2007-09-22 11:52:35 anatom Exp $
+ * @version $Id: PDFSigner.java,v 1.2 2007-09-27 10:02:27 anatom Exp $
  */
 public class PDFSigner extends BaseSigner{
 	
@@ -74,9 +75,8 @@ public class PDFSigner extends BaseSigner{
 	 * 
 	 * @see org.signserver.server.signers.ISigner#signData(org.signserver.common.ISignRequest, java.security.cert.X509Certificate)
 	 */
-	public ISignResponse signData(ISignRequest signRequest,
-			X509Certificate clientCert) throws IllegalSignRequestException,
-			SignTokenOfflineException {
+	public ISignResponse signData(ISignRequest signRequest, X509Certificate clientCert) 
+		throws IllegalSignRequestException, SignTokenOfflineException {
 		
 		// Check that the request contains a valid GenericSignRequest object with a byte[].
 		if(!(signRequest instanceof GenericSignRequest)){
@@ -126,7 +126,11 @@ public class PDFSigner extends BaseSigner{
 				PdfStamper stp;
 				stp = PdfStamper.createSignature(reader, fout, '\0');
 				PdfSignatureAppearance sap = stp.getSignatureAppearance();
-				Certificate[] certChain = (Certificate[])this.getSigningCertificateChain().toArray(new Certificate[0]);
+				Collection<Certificate> certs = this.getSigningCertificateChain();
+				if (certs == null) {
+					throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
+				}
+				Certificate[] certChain = (Certificate[])certs.toArray(new Certificate[0]);
 				PrivateKey privKey = this.getSignToken().getPrivateKey(ISignToken.PURPOSE_SIGN);
 				sap.setCrypto(privKey, certChain, null, PdfSignatureAppearance.WINCER_SIGNED);
 				sap.setReason(reason);
@@ -151,8 +155,7 @@ public class PDFSigner extends BaseSigner{
      * Not supported yet
      */
 	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException{
-		log.error("Error : genCertificateRequest called for PDFSigner. This is not supported yet");
-		return null;
+		return this.getSignToken().genCertificateRequest(info);
 	}
 }
 

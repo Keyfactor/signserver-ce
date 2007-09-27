@@ -163,7 +163,11 @@ public abstract class BaseSigner extends BaseWorker implements ISigner {
 		if(certChain==null){
 			certChain =  getSignToken().getCertificateChain(ISignToken.PURPOSE_SIGN);
 			if(certChain==null){
+				log.debug("Signtoken did not contain a certificate chain, looking in config.");
 				certChain=(new SignerConfig(config)).getSignerCertificateChain();
+				if (certChain == null) {
+					log.error("Neither Signtoken or SignerConfig contains a certificate chain!");					
+				}
 			}
 		}		
 		return certChain;

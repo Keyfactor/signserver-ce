@@ -69,7 +69,7 @@ import org.signserver.server.signtokens.ISignToken;
  * TSA = General name of the Time Stamp Authority.
  * 
  * @author philip
- * $Id: TimeStampSigner.java,v 1.3 2007-09-22 11:36:29 anatom Exp $
+ * $Id: TimeStampSigner.java,v 1.4 2007-09-27 10:02:27 anatom Exp $
  */
 public class TimeStampSigner extends BaseSigner{
 	
@@ -427,8 +427,7 @@ public class TimeStampSigner extends BaseSigner{
      * Not supported yet
      */
 	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException{
-		log.error("Error : genCertificateRequest called for TimeStampSigner which isn't supported yet");
-		return null;
+		return this.getSignToken().genCertificateRequest(info);
 	}
 }
 

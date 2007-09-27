@@ -52,7 +52,7 @@ import org.signserver.common.SignerStatus;
  * KEYSTOREPASSWORD : The password that locks the keystore.
  * 
  * @author philip
- * $Id: P12SignToken.java,v 1.4 2007-09-22 11:37:01 anatom Exp $
+ * $Id: P12SignToken.java,v 1.5 2007-09-27 10:02:27 anatom Exp $
  */
 public class P12SignToken implements ISignToken {
 	
@@ -67,7 +67,7 @@ public class P12SignToken implements ISignToken {
 	
 	private PrivateKey privKey = null;
 	private X509Certificate cert = null;
-	private Collection certChain = null;
+	private Collection<Certificate> certChain = null;
 	
 	
 	/**
@@ -108,8 +108,8 @@ public class P12SignToken implements ISignToken {
 			ks.load(in, authenticationcode.toCharArray());
 			in.close();
 			
-			// Fid the key private key entry in the keystore
-			Enumeration e = ks.aliases();
+			// Find the key private key entry in the keystore
+			Enumeration<String> e = ks.aliases();
 			Object o = null;
 			PrivateKey keystorePrivKey = null;
 			
@@ -129,7 +129,7 @@ public class P12SignToken implements ISignToken {
 			
 			//Certificate chain[] = ks.getCertificateChain((String) o);
 			Certificate[] chain = KeyTools.getCertChain(ks, (String) o);
-			certChain = new ArrayList();
+			certChain = new ArrayList<Certificate>();
 			for(int i=0;i<chain.length;i++){
 				certChain.add(chain[i]);
 			}
@@ -244,7 +244,7 @@ public class P12SignToken implements ISignToken {
 		return cert;
 	}
 
-	public Collection getCertificateChain(int purpose) throws SignTokenOfflineException {
+	public Collection<Certificate> getCertificateChain(int purpose) throws SignTokenOfflineException {
 		if(certChain == null){
 			if(keystorepassword != null){
 				try {
@@ -264,7 +264,8 @@ public class P12SignToken implements ISignToken {
 	/**
 	 * Method not supported
 	 */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException {		
+	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException {
+		log.error("genCertificateRequest was called, but is not supported for this sign token.");
 		return null;
 	}
 	

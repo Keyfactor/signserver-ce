@@ -12,47 +12,57 @@
  *************************************************************************/
 
 package org.signserver.server.signtokens;
-
+ 
 import java.util.Properties;
 
 import javax.ejb.EJBException;
 
 import org.apache.log4j.Logger;
+import org.ejbca.core.model.ca.catoken.PKCS11CAToken;
 import org.signserver.common.WorkerConfig;
-
-import se.primeKey.caToken.card.PrimeCAToken;
 
 
 /**
- * Class used to connect to the PrimeCard HSM card.
+ * Class used to connect to a PKCS11 HSM.
+ * 
+ * Properties:
+ *   sharedLibrary
+ *   slot
+ *   defaultKey
+ *   pin
+ * 
  * 
  * @see org.signserver.server.signtokens.ISignToken
- * @author Philip Vendil
- * @version $Id: PrimeCardHSMSignToken.java,v 1.5 2007-09-27 10:02:27 anatom Exp $
+ * @author Tomas Gustavsson, Philip Vendil
+ * @version $Id: PKCS11SignToken.java,v 1.1 2007-09-27 10:02:27 anatom Exp $
  */
 
-public class PrimeCardHSMSignToken extends CATokenSignTokenBase implements ISignToken {
+public class PKCS11SignToken extends CATokenSignTokenBase implements ISignToken{
 
-	private static final Logger log = Logger.getLogger(PrimeCardHSMSignToken.class);
-
-	public PrimeCardHSMSignToken(){
-		catoken = new PrimeCAToken();   
+	private static final Logger log = Logger.getLogger(PKCS11SignToken.class);
+	
+	public PKCS11SignToken() throws InstantiationException{
+		catoken = new PKCS11CAToken(); 
 	}
 
 	/**
-	 * Method initializing the primecardHSM device 
+	 * Method initializing the PKCS11 device 
 	 * 
 	 */
 	public void init(Properties props) {
 		log.debug(">init");
 		String signaturealgoritm = props.getProperty(WorkerConfig.SIGNERPROPERTY_SIGNATUREALGORITHM);
 		props = fixUpProperties(props);
-		((PrimeCAToken)catoken).init(props, null, signaturealgoritm);	
-		String authCode = props.getProperty("authCode");
-		if(authCode != null){
-			try{ 
+		try { 
+			((PKCS11CAToken)catoken).init(props, null, signaturealgoritm);	
+		} catch(Exception e) {
+			throw new EJBException(e);
+		}
+		String authCode = props.getProperty("pin");
+		if (authCode != null) {
+			try { 
 				this.activate(authCode);
-			}catch(Exception e){
+			} catch(Exception e) {
 				throw new EJBException(e);
 			}
 		}

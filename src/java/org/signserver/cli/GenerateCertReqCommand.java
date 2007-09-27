@@ -23,10 +23,10 @@ import org.signserver.common.PKCS10CertReqInfo;
  /**
   * Commands that requests a signer to generate a PKCS10 certificate request 
   *
-  * @version $Id: GenerateCertReqCommand.java,v 1.3 2007-03-09 11:26:38 herrvendil Exp $
+  * @version $Id: GenerateCertReqCommand.java,v 1.4 2007-09-27 09:59:40 anatom Exp $
   */
  public class GenerateCertReqCommand extends BaseCommand {
-     
+
 		protected static final int HELP = 0;
 		protected static final int FAIL = 1;
 		protected static final int SUCCESS = 2;
@@ -68,17 +68,19 @@ import org.signserver.common.PKCS10CertReqInfo;
         			 throw new IllegalAdminCommandException(resources[FAIL]);
         		 }
         	 }
-        	 
+
         	 PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg,dn,null);
         	 Base64SignerCertReqData reqData = (Base64SignerCertReqData) getSignSession(hostname).getCertificateRequest(id, certReqInfo);
-
+        	 if (reqData == null) {
+        		 throw new Exception("Base64SignerCertReqData returned was null. Unable to generate certificate request.");
+        	 }
         	 FileOutputStream fos = new FileOutputStream(filename);
         	 fos.write(reqData.getBase64CertReq());
         	 fos.close();
          
         	 getOutputStream().println(resources[SUCCESS] + filename);
          
-         } catch (Exception e) {             
+         } catch (Exception e) {   
              throw new ErrorAdminCommandException(e);            
          }
      }

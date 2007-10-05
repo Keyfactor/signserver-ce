@@ -45,7 +45,7 @@ import org.signserver.rmiClient.ISigner;
 
 import se.primeKey.pkcs15.PathForCTIAObj;
 import se.primeKey.securityProvider.PrimeKey;
-import se.primeKey.utils.CHVDialogExtended;
+import se.primeKey.smartCard.CHVDialogExtended;
 import se.primeKey.utils.CHVDialogExtendedFactoryImpl;
 import se.primeKey.utils.PrimeLog;
 import se.primeKey.utils.PrimeProperties;
@@ -169,7 +169,7 @@ public class SignerImpl implements ISigner {
         }
         static KeyStore getIt(String kspwd) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
             KeyStore keyStore = KeyStore.getInstance("PKCS15KS");
-            keyStore.load( new CHVDialogExtendedFactoryImpl(new MyDialog(kspwd)), null );
+            keyStore.load( new CHVDialogExtendedFactoryImpl(new MyDialog(kspwd)) );
             return keyStore;
         }
     }

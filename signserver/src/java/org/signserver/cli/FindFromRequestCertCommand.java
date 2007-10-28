@@ -28,7 +28,7 @@ import org.signserver.common.ArchiveDataVO;
 /**
  * Returns all archive datas requested from given IP
  *
- * @version $Id: FindFromRequestCertCommand.java,v 1.1 2007-02-27 16:18:07 herrvendil Exp $
+ * @version $Id: FindFromRequestCertCommand.java,v 1.2 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class FindFromRequestCertCommand extends BaseCommand {
 	
@@ -55,7 +55,7 @@ public class FindFromRequestCertCommand extends BaseCommand {
 	       		                                  "Example: signserver archive findfromrequestcert 1 EF34242D2324 \"CN=Test Root CA\" /tmp/archivedata \n\n");	       
 	    }	
         try {                    	
-        	int signerid = getWorkerId(args[1], hostname);
+        	int signerid = getWorkerId(args[2], hostname);
         	checkThatWorkerIsSigner(signerid,hostname);
         	
         	String certsn = args[3];
@@ -71,12 +71,12 @@ public class FindFromRequestCertCommand extends BaseCommand {
             
         	this.getOutputStream().println("Trying to find archive datas requested from client with certificate " + certsn + " issued by " + issuerdn + "\n");
 		                               	
-        	List result = getSignSession(hostname).findArchiveDatasFromRequestCertificate(signerid,sn,issuerdn);        	        	
+        	List<ArchiveDataVO> result = getCommonAdminInterface(hostname).findArchiveDatasFromRequestCertificate(signerid,sn,issuerdn);        	        	
         	
             if(result.size() != 0){
-            	Iterator iter = result.iterator();
+            	Iterator<ArchiveDataVO> iter = result.iterator();
             	while (iter.hasNext()){
-            	  ArchiveDataVO next = (ArchiveDataVO) iter.next();            	
+            	  ArchiveDataVO next =  iter.next();            	
             	  String filename = outputPath.getAbsolutePath() + "/"+ next.getArchiveId();
             	  FileOutputStream os = new FileOutputStream(filename);
             	  os.write(next.getArchiveData().getData());

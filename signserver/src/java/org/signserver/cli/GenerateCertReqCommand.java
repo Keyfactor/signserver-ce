@@ -23,7 +23,7 @@ import org.signserver.common.PKCS10CertReqInfo;
  /**
   * Commands that requests a signer to generate a PKCS10 certificate request 
   *
-  * @version $Id: GenerateCertReqCommand.java,v 1.4 2007-09-27 09:59:40 anatom Exp $
+  * @version $Id: GenerateCertReqCommand.java,v 1.5 2007-10-28 12:23:55 herrvendil Exp $
   */
  public class GenerateCertReqCommand extends BaseCommand {
 
@@ -63,14 +63,14 @@ import org.signserver.common.PKCS10CertReqInfo;
         		 id = Integer.parseInt(workerid);        		            		
         	 }else{
         		 // named worker is requested
-        		 id = getSignSession(hostname).getSignerId(workerid);
+        		 id = getCommonAdminInterface(hostname).getSignerId(workerid);
         		 if(id == 0){
         			 throw new IllegalAdminCommandException(resources[FAIL]);
         		 }
         	 }
 
         	 PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg,dn,null);
-        	 Base64SignerCertReqData reqData = (Base64SignerCertReqData) getSignSession(hostname).getCertificateRequest(id, certReqInfo);
+        	 Base64SignerCertReqData reqData = (Base64SignerCertReqData) getCommonAdminInterface(hostname).genCertificateRequest(id, certReqInfo);
         	 if (reqData == null) {
         		 throw new Exception("Base64SignerCertReqData returned was null. Unable to generate certificate request.");
         	 }

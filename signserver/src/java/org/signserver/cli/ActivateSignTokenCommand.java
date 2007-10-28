@@ -14,6 +14,7 @@
 
 package org.signserver.cli;
 
+import org.signserver.common.MailSignerStatus;
 import org.signserver.common.SignerStatus;
 
 
@@ -21,7 +22,7 @@ import org.signserver.common.SignerStatus;
 /**
  * Command used to activate a Sign Token
  *
- * @version $Id: ActivateSignTokenCommand.java,v 1.3 2007-03-14 20:38:32 primelars Exp $
+ * @version $Id: ActivateSignTokenCommand.java,v 1.4 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class ActivateSignTokenCommand extends BaseCommand {
 	
@@ -57,9 +58,16 @@ public class ActivateSignTokenCommand extends BaseCommand {
         	        	
         	
         	this.getOutputStream().println( resources[TRYING]+ signerid + "\n");
-        	this.getSignSession(hostname).activateSigner(signerid, authCode);
+        	this.getCommonAdminInterface(hostname).activateSigner(signerid, authCode);
         	
-        	if(((SignerStatus) getSignSession(hostname).getStatus(signerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE){
+        	boolean active = false;
+        	if(CommonAdminInterface.isSignServerMode()){
+        		active = ((SignerStatus) getCommonAdminInterface(hostname).getStatus(signerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE;
+        	}
+        	if(CommonAdminInterface.isMailSignerMode()){
+        		active = ((MailSignerStatus) getCommonAdminInterface(hostname).getStatus(signerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE;
+        	}
+        	if(active){
         		this.getOutputStream().println(resources[SUCCESS]);
         	}else{
         		this.getOutputStream().println(resources[FAIL]);

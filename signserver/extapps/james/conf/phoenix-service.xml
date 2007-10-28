@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server>
+<!-- JBoss Service configuration file -->
+
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  Phoenix Launcher Service Configuration                               -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+
+<server>
+  <classpath codebase="." archives="phoenix-loader.jar"/> 
+  <mbean code="org.apache.avalon.phoenix.launcher.JMXLauncher" name="Phoenix:service=Launcher">
+        <attribute name="PhoenixHome">../../phoenix/</attribute>
+        <attribute name="PhoenixConfigFile">../../phoenix/conf/kernel.xml</attribute>
+        <attribute name="AppsPath">../../phoenix/apps/</attribute>
+        <attribute name="LogFilename">../../phoenix/logs/phoenix.log/</attribute>
+        <attribute name="PhoenixDebug">false</attribute>
+    </mbean>
+</server>

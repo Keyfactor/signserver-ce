@@ -24,7 +24,7 @@ import java.util.Properties;
 /**
  * Implements the signserver command line interface
  *
- * @version $Id: signserver.java,v 1.10 2007-05-28 02:03:38 herrvendil Exp $
+ * @version $Id: signserver.java,v 1.11 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class signserver {
 	
@@ -69,11 +69,13 @@ public class signserver {
 	            	outputHelp();
 	            }
             } catch (IllegalAdminCommandException e) {
-                System.out.println(e.getMessage());            
+                System.out.println(e.getMessage());                
                 System.exit(-1);
             } catch (ErrorAdminCommandException e) {
             	System.out.println(e.getMessage()); 
-                //e.printStackTrace();
+                e.printStackTrace();
+                System.out.println("Caused by :" );
+                e.getCause().printStackTrace();
                 System.exit(-2);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -91,10 +93,24 @@ public class signserver {
     }
     
     protected void outputHelp() {
-    	System.out.println("Usage: signserver < getstatus | getconfig | reload | setproperty | setproperties | setpropertyfromfile | removeproperty " +
-    			"| dumpproperties | listauthorizedclients | addauthorizedclient | removeauthorizedclient | uploadsignercertificate " +
-    	"| uploadsignercertificatechain | activatesigntoken | deactivatesigntoken | generatecertreq | archive > \n");
-    	System.out.println("Available archive commands : Usage: signserver archive < findfromarchiveid | findfromrequestip | findfromrequestcert > \n");
+    	
+    	String usageString = "Usage: signserver < getstatus | getconfig | reload ";
+    	if(CommonAdminInterface.isSignServerMode()){
+    		usageString +="| resync ";
+    	}
+    	usageString +="| setproperty | setproperties | setpropertyfromfile | removeproperty | dumpproperties ";
+    	if(CommonAdminInterface.isSignServerMode()){
+    	  usageString +="| listauthorizedclients | addauthorizedclient | removeauthorizedclient ";
+    	}
+    	usageString +="| uploadsignercertificate | uploadsignercertificatechain | activatesigntoken | deactivatesigntoken | generatecertreq ";
+    	if(CommonAdminInterface.isSignServerMode()){	
+    		usageString +="| archive";
+    	}
+        usageString+= "> \n";
+    	System.out.println(usageString);
+    	if(CommonAdminInterface.isSignServerMode()){
+    	  System.out.println("Available archive commands : Usage: signserver archive < findfromarchiveid | findfromrequestip | findfromrequestcert > \n");
+    	}
     	System.out.println("Each basic command give more help");
 
     }

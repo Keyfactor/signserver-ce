@@ -13,6 +13,7 @@
 
 package org.signserver.common;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
@@ -22,7 +23,7 @@ import java.util.Date;
  * 
  * @author Philip Vendil 2007 jan 23
  *
- * @version $Id: ServiceConfig.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * @version $Id: ServiceConfig.java,v 1.3 2007-10-28 12:25:01 herrvendil Exp $
  */
  
 public class ServiceConfig {
@@ -59,18 +60,14 @@ public class ServiceConfig {
 		put(WorkerConfig.CLASS, this.getClass().getName());
 	}
 	
-	private void put(Object key,Object value){
+	private void put(String key,Serializable value){
 		workerConfig.getData().put(key, value);
 	}
 	
-	private Object get(Object key){
+	private Serializable get(String key){
 		return workerConfig.getData().get(key);
 	}
 	
-
-
-
-
 	public Date getLastRunTimestamp() {
 		String time = (String) get(LASTRUNTIMESTAMP);
 		if(time == null){

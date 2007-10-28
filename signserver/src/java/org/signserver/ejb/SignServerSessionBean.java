@@ -15,19 +15,20 @@
 package org.signserver.ejb;
 
 import java.math.BigInteger;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.FinderException;
-import javax.ejb.RemoveException;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
-import org.ejbca.core.ejb.BaseSessionBean;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
@@ -43,117 +44,56 @@ import org.signserver.common.SignTokenOfflineException;
 import org.signserver.common.SignerConfig;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IServiceTimerSession;
+import org.signserver.ejb.interfaces.ISignServerSession;
 import org.signserver.server.IWorker;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.signers.ISigner;
 
 /**
- * The main session bean
- * 
- * @ejb.bean name="SignServerSession"
- *           display-name="Name for SignSession"
- *           description="Description for SignSession"
- *           jndi-name="SignServerSession"
- *           local-jndi-name="SignServerSessionLocal"
- *           type="Stateless"
- *           view-type="both"
- *           transaction-type="Container"
- *
- * @ejb.transaction type="Supports"           
- *       
- * @ejb.ejb-external-ref description="The Global Configuration Session Bean"
- *   view-type="local"
- *   ref-name="ejb/GlobalConfigurationSessionLocal"
- *   type="Session"
- *   home="org.signserver.ejb.IGlobalConfigurationSessionLocalHome"
- *   business="org.signserver.ejb.IGlobalConfigurationSessionLocal"
- *   link="GlobalConfigurationSession"
- *   
- * @ejb.ejb-external-ref description="The Timer Service Session Bean"
- *   view-type="local"
- *   ref-name="ejb/ServiceTimerSessionLocal"
- *   type="Session"
- *   home="org.signserver.ejb.IServiceTimerSessionLocalHome"
- *   business="org.signserver.ejb.IServiceTimerSessionLocal"
- *   link="ServiceTimerSession"
- *           
- *           
- * @ejb.ejb-external-ref
- *   description="The Worker Config Bean"
- *   view-type="local"
- *   ejb-name="WorkerConfigDataLocal"
- *   type="Entity"
- *   home="org.signserver.ejb.WorkerConfigDataLocalHome"
- *   business="org.signserver.ejb.WorkerConfigDataLocal"
- *   link="WorkerConfigData"
- *   
- * @ejb.ejb-external-ref
- *   description="The Archive Bean"
- *   view-type="local"
- *   ejb-name="ArchiveDataLocal"
- *   type="Entity"
- *   home="org.signserver.ejb.ArchiveDataLocalHome"
- *   business="org.signserver.ejb.ArchiveDataLocal"
- *   link="ArchiveData" 
- * 
- * @ejb.home
- *   extends="javax.ejb.EJBHome"
- *   local-extends="javax.ejb.EJBLocalHome"
- *   local-class="org.signserver.ejb.SignServerSessionLocalHome"
- *   remote-class="org.signserver.ejb.SignServerSessionHome"
- *
- * @ejb.interface
- *   extends="javax.ejb.EJBObject"
- *   local-extends="javax.ejb.EJBLocalObject"
- *   local-class="org.signserver.ejb.SignServerSessionLocal"
- *   remote-class="org.signserver.ejb.SignServerSession"
- * 
- * 
- * 
- * @ejb.security-identity
- *           run-as="InternalUser"
+ * The main sign server session bean
  * 
  */
-public class SignServerSessionBean extends BaseSessionBean {
-
+@Stateless
+public class SignServerSessionBean implements ISignServerSession.ILocal, ISignServerSession.IRemote  {
+    @PersistenceContext(unitName="SignServerJPA")
+    EntityManager em;
 
 	private static final long serialVersionUID = 1L;
 
+	@EJB
+	private IGlobalConfigurationSession.ILocal globalConfigurationSession;
 
+	@EJB
+	private IServiceTimerSession.ILocal serviceTimerSession; 
+	
 	/** Log4j instance for actual implementation class */
 	public transient Logger log = Logger.getLogger(this.getClass());
 
     /** The local home interface of Worker Config entity bean. */
-    private WorkerConfigDataLocalHome workerConfigHome = null;
+    private WorkerConfigDataService workerConfigService = null;
     
     /** The local home interface of archive entity bean. */
-    private ArchiveDataLocalHome archiveDataHome = null;
+    private ArchiveDataService archiveDataService = null;
 
-	/**
-	 * 
-	 */
-	public SignServerSessionBean() {
-		super();
-		// Do Nothing     
+    @PostConstruct
+	public void create() {
+    	workerConfigService = new WorkerConfigDataService(em);
+    	archiveDataService = new ArchiveDataService(em);
 	}
+	
+	
 
-	/**
-	 * The SignSession Beans main method. Takes signature requests processes them
-	 * and returns a response.
-	 *
-	 *     
-	 * @throws SignTokenOfflineException if the signers token isn't activated. 
-	 * @throws IllegalSignRequestException if illegal request is sent to the method
-	 *
-	 *  
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#signData(int, org.signserver.common.ISignRequest, java.security.cert.X509Certificate, java.lang.String)
 	 */
 	public ISignResponse signData(int signerId, ISignRequest request,
 	                              X509Certificate clientCert, String requestIP) throws IllegalSignRequestException,
 		SignTokenOfflineException {
 		log.debug(">signData " + request.getRequestID());
-		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigHome, getGlobalConfigurationSession());
+		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService, globalConfigurationSession);
 		
         if(worker == null){
         	throw new IllegalSignRequestException("Non-existing signerId");
@@ -183,13 +123,8 @@ public class SignServerSessionBean extends BaseSessionBean {
         ISignResponse res = signer.signData(request,  clientCert);
 
         if(signer.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseSigner.ARCHIVE,"FALSE").equalsIgnoreCase("TRUE")){
-        	if(res.getArchiveData() != null){
-    			try {				
-    			  archiveDataHome.create(ArchiveDataVO.TYPE_RESPONSE,signerId, res.getArchiveId(), clientCert, requestIP, res.getArchiveData());
-    			} catch (CreateException e1) {
-                   throw new EJBException(e1);
-    			}
-        		        	
+        	if(res.getArchiveData() != null){    			
+    			  archiveDataService.create(ArchiveDataVO.TYPE_RESPONSE,signerId, res.getArchiveId(), clientCert, requestIP, res.getArchiveData());        		        	
         	}else{
         		log.error("Error archiving response generated of signer " + signerId + ", archiving is not supported by signer.");
         	}
@@ -203,10 +138,10 @@ public class SignServerSessionBean extends BaseSessionBean {
 
 
 
-	private boolean authorizedToRequestSignature(X509Certificate clientCert, Collection authorizedClients) {
+	private boolean authorizedToRequestSignature(X509Certificate clientCert, Collection<AuthorizedClient> authorizedClients) {
 
         boolean isAuthorized = false;
-        final Iterator iter = authorizedClients.iterator();
+        final Iterator<AuthorizedClient> iter = authorizedClients.iterator();
         String clientDN = CertTools.stringToBCDNString(clientCert.getIssuerDN().toString()); 
         
         while( iter.hasNext() && !isAuthorized ){
@@ -223,17 +158,11 @@ public class SignServerSessionBean extends BaseSessionBean {
 		return isAuthorized;
 	}
 
-	/**
-	 * Returns the current status of a signers. 
-	 *
-	 * Should be used with the cmd-line status command.
-	 * @param signerId of the signer
-	 * @return a SignerStatus class 
-	 *  
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#getStatus(int)
 	 */
 	public WorkerStatus getStatus(int workerId) throws InvalidSignerIdException{
-		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigHome, getGlobalConfigurationSession());
+		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession);
 		if(worker == null){
 			throw new InvalidSignerIdException("Given SignerId " + workerId + " doesn't exist");
 		}
@@ -242,59 +171,37 @@ public class SignServerSessionBean extends BaseSessionBean {
 		return worker.getStatus();
 	}
 
-	/**
-	 * Returns the Id of a signer given a name 
-	 *
-	 * @param signerName of the signer cannot be null
-	 * @return The Id of a named signer or 0 if no such name exists
-	 *  
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#getSignerId(java.lang.String)
 	 */
 	public int getSignerId(String signerName) {
-		return WorkerFactory.getInstance().getSignerIdFromName(signerName.toUpperCase(), workerConfigHome, getGlobalConfigurationSession());		
+		return WorkerFactory.getInstance().getSignerIdFromName(signerName.toUpperCase(), workerConfigService, globalConfigurationSession);		
 	}
 	 
 	
-	/**
-	 * Method used when a configuration have been updated. And should be
-	 * called from the commandline.
-	 *	  
-	 *
-	 * @param workerId of the worker that should be reloaded, or 0 to reload
-	 * reload of all available workers 
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#reloadConfiguration(int)
 	 */
 	public void reloadConfiguration(int workerId) {
 		if(workerId == 0){
-		  getGlobalConfigurationSession().reload();
+		  globalConfigurationSession.reload();
 		}else{
-			WorkerFactory.getInstance().reloadWorker(workerId, workerConfigHome, getGlobalConfigurationSession());
+			WorkerFactory.getInstance().reloadWorker(workerId, workerConfigService, globalConfigurationSession);
 		}
 		
-		if(workerId == 0 || getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES).contains(new Integer(workerId))){
-		  getServiceTimerSession().unload(workerId);
-		  getServiceTimerSession().load(workerId);
+		if(workerId == 0 || globalConfigurationSession.getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES).contains(new Integer(workerId))){
+		  serviceTimerSession.unload(workerId);
+		  serviceTimerSession.load(workerId);
 		}
 	}
 
-	/**
-	 * Method used to activate the signtoken of a signer.
-	 * Should be called from the command line.
-	 *    
-	 * 
-	 * @param signerId of the signer
-	 * @param authenticationCode (PIN) used to activate the token.
-	 * 
-	 * @throws SignTokenOfflineException 
-	 * @throws SignTokenAuthenticationFailureException 
-	 *
-	 *  
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#activateSigner(int, java.lang.String)
 	 */
 	public void activateSigner(int signerId, String authenticationCode)
 		throws SignTokenAuthenticationFailureException,
 		SignTokenOfflineException, InvalidSignerIdException {
-		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
+		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession);
 		if(worker == null){
 			throw new InvalidSignerIdException("Given SignerId " + signerId + " doesn't exist");
 		}
@@ -307,23 +214,12 @@ public class SignServerSessionBean extends BaseSessionBean {
 		signer.activateSigner(authenticationCode);
 	}
 
-	/**
-	 * Method used to deactivate the signtoken of a signer.
-	 * Should be called from the command line.
-	 *    
-	 * 
-	 * @param signerId of the signer
-	 * @param authenticationCode (PIN) used to activate the token.
-	 * 
-	 * @throws SignTokenOfflineException 
-	 * @throws SignTokenAuthenticationFailureException 
-	 *
-	 *  
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#deactivateSigner(int)
 	 */
-	public void deactivateSigner(int signerId)
+	public boolean deactivateSigner(int signerId)
 		throws SignTokenOfflineException, InvalidSignerIdException {
-		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
+		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession);
 		if(worker == null){
 			throw new InvalidSignerIdException("Given SignerId " + signerId + " doesn't exist");
 		}
@@ -333,141 +229,77 @@ public class SignServerSessionBean extends BaseSessionBean {
         }
 		ISigner signer = (ISigner) worker;
 		
-		signer.deactivateSigner();
+		return signer.deactivateSigner();
 	}
 
-	/**
-	 * Returns the current configuration of a signer.
-	 * 
-	 * Observe that this config might not be active until a reload command have been excecuted.
-	 * 
-	 * 
-	 * @param signerId
-	 * @return the current (not always active) configuration
-	 * 
-	 *  
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#getCurrentSignerConfig(int)
 	 */
 	public WorkerConfig getCurrentSignerConfig(int signerId){
-        return getSignerConfigBean(signerId).getWorkerConfig(); 				
+        return getSignerConfig(signerId); 				
 	}
 	
-	/**
-	 * Sets a parameter in a workers configuration
-	 * 
-	 * Observe that the worker isn't activated with this config until reload is performed.
-	 * 
-	 * @param workerId
-	 * @param key
-	 * @param value
-	 * 
-     * @ejb.transaction type="Required"  
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#setWorkerProperty(int, java.lang.String, java.lang.String)
 	 */
 	public void setWorkerProperty(int workerId, String key, String value){
-		WorkerConfigDataLocal signerconfigdata = getSignerConfigBean(workerId);
-		
-		WorkerConfig config = signerconfigdata.getWorkerConfig();
+		WorkerConfig config = getSignerConfig(workerId);
 		config.setProperty(key.toUpperCase(),value);
-		signerconfigdata.setWorkerConfig(config);
+		workerConfigService.setWorkerConfig(workerId, config);		
 	}
 	
-	/**
-	 * Removes a given workers property
-	 * 
-	 * 
-	 * @param workerId
-	 * @param key
-	 * @return true if the property did exist and was removed othervise false
-	 * 
-     * @ejb.transaction type="Required"
-	 * @ejb.interface-method
-	 */
-	
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#removeWorkerProperty(int, java.lang.String)
+	 */	
 	public boolean removeWorkerProperty(int workerId, String key){
 		boolean result = false;
-		WorkerConfigDataLocal workerconfigdata = getSignerConfigBean(workerId);
-		
-		WorkerConfig config = workerconfigdata.getWorkerConfig();
+		WorkerConfig config = getSignerConfig(workerId);
+				
 		result = config.removeProperty(key.toUpperCase());
 		if(config.getProperties().size() == 0){
-		  try {
-			workerconfigdata.remove();
+			workerConfigService.removeWorkerConfig(workerId);
 			log.debug("WorkerConfig is empty and therefore removed.");
-		} catch (EJBException e) {
-			log.error(e);
-		} catch (RemoveException e) {
-			log.error(e);
-		}
 		}else{
-		  workerconfigdata.setWorkerConfig(config);
+			workerConfigService.setWorkerConfig(workerId,config);
 		}
 		return result;
 	}	
 	
-	/**
-	 * Method that returns a collection of AuthorizedClient of
-	 * client certificate sn and issuerid accepted for a given signer-
-	 * 
-	 * @param signerId
-	 * @return Sorted collection opf authorized clients
-	 * 
-	 *  
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#getAuthorizedClients(int)
 	 */
-	public Collection getAuthorizedClients(int signerId){
-		return new SignerConfig( getSignerConfigBean(signerId).getWorkerConfig()).getAuthorizedClients();
+	public Collection<AuthorizedClient> getAuthorizedClients(int signerId){
+		return new SignerConfig( getSignerConfig(signerId)).getAuthorizedClients();
 	}
 	
-	/**
-	 * Method adding an authorized client to a signer
-	 * 
-	 * @param signerId
-	 * @param authClient
-	 * 
-     * @ejb.transaction type="Required"
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#addAuthorizedClient(int, org.signserver.common.AuthorizedClient)
 	 */
 	public void addAuthorizedClient(int signerId, AuthorizedClient authClient){
-		WorkerConfigDataLocal signerconfigdata = getSignerConfigBean(signerId);
-		
-		WorkerConfig config = signerconfigdata.getWorkerConfig();
+		WorkerConfig config = getSignerConfig(signerId);
 		(new SignerConfig(config)).addAuthorizedClient(authClient);
-		signerconfigdata.setWorkerConfig(config);		
+		workerConfigService.setWorkerConfig(signerId, config);		
 	}
 
-	/**
-	 * Removes an authorized client from a signer
-	 * 
-	 * @param signerId
-	 * @param authClient
-	 * 
-     * @ejb.transaction type="Required"
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#removeAuthorizedClient(int, org.signserver.common.AuthorizedClient)
 	 */
 	public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient){
 		boolean result = false;
-		WorkerConfigDataLocal signerconfigdata = getSignerConfigBean(signerId);
+		WorkerConfig config = getSignerConfig(signerId);
 		
-		WorkerConfig config = signerconfigdata.getWorkerConfig();
+		
 		result = (new SignerConfig(config)).removeAuthorizedClient(authClient);
-		signerconfigdata.setWorkerConfig(config);
+		workerConfigService.setWorkerConfig(signerId, config);
 		return result;
 	}
 	
-	/**
-	 * Method used to let a signer generate a certificate request
-	 * using the signers own genCertificateRequest metod
-	 * 
-	 * @param signerId id of the signer
-	 * @param certReqInfo information used by the signer to create the request
-	 * 
-     * @ejb.transaction type="Required"
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
 	 */
 	public ISignerCertReqData getCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws		
 		SignTokenOfflineException, InvalidSignerIdException {
-			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
+			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession);
 			if(worker == null){
 				throw new InvalidSignerIdException("Given SignerId " + signerId + " doesn't exist");
 			}
@@ -480,18 +312,11 @@ public class SignServerSessionBean extends BaseSessionBean {
 			return signer.genCertificateRequest(certReqInfo);
 	}
 	
-	/**
-	 * Method used to remove a key from a signer.
-	 * 
-	 * @param signerId id of the signer
-	 * @param purpose on of ISignToken.PURPOSE_ constants
-	 * @return true if removal was successful.
-	 * 
-     * @ejb.transaction type="Required"
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#destroyKey(int, int)
 	 */
 	public boolean destroyKey(int signerId, int purpose) throws	InvalidSignerIdException {
-			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigHome,getGlobalConfigurationSession());
+			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession);
 			if(worker == null){
 				throw new InvalidSignerIdException("Given SignerId " + signerId + " doesn't exist");
 			}
@@ -504,51 +329,35 @@ public class SignServerSessionBean extends BaseSessionBean {
 			return signer.destroyKey(purpose);
 	}
 	
-	/**
-	 * Method used to upload a certificate to a signers active configuration
-	 * 
-	 * @param signerId id of the signer
-	 * @param signerCert the certificate used to sign signature requests
-	 * @param scope one of GlobalConfiguration.SCOPE_ constants
-	 *  
-     * @ejb.transaction type="Required"
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#uploadSignerCertificate(int, java.security.cert.X509Certificate, java.lang.String)
 	 */
 	public void uploadSignerCertificate(int signerId, X509Certificate signerCert, String scope){		
-		WorkerConfigDataLocal signerconfigdata = getSignerConfigBean(signerId);
-		
-		WorkerConfig config = signerconfigdata.getWorkerConfig();
+		WorkerConfig config = getSignerConfig(signerId);
+
 		( new SignerConfig(config)).setSignerCertificate(signerCert,scope);
-		signerconfigdata.setWorkerConfig(config);
+		workerConfigService.setWorkerConfig(signerId, config);
 	}
 	
-	/**
-	 * Method used to upload a complete certificate chain to a configuration
-	 * 
-	 * @param signerId id of the signer
-	 * @param signerCerts the certificatechain used to sign signature requests
-	 * @param scope one of GlobalConfiguration.SCOPE_ constants
-     * @ejb.transaction type="Required"
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#uploadSignerCertificateChain(int, java.util.Collection, java.lang.String)
 	 */
-	public void uploadSignerCertificateChain(int signerId, Collection signerCerts, String scope){		
-		WorkerConfigDataLocal signerconfigdata = getSignerConfigBean(signerId);
+	public void uploadSignerCertificateChain(int signerId, Collection<Certificate> signerCerts, String scope){		
 		
-		WorkerConfig config = signerconfigdata.getWorkerConfig();
+		WorkerConfig config = getSignerConfig(signerId);
 		(new SignerConfig( config)).setSignerCertificateChain(signerCerts, scope);
-		signerconfigdata.setWorkerConfig(config);
+		workerConfigService.setWorkerConfig(signerId, config);
 	}
 	
-	/**
-	 * Methods that generates a free workerid that can be used for new signers
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#genFreeWorkerId()
 	 */
 	public int genFreeWorkerId(){
-		Collection ids =  getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+		Collection<Integer> ids =  globalConfigurationSession.getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
 		int max = 0;
-		Iterator iter = ids.iterator();
+		Iterator<Integer> iter = ids.iterator();
 		while(iter.hasNext()){
-			Integer id = (Integer) iter.next();
+			Integer id =  iter.next();
 			if(id.intValue() > max){
 				max = id.intValue();
 			}
@@ -557,131 +366,63 @@ public class SignServerSessionBean extends BaseSessionBean {
 		return max+1;
 	}
 	
-	/**
-	 * Method that finds an archive given it's archive Id
-	 * 
-	 * @param signerId id of the signer
-	 * @param archiveId the Id of the archive data (could be request serialnumber).
-	 * 
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#findArchiveDataFromArchiveId(int, java.lang.String)
 	 */
 	public ArchiveDataVO findArchiveDataFromArchiveId(int signerId, String archiveId){
 		ArchiveDataVO retval = null;
-		try {
-			retval = archiveDataHome.findByArchiveId(ArchiveDataVO.TYPE_RESPONSE,signerId,archiveId).getArchiveDataVO();
-		} catch (FinderException e) {}
+		
+		ArchiveDataBean adb = archiveDataService.findByArchiveId(ArchiveDataVO.TYPE_RESPONSE,signerId,archiveId);
+		if(adb != null){
+			retval = adb.getArchiveDataVO();
+		}
 		
 		return retval;
 	}
 	
-	/**
-	 * Method that finds an archive given it's requestors IP
-	 * 
-	 * @param signerId id of the signer
-	 * @param requestIP the IP address of the client creating the request
-	 * 
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#findArchiveDatasFromRequestIP(int, java.lang.String)
 	 */
-	public List findArchiveDatasFromRequestIP(int signerId, String requestIP){
-		ArrayList retval = new ArrayList();
-		try {
-			Collection result = archiveDataHome.findByRequestIP(ArchiveDataVO.TYPE_RESPONSE,signerId,requestIP);
-			Iterator iter = result.iterator();
-			while(iter.hasNext()){
-			  ArchiveDataLocal next = (ArchiveDataLocal) iter.next();
-			  retval.add(next.getArchiveDataVO());
-			}
-			
-		} catch (FinderException e) {}
-		
+	public List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerId, String requestIP){
+		ArrayList<ArchiveDataVO> retval = new ArrayList<ArchiveDataVO>();
+
+		Collection<ArchiveDataBean> result = archiveDataService.findByRequestIP(ArchiveDataVO.TYPE_RESPONSE,signerId,requestIP);
+		Iterator<ArchiveDataBean> iter = result.iterator();
+		while(iter.hasNext()){
+			ArchiveDataBean next =  iter.next();
+			retval.add(next.getArchiveDataVO());
+		}
+
 		return retval;
 	}
 	
-	/**
-	 * Method that finds an archive given it's requesters client certificate
-	 * 
-	 * @param signerId id of the signer
-	 * @param requestCertSerialnumber the serialnumber of the certificate making the request
-	 * @param requestIssuerDN the issuer of the client certificate
-	 * 
-	 * @ejb.interface-method
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.ISignServerSession#findArchiveDatasFromRequestCertificate(int, java.math.BigInteger, java.lang.String)
 	 */
-	public List findArchiveDatasFromRequestCertificate(int signerId, BigInteger requestCertSerialnumber, String requestCertIssuerDN){
-		ArrayList retval = new ArrayList();
-		try {
-			Collection result = archiveDataHome.findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE,signerId,CertTools.stringToBCDNString(requestCertIssuerDN),requestCertSerialnumber.toString(16));
-			Iterator iter = result.iterator();
-			while(iter.hasNext()){
-			  ArchiveDataLocal next = (ArchiveDataLocal) iter.next();
-			  retval.add(next.getArchiveDataVO());
-			}
-			
-		} catch (FinderException e) {}
+	public List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(int signerId, BigInteger requestCertSerialnumber, String requestCertIssuerDN){
+		ArrayList<ArchiveDataVO> retval = new ArrayList<ArchiveDataVO>();
+
+		Collection<ArchiveDataBean> result = archiveDataService.findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE,signerId,CertTools.stringToBCDNString(requestCertIssuerDN),requestCertSerialnumber.toString(16));
+		Iterator<ArchiveDataBean> iter = result.iterator();
+		while(iter.hasNext()){
+			ArchiveDataBean next = iter.next();
+			retval.add(next.getArchiveDataVO());
+		}
 		
 		return retval;
 	}	
 	
 	
-
-	/**
-	 * Create method
-	 * @ejb.create-method  view-type = "remote"
-	 */
-	public void ejbCreate() throws javax.ejb.CreateException {
-		workerConfigHome = (WorkerConfigDataLocalHome) getLocator().getLocalHome(WorkerConfigDataLocalHome.COMP_NAME);
-		archiveDataHome = (ArchiveDataLocalHome) getLocator().getLocalHome(ArchiveDataLocalHome.COMP_NAME);
-	}
-	
-	private WorkerConfigDataLocal getSignerConfigBean(int signerId){
-		WorkerConfigDataLocal signerConfig = null;
-	    try {
-			signerConfig = workerConfigHome.findByPrimaryKey(new WorkerConfigDataPK(signerId));
-		} catch (FinderException e) {
-			try {				
-				signerConfig = workerConfigHome.create(signerId,WorkerConfig.class.getName());
-			} catch (CreateException e1) {
-               throw new EJBException(e1);
-			}
+	private WorkerConfig getSignerConfig(int signerId){
+		WorkerConfig signerConfig = workerConfigService.getWorkerConfig(signerId);
+	    if(signerConfig == null){
+	    	workerConfigService.create(signerId, WorkerConfig.class.getName());
+			signerConfig = workerConfigService.getWorkerConfig(signerId);
 		}
 		return signerConfig;	
 	}
 	
-    /**
-     * Gets connection to global configuration session bean
-     *
-     * @return Connection
-     */
-    private IGlobalConfigurationSessionLocal getGlobalConfigurationSession() {
-        if (globalConfigurationSession == null) {
-            try {
-                IGlobalConfigurationSessionLocalHome globalconfigurationsessionhome = (IGlobalConfigurationSessionLocalHome) getLocator().getLocalHome(IGlobalConfigurationSessionLocalHome.COMP_NAME);
-                globalConfigurationSession = globalconfigurationsessionhome.create();
-            } catch (CreateException e) {
-                throw new EJBException(e);
-            }
-        }
-        return globalConfigurationSession;
-    } //getGlobalConfigurationSession
-    
-    private IGlobalConfigurationSessionLocal globalConfigurationSession = null;
-	
-    /**
-     * Gets connection to the service timer session
-     *
-     * @return Connection
-     */
-    private IServiceTimerSessionLocal getServiceTimerSession() {
-        if (serviceTimerSession == null) {
-            try {
-                IServiceTimerSessionLocalHome servicetimersessionhome = (IServiceTimerSessionLocalHome) getLocator().getLocalHome(IServiceTimerSessionLocalHome.COMP_NAME);
-                serviceTimerSession = servicetimersessionhome.create();
-            } catch (CreateException e) {
-                throw new EJBException(e);
-            }
-        }
-        return serviceTimerSession;
-    } //getServiceTimerSession
-    
-    private IServiceTimerSessionLocal serviceTimerSession = null;
+
+
     
 }

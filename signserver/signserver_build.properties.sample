@@ -1,7 +1,7 @@
 #
-# $Id: signserver_build.properties.sample,v 1.4 2007-04-26 08:25:20 herrvendil Exp $
+# $Id: signserver_build.properties.sample,v 1.5 2007-10-28 12:30:22 herrvendil Exp $
 #
-# File containting the build properties of the sign server
+# File containing the build properties of the sign server
 # 
 #
 
@@ -19,6 +19,19 @@
 # default: 1.5
 #server.java.target=1.5
 #client.java.target=1.5
+
+# SignServer Mode
+# Setting defining in which mode the SignServer should be built
+# Uncomment the following setting to build a stand-alone MailSigner
+# instead of a SignServer cluster.
+#
+#build.mode=MAILSIGNER
+
+##########################################################################
+#  SignServer Specific Settings                                          #
+#  Don't change this if you are setting up a Mail Signer                 #
+#  Mail Signer settings is further down.                                 #                                                                      #
+##########################################################################
 
 
 # Default content encoding used to display JSP pages.
@@ -40,7 +53,7 @@
 
 
 #PrimeCardHSM Specific Properties
-#Uncomment to when using PrimeCardHSM or RMI-SSL, default false.
+#Uncomment to when using PrimeCardHSM, default false.
 #primeCard.use=true
 #primeCard.home=${env.PRIMECARD_HOME}
 
@@ -202,3 +215,33 @@
 #ext.web.src=../needles/src/web/signserver
 # the location of external code to be included
 #src.external=../needles/tmp/bin/classes
+
+##########################################################################
+#  Mail Signer Specific Settings                                         #
+#  Don't change this if you are setting up a SignServer                  #
+#  Remember to configure the file mailsigner.properties as well          #                                                                      #
+##########################################################################
+
+# The Primary DNS server that the MailSigner should use.
+# Required Setting.
+mailsigner.primarydns=
+
+# The Secondary DNS server that the MailSigner should use.
+# Required Setting.
+mailsigner.secondarydns
+
+# Port that SMTP server should listen on
+# default=25
+#mailsigner.smtpport=25
+
+# Mail address to the postmaster administrator  
+# Required Setting.
+mailsigner.postmaster=
+
+# Ports used by CLI interface to connect to the mail signer over RMI
+# Only change these if the ports isn't available on you server.
+#
+# default 1099 and 2099
+#rmi.registry.port= 1099
+#rmi.server.port= 2099
+	

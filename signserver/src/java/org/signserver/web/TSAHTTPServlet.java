@@ -18,7 +18,9 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Random;
 
-import javax.ejb.EJBException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,13 +31,11 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
-import org.ejbca.core.ejb.ServiceLocator;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalSignRequestException;
 import org.signserver.common.SignTokenOfflineException;
-import org.signserver.ejb.SignServerSessionLocal;
-import org.signserver.ejb.SignServerSessionLocalHome;
+import org.signserver.ejb.interfaces.ISignServerSession;
 
  
 
@@ -47,7 +47,7 @@ import org.signserver.ejb.SignServerSessionLocalHome;
  * Use the request parameter 'signerId' to specify the timestamp signer.
  * 
  * @author Philip Vendil
- * @version $Id: TSAHTTPServlet.java,v 1.3 2007-09-24 11:37:52 anatom Exp $
+ * @version $Id: TSAHTTPServlet.java,v 1.4 2007-10-28 12:27:11 herrvendil Exp $
  */
 
 public class TSAHTTPServlet extends HttpServlet {
@@ -55,6 +55,22 @@ public class TSAHTTPServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private static Logger log = Logger.getLogger(TSAHTTPServlet.class);
+	
+
+	private ISignServerSession.ILocal signserversession;
+	
+    private ISignServerSession.ILocal getSignServerSession(){
+    	if(signserversession == null){
+    		try{
+    		  Context context = new InitialContext();
+    		  signserversession =  (org.signserver.ejb.interfaces.ISignServerSession.ILocal) context.lookup(ISignServerSession.ILocal.JNDI_NAME);
+    		}catch(NamingException e){
+    			log.error(e);
+    		}
+    	}
+    	
+    	return signserversession;
+    }
 	
 	private static final String SIGNERID_PROPERTY_NAME = "signerId";
 
@@ -121,7 +137,7 @@ public class TSAHTTPServlet extends HttpServlet {
         
         GenericSignResponse signResponse = null;
         try {
-			signResponse = (GenericSignResponse) getSignSession().signData(signerId, new GenericSignRequest(requestId, timeStampRequest),(X509Certificate) clientCertificate, req.getRemoteAddr());
+			signResponse = (GenericSignResponse) getSignServerSession().signData(signerId, new GenericSignRequest(requestId, timeStampRequest),(X509Certificate) clientCertificate, req.getRemoteAddr());
 		} catch (IllegalSignRequestException e) {
 			 throw new ServletException(e);
 		} catch (SignTokenOfflineException e) {
@@ -152,25 +168,6 @@ public class TSAHTTPServlet extends HttpServlet {
         
 
     } // doGet
-	
-
-	
-	private SignServerSessionLocal signsession = null;	
-	private SignServerSessionLocal getSignSession(){
-		if(signsession == null){
-
-			try {			
-				SignServerSessionLocalHome signhome = (SignServerSessionLocalHome) ServiceLocator.getInstance().getLocalHome(SignServerSessionLocalHome.COMP_NAME);
-			    signsession = signhome.create();
-			} catch (Exception e) {
-				throw new EJBException(e);
-			} 
-			
-		}
-		
-		return signsession;
-	}
-	
 	
 
 }

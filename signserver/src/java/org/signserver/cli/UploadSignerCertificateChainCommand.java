@@ -14,6 +14,7 @@
 
 package org.signserver.cli;
 
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Iterator;
@@ -27,7 +28,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Commands that uploads a PEM certificate to a singers config.
  *
- * @version $Id: UploadSignerCertificateChainCommand.java,v 1.3 2007-03-14 08:16:49 herrvendil Exp $
+ * @version $Id: UploadSignerCertificateChainCommand.java,v 1.4 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class UploadSignerCertificateChainCommand extends BaseCommand {
 	
@@ -51,7 +52,8 @@ public class UploadSignerCertificateChainCommand extends BaseCommand {
      * @throws IllegalAdminCommandException Error in command args
      * @throws ErrorAdminCommandException Error running command
      */
-    protected void execute(String hostname, String[] resources) throws IllegalAdminCommandException, ErrorAdminCommandException {
+    @SuppressWarnings("unchecked")
+	protected void execute(String hostname, String[] resources) throws IllegalAdminCommandException, ErrorAdminCommandException {
         if (args.length != 4) {
 	       throw new IllegalAdminCommandException(resources[HELP]);	       
 	    }	
@@ -73,7 +75,7 @@ public class UploadSignerCertificateChainCommand extends BaseCommand {
         	}
         	
         	String filename = args[3];
-            Collection certs = CertTools.getCertsFromPEM(filename);
+            Collection<Certificate> certs = CertTools.getCertsFromPEM(filename);
             if(certs.size() == 0){
             	throw new IllegalAdminCommandException(resources[BADPEM]);
             }
@@ -82,14 +84,14 @@ public class UploadSignerCertificateChainCommand extends BaseCommand {
         	        	        
         	this.getOutputStream().println(resources[TRYING]);
         	
-        	Iterator iter = certs.iterator();
+        	Iterator<Certificate> iter = certs.iterator();
         	while(iter.hasNext()){
         	  X509Certificate cert = (X509Certificate) iter.next();
               printCert(cert);
               this.getOutputStream().println("\n");
         	}
         	
-        	getSignSession(hostname).uploadSignerCertificateChain(signerid, certs, scope);
+        	getCommonAdminInterface(hostname).uploadSignerCertificateChain(signerid, certs, scope);
 
         	
         } catch (Exception e) {

@@ -24,7 +24,7 @@ import org.signserver.common.AuthorizedClient;
 /**
  * Adds an authorized client to a signer
  *
- * @version $Id: AddAuthorizedClientCommand.java,v 1.1 2007-02-27 16:18:08 herrvendil Exp $
+ * @version $Id: AddAuthorizedClientCommand.java,v 1.2 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class AddAuthorizedClientCommand extends BaseCommand {
 	
@@ -63,10 +63,10 @@ public class AddAuthorizedClientCommand extends BaseCommand {
         	this.getOutputStream().println("Adding the client certificate with sn " + certsn + " and issuerDN : " + issuerdn +" for signer " + signerid + "\n");
         	this.getOutputStream().println("See current configuration with the listauthorizedclients command, activate it with the reload command\n");		                       
         	
-        	getSignSession(hostname).addAuthorizedClient(signerid,authClient);        	        	
+        	getCommonAdminInterface(hostname).addAuthorizedClient(signerid,authClient);        	        	
         	
 
-        	printAuthorizedClients(getSignSession(hostname).getCurrentSignerConfig(signerid));
+        	printAuthorizedClients(getCommonAdminInterface(hostname).getCurrentSignerConfig(signerid));
         	
     		this.getOutputStream().println("\n\n");
         	

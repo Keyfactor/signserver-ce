@@ -14,6 +14,7 @@
 
 package org.signserver.ejb;
 
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,83 +22,43 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.FinderException;
-import javax.ejb.RemoveException;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 
 import org.apache.log4j.Logger;
-import org.ejbca.core.ejb.BaseSessionBean;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ResyncException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.GlobalConfigurationCache;
 import org.signserver.server.GlobalConfigurationFileParser;
 import org.signserver.server.service.IService;
 import org.signserver.server.signers.ISigner;
 
 /**
- * The main session bean
- * 
- * @ejb.bean name="GlobalConfigurationSession"
- *           display-name="Global Configuration"
- *           description="GlobalConfigurationFileParser"
- *           jndi-name="GlobalConfigurationSession"
- *           local-jndi-name="GlobalConfigurationSessionLocal"
- *           type="Stateless"
- *           view-type="both"
- *           transaction-type="Container"
- *
- * @ejb.transaction type="Required"                  
- *           
- * @ejb.ejb-external-ref
- *   description="GlobalConfigurationFileParser Entity Bean"
- *   view-type="local"
- *   ejb-name="GlobalConfigurationDataLocal"
- *   type="Entity"
- *   home="org.signserver.ejb.GlobalConfigurationDataLocalHome"
- *   business="org.signserver.ejb.GlobalConfigurationDataLocal"
- *   link="GlobalConfigurationData"
- *   
- * @ejb.home
- *   extends="javax.ejb.EJBHome"
- *   local-extends="javax.ejb.EJBLocalHome"
- *   local-class="org.signserver.ejb.IGlobalConfigurationSessionLocalHome"
- *   remote-class="org.signserver.ejb.IGlobalConfigurationSessionHome"
- *
- * @ejb.interface
- *   extends="javax.ejb.EJBObject"
- *   local-extends="javax.ejb.EJBLocalObject"
- *   local-class="org.signserver.ejb.IGlobalConfigurationSessionLocal"
- *   remote-class="org.signserver.ejb.IGlobalConfigurationSession"
+ * The implementation of the GlobalConfiguration Session Bean
  * 
  * 
- * 
- * @ejb.security-identity
- *           run-as="InternalUser"
+ * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession 
  *           
  * @version $id$
  */
-public class GlobalConfigurationSessionBean extends BaseSessionBean {
-
-
+@Stateless
+public class GlobalConfigurationSessionBean implements IGlobalConfigurationSession.ILocal, IGlobalConfigurationSession.IRemote {
+    @PersistenceContext(unitName="SignServerJPA")
+    EntityManager em;
+    
 	private static final long serialVersionUID = 1L;
 	
 	static{
 		SignServerUtil.installBCProvider();
 	}
 	
-
-
-
-
 	/** Log4j instance for actual implementation class */
 	public transient Logger log = Logger.getLogger(this.getClass());
-
-    /** The local home interface of Global Configuration entity bean. */
-    private GlobalConfigurationDataLocalHome globalConfigHome = null;
-    
  
 	/**
 	 * 
@@ -108,14 +69,7 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 	}
 	
 	/**
-	 * Method setting a global configuration property. 
-	 * For node. prefix will the node id be appended.
-	 * 
-	 * @param scope, one of the GlobalConfiguration.SCOPE_ constants
-	 * @param key of the property should not have any scope prefix, never null
-	 * @param value the value, never null.
-	 * @ejb.transaction type="Required" 
-	 * @ejb.interface-method
+	 * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#setProperty(String, String, String)
 	 */
 	public void setProperty(String scope, String key, String value) {				
 		if(GlobalConfigurationCache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)){
@@ -145,13 +99,7 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 	
 	
 	/**
-	 * Method used to remove a property from the global configuration.
-	 * 
-	 * @param scope, one of the GlobalConfiguration.SCOPE_ constants
-	 * @param key of the property should start with either glob. or node., never null
-	 * @return true if removal was successful, othervise false.
-	 * @ejb.transaction type="Required" 
-	 * @ejb.interface-method
+	 * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#removeProperty(String, String)
 	 */
 	public boolean removeProperty(String scope, String key){
 		boolean retval = false;
@@ -159,14 +107,9 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 		if(GlobalConfigurationCache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)){
 			GlobalConfigurationCache.getCachedGlobalConfig().remove(propertyKeyHelper(scope, key));
 		}else{				
-			try {
-				try {
-					GlobalConfigurationDataLocal globalConfigLocal = globalConfigHome.findByPrimaryKey(propertyKeyHelper(scope, key));
-					globalConfigLocal.remove();
-				} catch (FinderException e) {}				
-				GlobalConfigurationCache.setCachedGlobalConfig(null);
-				retval = true;
-			}catch (RemoveException e) {
+			try {				
+				retval = getGlobalConfigurationDataService().removeGlobalProperty(propertyKeyHelper(scope, key));
+				GlobalConfigurationCache.setCachedGlobalConfig(null);				
 			} catch (Throwable e) {
 				log.error("Error connecting to database, configuration is un-syncronized", e);
 				GlobalConfigurationCache.setCurrentState(GlobalConfiguration.STATE_OUTOFSYNC);
@@ -177,11 +120,7 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 	}
 	
 	/**
-	 * Method that returns all the global properties with
-	 * Global Scope and Node scopes properties for this node.
-	 * 
-	 * @return A GlobalConfiguration Object, nevel null
-	 * @ejb.interface-method
+	 * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#getGlobalConfiguration()
 	 */ 
 	public GlobalConfiguration getGlobalConfiguration(){
 		GlobalConfiguration retval = null;
@@ -190,28 +129,25 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 			GlobalConfigurationFileParser staticConfig = GlobalConfigurationFileParser.getInstance();
 			Properties properties = staticConfig.getStaticGlobalConfiguration();
 
-			try {
-				Iterator iter = globalConfigHome.findAll().iterator();
-				while(iter.hasNext()){
-					GlobalConfigurationDataLocal data = (GlobalConfigurationDataLocal) iter.next();
-					String rawkey = data.getPropertyKey();
-					if(rawkey.startsWith(GlobalConfiguration.SCOPE_NODE)){
-						String key = rawkey.replaceFirst(WorkerConfig.getNodeId() + ".", "");
-						properties.setProperty(key, data.getPropertyValue());
+			Iterator<GlobalConfigurationDataBean> iter = getGlobalConfigurationDataService().findAll().iterator();
+			while(iter.hasNext()){
+				GlobalConfigurationDataBean data =  iter.next();
+				String rawkey = data.getPropertyKey();
+				if(rawkey.startsWith(GlobalConfiguration.SCOPE_NODE)){
+					String key = rawkey.replaceFirst(WorkerConfig.getNodeId() + ".", "");
+					properties.setProperty(key, data.getPropertyValue());
+				}else{
+					if(rawkey.startsWith(GlobalConfiguration.SCOPE_GLOBAL)){
+						properties.setProperty(rawkey, data.getPropertyValue());				
 					}else{
-						if(rawkey.startsWith(GlobalConfiguration.SCOPE_GLOBAL)){
-							properties.setProperty(rawkey, data.getPropertyValue());				
-						}else{
-							log.error("Illegal property in Global Configuration " + rawkey);
-						}
-					}				
-				}
-				
-				GlobalConfigurationCache.setCachedGlobalConfig(properties);
-
-			} catch (FinderException e) {
-				log.error("Error fetching properties in the dynamic global configuration store",e);
+						log.error("Illegal property in Global Configuration " + rawkey);
+					}
+				}				
 			}
+
+			GlobalConfigurationCache.setCachedGlobalConfig(properties);
+
+
 		}
 
 		retval = new GlobalConfiguration(GlobalConfigurationCache.getCachedGlobalConfig(),GlobalConfigurationCache.getCurrentState());
@@ -220,34 +156,28 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 	}
 	
 	/**
-	 * Help method that returns all worker, either signers
-	 * or services defined in the global configuration.
-	 * 
-	 * @param workerType can either be GlobalConfiguration.WORKERTYPE_ALL, _SIGNERS or _SERVICES
-	 * 
-	 * @return A List if Integers of worker Ids, never null.
-	 * @ejb.interface-method
+	 * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#getWorkers(int)
 	 */
-	public List getWorkers(int workerType){
-		ArrayList retval = new ArrayList();
+	public List<Integer> getWorkers(int workerType){
+		ArrayList<Integer> retval = new ArrayList<Integer>();
         GlobalConfiguration gc = getGlobalConfiguration();
         
-        Iterator iter = gc.getKeyIterator();
+        Iterator<String> iter = gc.getKeyIterator();
         while(iter.hasNext()){
-        	String key = (String) iter.next();  
-        	debug("getWorkers, processing key : " + key);
+        	String key =  iter.next();  
+        	log.debug("getWorkers, processing key : " + key);
         	if(key.startsWith("GLOB.WORKER")){
-                retval = (ArrayList) getWorkerHelper(retval,gc,key,workerType,false);
+                retval = (ArrayList<Integer>) getWorkerHelper(retval,gc,key,workerType,false);
         	}
         	if(key.startsWith("GLOB.SIGNER")){
-        		retval = (ArrayList) getWorkerHelper(retval,gc,key,workerType,true);
+        		retval = (ArrayList<Integer>) getWorkerHelper(retval,gc,key,workerType,true);
         	}
         }
         
         return retval;
 	}
 	
-	private List getWorkerHelper(List retval, GlobalConfiguration gc, String key, int workerType, boolean signersOnly){
+	private List<Integer> getWorkerHelper(List<Integer> retval, GlobalConfiguration gc, String key, int workerType, boolean signersOnly){
 		try{
    		String unScopedKey = key.substring("GLOB.".length());
    		log.debug("unScopedKey : " + unScopedKey);
@@ -285,11 +215,11 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 			}
 		}
 		} catch (ClassNotFoundException e) {
-			error("Error in global configuration for configurared workers, classpath not found",e);
+			log.error("Error in global configuration for configurared workers, classpath not found",e);
 		} catch (InstantiationException e) {
-			error("Error in global configuration for configurared workers, classpath not found",e);
+			log.error("Error in global configuration for configurared workers, classpath not found",e);
 		} catch (IllegalAccessException e) {
-			error("Error in global configuration for configurared workers, classpath not found",e);
+			log.error("Error in global configuration for configurared workers, classpath not found",e);
 		}
 		
 		return retval;
@@ -297,14 +227,8 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 
 	
 	/**
-	 * Method that is used after a database crash to restore
-	 * all cached data to database.
-	 * 
-	 * @return true if resync was successfull
-	 * @ejb.interface-method
-	 * @ejb.transaction
-	 *   type="NotSupported"
-	 */
+	 * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#resync()
+	 */ 
 	public void resync() throws ResyncException{
 		
 		if(GlobalConfigurationCache.getCurrentState() != GlobalConfiguration.STATE_OUTOFSYNC){
@@ -321,39 +245,31 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 		String thisNodeConfig = GlobalConfiguration.SCOPE_NODE+WorkerConfig.getNodeId()+".";
 		// remove all global and node specific properties
 		try {
-			Collection allProperties = ((GlobalConfigurationDataLocalHome) getLocator().getLocalHome(GlobalConfigurationDataLocalHome.COMP_NAME)).findAll();
-			Iterator iter = allProperties.iterator();
+			Collection<GlobalConfigurationDataBean> allProperties = getGlobalConfigurationDataService().findAll();
+			Iterator<GlobalConfigurationDataBean> iter = allProperties.iterator();
 			while(iter.hasNext()){
-				GlobalConfigurationDataLocal data = (GlobalConfigurationDataLocal) iter.next();
+				GlobalConfigurationDataBean data =  iter.next();
 				if(data.getPropertyKey().startsWith(GlobalConfiguration.SCOPE_GLOBAL)){
-					data.remove();
+					getGlobalConfigurationDataService().removeGlobalProperty(data.getPropertyKey());
 				}else{
 					if(data.getPropertyKey().startsWith(thisNodeConfig)){
-						data.remove();
+						getGlobalConfigurationDataService().removeGlobalProperty(data.getPropertyKey());
 					}
 				}
 			}
 			
-		} catch (FinderException e) {
+		} catch (PersistenceException e) {
 			  String message = e.getMessage();
 			  log.error(message);
 			  throw new ResyncException(message);
-		} catch (EJBException e) {
-			  String message = e.getMessage();
-			  log.error(message);
-			  throw new ResyncException(message);
-		} catch (RemoveException e) {
-			  String message = e.getMessage();
-			  log.error(message);
-			  throw new ResyncException(message);
-		}
+		} 
 				
 
 		
 			
 
 		// add all properties
-		Iterator keySet = GlobalConfigurationCache.getCachedGlobalConfig().keySet().iterator();
+		Iterator<?> keySet = GlobalConfigurationCache.getCachedGlobalConfig().keySet().iterator();
 		while(keySet.hasNext()){
 			String fullKey = (String) keySet.next();
 
@@ -378,11 +294,8 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 	}
 	
 	/**
-	 * Method to reload all data from database.
-	 * 
-	 * @ejb.interface-method
-
-	 */
+	 * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#reload()
+	 */ 
 	public void reload() {
         GlobalConfigurationFileParser.getInstance().reloadConfiguration();
         GlobalConfigurationCache.setCachedGlobalConfig(null);
@@ -401,18 +314,8 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 	 */
 	private void setPropertyHelper(String key, String value){
 		try{
-			try {
-				GlobalConfigurationDataLocal globalConfigLocal = globalConfigHome.findByPrimaryKey(key);
-				globalConfigLocal.setPropertyValue(value);
+				getGlobalConfigurationDataService().setGlobalProperty(key, value);				
 				GlobalConfigurationCache.setCachedGlobalConfig(null);
-			} catch (FinderException e) {
-				try {
-					globalConfigHome.create(key, value);
-					GlobalConfigurationCache.setCachedGlobalConfig(null);
-				} catch (CreateException e1) {
-					log.error("Error creating global property " + key,e1);
-				}
-			}
 		}catch(Throwable e){
 			String message = "Error connecting to database, configuration is un-syncronized :"; 
 			log.error(message, e);
@@ -423,17 +326,14 @@ public class GlobalConfigurationSessionBean extends BaseSessionBean {
 	}
 
 
-
-	
-
-	/**
-	 * Create method
-	 * @ejb.create-method  
-	 */
-	public void ejbCreate() throws javax.ejb.CreateException {
-		globalConfigHome = (GlobalConfigurationDataLocalHome) getLocator().getLocalHome(GlobalConfigurationDataLocalHome.COMP_NAME);
-		
+    private GlobalConfigurationDataService globalConfigurationDataService = null;
+	private GlobalConfigurationDataService getGlobalConfigurationDataService(){
+		if(globalConfigurationDataService == null){
+			globalConfigurationDataService = new GlobalConfigurationDataService(em);
+		}
+		return globalConfigurationDataService;
 	}
+
 	
 
 }

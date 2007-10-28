@@ -29,7 +29,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * Command used to dump all configured properties for a worker or all workers
  *
- * @version $Id: DumpPropertiesCommand.java,v 1.1 2007-03-07 07:41:19 herrvendil Exp $
+ * @version $Id: DumpPropertiesCommand.java,v 1.2 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class DumpPropertiesCommand extends BaseCommand {
 	
@@ -70,7 +70,7 @@ public class DumpPropertiesCommand extends BaseCommand {
         			dumpAllProperties(hostname, outProps);            			
         		}else{
         			// named worker is requested
-        			int id = getSignSession(hostname).getSignerId(workerid);
+        			int id = getCommonAdminInterface(hostname).getSignerId(workerid);
         			if(id == 0){
         				throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
         			}
@@ -91,11 +91,11 @@ public class DumpPropertiesCommand extends BaseCommand {
     }
 
 	private void dumpAllProperties(String hostname, Properties outProps) throws RemoteException, Exception {		
-		List workers = getGlobalConfigurationSession(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+		List<Integer> workers = getCommonAdminInterface(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
 		
 		// First output all global properties
-		GlobalConfiguration gc = getGlobalConfigurationSession(hostname).getGlobalConfiguration();
-		Iterator iter = gc.getKeyIterator();
+		GlobalConfiguration gc = getCommonAdminInterface(hostname).getGlobalConfiguration();
+		Iterator<?> iter = gc.getKeyIterator();
 		while(iter.hasNext()){
 			String next = (String) iter.next();
 			outProps.put(next, gc.getProperty(next));
@@ -103,8 +103,8 @@ public class DumpPropertiesCommand extends BaseCommand {
 		iter = workers.iterator();
 		while(iter.hasNext()){
 			Integer next = (Integer) iter.next();
-			WorkerConfig workerConfig = getSignSession(hostname).getCurrentSignerConfig(next.intValue());
-			Enumeration e = workerConfig.getProperties().keys();
+			WorkerConfig workerConfig = getCommonAdminInterface(hostname).getCurrentSignerConfig(next.intValue());
+			Enumeration<?> e = workerConfig.getProperties().keys();
 			Properties workerProps = workerConfig.getProperties();
 			while(e.hasMoreElements()){
 				String key = (String) e.nextElement();
@@ -114,8 +114,8 @@ public class DumpPropertiesCommand extends BaseCommand {
 	}
 
 	private void dumpWorkerProperties(String hostname, int signerId, Properties outProps) throws RemoteException, Exception {
-		GlobalConfiguration gc = getGlobalConfigurationSession(hostname).getGlobalConfiguration();
-		Iterator iter = gc.getKeyIterator();
+		GlobalConfiguration gc = getCommonAdminInterface(hostname).getGlobalConfiguration();
+		Iterator<?> iter = gc.getKeyIterator();
 		while(iter.hasNext()){
 			String next = (String) iter.next();
 			if(next.substring(5).startsWith("WORKER")){
@@ -123,8 +123,8 @@ public class DumpPropertiesCommand extends BaseCommand {
 			}
 		}	
 		
-		WorkerConfig workerConfig = getSignSession(hostname).getCurrentSignerConfig(signerId);
-		Enumeration e = workerConfig.getProperties().keys();
+		WorkerConfig workerConfig = getCommonAdminInterface(hostname).getCurrentSignerConfig(signerId);
+		Enumeration<?> e = workerConfig.getProperties().keys();
 		Properties workerProps = workerConfig.getProperties();
 		while(e.hasMoreElements()){
 			String key = (String) e.nextElement();

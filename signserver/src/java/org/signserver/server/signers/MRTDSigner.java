@@ -26,6 +26,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.ejb.EJBException;
 
+import org.apache.log4j.Logger;
 import org.signserver.common.ISignRequest;
 import org.signserver.common.ISignResponse;
 import org.signserver.common.ISignerCertReqData;
@@ -41,10 +42,12 @@ import org.signserver.server.signtokens.ISignToken;
  * Class used to sign MRTD Document Objects.
  * 
  * @author Philip Vendil
- * @version $Id: MRTDSigner.java,v 1.3 2007-04-12 04:01:12 herrvendil Exp $
+ * @version $Id: MRTDSigner.java,v 1.4 2007-10-28 12:27:11 herrvendil Exp $
  */
 
 public class MRTDSigner extends BaseSigner {
+	
+	private transient Logger log = Logger.getLogger(this.getClass());
 	
 	public MRTDSigner(){
 	}
@@ -69,13 +72,13 @@ public class MRTDSigner extends BaseSigner {
 		
 		MRTDSignRequest req = (MRTDSignRequest) signRequest;
 		
-        ArrayList genSignatures = new ArrayList();
+        ArrayList<byte[]> genSignatures = new ArrayList<byte[]>();
         
 		if(req.getSignRequestData() == null){
 			throw new IllegalSignRequestException("Signature request data cannot be null.");
 		}
         
-        Iterator iterator = ((ArrayList) req.getSignRequestData()).iterator();
+        Iterator<?> iterator = ((ArrayList<?>) req.getSignRequestData()).iterator();
         while(iterator.hasNext()){
         	
         	byte[] data = null;

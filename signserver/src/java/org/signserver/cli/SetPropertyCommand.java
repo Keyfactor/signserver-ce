@@ -23,7 +23,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Sets a property for a given workerid
  *
- * @version $Id: SetPropertyCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * @version $Id: SetPropertyCommand.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class SetPropertyCommand extends BaseCommand {
 	
@@ -70,7 +70,7 @@ public class SetPropertyCommand extends BaseCommand {
 
         			}else{
         				// named worker is requested
-        				int id = getSignSession(hostname).getSignerId(workerid);
+        				int id = getCommonAdminInterface(hostname).getSignerId(workerid);
                 		if(id == 0){
                 			throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
                 		}
@@ -93,7 +93,7 @@ public class SetPropertyCommand extends BaseCommand {
     	this.getOutputStream().println("Setting the global property " + key + " to " + value +" with scope " + scope + "\n");
     	this.getOutputStream().println("See current configuration with the getconfig command, activate it with the reload command");
     
-		getGlobalConfigurationSession(hostname).setProperty(scope, key, value);
+    	getCommonAdminInterface(hostname).setGlobalProperty(scope, key, value);
 		
 	}
 
@@ -107,6 +107,6 @@ public class SetPropertyCommand extends BaseCommand {
     	this.getOutputStream().println("Setting the property " + propertykey + " to " + propertyvalue +" for worker " + workerId + "\n");
     	this.getOutputStream().println("See current configuration with the getconfig command, activate it with the reload command");		                       
     	
-    	getSignSession(hostname).setWorkerProperty(workerId,propertykey,propertyvalue);
+    	getCommonAdminInterface(hostname).setWorkerProperty(workerId,propertykey,propertyvalue);
 	}
 }

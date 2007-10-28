@@ -26,7 +26,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Commands that uploads a PEM certificate to a singers config.
  *
- * @version $Id: UploadSignerCertificateCommand.java,v 1.3 2007-03-14 08:17:07 herrvendil Exp $
+ * @version $Id: UploadSignerCertificateCommand.java,v 1.4 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class UploadSignerCertificateCommand extends BaseCommand {
 	
@@ -70,7 +70,7 @@ public class UploadSignerCertificateCommand extends BaseCommand {
         	}
         	
         	String filename = args[3];
-            Collection certs = CertTools.getCertsFromPEM(filename);
+            Collection<?> certs = CertTools.getCertsFromPEM(filename);
             if(certs.size() == 0){
             	throw new IllegalAdminCommandException("Invalid PEM file, couldn't find any certificate");
             }
@@ -80,7 +80,7 @@ public class UploadSignerCertificateCommand extends BaseCommand {
         	this.getOutputStream().println("Uploading the following signer certificate  : \n");
             printCert(cert);        			                       
         	
-        	getSignSession(hostname).uploadSignerCertificate(signerid, cert, scope);
+            getCommonAdminInterface(hostname).uploadSignerCertificate(signerid, cert, scope);
 
         	
         } catch (Exception e) {

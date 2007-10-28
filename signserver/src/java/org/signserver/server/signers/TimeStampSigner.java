@@ -69,7 +69,7 @@ import org.signserver.server.signtokens.ISignToken;
  * TSA = General name of the Time Stamp Authority.
  * 
  * @author philip
- * $Id: TimeStampSigner.java,v 1.4 2007-09-27 10:02:27 anatom Exp $
+ * $Id: TimeStampSigner.java,v 1.5 2007-10-28 12:27:11 herrvendil Exp $
  */
 public class TimeStampSigner extends BaseSigner{
 	
@@ -108,7 +108,7 @@ public class TimeStampSigner extends BaseSigner{
     	                                                    TSPAlgorithms.SHA256, TSPAlgorithms.SHA384, TSPAlgorithms.SHA512, TSPAlgorithms.RIPEMD128, 
     	                                                    TSPAlgorithms.RIPEMD160, TSPAlgorithms.RIPEMD256};
     
-    private static final HashMap ACCEPTEDALGORITHMSMAP = new HashMap();
+    private static final HashMap<String, String> ACCEPTEDALGORITHMSMAP = new HashMap<String, String>();
     
     static{
     	for(int i= 0 ; i < ACCEPTEDALGORITHMSNAMES.length;  i++){
@@ -122,9 +122,9 @@ public class TimeStampSigner extends BaseSigner{
 	//private static final String DEFAULT_DIGESTOID   = TSPAlgorithms.SHA1;
 	
 	private ITimeSource timeSource = null;
-	private Set acceptedAlgorithms = null;
-	private Set acceptedPolicies = null;
-	private Set acceptedExtensions = null;	
+	private Set<String> acceptedAlgorithms = null;
+	private Set<String> acceptedPolicies = null;
+	private Set<String> acceptedExtensions = null;	
 	
 	//private String defaultDigestOID = null;
 	private String defaultTSAPolicyOID = null;
@@ -242,7 +242,7 @@ public class TimeStampSigner extends BaseSigner{
 				  classpath = DEFAULT_TIMESOURCE;	
 				}
 				
-				Class implClass = Class.forName(classpath);
+				Class<?> implClass = Class.forName(classpath);
 				Object obj = implClass.newInstance();
 				timeSource = (ITimeSource) obj;
 				timeSource.init(config.getProperties());								 
@@ -261,7 +261,8 @@ public class TimeStampSigner extends BaseSigner{
 		return timeSource;		
 	}
 	
-	private Set getAcceptedAlgorithms(){
+	@SuppressWarnings("unchecked")
+	private Set<String> getAcceptedAlgorithms(){
 		if(acceptedAlgorithms == null){
 			String nonParsedAcceptedAlgorihms =  this.config.getProperties().getProperty(ACCEPTEDALGORITHMS);
 			if(nonParsedAcceptedAlgorihms == null){
@@ -286,7 +287,7 @@ public class TimeStampSigner extends BaseSigner{
 	}
 	
 
-	private Set getAcceptedPolicies(){
+	private Set<String> getAcceptedPolicies(){
 		if(acceptedPolicies == null){
 			String nonParsedAcceptedPolicies =  this.config.getProperties().getProperty(ACCEPTEDPOLICIES);
 			acceptedPolicies = makeSetOfProperty(nonParsedAcceptedPolicies);			
@@ -296,7 +297,7 @@ public class TimeStampSigner extends BaseSigner{
 	
 	}
 	
-	private Set getAcceptedExtensions(){
+	private Set<String> getAcceptedExtensions(){
 		if(acceptedExtensions == null){
 			String nonParsedAcceptedExtensions =  this.config.getProperties().getProperty(ACCEPTEDEXTENSIONS);
 			acceptedExtensions = makeSetOfProperty(nonParsedAcceptedExtensions);			
@@ -309,12 +310,12 @@ public class TimeStampSigner extends BaseSigner{
 	 * Help method taking a string and creating a java.util.Set of the strings using ';' as a delimiter.
 	 * If null is used as and argument then will null be returned by the method.
 	 */
-	private Set makeSetOfProperty(String nonParsedPropery) {
-		Set retval = null;
+	private Set<String> makeSetOfProperty(String nonParsedPropery) {
+		Set<String> retval = null;
 	    if(nonParsedPropery != null){
 	    	String[] subStrings = nonParsedPropery.split(";");
 	    	if(subStrings.length > 0){
-	    		retval = new HashSet();
+	    		retval = new HashSet<String>();
 	    		for(int i=0; i < subStrings.length ; i++){
 	    	       retval.add(subStrings[i]);		
 	    		}

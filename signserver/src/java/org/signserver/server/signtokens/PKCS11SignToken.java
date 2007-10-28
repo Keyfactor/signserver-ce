@@ -15,7 +15,6 @@ package org.signserver.server.signtokens;
  
 import java.util.Properties;
 
-import javax.ejb.EJBException;
 
 import org.apache.log4j.Logger;
 import org.ejbca.core.model.ca.catoken.PKCS11CAToken;
@@ -34,7 +33,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @see org.signserver.server.signtokens.ISignToken
  * @author Tomas Gustavsson, Philip Vendil
- * @version $Id: PKCS11SignToken.java,v 1.1 2007-09-27 10:02:27 anatom Exp $
+ * @version $Id: PKCS11SignToken.java,v 1.2 2007-10-28 12:27:15 herrvendil Exp $
  */
 
 public class PKCS11SignToken extends CATokenSignTokenBase implements ISignToken{
@@ -56,14 +55,14 @@ public class PKCS11SignToken extends CATokenSignTokenBase implements ISignToken{
 		try { 
 			((PKCS11CAToken)catoken).init(props, null, signaturealgoritm);	
 		} catch(Exception e) {
-			throw new EJBException(e);
+			log.error("Error initializing PKCS11SignToken : " + e.getMessage(),e);
 		}
 		String authCode = props.getProperty("pin");
 		if (authCode != null) {
 			try { 
 				this.activate(authCode);
 			} catch(Exception e) {
-				throw new EJBException(e);
+				log.error("Error auto activating PKCS11SignToken : " + e.getMessage(),e);
 			}
 		}
 		log.debug("<init");

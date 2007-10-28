@@ -19,18 +19,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.ejb.CreateException;
 import javax.ejb.EJBException;
-import javax.ejb.FinderException;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignerConfig;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.IGlobalConfigurationSessionLocal;
-import org.signserver.ejb.WorkerConfigDataLocal;
-import org.signserver.ejb.WorkerConfigDataLocalHome;
-import org.signserver.ejb.WorkerConfigDataPK;
+import org.signserver.ejb.WorkerConfigDataService;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.service.IService;
 import org.signserver.server.signers.ISigner;
 
@@ -52,8 +48,8 @@ public  class WorkerFactory {
 		return instance;
 	}
 	
-	private Map workerStore = null;
-	private Map nameToIdMap = null;
+	private Map<Integer, IWorker> workerStore = null;
+	private Map<String, Integer> nameToIdMap = null;
 	
 	
 	
@@ -66,11 +62,11 @@ public  class WorkerFactory {
 	 * the flush method is called.
 	 * 
 	 * @param signerId the Id that should match the one in the config file.
-	 * @param workerConfigHome The home interface of the signer config entity bean
+	 * @param workerConfigHome The service interface of the signer config entity bean
 	 * @return A ISigner as defined in the configuration file, or null if no configuration
 	 * for the specified signerId could be found.
 	 */
-	public IWorker getWorker(int workerId, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
+	public IWorker getWorker(int workerId, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){	   
 	   Integer id = new Integer(workerId);	
 			
 	   loadWorkers(workerConfigHome,gCSession);
@@ -93,7 +89,7 @@ public  class WorkerFactory {
 	 * @return A ISigner as defined in the configuration file, or null if no configuration
 	 * for the specified signerId could be found.
 	 */
-	public ISigner getSigner(String signerName, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
+	public ISigner getSigner(String signerName, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){	   
 	   ISigner retval = null;
 
 	   loadWorkers(workerConfigHome,gCSession);
@@ -120,7 +116,7 @@ public  class WorkerFactory {
 	 * @param workerConfigHome The home interface of the signer config entity bean
 	 * @return the id of the signer or 0 if no worker with the name is found.
 	 */
-	public int getSignerIdFromName(String signerName, WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){	   
+	public int getSignerIdFromName(String signerName, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){	   
 	   int retval = 0;		 	   
 	   loadWorkers(workerConfigHome,gCSession);
 	   synchronized(nameToIdMap){	
@@ -139,20 +135,20 @@ public  class WorkerFactory {
 	/**
 	 * Method to load all available signers
 	 */
-	private void loadWorkers(WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){
+	private void loadWorkers(WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){
 		   if(workerStore == null){
-              workerStore = new HashMap();
-              nameToIdMap = new HashMap();
+              workerStore = new HashMap<Integer, IWorker>();
+              nameToIdMap = new HashMap<String,Integer>();
 			   
-			  Collection workers = gCSession.getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+			  Collection<Integer> workers = gCSession.getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
 			  GlobalConfiguration gc = gCSession.getGlobalConfiguration();
-			  Iterator iter = workers.iterator();
+			  Iterator<Integer> iter = workers.iterator();
 			  while(iter.hasNext()){
 				  Integer nextId = (Integer) iter.next();				   
 				  try{	
 					  String classpath = gc.getWorkerClassPath(nextId.intValue());						
 					  if(classpath != null){					
-						  Class implClass = Class.forName(classpath);
+						  Class<?> implClass =  Class.forName(classpath);
 						  Object obj = implClass.newInstance();
 						  
 						  WorkerConfig config = null;
@@ -168,7 +164,7 @@ public  class WorkerFactory {
 						  }
 
 						  ((IWorker) obj).init(nextId.intValue(), config);						  
-						  getWorkerStore().put(nextId,obj);
+						  getWorkerStore().put(nextId,(IWorker) obj);
 					  }  
 				  }catch(ClassNotFoundException e){
 					  throw new EJBException(e);
@@ -201,17 +197,17 @@ public  class WorkerFactory {
 	 * Method used to force a reload of worker. 
 	 * @param id of worker
 	 */
-	public void reloadWorker(int id,WorkerConfigDataLocalHome workerConfigHome, IGlobalConfigurationSessionLocal gCSession){
+	public void reloadWorker(int id,WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){
 
 		if(workerStore == null){
-			workerStore = Collections.synchronizedMap(new HashMap());
-			nameToIdMap = Collections.synchronizedMap(new HashMap());
+			workerStore = Collections.synchronizedMap(new HashMap<Integer, IWorker>());
+			nameToIdMap = Collections.synchronizedMap(new HashMap<String, Integer>());
 		}
 		synchronized(nameToIdMap){	
 			synchronized(workerStore){
 				if(id != 0){
 					workerStore.put(new Integer(id),null);
-					Iterator iter = nameToIdMap.keySet().iterator();
+					Iterator<String> iter = nameToIdMap.keySet().iterator();
 					while(iter.hasNext()){
 						String next = (String) iter.next();
 						if(nameToIdMap.get(next) != null && 
@@ -225,7 +221,7 @@ public  class WorkerFactory {
 				try{	
 					String classpath = gc.getWorkerClassPath(id);						
 					if(classpath != null){					
-						Class implClass = Class.forName(classpath);
+						Class<?> implClass = Class.forName(classpath);
 						Object obj = implClass.newInstance();
 
 						WorkerConfig config = null;
@@ -240,7 +236,7 @@ public  class WorkerFactory {
 						}
 
 						((IWorker) obj).init(id, config);						  
-						getWorkerStore().put(new Integer(id),obj);
+						getWorkerStore().put(new Integer(id),(IWorker) obj);
 					}  
 				}catch(ClassNotFoundException e){
 					throw new EJBException(e);
@@ -258,33 +254,28 @@ public  class WorkerFactory {
 
 
 	
-	private WorkerConfig getWorkerProperties(int workerId, WorkerConfigDataLocalHome workerConfigHome){
-		
-		WorkerConfigDataLocal workerConfig = null;
-	    try {	    	
-			workerConfig = workerConfigHome.findByPrimaryKey(new WorkerConfigDataPK(workerId));
-		} catch (FinderException e) {
-			try {				
-				workerConfig = workerConfigHome.create(workerId,  WorkerConfig.class.getName());
-			} catch (CreateException e1) {
-               throw new EJBException(e1);
-			}
+	private WorkerConfig getWorkerProperties(int workerId, WorkerConfigDataService workerConfigHome){
+
+		WorkerConfig workerConfig = workerConfigHome.getWorkerConfig(workerId);
+		if(workerConfig == null){			
+			workerConfigHome.create(workerId,  WorkerConfig.class.getName());
+			workerConfig = workerConfigHome.getWorkerConfig(workerId);
 		}
-		
-		return workerConfig.getWorkerConfig();
+
+		return workerConfig;
 	}
 	
-	private Map getNameToIdMap(){
+	private Map<String, Integer> getNameToIdMap(){
 		if(nameToIdMap == null){
-			nameToIdMap =  Collections.synchronizedMap(new HashMap());
+			nameToIdMap =  Collections.synchronizedMap(new HashMap<String, Integer>());
 		}
 		return nameToIdMap;
 		
 	}
 	
-	private Map getWorkerStore(){
+	private Map<Integer, IWorker> getWorkerStore(){
 		if(workerStore == null){
-			workerStore = Collections.synchronizedMap(new HashMap());
+			workerStore = Collections.synchronizedMap(new HashMap<Integer, IWorker>());
 		}
 		return workerStore;
 		

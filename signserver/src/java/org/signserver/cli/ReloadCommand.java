@@ -19,7 +19,7 @@ package org.signserver.cli;
 /**
  * Reloads the current configuration
  *
- * @version $Id: ReloadCommand.java,v 1.2 2007-03-26 06:06:49 herrvendil Exp $
+ * @version $Id: ReloadCommand.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class ReloadCommand extends BaseCommand {
     /**
@@ -55,7 +55,7 @@ public class ReloadCommand extends BaseCommand {
         		}
           	}  
         	
-            this.getSignSession(hostname).reloadConfiguration(workerId);
+            this.getCommonAdminInterface(hostname).reloadConfiguration(workerId);
         	
         	this.getOutputStream().println("SignServer reloaded successfully\n");
         	this.getOutputStream().println("Current configuration is now activated.\n");

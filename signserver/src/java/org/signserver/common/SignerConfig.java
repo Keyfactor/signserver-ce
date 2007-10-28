@@ -15,6 +15,8 @@ package org.signserver.common;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -23,7 +25,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import javax.ejb.EJBException;
 
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
@@ -34,7 +35,7 @@ import org.ejbca.util.CertTools;
  * 
  * @author Philip Vendil 2007 jan 23
  *
- * @version $Id: SignerConfig.java,v 1.3 2007-03-09 11:26:38 herrvendil Exp $
+ * @version $Id: SignerConfig.java,v 1.4 2007-10-28 12:25:01 herrvendil Exp $
  */
 
 public class SignerConfig  {
@@ -57,7 +58,7 @@ public class SignerConfig  {
 		super();
 		this.workerConfig = workerConfig;
 		if(get(AUTHORIZED_CLIENTS) == null){
-			put(AUTHORIZED_CLIENTS,new HashSet());
+			put(AUTHORIZED_CLIENTS,new HashSet<AuthorizedClient>());
 		}
 		if(get(SIGNERCERT) == null){
 			put(SIGNERCERT,"");
@@ -70,11 +71,11 @@ public class SignerConfig  {
 	}
 	
 	
-	private void put(Object key,Object value){
+	private void put(String key,Serializable value){
 		workerConfig.getData().put(key, value);
 	}
 	
-	private Object get(Object key){
+	private Serializable get(String key){
 		return workerConfig.getData().get(key);
 	}
 	
@@ -83,8 +84,9 @@ public class SignerConfig  {
 	 * 
 	 * @param the AuthorizedClient to add
 	 */
+	@SuppressWarnings("unchecked")
 	public void addAuthorizedClient(AuthorizedClient client){
-		((HashSet) get(AUTHORIZED_CLIENTS)).add(client);				
+		((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).add(client);				
 	}
 
 	/**
@@ -93,12 +95,13 @@ public class SignerConfig  {
 	 * @param the AuthorizedClient to remove
 	 */
 
+	@SuppressWarnings("unchecked")
 	public boolean removeAuthorizedClient(AuthorizedClient client){
-		Iterator iter  = ((HashSet) get(AUTHORIZED_CLIENTS)).iterator();
+		Iterator<AuthorizedClient> iter  = ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).iterator();
 		while(iter.hasNext()){
-			AuthorizedClient next = (AuthorizedClient) iter.next();
+			AuthorizedClient next =  iter.next();
 			if(next.getCertSN().equals(client.getCertSN()) && next.getIssuerDN().equals(client.getIssuerDN())){				
-				return ((HashSet) get(AUTHORIZED_CLIENTS)).remove(next);				
+				return ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).remove(next);				
 			}
 		}
 		return false;
@@ -111,9 +114,10 @@ public class SignerConfig  {
 	 * @return a Collection of String containing the certificate serial number.
 	 */
 	
-	public Collection getAuthorizedClients(){
-		ArrayList result = new ArrayList();
-		Iterator iter = ((HashSet) get(AUTHORIZED_CLIENTS)).iterator();
+	@SuppressWarnings("unchecked")
+	public Collection<AuthorizedClient> getAuthorizedClients(){
+		ArrayList<AuthorizedClient> result = new ArrayList<AuthorizedClient>();
+		Iterator<AuthorizedClient> iter = ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).iterator();
 		while(iter.hasNext()){
 			result.add(iter.next());
 		}
@@ -128,10 +132,11 @@ public class SignerConfig  {
 	 * @param clientCertificate
 	 * @return true if client is authorized.
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean isClientAuthorized(X509Certificate clientCertificate){	  
 	  AuthorizedClient client = new AuthorizedClient(clientCertificate.getSerialNumber().toString(16),clientCertificate.getIssuerDN().toString()); 
 	  
-	  return ((HashSet) get(AUTHORIZED_CLIENTS)).contains(client);	  
+	  return ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).contains(client);	  
 	}
 
 
@@ -149,25 +154,25 @@ public class SignerConfig  {
 		}
 		
 		if(stringcert != null && !stringcert.equals("")){
-			Collection certs;
+			Collection<?> certs;
 			try {
 				certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
 				if(certs.size() > 0){
 					result = (X509Certificate) certs.iterator().next();
 				}
 			} catch (CertificateException e) {
-				throw new EJBException(e); 
+				log.error(e); 
 			} catch (IOException e) {
-				throw new EJBException(e);
+				log.error(e);
 			}
 
 		}
 	
 		if(result==null){
 			// try fetch certificate from certificate chain
-			Collection chain = getSignerCertificateChain();
+			Collection<?> chain = getSignerCertificateChain();
 			if(chain != null){
-				Iterator iter = chain.iterator();
+				Iterator<?> iter = chain.iterator();
 				while(iter.hasNext()){
 					X509Certificate next = (X509Certificate) iter.next();
 					if(next.getBasicConstraints() == -1){
@@ -186,21 +191,21 @@ public class SignerConfig  {
 	 * 
 	 */
 	public void setSignerCertificate(X509Certificate signerCert, String scope) {
-		ArrayList list = new ArrayList();
+		ArrayList<X509Certificate> list = new ArrayList<X509Certificate>();
 		list.add(signerCert);
 		if(scope.equals(GlobalConfiguration.SCOPE_GLOBAL)){
 			try {
 				String stringcert = new String(CertTools.getPEMFromCerts(list));
 				put(SIGNERCERT,stringcert);	
 			} catch (CertificateException e) {
-				throw new EJBException(e);
+				log.error(e);
 			}
 		}else{
 			try {
 				String stringcert = new String(CertTools.getPEMFromCerts(list));
 				put(WorkerConfig.getNodeId() + "." + SIGNERCERT,stringcert);	
 			} catch (CertificateException e) {
-				throw new EJBException(e);
+				log.error(e);
 			}			
 		}
 		
@@ -211,8 +216,9 @@ public class SignerConfig  {
 	 * @return the signer certificate stored or null if no certificates have been uploaded.
 	 * 
 	 */
-	public Collection getSignerCertificateChain() {
-		Collection result = null;
+	@SuppressWarnings("unchecked")
+	public Collection<Certificate> getSignerCertificateChain() {
+		Collection<Certificate> result = null;
 		String stringcert = (String) get(SIGNERCERTCHAIN);
 		if(stringcert == null || stringcert.equals("")){
 			stringcert = (String) get(WorkerConfig.getNodeId() +"."+ SIGNERCERTCHAIN);
@@ -222,9 +228,9 @@ public class SignerConfig  {
 			try {
 				result = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));				
 			} catch (CertificateException e) {
-				throw new EJBException(e); 
+				log.error(e); 
 			} catch (IOException e) {
-				throw new EJBException(e);
+				log.error(e);
 			}
 		}
 
@@ -237,20 +243,20 @@ public class SignerConfig  {
 	 * @param signerCert
 	 * 
 	 */
-	public void setSignerCertificateChain(Collection signerCertificateChain, String scope) {
+	public void setSignerCertificateChain(Collection<Certificate> signerCertificateChain, String scope) {
 		if(scope.equals(GlobalConfiguration.SCOPE_GLOBAL)){
 			try {
 				String stringcert = new String(CertTools.getPEMFromCerts(signerCertificateChain));
 				put(SIGNERCERTCHAIN,stringcert);	
 			} catch (CertificateException e) {
-				throw new EJBException(e);
+				log.error(e);
 			}
 		}else{
 			try {
 				String stringcert = new String(CertTools.getPEMFromCerts(signerCertificateChain));
 				put(WorkerConfig.getNodeId() +"." + SIGNERCERTCHAIN,stringcert);	
 			} catch (CertificateException e) {
-				throw new EJBException(e);
+				log.error(e);
 			}			
 		}
 		

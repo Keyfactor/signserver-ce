@@ -29,7 +29,7 @@ import org.signserver.common.GlobalConfiguration;
  * 
  * See the manual for the syntax of the property file
  *
- * @version $Id: SetPropertiesCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * @version $Id: SetPropertiesCommand.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class SetPropertiesCommand extends BaseCommand {
 	
@@ -67,7 +67,7 @@ public class SetPropertiesCommand extends BaseCommand {
         	Properties properties = loadProperties(args[1]);
         
         	getOutputStream().println("Configuring properties as defined in the file : " + args[1]);
-        	Enumeration iter = properties.keys();
+        	Enumeration<?> iter = properties.keys();
         	while(iter.hasMoreElements()){
         		String key = (String) iter.nextElement();
         		processKey(hostname, key.toUpperCase(), properties.getProperty(key));
@@ -134,7 +134,7 @@ public class SetPropertiesCommand extends BaseCommand {
     	  if(splittedKey.startsWith(GENID)){
     		workerid = getGenId( hostname, splittedKey);
     	  }else{
-    		  workerid = getSignSession(hostname).getSignerId(splittedKey);
+    		  workerid = getCommonAdminInterface(hostname).getSignerId(splittedKey);
     	  }
     	}
     	
@@ -150,10 +150,10 @@ public class SetPropertiesCommand extends BaseCommand {
 		
 	}
 
-	private HashMap genIds = new HashMap();
+	private HashMap<String, Integer> genIds = new HashMap<String, Integer>();
 	private int getGenId(String hostname, String splittedKey) throws RemoteException, Exception {
 		if(genIds.get(splittedKey) == null){
-			int genid = getSignSession(hostname).genFreeWorkerId();
+			int genid = getCommonAdminInterface(hostname).genFreeWorkerId();
 			genIds.put(splittedKey, new Integer(genid));
 		}
 		return ((Integer) genIds.get(splittedKey)).intValue();
@@ -189,7 +189,7 @@ public class SetPropertiesCommand extends BaseCommand {
 		    	if(splittedKey.substring(0, 1).matches("\\d")){
 		    		workerid = Integer.parseInt(splittedKey);		    		            		
 		    	}else{
-		    		workerid = getSignSession(hostname).getSignerId(splittedKey);		    	  
+		    		workerid = getCommonAdminInterface(hostname).getSignerId(splittedKey);		    	  
 		    	}				
 				key = WORKER_PREFIX + workerid + "." + propertykey;
 			}
@@ -219,13 +219,13 @@ public class SetPropertiesCommand extends BaseCommand {
 
 	private void setGlobalProperty(String scope, String hostname, String key, String value) throws RemoteException, Exception {
     	this.getOutputStream().println("Setting the global property " + key + " to " + value +" with scope " + scope );    	    
-		getGlobalConfigurationSession(hostname).setProperty(scope, key, value);
+    	getCommonAdminInterface(hostname).setGlobalProperty(scope, key, value);
 		
 	}
 	
 	private void removeGlobalProperty(String scope, String hostname, String key) throws RemoteException, Exception {
     	this.getOutputStream().println("Removing the global property " + key + " with scope " + scope );    	    
-		getGlobalConfigurationSession(hostname).removeProperty(scope, key);		
+    	getCommonAdminInterface(hostname).removeGlobalProperty(scope, key);		
 	}
 
 	// execute
@@ -236,10 +236,10 @@ public class SetPropertiesCommand extends BaseCommand {
 	
 	private void setWorkerProperty(int workerId, String hostname, String propertykey, String propertyvalue) throws RemoteException, Exception{
     	this.getOutputStream().println("Setting the property " + propertykey + " to " + propertyvalue +" for worker " + workerId );    	
-    	getSignSession(hostname).setWorkerProperty(workerId,propertykey,propertyvalue);
+    	getCommonAdminInterface(hostname).setWorkerProperty(workerId,propertykey,propertyvalue);
 	}
 	private void removeWorkerProperty(int workerId, String hostname, String propertykey) throws RemoteException, Exception{
     	this.getOutputStream().println("Removing the property " + propertykey + "  for worker " + workerId);    	
-    	getSignSession(hostname).removeWorkerProperty(workerId,propertykey);
+    	getCommonAdminInterface(hostname).removeWorkerProperty(workerId,propertykey);
 	}
 }

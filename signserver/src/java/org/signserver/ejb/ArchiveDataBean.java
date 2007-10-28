@@ -49,11 +49,11 @@ import org.signserver.common.ArchiveDataVO;
  * archiveData              : String  
  * </pre>
  *
- * @version $Id: ArchiveDataBean.java,v 1.2 2007-10-28 12:25:22 herrvendil Exp $
+ * @version $Id: ArchiveDataBean.java,v 1.3 2007-10-28 17:20:24 herrvendil Exp $
  *
  */
 @Entity
-@Table(name="ArchiveDataBean")
+@Table(name="ArchiveData")
 @NamedQueries(
 		{@NamedQuery(name="ArchiveDataBean.findByArchiveId",query="SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.archiveid=?3"),
 		 @NamedQuery(name="ArchiveDataBean.findByTime",query="SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.time>=?3 AND a.time<=?4"),

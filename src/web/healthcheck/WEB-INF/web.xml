@@ -76,12 +76,5 @@
     <env-entry-name>DataSource</env-entry-name>
     <env-entry-value>@datasource.jndi-name-prefix@@datasource.jndi-name@</env-entry-value>
     <env-entry-type>java.lang.String</env-entry-type>
-  </env-entry>
-  <ejb-local-ref>
-    <ejb-ref-name>ejb/SignServerSessionLocal</ejb-ref-name>
-    <ejb-ref-type>Session</ejb-ref-type>
-    <local-home>org.signserver.ejb.SignSessionLocalHome</local-home>
-    <local>org.signserver.ejb.SignSessionLocal</local>
-    <ejb-link>SignServerSession</ejb-link>
-  </ejb-local-ref>    
+  </env-entry>  
 </web-app>

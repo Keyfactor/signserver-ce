@@ -111,6 +111,7 @@ rmi.server.port           = ${rmi.server.port}
 	</target>
 	
 	<target name="run" if="buildMailSigner">
+	  <mkdir dir="${james-dir}/ext"/>
       <java        
         jar="${james-dir}/bin/phoenix-loader.jar"
         fork="true"

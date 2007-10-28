@@ -32,7 +32,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * 
  * @author Philip Vendil 21 okt 2007
  *
- * @version $Id: TestSignServerCLI.java,v 1.1 2007-10-28 12:27:53 herrvendil Exp $
+ * @version $Id: TestSignServerCLI.java,v 1.2 2007-10-28 17:20:46 herrvendil Exp $
  */
 
 public class TestSignServerCLI extends TestCase {
@@ -101,11 +101,14 @@ public class TestSignServerCLI extends TestCase {
 	}
 	
 	public void testSetupTimeStamp() throws Exception{
+		assertSuccessfulExecution(new String[] {"reload",
+				"all"});
+		
 		assertSuccessfulExecution(new String[] {"setproperties",
 				signserverhome +"/src/test/test_add_timestamp_configuration.properties"});		
 	    assertTrue(TestUtils.grepTempOut("Setting the property NAME to timestampSigner1000 for worker 1000"));
 		
-	    assertFailedExecution(new String[] {"getstatus",
+	    assertSuccessfulExecution(new String[] {"getstatus",
                 "complete",
                 TESTTSID});	
        
@@ -114,7 +117,7 @@ public class TestSignServerCLI extends TestCase {
                 "TESTKEY",
                 "TESTVALUE"});	
 		
-	    assertFailedExecution(new String[] {"getstatus",
+	    assertSuccessfulExecution(new String[] {"getstatus",
                 "complete",
                 TESTTSID});	
 	    

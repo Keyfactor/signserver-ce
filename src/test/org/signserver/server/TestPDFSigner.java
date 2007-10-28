@@ -37,6 +37,8 @@ public class TestPDFSigner extends TestCase {
 	private static IGlobalConfigurationSession.IRemote gCSession = null;
 	private static ISignServerSession.IRemote sSSession = null;
 	
+	private static String signserverhome;
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		SignServerUtil.installBCProvider();
@@ -53,7 +55,7 @@ public class TestPDFSigner extends TestCase {
 		
 		  
 		  sSSession.setWorkerProperty(5, "AUTHTYPE", "NOAUTH");
-		  String signserverhome = System.getenv("SIGNSERVER_HOME");
+		  signserverhome = System.getenv("SIGNSERVER_HOME");
 		  assertNotNull(signserverhome);
 		  sSSession.setWorkerProperty(5,"KEYSTOREPATH",signserverhome +"/src/test/timestamp1.p12");
 		  sSSession.setWorkerProperty(5, "KEYSTOREPASSWORD", "foo123");
@@ -81,7 +83,7 @@ public class TestPDFSigner extends TestCase {
 		assertNotNull(signercert);
 
 		// TODO: verify PDF file
-		FileOutputStream fos = new FileOutputStream("/tmp/signedpdf.pdf");
+		FileOutputStream fos = new FileOutputStream(signserverhome + "/tmp/signedpdf.pdf");
 		fos.write((byte[]) res.getSignedData());
 		fos.close();
 		

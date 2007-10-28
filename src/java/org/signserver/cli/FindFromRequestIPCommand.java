@@ -27,7 +27,7 @@ import org.signserver.common.ArchiveDataVO;
 /**
  * Returns all archive datas requested from given IP
  *
- * @version $Id: FindFromRequestIPCommand.java,v 1.1 2007-02-27 16:18:07 herrvendil Exp $
+ * @version $Id: FindFromRequestIPCommand.java,v 1.2 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class FindFromRequestIPCommand extends BaseCommand {
 	
@@ -54,7 +54,7 @@ public class FindFromRequestIPCommand extends BaseCommand {
 	       		                                  "Example: signserver archive findfromrequestip 1 10.1.1.1 /tmp/archivedata \n\n");	       
 	    }	
         try {                    	
-        	int signerid = getWorkerId(args[1], hostname);
+        	int signerid = getWorkerId(args[2], hostname);
         	checkThatWorkerIsSigner(signerid,hostname);
         	
         	String requestIP = args[3];
@@ -68,12 +68,12 @@ public class FindFromRequestIPCommand extends BaseCommand {
             
         	this.getOutputStream().println("Trying to find archive datas requested from IP " + requestIP +  "\n");
 		                               	
-        	List result = getSignSession(hostname).findArchiveDatasFromRequestIP(signerid,requestIP);        	        	
+        	List<ArchiveDataVO> result = getCommonAdminInterface(hostname).findArchiveDatasFromRequestIP(signerid,requestIP);        	        	
         	
             if(result.size() != 0){
-            	Iterator iter = result.iterator();
+            	Iterator<ArchiveDataVO> iter = result.iterator();
             	while (iter.hasNext()){
-            	  ArchiveDataVO next = (ArchiveDataVO) iter.next();            	
+            	  ArchiveDataVO next =  iter.next();            	
             	  String filename = outputPath.getAbsolutePath() + "/"+ next.getArchiveId();
             	  FileOutputStream os = new FileOutputStream(filename);
             	  os.write(next.getArchiveData().getData());

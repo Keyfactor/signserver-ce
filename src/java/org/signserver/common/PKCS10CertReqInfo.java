@@ -23,7 +23,7 @@ import org.bouncycastle.asn1.ASN1Set;
  * 
  * @author Philip Vendil 2007 feb 19
  *
- * @version $Id: PKCS10CertReqInfo.java,v 1.3 2007-03-09 11:26:38 herrvendil Exp $
+ * @version $Id: PKCS10CertReqInfo.java,v 1.4 2007-10-28 12:25:01 herrvendil Exp $
  */
 
 public class PKCS10CertReqInfo implements ISignerCertReqInfo {
@@ -36,7 +36,7 @@ public class PKCS10CertReqInfo implements ISignerCertReqInfo {
     /**
      * @param signatureAlgorithm used to sign the PKCS10
      * @param subjectDN used in the request
-     * @param attributes, might be null
+     * @param attributes might be null
      */	
 	public PKCS10CertReqInfo(String signatureAlgorithm, String subjectDN, ASN1Set attributes) {
 		super();

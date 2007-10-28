@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * 
  * 
  * @author Philip Vendil
- * $Id: MRTDSignResponse.java,v 1.1 2007-02-27 16:18:10 herrvendil Exp $
+ * $Id: MRTDSignResponse.java,v 1.2 2007-10-28 12:25:01 herrvendil Exp $
  */
 
 public class MRTDSignResponse implements ISignResponse {
@@ -32,13 +32,13 @@ public class MRTDSignResponse implements ISignResponse {
 	private static final long serialVersionUID = 1L;
 	
 	private int requestID = 0;
-	private ArrayList signedData = null;
+	private ArrayList<?> signedData = null;
 	private Certificate signerCertificate = null;
 
 	/**
 	 * Main Constuctor
 	 */
-	public MRTDSignResponse(int requestID, ArrayList signedData, Certificate signerCertificate){
+	public MRTDSignResponse(int requestID, ArrayList<?> signedData, Certificate signerCertificate){
 	  this.requestID = requestID;
 	  this.signedData = signedData;
 	  this.signerCertificate = signerCertificate;

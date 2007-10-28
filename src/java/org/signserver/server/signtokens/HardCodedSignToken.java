@@ -25,15 +25,16 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 
-import javax.ejb.EJBException;
 
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.SignTokenAuthenticationFailureException;
+import org.signserver.common.SignTokenInitializationFailureException;
 import org.signserver.common.SignTokenOfflineException;
 import org.signserver.common.SignerStatus;
 
@@ -41,7 +42,7 @@ import org.signserver.common.SignerStatus;
 /**
  * Class used for testing purposes, contains soft dummy key and certificates 
  * @author Philip Vendil
- * @version $Id: HardCodedSignToken.java,v 1.3 2007-04-12 04:01:08 herrvendil Exp $
+ * @version $Id: HardCodedSignToken.java,v 1.4 2007-10-28 12:27:11 herrvendil Exp $
  */
 
 public class HardCodedSignToken implements ISignToken {
@@ -53,7 +54,7 @@ public class HardCodedSignToken implements ISignToken {
 	 */
 	
 	
-	
+	/*
 	private static byte[] passTestKey = Base64.decode((
 	"MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDmZqPJNogVtiRZ" +
 	"9loOFJ7UPMsrqWXZZ8R+nTPB72+kQ+4qOpgUHfto7QpSbs9/9wGrUsxc/mpadt/g" +
@@ -80,9 +81,25 @@ public class HardCodedSignToken implements ISignToken {
 	"RS5kVQ1iNszwWOACEzbhnwEyMwRJMSWytjo2zZIdAoGACPzW59zxy2lyVWbJIjXa" +
 	"Frf7tI8+FffkudTPxU/zNbJJqHlprTlqv7aeHn8gYO+++8HkJVksvBRMR3DVjF7h" +
 	"Bstg/zzNoMZgzxjL+afGxe4KNcfTmoXFm/rG2WCEio+H4AF3g9QyQUxpvaLXG7VW" +
-	"VI42L5Hy2MkUE1Mw7GfDoy4=").getBytes());
+	"VI42L5Hy2MkUE1Mw7GfDoy4=").getBytes());*/
 
-	private static byte[] certbytes = Base64.decode((
+	private static byte[] passTestKey = Base64.decode((
+	"MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAIUQj9LZl/yZQHm9" +
+	"QSrg+o/Ir+F2UQrEamEL5Q307kS+AsrB+9mLYZhFY3vqIo21aZmxKdtPa/d1ML0u" +
+	"E2Ykz0L1QGJ1MO5Wux+EOKwoj0+JsI/nkfCMbgDmYK79h11REc7quin3U2K0wm5t" +
+	"XAaDus8X7ZRwp4wm7gP+tllUS4SrAgMBAAECgYAvSZVy/vTuRaAOI12XWWBx3IX0" +
+	"f9GJHAgZ+NorvZE3SLdBSvKvesLyFCaokKo65e9jOPyA/ZaG2FS7xjYKpKYqwt96" +
+	"1l5Vyd3dloaTFEDjjp/ZJgbmEwDKICXudqCH7PyCaCB+SofXUYmD7Ss7OxtqZtjY" +
+	"MoXQ1IYwhPPFDJyjoQJBAPWXbC1Fzpx7LFisISbcmNlDt1qQg7GgOxq8IokRkqUm" +
+	"1e/faRCXq8ZJmQfR9UnsESEWsCOWZ8gO2SKCvSiH8tMCQQCKtEPMDKtX/I3MjkMW" +
+	"wkIX0ivTjPn9tFM6av0X2ppQELQINe/vZLRuplLfOnAgKuGNi712e+yHPpvugsX1" +
+	"Lo/JAkEAk/Mx1yA7tOc7MvwXSKsSZai2t5dhzsshcBywjXSJrHZ14XjseXN1pxHF" +
+	"YAGrTGorc4yQdg/w24OeaXzraZRkwwJBAIBC/+qh0JR1g76j0yAplKqofESNOeNE" +
+	"rC36H36+dDITsBdjoTNTgZJMlZe9V1A3twmILjRxliDeYZ1mKp52ZxkCQD0gyo9r" +
+	"gbE9jGM7yKu169PZXNpWN0YP3UPM+ctqNkKe2l2hK0rCopoymxJGthba9iKhzHCZ" +
+	"FHqzLUsiKmWnrwY=" ).getBytes());
+	
+	/*private static byte[] certbytes = Base64.decode((
 	"MIID7zCCAqigAwIBAgIIWOzgRTcR/iAwPAYJKoZIhvcNAQEKMC+gDzANBglghkgB" +
 	"ZQMEAgEFAKEcMBoGCSqGSIb3DQEBCDANBglghkgBZQMEAgEFADA/MRMwEQYDVQQD" +
 	"EwpTZXRlY1Rlc3QyMRswGQYDVQQKExJSaWtzcG9saXNzdHlyZWxzZW4xCzAJBgNV" +
@@ -104,16 +121,31 @@ public class HardCodedSignToken implements ISignToken {
 	"FCOcN8VJEeIvgDyWoMUDG7K1YvjmkEU6CPVYrL2PAdY0bPZvTIymC1HuyPmMnf83" +
 	"QKHW0KKtb4uhkruTkX87yZm7fZZXfso6HeUKQ0+fbcqmQdXFEcJJEKSHTCcu5BVj" +
 	"JebCC2FiSP88KPGGW5D351LJ+UL8En3oA5eHxZCy/LeGejPw0N02XjVFfBZEKnf6" +
-	"5a94").getBytes());
+	"5a94").getBytes());*/
 
-	
-	
+	private static byte[] certbytes = Base64.decode((
+	"MIIC5DCCAcygAwIBAgIIfZgsZqV8NDAwDQYJKoZIhvcNAQEFBQAwNzERMA8GA1UE" +
+	"AxMIQWRtaW5DQTExFTATBgNVBAoTDEVKQkNBIFNhbXBsZTELMAkGA1UEBhMCU0Uw" +
+	"HhcNMDYwNjAzMTUzMzM5WhcNMjYwNTI5MTU0MzM5WjA3MRYwFAYDVQQDEw10aW1l" +
+	"c3RhbXB0ZXN0MR0wGwYDVQQKExRQcmltZUtleSBTb2x1dGlvbiBBQjCBnzANBgkq" +
+	"hkiG9w0BAQEFAAOBjQAwgYkCgYEAhRCP0tmX/JlAeb1BKuD6j8iv4XZRCsRqYQvl" +
+	"DfTuRL4CysH72YthmEVje+oijbVpmbEp209r93UwvS4TZiTPQvVAYnUw7la7H4Q4" +
+	"rCiPT4mwj+eR8IxuAOZgrv2HXVERzuq6KfdTYrTCbm1cBoO6zxftlHCnjCbuA/62" +
+	"WVRLhKsCAwEAAaN4MHYwDAYDVR0TAQH/BAIwADAOBgNVHQ8BAf8EBAMCBsAwFgYD" +
+	"VR0lAQH/BAwwCgYIKwYBBQUHAwgwHQYDVR0OBBYEFOrxsQleE90vW4I2FC4cDim/" +
+	"hKjhMB8GA1UdIwQYMBaAFNrdQb5Q2K3ZL/KD+leV040azuwPMA0GCSqGSIb3DQEB" +
+	"BQUAA4IBAQB5WKwHfItwzbU3gdsszZ1V0yfnc9znP8De8fOjBHaGdgO3wxo2zB0G" +
+	"JbgcyvVeJ5kecZRZcM+/bTNraWFGlCTkaqLD+1pMeVc1oBbtR5hevuykA+OR7RKS" +
+	"mUZ7CadXnZjkDRgN8XsP5doDOpV2ZunLfrPCx61mJ3GxG6gvuMutOd7U2BN2vbMr" +
+	"VMNxWOftXR/XyJAJxY0YOgplV8hOkW+Ky0MyAe2ktFnOOuMIMKhLgrN338ZeAXRs" +
+	"2lhcc/p79imDL5QkPavZWrcnNZpT506DDyzn1cf68HpJNF1ICY57hWmx79gbIFhe" +
+	"mJxVZp+eyws3H9Yb9o2pLs7EOS7n+X26" ).getBytes());
 	
 	private X509Certificate cert = null;
 	
 	private PrivateKey privateKey = null;
 	
-	public void init(Properties props)  {
+	public void init(Properties props) throws SignTokenInitializationFailureException {
 		
 		try
 		{
@@ -125,13 +157,13 @@ public class HardCodedSignToken implements ISignToken {
 			privateKey = keyFactory.generatePrivate(pkKeySpec);
 			
 		} catch (NoSuchAlgorithmException e) {
-			throw new EJBException(e);
+			throw new SignTokenInitializationFailureException("NoSuchAlgorithmException: " + e.getMessage());
 		} catch (InvalidKeySpecException e) {
-			throw new EJBException(e);
+			throw new SignTokenInitializationFailureException("InvalidKeySpecException: " + e.getMessage());
 		}catch (CertificateException e) {
-			throw new EJBException(e);
+			throw new SignTokenInitializationFailureException("CertificateException: " + e.getMessage());
         } catch (NoSuchProviderException e) {
-			throw new EJBException(e);
+			throw new SignTokenInitializationFailureException("NoSuchProviderException: " + e.getMessage());
 		}   
 
 	}
@@ -150,14 +182,16 @@ public class HardCodedSignToken implements ISignToken {
 	public void activate(String authenticationcode)
 			throws SignTokenAuthenticationFailureException,
 			SignTokenOfflineException {
-        // Do nothing
+        if(authenticationcode.equals("9876")){
+        	throw new SignTokenAuthenticationFailureException(""); 
+        }
 
 	}
 
 	/**
 	 * Not used in current implementation
 	 */	
-	public boolean deactivate() {		
+	public boolean deactivate() {	
 		return true;
 	}
 
@@ -192,22 +226,24 @@ public class HardCodedSignToken implements ISignToken {
 	/**
 	 * Not supported
 	 */
-	public Collection getCertificateChain(int purpose) throws SignTokenOfflineException {
+	public Collection<Certificate> getCertificateChain(int purpose) throws SignTokenOfflineException {
+		ArrayList<Certificate> certs = new ArrayList<Certificate>();
+		certs.add(cert);
+		return certs;
+	}
+
+	/**
+	 * Method not supported
+	 */
+	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException {
 		return null;
 	}
 
 	/**
 	 * Method not supported
 	 */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException {		
-		return null;
-	}
-
-	/**
-	 * Method not supported
-	 */
-	public boolean destroyKey(int purpose) {		
-		return false;
+	public boolean destroyKey(int purpose) {
+		return true;
 	}
 
 }

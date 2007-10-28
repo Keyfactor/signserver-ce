@@ -19,7 +19,6 @@ import java.util.Hashtable;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.rmi.PortableRemoteObject;
 
 import junit.framework.TestCase;
 
@@ -32,22 +31,22 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
-import org.signserver.ejb.IGlobalConfigurationSession;
-import org.signserver.ejb.SignServerSession;
-import org.signserver.ejb.SignServerSessionHome;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.ISignServerSession;
 import org.signserver.server.signers.TimeStampSigner;
 
 
 public class TestTimeStampSigner extends TestCase {
 
-	private static IGlobalConfigurationSession gCSession = null;
-	private static SignServerSession sSSession = null;
+	private static IGlobalConfigurationSession.IRemote gCSession = null;
+	private static ISignServerSession.IRemote sSSession = null;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 		SignServerUtil.installBCProvider();
-		gCSession = getGlobalConfigHome().create();
-		sSSession = getSignServerHome().create();
+		Context context = getInitialContext();
+		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
+		sSSession = (ISignServerSession.IRemote) context.lookup(ISignServerSession.IRemote.JNDI_NAME);
 
 	}
 	
@@ -121,34 +120,14 @@ public class TestTimeStampSigner extends TestCase {
 		  
 		  sSSession.reloadConfiguration(4);
 	}
-	 
-  /**
-   * Get the home interface
-   */
-  protected org.signserver.ejb.IGlobalConfigurationSessionHome getGlobalConfigHome() throws Exception {
-  	Context ctx = this.getInitialContext();
-  	Object o = ctx.lookup("GlobalConfigurationSession");
-  	org.signserver.ejb.IGlobalConfigurationSessionHome intf = (org.signserver.ejb.IGlobalConfigurationSessionHome) PortableRemoteObject
-  		.narrow(o, org.signserver.ejb.IGlobalConfigurationSessionHome.class);
-  	return intf;
-  }
-  
-  /**
-   * Get the home interface
-   */
-  protected SignServerSessionHome getSignServerHome() throws Exception {
-  	Context ctx = this.getInitialContext();
-  	Object o = ctx.lookup("SignServerSession");
-  	org.signserver.ejb.SignServerSessionHome intf = (org.signserver.ejb.SignServerSessionHome) PortableRemoteObject
-  		.narrow(o, org.signserver.ejb.SignServerSessionHome.class);
-  	return intf;
-  }
+
+
   
   /**
    * Get the initial naming context
    */
   protected Context getInitialContext() throws Exception {
-  	Hashtable props = new Hashtable();
+  	Hashtable<String, String> props = new Hashtable<String, String>();
   	props.put(
   		Context.INITIAL_CONTEXT_FACTORY,
   		"org.jnp.interfaces.NamingContextFactory");

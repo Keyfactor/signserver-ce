@@ -52,7 +52,7 @@ import org.signserver.common.SignerStatus;
  * KEYSTOREPASSWORD : The password that locks the keystore.
  * 
  * @author philip
- * $Id: P12SignToken.java,v 1.5 2007-09-27 10:02:27 anatom Exp $
+ * $Id: P12SignToken.java,v 1.6 2007-10-28 12:27:11 herrvendil Exp $
  */
 public class P12SignToken implements ISignToken {
 	
@@ -107,7 +107,7 @@ public class P12SignToken implements ISignToken {
 			InputStream in = new FileInputStream(keystorepath);
 			ks.load(in, authenticationcode.toCharArray());
 			in.close();
-			
+						
 			// Find the key private key entry in the keystore
 			Enumeration<String> e = ks.aliases();
 			Object o = null;

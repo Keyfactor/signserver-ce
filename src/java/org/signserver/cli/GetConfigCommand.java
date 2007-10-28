@@ -28,7 +28,7 @@ import org.signserver.common.WorkerConfig;
  * Gets the current configuration of the given signer, this might not be the same as
  * the active configuration.
  *
- * @version $Id: GetConfigCommand.java,v 1.3 2007-04-26 08:24:37 herrvendil Exp $
+ * @version $Id: GetConfigCommand.java,v 1.4 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class GetConfigCommand extends BaseCommand {
 	
@@ -69,7 +69,7 @@ public class GetConfigCommand extends BaseCommand {
         			
         		}else{
         			// named worker is requested
-        			int id = getSignSession(hostname).getSignerId(workerid);
+        			int id = getCommonAdminInterface(hostname).getSignerId(workerid);
             		if(id == 0){
             			throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
             		}
@@ -84,8 +84,8 @@ public class GetConfigCommand extends BaseCommand {
     }
 
 	private void displayGlobalConfiguration(String hostname) throws RemoteException, Exception {
-		GlobalConfiguration gc = getGlobalConfigurationSession(hostname).getGlobalConfiguration();
-		Iterator iter = gc.getKeyIterator();
+		GlobalConfiguration gc = getCommonAdminInterface(hostname).getGlobalConfiguration();
+		Iterator<?> iter = gc.getKeyIterator();
 		this.getOutputStream().println(" This node " + hostname + " have the following Global Configuration:");
 		while(iter.hasNext()){
 			String key = (String) iter.next();
@@ -98,7 +98,7 @@ public class GetConfigCommand extends BaseCommand {
 	}
 	
 	private void displayWorkerConfig(int workerId, String hostname) throws RemoteException, Exception{
-       	WorkerConfig config = this.getSignSession(hostname).getCurrentSignerConfig(workerId);
+       	WorkerConfig config = this.getCommonAdminInterface(hostname).getCurrentSignerConfig(workerId);
     	
     	        	
     	this.getOutputStream().println(
@@ -112,7 +112,7 @@ public class GetConfigCommand extends BaseCommand {
     		this.getOutputStream().println("  No properties exists in the current configuration\n");
     	}
     	
-    	Enumeration propertyKeys = config.getProperties().keys();
+    	Enumeration<?> propertyKeys = config.getProperties().keys();
     	while(propertyKeys.hasMoreElements()){
     		String key = (String) propertyKeys.nextElement();
     		this.getOutputStream().println("  " + key + "=" + config.getProperties().getProperty(key) + "\n");

@@ -24,7 +24,7 @@ import org.signserver.common.AuthorizedClient;
 /**
  * removes an authorized client from a given signer
  *
- * @version $Id: RemoveAuthorizedClientCommand.java,v 1.1 2007-02-27 16:18:07 herrvendil Exp $
+ * @version $Id: RemoveAuthorizedClientCommand.java,v 1.2 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class RemoveAuthorizedClientCommand extends BaseCommand {
 	
@@ -61,13 +61,13 @@ public class RemoveAuthorizedClientCommand extends BaseCommand {
         	        	
         	this.getOutputStream().println("Removing the client certificate with SN " + certsn + " with issuerDN " + issuerdn + " from signer with id " +signerid + "\n");
         	this.getOutputStream().println("See current configuration with the listauthorizedclients command, activate it with the reload command\n\n");
-        	if(getSignSession(hostname).removeAuthorizedClient(signerid,authClient)){
+        	if(getCommonAdminInterface(hostname).removeAuthorizedClient(signerid,authClient)){
         		this.getOutputStream().println("  Client Removed\n");	
         	}else{
         		this.getOutputStream().println("  Error, the given client doesn't seem to exist\n");
         	}
         	
-        	printAuthorizedClients(getSignSession(hostname).getCurrentSignerConfig(signerid));
+        	printAuthorizedClients(getCommonAdminInterface(hostname).getCurrentSignerConfig(signerid));
         	
     		this.getOutputStream().println("\n\n");
         	

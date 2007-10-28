@@ -19,7 +19,6 @@ import java.util.Hashtable;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.rmi.PortableRemoteObject;
 
 import junit.framework.TestCase;
 
@@ -29,22 +28,21 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
-import org.signserver.ejb.IGlobalConfigurationSession;
-import org.signserver.ejb.SignServerSession;
-import org.signserver.ejb.SignServerSessionHome;
-import org.signserver.server.signers.TimeStampSigner;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.ISignServerSession;
 
 
 public class TestPDFSigner extends TestCase {
 
-	private static IGlobalConfigurationSession gCSession = null;
-	private static SignServerSession sSSession = null;
+	private static IGlobalConfigurationSession.IRemote gCSession = null;
+	private static ISignServerSession.IRemote sSSession = null;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 		SignServerUtil.installBCProvider();
-		gCSession = getGlobalConfigHome().create();
-		sSSession = getSignServerHome().create();
+		Context context = getInitialContext();
+		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
+		sSSession = (ISignServerSession.IRemote) context.lookup(ISignServerSession.IRemote.JNDI_NAME);
 
 	}
 	
@@ -55,13 +53,13 @@ public class TestPDFSigner extends TestCase {
 		
 		  
 		  sSSession.setWorkerProperty(5, "AUTHTYPE", "NOAUTH");
-		  sSSession.setWorkerProperty(5,"KEYSTOREPATH","/tmp/timestamp.p12");
+		  String signserverhome = System.getenv("SIGNSERVER_HOME");
+		  assertNotNull(signserverhome);
+		  sSSession.setWorkerProperty(5,"KEYSTOREPATH",signserverhome +"/src/test/timestamp1.p12");
 		  sSSession.setWorkerProperty(5, "KEYSTOREPASSWORD", "foo123");
 		  
 		  sSSession.reloadConfiguration(5);	
 
-		  String signserverhome = System.getenv("SIGNSERVER_HOME");
-		  assertNotNull(signserverhome);
 	}
 
 
@@ -71,7 +69,7 @@ public class TestPDFSigner extends TestCase {
 
 		int reqid = 13;
 
-		GenericSignRequest signRequest = new GenericSignRequest(13, testpdf);
+		GenericSignRequest signRequest = new GenericSignRequest(13, Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
 
 
 		GenericSignResponse res = (GenericSignResponse) sSSession.signData(5,signRequest, null,null); 
@@ -116,34 +114,14 @@ public class TestPDFSigner extends TestCase {
 		  assertNotNull(signserverhome);
 	}
 	
-	 
-  /**
-   * Get the home interface
-   */
-  protected org.signserver.ejb.IGlobalConfigurationSessionHome getGlobalConfigHome() throws Exception {
-  	Context ctx = this.getInitialContext();
-  	Object o = ctx.lookup("GlobalConfigurationSession");
-  	org.signserver.ejb.IGlobalConfigurationSessionHome intf = (org.signserver.ejb.IGlobalConfigurationSessionHome) PortableRemoteObject
-  		.narrow(o, org.signserver.ejb.IGlobalConfigurationSessionHome.class);
-  	return intf;
-  }
-  
-  /**
-   * Get the home interface
-   */
-  protected SignServerSessionHome getSignServerHome() throws Exception {
-  	Context ctx = this.getInitialContext();
-  	Object o = ctx.lookup("SignServerSession");
-  	org.signserver.ejb.SignServerSessionHome intf = (org.signserver.ejb.SignServerSessionHome) PortableRemoteObject
-  		.narrow(o, org.signserver.ejb.SignServerSessionHome.class);
-  	return intf;
-  }
+
+
   
   /**
    * Get the initial naming context
    */
   private Context getInitialContext() throws Exception {
-  	Hashtable props = new Hashtable();
+  	Hashtable<String, String> props = new Hashtable<String, String>();
   	props.put(
   		Context.INITIAL_CONTEXT_FACTORY,
   		"org.jnp.interfaces.NamingContextFactory");
@@ -155,7 +133,7 @@ public class TestPDFSigner extends TestCase {
   	return ctx;
   }
 
-  private static byte[] testpdf = Base64.decode(("JVBERi0xLjQKJcOkw7zDtsOfCjIgMCBvYmoKPDwvTGVuZ3RoIDMgMCBSL0ZpbHRl"
+  private static String testpdf1 = "JVBERi0xLjQKJcOkw7zDtsOfCjIgMCBvYmoKPDwvTGVuZ3RoIDMgMCBSL0ZpbHRl"
 + "ci9GbGF0ZURlY29kZT4+CnN0cmVhbQp4nCXKMQrDMAxG4V2n+OcOiqXacgwhQ6De"
 + "A4JcIG0gQ6Fecv2aljd+L+CiDwICC1JJfMcYhQvaE9sN77/12kGLUzIekbP22XcM"
 + "VSAKf2GKNsNPMk797TRZtRrVJOsPHk4rrfgCC/kXdQplbmRzdHJlYW0KZW5kb2Jq"
@@ -882,8 +860,9 @@ public class TestPDFSigner extends TestCase {
 + "Xk/dt/MoxOyBGRd4T/f4lTxOEDD12wYb1aMbXJZAWuU6X0EM06uR/4yfzJL9WtE2"
 + "5NjW8/aNdnEmHI7ekT0padNpD9wy8ZxoRv7VoOMf7Cz2r/shBvaLqU+RZaf+PwIs"
 + "jn9EGBxrdgXiiLat0+VV2GhpW52I/ZBPWs3bb4F7sWqUpuZtII8YYSFHoR9ClfMP"
-+ "5H1oCFJb1eLWV0ZibX8eRJOw1cXuvzL9/Lcp075DA8EtJgcu3o5Q81d32cMU/tCe"
-+ "yseY/4rC/pYUEDN2OeOxLuQIhyvqoZidzo6iY6JpPY6r+RtqjIU25KUhWa4PsRGY"
++ "5H1oCFJb1eLWV0ZibX8eRJOw1cXuvzL9/Lcp075DA8EtJgcu3o5Q81d32cMU/tCe";
+private static String testpdf2 =
+  "yseY/4rC/pYUEDN2OeOxLuQIhyvqoZidzo6iY6JpPY6r+RtqjIU25KUhWa4PsRGY"
 + "iP2xKRSQ/lwCQ8qkgc8YsEosM2/fRmBOF324POm4IBzItklGw+TQYdtakjfhiEcj"
 + "pJ4onC5NBQzmmggAEv49CN1MC3sglRh3YLn50jWSII4oRVJefI6TIy5OFfoho7fS"
 + "TaSOZLT0MxtGUq+fXZhZUZCmuuYTCr0rAfZKM5/8KS0a2G4nHWLQrZVzayfUANws"
@@ -1675,8 +1654,9 @@ public class TestPDFSigner extends TestCase {
 + "eQAmPiU+03pU3hHAsz0mtKGbrxyHP5rLroC/9PS6VALPn9aYzQcRTsLv6NBDE385"
 + "0ekuYigexiQk1NyvhMZAobMxGhM9aMQyZv/8wSusuU9uAMooeop7BfDTqlIsoN2o"
 + "2ohwAUpxMoUhhALVUlRpMmWSF1mokG6xPqz4FEhuE1lUThAy9pcHLyw5COz+H7cp"
-+ "y70KZGp+88D26KbKqOVETXrv8WsaQSscUnHDtGlJ4NWkEIZxH3WNbLBRfAvXkwJj"
-+ "lMKMGY2bWFEOTVLDpBOYl5eqPovsiPENJPGGOe214ni32s7Dm7NduVj8hDEcfGS1"
++ "y70KZGp+88D26KbKqOVETXrv8WsaQSscUnHDtGlJ4NWkEIZxH3WNbLBRfAvXkwJj";
+private static String testpdf3 =
+  "lMKMGY2bWFEOTVLDpBOYl5eqPovsiPENJPGGOe214ni32s7Dm7NduVj8hDEcfGS1"
 + "csnBpESnAYcZ6cSVShU3s8hXJeHmzYNedW7w1yKSpVAbet35ar4WRiphkkvJqhWO"
 + "/YdqglXhJ20jpBIFgMuCSwZNWEIZeXG7VR2y22OvQytenInTxNCp6UrPX1HDS7ex"
 + "ne/1OM9QAAulNbTOe2ckILmZPxoOTs6AmKJ2afvgfOI5IECJfwmsGHPhL7hVGI1J"
@@ -2530,8 +2510,9 @@ public class TestPDFSigner extends TestCase {
 + "veIM06OFdjM6VCZMTxSE8MdH7PtkxpOAqSC5Wi4XTAjT3S+7IUcmJ7lKVzG/Jpym"
 + "L2jsY07OK3pbgtP+gnFjI92npu0Dm7Z5JErnCjMgY/3xF2WDm3EnLTV7sW3SVcA2"
 + "E1Uc/jBPc9OlrxCWcu/iX7LHMH5eqX86pv1Gy0P63TmH82ywq4n9Aa4HmSU1DZFc"
-+ "SlLkqb5BjR1bdBhHa0YI8PThCV1k7mUPvmJzweEHbWCoOGTBJliRv3hvrC+KTCI0"
-+ "U0rGwTYUHwOhR9ktzsLywDAE6DrF5xu15Eo5ZraRxQds34Dq6suOu4JegO/IP+as"
++ "SlLkqb5BjR1bdBhHa0YI8PThCV1k7mUPvmJzweEHbWCoOGTBJliRv3hvrC+KTCI0";
+private static String testpdf4 =
+  "U0rGwTYUHwOhR9ktzsLywDAE6DrF5xu15Eo5ZraRxQds34Dq6suOu4JegO/IP+as"
 + "62mozUMzgqGNQoMqSGVswf/VBPdLryBt1ZAZGS+rMIvqhgx7LWs0HiVNm/JqSEDY"
 + "fxqgoh8KQI3jXTqg6RVjT10hPnhw0APrggx5wva3oXGAsuO+0QxNPPbfxlu4K0FC"
 + "HRmF2b7AcGIkTcilp+tfte0oUSzKD+YmVwH7lrcOl8QZiwlXH8PIBSTshVYbcZHA"
@@ -3169,7 +3150,7 @@ public class TestPDFSigner extends TestCase {
 + "CjAwMDAxNDQwMDggMDAwMDAgbiAKMDAwMDE0NDA5MiAwMDAwMCBuIAp0cmFpbGVy"
 + "Cjw8L1NpemUgMTQvUm9vdCAxMiAwIFIKL0luZm8gMTMgMCBSCi9JRCBbIDw3QUZF"
 + "MDRCOEE5OEVDRDREQzBERkMxODNBN0UzMDAzNj4KPDdBRkUwNEI4QTk4RUNENERD"
-+ "MERGQzE4M0E3RTMwMDM2PiBdCj4+CnN0YXJ0eHJlZgoxNDQyNzkKJSVFT0YK").getBytes());
++ "MERGQzE4M0E3RTMwMDM2PiBdCj4+CnN0YXJ0eHJlZgoxNDQyNzkKJSVFT0YK";
 
   
 }

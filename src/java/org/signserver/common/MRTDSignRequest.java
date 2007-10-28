@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * 
  * 
  * @author Philip Vendil
- * $Id: MRTDSignRequest.java,v 1.1 2007-02-27 16:18:11 herrvendil Exp $
+ * $Id: MRTDSignRequest.java,v 1.2 2007-10-28 12:25:01 herrvendil Exp $
  */
 
 public class MRTDSignRequest implements ISignRequest {
@@ -32,7 +32,7 @@ public class MRTDSignRequest implements ISignRequest {
 	 */
 	private static final long serialVersionUID = 1L;
 	private int requestID = 0;
-	private ArrayList signRequestData = null;
+	private ArrayList<?> signRequestData = null;
 	
 	private static final String signatureAlgorithm = "RSASSA-PSS";
 	
@@ -43,7 +43,7 @@ public class MRTDSignRequest implements ISignRequest {
 	 * @param requestID a unique id of the request
 	 * @param signRequestData the data about to sign. Should be of type byte[]
 	 */
-	public MRTDSignRequest(int requestID, ArrayList signRequestData){
+	public MRTDSignRequest(int requestID, ArrayList<?> signRequestData){
 	  this.requestID = requestID;
 	  this.signRequestData = signRequestData;
 	}

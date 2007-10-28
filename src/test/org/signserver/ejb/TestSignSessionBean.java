@@ -23,7 +23,6 @@ import java.util.Properties;
 import javax.crypto.Cipher;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.rmi.PortableRemoteObject;
 
 import junit.framework.TestCase;
 
@@ -34,12 +33,14 @@ import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerConfig;
 import org.signserver.common.SignerStatus;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.ISignServerSession;
 
 public class TestSignSessionBean extends TestCase {
 
     /** Home interface */
-	private static SignServerSession sSSession = null;
-	private static IGlobalConfigurationSession gCSession = null;
+	private static ISignServerSession.IRemote sSSession = null;
+	private static IGlobalConfigurationSession.IRemote gCSession = null;
 
 
     /**
@@ -48,8 +49,9 @@ public class TestSignSessionBean extends TestCase {
     protected void setUp() throws Exception {
     	super.setUp();
 		SignServerUtil.installBCProvider();
-		gCSession = getGlobalConfigHome().create();
-		sSSession = getSignServerHome().create();
+		Context context = getInitialContext();
+		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
+		sSSession = (ISignServerSession.IRemote) context.lookup(ISignServerSession.IRemote.JNDI_NAME);
     }
 
 	public void test00SetupDatabase() throws Exception{
@@ -69,7 +71,7 @@ public class TestSignSessionBean extends TestCase {
 	public void test01SignData() throws Exception {  
        
        int reqid = 11;
-       ArrayList signrequests = new ArrayList();
+       ArrayList<byte[]> signrequests = new ArrayList<byte[]>();
        
        byte[] signreq1 = "Hello World".getBytes();
        byte[] signreq2 = "Hello World2".getBytes();
@@ -82,20 +84,20 @@ public class TestSignSessionBean extends TestCase {
        assertTrue(reqid == res.getRequestID());
        
        Certificate signercert = res.getSignerCertificate();       
-       ArrayList signatures = (ArrayList) res.getSignedData();
+       ArrayList<?> signatures = (ArrayList<?>) res.getSignedData();
        assertTrue(signatures.size() == 2);       
        
        Cipher c = Cipher.getInstance("RSA", "BC");
        c.init(Cipher.DECRYPT_MODE, signercert);
        
-       byte[] signres1 = c.doFinal((byte[]) ((ArrayList) res.getSignedData()).get(0));              
+       byte[] signres1 = c.doFinal((byte[]) ((ArrayList<?>) res.getSignedData()).get(0));              
        
        if (!arrayEquals(signreq1, signres1))
        {
     	   assertTrue("First MRTD doesn't match with request, " + new String(signreq1) + " = " + new String(signres1),false);
        }
        
-       byte[] signres2 = c.doFinal((byte[]) ((ArrayList) res.getSignedData()).get(1));
+       byte[] signres2 = c.doFinal((byte[]) ((ArrayList<?>) res.getSignedData()).get(1));
        
        if (!arrayEquals(signreq2, signres2))
        {
@@ -155,9 +157,9 @@ public class TestSignSessionBean extends TestCase {
 		AuthorizedClient authClient = new AuthorizedClient("123456","CN=testca");
 		sSSession.addAuthorizedClient(3,authClient);
 		
-		Collection result = new SignerConfig(sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
+		Collection<?> result = new SignerConfig(sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
 		boolean exists = false;
-		Iterator iter =result.iterator();
+		Iterator<?> iter =result.iterator();
 		while(iter.hasNext()){
 		   AuthorizedClient next = (AuthorizedClient) iter.next();	
 		   exists = exists || (next.getCertSN().equals("123456") && next.getIssuerDN().toString().equals("CN=testca"));
@@ -173,11 +175,11 @@ public class TestSignSessionBean extends TestCase {
 		AuthorizedClient authClient = new AuthorizedClient("123456","CN=testca");
 		assertTrue(sSSession.removeAuthorizedClient(3,authClient));
 		
-		Collection result = new SignerConfig( sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
+		Collection<?> result = new SignerConfig( sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
 		assertTrue(result.size() == initialsize-1);
 		
 		boolean exists = false;
-		Iterator iter =result.iterator();
+		Iterator<?> iter =result.iterator();
 		while(iter.hasNext()){
 		   AuthorizedClient next = (AuthorizedClient) iter.next();	
 		   exists = exists || (next.getCertSN().equals("123456") && next.getIssuerDN().toString().equals("CN=testca"));
@@ -194,33 +196,14 @@ public class TestSignSessionBean extends TestCase {
 		  sSSession.reloadConfiguration(3);
 	}
 	 
-  /**
-   * Get the home interface
-   */
-  protected org.signserver.ejb.IGlobalConfigurationSessionHome getGlobalConfigHome() throws Exception {
-  	Context ctx = this.getInitialContext();
-  	Object o = ctx.lookup("GlobalConfigurationSession");
-  	org.signserver.ejb.IGlobalConfigurationSessionHome intf = (org.signserver.ejb.IGlobalConfigurationSessionHome) PortableRemoteObject
-  		.narrow(o, org.signserver.ejb.IGlobalConfigurationSessionHome.class);
-  	return intf;
-  }
-  
-  /**
-   * Get the home interface
-   */
-  protected SignServerSessionHome getSignServerHome() throws Exception {
-  	Context ctx = this.getInitialContext();
-  	Object o = ctx.lookup("SignServerSession");
-  	org.signserver.ejb.SignServerSessionHome intf = (org.signserver.ejb.SignServerSessionHome) PortableRemoteObject
-  		.narrow(o, org.signserver.ejb.SignServerSessionHome.class);
-  	return intf;
-  }
+
+ 
   
   /**
    * Get the initial naming context
    */
   protected Context getInitialContext() throws Exception {
-  	Hashtable props = new Hashtable();
+  	Hashtable<String, String> props = new Hashtable<String, String>();
   	props.put(
   		Context.INITIAL_CONTEXT_FACTORY,
   		"org.jnp.interfaces.NamingContextFactory");

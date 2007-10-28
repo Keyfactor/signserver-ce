@@ -26,13 +26,13 @@ import java.util.Map;
  * Contains a merge of static and dynamically defined global properties
  * 
  * @author Philip Vendil
- * $Id: GlobalConfiguration.java,v 1.1 2007-02-27 16:18:10 herrvendil Exp $
+ * $Id: GlobalConfiguration.java,v 1.2 2007-10-28 12:25:01 herrvendil Exp $
  */
 public class GlobalConfiguration implements Serializable{
    
   private static final long serialVersionUID = 1L;
   
-  private Map config;  
+  private Map<?,?> config;  
   private String state;
     
   public static final String SCOPE_GLOBAL = "GLOB.";
@@ -44,6 +44,7 @@ public class GlobalConfiguration implements Serializable{
   public static final int WORKERTYPE_ALL = 1; 
   public static final int WORKERTYPE_SIGNERS = 2;
   public static final int WORKERTYPE_SERVICES = 3;
+  public static final int WORKERTYPE_MAILSIGNERS = 4;
   
   public static final String WORKERPROPERTY_BASE = "WORKER";
   public static final String WORKERPROPERTY_CLASSPATH = ".CLASSPATH";
@@ -59,7 +60,7 @@ public class GlobalConfiguration implements Serializable{
    * Constructor that should only be called within
    * the GlobalConfigurationSessionBean.
    */
-  public GlobalConfiguration(Map config, String state){
+  public GlobalConfiguration(Map<?,?> config, String state){
 	  this.config = config;
 	  this.state = state;
   }
@@ -71,7 +72,7 @@ public class GlobalConfiguration implements Serializable{
    * @return the currently set global property or null if it doesn't exist.
    */
   public String getProperty(String scope, String property) {
-	return (String) config.get(scope + property);
+	return (String) config.get((scope + property).toUpperCase());
   }
   
   /**
@@ -89,8 +90,9 @@ public class GlobalConfiguration implements Serializable{
   /**
    * @return Returns an iterator to all configured properties
    */
-  public Iterator getKeyIterator(){	  
-	  return config.keySet().iterator();
+  @SuppressWarnings("unchecked")
+public Iterator<String> getKeyIterator(){	  
+	  return (Iterator<String>) config.keySet().iterator();
   }
  
   /**

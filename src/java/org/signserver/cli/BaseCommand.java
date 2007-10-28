@@ -18,12 +18,7 @@ import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.Iterator;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizedClient;
@@ -31,36 +26,30 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerConfig;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.IGlobalConfigurationSession;
-import org.signserver.ejb.IGlobalConfigurationSessionHome;
-import org.signserver.ejb.SignServerSession;
-import org.signserver.ejb.SignServerSessionHome;
 
 /**
  * Base for Commands, contains useful functions
  *
- * @version $Id: BaseCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * @version $Id: BaseCommand.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
  */
 public abstract class BaseCommand implements IAdminCommand{
 	
 
 	
     /** Log4j instance for Base */
-    private static Logger baseLog = Logger.getLogger(BaseCommand.class);
+    //private static Logger baseLog = Logger.getLogger(BaseCommand.class);
     /** Log4j instance for actual class */
     private Logger log;
 
-    /** The SignSession home bean */
-    private SignServerSessionHome signhome = null;
-    private IGlobalConfigurationSessionHome globalConfigurationSessionHome;
+
+    
     
     /** Where print output of commands */
     private PrintStream outStream = System.out;
 
     /** holder of argument array */
     protected String[] args = null;
-	private SignServerSession signsession;
-	private IGlobalConfigurationSession globalConfigurationSession;
+	private CommonAdminInterface commonAdminInterface;
 
     /**
      * Creates a new default instance of the class
@@ -83,7 +72,7 @@ public abstract class BaseCommand implements IAdminCommand{
     }
     
     protected void printAuthorizedClients(WorkerConfig config){
-    	Iterator iter = new SignerConfig(config).getAuthorizedClients().iterator();
+    	Iterator<AuthorizedClient> iter = new SignerConfig(config).getAuthorizedClients().iterator();
     	while(iter.hasNext()){
     		AuthorizedClient client = (AuthorizedClient) iter.next();
     		this.getOutputStream().println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");
@@ -105,61 +94,13 @@ public abstract class BaseCommand implements IAdminCommand{
         }
     }
 
-    /**
-     * Gets InitialContext
-     *
-     * @return InitialContext
-     */
-    protected InitialContext getInitialContext(String hostname) throws NamingException {
-        baseLog.debug(">getInitialContext()");
-
-        try {
-        	Hashtable props = new Hashtable();
-        	props.put(
-        		Context.INITIAL_CONTEXT_FACTORY,
-        		"org.jnp.interfaces.NamingContextFactory");
-        	props.put(
-        		Context.URL_PKG_PREFIXES,
-        		"org.jboss.naming:org.jnp.interfaces");
-        	props.put(Context.PROVIDER_URL, "jnp://" + hostname +":1099");
-        	InitialContext cacheCtx = new InitialContext(props);
-            baseLog.debug("<getInitialContext()");
-            return cacheCtx;
-        } catch (NamingException e) {
-            baseLog.error("Can't get InitialContext", e);
-            throw e;
-        }
-    } // getInitialContext
 
 
-    /** Gets SignServerSession Remote
-     *@return SignServerSession
-     */
-    protected SignServerSession getSignSession(String hostname) throws Exception{
-    	
-        if(signhome == null){	
-          Context ctx = getInitialContext(hostname);
-          signhome = (SignServerSessionHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("SignServerSession"), SignServerSessionHome.class );            
-          signsession = signhome.create();          
-        } 
-        
-		return signsession;
-     } // getSignSession
+
+
     
 
-    /** Gets GlobalConfigurationSession Remote
-     *@return SignServerSession
-     */
-    protected IGlobalConfigurationSession getGlobalConfigurationSession(String hostname) throws Exception{
-    	
-        if(globalConfigurationSessionHome == null){	
-          Context ctx = getInitialContext(hostname);
-          globalConfigurationSessionHome = (IGlobalConfigurationSessionHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("GlobalConfigurationSession"), IGlobalConfigurationSessionHome.class );            
-          globalConfigurationSession = globalConfigurationSessionHome.create();          
-        } 
-        
-		return globalConfigurationSession;
-     } // getSignSession
+
     
     /**
      * Logs a message with priority DEBUG
@@ -251,7 +192,7 @@ public abstract class BaseCommand implements IAdminCommand{
     	if(workerIdOrName.substring(0, 1).matches("\\d")){
     		retval = Integer.parseInt(workerIdOrName);    		
     	}else{
-    		retval = getSignSession(hostname).getSignerId(workerIdOrName);
+    		retval = getCommonAdminInterface(hostname).getSignerId(workerIdOrName);
     		if(retval == 0){
     			throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
     		}
@@ -266,13 +207,24 @@ public abstract class BaseCommand implements IAdminCommand{
      * @throws RemoteException 
      */
     public void checkThatWorkerIsSigner(int signerid, String hostname) throws RemoteException, Exception{
-    	Collection signerIds = getGlobalConfigurationSession(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_SIGNERS);
+    	Collection<Integer> signerIds = getCommonAdminInterface(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_SIGNERS);
     	if(!signerIds.contains(new Integer(signerid))){
     		throw new IllegalAdminCommandException("Error: given workerId doesn't seem to point to any signer in the system.");
     	}
     	
     }
     
-
+    /** Gets GlobalConfigurationSession Remote
+     *@return SignServerSession
+     */
+    protected CommonAdminInterface getCommonAdminInterface(String hostname) throws Exception{
+    	
+        if(commonAdminInterface == null){	
+        	commonAdminInterface = new CommonAdminInterface(hostname);                    
+        } 
+        
+		return commonAdminInterface;
+     }
+    
 
 } //BaseCommand

@@ -13,17 +13,33 @@
 
 package org.signserver.server;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
-import org.ejbca.core.ejb.ServiceLocator;
+import org.apache.log4j.Logger;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.IGlobalConfigurationSessionLocal;
-import org.signserver.ejb.IGlobalConfigurationSessionLocalHome;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 
 
 public abstract class BaseWorker implements IWorker {
 	
+	private transient Logger log = Logger.getLogger(this.getClass());
+	
+	private IGlobalConfigurationSession.ILocal globalConfigurationSession;
+	
+    protected IGlobalConfigurationSession.ILocal getGlobalConfigurationSession(){
+    	if(globalConfigurationSession == null){
+    		try{
+    		  Context context = new InitialContext();
+    		  globalConfigurationSession =  (org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal) context.lookup(IGlobalConfigurationSession.ILocal.JNDI_NAME);
+    		}catch(NamingException e){
+    			log.error(e);
+    		}
+    	}
+    	
+    	return globalConfigurationSession;
+    }
 	//Private Property constants
 
     protected int workerId =0;
@@ -41,28 +57,5 @@ public abstract class BaseWorker implements IWorker {
       this.workerId = workerId;
       this.config = config;
     }
-	     
-    /**
-     * Gets connection to global configuration session bean
-     *
-     * @return Connection
-     */
-    protected IGlobalConfigurationSessionLocal getGlobalConfigurationSession() {
-        if (globalConfigurationSession == null) {
-            try {
-            	ServiceLocator locator = ServiceLocator.getInstance();
-                IGlobalConfigurationSessionLocalHome globalconfigurationsessionhome = (IGlobalConfigurationSessionLocalHome) locator.getLocalHome(IGlobalConfigurationSessionLocalHome.COMP_NAME);
-                globalConfigurationSession = globalconfigurationsessionhome.create();
-            } catch (CreateException e) {
-                throw new EJBException(e);
-            }
-        }
-        return globalConfigurationSession;
-    } //getGlobalConfigurationSession
-    
-    private IGlobalConfigurationSessionLocal globalConfigurationSession = null;
-	
-
-	
 	
 }

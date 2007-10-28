@@ -23,7 +23,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * removes a property for a given signer
  *
- * @version $Id: RemovePropertyCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * @version $Id: RemovePropertyCommand.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class RemovePropertyCommand extends BaseCommand {
 	
@@ -67,7 +67,7 @@ public class RemovePropertyCommand extends BaseCommand {
 
         			}else{
         				// named worker is requested
-        				int id = getSignSession(hostname).getSignerId(workerid);
+        				int id = getCommonAdminInterface(hostname).getSignerId(workerid);
                 		if(id == 0){
                 			throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
                 		}
@@ -95,14 +95,14 @@ public class RemovePropertyCommand extends BaseCommand {
     	this.getOutputStream().println("removing the global property " + key + " with scope " + scope + "\n");
     	this.getOutputStream().println("See current configuration with the getconfig command, activate it with the reload command");
     
-		getGlobalConfigurationSession(hostname).removeProperty(scope, key);
+    	getCommonAdminInterface(hostname).removeGlobalProperty(scope, key);
 		
 	}
 	
 	private void removeWorkerProperty(int workerId, String hostname, String propertykey) throws RemoteException, Exception{
     	this.getOutputStream().println("Removing the property " + propertykey + " from worker " + workerId + "\n");
     	this.getOutputStream().println("See current configuration with the getconfig command, activate it with the reload command\n\n");
-    	if(getSignSession(hostname).removeWorkerProperty(workerId,propertykey)){
+    	if(getCommonAdminInterface(hostname).removeWorkerProperty(workerId,propertykey)){
     		this.getOutputStream().println("  Property Removed\n");	
     	}else{
     		this.getOutputStream().println("  Error, the property "+ propertykey + " doesn't seem to exist\n");

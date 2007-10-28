@@ -24,7 +24,7 @@ import org.ejbca.core.model.UpgradeableDataHashMap;
  * 
  * 
  * @author Philip Vendil
- * $Id: ArchiveData.java,v 1.1 2007-02-27 16:18:10 herrvendil Exp $
+ * $Id: ArchiveData.java,v 1.2 2007-10-28 12:25:01 herrvendil Exp $
  */
 public class ArchiveData extends UpgradeableDataHashMap {
 
@@ -47,6 +47,7 @@ public class ArchiveData extends UpgradeableDataHashMap {
 	 * Constructor that should be used to create an archive data.
 	 * @param archiveData
 	 */
+	@SuppressWarnings("unchecked")
 	public ArchiveData(byte[] archiveData){
        data.put(ARCHIVEDATA,archiveData);
 	}

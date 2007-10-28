@@ -24,6 +24,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.SignTokenAuthenticationFailureException;
+import org.signserver.common.SignTokenInitializationFailureException;
 import org.signserver.common.SignTokenOfflineException;
 import org.signserver.common.SignerConfig;
 import org.signserver.common.SignerStatus;
@@ -35,6 +36,7 @@ import org.signserver.server.signtokens.ISignToken;
 
 public abstract class BaseSigner extends BaseWorker implements ISigner {
 	
+	private transient Logger log = Logger.getLogger(this.getClass());
 
 	//Private Property constants
 	/**
@@ -50,7 +52,7 @@ public abstract class BaseSigner extends BaseWorker implements ISigner {
 	public static final String ARCHIVE          = "ARCHIVE";
 
     /** Log4j instance for actual implementation class */
-    public transient Logger log = Logger.getLogger(this.getClass());
+   // private transient Logger log = Logger.getLogger(this.getClass());
     
     protected ISignToken signToken = null;
 
@@ -114,11 +116,13 @@ public abstract class BaseSigner extends BaseWorker implements ISigner {
 				String classpath =gc.getSignTokenProperty(
 						workerId,GlobalConfiguration.SIGNTOKENPROPERTY_CLASSPATH);
 				if(classpath != null){		
-					Class implClass = Class.forName(classpath);
+					Class<?> implClass = Class.forName(classpath);
 					Object obj = implClass.newInstance();
 					signToken = (ISignToken) obj;
 					signToken.init(config.getProperties());								 
 				} 
+			}catch(SignTokenInitializationFailureException e){
+				throw new EJBException(e);
 			}catch(ClassNotFoundException e){
 				throw new EJBException(e);
 			}
@@ -154,12 +158,12 @@ public abstract class BaseSigner extends BaseWorker implements ISigner {
 	}
 	
 	
-	private Collection certChain = null;
+	private Collection<Certificate> certChain = null;
 	/**
 	 * Private method that returns the certificate used when signing
 	 * @throws SignTokenOfflineException 
 	 */
-	protected Collection getSigningCertificateChain() throws SignTokenOfflineException {
+	protected Collection<Certificate> getSigningCertificateChain() throws SignTokenOfflineException {
 		if(certChain==null){
 			certChain =  getSignToken().getCertificateChain(ISignToken.PURPOSE_SIGN);
 			if(certChain==null){

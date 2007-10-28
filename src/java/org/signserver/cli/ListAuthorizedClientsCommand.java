@@ -20,7 +20,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * Gets the current configurations list of authorized clients
  *
- * @version $Id: ListAuthorizedClientsCommand.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * @version $Id: ListAuthorizedClientsCommand.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class ListAuthorizedClientsCommand extends BaseCommand {
 	
@@ -50,7 +50,7 @@ public class ListAuthorizedClientsCommand extends BaseCommand {
         	int signerid = getWorkerId(args[1], hostname);
         	checkThatWorkerIsSigner(signerid,hostname);
         	
-        	WorkerConfig config = this.getSignSession(hostname).getCurrentSignerConfig(signerid);
+        	WorkerConfig config = this.getCommonAdminInterface(hostname).getCurrentSignerConfig(signerid);
         	
         	this.getOutputStream().println(
          			                       "OBSERVE that this command displays the current configuration which\n"+

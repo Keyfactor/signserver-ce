@@ -14,6 +14,7 @@
 
 package org.signserver.common;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -30,7 +31,7 @@ import org.ejbca.core.model.UpgradeableDataHashMap;
  * 
  * 
  * @author Philip Vendil
- * $Id: WorkerConfig.java,v 1.5 2007-04-26 08:23:50 herrvendil Exp $
+ * $Id: WorkerConfig.java,v 1.6 2007-10-28 12:25:01 herrvendil Exp $
  */
 public  class WorkerConfig extends UpgradeableDataHashMap {
 	
@@ -73,6 +74,7 @@ public  class WorkerConfig extends UpgradeableDataHashMap {
 	public static final String CLASS = "CLASSPATH";
 	
 	
+	@SuppressWarnings("unchecked")
 	public WorkerConfig(){
 		data.put(PROPERTIES, new Properties());
 	}
@@ -113,7 +115,8 @@ public  class WorkerConfig extends UpgradeableDataHashMap {
 	/**
 	 * Special method to ge access to the complete data field
 	 */
-    HashMap getData(){
+    @SuppressWarnings("unchecked")
+	HashMap<String, Serializable> getData(){
     	return data;
     }
 
@@ -121,6 +124,7 @@ public  class WorkerConfig extends UpgradeableDataHashMap {
 		return LATEST_VERSION;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void upgrade() {
 		if(data.get(WorkerConfig.CLASS) == null){
 			data.put(WorkerConfig.CLASS, this.getClass().getName());
@@ -130,8 +134,8 @@ public  class WorkerConfig extends UpgradeableDataHashMap {
 	}
 
 	/**
-	 * @return Method retreving the Node id from the SIGNSERVER_NODEID environment
-	 * valiable
+	 * @return Method retrieving the Node id from the SIGNSERVER_NODEID environment
+	 * variable
 	 * 
 	 */
 	public static String getNodeId(){

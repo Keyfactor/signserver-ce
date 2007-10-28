@@ -22,6 +22,7 @@ import java.util.Properties;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.SignTokenAuthenticationFailureException;
+import org.signserver.common.SignTokenInitializationFailureException;
 import org.signserver.common.SignTokenOfflineException;
 
 
@@ -29,7 +30,7 @@ import org.signserver.common.SignTokenOfflineException;
  *  All SignToken plug-ins must implement this interface.
  * 
  * @author Philip Vendil
- * @version $Id: ISignToken.java,v 1.4 2007-05-28 02:04:05 herrvendil Exp $
+ * @version $Id: ISignToken.java,v 1.5 2007-10-28 12:27:11 herrvendil Exp $
  */
 
 
@@ -46,7 +47,7 @@ public interface ISignToken {
     * Method called after creation of instance.
     *
     */	
-	public abstract void init(Properties props);
+	public abstract void init(Properties props) throws SignTokenInitializationFailureException;
 	
 	/**
 	 *  Method that returns the current status of the signtoken.
@@ -118,7 +119,7 @@ public interface ISignToken {
      * 
      */
     
-    public abstract Collection getCertificateChain(int purpose) throws SignTokenOfflineException;
+    public abstract Collection<Certificate> getCertificateChain(int purpose) throws SignTokenOfflineException;
     
 	/**
 	 * Method used to tell the signer to create a certificate request using its sign token.

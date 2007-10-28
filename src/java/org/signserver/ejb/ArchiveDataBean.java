@@ -15,18 +15,19 @@
 package org.signserver.ejb;
 
 import java.io.UnsupportedEncodingException;
-import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.HashMap;
 
-import javax.ejb.CreateException;
 import javax.ejb.EJBException;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
-import org.apache.log4j.Logger;
-import org.ejbca.core.ejb.BaseEntityBean;
 import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
-import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.ArchiveDataVO;
 
@@ -48,198 +49,159 @@ import org.signserver.common.ArchiveDataVO;
  * archiveData              : String  
  * </pre>
  *
- * @version $Id: ArchiveDataBean.java,v 1.1 2007-02-27 16:18:19 herrvendil Exp $
+ * @version $Id: ArchiveDataBean.java,v 1.2 2007-10-28 12:25:22 herrvendil Exp $
  *
- * @ejb.bean description="Entity Bean storing requests and responses of signer beans"
- * display-name="ArchiveDataBean"
- * name="ArchiveData"
- * view-type="local"
- * type="CMP"
- * reentrant="False"
- * cmp-version="2.x"
- * transaction-type="Container"
- * schema="ArchiveDataBean"
- * 
- * @ejb.finder
- *   description="findByArchiveId"
- *   signature="org.signserver.ejb.ArchiveDataLocal findByArchiveId(int type, int signerid, java.lang.String archiveid)"
- *   query="SELECT OBJECT(a) from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.archiveid=?3"
- * 
- * @ejb.finder
- *   description="findByTime"
- *   signature="java.util.Collection findByTime(int type, int signerid, long starttime, long endtime)"
- *   query="SELECT OBJECT(a) from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.time>=?3 AND a.time<=?4"
- *   
- * @ejb.finder
- *   description="findByRequestCertificate"
- *   signature="java.util.Collection findByRequestCertificate(int type, int signerid, java.lang.String requestIssuerDN, java.lang.String requestCertSerialnumber)"
- *   query="SELECT OBJECT(a) from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4"
- *
- * @ejb.finder
- *   description="findByRequestCertificateAndTime"
- *   signature="java.util.Collection findByRequestCertificateAndTime(int type, int signerid, java.lang.String requestIssuerDN, java.lang.String requestCertSerialnumber, long starttime, long endtime)"
- *   query="SELECT OBJECT(a) from ArchiveDataBean a WHERE a.type=?1  AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4 AND a.time>=?5 AND a.time<=?6"
- *
- *
- * @ejb.finder
- *   description="findByRequestIP"
- *   signature="java.util.Collection findByRequestIP(int type, int signerid, java.lang.String requestIP)"
- *   query="SELECT OBJECT(a) from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3"
- *
- *@ejb.finder
- *   description="findByRequestIPAndTime"
- *   signature="java.util.Collection findByRequestIPAndTime(int type, int signerid, java.lang.String requestIP, long starttime, long endtime)"
- *   query="SELECT OBJECT(a) from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3 AND a.time>=?4 AND a.time<=?5"
- *
- * @ejb.transaction type="Required"
- *
- * @ejb.permission role-name="InternalUser"
- *
- *
- * @ejb.pk class="org.signserver.ejb.ArchiveDataPK"
- * extends="java.lang.Object"
- * implements="java.io.Serializable"
- *
- * @ejb.home
- * generate="local"
- * local-extends="javax.ejb.EJBLocalHome"
- * local-class="org.signserver.ejb.ArchiveDataLocalHome"
- *
- * @ejb.interface
- * generate="local"
- * local-extends="javax.ejb.EJBLocalObject"
- * local-class="org.signserver.ejb.ArchiveDataLocal"
- *
- *
- * @jonas.jdbc-mapping
- *   jndi-name="${datasource.jndi-name}"
  */
-public abstract class ArchiveDataBean extends BaseEntityBean {
+@Entity
+@Table(name="ArchiveDataBean")
+@NamedQueries(
+		{@NamedQuery(name="ArchiveDataBean.findByArchiveId",query="SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.archiveid=?3"),
+		 @NamedQuery(name="ArchiveDataBean.findByTime",query="SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.time>=?3 AND a.time<=?4"),
+		 @NamedQuery(name="ArchiveDataBean.findByRequestCertificate",query="SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4"),
+		 @NamedQuery(name="ArchiveDataBean.findByRequestCertificateAndTime",query="SELECT a from ArchiveDataBean a WHERE a.type=?1  AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4 AND a.time>=?5 AND a.time<=?6"),
+		 @NamedQuery(name="ArchiveDataBean.findByRequestIP",query="SELECT  a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3"),
+		 @NamedQuery(name="ArchiveDataBean.findByRequestIPAndTime",query="SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3 AND a.time>=?4 AND a.time<=?5")			
+		})
+public class ArchiveDataBean  {
 
-    private static final Logger log = Logger.getLogger(ArchiveDataBean.class);
-
-    
+   @Id
+   private String uniqueId;
+   private long time;
+   private int type;
+   private int signerid;
+   private String archiveid;
+   private String requestIssuerDN;
+   private String requestCertSerialnumber;
+   private String requestIP;
+   
+   @Column(columnDefinition="LONGVARCHAR")
+   private String archiveData;
   
     /**
      * Unique Id of the archieved data
      * Is a compination of type, archiveId and signerId
      *
      * @return uniqueId
-     * @ejb.persistence
-     * @ejb.interface-method
-     * @ejb.pk-field 
-     */
-    public abstract String getUniqueId();
+     */	
+    public  String getUniqueId(){
+    	return uniqueId;
+    }
 
     /**
      * Unique Id of the archieved data
      * Shouldn't be set after creation.
      * 
      * @param uniqueId  (could be response serialnumber or requestId or other
-     * @ejb.persistence
      */
-    public abstract void setUniqueId(String uniqueId);
+    public void setUniqueId(String uniqueId){
+    	this.uniqueId = uniqueId;    	
+    }
    
-    /**
-     * @ejb.persistence
-     */
-    public abstract long getTime();
+    
+    public  long getTime(){
+    	return time;
+    }
 
-    /**
-     * @ejb.persistence
-     */
-    public abstract void setTime(long time);    
+
+    public void setTime(long time){
+    	this.time = time;
+    }
     
     /**
      * type indicates if the archieve is of the type response or request
      * see ArchiveDataVO.TYPE_ constants for more information
      *
      * @return  the type (if the archive is of requests or responses
-     * @ejb.persistence 
      */
-    public abstract int getType();
+    public int getType(){
+    	return type;
+    }
 
     /**
      * type indicates if the archieve is of the type response or request
      * see TYPE constants for more information
      *
-     * @ejb.persistence
      */
-    public abstract void setType(int type);
+    public void setType(int type){
+    	this.type = type;
+    }
 
     /**
      * @return which signer that generated the archived data.
      *
-     * @ejb.persistence
      */
-    public abstract int getSignerid();
+    public int getSignerid(){
+    	return signerid;
+    }
     
     /**
      * @param signerid which signer that generated the archived data.
      *
-     * @ejb.persistence
      */
-    public abstract void setSignerid(int signerid);
+    public void setSignerid(int signerid){
+    	this.signerid = signerid;
+    }
     
     /**
-     * The unique ID of the archive, could be the response serialnumber
-     * @ejb.persistence
+     * The unique ID of the archive, could be the response serial number.
      */
-    public abstract String getArchiveid();
+    public String getArchiveid(){
+    	return archiveid;    	
+    }
 
     /**
-     * The unique ID of the archive, could be the response serialnumber
-     * @ejb.persistence
+     * The unique ID of the archive, could be the response serial number.
      */
-    public abstract void setArchiveid(String archiveid);   
+    public void setArchiveid(String archiveid){
+    	this.archiveid = archiveid;
+    }
     
-    
-    /**
-     * @ejb.persistence
-     */
-    public abstract String getRequestIssuerDN();
+    public String getRequestIssuerDN(){
+    	return requestIssuerDN;
+    }
 
-    /**
-     * @ejb.persistence
-     */
-    public abstract void setRequestIssuerDN(String requestIssuerDN);
-    
-    /**
-     * @ejb.persistence
-     */
-    public abstract String getRequestCertSerialnumber();
 
-    /**
-     * @ejb.persistence
-     */
-    public abstract void setRequestCertSerialnumber(String requestSerialnumber);
+    public void setRequestIssuerDN(String requestIssuerDN){
+    	this.requestIssuerDN = requestIssuerDN;
+    }
     
-    /**
-     * @ejb.persistence
-     */
-    public abstract String getRequestIP();
+    public String getRequestCertSerialnumber(){
+    	return requestCertSerialnumber;
+    }
 
-    /**
-     * @ejb.persistence
-     */
-    public abstract void setRequestIP(String requestIP);
+
+    public void setRequestCertSerialnumber(String requestSerialnumber){
+    	this.requestCertSerialnumber = requestSerialnumber;
+    }
+    
+
+    public String getRequestIP(){
+    	return requestIP;
+    }
+
+
+    public void setRequestIP(String requestIP){
+    	this.requestIP = requestIP;
+    }
     
     /**
      * WorkerConfig in xmlencoded String format
      * Shouldn't be used outside of entity bean, use getSignerConfig instead
      *
      * @return  xmlencoded encoded WorkerConfig
-     * @ejb.persistence jdbc-type="LONGVARCHAR"
      */
-    public abstract String getArchiveData();
+    public String getArchiveData(){
+    	return archiveData;
+    }
 
     /**
      * WorkerConfig in  xmlencoded String format
      *
      * @param WorkerConfig xmlencoded encoded data
-     * @ejb.persistence
      */
-    public abstract void setArchiveData(String archiveData);
+    public  void setArchiveData(String archiveData){
+    	this.archiveData = archiveData;
+    }
     
 
     //
@@ -263,10 +225,10 @@ public abstract class ArchiveDataBean extends BaseEntityBean {
     	} catch (UnsupportedEncodingException e) {
     		throw new EJBException(e);
     	}
-    	HashMap h  = (HashMap) decoder.readObject();
+    	HashMap<?, ?> h  = (HashMap<?, ?>) decoder.readObject();
     	decoder.close();
 
-        HashMap data = new Base64GetHashMap(h);
+        HashMap<?, ?> data = new Base64GetHashMap(h);
     		
     	ArchiveData archiveData = new ArchiveData(); 
     	archiveData.loadData(data);
@@ -277,7 +239,8 @@ public abstract class ArchiveDataBean extends BaseEntityBean {
     /**
      * Method that saves the archive data to database.
      */
-    private void setArchiveDataObject(ArchiveData data){
+    @SuppressWarnings("unchecked")
+	void setArchiveDataObject(ArchiveData data){
         // We must base64 encode string for UTF safety
         HashMap a = new Base64PutHashMap();
         a.putAll((HashMap)data.saveData());
@@ -289,9 +252,6 @@ public abstract class ArchiveDataBean extends BaseEntityBean {
     	encoder.close();
     	
     	try {
-    		if (log.isDebugEnabled()) {
-    			log.debug("WorkerConfig data: \n" + baos.toString("UTF8"));
-    		}
     		setArchiveData(baos.toString("UTF8"));
     	} catch (UnsupportedEncodingException e) {
     		throw new EJBException(e);
@@ -302,7 +262,6 @@ public abstract class ArchiveDataBean extends BaseEntityBean {
     
     /**
      * Method used to get the ArchiveDataVO representation of the data row. 
-     * @ejb.interface-method
      */
     public ArchiveDataVO getArchiveDataVO(){
     	return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
@@ -310,44 +269,11 @@ public abstract class ArchiveDataBean extends BaseEntityBean {
     			 getArchiveDataObject());
     }
 
-    //
-    // Fields required by Container
-    //
 
-    /**
-     * Entity Bean holding info about a signers configuration
-     * 
-     * @param signerId uniqe Id of the signer 
-     *
-     * @return primary key
-     * @ejb.create-method
-     */
-    public ArchiveDataPK ejbCreate(int type, int signerId, String archiveid, X509Certificate clientCert,
-    		                       String requestIP, ArchiveData archiveData)
-        throws CreateException {
-        String uniqueId =type+";"+signerId+";"+archiveid;
-        log.debug("Creating archive data, uniqueId=" + uniqueId);
-        this.setUniqueId(uniqueId);
-        this.setType(type);
-        this.setSignerid(signerId);
-        this.setTime(new Date().getTime());
-        this.setArchiveid(archiveid);
-        if(clientCert!=null){        	
-          this.setRequestIssuerDN(CertTools.getIssuerDN(clientCert));
-          this.setRequestCertSerialnumber(clientCert.getSerialNumber().toString(16));
-        }
-        this.setRequestIP(requestIP);
-        this.setArchiveDataObject(archiveData);
-        return null;
-    }
 
-    /**
-     * required method, does nothing
-     */
-    public void ejbPostCreate(int type, int signerId, String archiveid, X509Certificate clientCert,
-            String requestIP, ArchiveData archiveData) {
-        // Do nothing. Required.
-    }
+
+
+
 
 
 

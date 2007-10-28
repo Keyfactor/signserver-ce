@@ -20,7 +20,6 @@ import java.util.Hashtable;
 import javax.crypto.Cipher;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.rmi.PortableRemoteObject;
 
 import junit.framework.TestCase;
 
@@ -29,23 +28,22 @@ import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
-import org.signserver.ejb.IGlobalConfigurationSession;
-import org.signserver.ejb.SignServerSession;
-import org.signserver.ejb.SignServerSessionHome;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.ISignServerSession;
 
 
 public class TestMRTDSigner extends TestCase {
 
 
-	private static IGlobalConfigurationSession gCSession = null;
-	private static SignServerSession sSSession = null;
+	private static IGlobalConfigurationSession.IRemote gCSession = null;
+	private static ISignServerSession.IRemote sSSession = null;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 		SignServerUtil.installBCProvider();
-		gCSession = getGlobalConfigHome().create();
-		sSSession = getSignServerHome().create();
-
+		Context context = getInitialContext();
+		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
+		sSSession = (ISignServerSession.IRemote) context.lookup(ISignServerSession.IRemote.JNDI_NAME);
 	}
 	
 	public void test00SetupDatabase() throws Exception{
@@ -69,7 +67,7 @@ public class TestMRTDSigner extends TestCase {
 
 		  
 	      int reqid = 12;
-	      ArrayList signrequests = new ArrayList();
+	      ArrayList<byte[]> signrequests = new ArrayList<byte[]>();
 	      
 	      byte[] signreq1 = "Hello World".getBytes();
 	      byte[] signreq2 = "Hello World2".getBytes();
@@ -85,14 +83,14 @@ public class TestMRTDSigner extends TestCase {
 	      Cipher c = Cipher.getInstance("RSA", "BC");
           c.init(Cipher.DECRYPT_MODE, signercert);
 
-          byte[] signres1 = c.doFinal((byte[]) ((ArrayList) res.getSignedData()).get(0));
+          byte[] signres1 = c.doFinal((byte[]) ((ArrayList<?>) res.getSignedData()).get(0));
 
           if (!arrayEquals(signreq1, signres1))
           {
               assertTrue("First MRTD doesn't match with request",false);
           }
 
-          byte[] signres2 = c.doFinal((byte[]) ((ArrayList) res.getSignedData()).get(1));
+          byte[] signres2 = c.doFinal((byte[]) ((ArrayList<?>) res.getSignedData()).get(1));
 
           if (!arrayEquals(signreq2, signres2))
           {
@@ -135,33 +133,13 @@ public class TestMRTDSigner extends TestCase {
 		  sSSession.reloadConfiguration(3);
 	}
 	 
-    /**
-     * Get the home interface
-     */
-    protected org.signserver.ejb.IGlobalConfigurationSessionHome getGlobalConfigHome() throws Exception {
-    	Context ctx = this.getInitialContext();
-    	Object o = ctx.lookup("GlobalConfigurationSession");
-    	org.signserver.ejb.IGlobalConfigurationSessionHome intf = (org.signserver.ejb.IGlobalConfigurationSessionHome) PortableRemoteObject
-    		.narrow(o, org.signserver.ejb.IGlobalConfigurationSessionHome.class);
-    	return intf;
-    }
-    
-    /**
-     * Get the home interface
-     */
-    protected SignServerSessionHome getSignServerHome() throws Exception {
-    	Context ctx = this.getInitialContext();
-    	Object o = ctx.lookup("SignServerSession");
-    	org.signserver.ejb.SignServerSessionHome intf = (org.signserver.ejb.SignServerSessionHome) PortableRemoteObject
-    		.narrow(o, org.signserver.ejb.SignServerSessionHome.class);
-    	return intf;
-    }
+ 
     
     /**
      * Get the initial naming context
      */
     protected Context getInitialContext() throws Exception {
-    	Hashtable props = new Hashtable();
+    	Hashtable<String, String> props = new Hashtable<String, String>();
     	props.put(
     		Context.INITIAL_CONTEXT_FACTORY,
     		"org.jnp.interfaces.NamingContextFactory");

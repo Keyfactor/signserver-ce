@@ -20,7 +20,9 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Random;
 
-import javax.ejb.EJBException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,13 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.ejbca.core.ejb.ServiceLocator;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalSignRequestException;
 import org.signserver.common.SignTokenOfflineException;
-import org.signserver.ejb.SignServerSessionLocal;
-import org.signserver.ejb.SignServerSessionLocalHome;
+import org.signserver.ejb.interfaces.ISignServerSession;
 
  
 
@@ -46,7 +46,7 @@ import org.signserver.ejb.SignServerSessionLocalHome;
  * Use the request parameter 'signerId' to specify the PDF signer.
  * 
  * @author Tomas Gustavsson, based on TSAHTTPServlet by Philip Vendil
- * @version $Id: PDFHTTPServlet.java,v 1.3 2007-09-24 12:56:44 anatom Exp $
+ * @version $Id: PDFHTTPServlet.java,v 1.4 2007-10-28 12:27:11 herrvendil Exp $
  */
 
 public class PDFHTTPServlet extends HttpServlet {
@@ -57,7 +57,20 @@ public class PDFHTTPServlet extends HttpServlet {
 	
 	private static final String SIGNERID_PROPERTY_NAME = "signerId";
 
+	private ISignServerSession.ILocal signserversession;
 	
+    private ISignServerSession.ILocal getSignServerSession(){
+    	if(signserversession == null){
+    		try{
+    		  Context context = new InitialContext();
+    		  signserversession =  (org.signserver.ejb.interfaces.ISignServerSession.ILocal) context.lookup(ISignServerSession.ILocal.JNDI_NAME);
+    		}catch(NamingException e){
+    			log.error(e);
+    		}
+    	}
+    	
+    	return signserversession;
+    }
 
 	
 	public void init(ServletConfig config) {
@@ -118,7 +131,7 @@ public class PDFHTTPServlet extends HttpServlet {
         
         GenericSignResponse signResponse = null;
         try {
-			signResponse = (GenericSignResponse) getSignSession().signData(signerId, new GenericSignRequest(requestId, inbytes),(X509Certificate) clientCertificate, remoteAddr);
+			signResponse = (GenericSignResponse) getSignServerSession().signData(signerId, new GenericSignRequest(requestId, inbytes),(X509Certificate) clientCertificate, remoteAddr);
 		} catch (IllegalSignRequestException e) {
 			 throw new ServletException(e);
 		} catch (SignTokenOfflineException e) {
@@ -154,17 +167,6 @@ public class PDFHTTPServlet extends HttpServlet {
     } // doGet
 	
 	
-	private SignServerSessionLocal signsession = null;	
-	private SignServerSessionLocal getSignSession(){
-		if(signsession == null){
-			try {			
-				SignServerSessionLocalHome signhome = (SignServerSessionLocalHome) ServiceLocator.getInstance().getLocalHome(SignServerSessionLocalHome.COMP_NAME);
-			    signsession = signhome.create();
-			} catch (Exception e) {
-				throw new EJBException(e);
-			} 
-		}
-		return signsession;
-	}
+
 
 }

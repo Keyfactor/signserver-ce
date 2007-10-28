@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.MailSignerStatus;
 import org.signserver.common.ServiceStatus;
 import org.signserver.common.SignerConfig;
 import org.signserver.common.SignerStatus;
@@ -32,7 +33,7 @@ import org.signserver.common.WorkerStatus;
 /**
  * Gets the current status of the given worker
  *
- * @version $Id: GetStatusCommand.java,v 1.3 2007-03-16 11:07:52 herrvendil Exp $
+ * @version $Id: GetStatusCommand.java,v 1.4 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class GetStatusCommand extends BaseCommand {
 	
@@ -53,7 +54,8 @@ public class GetStatusCommand extends BaseCommand {
      * @throws IllegalAdminCommandException Error in command args
      * @throws ErrorAdminCommandException Error running command
      */
-    public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
+    @SuppressWarnings("unchecked")
+	public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
     	String errormessage = "Usage: signserver getstatus <complete | brief> <workerId | workerName | all> \n" +
     	                      "Example 1 : signserver getstatus complete all \n" +
                               "Example 2 : signserver getstatus brief 1 \n" +
@@ -78,24 +80,30 @@ public class GetStatusCommand extends BaseCommand {
         	
         	boolean complete = mode.equalsIgnoreCase("complete");
         	        	
-    		this.getOutputStream().println("Current version of server is : " + getGlobalConfigurationSession(hostname).getGlobalConfiguration().getAppVersion() + "\n\n");
+    		this.getOutputStream().println("Current version of server is : " + getCommonAdminInterface(hostname).getGlobalConfiguration().getAppVersion() + "\n\n");
         	
         	if(allSigners){
         		if(complete){
         		  displayGlobalConfiguration(hostname);
         		}
-        		List workers = getGlobalConfigurationSession(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_SIGNERS);
+        		
+        		List workers = null;
+        		if(CommonAdminInterface.isSignServerMode()){
+        		  workers = getCommonAdminInterface(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_SIGNERS);
+        		}else{
+        			workers = getCommonAdminInterface(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
+        		}
         		Collections.sort(workers);
         		
-        		Iterator iter = workers.iterator();
+        		Iterator<?> iter = workers.iterator();
         		while(iter.hasNext()){
         			Integer id = (Integer) iter.next();        			
-        			displayWorkerStatus(id.intValue(),getSignSession(hostname).getStatus(id.intValue()), complete);
+        			displayWorkerStatus(id.intValue(),getCommonAdminInterface(hostname).getStatus(id.intValue()), complete);
         		}
         		
         	}else{
         		int id = getWorkerId(args[2], hostname);
-        		displayWorkerStatus(id, getSignSession(hostname).getStatus(id), complete);
+        		displayWorkerStatus(id, getCommonAdminInterface(hostname).getStatus(id), complete);
         	}
 
 
@@ -111,9 +119,43 @@ public class GetStatusCommand extends BaseCommand {
 		if(status instanceof ServiceStatus){
 			displayServiceStatus(workerid,(ServiceStatus) status,complete);
 		}
+		if(status instanceof MailSignerStatus){
+			displayMailSignerStatus(workerid,(MailSignerStatus) status,complete);
+		}
 	}
     
-    private void displayServiceStatus(int serviceid, ServiceStatus status, boolean complete) {
+    private void displayMailSignerStatus(int workerid, MailSignerStatus status,
+    		boolean complete) {
+    	this.getOutputStream().println("Status of Mail Signer with Id " + workerid + " is :\n" +
+    			"  SignToken Status : "+signTokenStatuses[status.getTokenStatus()] + " \n\n" );
+
+    	if(complete){    	
+    		this.getOutputStream().println("Active Properties are :");
+
+
+    		if(status.getActiveSignerConfig().getProperties().size() == 0){
+    			this.getOutputStream().println("  No properties exists in active configuration\n");
+    		}
+
+    		Enumeration<?> propertyKeys = status.getActiveSignerConfig().getProperties().keys();
+    		while(propertyKeys.hasMoreElements()){
+    			String key = (String) propertyKeys.nextElement();
+    			this.getOutputStream().println("  " + key + "=" + status.getActiveSignerConfig().getProperties().getProperty(key) + "\n");
+    		}        		
+
+    		this.getOutputStream().println("\n");
+    		
+    		if(status.getSignerCertificate() == null){
+    			this.getOutputStream().println("Error: No Signer Certificate have been uploaded to this signer.\n");	
+    		}else{
+    			this.getOutputStream().println("The current configuration use the following signer certificate : \n");
+    			printCert((X509Certificate) status.getSignerCertificate() );
+    		}
+    	}
+
+    }
+
+	private void displayServiceStatus(int serviceid, ServiceStatus status, boolean complete) {
 
     	this.getOutputStream().println("Status of Service with Id " + serviceid + " is :\n");
     	this.getOutputStream().println("  Service was last run at : " + status.getLastRunDate() +"\n");    	    	
@@ -126,7 +168,7 @@ public class GetStatusCommand extends BaseCommand {
     			this.getOutputStream().println("  No properties exists in active configuration\n");
     		}
 
-    		Enumeration propertyKeys = status.getActiveSignerConfig().getProperties().keys();
+    		Enumeration<?> propertyKeys = status.getActiveSignerConfig().getProperties().keys();
     		while(propertyKeys.hasMoreElements()){
     			String key = (String) propertyKeys.nextElement();
     			this.getOutputStream().println("  " + key + "=" + status.getActiveSignerConfig().getProperties().getProperty(key) + "\n");
@@ -151,7 +193,7 @@ public class GetStatusCommand extends BaseCommand {
     			this.getOutputStream().println("  No properties exists in active configuration\n");
     		}
     		
-    		Enumeration propertyKeys = status.getActiveSignerConfig().getProperties().keys();
+    		Enumeration<?> propertyKeys = status.getActiveSignerConfig().getProperties().keys();
     		while(propertyKeys.hasMoreElements()){
     			String key = (String) propertyKeys.nextElement();
     			this.getOutputStream().println("  " + key + "=" + status.getActiveSignerConfig().getProperties().getProperty(key) + "\n");
@@ -160,7 +202,7 @@ public class GetStatusCommand extends BaseCommand {
     		this.getOutputStream().println("\n");
     		
     		this.getOutputStream().println("Active Authorized Clients are are (Cert DN, IssuerDN):");
-           	Iterator iter =  new SignerConfig(status.getActiveSignerConfig()).getAuthorizedClients().iterator();
+           	Iterator<?> iter =  new SignerConfig(status.getActiveSignerConfig()).getAuthorizedClients().iterator();
         	while(iter.hasNext()){
         		AuthorizedClient client = (AuthorizedClient) iter.next();
         		this.getOutputStream().println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");
@@ -175,19 +217,25 @@ public class GetStatusCommand extends BaseCommand {
     }
 
 	private void displayGlobalConfiguration(String hostname) throws RemoteException, Exception {
-		GlobalConfiguration gc = getGlobalConfigurationSession(hostname).getGlobalConfiguration();
+		GlobalConfiguration gc = getCommonAdminInterface(hostname).getGlobalConfiguration();
 		this.getOutputStream().println("The Global Configuration of Properties are :\n" );
-						
+								
 		if(!gc.getKeyIterator().hasNext()){
 			this.getOutputStream().println("  No properties exists in global configuration\n");
 		}
 
-		Iterator propertyKeys = gc.getKeyIterator();
+		Iterator<?> propertyKeys = gc.getKeyIterator();
 		while(propertyKeys.hasNext()){
 			String key = (String) propertyKeys.next();
 			this.getOutputStream().println("  " + key + "=" + gc.getProperty(key) + "\n");
 		}        		
 
+		if(gc.getState().equals(GlobalConfiguration.STATE_INSYNC)){
+			this.getOutputStream().println("  The global configuration is in sync with the database.\n");
+		}else{
+			this.getOutputStream().println("  WARNING: The global configuratuon is out of sync with the database.\n");
+		}
+		
 		this.getOutputStream().println("\n");
 		
 	}

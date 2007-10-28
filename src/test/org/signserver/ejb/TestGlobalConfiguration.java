@@ -17,27 +17,30 @@ import java.util.Hashtable;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.rmi.PortableRemoteObject;
 
 import junit.framework.TestCase;
 
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 
 public class TestGlobalConfiguration extends TestCase {
 
-	private static IGlobalConfigurationSession globalConfigSession = null;
+	private static IGlobalConfigurationSession.IRemote  globalConfigSession;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 			    
-		globalConfigSession = getHome().create();
+		Context context = getInitialContext();
+		globalConfigSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
+
+		
 	}
 	
     /**
      * Get the initial naming context
      */
     protected Context getInitialContext() throws Exception {
-    	Hashtable props = new Hashtable();
+    	Hashtable<String, String> props = new Hashtable<String, String>();
     	props.put(
     		Context.INITIAL_CONTEXT_FACTORY,
     		"org.jnp.interfaces.NamingContextFactory");
@@ -49,16 +52,6 @@ public class TestGlobalConfiguration extends TestCase {
     	return ctx;
     }
 
-    /**
-     * Get the home interface
-     */
-    protected org.signserver.ejb.IGlobalConfigurationSessionHome getHome() throws Exception {
-    	Context ctx = this.getInitialContext();
-    	Object o = ctx.lookup("GlobalConfigurationSession");
-    	org.signserver.ejb.IGlobalConfigurationSessionHome intf = (org.signserver.ejb.IGlobalConfigurationSessionHome) PortableRemoteObject
-    		.narrow(o, org.signserver.ejb.IGlobalConfigurationSessionHome.class);
-    	return intf;
-    } 
 
 	/*
 	 * Test method for 'org.signserver.common.GlobalConfigurationFileParser.getBaseProperty(String)'

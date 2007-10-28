@@ -17,7 +17,7 @@ package org.signserver.cli;
 /**
  * Factory for General signserver Commands.
  *
- * @version $Id: SignServerCommandFactory.java,v 1.2 2007-03-07 07:41:19 herrvendil Exp $
+ * @version $Id: SignServerCommandFactory.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
  */
 public class SignServerCommandFactory {
     /**
@@ -48,6 +48,9 @@ public class SignServerCommandFactory {
         if (args[0].equalsIgnoreCase("reload")) {
             return new ReloadCommand(args);
         }
+        if (args[0].equalsIgnoreCase("resync") && CommonAdminInterface.isSignServerMode()) {
+            return new ResyncCommand(args);
+        }
         if (args[0].equalsIgnoreCase("setproperty")) {
             return new SetPropertyCommand(args);
         }
@@ -63,13 +66,13 @@ public class SignServerCommandFactory {
         if (args[0].equalsIgnoreCase("dumpproperties")) {
             return new DumpPropertiesCommand(args);
         }
-        if (args[0].equalsIgnoreCase("listauthorizedclients")) {
+        if (args[0].equalsIgnoreCase("listauthorizedclients") && CommonAdminInterface.isSignServerMode()) {
             return new ListAuthorizedClientsCommand(args);
         }
-        if (args[0].equalsIgnoreCase("addauthorizedclient")) {
+        if (args[0].equalsIgnoreCase("addauthorizedclient") && CommonAdminInterface.isSignServerMode()) {
             return new AddAuthorizedClientCommand(args);
         }
-        if (args[0].equalsIgnoreCase("removeauthorizedclient")) {
+        if (args[0].equalsIgnoreCase("removeauthorizedclient")  && CommonAdminInterface.isSignServerMode()) {
             return new RemoveAuthorizedClientCommand(args);
         }
         if (args[0].equalsIgnoreCase("uploadsignercertificate")) {
@@ -87,7 +90,7 @@ public class SignServerCommandFactory {
         if (args[0].equalsIgnoreCase("generatecertreq")) {
             return new GenerateCertReqCommand(args);
         }
-        if (args[0].equalsIgnoreCase("archive")) {
+        if (args[0].equalsIgnoreCase("archive") && CommonAdminInterface.isSignServerMode()) {
             return getArchiveCommand(args);
         }
         return null;

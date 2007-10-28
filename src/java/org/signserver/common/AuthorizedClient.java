@@ -24,10 +24,10 @@ import org.ejbca.util.CertTools;
  * Class representing an authorized client containing the  serial number and issuerDN of trusted client certs.
  * @author Philip Vendil
  * 
- * $Id: AuthorizedClient.java,v 1.1 2007-02-27 16:18:10 herrvendil Exp $
+ * $Id: AuthorizedClient.java,v 1.2 2007-10-28 12:25:01 herrvendil Exp $
  *
  */
-public class AuthorizedClient implements Comparable, Serializable{
+public class AuthorizedClient implements Comparable<Object>, Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	String certSN = null;

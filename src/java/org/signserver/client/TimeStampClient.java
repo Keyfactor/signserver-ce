@@ -62,7 +62,7 @@ import org.bouncycastle.util.encoders.Hex;
  * Only works in unauthenticated mode.
  * 
  * @author philip
- * $Id: TimeStampClient.java,v 1.1 2007-02-27 16:18:15 herrvendil Exp $
+ * $Id: TimeStampClient.java,v 1.2 2007-10-28 12:25:02 herrvendil Exp $
  */
 
 public class TimeStampClient {
@@ -221,7 +221,7 @@ public class TimeStampClient {
 			System.out.println("Needs an inrep!");
 			return;
 		}
-		Collection col = getCertsFromPEM(signerfilestring);
+		Collection<X509Certificate> col = getCertsFromPEM(signerfilestring);
 		X509Certificate[] list = (X509Certificate[])col.toArray(new X509Certificate[0]);
 		if (list.length == 0) {
 			System.out.println("No certificate found in file: "+signerfilestring);
@@ -403,9 +403,9 @@ public class TimeStampClient {
      * @exception IOException if the filen cannot be read.
      * @exception CertificateException if the filen does not contain a correct certificate.
      */
-    private Collection getCertsFromPEM(String certFile) throws IOException, CertificateException {
+    private Collection<X509Certificate> getCertsFromPEM(String certFile) throws IOException, CertificateException {
         InputStream inStrm = new FileInputStream(certFile);
-        Collection certs = getCertsFromPEM(inStrm);
+        Collection<X509Certificate> certs = getCertsFromPEM(inStrm);
         return certs;
     }
 
@@ -418,9 +418,9 @@ public class TimeStampClient {
      * @exception IOException if the stream cannot be read.
      * @exception CertificateException if the stream does not contain a correct certificate.
      */
-    private Collection getCertsFromPEM(InputStream certstream)
+    private Collection<X509Certificate> getCertsFromPEM(InputStream certstream)
     throws IOException, CertificateException {
-        ArrayList ret = new ArrayList();
+        ArrayList<X509Certificate> ret = new ArrayList<X509Certificate>();
         String beginKey = "-----BEGIN CERTIFICATE-----";
         String endKey = "-----END CERTIFICATE-----";
         BufferedReader bufRdr = new BufferedReader(new InputStreamReader(certstream));

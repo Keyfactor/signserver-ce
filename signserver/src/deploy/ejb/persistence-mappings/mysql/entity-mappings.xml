@@ -6,21 +6,21 @@
    <entity class="org.signserver.ejb.ArchiveDataBean">
      <attributes>
         <basic name="archiveData">
-          <column column-definition="TEXT"/>
+          <column column-definition="LONGTEXT"/>
         </basic>  
       </attributes>
     </entity>
     <entity class="org.signserver.ejb.GlobalConfigurationDataBean">
      <attributes>
         <basic name="propertyValue">
-          <column column-definition="TEXT"/>
+          <column column-definition="LONGTEXT"/>
         </basic>  
       </attributes>
     </entity>
     <entity class="org.signserver.ejb.WorkerConfigDataBean">
      <attributes>
         <basic name="signerConfigData">
-          <column column-definition="TEXT"/>
+          <column column-definition="LONGTEXT"/>
         </basic>  
       </attributes>
     </entity>

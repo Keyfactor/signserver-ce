@@ -14,7 +14,10 @@
 
 package org.signserver.common;
 
+import java.io.PrintStream;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 
 
 /**
@@ -22,7 +25,7 @@ import java.security.cert.Certificate;
  * the status of a specific signer
  * @author Philip Vendil
  *
- * $Id: MailSignerStatus.java,v 1.1 2007-10-28 12:24:40 herrvendil Exp $
+ * $Id: MailSignerStatus.java,v 1.2 2007-11-09 15:45:49 herrvendil Exp $
  */
 
 public class MailSignerStatus extends WorkerStatus{
@@ -59,6 +62,37 @@ public class MailSignerStatus extends WorkerStatus{
 	 */
 	public Certificate getSignerCertificate(){
 		return signerCertificate;
+	}
+
+	@Override
+	public void displayStatus(int workerId, PrintStream out, boolean complete) {
+		out.println("Status of Mail Signer with Id " + workerId + " is :\n" +
+    			"  SignToken Status : "+signTokenStatuses[getTokenStatus()] + " \n\n" );
+
+    	if(complete){    	
+    		out.println("Active Properties are :");
+
+
+    		if(getActiveSignerConfig().getProperties().size() == 0){
+    			out.println("  No properties exists in active configuration\n");
+    		}
+
+    		Enumeration<?> propertyKeys = getActiveSignerConfig().getProperties().keys();
+    		while(propertyKeys.hasMoreElements()){
+    			String key = (String) propertyKeys.nextElement();
+    			out.println("  " + key + "=" + getActiveSignerConfig().getProperties().getProperty(key) + "\n");
+    		}        		
+
+    		out.println("\n");
+    		
+    		if(getSignerCertificate() == null){
+    			out.println("Error: No Signer Certificate have been uploaded to this signer.\n");	
+    		}else{
+    			out.println("The current configuration use the following signer certificate : \n");
+    			printCert((X509Certificate) getSignerCertificate(),out );
+    		}
+    	}
+		
 	}
 		
 	

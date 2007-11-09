@@ -29,7 +29,7 @@ import org.signserver.common.GlobalConfiguration;
  * 
  * See the manual for the syntax of the property file
  *
- * @version $Id: SetPropertiesCommand.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: SetPropertiesCommand.java,v 1.4 2007-11-09 15:45:13 herrvendil Exp $
  */
 public class SetPropertiesCommand extends BaseCommand {
 	
@@ -134,7 +134,7 @@ public class SetPropertiesCommand extends BaseCommand {
     	  if(splittedKey.startsWith(GENID)){
     		workerid = getGenId( hostname, splittedKey);
     	  }else{
-    		  workerid = getCommonAdminInterface(hostname).getSignerId(splittedKey);
+    		  workerid = getCommonAdminInterface(hostname).getWorkerId(splittedKey);
     	  }
     	}
     	
@@ -189,7 +189,7 @@ public class SetPropertiesCommand extends BaseCommand {
 		    	if(splittedKey.substring(0, 1).matches("\\d")){
 		    		workerid = Integer.parseInt(splittedKey);		    		            		
 		    	}else{
-		    		workerid = getCommonAdminInterface(hostname).getSignerId(splittedKey);		    	  
+		    		workerid = getCommonAdminInterface(hostname).getWorkerId(splittedKey);		    	  
 		    	}				
 				key = WORKER_PREFIX + workerid + "." + propertykey;
 			}

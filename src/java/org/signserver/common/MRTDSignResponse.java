@@ -24,10 +24,10 @@ import java.util.ArrayList;
  * 
  * 
  * @author Philip Vendil
- * $Id: MRTDSignResponse.java,v 1.2 2007-10-28 12:25:01 herrvendil Exp $
+ * $Id: MRTDSignResponse.java,v 1.3 2007-11-09 15:45:49 herrvendil Exp $
  */
 
-public class MRTDSignResponse implements ISignResponse {
+public class MRTDSignResponse implements IProcessResponse {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -46,7 +46,7 @@ public class MRTDSignResponse implements ISignResponse {
 	
 	/**
 	 * 
-	 * @see org.signserver.common.ISignResponse#getRequestID()
+	 * @see org.signserver.common.IProcessResponse#getRequestID()
 	 */
 	public int getRequestID() {
 		return requestID;
@@ -57,7 +57,7 @@ public class MRTDSignResponse implements ISignResponse {
 	 * 
 	 * @return ArrayList of signed Hashes in byte[] format
 	 */
-	public Serializable getSignedData() {
+	public Serializable getProcessedData() {
 		return signedData;
 	}
 

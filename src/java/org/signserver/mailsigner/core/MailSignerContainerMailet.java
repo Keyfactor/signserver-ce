@@ -59,7 +59,7 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * 
  * @author Philip Vendil
- * $Id: MailSignerContainerMailet.java,v 1.1 2007-10-28 12:26:11 herrvendil Exp $
+ * $Id: MailSignerContainerMailet.java,v 1.2 2007-11-09 15:47:24 herrvendil Exp $
  */
 public class MailSignerContainerMailet extends GenericMailet implements IMailSignerRMI{
 
@@ -154,9 +154,9 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	}
 
 	/**
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getSignerId(String)
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getWorkerId(String)
 	 */
-	public int getSignerId(String signerName) throws RemoteException {
+	public int getWorkerId(String signerName) throws RemoteException {
 		int retval = 0;
 		
 		List<Integer> signerIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);

@@ -21,12 +21,12 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.signserver.common.IllegalSignRequestException;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignTokenOfflineException;
-import org.signserver.ejb.interfaces.ISignServerSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 /**
  * Client class connecting to the sign server and requesting 
  * signatures conforming to the MRTD standard.
@@ -73,12 +73,12 @@ public class MRTDSignerClient {
 	public MRTDSignResponse signData(MRTDSignRequest request) throws RemoteException, SignServerException {
 		try{
 			Context context = getInitialContext();			
-			ISignServerSession.IRemote signsession = (ISignServerSession.IRemote) context.lookup(ISignServerSession.IRemote.JNDI_NAME);		
+			IWorkerSession.IRemote signsession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);		
 		
-		return (MRTDSignResponse) signsession.signData(1,request, null,null);
+		return (MRTDSignResponse) signsession.process(1,request, null,null);
 		}catch(SignTokenOfflineException e){
 			throw new SignServerException("Signer is offline. Activate it before continuing", e);
-		} catch (IllegalSignRequestException e) {
+		} catch (IllegalRequestException e) {
 			throw new SignServerException("Illegal Signature Request", e);			
 		} catch (NamingException e) {
 			throw new SignServerException("NamingException", e);		

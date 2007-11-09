@@ -10,31 +10,29 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
+
+ 
 package org.signserver.common;
 
-import java.security.cert.Certificate;
-
 /**
- * Interface used in responses from the WorkerSession.process method. Should
- * be implemented by all types of signers.
- * 
+ * Exception thrown if a singing operation is performed but
+ * the signing token isn't active. 
  * 
  * @author Philip Vendil
- * $Id: ISignResponse.java,v 1.2 2007-11-09 15:45:50 herrvendil Exp $
+ * $id$
  */
-public interface ISignResponse extends IArchivableProcessResponse {
-	/**
-	 * Should contain a unique request id used to link to the request
-	 */
-    public int getRequestID();
-    
-    
-    /**
-     * Method returning the certificate used for the signature
-     * 
-     * @return the Certificate that was used to sign.
-     */
-    
-    public Certificate getSignerCertificate();
-}
 
+public class IllegalRequestException extends Exception {
+
+	private static final long serialVersionUID = 1L;
+
+	public IllegalRequestException(String message) {
+		super(message);
+	}
+	
+	public String getMessage() {
+		return super.getMessage();
+	}
+
+
+}

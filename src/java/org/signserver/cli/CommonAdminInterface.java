@@ -42,7 +42,7 @@ import org.signserver.common.SignTokenOfflineException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.ISignServerSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession.IRemote;
 import org.signserver.mailsigner.cli.IMailSignerRMI;
 
@@ -54,7 +54,7 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * @author Philip Vendil 6 okt 2007
  *
- * @version $Id: CommonAdminInterface.java,v 1.1 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: CommonAdminInterface.java,v 1.2 2007-11-09 15:45:13 herrvendil Exp $
  */
 
 public class CommonAdminInterface  {
@@ -97,7 +97,7 @@ public class CommonAdminInterface  {
     private static Boolean mailSignerMode = null;
     
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#activateSigner(int, String)
+	 * @see org.signserver.ejb.WorkerSessionBean#activateSigner(int, String)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#activateSigner(int, String)
 	 */
 	public void activateSigner(int signerId, String authenticationCode)
@@ -114,7 +114,7 @@ public class CommonAdminInterface  {
 	}
 
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#deactivateSigner(int)
+	 * @see org.signserver.ejb.WorkerSessionBean#deactivateSigner(int)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#deactivateSigner(int)
 	 */
 	public boolean deactivateSigner(int signerId)
@@ -132,7 +132,7 @@ public class CommonAdminInterface  {
 	}
 
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#destroyKey(int, int)
+	 * @see org.signserver.ejb.WorkerSessionBean#destroyKey(int, int)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#destroyKey(int, int)
 	 */
 	public boolean destroyKey(int signerId, int purpose)
@@ -149,7 +149,7 @@ public class CommonAdminInterface  {
 	}
 
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#genCertificateRequest(int, ISignerCertReqInfo)
+	 * @see org.signserver.ejb.WorkerSessionBean#genCertificateRequest(int, ISignerCertReqInfo)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#genCertificateRequest(int, ISignerCertReqInfo)
 	 */
 	public ISignerCertReqData genCertificateRequest(int signerId,
@@ -166,7 +166,7 @@ public class CommonAdminInterface  {
 	}
 
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#getCurrentSignerConfig(int)
+	 * @see org.signserver.ejb.WorkerSessionBean#getCurrentSignerConfig(int)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getCurrentSignerConfig(int)
 	 */	
 	public WorkerConfig getCurrentSignerConfig(int signerId)
@@ -197,23 +197,23 @@ public class CommonAdminInterface  {
 	}
 
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#getSignerId(String)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getSignerId(String)
+	 * @see org.signserver.ejb.WorkerSessionBean#getWorkerId(String)
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getWorkerId(String)
 	 */	
-	public int getSignerId(String signerName) throws RemoteException {
+	public int getWorkerId(String signerName) throws RemoteException {
 		int retval = 0;
 		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().getSignerId(signerName);
+			retval = getIMailSignerRMI().getWorkerId(signerName);
 		}
 		if(isSignServerMode()){
-			retval = getSignSession().getSignerId(signerName);
+			retval = getSignSession().getWorkerId(signerName);
 		}		
 		
 		return retval;
 	}
 
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#getStatus(int)
+	 * @see org.signserver.ejb.WorkerSessionBean#getStatus(int)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getStatus(int)
 	 */	
 	public WorkerStatus getStatus(int workerId)
@@ -229,7 +229,7 @@ public class CommonAdminInterface  {
 	}
 
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#reloadConfiguration(int)
+	 * @see org.signserver.ejb.WorkerSessionBean#reloadConfiguration(int)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#reloadConfiguration(int)
 	 */	
 	public void reloadConfiguration(int workerId) throws RemoteException {
@@ -258,7 +258,7 @@ public class CommonAdminInterface  {
 	}
 
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#removeWorkerProperty(int, String)
+	 * @see org.signserver.ejb.WorkerSessionBean#removeWorkerProperty(int, String)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#removeWorkerProperty(int, String)
 	 */	
 	public boolean removeWorkerProperty(int workerId, String key)
@@ -301,7 +301,7 @@ public class CommonAdminInterface  {
 	}
 
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#setWorkerProperty(int, String, String)
+	 * @see org.signserver.ejb.WorkerSessionBean#setWorkerProperty(int, String, String)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#setWorkerProperty(int, String, String)	 
 	 */	
 	public void setWorkerProperty(int workerId, String key, String value)
@@ -315,7 +315,7 @@ public class CommonAdminInterface  {
 	}
 
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#uploadSignerCertificate(int, X509Certificate)
+	 * @see org.signserver.ejb.WorkerSessionBean#uploadSignerCertificate(int, X509Certificate)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#uploadSignerCertificate(int, X509Certificate)	 
 	 */		
 	public void uploadSignerCertificate(int signerId, X509Certificate signerCert, String scope)
@@ -330,7 +330,7 @@ public class CommonAdminInterface  {
 	}
 
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#uploadSignerCertificateChain(int, Collection)
+	 * @see org.signserver.ejb.WorkerSessionBean#uploadSignerCertificateChain(int, Collection)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#uploadSignerCertificateChain(int, Collection)	 
 	 */	
 	public void uploadSignerCertificateChain(int signerId,
@@ -345,7 +345,7 @@ public class CommonAdminInterface  {
 	}
 	
 	/**
-	 * @see org.signserver.ejb.SignServerSessionBean#genFreeWorkerId()
+	 * @see org.signserver.ejb.WorkerSessionBean#genFreeWorkerId()
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#genFreeWorkerId()
 	 */	
 	public int genFreeWorkerId() throws RemoteException{
@@ -371,7 +371,7 @@ public class CommonAdminInterface  {
 	 * Method only supported by SignServer Builds
 	 * @throws RemoteException 
 	 * 
-	 * @see org.signserver.ejb.SignServerSessionBean#getAuthorizedClients(int)
+	 * @see org.signserver.ejb.WorkerSessionBean#getAuthorizedClients(int)
 	 */
 	public Collection<AuthorizedClient> getAuthorizedClients(int signerId) throws RemoteException{
 		if(isSignServerMode()){
@@ -480,12 +480,12 @@ public class CommonAdminInterface  {
      * @return SignServerSession
      * @throws RemoteException 
      */
-    private ISignServerSession.IRemote getSignSession() throws RemoteException{
+    private IWorkerSession.IRemote getSignSession() throws RemoteException{
     	 
     	if(signsession == null){    		
 			try {
 				Context context = getInitialContext();
-				signsession = (ISignServerSession.IRemote) context.lookup(ISignServerSession.IRemote.JNDI_NAME);
+				signsession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
 			} catch (NamingException e) {
 				log.error("Error looking up signserver interface");
 				throw new RemoteException(e.getMessage());
@@ -494,7 +494,7 @@ public class CommonAdminInterface  {
 		return signsession;
      } // getSignSession
     /** The SignSession home bean */
-	private ISignServerSession.IRemote signsession;
+	private IWorkerSession.IRemote signsession;
 	
     /**
      * Gets InitialContext

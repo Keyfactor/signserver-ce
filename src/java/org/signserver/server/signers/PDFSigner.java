@@ -26,11 +26,12 @@ import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
+import org.signserver.common.IProcessRequest;
+import org.signserver.common.IProcessResponse;
 import org.signserver.common.ISignRequest;
-import org.signserver.common.ISignResponse;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.IllegalSignRequestException;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignTokenOfflineException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.signtokens.ISignToken;
@@ -50,7 +51,7 @@ import com.lowagie.text.pdf.PdfStamper;
  * RECTANGLE = The location of the visible signature field (llx, lly, urx, ury)
  * 
  * @author Tomas Gustavsson
- * @version $Id: PDFSigner.java,v 1.2 2007-09-27 10:02:27 anatom Exp $
+ * @version $Id: PDFSigner.java,v 1.3 2007-11-09 15:47:15 herrvendil Exp $
  */
 public class PDFSigner extends BaseSigner{
 	
@@ -73,17 +74,18 @@ public class PDFSigner extends BaseSigner{
 	 * The main method performing the actual signing operation.
 	 * Expects the signRequest to be a GenericSignRequest containing a signed PDF file
 	 * 
-	 * @see org.signserver.server.signers.ISigner#signData(org.signserver.common.ISignRequest, java.security.cert.X509Certificate)
+	 * @see org.signserver.server.signers.ISigner#signData(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate)
 	 */
-	public ISignResponse signData(ISignRequest signRequest, X509Certificate clientCert) 
-		throws IllegalSignRequestException, SignTokenOfflineException {
+	public IProcessResponse signData(IProcessRequest signRequest, X509Certificate clientCert) 
+		throws IllegalRequestException, SignTokenOfflineException {
 		
+		ISignRequest sReq = (ISignRequest) signRequest;
 		// Check that the request contains a valid GenericSignRequest object with a byte[].
 		if(!(signRequest instanceof GenericSignRequest)){
-			throw new IllegalSignRequestException("Recieved request wasn't a expected GenericSignRequest.");
+			throw new IllegalRequestException("Recieved request wasn't a expected GenericSignRequest.");
 		}
-		if(!(signRequest.getSignRequestData() instanceof byte[]) ) {
-			throw new IllegalSignRequestException("Recieved request data wasn't a expected byte[].");
+		if(!(sReq.getRequestData() instanceof byte[]) ) {
+			throw new IllegalRequestException("Recieved request data wasn't a expected byte[].");
 		}
 		
 		// The reason shown in the PDF signature
@@ -106,7 +108,7 @@ public class PDFSigner extends BaseSigner{
 		log.debug("Using rectangle: "+rectangle);
 		String[] rect = rectangle.split(",");
 		if ( rect.length < 4) {
-			throw new IllegalSignRequestException("RECTANGLE property must contain 4 comma separated values with no spaces.");			
+			throw new IllegalRequestException("RECTANGLE property must contain 4 comma separated values with no spaces.");			
 		}
 		int llx = Integer.valueOf(rect[0]);
 		int lly = Integer.valueOf(rect[1]);
@@ -115,7 +117,7 @@ public class PDFSigner extends BaseSigner{
         
 		// Start processing the actual signature
         GenericSignResponse signResponse = null;
-			byte[] pdfbytes = (byte[])signRequest.getSignRequestData();
+			byte[] pdfbytes = (byte[])sReq.getRequestData();
 			byte[] fpbytes = CertTools.generateSHA1Fingerprint(pdfbytes);
 			String fp = new String(Hex.encode(fpbytes));
 
@@ -139,13 +141,13 @@ public class PDFSigner extends BaseSigner{
 				stp.close();
 				fout.close();
 				byte[] signedbytes = fout.toByteArray();
-				signResponse = new GenericSignResponse(signRequest.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));				
+				signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));				
 			} catch (DocumentException e) {
 				log.error("Error signing PDF: ", e);
-				throw new IllegalSignRequestException("DocumentException: " + e.getMessage());
+				throw new IllegalRequestException("DocumentException: " + e.getMessage());
 			} catch (IOException e) {
 				log.error("Error signing PDF: ", e);
-				throw new IllegalSignRequestException("IOException: " + e.getMessage());
+				throw new IllegalRequestException("IOException: " + e.getMessage());
 			}
 		
 		return signResponse;

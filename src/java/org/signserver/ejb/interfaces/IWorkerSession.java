@@ -11,30 +11,30 @@ import javax.ejb.Remote;
 
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.ISignRequest;
-import org.signserver.common.ISignResponse;
+import org.signserver.common.IProcessRequest;
+import org.signserver.common.IProcessResponse;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.IllegalSignRequestException;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidSignerIdException;
 import org.signserver.common.SignTokenAuthenticationFailureException;
 import org.signserver.common.SignTokenOfflineException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
-public interface ISignServerSession  {
+public interface IWorkerSession  {
 
 	/**
-	 * The SignSession Beans main method. Takes signature requests processes them
+	 * The Worker Beans main method. Takes  requests processes them
 	 * and returns a response.
 	 *
 	 *     
 	 * @throws SignTokenOfflineException if the signers token isn't activated. 
-	 * @throws IllegalSignRequestException if illegal request is sent to the method
+	 * @throws IllegalRequestException if illegal request is sent to the method
 	 */
-	ISignResponse signData(int signerId, ISignRequest request,
+	IProcessResponse process(int signerId, IProcessRequest request,
 			X509Certificate clientCert, String requestIP)
-			throws IllegalSignRequestException, SignTokenOfflineException;
+			throws IllegalRequestException, SignTokenOfflineException;
 
 	/**
 	 * Returns the current status of a signers. 
@@ -47,13 +47,13 @@ public interface ISignServerSession  {
 	WorkerStatus getStatus(int workerId) throws InvalidSignerIdException;
 
 	/**
-	 * Returns the Id of a signer given a name 
+	 * Returns the Id of a worker given a name 
 	 *
-	 * @param signerName of the signer cannot be null
-	 * @return The Id of a named signer or 0 if no such name exists
+	 * @param workerName of the worker, cannot be null
+	 * @return The Id of a named worker or 0 if no such name exists
 	 *  
 	 */
-	int getSignerId(String signerName);
+	int getWorkerId(String workerName);
 
 	/**
 	 * Method used when a configuration have been updated. And should be
@@ -238,12 +238,12 @@ public interface ISignServerSession  {
 			BigInteger requestCertSerialnumber, String requestCertIssuerDN);
 
 	@Remote 
-	public interface IRemote extends ISignServerSession {
+	public interface IRemote extends IWorkerSession {
 		public static final String JNDI_NAME = "signserver/SignServerSessionBean/remote";
 	}
 
 	@Local 
-	public interface ILocal extends ISignServerSession {
+	public interface ILocal extends IWorkerSession {
 		public static final String JNDI_NAME = "signserver/SignServerSessionBean/local";
 	}
 }

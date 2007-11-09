@@ -32,21 +32,21 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.ISignServerSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.signers.TimeStampSigner;
 
 
 public class TestTimeStampSigner extends TestCase {
 
 	private static IGlobalConfigurationSession.IRemote gCSession = null;
-	private static ISignServerSession.IRemote sSSession = null;
+	private static IWorkerSession.IRemote sSSession = null;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 		SignServerUtil.installBCProvider();
 		Context context = getInitialContext();
 		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
-		sSSession = (ISignServerSession.IRemote) context.lookup(ISignServerSession.IRemote.JNDI_NAME);
+		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
 
 	}
 	
@@ -81,7 +81,7 @@ public class TestTimeStampSigner extends TestCase {
 		GenericSignRequest signRequest = new GenericSignRequest(12, requestBytes);
 
 
-		GenericSignResponse res = (GenericSignResponse) sSSession.signData(4,signRequest, null,null); 
+		GenericSignResponse res = (GenericSignResponse) sSSession.process(4,signRequest, null,null); 
 
 		assertTrue(reqid == res.getRequestID());
 
@@ -89,7 +89,7 @@ public class TestTimeStampSigner extends TestCase {
 
 		assertNotNull(signercert);
 
-		TimeStampResponse timeStampResponse =  new TimeStampResponse((byte[]) res.getSignedData());
+		TimeStampResponse timeStampResponse =  new TimeStampResponse((byte[]) res.getProcessedData());
 		timeStampResponse.validate(timeStampRequest);
 	      
 	}

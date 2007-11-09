@@ -21,6 +21,7 @@ import java.util.Iterator;
 
 import org.ejbca.util.CertTools;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.WorkerStatus;
 
   
 
@@ -28,7 +29,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Commands that uploads a PEM certificate to a singers config.
  *
- * @version $Id: UploadSignerCertificateChainCommand.java,v 1.4 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: UploadSignerCertificateChainCommand.java,v 1.5 2007-11-09 15:45:13 herrvendil Exp $
  */
 public class UploadSignerCertificateChainCommand extends BaseCommand {
 	
@@ -87,7 +88,7 @@ public class UploadSignerCertificateChainCommand extends BaseCommand {
         	Iterator<Certificate> iter = certs.iterator();
         	while(iter.hasNext()){
         	  X509Certificate cert = (X509Certificate) iter.next();
-              printCert(cert);
+              WorkerStatus.printCert(cert,getOutputStream());
               this.getOutputStream().println("\n");
         	}
         	

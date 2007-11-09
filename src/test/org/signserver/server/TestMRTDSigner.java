@@ -29,21 +29,21 @@ import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.ISignServerSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 
 public class TestMRTDSigner extends TestCase {
 
 
 	private static IGlobalConfigurationSession.IRemote gCSession = null;
-	private static ISignServerSession.IRemote sSSession = null;
+	private static IWorkerSession.IRemote sSSession = null;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 		SignServerUtil.installBCProvider();
 		Context context = getInitialContext();
 		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
-		sSSession = (ISignServerSession.IRemote) context.lookup(ISignServerSession.IRemote.JNDI_NAME);
+		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
 	}
 	
 	public void test00SetupDatabase() throws Exception{
@@ -74,7 +74,7 @@ public class TestMRTDSigner extends TestCase {
 	      signrequests.add(signreq1);
 	      signrequests.add(signreq2);
 		 		  
-		  MRTDSignResponse res =  (MRTDSignResponse) sSSession.signData(3, new MRTDSignRequest(reqid,signrequests), null, null); 		  
+		  MRTDSignResponse res =  (MRTDSignResponse) sSSession.process(3, new MRTDSignRequest(reqid,signrequests), null, null); 		  
 		  assertTrue(res!=null);
           assertTrue(reqid == res.getRequestID());	      
 	      Certificate signercert = res.getSignerCertificate();	      
@@ -83,14 +83,14 @@ public class TestMRTDSigner extends TestCase {
 	      Cipher c = Cipher.getInstance("RSA", "BC");
           c.init(Cipher.DECRYPT_MODE, signercert);
 
-          byte[] signres1 = c.doFinal((byte[]) ((ArrayList<?>) res.getSignedData()).get(0));
+          byte[] signres1 = c.doFinal((byte[]) ((ArrayList<?>) res.getProcessedData()).get(0));
 
           if (!arrayEquals(signreq1, signres1))
           {
               assertTrue("First MRTD doesn't match with request",false);
           }
 
-          byte[] signres2 = c.doFinal((byte[]) ((ArrayList<?>) res.getSignedData()).get(1));
+          byte[] signres2 = c.doFinal((byte[]) ((ArrayList<?>) res.getProcessedData()).get(1));
 
           if (!arrayEquals(signreq2, signres2))
           {

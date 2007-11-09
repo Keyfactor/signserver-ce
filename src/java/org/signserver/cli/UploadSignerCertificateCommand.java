@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import org.ejbca.util.CertTools;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.WorkerStatus;
 
 
  
@@ -26,7 +27,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Commands that uploads a PEM certificate to a singers config.
  *
- * @version $Id: UploadSignerCertificateCommand.java,v 1.4 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: UploadSignerCertificateCommand.java,v 1.5 2007-11-09 15:45:13 herrvendil Exp $
  */
 public class UploadSignerCertificateCommand extends BaseCommand {
 	
@@ -78,7 +79,7 @@ public class UploadSignerCertificateCommand extends BaseCommand {
                     	
         	        	        
         	this.getOutputStream().println("Uploading the following signer certificate  : \n");
-            printCert(cert);        			                       
+            WorkerStatus.printCert(cert,getOutputStream());        			                       
         	
             getCommonAdminInterface(hostname).uploadSignerCertificate(signerid, cert, scope);
 

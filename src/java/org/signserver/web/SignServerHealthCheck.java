@@ -32,7 +32,7 @@ import org.signserver.common.InvalidSignerIdException;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.ISignServerSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.signers.BaseSigner;
 
 
@@ -47,7 +47,7 @@ import org.signserver.server.signers.BaseSigner;
  * * All SignerTokens are aktive if not set as offline.
  * 
  * @author Philip Vendil
- * @version $Id: SignServerHealthCheck.java,v 1.2 2007-10-28 12:27:11 herrvendil Exp $
+ * @version $Id: SignServerHealthCheck.java,v 1.3 2007-11-09 15:47:06 herrvendil Exp $
  */
 
 public class SignServerHealthCheck implements IHealthCheck {
@@ -69,13 +69,13 @@ public class SignServerHealthCheck implements IHealthCheck {
     	return globalConfigurationSession;
     }
 
-	private ISignServerSession.ILocal signserversession;
+	private IWorkerSession.ILocal signserversession;
 	
-    private ISignServerSession.ILocal getSignServerSession(){
+    private IWorkerSession.ILocal getSignServerSession(){
     	if(signserversession == null){
     		try{
     		  Context context = new InitialContext();
-    		  signserversession =  (org.signserver.ejb.interfaces.ISignServerSession.ILocal) context.lookup(ISignServerSession.ILocal.JNDI_NAME);
+    		  signserversession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
     		}catch(NamingException e){
     			log.error(e);
     		}

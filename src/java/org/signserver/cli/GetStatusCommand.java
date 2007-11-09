@@ -14,18 +14,11 @@
 package org.signserver.cli;
 
 import java.rmi.RemoteException;
-import java.security.cert.X509Certificate;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.MailSignerStatus;
-import org.signserver.common.ServiceStatus;
-import org.signserver.common.SignerConfig;
-import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerStatus;
 
 
@@ -33,12 +26,12 @@ import org.signserver.common.WorkerStatus;
 /**
  * Gets the current status of the given worker
  *
- * @version $Id: GetStatusCommand.java,v 1.4 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: GetStatusCommand.java,v 1.5 2007-11-09 15:45:12 herrvendil Exp $
  */
 public class GetStatusCommand extends BaseCommand {
 	
 	
-	private static final String[] signTokenStatuses = {"", "Active", "Offline"};
+	
     /**
      * Creates a new instance of GetStatusCommand
      *
@@ -113,108 +106,10 @@ public class GetStatusCommand extends BaseCommand {
     }
 
     private void displayWorkerStatus(int workerid, WorkerStatus status, boolean complete) {
-		if(status instanceof SignerStatus){
-			displaySignerStatus(workerid,(SignerStatus) status,complete);
-		}
-		if(status instanceof ServiceStatus){
-			displayServiceStatus(workerid,(ServiceStatus) status,complete);
-		}
-		if(status instanceof MailSignerStatus){
-			displayMailSignerStatus(workerid,(MailSignerStatus) status,complete);
-		}
+		status.displayStatus(workerid, getOutputStream(), complete);
 	}
     
-    private void displayMailSignerStatus(int workerid, MailSignerStatus status,
-    		boolean complete) {
-    	this.getOutputStream().println("Status of Mail Signer with Id " + workerid + " is :\n" +
-    			"  SignToken Status : "+signTokenStatuses[status.getTokenStatus()] + " \n\n" );
 
-    	if(complete){    	
-    		this.getOutputStream().println("Active Properties are :");
-
-
-    		if(status.getActiveSignerConfig().getProperties().size() == 0){
-    			this.getOutputStream().println("  No properties exists in active configuration\n");
-    		}
-
-    		Enumeration<?> propertyKeys = status.getActiveSignerConfig().getProperties().keys();
-    		while(propertyKeys.hasMoreElements()){
-    			String key = (String) propertyKeys.nextElement();
-    			this.getOutputStream().println("  " + key + "=" + status.getActiveSignerConfig().getProperties().getProperty(key) + "\n");
-    		}        		
-
-    		this.getOutputStream().println("\n");
-    		
-    		if(status.getSignerCertificate() == null){
-    			this.getOutputStream().println("Error: No Signer Certificate have been uploaded to this signer.\n");	
-    		}else{
-    			this.getOutputStream().println("The current configuration use the following signer certificate : \n");
-    			printCert((X509Certificate) status.getSignerCertificate() );
-    		}
-    	}
-
-    }
-
-	private void displayServiceStatus(int serviceid, ServiceStatus status, boolean complete) {
-
-    	this.getOutputStream().println("Status of Service with Id " + serviceid + " is :\n");
-    	this.getOutputStream().println("  Service was last run at : " + status.getLastRunDate() +"\n");    	    	
-    	
-    	if(complete){    	
-    		this.getOutputStream().println("Active Properties are :");
-
-
-    		if(status.getActiveSignerConfig().getProperties().size() == 0){
-    			this.getOutputStream().println("  No properties exists in active configuration\n");
-    		}
-
-    		Enumeration<?> propertyKeys = status.getActiveSignerConfig().getProperties().keys();
-    		while(propertyKeys.hasMoreElements()){
-    			String key = (String) propertyKeys.nextElement();
-    			this.getOutputStream().println("  " + key + "=" + status.getActiveSignerConfig().getProperties().getProperty(key) + "\n");
-    		}        		
-
-    		this.getOutputStream().println("\n");
-
-    	}
-		
-	}
-
-	private void displaySignerStatus(int signerid, SignerStatus status, boolean complete){
-
-    	this.getOutputStream().println("Status of Signer with Id " + signerid + " is :\n" +
-    			                       "  SignToken Status : "+signTokenStatuses[status.getTokenStatus()] + " \n\n" );
-    	
-    	if(complete){    	
-    		this.getOutputStream().println("Active Properties are :");
-    		
-    		
-    		if(status.getActiveSignerConfig().getProperties().size() == 0){
-    			this.getOutputStream().println("  No properties exists in active configuration\n");
-    		}
-    		
-    		Enumeration<?> propertyKeys = status.getActiveSignerConfig().getProperties().keys();
-    		while(propertyKeys.hasMoreElements()){
-    			String key = (String) propertyKeys.nextElement();
-    			this.getOutputStream().println("  " + key + "=" + status.getActiveSignerConfig().getProperties().getProperty(key) + "\n");
-    		}        		
-    		
-    		this.getOutputStream().println("\n");
-    		
-    		this.getOutputStream().println("Active Authorized Clients are are (Cert DN, IssuerDN):");
-           	Iterator<?> iter =  new SignerConfig(status.getActiveSignerConfig()).getAuthorizedClients().iterator();
-        	while(iter.hasNext()){
-        		AuthorizedClient client = (AuthorizedClient) iter.next();
-        		this.getOutputStream().println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");
-        	}
-        	if(status.getSignerCertificate() == null){
-          	  this.getOutputStream().println("Error: No Signer Certificate have been uploaded to this signer.\n");	
-          	}else{
-          	  this.getOutputStream().println("The current configuration use the following signer certificate : \n");
-                printCert((X509Certificate) status.getSignerCertificate() );
-          	}
-    	}
-    }
 
 	private void displayGlobalConfiguration(String hostname) throws RemoteException, Exception {
 		GlobalConfiguration gc = getCommonAdminInterface(hostname).getGlobalConfiguration();

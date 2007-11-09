@@ -33,11 +33,13 @@ import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ISignRequest;
+import org.signserver.common.IArchivableProcessResponse;
+import org.signserver.common.IProcessRequest;
+import org.signserver.common.IProcessResponse;
 import org.signserver.common.ISignResponse;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.IllegalSignRequestException;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidSignerIdException;
 import org.signserver.common.SignTokenAuthenticationFailureException;
 import org.signserver.common.SignTokenOfflineException;
@@ -46,18 +48,18 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
-import org.signserver.ejb.interfaces.ISignServerSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.IWorker;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.signers.ISigner;
 
 /**
- * The main sign server session bean
+ * The main worker session bean
  * 
  */
 @Stateless
-public class SignServerSessionBean implements ISignServerSession.ILocal, ISignServerSession.IRemote  {
+public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.IRemote  {
     @PersistenceContext(unitName="SignServerJPA")
     EntityManager em;
 
@@ -87,52 +89,59 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	
 
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#signData(int, org.signserver.common.ISignRequest, java.security.cert.X509Certificate, java.lang.String)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#process(int, org.signserver.common.ISignRequest, java.security.cert.X509Certificate, java.lang.String)
 	 */
-	public ISignResponse signData(int signerId, ISignRequest request,
-	                              X509Certificate clientCert, String requestIP) throws IllegalSignRequestException,
+	public IProcessResponse process(int workerId, IProcessRequest request,
+	                              X509Certificate clientCert, String requestIP) throws IllegalRequestException,
 		SignTokenOfflineException {
-		log.debug(">signData " + request.getRequestID());
-		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService, globalConfigurationSession);
+		log.debug(">signData ");
+		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession);
 		
         if(worker == null){
-        	throw new IllegalSignRequestException("Non-existing signerId");
+        	throw new IllegalRequestException("Non-existing signerId");
         }
         
         if(!(worker instanceof ISigner)){
-        	throw new IllegalSignRequestException("Worker exists but isn't a signer.");
+        	throw new IllegalRequestException("Worker exists but isn't a signer.");
         }
 		ISigner signer = (ISigner) worker;
         
         if(signer.getAuthenticationType() == ISigner.AUTHTYPE_CLIENTCERT){
         	if(clientCert == null){
-        		throw new IllegalSignRequestException("Error, client authentication is required.");   
+        		throw new IllegalRequestException("Error, client authentication is required.");   
         	}else{
         		if(!authorizedToRequestSignature(clientCert, new SignerConfig (signer.getStatus().getActiveSignerConfig()).getAuthorizedClients())){        	                
         			
-        			throw new IllegalSignRequestException("Error, client '" + clientCert.getSubjectDN().toString() + "' requesting signature from signer with id : " + 
-        					signerId + " isn't an authorized client. ");   
+        			throw new IllegalRequestException("Error, client '" + clientCert.getSubjectDN().toString() + "' requesting signature from signer with id : " + 
+        					workerId + " isn't an authorized client. ");   
         		}
         	}
         }
         
         if(signer.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseSigner.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
-        	throw new SignTokenOfflineException("Error Signer : " + signerId + " is disabled and cannot perform any signature operations");
+        	throw new SignTokenOfflineException("Error Signer : " + workerId + " is disabled and cannot perform any signature operations");
         }
         
-        ISignResponse res = signer.signData(request,  clientCert);
-
-        if(signer.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseSigner.ARCHIVE,"FALSE").equalsIgnoreCase("TRUE")){
-        	if(res.getArchiveData() != null){    			
-    			  archiveDataService.create(ArchiveDataVO.TYPE_RESPONSE,signerId, res.getArchiveId(), clientCert, requestIP, res.getArchiveData());        		        	
-        	}else{
-        		log.error("Error archiving response generated of signer " + signerId + ", archiving is not supported by signer.");
+        IProcessResponse res = signer.signData(request,  clientCert);
+        
+        if(res instanceof IArchivableProcessResponse){
+        	IArchivableProcessResponse arres = (IArchivableProcessResponse) res;
+        	if(signer.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseSigner.ARCHIVE,"FALSE").equalsIgnoreCase("TRUE")){
+        		if(arres.getArchiveData() != null){    			
+        			archiveDataService.create(ArchiveDataVO.TYPE_RESPONSE,workerId, arres.getArchiveId(), clientCert, requestIP, arres.getArchiveData());        		        	
+        		}else{
+        			log.error("Error archiving response generated of signer " + workerId + ", archiving is not supported by signer.");
+        		}
         	}
         }
         
-        log.info("Signer " + signerId + " Processed request " + res.getRequestID() + " Successfully");
+        if(res instanceof ISignResponse){
+          log.info("Worker " + workerId + " Processed request " + ((ISignResponse) res).getRequestID() + " successfully");
+        }else{
+          log.info("Worker " + workerId + " Processed request successfully");
+        }
         
-		log.debug("<signData " + request.getRequestID());
+		log.debug("<process " );
 		return res;
 	}
 
@@ -159,7 +168,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#getStatus(int)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#getStatus(int)
 	 */
 	public WorkerStatus getStatus(int workerId) throws InvalidSignerIdException{
 		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession);
@@ -172,15 +181,15 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#getSignerId(java.lang.String)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#getWorkerId(java.lang.String)
 	 */
-	public int getSignerId(String signerName) {
-		return WorkerFactory.getInstance().getSignerIdFromName(signerName.toUpperCase(), workerConfigService, globalConfigurationSession);		
+	public int getWorkerId(String signerName) {
+		return WorkerFactory.getInstance().getWorkerIdFromName(signerName.toUpperCase(), workerConfigService, globalConfigurationSession);		
 	}
 	 
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#reloadConfiguration(int)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#reloadConfiguration(int)
 	 */
 	public void reloadConfiguration(int workerId) {
 		if(workerId == 0){
@@ -196,7 +205,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#activateSigner(int, java.lang.String)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#activateSigner(int, java.lang.String)
 	 */
 	public void activateSigner(int signerId, String authenticationCode)
 		throws SignTokenAuthenticationFailureException,
@@ -215,7 +224,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#deactivateSigner(int)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#deactivateSigner(int)
 	 */
 	public boolean deactivateSigner(int signerId)
 		throws SignTokenOfflineException, InvalidSignerIdException {
@@ -240,7 +249,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#setWorkerProperty(int, java.lang.String, java.lang.String)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#setWorkerProperty(int, java.lang.String, java.lang.String)
 	 */
 	public void setWorkerProperty(int workerId, String key, String value){
 		WorkerConfig config = getSignerConfig(workerId);
@@ -249,7 +258,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#removeWorkerProperty(int, java.lang.String)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#removeWorkerProperty(int, java.lang.String)
 	 */	
 	public boolean removeWorkerProperty(int workerId, String key){
 		boolean result = false;
@@ -266,14 +275,14 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}	
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#getAuthorizedClients(int)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#getAuthorizedClients(int)
 	 */
 	public Collection<AuthorizedClient> getAuthorizedClients(int signerId){
 		return new SignerConfig( getSignerConfig(signerId)).getAuthorizedClients();
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#addAuthorizedClient(int, org.signserver.common.AuthorizedClient)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#addAuthorizedClient(int, org.signserver.common.AuthorizedClient)
 	 */
 	public void addAuthorizedClient(int signerId, AuthorizedClient authClient){
 		WorkerConfig config = getSignerConfig(signerId);
@@ -282,7 +291,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#removeAuthorizedClient(int, org.signserver.common.AuthorizedClient)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#removeAuthorizedClient(int, org.signserver.common.AuthorizedClient)
 	 */
 	public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient){
 		boolean result = false;
@@ -295,7 +304,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
 	 */
 	public ISignerCertReqData getCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws		
 		SignTokenOfflineException, InvalidSignerIdException {
@@ -313,7 +322,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#destroyKey(int, int)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#destroyKey(int, int)
 	 */
 	public boolean destroyKey(int signerId, int purpose) throws	InvalidSignerIdException {
 			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession);
@@ -330,7 +339,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#uploadSignerCertificate(int, java.security.cert.X509Certificate, java.lang.String)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#uploadSignerCertificate(int, java.security.cert.X509Certificate, java.lang.String)
 	 */
 	public void uploadSignerCertificate(int signerId, X509Certificate signerCert, String scope){		
 		WorkerConfig config = getSignerConfig(signerId);
@@ -340,7 +349,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#uploadSignerCertificateChain(int, java.util.Collection, java.lang.String)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#uploadSignerCertificateChain(int, java.util.Collection, java.lang.String)
 	 */
 	public void uploadSignerCertificateChain(int signerId, Collection<Certificate> signerCerts, String scope){		
 		
@@ -350,7 +359,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#genFreeWorkerId()
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#genFreeWorkerId()
 	 */
 	public int genFreeWorkerId(){
 		Collection<Integer> ids =  globalConfigurationSession.getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
@@ -367,7 +376,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#findArchiveDataFromArchiveId(int, java.lang.String)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDataFromArchiveId(int, java.lang.String)
 	 */
 	public ArchiveDataVO findArchiveDataFromArchiveId(int signerId, String archiveId){
 		ArchiveDataVO retval = null;
@@ -381,7 +390,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#findArchiveDatasFromRequestIP(int, java.lang.String)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDatasFromRequestIP(int, java.lang.String)
 	 */
 	public List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerId, String requestIP){
 		ArrayList<ArchiveDataVO> retval = new ArrayList<ArchiveDataVO>();
@@ -397,7 +406,7 @@ public class SignServerSessionBean implements ISignServerSession.ILocal, ISignSe
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#findArchiveDatasFromRequestCertificate(int, java.math.BigInteger, java.lang.String)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDatasFromRequestCertificate(int, java.math.BigInteger, java.lang.String)
 	 */
 	public List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(int signerId, BigInteger requestCertSerialnumber, String requestCertIssuerDN){
 		ArrayList<ArchiveDataVO> retval = new ArrayList<ArchiveDataVO>();

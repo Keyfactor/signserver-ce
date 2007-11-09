@@ -21,6 +21,7 @@ import java.util.Iterator;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignerConfig;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerStatus;
 
 
 
@@ -28,7 +29,7 @@ import org.signserver.common.WorkerConfig;
  * Gets the current configuration of the given signer, this might not be the same as
  * the active configuration.
  *
- * @version $Id: GetConfigCommand.java,v 1.4 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: GetConfigCommand.java,v 1.5 2007-11-09 15:45:13 herrvendil Exp $
  */
 public class GetConfigCommand extends BaseCommand {
 	
@@ -69,7 +70,7 @@ public class GetConfigCommand extends BaseCommand {
         			
         		}else{
         			// named worker is requested
-        			int id = getCommonAdminInterface(hostname).getSignerId(workerid);
+        			int id = getCommonAdminInterface(hostname).getWorkerId(workerid);
             		if(id == 0){
             			throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
             		}
@@ -121,7 +122,7 @@ public class GetConfigCommand extends BaseCommand {
     	
     	if(config.getProperties().getProperty("SIGNERCERT") !=null){
     		this.getOutputStream().println(" The current configuration use the following signer certificate : \n");
-    		printCert(new SignerConfig(config).getSignerCertificate()); 
+    		WorkerStatus.printCert(new SignerConfig(config).getSignerCertificate(), getOutputStream()); 
     	}else{
     		this.getOutputStream().println(" Either this isn't a Signer or no Signer Certificate have been uploaded to it.\n");    		
     	}

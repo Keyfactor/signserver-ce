@@ -58,7 +58,7 @@ public class TestMailSignerContainerMailet extends TestCase {
 	}
 
 	public void testGetSignerId() throws RemoteException {
-		   int id = mc.getSignerId("testWorker");
+		   int id = mc.getWorkerId("testWorker");
 		   assertTrue(""+ id , id == 3);
 	}
 

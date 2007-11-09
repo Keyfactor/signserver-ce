@@ -34,7 +34,7 @@ public interface IMailSignerRMI extends Remote{
 	 * @return The Id of a named signer or 0 if no such name exists
 	 *  
 	 */
-	public int getSignerId(String signerName) throws RemoteException;
+	public int getWorkerId(String signerName) throws RemoteException;
 	
 	/**
 	 * Method used when a configuration have been updated. And should be

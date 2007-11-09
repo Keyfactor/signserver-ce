@@ -10,29 +10,21 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
- 
-package org.signserver.common;
+package org.signserver.groupkeyservice.common;
 
 /**
- * Exception thrown if a singing operation is performed but
- * the signing token isn't active. 
+ * Class containing constants common for the GroupKeyService part of the SignServer.
  * 
  * @author Philip Vendil
- * $id$
+ * $Id: GroupKeyServiceConstants.java,v 1.1 2007-11-09 15:46:45 herrvendil Exp $
  */
-
-public class IllegalSignRequestException extends Exception {
-
-	private static final long serialVersionUID = 1L;
-
-	public IllegalSignRequestException(String message) {
-		super(message);
-	}
+public class GroupKeyServiceConstants {
 	
-	public String getMessage() {
-		return super.getMessage();
-	}
-
+	/**
+	 * Keytype constants specifing the type of key used.
+	 */
+	public static final int KEYTYPE_DEFAULT = 0;
+	public static final int KEYTYPE_AES256 = 1;
+	public static final int KEYTYPE_RSA2048 = 2;
 
 }

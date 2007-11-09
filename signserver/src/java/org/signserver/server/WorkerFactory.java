@@ -106,26 +106,26 @@ public  class WorkerFactory {
 	}
 	
 	/**
-	 * Method returning a id of a named signer
+	 * Method returning a id of a named Worker
 	 * 
 	 * 
-	 * The signer will only be created upon first call, then it's stored in memory until
+	 * The worker will only be created upon first call, then it's stored in memory until
 	 * the flush method is called.
 	 * 
-	 * @param signerName the name of a named signer.
+	 * @param workerName the name of a named worker.
 	 * @param workerConfigHome The home interface of the signer config entity bean
 	 * @return the id of the signer or 0 if no worker with the name is found.
 	 */
-	public int getSignerIdFromName(String signerName, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){	   
+	public int getWorkerIdFromName(String workerName, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){	   
 	   int retval = 0;		 	   
 	   loadWorkers(workerConfigHome,gCSession);
 	   synchronized(nameToIdMap){	
 		   synchronized(workerStore){
-			   if(nameToIdMap.get(signerName) == null){
+			   if(nameToIdMap.get(workerName) == null){
 				   return retval;
 			   }
 
-			   retval = ((Integer)nameToIdMap.get(signerName)).intValue();
+			   retval = ((Integer)nameToIdMap.get(workerName)).intValue();
 		   }
 	   }
 	   log.debug("getSignerIdFromName : returning " + retval); 

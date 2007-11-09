@@ -15,12 +15,12 @@
 package org.signserver.common;
 
 /**
- * A Generic sign request class impelmenting the minimal required functionality.
+ * A Generic work request class implementing the minimal required functionality.
  * 
  * Could be used for TimeStamp Request.
  * 
  * @author philip
- * $Id: GenericSignRequest.java,v 1.1 2007-02-27 16:18:11 herrvendil Exp $
+ * $Id: GenericSignRequest.java,v 1.2 2007-11-09 15:45:50 herrvendil Exp $
  */
 public class GenericSignRequest implements ISignRequest {
 
@@ -28,32 +28,32 @@ public class GenericSignRequest implements ISignRequest {
 	private static final long serialVersionUID = 1L;
 
 	private int requestID;
-	private Object signRequestData;
+	private Object requestData;
 	
 	/**
 	 * Creates a GenericSignRequest, works as a simple VO.
 	 * 
 	 * @param requestID
-	 * @param signRequestData
-	 * @see org.signserver.common.ISignRequest
+	 * @param requestData
+	 * @see org.signserver.common.IProcessRequest
 	 */
-	public GenericSignRequest(int requestID, Object signRequestData){
+	public GenericSignRequest(int requestID, Object requestData){
 		this.requestID = requestID;
-		this.signRequestData = signRequestData;
+		this.requestData = requestData;
 	}
 	
 	/**
-	 * @see org.signserver.common.ISignRequest
+	 * @see org.signserver.common.IProcessRequest
 	 */
 	public int getRequestID() {		
 		return requestID;
 	}
 
 	/**
-	 * @see org.signserver.common.ISignRequest
+	 * @see org.signserver.common.IProcessRequest
 	 */
-	public Object getSignRequestData() {	
-		return signRequestData;
+	public Object getRequestData() {	
+		return requestData;
 	}
 
 }

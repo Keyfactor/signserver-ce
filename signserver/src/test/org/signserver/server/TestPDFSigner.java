@@ -29,13 +29,13 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.ISignServerSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 
 public class TestPDFSigner extends TestCase {
 
 	private static IGlobalConfigurationSession.IRemote gCSession = null;
-	private static ISignServerSession.IRemote sSSession = null;
+	private static IWorkerSession.IRemote sSSession = null;
 	
 	private static String signserverhome;
 	
@@ -44,7 +44,7 @@ public class TestPDFSigner extends TestCase {
 		SignServerUtil.installBCProvider();
 		Context context = getInitialContext();
 		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
-		sSSession = (ISignServerSession.IRemote) context.lookup(ISignServerSession.IRemote.JNDI_NAME);
+		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
 
 	}
 	
@@ -74,7 +74,7 @@ public class TestPDFSigner extends TestCase {
 		GenericSignRequest signRequest = new GenericSignRequest(13, Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
 
 
-		GenericSignResponse res = (GenericSignResponse) sSSession.signData(5,signRequest, null,null); 
+		GenericSignResponse res = (GenericSignResponse) sSSession.process(5,signRequest, null,null); 
 
 		assertTrue(reqid == res.getRequestID());
 
@@ -84,7 +84,7 @@ public class TestPDFSigner extends TestCase {
 
 		// TODO: verify PDF file
 		FileOutputStream fos = new FileOutputStream(signserverhome + "/tmp/signedpdf.pdf");
-		fos.write((byte[]) res.getSignedData());
+		fos.write((byte[]) res.getProcessedData());
 		fos.close();
 		
 	}

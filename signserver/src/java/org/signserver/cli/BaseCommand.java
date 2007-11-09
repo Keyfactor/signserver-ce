@@ -15,8 +15,6 @@ package org.signserver.cli;
 
 import java.io.PrintStream;
 import java.rmi.RemoteException;
-import java.security.cert.X509Certificate;
-import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -30,7 +28,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * Base for Commands, contains useful functions
  *
- * @version $Id: BaseCommand.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: BaseCommand.java,v 1.4 2007-11-09 15:45:12 herrvendil Exp $
  */
 public abstract class BaseCommand implements IAdminCommand{
 	
@@ -60,16 +58,7 @@ public abstract class BaseCommand implements IAdminCommand{
         SignServerUtil.installBCProvider();
     }
     
-    protected void printCert(X509Certificate cert){
-    	DateFormat df = DateFormat.getDateInstance();        
-    	
-    	this.getOutputStream().println("DN : " + cert.getSubjectDN().toString());
-    	this.getOutputStream().println("SerialNumber : " + cert.getSerialNumber().toString(16));
-    	this.getOutputStream().println("Issuer DN : " + cert.getIssuerDN().toString());
-    	this.getOutputStream().println("Valid from :" +  df.format(cert.getNotBefore()));
-    	this.getOutputStream().println("Valid to : " +  df.format(cert.getNotAfter()));
-    	this.getOutputStream().println("\n\n");
-    }
+
     
     protected void printAuthorizedClients(WorkerConfig config){
     	Iterator<AuthorizedClient> iter = new SignerConfig(config).getAuthorizedClients().iterator();
@@ -192,7 +181,7 @@ public abstract class BaseCommand implements IAdminCommand{
     	if(workerIdOrName.substring(0, 1).matches("\\d")){
     		retval = Integer.parseInt(workerIdOrName);    		
     	}else{
-    		retval = getCommonAdminInterface(hostname).getSignerId(workerIdOrName);
+    		retval = getCommonAdminInterface(hostname).getWorkerId(workerIdOrName);
     		if(retval == 0){
     			throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
     		}

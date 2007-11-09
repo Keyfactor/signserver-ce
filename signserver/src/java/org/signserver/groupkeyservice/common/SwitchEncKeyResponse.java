@@ -10,31 +10,49 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.common;
+package org.signserver.groupkeyservice.common;
 
-import java.security.cert.Certificate;
+import java.io.Serializable;
+
+import org.signserver.common.IProcessResponse;
 
 /**
- * Interface used in responses from the WorkerSession.process method. Should
- * be implemented by all types of signers.
+ * SwitchEncKeyResponse is given by a GroupKeyService processing a SwitchEncKeyRequest if
+ * all the processing was successful.
  * 
- * 
+ * @author phive
+ *
  * @author Philip Vendil
- * $Id: ISignResponse.java,v 1.2 2007-11-09 15:45:50 herrvendil Exp $
+ * $Id: SwitchEncKeyResponse.java,v 1.1 2007-11-09 15:46:45 herrvendil Exp $
  */
-public interface ISignResponse extends IArchivableProcessResponse {
-	/**
-	 * Should contain a unique request id used to link to the request
-	 */
-    public int getRequestID();
-    
-    
-    /**
-     * Method returning the certificate used for the signature
-     * 
-     * @return the Certificate that was used to sign.
-     */
-    
-    public Certificate getSignerCertificate();
-}
+public class SwitchEncKeyResponse implements IProcessResponse{
+	private static final long serialVersionUID = 1L;
 
+	private int newKeyIndex;
+		
+	/**
+	 * Main constructor for the FetchKeyResponse
+	 * @param newKeyIndex the index of the new encryption key used.
+	 */
+	public SwitchEncKeyResponse(int newKeyIndex) {
+		this.newKeyIndex = newKeyIndex;
+	}
+
+	/**
+	 * Not implemented or used.
+	 */
+	public Serializable getProcessedData() {
+		return null;
+	}
+
+	/**
+	 * @return the index of the new encryption key used.
+	 */
+	public int getNewKeyIndex() {
+		return newKeyIndex;
+	}
+
+
+	
+
+}

@@ -29,7 +29,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * Command used to dump all configured properties for a worker or all workers
  *
- * @version $Id: DumpPropertiesCommand.java,v 1.2 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: DumpPropertiesCommand.java,v 1.3 2007-11-09 15:45:13 herrvendil Exp $
  */
 public class DumpPropertiesCommand extends BaseCommand {
 	
@@ -70,7 +70,7 @@ public class DumpPropertiesCommand extends BaseCommand {
         			dumpAllProperties(hostname, outProps);            			
         		}else{
         			// named worker is requested
-        			int id = getCommonAdminInterface(hostname).getSignerId(workerid);
+        			int id = getCommonAdminInterface(hostname).getWorkerId(workerid);
         			if(id == 0){
         				throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
         			}

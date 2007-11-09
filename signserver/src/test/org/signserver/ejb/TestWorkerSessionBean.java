@@ -34,12 +34,12 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerConfig;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.ISignServerSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
-public class TestSignSessionBean extends TestCase {
+public class TestWorkerSessionBean extends TestCase {
 
     /** Home interface */
-	private static ISignServerSession.IRemote sSSession = null;
+	private static IWorkerSession.IRemote sSSession = null;
 	private static IGlobalConfigurationSession.IRemote gCSession = null;
 
 
@@ -51,7 +51,7 @@ public class TestSignSessionBean extends TestCase {
 		SignServerUtil.installBCProvider();
 		Context context = getInitialContext();
 		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
-		sSSession = (ISignServerSession.IRemote) context.lookup(ISignServerSession.IRemote.JNDI_NAME);
+		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
     }
 
 	public void test00SetupDatabase() throws Exception{
@@ -79,25 +79,25 @@ public class TestSignSessionBean extends TestCase {
        signrequests.add(signreq2);
        
        MRTDSignRequest req = new MRTDSignRequest(reqid, signrequests);
-       MRTDSignResponse res = (MRTDSignResponse) sSSession.signData(3, req, null, null);
+       MRTDSignResponse res = (MRTDSignResponse) sSSession.process(3, req, null, null);
        
        assertTrue(reqid == res.getRequestID());
        
        Certificate signercert = res.getSignerCertificate();       
-       ArrayList<?> signatures = (ArrayList<?>) res.getSignedData();
+       ArrayList<?> signatures = (ArrayList<?>) res.getProcessedData();
        assertTrue(signatures.size() == 2);       
        
        Cipher c = Cipher.getInstance("RSA", "BC");
        c.init(Cipher.DECRYPT_MODE, signercert);
        
-       byte[] signres1 = c.doFinal((byte[]) ((ArrayList<?>) res.getSignedData()).get(0));              
+       byte[] signres1 = c.doFinal((byte[]) ((ArrayList<?>) res.getProcessedData()).get(0));              
        
        if (!arrayEquals(signreq1, signres1))
        {
     	   assertTrue("First MRTD doesn't match with request, " + new String(signreq1) + " = " + new String(signres1),false);
        }
        
-       byte[] signres2 = c.doFinal((byte[]) ((ArrayList<?>) res.getSignedData()).get(1));
+       byte[] signres2 = c.doFinal((byte[]) ((ArrayList<?>) res.getProcessedData()).get(1));
        
        if (!arrayEquals(signreq2, signres2))
        {
@@ -126,7 +126,7 @@ public class TestSignSessionBean extends TestCase {
 	
 	
 	public void test04NameMapping() throws Exception{	
-		   int id = sSSession.getSignerId("testWorker");
+		   int id = sSSession.getWorkerId("testWorker");
 		   assertTrue(""+ id , id == 3);
 	}
 

@@ -23,9 +23,7 @@
         <fileset dir="${jboss.home}/client" includes="*.jar"/>
     </path>
 
-	<target name="signserver:cli" depends="signserver:noprompt" description="Handy hook to run a command">
-		<signserver:cli name="${cli.name}" arg="${cli.args}"/>
-	</target>
+
 
     
     <!--

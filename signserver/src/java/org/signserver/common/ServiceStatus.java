@@ -14,8 +14,10 @@
 
 package org.signserver.common;
 
+import java.io.PrintStream;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 
 
 /**
@@ -23,7 +25,7 @@ import java.util.Date;
  * the status of a specific service
  * @author Philip Vendil
  *
- * $Id: ServiceStatus.java,v 1.2 2007-03-05 06:48:32 herrvendil Exp $
+ * $Id: ServiceStatus.java,v 1.3 2007-11-09 15:45:49 herrvendil Exp $
  */
 
 public class ServiceStatus extends WorkerStatus{
@@ -51,6 +53,31 @@ public class ServiceStatus extends WorkerStatus{
 		}
 				
 		return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastRun);		
+	}
+
+	@Override
+	public void displayStatus(int workerId, PrintStream out, boolean complete) {
+		out.println("Status of Service with Id " + workerId + " is :\n");
+		out.println("  Service was last run at : " + getLastRunDate() +"\n");    	    	
+    	
+    	if(complete){    	
+    		out.println("Active Properties are :");
+
+
+    		if(getActiveSignerConfig().getProperties().size() == 0){
+    			out.println("  No properties exists in active configuration\n");
+    		}
+
+    		Enumeration<?> propertyKeys = getActiveSignerConfig().getProperties().keys();
+    		while(propertyKeys.hasMoreElements()){
+    			String key = (String) propertyKeys.nextElement();
+    			out.println("  " + key + "=" + getActiveSignerConfig().getProperties().getProperty(key) + "\n");
+    		}        		
+
+    		out.println("\n");
+
+    	}
+		
 	}
 
 		

@@ -14,9 +14,13 @@
 
 package org.signserver.common;
 
+
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.cert.X509Certificate;
+import java.text.DateFormat;
 
 /**
  * Common base class used to report the status of a signer or service. Should
@@ -24,11 +28,12 @@ import java.net.UnknownHostException;
  * 
  * @author Philip Vendil
  *
- * $Id: WorkerStatus.java,v 1.1 2007-02-27 16:18:10 herrvendil Exp $
+ * $Id: WorkerStatus.java,v 1.2 2007-11-09 15:45:50 herrvendil Exp $
  */
 
-public class WorkerStatus implements Serializable{
+public abstract class WorkerStatus implements Serializable{
 
+	protected static final String[] signTokenStatuses = {"", "Active", "Offline"};
 	
 	private static final long serialVersionUID = 1L;
 
@@ -60,9 +65,23 @@ public class WorkerStatus implements Serializable{
 		return activeconfig;
 	}
 	
-
+	
+	/**
+	 * Method all inheriting workers must implement. It responsible for writing the status for that specific
+	 * type of worker in the CLI
+	 */
+    public abstract void displayStatus(int workerId, PrintStream out, boolean complete);
 	 
 
-		
+    public static void printCert(X509Certificate cert, PrintStream out){
+    	DateFormat df = DateFormat.getDateInstance();        
+    	
+    	out.println("DN : " + cert.getSubjectDN().toString());
+    	out.println("SerialNumber : " + cert.getSerialNumber().toString(16));
+    	out.println("Issuer DN : " + cert.getIssuerDN().toString());
+    	out.println("Valid from :" +  df.format(cert.getNotBefore()));
+    	out.println("Valid to : " +  df.format(cert.getNotAfter()));
+    	out.println("\n\n");
+    }
 	
 }

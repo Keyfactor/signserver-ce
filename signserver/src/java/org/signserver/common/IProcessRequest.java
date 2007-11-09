@@ -10,31 +10,22 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
+ 
+
 package org.signserver.common;
 
-import java.security.cert.Certificate;
+import java.io.Serializable;
 
 /**
- * Interface used in responses from the WorkerSession.process method. Should
- * be implemented by all types of signers.
+ * Interface used for requests to WorkerSession.process method. Should
+ * be implemented by all types of workers.
  * 
  * 
  * @author Philip Vendil
- * $Id: ISignResponse.java,v 1.2 2007-11-09 15:45:50 herrvendil Exp $
+ * $Id: IProcessRequest.java,v 1.1 2007-11-09 15:45:49 herrvendil Exp $
  */
-public interface ISignResponse extends IArchivableProcessResponse {
-	/**
-	 * Should contain a unique request id used to link to the request
-	 */
-    public int getRequestID();
-    
-    
-    /**
-     * Method returning the certificate used for the signature
-     * 
-     * @return the Certificate that was used to sign.
-     */
-    
-    public Certificate getSignerCertificate();
-}
 
+public interface IProcessRequest extends Serializable{
+	
+
+}

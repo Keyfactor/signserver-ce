@@ -41,11 +41,12 @@ import org.bouncycastle.tsp.TimeStampTokenGenerator;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
+import org.signserver.common.IProcessRequest;
+import org.signserver.common.IProcessResponse;
 import org.signserver.common.ISignRequest;
-import org.signserver.common.ISignResponse;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.IllegalSignRequestException;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignTokenOfflineException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ITimeSource;
@@ -69,7 +70,7 @@ import org.signserver.server.signtokens.ISignToken;
  * TSA = General name of the Time Stamp Authority.
  * 
  * @author philip
- * $Id: TimeStampSigner.java,v 1.5 2007-10-28 12:27:11 herrvendil Exp $
+ * $Id: TimeStampSigner.java,v 1.6 2007-11-09 15:47:15 herrvendil Exp $
  */
 public class TimeStampSigner extends BaseSigner{
 	
@@ -156,22 +157,22 @@ public class TimeStampSigner extends BaseSigner{
 	 * The main method performing the actual timestamp operation.
 	 * Expects the signRequest to be a GenericSignRequest contining a TimeStampRequest
 	 * 
-	 * @see org.signserver.server.signers.ISigner#signData(org.signserver.common.ISignRequest, java.security.cert.X509Certificate)
+	 * @see org.signserver.server.signers.ISigner#signData(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate)
 	 */
-	public ISignResponse signData(ISignRequest signRequest,
-			X509Certificate clientCert) throws IllegalSignRequestException,
+	public IProcessResponse signData(IProcessRequest signRequest,
+			X509Certificate clientCert) throws IllegalRequestException,
 			SignTokenOfflineException {
 		boolean returnbytearray = false;
 		
-		
+		ISignRequest sReq = (ISignRequest) signRequest;
 		// Check that the request contains a valid TimeStampRequest object.
 		if(!(signRequest instanceof GenericSignRequest)){
-			throw new IllegalSignRequestException("Recieved request wasn't a expected GenericSignRequest. ");
+			throw new IllegalRequestException("Recieved request wasn't a expected GenericSignRequest. ");
 		}
 		
-		if(!((signRequest.getSignRequestData() instanceof TimeStampRequest) ||
-		    (signRequest.getSignRequestData() instanceof byte[]))){
-			throw new IllegalSignRequestException("Recieved request data wasn't a expected TimeStampRequest. ");
+		if(!((sReq.getRequestData() instanceof TimeStampRequest) ||
+		    (sReq.getRequestData() instanceof byte[]))){
+			throw new IllegalRequestException("Recieved request data wasn't a expected TimeStampRequest. ");
 		}
 		
 		
@@ -182,11 +183,11 @@ public class TimeStampSigner extends BaseSigner{
         GenericSignResponse signResponse = null;
 		try {
 			TimeStampRequest timeStampRequest = null;
-			if(signRequest.getSignRequestData() instanceof byte[]){
-				timeStampRequest = new TimeStampRequest((byte[]) signRequest.getSignRequestData());
+			if(sReq.getRequestData() instanceof byte[]){
+				timeStampRequest = new TimeStampRequest((byte[]) sReq.getRequestData());
 				returnbytearray = true;
 			}else{
-				timeStampRequest = (TimeStampRequest) signRequest.getSignRequestData();
+				timeStampRequest = (TimeStampRequest) sReq.getRequestData();
 			}
 			TimeStampTokenGenerator timeStampTokenGen = getTimeStampTokenGenerator(timeStampRequest);
 			
@@ -196,33 +197,33 @@ public class TimeStampSigner extends BaseSigner{
 		    
 		    TimeStampResponse timeStampResponse = timeStampResponseGen.generate(timeStampRequest,getSerialNumber(),getTimeSource().getGenTime(),getSignToken().getProvider(ISignToken.PROVIDERUSAGE_SIGN));
 			if(returnbytearray){
-				signResponse = new GenericSignResponse(signRequest.getRequestID(),timeStampResponse.getEncoded(),getSigningCertificate(),
+				signResponse = new GenericSignResponse(sReq.getRequestID(),timeStampResponse.getEncoded(),getSigningCertificate(),
                         timeStampResponse.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16), new ArchiveData(timeStampResponse.getEncoded()));				
 			}else{
-			  signResponse = new GenericSignResponse(signRequest.getRequestID(),timeStampResponse.getEncoded(),getSigningCertificate(),
+			  signResponse = new GenericSignResponse(sReq.getRequestID(),timeStampResponse.getEncoded(),getSigningCertificate(),
 					                               timeStampResponse.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16), new ArchiveData(timeStampResponse.getEncoded()));
 			}
 		} catch (InvalidAlgorithmParameterException e) {
 			log.error("InvalidAlgorithmParameterException: ", e);
-			throw new IllegalSignRequestException("InvalidAlgorithmParameterException: " + e.getMessage());
+			throw new IllegalRequestException("InvalidAlgorithmParameterException: " + e.getMessage());
 		} catch (NoSuchAlgorithmException e) {
 			log.error("NoSuchAlgorithmException: ", e);
-			throw new IllegalSignRequestException("NoSuchAlgorithmException: " + e.getMessage());
+			throw new IllegalRequestException("NoSuchAlgorithmException: " + e.getMessage());
 		} catch (NoSuchProviderException e) {
 			log.error("NoSuchProviderException: ", e);
-			throw new IllegalSignRequestException("NoSuchProviderException: " + e.getMessage());
+			throw new IllegalRequestException("NoSuchProviderException: " + e.getMessage());
 		} catch (SignTokenOfflineException e) {
 			log.error("SignTokenOfflineException: ", e);
-			throw new IllegalSignRequestException("SignTokenOfflineException: " + e.getMessage());
+			throw new IllegalRequestException("SignTokenOfflineException: " + e.getMessage());
 		} catch (CertStoreException e) {
 			log.error("CertStoreException: ", e);
-			throw new IllegalSignRequestException("CertStoreException: " + e.getMessage());
+			throw new IllegalRequestException("CertStoreException: " + e.getMessage());
 		} catch (IOException e) {
 			log.error("IOException: ", e);
-			throw new IllegalSignRequestException("IOException: " + e.getMessage());
+			throw new IllegalRequestException("IOException: " + e.getMessage());
 		}catch(TSPException e){
 			log.error("TSPException: ", e);
-			throw new IllegalSignRequestException(e.getMessage());
+			throw new IllegalRequestException(e.getMessage());
 		} 
 		
 		return signResponse;
@@ -325,7 +326,7 @@ public class TimeStampSigner extends BaseSigner{
 		return retval;
 	}
 	
-	private TimeStampTokenGenerator getTimeStampTokenGenerator(TimeStampRequest timeStampRequest) throws IllegalSignRequestException, SignTokenOfflineException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CertStoreException{
+	private TimeStampTokenGenerator getTimeStampTokenGenerator(TimeStampRequest timeStampRequest) throws IllegalRequestException, SignTokenOfflineException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CertStoreException{
 		TimeStampTokenGenerator timeStampTokenGen = null;
 			try {
 				String digestOID= timeStampRequest.getMessageImprintAlgOID();
@@ -368,10 +369,10 @@ public class TimeStampSigner extends BaseSigner{
 				
 			} catch (IllegalArgumentException e) {
 				log.error("IllegalArgumentException: ", e);
-				throw new IllegalSignRequestException(e.getMessage());
+				throw new IllegalRequestException(e.getMessage());
 			} catch (TSPException e) {
 				log.error("TSPException: ", e);
-				throw new IllegalSignRequestException(e.getMessage());
+				throw new IllegalRequestException(e.getMessage());
 			} 		
 		return timeStampTokenGen;
 	}

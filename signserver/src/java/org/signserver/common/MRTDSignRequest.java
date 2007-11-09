@@ -22,10 +22,10 @@ import java.util.ArrayList;
  * 
  * 
  * @author Philip Vendil
- * $Id: MRTDSignRequest.java,v 1.2 2007-10-28 12:25:01 herrvendil Exp $
+ * $Id: MRTDSignRequest.java,v 1.3 2007-11-09 15:45:49 herrvendil Exp $
  */
 
-public class MRTDSignRequest implements ISignRequest {
+public class MRTDSignRequest implements IProcessRequest {
 
 	/**
 	 * 
@@ -50,7 +50,7 @@ public class MRTDSignRequest implements ISignRequest {
 	
 	/**
 	 * 
-	 * @see org.signserver.common.ISignRequest#getRequestID()
+	 * @see org.signserver.common.IProcessRequest#getRequestID()
 	 */
 	
 	public int getRequestID() {
@@ -60,7 +60,7 @@ public class MRTDSignRequest implements ISignRequest {
 	/**
 	 * Returns the signed data as an ArrayList of document objects to sign.
 	 */
-	public Object getSignRequestData() {
+	public Object getRequestData() {
 		return signRequestData;
 	}
 

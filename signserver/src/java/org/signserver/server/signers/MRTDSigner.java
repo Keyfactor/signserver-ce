@@ -27,11 +27,12 @@ import javax.crypto.NoSuchPaddingException;
 import javax.ejb.EJBException;
 
 import org.apache.log4j.Logger;
+import org.signserver.common.IProcessRequest;
+import org.signserver.common.IProcessResponse;
 import org.signserver.common.ISignRequest;
-import org.signserver.common.ISignResponse;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.IllegalSignRequestException;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.SignTokenOfflineException;
@@ -42,7 +43,7 @@ import org.signserver.server.signtokens.ISignToken;
  * Class used to sign MRTD Document Objects.
  * 
  * @author Philip Vendil
- * @version $Id: MRTDSigner.java,v 1.4 2007-10-28 12:27:11 herrvendil Exp $
+ * @version $Id: MRTDSigner.java,v 1.5 2007-11-09 15:47:14 herrvendil Exp $
  */
 
 public class MRTDSigner extends BaseSigner {
@@ -62,11 +63,13 @@ public class MRTDSigner extends BaseSigner {
 	 *
 	 */
 	
-	public ISignResponse signData(ISignRequest signRequest,
-	                              X509Certificate cert) throws IllegalSignRequestException, SignTokenOfflineException{
+	public IProcessResponse signData(IProcessRequest signRequest,
+	                              X509Certificate cert) throws IllegalRequestException, SignTokenOfflineException{
 		
+		
+		ISignRequest sReq = (ISignRequest) signRequest;
 		if(!(signRequest instanceof MRTDSignRequest)){
-			throw new IllegalSignRequestException("Sign request with id :" + signRequest.getRequestID() + " is of the wrong type :" 
+			throw new IllegalRequestException("Sign request with id :" + sReq.getRequestID() + " is of the wrong type :" 
 					                               + signRequest.getClass().getName() + " should be MRTDSignRequest ");
 		}
 		
@@ -74,18 +77,18 @@ public class MRTDSigner extends BaseSigner {
 		
         ArrayList<byte[]> genSignatures = new ArrayList<byte[]>();
         
-		if(req.getSignRequestData() == null){
-			throw new IllegalSignRequestException("Signature request data cannot be null.");
+		if(req.getRequestData() == null){
+			throw new IllegalRequestException("Signature request data cannot be null.");
 		}
         
-        Iterator<?> iterator = ((ArrayList<?>) req.getSignRequestData()).iterator();
+        Iterator<?> iterator = ((ArrayList<?>) req.getRequestData()).iterator();
         while(iterator.hasNext()){
         	
         	byte[] data = null;
         	try{
         	   data = (byte[]) iterator.next();	
         	}catch(Exception e){
-        		throw new IllegalSignRequestException("Signature request data must be an ArrayList of byte[]");
+        		throw new IllegalRequestException("Signature request data must be an ArrayList of byte[]");
         	}
         	
         	
@@ -120,7 +123,7 @@ public class MRTDSigner extends BaseSigner {
             genSignatures.add(result);	
         }
         
-		return new MRTDSignResponse(signRequest.getRequestID(),genSignatures,getSigningCertificate());
+		return new MRTDSignResponse(sReq.getRequestID(),genSignatures,getSigningCertificate());
 	} 
 
 

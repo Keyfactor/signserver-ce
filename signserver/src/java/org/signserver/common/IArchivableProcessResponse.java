@@ -12,29 +12,26 @@
  *************************************************************************/
 package org.signserver.common;
 
-import java.security.cert.Certificate;
-
 /**
- * Interface used in responses from the WorkerSession.process method. Should
- * be implemented by all types of signers.
+ * Interface that should be implemented by all process responses that could be archived.
  * 
- * 
- * @author Philip Vendil
- * $Id: ISignResponse.java,v 1.2 2007-11-09 15:45:50 herrvendil Exp $
+ * @author phive
+ *
  */
-public interface ISignResponse extends IArchivableProcessResponse {
-	/**
-	 * Should contain a unique request id used to link to the request
-	 */
-    public int getRequestID();
-    
+public interface IArchivableProcessResponse extends IProcessResponse {
+
+	
+    /**
+     * Method that should return an Id of the archived data could be
+     * the response serialnumber.
+     * 
+     * return null of not implemented.
+     */
+    public String getArchiveId();
     
     /**
-     * Method returning the certificate used for the signature
-     * 
-     * @return the Certificate that was used to sign.
+     * Method that should return a archive data object used for achiving.
+     * return null if not implemented.
      */
-    
-    public Certificate getSignerCertificate();
+    public ArchiveData getArchiveData();
 }
-

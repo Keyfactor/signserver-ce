@@ -10,59 +10,56 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
-
-package org.signserver.common;
+package org.signserver.groupkeyservice.common;
 
 import java.io.PrintStream;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import java.util.Enumeration;
-import java.util.Iterator;
+
+import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerStatus;
 
 /**
- * Class used when responding to the SignSession.getStatus() method, represents
- * the status of a specific signer
+ * Class used to display the status of a GroupKeyService such as 
+ * keys in database etc.
+ * 
+ * 
  * @author Philip Vendil
- *
- * $Id: SignerStatus.java,v 1.3 2007-11-09 15:45:50 herrvendil Exp $
+ * $Id: GroupKeyServiceStatus.java,v 1.1 2007-11-09 15:46:45 herrvendil Exp $
  */
+public class GroupKeyServiceStatus extends WorkerStatus {
 
-public class SignerStatus extends WorkerStatus{
-
-	public static final int STATUS_ACTIVE  = 1;
-	public static final int STATUS_OFFLINE = 2;
-	
 	private static final long serialVersionUID = 1L;
-
-	private int tokenStatus = 0;
-	private Certificate signerCertificate = null;
 	
-	/** 
-	 * Main constuctor
-	 */
-	public SignerStatus(int tokenStatus, SignerConfig config, Certificate signerCertificate){
-		super(config.getWorkerConfig());
+	private long numOfUnassignedKeys;	 
+	private long numOfKeys;	 
+	private long numOfAssignedKeys;	 
+	private long numByCreationDate;	 
+	private long numByFirstUsedDate;	 
+	private long numByLastFetchedDate;
+	private long currentEncKeyIndex;
+	private int tokenStatus = 0;
+	
+	public GroupKeyServiceStatus(int tokenStatus, WorkerConfig config, long numOfUnassignedKeys,
+			long numOfKeys, long numOfAssignedKeys, long numByCreationDate,
+			long numByFirstUsedDate, long numByLastFetchedDate, long currentEncKeyIndex) {
+		super(config);
 		this.tokenStatus = tokenStatus;
-	    this.signerCertificate = signerCertificate;
+		this.numOfUnassignedKeys = numOfUnassignedKeys;
+		this.numOfKeys = numOfKeys;
+		this.numOfAssignedKeys = numOfAssignedKeys;
+		this.numByCreationDate = numByCreationDate;
+		this.numByFirstUsedDate = numByFirstUsedDate;
+		this.numByLastFetchedDate = numByLastFetchedDate;
+		this.currentEncKeyIndex = currentEncKeyIndex;
 	}
-
+	
 	/**
 	 * @return Returns the tokenStatus.
 	 */
 	public int getTokenStatus() {
 		return tokenStatus;
 	}
-
-	 
-	/**
-	 * Method used to retrieve the currently used signercertficate.
-	 * Use this method when checking status and not from config, since the cert isn't always in db.
-	 * @return
-	 */
-	public Certificate getSignerCertificate(){
-		return signerCertificate;
-	}
+	
 
 	@Override
 	public void displayStatus(int workerId, PrintStream out, boolean complete) {
@@ -85,20 +82,39 @@ public class SignerStatus extends WorkerStatus{
 
 			out.println("\n");
 
-			out.println("Active Authorized Clients are are (Cert DN, IssuerDN):");
-			Iterator<?> iter =  new SignerConfig(getActiveSignerConfig()).getAuthorizedClients().iterator();
-			while(iter.hasNext()){
-				AuthorizedClient client = (AuthorizedClient) iter.next();
-				out.println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");
-			}
-			if(getSignerCertificate() == null){
-				out.println("Error: No Signer Certificate have been uploaded to this signer.\n");	
-			}else{
-				out.println("The current configuration use the following signer certificate : \n");
-				printCert((X509Certificate) getSignerCertificate(),out );
-			}
+			out.println("TODO");
 		}		
-	}
 		
-	
+	}
+
+	public long getNumOfUnassignedKeys() {
+		return numOfUnassignedKeys;
+	}
+
+	public long getNumOfKeys() {
+		return numOfKeys;
+	}
+
+	public long getNumOfAssignedKeys() {
+		return numOfAssignedKeys;
+	}
+
+	public long getNumByCreationDate() {
+		return numByCreationDate;
+	}
+
+	public long getNumByFirstUsedDate() {
+		return numByFirstUsedDate;
+	}
+
+	public long getNumByLastFetchedDate() {
+		return numByLastFetchedDate;
+	}
+
+	public long getCurrentEncKeyIndex() {
+		return currentEncKeyIndex;
+	}
+
+
+
 }

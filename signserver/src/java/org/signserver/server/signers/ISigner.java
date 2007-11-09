@@ -15,11 +15,11 @@ package org.signserver.server.signers;
  
 import java.security.cert.X509Certificate;
 
-import org.signserver.common.ISignRequest;
-import org.signserver.common.ISignResponse;
+import org.signserver.common.IProcessRequest;
+import org.signserver.common.IProcessResponse;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.IllegalSignRequestException;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignTokenAuthenticationFailureException;
 import org.signserver.common.SignTokenOfflineException;
 import org.signserver.server.IWorker;
@@ -32,7 +32,7 @@ import org.signserver.server.IWorker;
  * 
  * 
  * @author Philip Vendil
- * $Id: ISigner.java,v 1.2 2007-03-09 09:27:33 herrvendil Exp $
+ * $Id: ISigner.java,v 1.3 2007-11-09 15:47:14 herrvendil Exp $
  */
 public interface ISigner extends IWorker{
 
@@ -43,8 +43,8 @@ public interface ISigner extends IWorker{
 	/**
     * Main method that does the actual signing according to the data in the request. 
     */
-	public ISignResponse signData(ISignRequest signRequest,
-	                              X509Certificate clientCert) throws IllegalSignRequestException, SignTokenOfflineException;
+	public IProcessResponse signData(IProcessRequest signRequest,
+	                              X509Certificate clientCert) throws IllegalRequestException, SignTokenOfflineException;
 	
 
 	

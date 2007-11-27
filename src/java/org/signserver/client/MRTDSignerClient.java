@@ -25,7 +25,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.SignServerException;
-import org.signserver.common.SignTokenOfflineException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.ejb.interfaces.IWorkerSession;
 /**
  * Client class connecting to the sign server and requesting 
@@ -76,7 +76,7 @@ public class MRTDSignerClient {
 			IWorkerSession.IRemote signsession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);		
 		
 		return (MRTDSignResponse) signsession.process(1,request, null,null);
-		}catch(SignTokenOfflineException e){
+		}catch(CryptoTokenOfflineException e){
 			throw new SignServerException("Signer is offline. Activate it before continuing", e);
 		} catch (IllegalRequestException e) {
 			throw new SignServerException("Illegal Signature Request", e);			

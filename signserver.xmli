@@ -25,12 +25,19 @@
 		
 	   <property name="healthcheck.src" value="${src}/web/healthcheck" />
 	   <property name="healthcheckwar" value="${server.dist.dir}/healthcheck.war" />
+
+	   <property name="healthcheck.authorizedips" value="127.0.0.1" />
+	   <property name="healthcheck.minimumfreememory" value="1" />
+	   <property name="healthcheck.checkdbstring" value="Select count(*) from SignerConfigData" />
+	
+	   <property name="signserverws.enabled" value="true" />
 	
 	   <path id="signserver.compile.classpath">
 	        <path refid="ext.classpath" />
 	        <fileset dir="lib" includes="*.jar" />
 	        <fileset dir="lib/itext" includes="*.jar" />
-	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />    	
+	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
+	   	    <fileset dir="lib/jaxws" includes="*.jar" />
 	        <path refid="j2ee.classpath" />
 	    </path>
 
@@ -126,14 +133,12 @@ database.password      = ${database.password}
 	    <target name="signserver:compile" unless="buildMailSigner">	    	
 	        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
 	            <classpath refid="server.compile.classpath" />
-	            <src path="${src.java}" />
-	        	<exclude name="org/signserver/rmiClient/**"/> 
+	            <src path="${src.java}" /> 
 	        	<exclude name="org/signserver/mailsigner/**"/>
-	        	<exclude name="org/signserver/rmi/**"/> 
 	        	<exclude name="org/signserver/appserver/**"/> 
-	        	<exclude name="org/signserver/server/signtokens/PrimeCardHSMSignToken.*"/>
-	        	<exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>
-	        	<exclude name="org/signserver/server/mailets/**"/>
+	        	<exclude name="org/signserver/server/cryptotokens/PrimeCardHSMCryptoToken.*"/>
+	        	<exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>	        	
+	        	<exclude name="org/signserver/protocol/ws/client/**"/>
 	        </javac>
 	        <copy todir="${build}">
 	            <fileset dir="src/java">
@@ -162,6 +167,7 @@ database.password      = ${database.password}
 	        	<fileset dir="." includes="signserver_server.properties"/>
 	        	<fileset dir="src/java" includes="profilemappings.properties"/>
 	            <fileset dir="${build}">
+	              <include name="org/signserver/groupkeyservice/**" />
 	        	  <include name="org/signserver/ejb/**" />
 	          	  <include name="org/signserver/common/**" />
 	          	  <include name="org/signserver/server/**" />
@@ -200,16 +206,223 @@ database.password      = ${database.password}
 
 	        </war>
 	    </target>
+	            	
+	        		
+	   <!-- =================================================================== -->
+	   <!-- Build WebService interface part                                                                                                                             -->
+       <!-- =================================================================== -->
+	   <path id="jaxws.classpath">
+	    	<fileset dir="lib/jaxws">
+	    	  <include name="**/*.jar"/>
+	    	</fileset> 
+	    	<pathelement location="${java.home}/../lib/tools.jar"/>
+	    	<pathelement location="${build}"/>
+	    	<path refid="signserver.compile.classpath" />
+	    </path>
+		<!--
+	    <path id="jaxws.client.classpath">
+	    	<fileset dir="lib">
+	    	  <include name="**/*.jar"/>
+	    	</fileset> 
+	    	<fileset dir="lib/ext">
+	    	  <include name="**/*.jar"/>
+	    	</fileset> 
+	    	<pathelement location="${java.home}/../lib/tools.jar"/>
+	    	<pathelement location="tmp/jaxws/gen-classes/client"/>
+	    	<pathelement location="${build}"/>
+	    </path> -->
 		
+	    <path id="jaxws.test.classpath">
+	    	<path refid="jaxws.client.classpath" />
+	    	<path refid="j2ee.classpath" />
+	    </path>
+		
+		
+	    <target name="ws.init" depends="init, signserverwsconditioncheck" if="signserverws.conditionenabled">
+	    	<mkdir dir="tmp/jaxws/gen-classes/server"/>
+	    	<mkdir dir="tmp/jaxws/gen-classes/client"/>
+	    </target>
+	
+	
+	    <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen">
+	        <classpath refid="jaxws.classpath"/>
+	    </taskdef>
+	
+    <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+        <classpath refid="jaxws.classpath"/>
+    </taskdef>
+		
+		<target depends="ws.init" name="ws.gen.server" if="signserverws.conditionenabled" >
+	       <wsgen  fork="true" sei="org.signserver.protocol.ws.server.SignServerWS"
+	       	     genwsdl="true" destdir="tmp/jaxws/gen-classes/server" 	            
+	            debug="true" >
+			 <classpath>
+			  <path refid="jaxws.classpath" /> 
+			  <pathelement location="src" /> 
+			 </classpath>
+
+			  </wsgen>
+		</target>
+
+		
+
+		<target name="signserverwsconditioncheck" unless="buildMailSigner">
+			<condition property="signserverws.conditionenabled">
+				<istrue value="${signserverws.enabled}"/>
+			</condition>
+		</target>
+		
+	    <target name="signserverws.war" depends="ws.gen.server" if="signserverws.conditionenabled" >
+	        <copy todir="tmp/jaxws/gen-classes/server">
+	    	  <fileset dir="${build}">
+	            <include name="org/signserver/protocol/ws/*.class"/> 
+	    	  	<include name="org/signserver/protocol/ws/server/*.class"/>  
+	          </fileset>
+	        </copy>	
+	    	
+	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@signserverws.war@-->" value="module>&lt;web>&lt;web-uri>signserverws.war&lt;/web-uri>&lt;context-root>/signserver/signserverws&lt;/context-root>&lt;/web>&lt;/module>"/>
+	        <war warfile="${server.dist.dir}/signserverws.war" webxml="src/jaxws/web.xml">
+	            <webinf dir="src/jaxws" includes="sun-jaxws.xml"/>
+	            <!-- <zipfileset
+	                    dir="tmp/jaxws/wsdl"
+	                    includes="*.wsdl, *.xsd"
+	                    prefix="WEB-INF/wsdl"/> -->
+	            <classes dir="tmp/jaxws/gen-classes/server"/>
+	         	<lib dir="lib/jaxws" includes="*.jar" />        		
+	        </war>
+	    </target>
+		
+		
+	    <target name="ws.gen.client" depends="ws.init, ws.gen.server">	    	
+	        <wsimport 
+	                destdir="tmp/jaxws/gen-classes/client"
+	                wsdl="tmp/jaxws/gen-classes/server/SignServerWSService.wsdl">	          
+	        </wsimport>
+	    </target>
+	<!--
+	    <target name="ws.build.client" depends="ws.init, ejbca-util.jar" unless="ejbcaws.isjava14">
+	        <javac debug="true" debuglevel="${debuglevel}" destdir="tmp/jaxws/gen-classes/client" >
+	            <src path="src/jaxws/gen-java/client"/>
+	            <classpath refid="jaxws.client.classpath"/>        	
+	        </javac>
+	        <javac debug="true" debuglevel="${debuglevel}" destdir="${build}" >
+	            <src path="src/java"/>
+	            <classpath refid="jaxws.client.classpath"/>
+	        	<include name="org/ejbca/core/protocol/ws/client/*.java"/>            
+	        </javac>
+	    	
+	    	<mkdir dir="tmp/ejbcawscli.jar"/>
+	    	<mkdir dir="tmp/ejbcawscli.jar/META-INF"/>
+	    	<mkdir dir="dist/ejbcawscli/lib"/>
+
+	        <copy todir="tmp/ejbcawscli.jar">
+	            <fileset dir="${build}">
+	              <include name="org/ejbca/core/protocol/ws/client/*.class"/>
+	              <include name="org/ejbca/core/protocol/ws/common/*.class"/>
+	              <include name="org/ejbca/core/protocol/ws/objects/*.class"/>            	
+	            </fileset>	
+	            <fileset dir="tmp/jaxws/gen-classes/client">
+	              <include name="**/*.class"/>
+	            </fileset>	
+	            <fileset dir="${src.java}">
+		              <include name="log4j.properties"/>
+		              <include name="profilemappings.properties"/>
+		        </fileset>
+		    </copy> 
+	 
+	        <copy todir="dist/ejbcawscli/lib">
+	            <fileset dir="${ejbca.home}/lib">        
+	              <include name="bcprov-jdk15.jar"/>
+	              <include name="log4j.jar"/>      
+	              <include name="commons-lang-2.0.jar"/>            	
+	            </fileset>	
+	            <fileset dir="${ejbca.home}/dist">
+	              <include name="ejbca-util.jar"/>         
+	            </fileset>	    
+		        <fileset dir="${lib}/jaxws">
+					<include name="activation.jar" />
+					<include name="FastInfoset.jar" />
+				    <include name="http.jar" />
+					<include name="jaxb-api.jar" />
+				    <include name="jaxb-impl.jar" />
+				    <include name="jaxb-xjc.jar" />
+					<include name="jaxws-api.jar" />
+				    <include name="jaxws-rt.jar" />
+				    <include name="jsr173_api.jar" />
+				 	<include name="jsr181-api.jar" />
+				    <include name="jsr250-api.jar" />
+					<include name="resolver.jar" />
+				    <include name="saaj-api.jar" />
+					<include name="saaj-impl.jar" />
+					<include name="sjsxp.jar" />
+				</fileset>
+		    </copy>    	
+		    <copy todir="dist/ejbcawscli/">
+	            <fileset dir="${src}/jaxws/cli">
+	                <include name="*.*" />
+	            </fileset>
+	        </copy> 
+	    	              
+	        <jar destfile="dist/ejbcawscli/ejbcawscli.jar" basedir="tmp/ejbcawscli.jar">
+	          <manifest>
+	          	<attribute name="Class-Path" value="lib/bcprov-jdk15.jar lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/commons-lang-2.0.jar"/>
+	            <attribute name="Main-Class" value="org.ejbca.core.protocol.ws.client.ejbcawsracli"/>
+	          </manifest>
+	        </jar>    	    	
+	    </target>
+
+	    <target name="ejbcaws.client" depends="ejbcawsconditioncheck,isjava14check,ws.build.client" if="ejbcawsconditioncheck" unless="ejbcaws.isjava14" description="Build the EJBCA WS-API client"/>
+         -->
+	    <!-- Compile JAXWS JUnit testcases -->
+	<!--
+	    <target name="test:compilews" depends="ws.build, ws.build.client">
+	        <mkdir dir="${test.dir}" />
+	        <javac srcdir="${test.src.dir}" destdir="${test.dir}" debug="on" includeantruntime="no" encoding="iso8859-1">
+	            <classpath refid="jaxws.test.classpath" />
+	        	<include name="org/ejbca/core/protocol/ws/Test*" />
+	        </javac>	     
+	        <copy file="${src.java}/jndi.properties" todir="${test.dir}" failonerror="false"/>
+	    </target>
+		
+	    <target name="test:runws" depends="test:compilews,j2ee:assert-run" description="run JAXWS JUnit testcases">
+	    	<echo>Important: In order to run the tests you have performed a regular ant install at some point and not changed the default administrator group.
+	    	</echo>
+	        <delete dir="${test.dir}/ws/reports" />
+	        <mkdir dir="${test.dir}/ws/reports/html" />
+	        <junit printsummary="yes" haltonfailure="no">
+				<sysproperty key="testtype" value="WEB"/>
+	            <classpath>
+	                <path refid="jaxws.test.classpath" />
+	                <path location="${test.dir}" />
+	            </classpath>
+	            <formatter type="xml" />	        	
+	            <batchtest fork="yes" todir="${test.dir}/ws/reports">
+	                <fileset dir="${test.dir}">
+	                    <include name="**/protocol/ws/TestEjbcaWS.class" />
+	                </fileset>
+	            </batchtest>
+	            <batchtest fork="yes" todir="${test.dir}/ws/reports">
+	                <fileset dir="${test.dir}">
+	                    <include name="**/protocol/ws/TestEjbcaWSNonAdmin.class" />
+	                </fileset>
+	            </batchtest>
+	        </junit>
+	        <junitreport todir="${test.dir}/ws/reports">
+	            <fileset dir="${test.dir}/ws/reports">
+	                <include name="TEST-*.xml" />
+	            </fileset>
+	            <report format="frames" todir="${test.dir}/ws/reports/html" />
+	        </junitreport>
+	    </target>
+		-->
 		
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war" unless="buildMailSigner" >
-	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/applicationnormi.xml">         		
+	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war" unless="buildMailSigner" >
+	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
-	                <exclude name="META-INF/applicationwithrmi.xml" />
-	            	<exclude name="META-INF/applicationnormi.xml" />
+	                <exclude name="META-INF/application.xml" />
 	            </fileset>
 	            <fileset dir=".">
 	                <include name="${lib}/log4j.jar" />

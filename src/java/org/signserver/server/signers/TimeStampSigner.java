@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.ejb.EJBException;
+import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.GeneralName;
@@ -47,10 +48,10 @@ import org.signserver.common.ISignRequest;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.SignTokenOfflineException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ITimeSource;
-import org.signserver.server.signtokens.ISignToken;
+import org.signserver.server.cryptotokens.ICryptoToken;
  
 
 /**
@@ -70,7 +71,7 @@ import org.signserver.server.signtokens.ISignToken;
  * TSA = General name of the Time Stamp Authority.
  * 
  * @author philip
- * $Id: TimeStampSigner.java,v 1.6 2007-11-09 15:47:15 herrvendil Exp $
+ * $Id: TimeStampSigner.java,v 1.7 2007-11-27 06:05:07 herrvendil Exp $
  */
 public class TimeStampSigner extends BaseSigner{
 	
@@ -130,8 +131,8 @@ public class TimeStampSigner extends BaseSigner{
 	//private String defaultDigestOID = null;
 	private String defaultTSAPolicyOID = null;
 	
-	public void init(int signerId, WorkerConfig config) {
-		super.init(signerId, config);
+	public void init(int signerId, WorkerConfig config, EntityManager em) {
+		super.init(signerId, config,em);
 		// Check that the timestamp server is properly configured
 	    timeSource = getTimeSource();
 	    if(timeSource == null){
@@ -159,9 +160,9 @@ public class TimeStampSigner extends BaseSigner{
 	 * 
 	 * @see org.signserver.server.signers.ISigner#signData(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate)
 	 */
-	public IProcessResponse signData(IProcessRequest signRequest,
+	public IProcessResponse processData(IProcessRequest signRequest,
 			X509Certificate clientCert) throws IllegalRequestException,
-			SignTokenOfflineException {
+			CryptoTokenOfflineException {
 		boolean returnbytearray = false;
 		
 		ISignRequest sReq = (ISignRequest) signRequest;
@@ -195,7 +196,7 @@ public class TimeStampSigner extends BaseSigner{
             
 		    timeStampRequest.validate(this.getAcceptedAlgorithms(), this.getAcceptedPolicies(), this.getAcceptedExtensions(), "BC");
 		    
-		    TimeStampResponse timeStampResponse = timeStampResponseGen.generate(timeStampRequest,getSerialNumber(),getTimeSource().getGenTime(),getSignToken().getProvider(ISignToken.PROVIDERUSAGE_SIGN));
+		    TimeStampResponse timeStampResponse = timeStampResponseGen.generate(timeStampRequest,getSerialNumber(),getTimeSource().getGenTime(),getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
 			if(returnbytearray){
 				signResponse = new GenericSignResponse(sReq.getRequestID(),timeStampResponse.getEncoded(),getSigningCertificate(),
                         timeStampResponse.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16), new ArchiveData(timeStampResponse.getEncoded()));				
@@ -212,9 +213,9 @@ public class TimeStampSigner extends BaseSigner{
 		} catch (NoSuchProviderException e) {
 			log.error("NoSuchProviderException: ", e);
 			throw new IllegalRequestException("NoSuchProviderException: " + e.getMessage());
-		} catch (SignTokenOfflineException e) {
-			log.error("SignTokenOfflineException: ", e);
-			throw new IllegalRequestException("SignTokenOfflineException: " + e.getMessage());
+		} catch (CryptoTokenOfflineException e) {
+			log.error("CryptoTokenOfflineException: ", e);
+			throw new IllegalRequestException("CryptoTokenOfflineException: " + e.getMessage());
 		} catch (CertStoreException e) {
 			log.error("CertStoreException: ", e);
 			throw new IllegalRequestException("CertStoreException: " + e.getMessage());
@@ -326,7 +327,7 @@ public class TimeStampSigner extends BaseSigner{
 		return retval;
 	}
 	
-	private TimeStampTokenGenerator getTimeStampTokenGenerator(TimeStampRequest timeStampRequest) throws IllegalRequestException, SignTokenOfflineException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CertStoreException{
+	private TimeStampTokenGenerator getTimeStampTokenGenerator(TimeStampRequest timeStampRequest) throws IllegalRequestException, CryptoTokenOfflineException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CertStoreException{
 		TimeStampTokenGenerator timeStampTokenGen = null;
 			try {
 				String digestOID= timeStampRequest.getMessageImprintAlgOID();
@@ -339,7 +340,7 @@ public class TimeStampSigner extends BaseSigner{
 					tSAPolicyOID = defaultTSAPolicyOID;
 				}
 				
-				timeStampTokenGen = new TimeStampTokenGenerator(this.getSignToken().getPrivateKey(ISignToken.PURPOSE_SIGN), (X509Certificate) getSigningCertificate(), digestOID, tSAPolicyOID);
+				timeStampTokenGen = new TimeStampTokenGenerator(this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN), (X509Certificate) getSigningCertificate(), digestOID, tSAPolicyOID);
 				
 				
 				if(config.getProperties().getProperty(ACCURACYMICROS) != null){
@@ -428,8 +429,8 @@ public class TimeStampSigner extends BaseSigner{
     /**
      * Not supported yet
      */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException{
-		return this.getSignToken().genCertificateRequest(info);
+	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
+		return this.getCryptoToken().genCertificateRequest(info);
 	}
 }
 

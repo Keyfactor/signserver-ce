@@ -39,10 +39,10 @@ import org.ejbca.util.CertTools;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.InvalidSignerIdException;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.MailSignerConfig;
-import org.signserver.common.SignTokenAuthenticationFailureException;
-import org.signserver.common.SignTokenOfflineException;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.mailsigner.BaseMailSigner;
@@ -59,7 +59,7 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * 
  * @author Philip Vendil
- * $Id: MailSignerContainerMailet.java,v 1.2 2007-11-09 15:47:24 herrvendil Exp $
+ * $Id: MailSignerContainerMailet.java,v 1.3 2007-11-27 06:05:12 herrvendil Exp $
  */
 public class MailSignerContainerMailet extends GenericMailet implements IMailSignerRMI{
 
@@ -108,7 +108,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 				if(activeProps.getProperty(BaseMailSigner.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
 				  getMailSigner(id).service(mail);
 				}
-			} catch (InvalidSignerIdException e) {
+			} catch (InvalidWorkerIdException e) {
 				// Should never happen
 				log.error(e);
 			}
@@ -119,8 +119,8 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#activateSigner(int, String)
 	 */
 	public void activateSigner(int signerId, String authenticationCode)
-			throws SignTokenAuthenticationFailureException,
-			SignTokenOfflineException, InvalidSignerIdException,
+			throws CryptoTokenAuthenticationFailureException,
+			CryptoTokenOfflineException, InvalidWorkerIdException,
 			RemoteException {
 		getMailSigner(signerId).activateSigner(authenticationCode);		
 	}
@@ -129,7 +129,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#deactivateSigner(int)
 	 */
 	public boolean deactivateSigner(int signerId)
-			throws SignTokenOfflineException, InvalidSignerIdException,
+			throws CryptoTokenOfflineException, InvalidWorkerIdException,
 			RemoteException {
 		return getMailSigner(signerId).deactivateSigner();
 		
@@ -139,7 +139,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#destroyKey(int, int)
 	 */
 	public boolean destroyKey(int signerId, int purpose)
-			throws InvalidSignerIdException, RemoteException {		
+			throws InvalidWorkerIdException, RemoteException {		
 		return getMailSigner(signerId).destroyKey(purpose);
 	}
 
@@ -147,8 +147,8 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getCertificateRequest(int, ISignerCertReqInfo)
 	 */
 	public ISignerCertReqData genCertificateRequest(int signerId,
-			ISignerCertReqInfo certReqInfo) throws SignTokenOfflineException,
-			InvalidSignerIdException, RemoteException {
+			ISignerCertReqInfo certReqInfo) throws CryptoTokenOfflineException,
+			InvalidWorkerIdException, RemoteException {
 		
 		return getMailSigner(signerId).genCertificateRequest(certReqInfo);
 	}
@@ -166,7 +166,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 				if(name != null && name.equalsIgnoreCase(signerName)){
 					retval = id;
 				}
-			} catch (InvalidSignerIdException e) {
+			} catch (InvalidWorkerIdException e) {
 				// Should never happen
 				log.error(e);
 			}
@@ -180,7 +180,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getStatus(int)
 	 */
 	public WorkerStatus getStatus(int workerId)
-			throws InvalidSignerIdException, RemoteException {
+			throws InvalidWorkerIdException, RemoteException {
 		
 		return getMailSigner(workerId).getStatus();
 	}
@@ -306,7 +306,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	/**
 	 * Method that finds and initializes a MailSigner
 	 */
-	private IMailSigner getMailSigner(int signerId) throws InvalidSignerIdException{
+	private IMailSigner getMailSigner(int signerId) throws InvalidWorkerIdException{
 		IMailSigner retval = mailSigners.get(signerId);
 				
 		if(retval == null){
@@ -330,7 +330,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 		}
 		
 		if(retval == null){
-			throw new InvalidSignerIdException("Error, couldn't find signer id in global configuration.");
+			throw new InvalidWorkerIdException("Error, couldn't find signer id in global configuration.");
 		}
 		
 		return retval;

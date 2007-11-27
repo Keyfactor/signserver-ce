@@ -20,14 +20,13 @@ import org.signserver.common.IProcessResponse;
  * Response sent after processing the PregenerateKeysRequest
  * 
  * @author Philip Vendil
- * $Id: PregenerateKeysResponse.java,v 1.1 2007-11-09 15:46:45 herrvendil Exp $
+ * $Id: PregenerateKeysResponse.java,v 1.2 2007-11-27 06:05:06 herrvendil Exp $
  */
 public class PregenerateKeysResponse implements IProcessResponse {
 
 	private static final long serialVersionUID = 1L;
 	
 	int numberOfKeysGenerated;
-	int keyType;
 	
 
 	
@@ -35,12 +34,10 @@ public class PregenerateKeysResponse implements IProcessResponse {
     * Main constructor
     * 
     * @param numberOfKeysGenerated number of keys that were generated.
-    * @param keyType the type of key actually generated
     */
-	public PregenerateKeysResponse(int numberOfKeysGenerated, int keyType) {
+	public PregenerateKeysResponse(int numberOfKeysGenerated) {
 		super();
 		this.numberOfKeysGenerated = numberOfKeysGenerated;
-		this.keyType = keyType;
 	}
 
 	/**
@@ -50,13 +47,7 @@ public class PregenerateKeysResponse implements IProcessResponse {
 		return numberOfKeysGenerated;
 	}
 
-	/**
-	 * 
-	 * @return the type of key actually generated    
-	 */
-	public int getKeyType() {
-		return keyType;
-	}
+
 
 	/**
 	 * Not implemented

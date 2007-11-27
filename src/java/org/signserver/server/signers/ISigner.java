@@ -20,8 +20,9 @@ import org.signserver.common.IProcessResponse;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.SignTokenAuthenticationFailureException;
-import org.signserver.common.SignTokenOfflineException;
+import org.signserver.common.SignServerException;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.server.IWorker;
 
 
@@ -32,19 +33,23 @@ import org.signserver.server.IWorker;
  * 
  * 
  * @author Philip Vendil
- * $Id: ISigner.java,v 1.3 2007-11-09 15:47:14 herrvendil Exp $
+ * $Id: ISigner.java,v 1.4 2007-11-27 06:05:08 herrvendil Exp $
  */
 public interface ISigner extends IWorker{
 
-	public static final int AUTHTYPE_CLIENTCERT = 0;
-	public static final int AUTHTYPE_NOAUTH     = 1;
+	public static final String AUTHTYPE_CLIENTCERT = "CLIENTCERT";
+	public static final String AUTHTYPE_NOAUTH     = "NOAUTH";
 	
 
 	/**
-    * Main method that does the actual signing according to the data in the request. 
+    * Main method that does the actual signing according to the data in the request.
+    * 
+    *  @throws IllegalRequestException if requests contain unsupported data.
+    *  @throws CryptoTokenOfflineException if the token performing cryptographic operations is offline.
+    *  @throws SignServerException if general failure occured during the operation.
     */
-	public IProcessResponse signData(IProcessRequest signRequest,
-	                              X509Certificate clientCert) throws IllegalRequestException, SignTokenOfflineException;
+	public IProcessResponse processData(IProcessRequest signRequest,
+	                              X509Certificate clientCert) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 	
 
 	
@@ -53,28 +58,28 @@ public interface ISigner extends IWorker{
 	 * @param authenticationCode 
 	 * @pram props, the configuration that should be used for activation, doesn't have to be the active one for smooth shift of keys.
 	 */
-	public void activateSigner(String authenticationCode) throws SignTokenAuthenticationFailureException, SignTokenOfflineException;
+	public void activateSigner(String authenticationCode) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException;
 	
 	/**
 	 * Method used to deactivate a signer when it's not used anymort
 	 */	
-	public boolean deactivateSigner() throws SignTokenOfflineException;
+	public boolean deactivateSigner() throws CryptoTokenOfflineException;
 	
 	
 	/**
 	 * Method used to tell the signer to create a certificate request using its sign token.
 	 */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException;
+	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException;
 	
 	/**
-	 * Method specifying which typw of authentication that shuld be performed before signature is performed
+	 * Method specifying which type of authentication that should be performed before signature is performed
 	 * Returns one of the AUTHTYPE_ constants
 	 */
-	public int getAuthenticationType();
+	public String getAuthenticationType();
 	
 	/**
 	 * Method used to remove a key in the signer that shouldn't be used any more
-	 * @param purpose on of ISignToken.PURPOSE_ constants
+	 * @param purpose on of ICryptoToken.PURPOSE_ constants
 	 * @return true if removal was successful.
 	 */
 	public boolean destroyKey(int purpose);

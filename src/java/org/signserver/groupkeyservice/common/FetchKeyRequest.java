@@ -19,43 +19,34 @@ import org.signserver.common.IProcessRequest;
  * group key given a documentId.
  * 
  * @author Philip Vendil
- * $Id: FetchKeyRequest.java,v 1.1 2007-11-09 15:46:45 herrvendil Exp $
+ * $Id: FetchKeyRequest.java,v 1.2 2007-11-27 06:05:06 herrvendil Exp $
  */
 public class FetchKeyRequest implements IProcessRequest {
 	
 	private static final long serialVersionUID = 1L;
 	// Not really used in this case.	
 	private String documentId;
-	private boolean genKeyIfNotExist = false;
-	private int keyType = GroupKeyServiceConstants.KEYTYPE_DEFAULT;
+	private boolean genKeyIfNotExist = false;	
+	private int keyPart = GroupKeyServiceConstants.KEYPART_SYMMETRIC;
+
 	
 	/**
 	 * Default constructor used to fetch a key using the default key type.
 	 * 
 	 * @param documentId unique identifier of a document
+	 * @param keyPart one of GroupKeyServiceConstants.KEYPART constants indicating part of key to fetch.
 	 * @param genKeyIfNotExist if key doesn't exists should a unassigned key be used, otherwise
 	 * will a IllegalRequestException be thrown.
 	 */
-	public FetchKeyRequest(String documentId, boolean genKeyIfNotExist) {
+	public FetchKeyRequest(String documentId, int keyPart, boolean genKeyIfNotExist) {
 		super();
 		this.documentId = documentId;
+		this.keyPart = keyPart;
 		this.genKeyIfNotExist = genKeyIfNotExist;
 	}
 	
-	/**
-	 * Default constructor used to fetch a key using the default key type.
-	 * 
-	 * @param documentId unique identifier of a document
-	 * @param genKeyIfNotExist if key doesn't exists should a unassigned key be used, otherwise
-	 * will a IllegalRequestException be thrown.
-	 * @param keyType one of GroupKeyServiceConstants.KEYTYPE_ constants
-	 */
-	public FetchKeyRequest(String documentId, boolean genKeyIfNotExist, int keyType) {
-		super();
-		this.documentId = documentId;
-		this.genKeyIfNotExist = genKeyIfNotExist;
-		this.keyType = keyType;
-	}
+
+
 
 	/**
 	 * 
@@ -75,11 +66,12 @@ public class FetchKeyRequest implements IProcessRequest {
 
 
 	/**
-	 * 
-	 * @return one of GroupKeyServiceConstants.KEYTYPE_ constants
+	 * @return one of GroupKeyServiceConstants.KEYPART_ constants indicating part of key to fetch.
 	 */
-	public int getKeyType() {
-		return keyType;
+	public int getKeyPart() {
+		return keyPart;
 	}
+	
+	
 
 }

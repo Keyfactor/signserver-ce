@@ -19,7 +19,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.SignerConfig;
+import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
@@ -29,7 +29,7 @@ import org.signserver.common.WorkerStatus;
  * Gets the current configuration of the given signer, this might not be the same as
  * the active configuration.
  *
- * @version $Id: GetConfigCommand.java,v 1.5 2007-11-09 15:45:13 herrvendil Exp $
+ * @version $Id: GetConfigCommand.java,v 1.6 2007-11-27 06:05:05 herrvendil Exp $
  */
 public class GetConfigCommand extends BaseCommand {
 	
@@ -122,7 +122,7 @@ public class GetConfigCommand extends BaseCommand {
     	
     	if(config.getProperties().getProperty("SIGNERCERT") !=null){
     		this.getOutputStream().println(" The current configuration use the following signer certificate : \n");
-    		WorkerStatus.printCert(new SignerConfig(config).getSignerCertificate(), getOutputStream()); 
+    		WorkerStatus.printCert(new ProcessableConfig(config).getSignerCertificate(), getOutputStream()); 
     	}else{
     		this.getOutputStream().println(" Either this isn't a Signer or no Signer Certificate have been uploaded to it.\n");    		
     	}

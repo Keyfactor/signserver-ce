@@ -53,7 +53,7 @@ public class TestTimeStampSigner extends TestCase {
 	public void test00SetupDatabase() throws Exception{
 		   
 		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER4.CLASSPATH", "org.signserver.server.signers.TimeStampSigner");
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER4.SIGNERTOKEN.CLASSPATH", "org.signserver.server.signtokens.P12SignToken");
+		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER4.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
 		
 		  
 		  sSSession.setWorkerProperty(4, "AUTHTYPE", "NOAUTH");

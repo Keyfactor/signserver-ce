@@ -1,5 +1,5 @@
 #
-# $Id: signserver_build.properties.sample,v 1.5 2007-10-28 12:30:22 herrvendil Exp $
+# $Id: signserver_build.properties.sample,v 1.6 2007-11-27 06:10:56 herrvendil Exp $
 #
 # File containing the build properties of the sign server
 # 
@@ -215,6 +215,30 @@
 #ext.web.src=../needles/src/web/signserver
 # the location of external code to be included
 #src.external=../needles/tmp/bin/classes
+
+# -------------- JAX-WS Web Service Configuration ----------------
+#
+# Set to false to disable WebService deployment
+signserverws.enabled=true
+
+# -------------- Status And Health Check Configuration -----------
+#
+# Parameters configuring how health check and status should be
+# configured.
+#
+# Setting specifying which remote IPs that may call this healthcheck servlet. Use ';' for between multiple IPs. 
+# Default : 127.0.0.1
+healthcheck.authorizedips=127.0.0.1
+
+# Parameter to set the number of Mega Bytes of memory that must be free before removing 
+# the node out of the cluster.
+# Default : 1
+healthcheck.minimumfreememory=1
+
+# Parameter indicating the string that should be used to do 
+# a minimal check that the database is working. May differ between databases.
+# Default : 1
+healthcheck.checkdbstring=Select count(*) from SignerConfigData
 
 ##########################################################################
 #  Mail Signer Specific Settings                                         #

@@ -20,6 +20,8 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
@@ -32,9 +34,9 @@ import org.signserver.common.ISignRequest;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.SignTokenOfflineException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.server.signtokens.ISignToken;
+import org.signserver.server.cryptotokens.ICryptoToken;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfReader;
@@ -51,7 +53,7 @@ import com.lowagie.text.pdf.PdfStamper;
  * RECTANGLE = The location of the visible signature field (llx, lly, urx, ury)
  * 
  * @author Tomas Gustavsson
- * @version $Id: PDFSigner.java,v 1.3 2007-11-09 15:47:15 herrvendil Exp $
+ * @version $Id: PDFSigner.java,v 1.4 2007-11-27 06:05:07 herrvendil Exp $
  */
 public class PDFSigner extends BaseSigner{
 	
@@ -66,8 +68,8 @@ public class PDFSigner extends BaseSigner{
 	private static final String RECTANGLE = "RECTANGLE";
 	private static final String RECTANGLEDEFAULT = "400,700,500,800";
 		
-	public void init(int signerId, WorkerConfig config) {
-		super.init(signerId, config);				                                 
+	public void init(int signerId, WorkerConfig config, EntityManager em) {
+		super.init(signerId, config, em);				                                 
 	}
 
 	/**
@@ -76,8 +78,8 @@ public class PDFSigner extends BaseSigner{
 	 * 
 	 * @see org.signserver.server.signers.ISigner#signData(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate)
 	 */
-	public IProcessResponse signData(IProcessRequest signRequest, X509Certificate clientCert) 
-		throws IllegalRequestException, SignTokenOfflineException {
+	public IProcessResponse processData(IProcessRequest signRequest, X509Certificate clientCert) 
+		throws IllegalRequestException, CryptoTokenOfflineException {
 		
 		ISignRequest sReq = (ISignRequest) signRequest;
 		// Check that the request contains a valid GenericSignRequest object with a byte[].
@@ -133,7 +135,7 @@ public class PDFSigner extends BaseSigner{
 					throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
 				}
 				Certificate[] certChain = (Certificate[])certs.toArray(new Certificate[0]);
-				PrivateKey privKey = this.getSignToken().getPrivateKey(ISignToken.PURPOSE_SIGN);
+				PrivateKey privKey = this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
 				sap.setCrypto(privKey, certChain, null, PdfSignatureAppearance.WINCER_SIGNED);
 				sap.setReason(reason);
 				sap.setLocation(location);
@@ -156,8 +158,8 @@ public class PDFSigner extends BaseSigner{
     /**
      * Not supported yet
      */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException{
-		return this.getSignToken().genCertificateRequest(info);
+	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
+		return this.getCryptoToken().genCertificateRequest(info);
 	}
 }
 

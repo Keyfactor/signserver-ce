@@ -13,14 +13,14 @@
 
 package org.signserver.cli;
 
-import org.signserver.common.SignerConfig;
+import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 
 
 /**
  * Gets the current configurations list of authorized clients
  *
- * @version $Id: ListAuthorizedClientsCommand.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: ListAuthorizedClientsCommand.java,v 1.4 2007-11-27 06:05:05 herrvendil Exp $
  */
 public class ListAuthorizedClientsCommand extends BaseCommand {
 	
@@ -58,7 +58,7 @@ public class ListAuthorizedClientsCommand extends BaseCommand {
         			                       "Configurations are activated with the reload command. \n\n" +
         			                       "The current list of authorized clients to " + signerid + " are :\n");
         	
-        	if(new SignerConfig(config).getAuthorizedClients().size() == 0){
+        	if(new ProcessableConfig(config).getAuthorizedClients().size() == 0){
         		this.getOutputStream().println("  No authorized clients exists-\n");
         	}
         	

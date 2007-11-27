@@ -31,7 +31,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.SignerConfig;
+import org.signserver.common.ProcessableConfig;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -57,7 +57,7 @@ public class TestWorkerSessionBean extends TestCase {
 	public void test00SetupDatabase() throws Exception{
 		   
 		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.CLASSPATH", "org.signserver.server.signers.MRTDSigner");
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.SIGNERTOKEN.CLASSPATH", "org.signserver.server.signtokens.HardCodedSignToken");
+		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
 		
 		  
 		  sSSession.setWorkerProperty(3, "AUTHTYPE", "NOAUTH");
@@ -157,7 +157,7 @@ public class TestWorkerSessionBean extends TestCase {
 		AuthorizedClient authClient = new AuthorizedClient("123456","CN=testca");
 		sSSession.addAuthorizedClient(3,authClient);
 		
-		Collection<?> result = new SignerConfig(sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
+		Collection<?> result = new ProcessableConfig(sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
 		boolean exists = false;
 		Iterator<?> iter =result.iterator();
 		while(iter.hasNext()){
@@ -171,11 +171,11 @@ public class TestWorkerSessionBean extends TestCase {
 	 * Test method for 'org.signserver.ejb.SignSessionBean.RemoveAuthorizedClient(int, AuthorizedClient)'
 	 */
 	public void test08RemoveAuthorizedClient() throws Exception{		
-		int initialsize = new SignerConfig( sSSession.getCurrentSignerConfig(3)).getAuthorizedClients().size();
+		int initialsize = new ProcessableConfig( sSSession.getCurrentSignerConfig(3)).getAuthorizedClients().size();
 		AuthorizedClient authClient = new AuthorizedClient("123456","CN=testca");
 		assertTrue(sSSession.removeAuthorizedClient(3,authClient));
 		
-		Collection<?> result = new SignerConfig( sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
+		Collection<?> result = new ProcessableConfig( sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
 		assertTrue(result.size() == initialsize-1);
 		
 		boolean exists = false;

@@ -34,11 +34,11 @@ import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.InvalidSignerIdException;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.MailSignerConfig;
 import org.signserver.common.ResyncException;
-import org.signserver.common.SignTokenAuthenticationFailureException;
-import org.signserver.common.SignTokenOfflineException;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -54,7 +54,7 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * @author Philip Vendil 6 okt 2007
  *
- * @version $Id: CommonAdminInterface.java,v 1.2 2007-11-09 15:45:13 herrvendil Exp $
+ * @version $Id: CommonAdminInterface.java,v 1.3 2007-11-27 06:05:05 herrvendil Exp $
  */
 
 public class CommonAdminInterface  {
@@ -101,8 +101,8 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#activateSigner(int, String)
 	 */
 	public void activateSigner(int signerId, String authenticationCode)
-			throws SignTokenAuthenticationFailureException,
-			SignTokenOfflineException, InvalidSignerIdException,
+			throws CryptoTokenAuthenticationFailureException,
+			CryptoTokenOfflineException, InvalidWorkerIdException,
 			RemoteException {
 		if(isMailSignerMode()){
 			getIMailSignerRMI().activateSigner(signerId, authenticationCode);
@@ -118,7 +118,7 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#deactivateSigner(int)
 	 */
 	public boolean deactivateSigner(int signerId)
-			throws SignTokenOfflineException, InvalidSignerIdException,
+			throws CryptoTokenOfflineException, InvalidWorkerIdException,
 			RemoteException {
 		boolean retval = false;
 		if(isMailSignerMode()){
@@ -136,7 +136,7 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#destroyKey(int, int)
 	 */
 	public boolean destroyKey(int signerId, int purpose)
-			throws InvalidSignerIdException, RemoteException {
+			throws InvalidWorkerIdException, RemoteException {
 		boolean retval = false;
 		if(isMailSignerMode()){
 			retval = getIMailSignerRMI().destroyKey(signerId, purpose);
@@ -153,8 +153,8 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#genCertificateRequest(int, ISignerCertReqInfo)
 	 */
 	public ISignerCertReqData genCertificateRequest(int signerId,
-			ISignerCertReqInfo certReqInfo) throws SignTokenOfflineException,
-			InvalidSignerIdException, RemoteException {
+			ISignerCertReqInfo certReqInfo) throws CryptoTokenOfflineException,
+			InvalidWorkerIdException, RemoteException {
 		ISignerCertReqData retval = null;
 		if(isMailSignerMode()){
 			retval = getIMailSignerRMI().genCertificateRequest(signerId, certReqInfo);
@@ -217,7 +217,7 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getStatus(int)
 	 */	
 	public WorkerStatus getStatus(int workerId)
-			throws InvalidSignerIdException, RemoteException {
+			throws InvalidWorkerIdException, RemoteException {
 		WorkerStatus retval = null;
 		if(isMailSignerMode()){
 			retval = getIMailSignerRMI().getStatus(workerId);

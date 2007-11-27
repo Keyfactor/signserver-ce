@@ -22,10 +22,10 @@ import java.util.ArrayList;
  * 
  * 
  * @author Philip Vendil
- * $Id: MRTDSignRequest.java,v 1.3 2007-11-09 15:45:49 herrvendil Exp $
+ * $Id: MRTDSignRequest.java,v 1.4 2007-11-27 06:05:06 herrvendil Exp $
  */
 
-public class MRTDSignRequest implements IProcessRequest {
+public class MRTDSignRequest implements ISignRequest {
 
 	/**
 	 * 

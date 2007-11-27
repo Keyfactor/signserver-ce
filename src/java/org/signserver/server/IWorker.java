@@ -13,6 +13,8 @@
 
 package org.signserver.server;
 
+import javax.persistence.EntityManager;
+
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
  
@@ -23,7 +25,7 @@ import org.signserver.common.WorkerStatus;
  * 
  * 
  * @author Philip Vendil
- * $Id: IWorker.java,v 1.1 2007-02-27 16:18:12 herrvendil Exp $
+ * $Id: IWorker.java,v 1.2 2007-11-27 06:05:04 herrvendil Exp $
  */
 public interface IWorker {
 
@@ -32,11 +34,11 @@ public interface IWorker {
 	 * @param workerId the unique id of the worker
 	 * @param config the configuration stored in database
 	 */
-	public void init(int workerId, WorkerConfig config);
+	public void init(int workerId, WorkerConfig config, EntityManager em);
 	
 	/**
 	 * Should return the actual status of the worker, status could be if
-	 * the signer is activated or not, or equvivallent for a service.
+	 * the signer is activated or not, or equivalent for a service.
 	 * @return a WorkerStatus object.
 	 */
 	public WorkerStatus getStatus();

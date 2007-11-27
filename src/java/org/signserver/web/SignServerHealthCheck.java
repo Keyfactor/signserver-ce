@@ -28,7 +28,7 @@ import org.ejbca.core.ejb.JNDINames;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.ejbca.util.JDBCUtil;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.InvalidSignerIdException;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -47,7 +47,7 @@ import org.signserver.server.signers.BaseSigner;
  * * All SignerTokens are aktive if not set as offline.
  * 
  * @author Philip Vendil
- * @version $Id: SignServerHealthCheck.java,v 1.3 2007-11-09 15:47:06 herrvendil Exp $
+ * @version $Id: SignServerHealthCheck.java,v 1.4 2007-11-27 06:05:08 herrvendil Exp $
  */
 
 public class SignServerHealthCheck implements IHealthCheck {
@@ -98,9 +98,9 @@ public class SignServerHealthCheck implements IHealthCheck {
 		log.debug("Starting HealthCheck health check requested by : " + request.getRemoteAddr());
 		String errormessage = "";
 		
-		errormessage += checkDB();
+		errormessage += checkDB(checkDBString);
 		if(errormessage.equals("")){
-		  errormessage += checkMemory();								
+		  errormessage += checkMemory(minfreememory);								
 		  errormessage += checkSigners();	
 		
 		}
@@ -113,7 +113,7 @@ public class SignServerHealthCheck implements IHealthCheck {
 		return errormessage;
 	}
 	
-	private String checkMemory(){
+	public static String checkMemory(int minfreememory){
 		String retval = "";
         if(minfreememory >= Runtime.getRuntime().freeMemory()){
           retval = "\nError Virtual Memory is about to run out, currently free memory :" + Runtime.getRuntime().freeMemory();	
@@ -122,7 +122,7 @@ public class SignServerHealthCheck implements IHealthCheck {
 		return retval;
 	}
 	
-	private String checkDB(){
+	public static String checkDB(String checkDBString){
 		String retval = "";
 		try{	
 		  Connection con = JDBCUtil.getDBConnection(JNDINames.DATASOURCE);
@@ -147,11 +147,11 @@ public class SignServerHealthCheck implements IHealthCheck {
 				WorkerConfig signerConfig = signerStatus.getActiveSignerConfig();
 				if(signerConfig.getProperties().getProperty(BaseSigner.DISABLED) == null  || !signerConfig.getProperties().getProperty(BaseSigner.DISABLED).equalsIgnoreCase("TRUE")){													
 				  if(signerStatus.getTokenStatus() == SignerStatus.STATUS_OFFLINE){
-					retval +="\n Error Signer Token is disconnected, Singer Id : " + signerId;
-					log.error("Error Signer Token is disconnected, Singer Id : " + signerId);
+					retval +="\n Error Signer Token is disconnected, worker Id : " + signerId;
+					log.error("Error Signer Token is disconnected, worker Id : " + signerId);
 				  }
 				}
-			} catch (InvalidSignerIdException e) {
+			} catch (InvalidWorkerIdException e) {
 				log.error(e.getMessage(),e);
 				e.printStackTrace();
 			}

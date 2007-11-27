@@ -22,7 +22,7 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
-import org.signserver.common.SignerConfig;
+import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 
 /**
@@ -96,7 +96,7 @@ public class WorkerConfigDataService {
 
     		if(data.get(WorkerConfig.CLASS) == null){
     			// Special case, need to upgrade from signserver 1.0
-    			workerConf = new SignerConfig(new WorkerConfig()).getWorkerConfig();        	
+    			workerConf = new ProcessableConfig(new WorkerConfig()).getWorkerConfig();        	
     			workerConf.loadData(data);
     			workerConf.upgrade();        	
     		}else{        	

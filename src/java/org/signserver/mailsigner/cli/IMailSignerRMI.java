@@ -9,9 +9,9 @@ import java.util.List;
 
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.InvalidSignerIdException;
-import org.signserver.common.SignTokenAuthenticationFailureException;
-import org.signserver.common.SignTokenOfflineException;
+import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
@@ -25,7 +25,7 @@ public interface IMailSignerRMI extends Remote{
 	 * @return a MailSignerStatus object
 	 *  
 	 */
-	public WorkerStatus getStatus(int workerId) throws InvalidSignerIdException, RemoteException;
+	public WorkerStatus getStatus(int workerId) throws InvalidWorkerIdException, RemoteException;
 	
 	/**
 	 * Returns the Id of a  given a name of a MailSigner 
@@ -54,13 +54,13 @@ public interface IMailSignerRMI extends Remote{
 	 * @param signerId of the mail signer
 	 * @param authenticationCode (PIN) used to activate the token.
 	 * 
-	 * @throws SignTokenOfflineException 
-	 * @throws SignTokenAuthenticationFailureException 
+	 * @throws CryptoTokenOfflineException 
+	 * @throws CryptoTokenAuthenticationFailureException 
 	 *
 	 */
 	public void activateSigner(int signerId, String authenticationCode)
-		throws SignTokenAuthenticationFailureException,
-		SignTokenOfflineException, InvalidSignerIdException, RemoteException;
+		throws CryptoTokenAuthenticationFailureException,
+		CryptoTokenOfflineException, InvalidWorkerIdException, RemoteException;
 	
 	/**
 	 * Method used to deactivate the sign-token of a mail signer.
@@ -70,12 +70,12 @@ public interface IMailSignerRMI extends Remote{
 	 * @param signerId of the signer
 	 * @param authenticationCode (PIN) used to activate the token.
 	 * @return true if deactivation was successful.
-	 * @throws SignTokenOfflineException 
-	 * @throws InvalidSignerIdException 
+	 * @throws CryptoTokenOfflineException 
+	 * @throws InvalidWorkerIdException 
 	 *
 	 */
 	public boolean deactivateSigner(int signerId)
-		throws SignTokenOfflineException, InvalidSignerIdException, RemoteException;
+		throws CryptoTokenOfflineException, InvalidWorkerIdException, RemoteException;
 	
 	/**
 	 * Method used to upload a certificate to a signers configuration
@@ -98,11 +98,11 @@ public interface IMailSignerRMI extends Remote{
 	 * Method used to remove a key from a mail signer.
 	 * 
 	 * @param signerId id of the signer
-	 * @param purpose on of ISignToken.PURPOSE_ constants
+	 * @param purpose on of ICryptoToken.PURPOSE_ constants
 	 * @return true if removal was successful.
 	 * 
 	 */
-	public boolean destroyKey(int signerId, int purpose) throws	InvalidSignerIdException, RemoteException;
+	public boolean destroyKey(int signerId, int purpose) throws	InvalidWorkerIdException, RemoteException;
 	
 	/**
 	 * Method used to let a mail signer generate a certificate request
@@ -113,7 +113,7 @@ public interface IMailSignerRMI extends Remote{
 	 * 
 	 */
 	public ISignerCertReqData genCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws		
-		SignTokenOfflineException, InvalidSignerIdException, RemoteException;
+		CryptoTokenOfflineException, InvalidWorkerIdException, RemoteException;
 	
 	/**
 	 * Returns the current configuration of a mail signer.

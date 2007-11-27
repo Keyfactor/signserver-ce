@@ -6,16 +6,16 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.InvalidSignerIdException;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.MailSignerConfig;
 import org.signserver.common.MailSignerStatus;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.SignTokenAuthenticationFailureException;
-import org.signserver.common.SignTokenOfflineException;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
-import org.signserver.server.signtokens.ISignToken;
+import org.signserver.server.cryptotokens.ICryptoToken;
 
 public class TestMailSignerContainerMailet extends TestCase {
 
@@ -38,22 +38,22 @@ public class TestMailSignerContainerMailet extends TestCase {
 		  mc.reloadConfiguration(3);	
 	} 
 	
-	public void testActivateSigner() throws RemoteException, SignTokenOfflineException, InvalidSignerIdException {
+	public void testActivateSigner() throws RemoteException, CryptoTokenOfflineException, InvalidWorkerIdException {
 		try{
 		  mc.activateSigner(3, "9876");
 		  fail();
-		}catch(SignTokenAuthenticationFailureException e){}
+		}catch(CryptoTokenAuthenticationFailureException e){}
 	}
 
-	public void testDeactivateSigner() throws RemoteException, SignTokenOfflineException, InvalidSignerIdException {
+	public void testDeactivateSigner() throws RemoteException, CryptoTokenOfflineException, InvalidWorkerIdException {
 		assertTrue(mc.deactivateSigner(3));
 	}
 
-	public void testDestroyKey() throws RemoteException, InvalidSignerIdException {
-		assertTrue(mc.destroyKey(3, ISignToken.PURPOSE_SIGN));
+	public void testDestroyKey() throws RemoteException, InvalidWorkerIdException {
+		assertTrue(mc.destroyKey(3, ICryptoToken.PURPOSE_SIGN));
 	}
 
-	public void testGenCertificateRequest() throws RemoteException, SignTokenOfflineException, InvalidSignerIdException {
+	public void testGenCertificateRequest() throws RemoteException, CryptoTokenOfflineException, InvalidWorkerIdException {
 		assertNull(mc.genCertificateRequest(3, null));
 	}
 
@@ -62,7 +62,7 @@ public class TestMailSignerContainerMailet extends TestCase {
 		   assertTrue(""+ id , id == 3);
 	}
 
-	public void testGetStatus() throws RemoteException, InvalidSignerIdException {
+	public void testGetStatus() throws RemoteException, InvalidWorkerIdException {
 		   assertTrue(((MailSignerStatus) mc.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_ACTIVE ||
 				   ((MailSignerStatus)mc.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_OFFLINE);
 	}
@@ -73,7 +73,7 @@ public class TestMailSignerContainerMailet extends TestCase {
 
 
 
-	public void testGetCurrentSignerConfig() throws RemoteException, InvalidSignerIdException {
+	public void testGetCurrentSignerConfig() throws RemoteException, InvalidWorkerIdException {
 		mc.removeWorkerProperty(3, "TESTKEY");
 		WorkerStatus ws = mc.getStatus(3);
 		assertNull(ws.getActiveSignerConfig().getProperties().getProperty("TESTKEY"));

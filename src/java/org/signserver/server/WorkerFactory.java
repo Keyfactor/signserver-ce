@@ -20,10 +20,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.ejb.EJBException;
+import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.SignerConfig;
+import org.signserver.common.IllegalRequestException;
+import org.signserver.common.ProcessableConfig;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.WorkerConfigDataService;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -49,6 +52,7 @@ public  class WorkerFactory {
 	}
 	
 	private Map<Integer, IWorker> workerStore = null;
+	private Map<Integer, IAuthorizer> authenticatorStore = null;
 	private Map<String, Integer> nameToIdMap = null;
 	
 	
@@ -66,10 +70,10 @@ public  class WorkerFactory {
 	 * @return A ISigner as defined in the configuration file, or null if no configuration
 	 * for the specified signerId could be found.
 	 */
-	public IWorker getWorker(int workerId, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){	   
+	public IWorker getWorker(int workerId, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession, EntityManager em){	   
 	   Integer id = new Integer(workerId);	
 			
-	   loadWorkers(workerConfigHome,gCSession);
+	   loadWorkers(workerConfigHome,gCSession,em);
 	   synchronized(workerStore){			   
 		   return (IWorker) workerStore.get(id);
 	   }
@@ -89,10 +93,10 @@ public  class WorkerFactory {
 	 * @return A ISigner as defined in the configuration file, or null if no configuration
 	 * for the specified signerId could be found.
 	 */
-	public ISigner getSigner(String signerName, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){	   
+	public ISigner getSigner(String signerName, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession, EntityManager em){	   
 	   ISigner retval = null;
 
-	   loadWorkers(workerConfigHome,gCSession);
+	   loadWorkers(workerConfigHome,gCSession,em);
 		
 	   synchronized(nameToIdMap){	
 		   synchronized(workerStore){
@@ -116,9 +120,9 @@ public  class WorkerFactory {
 	 * @param workerConfigHome The home interface of the signer config entity bean
 	 * @return the id of the signer or 0 if no worker with the name is found.
 	 */
-	public int getWorkerIdFromName(String workerName, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){	   
+	public int getWorkerIdFromName(String workerName, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession, EntityManager em){	   
 	   int retval = 0;		 	   
-	   loadWorkers(workerConfigHome,gCSession);
+	   loadWorkers(workerConfigHome,gCSession, em);
 	   synchronized(nameToIdMap){	
 		   synchronized(workerStore){
 			   if(nameToIdMap.get(workerName) == null){
@@ -135,7 +139,7 @@ public  class WorkerFactory {
 	/**
 	 * Method to load all available signers
 	 */
-	private void loadWorkers(WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){
+	private void loadWorkers(WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession, EntityManager em){
 		   if(workerStore == null){
               workerStore = new HashMap<Integer, IWorker>();
               nameToIdMap = new HashMap<String,Integer>();
@@ -154,16 +158,16 @@ public  class WorkerFactory {
 						  WorkerConfig config = null;
 						  if(obj instanceof ISigner){
 							  config = getWorkerProperties(nextId.intValue(), workerConfigHome);
-							  if(config.getProperties().getProperty(SignerConfig.NAME) != null){
+							  if(config.getProperties().getProperty(ProcessableConfig.NAME) != null){
 								  
-								  getNameToIdMap().put(config.getProperties().getProperty(SignerConfig.NAME).toUpperCase(), nextId); 
+								  getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), nextId); 
 							  }  
 						  }
 						  if(obj instanceof IService){
 							  config = getWorkerProperties(nextId.intValue(), workerConfigHome);
 						  }
 
-						  ((IWorker) obj).init(nextId.intValue(), config);						  
+						  ((IWorker) obj).init(nextId.intValue(), config, em);						  
 						  getWorkerStore().put(nextId,(IWorker) obj);
 					  }  
 				  }catch(ClassNotFoundException e){
@@ -189,7 +193,8 @@ public  class WorkerFactory {
 	public void flush(){
 		if(workerStore != null){
 			workerStore = null;
-			nameToIdMap = null;			
+			nameToIdMap = null;	
+			authenticatorStore = null;
 		}
 	}
 	
@@ -197,15 +202,17 @@ public  class WorkerFactory {
 	 * Method used to force a reload of worker. 
 	 * @param id of worker
 	 */
-	public void reloadWorker(int id,WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession){
+	public void reloadWorker(int id,WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession, EntityManager em){
 
 		if(workerStore == null){
 			workerStore = Collections.synchronizedMap(new HashMap<Integer, IWorker>());
 			nameToIdMap = Collections.synchronizedMap(new HashMap<String, Integer>());
+			authenticatorStore = Collections.synchronizedMap(new HashMap<Integer, IAuthorizer>());
 		}
 		synchronized(nameToIdMap){	
 			synchronized(workerStore){
 				if(id != 0){
+					
 					workerStore.put(new Integer(id),null);
 					Iterator<String> iter = nameToIdMap.keySet().iterator();
 					while(iter.hasNext()){
@@ -227,15 +234,15 @@ public  class WorkerFactory {
 						WorkerConfig config = null;
 						if(obj instanceof ISigner){
 							config = getWorkerProperties(id, workerConfigHome);
-							if(config.getProperties().getProperty(SignerConfig.NAME) != null){
-								getNameToIdMap().put(config.getProperties().getProperty(SignerConfig.NAME).toUpperCase(), new Integer(id)); 
+							if(config.getProperties().getProperty(ProcessableConfig.NAME) != null){
+								getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), new Integer(id)); 
 							}  
 						}
 						if(obj instanceof IService){
 							config = getWorkerProperties(id, workerConfigHome);
 						}
 
-						((IWorker) obj).init(id, config);						  
+						((IWorker) obj).init(id, config, em);						  
 						getWorkerStore().put(new Integer(id),(IWorker) obj);
 					}  
 				}catch(ClassNotFoundException e){
@@ -251,6 +258,46 @@ public  class WorkerFactory {
 		}
 	}		
 
+	/**
+	 * Returns the configured authorizer for the given worker.
+	 * 
+	 * @param workerId id of worker 
+	 * @param authType one of ISigner.AUTHTYPE_ constants or class path to custom implementation
+	 * @return initialized authorizer.
+	 */
+	public IAuthorizer getAuthenticator(int workerId, String authType, WorkerConfig config, EntityManager em) throws IllegalRequestException{
+		if(getAuthenticatorStore().get(workerId) == null){
+			IAuthorizer auth = null;
+			if(authType.equalsIgnoreCase(ISigner.AUTHTYPE_NOAUTH)){
+				auth = new NoAuthorizer();				
+			}else if (authType.equalsIgnoreCase(ISigner.AUTHTYPE_NOAUTH)){
+				auth = new ClientCertAuthorizer();
+			}else{
+
+				try {
+					Class<?> c = this.getClass().getClassLoader().loadClass(authType);
+					auth = (IAuthorizer) c.newInstance();
+				} catch (ClassNotFoundException e) {
+					log.error("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.",e);
+					throw new IllegalRequestException("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
+				} catch (InstantiationException e) {
+					log.error("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.",e);
+					throw new IllegalRequestException("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
+				} catch (IllegalAccessException e) {
+					log.error("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.",e);
+					throw new IllegalRequestException("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
+				}
+				
+			}
+			try {
+				auth.init(workerId, config, em);
+			} catch (SignServerException e) {
+				log.error("Error initializing authorizer for worker " + workerId + " with authtype " + authType + ", message : " + e.getMessage(),e );
+			}
+			getAuthenticatorStore().put(workerId, auth);
+		}
+		return getAuthenticatorStore().get(workerId);
+	}
 
 
 	
@@ -280,5 +327,14 @@ public  class WorkerFactory {
 		return workerStore;
 		
 	}
+	
+	private Map<Integer, IAuthorizer> getAuthenticatorStore(){
+		if(authenticatorStore == null){
+			authenticatorStore = Collections.synchronizedMap(new HashMap<Integer, IAuthorizer>());
+		}
+		return authenticatorStore;
+		
+	}
+
 
 }

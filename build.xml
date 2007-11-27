@@ -145,7 +145,10 @@
 	    </copy>
 		<replace file="${preprocessed}/java/org/signserver/common/GlobalConfiguration.java" token="@signserver.version@" value="${app.version}"/>	
 		<replace file="${preprocessed}/web/healthcheck/WEB-INF/web.xml" token="@datasource.jndi-name-prefix@" value="${datasource.jndi-name-prefix}"/>	
-		<replace file="${preprocessed}/web/healthcheck/WEB-INF/web.xml" token="@datasource.jndi-name@" value="${datasource.jndi-name}"/>	
+		<replace file="${preprocessed}/web/healthcheck/WEB-INF/web.xml" token="@datasource.jndi-name@" value="${datasource.jndi-name}"/>
+		<replace file="${preprocessed}/web/healthcheck/WEB-INF/web.xml" token="@healthcheck.authorizedips@" value="${healthcheck.authorizedips}"/>
+		<replace file="${preprocessed}/web/healthcheck/WEB-INF/web.xml" token="@healthcheck.minimumfreememory@" value="${healthcheck.minimumfreememory}"/>
+		<replace file="${preprocessed}/web/healthcheck/WEB-INF/web.xml" token="@healthcheck.checkdbstring@" value="${healthcheck.checkdbstring}"/>
 		<!-- Make a copy of the signserver_cli.properties in bin dir -->
 		<copy file="signserver_cli.properties" todir="bin" />
 	</target>

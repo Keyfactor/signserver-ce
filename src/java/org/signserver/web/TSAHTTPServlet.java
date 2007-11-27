@@ -34,7 +34,8 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.SignTokenOfflineException;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
  
@@ -47,7 +48,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * Use the request parameter 'signerId' to specify the timestamp signer.
  * 
  * @author Philip Vendil
- * @version $Id: TSAHTTPServlet.java,v 1.5 2007-11-09 15:47:06 herrvendil Exp $
+ * @version $Id: TSAHTTPServlet.java,v 1.6 2007-11-27 06:05:08 herrvendil Exp $
  */
 
 public class TSAHTTPServlet extends HttpServlet {
@@ -140,9 +141,11 @@ public class TSAHTTPServlet extends HttpServlet {
 			signResponse = (GenericSignResponse) getSignServerSession().process(signerId, new GenericSignRequest(requestId, timeStampRequest),(X509Certificate) clientCertificate, req.getRemoteAddr());
 		} catch (IllegalRequestException e) {
 			 throw new ServletException(e);
-		} catch (SignTokenOfflineException e) {
+		} catch (CryptoTokenOfflineException e) {
 			 throw new ServletException(e);
-	    }
+	    } catch (SignServerException e) {
+	    	throw new ServletException(e);
+		}
 		
 		if(signResponse.getRequestID() != requestId){
 			throw new ServletException("Error in signing operation, response id didn't match request id");

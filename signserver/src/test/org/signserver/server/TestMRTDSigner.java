@@ -49,7 +49,7 @@ public class TestMRTDSigner extends TestCase {
 	public void test00SetupDatabase() throws Exception{
 		   
 		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.CLASSPATH", "org.signserver.server.signers.MRTDSigner");
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.SIGNERTOKEN.CLASSPATH", "org.signserver.server.signtokens.HardCodedSignToken");
+		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
 		
 		  
 		  sSSession.setWorkerProperty(3, "AUTHTYPE", "NOAUTH");

@@ -35,15 +35,15 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
-import org.signserver.common.SignTokenOfflineException;
-import org.signserver.server.signtokens.ISignToken;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.server.cryptotokens.ICryptoToken;
 
 
 /**
  * Class used to sign MRTD Document Objects.
  * 
  * @author Philip Vendil
- * @version $Id: MRTDSigner.java,v 1.5 2007-11-09 15:47:14 herrvendil Exp $
+ * @version $Id: MRTDSigner.java,v 1.6 2007-11-27 06:05:07 herrvendil Exp $
  */
 
 public class MRTDSigner extends BaseSigner {
@@ -63,8 +63,8 @@ public class MRTDSigner extends BaseSigner {
 	 *
 	 */
 	
-	public IProcessResponse signData(IProcessRequest signRequest,
-	                              X509Certificate cert) throws IllegalRequestException, SignTokenOfflineException{
+	public IProcessResponse processData(IProcessRequest signRequest,
+	                              X509Certificate cert) throws IllegalRequestException, CryptoTokenOfflineException{
 		
 		
 		ISignRequest sReq = (ISignRequest) signRequest;
@@ -94,7 +94,7 @@ public class MRTDSigner extends BaseSigner {
         	
         	Cipher c;
 			try {
-				c = Cipher.getInstance("RSA", getSignToken().getProvider(ISignToken.PROVIDERUSAGE_SIGN));
+				c = Cipher.getInstance("RSA", getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
 			} catch (NoSuchAlgorithmException e) {
 				throw new EJBException(e);
 			} catch (NoSuchProviderException e) {
@@ -104,7 +104,7 @@ public class MRTDSigner extends BaseSigner {
 			}
 
             try {
-				c.init(Cipher.ENCRYPT_MODE, this.getSignToken().getPrivateKey(ISignToken.PURPOSE_SIGN));				
+				c.init(Cipher.ENCRYPT_MODE, this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN));				
 			} catch (InvalidKeyException e) {
 				throw new EJBException(e);
 			}
@@ -131,7 +131,7 @@ public class MRTDSigner extends BaseSigner {
     /**
      * Not supported yet
      */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException{
+	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
 		log.error("Error : genCertificateRequest called for MRTDSigner which isn't supportet yet");
 		return null;
 	}

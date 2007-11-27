@@ -23,18 +23,18 @@ import org.signserver.common.IProcessResponse;
  * @author phive
  *
  * @author Philip Vendil
- * $Id: SwitchEncKeyResponse.java,v 1.1 2007-11-09 15:46:45 herrvendil Exp $
+ * $Id: SwitchEncKeyResponse.java,v 1.2 2007-11-27 06:05:06 herrvendil Exp $
  */
 public class SwitchEncKeyResponse implements IProcessResponse{
 	private static final long serialVersionUID = 1L;
 
-	private int newKeyIndex;
+	private String newKeyIndex;
 		
 	/**
 	 * Main constructor for the FetchKeyResponse
 	 * @param newKeyIndex the index of the new encryption key used.
 	 */
-	public SwitchEncKeyResponse(int newKeyIndex) {
+	public SwitchEncKeyResponse(String newKeyIndex) {
 		this.newKeyIndex = newKeyIndex;
 	}
 
@@ -48,7 +48,7 @@ public class SwitchEncKeyResponse implements IProcessResponse{
 	/**
 	 * @return the index of the new encryption key used.
 	 */
-	public int getNewKeyIndex() {
+	public String getNewKeyIndex() {
 		return newKeyIndex;
 	}
 

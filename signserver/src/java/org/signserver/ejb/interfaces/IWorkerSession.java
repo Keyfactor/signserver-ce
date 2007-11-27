@@ -16,9 +16,10 @@ import org.signserver.common.IProcessResponse;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.InvalidSignerIdException;
-import org.signserver.common.SignTokenAuthenticationFailureException;
-import org.signserver.common.SignTokenOfflineException;
+import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
@@ -29,12 +30,13 @@ public interface IWorkerSession  {
 	 * and returns a response.
 	 *
 	 *     
-	 * @throws SignTokenOfflineException if the signers token isn't activated. 
+	 * @throws CryptoTokenOfflineException if the signers token isn't activated. 
 	 * @throws IllegalRequestException if illegal request is sent to the method
+	 * @throws SignServerException if some other error occurred server side during process.
 	 */
 	IProcessResponse process(int signerId, IProcessRequest request,
 			X509Certificate clientCert, String requestIP)
-			throws IllegalRequestException, SignTokenOfflineException;
+			throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 
 	/**
 	 * Returns the current status of a signers. 
@@ -44,7 +46,7 @@ public interface IWorkerSession  {
 	 * @return a SignerStatus class 
 	 *  
 	 */
-	WorkerStatus getStatus(int workerId) throws InvalidSignerIdException;
+	WorkerStatus getStatus(int workerId) throws InvalidWorkerIdException;
 
 	/**
 	 * Returns the Id of a worker given a name 
@@ -73,13 +75,13 @@ public interface IWorkerSession  {
 	 * @param signerId of the signer
 	 * @param authenticationCode (PIN) used to activate the token.
 	 * 
-	 * @throws SignTokenOfflineException 
-	 * @throws SignTokenAuthenticationFailureException 
+	 * @throws CryptoTokenOfflineException 
+	 * @throws CryptoTokenAuthenticationFailureException 
 	 *
 	 */
 	void activateSigner(int signerId, String authenticationCode)
-			throws SignTokenAuthenticationFailureException,
-			SignTokenOfflineException, InvalidSignerIdException;
+			throws CryptoTokenAuthenticationFailureException,
+			CryptoTokenOfflineException, InvalidWorkerIdException;
 
 	/**
 	 * Method used to deactivate the signtoken of a signer.
@@ -89,12 +91,12 @@ public interface IWorkerSession  {
 	 * @param signerId of the signer
 	 * @param authenticationCode (PIN) used to activate the token.
 	 * @return true if deactivation was successful
-	 * @throws SignTokenOfflineException 
-	 * @throws SignTokenAuthenticationFailureException 
+	 * @throws CryptoTokenOfflineException 
+	 * @throws CryptoTokenAuthenticationFailureException 
 	 *
 	 */
-	boolean deactivateSigner(int signerId) throws SignTokenOfflineException,
-			InvalidSignerIdException;
+	boolean deactivateSigner(int signerId) throws CryptoTokenOfflineException,
+			InvalidWorkerIdException;
 
 	/**
 	 * Returns the current configuration of a signer.
@@ -168,19 +170,19 @@ public interface IWorkerSession  {
 	 * 
 	 */
 	ISignerCertReqData getCertificateRequest(int signerId,
-			ISignerCertReqInfo certReqInfo) throws SignTokenOfflineException,
-			InvalidSignerIdException;
+			ISignerCertReqInfo certReqInfo) throws CryptoTokenOfflineException,
+			InvalidWorkerIdException;
 
 	/**
 	 * Method used to remove a key from a signer.
 	 * 
 	 * @param signerId id of the signer
-	 * @param purpose on of ISignToken.PURPOSE_ constants
+	 * @param purpose on of ICryptoToken.PURPOSE_ constants
 	 * @return true if removal was successful.
 	 * 
 	 */
 	boolean destroyKey(int signerId, int purpose)
-			throws InvalidSignerIdException;
+			throws InvalidWorkerIdException;
 
 	/**
 	 * Method used to upload a certificate to a signers active configuration
@@ -239,11 +241,11 @@ public interface IWorkerSession  {
 
 	@Remote 
 	public interface IRemote extends IWorkerSession {
-		public static final String JNDI_NAME = "signserver/SignServerSessionBean/remote";
+		public static final String JNDI_NAME = "signserver/WorkerSessionBean/remote";
 	}
 
 	@Local 
 	public interface ILocal extends IWorkerSession {
-		public static final String JNDI_NAME = "signserver/SignServerSessionBean/local";
+		public static final String JNDI_NAME = "signserver/WorkerSessionBean/local";
 	}
 }

@@ -51,7 +51,7 @@ public class TestPDFSigner extends TestCase {
 	public void test00SetupDatabase() throws Exception{
 		   
 		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER5.CLASSPATH", "org.signserver.server.signers.PDFSigner");
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER5.SIGNERTOKEN.CLASSPATH", "org.signserver.server.signtokens.P12SignToken");
+		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER5.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
 		
 		  
 		  sSSession.setWorkerProperty(5, "AUTHTYPE", "NOAUTH");

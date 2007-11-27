@@ -22,13 +22,13 @@ import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.SignerConfig;
+import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 
 /**
  * Base for Commands, contains useful functions
  *
- * @version $Id: BaseCommand.java,v 1.4 2007-11-09 15:45:12 herrvendil Exp $
+ * @version $Id: BaseCommand.java,v 1.5 2007-11-27 06:05:05 herrvendil Exp $
  */
 public abstract class BaseCommand implements IAdminCommand{
 	
@@ -61,7 +61,7 @@ public abstract class BaseCommand implements IAdminCommand{
 
     
     protected void printAuthorizedClients(WorkerConfig config){
-    	Iterator<AuthorizedClient> iter = new SignerConfig(config).getAuthorizedClients().iterator();
+    	Iterator<AuthorizedClient> iter = new ProcessableConfig(config).getAuthorizedClients().iterator();
     	while(iter.hasNext()){
     		AuthorizedClient client = (AuthorizedClient) iter.next();
     		this.getOutputStream().println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");

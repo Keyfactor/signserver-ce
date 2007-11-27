@@ -25,34 +25,28 @@ import java.util.Iterator;
  * the status of a specific signer
  * @author Philip Vendil
  *
- * $Id: SignerStatus.java,v 1.3 2007-11-09 15:45:50 herrvendil Exp $
+ * $Id: SignerStatus.java,v 1.4 2007-11-27 06:05:06 herrvendil Exp $
  */
 
-public class SignerStatus extends WorkerStatus{
+public class SignerStatus extends CryptoTokenStatus{
 
-	public static final int STATUS_ACTIVE  = 1;
-	public static final int STATUS_OFFLINE = 2;
+
 	
 	private static final long serialVersionUID = 1L;
 
-	private int tokenStatus = 0;
+
 	private Certificate signerCertificate = null;
 	
 	/** 
 	 * Main constuctor
 	 */
-	public SignerStatus(int tokenStatus, SignerConfig config, Certificate signerCertificate){
-		super(config.getWorkerConfig());
-		this.tokenStatus = tokenStatus;
+	public SignerStatus(int tokenStatus, ProcessableConfig config, Certificate signerCertificate){
+		super(tokenStatus, config.getWorkerConfig());
+	
 	    this.signerCertificate = signerCertificate;
 	}
 
-	/**
-	 * @return Returns the tokenStatus.
-	 */
-	public int getTokenStatus() {
-		return tokenStatus;
-	}
+
 
 	 
 	/**
@@ -86,7 +80,7 @@ public class SignerStatus extends WorkerStatus{
 			out.println("\n");
 
 			out.println("Active Authorized Clients are are (Cert DN, IssuerDN):");
-			Iterator<?> iter =  new SignerConfig(getActiveSignerConfig()).getAuthorizedClients().iterator();
+			Iterator<?> iter =  new ProcessableConfig(getActiveSignerConfig()).getAuthorizedClients().iterator();
 			while(iter.hasNext()){
 				AuthorizedClient client = (AuthorizedClient) iter.next();
 				out.println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");

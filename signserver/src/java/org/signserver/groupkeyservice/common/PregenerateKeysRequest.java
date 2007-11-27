@@ -22,15 +22,13 @@ import org.signserver.common.IProcessRequest;
  * 
  * @author Philip Vendil
  * 
- * $Id: PregenerateKeysRequest.java,v 1.1 2007-11-09 15:46:45 herrvendil Exp $
+ * $Id: PregenerateKeysRequest.java,v 1.2 2007-11-27 06:05:05 herrvendil Exp $
  */
 public class PregenerateKeysRequest implements IProcessRequest{
 
 	private static final long serialVersionUID = 1L;
 
     int numberOfKeys;
-    int keyType = GroupKeyServiceConstants.KEYTYPE_DEFAULT;
-    
     
     
     /**
@@ -46,20 +44,7 @@ public class PregenerateKeysRequest implements IProcessRequest{
 		this.numberOfKeys = numberOfKeys;
 	}
 	
-    /**
-     * Constructor pregenerating unassigned keys with default key type.
-     *  
-     * Special care should be taken to the number of keys generated in one requests so
-     * no transaction timeout occurs.
-     * 
-     * @param numberOfKeys number of keys to generate
-     * @param keyType one of GroupKeyServiceConstants.KEYTYPE_ constants
-     */
-	public PregenerateKeysRequest(int numberOfKeys, int keyType) {
-		super();
-		this.numberOfKeys = numberOfKeys;
-		this.keyType = keyType;
-	}
+
 	
 	/**
 	 * @return number of keys to generate
@@ -68,13 +53,7 @@ public class PregenerateKeysRequest implements IProcessRequest{
 		return numberOfKeys;
 	}
 	
-	/**
-	 * 
-	 * @return one of GroupKeyServiceConstants.KEYTYPE_ constants
-	 */
-	public int getKeyType() {
-		return keyType;
-	}
+
     
     
 

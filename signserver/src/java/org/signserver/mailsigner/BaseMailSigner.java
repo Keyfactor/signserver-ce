@@ -23,15 +23,15 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.MailSignerConfig;
 import org.signserver.common.MailSignerStatus;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.SignTokenAuthenticationFailureException;
-import org.signserver.common.SignTokenInitializationFailureException;
-import org.signserver.common.SignTokenOfflineException;
-import org.signserver.common.SignerConfig;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenInitializationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.ProcessableConfig;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.mailsigner.core.NonEJBGlobalConfigurationSession;
-import org.signserver.server.signtokens.ISignToken;
+import org.signserver.server.cryptotokens.ICryptoToken;
 
 /**
  * Base class for IMailSigners containing a lot of useful methods
@@ -43,7 +43,7 @@ import org.signserver.server.signtokens.ISignToken;
  * 
  * @author Philip Vendil 23 sep 2007
  *
- * @version $Id: BaseMailSigner.java,v 1.1 2007-10-28 12:26:13 herrvendil Exp $
+ * @version $Id: BaseMailSigner.java,v 1.2 2007-11-27 06:05:07 herrvendil Exp $
  */
 public abstract class BaseMailSigner  implements IMailSigner {
 	
@@ -60,7 +60,7 @@ public abstract class BaseMailSigner  implements IMailSigner {
     /** Log4j instance for actual implementation class */
     public transient Logger log = Logger.getLogger(this.getClass());
     
-    protected ISignToken signToken = null;
+    protected ICryptoToken cryptoToken = null;
 
 
     protected int workerId =0;
@@ -80,15 +80,15 @@ public abstract class BaseMailSigner  implements IMailSigner {
     }
 	    
 	public void activateSigner(String authenticationCode)
-			throws SignTokenAuthenticationFailureException,
-			SignTokenOfflineException {		
+			throws CryptoTokenAuthenticationFailureException,
+			CryptoTokenOfflineException {		
 			    
-		getSignToken().activate(authenticationCode);
+		getCryptoToken().activate(authenticationCode);
 	    
 	}
 
-	public boolean deactivateSigner() throws SignTokenOfflineException {
-		return getSignToken().deactivate();
+	public boolean deactivateSigner() throws CryptoTokenOfflineException {
+		return getCryptoToken().deactivate();
 	}
 	
 
@@ -102,19 +102,19 @@ public abstract class BaseMailSigner  implements IMailSigner {
         try {
         	
             int signTokenStatus = SignerStatus.STATUS_ACTIVE;
-        	if(getSignToken() != null){
-        		signTokenStatus = getSignToken().getSignTokenStatus();
+        	if(getCryptoToken() != null){
+        		signTokenStatus = getCryptoToken().getCryptoTokenStatus();
         	}
 			  retval = new MailSignerStatus(signTokenStatus, new MailSignerConfig( config), getSigningCertificate());
-		} catch (SignTokenOfflineException e) {
-			retval = new MailSignerStatus(getSignToken().getSignTokenStatus(), new MailSignerConfig( config), null);
+		} catch (CryptoTokenOfflineException e) {
+			retval = new MailSignerStatus(getCryptoToken().getCryptoTokenStatus(), new MailSignerConfig( config), null);
 		}
 		
 		return retval;
 	}
 	
-	protected ISignToken getSignToken() {
-		if(signToken == null){
+	protected ICryptoToken getCryptoToken() {
+		if(cryptoToken == null){
 			GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
 			try{				
 				String classpath =gc.getSignTokenProperty(
@@ -122,10 +122,10 @@ public abstract class BaseMailSigner  implements IMailSigner {
 				if(classpath != null){		
 					Class<?> implClass = Class.forName(classpath);
 					Object obj = implClass.newInstance();
-					signToken = (ISignToken) obj;
-					signToken.init(config.getProperties());								 
+					cryptoToken = (ICryptoToken) obj;
+					cryptoToken.init(config.getProperties());								 
 				} 
-			}catch(SignTokenInitializationFailureException e){
+			}catch(CryptoTokenInitializationFailureException e){
 				log.error("Error instanciating SignerToken",e);
 			}catch(ClassNotFoundException e){
 				log.error("Error instanciating SignerToken",e);
@@ -136,7 +136,7 @@ public abstract class BaseMailSigner  implements IMailSigner {
 			}
 		}
 		
-		return signToken;
+		return cryptoToken;
 	}
 
 					
@@ -144,15 +144,15 @@ public abstract class BaseMailSigner  implements IMailSigner {
  
 	/**
 	 * Private method that returns the certificate used when signing
-	 * @throws SignTokenOfflineException 
+	 * @throws CryptoTokenOfflineException 
 	 */
-	protected Certificate getSigningCertificate() throws SignTokenOfflineException {
+	protected Certificate getSigningCertificate() throws CryptoTokenOfflineException {
 		if(cert==null){
-			if(getSignToken() != null){
-			  cert = (Certificate) getSignToken().getCertificate(ISignToken.PURPOSE_SIGN);
+			if(getCryptoToken() != null){
+			  cert = (Certificate) getCryptoToken().getCertificate(ICryptoToken.PURPOSE_SIGN);
 			}
 			if(cert==null){
-			  cert=( new SignerConfig( config)).getSignerCertificate();
+			  cert=( new ProcessableConfig( config)).getSignerCertificate();
 			}
 		}		
 		return cert;
@@ -162,14 +162,14 @@ public abstract class BaseMailSigner  implements IMailSigner {
 	private Collection<Certificate> certChain = null;
 	/**
 	 * Private method that returns the certificate used when signing
-	 * @throws SignTokenOfflineException 
+	 * @throws CryptoTokenOfflineException 
 	 */
 
-	protected Collection<Certificate> getSigningCertificateChain() throws SignTokenOfflineException {
+	protected Collection<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
 		if(certChain==null){
-			certChain =  getSignToken().getCertificateChain(ISignToken.PURPOSE_SIGN);
+			certChain =  getCryptoToken().getCertificateChain(ICryptoToken.PURPOSE_SIGN);
 			if(certChain==null){
-				certChain=(new SignerConfig(config)).getSignerCertificateChain();
+				certChain=(new ProcessableConfig(config)).getSignerCertificateChain();
 			}
 		}		
 		return certChain;
@@ -179,8 +179,8 @@ public abstract class BaseMailSigner  implements IMailSigner {
 	 * Method sending the request info to the signtoken
 	 * @return the request or null if method isn't supported by signertoken.
 	 */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws SignTokenOfflineException {
-		return getSignToken().genCertificateRequest(info);
+	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
+		return getCryptoToken().genCertificateRequest(info);
 		 
 	}
 	
@@ -188,7 +188,7 @@ public abstract class BaseMailSigner  implements IMailSigner {
 	 * Method sending the removal request to the signtoken
 	 */
 	public boolean destroyKey(int purpose) {
-		return getSignToken().destroyKey(purpose);
+		return getCryptoToken().destroyKey(purpose);
 	}
 	
 	/**

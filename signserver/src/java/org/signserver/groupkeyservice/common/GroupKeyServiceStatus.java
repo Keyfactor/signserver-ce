@@ -13,10 +13,11 @@
 package org.signserver.groupkeyservice.common;
 
 import java.io.PrintStream;
+import java.util.Date;
 import java.util.Enumeration;
 
+import org.signserver.common.CryptoTokenStatus;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
 
 /**
  * Class used to display the status of a GroupKeyService such as 
@@ -24,46 +25,35 @@ import org.signserver.common.WorkerStatus;
  * 
  * 
  * @author Philip Vendil
- * $Id: GroupKeyServiceStatus.java,v 1.1 2007-11-09 15:46:45 herrvendil Exp $
+ * $Id: GroupKeyServiceStatus.java,v 1.2 2007-11-27 06:05:06 herrvendil Exp $
  */
-public class GroupKeyServiceStatus extends WorkerStatus {
+public class GroupKeyServiceStatus extends CryptoTokenStatus {
 
 	private static final long serialVersionUID = 1L;
 	
 	private long numOfUnassignedKeys;	 
 	private long numOfKeys;	 
 	private long numOfAssignedKeys;	 
-	private long numByCreationDate;	 
-	private long numByFirstUsedDate;	 
-	private long numByLastFetchedDate;
-	private long currentEncKeyIndex;
-	private int tokenStatus = 0;
+
+	private String currentEncKeyRef;
+	private long currentEncKeyNumEncryptions;
+	private Date currentEncKeyStartDate;
 	
 	public GroupKeyServiceStatus(int tokenStatus, WorkerConfig config, long numOfUnassignedKeys,
-			long numOfKeys, long numOfAssignedKeys, long numByCreationDate,
-			long numByFirstUsedDate, long numByLastFetchedDate, long currentEncKeyIndex) {
-		super(config);
-		this.tokenStatus = tokenStatus;
+			long numOfKeys, long numOfAssignedKeys, String currentEncKeyRef,
+			long currentEncKeyNumEncryptions, Date currentEncKeyStartDate) {
+		super(tokenStatus,config);
 		this.numOfUnassignedKeys = numOfUnassignedKeys;
 		this.numOfKeys = numOfKeys;
 		this.numOfAssignedKeys = numOfAssignedKeys;
-		this.numByCreationDate = numByCreationDate;
-		this.numByFirstUsedDate = numByFirstUsedDate;
-		this.numByLastFetchedDate = numByLastFetchedDate;
-		this.currentEncKeyIndex = currentEncKeyIndex;
+        this.currentEncKeyRef = currentEncKeyRef;
+        this.currentEncKeyNumEncryptions = currentEncKeyNumEncryptions;
+        this.currentEncKeyStartDate = currentEncKeyStartDate;
 	}
-	
-	/**
-	 * @return Returns the tokenStatus.
-	 */
-	public int getTokenStatus() {
-		return tokenStatus;
-	}
-	
 
 	@Override
 	public void displayStatus(int workerId, PrintStream out, boolean complete) {
-		out.println("Status of Signer with Id " + workerId + " is :\n" +
+		out.println("Status of Group Key Service with Id " + workerId + " is :\n" +
 				"  SignToken Status : "+signTokenStatuses[getTokenStatus()] + " \n\n" );
 
 		if(complete){    	
@@ -82,7 +72,16 @@ public class GroupKeyServiceStatus extends WorkerStatus {
 
 			out.println("\n");
 
-			out.println("TODO");
+			out.println(" Total number of generated keys in database : " + numOfKeys);
+			out.println(" Number of assigned keys in database : " + numOfAssignedKeys);
+			out.println(" Number of unassigned keys in database : " + numOfUnassignedKeys);
+			if(currentEncKeyRef != null){
+				out.println("\n\n Currently used encryption key reference is : " + currentEncKeyRef);
+				out.println(" Currently used encryption key count : " + currentEncKeyNumEncryptions);
+				out.println(" Currently used encryption key start date : " + currentEncKeyStartDate.toString());
+			}else{
+				out.println("\n\n No encryption key have been initialized.");
+			}
 		}		
 		
 	}
@@ -99,20 +98,23 @@ public class GroupKeyServiceStatus extends WorkerStatus {
 		return numOfAssignedKeys;
 	}
 
-	public long getNumByCreationDate() {
-		return numByCreationDate;
+
+	public String getCurrentEncKeyRef() {
+		return currentEncKeyRef;
 	}
 
-	public long getNumByFirstUsedDate() {
-		return numByFirstUsedDate;
+	/**
+	 * @return the currentEncKeyNumEncryptions
+	 */
+	public long getCurrentEncKeyNumEncryptions() {
+		return currentEncKeyNumEncryptions;
 	}
 
-	public long getNumByLastFetchedDate() {
-		return numByLastFetchedDate;
-	}
-
-	public long getCurrentEncKeyIndex() {
-		return currentEncKeyIndex;
+	/**
+	 * @return the currentEncKeyStartDate
+	 */
+	public Date getCurrentEncKeyStartDate() {
+		return currentEncKeyStartDate;
 	}
 
 

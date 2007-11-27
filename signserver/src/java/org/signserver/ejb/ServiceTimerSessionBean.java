@@ -111,11 +111,11 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 			UserTransaction ut = sessionCtx.getUserTransaction();
 			try{
 				ut.begin();
-				IWorker worker = WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession);
+				IWorker worker = WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, em);
 				if(worker != null){
-					serviceConfig = new ServiceConfig( WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession).getStatus().getActiveSignerConfig());
+					serviceConfig = new ServiceConfig( WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession,em).getStatus().getActiveSignerConfig());
 					if(serviceConfig != null){					
-						service = (IService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession);
+						service = (IService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession,em);
 						sessionCtx.getTimerService().createTimer(service.getNextInterval()*1000, timerInfo);
 						if(!service.isSingleton()){
 							run=true;						
@@ -203,7 +203,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 			while(iter.hasNext()){
 				Integer nextId = (Integer) iter.next();								
 				if(!existingTimers.contains(nextId)){					
-					IService service = (IService) WorkerFactory.getInstance().getWorker(nextId.intValue(), workerConfigService, globalConfigurationSession);
+					IService service = (IService) WorkerFactory.getInstance().getWorker(nextId.intValue(), workerConfigService, globalConfigurationSession, em);
 					if(service != null && service.isActive()  && service.getNextInterval() != IService.DONT_EXECUTE){
 					  sessionCtx.getTimerService().createTimer((service.getNextInterval()) *1000, nextId);
 					}

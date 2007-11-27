@@ -16,6 +16,7 @@ package org.signserver.server;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.WorkerConfig;
@@ -44,7 +45,9 @@ public abstract class BaseWorker implements IWorker {
 
     protected int workerId =0;
     
-    protected WorkerConfig config = null; 
+    protected WorkerConfig config = null;
+
+	protected EntityManager em; 
     
     protected BaseWorker(){
 
@@ -53,9 +56,10 @@ public abstract class BaseWorker implements IWorker {
     /**
      * Initialization method that should be called directly after creation
      */
-    public void init(int workerId, WorkerConfig config){
+    public void init(int workerId, WorkerConfig config, EntityManager em){
       this.workerId = workerId;
       this.config = config;
+      this.em = em;
     }
 	
 }

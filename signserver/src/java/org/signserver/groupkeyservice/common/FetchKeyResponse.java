@@ -13,7 +13,6 @@
 package org.signserver.groupkeyservice.common;
 
 import java.io.Serializable;
-import java.security.Key;
 
 import org.signserver.common.IProcessResponse;
 
@@ -24,20 +23,20 @@ import org.signserver.common.IProcessResponse;
  * @author phive
  *
  * @author Philip Vendil
- * $Id: FetchKeyResponse.java,v 1.1 2007-11-09 15:46:45 herrvendil Exp $
+ * $Id: FetchKeyResponse.java,v 1.2 2007-11-27 06:05:06 herrvendil Exp $
  */
 public class FetchKeyResponse implements IProcessResponse{
 	private static final long serialVersionUID = 1L;
 
 	private String documentId;
-	private Key groupKey;
+	private byte[] groupKey;
 		
 	/**
 	 * Main constructor for the FetchKeyResponse
 	 * @param documentId the unique documentId that is related to the group key
-	 * @param groupKey the actual key, decrypted.
+	 * @param groupKey the actual key, decrypted and object serialized.
 	 */
-	public FetchKeyResponse(String documentId, Key groupKey) {
+	public FetchKeyResponse(String documentId, byte[] groupKey) {
 		this.documentId = documentId;
 		this.groupKey = groupKey;
 	}
@@ -52,8 +51,8 @@ public class FetchKeyResponse implements IProcessResponse{
 	/**
 	 * @return the actual key, decrypted.
 	 */
-	public Key getGroupKey(){
-		return (Key) groupKey;
+	public byte[] getGroupKey(){
+		return  groupKey;
 	}
 
 	public Serializable getProcessedData() {

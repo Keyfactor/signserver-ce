@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.server;
 
-import java.security.cert.X509Certificate;
-
 import javax.persistence.EntityManager;
 
 import org.signserver.common.IProcessRequest;
@@ -30,7 +28,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @author Philip Vendil 23 nov 2007
  *
- * @version $Id: IAuthorizer.java,v 1.1 2007-11-27 06:05:04 herrvendil Exp $
+ * @version $Id: IAuthorizer.java,v 1.2 2007-12-02 20:35:18 herrvendil Exp $
  */
 public interface IAuthorizer {
 	
@@ -49,10 +47,9 @@ public interface IAuthorizer {
 	 * Main method determining if the requester is authorized to process the data in the request.
 	 * 
 	 * @param request the request data sent to the worker to process.
-	 * @param clientCert client certificate of the user, may be null if no client certificate authentication was used.
-	 * @param clientIP IP of the requesting client, may be null.
+	 * @param requestContext containing the optional clientCert client certificate or remote IP of the user, may also contain customly defined data.
 	 * @throws SignServerException if unexpected error occurred during authorization.
 	 * @throws IllegalRequestException if the requester isn't authorized or couldn't be authenticated for some other reason.
 	 */
-	void isAuthorized(IProcessRequest request, X509Certificate clientCert, String clientIP) throws IllegalRequestException, SignServerException;
+	void isAuthorized(IProcessRequest request, RequestContext requestContext) throws IllegalRequestException, SignServerException;
 }

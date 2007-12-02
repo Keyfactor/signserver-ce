@@ -81,7 +81,7 @@ public class TestTimeStampSigner extends TestCase {
 		GenericSignRequest signRequest = new GenericSignRequest(12, requestBytes);
 
 
-		GenericSignResponse res = (GenericSignResponse) sSSession.process(4,signRequest, null,null); 
+		GenericSignResponse res = (GenericSignResponse) sSSession.process(4,signRequest, new RequestContext()); 
 
 		assertTrue(reqid == res.getRequestID());
 

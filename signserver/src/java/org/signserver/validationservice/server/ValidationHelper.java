@@ -21,19 +21,20 @@ import javax.persistence.EntityManager;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.validationservice.common.ValidationServiceConstants;
 
 /**
  * Class containing helper methods for the validation service sub framework
  * 
  * @author Philip Vendil
- * @version $Id: ValidationHelper.java,v 1.1 2007-11-28 12:21:49 herrvendil Exp $
+ * @version $Id: ValidationHelper.java,v 1.2 2007-12-02 20:35:17 herrvendil Exp $
  */
 public class ValidationHelper {
 	
-	
-
 	private static final String VALIDATOR_PREFIX1 = "validator";
 	private static final String VALIDATOR_PREFIX2 = "val";
+	
+	private static final String ISSUER_PREFIX = "issuer";
 	
 	private static final int SUPPORTED_NUMBER_OF_VALIDATORS = 255;
 	
@@ -125,7 +126,7 @@ public class ValidationHelper {
 	}
 	
 	/**
-	 * Help method instantiating all configured validators and initilaizes them and
+	 * Help method instantiating all configured validators and initializes them and
 	 * returns a HashMap containing all available validators by validatorId as key.
 	 * 
 	 * @param workerId current workerId
@@ -136,10 +137,10 @@ public class ValidationHelper {
 	public static HashMap<Integer, IValidator> genValidators(int workerId, WorkerConfig config, EntityManager em, ICryptoToken ct) throws SignServerException{
 		HashMap<Integer, IValidator> retval = new HashMap<Integer, IValidator>();
 		
-		for(int i=0;i<=SUPPORTED_NUMBER_OF_VALIDATORS;i++){
+		for(int i=1;i<=SUPPORTED_NUMBER_OF_VALIDATORS;i++){
 			Properties valprops = getValidatorProperties(i,config);
 			if(valprops != null){
-				String classpath = valprops.getProperty(IValidator.SETTING_CLASSPATH);
+				String classpath = valprops.getProperty(ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH);
 				if(classpath != null){
 					try {
 						Class<?> c = ValidationHelper.class.getClassLoader().loadClass(classpath);
@@ -147,18 +148,91 @@ public class ValidationHelper {
 						v.init(workerId, i, valprops, em, ct);
 						retval.put(i, v);
 					} catch (ClassNotFoundException e) {
-						throw new SignServerException("Error validator with validatorId " +i + " with workerId " + workerId + " have got the required setting " + IValidator.SETTING_CLASSPATH + " set correctly.");
+						throw new SignServerException("Error validator with validatorId " +i + " with workerId " + workerId + " have got the required setting " + ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH + " set correctly.");
 					} catch (InstantiationException e) {
-						throw new SignServerException("Error validator with validatorId " +i + " with workerId " + workerId + " have got the required setting " + IValidator.SETTING_CLASSPATH + " set correctly.");
+						throw new SignServerException("Error validator with validatorId " +i + " with workerId " + workerId + " have got the required setting " + ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH + " set correctly.");
 					} catch (IllegalAccessException e) {
-						throw new SignServerException("Error validator with validatorId " +i + " with workerId " + workerId + " have got the required setting " + IValidator.SETTING_CLASSPATH + " set correctly.");
+						throw new SignServerException("Error validator with validatorId " +i + " with workerId " + workerId + " have got the required setting " + ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH + " set correctly.");
 					}				
 				}else{
-					throw new SignServerException("Error validator with validatorId " +i + " with workerId " + workerId + " have got the required setting " + IValidator.SETTING_CLASSPATH + " set correctly.");
+					throw new SignServerException("Error validator with validatorId " +i + " with workerId " + workerId + " have got the required setting " + ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH + " set correctly.");
 				}
 			}
 		}
 		
+		return retval;
+	}
+	
+	/**
+	 * Method returning a validation properties from a validation properties.
+	 * 
+	 * It will work in the following manner:
+	 * <ul>
+	 * <li>All properties starting with 'issuer<issuerId>.' or 'issuer<issuerId>.' will have
+	 *   the following keys added without the 'issuer...' prefix.
+	 * <li>All properties without 'issuer...' prefix will be added if the key doesn't exist already. I.e
+	 * all properties with keys starting 'issuer..' overrides general properties.
+	 * <li>If no 'issuer<issuerId>.' exists for the given id then, null will be returned.
+	 * </ul>
+	 * @param config a worker config containing all properties
+	 * @return a Propertes according to above specification or 'null' if no property with 'issuer...' exists
+	 * in configuration.
+	 */
+	public static Properties getIssuerProperties(int issuerId, Properties validatorProperties){
+		Properties retval = new Properties();
+		
+		boolean foundIssuerId = false;
+		// find issuer properties
+		Enumeration<?> en = validatorProperties.propertyNames();
+		while(en.hasMoreElements()){
+			String next = (String) en.nextElement();
+			String strippedKey = issuerPrefix(issuerId,next);
+			if(strippedKey != null){
+				foundIssuerId = true;
+				retval.setProperty(strippedKey, validatorProperties.getProperty(next));
+			}
+		}
+		if(foundIssuerId){
+			// Separate general properties from issuer specific and add if they already doesn't exist.
+			en = validatorProperties.propertyNames();
+			while(en.hasMoreElements()){
+				String next = (String) en.nextElement();
+				if(issuerPrefix(0, next) == null){
+					if(retval.getProperty(next) == null){
+						retval.setProperty(next, validatorProperties.getProperty(next));
+					}
+				}
+			}
+		}else{
+			retval = null;
+		}
+
+		return retval;
+	}
+	
+	/**
+	 * Returns the value after the issuer prefix
+	 * @param next input property key
+	 * @return the subset of the property key with issuer prefix removed, or null if no
+	 * issuer prefix could be found.
+	 */
+	private static String issuerPrefix(int issuerId, String key ) {
+		String retval = null;
+		
+		if(key.length() > ISSUER_PREFIX.length() +2){
+			String tmp = key.substring(0, ISSUER_PREFIX.length());
+			if(tmp.equalsIgnoreCase(ISSUER_PREFIX)){
+				if(key.substring(ISSUER_PREFIX.length()).substring(0, 1).matches("\\d")){
+					try{
+					  int id = Integer.parseInt(key.substring(ISSUER_PREFIX.length(),key.indexOf('.')));
+					  if(id == issuerId || issuerId == 0){
+					    retval = key.substring(key.indexOf('.')+1);
+					  }
+					}catch(NumberFormatException e){}
+				}
+			}
+		}
+
 		return retval;
 	}
 }

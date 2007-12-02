@@ -30,7 +30,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @author Philip Vendil 24 nov 2007
  *
- * @version $Id: DummyAuthorizer.java,v 1.1 2007-11-27 06:05:04 herrvendil Exp $
+ * @version $Id: DummyAuthorizer.java,v 1.2 2007-12-02 20:35:18 herrvendil Exp $
  */
 
 public class DummyAuthorizer implements IAuthorizer {
@@ -48,11 +48,13 @@ public class DummyAuthorizer implements IAuthorizer {
 	}
 
 	/**
-	 * @see org.signserver.server.IAuthorizer#isAuthorized(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate, java.lang.String)
+	 * @see org.signserver.server.IAuthorizer#isAuthorized(IProcessRequest, RequestContext)
 	 */
-	public void isAuthorized(IProcessRequest request,
-			X509Certificate clientCert, String clientIP)
+	public void isAuthorized(IProcessRequest request,RequestContext requestContext)
 			throws SignServerException, IllegalRequestException {
+		
+		String clientIP = (String) requestContext.get(RequestContext.REMOTE_IP);
+		X509Certificate clientCert = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
 		
 		if(clientIP != null && !clientIP.equals("1.2.3.4")){
 			throw new IllegalRequestException("Not authorized");

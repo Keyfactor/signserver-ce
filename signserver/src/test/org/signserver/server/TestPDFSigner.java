@@ -74,7 +74,7 @@ public class TestPDFSigner extends TestCase {
 		GenericSignRequest signRequest = new GenericSignRequest(13, Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
 
 
-		GenericSignResponse res = (GenericSignResponse) sSSession.process(5,signRequest, null,null); 
+		GenericSignResponse res = (GenericSignResponse) sSSession.process(5,signRequest, new RequestContext()); 
 
 		assertTrue(reqid == res.getRequestID());
 

@@ -52,6 +52,7 @@ import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.IAuthorizer;
 import org.signserver.server.IWorker;
+import org.signserver.server.RequestContext;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.signers.ISigner;
@@ -93,8 +94,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	/**
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#process(int, org.signserver.common.ISignRequest, java.security.cert.X509Certificate, java.lang.String)
 	 */
-	public IProcessResponse process(int workerId, IProcessRequest request,
-	                              X509Certificate clientCert, String requestIP) throws IllegalRequestException,
+	public IProcessResponse process(int workerId, IProcessRequest request, RequestContext requestContext) throws IllegalRequestException,
 		CryptoTokenOfflineException, SignServerException {
 		log.debug(">signData ");
 		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession,em);
@@ -109,7 +109,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 		ISigner signer = (ISigner) worker;
         		
         IAuthorizer auth = WorkerFactory.getInstance().getAuthenticator(workerId, signer.getAuthenticationType(), worker.getStatus().getActiveSignerConfig(), em);
-        auth.isAuthorized(request, clientCert, requestIP);
+        auth.isAuthorized(request, requestContext);
         
         if(signer.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseSigner.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
         	throw new CryptoTokenOfflineException("Error Signer : " + workerId + " is disabled and cannot perform any signature operations");
@@ -117,11 +117,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
         
         IProcessResponse res = null;
 		try {
-			res = signer.processData(request,  clientCert);
+			res = signer.processData(request,  requestContext);
 	        if(res instanceof IArchivableProcessResponse){
 	        	IArchivableProcessResponse arres = (IArchivableProcessResponse) res;
 	        	if(signer.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseSigner.ARCHIVE,"FALSE").equalsIgnoreCase("TRUE")){
-	        		if(arres.getArchiveData() != null){    			
+	        		if(arres.getArchiveData() != null){ 
+	        			String requestIP = (String) requestContext.get(RequestContext.REMOTE_IP);
+	        			X509Certificate clientCert = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
 	        			archiveDataService.create(ArchiveDataVO.TYPE_RESPONSE,workerId, arres.getArchiveId(), clientCert, requestIP, arres.getArchiveData());        		        	
 	        		}else{
 	        			log.error("Error archiving response generated of signer " + workerId + ", archiving is not supported by signer.");

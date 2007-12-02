@@ -49,6 +49,7 @@ import org.signserver.protocol.ws.ISignServerWS;
 import org.signserver.protocol.ws.ProcessRequestWS;
 import org.signserver.protocol.ws.ProcessResponseWS;
 import org.signserver.protocol.ws.WorkerStatusWS;
+import org.signserver.server.RequestContext;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.web.SignServerHealthCheck;
 
@@ -58,7 +59,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementor of the ISignServerWS interface.
  * 
  * @author Philip Vendil
- * $Id: SignServerWS.java,v 1.1 2007-11-27 06:05:12 herrvendil Exp $
+ * $Id: SignServerWS.java,v 1.2 2007-12-02 20:35:19 herrvendil Exp $
  */
 
 @WebService(targetNamespace="gen.ws.protocol.signserver.org")
@@ -171,7 +172,7 @@ public class SignServerWS implements ISignServerWS {
 		for (Iterator<ProcessRequestWS> iterator = requests.iterator(); iterator.hasNext();) {
 			ProcessRequestWS next = iterator.next();
 			GenericSignRequest req = new GenericSignRequest(next.getRequestID(),next.getSignRequestData());
-			IProcessResponse resp = getSignServerSession().process(workerId, req, clientCert, requestIP);
+			IProcessResponse resp = getSignServerSession().process(workerId, req, new RequestContext(clientCert, requestIP));
 			ProcessResponseWS wsresp = new ProcessResponseWS();
 			wsresp.setProcessedData((byte[]) resp.getProcessedData());
 			if(resp instanceof ISignResponse){

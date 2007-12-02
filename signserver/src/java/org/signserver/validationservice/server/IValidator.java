@@ -14,7 +14,7 @@ package org.signserver.validationservice.server;
 
 
 import java.net.ConnectException;
-import java.security.cert.Certificate;
+import java.util.List;
 import java.util.Properties;
 
 import javax.persistence.EntityManager;
@@ -23,26 +23,27 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
 
 /**
  * Interface all types of validators should implement, this could be 
  * a OCSP Validator or CRL validator or simply a database were the certificate
- * status is lookup up.
+ * status is lookup up. It's recommended that the BaseValidator is inherited.
  * 
  * It's main method is validate(Certificate cert)
  * 
+ * Important a validator also have to support to check the revocation status of the
+ * involved CA certificates and should only return Validation object with status REVOKED or VALID
+ * 
  * @author Philip Vendil
  *  
- * @version $Id: IValidator.java,v 1.1 2007-11-28 12:21:49 herrvendil Exp $
+ * @version $Id: IValidator.java,v 1.2 2007-12-02 20:35:17 herrvendil Exp $
  *
  */
 public interface IValidator {
 	
-	/**
-	 * Setting indicating the class path to the validator to instantiate. 
-	 */
-	public static final String SETTING_CLASSPATH = "CLASSPATH";
+
 	
 	/**
 	 * Initialization method that should be called directly after creation.
@@ -60,13 +61,16 @@ public interface IValidator {
 	 * Main method of a Group Key Service responsible for fetching keys from
 	 * the database.
 	 * 
+	 * Important a validator also have to support to check the revocation status of the
+     * involved CA certificates and should only return Validation object with status REVOKED or VALID
+	 * 
 	 * @param cert the certificate to validate.
 	 * @return a Validation object or null if the certificate couldn't be looked up in this validator.
 	 * @throws IllegalRequestException if data in the request didn't conform with the specification.
 	 * @throws CryptoTokenOfflineException if the crypto token isn't online. 
 	 * @throws SignServerException for general failure exception during validation.
 	 */
-	Validation validate(Certificate cert) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+	Validation validate(ICertificate cert) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 	
 	/**
 	 * Optional method used to test the connection to a specific underlying validator implementation.
@@ -75,4 +79,12 @@ public interface IValidator {
 	 * @throws SignServerException for general failure exception during validation.
 	 */
 	void testConnection() throws ConnectException, SignServerException;
+	
+	/**
+	 * Method that should return the entire certificate chain for the given certificate
+	 * or null if the validator doesn't support the issuer of the given certificate.
+	 * @param certificate to verify
+	 * @return a certificate chain with the root CA last or null if validator doesn't support given issuer.
+	 */
+	List<ICertificate> getCertificateChain(ICertificate cert);
 }

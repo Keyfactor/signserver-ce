@@ -16,7 +16,6 @@ package org.signserver.server.signers;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -27,6 +26,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.ejb.EJBException;
 
 import org.apache.log4j.Logger;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IProcessRequest;
 import org.signserver.common.IProcessResponse;
 import org.signserver.common.ISignRequest;
@@ -35,7 +35,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
-import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.server.RequestContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 
 
@@ -43,7 +43,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * Class used to sign MRTD Document Objects.
  * 
  * @author Philip Vendil
- * @version $Id: MRTDSigner.java,v 1.6 2007-11-27 06:05:07 herrvendil Exp $
+ * @version $Id: MRTDSigner.java,v 1.7 2007-12-02 20:35:18 herrvendil Exp $
  */
 
 public class MRTDSigner extends BaseSigner {
@@ -64,7 +64,7 @@ public class MRTDSigner extends BaseSigner {
 	 */
 	
 	public IProcessResponse processData(IProcessRequest signRequest,
-	                              X509Certificate cert) throws IllegalRequestException, CryptoTokenOfflineException{
+	                              RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException{
 		
 		
 		ISignRequest sReq = (ISignRequest) signRequest;

@@ -13,17 +13,16 @@
 
 package org.signserver.server.signers;
  
-import java.security.cert.X509Certificate;
-
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IProcessRequest;
 import org.signserver.common.IProcessResponse;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.server.IWorker;
+import org.signserver.server.RequestContext;
 
 
 /**
@@ -33,7 +32,7 @@ import org.signserver.server.IWorker;
  * 
  * 
  * @author Philip Vendil
- * $Id: ISigner.java,v 1.4 2007-11-27 06:05:08 herrvendil Exp $
+ * $Id: ISigner.java,v 1.5 2007-12-02 20:35:18 herrvendil Exp $
  */
 public interface ISigner extends IWorker{
 
@@ -45,18 +44,18 @@ public interface ISigner extends IWorker{
     * Main method that does the actual signing according to the data in the request.
     * 
     *  @throws IllegalRequestException if requests contain unsupported data.
-    *  @throws CryptoTokenOfflineException if the token performing cryptographic operations is offline.
-    *  @throws SignServerException if general failure occured during the operation.
+    *  @throws CryptoTokenOfflineException if the token performing cryptographic operations is off-line.
+    *  @throws SignServerException if general failure occurred during the operation.
     */
 	public IProcessResponse processData(IProcessRequest signRequest,
-	                              X509Certificate clientCert) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+	                              RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 	
 
 	
 	/**
 	 * Method used to activate a signer using the supplied authentication Code
 	 * @param authenticationCode 
-	 * @pram props, the configuration that should be used for activation, doesn't have to be the active one for smooth shift of keys.
+	 * @param props the configuration that should be used for activation, doesn't have to be the active one for smooth shift of keys.
 	 */
 	public void activateSigner(String authenticationCode) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException;
 	

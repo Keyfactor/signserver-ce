@@ -51,6 +51,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ITimeSource;
+import org.signserver.server.RequestContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
  
 
@@ -71,7 +72,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * TSA = General name of the Time Stamp Authority.
  * 
  * @author philip
- * $Id: TimeStampSigner.java,v 1.7 2007-11-27 06:05:07 herrvendil Exp $
+ * $Id: TimeStampSigner.java,v 1.8 2007-12-02 20:35:18 herrvendil Exp $
  */
 public class TimeStampSigner extends BaseSigner{
 	
@@ -161,7 +162,7 @@ public class TimeStampSigner extends BaseSigner{
 	 * @see org.signserver.server.signers.ISigner#signData(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate)
 	 */
 	public IProcessResponse processData(IProcessRequest signRequest,
-			X509Certificate clientCert) throws IllegalRequestException,
+			RequestContext requestContext) throws IllegalRequestException,
 			CryptoTokenOfflineException {
 		boolean returnbytearray = false;
 		

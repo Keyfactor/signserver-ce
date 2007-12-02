@@ -110,7 +110,7 @@ public class TestCustomAuth extends TestCase {
 		GenericSignRequest req = new GenericSignRequest(reqid, requestBytes);
 
 
-		GenericSignResponse res = (GenericSignResponse) sSSession.process(9,req, cert,ip); 
+		GenericSignResponse res = (GenericSignResponse) sSSession.process(9,req, new RequestContext(cert,ip)); 
 
 		assertTrue(reqid == res.getRequestID());
 

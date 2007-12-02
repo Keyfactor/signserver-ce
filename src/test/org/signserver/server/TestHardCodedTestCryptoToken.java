@@ -14,12 +14,11 @@
 package org.signserver.server;
 
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
 import java.security.Signature;
 
 import junit.framework.TestCase;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.signserver.common.SignServerUtil;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.server.cryptotokens.ICryptoToken;
  
@@ -30,7 +29,7 @@ public class TestHardCodedTestCryptoToken extends TestCase {
 		super.setUp();
 		
 		// Install BC Provider
-        Security.addProvider(new BouncyCastleProvider()); 
+        SignServerUtil.installBCProvider();
 	}
 
 	/*

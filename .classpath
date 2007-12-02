@@ -23,6 +23,8 @@
 	<classpathentry kind="lib" path="lib/ext/james/mailet-api-2.3.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/ejb3-persistence.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/jboss-ejb3x.jar"/>
+	<classpathentry kind="lib" path="tmp/validationws/gen-classes/client"/>
+	<classpathentry kind="lib" path="tmp/validationws/gen-classes/server"/>
 	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/client"/>
 	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/server"/>
 	<classpathentry kind="output" path=".eclipse/out"/>

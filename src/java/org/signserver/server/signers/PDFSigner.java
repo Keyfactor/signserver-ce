@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import java.util.Collection;
 
 import javax.persistence.EntityManager;
@@ -26,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IProcessRequest;
@@ -34,8 +34,8 @@ import org.signserver.common.ISignRequest;
 import org.signserver.common.ISignerCertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.RequestContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 
 import com.lowagie.text.DocumentException;
@@ -53,7 +53,7 @@ import com.lowagie.text.pdf.PdfStamper;
  * RECTANGLE = The location of the visible signature field (llx, lly, urx, ury)
  * 
  * @author Tomas Gustavsson
- * @version $Id: PDFSigner.java,v 1.4 2007-11-27 06:05:07 herrvendil Exp $
+ * @version $Id: PDFSigner.java,v 1.5 2007-12-02 20:35:18 herrvendil Exp $
  */
 public class PDFSigner extends BaseSigner{
 	
@@ -78,7 +78,7 @@ public class PDFSigner extends BaseSigner{
 	 * 
 	 * @see org.signserver.server.signers.ISigner#signData(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate)
 	 */
-	public IProcessResponse processData(IProcessRequest signRequest, X509Certificate clientCert) 
+	public IProcessResponse processData(IProcessRequest signRequest, RequestContext requestContext) 
 		throws IllegalRequestException, CryptoTokenOfflineException {
 		
 		ISignRequest sReq = (ISignRequest) signRequest;

@@ -13,8 +13,6 @@
 
 package org.signserver.groupkeyservice.server;
 
-import java.security.cert.X509Certificate;
-
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
@@ -30,6 +28,7 @@ import org.signserver.groupkeyservice.common.GroupKeyServiceConstants;
 import org.signserver.groupkeyservice.common.IRemoveGroupKeyRequest;
 import org.signserver.groupkeyservice.common.PregenerateKeysRequest;
 import org.signserver.groupkeyservice.common.SwitchEncKeyRequest;
+import org.signserver.server.RequestContext;
 import org.signserver.server.cryptotokens.IExtendedCryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -40,7 +39,7 @@ import org.signserver.server.signers.BaseSigner;
  * 
  * @author Philip Vendil 16 nov 2007
  *
- * @version $Id: GroupKeyServiceWorker.java,v 1.1 2007-11-27 06:05:09 herrvendil Exp $
+ * @version $Id: GroupKeyServiceWorker.java,v 1.2 2007-12-02 20:35:18 herrvendil Exp $
  */
 
 public class GroupKeyServiceWorker extends BaseSigner {
@@ -110,7 +109,7 @@ public class GroupKeyServiceWorker extends BaseSigner {
 	 * @see org.signserver.server.signers.ISigner#processData(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate)
 	 */
 	public IProcessResponse processData(IProcessRequest processRequest,
-			X509Certificate clientCert) throws IllegalRequestException,
+			RequestContext requestContext) throws IllegalRequestException,
 			CryptoTokenOfflineException, SignServerException {
 		
 		if(processRequest instanceof FetchKeyRequest){

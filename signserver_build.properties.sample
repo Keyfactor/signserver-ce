@@ -1,5 +1,5 @@
 #
-# $Id: signserver_build.properties.sample,v 1.6 2007-11-27 06:10:56 herrvendil Exp $
+# $Id: signserver_build.properties.sample,v 1.7 2007-12-02 20:33:05 herrvendil Exp $
 #
 # File containing the build properties of the sign server
 # 
@@ -218,8 +218,12 @@
 
 # -------------- JAX-WS Web Service Configuration ----------------
 #
-# Set to false to disable WebService deployment
+# Set to false to disable Main WebService deployment
 signserverws.enabled=true
+
+# Set to true to enable Validation WebService deployment
+# Default false
+validationws.enabled=false
 
 # -------------- Status And Health Check Configuration -----------
 #

@@ -49,6 +49,7 @@ import org.signserver.groupkeyservice.common.RemoveGroupKeyResponse;
 import org.signserver.groupkeyservice.common.SwitchEncKeyRequest;
 import org.signserver.groupkeyservice.common.SwitchEncKeyResponse;
 import org.signserver.groupkeyservice.common.TimeRemoveGroupKeyRequest;
+import org.signserver.server.RequestContext;
 
 
 public class TestGroupKeyService extends TestCase {
@@ -117,7 +118,7 @@ public class TestGroupKeyService extends TestCase {
 		
 		
 		PregenerateKeysRequest req = new PregenerateKeysRequest((int) keysToGen);
-		PregenerateKeysResponse res = (PregenerateKeysResponse) sSSession.process(10, req, null, null);
+		PregenerateKeysResponse res = (PregenerateKeysResponse) sSSession.process(10, req, new RequestContext());
 		assertTrue(res.getNumberOfKeysGenerated() == keysToGen);
 		GroupKeyServiceStatus stat = (GroupKeyServiceStatus) sSSession.getStatus(10);
 		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);	
@@ -185,7 +186,7 @@ public class TestGroupKeyService extends TestCase {
 	public void test04SwitchEncKey() throws Exception{
 		// Test key switch manually
 		SwitchEncKeyRequest req = new SwitchEncKeyRequest();
-		SwitchEncKeyResponse res = (SwitchEncKeyResponse) sSSession.process(10, req, null, null);
+		SwitchEncKeyResponse res = (SwitchEncKeyResponse) sSSession.process(10, req, new RequestContext());
 		String newKeyIndex = res.getNewKeyIndex();
         assertFalse(newKeyIndex.equals(startEncKeyRef));
         GroupKeyServiceStatus stat = (GroupKeyServiceStatus) sSSession.getStatus(10);
@@ -230,14 +231,14 @@ public class TestGroupKeyService extends TestCase {
 		list.add(docId1);
 		list.add(docId2);
 		DocumentIDRemoveGroupKeyRequest req = new DocumentIDRemoveGroupKeyRequest(list);
-		RemoveGroupKeyResponse res = (RemoveGroupKeyResponse) sSSession.process(10, req, null, null);
+		RemoveGroupKeyResponse res = (RemoveGroupKeyResponse) sSSession.process(10, req, new RequestContext());
 		assertTrue(res.getNumOfKeysRemoved() == 2);
 		stat = (GroupKeyServiceStatus) sSSession.getStatus(10);
 		assertTrue(numOfKeys-2 == stat.getNumOfKeys());		
 		// test to remove by time
 		
 		TimeRemoveGroupKeyRequest req2 = new TimeRemoveGroupKeyRequest(TimeRemoveGroupKeyRequest.TYPE_CREATIONDATE,startDate,new Date());
-		res = (RemoveGroupKeyResponse) sSSession.process(10, req2, null, null);
+		res = (RemoveGroupKeyResponse) sSSession.process(10, req2, new RequestContext());
 		assertTrue(res.wasOperationSuccessful());
 		assertTrue(res.getNumOfKeysRemoved() > 0);
 		stat = (GroupKeyServiceStatus) sSSession.getStatus(10);
@@ -249,7 +250,7 @@ public class TestGroupKeyService extends TestCase {
 		GroupKeyServiceStatus orgstat = (GroupKeyServiceStatus) sSSession.getStatus(12);
 		
 		PregenerateKeysRequest req = new PregenerateKeysRequest((int) rSAkeysToGen);
-		PregenerateKeysResponse res = (PregenerateKeysResponse) sSSession.process(12, req, null, null);
+		PregenerateKeysResponse res = (PregenerateKeysResponse) sSSession.process(12, req, new RequestContext());
 		assertTrue(res.getNumberOfKeysGenerated() == rSAkeysToGen);
 		
 		GroupKeyServiceStatus stat = (GroupKeyServiceStatus) sSSession.getStatus(12);
@@ -330,7 +331,7 @@ public class TestGroupKeyService extends TestCase {
 			documentId = "docId" + Integer.toHexString(rand.nextInt());
 		}
 		FetchKeyRequest req = new FetchKeyRequest(documentId,keyPart,genKeyIfNotExists);
-		FetchKeyResponse res = (FetchKeyResponse) sSSession.process(10, req, null, null);
+		FetchKeyResponse res = (FetchKeyResponse) sSSession.process(10, req, new RequestContext());
 		assertTrue(res.getDocumentId().equals(documentId));
 		byte[] orgdata2 = "HELLO2".getBytes();
 		SecretKey key = new SecretKeySpec(res.getGroupKey(),"AES");
@@ -349,7 +350,7 @@ public class TestGroupKeyService extends TestCase {
 			documentId = "docId" + Integer.toHexString(rand.nextInt());
 		}
 		FetchKeyRequest req = new FetchKeyRequest(documentId,keyPart,genKeyIfNotExists);
-		FetchKeyResponse res = (FetchKeyResponse) sSSession.process(12, req, null, null);
+		FetchKeyResponse res = (FetchKeyResponse) sSSession.process(12, req, new RequestContext());
 		assertTrue(res.getDocumentId().equals(documentId));
 		if(keyPart == GroupKeyServiceConstants.KEYPART_PRIVATE){
 		  PKCS8EncodedKeySpec pkKeySpec = new PKCS8EncodedKeySpec(res.getGroupKey());

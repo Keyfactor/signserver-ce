@@ -13,13 +13,11 @@
 
 package org.signserver.validationservice.server.validcache;
 
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.ejbca.util.CertTools;
+import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
 
 /**
@@ -31,7 +29,7 @@ import org.signserver.validationservice.common.Validation;
  * 
  * @author Philip Vendil 26 nov 2007
  *
- * @version $Id: ValidationCache.java,v 1.1 2007-11-27 06:05:07 herrvendil Exp $
+ * @version $Id: ValidationCache.java,v 1.2 2007-12-02 20:35:18 herrvendil Exp $
  */
 
 public class ValidationCache {
@@ -59,8 +57,8 @@ public class ValidationCache {
 	 * @param cert certificate used as key in the cache.
 	 * @param validation the validation to add.
 	 */
-	public void put(X509Certificate cert, Validation validation){		
-		if(cachedIssuersDNSet.contains(CertTools.getIssuerDN(cert))){
+	public void put(ICertificate cert, Validation validation){		
+		if(cachedIssuersDNSet.contains(cert.getIssuer())){
 			timeQueue.pushNew(cert);
 			validationMap.put(cert, validation);
 		}
@@ -71,7 +69,7 @@ public class ValidationCache {
 	 * @param cert the certificate to look up a validation for
 	 * @return the validation if it exists otherwise null.
 	 */
-	public Validation get(Certificate cert){
+	public Validation get(ICertificate cert){
 		timeQueue.popOld();
 		return validationMap.get(cert);
 	}

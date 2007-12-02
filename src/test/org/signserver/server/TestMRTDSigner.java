@@ -74,7 +74,7 @@ public class TestMRTDSigner extends TestCase {
 	      signrequests.add(signreq1);
 	      signrequests.add(signreq2);
 		 		  
-		  MRTDSignResponse res =  (MRTDSignResponse) sSSession.process(3, new MRTDSignRequest(reqid,signrequests), null, null); 		  
+		  MRTDSignResponse res =  (MRTDSignResponse) sSSession.process(3, new MRTDSignRequest(reqid,signrequests), new RequestContext()); 		  
 		  assertTrue(res!=null);
           assertTrue(reqid == res.getRequestID());	      
 	      Certificate signercert = res.getSignerCertificate();	      

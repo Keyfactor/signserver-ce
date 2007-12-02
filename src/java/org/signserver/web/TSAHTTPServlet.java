@@ -37,6 +37,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.RequestContext;
 
  
 
@@ -48,7 +49,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * Use the request parameter 'signerId' to specify the timestamp signer.
  * 
  * @author Philip Vendil
- * @version $Id: TSAHTTPServlet.java,v 1.6 2007-11-27 06:05:08 herrvendil Exp $
+ * @version $Id: TSAHTTPServlet.java,v 1.7 2007-12-02 20:35:18 herrvendil Exp $
  */
 
 public class TSAHTTPServlet extends HttpServlet {
@@ -138,7 +139,7 @@ public class TSAHTTPServlet extends HttpServlet {
         
         GenericSignResponse signResponse = null;
         try {
-			signResponse = (GenericSignResponse) getSignServerSession().process(signerId, new GenericSignRequest(requestId, timeStampRequest),(X509Certificate) clientCertificate, req.getRemoteAddr());
+			signResponse = (GenericSignResponse) getSignServerSession().process(signerId, new GenericSignRequest(requestId, timeStampRequest), new RequestContext((X509Certificate) clientCertificate, req.getRemoteAddr()));
 		} catch (IllegalRequestException e) {
 			 throw new ServletException(e);
 		} catch (CryptoTokenOfflineException e) {

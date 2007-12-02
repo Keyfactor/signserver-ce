@@ -22,6 +22,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.server.RequestContext;
 
 public interface IWorkerSession  {
 
@@ -35,7 +36,7 @@ public interface IWorkerSession  {
 	 * @throws SignServerException if some other error occurred server side during process.
 	 */
 	IProcessResponse process(int signerId, IProcessRequest request,
-			X509Certificate clientCert, String requestIP)
+			RequestContext requestContext)
 			throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 
 	/**

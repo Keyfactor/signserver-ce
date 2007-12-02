@@ -35,7 +35,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @author Philip Vendil 24 nov 2007
  *
- * @version $Id: ClientCertAuthorizer.java,v 1.1 2007-11-27 06:05:03 herrvendil Exp $
+ * @version $Id: ClientCertAuthorizer.java,v 1.2 2007-12-02 20:35:17 herrvendil Exp $
  */
 
 public class ClientCertAuthorizer implements IAuthorizer {
@@ -57,11 +57,11 @@ public class ClientCertAuthorizer implements IAuthorizer {
 	/**
 	 * Performing SignServer 2.x client certificate authentication
 	 * 
-	 * @see org.signserver.server.IAuthorizer#isAuthorized(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate, java.lang.String)
+	 * @see org.signserver.server.IAuthorizer#isAuthorized(IProcessRequest, RequestContext)
 	 */
-	public void isAuthorized(IProcessRequest request,
-			X509Certificate clientCert, String clientIP)
+	public void isAuthorized(IProcessRequest request,RequestContext requestContext)
 			throws SignServerException, IllegalRequestException {
+		X509Certificate clientCert = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
     	if(clientCert == null){
     		throw new IllegalRequestException("Error, client authentication is required.");   
     	}else{
@@ -75,7 +75,7 @@ public class ClientCertAuthorizer implements IAuthorizer {
 	
 	private boolean authorizedToRequestSignature(X509Certificate clientCert, Collection<AuthorizedClient> authorizedClients) {
 
-        boolean isAuthorized = false;
+        boolean isAuthorized = false;        
         final Iterator<AuthorizedClient> iter = authorizedClients.iterator();
         String clientDN = CertTools.stringToBCDNString(clientCert.getIssuerDN().toString()); 
         

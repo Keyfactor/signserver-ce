@@ -43,7 +43,7 @@ public class TestExtendedHardCodedCryptoToken extends TestCase {
 	public void testEncryptDecryptData() throws Exception {
 	  ExtendedHardCodedCryptoToken ehct = new ExtendedHardCodedCryptoToken();
 	  String keyRefAES =  ehct.genNonExportableKey("AES", "256");
-	  assertTrue(keyRefAES.equals(ExtendedHardCodedCryptoToken.KEYREF_AES256KEY));
+	  assertTrue(keyRefAES.startsWith(ExtendedHardCodedCryptoToken.KEYREF_AES256KEY));
 	  
 	  byte[] orgdata = "HELLO".getBytes();
 	  byte[] encdata = ehct.encryptData(keyRefAES, orgdata);
@@ -53,7 +53,7 @@ public class TestExtendedHardCodedCryptoToken extends TestCase {
 	  assertTrue(new String(data),new String(orgdata).equals(new String(data)));
 	  
 	  String keyRefRSA =  ehct.genNonExportableKey("RSA", "1024");
-	  assertTrue(keyRefRSA.equals(ExtendedHardCodedCryptoToken.KEYREF_RSA1024KEY));
+	  assertTrue(keyRefRSA.startsWith(ExtendedHardCodedCryptoToken.KEYREF_RSA1024KEY));
 	  byte[] orgdata2 = "HELLO2".getBytes();
 	  byte[] encdata2 = ehct.encryptData(keyRefRSA, orgdata2);
 	  assertFalse(new String(orgdata2).equals(new String(encdata2)));

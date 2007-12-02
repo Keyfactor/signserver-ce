@@ -24,5 +24,7 @@
         </web>
     </module>
     <!--@signserverws.war@-->
+    
+    <!--@validationws.war@-->
 </application>
 

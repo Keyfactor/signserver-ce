@@ -67,5 +67,35 @@ public class TestValidationHelper extends TestCase {
 		}catch(SignServerException e){}
 		
 	}
+	
+	public void testGetIssuerProperties() {
+		
+		Properties config = new Properties();
+		config.setProperty("SOMEGENDATA", "TESTDATA");
+		config.setProperty("issuer1.KEY1", "key1data");
+		config.setProperty("issuer1.KEY2", "key2data");
+		config.setProperty("ISSUER1.KEY3", "key3data");
+		config.setProperty("ISSUERi1.KEY5", "key5data");
+		config.setProperty("issuer3.KEY6", "key6data");
+		config.setProperty("issuer255.KEY7", "key7data");
+		config.setProperty("ISSUER255.KEY8", "key8data");
+		
+		Properties props = ValidationHelper.getIssuerProperties(1, config);
+		assertTrue(props.get("SOMEGENDATA").equals("TESTDATA"));
+		assertTrue(props.get("KEY1").equals("key1data"));
+		assertTrue(props.get("key1") == null);
+		assertTrue(props.get("KEY2").equals("key2data"));
+		assertTrue(props.get("KEY3").equals("key3data"));
+		assertTrue(props.get("KEY5")== null);
+		assertTrue(props.get("ISSUERi1.KEY5").equals("key5data"));
+		assertTrue(props.get("issuer3.KEY6") == null);
+		
+		assertTrue(ValidationHelper.getIssuerProperties(2, config) == null);
+		assertTrue(ValidationHelper.getIssuerProperties(3, config).getProperty("KEY6").equals("key6data"));
+		assertTrue(ValidationHelper.getIssuerProperties(255, config).getProperty("KEY7").equals("key7data"));
+		assertTrue(ValidationHelper.getIssuerProperties(255, config).getProperty("KEY8").equals("key8data"));
+		assertTrue(ValidationHelper.getIssuerProperties(255, config).getProperty("SOMEGENDATA").equals("TESTDATA"));
+		
+	}
 
 }

@@ -36,5 +36,9 @@
   <session-config>
     <session-timeout>60</session-timeout>
   </session-config>
-   
+  <env-entry>
+    <env-entry-name>DataSource</env-entry-name>
+    <env-entry-value>@datasource.jndi-name-prefix@@datasource.jndi-name@</env-entry-value>
+    <env-entry-type>java.lang.String</env-entry-type>
+  </env-entry>  
 </web-app>

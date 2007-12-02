@@ -31,9 +31,10 @@
 	   <property name="healthcheck.checkdbstring" value="Select count(*) from SignerConfigData" />
 	
 	   <property name="signserverws.enabled" value="true" />
+	   <property name="validationws.enabled" value="false" />
 	
 	   <path id="signserver.compile.classpath">
-	        <path refid="ext.classpath" />
+	        <path refid="signserver.ext.classpath" />
 	        <fileset dir="lib" includes="*.jar" />
 	        <fileset dir="lib/itext" includes="*.jar" />
 	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
@@ -50,6 +51,10 @@
 	        <fileset dir="${client.primeCard.dist}" includes="*.jar" />
 	        <path refid="signserver.compile.classpath" />
 	    </path>
+	
+        <path id="signserver.ext.classpath">
+          <fileset dir="lib/ext" includes="*.jar" />
+        </path>
 
 	    <path id="j2ee.classpath">
 	        <fileset dir="${jboss.home}/lib">
@@ -168,6 +173,7 @@ database.password      = ${database.password}
 	        	<fileset dir="src/java" includes="profilemappings.properties"/>
 	            <fileset dir="${build}">
 	              <include name="org/signserver/groupkeyservice/**" />
+	              <include name="org/signserver/validationservice/**" />
 	        	  <include name="org/signserver/ejb/**" />
 	          	  <include name="org/signserver/common/**" />
 	          	  <include name="org/signserver/server/**" />
@@ -272,7 +278,7 @@ database.password      = ${database.password}
 			</condition>
 		</target>
 		
-	    <target name="signserverws.war" depends="ws.gen.server" if="signserverws.conditionenabled" >
+	    <target name="signserverws.war" depends="ws.gen.server, ws.gen.client" if="signserverws.conditionenabled" >
 	        <copy todir="tmp/jaxws/gen-classes/server">
 	    	  <fileset dir="${build}">
 	            <include name="org/signserver/protocol/ws/*.class"/> 
@@ -281,7 +287,7 @@ database.password      = ${database.password}
 	        </copy>	
 	    	
 	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@signserverws.war@-->" value="module>&lt;web>&lt;web-uri>signserverws.war&lt;/web-uri>&lt;context-root>/signserver/signserverws&lt;/context-root>&lt;/web>&lt;/module>"/>
-	        <war warfile="${server.dist.dir}/signserverws.war" webxml="src/jaxws/web.xml">
+	        <war warfile="${server.dist.dir}/signserverws.war" webxml="${src}/jaxws/web.xml">
 	            <webinf dir="src/jaxws" includes="sun-jaxws.xml"/>
 	            <!-- <zipfileset
 	                    dir="tmp/jaxws/wsdl"
@@ -293,7 +299,7 @@ database.password      = ${database.password}
 	    </target>
 		
 		
-	    <target name="ws.gen.client" depends="ws.init, ws.gen.server">	    	
+	    <target name="ws.gen.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled">	    	
 	        <wsimport 
 	                destdir="tmp/jaxws/gen-classes/client"
 	                wsdl="tmp/jaxws/gen-classes/server/SignServerWSService.wsdl">	          
@@ -415,11 +421,58 @@ database.password      = ${database.password}
 	        </junitreport>
 	    </target>
 		-->
+	        		
+	   <!-- =================================================================== -->
+	   <!-- Build Validation Service Web Service                                -->
+	   <!-- =================================================================== -->	        		
+	   <target name="validationwsconditioncheck" unless="buildMailSigner">
+	      <condition property="validationws.conditionenabled">
+	        <istrue value="${validationws.enabled}"/>
+	      </condition>
+	  </target>		
+	  
+	  <target name="validationws.init" depends="init, validationwsconditioncheck" if="validationws.conditionenabled">
+	      <mkdir dir="tmp/validationws/gen-classes/server"/>
+	      <mkdir dir="tmp/validationws/gen-classes/client"/>
+	  </target>
+	        	
+	  <target depends="validationws.init" name="validationws.gen.server" if="validationws.conditionenabled" >
+	     <wsgen  fork="true" sei="org.signserver.protocol.validationservice.ws.server.ValidationWS"
+	        	       	     genwsdl="true" destdir="tmp/validationws/gen-classes/server" 	            
+	        	            debug="true" >
+	        <classpath>
+	          <path refid="jaxws.classpath" /> 
+	          <pathelement location="src" /> 
+	        </classpath>
+         </wsgen>
+	  </target>
+
+	  <target name="validationws.war" depends="validationws.gen.server, validationws.gen.client" if="validationws.conditionenabled" >
+	     <copy todir="tmp/validationws/gen-classes/server">
+	        <fileset dir="${build}">
+	        	<include name="org/signserver/protocol/validationservice/ws/*.class"/> 
+	        	<include name="org/signserver/protocol/validationservice/ws/server/*.class"/>  
+	        </fileset>
+	    </copy>	
+	        	    	
+	    <replace file="${eardd.src}/META-INF/application.xml" token="!--@validationws.war@-->" value="module>&lt;web>&lt;web-uri>validationws.war&lt;/web-uri>&lt;context-root>/signserver/validationws&lt;/context-root>&lt;/web>&lt;/module>"/>
+	    <war warfile="${server.dist.dir}/validationws.war" webxml="${src}/validationws/web.xml">
+	        <webinf dir="src/validationws" includes="sun-jaxws.xml"/>
+	        	<classes dir="tmp/validationws/gen-classes/server"/>
+	        	<lib dir="lib/jaxws" includes="*.jar" />        		
+	    </war>
+	   </target>
+	        			        		
+	   <target name="validationws.gen.client" depends="validationws.init, validationws.gen.server" if="validationws.conditionenabled">	    	
+	      <wsimport destdir="tmp/validationws/gen-classes/client"
+	        	    wsdl="tmp/validationws/gen-classes/server/ValidationWSService.wsdl">	          
+	      </wsimport>
+	   </target>
 		
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war" unless="buildMailSigner" >
+	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />
@@ -457,6 +510,8 @@ database.password      = ${database.password}
         <javac srcdir="${test.src.dir}" destdir="${test.dir}" debug="on" includeantruntime="no" encoding="iso8859-1"  target="${server.java.target}" source="${server.java.target}">
             <classpath refid="signserver.test.compile.classpath" />
         	<exclude name="org/signserver/mailsigner/**"/>
+        	<exclude name="org/signserver/protocol/validationservice/ws/**"/>
+        	<exclude name="org/signserver/protocol/ws/**"/>
         </javac>
         <!-- jndi.properties needs to be in the classpath -->
         <copy file="${src.java}/jndi.properties" todir="${test.dir}" />
@@ -476,6 +531,8 @@ database.password      = ${database.password}
                 <fileset dir="${test.dir}">                  
                     <include name="**/ejb/Test*" /> 
                     <include name="**/server/Test*" /> 
+                	<include name="**/server/validcache/Test*" />
+                	<include name="**/groupkeyservice/Test*" /> 
                 	<include name="**/cli/TestSignServer*" />
                     <exclude name="**/*Continously*" />
                     <exclude name="**/TestRunner*" />

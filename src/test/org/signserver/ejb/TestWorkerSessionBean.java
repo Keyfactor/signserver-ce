@@ -35,6 +35,7 @@ import org.signserver.common.ProcessableConfig;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.RequestContext;
 
 public class TestWorkerSessionBean extends TestCase {
 
@@ -79,7 +80,7 @@ public class TestWorkerSessionBean extends TestCase {
        signrequests.add(signreq2);
        
        MRTDSignRequest req = new MRTDSignRequest(reqid, signrequests);
-       MRTDSignResponse res = (MRTDSignResponse) sSSession.process(3, req, null, null);
+       MRTDSignResponse res = (MRTDSignResponse) sSSession.process(3, req, new RequestContext());
        
        assertTrue(reqid == res.getRequestID());
        

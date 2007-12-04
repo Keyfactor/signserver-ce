@@ -142,8 +142,6 @@ public class TestValidationServiceWorker extends TestCase {
 		  sSSession.setWorkerProperty(15, "VAL2.TESTPROP", "TEST");
 		  sSSession.setWorkerProperty(15, "VAL2.ISSUER1.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(revocedRootCA1Chain));
 		  sSSession.setWorkerProperty(15, "VAL2.ISSUER250.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(longChain));
-		  String signserverhome = System.getenv("SIGNSERVER_HOME");
-		  assertNotNull(signserverhome);
 		  
 		  sSSession.reloadConfiguration(15);		  
 		  
@@ -159,7 +157,7 @@ public class TestValidationServiceWorker extends TestCase {
 		assertTrue(val.getStatus().equals(Validation.Status.VALID));
 		assertTrue(val.getStatusMessage() != null);
 		List<ICertificate> cAChain = val.getCAChain();
-		assertTrue(cAChain != null);
+ 		assertTrue(cAChain != null);
 		assertTrue(cAChain.get(0).getSubject().equals("CN=ValidSubCA1"));
 		assertTrue(cAChain.get(1).getSubject().equals("CN=ValidRootCA1"));
 		
@@ -468,8 +466,7 @@ public class TestValidationServiceWorker extends TestCase {
 		  sSSession.removeWorkerProperty(15, "VAL2.ISSUER250.CERTCHAIN");		
 		  sSSession.removeWorkerProperty(15, "VAL1.WAITTIME");
 		  sSSession.removeWorkerProperty(15, "CACHEDISSUERS");
-		  String signserverhome = System.getenv("SIGNSERVER_HOME");
-		  assertNotNull(signserverhome);
+
 		  
 		  sSSession.reloadConfiguration(15);		   
 	}

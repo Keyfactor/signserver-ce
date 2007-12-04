@@ -31,7 +31,7 @@ import org.signserver.validationservice.common.X509Certificate;
  * 
  * @author Philip Vendil
  * 
- * @version $Id: DummyValidator.java,v 1.2 2007-12-02 20:35:17 herrvendil Exp $
+ * @version $Id: DummyValidator.java,v 1.3 2007-12-04 15:31:27 herrvendil Exp $
  */
 public class DummyValidator extends BaseValidator {
 	
@@ -65,6 +65,10 @@ public class DummyValidator extends BaseValidator {
 			Thread.sleep(waitTime);
 		} catch (InterruptedException e) {
 			
+		}
+		
+		if(getCertificateChain(cert) == null && ((X509Certificate) cert).getBasicConstraints() == -1){
+			return null;
 		}
 		
 		X509Certificate xcert = (X509Certificate) cert;

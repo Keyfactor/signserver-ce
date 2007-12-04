@@ -38,7 +38,7 @@ import org.signserver.validationservice.common.Validation;
  * 
  * @author Philip Vendil
  *  
- * @version $Id: IValidator.java,v 1.2 2007-12-02 20:35:17 herrvendil Exp $
+ * @version $Id: IValidator.java,v 1.3 2007-12-04 15:31:27 herrvendil Exp $
  *
  */
 public interface IValidator {
@@ -58,11 +58,12 @@ public interface IValidator {
 	void init(int workerId, int validatorId, Properties props, EntityManager em, ICryptoToken ct) throws SignServerException;
 
 	/**
-	 * Main method of a Group Key Service responsible for fetching keys from
-	 * the database.
+	 * Main method of a Validation Service responsible for validating certificates.
 	 * 
 	 * Important a validator also have to support to check the revocation status of the
      * involved CA certificates and should only return Validation object with status REVOKED or VALID
+	 * If the validator doesn't support the given issuer it must return null.
+	 * 
 	 * 
 	 * @param cert the certificate to validate.
 	 * @return a Validation object or null if the certificate couldn't be looked up in this validator.

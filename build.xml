@@ -41,15 +41,16 @@
     <property name="test.src.dir" location="${src}/test" />
     <property name="server.dist.dir" location="dist-server" />
     <property name="client.dist.dir" location="dist-client" />
-    <property name="apidoc" value="./doc/api" />    
+    <property name="apidoc" value="./doc/api" />  
+	
+	<property name="custom.commandfactory" value="org.signserver.cli.DefaultSignServerCommandFactory"/>
 
     <property name="jar.extclasspath" value="lib/${server.java.target}/bcmail-jdk.jar lib/${server.java.target}/bcprov-jdk.jar lib/${server.java.target}/bctsp-jdk.jar lib/log4j.jar lib/ejbca-util.jar lib/caToken.jar lib/commons-lang-2.0.jar lib/ldap.jar lib/itext.jar"/>
 
 	<import file="./signserver.xmli" />
 	<import file="./mailsigner.xmli" />
+	<import file="${custom.build.xml}" optional="true"/>
 	
-
-
 	
 	<property name="build.mode" value="SIGNSERVER" />
 	<condition property="buildMailSigner">		
@@ -107,7 +108,7 @@
 	<!--
 	  Preprocesses Sign Server by replacing tags with correct version and application texts.
 	-->
-	<target name="preprocess">
+	<target name="preprocess" depends="preprocess-extjava, preprocess-extweb" >
         <copy todir="${preprocessed}">
             <fileset dir="src">
               <include name="**"/>
@@ -143,6 +144,7 @@
 				<replacestring from="@healthcheck.authorizedips@" to="${healthcheck.authorizedips}"/>
 				<replacestring from="@healthcheck.minimumfreememory@" to="${healthcheck.minimumfreememory}"/>
 				<replacestring from="@healthcheck.checkdbstring@" to="${healthcheck.checkdbstring}"/>
+				<replacestring from="@SignServerCommandFactory@" to="${custom.commandfactory}"/>
 			</tokenfilter>
 			</filterchain>
 	    </copy>
@@ -150,7 +152,24 @@
 		<!-- Make a copy of the signserver_cli.properties in bin dir -->
 		<copy file="signserver_cli.properties" todir="bin" />
 	</target>
-
+	
+	<target name="preprocess-extjava"  if="custom.src.java">
+	    <mkdir dir="${preprocessed}/java"/>
+        <copy todir="${preprocessed}/java">
+            <fileset dir="${custom.src.java}">
+              <include name="**"/>
+            </fileset>	      
+	    </copy>
+	</target>
+	
+    <target name="preprocess-extweb"  if="custom.src.web">
+       <mkdir dir="${preprocessed}/web/pub"/>       	
+       <copy todir="${preprocessed}/web/pub">
+          <fileset dir="${custom.src.web}">
+             <include name="**"/>
+           </fileset>	      
+       </copy>
+     </target>
  
     
     <!-- =================================================================== -->

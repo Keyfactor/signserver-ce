@@ -1,5 +1,5 @@
 #
-# $Id: signserver_build.properties.sample,v 1.7 2007-12-02 20:33:05 herrvendil Exp $
+# $Id: signserver_build.properties.sample,v 1.8 2007-12-04 15:35:26 herrvendil Exp $
 #
 # File containing the build properties of the sign server
 # 
@@ -211,10 +211,28 @@
 #deploy.tomcat.version=
 
 # ------------- Custom Code Configuration ------------------------
-# alternative servlet definition
-#ext.web.src=../needles/src/web/signserver
-# the location of external code to be included
-#src.external=../needles/tmp/bin/classes
+# It is possible to have a custom code tree outside the sign server
+# for custom modifications.
+#
+# The external code will be copied into the temporary code tree
+# used for pre-processing
+#
+# Location of external java source directory
+#custom.src.java = <custom-code>/src/java
+#
+# Location of external web source directory
+#custom.src.web= <custom-code>/src/web
+#
+# Location of optional custom build xml that will be imported.
+#custom.build.xml= <custom-code>/build.xml
+#
+# Setting defining a custom ISignServerCommandFactory used for customizing 
+# the CLI interface.
+#
+# Default : org.signserver.cli.DefaultSignServerCommandFactory
+#custom.commandfactory=org.signserver.cli.DefaultSignServerCommandFactory
+
+
 
 # -------------- JAX-WS Web Service Configuration ----------------
 #

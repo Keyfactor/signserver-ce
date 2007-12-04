@@ -24,7 +24,7 @@ import java.util.Properties;
 /**
  * Implements the signserver command line interface
  *
- * @version $Id: signserver.java,v 1.11 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: signserver.java,v 1.12 2007-12-04 15:35:10 herrvendil Exp $
  */
 public class signserver {
 	
@@ -66,7 +66,7 @@ public class signserver {
 	                }
 	                
 	            } else {
-	            	outputHelp();
+	            	getSignServerCommandFactory().outputHelp(System.out);
 	            }
             } catch (IllegalAdminCommandException e) {
                 System.out.println(e.getMessage());                
@@ -92,31 +92,10 @@ public class signserver {
         new signserver(args);
     }
     
-    protected void outputHelp() {
-    	
-    	String usageString = "Usage: signserver < getstatus | getconfig | reload ";
-    	if(CommonAdminInterface.isSignServerMode()){
-    		usageString +="| resync ";
-    	}
-    	usageString +="| setproperty | setproperties | setpropertyfromfile | removeproperty | dumpproperties ";
-    	if(CommonAdminInterface.isSignServerMode()){
-    	  usageString +="| listauthorizedclients | addauthorizedclient | removeauthorizedclient ";
-    	}
-    	usageString +="| uploadsignercertificate | uploadsignercertificatechain | activatesigntoken | deactivatesigntoken | generatecertreq ";
-    	if(CommonAdminInterface.isSignServerMode()){	
-    		usageString +="| archive";
-    	}
-        usageString+= "> \n";
-    	System.out.println(usageString);
-    	if(CommonAdminInterface.isSignServerMode()){
-    	  System.out.println("Available archive commands : Usage: signserver archive < findfromarchiveid | findfromrequestip | findfromrequestcert > \n");
-    	}
-    	System.out.println("Each basic command give more help");
-
-    }
+ 
 
 	protected IAdminCommand getCommand(String[] args) {
-		return SignServerCommandFactory.getCommand(args);
+		return getSignServerCommandFactory().getCommand(args);
 	}
 
 	private String getMasterHostname()throws IOException{
@@ -198,10 +177,31 @@ public class signserver {
 		}
 		return retval;
 	}
+
+    
+    private static final String SignServerCommandFactoryPath = "@SignServerCommandFactory@";
+    
+    private ISignServerCommandFactory signServerCommandFactory = null;
+    private ISignServerCommandFactory getSignServerCommandFactory(){
+    	if(signServerCommandFactory == null){
+    	  if(SignServerCommandFactoryPath.startsWith("@SignServerCommandFact")){
+    		  signServerCommandFactory = new DefaultSignServerCommandFactory();
+    	  }else{
+    		  try{
+    		    Class<?> c = this.getClass().getClassLoader().loadClass(SignServerCommandFactoryPath);
+    		    signServerCommandFactory = (ISignServerCommandFactory) c.newInstance();
+    		  }catch(Exception e){
+    			  System.out.println("Error instanciating SignServerCommandFactory.");
+    			  e.printStackTrace();    			  
+    		  }
+    	  }
+    	  
+    	}
+    	
+    	return signServerCommandFactory;
+    }
     
 }
     
-
-
 
 //signserver

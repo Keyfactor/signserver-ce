@@ -11,32 +11,37 @@
  *                                                                       *
  *************************************************************************/
 
- 
-package org.signserver.cli;
+
+package org.signserver.cli.archive;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Iterator;
+import java.util.List;
 
+import org.signserver.cli.BaseCommand;
+import org.signserver.cli.ErrorAdminCommandException;
+import org.signserver.cli.IllegalAdminCommandException;
 import org.signserver.common.ArchiveDataVO;
 
 
 
 
 /**
- * Finds archivedata from database with given id.
+ * Returns all archive datas requested from given IP
  *
- * @version $Id: FindFromArchiveIdCommand.java,v 1.2 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: FindFromRequestIPCommand.java,v 1.1 2007-12-04 15:35:10 herrvendil Exp $
  */
-public class FindFromArchiveIdCommand extends BaseCommand {
+public class FindFromRequestIPCommand extends BaseCommand {
 	
 	
 	
     /**
-     * Creates a new instance of FindFromArchiveIdCommand
+     * Creates a new instance of FindFromRequestIPCommand
      *
      * @param args command line arguments
      */
-    public FindFromArchiveIdCommand(String[] args) {
+    public FindFromRequestIPCommand(String[] args) {
         super(args);
     }
 
@@ -48,14 +53,14 @@ public class FindFromArchiveIdCommand extends BaseCommand {
      */
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
         if (args.length != 5) {
-	       throw new IllegalAdminCommandException("Usage: signserver archive findfromarchiveid <signerid> <archiveid> <outputpath>\n" + 
-	       		                                  "Example: signserver archive findfromarchiveid 1 EF34242D2324 /tmp/archivedata\n\n");	       
+	       throw new IllegalAdminCommandException("Usage: signserver archive findfromrequestip <signerid> <requestip> <outputpath>\n" + 
+	       		                                  "Example: signserver archive findfromrequestip 1 10.1.1.1 /tmp/archivedata \n\n");	       
 	    }	
         try {                    	
         	int signerid = getWorkerId(args[2], hostname);
         	checkThatWorkerIsSigner(signerid,hostname);
         	
-        	String archiveid = args[3];
+        	String requestIP = args[3];
             File outputPath = new File(args[4]);
             if(!outputPath.exists()){
             	throw new IllegalAdminCommandException("Error output path " + args[4] + " doesn't exist\n\n");	 
@@ -64,24 +69,27 @@ public class FindFromArchiveIdCommand extends BaseCommand {
             	throw new IllegalAdminCommandException("Error output path " + args[4] + " isn't a directory\n\n");	 
             }            
             
-        	this.getOutputStream().println("Trying to find archive data with archiveid " + archiveid +  "\n");
+        	this.getOutputStream().println("Trying to find archive datas requested from IP " + requestIP +  "\n");
 		                               	
-        	ArchiveDataVO result = getCommonAdminInterface(hostname).findArchiveDataFromArchiveId(signerid,archiveid);        	        	
+        	List<ArchiveDataVO> result = getCommonAdminInterface(hostname).findArchiveDatasFromRequestIP(signerid,requestIP);        	        	
         	
-            if(result != null){
-            	String filename = outputPath.getAbsolutePath() + "/"+ result.getArchiveId();
-            	FileOutputStream os = new FileOutputStream(filename);
-            	os.write(result.getArchiveData().getData());
-            	os.close();
-            	this.getOutputStream().println("Archive data with archiveid " + archiveid + " written to file : " +filename + "\n\n");
+            if(result.size() != 0){
+            	Iterator<ArchiveDataVO> iter = result.iterator();
+            	while (iter.hasNext()){
+            	  ArchiveDataVO next =  iter.next();            	
+            	  String filename = outputPath.getAbsolutePath() + "/"+ next.getArchiveId();
+            	  FileOutputStream os = new FileOutputStream(filename);
+            	  os.write(next.getArchiveData().getData());
+            	  os.close();
+            	  this.getOutputStream().println("Archive data with archiveid " + next.getArchiveId() + " written to file : " +filename + "\n\n");
+            	}
             }else{
-            	this.getOutputStream().println("Couldn't find any archive data with archiveid " + archiveid + " from signer " +signerid + "\n\n");
+            	this.getOutputStream().println("Couldn't find any archive data from client with IP " + requestIP + " from signer " +signerid + "\n\n");
             }        	
         	
     		this.getOutputStream().println("\n\n");
         	
         } catch (Exception e) {
-        	e.printStackTrace();
         	throw new ErrorAdminCommandException(e);            
         }
     }

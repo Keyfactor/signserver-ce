@@ -13,27 +13,25 @@
 
 
 package org.signserver.cli;
+
+import java.io.PrintStream;
+
+import org.signserver.cli.archive.FindFromArchiveIdCommand;
+import org.signserver.cli.archive.FindFromRequestCertCommand;
+import org.signserver.cli.archive.FindFromRequestIPCommand;
  
 /**
  * Factory for General signserver Commands.
  *
- * @version $Id: SignServerCommandFactory.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: DefaultSignServerCommandFactory.java,v 1.1 2007-12-04 15:35:10 herrvendil Exp $
  */
-public class SignServerCommandFactory {
-    /**
-     * Cannot create an instance of this class, only use static methods.
-     */
-    private SignServerCommandFactory() {
-    }
+public class DefaultSignServerCommandFactory implements ISignServerCommandFactory {
 
-    /**
-     * Returns an Admin Command object based on contents in args[0].
-     *
-     * @param args array of arguments typically passed from main().
-     *
-     * @return Command object or null if args[0] does not specify a valid command.
-     */
-    public static IAdminCommand getCommand(String[] args) {
+
+    /* (non-Javadoc)
+	 * @see org.signserver.cli.ISignServerCommandFactory#getCommand(java.lang.String[])
+	 */
+    public IAdminCommand getCommand(String[] args) {
     	
     	if (args.length < 1) {
             return null;
@@ -118,4 +116,30 @@ public class SignServerCommandFactory {
 		
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.signserver.cli.ISignServerCommandFactory#outputHelp(java.io.PrintStream)
+	 */
+	public void outputHelp(PrintStream out) {
+	    	
+	    	String usageString = "Usage: signserver < getstatus | getconfig | reload ";
+	    	if(CommonAdminInterface.isSignServerMode()){
+	    		usageString +="| resync ";
+	    	}
+	    	usageString +="| setproperty | setproperties | setpropertyfromfile | removeproperty | dumpproperties ";
+	    	if(CommonAdminInterface.isSignServerMode()){
+	    	  usageString +="| listauthorizedclients | addauthorizedclient | removeauthorizedclient ";
+	    	}
+	    	usageString +="| uploadsignercertificate | uploadsignercertificatechain | activatesigntoken | deactivatesigntoken | generatecertreq ";
+	    	if(CommonAdminInterface.isSignServerMode()){	
+	    		usageString +="| archive";
+	    	}
+	        usageString+= "> \n";
+	        out.println(usageString);
+	    	if(CommonAdminInterface.isSignServerMode()){
+	    		out.println("Available archive commands : Usage: signserver archive < findfromarchiveid | findfromrequestip | findfromrequestcert > \n");
+	    	}
+	    	out.println("Each basic command give more help");
+
+	    }
 } 

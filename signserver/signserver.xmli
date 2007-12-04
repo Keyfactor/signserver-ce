@@ -156,7 +156,7 @@ database.password      = ${database.password}
 	    <!-- Build signserver ejb part                                           -->
 	    <!-- =================================================================== -->
 	    <target name="signserver-ejb.jar" depends="timeStampTestClient, signserver:compile" description="Creates master ejb.jar" unless="buildMailSigner">
-			<mkdir dir="${src.external}"/>
+
 	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
 	            <manifest>
 	                <!-- todo: autogenerate this from a fileset -->
@@ -172,32 +172,21 @@ database.password      = ${database.password}
 	        	<fileset dir="." includes="signserver_server.properties"/>
 	        	<fileset dir="src/java" includes="profilemappings.properties"/>
 	            <fileset dir="${build}">
-	              <include name="org/signserver/groupkeyservice/**" />
-	              <include name="org/signserver/validationservice/**" />
-	        	  <include name="org/signserver/ejb/**" />
-	          	  <include name="org/signserver/common/**" />
-	          	  <include name="org/signserver/server/**" />
-	              <include name="org/signserver/web/**" />
-		          <include name="org/signserver/mailsigner/**" />
+	          	  <exclude name="org/signserver/cli/**" />
+	          	  <exclude name="org/signserver/client/**" />
+	          	  <exclude  name="org/signserver/protocol/validationservice/ws/**" />
+	              <exclude  name="org/signserver/protocol/ws/**" />
+		          <exclude name="org/signserver/mailsigner/**" />
 	        	</fileset>
-	            <fileset dir="${src.external}"/>
 	        </jar>
 	    </target>
 	       
-	    
-	    <!-- =================================================================== -->
-	    <!-- Build external web part                                                                                                                             -->
-	    <!-- =================================================================== -->
-	    <target if="ext.web.src" name="ext.web.war" depends="signserver:compile" unless="buildMailSigner">
-	        <war destfile="${webwar}" webxml="${ext.web.src}/WEB-INF/web.xml">
-	            <fileset dir="${ext.web.src}" excludes="WEB-INF/web.xml" />
-	        </war>
-	    </target>
+
 		
 	    <!-- =================================================================== -->
 	    <!-- Build web part                                                                                                                             -->
 	    <!-- =================================================================== -->
-	    <target unless="ext.web.src" name="web.war" depends="ext.web.war">
+	    <target name="web.war" depends="signserver:compile" unless="buildMailSigner">
 	        <war destfile="${webwar}" webxml="${web.src}/WEB-INF/web.xml">
 	            <fileset dir="${web.src}" excludes="WEB-INF/web.xml" />
 	        </war>

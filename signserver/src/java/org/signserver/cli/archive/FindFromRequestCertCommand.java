@@ -12,24 +12,28 @@
  *************************************************************************/
 
 
-package org.signserver.cli;
+package org.signserver.cli.archive;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 
+import org.signserver.cli.BaseCommand;
+import org.signserver.cli.ErrorAdminCommandException;
+import org.signserver.cli.IllegalAdminCommandException;
 import org.signserver.common.ArchiveDataVO;
 
 
 
-
+  
 /**
  * Returns all archive datas requested from given IP
  *
- * @version $Id: FindFromRequestIPCommand.java,v 1.2 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: FindFromRequestCertCommand.java,v 1.1 2007-12-04 15:35:10 herrvendil Exp $
  */
-public class FindFromRequestIPCommand extends BaseCommand {
+public class FindFromRequestCertCommand extends BaseCommand {
 	
 	
 	
@@ -38,7 +42,7 @@ public class FindFromRequestIPCommand extends BaseCommand {
      *
      * @param args command line arguments
      */
-    public FindFromRequestIPCommand(String[] args) {
+    public FindFromRequestCertCommand(String[] args) {
         super(args);
     }
 
@@ -49,16 +53,18 @@ public class FindFromRequestIPCommand extends BaseCommand {
      * @throws ErrorAdminCommandException Error running command
      */
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
-        if (args.length != 5) {
-	       throw new IllegalAdminCommandException("Usage: signserver archive findfromrequestip <signerid> <requestip> <outputpath>\n" + 
-	       		                                  "Example: signserver archive findfromrequestip 1 10.1.1.1 /tmp/archivedata \n\n");	       
+        if (args.length != 6) {
+	       throw new IllegalAdminCommandException("Usage: signserver archive findfromrequestcert <signerid> <certificatesn (hex)> <issuerd> <outputpath>\n" + 
+	       		                                  "Example: signserver archive findfromrequestcert 1 EF34242D2324 \"CN=Test Root CA\" /tmp/archivedata \n\n");	       
 	    }	
         try {                    	
         	int signerid = getWorkerId(args[2], hostname);
         	checkThatWorkerIsSigner(signerid,hostname);
         	
-        	String requestIP = args[3];
-            File outputPath = new File(args[4]);
+        	String certsn = args[3];
+        	String issuerdn = args[4];
+        	BigInteger sn = new BigInteger(certsn,16);         	
+            File outputPath = new File(args[5]);
             if(!outputPath.exists()){
             	throw new IllegalAdminCommandException("Error output path " + args[4] + " doesn't exist\n\n");	 
             }
@@ -66,9 +72,9 @@ public class FindFromRequestIPCommand extends BaseCommand {
             	throw new IllegalAdminCommandException("Error output path " + args[4] + " isn't a directory\n\n");	 
             }            
             
-        	this.getOutputStream().println("Trying to find archive datas requested from IP " + requestIP +  "\n");
+        	this.getOutputStream().println("Trying to find archive datas requested from client with certificate " + certsn + " issued by " + issuerdn + "\n");
 		                               	
-        	List<ArchiveDataVO> result = getCommonAdminInterface(hostname).findArchiveDatasFromRequestIP(signerid,requestIP);        	        	
+        	List<ArchiveDataVO> result = getCommonAdminInterface(hostname).findArchiveDatasFromRequestCertificate(signerid,sn,issuerdn);        	        	
         	
             if(result.size() != 0){
             	Iterator<ArchiveDataVO> iter = result.iterator();
@@ -81,7 +87,7 @@ public class FindFromRequestIPCommand extends BaseCommand {
             	  this.getOutputStream().println("Archive data with archiveid " + next.getArchiveId() + " written to file : " +filename + "\n\n");
             	}
             }else{
-            	this.getOutputStream().println("Couldn't find any archive data from client with IP " + requestIP + " from signer " +signerid + "\n\n");
+            	this.getOutputStream().println("Couldn't find any archive data from client with certificate " + certsn + " issued by " + issuerdn + " from signer " +signerid + "\n\n");
             }        	
         	
     		this.getOutputStream().println("\n\n");

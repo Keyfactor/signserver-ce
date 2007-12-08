@@ -24,7 +24,7 @@ import org.signserver.server.ServiceExecutionFailedException;
  * 
  * 
  * @author Philip Vendil
- * $Id: IService.java,v 1.1 2007-02-27 16:18:28 herrvendil Exp $
+ * $Id: IService.java,v 1.2 2007-12-08 07:51:10 herrvendil Exp $
  */
 public interface IService extends IWorker{
 	 
@@ -45,8 +45,12 @@ public interface IService extends IWorker{
 	public void work() throws ServiceExecutionFailedException;
 	
 	/**
-	 * @return should return the seconds to next time the service should
-	 * execute, or -1 (DONE_EXECUTE) if the service should stop executing.
+	 * @return should return the milliseconds to next time the service should
+	 * execute, or -1 (DONE_EXECUTE) if the service should stop executing.´
+	 * 
+	 * IMPORTANT, this have changed since 2.0 version were seconds were 
+	 * specified. This shouldn't be confused with the INTERVAL setting 
+	 * that is still configured in seconds.
 	 */
 	public long getNextInterval();
 	

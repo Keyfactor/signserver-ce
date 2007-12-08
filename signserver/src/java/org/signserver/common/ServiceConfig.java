@@ -23,7 +23,7 @@ import java.util.Date;
  * 
  * @author Philip Vendil 2007 jan 23
  *
- * @version $Id: ServiceConfig.java,v 1.3 2007-10-28 12:25:01 herrvendil Exp $
+ * @version $Id: ServiceConfig.java,v 1.4 2007-12-08 07:51:10 herrvendil Exp $
  */
  
 public class ServiceConfig {
@@ -45,6 +45,13 @@ public class ServiceConfig {
 	 * Property that should define the interval i seconds the service should run.
 	 */
     public static final String INTERVAL = "INTERVAL";
+    
+    
+	/**
+	 * Property that should define a CRON expression of how often the service should run.
+	 * It should conform to Unix CRON standard. See developers manual for more details.
+	 */
+    public static final String CRON = "CRON";
     
     /**
      * Internal setting determining the  last time the service was runned

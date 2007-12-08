@@ -7,12 +7,12 @@ You need to drop your jdbc driver in ${jboss.home}/server/default/lib
 
 Customize at will as this is mainly for development.
 
-$Id: signserver-ds.xml,v 1.1 2007-02-27 16:18:16 herrvendil Exp $
+$Id: signserver-ds.xml,v 1.2 2007-12-08 07:51:28 herrvendil Exp $
 
  -->
 
 <datasources>
-   <local-tx-datasource>
+   <no-tx-datasource>
 
       <!-- The jndi name of the DataSource, it is prefixed with java:/ -->
       <!-- Datasources are not available outside the virtual machine -->
@@ -65,6 +65,6 @@ $Id: signserver-ds.xml,v 1.1 2007-02-27 16:18:16 herrvendil Exp $
            this is a debugging feature that should be turned off in production -->
       <track-statements/>
 
-   </local-tx-datasource>
+   </no-tx-datasource>
 
 </datasources>

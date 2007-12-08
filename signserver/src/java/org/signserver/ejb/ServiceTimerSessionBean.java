@@ -108,6 +108,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 			ServiceConfig serviceConfig = null;
 			IService service = null;
 			boolean run = false;
+			boolean isSingleton = false;
 			UserTransaction ut = sessionCtx.getUserTransaction();
 			try{
 				ut.begin();
@@ -116,12 +117,13 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 					serviceConfig = new ServiceConfig( WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession,em).getStatus().getActiveSignerConfig());
 					if(serviceConfig != null){					
 						service = (IService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession,em);
-						sessionCtx.getTimerService().createTimer(service.getNextInterval()*1000, timerInfo);
-						if(!service.isSingleton()){
+						sessionCtx.getTimerService().createTimer(service.getNextInterval(), timerInfo);
+						isSingleton = service.isSingleton();
+						if(!isSingleton){
 							run=true;						
 						}else{
 							GlobalConfiguration gc = globalConfigurationSession.getGlobalConfiguration();
-							Date nextRunDate = new Date();
+							Date nextRunDate = new Date(0);
 							if(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL,"SERVICENEXTRUNDATE"+ timerInfo.intValue()) != null){
 								nextRunDate = new Date(Long.parseLong(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL,"SERVICENEXTRUNDATE"+ timerInfo.intValue())));
 							}						
@@ -171,7 +173,9 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 					log.error("Service with id " + timerInfo.intValue() + " not found.");																
 				} 
 			}else{
-				log.info("Service " + timerInfo.intValue() +  " have been executed on another node in the cluster, waiting.");				
+				if(isSingleton){
+				  log.info("Service " + timerInfo.intValue() +  " have been executed on another node in the cluster, waiting.");
+				}
 			}
 		}
 	}    
@@ -205,7 +209,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 				if(!existingTimers.contains(nextId)){					
 					IService service = (IService) WorkerFactory.getInstance().getWorker(nextId.intValue(), workerConfigService, globalConfigurationSession, em);
 					if(service != null && service.isActive()  && service.getNextInterval() != IService.DONT_EXECUTE){
-					  sessionCtx.getTimerService().createTimer((service.getNextInterval()) *1000, nextId);
+					  sessionCtx.getTimerService().createTimer((service.getNextInterval()), nextId);
 					}
 				}
 			}

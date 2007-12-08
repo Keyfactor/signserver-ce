@@ -13,7 +13,16 @@
  
 package org.signserver.server.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
+import org.signserver.common.WorkerConfig;
 import org.signserver.server.ServiceExecutionFailedException;
 
 /**
@@ -23,19 +32,56 @@ import org.signserver.server.ServiceExecutionFailedException;
  * 
  * @author Philip Vendil 2007 jan 23
  *
- * @version $Id: DummyService.java,v 1.1 2007-02-27 16:18:28 herrvendil Exp $
+ * @version $Id: DummyService.java,v 1.2 2007-12-08 07:51:10 herrvendil Exp $
  */
 
 public class DummyService extends BaseService {
 
 	public transient Logger log = Logger.getLogger(this.getClass());
+	
+    String outPath = null;
+	
+	@Override
+	public void init(int workerId, WorkerConfig config, EntityManager em) {
+		super.init(workerId, config, em);
+		
+		outPath = config.getProperties().getProperty("OUTPATH");
+		
+		log.info("Initializing DummyService, output path : " + outPath);
+	}
+	
 	/**
 	 * Example of super simple service.
 	 * 
 	 * @see org.signserver.server.service.IService#work()
 	 */
 	public void work() throws ServiceExecutionFailedException {
-		log.info("DummyService.work() called.");
+		
+		int currentCount = 0;
+		
+		try{
+		  FileInputStream fis = new FileInputStream(outPath);
+		  ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		  int next = 0;
+		  while((next = fis.read()) != -1){
+			  baos.write(next);
+		  }
+		  fis.close();
+		  currentCount = Integer.parseInt(new String(baos.toByteArray()));
+		}catch(FileNotFoundException e){
+		}catch(IOException e){
+			throw new ServiceExecutionFailedException(e.getClass().getName() + " : " + e.getMessage());
+		}
+		currentCount++;
+		try{
+			FileOutputStream fos = new FileOutputStream(outPath);
+			fos.write(("" + currentCount).getBytes());
+			fos.close();
+		}catch(IOException e){
+			throw new ServiceExecutionFailedException(e.getClass().getName() + " : " + e.getMessage());
+		}
+		
+		log.info("DummyService.work() called. current count : " + currentCount);
 	}
 
 }

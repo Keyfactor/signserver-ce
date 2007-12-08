@@ -37,6 +37,7 @@
 	        <path refid="signserver.ext.classpath" />
 	        <fileset dir="lib" includes="*.jar" />
 	        <fileset dir="lib/itext" includes="*.jar" />
+	   	    <fileset dir="lib/quartz" includes="*.jar" />
 	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
 	   	    <fileset dir="lib/jaxws" includes="*.jar" />
 	        <path refid="j2ee.classpath" />
@@ -472,6 +473,7 @@ database.password      = ${database.password}
 	                <include name="${lib}/ldap.jar" />
 	            	<include name="${lib}/commons-lang-2.0.jar" />
 	            	<include name="${lib}/itext/*.jar" />
+	            	<include name="${lib}/quartz/*.jar" />
 	            </fileset>
 	            <fileset dir="${server.dist.dir}">
 	                <include name="*-ejb.jar" />
@@ -519,7 +521,8 @@ database.password      = ${database.password}
             <batchtest fork="yes" todir="${test.dir}/reports">
                 <fileset dir="${test.dir}">                  
                     <include name="**/ejb/Test*" /> 
-                    <include name="**/server/Test*" /> 
+                    <include name="**/server/Test*" />
+                	<include name="**/server/service/Test*" />
                 	<include name="**/server/validcache/Test*" />
                 	<include name="**/groupkeyservice/Test*" /> 
                 	<include name="**/cli/TestSignServer*" />

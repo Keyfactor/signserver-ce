@@ -13,7 +13,10 @@
 
 package org.signserver.validationservice.common;
 
-import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
@@ -32,10 +35,10 @@ import org.signserver.validationservice.server.ICertificateManager;
  * 
  * @author Philip Vendil 26 nov 2007
  *
- * @version $Id: Validation.java,v 1.2 2007-12-02 20:35:17 herrvendil Exp $
+ * @version $Id: Validation.java,v 1.3 2007-12-10 15:54:01 herrvendil Exp $
  */
 
-public class Validation implements Serializable{
+public class Validation implements Externalizable{
 	
 	private transient Logger log = Logger.getLogger(this.getClass());
 		
@@ -62,6 +65,11 @@ public class Validation implements Serializable{
 	private Date validationDate;
 	private Date revokedDate;
 	private int revokationReason = 0;
+	
+	/**
+	 * Default constructor used for serialization
+	 */
+	public Validation(){}
 	
 	/**
 	 * Constructor that should be used for validation that resulted in
@@ -178,6 +186,77 @@ public class Validation implements Serializable{
 	 */
 	public Date getValidationDate() {
 		return validationDate;
+	}
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+       validationDate = new Date(in.readLong());
+       int size = in.readInt();
+       certificateData = new byte[size];
+       in.readFully(certificateData);
+      
+       size = in.readInt();
+       byte[] stringData = new byte[size];
+       in.readFully(stringData);
+       status = Status.valueOf(new String(stringData,"UTF-8"));
+       
+       size = in.readInt();
+       if(size != 0){
+         stringData = new byte[size];
+         in.readFully(stringData);
+         statusMessage = new String(stringData,"UTF-8");
+       }
+		
+       long time = in.readLong();
+       if(time != 0){
+    	   revokedDate = new Date(time);
+       }
+       
+       revokationReason = in.readInt();
+       
+       cAChainData = new ArrayList<byte[]>();
+       size = in.readInt();
+		for(int i =0 ;i<size; i++){
+			int dataLen = in.readInt();
+			byte[] data = new byte[dataLen];
+			in.readFully(data);
+			cAChainData.add(data.clone());
+		}       
+       
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeLong(validationDate.getTime());
+		out.writeInt(certificateData.length);
+		out.write(certificateData);
+		
+		byte[] stringData = status.name().getBytes("UTF-8"); 
+		out.writeInt(stringData.length);
+		out.write(stringData);
+		
+        if(statusMessage==null){
+        	out.writeInt(0);
+        }else{
+        	stringData = statusMessage.getBytes("UTF-8"); 
+    		out.writeInt(stringData.length);
+    		out.write(stringData);
+        }
+		
+        if(revokedDate == null){
+        	out.writeLong(0);
+        }else{
+        	out.writeLong(revokedDate.getTime());
+        }
+
+        out.writeInt(revokationReason);	
+ 		
+		out.writeInt(cAChainData.size());
+		for(int i =0 ;i<cAChainData.size(); i++){
+			byte[] data = cAChainData.get(i);
+			out.writeInt(data.length);
+			out.write(data);
+		}
+		
 	}
 
 	

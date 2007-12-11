@@ -12,9 +12,12 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import org.signserver.common.IProcessResponse;
+import org.signserver.common.RequestAndResponseManager;
 
 /**
  * Class containing info about the remove group keys
@@ -26,7 +29,7 @@ import org.signserver.common.IProcessResponse;
  * 
  * @author Philip Vendil 13 nov 2007
  *
- * @version $Id: RemoveGroupKeyResponse.java,v 1.1 2007-11-27 06:05:06 herrvendil Exp $
+ * @version $Id: RemoveGroupKeyResponse.java,v 1.2 2007-12-11 05:36:58 herrvendil Exp $
  */
 public class RemoveGroupKeyResponse implements IProcessResponse{
 
@@ -36,12 +39,10 @@ public class RemoveGroupKeyResponse implements IProcessResponse{
 	private boolean operationSuccessful = false;
 	private long numOfKeysRemoved = 0;
 
-	/**
-	 * Not Used
-	 */
-	public Serializable getProcessedData() {
-		return null;
-	}
+    /**
+     * Default constructor used during serialization
+     */
+	public RemoveGroupKeyResponse(){}
 
 	/**
 	 * 
@@ -68,5 +69,22 @@ public class RemoveGroupKeyResponse implements IProcessResponse{
 	 */
 	public long getNumOfKeysRemoved() {
 		return numOfKeysRemoved;
+	}
+
+
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		numOfKeysRemoved = in.readLong();
+		operationSuccessful = in.readBoolean();
+		
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+       out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_REMOVEKEY);
+       out.writeLong(numOfKeysRemoved);
+       out.writeBoolean(operationSuccessful);
+		
 	}
 }

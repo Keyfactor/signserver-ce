@@ -12,7 +12,12 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 import org.signserver.common.IProcessRequest;
+import org.signserver.common.RequestAndResponseManager;
 
 /**
  * Request to a GroupKeyService to pregenerate unassigned keys into database.
@@ -22,7 +27,7 @@ import org.signserver.common.IProcessRequest;
  * 
  * @author Philip Vendil
  * 
- * $Id: PregenerateKeysRequest.java,v 1.2 2007-11-27 06:05:05 herrvendil Exp $
+ * $Id: PregenerateKeysRequest.java,v 1.3 2007-12-11 05:36:58 herrvendil Exp $
  */
 public class PregenerateKeysRequest implements IProcessRequest{
 
@@ -30,6 +35,10 @@ public class PregenerateKeysRequest implements IProcessRequest{
 
     int numberOfKeys;
     
+    /**
+     * Default constructor used during serialization
+     */
+    public PregenerateKeysRequest(){}
     
     /**
      * Constructor pregenerating unassigned keys with default key type.
@@ -52,9 +61,19 @@ public class PregenerateKeysRequest implements IProcessRequest{
 	public int getNumberOfKeys() {
 		return numberOfKeys;
 	}
-	
 
-    
-    
+
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		this.numberOfKeys = in.readInt();
+		
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_PREGENKEYS);
+        out.writeInt(numberOfKeys);
+	}
 
 }

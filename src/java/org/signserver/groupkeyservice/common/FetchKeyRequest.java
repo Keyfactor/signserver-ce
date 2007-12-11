@@ -12,14 +12,19 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 import org.signserver.common.IProcessRequest;
+import org.signserver.common.RequestAndResponseManager;
 
 /**
  * FetchKeyRequest is a process request sent to GroupKeyService in order to fetch a 
  * group key given a documentId.
  * 
  * @author Philip Vendil
- * $Id: FetchKeyRequest.java,v 1.2 2007-11-27 06:05:06 herrvendil Exp $
+ * $Id: FetchKeyRequest.java,v 1.3 2007-12-11 05:36:58 herrvendil Exp $
  */
 public class FetchKeyRequest implements IProcessRequest {
 	
@@ -29,6 +34,10 @@ public class FetchKeyRequest implements IProcessRequest {
 	private boolean genKeyIfNotExist = false;	
 	private int keyPart = GroupKeyServiceConstants.KEYPART_SYMMETRIC;
 
+    /**
+     * Default constructor used during serialization
+     */
+	public FetchKeyRequest(){}
 	
 	/**
 	 * Default constructor used to fetch a key using the default key type.
@@ -70,6 +79,29 @@ public class FetchKeyRequest implements IProcessRequest {
 	 */
 	public int getKeyPart() {
 		return keyPart;
+	}
+
+
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		int stringLen = in.readInt();
+		byte[] stringData = new byte[stringLen];
+		in.readFully(stringData);
+		this.documentId = new String(stringData,"UTF-8");
+
+		this.genKeyIfNotExist = in.readBoolean();
+		this.keyPart = in.readInt();
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_FETCHKEY);
+		byte[] stringData = documentId.getBytes("UTF-8");
+		out.writeInt(stringData.length);
+		out.write(stringData);
+		out.writeBoolean(genKeyIfNotExist);
+		out.writeInt(keyPart);
 	}
 	
 	

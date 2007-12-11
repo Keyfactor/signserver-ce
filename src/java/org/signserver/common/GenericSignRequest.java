@@ -14,13 +14,17 @@
  
 package org.signserver.common;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 /**
  * A Generic work request class implementing the minimal required functionality.
  * 
  * Could be used for TimeStamp Request.
  * 
  * @author philip
- * $Id: GenericSignRequest.java,v 1.2 2007-11-09 15:45:50 herrvendil Exp $
+ * $Id: GenericSignRequest.java,v 1.3 2007-12-11 05:36:58 herrvendil Exp $
  */
 public class GenericSignRequest implements ISignRequest {
 
@@ -29,6 +33,14 @@ public class GenericSignRequest implements ISignRequest {
 
 	private int requestID;
 	private Object requestData;
+	
+
+    /**
+     * Default constructor used during serialization
+     */
+	public GenericSignRequest() {
+		super();
+	}
 	
 	/**
 	 * Creates a GenericSignRequest, works as a simple VO.
@@ -55,5 +67,23 @@ public class GenericSignRequest implements ISignRequest {
 	public Object getRequestData() {	
 		return requestData;
 	}
+
+
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		this.requestID = in.readInt();
+		this.requestData = in.readObject();		
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.REQUESTTYPE_GENERICSIGNREQUEST);
+		out.writeInt(requestID);
+		out.writeObject(requestData);
+		
+	}
+
+
 
 }

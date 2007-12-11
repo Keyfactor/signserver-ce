@@ -14,7 +14,7 @@
  
 package org.signserver.common;
 
-import java.io.Serializable;
+import java.io.Externalizable;
 
 /**
  * Interface used in responses from the WorkerSession.process method. Should
@@ -22,22 +22,12 @@ import java.io.Serializable;
  * 
  * 
  * @author Philip Vendil
- * $Id: IProcessResponse.java,v 1.1 2007-11-09 15:45:49 herrvendil Exp $
+ * $Id: IProcessResponse.java,v 1.2 2007-12-11 05:36:58 herrvendil Exp $
  */
 
-public interface IProcessResponse extends Serializable{
+public interface IProcessResponse extends Externalizable{
 	
 
-    
-    /**
-     * Should contain the data that is processed, this is a very general method
-     * which result can very depending on worker
-     */
-    public Serializable getProcessedData();
-    
-
-    
-    
 
     
 

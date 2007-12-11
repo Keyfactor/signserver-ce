@@ -24,7 +24,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  * 
  * @author Philip Vendil 2007 jan 26
  *
- * @version $Id: SignServerUtil.java,v 1.1 2007-02-27 16:18:11 herrvendil Exp $
+ * @version $Id: SignServerUtil.java,v 1.2 2007-12-11 05:36:58 herrvendil Exp $
  */
 
 public class SignServerUtil {
@@ -40,5 +40,7 @@ public class SignServerUtil {
 
 		}
 	}
+	
+
 	
 }

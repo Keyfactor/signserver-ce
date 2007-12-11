@@ -12,9 +12,12 @@
  *************************************************************************/
 package org.signserver.validationservice.common;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import org.signserver.common.IProcessResponse;
+import org.signserver.common.RequestAndResponseManager;
 
 /**
  * ValidateResponse is the response sent back from the validation service
@@ -22,12 +25,17 @@ import org.signserver.common.IProcessResponse;
  * 
  *
  * @author Philip Vendil
- * $Id: ValidateResponse.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
+ * $Id: ValidateResponse.java,v 1.2 2007-12-11 05:37:52 herrvendil Exp $
  */
 public class ValidateResponse implements IProcessResponse{
 	private static final long serialVersionUID = 1L;
 
 	private Validation validation;
+	
+    /**
+     * Default constructor used during serialization
+     */
+	public ValidateResponse(){}
 	
 	/**
 	 * Main constructor
@@ -39,12 +47,6 @@ public class ValidateResponse implements IProcessResponse{
 		this.validation = validation;
 	}
 
-	/**
-	 * Not supported method.
-	 */
-	public Serializable getProcessedData() {
-		return null;
-	}
 
 
 
@@ -53,6 +55,23 @@ public class ValidateResponse implements IProcessResponse{
 	 */
 	public Validation getValidation() {
 		return validation;
+	}
+
+
+
+
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		validation = (Validation) in.readObject();
+		
+	}
+
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.RESPONSETYPE_VALIDATE);
+		out.writeObject(validation);
 	}
 
 

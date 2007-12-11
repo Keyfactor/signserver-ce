@@ -62,6 +62,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 	
 	public void test00SetupDatabase() throws Exception{
+
 		
 		  KeyPair validRootCA1Keys = KeyTools.genKeys("1024", "RSA");
 		  validRootCA1 = ValidationTestUtils.genCert("CN=ValidRootCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
@@ -143,7 +144,9 @@ public class TestValidationServiceWorker extends TestCase {
 		  sSSession.setWorkerProperty(15, "VAL2.ISSUER1.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(revocedRootCA1Chain));
 		  sSSession.setWorkerProperty(15, "VAL2.ISSUER250.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(longChain));
 		  
-		  sSSession.reloadConfiguration(15);		  
+		  sSSession.reloadConfiguration(15);	
+		  
+		  
 		  
 		  
 	}

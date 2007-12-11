@@ -13,6 +13,7 @@
 
 package org.signserver.protocol.ws.server;
 
+import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -30,14 +31,15 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.log4j.Logger;
-import org.signserver.common.GenericSignRequest;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.IProcessRequest;
 import org.signserver.common.IProcessResponse;
 import org.signserver.common.ISignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ProcessableConfig;
+import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
@@ -59,7 +61,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementor of the ISignServerWS interface.
  * 
  * @author Philip Vendil
- * $Id: SignServerWS.java,v 1.2 2007-12-02 20:35:19 herrvendil Exp $
+ * $Id: SignServerWS.java,v 1.3 2007-12-11 05:38:03 herrvendil Exp $
  */
 
 @WebService(targetNamespace="gen.ws.protocol.signserver.org")
@@ -73,7 +75,7 @@ public class SignServerWS implements ISignServerWS {
 
 	public Collection<WorkerStatusWS> getStatus(String workerIdOrName)
 			throws InvalidWorkerIdException {
-		log.info("WS getStatus called");
+		log.debug("WS getStatus called");
 		ArrayList<WorkerStatusWS> retval = new ArrayList<WorkerStatusWS>();
 		
 		String errormessage = "";
@@ -89,11 +91,11 @@ public class SignServerWS implements ISignServerWS {
 			errormessage = null;
 		}
 		
-	     // TODO Check Signers
 		int workerId = 0;
 		try {
-			if(workerIdOrName.equalsIgnoreCase(ISignServerWS.ALLWORKERS))
-			workerId = getWorkerId(workerIdOrName);
+			if(!workerIdOrName.equalsIgnoreCase(ISignServerWS.ALLWORKERS)){
+			  workerId = getWorkerId(workerIdOrName);
+			}
 		} catch (IllegalRequestException e) {
 			throw new InvalidWorkerIdException("Worker id or name " + workerIdOrName + " couldn't be found.");
 		}
@@ -104,6 +106,7 @@ public class SignServerWS implements ISignServerWS {
 				  errormessage = checkSigner(workerId);
 			}
 			WorkerStatusWS resp = new WorkerStatusWS();
+			resp.setWorkerName(workerIdOrName);
 			if(errormessage == null){					
 				resp.setOverallStatus(WorkerStatusWS.OVERALLSTATUS_ALLOK);
 			}else{
@@ -121,6 +124,7 @@ public class SignServerWS implements ISignServerWS {
 				}
 				
 				WorkerStatusWS resp = new WorkerStatusWS();
+				resp.setWorkerName("" +next);
 				if(errormessage == null){					
 					resp.setOverallStatus(WorkerStatusWS.OVERALLSTATUS_ALLOK);
 				}else{
@@ -130,12 +134,6 @@ public class SignServerWS implements ISignServerWS {
 				retval.add(resp);			    
 			}							
 		}
-		
-		
-		
-		
-		retval.add(new WorkerStatusWS(WorkerStatusWS.OVERALLSTATUS_ALLOK,null));
-		
 		return retval;
 	}
 	
@@ -171,10 +169,21 @@ public class SignServerWS implements ISignServerWS {
 		
 		for (Iterator<ProcessRequestWS> iterator = requests.iterator(); iterator.hasNext();) {
 			ProcessRequestWS next = iterator.next();
-			GenericSignRequest req = new GenericSignRequest(next.getRequestID(),next.getSignRequestData());
+			IProcessRequest req;
+			try {
+				req = RequestAndResponseManager.parseProcessRequest(next.getRequestData());
+			} catch (IOException e1) {
+				log.error("Error parsing process request",e1);
+				throw new IllegalRequestException(e1.getMessage());
+			}
 			IProcessResponse resp = getSignServerSession().process(workerId, req, new RequestContext(clientCert, requestIP));
 			ProcessResponseWS wsresp = new ProcessResponseWS();
-			wsresp.setProcessedData((byte[]) resp.getProcessedData());
+			try {
+				wsresp.setResponseData(RequestAndResponseManager.serializeProcessResponse(resp));
+			} catch (IOException e1) {
+				log.error("Error parsing process response",e1);
+				throw new SignServerException(e1.getMessage());
+			}
 			if(resp instanceof ISignResponse){
 				wsresp.setRequestID(((ISignResponse)resp).getRequestID());
 				try {

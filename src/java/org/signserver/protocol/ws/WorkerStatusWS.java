@@ -20,7 +20,7 @@ package org.signserver.protocol.ws;
  * 
  * @author Philip Vendil 28 okt 2007
  *
- * @version $Id: WorkerStatusWS.java,v 1.1 2007-11-27 06:05:07 herrvendil Exp $
+ * @version $Id: WorkerStatusWS.java,v 1.2 2007-12-11 05:37:33 herrvendil Exp $
  */
 
 public class WorkerStatusWS {
@@ -28,6 +28,7 @@ public class WorkerStatusWS {
 	public static transient final String OVERALLSTATUS_ALLOK = "ALLOK";
 	public static transient final String OVERALLSTATUS_ERROR = "ERROR";
 	
+	private String workerName;
 	private String overallStatus;
 	private String errormessage;
 	
@@ -39,12 +40,13 @@ public class WorkerStatusWS {
 	}
 	
 	/**
-	 * 
+	 * @param workerName worker name or id.
 	 * @param overallStatus the
 	 * @param errormessage the error message describing the problem
 	 * if not OVERALLSTATUS_ALLOK is returned
 	 */
-	public WorkerStatusWS(String overallStatus, String errormessage){
+	public WorkerStatusWS(String workerName, String overallStatus, String errormessage){
+		this.workerName = workerName;
 		this.overallStatus = overallStatus;
 		this.errormessage = errormessage;
 	}
@@ -91,6 +93,20 @@ public class WorkerStatusWS {
 	 */
 	public void setErrormessage(String errormessage) {
 		this.errormessage = errormessage;
+	}
+
+	/**
+	 * @return the workerName or workerId
+	 */
+	public String getWorkerName() {
+		return workerName;
+	}
+
+	/**
+	 * @param workerName the workerName or workerId
+	 */
+	public void setWorkerName(String workerName) {
+		this.workerName = workerName;
 	}
 	
 	

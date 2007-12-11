@@ -28,7 +28,7 @@ import org.signserver.protocol.ws.gen.ProcessResponseWS;
 * 
 * @author Philip Vendil 28 okt 2007
 *
-* @version $Id: WSClientUtil.java,v 1.1 2007-11-27 06:05:11 herrvendil Exp $
+* @version $Id: WSClientUtil.java,v 1.2 2007-12-11 05:37:33 herrvendil Exp $
 */
 public class WSClientUtil {
 
@@ -41,15 +41,14 @@ public class WSClientUtil {
 		for (Iterator<org.signserver.protocol.ws.ProcessRequestWS> iterator = signRequestWS.iterator(); iterator.hasNext();) {
 			org.signserver.protocol.ws.ProcessRequestWS next = iterator.next();
 			ProcessRequestWS temp = new ProcessRequestWS();
-			temp.setRequestID(next.getRequestID());
-			temp.setSignRequestDataBase64(next.getSignRequestDataBase64());
+			temp.setRequestDataBase64(next.getRequestDataBase64());
 			retval.add(temp);
 		}
 		return retval;
 	}
 	
 	/**
-	 * Method used to convert a auto generated SignRequestWS to a coded SignRequestWS 
+	 * Method used to convert a auto generated ProcessResponseWS to a coded ProcessResponseWS 
 	 */
 	public static List<org.signserver.protocol.ws.ProcessResponseWS> convertProcessResponseWS( 
 			List<ProcessResponseWS> signResponseWS){
@@ -58,16 +57,7 @@ public class WSClientUtil {
 		for (Iterator<ProcessResponseWS> iterator = signResponseWS.iterator(); iterator.hasNext();) {
 			ProcessResponseWS next =  iterator.next();	
 			org.signserver.protocol.ws.ProcessResponseWS temp = new org.signserver.protocol.ws.ProcessResponseWS();
-			temp.setRequestID(next.getRequestID());	
-			temp.setProcessedDataBase64(next.getProcessedDataBase64());
-			temp.setSignerCertificate(convertCertificate(next.getSignerCertificate()));
-
-			List<org.signserver.protocol.ws.gen.Certificate> chain = next.getSignerCertificateChain();
-			ArrayList<org.signserver.protocol.ws.Certificate> resChain = new ArrayList<org.signserver.protocol.ws.Certificate>();
-			for (Iterator<org.signserver.protocol.ws.gen.Certificate> iter2 = chain.iterator(); iterator.hasNext();) {
-				resChain.add(convertCertificate(iter2.next()));
-			}
-			temp.setSignerCertificateChain(resChain);
+			temp.setResponseDataBase64(next.getResponseDataBase64());
 		}
 		return retval;
 	}
@@ -77,11 +67,12 @@ public class WSClientUtil {
 	 * @param signerCertificate
 	 * @return
 	 */
+	/*
 	private static org.signserver.protocol.ws.Certificate convertCertificate(
 			org.signserver.protocol.ws.gen.Certificate certificate) {
 		org.signserver.protocol.ws.Certificate retval = new  org.signserver.protocol.ws.Certificate();
 		retval.setCertificateBase64(certificate.getCertificateBase64());
 		return retval;
-	}
+	}*/
 	
 }

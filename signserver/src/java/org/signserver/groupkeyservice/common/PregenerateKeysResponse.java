@@ -12,15 +12,18 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import org.signserver.common.IProcessResponse;
+import org.signserver.common.RequestAndResponseManager;
 
 /**
  * Response sent after processing the PregenerateKeysRequest
  * 
  * @author Philip Vendil
- * $Id: PregenerateKeysResponse.java,v 1.2 2007-11-27 06:05:06 herrvendil Exp $
+ * $Id: PregenerateKeysResponse.java,v 1.3 2007-12-11 05:36:58 herrvendil Exp $
  */
 public class PregenerateKeysResponse implements IProcessResponse {
 
@@ -28,7 +31,10 @@ public class PregenerateKeysResponse implements IProcessResponse {
 	
 	int numberOfKeysGenerated;
 	
-
+    /**
+     * Default constructor used during serialization
+     */
+	public PregenerateKeysResponse(){}
 	
    /**
     * Main constructor
@@ -49,12 +55,18 @@ public class PregenerateKeysResponse implements IProcessResponse {
 
 
 
-	/**
-	 * Not implemented
-	 * @see org.signserver.common.IProcessResponse#getProcessedData()
-	 */
-	public Serializable getProcessedData() {	
-		return null;
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+         in.readInt();
+         numberOfKeysGenerated = in.readInt();
+		
 	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_PREGENKEYS);
+		out.writeInt(numberOfKeysGenerated);
+	}
+
+
 
 }

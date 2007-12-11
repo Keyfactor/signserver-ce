@@ -12,7 +12,12 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Date;
+
+import org.signserver.common.RequestAndResponseManager;
 
 /**
  * Class containing info about the remove group keys request
@@ -21,7 +26,7 @@ import java.util.Date;
  * 
  * @author Philip Vendil 13 nov 2007
  *
- * @version $Id: TimeRemoveGroupKeyRequest.java,v 1.1 2007-11-27 06:05:06 herrvendil Exp $
+ * @version $Id: TimeRemoveGroupKeyRequest.java,v 1.2 2007-12-11 05:36:58 herrvendil Exp $
  */
 public class TimeRemoveGroupKeyRequest implements IRemoveGroupKeyRequest {
 
@@ -34,6 +39,11 @@ public class TimeRemoveGroupKeyRequest implements IRemoveGroupKeyRequest {
 	private int type;
 	private Date beginDate;
 	private Date endDate;
+	
+    /**
+     * Default constructor used during serialization
+     */
+	public TimeRemoveGroupKeyRequest(){}
 	
 	/**
 	 * 
@@ -68,6 +78,22 @@ public class TimeRemoveGroupKeyRequest implements IRemoveGroupKeyRequest {
 	 */
 	public Date getEndDate() {
 		return endDate;
+	}
+
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		type = in.readInt();
+		beginDate = new Date(in.readLong());
+		endDate = new Date(in.readLong());
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_TIMEREMKEYS);
+		out.writeInt(type);
+		out.writeLong(beginDate.getTime());
+		out.writeLong(endDate.getTime());		
 	}
 
 }

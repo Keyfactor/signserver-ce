@@ -12,9 +12,12 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import org.signserver.common.IProcessResponse;
+import org.signserver.common.RequestAndResponseManager;
 
 /**
  * FetchKeyResponse is given by a GroupKeyService processing a FetchKeyRequest if
@@ -23,13 +26,18 @@ import org.signserver.common.IProcessResponse;
  * @author phive
  *
  * @author Philip Vendil
- * $Id: FetchKeyResponse.java,v 1.2 2007-11-27 06:05:06 herrvendil Exp $
+ * $Id: FetchKeyResponse.java,v 1.3 2007-12-11 05:36:58 herrvendil Exp $
  */
 public class FetchKeyResponse implements IProcessResponse{
 	private static final long serialVersionUID = 1L;
 
 	private String documentId;
 	private byte[] groupKey;
+	
+    /**
+     * Default constructor used during serialization
+     */
+	public FetchKeyResponse(){}
 		
 	/**
 	 * Main constructor for the FetchKeyResponse
@@ -55,8 +63,25 @@ public class FetchKeyResponse implements IProcessResponse{
 		return  groupKey;
 	}
 
-	public Serializable getProcessedData() {
-		return groupKey;
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		int stringLen = in.readInt();
+		byte[] stringData = new byte[stringLen];
+		in.readFully(stringData);
+		this.documentId = new String(stringData,"UTF-8");
+		int keySize = in.readInt();
+		groupKey = new byte[keySize];
+		in.readFully(groupKey);		
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_FETCHKEY);
+		byte[] stringData = documentId.getBytes("UTF-8");
+		out.writeInt(stringData.length);
+		out.write(stringData);
+		out.writeInt(groupKey.length);
+		out.write(groupKey);
 	}
 	
 

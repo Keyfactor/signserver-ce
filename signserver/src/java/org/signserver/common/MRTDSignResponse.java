@@ -14,9 +14,16 @@
  
 package org.signserver.common;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
+
+import org.ejbca.util.CertTools;
 
 /**
  * Class used for the response of the signSession.signData method and contain information
@@ -24,7 +31,7 @@ import java.util.ArrayList;
  * 
  * 
  * @author Philip Vendil
- * $Id: MRTDSignResponse.java,v 1.3 2007-11-09 15:45:49 herrvendil Exp $
+ * $Id: MRTDSignResponse.java,v 1.4 2007-12-11 05:36:58 herrvendil Exp $
  */
 
 public class MRTDSignResponse implements IProcessResponse {
@@ -32,13 +39,18 @@ public class MRTDSignResponse implements IProcessResponse {
 	private static final long serialVersionUID = 1L;
 	
 	private int requestID = 0;
-	private ArrayList<?> signedData = null;
+	private ArrayList<byte[]> signedData = null;
 	private Certificate signerCertificate = null;
 
+    /**
+     * Default constructor used during serialization
+     */
+	public MRTDSignResponse(){}
+	
 	/**
 	 * Main Constuctor
 	 */
-	public MRTDSignResponse(int requestID, ArrayList<?> signedData, Certificate signerCertificate){
+	public MRTDSignResponse(int requestID, ArrayList<byte[]> signedData, Certificate signerCertificate){
 	  this.requestID = requestID;
 	  this.signedData = signedData;
 	  this.signerCertificate = signerCertificate;
@@ -82,6 +94,49 @@ public class MRTDSignResponse implements IProcessResponse {
 	 */	
 	public String getArchiveId() {
 		return null;
+	}
+
+
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		this.requestID = in.readInt();
+		int arraySize = in.readInt();
+		this.signedData = new ArrayList<byte[]>();
+		for(int i = 0;i<arraySize;i++){
+			int dataSize = in.readInt();
+			byte[] data = new byte[dataSize];
+			in.readFully(data);
+			signedData.add(data);
+		}
+		int certSize = in.readInt();
+		byte[] certData = new byte[certSize];
+		in.readFully(certData);
+		try {
+			this.signerCertificate = CertTools.getCertfromByteArray(certData);
+		} catch (CertificateException e) {
+			throw new IOException(e);
+		}
+		
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.RESPONSETYPE_MRTDSIGNRESPONSE);
+		out.writeInt(this.requestID);
+		out.writeInt(this.signedData.size());
+		for(byte[] data : signedData){
+			out.writeInt(data.length);
+			out.write(data);
+		}
+		try {
+			byte[] certData = this.signerCertificate.getEncoded();
+			out.writeInt(certData.length);
+			out.write(certData);
+		} catch (CertificateEncodingException e) {
+			throw new IOException(e);
+		}
+				
 	}
 
 }

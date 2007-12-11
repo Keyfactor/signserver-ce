@@ -14,7 +14,7 @@
 
 package org.signserver.common;
 
-import java.io.Serializable;
+import java.io.Externalizable;
 
 /**
  * Interface used for requests to WorkerSession.process method. Should
@@ -22,10 +22,11 @@ import java.io.Serializable;
  * 
  * 
  * @author Philip Vendil
- * $Id: IProcessRequest.java,v 1.1 2007-11-09 15:45:49 herrvendil Exp $
+ * $Id: IProcessRequest.java,v 1.2 2007-12-11 05:36:58 herrvendil Exp $
  */
 
-public interface IProcessRequest extends Serializable{
+public interface IProcessRequest extends Externalizable{
 	
+
 
 }

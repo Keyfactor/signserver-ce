@@ -14,8 +14,15 @@
  
 package org.signserver.common;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+
+import org.ejbca.util.CertTools;
 
 /**
  * A generic work response class implementing the minimal required functionality.
@@ -23,7 +30,7 @@ import java.security.cert.Certificate;
  * Could be used for TimeStamp Responses.
  * 
  * @author philip
- * $Id: GenericSignResponse.java,v 1.2 2007-11-09 15:45:49 herrvendil Exp $
+ * $Id: GenericSignResponse.java,v 1.3 2007-12-11 05:36:58 herrvendil Exp $
  */
 public class GenericSignResponse implements ISignResponse {
 
@@ -34,6 +41,10 @@ public class GenericSignResponse implements ISignResponse {
 	private ArchiveData archiveData;
 	private String archiveId;
 	
+    /**
+     * Default constructor used during serialization
+     */
+	public GenericSignResponse(){}
 	
 	/**
 	 * Creates a GenericWorkResponse, works as a simple VO.
@@ -57,12 +68,6 @@ public class GenericSignResponse implements ISignResponse {
 		return requestID;
 	}
 
-	/**
-	 * @see org.signserver.common.IProcessResponse#getProcessedData()
-	 */
-	public Serializable getProcessedData() {	
-		return processedData;
-	}
 
 	/**
 	 * @see org.signserver.common.IProcessResponse#getSignerCertificate()
@@ -84,5 +89,44 @@ public class GenericSignResponse implements ISignResponse {
 	public String getArchiveId() {
 		return archiveId;
 	}
+
+	
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		this.requestID = in.readInt();
+		processedData = (Serializable) in.readObject();
+		int certSize = in.readInt();
+		byte[] certData = new byte[certSize];
+		in.readFully(certData);
+		try {
+			this.signerCertificate = CertTools.getCertfromByteArray(certData);
+		} catch (CertificateException e) {
+			throw new IOException(e);
+		}
+		
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GENERICSIGNRESPONSE);
+		out.writeInt(this.requestID);
+		out.writeObject(processedData);
+		try {
+			byte[] certData = this.signerCertificate.getEncoded();
+			out.writeInt(certData.length);
+			out.write(certData);
+		} catch (CertificateEncodingException e) {
+			throw new IOException(e);
+		}
+	}
+
+	/**
+	 * @return the processedData
+	 */
+	public Serializable getProcessedData() {
+		return processedData;
+	}
+
+
 
 }

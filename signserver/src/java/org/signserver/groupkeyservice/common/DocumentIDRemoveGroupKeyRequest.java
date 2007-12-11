@@ -12,7 +12,13 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.signserver.common.RequestAndResponseManager;
 
 /**
  * Class containing info about the remove group keys request
@@ -21,7 +27,7 @@ import java.util.List;
  * 
  * @author Philip Vendil 13 nov 2007
  *
- * @version $Id: DocumentIDRemoveGroupKeyRequest.java,v 1.1 2007-11-27 06:05:05 herrvendil Exp $
+ * @version $Id: DocumentIDRemoveGroupKeyRequest.java,v 1.2 2007-12-11 05:36:58 herrvendil Exp $
  */
 public class DocumentIDRemoveGroupKeyRequest implements IRemoveGroupKeyRequest {
 
@@ -30,6 +36,10 @@ public class DocumentIDRemoveGroupKeyRequest implements IRemoveGroupKeyRequest {
 	
 	private List<String> documentIds;
 	
+    /**
+     * Default constructor used during serialization
+     */
+	public DocumentIDRemoveGroupKeyRequest(){}
 	
     /**
      * 
@@ -46,6 +56,33 @@ public class DocumentIDRemoveGroupKeyRequest implements IRemoveGroupKeyRequest {
 	 */
 	public List<String> getDocumentIds() {
 		return documentIds;
+	}
+
+
+
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		int size = in.readInt();
+		this.documentIds = new ArrayList<String>();
+		for(int i=0;i<size;i++){
+			int stringLen = in.readInt();
+			byte[] stringData = new byte[stringLen];
+			in.readFully(stringData);
+			documentIds.add(new String(stringData,"UTF-8"));
+		}		
+	}
+
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_IDREMKEYS);
+		out.writeInt(documentIds.size());
+		for(String documentId : documentIds){
+			byte[] stringData = documentId.getBytes("UTF-8");
+			out.writeInt(stringData.length);
+			out.write(stringData);
+		}		
 	}
 
 

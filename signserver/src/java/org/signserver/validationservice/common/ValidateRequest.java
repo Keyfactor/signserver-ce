@@ -12,12 +12,17 @@
  *************************************************************************/
 package org.signserver.validationservice.common;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.common.IProcessRequest;
+import org.signserver.common.RequestAndResponseManager;
+import org.signserver.validationservice.common.ValidationServiceConstants.CertType;
 import org.signserver.validationservice.server.ICertificateManager;
 
 /**
@@ -25,7 +30,7 @@ import org.signserver.validationservice.server.ICertificateManager;
  * validate a certificate.
  * 
  * @author Philip Vendil
- * $Id: ValidateRequest.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
+ * $Id: ValidateRequest.java,v 1.2 2007-12-11 05:37:52 herrvendil Exp $
  */
 public class ValidateRequest implements IProcessRequest {
 
@@ -37,6 +42,10 @@ public class ValidateRequest implements IProcessRequest {
 	private byte[] certificateData;
 	private ValidationServiceConstants.CertType certType;
 
+    /**
+     * Default constructor used during serialization
+     */
+	public ValidateRequest(){}
 	
 	/**
 	 * Default constructor performing a full validation, verifying the complete chain
@@ -74,6 +83,34 @@ public class ValidateRequest implements IProcessRequest {
 	 */
 	public ValidationServiceConstants.CertType getCertType() {
 		return certType;
+	}
+
+
+
+
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		int dataSize = in.readInt();
+		certificateData = new byte[dataSize];
+		in.readFully(certificateData);
+		int stringLen = in.readInt();
+		byte[] stringData = new byte[stringLen];
+		in.readFully(stringData);
+		this.certType = CertType.valueOf(new String(stringData,"UTF-8"));
+	    
+	}
+
+
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.RESPONSETYPE_VALIDATE);
+		out.writeInt(certificateData.length);
+		out.write(certificateData);
+		byte[] stringData = certType.name().getBytes("UTF-8");
+		out.writeInt(stringData.length);
+		out.write(stringData);
 	}
 
 

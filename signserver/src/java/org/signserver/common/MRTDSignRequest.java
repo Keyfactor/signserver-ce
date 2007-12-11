@@ -14,6 +14,9 @@
  
 package org.signserver.common;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 
 /**
@@ -22,7 +25,7 @@ import java.util.ArrayList;
  * 
  * 
  * @author Philip Vendil
- * $Id: MRTDSignRequest.java,v 1.4 2007-11-27 06:05:06 herrvendil Exp $
+ * $Id: MRTDSignRequest.java,v 1.5 2007-12-11 05:36:58 herrvendil Exp $
  */
 
 public class MRTDSignRequest implements ISignRequest {
@@ -32,10 +35,14 @@ public class MRTDSignRequest implements ISignRequest {
 	 */
 	private static final long serialVersionUID = 1L;
 	private int requestID = 0;
-	private ArrayList<?> signRequestData = null;
+	private ArrayList<byte[]> signRequestData = null;
 	
 	private static final String signatureAlgorithm = "RSASSA-PSS";
 	
+    /**
+     * Default constructor used during serialization
+     */
+	public MRTDSignRequest(){}
 	
 	/**
 	 * Main constuctor.
@@ -43,7 +50,7 @@ public class MRTDSignRequest implements ISignRequest {
 	 * @param requestID a unique id of the request
 	 * @param signRequestData the data about to sign. Should be of type byte[]
 	 */
-	public MRTDSignRequest(int requestID, ArrayList<?> signRequestData){
+	public MRTDSignRequest(int requestID, ArrayList<byte[]> signRequestData){
 	  this.requestID = requestID;
 	  this.signRequestData = signRequestData;
 	}
@@ -66,6 +73,33 @@ public class MRTDSignRequest implements ISignRequest {
 
 	public String getSignatureAlgorithm(){
 		return signatureAlgorithm;
+	}
+
+
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		in.readInt();
+		this.requestID = in.readInt();
+		int arraySize = in.readInt();
+		this.signRequestData = new ArrayList<byte[]>();
+		for(int i = 0;i<arraySize;i++){
+			int dataSize = in.readInt();
+			byte[] data = new byte[dataSize];
+			in.readFully(data);
+			signRequestData.add(data);
+		}
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.REQUESTTYPE_MRTDSIGNREQUEST);
+		out.writeInt(this.requestID);
+		out.writeInt(this.signRequestData.size());
+		for(byte[] data : signRequestData){
+			out.writeInt(data.length);
+			out.write(data);
+		}
+		
 	}
 	
 }

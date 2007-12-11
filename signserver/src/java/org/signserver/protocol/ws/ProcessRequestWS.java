@@ -13,9 +13,13 @@
 
 package org.signserver.protocol.ws;
 
+import java.io.IOException;
+
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.ejbca.util.Base64;
+import org.signserver.common.IProcessRequest;
+import org.signserver.common.RequestAndResponseManager;
 
 /**
  * 
@@ -24,79 +28,67 @@ import org.ejbca.util.Base64;
  * 
  * @author Philip Vendil 28 okt 2007
  *
- * @version $Id: ProcessRequestWS.java,v 1.1 2007-11-27 06:05:07 herrvendil Exp $
+ * @version $Id: ProcessRequestWS.java,v 1.2 2007-12-11 05:37:33 herrvendil Exp $
  */
 
 public class ProcessRequestWS {
-
-	private int requestID;
-	private String signRequestDataBase64;
+	
+	private String requestDataBase64;
 	
 	public ProcessRequestWS() {
 	}
 
-	public ProcessRequestWS(int requestID, byte[] signRequestData) {
+	public ProcessRequestWS(byte[] requestData) {
 		super();
-		this.requestID = requestID;
-		setSignRequestData(signRequestData);
+		setRequestData(requestData);
+	}
+	
+	public ProcessRequestWS(IProcessRequest processRequest) throws IOException {
+		super();
+		setRequestData(RequestAndResponseManager.serializeProcessRequest(processRequest));
 	}
 	
 
 
 	
+
+
 	/**
 	 * 
-	 * @return the request id sent in the request to identify the response if more
-	 * than one request was called in one call.
+	 * @return Base64 encoded string containing the request data.
 	 */
-	public int getRequestID() {
-		return requestID;
-	}
-	
-	/**
-	 * @param requestID the request id sent in the request to identify the response if more
-	 * than one request was called in one call.
-	 */
-	public void setRequestID(int requestID) {
-		this.requestID = requestID;
+	public String getRequestDataBase64() {
+		return requestDataBase64;
 	}
 
 	/**
 	 * 
-	 * @return Base64 encoded string containing the signature request data.
+	 * @param requestDataBase64 encoded string containing the request data.
 	 */
-	public String getSignRequestDataBase64() {
-		return signRequestDataBase64;
-	}
-
-	/**
-	 * 
-	 * @param signRequestDataBase64 encoded string containing the signature request data.
-	 */
-	public void setSignRequestDataBase64(String signRequestDataBase64) {
-		this.signRequestDataBase64 = signRequestDataBase64;
+	public void setRequestDataBase64(String requestDataBase64) {
+		this.requestDataBase64 = requestDataBase64;
 	}
 	
 	/**
-	 * Help method used to set the signature request from binary form. 
-	 * @param signedData the data to base64 encode
+	 * Help method used to set the request from binary form. 
+	 * @param requestData the data to base64 encode
 	 */
 	@XmlTransient
-	public void setSignRequestData(byte[] signRequestData){
-		if(signRequestData != null){
-		  this.signRequestDataBase64 = new String(Base64.encode(signRequestData));
+	public void setRequestData(byte[] requestData){
+		if(requestData != null){
+		  this.requestDataBase64 = new String(Base64.encode(requestData));
 		}
 	}
 	
 	/**
-	 * Help method returning the signature request data in binary form. 
+	 * Help method returning the  request data in binary form. 
 	 * @param signedData the actual data
 	 */	
-	public byte[] getSignRequestData(){
-		if(signRequestDataBase64 == null){
+	public byte[] getRequestData(){
+		if(requestDataBase64 == null){
 			return null;
 		}
-		return Base64.decode(signRequestDataBase64.getBytes());
+		return Base64.decode(requestDataBase64.getBytes());
 	}
 	
 }

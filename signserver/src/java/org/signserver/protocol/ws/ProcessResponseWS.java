@@ -12,14 +12,15 @@
  *************************************************************************/
 package org.signserver.protocol.ws;
 
+import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.ejbca.util.Base64;
+import org.signserver.common.IProcessResponse;
+import org.signserver.common.RequestAndResponseManager;
 
 /**
  * WebService representation of a signature response, corresponding
@@ -28,13 +29,13 @@ import org.ejbca.util.Base64;
  * 
  * @author Philip Vendil 28 okt 2007
  *
- * @version $Id: ProcessResponseWS.java,v 1.1 2007-11-27 06:05:07 herrvendil Exp $
+ * @version $Id: ProcessResponseWS.java,v 1.2 2007-12-11 05:37:33 herrvendil Exp $
  */
 
 public class ProcessResponseWS {
 	
 	private int requestID;
-	private String processedDataBase64;
+	private String responseDataBase64;
 	private Certificate signerCertificate;
 	private Collection<Certificate> signerCertificateChain;
 	
@@ -47,31 +48,12 @@ public class ProcessResponseWS {
 	 * Constructor using non-WS objects.
 	 * @throws CertificateEncodingException 
 	 */
-	public ProcessResponseWS(int requestID, byte[] processedData, java.security.cert.Certificate signerCertificate,
-  			Collection<java.security.cert.Certificate> signerCertificateChain) throws CertificateEncodingException{
+	public ProcessResponseWS(int requestID, byte[] responseData) throws CertificateEncodingException{
 		this.requestID = requestID;
-		setProcessedData(processedData);
-		setSignerCertificate(new Certificate(signerCertificate));
-		
-		ArrayList<Certificate> certs = new ArrayList<Certificate>();
-		if(signerCertificateChain != null){
-		  for (Iterator<java.security.cert.Certificate> iterator = signerCertificateChain.iterator(); iterator.hasNext();) {
-			certs.add(new Certificate(iterator.next()));			
-		  }
-		}
+		setResponseData(responseData);
+
 	}
-	
-	/*
-	public SignResponseWS(org.signserver.protocol.ws.gen.SignResponseWS signResponseWS){
-		setRequestID(signResponseWS.getRequestID());
-		setSignedData(signResponseWS.getSignedData());
-		setSignerCertificate(new Certificate(signResponseWS.getSignerCertificate()));
-		
-		ArrayList<Certificate> certs = new ArrayList<Certificate>();
-		for (Iterator<org.signserver.protocol.ws.gen.Certificate> iterator = signResponseWS.getSignerCertificateChain().iterator(); iterator.hasNext();) {
-			certs.add(new Certificate(iterator.next()));			
-		}		
-	}*/
+
 	
 	/**
 	 * 
@@ -93,15 +75,15 @@ public class ProcessResponseWS {
 	/**
 	 * @return the processed data in base64 encoding.
 	 */
-	public String getProcessedDataBase64() {
-		return processedDataBase64;
+	public String getResponseDataBase64() {
+		return responseDataBase64;
 	}
 	
 	/**
-	 * @param prociessedDataBase64 the processed data in base64 encoding.
+	 * @param responseDataBase64 the processed data in base64 encoding.
 	 */
-	public void setProcessedDataBase64(String processedDataBase64) {
-		this.processedDataBase64 = processedDataBase64;
+	public void setResponseDataBase64(String responseDataBase64) {
+		this.responseDataBase64 = responseDataBase64;
 	}
 		
 
@@ -143,9 +125,9 @@ public class ProcessResponseWS {
 	 * @param signedData the data to base64 encode
 	 */
 	@XmlTransient
-	public void setProcessedData(byte[] processedData){
+	public void setResponseData(byte[] processedData){
 		if(processedData != null){
-		  this.processedDataBase64 = new String(Base64.encode(processedData));
+		  this.responseDataBase64 = new String(Base64.encode(processedData));
 		}
 	}
 	
@@ -153,11 +135,21 @@ public class ProcessResponseWS {
 	 * Help method returning the processed data in bytearray form. 
 	 * @param processedData the actual data
 	 */
-	public byte[] getProcessedData(){
-		if(processedDataBase64 == null){
+	public byte[] getResponseData(){
+		if(responseDataBase64 == null){
 			return null;
 		}
-		return Base64.decode(processedDataBase64.getBytes());
+		return Base64.decode(responseDataBase64.getBytes());
+	}
+	
+	/**
+	 * Help method used to extract the IProcessResponse from
+	 * the WS response
+	 * @throws IOException if parsing of data failed.
+	 */
+	@XmlTransient
+	public IProcessResponse getProcessResponse() throws IOException{
+		return RequestAndResponseManager.parseProcessResponse(getResponseData());
 	}
 
 }

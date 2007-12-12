@@ -24,10 +24,10 @@ import javax.naming.NamingException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.RequestContext;
 /**
  * Client class connecting to the sign server and requesting 
  * signatures conforming to the MRTD standard.

@@ -41,6 +41,7 @@ import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -53,7 +54,6 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.IAuthorizer;
 import org.signserver.server.IWorker;
-import org.signserver.server.RequestContext;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.IProcessable;
 

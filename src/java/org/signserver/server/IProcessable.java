@@ -20,9 +20,9 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.server.IWorker;
-import org.signserver.server.RequestContext;
 
 
 /**
@@ -32,7 +32,7 @@ import org.signserver.server.RequestContext;
  * 
  * 
  * @author Philip Vendil
- * $Id: IProcessable.java,v 1.1 2007-12-12 14:00:07 herrvendil Exp $
+ * $Id: IProcessable.java,v 1.2 2007-12-12 14:24:56 herrvendil Exp $
  */
 public interface IProcessable extends IWorker{
 

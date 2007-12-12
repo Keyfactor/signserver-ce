@@ -34,6 +34,7 @@ import junit.framework.TestCase;
 
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -49,7 +50,6 @@ import org.signserver.groupkeyservice.common.RemoveGroupKeyResponse;
 import org.signserver.groupkeyservice.common.SwitchEncKeyRequest;
 import org.signserver.groupkeyservice.common.SwitchEncKeyResponse;
 import org.signserver.groupkeyservice.common.TimeRemoveGroupKeyRequest;
-import org.signserver.server.RequestContext;
 
 
 public class TestGroupKeyService extends TestCase {

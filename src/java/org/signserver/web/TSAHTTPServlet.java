@@ -35,9 +35,9 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.RequestContext;
 
  
 
@@ -49,7 +49,7 @@ import org.signserver.server.RequestContext;
  * Use the request parameter 'signerId' to specify the timestamp signer.
  * 
  * @author Philip Vendil
- * @version $Id: TSAHTTPServlet.java,v 1.8 2007-12-12 14:00:07 herrvendil Exp $
+ * @version $Id: TSAHTTPServlet.java,v 1.9 2007-12-12 14:24:56 herrvendil Exp $
  */
 
 public class TSAHTTPServlet extends HttpServlet {

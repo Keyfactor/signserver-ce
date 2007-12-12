@@ -40,6 +40,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RequestAndResponseManager;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerStatus;
@@ -50,7 +51,6 @@ import org.signserver.protocol.ws.ISignServerWS;
 import org.signserver.protocol.ws.ProcessRequestWS;
 import org.signserver.protocol.ws.ProcessResponseWS;
 import org.signserver.protocol.ws.WorkerStatusWS;
-import org.signserver.server.RequestContext;
 import org.signserver.web.SignServerHealthCheck;
 
 
@@ -59,7 +59,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementor of the ISignServerWS interface.
  * 
  * @author Philip Vendil
- * $Id: SignServerWS.java,v 1.4 2007-12-12 14:00:08 herrvendil Exp $
+ * $Id: SignServerWS.java,v 1.5 2007-12-12 14:24:56 herrvendil Exp $
  */
 
 @WebService(targetNamespace="gen.ws.protocol.signserver.org")

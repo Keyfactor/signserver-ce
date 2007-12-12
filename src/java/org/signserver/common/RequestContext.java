@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.common;
 
 import java.io.Serializable;
 import java.security.cert.Certificate;
@@ -24,7 +24,7 @@ import java.util.HashMap;
  * 
  * @author Philip Vendil 1 dec 2007
  *
- * @version $Id: RequestContext.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
+ * @version $Id: RequestContext.java,v 1.1 2007-12-12 14:24:56 herrvendil Exp $
  */
 public class RequestContext implements Serializable{
 
@@ -45,6 +45,11 @@ public class RequestContext implements Serializable{
 	public static final String REMOTE_IP          = "REMOTE_IP";
 	
 	/**
+	 * All requests called from a CLI interface should set this setting to Boolean true.
+	 */
+	public static final String CALLED_FROM_CLI    = "CALLED_FROM_CLI";
+	
+	/**
 	 * Default constructor creating an empty context.
 	 */
 	public RequestContext(){}
@@ -55,6 +60,13 @@ public class RequestContext implements Serializable{
 	public RequestContext(Certificate clientCertificate, String remoteIP){
 		context.put(CLIENT_CERTIFICATE, clientCertificate);
 		context.put(REMOTE_IP, remoteIP);
+	}
+	
+	/**
+	 * Help constructor used for calls from the RMI cli
+	 */
+	public RequestContext(boolean calledFromCli){
+		context.put(CALLED_FROM_CLI, calledFromCli);
 	}
 	
 	/**
@@ -79,6 +91,16 @@ public class RequestContext implements Serializable{
 	 */
 	public void remove(String field){
 	   	context.remove(field);
+	}
+	
+	public boolean isCalledFromCLI(){
+	   boolean retval = false;
+	   
+	   if(context.get(CALLED_FROM_CLI) != null){
+		   retval = (Boolean) context.get(CALLED_FROM_CLI);
+	   }
+	   
+	   return retval;
 	}
 	
 }

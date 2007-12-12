@@ -30,12 +30,12 @@ import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.RequestContext;
 
 public class TestWorkerSessionBean extends TestCase {
 

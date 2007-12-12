@@ -49,9 +49,9 @@ import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ITimeSource;
-import org.signserver.server.RequestContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
  
 
@@ -72,7 +72,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * TSA = General name of the Time Stamp Authority.
  * 
  * @author philip
- * $Id: TimeStampSigner.java,v 1.9 2007-12-12 14:00:06 herrvendil Exp $
+ * $Id: TimeStampSigner.java,v 1.10 2007-12-12 14:24:55 herrvendil Exp $
  */
 public class TimeStampSigner extends BaseSigner{
 	

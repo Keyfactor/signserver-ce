@@ -26,6 +26,7 @@ import org.signserver.common.AuthorizedClient;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessableConfig;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 
@@ -35,7 +36,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @author Philip Vendil 24 nov 2007
  *
- * @version $Id: ClientCertAuthorizer.java,v 1.3 2007-12-12 14:00:07 herrvendil Exp $
+ * @version $Id: ClientCertAuthorizer.java,v 1.4 2007-12-12 14:24:56 herrvendil Exp $
  */
 
 public class ClientCertAuthorizer implements IAuthorizer {

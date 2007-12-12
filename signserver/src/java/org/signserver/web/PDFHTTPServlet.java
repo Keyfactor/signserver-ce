@@ -34,9 +34,9 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.RequestContext;
 
  
 
@@ -48,7 +48,7 @@ import org.signserver.server.RequestContext;
  * Use the request parameter 'signerId' to specify the PDF signer.
  * 
  * @author Tomas Gustavsson, based on TSAHTTPServlet by Philip Vendil
- * @version $Id: PDFHTTPServlet.java,v 1.7 2007-12-02 20:35:18 herrvendil Exp $
+ * @version $Id: PDFHTTPServlet.java,v 1.8 2007-12-12 14:24:55 herrvendil Exp $
  */
 
 public class PDFHTTPServlet extends HttpServlet {

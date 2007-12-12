@@ -20,6 +20,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
@@ -28,7 +29,6 @@ import org.signserver.groupkeyservice.common.GroupKeyServiceConstants;
 import org.signserver.groupkeyservice.common.IRemoveGroupKeyRequest;
 import org.signserver.groupkeyservice.common.PregenerateKeysRequest;
 import org.signserver.groupkeyservice.common.SwitchEncKeyRequest;
-import org.signserver.server.RequestContext;
 import org.signserver.server.cryptotokens.IExtendedCryptoToken;
 import org.signserver.server.BaseProcessable;
 
@@ -39,7 +39,7 @@ import org.signserver.server.BaseProcessable;
  * 
  * @author Philip Vendil 16 nov 2007
  *
- * @version $Id: GroupKeyServiceWorker.java,v 1.3 2007-12-12 14:00:08 herrvendil Exp $
+ * @version $Id: GroupKeyServiceWorker.java,v 1.4 2007-12-12 14:24:56 herrvendil Exp $
  */
 
 public class GroupKeyServiceWorker extends BaseProcessable {

@@ -14,10 +14,9 @@
  
 package org.signserver.common;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.Serializable;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -30,13 +29,13 @@ import org.ejbca.util.CertTools;
  * Could be used for TimeStamp Responses.
  * 
  * @author philip
- * $Id: GenericSignResponse.java,v 1.3 2007-12-11 05:36:58 herrvendil Exp $
+ * $Id: GenericSignResponse.java,v 1.4 2007-12-12 14:00:05 herrvendil Exp $
  */
-public class GenericSignResponse implements ISignResponse {
+public class GenericSignResponse extends ProcessResponse implements ISignResponse {
 
 	private static final long serialVersionUID = 1L;
 	private int requestID;
-	private Serializable processedData;
+	private byte[] processedData;
 	private Certificate signerCertificate;
 	private ArchiveData archiveData;
 	private String archiveId;
@@ -49,9 +48,9 @@ public class GenericSignResponse implements ISignResponse {
 	/**
 	 * Creates a GenericWorkResponse, works as a simple VO.
 	 * 
-	 * @see org.signserver.common.IProcessRequest
+	 * @see org.signserver.common.ProcessRequest
 	 */
-	public GenericSignResponse(int requestID, Serializable processedData, 
+	public GenericSignResponse(int requestID, byte[] processedData, 
 			                   Certificate signerCertificate, 
 			                   String archiveId, ArchiveData archiveData) {
 		this.requestID = requestID;
@@ -62,7 +61,7 @@ public class GenericSignResponse implements ISignResponse {
 	}
 
 	/**
-	 * @see org.signserver.common.IProcessResponse#getRequestID()
+	 * @see org.signserver.common.ProcessResponse#getRequestID()
 	 */
 	public int getRequestID() {
 		return requestID;
@@ -70,61 +69,78 @@ public class GenericSignResponse implements ISignResponse {
 
 
 	/**
-	 * @see org.signserver.common.IProcessResponse#getSignerCertificate()
+	 * @see org.signserver.common.ProcessResponse#getSignerCertificate()
 	 */
 	public Certificate getSignerCertificate() {
 		return signerCertificate;
 	}
 
 	/**
-	 * @see org.signserver.common.IProcessResponse#getArchiveData()
+	 * @see org.signserver.common.ProcessResponse#getArchiveData()
 	 */	
 	public ArchiveData getArchiveData() {
 		return archiveData;
 	}
 	
 	/**
-	 * @see org.signserver.common.IProcessResponse#getArchiveId()
+	 * @see org.signserver.common.ProcessResponse#getArchiveId()
 	 */	
 	public String getArchiveId() {
 		return archiveId;
 	}
 
-	
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
-		in.readInt();
-		this.requestID = in.readInt();
-		processedData = (Serializable) in.readObject();
-		int certSize = in.readInt();
-		byte[] certData = new byte[certSize];
-		in.readFully(certData);
-		try {
-			this.signerCertificate = CertTools.getCertfromByteArray(certData);
-		} catch (CertificateException e) {
-			throw new IOException(e);
-		}
-		
-	}
 
-	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GENERICSIGNRESPONSE);
-		out.writeInt(this.requestID);
-		out.writeObject(processedData);
-		try {
-			byte[] certData = this.signerCertificate.getEncoded();
-			out.writeInt(certData.length);
-			out.write(certData);
-		} catch (CertificateEncodingException e) {
-			throw new IOException(e);
-		}
-	}
 
 	/**
 	 * @return the processedData
 	 */
-	public Serializable getProcessedData() {
+	public byte[] getProcessedData() {
 		return processedData;
+	}
+
+	public void parse(DataInput in) throws IOException {
+		in.readInt();
+		this.requestID = in.readInt();
+		
+		int certSize = in.readInt();
+		if(certSize != 0){
+			byte[] certData = new byte[certSize];
+			in.readFully(certData);
+			try {
+				this.signerCertificate = CertTools.getCertfromByteArray(certData);
+			} catch (CertificateException e) {
+				try {
+					throw new IOException(e.getMessage()).initCause(e);
+				} catch (Throwable e1) {
+					throw new IOException(e.getMessage());
+				}
+			}
+		}
+		int dataSize = in.readInt();
+		processedData = new byte[dataSize];
+		in.readFully(processedData);
+	}
+
+	public void serialize(DataOutput out) throws IOException {
+		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GENERICSIGNRESPONSE);
+		out.writeInt(this.requestID);
+		if(signerCertificate != null){
+			try {
+				byte[] certData = this.signerCertificate.getEncoded();
+				out.writeInt(certData.length);
+				out.write(certData);
+			} catch (CertificateEncodingException e) {
+				try {
+					throw new IOException(e.getMessage()).initCause(e);
+				} catch (Throwable e1) {
+					throw new IOException(e.getMessage());
+				}
+			}
+		}else{
+			out.writeInt(0);
+		}
+        out.writeInt(processedData.length);
+		out.write(processedData);
 	}
 
 

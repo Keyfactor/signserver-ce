@@ -12,11 +12,11 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
-import org.signserver.common.IProcessRequest;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestAndResponseManager;
 
 /**
@@ -27,9 +27,9 @@ import org.signserver.common.RequestAndResponseManager;
  * 
  * @author Philip Vendil
  * 
- * $Id: PregenerateKeysRequest.java,v 1.3 2007-12-11 05:36:58 herrvendil Exp $
+ * $Id: PregenerateKeysRequest.java,v 1.4 2007-12-12 14:00:06 herrvendil Exp $
  */
-public class PregenerateKeysRequest implements IProcessRequest{
+public class PregenerateKeysRequest extends ProcessRequest{
 
 	private static final long serialVersionUID = 1L;
 
@@ -63,15 +63,12 @@ public class PregenerateKeysRequest implements IProcessRequest{
 	}
 
 
-
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void parse(DataInput in) throws IOException {
 		in.readInt();
 		this.numberOfKeys = in.readInt();
-		
 	}
 
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void serialize(DataOutput out) throws IOException {
         out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_PREGENKEYS);
         out.writeInt(numberOfKeys);
 	}

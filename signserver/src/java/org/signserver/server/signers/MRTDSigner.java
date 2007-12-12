@@ -27,10 +27,10 @@ import javax.ejb.EJBException;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.IProcessRequest;
-import org.signserver.common.IProcessResponse;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.ISignRequest;
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.MRTDSignRequest;
@@ -43,7 +43,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * Class used to sign MRTD Document Objects.
  * 
  * @author Philip Vendil
- * @version $Id: MRTDSigner.java,v 1.7 2007-12-02 20:35:18 herrvendil Exp $
+ * @version $Id: MRTDSigner.java,v 1.8 2007-12-12 14:00:06 herrvendil Exp $
  */
 
 public class MRTDSigner extends BaseSigner {
@@ -63,7 +63,7 @@ public class MRTDSigner extends BaseSigner {
 	 *
 	 */
 	
-	public IProcessResponse processData(IProcessRequest signRequest,
+	public ProcessResponse processData(ProcessRequest signRequest,
 	                              RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException{
 		
 		
@@ -131,7 +131,7 @@ public class MRTDSigner extends BaseSigner {
     /**
      * Not supported yet
      */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
 		log.error("Error : genCertificateRequest called for MRTDSigner which isn't supportet yet");
 		return null;
 	}

@@ -12,11 +12,11 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
-import org.signserver.common.IProcessResponse;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestAndResponseManager;
 
 /**
@@ -26,9 +26,9 @@ import org.signserver.common.RequestAndResponseManager;
  * @author phive
  *
  * @author Philip Vendil
- * $Id: SwitchEncKeyResponse.java,v 1.3 2007-12-11 05:36:58 herrvendil Exp $
+ * $Id: SwitchEncKeyResponse.java,v 1.4 2007-12-12 14:00:06 herrvendil Exp $
  */
-public class SwitchEncKeyResponse implements IProcessResponse{
+public class SwitchEncKeyResponse extends ProcessResponse{
 	private static final long serialVersionUID = 1L;
 
 	private String newKeyIndex;
@@ -55,9 +55,7 @@ public class SwitchEncKeyResponse implements IProcessResponse{
 	}
 
 
-
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void parse(DataInput in) throws IOException {
 		in.readInt();
 		int stringLen = in.readInt();
 		byte[] stringData = new byte[stringLen];
@@ -65,7 +63,7 @@ public class SwitchEncKeyResponse implements IProcessResponse{
 		this.newKeyIndex = new String(stringData,"UTF-8");
 	}
 
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void serialize(DataOutput out) throws IOException {
 		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_SWITCHENCKEY);
 		byte[] stringData = newKeyIndex.getBytes("UTF-8");
 		out.writeInt(stringData.length);

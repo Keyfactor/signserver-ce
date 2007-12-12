@@ -12,11 +12,11 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
-import org.signserver.common.IProcessRequest;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestAndResponseManager;
 
 /**
@@ -24,9 +24,9 @@ import org.signserver.common.RequestAndResponseManager;
  * used to encrypt the stored group keys in database.
  * 
  * @author Philip Vendil
- * $Id: SwitchEncKeyRequest.java,v 1.2 2007-12-11 05:36:58 herrvendil Exp $
+ * $Id: SwitchEncKeyRequest.java,v 1.3 2007-12-12 14:00:06 herrvendil Exp $
  */
-public class SwitchEncKeyRequest implements IProcessRequest {
+public class SwitchEncKeyRequest extends ProcessRequest {
 	
 	private static final long serialVersionUID = 1L;
 	// Not really used in this case.		
@@ -40,14 +40,14 @@ public class SwitchEncKeyRequest implements IProcessRequest {
 
 
 
-
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void parse(DataInput in) throws IOException {
 		in.readInt();
-		
 	}
 
-	public void writeExternal(ObjectOutput out) throws IOException {
+
+
+
+	public void serialize(DataOutput out) throws IOException {
 		out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_SWITCHENCKEY);
 		
 	}

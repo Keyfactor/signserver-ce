@@ -26,7 +26,7 @@ import org.signserver.common.WorkerStatus;
 /**
  * Gets the current status of the given worker
  *
- * @version $Id: GetStatusCommand.java,v 1.5 2007-11-09 15:45:12 herrvendil Exp $
+ * @version $Id: GetStatusCommand.java,v 1.6 2007-12-12 14:00:08 herrvendil Exp $
  */
 public class GetStatusCommand extends BaseCommand {
 	
@@ -82,7 +82,7 @@ public class GetStatusCommand extends BaseCommand {
         		
         		List workers = null;
         		if(CommonAdminInterface.isSignServerMode()){
-        		  workers = getCommonAdminInterface(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_SIGNERS);
+        		  workers = getCommonAdminInterface(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
         		}else{
         			workers = getCommonAdminInterface(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
         		}

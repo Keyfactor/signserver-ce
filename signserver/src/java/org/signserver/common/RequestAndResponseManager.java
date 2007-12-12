@@ -16,12 +16,12 @@ package org.signserver.common;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.signserver.groupkeyservice.common.DocumentIDRemoveGroupKeyRequest;
 import org.signserver.groupkeyservice.common.FetchKeyRequest;
 import org.signserver.groupkeyservice.common.FetchKeyResponse;
@@ -35,8 +35,10 @@ import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 
 /**
- * Class used to parse and generate IProcessRequest and IProcessResponse
+ * Class used to parse and generate list available  and their IProcessRequest and IProcessResponse
  * from byte[] data.
+ * 
+ * 
  * 
  * It have a standard set of available request/response classes but
  * it is possible to dynamically register and unregister other classes
@@ -45,10 +47,13 @@ import org.signserver.validationservice.common.ValidateResponse;
  * 
  * @author Philip Vendil 9 dec 2007
  *
- * @version $Id: RequestAndResponseManager.java,v 1.1 2007-12-11 05:36:58 herrvendil Exp $
+ * @version $Id: RequestAndResponseManager.java,v 1.2 2007-12-12 14:00:05 herrvendil Exp $
  */
 
 public class RequestAndResponseManager {
+	
+	private static final Logger log = Logger.getLogger(RequestAndResponseManager.class);
+	
 	// Signer Request types
 	public static final int REQUESTTYPE_GENERICSIGNREQUEST = 1;
 	public static final int REQUESTTYPE_MRTDSIGNREQUEST    = 2;
@@ -78,6 +83,8 @@ public class RequestAndResponseManager {
 	
 	public static HashMap<Integer, String> availableRequestTypes = new HashMap<Integer, String>();
 	public static HashMap<Integer, String> availableResponseTypes = new HashMap<Integer, String>();
+	
+	
 
 	static{
 		availableRequestTypes.put(REQUESTTYPE_GENERICSIGNREQUEST,GenericSignRequest.class.getName());
@@ -107,17 +114,18 @@ public class RequestAndResponseManager {
 	 * @return a IProcessRequest or null if request wasn't supported.
 	 * @throws IOException 
 	 */
-	public static IProcessRequest parseProcessRequest(byte[] data) throws IOException{
-		IProcessRequest retval = null;
+	public static ProcessRequest parseProcessRequest(byte[] data) throws IOException{
+		ProcessRequest retval = null;
 		String classPath = availableRequestTypes.get(getRequestOrResponeType(data));
 		if(classPath != null){
 			try {
 				Class<?> c = RequestAndResponseManager.class.getClassLoader().loadClass(classPath);
-				retval = (IProcessRequest) c.newInstance();
+				retval = (ProcessRequest) c.newInstance();
 
-				retval.readExternal(new ObjectInputStream(new ByteArrayInputStream(data)));
+				retval.parse(new DataInputStream(new ByteArrayInputStream(data)));
 			} catch (Exception e) {
-				throw new IOException("Error deserializing IProcessRequest from byte array ",e);
+				log.error("Error deserializing IProcessRequest from byte array  : " + e.getMessage(),e);
+				throw new IOException("Error deserializing IProcessRequest from byte array : " + e.getMessage());	
 			}
 		}else{
 			throw new IOException("Error unsupported IProcessRequest in request");
@@ -133,17 +141,18 @@ public class RequestAndResponseManager {
 	 * @return a IProcessResponse or null if response wasn't supported.
 	 * @throws IOException 
 	 */
-	public static IProcessResponse parseProcessResponse(byte[] data) throws IOException{
-		IProcessResponse retval = null;
+	public static ProcessResponse parseProcessResponse(byte[] data) throws IOException{
+		ProcessResponse retval = null;
 		String classPath = availableResponseTypes.get(getRequestOrResponeType(data));
 		if(classPath != null){
 			try {
 				Class<?> c = RequestAndResponseManager.class.getClassLoader().loadClass(classPath);
-				retval = (IProcessResponse) c.newInstance();
+				retval = (ProcessResponse) c.newInstance();
 
-				retval.readExternal(new ObjectInputStream(new ByteArrayInputStream(data)));
+				retval.parse(new DataInputStream(new ByteArrayInputStream(data)));
 			} catch (Exception e) {
-				throw new IOException("Error deserializing IProcessResponse from byte array ",e);
+				    log.error("Error deserializing IProcessResponse from byte array  : " + e.getMessage(),e);
+					throw new IOException("Error deserializing IProcessResponse from byte array  : " + e.getMessage());
 			}
 		}else{
 			throw new IOException("Error unsupported IProcessResponse in request");
@@ -158,10 +167,10 @@ public class RequestAndResponseManager {
 	 * @return a serialized representation of the request
 	 * @throws IOException if error occurred during serialization
 	 */
-	public static byte[] serializeProcessRequest(IProcessRequest request) throws IOException{		
+	public static byte[] serializeProcessRequest(ProcessRequest request) throws IOException{		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(request);
+		DataOutputStream dos = new DataOutputStream(baos);		
+		request.serialize(dos);
 		return baos.toByteArray();
 	}
 	
@@ -171,10 +180,10 @@ public class RequestAndResponseManager {
 	 * @return a serialized representation of the response
 	 * @throws IOException if error occurred during serialization
 	 */
-	public static byte[] serializeProcessResponse(IProcessResponse response) throws IOException{		
+	public static byte[] serializeProcessResponse(ProcessResponse response) throws IOException{		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(response);
+		DataOutputStream dos = new DataOutputStream(baos);
+		response.serialize(dos);
 		return baos.toByteArray();
 	}
 	
@@ -238,7 +247,7 @@ public class RequestAndResponseManager {
 	private static int getRequestOrResponeType(byte[] data) throws IOException{
 		int retval = 0;
 		if(data != null){
-			DataInputStream dais = new DataInputStream(new ByteArrayInputStream(data));
+			DataInputStream dais = new DataInputStream(new ByteArrayInputStream(data));			
 			retval = dais.readInt();
 		}
 		return retval;

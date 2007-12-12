@@ -28,7 +28,7 @@ import org.signserver.protocol.ws.gen.ProcessResponseWS;
 * 
 * @author Philip Vendil 28 okt 2007
 *
-* @version $Id: WSClientUtil.java,v 1.2 2007-12-11 05:37:33 herrvendil Exp $
+* @version $Id: WSClientUtil.java,v 1.3 2007-12-12 14:00:07 herrvendil Exp $
 */
 public class WSClientUtil {
 
@@ -58,6 +58,7 @@ public class WSClientUtil {
 			ProcessResponseWS next =  iterator.next();	
 			org.signserver.protocol.ws.ProcessResponseWS temp = new org.signserver.protocol.ws.ProcessResponseWS();
 			temp.setResponseDataBase64(next.getResponseDataBase64());
+			retval.add(temp);
 		}
 		return retval;
 	}

@@ -46,7 +46,7 @@ import org.signserver.groupkeyservice.ejb.GroupKeyDataService;
  * 
  * @author Philip Vendil 23 nov 2007
  *
- * @version $Id: DefaultGroupKeyService.java,v 1.1 2007-11-27 06:05:09 herrvendil Exp $
+ * @version $Id: DefaultGroupKeyService.java,v 1.2 2007-12-12 14:00:08 herrvendil Exp $
  */
 
 public class DefaultGroupKeyService extends BaseGroupKeyService {
@@ -174,9 +174,9 @@ public class DefaultGroupKeyService extends BaseGroupKeyService {
 		long numUnassignedKeys = getGroupKeyDataService().getNumOfUnassignedKeys(new Date(0), new Date());
 		EncKeyDataBean currentEncKey = getGroupKeyDataService().getCurrentEncKeyRef();
 		if(currentEncKey == null){
-			return new GroupKeyServiceStatus(ect.getCryptoTokenStatus(),config,numUnassignedKeys,numOfKeys,numAssignedKeys,null,0,null);
+			return new GroupKeyServiceStatus(workerId, ect.getCryptoTokenStatus(),config,numUnassignedKeys,numOfKeys,numAssignedKeys,null,0,null);
 		}
-		return new GroupKeyServiceStatus(ect.getCryptoTokenStatus(),config,numUnassignedKeys,numOfKeys,numAssignedKeys,currentEncKey.getEncKeyRef(),currentEncKey.getNumberOfEncryptions(),currentEncKey.getUsageStarted());
+		return new GroupKeyServiceStatus(workerId, ect.getCryptoTokenStatus(),config,numUnassignedKeys,numOfKeys,numAssignedKeys,currentEncKey.getEncKeyRef(),currentEncKey.getNumberOfEncryptions(),currentEncKey.getUsageStarted());
 	}
 
 }

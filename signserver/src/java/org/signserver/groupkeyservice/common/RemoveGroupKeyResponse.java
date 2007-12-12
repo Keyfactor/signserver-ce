@@ -12,11 +12,11 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
-import org.signserver.common.IProcessResponse;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestAndResponseManager;
 
 /**
@@ -29,9 +29,9 @@ import org.signserver.common.RequestAndResponseManager;
  * 
  * @author Philip Vendil 13 nov 2007
  *
- * @version $Id: RemoveGroupKeyResponse.java,v 1.2 2007-12-11 05:36:58 herrvendil Exp $
+ * @version $Id: RemoveGroupKeyResponse.java,v 1.3 2007-12-12 14:00:06 herrvendil Exp $
  */
-public class RemoveGroupKeyResponse implements IProcessResponse{
+public class RemoveGroupKeyResponse extends ProcessResponse{
 
 
 	private static final long serialVersionUID = 1L;
@@ -72,19 +72,15 @@ public class RemoveGroupKeyResponse implements IProcessResponse{
 	}
 
 
-
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void parse(DataInput in) throws IOException {
 		in.readInt();
 		numOfKeysRemoved = in.readLong();
 		operationSuccessful = in.readBoolean();
-		
 	}
 
-	public void writeExternal(ObjectOutput out) throws IOException {
-       out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_REMOVEKEY);
-       out.writeLong(numOfKeysRemoved);
-       out.writeBoolean(operationSuccessful);
-		
+	public void serialize(DataOutput out) throws IOException {
+	       out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_REMOVEKEY);
+	       out.writeLong(numOfKeysRemoved);
+	       out.writeBoolean(operationSuccessful);
 	}
 }

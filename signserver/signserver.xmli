@@ -41,6 +41,9 @@
 	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
 	   	    <fileset dir="lib/jaxws" includes="*.jar" />
 	        <path refid="j2ee.classpath" />
+	        
+            <path location="tmp/jaxws/gen-classes/client" />
+            <path location="tmp/validationws/gen-classes/client" />
 	    </path>
 
 	    <path id="server.compile.classpath">
@@ -76,6 +79,7 @@
         <path refid="server.compile.classpath" />
         <path location="${build}" />
         <path refid="j2ee.classpath" />
+        <path refid="jaxws.classpath" />
       </path>
 	
 	   <!-- those are the default values used within JBoss for easy startup -->
@@ -136,7 +140,7 @@ database.password      = ${database.password}
 	   <!-- =================================================================== -->
 	    <!-- Compile java sources                                                -->
 	    <!-- =================================================================== -->
-	    <target name="signserver:compile" unless="buildMailSigner">	    	
+	    <target name="signserver:compile" unless="buildMailSigner" >	    	
 	        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
 	            <classpath refid="server.compile.classpath" />
 	            <src path="${src.java}" /> 
@@ -295,6 +299,14 @@ database.password      = ${database.password}
 	                wsdl="tmp/jaxws/gen-classes/server/SignServerWSService.wsdl">	          
 	        </wsimport>
 	    </target>
+	    
+	    <target name="ws.compile.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled">	    	
+	        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
+	            <classpath refid="server.compile.classpath" />
+	            <src path="${src.java}" /> 	        	
+	        	<include name="org/signserver/protocol/ws/client/**"/>
+	        </javac>
+	    </target>
 	<!--
 	    <target name="ws.build.client" depends="ws.init, ejbca-util.jar" unless="ejbcaws.isjava14">
 	        <javac debug="true" debuglevel="${debuglevel}" destdir="tmp/jaxws/gen-classes/client" >
@@ -369,48 +381,7 @@ database.password      = ${database.password}
 
 	    <target name="ejbcaws.client" depends="ejbcawsconditioncheck,isjava14check,ws.build.client" if="ejbcawsconditioncheck" unless="ejbcaws.isjava14" description="Build the EJBCA WS-API client"/>
          -->
-	    <!-- Compile JAXWS JUnit testcases -->
-	<!--
-	    <target name="test:compilews" depends="ws.build, ws.build.client">
-	        <mkdir dir="${test.dir}" />
-	        <javac srcdir="${test.src.dir}" destdir="${test.dir}" debug="on" includeantruntime="no" encoding="iso8859-1">
-	            <classpath refid="jaxws.test.classpath" />
-	        	<include name="org/ejbca/core/protocol/ws/Test*" />
-	        </javac>	     
-	        <copy file="${src.java}/jndi.properties" todir="${test.dir}" failonerror="false"/>
-	    </target>
-		
-	    <target name="test:runws" depends="test:compilews,j2ee:assert-run" description="run JAXWS JUnit testcases">
-	    	<echo>Important: In order to run the tests you have performed a regular ant install at some point and not changed the default administrator group.
-	    	</echo>
-	        <delete dir="${test.dir}/ws/reports" />
-	        <mkdir dir="${test.dir}/ws/reports/html" />
-	        <junit printsummary="yes" haltonfailure="no">
-				<sysproperty key="testtype" value="WEB"/>
-	            <classpath>
-	                <path refid="jaxws.test.classpath" />
-	                <path location="${test.dir}" />
-	            </classpath>
-	            <formatter type="xml" />	        	
-	            <batchtest fork="yes" todir="${test.dir}/ws/reports">
-	                <fileset dir="${test.dir}">
-	                    <include name="**/protocol/ws/TestEjbcaWS.class" />
-	                </fileset>
-	            </batchtest>
-	            <batchtest fork="yes" todir="${test.dir}/ws/reports">
-	                <fileset dir="${test.dir}">
-	                    <include name="**/protocol/ws/TestEjbcaWSNonAdmin.class" />
-	                </fileset>
-	            </batchtest>
-	        </junit>
-	        <junitreport todir="${test.dir}/ws/reports">
-	            <fileset dir="${test.dir}/ws/reports">
-	                <include name="TEST-*.xml" />
-	            </fileset>
-	            <report format="frames" todir="${test.dir}/ws/reports/html" />
-	        </junitreport>
-	    </target>
-		-->
+
 	        		
 	   <!-- =================================================================== -->
 	   <!-- Build Validation Service Web Service                                -->
@@ -496,13 +467,14 @@ database.password      = ${database.password}
         <keytool arg="-v -alias SIGNSERVER -import -file '${java.trustcert}' -keystore '${java.home}/lib/security/cacerts' -storepass ${java.trustpassword} -noprompt"/>
     </target>
 	
-    <target name="test:signserver:compile" description="compile JUnit testcases" unless="buildMailSigner">
+    <target name="test:signserver:compile" description="compile JUnit testcases" depends="ws.compile.client" unless="buildMailSigner">
         <mkdir dir="${test.dir}" />
+        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled.</echo>
         <javac srcdir="${test.src.dir}" destdir="${test.dir}" debug="on" includeantruntime="no" encoding="iso8859-1"  target="${server.java.target}" source="${server.java.target}">
             <classpath refid="signserver.test.compile.classpath" />
         	<exclude name="org/signserver/mailsigner/**"/>
-        	<exclude name="org/signserver/protocol/validationservice/ws/**"/>
-        	<exclude name="org/signserver/protocol/ws/**"/>
+        	<!-- <exclude name="org/signserver/protocol/validationservice/ws/**"/>
+        	<exclude name="org/signserver/protocol/ws/**"/> -->
         </javac>
         <!-- jndi.properties needs to be in the classpath -->
         <copy file="${src.java}/jndi.properties" todir="${test.dir}" />
@@ -510,6 +482,7 @@ database.password      = ${database.password}
 	
     <target name="test:signserver:run" depends="test:signserver:compile" description="run JUnit testcases" unless="buildMailSigner">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
+        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled.</echo>
         <delete dir="${test.dir}/reports" />
         <mkdir dir="${test.dir}/reports/html" />
         <junit printsummary="yes" haltonfailure="no">
@@ -526,6 +499,8 @@ database.password      = ${database.password}
                 	<include name="**/server/validcache/Test*" />
                 	<include name="**/groupkeyservice/Test*" /> 
                 	<include name="**/cli/TestSignServer*" />
+                	<include name="**/protocol/validationservice/ws/Test*" />
+                	<include name="**/protocol/ws/Test*" />
                     <exclude name="**/*Continously*" />
                     <exclude name="**/TestRunner*" />
                 	<exclude name="**/db/*" />

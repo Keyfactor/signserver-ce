@@ -14,9 +14,9 @@
  
 package org.signserver.common;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.ArrayList;
 
 /**
@@ -25,10 +25,10 @@ import java.util.ArrayList;
  * 
  * 
  * @author Philip Vendil
- * $Id: MRTDSignRequest.java,v 1.5 2007-12-11 05:36:58 herrvendil Exp $
+ * $Id: MRTDSignRequest.java,v 1.6 2007-12-12 14:00:05 herrvendil Exp $
  */
 
-public class MRTDSignRequest implements ISignRequest {
+public class MRTDSignRequest extends ProcessRequest implements ISignRequest  {
 
 	/**
 	 * 
@@ -57,7 +57,7 @@ public class MRTDSignRequest implements ISignRequest {
 	
 	/**
 	 * 
-	 * @see org.signserver.common.IProcessRequest#getRequestID()
+	 * @see org.signserver.common.ProcessRequest#getRequestID()
 	 */
 	
 	public int getRequestID() {
@@ -76,9 +76,7 @@ public class MRTDSignRequest implements ISignRequest {
 	}
 
 
-
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void parse(DataInput in) throws IOException {
 		in.readInt();
 		this.requestID = in.readInt();
 		int arraySize = in.readInt();
@@ -89,9 +87,10 @@ public class MRTDSignRequest implements ISignRequest {
 			in.readFully(data);
 			signRequestData.add(data);
 		}
+		
 	}
 
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void serialize(DataOutput out) throws IOException {
 		out.writeInt(RequestAndResponseManager.REQUESTTYPE_MRTDSIGNREQUEST);
 		out.writeInt(this.requestID);
 		out.writeInt(this.signRequestData.size());
@@ -99,7 +98,6 @@ public class MRTDSignRequest implements ISignRequest {
 			out.writeInt(data.length);
 			out.write(data);
 		}
-		
 	}
 	
 }

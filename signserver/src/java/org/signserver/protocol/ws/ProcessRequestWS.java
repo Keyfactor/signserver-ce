@@ -18,7 +18,7 @@ import java.io.IOException;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.ejbca.util.Base64;
-import org.signserver.common.IProcessRequest;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestAndResponseManager;
 
 /**
@@ -28,7 +28,7 @@ import org.signserver.common.RequestAndResponseManager;
  * 
  * @author Philip Vendil 28 okt 2007
  *
- * @version $Id: ProcessRequestWS.java,v 1.2 2007-12-11 05:37:33 herrvendil Exp $
+ * @version $Id: ProcessRequestWS.java,v 1.3 2007-12-12 14:00:08 herrvendil Exp $
  */
 
 public class ProcessRequestWS {
@@ -43,7 +43,7 @@ public class ProcessRequestWS {
 		setRequestData(requestData);
 	}
 	
-	public ProcessRequestWS(IProcessRequest processRequest) throws IOException {
+	public ProcessRequestWS(ProcessRequest processRequest) throws IOException {
 		super();
 		setRequestData(RequestAndResponseManager.serializeProcessRequest(processRequest));
 	}

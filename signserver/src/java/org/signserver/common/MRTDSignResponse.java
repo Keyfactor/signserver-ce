@@ -14,9 +14,9 @@
  
 package org.signserver.common;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -31,10 +31,10 @@ import org.ejbca.util.CertTools;
  * 
  * 
  * @author Philip Vendil
- * $Id: MRTDSignResponse.java,v 1.4 2007-12-11 05:36:58 herrvendil Exp $
+ * $Id: MRTDSignResponse.java,v 1.5 2007-12-12 14:00:05 herrvendil Exp $
  */
 
-public class MRTDSignResponse implements IProcessResponse {
+public class MRTDSignResponse extends ProcessResponse {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -58,7 +58,7 @@ public class MRTDSignResponse implements IProcessResponse {
 	
 	/**
 	 * 
-	 * @see org.signserver.common.IProcessResponse#getRequestID()
+	 * @see org.signserver.common.ProcessResponse#getRequestID()
 	 */
 	public int getRequestID() {
 		return requestID;
@@ -97,9 +97,7 @@ public class MRTDSignResponse implements IProcessResponse {
 	}
 
 
-
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void parse(DataInput in) throws IOException {
 		in.readInt();
 		this.requestID = in.readInt();
 		int arraySize = in.readInt();
@@ -116,12 +114,15 @@ public class MRTDSignResponse implements IProcessResponse {
 		try {
 			this.signerCertificate = CertTools.getCertfromByteArray(certData);
 		} catch (CertificateException e) {
-			throw new IOException(e);
+			try {
+				throw new IOException(e.getMessage()).initCause(e);
+			} catch (Throwable e1) {
+				throw new IOException(e.getMessage());
+			}
 		}
-		
 	}
 
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void serialize(DataOutput out) throws IOException {
 		out.writeInt(RequestAndResponseManager.RESPONSETYPE_MRTDSIGNRESPONSE);
 		out.writeInt(this.requestID);
 		out.writeInt(this.signedData.size());
@@ -134,9 +135,13 @@ public class MRTDSignResponse implements IProcessResponse {
 			out.writeInt(certData.length);
 			out.write(certData);
 		} catch (CertificateEncodingException e) {
-			throw new IOException(e);
+			try {
+				throw new IOException(e.getMessage()).initCause(e);
+			} catch (Throwable e1) {
+				throw new IOException(e.getMessage());
+			}
 		}
-				
 	}
+
 
 }

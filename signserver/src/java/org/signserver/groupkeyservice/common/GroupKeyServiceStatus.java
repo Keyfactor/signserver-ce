@@ -25,7 +25,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * 
  * @author Philip Vendil
- * $Id: GroupKeyServiceStatus.java,v 1.2 2007-11-27 06:05:06 herrvendil Exp $
+ * $Id: GroupKeyServiceStatus.java,v 1.3 2007-12-12 14:00:06 herrvendil Exp $
  */
 public class GroupKeyServiceStatus extends CryptoTokenStatus {
 
@@ -39,10 +39,10 @@ public class GroupKeyServiceStatus extends CryptoTokenStatus {
 	private long currentEncKeyNumEncryptions;
 	private Date currentEncKeyStartDate;
 	
-	public GroupKeyServiceStatus(int tokenStatus, WorkerConfig config, long numOfUnassignedKeys,
+	public GroupKeyServiceStatus(int workerId, int tokenStatus, WorkerConfig config, long numOfUnassignedKeys,
 			long numOfKeys, long numOfAssignedKeys, String currentEncKeyRef,
 			long currentEncKeyNumEncryptions, Date currentEncKeyStartDate) {
-		super(tokenStatus,config);
+		super(workerId, tokenStatus,config);
 		this.numOfUnassignedKeys = numOfUnassignedKeys;
 		this.numOfKeys = numOfKeys;
 		this.numOfAssignedKeys = numOfAssignedKeys;

@@ -25,7 +25,7 @@ import java.util.Iterator;
  * the status of a specific signer
  * @author Philip Vendil
  *
- * $Id: SignerStatus.java,v 1.4 2007-11-27 06:05:06 herrvendil Exp $
+ * $Id: SignerStatus.java,v 1.5 2007-12-12 14:00:05 herrvendil Exp $
  */
 
 public class SignerStatus extends CryptoTokenStatus{
@@ -38,10 +38,10 @@ public class SignerStatus extends CryptoTokenStatus{
 	private Certificate signerCertificate = null;
 	
 	/** 
-	 * Main constuctor
+	 * Main constructor
 	 */
-	public SignerStatus(int tokenStatus, ProcessableConfig config, Certificate signerCertificate){
-		super(tokenStatus, config.getWorkerConfig());
+	public SignerStatus(int workerId, int tokenStatus, ProcessableConfig config, Certificate signerCertificate){
+		super(workerId, tokenStatus, config.getWorkerConfig());
 	
 	    this.signerCertificate = signerCertificate;
 	}

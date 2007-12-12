@@ -11,73 +11,53 @@
  *                                                                       *
  *************************************************************************/
 
-package org.signserver.mailsigner;
+package org.signserver.server;
 
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 
+import javax.ejb.EJBException;
+
 import org.apache.log4j.Logger;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.MailSignerConfig;
-import org.signserver.common.MailSignerStatus;
-import org.signserver.common.SignServerUtil;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.ProcessableConfig;
-import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
-import org.signserver.mailsigner.core.NonEJBGlobalConfigurationSession;
 import org.signserver.server.cryptotokens.ICryptoToken;
 
-/**
- * Base class for IMailSigners containing a lot of useful methods
- * for the IMailSigner plug-in.
- * 
- * If extending this class is the only the  method that requires implementation the 
- * 'service' method. 
- * 
- * 
- * @author Philip Vendil 23 sep 2007
- *
- * @version $Id: BaseMailSigner.java,v 1.3 2007-12-12 14:00:08 herrvendil Exp $
- */
-public abstract class BaseMailSigner  implements IMailSigner {
+
+public abstract class BaseProcessable extends BaseWorker implements IProcessable {
 	
-	static{
-		SignServerUtil.installBCProvider();
-	}
-	
+	private transient Logger log = Logger.getLogger(this.getClass());
+
+	//Private Property constants
 	/**
 	 * Property indicating that the signserver shouldn't be used.
 	 * Set propery to TRUE to disable the signer.
 	 */
 	public static final String DISABLED          = "DISABLED";
 	
+	/**
+	 * Constant indicating that the signserver archive the response data.
+	 * Set propery to TRUE to start archiving
+	 */
+	public static final String ARCHIVE          = "ARCHIVE";
+
     /** Log4j instance for actual implementation class */
-    public transient Logger log = Logger.getLogger(this.getClass());
+   // private transient Logger log = Logger.getLogger(this.getClass());
     
     protected ICryptoToken cryptoToken = null;
 
-
-    protected int workerId =0;
     
-    protected WorkerConfig config = null; 
-    
-    protected BaseMailSigner(){
+    protected BaseProcessable(){
 
     }
 
-    /**
-     * Initialization method that should be called directly after creation
-     */
-    public void init(int workerId, WorkerConfig config){
-      this.workerId = workerId;
-      this.config = config;
-    }
 	    
 	public void activateSigner(String authenticationCode)
 			throws CryptoTokenAuthenticationFailureException,
@@ -91,27 +71,18 @@ public abstract class BaseMailSigner  implements IMailSigner {
 		return getCryptoToken().deactivate();
 	}
 	
-
-	
 	/**
-	 * @see org.signserver.server.signers.IProcessable#getStatus()
+	 * Returns the authentication type configured for this signer.
+	 * Returns one of the ISigner.AUTHTYPE_ constants or the class path
+	 * to a custom authenticator. 
+	 * 
+	 * default is client certificate authentication.
 	 */
-	public WorkerStatus getStatus() {
-		MailSignerStatus retval = null;
-
-        try {
-        	
-            int signTokenStatus = SignerStatus.STATUS_ACTIVE;
-        	if(getCryptoToken() != null){
-        		signTokenStatus = getCryptoToken().getCryptoTokenStatus();
-        	}
-			  retval = new MailSignerStatus(workerId,signTokenStatus, new MailSignerConfig( config), getSigningCertificate());
-		} catch (CryptoTokenOfflineException e) {
-			retval = new MailSignerStatus(workerId,getCryptoToken().getCryptoTokenStatus(), new MailSignerConfig( config), null);
-		}
-		
-		return retval;
+	public String getAuthenticationType(){				
+		return config.getProperties().getProperty(WorkerConfig.PROPERTY_AUTHTYPE, IProcessable.AUTHTYPE_CLIENTCERT);
 	}
+	
+	
 	
 	protected ICryptoToken getCryptoToken() {
 		if(cryptoToken == null){
@@ -126,21 +97,26 @@ public abstract class BaseMailSigner  implements IMailSigner {
 					cryptoToken.init(config.getProperties());								 
 				} 
 			}catch(CryptoTokenInitializationFailureException e){
-				log.error("Error instanciating SignerToken",e);
+				throw new EJBException(e);
 			}catch(ClassNotFoundException e){
-				log.error("Error instanciating SignerToken",e);
-			}catch(IllegalAccessException iae){
-				log.error("Error instanciating SignerToken",iae);
-			}catch(InstantiationException ie){
-				log.error("Error instanciating SignerToken",ie);
+				throw new EJBException(e);
+			}
+			catch(IllegalAccessException iae){
+				throw new EJBException(iae);
+			}
+			catch(InstantiationException ie){
+				throw new EJBException(ie);
 			}
 		}
 		
 		return cryptoToken;
 	}
 
-					
-    private Certificate cert = null;	
+	
+
+	
+						
+    private X509Certificate cert = null;	
  
 	/**
 	 * Private method that returns the certificate used when signing
@@ -148,9 +124,7 @@ public abstract class BaseMailSigner  implements IMailSigner {
 	 */
 	protected Certificate getSigningCertificate() throws CryptoTokenOfflineException {
 		if(cert==null){
-			if(getCryptoToken() != null){
-			  cert = (Certificate) getCryptoToken().getCertificate(ICryptoToken.PURPOSE_SIGN);
-			}
+			cert = (X509Certificate) getCryptoToken().getCertificate(ICryptoToken.PURPOSE_SIGN);
 			if(cert==null){
 			  cert=( new ProcessableConfig( config)).getSignerCertificate();
 			}
@@ -164,12 +138,15 @@ public abstract class BaseMailSigner  implements IMailSigner {
 	 * Private method that returns the certificate used when signing
 	 * @throws CryptoTokenOfflineException 
 	 */
-
 	protected Collection<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
 		if(certChain==null){
 			certChain =  getCryptoToken().getCertificateChain(ICryptoToken.PURPOSE_SIGN);
 			if(certChain==null){
+				log.debug("Signtoken did not contain a certificate chain, looking in config.");
 				certChain=(new ProcessableConfig(config)).getSignerCertificateChain();
+				if (certChain == null) {
+					log.error("Neither Signtoken or ProcessableConfig contains a certificate chain!");					
+				}
 			}
 		}		
 		return certChain;
@@ -189,16 +166,6 @@ public abstract class BaseMailSigner  implements IMailSigner {
 	 */
 	public boolean destroyKey(int purpose) {
 		return getCryptoToken().destroyKey(purpose);
-	}
-	
-	/**
-	 * Returns the non-EJB variant of the global configuration session.
-	 * 
-	 * Is very similar capabilities as the EJB bean.
-	 * @return the instance of NonEJBGlobalConfigurationSession 
-	 */
-	protected NonEJBGlobalConfigurationSession getGlobalConfigurationSession(){
-		return NonEJBGlobalConfigurationSession.getInstance();
 	}
 	
 	

@@ -29,7 +29,7 @@ import org.signserver.protocol.ws.gen.WorkerStatusWS;
  * 
  * @author Philip Vendil 2007 feb 3
  *
- * @version $Id: CallFirstNodeWithStatusOKWSClient.java,v 1.1 2007-11-27 06:05:11 herrvendil Exp $
+ * @version $Id: CallFirstNodeWithStatusOKWSClient.java,v 1.2 2007-12-12 14:00:07 herrvendil Exp $
  */
 public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	    private static Logger log = Logger.getLogger(CallFirstNodeWithStatusOKWSClient.class);
@@ -41,8 +41,14 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	    
 		private String fastestHost = null;
 		private String protocol = SignServerWSClientFactory.PROTOCOL;
+		private int port = 0;
+		private String  wSDLURL = null;
 		
 		private HashMap<String, SignServerWS> serviceMap = new HashMap<String, SignServerWS>();
+
+
+
+		private IFaultCallback faultCallback;
 	    
 
 	    
@@ -59,44 +65,63 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	     * 
 	     */
 	    public void init(String[] hosts, int port, int timeOut, 
-	    		             String  wSDLURL, boolean useHTTPS){
+	    		             String  wSDLURL, boolean useHTTPS, IFaultCallback faultCallback){
 
 	        this.hosts = hosts;  
 	        this.timeOut = timeOut;
 	        if(useHTTPS){
 	        	protocol = SignServerWSClientFactory.SECURE_PROTOCOL;
 	        }
+	        this.port = port;
+	        this.wSDLURL = wSDLURL;
+	        this.faultCallback = faultCallback;
 	        
-	        QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
+	        
 	        for (int i = 0; i < hosts.length; i++) {
-				try {
-					URL u = new URL(protocol + hosts[i] + ":" + port + wSDLURL);
-					SignServerWSService signServerWSService = new SignServerWSService(u,qname);
-					SignServerWS client = signServerWSService.getSignServerWSPort();
-					if( client instanceof BindingProvider ){
-						( ( BindingProvider ) client ).getRequestContext().put(
-								"com.sun.xml.ws.connect.timeout", timeOut  );
-						( ( BindingProvider ) client ).getRequestContext().put(
-								"com.sun.xml.ws.request.timeout", timeOut  );
-					} 
-					serviceMap.put(hosts[i], client);
-				} catch (MalformedURLException e) {
-					log.error("MalformedURLException :" +protocol + hosts[i] + ":" + port + wSDLURL ,e);
-				}
+	        	try{
+	        	  connectToHost(hosts[i]);
+	        	}catch(Throwable e){
+	        		faultCallback.addCommunicationError(new GenericCommunicationFault("Error initializing connection : " + e.getMessage(),hosts[i],e));
+	        	}
+
 
 			}
 	    }
 	    
-	    /**
+	    private SignServerWS connectToHost(String host) {
+	    	SignServerWS retval = null;
+	    	retval = serviceMap.get(host);
+	    	if(retval == null){
+	    		try {
+	    			QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
+	    			URL u = new URL(protocol + host + ":" + port + wSDLURL);
+	    			SignServerWSService signServerWSService = new SignServerWSService(u,qname);
+	    			retval = signServerWSService.getSignServerWSPort();
+	    			if( retval instanceof BindingProvider ){
+	    				( ( BindingProvider ) retval ).getRequestContext().put(
+	    						"com.sun.xml.ws.connect.timeout", timeOut  );
+	    				( ( BindingProvider ) retval ).getRequestContext().put(
+	    						"com.sun.xml.ws.request.timeout", timeOut  );
+	    			} 
+	    			serviceMap.put(host, retval);
+	    		} catch (MalformedURLException e) {
+	    			log.error("MalformedURLException :" +protocol + host + ":" + port + wSDLURL ,e);
+	    		}
+	    	}
+			
+			return retval;
+		}
+
+		/**
 		 * @see org.signserver.protocol.ws.client.ISignServerWSClient#process(String, List, IFaultCallback)
 		 */
-	    public List<ProcessResponseWS> process(String workerId, List<ProcessRequestWS> requests, IFaultCallback errorCallback){
+	    public List<ProcessResponseWS> process(String workerId, List<ProcessRequestWS> requests){
 	    	List<ProcessResponseWS> resp = null;
 
-	    	String fastestHost = getFastestHost(errorCallback);
+	    	String fastestHost = getFastestHost(workerId, faultCallback);
 
 	    	if(fastestHost != null){
-	    		SignServerWS service = serviceMap.get(fastestHost);	
+	    		SignServerWS service = connectToHost(fastestHost);	
 
 	    		try {
 	    			List<org.signserver.protocol.ws.gen.ProcessResponseWS> response = service.process(workerId, WSClientUtil.convertProcessRequestWS(requests));
@@ -104,13 +129,15 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	    				resp = WSClientUtil.convertProcessResponseWS(response);  
 	    			}
 	    		} catch (IllegalRequestException_Exception e) {
-	    			errorCallback.addCommunicationError(new GenericCommunicationFault(fastestHost,new org.signserver.common.IllegalRequestException(e.getMessage())));
+	    			faultCallback.addCommunicationError(new GenericCommunicationFault("IllegalRequestException : " +e.getMessage(), fastestHost,new org.signserver.common.IllegalRequestException(e.getMessage())));
 	    		} catch (InvalidWorkerIdException_Exception e) {
-	    			errorCallback.addCommunicationError(new GenericCommunicationFault(fastestHost,new org.signserver.common.InvalidWorkerIdException(e.getMessage())));
+	    			faultCallback.addCommunicationError(new GenericCommunicationFault("InvalidWorkerIdException : " +e.getMessage(), fastestHost,new org.signserver.common.InvalidWorkerIdException(e.getMessage())));
 	    		} catch (SignServerException_Exception e) {
-	    			errorCallback.addCommunicationError(new GenericCommunicationFault(fastestHost,new org.signserver.common.SignServerException(e.getMessage())));
+	    			faultCallback.addCommunicationError(new GenericCommunicationFault("SignServerException : " +e.getMessage(), fastestHost,new org.signserver.common.SignServerException(e.getMessage())));
 	    		} catch (CryptoTokenOfflineException_Exception e) {
-	    			errorCallback.addCommunicationError(new GenericCommunicationFault(fastestHost,new org.signserver.common.CryptoTokenOfflineException(e.getMessage())));
+	    			faultCallback.addCommunicationError(new GenericCommunicationFault("CryptoTokenOfflineException : " +e.getMessage(), fastestHost,new org.signserver.common.CryptoTokenOfflineException(e.getMessage())));
+	    		}catch(Throwable e){
+	    			faultCallback.addCommunicationError(new GenericCommunicationFault(e.getMessage(),fastestHost,e));
 	    		}
 
 	    	}
@@ -132,11 +159,11 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	     * @return the fastest host or null if no host responded within the timeout.
 	     */
 	    
-	    String getFastestHost(IFaultCallback errorCallback) {
+	    String getFastestHost(String workerId, IFaultCallback errorCallback) {
 	        this.fastestHost = null;
 	        
 	        for(int i=0; i<hosts.length ; i++)
-	            new Thread(new StatusChecker("ID " + i,hosts[i],errorCallback)).start();
+	            new Thread(new StatusChecker(workerId, "ID " + i,hosts[i],errorCallback)).start();
 	        synchronized( this ) {
 	            try {
 	                this.wait(timeOut);
@@ -162,8 +189,11 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 			
 			final private String id;
 
-			public StatusChecker(String id, String host, IFaultCallback errorCallback){
+			final private String workerId;
+
+			public StatusChecker(String workerId, String id, String host, IFaultCallback errorCallback){
 	    		super();
+	    		this.workerId = workerId;
 	    		this.id = id;
 	    		this.host = host;
 	    		this.errorCallback = errorCallback;    		
@@ -174,17 +204,24 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 			    boolean statusOK = false;
 			    logStatusChecker.debug("Thread with id : " + id + " started.");
 			    try{
-			    	List<WorkerStatusWS> result = serviceMap.get(host).getStatus(id);
-			    	if(result.size() == 1){
-			    		WorkerStatusWS status = result.get(0);
-			    		if(status.getOverallStatus().equals(org.signserver.protocol.ws.WorkerStatusWS.OVERALLSTATUS_ALLOK))
-			    			statusOK = true;
-			    		else {
-			    			errorCallback.addCommunicationError(new GenericCommunicationFault(host,"Error the node responded status ERROR :" + status.getErrormessage() ));			        			
+			    	if(connectToHost(host) != null){
+			    		List<WorkerStatusWS> result = connectToHost(host).getStatus(workerId);
+			    		if(result != null && result.size() == 1){
+			    			WorkerStatusWS status = result.get(0);
+			    			if(status.getOverallStatus().equals(org.signserver.protocol.ws.WorkerStatusWS.OVERALLSTATUS_ALLOK)){
+			    				statusOK = true;
+			    			} else {
+			    				errorCallback.addCommunicationError(new GenericCommunicationFault("Error the node responded status ERROR :" + status.getErrormessage(),host ));			        			
+			    			}
 			    		}
+			    	}else{
+			    		errorCallback.addCommunicationError(new GenericCommunicationFault("Error Couldn't connect to host : " + host ,host));
 			    	}
 			    }catch (InvalidWorkerIdException_Exception e) {
 			    	errorCallback.addCommunicationError(new GenericCommunicationFault(host,new org.signserver.common.InvalidWorkerIdException(e.getMessage())));
+				}catch (Throwable e){
+					errorCallback.addCommunicationError(new GenericCommunicationFault(host,e));
+					serviceMap.remove(host);
 				}
 			    logStatusChecker.debug("Thread with id : " + id + " finished.");
 			    synchronized( CallFirstNodeWithStatusOKWSClient.this ) {

@@ -41,7 +41,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.protocol.validationservice.ws.IValidationWS;
 import org.signserver.protocol.validationservice.ws.ValidationResponse;
 import org.signserver.server.RequestContext;
-import org.signserver.server.signers.BaseSigner;
+import org.signserver.server.BaseProcessable;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -58,7 +58,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementation of the Validation Service web interface.
  * 
  *
- * @version $Id: ValidationWS.java,v 1.1 2007-12-02 20:35:19 herrvendil Exp $
+ * @version $Id: ValidationWS.java,v 1.2 2007-12-12 14:00:08 herrvendil Exp $
  */
 @WebService(targetNamespace="gen.ws.validationservice.protocol.signserver.org")
 public class ValidationWS implements IValidationWS {
@@ -173,7 +173,7 @@ public class ValidationWS implements IValidationWS {
     	try {
     		ValidationStatus status = (ValidationStatus) getWorkerSession().getStatus(workerId);
     		WorkerConfig signerConfig = status.getActiveSignerConfig();
-    		if(signerConfig.getProperties().getProperty(BaseSigner.DISABLED) == null  || !signerConfig.getProperties().getProperty(BaseSigner.DISABLED).equalsIgnoreCase("TRUE")){													
+    		if(signerConfig.getProperties().getProperty(BaseProcessable.DISABLED) == null  || !signerConfig.getProperties().getProperty(BaseProcessable.DISABLED).equalsIgnoreCase("TRUE")){													
     			if(status.getTokenStatus() == SignerStatus.STATUS_OFFLINE){
     				retval ="Error Signer Token is disconnected, worker Id : " + workerId;
     			}

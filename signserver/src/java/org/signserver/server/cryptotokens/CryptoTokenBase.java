@@ -31,7 +31,7 @@ import org.ejbca.core.model.ca.catoken.ICAToken;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.signserver.common.Base64SignerCertReqData;
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
@@ -45,7 +45,7 @@ import org.signserver.common.SignerStatus;
  * 
  * @see org.signserver.server.cryptotokens.ICryptoToken
  * @author Philip Vendil, Tomas Gustavsson
- * @version $Id: CryptoTokenBase.java,v 1.1 2007-11-27 06:05:08 herrvendil Exp $
+ * @version $Id: CryptoTokenBase.java,v 1.2 2007-12-12 14:00:04 herrvendil Exp $
  */
 public abstract class CryptoTokenBase implements ICryptoToken{
 
@@ -161,7 +161,7 @@ public abstract class CryptoTokenBase implements ICryptoToken{
 	}
 
 	
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
 		Base64SignerCertReqData retval = null;
 		if(info instanceof PKCS10CertReqInfo){
 			PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info; 

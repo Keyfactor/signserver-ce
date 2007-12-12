@@ -7,9 +7,9 @@ package org.signserver.common;
  * 
  * 
  * @author Philip Vendil
- * $Id: ISignRequest.java,v 1.2 2007-11-09 15:45:49 herrvendil Exp $
+ * $Id: ISignRequest.java,v 1.3 2007-12-12 14:00:04 herrvendil Exp $
  */
-public interface ISignRequest extends IProcessRequest {
+public interface ISignRequest {
 
 	/**
 	 * Should contain a unique request id used to identify the request

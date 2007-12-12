@@ -42,10 +42,10 @@ import org.bouncycastle.tsp.TimeStampTokenGenerator;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.IProcessRequest;
-import org.signserver.common.IProcessResponse;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.ISignRequest;
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -72,7 +72,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * TSA = General name of the Time Stamp Authority.
  * 
  * @author philip
- * $Id: TimeStampSigner.java,v 1.8 2007-12-02 20:35:18 herrvendil Exp $
+ * $Id: TimeStampSigner.java,v 1.9 2007-12-12 14:00:06 herrvendil Exp $
  */
 public class TimeStampSigner extends BaseSigner{
 	
@@ -159,9 +159,9 @@ public class TimeStampSigner extends BaseSigner{
 	 * The main method performing the actual timestamp operation.
 	 * Expects the signRequest to be a GenericSignRequest contining a TimeStampRequest
 	 * 
-	 * @see org.signserver.server.signers.ISigner#signData(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate)
+	 * @see org.signserver.server.signers.IProcessable#signData(org.signserver.common.ProcessRequest, java.security.cert.X509Certificate)
 	 */
-	public IProcessResponse processData(IProcessRequest signRequest,
+	public ProcessResponse processData(ProcessRequest signRequest,
 			RequestContext requestContext) throws IllegalRequestException,
 			CryptoTokenOfflineException {
 		boolean returnbytearray = false;
@@ -185,12 +185,10 @@ public class TimeStampSigner extends BaseSigner{
         GenericSignResponse signResponse = null;
 		try {
 			TimeStampRequest timeStampRequest = null;
-			if(sReq.getRequestData() instanceof byte[]){
-				timeStampRequest = new TimeStampRequest((byte[]) sReq.getRequestData());
-				returnbytearray = true;
-			}else{
-				timeStampRequest = (TimeStampRequest) sReq.getRequestData();
-			}
+			
+			timeStampRequest = new TimeStampRequest((byte[]) sReq.getRequestData());
+			returnbytearray = true;
+
 			TimeStampTokenGenerator timeStampTokenGen = getTimeStampTokenGenerator(timeStampRequest);
 			
 			TimeStampResponseGenerator timeStampResponseGen = getTimeStampResponseGenerator(timeStampTokenGen);						
@@ -214,9 +212,6 @@ public class TimeStampSigner extends BaseSigner{
 		} catch (NoSuchProviderException e) {
 			log.error("NoSuchProviderException: ", e);
 			throw new IllegalRequestException("NoSuchProviderException: " + e.getMessage());
-		} catch (CryptoTokenOfflineException e) {
-			log.error("CryptoTokenOfflineException: ", e);
-			throw new IllegalRequestException("CryptoTokenOfflineException: " + e.getMessage());
 		} catch (CertStoreException e) {
 			log.error("CertStoreException: ", e);
 			throw new IllegalRequestException("CertStoreException: " + e.getMessage());
@@ -430,7 +425,7 @@ public class TimeStampSigner extends BaseSigner{
     /**
      * Not supported yet
      */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
 		return this.getCryptoToken().genCertificateRequest(info);
 	}
 }

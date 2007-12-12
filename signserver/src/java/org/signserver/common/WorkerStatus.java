@@ -28,7 +28,7 @@ import java.text.DateFormat;
  * 
  * @author Philip Vendil
  *
- * $Id: WorkerStatus.java,v 1.2 2007-11-09 15:45:50 herrvendil Exp $
+ * $Id: WorkerStatus.java,v 1.3 2007-12-12 14:00:05 herrvendil Exp $
  */
 
 public abstract class WorkerStatus implements Serializable{
@@ -39,12 +39,13 @@ public abstract class WorkerStatus implements Serializable{
 
 	protected String hostname = null;
 	protected WorkerConfig activeconfig= null;	
-
+    protected int workerId;
 	
 	/** 
 	 * Main constuctor
 	 */
-	public WorkerStatus(WorkerConfig config){	
+	public WorkerStatus(int workerId, WorkerConfig config){
+		this.workerId = workerId;
 	    try {
 	    	hostname= InetAddress.getLocalHost().getHostName();
 	    } catch (UnknownHostException e) {
@@ -65,6 +66,13 @@ public abstract class WorkerStatus implements Serializable{
 		return activeconfig;
 	}
 	
+	/**
+	 * Abstract method all workers must implement, used be health checkers to check that
+	 * everything is OK with this worker 
+	 * 
+	 * @return null of everything is OK, otherwise an descriptive error message of the problem.
+	 */
+	public abstract String isOK();
 	
 	/**
 	 * Method all inheriting workers must implement. It responsible for writing the status for that specific

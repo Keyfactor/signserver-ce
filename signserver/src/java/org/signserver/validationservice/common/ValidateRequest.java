@@ -12,15 +12,15 @@
  *************************************************************************/
 package org.signserver.validationservice.common;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
-import org.signserver.common.IProcessRequest;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.validationservice.common.ValidationServiceConstants.CertType;
 import org.signserver.validationservice.server.ICertificateManager;
@@ -30,9 +30,9 @@ import org.signserver.validationservice.server.ICertificateManager;
  * validate a certificate.
  * 
  * @author Philip Vendil
- * $Id: ValidateRequest.java,v 1.2 2007-12-11 05:37:52 herrvendil Exp $
+ * $Id: ValidateRequest.java,v 1.3 2007-12-12 14:00:07 herrvendil Exp $
  */
-public class ValidateRequest implements IProcessRequest {
+public class ValidateRequest extends ProcessRequest {
 
 	private transient Logger log = Logger.getLogger(this.getClass());
 
@@ -87,10 +87,7 @@ public class ValidateRequest implements IProcessRequest {
 
 
 
-
-
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void parse(DataInput in) throws IOException {
 		in.readInt();
 		int dataSize = in.readInt();
 		certificateData = new byte[dataSize];
@@ -99,12 +96,9 @@ public class ValidateRequest implements IProcessRequest {
 		byte[] stringData = new byte[stringLen];
 		in.readFully(stringData);
 		this.certType = CertType.valueOf(new String(stringData,"UTF-8"));
-	    
 	}
 
-
-
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void serialize(DataOutput out) throws IOException {
 		out.writeInt(RequestAndResponseManager.RESPONSETYPE_VALIDATE);
 		out.writeInt(certificateData.length);
 		out.write(certificateData);

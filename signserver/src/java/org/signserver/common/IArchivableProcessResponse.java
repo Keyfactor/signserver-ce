@@ -18,7 +18,7 @@ package org.signserver.common;
  * @author phive
  *
  */
-public interface IArchivableProcessResponse extends IProcessResponse {
+public interface IArchivableProcessResponse {
 
 	
     /**

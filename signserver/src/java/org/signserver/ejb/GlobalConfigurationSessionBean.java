@@ -36,7 +36,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.GlobalConfigurationCache;
 import org.signserver.server.GlobalConfigurationFileParser;
 import org.signserver.server.service.IService;
-import org.signserver.server.signers.ISigner;
+import org.signserver.server.IProcessable;
 
 /**
  * The implementation of the GlobalConfiguration Session Bean
@@ -191,11 +191,11 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 				if(workerType == GlobalConfiguration.WORKERTYPE_ALL){
 					retval.add(new Integer(id));
 				}else{
-					if(workerType == GlobalConfiguration.WORKERTYPE_SIGNERS){
+					if(workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE){
 						String classPath = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, unScopedKey);
 						log.debug("Found Classpath " + classPath);
 						Object obj = this.getClass().getClassLoader().loadClass(classPath).newInstance();
-						if(obj instanceof ISigner){
+						if(obj instanceof IProcessable){
 							log.debug("Adding Signer " + id);
 							retval.add(new Integer(id));        			   
 						}

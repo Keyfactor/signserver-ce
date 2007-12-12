@@ -14,9 +14,9 @@
  
 package org.signserver.common;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
 /**
  * A Generic work request class implementing the minimal required functionality.
@@ -24,15 +24,15 @@ import java.io.ObjectOutput;
  * Could be used for TimeStamp Request.
  * 
  * @author philip
- * $Id: GenericSignRequest.java,v 1.3 2007-12-11 05:36:58 herrvendil Exp $
+ * $Id: GenericSignRequest.java,v 1.4 2007-12-12 14:00:05 herrvendil Exp $
  */
-public class GenericSignRequest implements ISignRequest {
+public class GenericSignRequest extends ProcessRequest implements ISignRequest {
 
 
 	private static final long serialVersionUID = 1L;
 
 	private int requestID;
-	private Object requestData;
+	private byte[] requestData;
 	
 
     /**
@@ -47,41 +47,41 @@ public class GenericSignRequest implements ISignRequest {
 	 * 
 	 * @param requestID
 	 * @param requestData
-	 * @see org.signserver.common.IProcessRequest
+	 * @see org.signserver.common.ProcessRequest
 	 */
-	public GenericSignRequest(int requestID, Object requestData){
+	public GenericSignRequest(int requestID, byte[] requestData){
 		this.requestID = requestID;
 		this.requestData = requestData;
 	}
 	
 	/**
-	 * @see org.signserver.common.IProcessRequest
+	 * @see org.signserver.common.ProcessRequest
 	 */
 	public int getRequestID() {		
 		return requestID;
 	}
 
 	/**
-	 * @see org.signserver.common.IProcessRequest
+	 * @see org.signserver.common.ProcessRequest
 	 */
-	public Object getRequestData() {	
+	public byte[] getRequestData() {	
 		return requestData;
 	}
 
 
-
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void parse(DataInput in) throws IOException {
 		in.readInt();
 		this.requestID = in.readInt();
-		this.requestData = in.readObject();		
+		int dataSize = in.readInt();		
+		this.requestData = new byte[dataSize];
+		in.readFully(requestData);			
 	}
 
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void serialize(DataOutput out) throws IOException {
 		out.writeInt(RequestAndResponseManager.REQUESTTYPE_GENERICSIGNREQUEST);
 		out.writeInt(requestID);
-		out.writeObject(requestData);
-		
+		out.writeInt(requestData.length);
+		out.write(requestData);		
 	}
 
 

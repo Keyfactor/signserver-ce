@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.MailSignerConfig;
@@ -54,7 +54,7 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * @author Philip Vendil 6 okt 2007
  *
- * @version $Id: CommonAdminInterface.java,v 1.3 2007-11-27 06:05:05 herrvendil Exp $
+ * @version $Id: CommonAdminInterface.java,v 1.4 2007-12-12 14:00:08 herrvendil Exp $
  */
 
 public class CommonAdminInterface  {
@@ -152,10 +152,10 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.ejb.WorkerSessionBean#genCertificateRequest(int, ISignerCertReqInfo)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#genCertificateRequest(int, ISignerCertReqInfo)
 	 */
-	public ISignerCertReqData genCertificateRequest(int signerId,
+	public ICertReqData genCertificateRequest(int signerId,
 			ISignerCertReqInfo certReqInfo) throws CryptoTokenOfflineException,
 			InvalidWorkerIdException, RemoteException {
-		ISignerCertReqData retval = null;
+		ICertReqData retval = null;
 		if(isMailSignerMode()){
 			retval = getIMailSignerRMI().genCertificateRequest(signerId, certReqInfo);
 		}
@@ -289,7 +289,7 @@ public class CommonAdminInterface  {
 	
 	public List<Integer> getWorkers(int workerType) throws RemoteException {
 		if(isMailSignerMode()){
-			if(workerType == GlobalConfiguration.WORKERTYPE_SIGNERS){
+			if(workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE){
 				workerType = GlobalConfiguration.WORKERTYPE_MAILSIGNERS;
 			}
 			return getIMailSignerRMI().getWorkers(workerType);

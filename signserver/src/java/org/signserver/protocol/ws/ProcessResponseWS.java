@@ -19,7 +19,7 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.ejbca.util.Base64;
-import org.signserver.common.IProcessResponse;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestAndResponseManager;
 
 /**
@@ -29,7 +29,7 @@ import org.signserver.common.RequestAndResponseManager;
  * 
  * @author Philip Vendil 28 okt 2007
  *
- * @version $Id: ProcessResponseWS.java,v 1.2 2007-12-11 05:37:33 herrvendil Exp $
+ * @version $Id: ProcessResponseWS.java,v 1.3 2007-12-12 14:00:08 herrvendil Exp $
  */
 
 public class ProcessResponseWS {
@@ -148,7 +148,7 @@ public class ProcessResponseWS {
 	 * @throws IOException if parsing of data failed.
 	 */
 	@XmlTransient
-	public IProcessResponse getProcessResponse() throws IOException{
+	public ProcessResponse getProcessResponse() throws IOException{
 		return RequestAndResponseManager.parseProcessResponse(getResponseData());
 	}
 

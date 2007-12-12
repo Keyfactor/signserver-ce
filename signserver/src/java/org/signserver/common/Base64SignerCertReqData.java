@@ -21,10 +21,10 @@ package org.signserver.common;
  * 
  * @author Philip Vendil 2007 feb 19
  *
- * @version $Id: Base64SignerCertReqData.java,v 1.1 2007-02-27 16:18:11 herrvendil Exp $
+ * @version $Id: Base64SignerCertReqData.java,v 1.2 2007-12-12 14:00:05 herrvendil Exp $
  */
 
-public class Base64SignerCertReqData implements ISignerCertReqData {
+public class Base64SignerCertReqData implements ICertReqData {
 
 	private static final long serialVersionUID = 1L;
 	byte[] base64CertReq = null;

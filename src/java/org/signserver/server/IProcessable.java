@@ -32,12 +32,13 @@ import org.signserver.server.IWorker;
  * 
  * 
  * @author Philip Vendil
- * $Id: IProcessable.java,v 1.2 2007-12-12 14:24:56 herrvendil Exp $
+ * $Id: IProcessable.java,v 1.3 2007-12-12 15:13:37 herrvendil Exp $
  */
 public interface IProcessable extends IWorker{
 
 	public static final String AUTHTYPE_CLIENTCERT = "CLIENTCERT";
 	public static final String AUTHTYPE_NOAUTH     = "NOAUTH";
+	
 	
 
 	/**

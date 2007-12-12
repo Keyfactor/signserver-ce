@@ -32,30 +32,30 @@ import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IArchivableProcessResponse;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.ISignResponse;
 import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignResponse;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.ProcessableConfig;
+import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerConstants;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.BaseProcessable;
 import org.signserver.server.IAuthorizer;
+import org.signserver.server.IProcessable;
 import org.signserver.server.IWorker;
 import org.signserver.server.WorkerFactory;
-import org.signserver.server.IProcessable;
 
 /**
  * The main worker session bean
@@ -111,7 +111,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
         IAuthorizer auth = WorkerFactory.getInstance().getAuthenticator(workerId, processable.getAuthenticationType(), worker.getStatus().getActiveSignerConfig(), em);
         auth.isAuthorized(request, requestContext);
         
-        if(processable.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseProcessable.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
+        if(processable.getStatus().getActiveSignerConfig().getProperties().getProperty(SignServerConstants.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
         	throw new CryptoTokenOfflineException("Error Signer : " + workerId + " is disabled and cannot perform any signature operations");
         }
         
@@ -120,7 +120,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 			res = processable.processData(request,  requestContext);
 	        if(res instanceof IArchivableProcessResponse){
 	        	IArchivableProcessResponse arres = (IArchivableProcessResponse) res;
-	        	if(processable.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseProcessable.ARCHIVE,"FALSE").equalsIgnoreCase("TRUE")){
+	        	if(processable.getStatus().getActiveSignerConfig().getProperties().getProperty(SignServerConstants.ARCHIVE,"FALSE").equalsIgnoreCase("TRUE")){
 	        		if(arres.getArchiveData() != null){ 
 	        			String requestIP = (String) requestContext.get(RequestContext.REMOTE_IP);
 	        			X509Certificate clientCert = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);

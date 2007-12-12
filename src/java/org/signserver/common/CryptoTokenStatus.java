@@ -13,7 +13,6 @@
 
 package org.signserver.common;
 
-import org.signserver.server.BaseProcessable;
 
 
 /**
@@ -22,7 +21,7 @@ import org.signserver.server.BaseProcessable;
  * 
  * @author Philip Vendil 23 nov 2007
  *
- * @version $Id: CryptoTokenStatus.java,v 1.2 2007-12-12 14:00:05 herrvendil Exp $
+ * @version $Id: CryptoTokenStatus.java,v 1.3 2007-12-12 15:13:37 herrvendil Exp $
  */
 
 public abstract class CryptoTokenStatus extends WorkerStatus{
@@ -54,7 +53,7 @@ public abstract class CryptoTokenStatus extends WorkerStatus{
 	@Override
 	public String isOK() {
 		String retval = null;		
-		if(this.getActiveSignerConfig().getProperties().getProperty(BaseProcessable.DISABLED) == null  || !getActiveSignerConfig().getProperties().getProperty(BaseProcessable.DISABLED).equalsIgnoreCase("TRUE")){													
+		if(this.getActiveSignerConfig().getProperties().getProperty(SignServerConstants.DISABLED) == null  || !getActiveSignerConfig().getProperties().getProperty(SignServerConstants.DISABLED).equalsIgnoreCase("TRUE")){													
 		  if(getTokenStatus() == SignerStatus.STATUS_OFFLINE){
 			  retval ="Error Crypto Token is disconnected, worker Id : " + workerId;
 		  }

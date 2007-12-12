@@ -1,5 +1,5 @@
 #
-# $Id: signserver_build.properties.sample,v 1.8 2007-12-04 15:35:26 herrvendil Exp $
+# $Id: signserver_build.properties.sample,v 1.9 2007-12-12 15:13:37 herrvendil Exp $
 #
 # File containing the build properties of the sign server
 # 
@@ -274,7 +274,7 @@ mailsigner.primarydns=
 
 # The Secondary DNS server that the MailSigner should use.
 # Required Setting.
-mailsigner.secondarydns
+mailsigner.secondarydns=
 
 # Port that SMTP server should listen on
 # default=25

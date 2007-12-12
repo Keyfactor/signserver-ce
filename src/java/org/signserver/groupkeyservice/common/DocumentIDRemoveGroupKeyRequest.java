@@ -12,12 +12,13 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestAndResponseManager;
 
 /**
@@ -27,9 +28,9 @@ import org.signserver.common.RequestAndResponseManager;
  * 
  * @author Philip Vendil 13 nov 2007
  *
- * @version $Id: DocumentIDRemoveGroupKeyRequest.java,v 1.2 2007-12-11 05:36:58 herrvendil Exp $
+ * @version $Id: DocumentIDRemoveGroupKeyRequest.java,v 1.3 2007-12-12 14:00:06 herrvendil Exp $
  */
-public class DocumentIDRemoveGroupKeyRequest implements IRemoveGroupKeyRequest {
+public class DocumentIDRemoveGroupKeyRequest extends ProcessRequest implements IRemoveGroupKeyRequest {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -59,10 +60,7 @@ public class DocumentIDRemoveGroupKeyRequest implements IRemoveGroupKeyRequest {
 	}
 
 
-
-
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void parse(DataInput in) throws IOException {
 		in.readInt();
 		int size = in.readInt();
 		this.documentIds = new ArrayList<String>();
@@ -71,18 +69,17 @@ public class DocumentIDRemoveGroupKeyRequest implements IRemoveGroupKeyRequest {
 			byte[] stringData = new byte[stringLen];
 			in.readFully(stringData);
 			documentIds.add(new String(stringData,"UTF-8"));
-		}		
+		}	
 	}
 
-
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void serialize(DataOutput out) throws IOException {
 		out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_IDREMKEYS);
 		out.writeInt(documentIds.size());
 		for(String documentId : documentIds){
 			byte[] stringData = documentId.getBytes("UTF-8");
 			out.writeInt(stringData.length);
 			out.write(stringData);
-		}		
+		}	
 	}
 
 

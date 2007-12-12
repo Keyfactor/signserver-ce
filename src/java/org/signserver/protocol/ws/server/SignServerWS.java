@@ -33,8 +33,8 @@ import javax.xml.ws.handler.MessageContext;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.IProcessRequest;
-import org.signserver.common.IProcessResponse;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.ISignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
@@ -42,7 +42,6 @@ import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignerStatus;
-import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -52,7 +51,6 @@ import org.signserver.protocol.ws.ProcessRequestWS;
 import org.signserver.protocol.ws.ProcessResponseWS;
 import org.signserver.protocol.ws.WorkerStatusWS;
 import org.signserver.server.RequestContext;
-import org.signserver.server.signers.BaseSigner;
 import org.signserver.web.SignServerHealthCheck;
 
 
@@ -61,7 +59,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementor of the ISignServerWS interface.
  * 
  * @author Philip Vendil
- * $Id: SignServerWS.java,v 1.3 2007-12-11 05:38:03 herrvendil Exp $
+ * $Id: SignServerWS.java,v 1.4 2007-12-12 14:00:08 herrvendil Exp $
  */
 
 @WebService(targetNamespace="gen.ws.protocol.signserver.org")
@@ -116,7 +114,7 @@ public class SignServerWS implements ISignServerWS {
 			retval.add(resp);
 		}else{
 			// All Workers
-			List<Integer> signers = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_SIGNERS);
+			List<Integer> signers = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
 			for (Iterator<Integer> iterator = signers.iterator(); iterator.hasNext();) {
 				int next =  iterator.next();
 				if(errormessage== null){
@@ -139,14 +137,11 @@ public class SignServerWS implements ISignServerWS {
 	
 	private String checkSigner(int workerId) throws InvalidWorkerIdException{
 		String retval = null;
-		SignerStatus signerStatus = (SignerStatus) getSignServerSession().getStatus(workerId);
-		WorkerConfig signerConfig = signerStatus.getActiveSignerConfig();
-		if(signerConfig.getProperties().getProperty(BaseSigner.DISABLED) == null  || !signerConfig.getProperties().getProperty(BaseSigner.DISABLED).equalsIgnoreCase("TRUE")){													
-		  if(signerStatus.getTokenStatus() == SignerStatus.STATUS_OFFLINE){
-			  retval ="Error Signer Token is disconnected, worker Id : " + workerId;
-		  }
-		}
-		
+		WorkerStatus workerStatus = getWorkerSession().getStatus(workerId);
+		String currentMessage = workerStatus.isOK();
+		if(currentMessage != null){
+			retval += currentMessage;
+		}		
 		return retval;
 	}
 
@@ -169,14 +164,14 @@ public class SignServerWS implements ISignServerWS {
 		
 		for (Iterator<ProcessRequestWS> iterator = requests.iterator(); iterator.hasNext();) {
 			ProcessRequestWS next = iterator.next();
-			IProcessRequest req;
+			ProcessRequest req;
 			try {
 				req = RequestAndResponseManager.parseProcessRequest(next.getRequestData());
 			} catch (IOException e1) {
 				log.error("Error parsing process request",e1);
 				throw new IllegalRequestException(e1.getMessage());
 			}
-			IProcessResponse resp = getSignServerSession().process(workerId, req, new RequestContext(clientCert, requestIP));
+			ProcessResponse resp = getWorkerSession().process(workerId, req, new RequestContext(clientCert, requestIP));
 			ProcessResponseWS wsresp = new ProcessResponseWS();
 			try {
 				wsresp.setResponseData(RequestAndResponseManager.serializeProcessResponse(resp));
@@ -203,7 +198,7 @@ public class SignServerWS implements ISignServerWS {
 	private ArrayList<Certificate> getSignerCertificateChain(int workerId) throws InvalidWorkerIdException {
 		ArrayList<Certificate> retval = null;
 		try{
-		  WorkerStatus ws = getSignServerSession().getStatus(workerId);
+		  WorkerStatus ws = getWorkerSession().getStatus(workerId);
 		  if(ws instanceof SignerStatus){
 			ProcessableConfig sc = new ProcessableConfig(((SignerStatus) ws).getActiveSignerConfig());
 			Collection<java.security.cert.Certificate> signerCertificateChain = sc.getSignerCertificateChain();
@@ -249,7 +244,7 @@ public class SignServerWS implements ISignServerWS {
     	if(workerIdOrName.substring(0, 1).matches("\\d")){
     		retval = Integer.parseInt(workerIdOrName);    		
     	}else{
-    		retval = getSignServerSession().getWorkerId(workerIdOrName);
+    		retval = getWorkerSession().getWorkerId(workerIdOrName);
     		if(retval == 0){
     			throw new IllegalRequestException("Error: No worker with the given name could be found");
     		}
@@ -281,19 +276,19 @@ public class SignServerWS implements ISignServerWS {
       return checkDBString;
     }
     
-	private IWorkerSession.ILocal signserversession;
+	private IWorkerSession.ILocal workersession;
 	
-    private IWorkerSession.ILocal getSignServerSession(){
-    	if(signserversession == null){
+    private IWorkerSession.ILocal getWorkerSession(){
+    	if(workersession == null){
     		try{
     		  Context context = new InitialContext();
-    		  signserversession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
+    		  workersession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
     		}catch(NamingException e){
     			log.error(e);
     		}
     	}
     	
-    	return signserversession;
+    	return workersession;
     }
     
 	private IGlobalConfigurationSession.ILocal globalconfigsession;

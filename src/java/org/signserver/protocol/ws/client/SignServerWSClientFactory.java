@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Philip Vendil 10 nov 2007
  *
- * @version $Id: SignServerWSClientFactory.java,v 1.1 2007-11-27 06:05:11 herrvendil Exp $
+ * @version $Id: SignServerWSClientFactory.java,v 1.2 2007-12-12 14:00:07 herrvendil Exp $
  */
 
 public class SignServerWSClientFactory {
@@ -50,8 +50,8 @@ public class SignServerWSClientFactory {
      * @param hosts host names of the server to connect to.
      * @param useHTTPS indicates if HTTPS should be used.
      */
-    public ISignServerWSClient generateSignServerWSClient(String clientType, String[] hosts, boolean useHTTPS){
-       return generateSignServerWSClient(clientType, hosts, useHTTPS, DEFAULT_PORT, DEFAULT_TIMEOUT,DEFAULT_WSDL_URL);
+    public ISignServerWSClient generateSignServerWSClient(String clientType, String[] hosts, boolean useHTTPS, IFaultCallback faultCallback){
+       return generateSignServerWSClient(clientType, hosts, useHTTPS, faultCallback, DEFAULT_PORT, DEFAULT_TIMEOUT,DEFAULT_WSDL_URL);
     }
     
     /**
@@ -63,8 +63,8 @@ public class SignServerWSClientFactory {
      * @param useHTTPS indicates if HTTPS should be used.
      * @param port to connect to
      */
-    public ISignServerWSClient generateSignServerWSClient(String clientType,String[] hosts, boolean useHTTPS, int port ){
-    	return generateSignServerWSClient(clientType, hosts, useHTTPS, port, DEFAULT_TIMEOUT,DEFAULT_WSDL_URL);
+    public ISignServerWSClient generateSignServerWSClient(String clientType,String[] hosts, boolean useHTTPS, IFaultCallback faultCallback , int port ){
+    	return generateSignServerWSClient(clientType, hosts, useHTTPS, faultCallback, port, DEFAULT_TIMEOUT,DEFAULT_WSDL_URL);
     }
     
     /**
@@ -77,8 +77,8 @@ public class SignServerWSClientFactory {
      * @param port to connect to
      * @param timeOut in milliseconds
      */
-    public ISignServerWSClient generateSignServerWSClient(String clientType,String[] hosts, int port,  boolean useHTTPS, int timeOut){
-    	return generateSignServerWSClient(clientType, hosts, useHTTPS, DEFAULT_PORT, timeOut,DEFAULT_WSDL_URL);
+    public ISignServerWSClient generateSignServerWSClient(String clientType,String[] hosts, boolean useHTTPS,IFaultCallback faultCallback,int port, int timeOut){
+    	return generateSignServerWSClient(clientType, hosts, useHTTPS, faultCallback, DEFAULT_PORT, timeOut,DEFAULT_WSDL_URL);
     }
     
     /**
@@ -92,7 +92,7 @@ public class SignServerWSClientFactory {
      * @param timeOut in milliseconds
      * @param customAppURI the path to the sign server URI where the WS is deployed.
      */
-    public ISignServerWSClient generateSignServerWSClient(String clientType,String[] hosts,  boolean useHTTPS, int port, int timeOut, String customAppURI){
+    public ISignServerWSClient generateSignServerWSClient(String clientType,String[] hosts,  boolean useHTTPS, IFaultCallback faultCallback, int port, int timeOut, String customAppURI){
     	ISignServerWSClient retval = null;
     	try {
 			retval = (ISignServerWSClient) this.getClass().getClassLoader().loadClass(clientType).newInstance();
@@ -102,7 +102,7 @@ public class SignServerWSClientFactory {
 				tmpPort = SECURE_PORT;
 			}
 			
-			retval.init(hosts, tmpPort, timeOut, customAppURI, useHTTPS);
+			retval.init(hosts, tmpPort, timeOut, customAppURI, useHTTPS, faultCallback);
 			
 		} catch (Exception e) {
 			log.error("Error creating SignServiceWSClient of type " + clientType,e);

@@ -34,7 +34,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.ejbca.util.KeyTools;
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -52,7 +52,7 @@ import org.signserver.common.SignerStatus;
  * KEYSTOREPASSWORD : The password that locks the key store.
  * 
  * @author Philip Vendil
- * $Id: P12CryptoToken.java,v 1.1 2007-11-27 06:05:08 herrvendil Exp $
+ * $Id: P12CryptoToken.java,v 1.2 2007-12-12 14:00:04 herrvendil Exp $
  */
 public class P12CryptoToken implements ICryptoToken {
 	
@@ -265,7 +265,7 @@ public class P12CryptoToken implements ICryptoToken {
 	/**
 	 * Method not supported
 	 */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
 		log.error("genCertificateRequest was called, but is not supported for this sign token.");
 		return null;
 	}

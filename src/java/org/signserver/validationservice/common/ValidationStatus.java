@@ -26,7 +26,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * 
  * @author Philip Vendil
- * $Id: ValidationStatus.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
+ * $Id: ValidationStatus.java,v 1.2 2007-12-12 14:00:07 herrvendil Exp $
  */
 public class ValidationStatus extends CryptoTokenStatus {
 
@@ -37,9 +37,9 @@ public class ValidationStatus extends CryptoTokenStatus {
 	
     private HashMap<Integer,String> validatorStatuses;
 	
-	public ValidationStatus(int tokenStatus, WorkerConfig config, 
+	public ValidationStatus(int workerId, int tokenStatus, WorkerConfig config, 
 			HashMap<Integer,String> validatorStatuses) {
-		super(tokenStatus,config);
+		super(workerId, tokenStatus,config);
 		this.validatorStatuses = validatorStatuses;
 	}
 

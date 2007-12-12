@@ -29,11 +29,9 @@ import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.ejbca.util.JDBCUtil;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.SignerStatus;
-import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.signers.BaseSigner;
 
 
 
@@ -47,7 +45,7 @@ import org.signserver.server.signers.BaseSigner;
  * * All SignerTokens are aktive if not set as offline.
  * 
  * @author Philip Vendil
- * @version $Id: SignServerHealthCheck.java,v 1.4 2007-11-27 06:05:08 herrvendil Exp $
+ * @version $Id: SignServerHealthCheck.java,v 1.5 2007-12-12 14:00:08 herrvendil Exp $
  */
 
 public class SignServerHealthCheck implements IHealthCheck {
@@ -71,7 +69,7 @@ public class SignServerHealthCheck implements IHealthCheck {
 
 	private IWorkerSession.ILocal signserversession;
 	
-    private IWorkerSession.ILocal getSignServerSession(){
+    private IWorkerSession.ILocal getWorkerSession(){
     	if(signserversession == null){
     		try{
     		  Context context = new InitialContext();
@@ -138,19 +136,18 @@ public class SignServerHealthCheck implements IHealthCheck {
  	
 	private String checkSigners(){
 		String retval = "";		
-		Iterator<Integer> iter = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_SIGNERS).iterator();
+		Iterator<Integer> iter = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE).iterator();
 		while(iter.hasNext()){
-			int signerId = ((Integer) iter.next()).intValue(); 
-			SignerStatus signerStatus;
+			int processableId = ((Integer) iter.next()).intValue(); 
+			
 			try {
-				signerStatus = (SignerStatus) getSignServerSession().getStatus(signerId);
-				WorkerConfig signerConfig = signerStatus.getActiveSignerConfig();
-				if(signerConfig.getProperties().getProperty(BaseSigner.DISABLED) == null  || !signerConfig.getProperties().getProperty(BaseSigner.DISABLED).equalsIgnoreCase("TRUE")){													
-				  if(signerStatus.getTokenStatus() == SignerStatus.STATUS_OFFLINE){
-					retval +="\n Error Signer Token is disconnected, worker Id : " + signerId;
-					log.error("Error Signer Token is disconnected, worker Id : " + signerId);
-				  }
+				WorkerStatus workerStatus =  getWorkerSession().getStatus(processableId);
+				String currentMessage = workerStatus.isOK();
+				if(currentMessage != null){
+					retval += "\n " +currentMessage;
+					log.error(currentMessage);
 				}
+
 			} catch (InvalidWorkerIdException e) {
 				log.error(e.getMessage(),e);
 				e.printStackTrace();

@@ -30,7 +30,7 @@ import org.signserver.protocol.ws.ProcessRequestWS;
  * 
  * @author Philip Vendil
  *
- * @version $Id: ISignServerWSClient.java,v 1.1 2007-11-27 06:05:11 herrvendil Exp $
+ * @version $Id: ISignServerWSClient.java,v 1.2 2007-12-12 14:00:07 herrvendil Exp $
  */
 public interface ISignServerWSClient {
    
@@ -43,9 +43,11 @@ public interface ISignServerWSClient {
      * @param timeOut in milliseconds
      * @param wSDLURI the URL to the WSDL of the service appended to the host and port.
      * @param useHTTPS if HTTPS should be used to connect to the server. 
+     * @param faultCallback an interface to which all the problems are reported
+	 * this is mainly used to report problems when connecting to nodes. 
      */
 	void init(String[] hosts, int port, int timeOut, 
-         String wSDLURI, boolean useHTTPS);
+         String wSDLURI, boolean useHTTPS, IFaultCallback faultCallback);
 
 	/**
 	 * The main method used to send process requests to a sign server.
@@ -56,9 +58,9 @@ public interface ISignServerWSClient {
 	 * @param requests a list of requests to process
 	 * @param errorCallback an interface to which all the problems are reported
 	 * this is mainly used to report problems when connecting to nodes. 
-	 * @return list of ProcessResponse or null if all nodes are down or didn't respond in time.
+	 * 
 	 */
-	List<ProcessResponseWS> process(String workerId, List<ProcessRequestWS> requests, IFaultCallback errorCallback);
+	List<ProcessResponseWS> process(String workerId, List<ProcessRequestWS> requests);
 	
 
 

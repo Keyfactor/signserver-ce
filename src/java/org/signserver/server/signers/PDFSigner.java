@@ -28,10 +28,10 @@ import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.IProcessRequest;
-import org.signserver.common.IProcessResponse;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.ISignRequest;
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.WorkerConfig;
@@ -53,7 +53,7 @@ import com.lowagie.text.pdf.PdfStamper;
  * RECTANGLE = The location of the visible signature field (llx, lly, urx, ury)
  * 
  * @author Tomas Gustavsson
- * @version $Id: PDFSigner.java,v 1.5 2007-12-02 20:35:18 herrvendil Exp $
+ * @version $Id: PDFSigner.java,v 1.6 2007-12-12 14:00:06 herrvendil Exp $
  */
 public class PDFSigner extends BaseSigner{
 	
@@ -76,9 +76,9 @@ public class PDFSigner extends BaseSigner{
 	 * The main method performing the actual signing operation.
 	 * Expects the signRequest to be a GenericSignRequest containing a signed PDF file
 	 * 
-	 * @see org.signserver.server.signers.ISigner#signData(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate)
+	 * @see org.signserver.server.signers.IProcessable#signData(org.signserver.common.ProcessRequest, java.security.cert.X509Certificate)
 	 */
-	public IProcessResponse processData(IProcessRequest signRequest, RequestContext requestContext) 
+	public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) 
 		throws IllegalRequestException, CryptoTokenOfflineException {
 		
 		ISignRequest sReq = (ISignRequest) signRequest;
@@ -158,7 +158,7 @@ public class PDFSigner extends BaseSigner{
     /**
      * Not supported yet
      */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
 		return this.getCryptoToken().genCertificateRequest(info);
 	}
 }

@@ -25,34 +25,27 @@ import java.util.Enumeration;
  * the status of a specific signer
  * @author Philip Vendil
  *
- * $Id: MailSignerStatus.java,v 1.2 2007-11-09 15:45:49 herrvendil Exp $
+ * $Id: MailSignerStatus.java,v 1.3 2007-12-12 14:00:05 herrvendil Exp $
  */
 
-public class MailSignerStatus extends WorkerStatus{
+public class MailSignerStatus extends CryptoTokenStatus{
 
 	public static final int STATUS_ACTIVE  = 1;
 	public static final int STATUS_OFFLINE = 2;
 	
 	private static final long serialVersionUID = 1L;
 
-	private int tokenStatus = 0;
 	private Certificate signerCertificate = null;
 	
 	/** 
-	 * Main constuctor
+	 * Main constructor
 	 */
-	public MailSignerStatus(int tokenStatus, MailSignerConfig config, Certificate signerCertificate){
-		super(config.getWorkerConfig());
-		this.tokenStatus = tokenStatus;
+	public MailSignerStatus(int workerId, int tokenStatus, MailSignerConfig config, Certificate signerCertificate){
+		super(workerId, tokenStatus, config.getWorkerConfig());		
 	    this.signerCertificate = signerCertificate;
 	}
 
-	/**
-	 * @return Returns the tokenStatus.
-	 */
-	public int getTokenStatus() {
-		return tokenStatus;
-	}
+
 
 	 
 	/**

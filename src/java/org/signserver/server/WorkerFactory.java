@@ -31,7 +31,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.WorkerConfigDataService;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.service.IService;
-import org.signserver.server.signers.ISigner;
+import org.signserver.server.IProcessable;
 
 
 /**
@@ -93,15 +93,15 @@ public  class WorkerFactory {
 	 * @return A ISigner as defined in the configuration file, or null if no configuration
 	 * for the specified signerId could be found.
 	 */
-	public ISigner getSigner(String signerName, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession, EntityManager em){	   
-	   ISigner retval = null;
+	public IProcessable getSigner(String signerName, WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession, EntityManager em){	   
+	   IProcessable retval = null;
 
 	   loadWorkers(workerConfigHome,gCSession,em);
 		
 	   synchronized(nameToIdMap){	
 		   synchronized(workerStore){
 			   if(nameToIdMap.get(signerName) != null){
-				   retval = (ISigner) workerStore.get(nameToIdMap.get(signerName));
+				   retval = (IProcessable) workerStore.get(nameToIdMap.get(signerName));
 			   }
 		   }
 	   }
@@ -156,7 +156,7 @@ public  class WorkerFactory {
 						  Object obj = implClass.newInstance();
 						  
 						  WorkerConfig config = null;
-						  if(obj instanceof ISigner){
+						  if(obj instanceof IProcessable){
 							  config = getWorkerProperties(nextId.intValue(), workerConfigHome);
 							  if(config.getProperties().getProperty(ProcessableConfig.NAME) != null){
 								  
@@ -207,53 +207,61 @@ public  class WorkerFactory {
 		if(workerStore == null){
 			workerStore = Collections.synchronizedMap(new HashMap<Integer, IWorker>());
 			nameToIdMap = Collections.synchronizedMap(new HashMap<String, Integer>());
+			
+		}
+		
+		if(authenticatorStore == null){
 			authenticatorStore = Collections.synchronizedMap(new HashMap<Integer, IAuthorizer>());
 		}
+		
 		synchronized(nameToIdMap){	
 			synchronized(workerStore){
-				if(id != 0){
-					
-					workerStore.put(new Integer(id),null);
-					Iterator<String> iter = nameToIdMap.keySet().iterator();
-					while(iter.hasNext()){
-						String next = (String) iter.next();
-						if(nameToIdMap.get(next) != null && 
-								((Integer) nameToIdMap.get(next)).intValue() == id){
-							iter.remove();
+				synchronized(authenticatorStore){
+					if(id != 0){
+
+						workerStore.put(new Integer(id),null);
+						authenticatorStore.put(id, null);
+						Iterator<String> iter = nameToIdMap.keySet().iterator();
+						while(iter.hasNext()){
+							String next = (String) iter.next();
+							if(nameToIdMap.get(next) != null && 
+									((Integer) nameToIdMap.get(next)).intValue() == id){
+								iter.remove();
+							}
 						}
 					}
-				}
-				GlobalConfiguration gc = gCSession.getGlobalConfiguration();
+					GlobalConfiguration gc = gCSession.getGlobalConfiguration();
 
-				try{	
-					String classpath = gc.getWorkerClassPath(id);						
-					if(classpath != null){					
-						Class<?> implClass = Class.forName(classpath);
-						Object obj = implClass.newInstance();
+					try{	
+						String classpath = gc.getWorkerClassPath(id);						
+						if(classpath != null){					
+							Class<?> implClass = Class.forName(classpath);
+							Object obj = implClass.newInstance();
 
-						WorkerConfig config = null;
-						if(obj instanceof ISigner){
-							config = getWorkerProperties(id, workerConfigHome);
-							if(config.getProperties().getProperty(ProcessableConfig.NAME) != null){
-								getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), new Integer(id)); 
-							}  
-						}
-						if(obj instanceof IService){
-							config = getWorkerProperties(id, workerConfigHome);
-						}
+							WorkerConfig config = null;
+							if(obj instanceof IProcessable){
+								config = getWorkerProperties(id, workerConfigHome);
+								if(config.getProperties().getProperty(ProcessableConfig.NAME) != null){
+									getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), new Integer(id)); 
+								}  
+							}
+							if(obj instanceof IService){
+								config = getWorkerProperties(id, workerConfigHome);
+							}
 
-						((IWorker) obj).init(id, config, em);						  
-						getWorkerStore().put(new Integer(id),(IWorker) obj);
-					}  
-				}catch(ClassNotFoundException e){
-					throw new EJBException(e);
+							((IWorker) obj).init(id, config, em);						  
+							getWorkerStore().put(new Integer(id),(IWorker) obj);
+						}  
+					}catch(ClassNotFoundException e){
+						throw new EJBException(e);
+					}
+					catch(IllegalAccessException iae){
+						throw new EJBException(iae);
+					}
+					catch(InstantiationException ie){
+						throw new EJBException(ie);
+					} 
 				}
-				catch(IllegalAccessException iae){
-					throw new EJBException(iae);
-				}
-				catch(InstantiationException ie){
-					throw new EJBException(ie);
-				} 
 			}
 		}
 	}		
@@ -268,9 +276,9 @@ public  class WorkerFactory {
 	public IAuthorizer getAuthenticator(int workerId, String authType, WorkerConfig config, EntityManager em) throws IllegalRequestException{
 		if(getAuthenticatorStore().get(workerId) == null){
 			IAuthorizer auth = null;
-			if(authType.equalsIgnoreCase(ISigner.AUTHTYPE_NOAUTH)){
+			if(authType.equalsIgnoreCase(IProcessable.AUTHTYPE_NOAUTH)){
 				auth = new NoAuthorizer();				
-			}else if (authType.equalsIgnoreCase(ISigner.AUTHTYPE_NOAUTH)){
+			}else if (authType.equalsIgnoreCase(IProcessable.AUTHTYPE_NOAUTH)){
 				auth = new ClientCertAuthorizer();
 			}else{
 

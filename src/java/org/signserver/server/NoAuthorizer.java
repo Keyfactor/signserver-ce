@@ -15,7 +15,7 @@ package org.signserver.server;
 
 import javax.persistence.EntityManager;
 
-import org.signserver.common.IProcessRequest;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -26,7 +26,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @author Philip Vendil 24 nov 2007
  *
- * @version $Id: NoAuthorizer.java,v 1.2 2007-12-02 20:35:18 herrvendil Exp $
+ * @version $Id: NoAuthorizer.java,v 1.3 2007-12-12 14:00:07 herrvendil Exp $
  */
 
 public class NoAuthorizer implements IAuthorizer {
@@ -40,9 +40,9 @@ public class NoAuthorizer implements IAuthorizer {
 	}
 
 	/**
-	 * @see org.signserver.server.IAuthorizer#isAuthorized(IProcessRequest, RequestContext)
+	 * @see org.signserver.server.IAuthorizer#isAuthorized(ProcessRequest, RequestContext)
 	 */
-	public void isAuthorized(IProcessRequest request,RequestContext requestContext)
+	public void isAuthorized(ProcessRequest request,RequestContext requestContext)
 			throws SignServerException, IllegalRequestException {
 	}
 

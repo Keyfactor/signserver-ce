@@ -34,10 +34,10 @@ import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IArchivableProcessResponse;
-import org.signserver.common.IProcessRequest;
-import org.signserver.common.IProcessResponse;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.ISignResponse;
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
@@ -50,12 +50,12 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.BaseProcessable;
 import org.signserver.server.IAuthorizer;
 import org.signserver.server.IWorker;
 import org.signserver.server.RequestContext;
 import org.signserver.server.WorkerFactory;
-import org.signserver.server.signers.BaseSigner;
-import org.signserver.server.signers.ISigner;
+import org.signserver.server.IProcessable;
 
 /**
  * The main worker session bean
@@ -94,7 +94,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	/**
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#process(int, org.signserver.common.ISignRequest, java.security.cert.X509Certificate, java.lang.String)
 	 */
-	public IProcessResponse process(int workerId, IProcessRequest request, RequestContext requestContext) throws IllegalRequestException,
+	public ProcessResponse process(int workerId, ProcessRequest request, RequestContext requestContext) throws IllegalRequestException,
 		CryptoTokenOfflineException, SignServerException {
 		log.debug(">signData ");
 		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession,em);
@@ -103,24 +103,24 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
         	throw new IllegalRequestException("Non-existing signerId");
         }
         
-        if(!(worker instanceof ISigner)){
-        	throw new IllegalRequestException("Worker exists but isn't a signer.");
+        if(!(worker instanceof IProcessable)){
+        	throw new IllegalRequestException("Worker exists but isn't a processable.");
         }
-		ISigner signer = (ISigner) worker;
+		IProcessable processable = (IProcessable) worker;
         		
-        IAuthorizer auth = WorkerFactory.getInstance().getAuthenticator(workerId, signer.getAuthenticationType(), worker.getStatus().getActiveSignerConfig(), em);
+        IAuthorizer auth = WorkerFactory.getInstance().getAuthenticator(workerId, processable.getAuthenticationType(), worker.getStatus().getActiveSignerConfig(), em);
         auth.isAuthorized(request, requestContext);
         
-        if(signer.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseSigner.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
+        if(processable.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseProcessable.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
         	throw new CryptoTokenOfflineException("Error Signer : " + workerId + " is disabled and cannot perform any signature operations");
         }
         
-        IProcessResponse res = null;
+        ProcessResponse res = null;
 		try {
-			res = signer.processData(request,  requestContext);
+			res = processable.processData(request,  requestContext);
 	        if(res instanceof IArchivableProcessResponse){
 	        	IArchivableProcessResponse arres = (IArchivableProcessResponse) res;
-	        	if(signer.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseSigner.ARCHIVE,"FALSE").equalsIgnoreCase("TRUE")){
+	        	if(processable.getStatus().getActiveSignerConfig().getProperties().getProperty(BaseProcessable.ARCHIVE,"FALSE").equalsIgnoreCase("TRUE")){
 	        		if(arres.getArchiveData() != null){ 
 	        			String requestIP = (String) requestContext.get(RequestContext.REMOTE_IP);
 	        			X509Certificate clientCert = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
@@ -138,6 +138,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	        }
 		} catch (SignServerException e) {
 			log.error("SignServerException calling signer with id " + workerId + " : " +e.getMessage(),e);
+			throw e;
 		}
         
 
@@ -198,10 +199,10 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 			throw new InvalidWorkerIdException("Given SignerId " + signerId + " doesn't exist");
 		}
 		
-        if(!(worker instanceof ISigner)){
+        if(!(worker instanceof IProcessable)){
         	throw new InvalidWorkerIdException("Worker exists but isn't a signer.");
         }
-		ISigner signer = (ISigner) worker;
+		IProcessable signer = (IProcessable) worker;
 		
 		signer.activateSigner(authenticationCode);
 	}
@@ -216,10 +217,10 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 			throw new InvalidWorkerIdException("Given SignerId " + signerId + " doesn't exist");
 		}
 		
-        if(!(worker instanceof ISigner)){
+        if(!(worker instanceof IProcessable)){
         	throw new InvalidWorkerIdException("Worker exists but isn't a signer.");
         }
-		ISigner signer = (ISigner) worker;
+		IProcessable signer = (IProcessable) worker;
 		
 		return signer.deactivateSigner();
 	}
@@ -289,19 +290,19 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	/* (non-Javadoc)
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
 	 */
-	public ISignerCertReqData getCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws		
+	public ICertReqData getCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws		
 		CryptoTokenOfflineException, InvalidWorkerIdException {
 			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession,em);
 			if(worker == null){
 				throw new InvalidWorkerIdException("Given SignerId " + signerId + " doesn't exist");
 			}
 			
-	        if(!(worker instanceof ISigner)){
+	        if(!(worker instanceof IProcessable)){
 	        	throw new InvalidWorkerIdException("Worker exists but isn't a signer.");
 	        }
-			ISigner signer = (ISigner) worker;
+			IProcessable processable = (IProcessable) worker;
 			
-			return signer.genCertificateRequest(certReqInfo);
+			return processable.genCertificateRequest(certReqInfo);
 	}
 	
 	/* (non-Javadoc)
@@ -313,10 +314,10 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 				throw new InvalidWorkerIdException("Given SignerId " + signerId + " doesn't exist");
 			}
 			
-	        if(!(worker instanceof ISigner)){
+	        if(!(worker instanceof IProcessable)){
 	        	throw new InvalidWorkerIdException("Worker exists but isn't a signer.");
 	        }
-			ISigner signer = (ISigner) worker;
+			IProcessable signer = (IProcessable) worker;
 			
 			return signer.destroyKey(purpose);
 	}

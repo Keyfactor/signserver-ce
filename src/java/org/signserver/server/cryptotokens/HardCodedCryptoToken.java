@@ -31,7 +31,7 @@ import java.util.Properties;
 
 
 import org.bouncycastle.util.encoders.Base64;
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
@@ -42,7 +42,7 @@ import org.signserver.common.SignerStatus;
 /**
  * Class used for testing purposes, contains soft dummy key and certificates 
  * @author Philip Vendil
- * @version $Id: HardCodedCryptoToken.java,v 1.1 2007-11-27 06:05:08 herrvendil Exp $
+ * @version $Id: HardCodedCryptoToken.java,v 1.2 2007-12-12 14:00:04 herrvendil Exp $
  */
 
 public class HardCodedCryptoToken implements ICryptoToken {
@@ -235,7 +235,7 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	/**
 	 * Method not supported
 	 */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
 		return null;
 	}
 

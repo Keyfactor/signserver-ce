@@ -13,6 +13,8 @@
 
 package org.signserver.common;
 
+import org.signserver.server.BaseProcessable;
+
 
 /**
  * Abstract Status class containing token status.
@@ -20,11 +22,13 @@ package org.signserver.common;
  * 
  * @author Philip Vendil 23 nov 2007
  *
- * @version $Id: CryptoTokenStatus.java,v 1.1 2007-11-27 06:05:06 herrvendil Exp $
+ * @version $Id: CryptoTokenStatus.java,v 1.2 2007-12-12 14:00:05 herrvendil Exp $
  */
 
 public abstract class CryptoTokenStatus extends WorkerStatus{
 	
+
+
 	public static final int STATUS_ACTIVE  = 1;
 	public static final int STATUS_OFFLINE = 2;
 	
@@ -32,8 +36,8 @@ public abstract class CryptoTokenStatus extends WorkerStatus{
 	/** 
 	 * Main constructor
 	 */
-	public CryptoTokenStatus(int tokenStatus, WorkerConfig config){
-		super(config);
+	public CryptoTokenStatus(int workerId, int tokenStatus, WorkerConfig config){
+		super(workerId, config);
 		this.tokenStatus = tokenStatus;
 	}
 	
@@ -42,5 +46,19 @@ public abstract class CryptoTokenStatus extends WorkerStatus{
 	 */
 	public int getTokenStatus() {
 		return tokenStatus;
+	}
+	
+	/**
+	 * Method checking the crypto token that it is online.
+	 */
+	@Override
+	public String isOK() {
+		String retval = null;		
+		if(this.getActiveSignerConfig().getProperties().getProperty(BaseProcessable.DISABLED) == null  || !getActiveSignerConfig().getProperties().getProperty(BaseProcessable.DISABLED).equalsIgnoreCase("TRUE")){													
+		  if(getTokenStatus() == SignerStatus.STATUS_OFFLINE){
+			  retval ="Error Crypto Token is disconnected, worker Id : " + workerId;
+		  }
+		}
+		return retval;
 	}
 }

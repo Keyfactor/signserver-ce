@@ -37,7 +37,7 @@ import org.apache.mailet.Mail;
 import org.apache.mailet.MailetConfig;
 import org.ejbca.util.CertTools;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.MailSignerConfig;
@@ -59,7 +59,7 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * 
  * @author Philip Vendil
- * $Id: MailSignerContainerMailet.java,v 1.3 2007-11-27 06:05:12 herrvendil Exp $
+ * $Id: MailSignerContainerMailet.java,v 1.4 2007-12-12 14:00:08 herrvendil Exp $
  */
 public class MailSignerContainerMailet extends GenericMailet implements IMailSignerRMI{
 
@@ -146,7 +146,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	/**
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getCertificateRequest(int, ISignerCertReqInfo)
 	 */
-	public ISignerCertReqData genCertificateRequest(int signerId,
+	public ICertReqData genCertificateRequest(int signerId,
 			ISignerCertReqInfo certReqInfo) throws CryptoTokenOfflineException,
 			InvalidWorkerIdException, RemoteException {
 		

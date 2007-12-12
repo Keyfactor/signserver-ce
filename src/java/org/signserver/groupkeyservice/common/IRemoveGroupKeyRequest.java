@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
-import org.signserver.common.IProcessRequest;
 
 /**
  * Interface that all classes contain data to the
@@ -22,8 +21,8 @@ import org.signserver.common.IProcessRequest;
  * 
  * @author Philip Vendil 13 nov 2007
  *
- * @version $Id: IRemoveGroupKeyRequest.java,v 1.1 2007-11-27 06:05:05 herrvendil Exp $
+ * @version $Id: IRemoveGroupKeyRequest.java,v 1.2 2007-12-12 14:00:05 herrvendil Exp $
  */
-public interface IRemoveGroupKeyRequest extends IProcessRequest{
+public interface IRemoveGroupKeyRequest {
 
 }

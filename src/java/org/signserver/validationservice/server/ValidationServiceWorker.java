@@ -17,14 +17,14 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.IProcessRequest;
-import org.signserver.common.IProcessResponse;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.RequestContext;
-import org.signserver.server.signers.BaseSigner;
+import org.signserver.server.BaseProcessable;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 
@@ -38,7 +38,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
  * @version $$
  */
 
-public class ValidationServiceWorker extends BaseSigner {
+public class ValidationServiceWorker extends BaseProcessable {
 	
 	private transient Logger log = Logger.getLogger(this.getClass());
 
@@ -92,9 +92,9 @@ public class ValidationServiceWorker extends BaseSigner {
 	 * Main method of the container calling the appropriate method
 	 * of the ValidationService depending on the type of request.
 	 * 
-	 * @see org.signserver.server.signers.ISigner#processData(org.signserver.common.IProcessRequest, java.security.cert.X509Certificate)
+	 * @see org.signserver.server.signers.IProcessable#processData(org.signserver.common.ProcessRequest, java.security.cert.X509Certificate)
 	 */
-	public IProcessResponse processData(IProcessRequest processRequest,
+	public ProcessResponse processData(ProcessRequest processRequest,
 			RequestContext requestContext) throws IllegalRequestException,
 			CryptoTokenOfflineException, SignServerException {
 		
@@ -107,9 +107,8 @@ public class ValidationServiceWorker extends BaseSigner {
 
 
 	/**
-	 * @see org.signserver.server.signers.BaseSigner#getStatus()
+	 * @see org.signserver.server.signers.BaseProcessable#getStatus()
 	 */
-	@Override
 	public WorkerStatus getStatus() {		
 		return validationService.getStatus();
 	}

@@ -49,7 +49,7 @@ import org.signserver.server.RequestContext;
  * Use the request parameter 'signerId' to specify the timestamp signer.
  * 
  * @author Philip Vendil
- * @version $Id: TSAHTTPServlet.java,v 1.7 2007-12-02 20:35:18 herrvendil Exp $
+ * @version $Id: TSAHTTPServlet.java,v 1.8 2007-12-12 14:00:07 herrvendil Exp $
  */
 
 public class TSAHTTPServlet extends HttpServlet {
@@ -139,7 +139,7 @@ public class TSAHTTPServlet extends HttpServlet {
         
         GenericSignResponse signResponse = null;
         try {
-			signResponse = (GenericSignResponse) getSignServerSession().process(signerId, new GenericSignRequest(requestId, timeStampRequest), new RequestContext((X509Certificate) clientCertificate, req.getRemoteAddr()));
+			signResponse = (GenericSignResponse) getSignServerSession().process(signerId, new GenericSignRequest(requestId, timeStampRequest.getEncoded()), new RequestContext((X509Certificate) clientCertificate, req.getRemoteAddr()));
 		} catch (IllegalRequestException e) {
 			 throw new ServletException(e);
 		} catch (CryptoTokenOfflineException e) {

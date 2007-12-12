@@ -2,8 +2,8 @@ package org.signserver.validationservice.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -47,14 +47,15 @@ public class TestValidationSerialization extends TestCase {
 		  Validation val = new Validation(ICertificateManager.genICertificate(validCert1),caChain,Validation.Status.BADCERTTYPE,null);
 		  
 		  ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		  ObjectOutputStream oos = new ObjectOutputStream(baos);
-		  oos.writeObject(val);
+		  DataOutputStream out = new DataOutputStream(baos);
+		  val.serialize(out);
 		  
 		  byte[] data = baos.toByteArray();
 		  
-		  ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+		  DataInputStream ois = new DataInputStream(new ByteArrayInputStream(data));
 		  
-		  Validation val2 = (Validation) ois.readObject();
+		  Validation val2 = new Validation();
+		  val2.parse(ois);
 		  assertTrue(val2.getStatus() == Status.BADCERTTYPE);
 		  assertTrue(Math.abs(System.currentTimeMillis() -  val2.getValidationDate().getTime()) < 1000); 
 		  assertTrue(val2.getStatusMessage() == null);
@@ -67,14 +68,15 @@ public class TestValidationSerialization extends TestCase {
           val = new Validation(ICertificateManager.genICertificate(validCert1),caChain,Validation.Status.VALID,"test",new Date(1000),10);
 		  
 		  baos = new ByteArrayOutputStream();
-		  oos = new ObjectOutputStream(baos);
-		  oos.writeObject(val);
+		  out = new DataOutputStream(baos);
+		  val.serialize(out);
 		  
 		  data = baos.toByteArray();
 		  
-		  ois = new ObjectInputStream(new ByteArrayInputStream(data));
+		  ois = new DataInputStream(new ByteArrayInputStream(data));
 		  
-		  val2 = (Validation) ois.readObject();
+		  val2 = new Validation();
+		  val2.parse(ois);
 		  assertTrue(val2.getStatus() == Status.VALID);
 		  assertTrue(Math.abs(System.currentTimeMillis() -  val2.getValidationDate().getTime()) < 1000); 
 		  assertTrue(val2.getStatusMessage().equals("test"));

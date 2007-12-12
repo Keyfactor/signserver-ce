@@ -11,9 +11,9 @@ import javax.ejb.Remote;
 
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.IProcessRequest;
-import org.signserver.common.IProcessResponse;
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
@@ -35,7 +35,7 @@ public interface IWorkerSession  {
 	 * @throws IllegalRequestException if illegal request is sent to the method
 	 * @throws SignServerException if some other error occurred server side during process.
 	 */
-	IProcessResponse process(int signerId, IProcessRequest request,
+	ProcessResponse process(int signerId, ProcessRequest request,
 			RequestContext requestContext)
 			throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 
@@ -170,7 +170,7 @@ public interface IWorkerSession  {
 	 * @param certReqInfo information used by the signer to create the request
 	 * 
 	 */
-	ISignerCertReqData getCertificateRequest(int signerId,
+	ICertReqData getCertificateRequest(int signerId,
 			ISignerCertReqInfo certReqInfo) throws CryptoTokenOfflineException,
 			InvalidWorkerIdException;
 

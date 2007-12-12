@@ -26,7 +26,7 @@ import java.util.Map;
  * Contains a merge of static and dynamically defined global properties
  * 
  * @author Philip Vendil
- * $Id: GlobalConfiguration.java,v 1.2 2007-10-28 12:25:01 herrvendil Exp $
+ * $Id: GlobalConfiguration.java,v 1.3 2007-12-12 14:00:05 herrvendil Exp $
  */
 public class GlobalConfiguration implements Serializable{
    
@@ -42,7 +42,7 @@ public class GlobalConfiguration implements Serializable{
   public static final String STATE_OUTOFSYNC = "OUTOFSYNC";
   
   public static final int WORKERTYPE_ALL = 1; 
-  public static final int WORKERTYPE_SIGNERS = 2;
+  public static final int WORKERTYPE_PROCESSABLE = 2;
   public static final int WORKERTYPE_SERVICES = 3;
   public static final int WORKERTYPE_MAILSIGNERS = 4;
   

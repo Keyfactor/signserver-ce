@@ -10,25 +10,21 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
  
 package org.signserver.common;
 
-import java.io.Externalizable;
-
 /**
- * Interface used in responses from the WorkerSession.process method. Should
- * be implemented by all types of workers.
  * 
+ * Interface for the value object class used to transport the data between the signer
+ * to the CLI
  * 
- * @author Philip Vendil
- * $Id: IProcessResponse.java,v 1.2 2007-12-11 05:36:58 herrvendil Exp $
+ * @author Philip Vendil 2007 feb 19
+ *
+ * @version $Id: ICertReqData.java,v 1.1 2007-12-12 14:00:05 herrvendil Exp $
  */
 
-public interface IProcessResponse extends Externalizable{
+public interface ICertReqData extends java.io.Serializable{
 	
-
-
-    
+	
 
 }

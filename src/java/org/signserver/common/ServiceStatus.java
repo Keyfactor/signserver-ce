@@ -25,7 +25,7 @@ import java.util.Enumeration;
  * the status of a specific service
  * @author Philip Vendil
  *
- * $Id: ServiceStatus.java,v 1.3 2007-11-09 15:45:49 herrvendil Exp $
+ * $Id: ServiceStatus.java,v 1.4 2007-12-12 14:00:05 herrvendil Exp $
  */
 
 public class ServiceStatus extends WorkerStatus{
@@ -36,8 +36,8 @@ public class ServiceStatus extends WorkerStatus{
 	/** 
 	 * Main constuctor
 	 */
-	public ServiceStatus(ServiceConfig config){
-		super(config.getWorkerConfig());
+	public ServiceStatus(int workerId, ServiceConfig config){
+		super(workerId, config.getWorkerConfig());
 
 	}
 
@@ -78,6 +78,14 @@ public class ServiceStatus extends WorkerStatus{
 
     	}
 		
+	}
+
+	/**
+	 * The default behavior is not to check anything.
+	 */
+	@Override
+	public String isOK() {
+		return null;
 	}
 
 		

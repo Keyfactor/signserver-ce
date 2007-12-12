@@ -19,7 +19,7 @@ import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
@@ -30,7 +30,7 @@ import org.signserver.common.CryptoTokenOfflineException;
  *  All CryptoToken plug-ins must implement this interface.
  * 
  * @author Philip Vendil
- * @version $Id: ICryptoToken.java,v 1.1 2007-11-27 06:05:08 herrvendil Exp $
+ * @version $Id: ICryptoToken.java,v 1.2 2007-12-12 14:00:04 herrvendil Exp $
  */
 
 
@@ -124,7 +124,7 @@ public interface ICryptoToken {
 	/**
 	 * Method used to tell the crypto token to create a certificate request using its crypto token.
 	 */
-	public ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException;
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException;
 	
 	/**
 	 * Method used to remove a key in the signer that shouldn't be used any more

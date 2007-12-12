@@ -18,7 +18,7 @@ package org.signserver.mailsigner;
 import org.apache.mailet.Mail;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
@@ -28,7 +28,7 @@ import org.signserver.common.WorkerStatus;
  * 
  * 
  * @author Philip Vendil
- * $Id: IMailSigner.java,v 1.2 2007-11-27 06:05:07 herrvendil Exp $
+ * $Id: IMailSigner.java,v 1.3 2007-12-12 14:00:08 herrvendil Exp $
  */
 public interface IMailSigner {
 		
@@ -53,7 +53,7 @@ public interface IMailSigner {
 	/**
 	 * Method used to tell the signer to create a certificate request using its sign token.
 	 */
-	ISignerCertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException;
+	ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException;
 	
 	
 	/**

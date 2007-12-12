@@ -7,7 +7,7 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.List;
 
-import org.signserver.common.ISignerCertReqData;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
@@ -112,7 +112,7 @@ public interface IMailSignerRMI extends Remote{
 	 * @param certReqInfo information used by the signer to create the request
 	 * 
 	 */
-	public ISignerCertReqData genCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws		
+	public ICertReqData genCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws		
 		CryptoTokenOfflineException, InvalidWorkerIdException, RemoteException;
 	
 	/**

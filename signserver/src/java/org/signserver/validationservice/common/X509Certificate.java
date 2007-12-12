@@ -27,9 +27,9 @@ import org.ejbca.util.CertTools;
  * 
  * @author Philip Vendil 29 nov 2007
  *
- * @version $Id: X509Certificate.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
+ * @version $Id: X509Certificate.java,v 1.2 2007-12-12 15:13:37 herrvendil Exp $
  */
-
+@SuppressWarnings("unchecked")
 public class X509Certificate extends X509CertificateObject
 		implements ICertificate {
 

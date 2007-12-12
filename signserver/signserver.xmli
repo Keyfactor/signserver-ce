@@ -146,7 +146,6 @@ database.password      = ${database.password}
 	            <src path="${src.java}" /> 
 	        	<exclude name="org/signserver/mailsigner/**"/>
 	        	<exclude name="org/signserver/appserver/**"/> 
-	        	<exclude name="org/signserver/server/cryptotokens/PrimeCardHSMCryptoToken.*"/>
 	        	<exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>	        	
 	        	<exclude name="org/signserver/protocol/ws/client/**"/>
 	        </javac>

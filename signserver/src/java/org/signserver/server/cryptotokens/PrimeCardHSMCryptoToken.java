@@ -15,12 +15,9 @@ package org.signserver.server.cryptotokens;
 
 import java.util.Properties;
 
-import javax.ejb.EJBException;
-
 import org.apache.log4j.Logger;
-import org.signserver.common.WorkerConfig;
-
 import org.ejbca.core.model.ca.catoken.ICAToken;
+import org.signserver.common.WorkerConfig;
 
 
 /**
@@ -28,7 +25,7 @@ import org.ejbca.core.model.ca.catoken.ICAToken;
  * 
  * @see org.signserver.server.cryptotokens.ICryptoToken
  * @author Philip Vendil
- * @version $Id: PrimeCardHSMCryptoToken.java,v 1.1 2007-11-27 06:05:08 herrvendil Exp $
+ * @version $Id: PrimeCardHSMCryptoToken.java,v 1.2 2007-12-12 15:13:37 herrvendil Exp $
  */
 
 public class PrimeCardHSMCryptoToken extends CryptoTokenBase implements ICryptoToken {
@@ -70,7 +67,7 @@ public class PrimeCardHSMCryptoToken extends CryptoTokenBase implements ICryptoT
 			try{ 
 				this.activate(authCode);
 			}catch(Exception e){
-				throw new EJBException(e);
+				log.error("Error activating PrimeCardHSM CryptoToken", e);
 			}
 		}
 		log.debug("<init");

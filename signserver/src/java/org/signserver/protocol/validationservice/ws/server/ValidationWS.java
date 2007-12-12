@@ -35,13 +35,10 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
-import org.signserver.common.SignerStatus;
-import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.protocol.validationservice.ws.IValidationWS;
 import org.signserver.protocol.validationservice.ws.ValidationResponse;
-import org.signserver.server.BaseProcessable;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -58,7 +55,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementation of the Validation Service web interface.
  * 
  *
- * @version $Id: ValidationWS.java,v 1.3 2007-12-12 14:24:56 herrvendil Exp $
+ * @version $Id: ValidationWS.java,v 1.4 2007-12-12 15:13:37 herrvendil Exp $
  */
 @WebService(targetNamespace="gen.ws.validationservice.protocol.signserver.org")
 public class ValidationWS implements IValidationWS {
@@ -172,12 +169,7 @@ public class ValidationWS implements IValidationWS {
     	String retval = null;
     	try {
     		ValidationStatus status = (ValidationStatus) getWorkerSession().getStatus(workerId);
-    		WorkerConfig signerConfig = status.getActiveSignerConfig();
-    		if(signerConfig.getProperties().getProperty(BaseProcessable.DISABLED) == null  || !signerConfig.getProperties().getProperty(BaseProcessable.DISABLED).equalsIgnoreCase("TRUE")){													
-    			if(status.getTokenStatus() == SignerStatus.STATUS_OFFLINE){
-    				retval ="Error Signer Token is disconnected, worker Id : " + workerId;
-    			}
-    		}
+    		retval = status.isOK();
     		
     	} catch (InvalidWorkerIdException e) {
     		log.error("Error invalid worker id " + workerId + "when checking status for validation service");

@@ -36,17 +36,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 	private transient Logger log = Logger.getLogger(this.getClass());
 
 	//Private Property constants
-	/**
-	 * Property indicating that the signserver shouldn't be used.
-	 * Set propery to TRUE to disable the signer.
-	 */
-	public static final String DISABLED          = "DISABLED";
-	
-	/**
-	 * Constant indicating that the signserver archive the response data.
-	 * Set propery to TRUE to start archiving
-	 */
-	public static final String ARCHIVE          = "ARCHIVE";
+
 
     /** Log4j instance for actual implementation class */
    // private transient Logger log = Logger.getLogger(this.getClass());

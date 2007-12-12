@@ -61,16 +61,16 @@ rmi.server.port           = ${rmi.server.port}
             <classpath refid="mailsigner.compile.classpath" />
             <src path="${src.java}" /> 
         
-        	<exclude name="org/signserver/server/signtokens/PrimeCardHSM**"/>
         	<exclude name="org/signserver/appserver/**"/>        	
-        	<exclude name="org/signserver/client/**"/>
-        	<exclude name="org/signserver/ejb/**"/>
-        	<exclude name="org/signserver/rmi/**"/>
-        	<exclude name="org/signserver/rmiClient/**"/>
+        	<exclude name="org/signserver/client/**"/>        	
+        	<exclude name="org/signserver/ejb/**"/>  
         	<exclude name="org/signserver/server/*.java"/>
         	<exclude name="org/signserver/server/signers/**"/>
         	<exclude name="org/signserver/server/service/**"/>
+        	<exclude name="org/signserver/validationservice/**"/>
+        	<exclude name="org/signserver/groupkeyservice//**"/>        	
         	<exclude name="org/signserver/web/**"/>
+        	<exclude name="org/signserver/protocol/**/**"/>
         </javac>
         <copy todir="${build}">
             <fileset dir="src/java">

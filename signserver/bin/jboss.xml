@@ -18,7 +18,7 @@
 	<!--property name="j2ee.web-noconfigure" value="true"/-->
 	
 	
-	<target name="j2ee:check" description="Check a few configuration settings">
+	<target name="j2ee:check" description="Check a few configuration settings" unless="buildMailSigner">
         <!--
             we could have a dedicated jboss for ejbca, so give users a chance to override
             otherwise, try to pick the one from environment if it exists

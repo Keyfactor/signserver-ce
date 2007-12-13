@@ -236,20 +236,25 @@ database.password      = ${database.password}
 	    	<path refid="j2ee.classpath" />
 	    </path>
 		
+	    <target name="ws.common.init" unless="buildMailSigner">
+		    <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen" >
+		        <classpath refid="jaxws.classpath"/>
+		    </taskdef>
 		
-	    <target name="ws.init" depends="init, signserverwsconditioncheck" if="signserverws.conditionenabled">
+	        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+	            <classpath refid="jaxws.classpath"/>
+	        </taskdef>
+	    </target>
+		
+	    <target name="ws.init" depends="init, signserverwsconditioncheck, ws.common.init" if="signserverws.conditionenabled">
 	    	<mkdir dir="tmp/jaxws/gen-classes/server"/>
 	    	<mkdir dir="tmp/jaxws/gen-classes/client"/>
+	    	
+
 	    </target>
 	
 	
-	    <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen">
-	        <classpath refid="jaxws.classpath"/>
-	    </taskdef>
-	
-    <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
-        <classpath refid="jaxws.classpath"/>
-    </taskdef>
+
 		
 		<target depends="ws.init" name="ws.gen.server" if="signserverws.conditionenabled" >
 	       <wsgen  fork="true" sei="org.signserver.protocol.ws.server.SignServerWS"
@@ -391,7 +396,7 @@ database.password      = ${database.password}
 	      </condition>
 	  </target>		
 	  
-	  <target name="validationws.init" depends="init, validationwsconditioncheck" if="validationws.conditionenabled">
+	  <target name="validationws.init" depends="init, validationwsconditioncheck, ws.common.init" if="validationws.conditionenabled">
 	      <mkdir dir="tmp/validationws/gen-classes/server"/>
 	      <mkdir dir="tmp/validationws/gen-classes/client"/>
 	  </target>

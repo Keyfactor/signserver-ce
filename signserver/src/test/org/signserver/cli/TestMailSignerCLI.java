@@ -29,7 +29,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * 
  * @author Philip Vendil 21 okt 2007
  *
- * @version $Id: TestMailSignerCLI.java,v 1.1 2007-10-28 12:27:53 herrvendil Exp $
+ * @version $Id: TestMailSignerCLI.java,v 1.2 2007-12-13 12:49:55 herrvendil Exp $
  */
 
 public class TestMailSignerCLI extends TestCase {
@@ -135,23 +135,23 @@ public class TestMailSignerCLI extends TestCase {
 			assertSuccessfulExecution(new String[] {"activatesigntoken",
 					TESTTSID,
 			"1234"});
-			assertTrue(TestUtils.grepTempOut("Activation of signer was successful"));
+			assertTrue(TestUtils.grepTempOut("Activation of worker was successful"));
 
 
 			assertSuccessfulExecution(new String[] {"deactivatesigntoken",
 					TESTTSID});
-			assertTrue(TestUtils.grepTempOut("Deactivation of signer was successful"));
+			assertTrue(TestUtils.grepTempOut("Deactivation of worker was successful"));
 
 
 			// Test operations by name
-			assertSuccessfulExecution(new String[] {"activatesigntoken",
+			assertSuccessfulExecution(new String[] {"activatecryptotoken",
 					"dummyMailSigner1000",
 			"1234"});
-			assertTrue(TestUtils.grepTempOut("Activation of signer was successful"));
-			assertSuccessfulExecution(new String[] {"activatesigntoken",
+			assertTrue(TestUtils.grepTempOut("Activation of worker was successful"));
+			assertSuccessfulExecution(new String[] {"activatecryptotoken",
 					"DUMMYMAILSIGNER1000",
 			"1234"});
-			assertFailedExecution(new String[] {"activatesigntoken",
+			assertFailedExecution(new String[] {"activatecryptotoken",
 					"DUMMYMAILSIGNER2000",
 			"1234"});
 

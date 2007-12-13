@@ -32,7 +32,7 @@ public class TestMailSignerContainerMailet extends TestCase {
 	public void test00SetupDatabase() throws Exception{
 		   
 		  mc.setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.CLASSPATH", "org.signserver.mailsigner.mailsigners.DummyMailSigner");
-		  mc.setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.SIGNERTOKEN.CLASSPATH", "org.signserver.server.signtokens.HardCodedSignToken");
+		  mc.setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.CRYPTOTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
 				  		  
           mc.setWorkerProperty(3, "NAME", "testWorker");
 		  mc.reloadConfiguration(3);	

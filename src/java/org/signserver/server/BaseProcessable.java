@@ -78,8 +78,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 		if(cryptoToken == null){
 			GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
 			try{				
-				String classpath =gc.getSignTokenProperty(
-						workerId,GlobalConfiguration.SIGNTOKENPROPERTY_CLASSPATH);
+				String classpath =gc.getCryptoTokenProperty(
+						workerId,GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);
 				if(classpath != null){		
 					Class<?> implClass = Class.forName(classpath);
 					Object obj = implClass.newInstance();

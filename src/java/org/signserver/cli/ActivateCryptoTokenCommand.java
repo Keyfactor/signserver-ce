@@ -20,11 +20,11 @@ import org.signserver.common.SignerStatus;
 
 
 /**
- * Command used to activate a Sign Token
+ * Command used to activate a Crypto Token
  *
- * @version $Id: ActivateSignTokenCommand.java,v 1.4 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: ActivateCryptoTokenCommand.java,v 1.1 2007-12-13 12:49:32 herrvendil Exp $
  */
-public class ActivateSignTokenCommand extends BaseCommand {
+public class ActivateCryptoTokenCommand extends BaseCommand {
 	
 	protected static final int HELP = 0;
 	protected static final int TRYING = 1;
@@ -36,7 +36,7 @@ public class ActivateSignTokenCommand extends BaseCommand {
      *
      * @param args command line arguments
      */
-    public ActivateSignTokenCommand(String[] args) {
+    public ActivateCryptoTokenCommand(String[] args) {
         super(args);
     }    
     
@@ -52,20 +52,20 @@ public class ActivateSignTokenCommand extends BaseCommand {
 	    }	
         try {            
         	
-        	int signerid = getWorkerId(args[1], hostname);
-        	checkThatWorkerIsSigner(signerid,hostname);
+        	int workerid = getWorkerId(args[1], hostname);
+        	checkThatWorkerIsSigner(workerid,hostname);
         	String authCode = args[2];
         	        	
         	
-        	this.getOutputStream().println( resources[TRYING]+ signerid + "\n");
-        	this.getCommonAdminInterface(hostname).activateSigner(signerid, authCode);
+        	this.getOutputStream().println( resources[TRYING]+ workerid + "\n");
+        	this.getCommonAdminInterface(hostname).activateSigner(workerid, authCode);
         	
         	boolean active = false;
         	if(CommonAdminInterface.isSignServerMode()){
-        		active = ((SignerStatus) getCommonAdminInterface(hostname).getStatus(signerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE;
+        		active = ((SignerStatus) getCommonAdminInterface(hostname).getStatus(workerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE;
         	}
         	if(CommonAdminInterface.isMailSignerMode()){
-        		active = ((MailSignerStatus) getCommonAdminInterface(hostname).getStatus(signerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE;
+        		active = ((MailSignerStatus) getCommonAdminInterface(hostname).getStatus(workerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE;
         	}
         	if(active){
         		this.getOutputStream().println(resources[SUCCESS]);
@@ -82,12 +82,12 @@ public class ActivateSignTokenCommand extends BaseCommand {
     }
     
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
-    	String[] resources =  {"Usage: signserver activatesigntoken <signerid | signerName> <authentication code> \n" + 
-                               "Example 1 : signserver activatesigntoken 1 123456 \n\n" +
-                               "Example 2 : signserver activatesigntoken mySigner 123456 \n\n",
-                               "Trying to activate sign token of signer with id : ",
-                               "Activation of signer was successful\n\n",
-                               "Activation of signer FAILED\n\n"};
+    	String[] resources =  {"Usage: signserver activatesigntoken <worker id | worker name> <authentication code> \n" + 
+                               "Example 1 : signserver activatecryptotoken 1 123456 \n\n" +
+                               "Example 2 : signserver activatecryptotoken mySigner 123456 \n\n",
+                               "Trying to activate crypto token of worker with id : ",
+                               "Activation of worker was successful\n\n",
+                               "Activation of worker FAILED\n\n"};
         execute(hostname,resources);   
     }
     

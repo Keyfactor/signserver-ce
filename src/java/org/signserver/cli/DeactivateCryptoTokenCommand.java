@@ -16,11 +16,11 @@ package org.signserver.cli;
 
 
 /**
- * Command used to deactivate a Sign Token
+ * Command used to deactivate a Crypto Token
  *
- * @version $Id: DeactivateSignTokenCommand.java,v 1.4 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: DeactivateCryptoTokenCommand.java,v 1.1 2007-12-13 12:49:32 herrvendil Exp $
  */
-public class DeactivateSignTokenCommand extends BaseCommand {
+public class DeactivateCryptoTokenCommand extends BaseCommand {
 	protected static final int HELP = 0;
 	protected static final int TRYING = 1;
 	protected static final int SUCCESS = 2;
@@ -30,7 +30,7 @@ public class DeactivateSignTokenCommand extends BaseCommand {
      *
      * @param args command line arguments
      */
-    public DeactivateSignTokenCommand(String[] args) {
+    public DeactivateCryptoTokenCommand(String[] args) {
         super(args);
     }
 
@@ -46,12 +46,12 @@ public class DeactivateSignTokenCommand extends BaseCommand {
 	    }	
         try {            
         	
-        	int signerid = getWorkerId(args[1], hostname);
-        	checkThatWorkerIsSigner(signerid,hostname);
+        	int workerid = getWorkerId(args[1], hostname);
+        	checkThatWorkerIsSigner(workerid,hostname);
         	        	
         	
-        	this.getOutputStream().println(resources[TRYING] + signerid + "\n");
-        	this.getCommonAdminInterface(hostname).deactivateSigner(signerid);        			                
+        	this.getOutputStream().println(resources[TRYING] + workerid + "\n");
+        	this.getCommonAdminInterface(hostname).deactivateSigner(workerid);        			                
         	this.getOutputStream().println(resources[SUCCESS]);
 
         } catch( IllegalAdminCommandException e ) {
@@ -64,11 +64,11 @@ public class DeactivateSignTokenCommand extends BaseCommand {
     }
     
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
-    	String[] resources =  {"Usage: signserver deactivatesigntoken <signerid> \n" + 
-                               "Example: signserver deactivatesigntoken 1 \n"+
-                               "Example 2 : signserver deactivatesigntoken mySigner \n\n",
-                               "Trying to deactivate sign token of signer with id : ",
-                               "Deactivation of signer was successful\n\n"};
+    	String[] resources =  {"Usage: signserver deactivatecryptotoken <worker id | worker name> \n" + 
+                               "Example: signserver deactivatecryptotoken 1 \n"+
+                               "Example 2 : signserver deactivatecryptotoken mySigner \n\n",
+                               "Trying to deactivate crypto token of worker with id : ",
+                               "Deactivation of worker was successful\n\n"};
         execute(hostname,resources);   
     }
 

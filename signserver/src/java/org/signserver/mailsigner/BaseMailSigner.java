@@ -43,7 +43,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * 
  * @author Philip Vendil 23 sep 2007
  *
- * @version $Id: BaseMailSigner.java,v 1.3 2007-12-12 14:00:08 herrvendil Exp $
+ * @version $Id: BaseMailSigner.java,v 1.4 2007-12-13 12:49:32 herrvendil Exp $
  */
 public abstract class BaseMailSigner  implements IMailSigner {
 	
@@ -117,8 +117,8 @@ public abstract class BaseMailSigner  implements IMailSigner {
 		if(cryptoToken == null){
 			GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
 			try{				
-				String classpath =gc.getSignTokenProperty(
-						workerId,GlobalConfiguration.SIGNTOKENPROPERTY_CLASSPATH);
+				String classpath =gc.getCryptoTokenProperty(
+						workerId,GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);
 				if(classpath != null){		
 					Class<?> implClass = Class.forName(classpath);
 					Object obj = implClass.newInstance();

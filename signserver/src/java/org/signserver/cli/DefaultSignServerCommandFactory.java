@@ -23,7 +23,7 @@ import org.signserver.cli.archive.FindFromRequestIPCommand;
 /**
  * Factory for General signserver Commands.
  *
- * @version $Id: DefaultSignServerCommandFactory.java,v 1.1 2007-12-04 15:35:10 herrvendil Exp $
+ * @version $Id: DefaultSignServerCommandFactory.java,v 1.2 2007-12-13 12:49:32 herrvendil Exp $
  */
 public class DefaultSignServerCommandFactory implements ISignServerCommandFactory {
 
@@ -79,11 +79,11 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         if (args[0].equalsIgnoreCase("uploadsignercertificatechain")) {
             return new UploadSignerCertificateChainCommand(args);
         }
-        if (args[0].equalsIgnoreCase("activatesigntoken")) {
-            return new ActivateSignTokenCommand(args);
+        if (args[0].equalsIgnoreCase("activatesigntoken") || args[0].equalsIgnoreCase("activatecryptotoken")) {
+            return new ActivateCryptoTokenCommand(args);
         }
-        if (args[0].equalsIgnoreCase("deactivatesigntoken")) {
-            return new DeactivateSignTokenCommand(args);
+        if (args[0].equalsIgnoreCase("deactivatesigntoken") || args[0].equalsIgnoreCase("deactivatecryptotoken")) {
+            return new DeactivateCryptoTokenCommand(args);
         }
         if (args[0].equalsIgnoreCase("generatecertreq")) {
             return new GenerateCertReqCommand(args);
@@ -130,7 +130,7 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
 	    	if(CommonAdminInterface.isSignServerMode()){
 	    	  usageString +="| listauthorizedclients | addauthorizedclient | removeauthorizedclient ";
 	    	}
-	    	usageString +="| uploadsignercertificate | uploadsignercertificatechain | activatesigntoken | deactivatesigntoken | generatecertreq ";
+	    	usageString +="| uploadsignercertificate | uploadsignercertificatechain | activatecryptotoken | deactivatecryptotoken | generatecertreq ";
 	    	if(CommonAdminInterface.isSignServerMode()){	
 	    		usageString +="| archive";
 	    	}

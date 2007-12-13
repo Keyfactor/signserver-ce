@@ -26,7 +26,7 @@ import java.util.Map;
  * Contains a merge of static and dynamically defined global properties
  * 
  * @author Philip Vendil
- * $Id: GlobalConfiguration.java,v 1.3 2007-12-12 14:00:05 herrvendil Exp $
+ * $Id: GlobalConfiguration.java,v 1.4 2007-12-13 12:49:32 herrvendil Exp $
  */
 public class GlobalConfiguration implements Serializable{
    
@@ -49,8 +49,9 @@ public class GlobalConfiguration implements Serializable{
   public static final String WORKERPROPERTY_BASE = "WORKER";
   public static final String WORKERPROPERTY_CLASSPATH = ".CLASSPATH";
   
-  private static final String SIGNTOKENPROPERTY_BASE = ".SIGNERTOKEN";
-  public static final String SIGNTOKENPROPERTY_CLASSPATH = ".CLASSPATH"; 
+  private static final String CRYPTOTOKENPROPERTY_BASE = ".CRYPTOTOKEN";
+  private static final String OLD_CRYPTOTOKENPROPERTY_BASE = ".SIGNERTOKEN";
+  public static final String CRYPTOTOKENPROPERTY_CLASSPATH = ".CLASSPATH"; 
   
 	// Current version of the application.    
   public static final String VERSION = "@signserver.version@";
@@ -115,16 +116,19 @@ public Iterator<String> getKeyIterator(){
   }
   
   /**
-   * Returns the property specific to a signertoken,
+   * Returns the property specific to a cryptotoken,
    * This should only be used with signers and not with
-   * signtokens.
+   * cryptotokens.
    * 
-   * @param signerId
-   * @param signertokenproperty
-   * @return
+   * @param workerId
+   * @param cryptotokenproperty
+   * @return return the given cryptotoken property or null.
    */
-  public String getSignTokenProperty(int signerId, String signertokenproperty){    	
-  	String key = WORKERPROPERTY_BASE + signerId + SIGNTOKENPROPERTY_BASE + signertokenproperty;  	
+  public String getCryptoTokenProperty(int signerId, String cryptotokenproperty){    	
+  	String key = WORKERPROPERTY_BASE + signerId + CRYPTOTOKENPROPERTY_BASE + cryptotokenproperty;
+  	if(getProperty(SCOPE_GLOBAL, key) == null){
+  		key = WORKERPROPERTY_BASE + signerId + OLD_CRYPTOTOKENPROPERTY_BASE + cryptotokenproperty;
+  	}
   	return getProperty(SCOPE_GLOBAL, key);
   }
   

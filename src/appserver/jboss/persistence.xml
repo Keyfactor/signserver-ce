@@ -4,7 +4,7 @@
       <jta-data-source>java:/SignServerDS</jta-data-source>
       <mapping-file>META-INF/entity-mappings.xml</mapping-file>
        <properties>            
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
        </properties>
    </persistence-unit>
 </persistence>

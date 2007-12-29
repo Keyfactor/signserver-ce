@@ -1,0 +1,222 @@
+package org.signserver.mailsigner.mailsigners;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.rmi.Naming;
+import java.util.Date;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+import junit.framework.TestCase;
+
+import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.MailSignerConfig;
+import org.signserver.common.SignServerUtil;
+import org.signserver.mailsigner.cli.IMailSignerRMI;
+import org.signserver.mailsigner.core.MailSignerContainerMailet;
+/**
+ * Abstract test class containing a lot of help methods in setting up and
+ * configuring a mail signer junit test. 
+ * 
+ */
+public abstract class BaseMailSignerTester extends TestCase {
+
+
+	private static final String PORT = "@MAILSIGNERPORT@";
+	protected static IMailSignerRMI iMailSignerRMI;
+	protected static String signServerHome = null;
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		SignServerUtil.installBCProvider();
+		iMailSignerRMI = getIMailSignerRMI();
+		
+		iMailSignerRMI.setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, MailSignerContainerMailet.TESTMODE_SETTING, "TRUE");
+		
+		iMailSignerRMI.setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, GlobalConfiguration.WORKERPROPERTY_BASE + getWorkerId() + GlobalConfiguration.WORKERPROPERTY_CLASSPATH, getMailSignerClassPath());
+		if(getCryptoTokenClasspath() != null){
+			iMailSignerRMI.setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, GlobalConfiguration.WORKERPROPERTY_BASE + getWorkerId() + GlobalConfiguration.CRYPTOTOKENPROPERTY_BASE + GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH, getCryptoTokenClasspath());
+		}		
+		iMailSignerRMI.addAuthorizedUser(getSMTPAuthUser(), "foo123");
+		
+		signServerHome = System.getenv("SIGNSERVER_HOME");
+		assertNotNull(signServerHome);
+		
+		iMailSignerRMI.reloadConfiguration(getWorkerId());
+		
+
+	}
+
+	/**
+	 * 
+	 * @return the username that should be used for smtp authentication
+	 */
+	protected abstract String getSMTPAuthUser();
+
+	/**
+	 * 
+	 * @return the classpath to the crypto token or null if no cryptotoken should be used
+	 */
+	protected abstract String getCryptoTokenClasspath();
+
+	/**
+	 * 
+	 * @return the classpath of the mail signer under test.
+	 */
+	protected abstract String getMailSignerClassPath();
+
+	/**
+	 * 
+	 * @return should return the workerId that it should be configured ass.
+	 */
+	protected abstract int getWorkerId();
+
+	/**
+	 * Method that sleeps for 2 seconds and then fetches the mail from the test in-box.
+	 * 
+	 * Make sure you have cleared the in-box in the beginning of the test session.
+	 * 
+	 * @return the mail send in test of null if it wasn't there.
+	 * @throws Exception
+	 */
+	protected MimeMessage readTestInbox() throws Exception {
+		Thread.sleep(2000);
+		File testInbox = new File(signServerHome + "/tmp/testmail");
+		if(testInbox.exists()){
+		   Session session = Session.getInstance(System.getProperties(), null);
+		   FileInputStream fis = new FileInputStream(testInbox);
+		   MimeMessage msg = new MimeMessage(session,fis);	   		   
+		   fis.close();
+		   return msg;
+		}
+		return null;
+	}
+
+	/**
+	 * Method to clear the test in-box (that only supports on email at the time) to make sure
+	 * the tested one is fetched. Should be called before any send mail methods is done.
+	 */
+	protected void clearTestInbox() {
+		File testInbox = new File(signServerHome + "/tmp/testmail");
+		if(testInbox.exists()){
+			assertTrue(testInbox.delete());
+		}		
+	}
+
+	protected void sendMail(String from, String to, 
+			String subject, String message) throws Exception{
+
+		String host = "localhost";
+
+		// create some properties and get the default Session
+		Properties props = System.getProperties();
+		props.put("mail.smtp.auth", "true");
+
+
+		Session session = Session.getInstance(props, null);
+
+
+
+		// create a message
+		MimeMessage msg = new MimeMessage(session);
+		msg.setFrom(new InternetAddress(from));
+		InternetAddress[] address = {new InternetAddress(to)};
+		msg.setRecipients(Message.RecipientType.TO, address);
+		msg.setSubject(subject);
+
+		msg.setText(message);
+
+		// set the Date: header
+		msg.setSentDate(new Date());
+
+		// send the message
+
+		Transport t = session.getTransport("smtp");
+		
+		try {
+			
+			t.connect(host,getPort(),getSMTPAuthUser(),"foo123");
+			t.sendMessage(msg,msg.getAllRecipients());
+
+		} finally {
+			t.close();
+		}
+
+	}
+	
+	protected void sendMail(MimeMessage msg) throws Exception{
+
+		String host = "localhost";
+
+		// create some properties and get the default Session
+		Properties props = System.getProperties();
+
+		props.put("mail.smtp.auth", "true");
+
+
+		Session session = Session.getInstance(props, null);
+
+		Transport t = session.getTransport();
+		try {
+			t.connect(host,getSMTPAuthUser(),"foo123");
+			t.sendMessage(msg,msg.getAllRecipients());
+
+		} finally {
+			t.close();
+		}
+	}
+	
+	protected int getPort(){
+		if(PORT.startsWith("@MAILSIGNERPORT")){
+			return 26;
+		}
+		return Integer.parseInt(PORT);
+	}
+	
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		iMailSignerRMI = getIMailSignerRMI();
+		iMailSignerRMI.removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, MailSignerContainerMailet.TESTMODE_SETTING);
+		iMailSignerRMI.removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, GlobalConfiguration.WORKERPROPERTY_BASE + getWorkerId() + GlobalConfiguration.WORKERPROPERTY_CLASSPATH);
+		if(getCryptoTokenClasspath() != null){
+			iMailSignerRMI.removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, GlobalConfiguration.WORKERPROPERTY_BASE + getWorkerId() + GlobalConfiguration.CRYPTOTOKENPROPERTY_BASE + GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);
+		}		
+		iMailSignerRMI.removeAuthorizedUser(getSMTPAuthUser());
+		
+		iMailSignerRMI.reloadConfiguration(getWorkerId());
+	}
+	
+
+	private IMailSignerRMI getIMailSignerRMI() throws Exception{
+		if(iMailSignerRMI == null){
+			String lookupName = "//localhost:" + MailSignerConfig.getRMIRegistryPort() + "/" +
+			MailSignerConfig.RMI_OBJECT_NAME;
+
+			iMailSignerRMI = (IMailSignerRMI) Naming.lookup(lookupName);
+		}
+		
+		return iMailSignerRMI;
+	}
+	
+	  
+	protected boolean arrayEquals(byte[] signreq2, byte[] signres2) {
+		boolean retval = true;
+
+		if(signreq2.length != signres2.length){
+			return false;
+		}
+
+		for(int i=0;i<signreq2.length;i++){
+			if(signreq2[i] != signres2[i]){
+				return false;
+			}
+		}
+		return retval;
+	}
+
+}

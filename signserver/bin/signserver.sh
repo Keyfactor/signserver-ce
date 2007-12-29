@@ -30,29 +30,33 @@ else
     exit 1
 fi
 
-EJBCA_HOME="`dirname $0`/.."
+SIGNSERVER_HOME="`dirname $0`/.."
 # Check that classes exist
-if [ ! -d ${EJBCA_HOME}/tmp/bin/classes ]
+if [ ! -d ${SIGNSERVER_HOME}/tmp/bin/classes ]
 then    
         echo "You must build SIGNSERVER before using the cli, use 'ant'."
         exit 1
 fi
 
 # library classpath
-CP="$EJBCA_HOME/tmp/bin/classes"
+CP="$SIGNSERVER_HOME/tmp/bin/classes"
 for i in "${J2EE_DIR}"/*.jar
 do
 	CP="$i":"$CP"
 done
-for i in "${EJBCA_HOME}"/lib/*.jar
+for i in "${SIGNSERVER_HOME}"/lib/*.jar
 do
 	CP="$i":"$CP"
 done
-for i in "${EJBCA_HOME}"/lib/1.5/*.jar
+for i in "${SIGNSERVER_HOME}"/lib/1.5/*.jar
 do
 	CP="$i":"$CP"
 done
-for i in "${EJBCA_HOME}"/tmp/lib/*.jar
+for i in "${SIGNSERVER_HOME}"/lib/ejb/*.jar
+do
+	CP="$i":"$CP"
+done
+for i in "${SIGNSERVER_HOME}"/lib/james/*.jar
 do
 	CP="$i":"$CP"
 done

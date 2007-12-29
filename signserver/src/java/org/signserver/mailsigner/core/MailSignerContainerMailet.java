@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.mailsigner.core;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.rmi.AccessException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -36,13 +39,14 @@ import org.apache.mailet.GenericMailet;
 import org.apache.mailet.Mail;
 import org.apache.mailet.MailetConfig;
 import org.ejbca.util.CertTools;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.MailSignerConfig;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.MailSignerUser;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.mailsigner.BaseMailSigner;
@@ -59,15 +63,20 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * 
  * @author Philip Vendil
- * $Id: MailSignerContainerMailet.java,v 1.4 2007-12-12 14:00:08 herrvendil Exp $
+ * $Id: MailSignerContainerMailet.java,v 1.5 2007-12-29 10:43:53 herrvendil Exp $
  */
 public class MailSignerContainerMailet extends GenericMailet implements IMailSignerRMI{
 
+	public static final String TESTMODE_SETTING = "TESTMODE";
+	
 	private static transient Logger log = Logger.getLogger(MailSignerContainerMailet.class.getName());
 	
     private ConcurrentHashMap<Integer, IMailSigner> mailSigners = new ConcurrentHashMap<Integer, IMailSigner>();
 	
+    private MailSignerUserRepository userRepository = new MailSignerUserRepository();
 
+    /*Boolean indicating this instance isn't run from a testscript */
+	private boolean getMailContext;
     
     
     /**
@@ -79,7 +88,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	@Override
 	public void init(MailetConfig mailetConfig) throws MessagingException {
 		super.init(mailetConfig);
-		
+		getMailContext = true;
 		try{
 			     
 			Registry registry = LocateRegistry.createRegistry(MailSignerConfig.getRMIRegistryPort());
@@ -98,22 +107,60 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	 * Method that sends the mail to all the configured mail signers.
 	 * In id order (ascending) order.
 	 */
-	public void service(Mail mail) {
+	public void service(Mail mail) throws MessagingException{
 		List<Integer> mailIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
 		for (Integer id : mailIds) {
 			try {
 				IMailSigner mailSigner = getMailSigner(id);
 				
 				Properties activeProps = mailSigner.getStatus().getActiveSignerConfig().getProperties();
-				if(activeProps.getProperty(BaseMailSigner.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
+				if(!activeProps.getProperty(BaseMailSigner.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
 				  getMailSigner(id).service(mail);
 				}
 			} catch (InvalidWorkerIdException e) {
 				// Should never happen
 				log.error(e);
+			} catch (CryptoTokenOfflineException e){
+				log.error("CryptoTokenOfflineException : " + e.getMessage(),e);
+				throw new MessagingException(e.getMessage(),e);
 			}
 		}
+		mailTest(mail);
 	}
+
+	/**
+	 * Method used to test a mail signer, checks if setting TESTMODE is set
+	 * to TRUE in global configuration. If so is the mail serialized and
+	 * written to the temporary directory for later inspection.
+	 * @param mail
+	 */
+	private void mailTest(Mail mail) {
+
+		if(mail.getState() != Mail.ERROR){
+			GlobalConfiguration gc = NonEJBGlobalConfigurationSession.getInstance().getGlobalConfiguration();
+			if(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, TESTMODE_SETTING)!= null &&
+					gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, TESTMODE_SETTING).equalsIgnoreCase("TRUE")){
+				String signserverhome = System.getenv("SIGNSERVER_HOME");
+				if(signserverhome == null){
+					log.error("Error performing test of mail signer, environment variable SIGNSERVER_HOME isn't set");
+				}
+
+				try {
+					FileOutputStream fos = new FileOutputStream(signserverhome + "/tmp/testmail");				
+					mail.getMessage().writeTo(fos);
+					fos.close();
+				} catch (FileNotFoundException e) {
+					log.error("Error performing test of mail signer : " + e.getMessage());
+				} catch (IOException e) {
+					log.error("Error performing test of mail signer : " + e.getMessage());
+				} catch (MessagingException e) {
+					log.error("Error performing test of mail signer : " + e.getMessage());
+				} 
+				mail.setState(Mail.GHOST);
+			}
+		}
+	}		
+
 
 	/**
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#activateSigner(int, String)
@@ -318,7 +365,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 					
 					try {
 						IMailSigner mailSigner = (IMailSigner) this.getClass().getClassLoader().loadClass(classPath).newInstance();
-						mailSigner.init(id, cloneWorkerProperties(PropertyFileStore.getInstance().getWorkerProperties(id)));
+						mailSigner.init(id, cloneWorkerProperties(PropertyFileStore.getInstance().getWorkerProperties(id)),  (getMailContext) ? getMailetContext() : null);
 						mailSigners.put(id, mailSigner);
 						retval = mailSigner;
 					} catch (Exception e) {
@@ -348,10 +395,29 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 		return retval;
 	}
 
+	/**
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#addAuthorizedUser(String, String)
+	 */
+	public void addAuthorizedUser(String username, String password) {
+		userRepository.addUser(username, password);		
+	}
 
+	/**
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getAuthorizedUsers()
+	 */
+	public List<MailSignerUser> getAuthorizedUsers() {		
+		return userRepository.getUsersSorted();
+	}
 
-
-
-
+	/**
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#removeAuthorizedUser(String)
+	 */
+	public boolean removeAuthorizedUser(String username) {
+		if(userRepository.containsCaseInsensitive(username)){
+			userRepository.removeUser(username);
+			return true;
+		}
+		return false;
+	}
 
 }

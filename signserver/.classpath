@@ -11,6 +11,7 @@
 	<classpathentry kind="lib" path="lib/itext/itext.jar"/>
 	<classpathentry kind="lib" path="lib/jaxws/jaxws-tools.jar"/>
 	<classpathentry kind="lib" path="lib/quartz/quartz-1.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/ext/james/smtp.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/lib/jboss-system.jar"/>
 	<classpathentry kind="lib" path="lib/ejbca-util.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/jboss-j2ee.jar"/>

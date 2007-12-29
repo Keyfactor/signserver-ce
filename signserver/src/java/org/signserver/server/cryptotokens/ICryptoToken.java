@@ -30,7 +30,7 @@ import org.signserver.common.CryptoTokenOfflineException;
  *  All CryptoToken plug-ins must implement this interface.
  * 
  * @author Philip Vendil
- * @version $Id: ICryptoToken.java,v 1.2 2007-12-12 14:00:04 herrvendil Exp $
+ * @version $Id: ICryptoToken.java,v 1.3 2007-12-29 10:43:53 herrvendil Exp $
  */
 
 
@@ -52,7 +52,7 @@ public interface ICryptoToken {
 	/**
 	 *  Method that returns the current status of the crypto token.
 	 * 
-	 *  Should return one of the SignerStatus..STATUS_.. values 
+	 *  Should return one of the SignerStatus.STATUS_.. values 
 	 */
 	public abstract int getCryptoTokenStatus();
 	

@@ -23,7 +23,8 @@ import org.signserver.validationservice.common.ValidationServiceConstants.CertTy
  * WebService interface for the Validation Service
  * 
  *
- * @version $Id: IValidationWS.java,v 1.1 2007-12-02 20:35:18 herrvendil Exp $
+ * @author Philip Vendil
+ * @version $Id: IValidationWS.java,v 1.2 2007-12-29 10:43:53 herrvendil Exp $
  */
 public interface IValidationWS {
 

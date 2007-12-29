@@ -17,16 +17,17 @@ import java.security.cert.Certificate;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
+import org.apache.mailet.MailetContext;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenInitializationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.MailSignerConfig;
 import org.signserver.common.MailSignerStatus;
-import org.signserver.common.SignServerUtil;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenInitializationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ProcessableConfig;
+import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
@@ -43,7 +44,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * 
  * @author Philip Vendil 23 sep 2007
  *
- * @version $Id: BaseMailSigner.java,v 1.4 2007-12-13 12:49:32 herrvendil Exp $
+ * @version $Id: BaseMailSigner.java,v 1.5 2007-12-29 10:43:53 herrvendil Exp $
  */
 public abstract class BaseMailSigner  implements IMailSigner {
 	
@@ -52,8 +53,8 @@ public abstract class BaseMailSigner  implements IMailSigner {
 	}
 	
 	/**
-	 * Property indicating that the signserver shouldn't be used.
-	 * Set propery to TRUE to disable the signer.
+	 * Property indicating that the mail signer shouldn't be used.
+	 * Set property to TRUE to disable the signer.
 	 */
 	public static final String DISABLED          = "DISABLED";
 	
@@ -65,7 +66,9 @@ public abstract class BaseMailSigner  implements IMailSigner {
 
     protected int workerId =0;
     
-    protected WorkerConfig config = null; 
+    protected WorkerConfig config = null;
+
+	protected MailetContext mailetContext; 
     
     protected BaseMailSigner(){
 
@@ -74,9 +77,10 @@ public abstract class BaseMailSigner  implements IMailSigner {
     /**
      * Initialization method that should be called directly after creation
      */
-    public void init(int workerId, WorkerConfig config){
+    public void init(int workerId, WorkerConfig config, MailetContext mailetContext){
       this.workerId = workerId;
       this.config = config;
+      this.mailetContext = mailetContext;
     }
 	    
 	public void activateSigner(String authenticationCode)

@@ -138,6 +138,7 @@
 		    	<replacestring from="@SIGNSERVER@" to="${app.name.cap}"/>
 				<replacestring from="@RMIREGISTRYPORT@" to="${rmi.registry.port}"/>
 				<replacestring from="@RMISERVERPORT@" to="${rmi.server.port}"/>
+				<replacestring from="@MAILSIGNERPORT@" to="${mailsigner.smtpport}"/>
 				<replacestring from="@BUILDMODE@" to="${build.mode}"/>
 				<replacestring from="@datasource.jndi-name-prefix@" to="${datasource.jndi-name-prefix}"/>
 				<replacestring from="@datasource.jndi-name@" to="${datasource.jndi-name}"/>

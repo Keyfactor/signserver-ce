@@ -29,7 +29,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * 
  * @author Philip Vendil 21 okt 2007
  *
- * @version $Id: TestMailSignerCLI.java,v 1.2 2007-12-13 12:49:55 herrvendil Exp $
+ * @version $Id: TestMailSignerCLI.java,v 1.3 2007-12-29 10:44:26 herrvendil Exp $
  */
 
 public class TestMailSignerCLI extends TestCase {
@@ -154,9 +154,19 @@ public class TestMailSignerCLI extends TestCase {
 			assertFailedExecution(new String[] {"activatecryptotoken",
 					"DUMMYMAILSIGNER2000",
 			"1234"});
-
-
-
+			
+			
+			assertSuccessfulExecution(new String[] {"addauthorizeduser",
+					"test1",
+					"pwd1"});	
+			assertSuccessfulExecution(new String[] {"listauthorizedusers"});
+			assertTrue(TestUtils.grepTempOut("TEST1"));
+			
+			assertSuccessfulExecution(new String[] {"removeauthorizeduser",
+					"test1"});	
+			assertSuccessfulExecution(new String[] {"listauthorizedusers"});
+			assertFalse(TestUtils.grepTempOut("TEST1"));
+			
 			// Dump
 			assertSuccessfulExecution(new String[] {"dumpproperties",
 					"DUMMYMAILSIGNER1000",

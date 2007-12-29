@@ -45,7 +45,7 @@ if "%SIGNSERVER_HOME%" == "" (
     set SIGNSRV_HOME="%SIGNSERVER_HOME%"
 ) 
   
-set SIGNSERVER_CP=%SIGNSRV_HOME%\lib\log4j.jar;%SIGNSRV_HOME%\lib\1.5\bcprov-jdk.jar;%SIGNSRV_HOME%\lib\1.5\bcmail-jdk.jar;%SIGNSRV_HOME%\lib\ejbca-util.jar;%SIGNSRV_HOME%\lib\commons-lang-2.0.jar;%SIGNSRV_HOME%\tmp\lib\base-core.jar;%SIGNSRV_HOME%\tmp\lib\base-opt.jar;%SIGNSRV_HOME%\tmp\lib\caTokenCard.jar;%SIGNSRV_HOME%\tmp\lib\pcscOCFTerminal.jar;%SIGNSRV_HOME%\tmp\lib\pkcs15.jar.jar;%SIGNSRV_HOME%\tmp\lib\securityProvider.jar;%SIGNSRV_HOME%\tmp\lib\smartCard.jar;%SIGNSRV_HOME%\lib\ext\ejb\jboss-ejb3x.jar
+set SIGNSERVER_CP=%SIGNSRV_HOME%\lib\log4j.jar;%SIGNSRV_HOME%\lib\1.5\bcprov-jdk.jar;%SIGNSRV_HOME%\lib\1.5\bcmail-jdk.jar;%SIGNSRV_HOME%\lib\ejbca-util.jar;%SIGNSRV_HOME%\lib\commons-lang-2.0.jar;%SIGNSRV_HOME%\tmp\lib\base-core.jar;%SIGNSRV_HOME%\tmp\lib\base-opt.jar;%SIGNSRV_HOME%\tmp\lib\caTokenCard.jar;%SIGNSRV_HOME%\tmp\lib\pcscOCFTerminal.jar;%SIGNSRV_HOME%\tmp\lib\pkcs15.jar.jar;%SIGNSRV_HOME%\tmp\lib\securityProvider.jar;%SIGNSRV_HOME%\tmp\lib\smartCard.jar;%SIGNSRV_HOME%\lib\ext\ejb\jboss-ejb3x.jar;%SIGNSRV_HOME%\lib\ext\james\james-2.3.1.jar
 set CP=%SIGNSRV_HOME%\tmp\bin\classes
 
 rem check that we have built the classes

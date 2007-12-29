@@ -8,6 +8,8 @@
     <property name="mailsigner.mailetname" value="MailSignerContainerMailet"/>	
 	<property name="rmi.registry.port" value="1099"/>
 	<property name="rmi.server.port" value="2099"/>
+	<property name="mailsigner.smtpauth" value="true"/>
+
 	<property name="james-dir" value="extapps/james" />
 	
     <path id="mailsigner.compile.classpath">
@@ -22,6 +24,7 @@
     </path>
 	
     <path id="mailsigner.ext.classpath">
+      <fileset dir="lib/ext/james" includes="*.jar" />
       <fileset dir="lib/ext" includes="*.jar" />
     </path>
 	
@@ -39,8 +42,10 @@ mailsigner.primarydns     = ${mailsigner.primarydns}
 mailsigner.secondarydns   = ${mailsigner.secondarydns}
 mailsigner.smtpport       = ${mailsigner.smtpport}
 mailsigner.postmaster     = ${mailsigner.postmaster}
+mailsigner.smtpauth       = ${mailsigner.smtpauth}
 rmi.registry.port         = ${rmi.registry.port}
-rmi.server.port           = ${rmi.server.port}        
+rmi.server.port           = ${rmi.server.port}
+        	
       </echo>
     </target>
 	
@@ -99,6 +104,7 @@ rmi.server.port           = ${rmi.server.port}
 	  <replace file="${james-dir}/apps/james/SAR-INF/config.xml" token="@mailsigner.mailetpackage@" value="${mailsigner.mailetpackage}"/>
 	  <replace file="${james-dir}/apps/james/SAR-INF/config.xml" token="@mailsigner.smtpport@" value="${mailsigner.smtpport}"/>
 	  <replace file="${james-dir}/apps/james/SAR-INF/config.xml" token="@mailsigner.mailetname@" value="${mailsigner.mailetname}"/>
+      <replace file="${james-dir}/apps/james/SAR-INF/config.xml" token="@mailsigner.smtpauth@" value="${mailsigner.smtpauth}"/>
 	  <mkdir dir="${james-dir}/apps/james/SAR-INF/lib" />
       <copy file="${mailsigner.jar}" todir="${james-dir}/apps/james/SAR-INF/lib"/>
       <copy todir="${james-dir}/apps/james/SAR-INF/lib">
@@ -172,6 +178,7 @@ rmi.server.port           = ${rmi.server.port}
                 	<include name="**/server/TestHardCoded*" />
                 	<include name="**/server/TestP12SignToken*" />
                     <include name="**/mailsigner/core/Test*" /> 
+                	<include name="**/mailsigner/mailsigners/Test*" /> 
                 </fileset>
             </batchtest>
         </junit>

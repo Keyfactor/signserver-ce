@@ -23,7 +23,7 @@ import org.signserver.cli.archive.FindFromRequestIPCommand;
 /**
  * Factory for General signserver Commands.
  *
- * @version $Id: DefaultSignServerCommandFactory.java,v 1.2 2007-12-13 12:49:32 herrvendil Exp $
+ * @version $Id: DefaultSignServerCommandFactory.java,v 1.3 2007-12-29 10:43:53 herrvendil Exp $
  */
 public class DefaultSignServerCommandFactory implements ISignServerCommandFactory {
 
@@ -72,6 +72,15 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         }
         if (args[0].equalsIgnoreCase("removeauthorizedclient")  && CommonAdminInterface.isSignServerMode()) {
             return new RemoveAuthorizedClientCommand(args);
+        }
+        if (args[0].equalsIgnoreCase("listauthorizedusers") && CommonAdminInterface.isMailSignerMode()) {
+            return new ListAuthorizedUsersCommand(args);
+        }
+        if (args[0].equalsIgnoreCase("addauthorizeduser") && CommonAdminInterface.isMailSignerMode()) {
+            return new AddAuthorizedUserCommand(args);
+        }
+        if (args[0].equalsIgnoreCase("removeauthorizeduser")  && CommonAdminInterface.isMailSignerMode()) {
+            return new RemoveAuthorizedUserCommand(args);
         }
         if (args[0].equalsIgnoreCase("uploadsignercertificate")) {
             return new UploadSignerCertificateCommand(args);
@@ -129,6 +138,8 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
 	    	usageString +="| setproperty | setproperties | setpropertyfromfile | removeproperty | dumpproperties ";
 	    	if(CommonAdminInterface.isSignServerMode()){
 	    	  usageString +="| listauthorizedclients | addauthorizedclient | removeauthorizedclient ";
+	    	}else{
+	    		usageString +="| listauthorizedusers | addauthorizeduser | removeauthorizeduser ";
 	    	}
 	    	usageString +="| uploadsignercertificate | uploadsignercertificatechain | activatecryptotoken | deactivatecryptotoken | generatecertreq ";
 	    	if(CommonAdminInterface.isSignServerMode()){	

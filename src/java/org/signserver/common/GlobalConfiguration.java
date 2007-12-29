@@ -26,7 +26,7 @@ import java.util.Map;
  * Contains a merge of static and dynamically defined global properties
  * 
  * @author Philip Vendil
- * $Id: GlobalConfiguration.java,v 1.4 2007-12-13 12:49:32 herrvendil Exp $
+ * $Id: GlobalConfiguration.java,v 1.5 2007-12-29 10:43:53 herrvendil Exp $
  */
 public class GlobalConfiguration implements Serializable{
    
@@ -49,8 +49,8 @@ public class GlobalConfiguration implements Serializable{
   public static final String WORKERPROPERTY_BASE = "WORKER";
   public static final String WORKERPROPERTY_CLASSPATH = ".CLASSPATH";
   
-  private static final String CRYPTOTOKENPROPERTY_BASE = ".CRYPTOTOKEN";
-  private static final String OLD_CRYPTOTOKENPROPERTY_BASE = ".SIGNERTOKEN";
+  public static final String CRYPTOTOKENPROPERTY_BASE = ".CRYPTOTOKEN";
+  public static final String OLD_CRYPTOTOKENPROPERTY_BASE = ".SIGNERTOKEN";
   public static final String CRYPTOTOKENPROPERTY_CLASSPATH = ".CLASSPATH"; 
   
 	// Current version of the application.    
@@ -124,10 +124,10 @@ public Iterator<String> getKeyIterator(){
    * @param cryptotokenproperty
    * @return return the given cryptotoken property or null.
    */
-  public String getCryptoTokenProperty(int signerId, String cryptotokenproperty){    	
-  	String key = WORKERPROPERTY_BASE + signerId + CRYPTOTOKENPROPERTY_BASE + cryptotokenproperty;
+  public String getCryptoTokenProperty(int workerId, String cryptotokenproperty){    	
+  	String key = WORKERPROPERTY_BASE + workerId + CRYPTOTOKENPROPERTY_BASE + cryptotokenproperty;
   	if(getProperty(SCOPE_GLOBAL, key) == null){
-  		key = WORKERPROPERTY_BASE + signerId + OLD_CRYPTOTOKENPROPERTY_BASE + cryptotokenproperty;
+  		key = WORKERPROPERTY_BASE + workerId + OLD_CRYPTOTOKENPROPERTY_BASE + cryptotokenproperty;
   	}
   	return getProperty(SCOPE_GLOBAL, key);
   }

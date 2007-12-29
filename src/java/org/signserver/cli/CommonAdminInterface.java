@@ -36,6 +36,7 @@ import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.MailSignerConfig;
+import org.signserver.common.MailSignerUser;
 import org.signserver.common.ResyncException;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -54,7 +55,7 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * @author Philip Vendil 6 okt 2007
  *
- * @version $Id: CommonAdminInterface.java,v 1.4 2007-12-12 14:00:08 herrvendil Exp $
+ * @version $Id: CommonAdminInterface.java,v 1.5 2007-12-29 10:43:53 herrvendil Exp $
  */
 
 public class CommonAdminInterface  {
@@ -408,6 +409,49 @@ public class CommonAdminInterface  {
 		  return getSignSession().removeAuthorizedClient(signerId, authClient);
 		}
 		return false;
+	}
+	
+	/**
+	 * Method only supported by Mail Signer Builds
+	 *  
+	 * Method adding an authorized user to the mail signer
+	 * 
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#addAuthorizedUser(String, String)
+	 * 
+	 */
+	public void addAuthorizedUser(String username, String password) throws RemoteException{
+		if(isMailSignerMode()){
+		  getIMailSignerRMI().addAuthorizedUser(username, password);
+		}
+	}
+
+	/**
+	 * Method only supported by Mail Signer Builds
+	 * Removes an authorized client from a signer
+	 * 
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#removeAuthorizedUser(String)
+	 * @throws RemoteException 
+	 * 
+	 */
+	public boolean removeAuthorizedUser(String username) throws RemoteException{
+		if(isMailSignerMode()){
+			  return getIMailSignerRMI().removeAuthorizedUser(username);
+		}
+		return false;
+	}
+	
+	/**
+	 *  Method only supported by Mail Signer Builds
+	 * @throws RemoteException 
+	 * 
+	 * @see {@link org.signserver.mailsigner.cli.IMailSignerRMI#getAuthorizedUsers()}
+	 */
+	public List<MailSignerUser> getAuthorizedUsers() throws RemoteException{
+		if(isMailSignerMode()){
+			return getIMailSignerRMI().getAuthorizedUsers();
+		}
+		
+		return null;
 	}
 	
 	public ArchiveDataVO findArchiveDataFromArchiveId(int signerid,

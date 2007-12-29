@@ -278,7 +278,7 @@ public  class WorkerFactory {
 			IAuthorizer auth = null;
 			if(authType.equalsIgnoreCase(IProcessable.AUTHTYPE_NOAUTH)){
 				auth = new NoAuthorizer();				
-			}else if (authType.equalsIgnoreCase(IProcessable.AUTHTYPE_NOAUTH)){
+			}else if (authType.equalsIgnoreCase(IProcessable.AUTHTYPE_CLIENTCERT)){
 				auth = new ClientCertAuthorizer();
 			}else{
 

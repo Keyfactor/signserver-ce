@@ -218,18 +218,6 @@ database.password      = ${database.password}
 	    	<pathelement location="${build}"/>
 	    	<path refid="signserver.compile.classpath" />
 	    </path>
-		<!--
-	    <path id="jaxws.client.classpath">
-	    	<fileset dir="lib">
-	    	  <include name="**/*.jar"/>
-	    	</fileset> 
-	    	<fileset dir="lib/ext">
-	    	  <include name="**/*.jar"/>
-	    	</fileset> 
-	    	<pathelement location="${java.home}/../lib/tools.jar"/>
-	    	<pathelement location="tmp/jaxws/gen-classes/client"/>
-	    	<pathelement location="${build}"/>
-	    </path> -->
 		
 	    <path id="jaxws.test.classpath">
 	    	<path refid="jaxws.client.classpath" />
@@ -309,29 +297,25 @@ database.password      = ${database.password}
 	            <classpath refid="server.compile.classpath" />
 	            <src path="${src.java}" /> 	        	
 	        	<include name="org/signserver/protocol/ws/client/**"/>
+	        	<include name="org/signserver/protocol/ws/client/cli/**"/>
 	        </javac>
 	    </target>
-	<!--
-	    <target name="ws.build.client" depends="ws.init, ejbca-util.jar" unless="ejbcaws.isjava14">
-	        <javac debug="true" debuglevel="${debuglevel}" destdir="tmp/jaxws/gen-classes/client" >
-	            <src path="src/jaxws/gen-java/client"/>
-	            <classpath refid="jaxws.client.classpath"/>        	
-	        </javac>
-	        <javac debug="true" debuglevel="${debuglevel}" destdir="${build}" >
-	            <src path="src/java"/>
-	            <classpath refid="jaxws.client.classpath"/>
-	        	<include name="org/ejbca/core/protocol/ws/client/*.java"/>            
-	        </javac>
-	    	
-	    	<mkdir dir="tmp/ejbcawscli.jar"/>
-	    	<mkdir dir="tmp/ejbcawscli.jar/META-INF"/>
-	    	<mkdir dir="dist/ejbcawscli/lib"/>
 
-	        <copy todir="tmp/ejbcawscli.jar">
+	    <target name="ws.build.client" depends="ws.init, ws.compile.client" if="signserverws.conditionenabled">
+	    	
+	    	<mkdir dir="tmp/signserverwscli.jar"/>
+	    	<mkdir dir="tmp/signserverwscli.jar/META-INF"/>
+	    	<mkdir dir="dist-client/signserverwscli/lib"/>
+
+	        <copy todir="tmp/signserverwscli.jar">
 	            <fileset dir="${build}">
-	              <include name="org/ejbca/core/protocol/ws/client/*.class"/>
-	              <include name="org/ejbca/core/protocol/ws/common/*.class"/>
-	              <include name="org/ejbca/core/protocol/ws/objects/*.class"/>            	
+	              <include name="org/signserver/protocol/ws/client/*.class"/>
+	              <include name="org/signserver/protocol/ws/client/cli/*.class"/>
+	              <include name="org/signserver/protocol/ws/*.class"/> 
+	              <include name="org/signserver/cli/*.class"/>
+	              <include name="org/signserver/common/*.class"/>
+	              <include name="org/signserver/groupkeyservice/common/*.class"/>
+	              <include name="org/signserver/validationservice/common/*.class"/>
 	            </fileset>	
 	            <fileset dir="tmp/jaxws/gen-classes/client">
 	              <include name="**/*.class"/>
@@ -342,14 +326,14 @@ database.password      = ${database.password}
 		        </fileset>
 		    </copy> 
 	 
-	        <copy todir="dist/ejbcawscli/lib">
-	            <fileset dir="${ejbca.home}/lib">        
-	              <include name="bcprov-jdk15.jar"/>
+	        <copy todir="dist-client/signserverwscli/lib">
+	            <fileset dir="${lib}">        
 	              <include name="log4j.jar"/>      
-	              <include name="commons-lang-2.0.jar"/>            	
+	              <include name="commons-lang-2.0.jar"/>
+	              <include name="ejbca-util.jar"/>
 	            </fileset>	
-	            <fileset dir="${ejbca.home}/dist">
-	              <include name="ejbca-util.jar"/>         
+	            <fileset dir="${lib}/${client.java.target}">        
+	              <include name="bcprov-jdk.jar"/>                  	
 	            </fileset>	    
 		        <fileset dir="${lib}/jaxws">
 					<include name="activation.jar" />
@@ -369,24 +353,22 @@ database.password      = ${database.password}
 					<include name="sjsxp.jar" />
 				</fileset>
 		    </copy>    	
-		    <copy todir="dist/ejbcawscli/">
+		    <copy todir="dist-client/signserverwscli/">
 	            <fileset dir="${src}/jaxws/cli">
 	                <include name="*.*" />
 	            </fileset>
 	        </copy> 
 	    	              
-	        <jar destfile="dist/ejbcawscli/ejbcawscli.jar" basedir="tmp/ejbcawscli.jar">
+	        <jar destfile="dist-client/signserverwscli/signserverwscli.jar" basedir="tmp/signserverwscli.jar">
 	          <manifest>
-	          	<attribute name="Class-Path" value="lib/bcprov-jdk15.jar lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/commons-lang-2.0.jar"/>
-	            <attribute name="Main-Class" value="org.ejbca.core.protocol.ws.client.ejbcawsracli"/>
+	          	<attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/commons-lang-2.0.jar"/>
+	            <attribute name="Main-Class" value="org.signserver.protocol.ws.client.cli.WSCLI"/>
 	          </manifest>
 	        </jar>    	    	
 	    </target>
 
-	    <target name="ejbcaws.client" depends="ejbcawsconditioncheck,isjava14check,ws.build.client" if="ejbcawsconditioncheck" unless="ejbcaws.isjava14" description="Build the EJBCA WS-API client"/>
-         -->
+	    <target name="signserverws.client" depends="signserverwsconditioncheck,ws.build.client" if="signserverws.conditionenabled" />
 
-	        		
 	   <!-- =================================================================== -->
 	   <!-- Build Validation Service Web Service                                -->
 	   <!-- =================================================================== -->	        		
@@ -437,7 +419,7 @@ database.password      = ${database.password}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war" unless="buildMailSigner" >
+	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

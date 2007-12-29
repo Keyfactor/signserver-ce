@@ -1,5 +1,24 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.mailsigner.cli;
 
+/**
+ * RMI interface for the signserver cli.
+ * 
+ * 
+ * @author Philip Vendil
+ * $Id: IMailSignerRMI.java,v 1.5 2007-12-29 10:43:53 herrvendil Exp $
+ */
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.security.cert.Certificate;
@@ -7,11 +26,12 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.List;
 
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.MailSignerUser;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
@@ -187,4 +207,30 @@ public interface IMailSignerRMI extends Remote{
 		 * @throws java.rmi.RemoteException
 		 */
 		public List<Integer> getWorkers(int workerType) throws java.rmi.RemoteException;
+		
+		/**
+		 * Method adding an authorized user to a mail signer.
+		 * 
+		 * It's only possible to give access to the entire mail signer and
+		 * not to individual mail signers.
+		 * 
+		 * @param username case insensitive username of the user.
+		 * @param password the password used to authenticate the user.
+		 * 
+		 */
+		void addAuthorizedUser(String username, String password)  throws java.rmi.RemoteException;
+		
+		/**
+		 * Method to remove a authorized user from the mail signer
+		 * 
+		 * @param username case insensitive username of the user.
+		 * @return true if the user exists and was removed, false otherwise
+		 */
+		boolean removeAuthorizedUser(String username)  throws java.rmi.RemoteException;
+		
+		/**
+		 * 
+		 * @return A list of all authorized users sorted by user name. Never null.
+		 */
+		List<MailSignerUser> getAuthorizedUsers()  throws java.rmi.RemoteException;
 }

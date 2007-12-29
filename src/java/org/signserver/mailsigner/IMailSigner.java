@@ -15,7 +15,10 @@ package org.signserver.mailsigner;
 
 
 
+import javax.mail.MessagingException;
+
 import org.apache.mailet.Mail;
+import org.apache.mailet.MailetContext;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
@@ -28,15 +31,17 @@ import org.signserver.common.WorkerStatus;
  * 
  * 
  * @author Philip Vendil
- * $Id: IMailSigner.java,v 1.3 2007-12-12 14:00:08 herrvendil Exp $
+ * $Id: IMailSigner.java,v 1.4 2007-12-29 10:43:53 herrvendil Exp $
  */
 public interface IMailSigner {
 		
 	/**
 	 * Main method used when signing mails
 	 * @param mail the mail sent through the SMTP server
+	 * @throws MessagingException if error occurred during processing of mail.
+	 * @throws CryptoTokenOfflineException if the signing token not available at the time of the process.
 	 */
-	void service(Mail mail);
+	void service(Mail mail) throws MessagingException, CryptoTokenOfflineException;
 	
 	/**
 	 * Method used to activate a signer using the supplied authentication Code
@@ -67,8 +72,9 @@ public interface IMailSigner {
 		 * Initialization method that should be called directly after creation.
 		 * @param workerId the unique id of the worker
 		 * @param config the configuration stored in database
+		 * @param the mailet context containing the mail signer configuration.
 		 */
-		public void init(int workerId, WorkerConfig config);
+		public void init(int workerId, WorkerConfig config, MailetContext mailetContext);
 		
 		/**
 		 * Should return the actual status of the worker, status could be if
@@ -76,5 +82,7 @@ public interface IMailSigner {
 		 * @return a WorkerStatus object.
 		 */
 		public WorkerStatus getStatus();
+
+
 
 }

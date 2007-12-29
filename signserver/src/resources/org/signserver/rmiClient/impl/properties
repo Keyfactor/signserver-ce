@@ -1,5 +1,0 @@
-registryPortRMI 47001
-keyStoreName rmiclienttest.jks
-keyStorePassword foo123
-#keyPassword foo123
- 

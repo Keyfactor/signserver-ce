@@ -145,6 +145,7 @@ database.password      = ${database.password}
 	            <classpath refid="server.compile.classpath" />
 	            <src path="${src.java}" /> 
 	        	<exclude name="org/signserver/mailsigner/**"/>
+	        	<exclude name="org/signserver/common/MailSigner*"/>
 	        	<exclude name="org/signserver/appserver/**"/> 
 	        	<exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>	        	
 	        	<exclude name="org/signserver/protocol/ws/client/**"/>

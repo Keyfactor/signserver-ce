@@ -119,14 +119,23 @@ rmi.server.port           = ${rmi.server.port}
             
 	</target>
 	
+	<condition property="james.java.ext.dirs" value="${james-dir}/lib;${james-dir}/tools/lib">
+	 	<os family="windows"/>
+	</condition>
+	<condition property="james.java.ext.dirs" value="${james-dir}/lib:${james-dir}/tools/lib">
+		<os family="unix"/>
+	</condition>
+	
 	<target name="run" if="buildMailSigner">
+
 	  <mkdir dir="${james-dir}/ext"/>
       <java        
         jar="${james-dir}/bin/phoenix-loader.jar"
         fork="true"
-        failonerror="true"       	
+        failonerror="true"
+      	
         >
-      	  <sysproperty key="java.ext.dirs" value="${james-dir}/lib;${james-dir}/tools/lib"/>
+      	  <sysproperty key="java.ext.dirs" value="${james.java.ext.dirs}"/>
       	  <sysproperty key="phoenix.home" value="${james-dir}"/>
       	  <sysproperty key="java.security.policy" value="jar:file:${james-dir}/bin/phoenix-loader.jar!/META-INF/java.policy"/>
       	  <sysproperty key="java.security.manager" value=""/>
@@ -138,7 +147,7 @@ rmi.server.port           = ${rmi.server.port}
         jar="${james-dir}/bin/phoenix-loader.jar"
         fork="true"
         failonerror="true" >
-      	  <sysproperty key="java.ext.dirs" value="${james-dir}/lib;${james-dir}/tools/lib"/>
+      	  <sysproperty key="java.ext.dirs" value="${james.java.ext.dirs}"/>
       	  <sysproperty key="phoenix.home" value="${james-dir}"/>
       	  <sysproperty key="java.security.policy" value="jar:file:${james-dir}/bin/phoenix-loader.jar!/META-INF/java.policy"/>
       	  <sysproperty key="java.security.manager" value=""/>

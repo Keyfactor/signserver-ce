@@ -26,7 +26,7 @@ import org.signserver.common.WorkerStatus;
 /**
  * Gets the current status of the given worker
  *
- * @version $Id: GetStatusCommand.java,v 1.6 2007-12-12 14:00:08 herrvendil Exp $
+ * @version $Id: GetStatusCommand.java,v 1.7 2008-01-01 19:54:45 herrvendil Exp $
  */
 public class GetStatusCommand extends BaseCommand {
 	
@@ -100,7 +100,10 @@ public class GetStatusCommand extends BaseCommand {
         	}
 
 
-        } catch (Exception e) {
+        }catch (Exception e) {
+        	if(e instanceof IllegalAdminCommandException){
+        		throw (IllegalAdminCommandException) e;
+        	}
         	throw new ErrorAdminCommandException(e);            
         }
     }

@@ -59,7 +59,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementor of the ISignServerWS interface.
  * 
  * @author Philip Vendil
- * $Id: SignServerWS.java,v 1.6 2008-01-01 12:31:23 herrvendil Exp $
+ * $Id: SignServerWS.java,v 1.7 2008-01-01 19:54:45 herrvendil Exp $
  */
 
 @WebService(targetNamespace="gen.ws.protocol.signserver.org")
@@ -257,7 +257,7 @@ public class SignServerWS implements ISignServerWS {
     private static final String MINIMUMFREEMEMORY = "@healthcheck.minimumfreememory@";
     private int minimumFreeMemory = 1;
     private int getMinimumFreeMemory(){
-      if(!MINIMUMFREEMEMORY.equals("@healthcheck.minimumfreememory@")){
+      if(!MINIMUMFREEMEMORY.startsWith("@healthcheck.minimumfreememory")){
     	  try{
     	    minimumFreeMemory = Integer.parseInt(MINIMUMFREEMEMORY.trim());
     	  }catch(NumberFormatException e){

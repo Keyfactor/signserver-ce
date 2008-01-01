@@ -55,7 +55,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementation of the Validation Service web interface.
  * 
  *
- * @version $Id: ValidationWS.java,v 1.5 2008-01-01 12:31:23 herrvendil Exp $
+ * @version $Id: ValidationWS.java,v 1.6 2008-01-01 19:54:45 herrvendil Exp $
  */
 @WebService(targetNamespace="gen.ws.validationservice.protocol.signserver.org")
 public class ValidationWS implements IValidationWS {
@@ -181,7 +181,7 @@ public class ValidationWS implements IValidationWS {
 	private static final String MINIMUMFREEMEMORY = "@healthcheck.minimumfreememory@";
     private int minimumFreeMemory = 1;
     private int getMinimumFreeMemory(){
-      if(!MINIMUMFREEMEMORY.equals("@healthcheck.minimumfreememory@")){
+      if(!MINIMUMFREEMEMORY.startsWith("@healthcheck.minimumfreememory")){
     	  try{
     	    minimumFreeMemory = Integer.parseInt(MINIMUMFREEMEMORY.trim());
     	  }catch(NumberFormatException e){

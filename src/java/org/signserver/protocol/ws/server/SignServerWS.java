@@ -59,7 +59,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementor of the ISignServerWS interface.
  * 
  * @author Philip Vendil
- * $Id: SignServerWS.java,v 1.5 2007-12-12 14:24:56 herrvendil Exp $
+ * $Id: SignServerWS.java,v 1.6 2008-01-01 12:31:23 herrvendil Exp $
  */
 
 @WebService(targetNamespace="gen.ws.protocol.signserver.org")
@@ -268,9 +268,9 @@ public class SignServerWS implements ISignServerWS {
     }
     
     private static final String CHECKDBSTRING = "@healthcheck.checkdbstring@";
-    private String checkDBString = "Select count(*) from SignerConfigData";
+    private String checkDBString = "Select count(*) from signerconfigdata";
     private String getCheckDBString(){
-      if(!CHECKDBSTRING.equals("@healthcheck.checkdbstring@")){
+      if(!CHECKDBSTRING.startsWith("@healthcheck.checkdbstring")){
     	  checkDBString = CHECKDBSTRING;
       }
       return checkDBString;

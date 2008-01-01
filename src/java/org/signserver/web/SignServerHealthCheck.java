@@ -45,7 +45,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * * All SignerTokens are aktive if not set as offline.
  * 
  * @author Philip Vendil
- * @version $Id: SignServerHealthCheck.java,v 1.5 2007-12-12 14:00:08 herrvendil Exp $
+ * @version $Id: SignServerHealthCheck.java,v 1.6 2008-01-01 12:31:21 herrvendil Exp $
  */
 
 public class SignServerHealthCheck implements IHealthCheck {
@@ -128,8 +128,8 @@ public class SignServerHealthCheck implements IHealthCheck {
 		  statement.execute(checkDBString);		  
 		  JDBCUtil.close(con);
 		}catch(Exception e){
-			retval = "\nError creating connection to EJBCA Database.";
-			log.error("Error creating connection to EJBCA Database.",e);
+			retval = "\nError creating connection to SignServer Database.";
+			log.error("Error creating connection to SignServer Database.",e);
 		}
 		return retval;
 	}

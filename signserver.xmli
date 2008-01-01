@@ -28,7 +28,7 @@
 
 	   <property name="healthcheck.authorizedips" value="127.0.0.1" />
 	   <property name="healthcheck.minimumfreememory" value="1" />
-	   <property name="healthcheck.checkdbstring" value="Select count(*) from SignerConfigData" />
+	   <property name="healthcheck.checkdbstring" value="Select count(*) from signerconfigdata" />
 	
 	   <property name="signserverws.enabled" value="true" />
 	   <property name="validationws.enabled" value="false" />

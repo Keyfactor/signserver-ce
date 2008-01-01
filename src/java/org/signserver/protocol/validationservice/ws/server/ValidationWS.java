@@ -55,7 +55,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementation of the Validation Service web interface.
  * 
  *
- * @version $Id: ValidationWS.java,v 1.4 2007-12-12 15:13:37 herrvendil Exp $
+ * @version $Id: ValidationWS.java,v 1.5 2008-01-01 12:31:23 herrvendil Exp $
  */
 @WebService(targetNamespace="gen.ws.validationservice.protocol.signserver.org")
 public class ValidationWS implements IValidationWS {
@@ -192,9 +192,9 @@ public class ValidationWS implements IValidationWS {
     }
     
     private static final String CHECKDBSTRING = "@healthcheck.checkdbstring@";
-    private String checkDBString = "Select count(*) from SignerConfigData";
+    private String checkDBString = "Select count(*) from signerconfigdata";
     private String getCheckDBString(){
-      if(!CHECKDBSTRING.equals("@healthcheck.checkdbstring@")){
+      if(!CHECKDBSTRING.startsWith("@healthcheck.checkdbstring")){
     	  checkDBString = CHECKDBSTRING;
       }
       return checkDBString;

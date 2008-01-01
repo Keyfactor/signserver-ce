@@ -40,7 +40,7 @@
 	   	    <fileset dir="lib/quartz" includes="*.jar" />
 	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
 	   	    <fileset dir="lib/jaxws" includes="*.jar" />	   	    
-    	    <fileset dir="lib/ext/james" includes="james-2.3.jar" />
+    	    <fileset dir="lib/ext/james" includes="james-2.3.1.jar" />
 	        <path refid="j2ee.classpath" />
 	        
             <path location="tmp/jaxws/gen-classes/client" />

@@ -19,7 +19,7 @@
     	<fileset dir="lib/ext/james" includes="mailet-api-2.3.jar" />
     	<fileset dir="lib/ext/james" includes="mailet-2.3.jar" />
     	<fileset dir="lib/ext/james" includes="mail-1.4.jar" />
-    	<fileset dir="lib/ext/james" includes="james-2.3.jar" />
+    	<fileset dir="lib/ext/james" includes="james-2.3.1.jar" />
     	<fileset dir="lib/ext/ejb" includes="jboss-ejb3x.jar" />
     </path>
 	

@@ -39,7 +39,8 @@
 	        <fileset dir="lib/itext" includes="*.jar" />
 	   	    <fileset dir="lib/quartz" includes="*.jar" />
 	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
-	   	    <fileset dir="lib/jaxws" includes="*.jar" />
+	   	    <fileset dir="lib/jaxws" includes="*.jar" />	   	    
+    	    <fileset dir="lib/ext/james" includes="james-2.3.jar" />
 	        <path refid="j2ee.classpath" />
 	        
             <path location="tmp/jaxws/gen-classes/client" />
@@ -80,6 +81,7 @@
         <path location="${build}" />
         <path refid="j2ee.classpath" />
         <path refid="jaxws.classpath" />
+        
       </path>
 	
 	   <!-- those are the default values used within JBoss for easy startup -->
@@ -145,7 +147,6 @@ database.password      = ${database.password}
 	            <classpath refid="server.compile.classpath" />
 	            <src path="${src.java}" /> 
 	        	<exclude name="org/signserver/mailsigner/**"/>
-	        	<exclude name="org/signserver/common/MailSigner*"/>
 	        	<exclude name="org/signserver/appserver/**"/> 
 	        	<exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>	        	
 	        	<exclude name="org/signserver/protocol/ws/client/**"/>

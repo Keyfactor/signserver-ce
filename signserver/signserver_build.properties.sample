@@ -1,5 +1,5 @@
 #
-# $Id: signserver_build.properties.sample,v 1.9 2007-12-12 15:13:37 herrvendil Exp $
+# $Id: signserver_build.properties.sample,v 1.10 2008-01-01 12:31:23 herrvendil Exp $
 #
 # File containing the build properties of the sign server
 # 
@@ -259,8 +259,8 @@ healthcheck.minimumfreememory=1
 
 # Parameter indicating the string that should be used to do 
 # a minimal check that the database is working. May differ between databases.
-# Default : 1
-healthcheck.checkdbstring=Select count(*) from SignerConfigData
+# Default : Select count(*) from signerconfigdata
+healthcheck.checkdbstring=Select count(*) from signerconfigdata
 
 ##########################################################################
 #  Mail Signer Specific Settings                                         #

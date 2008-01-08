@@ -28,7 +28,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * Base for Commands, contains useful functions
  *
- * @version $Id: BaseCommand.java,v 1.6 2007-12-12 14:00:08 herrvendil Exp $
+ * @version $Id: BaseCommand.java,v 1.7 2008-01-08 15:18:08 herrvendil Exp $
  */
 public abstract class BaseCommand implements IAdminCommand{
 	
@@ -195,10 +195,10 @@ public abstract class BaseCommand implements IAdminCommand{
      * @throws Exception 
      * @throws RemoteException 
      */
-    public void checkThatWorkerIsSigner(int signerid, String hostname) throws RemoteException, Exception{
+    public void checkThatWorkerIsProcessable(int signerid, String hostname) throws RemoteException, Exception{
     	Collection<Integer> signerIds = getCommonAdminInterface(hostname).getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
     	if(!signerIds.contains(new Integer(signerid))){
-    		throw new IllegalAdminCommandException("Error: given workerId doesn't seem to point to any signer in the system.");
+    		throw new IllegalAdminCommandException("Error: given workerId doesn't seem to point to any processable worker in the system.");
     	}
     	
     }

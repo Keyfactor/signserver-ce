@@ -30,7 +30,7 @@ import org.signserver.common.ArchiveDataVO;
 /**
  * Returns all archive datas requested from given IP
  *
- * @version $Id: FindFromRequestIPCommand.java,v 1.1 2007-12-04 15:35:10 herrvendil Exp $
+ * @version $Id: FindFromRequestIPCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class FindFromRequestIPCommand extends BaseCommand {
 	
@@ -58,7 +58,7 @@ public class FindFromRequestIPCommand extends BaseCommand {
 	    }	
         try {                    	
         	int signerid = getWorkerId(args[2], hostname);
-        	checkThatWorkerIsSigner(signerid,hostname);
+        	checkThatWorkerIsProcessable(signerid,hostname);
         	
         	String requestIP = args[3];
             File outputPath = new File(args[4]);
@@ -89,6 +89,8 @@ public class FindFromRequestIPCommand extends BaseCommand {
         	
     		this.getOutputStream().println("\n\n");
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

@@ -29,7 +29,7 @@ import org.signserver.common.WorkerStatus;
  * Gets the current configuration of the given signer, this might not be the same as
  * the active configuration.
  *
- * @version $Id: GetConfigCommand.java,v 1.6 2007-11-27 06:05:05 herrvendil Exp $
+ * @version $Id: GetConfigCommand.java,v 1.7 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class GetConfigCommand extends BaseCommand {
 	
@@ -79,6 +79,8 @@ public class GetConfigCommand extends BaseCommand {
         	}
  
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

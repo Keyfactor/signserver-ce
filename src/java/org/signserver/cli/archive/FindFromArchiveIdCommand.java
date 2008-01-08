@@ -28,7 +28,7 @@ import org.signserver.common.ArchiveDataVO;
 /**
  * Finds archivedata from database with given id.
  *
- * @version $Id: FindFromArchiveIdCommand.java,v 1.1 2007-12-04 15:35:10 herrvendil Exp $
+ * @version $Id: FindFromArchiveIdCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class FindFromArchiveIdCommand extends BaseCommand {
 	
@@ -56,7 +56,7 @@ public class FindFromArchiveIdCommand extends BaseCommand {
 	    }	
         try {                    	
         	int signerid = getWorkerId(args[2], hostname);
-        	checkThatWorkerIsSigner(signerid,hostname);
+        	checkThatWorkerIsProcessable(signerid,hostname);
         	
         	String archiveid = args[3];
             File outputPath = new File(args[4]);
@@ -83,8 +83,9 @@ public class FindFromArchiveIdCommand extends BaseCommand {
         	
     		this.getOutputStream().println("\n\n");
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
-        	e.printStackTrace();
         	throw new ErrorAdminCommandException(e);            
         }
     }

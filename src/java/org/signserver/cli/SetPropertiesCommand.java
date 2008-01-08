@@ -29,7 +29,7 @@ import org.signserver.common.GlobalConfiguration;
  * 
  * See the manual for the syntax of the property file
  *
- * @version $Id: SetPropertiesCommand.java,v 1.4 2007-11-09 15:45:13 herrvendil Exp $
+ * @version $Id: SetPropertiesCommand.java,v 1.5 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class SetPropertiesCommand extends BaseCommand {
 	
@@ -75,6 +75,8 @@ public class SetPropertiesCommand extends BaseCommand {
 
         	this.getOutputStream().println("\n\n");
 
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

@@ -18,7 +18,7 @@ package org.signserver.cli;
 /**
  * Adds an authorized user to a mail signer installation
  *
- * @version $Id: AddAuthorizedUserCommand.java,v 1.1 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id: AddAuthorizedUserCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
  * @author Philip Vendil
  */
 public class AddAuthorizedUserCommand extends BaseCommand {
@@ -57,6 +57,8 @@ public class AddAuthorizedUserCommand extends BaseCommand {
         	        	        	
     		this.getOutputStream().println("\n\n");
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

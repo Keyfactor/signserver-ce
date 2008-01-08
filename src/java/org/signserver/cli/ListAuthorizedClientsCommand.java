@@ -20,7 +20,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * Gets the current configurations list of authorized clients
  *
- * @version $Id: ListAuthorizedClientsCommand.java,v 1.4 2007-11-27 06:05:05 herrvendil Exp $
+ * @version $Id: ListAuthorizedClientsCommand.java,v 1.5 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class ListAuthorizedClientsCommand extends BaseCommand {
 	
@@ -48,7 +48,7 @@ public class ListAuthorizedClientsCommand extends BaseCommand {
         try {            
         	
         	int signerid = getWorkerId(args[1], hostname);
-        	checkThatWorkerIsSigner(signerid,hostname);
+        	checkThatWorkerIsProcessable(signerid,hostname);
         	
         	WorkerConfig config = this.getCommonAdminInterface(hostname).getCurrentSignerConfig(signerid);
         	
@@ -67,6 +67,8 @@ public class ListAuthorizedClientsCommand extends BaseCommand {
 
     		this.getOutputStream().println("\n\n");
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

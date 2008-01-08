@@ -19,11 +19,14 @@ import java.io.PrintStream;
 import org.signserver.cli.archive.FindFromArchiveIdCommand;
 import org.signserver.cli.archive.FindFromRequestCertCommand;
 import org.signserver.cli.archive.FindFromRequestIPCommand;
+import org.signserver.cli.groupkeyservice.PregenerateKeyCommand;
+import org.signserver.cli.groupkeyservice.RemoveGroupKeysCommand;
+import org.signserver.cli.groupkeyservice.SwitchEncKeyCommand;
  
 /**
  * Factory for General signserver Commands.
  *
- * @version $Id: DefaultSignServerCommandFactory.java,v 1.3 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id: DefaultSignServerCommandFactory.java,v 1.4 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class DefaultSignServerCommandFactory implements ISignServerCommandFactory {
 
@@ -100,11 +103,34 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         if (args[0].equalsIgnoreCase("archive") && CommonAdminInterface.isSignServerMode()) {
             return getArchiveCommand(args);
         }
+        if (args[0].equalsIgnoreCase("groupkeyservice") && CommonAdminInterface.isSignServerMode()) {
+            return getGroupKeyServiceCommand(args);
+        }
         return null;
         
         
         
     } // getCommand
+
+	private IAdminCommand getGroupKeyServiceCommand(String[] args) {
+	   	if (args.length < 2) {
+            return null;
+        }
+    	 
+        if (args[1].equalsIgnoreCase("switchenckey")) {
+            return new SwitchEncKeyCommand(args);
+        }
+
+        if (args[1].equalsIgnoreCase("removegroupkeys")) {
+            return new RemoveGroupKeysCommand(args);
+        }
+        
+        if (args[1].equalsIgnoreCase("pregeneratekeys")) {
+            return new PregenerateKeyCommand(args);
+        }
+		
+		return null;
+	}
 
 	private static IAdminCommand getArchiveCommand(String[] args) {
 	   	if (args.length < 2) {
@@ -143,12 +169,13 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
 	    	}
 	    	usageString +="| uploadsignercertificate | uploadsignercertificatechain | activatecryptotoken | deactivatecryptotoken | generatecertreq ";
 	    	if(CommonAdminInterface.isSignServerMode()){	
-	    		usageString +="| archive";
+	    		usageString +="| archive | groupkeyservice";
 	    	}
 	        usageString+= "> \n";
 	        out.println(usageString);
 	    	if(CommonAdminInterface.isSignServerMode()){
-	    		out.println("Available archive commands : Usage: signserver archive < findfromarchiveid | findfromrequestip | findfromrequestcert > \n");
+	    		out.println("Available archive commands : signserver archive < findfromarchiveid | findfromrequestip | findfromrequestcert > \n");
+	    		out.println("Available groupkeyservice commands : signserver groupkeyservice < switchenckey | removegroupkeys | pregeneratekeys > \n");
 	    	}
 	    	out.println("Each basic command give more help");
 

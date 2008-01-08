@@ -23,7 +23,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Sets a property for a given workerid
  *
- * @version $Id: SetPropertyCommand.java,v 1.4 2007-11-09 15:45:12 herrvendil Exp $
+ * @version $Id: SetPropertyCommand.java,v 1.5 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class SetPropertyCommand extends BaseCommand {
 	
@@ -82,6 +82,8 @@ public class SetPropertyCommand extends BaseCommand {
 
         	this.getOutputStream().println("\n\n");
 
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

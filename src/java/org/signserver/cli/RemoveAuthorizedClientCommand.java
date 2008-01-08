@@ -24,7 +24,7 @@ import org.signserver.common.AuthorizedClient;
 /**
  * removes an authorized client from a given signer
  *
- * @version $Id: RemoveAuthorizedClientCommand.java,v 1.2 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: RemoveAuthorizedClientCommand.java,v 1.3 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class RemoveAuthorizedClientCommand extends BaseCommand {
 	
@@ -71,10 +71,17 @@ public class RemoveAuthorizedClientCommand extends BaseCommand {
         	
     		this.getOutputStream().println("\n\n");
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }
     }
+
+	private void checkThatWorkerIsSigner(int signerid, String hostname) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	public int getCommandType() {
 		return TYPE_EXECUTEONMASTER;

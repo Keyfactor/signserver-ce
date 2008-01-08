@@ -23,7 +23,7 @@ import org.signserver.common.PKCS10CertReqInfo;
  /**
   * Commands that requests a signer to generate a PKCS10 certificate request 
   *
-  * @version $Id: GenerateCertReqCommand.java,v 1.6 2007-11-09 15:45:13 herrvendil Exp $
+  * @version $Id: GenerateCertReqCommand.java,v 1.7 2008-01-08 15:18:08 herrvendil Exp $
   */
  public class GenerateCertReqCommand extends BaseCommand {
 
@@ -80,6 +80,8 @@ import org.signserver.common.PKCS10CertReqInfo;
          
         	 getOutputStream().println(resources[SUCCESS] + filename);
          
+         } catch (IllegalAdminCommandException e) {
+         	throw e;  
          } catch (Exception e) {   
              throw new ErrorAdminCommandException(e);            
          }

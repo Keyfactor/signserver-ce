@@ -28,7 +28,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Sets a property for a given workerid with byte data from file set as a BASE94 encoded string
  *
- * @version $Id: SetPropertyFromFileCommand.java,v 1.4 2007-11-09 15:45:13 herrvendil Exp $
+ * @version $Id: SetPropertyFromFileCommand.java,v 1.5 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class SetPropertyFromFileCommand extends BaseCommand {
 	
@@ -88,6 +88,8 @@ public class SetPropertyFromFileCommand extends BaseCommand {
 
         	this.getOutputStream().println("\n\n");
 
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

@@ -29,7 +29,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * Command used to dump all configured properties for a worker or all workers
  *
- * @version $Id: DumpPropertiesCommand.java,v 1.3 2007-11-09 15:45:13 herrvendil Exp $
+ * @version $Id: DumpPropertiesCommand.java,v 1.4 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class DumpPropertiesCommand extends BaseCommand {
 	
@@ -85,6 +85,8 @@ public class DumpPropertiesCommand extends BaseCommand {
 
         	this.getOutputStream().println("\n\n");
 
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

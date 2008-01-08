@@ -22,7 +22,7 @@ import org.signserver.common.ResyncException;
 /**
  * Reloads the current configuration
  *
- * @version $Id: ResyncCommand.java,v 1.1 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: ResyncCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class ResyncCommand extends BaseCommand {
     /**
@@ -68,6 +68,8 @@ public class ResyncCommand extends BaseCommand {
           		this.getOutputStream().println("Syncronization aborted.");
           	}        	
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

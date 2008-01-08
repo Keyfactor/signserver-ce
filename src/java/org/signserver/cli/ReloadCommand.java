@@ -19,7 +19,7 @@ package org.signserver.cli;
 /**
  * Reloads the current configuration
  *
- * @version $Id: ReloadCommand.java,v 1.3 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: ReloadCommand.java,v 1.4 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class ReloadCommand extends BaseCommand {
     /**
@@ -61,6 +61,8 @@ public class ReloadCommand extends BaseCommand {
         	this.getOutputStream().println("Current configuration is now activated.\n");
         	
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

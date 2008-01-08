@@ -27,7 +27,7 @@ import org.signserver.common.WorkerStatus;
 /**
  * Commands that uploads a PEM certificate to a singers config.
  *
- * @version $Id: UploadSignerCertificateCommand.java,v 1.5 2007-11-09 15:45:13 herrvendil Exp $
+ * @version $Id: UploadSignerCertificateCommand.java,v 1.6 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class UploadSignerCertificateCommand extends BaseCommand {
 	
@@ -56,7 +56,7 @@ public class UploadSignerCertificateCommand extends BaseCommand {
         try {            
         	
         	int signerid = getWorkerId(args[1], hostname);
-        	checkThatWorkerIsSigner(signerid,hostname);
+        	checkThatWorkerIsProcessable(signerid,hostname);
         	
         	String scope = args[2];
         	
@@ -84,6 +84,8 @@ public class UploadSignerCertificateCommand extends BaseCommand {
             getCommonAdminInterface(hostname).uploadSignerCertificate(signerid, cert, scope);
 
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

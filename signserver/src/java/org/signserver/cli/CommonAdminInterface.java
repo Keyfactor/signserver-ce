@@ -31,15 +31,20 @@ import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.MailSignerConfig;
 import org.signserver.common.MailSignerUser;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
+import org.signserver.common.RequestContext;
 import org.signserver.common.ResyncException;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -55,7 +60,7 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * @author Philip Vendil 6 okt 2007
  *
- * @version $Id: CommonAdminInterface.java,v 1.5 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id: CommonAdminInterface.java,v 1.6 2008-01-08 15:18:08 herrvendil Exp $
  */
 
 public class CommonAdminInterface  {
@@ -109,7 +114,7 @@ public class CommonAdminInterface  {
 			getIMailSignerRMI().activateSigner(signerId, authenticationCode);
 		}
 		if(isSignServerMode()){
-			getSignSession().activateSigner(signerId, authenticationCode);
+			getWorkerSession().activateSigner(signerId, authenticationCode);
 		}
 		
 	}
@@ -126,7 +131,7 @@ public class CommonAdminInterface  {
 			retval = getIMailSignerRMI().deactivateSigner(signerId);
 		}
 		if(isSignServerMode()){
-			retval = getSignSession().deactivateSigner(signerId);			
+			retval = getWorkerSession().deactivateSigner(signerId);			
 		}
 		
 		return retval;
@@ -143,7 +148,7 @@ public class CommonAdminInterface  {
 			retval = getIMailSignerRMI().destroyKey(signerId, purpose);
 		}
 		if(isSignServerMode()){
-			retval = getSignSession().destroyKey(signerId, purpose);		
+			retval = getWorkerSession().destroyKey(signerId, purpose);		
 		}
 		
 		return retval;
@@ -161,7 +166,7 @@ public class CommonAdminInterface  {
 			retval = getIMailSignerRMI().genCertificateRequest(signerId, certReqInfo);
 		}
 		if(isSignServerMode()){
-			retval = getSignSession().getCertificateRequest(signerId, certReqInfo);		
+			retval = getWorkerSession().getCertificateRequest(signerId, certReqInfo);		
 		}
 		return retval;
 	}
@@ -177,7 +182,7 @@ public class CommonAdminInterface  {
 			retval = getIMailSignerRMI().getCurrentSignerConfig(signerId);
 		}
 		if(isSignServerMode()){
-			retval = getSignSession().getCurrentSignerConfig(signerId);		
+			retval = getWorkerSession().getCurrentSignerConfig(signerId);		
 		}
 		return retval;
 	}
@@ -207,7 +212,7 @@ public class CommonAdminInterface  {
 			retval = getIMailSignerRMI().getWorkerId(signerName);
 		}
 		if(isSignServerMode()){
-			retval = getSignSession().getWorkerId(signerName);
+			retval = getWorkerSession().getWorkerId(signerName);
 		}		
 		
 		return retval;
@@ -224,7 +229,7 @@ public class CommonAdminInterface  {
 			retval = getIMailSignerRMI().getStatus(workerId);
 		}
 		if(isSignServerMode()){
-			retval = getSignSession().getStatus(workerId);
+			retval = getWorkerSession().getStatus(workerId);
 		}
 		return retval;
 	}
@@ -238,7 +243,7 @@ public class CommonAdminInterface  {
 			getIMailSignerRMI().reloadConfiguration(workerId);
 		}
 		if(isSignServerMode()){
-			getSignSession().reloadConfiguration(workerId);
+			getWorkerSession().reloadConfiguration(workerId);
 		}
 	}
 
@@ -269,7 +274,7 @@ public class CommonAdminInterface  {
 			retval = getIMailSignerRMI().removeWorkerProperty(workerId, key);
 		}
 		if(isSignServerMode()){
-			retval = getSignSession().removeWorkerProperty(workerId, key);
+			retval = getWorkerSession().removeWorkerProperty(workerId, key);
 		}
 		return retval;
 	}
@@ -311,7 +316,7 @@ public class CommonAdminInterface  {
 			getIMailSignerRMI().setWorkerProperty(workerId,key,value);
 		}
 		if(isSignServerMode()){
-			getSignSession().setWorkerProperty(workerId, key, value);
+			getWorkerSession().setWorkerProperty(workerId, key, value);
 		}
 	}
 
@@ -325,7 +330,7 @@ public class CommonAdminInterface  {
 			getIMailSignerRMI().uploadSignerCertificate(signerId,signerCert);
 		}
 		if(isSignServerMode()){
-			getSignSession().uploadSignerCertificate(signerId, signerCert, scope);
+			getWorkerSession().uploadSignerCertificate(signerId, signerCert, scope);
 		}
 		
 	}
@@ -341,7 +346,7 @@ public class CommonAdminInterface  {
 			getIMailSignerRMI().uploadSignerCertificateChain(signerId,signerCerts);
 		}
 		if(isSignServerMode()){
-			getSignSession().uploadSignerCertificateChain(signerId, signerCerts, scope);
+			getWorkerSession().uploadSignerCertificateChain(signerId, signerCerts, scope);
 		}
 	}
 	
@@ -355,7 +360,7 @@ public class CommonAdminInterface  {
 			retval = getIMailSignerRMI().genFreeWorkerId();
 		}
 		if(isSignServerMode()){
-			retval = getSignSession().genFreeWorkerId();
+			retval = getWorkerSession().genFreeWorkerId();
 		}
 		
 		return retval;
@@ -369,6 +374,16 @@ public class CommonAdminInterface  {
 	}
 	
 	/**
+	 * @see org.signserver.ejb.WorkerSessionBean#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
+	 */	
+	public ProcessResponse processRequest(int workerId, ProcessRequest request) throws RemoteException, IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+		if(isSignServerMode()){
+			return getWorkerSession().process(workerId, request, new RequestContext(true));
+		}
+        return null;
+	}
+	
+	/**
 	 * Method only supported by SignServer Builds
 	 * @throws RemoteException 
 	 * 
@@ -376,7 +391,7 @@ public class CommonAdminInterface  {
 	 */
 	public Collection<AuthorizedClient> getAuthorizedClients(int signerId) throws RemoteException{
 		if(isSignServerMode()){
-		   return getSignSession().getAuthorizedClients(signerId);
+		   return getWorkerSession().getAuthorizedClients(signerId);
 		}
 		
 		return null;
@@ -392,7 +407,7 @@ public class CommonAdminInterface  {
 	 */
 	public void addAuthorizedClient(int signerId, AuthorizedClient authClient) throws RemoteException{
 		if(isSignServerMode()){
-		  getSignSession().addAuthorizedClient(signerId, authClient);
+		  getWorkerSession().addAuthorizedClient(signerId, authClient);
 		}
 	}
 
@@ -406,7 +421,7 @@ public class CommonAdminInterface  {
 	 */
 	public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient) throws RemoteException{
 		if(isSignServerMode()){
-		  return getSignSession().removeAuthorizedClient(signerId, authClient);
+		  return getWorkerSession().removeAuthorizedClient(signerId, authClient);
 		}
 		return false;
 	}
@@ -457,7 +472,7 @@ public class CommonAdminInterface  {
 	public ArchiveDataVO findArchiveDataFromArchiveId(int signerid,
 			String archiveid) throws RemoteException {
 		if(isSignServerMode()){
-			return getSignSession().findArchiveDataFromArchiveId(signerid, archiveid);
+			return getWorkerSession().findArchiveDataFromArchiveId(signerid, archiveid);
 		}
 		return null;
 	}
@@ -466,7 +481,7 @@ public class CommonAdminInterface  {
 	public List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(int signerid,
 			BigInteger sn, String issuerdn) throws RemoteException {
 		if(isSignServerMode()){
-			return getSignSession().findArchiveDatasFromRequestCertificate(signerid, sn, issuerdn);
+			return getWorkerSession().findArchiveDatasFromRequestCertificate(signerid, sn, issuerdn);
 		}
 		return null;
 	}
@@ -474,7 +489,7 @@ public class CommonAdminInterface  {
 
 	public List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerid, String requestIP) throws RemoteException {
 		if(isSignServerMode()){
-			return getSignSession().findArchiveDatasFromRequestIP(signerid, requestIP);
+			return getWorkerSession().findArchiveDatasFromRequestIP(signerid, requestIP);
 		}
 		return null;
 	}
@@ -524,7 +539,7 @@ public class CommonAdminInterface  {
      * @return SignServerSession
      * @throws RemoteException 
      */
-    private IWorkerSession.IRemote getSignSession() throws RemoteException{
+    private IWorkerSession.IRemote getWorkerSession() throws RemoteException{
     	 
     	if(signsession == null){    		
 			try {

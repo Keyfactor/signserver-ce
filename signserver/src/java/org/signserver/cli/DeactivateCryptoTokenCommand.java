@@ -18,7 +18,7 @@ package org.signserver.cli;
 /**
  * Command used to deactivate a Crypto Token
  *
- * @version $Id: DeactivateCryptoTokenCommand.java,v 1.1 2007-12-13 12:49:32 herrvendil Exp $
+ * @version $Id: DeactivateCryptoTokenCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class DeactivateCryptoTokenCommand extends BaseCommand {
 	protected static final int HELP = 0;
@@ -47,7 +47,7 @@ public class DeactivateCryptoTokenCommand extends BaseCommand {
         try {            
         	
         	int workerid = getWorkerId(args[1], hostname);
-        	checkThatWorkerIsSigner(workerid,hostname);
+        	checkThatWorkerIsProcessable(workerid,hostname);
         	        	
         	
         	this.getOutputStream().println(resources[TRYING] + workerid + "\n");

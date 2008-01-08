@@ -29,7 +29,7 @@ import org.signserver.common.WorkerStatus;
 /**
  * Commands that uploads a PEM certificate to a singers config.
  *
- * @version $Id: UploadSignerCertificateChainCommand.java,v 1.5 2007-11-09 15:45:13 herrvendil Exp $
+ * @version $Id: UploadSignerCertificateChainCommand.java,v 1.6 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class UploadSignerCertificateChainCommand extends BaseCommand {
 	
@@ -95,12 +95,19 @@ public class UploadSignerCertificateChainCommand extends BaseCommand {
         	getCommonAdminInterface(hostname).uploadSignerCertificateChain(signerid, certs, scope);
 
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }
     }
 
-    public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
+    private void checkThatWorkerIsSigner(int signerid, String hostname) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
     	String[] resources =  {"Usage: signserver uploadsignercertificatechain <-host hostname (optional)> <signerid | name> <NODE | GLOB> <filename> \n" + 
                                "Example: signserver uploadsignercertificatechain 1 GLOB /home/user/signercertchain.pem\n\n",
                                "Uploading the following signer certificates  : \n",

@@ -21,7 +21,7 @@ import org.signserver.common.MailSignerUser;
 /**
  * Gets the current list of authorized users of performing SMTP AUTH
  *
- * @version $Id: ListAuthorizedUsersCommand.java,v 1.1 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id: ListAuthorizedUsersCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
  * @author Philip Vendil
  */
 public class ListAuthorizedUsersCommand extends BaseCommand {
@@ -67,6 +67,8 @@ public class ListAuthorizedUsersCommand extends BaseCommand {
 
     		this.getOutputStream().println("\n\n");
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

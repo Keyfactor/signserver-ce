@@ -18,7 +18,7 @@ package org.signserver.cli;
 /**
  * removes an authorized user from a mail signer installation
  *
- * @version $Id: RemoveAuthorizedUserCommand.java,v 1.1 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id: RemoveAuthorizedUserCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
  * @author Philip Vendil
  */
 public class RemoveAuthorizedUserCommand extends BaseCommand {
@@ -57,6 +57,8 @@ public class RemoveAuthorizedUserCommand extends BaseCommand {
         	
     		this.getOutputStream().println("\n\n");
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

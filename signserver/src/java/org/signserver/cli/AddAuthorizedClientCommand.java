@@ -24,7 +24,7 @@ import org.signserver.common.AuthorizedClient;
 /**
  * Adds an authorized client to a signer
  *
- * @version $Id: AddAuthorizedClientCommand.java,v 1.2 2007-10-28 12:23:55 herrvendil Exp $
+ * @version $Id: AddAuthorizedClientCommand.java,v 1.3 2008-01-08 15:18:08 herrvendil Exp $
  */
 public class AddAuthorizedClientCommand extends BaseCommand {
 	
@@ -50,10 +50,12 @@ public class AddAuthorizedClientCommand extends BaseCommand {
 	       throw new IllegalAdminCommandException("Usage: signserver addauthorizedclient <signerid> <certificatesn (hex)> <issuerd>\n" + 
 	       		                                  "Example: signserver addauthorizedclient 1 EF34242D2324 \"CN=Test Root CA\"\n\n");	       
 	    }	
+        
+        
         try {            
         	
         	int signerid = getWorkerId(args[1], hostname);
-        	checkThatWorkerIsSigner(signerid,hostname);
+        	checkThatWorkerIsProcessable(signerid,hostname);
         	
         	String certsn = args[2];
         	String issuerdn = args[3];
@@ -70,6 +72,8 @@ public class AddAuthorizedClientCommand extends BaseCommand {
         	
     		this.getOutputStream().println("\n\n");
         	
+        } catch (IllegalAdminCommandException e) {
+        	throw e;  
         } catch (Exception e) {
         	throw new ErrorAdminCommandException(e);            
         }

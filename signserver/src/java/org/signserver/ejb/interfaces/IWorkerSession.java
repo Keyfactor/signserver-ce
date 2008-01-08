@@ -40,11 +40,11 @@ public interface IWorkerSession  {
 			throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 
 	/**
-	 * Returns the current status of a signers. 
+	 * Returns the current status of a processalbe. 
 	 *
 	 * Should be used with the cmd-line status command.
-	 * @param signerId of the signer
-	 * @return a SignerStatus class 
+	 * @param workerId of the signer
+	 * @return a WorkerStatus class 
 	 *  
 	 */
 	WorkerStatus getStatus(int workerId) throws InvalidWorkerIdException;

@@ -29,7 +29,7 @@ import org.signserver.groupkeyservice.common.TimeRemoveGroupKeyRequest;
  * Command used to tell a group key service to remove a specific
  * set of group keys.
  *
- * @version $Id: RemoveGroupKeysCommand.java,v 1.1 2008-01-08 15:17:08 herrvendil Exp $
+ * @version $Id: RemoveGroupKeysCommand.java,v 1.2 2008-01-08 16:03:47 herrvendil Exp $
  * @author Philip Vendil
  */
 public class RemoveGroupKeysCommand extends BaseGroupKeyServiceCommand {
@@ -54,7 +54,7 @@ public class RemoveGroupKeysCommand extends BaseGroupKeyServiceCommand {
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
         if (args.length != 6) {
 	       throw new IllegalAdminCommandException("Usage: signserver groupkeyservice removegroupkeys <workerId or name> <type> <start date> <end date>\n" +
-	    		                                  "  Where: <type> one of CREATE FIRSTUSED LASTFETCHED\n" +
+	    		                                  "  Where: <type> one of CREATED FIRSTUSED LASTFETCHED\n" +
 	    		                                  "  Tip: Use \" around dates requiring spaces.\n" +
 	       		                                  "Example: signserver groupkeyservice removegroupkeys GroupKeyService1 LASTFETCHED \"2007-12-01 00:00\" \"2007-12-31 00:00\"\n\n");	       
 	    }	
@@ -90,14 +90,14 @@ public class RemoveGroupKeysCommand extends BaseGroupKeyServiceCommand {
 	}
 
 	private int getType(String typeString) throws IllegalAdminCommandException {
-		if(typeString.equalsIgnoreCase("CREATE")){
+		if(typeString.equalsIgnoreCase("CREATED")){
 			return TimeRemoveGroupKeyRequest.TYPE_CREATIONDATE;
 		}else if(typeString.equalsIgnoreCase("FIRSTUSED")){
 			return TimeRemoveGroupKeyRequest.TYPE_FIRSTUSEDDATE;
 		}else if(typeString.equalsIgnoreCase("LASTFETCHED")){
 			return TimeRemoveGroupKeyRequest.TYPE_LASTFETCHEDDATE;
 		}else{
-			throw new IllegalAdminCommandException("Error: the type parameter '" + typeString+ "' must be either CREATE FIRSTUSED LASTFETCHED");
+			throw new IllegalAdminCommandException("Error: the type parameter '" + typeString+ "' must be either CREATED FIRSTUSED LASTFETCHED");
 		}
 	}
 

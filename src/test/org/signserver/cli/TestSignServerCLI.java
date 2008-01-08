@@ -15,6 +15,8 @@ package org.signserver.cli;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 import junit.framework.TestCase;
@@ -32,13 +34,14 @@ import org.signserver.testutils.TestingSecurityManager;
  * 
  * @author Philip Vendil 21 okt 2007
  *
- * @version $Id: TestSignServerCLI.java,v 1.4 2007-12-13 12:49:55 herrvendil Exp $
+ * @version $Id: TestSignServerCLI.java,v 1.5 2008-01-08 16:03:47 herrvendil Exp $
  */
 
 public class TestSignServerCLI extends TestCase {
 
 	private static final String TESTID = "100";
 	private static final String TESTTSID = "1000";
+	private static final String TESTGSID = "1023";
 	
 	private static String signserverhome;
 	protected void setUp() throws Exception {
@@ -245,6 +248,8 @@ public class TestSignServerCLI extends TestCase {
 		TestingSecurityManager.remove();
 	}
 	
+
+	
 	public void testRemoveTimeStamp(){
 		// Remove and restore
 		assertSuccessfulExecution(new String[] {"setproperties",
@@ -261,6 +266,70 @@ public class TestSignServerCLI extends TestCase {
 		
 		assertSuccessfulExecution(new String[] {"reload",
 				TESTTSID});
+		assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
+         
+		TestingSecurityManager.remove();
+	}
+	
+	public void testSetupGroupKeyService() throws Exception{
+		assertSuccessfulExecution(new String[] {"reload",
+				"all"});
+		
+		assertTrue(new File(signserverhome +"/src/test/test_add_groupkeyservice_configuration.properties").exists());
+		assertSuccessfulExecution(new String[] {"setproperties",
+				signserverhome +"/src/test/test_add_groupkeyservice_configuration.properties"});		
+	    assertTrue(TestUtils.grepTempOut("Setting the property NAME to Test1 for worker 1023"));
+		
+	    assertSuccessfulExecution(new String[] {"getstatus",
+                "complete",
+                TESTGSID});	
+	    
+		assertSuccessfulExecution(new String[] {"groupkeyservice",
+				"switchenckey", "" + TESTGSID});
+		assertTrue(TestUtils.grepTempOut("key switched successfully"));
+		assertSuccessfulExecution(new String[] {"groupkeyservice",
+				"switchenckey", "Test1"});
+		assertTrue(TestUtils.grepTempOut("key switched successfully"));
+
+		assertSuccessfulExecution(new String[] {"groupkeyservice",
+				"pregeneratekeys", "" + TESTGSID, "1"});
+		assertTrue(TestUtils.grepTempOut("1 Pregenerated successfully"));
+		
+		assertSuccessfulExecution(new String[] {"groupkeyservice",
+				"pregeneratekeys", "" + TESTGSID, "101"});
+		assertTrue(TestUtils.grepTempOut("101 Pregenerated successfully"));
+		
+		assertSuccessfulExecution(new String[] {"groupkeyservice",
+				"pregeneratekeys", "" + TESTGSID, "1000"});
+		assertTrue(TestUtils.grepTempOut("1000 Pregenerated successfully"));
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat();
+		String startDate = dateFormat.format(new Date(0));
+		String endDate = dateFormat.format(new Date(System.currentTimeMillis() + 120000));
+		
+		assertSuccessfulExecution(new String[] {"groupkeyservice",
+				"removegroupkeys", "" + TESTGSID, "created", startDate, endDate});		
+		assertTrue(TestUtils.grepTempOut("1102 Group keys removed"));
+		
+		assertSuccessfulExecution(new String[] {"groupkeyservice",
+				"removegroupkeys", "" + TESTGSID, "FIRSTUSED", startDate, endDate});
+		assertTrue(TestUtils.grepTempOut("0 Group keys removed"));
+		
+		assertSuccessfulExecution(new String[] {"groupkeyservice",
+				"removegroupkeys", "" + TESTGSID, "LASTFETCHED", startDate, endDate});		
+		assertTrue(TestUtils.grepTempOut("0 Group keys removed"));
+				
+		TestingSecurityManager.remove();
+	}
+	
+	public void testRemoveGroupKeyService(){
+		// Remove and restore
+		assertSuccessfulExecution(new String[] {"setproperties",
+				signserverhome +"/src/test/test_rem_groupkeyservice_configuration.properties"});		
+		assertTrue(TestUtils.grepTempOut("Removing the property NAME  for worker 1023"));
+				
+		assertSuccessfulExecution(new String[] {"reload",
+				TESTGSID});
 		assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
          
 		TestingSecurityManager.remove();

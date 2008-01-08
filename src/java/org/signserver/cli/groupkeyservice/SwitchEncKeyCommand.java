@@ -25,7 +25,7 @@ import org.signserver.groupkeyservice.common.SwitchEncKeyResponse;
  * Command used to tell a group key service to switch the encryption key 
  * used to protect the group keys.
  *
- * @version $Id: SwitchEncKeyCommand.java,v 1.1 2008-01-08 15:17:08 herrvendil Exp $
+ * @version $Id: SwitchEncKeyCommand.java,v 1.2 2008-01-08 16:03:47 herrvendil Exp $
  * @author Philip Vendil
  */
 public class SwitchEncKeyCommand extends BaseGroupKeyServiceCommand {
@@ -59,7 +59,7 @@ public class SwitchEncKeyCommand extends BaseGroupKeyServiceCommand {
         	SwitchEncKeyRequest req = new SwitchEncKeyRequest();
         	SwitchEncKeyResponse resp = (SwitchEncKeyResponse) getCommonAdminInterface(hostname).processRequest(workerId, req);
 
-        	this.getOutputStream().println("\nEncryption key switched succesfully, new key id is : " + resp.getNewKeyIndex() +"\n");
+        	this.getOutputStream().println("\nEncryption key switched successfully, new key id is : " + resp.getNewKeyIndex() +"\n");
      
         } catch (CryptoTokenOfflineException e) {
         	throw new IllegalAdminCommandException("Error, Group key service " + args[2] + " : Crypotoken is off-line.");   

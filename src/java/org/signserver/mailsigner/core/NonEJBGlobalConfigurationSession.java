@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.mailsigner.IMailSigner;
+import org.signserver.mailsigner.IMailProcessor;
 
 /**
  * Class in charge of the Non-EJB representation of the global configuration.
@@ -153,7 +153,7 @@ public class NonEJBGlobalConfigurationSession {
 							String classPath = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, unScopedKey);
 							log.debug("Found Classpath " + classPath);
 							Object obj = this.getClass().getClassLoader().loadClass(classPath).newInstance();
-							if(obj instanceof IMailSigner){
+							if(obj instanceof IMailProcessor){
 								log.debug("Adding Mail Signer " + id);
 								retval.add(new Integer(id));        			   
 							}

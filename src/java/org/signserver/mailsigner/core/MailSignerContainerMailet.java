@@ -49,8 +49,8 @@ import org.signserver.common.MailSignerConfig;
 import org.signserver.common.MailSignerUser;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
-import org.signserver.mailsigner.BaseMailSigner;
-import org.signserver.mailsigner.IMailSigner;
+import org.signserver.mailsigner.BaseMailProcessor;
+import org.signserver.mailsigner.IMailProcessor;
 import org.signserver.mailsigner.cli.IMailSignerRMI;
 
 /**
@@ -63,7 +63,7 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * 
  * @author Philip Vendil
- * $Id: MailSignerContainerMailet.java,v 1.5 2007-12-29 10:43:53 herrvendil Exp $
+ * $Id: MailSignerContainerMailet.java,v 1.6 2008-01-19 03:42:11 herrvendil Exp $
  */
 public class MailSignerContainerMailet extends GenericMailet implements IMailSignerRMI{
 
@@ -71,7 +71,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	
 	private static transient Logger log = Logger.getLogger(MailSignerContainerMailet.class.getName());
 	
-    private ConcurrentHashMap<Integer, IMailSigner> mailSigners = new ConcurrentHashMap<Integer, IMailSigner>();
+    private ConcurrentHashMap<Integer, IMailProcessor> mailProcessors = new ConcurrentHashMap<Integer, IMailProcessor>();
 	
     private MailSignerUserRepository userRepository = new MailSignerUserRepository();
 
@@ -80,7 +80,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
     
     
     /**
-     * Creates all the configured IMailSigner plugins, initializes
+     * Creates all the configured IMailProcessor plugins, initializes
      * them and send them their configuration.
      * 
      * Also sets up the RMI service for the CLI.
@@ -111,10 +111,10 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 		List<Integer> mailIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
 		for (Integer id : mailIds) {
 			try {
-				IMailSigner mailSigner = getMailSigner(id);
+				IMailProcessor mailProcessor = getMailSigner(id);
 				
-				Properties activeProps = mailSigner.getStatus().getActiveSignerConfig().getProperties();
-				if(!activeProps.getProperty(BaseMailSigner.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
+				Properties activeProps = mailProcessor.getStatus().getActiveSignerConfig().getProperties();
+				if(!activeProps.getProperty(BaseMailProcessor.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
 				  getMailSigner(id).service(mail);
 				}
 			} catch (InvalidWorkerIdException e) {
@@ -165,20 +165,20 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	/**
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#activateSigner(int, String)
 	 */
-	public void activateSigner(int signerId, String authenticationCode)
+	public void activateCryptoToken(int signerId, String authenticationCode)
 			throws CryptoTokenAuthenticationFailureException,
 			CryptoTokenOfflineException, InvalidWorkerIdException,
 			RemoteException {
-		getMailSigner(signerId).activateSigner(authenticationCode);		
+		getMailSigner(signerId).activateCryptoToken(authenticationCode);		
 	}
 
 	/**
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#deactivateSigner(int)
 	 */
-	public boolean deactivateSigner(int signerId)
+	public boolean deactivateCryptoToken(int signerId)
 			throws CryptoTokenOfflineException, InvalidWorkerIdException,
 			RemoteException {
-		return getMailSigner(signerId).deactivateSigner();
+		return getMailSigner(signerId).deactivateCryptoToken();
 		
 	}
 
@@ -239,9 +239,9 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 			throws RemoteException {
 		if(workerId == 0){
 		  NonEJBGlobalConfigurationSession.getInstance().reload();
-		  mailSigners.clear();
+		  mailProcessors.clear();
 		}else{
-		  mailSigners.remove(workerId);
+		  mailProcessors.remove(workerId);
 		}		
 	}
 
@@ -353,8 +353,8 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	/**
 	 * Method that finds and initializes a MailSigner
 	 */
-	private IMailSigner getMailSigner(int signerId) throws InvalidWorkerIdException{
-		IMailSigner retval = mailSigners.get(signerId);
+	private IMailProcessor getMailSigner(int signerId) throws InvalidWorkerIdException{
+		IMailProcessor retval = mailProcessors.get(signerId);
 				
 		if(retval == null){
 			List<Integer> mailIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
@@ -364,10 +364,10 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 					String classPath = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, GlobalConfiguration.WORKERPROPERTY_BASE + id + GlobalConfiguration.WORKERPROPERTY_CLASSPATH);
 					
 					try {
-						IMailSigner mailSigner = (IMailSigner) this.getClass().getClassLoader().loadClass(classPath).newInstance();
-						mailSigner.init(id, cloneWorkerProperties(PropertyFileStore.getInstance().getWorkerProperties(id)),  (getMailContext) ? getMailetContext() : null);
-						mailSigners.put(id, mailSigner);
-						retval = mailSigner;
+						IMailProcessor mailProcessor = (IMailProcessor) this.getClass().getClassLoader().loadClass(classPath).newInstance();
+						mailProcessor.init(id, cloneWorkerProperties(PropertyFileStore.getInstance().getWorkerProperties(id)),  (getMailContext) ? getMailetContext() : null);
+						mailProcessors.put(id, mailProcessor);
+						retval = mailProcessor;
 					} catch (Exception e) {
 						log.error("Error creating an instance of mail signer with Id " + id,e);
 					} 				

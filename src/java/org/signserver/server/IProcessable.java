@@ -28,11 +28,11 @@ import org.signserver.server.IWorker;
 /**
  * IProcessable is an interface that all processable workers should implement
  * 
- * There exists a BaseService that can be extended covering some of it's functions
+ * There exists a BaseTimedService that can be extended covering some of it's functions
  * 
  * 
  * @author Philip Vendil
- * $Id: IProcessable.java,v 1.3 2007-12-12 15:13:37 herrvendil Exp $
+ * $Id: IProcessable.java,v 1.4 2008-01-19 03:41:15 herrvendil Exp $
  */
 public interface IProcessable extends IWorker{
 

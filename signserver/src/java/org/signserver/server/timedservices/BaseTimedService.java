@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
 
-package org.signserver.server.service;
+package org.signserver.server.timedservices;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -24,7 +24,7 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.server.BaseWorker;
 
 
-public abstract class BaseService extends BaseWorker implements IService {
+public abstract class BaseTimedService extends BaseWorker implements ITimedService {
 	 
 	//Private Property constants
 
@@ -33,13 +33,13 @@ public abstract class BaseService extends BaseWorker implements IService {
     
 
     
-    protected BaseService(){
+    protected BaseTimedService(){
 
     }
 
 
     /**
-     * @see org.signserver.server.service.IService#getNextInterval()
+     * @see org.signserver.server.timedservices.ITimedService#getNextInterval()
      */
 
 
@@ -78,7 +78,7 @@ public abstract class BaseService extends BaseWorker implements IService {
 
 
     /**
-     * @see org.signserver.server.service.IService#isActive()
+     * @see org.signserver.server.timedservices.ITimedService#isActive()
      */
 	public boolean isActive() {
 		if(config.getProperties().getProperty(ServiceConfig.ACTIVE) == null){
@@ -92,7 +92,7 @@ public abstract class BaseService extends BaseWorker implements IService {
 
 
 	/**
-	 * @see org.signserver.server.service.IService#isSingleton()
+	 * @see org.signserver.server.timedservices.ITimedService#isSingleton()
 	 */
 	public boolean isSingleton() {
 		if(config.getProperties().getProperty(ServiceConfig.SINGLETON) == null){

@@ -40,13 +40,13 @@ public class TestMailSignerContainerMailet extends TestCase {
 	
 	public void testActivateSigner() throws RemoteException, CryptoTokenOfflineException, InvalidWorkerIdException {
 		try{
-		  mc.activateSigner(3, "9876");
+		  mc.activateCryptoToken(3, "9876");
 		  fail();
 		}catch(CryptoTokenAuthenticationFailureException e){}
 	}
 
 	public void testDeactivateSigner() throws RemoteException, CryptoTokenOfflineException, InvalidWorkerIdException {
-		assertTrue(mc.deactivateSigner(3));
+		assertTrue(mc.deactivateCryptoToken(3));
 	}
 
 	public void testDestroyKey() throws RemoteException, InvalidWorkerIdException {

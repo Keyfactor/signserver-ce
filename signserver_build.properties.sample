@@ -1,5 +1,5 @@
 #
-# $Id: signserver_build.properties.sample,v 1.11 2008-01-01 19:55:05 herrvendil Exp $
+# $Id: signserver_build.properties.sample,v 1.12 2008-01-19 03:39:20 herrvendil Exp $
 #
 # File containing the build properties of the sign server
 # 
@@ -263,8 +263,7 @@ healthcheck.checkdbstring=Select count(*) from signerconfigdata
 
 ##########################################################################
 #  Mail Signer Specific Settings                                         #
-#  Don't change this if you are setting up a SignServer                  #
-#  Remember to configure the file mailsigner.properties as well          #                                                                      #
+#  Don't change this if you are setting up a SignServer                  #                                                                      
 ##########################################################################
 
 # The Primary DNS server that the MailSigner should use.

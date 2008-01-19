@@ -47,7 +47,7 @@ import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.WorkerFactory;
-import org.signserver.server.service.IService;
+import org.signserver.server.timedservices.ITimedService;
 
 
 /**
@@ -106,7 +106,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 			load(0);
 		}else{		
 			ServiceConfig serviceConfig = null;
-			IService service = null;
+			ITimedService timedService = null;
 			boolean run = false;
 			boolean isSingleton = false;
 			UserTransaction ut = sessionCtx.getUserTransaction();
@@ -116,9 +116,9 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 				if(worker != null){
 					serviceConfig = new ServiceConfig( WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession,em).getStatus().getActiveSignerConfig());
 					if(serviceConfig != null){					
-						service = (IService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession,em);
-						sessionCtx.getTimerService().createTimer(service.getNextInterval(), timerInfo);
-						isSingleton = service.isSingleton();
+						timedService = (ITimedService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession,em);
+						sessionCtx.getTimerService().createTimer(timedService.getNextInterval(), timerInfo);
+						isSingleton = timedService.isSingleton();
 						if(!isSingleton){
 							run=true;						
 						}else{
@@ -129,7 +129,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 							}						
 							Date currentDate = new Date();
 							if(currentDate.after(nextRunDate)){
-								nextRunDate = new Date(currentDate.getTime() + service.getNextInterval());							
+								nextRunDate = new Date(currentDate.getTime() + timedService.getNextInterval());							
 								globalConfigurationSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE"+ timerInfo.intValue(), "" +nextRunDate.getTime());
 								run=true;
 							}
@@ -161,8 +161,8 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 			if(run){
 				if(serviceConfig != null){
 					try{
-						if(service.isActive() && service.getNextInterval() != IService.DONT_EXECUTE){				
-							service.work();
+						if(timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE){				
+							timedService.work();
 							serviceConfig.setLastRunTimestamp(new Date());
 							log.info("Service " + timerInfo.intValue() +  " executed successfully.");							
 						}
@@ -207,9 +207,9 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 			while(iter.hasNext()){
 				Integer nextId = (Integer) iter.next();								
 				if(!existingTimers.contains(nextId)){					
-					IService service = (IService) WorkerFactory.getInstance().getWorker(nextId.intValue(), workerConfigService, globalConfigurationSession, em);
-					if(service != null && service.isActive()  && service.getNextInterval() != IService.DONT_EXECUTE){
-					  sessionCtx.getTimerService().createTimer((service.getNextInterval()), nextId);
+					ITimedService timedService = (ITimedService) WorkerFactory.getInstance().getWorker(nextId.intValue(), workerConfigService, globalConfigurationSession, em);
+					if(timedService != null && timedService.isActive()  && timedService.getNextInterval() != ITimedService.DONT_EXECUTE){
+					  sessionCtx.getTimerService().createTimer((timedService.getNextInterval()), nextId);
 					}
 				}
 			}

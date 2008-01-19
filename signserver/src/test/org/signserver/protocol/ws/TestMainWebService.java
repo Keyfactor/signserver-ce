@@ -145,7 +145,7 @@ public class TestMainWebService extends TestCase {
 		assertTrue(statuses.get(0).getErrormessage() == null);
 		
 		statuses = signServerWS.getStatus(ISignServerWS.ALLWORKERS);
-		assertTrue(statuses.size() == 2);
+		assertTrue(statuses.size() >= 2);
 		assertTrue(statuses.get(0).getWorkerName().equals("9") || statuses.get(0).getWorkerName().equals("16"));
 		assertTrue(statuses.get(1).getWorkerName().equals("9") || statuses.get(1).getWorkerName().equals("16"));
 		
@@ -275,7 +275,7 @@ public class TestMainWebService extends TestCase {
         
         // Test timeout
         String[] hosts5 = {"127.0.0.1"};
-        client = f.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK,hosts5 , false, callback, 8080, 10);
+        client = f.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK,hosts5 , false, callback, 8080, 5);
         resps = client.process("9", reqs);
         assertTrue(resps == null);
         assertTrue(callback.isCallBackCalled());

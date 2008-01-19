@@ -30,7 +30,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.WorkerConfigDataService;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.server.service.IService;
+import org.signserver.server.timedservices.ITimedService;
 import org.signserver.server.IProcessable;
 
 
@@ -163,7 +163,7 @@ public  class WorkerFactory {
 								  getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), nextId); 
 							  }  
 						  }
-						  if(obj instanceof IService){
+						  if(obj instanceof ITimedService){
 							  config = getWorkerProperties(nextId.intValue(), workerConfigHome);
 						  }
 
@@ -245,7 +245,7 @@ public  class WorkerFactory {
 									getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), new Integer(id)); 
 								}  
 							}
-							if(obj instanceof IService){
+							if(obj instanceof ITimedService){
 								config = getWorkerProperties(id, workerConfigHome);
 							}
 

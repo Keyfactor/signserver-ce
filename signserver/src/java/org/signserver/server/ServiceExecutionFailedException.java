@@ -14,13 +14,13 @@
 package org.signserver.server;
  
 /**
- * IService is an interface that all services should implement
+ * ITimedService is an interface that all services should implement
  * 
- * There exists a BaseService that can be extended covering some of it's functions
+ * There exists a BaseTimedService that can be extended covering some of it's functions
  * 
  * 
  * @author Philip Vendil
- * $Id: ServiceExecutionFailedException.java,v 1.1 2007-02-27 16:18:12 herrvendil Exp $
+ * $Id: ServiceExecutionFailedException.java,v 1.2 2008-01-19 03:41:15 herrvendil Exp $
  */
 public class ServiceExecutionFailedException extends Exception {
 

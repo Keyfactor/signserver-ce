@@ -38,7 +38,7 @@ import org.apache.mailet.MailAddress;
 import org.apache.mailet.RFC2822Headers;
 import org.bouncycastle.mail.smime.SMIMESignedGenerator;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.mailsigner.BaseMailSigner;
+import org.signserver.mailsigner.BaseMailProcessor;
 import org.signserver.mailsigner.core.SMIMEHelper;
 import org.signserver.server.cryptotokens.ICryptoToken;
 
@@ -59,10 +59,10 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * 
  * @author Philip Vendil 22 dec 2007
  *
- * @version $Id: SimpleMailSigner.java,v 1.1 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id: SimpleMailSigner.java,v 1.2 2008-01-19 03:42:11 herrvendil Exp $
  */
 
-public class SimpleMailSigner extends BaseMailSigner {
+public class SimpleMailSigner extends BaseMailProcessor {
 
 
 	/**
@@ -129,7 +129,7 @@ public class SimpleMailSigner extends BaseMailSigner {
 	
 	/**
 	 * Setting defining if SMTP AUTH should be required to
-	 * sign the mail. (Default is false).
+	 * sign the mail. (Default is true).
 	 */
 	public static final String REQUIRESMTPAUTH = "REQUIRESMTPAUTH";
 	public static final String DEFAULT_REQUIRESMTPAUTH = "TRUE";
@@ -147,7 +147,7 @@ public class SimpleMailSigner extends BaseMailSigner {
 	public transient Logger log = Logger.getLogger(this.getClass());
 	
 	/**
-	 * @see org.signserver.mailsigner.IMailSigner#service(org.apache.mailet.Mail)
+	 * @see org.signserver.mailsigner.IMailProcessor#service(org.apache.mailet.Mail)
 	 */
 	public void service(Mail mail) throws MessagingException, CryptoTokenOfflineException{
 		try{

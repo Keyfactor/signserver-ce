@@ -15,7 +15,7 @@ package org.signserver.mailsigner.mailsigners;
 
 import org.apache.log4j.Logger;
 import org.apache.mailet.Mail;
-import org.signserver.mailsigner.BaseMailSigner;
+import org.signserver.mailsigner.BaseMailProcessor;
 
 /**
  * Empty demo implementation of a mail signer
@@ -25,15 +25,15 @@ import org.signserver.mailsigner.BaseMailSigner;
  * 
  * @author Philip Vendil 23 sep 2007
  *
- * @version $Id: DummyMailSigner.java,v 1.1 2007-10-28 12:26:13 herrvendil Exp $
+ * @version $Id: DummyMailSigner.java,v 1.2 2008-01-19 03:42:11 herrvendil Exp $
  */
 
-public class DummyMailSigner extends BaseMailSigner {
+public class DummyMailSigner extends BaseMailProcessor {
 
 	public transient Logger log = Logger.getLogger(this.getClass());
 	
 	/**
-	 * @see org.signserver.mailsigner.IMailSigner#service(org.apache.mailet.Mail)
+	 * @see org.signserver.mailsigner.IMailProcessor#service(org.apache.mailet.Mail)
 	 */
 	public void service(Mail mail) {
 		log.info("Service called for mailsigner with id " + workerId);

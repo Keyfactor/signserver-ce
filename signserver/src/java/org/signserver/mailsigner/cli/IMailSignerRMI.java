@@ -17,7 +17,7 @@ package org.signserver.mailsigner.cli;
  * 
  * 
  * @author Philip Vendil
- * $Id: IMailSignerRMI.java,v 1.5 2007-12-29 10:43:53 herrvendil Exp $
+ * $Id: IMailSignerRMI.java,v 1.6 2008-01-19 03:42:11 herrvendil Exp $
  */
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -67,7 +67,7 @@ public interface IMailSignerRMI extends Remote{
 	public void reloadConfiguration(int workerId) throws RemoteException;
 	
 	/**
-	 * Method used to activate the sign-token of a mail signer.
+	 * Method used to activate the crypto-token of a mail signer.
 	 * Should be called from the command line.
 	 *    
 	 * 
@@ -78,7 +78,7 @@ public interface IMailSignerRMI extends Remote{
 	 * @throws CryptoTokenAuthenticationFailureException 
 	 *
 	 */
-	public void activateSigner(int signerId, String authenticationCode)
+	public void activateCryptoToken(int signerId, String authenticationCode)
 		throws CryptoTokenAuthenticationFailureException,
 		CryptoTokenOfflineException, InvalidWorkerIdException, RemoteException;
 	
@@ -94,7 +94,7 @@ public interface IMailSignerRMI extends Remote{
 	 * @throws InvalidWorkerIdException 
 	 *
 	 */
-	public boolean deactivateSigner(int signerId)
+	public boolean deactivateCryptoToken(int signerId)
 		throws CryptoTokenOfflineException, InvalidWorkerIdException, RemoteException;
 	
 	/**

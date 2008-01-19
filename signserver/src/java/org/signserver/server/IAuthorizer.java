@@ -21,7 +21,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 
 /**
- * Interface that all  authorization devices should implement regulating
+ * Interface that all authorization devices should implement regulating
  * access to a worker in the system
  * 
  * Its main method is: isAuthorized which have the responsibility of looking up if the
@@ -29,7 +29,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @author Philip Vendil 23 nov 2007
  *
- * @version $Id: IAuthorizer.java,v 1.4 2007-12-12 14:24:56 herrvendil Exp $
+ * @version $Id: IAuthorizer.java,v 1.5 2008-01-19 03:41:15 herrvendil Exp $
  */
 public interface IAuthorizer {
 	

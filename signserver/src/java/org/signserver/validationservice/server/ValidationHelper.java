@@ -27,7 +27,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
  * Class containing helper methods for the validation service sub framework
  * 
  * @author Philip Vendil
- * @version $Id: ValidationHelper.java,v 1.2 2007-12-02 20:35:17 herrvendil Exp $
+ * @version $Id: ValidationHelper.java,v 1.3 2008-01-19 03:40:47 herrvendil Exp $
  */
 public class ValidationHelper {
 	
@@ -168,7 +168,7 @@ public class ValidationHelper {
 	 * 
 	 * It will work in the following manner:
 	 * <ul>
-	 * <li>All properties starting with 'issuer<issuerId>.' or 'issuer<issuerId>.' will have
+	 * <li>All properties starting with 'issuer<issuerId>.'  will have
 	 *   the following keys added without the 'issuer...' prefix.
 	 * <li>All properties without 'issuer...' prefix will be added if the key doesn't exist already. I.e
 	 * all properties with keys starting 'issuer..' overrides general properties.

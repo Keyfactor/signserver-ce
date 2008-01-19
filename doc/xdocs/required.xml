@@ -15,12 +15,12 @@
     Build tool used to build this framework. Version 1.6.5 and up should work.
     </p>
 </subsection>
-<subsection name="JBoss">
+<subsection name="JBoss, (Not MailSigner builds)">
     <p>
     <a href="http://www.jboss.org/">JBoss web site</a>
     </p>    
     <p>
-    The recommended application server used by SignServer. Version 4.0.5 and up have been most tested.
+    The recommended application server used by SignServer. Version 4.2.2 and up have been most tested.
     </p>
 </subsection>
 <subsection name="Java Development Kit">

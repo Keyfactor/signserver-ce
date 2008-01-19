@@ -50,7 +50,7 @@ public class TestBaseService extends TestCase {
 	
 	public void test00SetupDatabase() throws Exception{
 		   
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.server.service.DummyService");
+		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.server.timedservices.DummyTimedService");
 		
 		  sSSession.setWorkerProperty(17, ServiceConfig.ACTIVE, "TRUE");
 		  sSSession.setWorkerProperty(17, ServiceConfig.INTERVAL, "1");

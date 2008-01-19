@@ -60,7 +60,7 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * @author Philip Vendil 6 okt 2007
  *
- * @version $Id: CommonAdminInterface.java,v 1.6 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id: CommonAdminInterface.java,v 1.7 2008-01-19 03:41:37 herrvendil Exp $
  */
 
 public class CommonAdminInterface  {
@@ -111,7 +111,7 @@ public class CommonAdminInterface  {
 			CryptoTokenOfflineException, InvalidWorkerIdException,
 			RemoteException {
 		if(isMailSignerMode()){
-			getIMailSignerRMI().activateSigner(signerId, authenticationCode);
+			getIMailSignerRMI().activateCryptoToken(signerId, authenticationCode);
 		}
 		if(isSignServerMode()){
 			getWorkerSession().activateSigner(signerId, authenticationCode);
@@ -128,7 +128,7 @@ public class CommonAdminInterface  {
 			RemoteException {
 		boolean retval = false;
 		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().deactivateSigner(signerId);
+			retval = getIMailSignerRMI().deactivateCryptoToken(signerId);
 		}
 		if(isSignServerMode()){
 			retval = getWorkerSession().deactivateSigner(signerId);			

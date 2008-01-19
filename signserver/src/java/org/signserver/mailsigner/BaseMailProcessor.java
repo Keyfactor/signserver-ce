@@ -35,8 +35,8 @@ import org.signserver.mailsigner.core.NonEJBGlobalConfigurationSession;
 import org.signserver.server.cryptotokens.ICryptoToken;
 
 /**
- * Base class for IMailSigners containing a lot of useful methods
- * for the IMailSigner plug-in.
+ * Base class for IMailProcessor containing a lot of useful methods
+ * for the IMailProcessor plug-in.
  * 
  * If extending this class is the only the  method that requires implementation the 
  * 'service' method. 
@@ -44,16 +44,16 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * 
  * @author Philip Vendil 23 sep 2007
  *
- * @version $Id: BaseMailSigner.java,v 1.5 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id: BaseMailProcessor.java,v 1.1 2008-01-19 03:41:57 herrvendil Exp $
  */
-public abstract class BaseMailSigner  implements IMailSigner {
+public abstract class BaseMailProcessor  implements IMailProcessor {
 	
 	static{
 		SignServerUtil.installBCProvider();
 	}
 	
 	/**
-	 * Property indicating that the mail signer shouldn't be used.
+	 * Property indicating that the mail proce shouldn't be used.
 	 * Set property to TRUE to disable the signer.
 	 */
 	public static final String DISABLED          = "DISABLED";
@@ -70,7 +70,7 @@ public abstract class BaseMailSigner  implements IMailSigner {
 
 	protected MailetContext mailetContext; 
     
-    protected BaseMailSigner(){
+    protected BaseMailProcessor(){
 
     }
 
@@ -83,7 +83,7 @@ public abstract class BaseMailSigner  implements IMailSigner {
       this.mailetContext = mailetContext;
     }
 	    
-	public void activateSigner(String authenticationCode)
+	public void activateCryptoToken(String authenticationCode)
 			throws CryptoTokenAuthenticationFailureException,
 			CryptoTokenOfflineException {		
 			    
@@ -91,7 +91,7 @@ public abstract class BaseMailSigner  implements IMailSigner {
 	    
 	}
 
-	public boolean deactivateSigner() throws CryptoTokenOfflineException {
+	public boolean deactivateCryptoToken() throws CryptoTokenOfflineException {
 		return getCryptoToken().deactivate();
 	}
 	

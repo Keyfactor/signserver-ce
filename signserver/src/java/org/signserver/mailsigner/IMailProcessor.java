@@ -28,15 +28,16 @@ import org.signserver.common.WorkerStatus;
 
 /**
  * Interface used by all MailSigner plug-ins in order to 
+ * process mails.
  * 
  * 
  * @author Philip Vendil
- * $Id: IMailSigner.java,v 1.4 2007-12-29 10:43:53 herrvendil Exp $
+ * $Id: IMailProcessor.java,v 1.1 2008-01-19 03:41:57 herrvendil Exp $
  */
-public interface IMailSigner {
+public interface IMailProcessor {
 		
 	/**
-	 * Main method used when signing mails
+	 * Main method used when processing mails
 	 * @param mail the mail sent through the SMTP server
 	 * @throws MessagingException if error occurred during processing of mail.
 	 * @throws CryptoTokenOfflineException if the signing token not available at the time of the process.
@@ -44,25 +45,25 @@ public interface IMailSigner {
 	void service(Mail mail) throws MessagingException, CryptoTokenOfflineException;
 	
 	/**
-	 * Method used to activate a signer using the supplied authentication Code
+	 * Method used to activate a crypto token using the supplied authentication Code
 	 * @param authenticationCode 
 	 */
-	void activateSigner(String authenticationCode) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException;
+	void activateCryptoToken(String authenticationCode) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException;
 	
 	/**
-	 * Method used to de-activate a signer when it's not used anymore
+	 * Method used to de-activate a crypto token when it's not used anymore
 	 */	
-	boolean deactivateSigner() throws CryptoTokenOfflineException;
+	boolean deactivateCryptoToken() throws CryptoTokenOfflineException;
 	
 	
 	/**
-	 * Method used to tell the signer to create a certificate request using its sign token.
+	 * Method used to tell the processable to create a certificate request using its sign token.
 	 */
 	ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException;
 	
 	
 	/**
-	 * Method used to remove a key in the sign-token that shouldn't be used any more
+	 * Method used to remove a key in the crypto-token that shouldn't be used any more
 	 * @param purpose on of ICryptoToken.PURPOSE_ constants
 	 * @return true if removal was successful.
 	 */

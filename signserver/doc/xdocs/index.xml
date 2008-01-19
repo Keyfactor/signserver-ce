@@ -8,20 +8,28 @@
 <body>
   <section name="Latest News">
     <note>
-    Version 2 of the SignServer and the first official open source release is available in the download section.     
+    After a lot of work of redesign and adding new features is the version 3.0 Beta 1of the SignServer released.
+    It have migrated into EJB3, and have new types of services available. See below for a list of new changes.  
     </note>
    </section>
 
 <section name="What's the SignServer?">
 <p>
-The SignServer is an application for automatic signatures called by other systems not able to connect to cryptographic hardware. It is a framework that can be customized to specific needs. 
+The SignServer is an application framework performing cryptographic operations  for other applications. It's intended to be used in environments where keys are supposed to be protected in hardware but there isn't possible to connect such hardware to existing enterprise applications or where the operations are considered extra sensitive so the hardware have to protected more carefully. Another usage is to provide a simplified method to provide signatures in different application managed from one location in the company.
+</p>
+<p>
+From version 3.0 there also exists a mail signer framework that can be used to perform cryptographic operation on emails. 
+</p>
+<p> 
 The SignServer have a ready to use:
 <ul>
 <li>TimeStamp Authority (RFC 3161 complaint)</li>
 <li>PDF Signer</li>
 <li>MRTD Signer</li>
+<li>Validation Service Framework</li>
+<li>Group Key Service Framework</li>
+<li>Simple Mail Signer</li>
 </ul> 
-Another usage is to provide a simplified method to provide signatures in different application managed from one location  in the company.
 </p>
 <p>
 The SignServer have been designed for high-availability and can be clustered for maximum reliability.
@@ -35,9 +43,25 @@ Different kinds of sign tokens exist:
 </ul>
 </p>
 </section>
-<section name="What's new for SignServer 2.0?">
+<section name="What's new for SignServer 3.0?">
 <p>
-Some of the new features for version 2.0 are: dynamic configuration of available signers, improved CLI interface, global store used to store information inside a cluster and improved deployment in a clustered environment. 
+Some of the new features for version 3.0 are: 
+<ul>
+<li>Complete refactorisation of J2EE from EJB2 to EJB3 to simplify further development.</li>
+<li>Renamed component Service to TimedService since 3.0 supports other services.</li>
+<li>A TimedService can now be configured with a 'cron-like' settings to have services executed in other than just periodical intervals.</li>
+<li>A Validation Service API used to validate certificate from different issuers. The Validation Service API have it's own easy to use Web Service used to integrate with other platforms.</li>
+<li>A Group Key Service API used to generate and manage group keys, symmetric or asymmetric.</li>
+<li>Possibility to have customized authorization of requests, not just the built in client certificate authorization list.</li>
+<li>The name SignToken is changed to CryptoToken and introduced a new concept of ExtendedCryptoToken that supports symmetric operations.</li>
+<li>The RMI-SSL interface have been removed and replaced with a JAX-WS interface with a simple client framework supporting different load-balance or high availability policies.</li>
+<li>All request data have changed from serialization to externalization to be easier to translate to other platforms.</li>
+<li>A completely new MailSigner API based upon the JAMES SMTP server to perform automated cryptographic operations on e-mails very similar to the plug-ins for the SignServer.</li>
+<li>Java 1.4 is no longer supported.</li>
+<li>A lot of new JUnit tests in the test suite.</li>
+<li>A PDF Signer that can add a signature to a PDF document through a simple HTML interface.</li>
+<li>PKCS11 Crypto Token to connect to different PKCS11 implementations.</li>
+</ul>
 </p>
 <p>
 More information can be found in the manual

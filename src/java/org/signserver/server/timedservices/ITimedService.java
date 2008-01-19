@@ -11,22 +11,22 @@
  *                                                                       *
  *************************************************************************/
 
-package org.signserver.server.service;
+package org.signserver.server.timedservices;
 
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
 
 
 /**
- * IService is an interface that all services should implement
+ * ITimedService is an interface that all services should implement
  * 
- * There exists a BaseService that can be extended covering some of it's functions
+ * There exists a BaseTimedService that can be extended covering some of it's functions
  * 
  * 
  * @author Philip Vendil
- * $Id: IService.java,v 1.2 2007-12-08 07:51:10 herrvendil Exp $
+ * $Id: ITimedService.java,v 1.1 2008-01-19 03:40:26 herrvendil Exp $
  */
-public interface IService extends IWorker{
+public interface ITimedService extends IWorker{
 	 
 	/**
 	 * Constant indicating if the service should stop executing
@@ -60,8 +60,8 @@ public interface IService extends IWorker{
 	public boolean isActive();
 	
 	/**
-	 * @return true if it should be a singleton only runned at one node at
-	 * the time, of false if it should be runned on all nodes simultainously.
+	 * @return true if it should be a singleton only run at one node at
+	 * the time, of false if it should be run on all nodes simultaneously.
 	 */
 	public boolean isSingleton();
 

@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
  
-package org.signserver.server.service;
+package org.signserver.server.timedservices;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -32,10 +32,10 @@ import org.signserver.server.ServiceExecutionFailedException;
  * 
  * @author Philip Vendil 2007 jan 23
  *
- * @version $Id: DummyService.java,v 1.2 2007-12-08 07:51:10 herrvendil Exp $
+ * @version $Id: DummyTimedService.java,v 1.1 2008-01-19 03:40:26 herrvendil Exp $
  */
 
-public class DummyService extends BaseService {
+public class DummyTimedService extends BaseTimedService {
 
 	public transient Logger log = Logger.getLogger(this.getClass());
 	
@@ -47,13 +47,13 @@ public class DummyService extends BaseService {
 		
 		outPath = config.getProperties().getProperty("OUTPATH");
 		
-		log.info("Initializing DummyService, output path : " + outPath);
+		log.info("Initializing DummyTimedService, output path : " + outPath);
 	}
 	
 	/**
 	 * Example of super simple service.
 	 * 
-	 * @see org.signserver.server.service.IService#work()
+	 * @see org.signserver.server.timedservices.ITimedService#work()
 	 */
 	public void work() throws ServiceExecutionFailedException {
 		
@@ -81,7 +81,7 @@ public class DummyService extends BaseService {
 			throw new ServiceExecutionFailedException(e.getClass().getName() + " : " + e.getMessage());
 		}
 		
-		log.info("DummyService.work() called. current count : " + currentCount);
+		log.info("DummyTimedService.work() called. current count : " + currentCount);
 	}
 
 }

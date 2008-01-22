@@ -32,7 +32,7 @@
             <menu name="Contributing">
                 <item name="Contributors"          href="/contributors.html"/>
                 <item name="Bug Database"          href="http://jira.primekey.se/"/>
-                <item name="SVN Repositories"      href="http://signserver.svn.sourceforge.net/viewvc/signserver/"/>
+                <item name="Repositories"      href="/repositories.html"/>
             </menu>
 
         </menusection>

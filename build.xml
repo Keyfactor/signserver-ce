@@ -321,12 +321,50 @@
 				command="find ${publish.dir} -type f -exec chmod 664 {} \;"/>
 		
     </target>
-	<target name="ziprelease" description="Make a zip file for EJBCA release">
+	
+    	<target name="ziprelease" description="Make a zip files for SignServer release" >
+    		<input message="Version tag for zipfile (ex 3_0):" addproperty="signserver.zipversion" />
+    		<antcall target="ziprelease-lgpl3"/>
+    		<antcall target="ziprelease-lgpl21"/>
+    	</target>
+    		
+    	
+    		
+	<target name="ziprelease-lgpl3" >
 		<antcall  target="clean"/>
-        <input message="Version tag for zipfile (ex 2_0):" addproperty="signserver.zipversion" /> 
-		<zip destfile="../signserver_${signserver.zipversion}.zip">
-		    <zipfileset dir="." prefix="signserver_${signserver.zipversion}" filemode="600" dirmode="700"> 
+		<copy file="doc/lgpl-3.0.txt" tofile="LICENSE" />
+		<zip destfile="../signserver_lgpl_v3_version_${signserver.zipversion}.zip">
+		    <zipfileset dir="." prefix="signserver_lgpl_v3_version_${signserver.zipversion}" filemode="600" dirmode="700"> 
 		    	<include name="**/**" />
+		    	<exclude name="**/CVS/**" />
+		    	<exclude name="doc/lgpl-**" />
+		    	<exclude name="tmp/**" />
+		    	<exclude name="dist/**" />
+		    	<exclude name="dist-client/**" />
+		    	<exclude name="dist-server/**" />
+		    	<exclude name="out/**" />
+		    	<exclude name="eclipseBuild/**" />
+		    	<exclude name="**/*.class" />
+		    	<exclude name=".classpath" />
+		    	<exclude name=".project" />
+		    	<exclude name=".eclipse/**" />
+		    	<exclude name="**/.cvsignore" />
+		    	<exclude name="**/*.sh" />
+		    </zipfileset>
+		    <zipfileset dir="." prefix="signserver_lgpl_v3_version_${signserver.zipversion}" filemode="700" dirmode="700"> 
+		    	<include name="**/*.sh" />
+		    </zipfileset>
+		</zip>
+		<delete file="LICENSE"/>
+	</target>
+	
+	<target name="ziprelease-lgpl21" >
+		<antcall  target="clean"/>  
+		<copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+		<zip destfile="../signserver_lgpl_v21_version_${signserver.zipversion}.zip">
+		    <zipfileset dir="." prefix="signserver_lgpl_v21_version_${signserver.zipversion}" filemode="600" dirmode="700"> 
+		    	<include name="**/**" />
+		    	<exclude name="doc/lgpl-**" />
 		    	<exclude name="**/CVS/**" />
 		    	<exclude name="tmp/**" />
 		    	<exclude name="dist/**" />
@@ -341,10 +379,11 @@
 		    	<exclude name="**/.cvsignore" />
 		    	<exclude name="**/*.sh" />
 		    </zipfileset>
-		    <zipfileset dir="." prefix="signserver_${signserver.zipversion}" filemode="700" dirmode="700"> 
+		    <zipfileset dir="." prefix="signserver_lgpl_v21_version_${signserver.zipversion}" filemode="700" dirmode="700"> 
 		    	<include name="**/*.sh" />
 		    </zipfileset>
 		</zip>
+		<delete file="LICENSE"/>
 	</target>
 	
 

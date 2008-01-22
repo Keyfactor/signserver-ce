@@ -346,13 +346,17 @@ database.password      = ${database.password}
 				    <include name="jaxb-xjc.jar" />
 					<include name="jaxws-api.jar" />
 				    <include name="jaxws-rt.jar" />
+		        	<include name="jaxws-tools.jar" />
 				    <include name="jsr173_api.jar" />
 				 	<include name="jsr181-api.jar" />
 				    <include name="jsr250-api.jar" />
+		        	<include name="mimepull.jar" />
 					<include name="resolver.jar" />
 				    <include name="saaj-api.jar" />
 					<include name="saaj-impl.jar" />
 					<include name="sjsxp.jar" />
+		        	<include name="stax-ex.jar" />
+					<include name="streambuffer.jar" />
 				</fileset>
 		    </copy>    	
 		    <copy todir="dist-client/signserverwscli/">
@@ -363,7 +367,7 @@ database.password      = ${database.password}
 	    	              
 	        <jar destfile="dist-client/signserverwscli/signserverwscli.jar" basedir="tmp/signserverwscli.jar">
 	          <manifest>
-	          	<attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/commons-lang-2.0.jar"/>
+	          	<attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar  lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jaxws-tools.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/mimepull.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/stax-ex.jar lib/streambuffer.jar lib/commons-lang-2.0.jar"/>
 	            <attribute name="Main-Class" value="org.signserver.protocol.ws.client.cli.WSCLI"/>
 	          </manifest>
 	        </jar>    	    	

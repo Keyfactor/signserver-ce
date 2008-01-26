@@ -221,14 +221,10 @@ database.password      = ${database.password}
 	    	<path refid="signserver.compile.classpath" />
 	    </path>
 		
-	    <path id="jaxws.test.classpath">
-	    	<path refid="jaxws.client.classpath" />
-	    	<path refid="j2ee.classpath" />
-	    </path>
 		
 	    <target name="ws.common.init" unless="buildMailSigner">
 		    <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen" >
-		        <classpath refid="jaxws.classpath"/>
+		        <classpath refid="jaxws.classpath"/>		    	
 		    </taskdef>
 		
 	        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
@@ -250,6 +246,7 @@ database.password      = ${database.password}
 	       <wsgen  fork="true" sei="org.signserver.protocol.ws.server.SignServerWS"
 	       	     genwsdl="true" destdir="tmp/jaxws/gen-classes/server" 	            
 	            debug="true" >
+	       	  
 			 <classpath>
 			  <path refid="jaxws.classpath" /> 
 			  <pathelement location="src" /> 
@@ -461,7 +458,7 @@ database.password      = ${database.password}
 	
     <target name="test:signserver:compile" description="compile JUnit testcases" depends="ws.compile.client" unless="buildMailSigner">
         <mkdir dir="${test.dir}" />
-        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled.</echo>
+        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled, and HTTPS be turned off.</echo>
         <javac srcdir="${test.src.dir}" destdir="${test.dir}" debug="on" includeantruntime="no" encoding="iso8859-1"  target="${server.java.target}" source="${server.java.target}">
             <classpath refid="signserver.test.compile.classpath" />
         	<exclude name="org/signserver/mailsigner/**"/>
@@ -474,7 +471,7 @@ database.password      = ${database.password}
 	
     <target name="test:signserver:run" depends="test:signserver:compile" description="run JUnit testcases" unless="buildMailSigner">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
-        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled.</echo>
+        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled, and HTTPS be turned off.</echo>
         <delete dir="${test.dir}/reports" />
         <mkdir dir="${test.dir}/reports/html" />
         <junit printsummary="yes" haltonfailure="no">

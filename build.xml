@@ -337,6 +337,7 @@
 		    <zipfileset dir="." prefix="signserver_lgpl_v3_version_${signserver.zipversion}" filemode="600" dirmode="700"> 
 		    	<include name="**/**" />
 		    	<exclude name="**/CVS/**" />
+		    	<exclude name="signserver_build.properties" />
 		    	<exclude name="doc/lgpl-**" />
 		    	<exclude name="tmp/**" />
 		    	<exclude name="dist/**" />

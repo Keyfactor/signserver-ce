@@ -340,6 +340,7 @@
 		    	<exclude name="signserver_build.properties" />
 		    	<exclude name="doc/lgpl-**" />
 		    	<exclude name="tmp/**" />
+		    	<exclude name="p12/**" />
 		    	<exclude name="dist/**" />
 		    	<exclude name="dist-client/**" />
 		    	<exclude name="dist-server/**" />
@@ -369,6 +370,7 @@
 		    	<exclude name="**/CVS/**" />
 			<exclude name="signserver_build.properties" />
 		    	<exclude name="tmp/**" />
+		    	<exclude name="p12/**" />
 		    	<exclude name="dist/**" />
 		    	<exclude name="dist-client/**" />
 		    	<exclude name="dist-server/**" />

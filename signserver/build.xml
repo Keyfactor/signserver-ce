@@ -367,6 +367,7 @@
 		    	<include name="**/**" />
 		    	<exclude name="doc/lgpl-**" />
 		    	<exclude name="**/CVS/**" />
+			<exclude name="signserver_build.properties" />
 		    	<exclude name="tmp/**" />
 		    	<exclude name="dist/**" />
 		    	<exclude name="dist-client/**" />

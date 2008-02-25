@@ -45,7 +45,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * 
  * Processes PDF signing Requests over HTTP
  * 
- * Use the request parameter 'signerId' to specify the PDF signer.
+ * Use the request parameter 'signerId' or 'signerName' to specify the PDF signer.
  * 
  * @author Tomas Gustavsson, based on TSAHTTPServlet by Philip Vendil
  * @version $Id: PDFHTTPServlet.java,v 1.8 2007-12-12 14:24:55 herrvendil Exp $
@@ -58,6 +58,7 @@ public class PDFHTTPServlet extends HttpServlet {
 	private static Logger log = Logger.getLogger(PDFHTTPServlet.class);
 	
 	private static final String SIGNERID_PROPERTY_NAME = "signerId";
+	private static final String SIGNERNAME_PROPERTY_NAME = "signerName";
 
 	private IWorkerSession.ILocal signserversession;
 	
@@ -93,6 +94,10 @@ public class PDFHTTPServlet extends HttpServlet {
         throws IOException, ServletException {
         log.debug(">doPost()");
         int signerId = 1;
+        if(req.getParameter(SIGNERNAME_PROPERTY_NAME) != null){
+        	signerId = getSignServerSession().getWorkerId(req.getParameter(SIGNERNAME_PROPERTY_NAME));
+        	log.debug("Found a signerName in the request");
+        }
         if(req.getParameter(SIGNERID_PROPERTY_NAME) != null){
         	signerId = Integer.parseInt(req.getParameter(SIGNERID_PROPERTY_NAME));
         	log.debug("Found a signerid in the request");
@@ -130,7 +135,7 @@ public class PDFHTTPServlet extends HttpServlet {
         
         Random rand = new Random();        
         int requestId = rand.nextInt();
-        
+
         GenericSignResponse signResponse = null;
         try {
 			signResponse = (GenericSignResponse) getSignServerSession().process(signerId, new GenericSignRequest(requestId, inbytes),new RequestContext((X509Certificate) clientCertificate, remoteAddr));

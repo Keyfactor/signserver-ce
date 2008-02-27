@@ -1,8 +1,29 @@
 <html>
-<head>
-<title>PDF signing demo</title>
-</head>
-<body > 
+	<head>
+		<title>PDF signing demo</title>
+		<style TYPE="text/css"> <!--
+		body {
+			width: 55em;
+			margin-left: 5em;
+			margin-top: 1em;
+		}
+		a:link {
+			color: #00007f;
+			text-decoration: none;
+		}
+		img {
+			border: 0px;
+		}
+		div.header {
+			font-size: 42px;
+			font-weight: bold;
+			margin-left: 2.5em;
+			margin-top: 15px;
+			font-style: italic;
+		}
+		--></style> 
+	</head>
+<body>
 <SCRIPT language="JavaScript">
 <!--  
 function check()
@@ -16,21 +37,13 @@ function check()
 }
 -->
 </SCRIPT>
-<div align="center">   
+<div style="text-align: center;">   
    <h2>PDF file signing<br></h2>
 </div>
+<p>
+Simply upload a PDF document (small please) to the PDF signer and you will get back the same PDF, but signed by the signserver. This is a central organization signature.
     <form name="recievefile" action="/signserver/pdf?signerName=PDFSigner" method="post" enctype='multipart/form-data' >
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
-    <tr id="Row1"> 
-      <td width="50%" valign="top"> 
-        <div align="left"> 
-          <h3>&nbsp;</h3>
-        </div>
-      </td>
-      <td width="50%" valign="top"> 
-        <div align="right">
-      </td>
-    </tr>
     <tr id="Row2"> 
       <td width="49%" valign="top" align="right">Select PDF file to upload and sign</td>
       <td width="51%" valign="top">     
@@ -40,5 +53,20 @@ function check()
     </tr>
   </table>
     </form>
+</p>
+
+<h2>Verification of signature</h2>
+<p>
+You can display the signature very nicely in Acrobat reader with signing plug-ins. If verified correctly you will get a green check in the signature field.
+</p>
+<p>
+If you want to verify the signed PDFs nicely you must download the CA certificate from your CA and install it in acrobat reader.
+<ul>
+<li>In Ubuntu you can enable the medibuntu repository and then <strong>apt-get install acroread acroread-plugins</strong>.</li>
+<li>You can also simply download Acrobat Reader from Adobe.</li>
+<li>Download the root CA certificate and install in Acrobat reader (v8) in </i>Document->Manage Trusted Identities->Display: Certificates->Add Contacts</i>. Edit Trust and enable at least <i>Signatures and as a trusted root</i></li>
+</ul>
+</p>
+
 </body>
 </html>

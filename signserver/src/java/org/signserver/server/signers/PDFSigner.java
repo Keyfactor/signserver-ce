@@ -28,13 +28,14 @@ import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.ISignRequest;
 import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignRequest;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.StatisticsCollector;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.cryptotokens.ICryptoToken;
 
@@ -59,6 +60,7 @@ public class PDFSigner extends BaseSigner{
 	
     /** Log4j instance for actual implementation class */
     public transient Logger log = Logger.getLogger(this.getClass());
+	private final StatisticsCollector statisticsCollector = StatisticsCollector.getInstance(this.getClass().getName(), "PDF size in bytes");
     
 	//Private Property constants
 	private static final String REASON = "REASON";
@@ -122,7 +124,9 @@ public class PDFSigner extends BaseSigner{
 			byte[] pdfbytes = (byte[])sReq.getRequestData();
 			byte[] fpbytes = CertTools.generateSHA1Fingerprint(pdfbytes);
 			String fp = new String(Hex.encode(fpbytes));
-
+			if (statisticsCollector != null) {
+				statisticsCollector.addRow(""+pdfbytes.length);
+			}
 			try {
 				// Thanks to Ezizmuhamet Muhammetkuliyev for this PDF signing snippet 
 				PdfReader reader = new PdfReader(pdfbytes);

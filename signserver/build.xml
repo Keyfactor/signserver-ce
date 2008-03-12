@@ -229,6 +229,10 @@
         <antcall target="test:signserver:run"/>
     	<antcall target="test:mailsigner:run"/>
     </target>
+
+    <target name="test:runperf" description="Test performace of signing modules">
+        <antcall target="test:signserver:performance"/>
+    </target>
 		
 	<property name="velocity.dir" location="lib/ext/velocity"/>
     <!-- Initialization properties -->

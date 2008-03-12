@@ -20,6 +20,9 @@
 	   <property name="server.primeCard.catoken" location="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
 	   <property name="client.primeCard.dist" location="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
 
+	   <property name="performanceTestToolBuild" location="${bin}/performanceTestTool"/>
+	   <property name="performanceTestToolJar" location="${client.dist.dir}/performanceTestTool.jar"/>
+
 	   <property name="web.src" value="${src}/web/pub" />
 	   <property name="webwar" value="${server.dist.dir}/web.war" />
 		
@@ -150,6 +153,7 @@ database.password      = ${database.password}
 	        	<exclude name="org/signserver/appserver/**"/> 
 	        	<exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>	        	
 	        	<exclude name="org/signserver/protocol/ws/client/**"/>
+	        	<exclude name="org/signserver/client/PerformanceTest*"/>
 	        </javac>
 	        <copy todir="${build}">
 	            <fileset dir="src/java">
@@ -161,7 +165,7 @@ database.password      = ${database.password}
 	   <!-- =================================================================== -->
 	    <!-- Build signserver ejb part                                           -->
 	    <!-- =================================================================== -->
-	    <target name="signserver-ejb.jar" depends="timeStampTestClient, signserver:compile" description="Creates master ejb.jar" unless="buildMailSigner">
+	    <target name="signserver-ejb.jar" depends="timeStampTestClient, performanceTestTool, signserver:compile" description="Creates master ejb.jar" unless="buildMailSigner">
 
 	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
 	            <manifest>
@@ -506,6 +510,60 @@ database.password      = ${database.password}
             <report format="frames" todir="${test.dir}/reports/html" />
         </junitreport> 
     </target>
+
+    <target name="test:signserver:performance" description="run performance test locally" unless="buildMailSigner">
+        <available file="${performanceTestToolJar}" property="perfTestExists"/>
+        <antcall target="test:signserver:initperformance" />
+        <antcall target="j2ee:assert-run" />
+      	<property name="performancetest.host" value="http://localhost:8080/signserver/" />
+       	<property name="performancetest.runtime" value="1200" />
+       	<property name="performancetest.threads" value="10" />
+       	<property name="performancetest.intervalsize" value="30" />
+       	<property name="performancetest.statisticsdir" value="tmp/statistics/" />
+        <echo>Starting performance tests..</echo>
+        <echo>Assuming: </echo>
+        <echo> - collected data to be found in ${performancetest.statisticsdir} (set by GLOB.STATISTICS.OUTPUTDIR).</echo>
+        <echo> - A PDF worker with name "PDFSigner" exists.</echo>
+        <echo />
+        <echo>Processed data can be found in ${performancetest.statisticsdir}.</echo>
+        <delete dir="${testperf.dir}" />
+        <java jar="${performanceTestToolJar}" fork="true">
+            <jvmarg line="-Xmx512m -XX:+UseConcMarkSweepGC" />
+            <arg line="test ${performancetest.runtime} ${performancetest.threads} ${performancetest.host}" />
+        </java>
+        <java jar="${performanceTestToolJar}" fork="true">
+        	<arg line="postprocess ${performancetest.statisticsdir} ${performancetest.intervalsize}" />
+        </java>
+    </target>
+
+    <target name="test:signserver:initperformance" unless="perfTestExists" >
+        <antcall target="build" />
+    </target>
+
+	 <!--                                                   -->
+	 <!-- Target used to build the Performace-test          -->
+	 <!--                                                   -->
+	  <target name="performanceTestTool" depends="signserver:compile" unless="buildMailSigner">
+	    <mkdir dir="${performanceTestToolBuild}"/>
+	    <javac srcdir="${src.java}" destdir="${performanceTestToolBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
+		   <include name="org/signserver/client/PerformanceTest*"/>
+           <classpath path="${lib}/reports/jcommon-1.0.12.jar"/>
+           <classpath path="${lib}/reports/jfreechart-1.0.9.jar"/>
+		   <classpath refid="signserver.compile.classpath"/> 
+	    </javac>
+	    
+	    <unzip src="${lib}/itext/itext.jar" dest="${performanceTestToolBuild}/" />
+	    <unzip src="${lib}/reports/jcommon-1.0.12.jar" dest="${performanceTestToolBuild}/" />
+	    <unzip src="${lib}/reports/jfreechart-1.0.9.jar" dest="${performanceTestToolBuild}/" />
+
+	    <jar destfile="${performanceTestToolJar}" basedir="${performanceTestToolBuild}">
+	      <manifest>
+	        <!--<attribute name="Class-Path" value="itext.jar"/>-->
+	        <attribute name="Main-Class" value="org.signserver.client.PerformanceTestTool"/>
+	      </manifest>
+	    </jar>
+	  </target>
+
 	
 	 <!--                                                   -->
 	 <!-- Target Used to test the TimeStamp communication     -->

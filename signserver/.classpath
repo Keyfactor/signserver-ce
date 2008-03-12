@@ -29,5 +29,7 @@
 	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/server"/>
 	<classpathentry kind="lib" path="tmp/validationws/gen-classes/client"/>
 	<classpathentry kind="lib" path="tmp/validationws/gen-classes/server"/>
+	<classpathentry kind="lib" path="lib/reports/jcommon-1.0.12.jar"/>
+	<classpathentry kind="lib" path="lib/reports/jfreechart-1.0.9.jar"/>
 	<classpathentry kind="output" path=".eclipse/out"/>
 </classpath>

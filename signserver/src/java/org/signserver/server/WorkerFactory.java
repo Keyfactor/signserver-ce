@@ -139,7 +139,7 @@ public  class WorkerFactory {
 	/**
 	 * Method to load all available signers
 	 */
-	private void loadWorkers(WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession, EntityManager em){
+	private synchronized void loadWorkers(WorkerConfigDataService workerConfigHome, IGlobalConfigurationSession.ILocal gCSession, EntityManager em){
 		   if(workerStore == null){
               workerStore = new HashMap<Integer, IWorker>();
               nameToIdMap = new HashMap<String,Integer>();

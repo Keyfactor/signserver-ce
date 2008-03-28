@@ -5,11 +5,10 @@
 # 
 #
 
-# JBoss used during development
-# Default: $JBOSS_HOME
-#jboss.home=${basedir}/../../jboss-4.0.1
-
-#jboss.home=${env.JBOSS_HOME}
+# Application server used during development
+# Default: $APPSRV_HOME or $JBOSS_HOME
+#appserver.home=${basedir}/../../jboss-4.2.2
+#appserver.home=${env.APPSRV_HOME}
 
 # which compiler to use
 # default: javac
@@ -90,7 +89,11 @@
 # Default 8443
 #httpserver.privhttps=8443
 
-
+# The interfaces JBoss will bind to. E.g. 127.0.0.1 will only allow connections from localhost.
+# Default 0.0.0.0
+#httpsserver.bindaddress.pubhttp=0.0.0.0
+#httpsserver.bindaddress.pubhttps=0.0.0.0
+#httpsserver.bindaddress.privhttps=0.0.0.0
 
 # Default content encoding used to display JSP pages, for example ISO-8859-1, UTF-8 or GBK.
 # Default: ISO-8859-1
@@ -234,6 +237,8 @@
 
 
 # -------------- JAX-WS Web Service Configuration ----------------
+#
+# JAX-WS Web Service requires JAX-WS 2.1 to build. This is included in JDK 1.6.0_04 and later.
 #
 # Set to false to disable Main WebService deployment
 signserverws.enabled=true

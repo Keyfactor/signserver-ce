@@ -65,10 +65,11 @@
         </path>
 
 	    <path id="j2ee.classpath">
-	        <fileset dir="${jboss.home}/lib">
+	        <fileset dir="${appserver.home}/lib">
 	            <include name="jboss-system.jar" />
 	        </fileset>
-	        <fileset dir="${jboss.home}/client">
+        	<!-- jboss -->
+	        <fileset dir="${appserver.home}/client">
 	            <include name="jbossall-client.jar" />
 	            <include name="jboss-j2ee.jar" />
 	            <include name="ejb3-persistence.jar" />
@@ -86,7 +87,7 @@
         <path refid="jaxws.classpath" />
         
       </path>
-	
+
 	   <!-- those are the default values used within JBoss for easy startup -->
 	    <property name="web.contentencoding" value="ISO-8859-1" />
 	    <property name="datasource.jndi-name" value="SignServerDS" />
@@ -100,6 +101,9 @@
 	    <property name="httpserver.pubhttp" value="8080" />
 	    <property name="httpserver.pubhttps" value="8442" />
 	    <property name="httpserver.privhttps" value="8443" />
+        <property name="httpsserver.bindaddress.pubhttp" value="0.0.0.0" />
+        <property name="httpsserver.bindaddress.pubhttps" value="0.0.0.0" />
+        <property name="httpsserver.bindaddress.privhttps" value="0.0.0.0" />
 	    <property name="httpsserver.password" value="serverpwd" />
 	    <property name="httpsserver.keystore" value="p12/tomcat.jks" />	
 	    <property name="web.contentencoding" value="ISO-8859-1" />
@@ -114,7 +118,7 @@
         <echo>
 ---------- CONFIGURATION PROPERTIES ----------
 build.mode             = ${build.mode}
-jboss.home             = ${jboss.home}
+appserver.home         = ${appserver.home}
 web.contentencoding    = ${web.contentencoding}
 datasource.jndi-name   = ${datasource.jndi-name}
 datasource.jndi-name-prefix = ${datasource.jndi-name-prefix}

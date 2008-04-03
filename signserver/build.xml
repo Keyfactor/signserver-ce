@@ -313,7 +313,7 @@
     	<sshexec trust="true" host="shell.sourceforge.net"
 				username="${username}" password="${password}"
 				command="find ${publish.dir} -type f -exec chmod 664 {} \;"/>
-		
+    	<delete file="htdocs.tgz"/>
     </target>
     <target name="site:publish" depends="doc" description="Publish the website to the sandbox subdirectory.">
     	<property name="publish.dir" value="signserver/htdocs"/>
@@ -333,7 +333,7 @@
     	<sshexec trust="true" host="shell.sourceforge.net"
 				username="${username}" password="${password}"
 				command="find ${publish.dir} -type f -exec chmod 664 {} \;"/>
-		
+    	<delete file="htdocs.tgz"/>
     </target>
 	
     	<target name="ziprelease" description="Make a zip files for SignServer release" >

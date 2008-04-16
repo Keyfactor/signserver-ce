@@ -10,8 +10,17 @@
 
     <property file="${user.home}/${app.name}.properties"/>
     <property file="../${app.name}.properties"/>
-    <!-- this sucks because we have a dependency with JBoss just for the jndi provider -->
-    <property name="jboss.home" value="${env.JBOSS_HOME}"/>
+    
+	<!-- A little special something to handle backward compatibility with 
+	       people using JBOSS_HOME. They can switch to APPSRV_HOME now, and both will work. 
+	  -->        
+	  <condition property="jboss.home" value="${env.JBOSS_HOME}" >
+	      <equals arg1="${appserver.home}" arg2="${appserver.home}"/>
+	  </condition>
+	  <condition property="appserver.home" value="${env.APPSRV_HOME}" else="${jboss.home}">
+	      <contains string="${jboss.home}" substring="JBOSS_HOME"/>
+	  </condition>
+
 
     <property name="lib.dir" location="../lib"/>
 
@@ -20,7 +29,18 @@
         <pathelement path="../bin"/>
         <pathelement path="../tmp/bin/classes"/>
         <fileset dir="${lib.dir}" includes="*.jar"/>
-        <fileset dir="${jboss.home}/client" includes="*.jar"/>
+        <fileset dir="${appserver.home}">
+        	<!-- jboss -->
+            <include name="client/*.jar"/>
+        	<!-- glassfish -->
+            <include name="lib/*.jar"/>
+        	<!-- weblogic -->
+            <include name="server/lib/weblogic.jar"/>
+        	<!-- oracle -->
+            <include name="j2ee/home/oc4jclient.jar"/>
+        	<!-- websphere -->
+            <include name="runtimes/com.ibm.*.jar"/>
+        </fileset>
     </path>
 
 

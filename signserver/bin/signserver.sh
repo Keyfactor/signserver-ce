@@ -6,13 +6,20 @@ case "`uname`" in
   CYGWIN*) cygwin=true ;;
 esac
 
+JAVACMD=`which java`
 # Check that JAVA_HOME is set
-if [ -f $JAVA_HOME ]; then
-    echo "You must set JAVA_HOME before running the SIGNSERVER cli."
-    exit 1
+if [ ! -n "$JAVA_HOME" ]; then
+    if [ ! -n "$JAVACMD" ]
+    then
+        echo "You must set JAVA_HOME before running the EJBCA cli."
+        exit 1
+    fi
+else
+    JAVACMD=$JAVA_HOME/bin/java
 fi
 
-	class_name=org.signserver.cli.signserver
+
+class_name=org.signserver.cli.signserver
 
 # discard $1 from the command line args
 #shift
@@ -69,5 +76,5 @@ if $cygwin; then
   CP=`cygpath --path --windows "$CP"`
 fi
 
-exec "$JAVA_HOME/bin/java" -cp $CP $class_name "$@"
+exec "$JAVACMD" -cp $CP $class_name "$@"
 

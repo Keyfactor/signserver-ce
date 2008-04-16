@@ -25,15 +25,34 @@ class_name=org.signserver.cli.signserver
 #shift
 
 # J2EE server classpath
-if [ -n "$JBOSS_HOME" ]; then
-    echo "Using JBoss JNDI provider..."
-    J2EE_DIR="${JBOSS_HOME}"/client
-elif [ -n "$WEBLOGIC_HOME" ]; then
-    echo "Using Weblogic JNDI provider..."
-    J2EE_DIR="${WEBLOGIC_HOME}"/server/lib
+if [ ! -n "$APPSRV_HOME" ]; then
+    if [ -n "$JBOSS_HOME" ]; then
+        APPSRV_HOME=$JBOSS_HOME
+    elif [ -n "$WEBLOGIC_HOME" ]; then
+        APPSRV_HOME=$WEBLOGIC_HOME
+    fi
+fi
+
+if [ -n "$APPSRV_HOME" ]; then
+    J2EE_DIR="${APPSRV_HOME}"/client
+    if [ -r "$APPSRV_HOME"/server/lib/weblogic.jar ]; then
+        echo "Using Weblogic JNDI provider..."
+        J2EE_DIR="${APPSRV_HOME}"/server/lib
+    elif [ -r "$APPSRV_HOME"/lib/appserv-rt.jar ]; then
+        echo Using Glassfish JNDI provider...
+        J2EE_DIR="${APPSRV_HOME}"/lib
+    elif [ -r "$APPSRV_HOME"/j2ee/home/oc4jclient.jar ]; then
+        echo Using Oracle JNDI provider...
+        J2EE_DIR="${APPSRV_HOME}"/j2ee/home
+    elif [ -d "$APPSRV_HOME"/runtimes ]; then
+        echo Using Websphere JNDI provider...
+        J2EE_DIR="${APPSRV_HOME}"/runtimes
+    else 
+        echo "Using JBoss JNDI provider..."
+    fi
 else
     echo "Could not find a valid J2EE server for JNDI provider.."
-    echo "Specify a JBOSS_HOME or WEBLOGIC_HOME environment variable"
+    echo "Specify a APPSRV_HOME environment variable"
     exit 1
 fi
 

@@ -18,16 +18,16 @@ The SignServer is a framework designed to perform different kind of digital sign
 <a href="images/architecture.png"><img src="images/architecture.png" align="middle" border="0" width="523" height="359" ALT="architecture"/></a>
 </p>
 <p>
-In the 3.0 version there are three kind of processable services. Signers (used to sign or in other way  process requested data). Validation Services used to verify the validity of a certificate against a set of backed issuers. The validation service can be used to simply the integration of PKIs into existing applications. The the third processable service is a group key service framework used to manage and to distribute group keys for different applications, these keys can be both symmetric and asymmetric. In addition to processable services there also exists another concept called Timed Service (called just 'service' in 2.0 edition) which are plug-ins run at defined intervals performing maintenance or reporting routines.
+In the 3.0 version there are three kind of processable services. Signers (used to sign or in other way  process requested data). Validation Services used to verify the validity of a certificate against a set of backed issuers. The validation service can be used to simply the integration of PKIs into existing applications. The third processable service is a group key service framework used to manage and to distribute group keys for different applications, these keys can be both symmetric and asymmetric. In addition to processable services there also exists another concept called Timed Service (called just 'service' in 2.0 edition) which are plug-ins run at defined intervals performing maintenance or reporting routines.
 </p>
 <p>
 Out-of-the-box are there three Signers ready to be used. They are a MRTD Signer used for signing Machine Readable Travel Documents (also known as Electronic Passports), a Timestamp Signer that can be used to set up a Timestamp Authority and a PDF signer that can be used to automatically sign documents. 
 </p>
 <p>
-The main way of communicating with the SignServer is through a WebService interface (previous versions had a RMI-SSL interface, but that have been replaced by the WS for better platform independence.) but the Timestamp Signer is also available through HTTP communication and the PDF signer have a simple HTML page that allows users to upload documents to be signed.
+The main way of communicating with the SignServer is through a WebService interface (previous versions had a RMI-SSL interface, but that have been replaced by the WS for better platform independence). The Timestamp Signer is also available through HTTP communication and the PDF signer have a simple HTML page that allows users to upload documents to be signed.
 </p>
 <p>
-The applications i administrated through a command-line interface, where the properties and access control can be configured.
+The applications are administrated through a command-line interface, where the properties and access controls can be configured.
 </p>
 <p>
 One SignServer can have multiple signers for different purposes.
@@ -41,7 +41,7 @@ See the manual for more details.
 The MailSigner is a different build of the SignServer, targeted to perform automated cryptographic operations on e-mails. The MailSigner is an add-on to the James SMTP project and the James SMTP binaries is shipped along with the SignServer package for simplified set-up.
 </p>
 <p>
-The MailSigner's main component is the MailProcessor which is the base for all MailSigner plug-ins. There exists one ready to use MailSigner called the SimpleMailSigner. It generates a signed SMIME message of all mails sent to through the server.
+The MailSigner's main component is the MailProcessor which is the base for all MailSigner plug-ins. There exists one ready to use MailSigner called the SimpleMailSigner. It generates a signed SMIME message of all mails sent through the server.
 </p>
 
 </subsection>

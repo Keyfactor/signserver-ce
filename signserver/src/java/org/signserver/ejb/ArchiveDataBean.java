@@ -22,6 +22,7 @@ import javax.ejb.EJBException;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -74,7 +75,8 @@ public class ArchiveDataBean  {
    private String requestCertSerialnumber;
    private String requestIP;
    
-   @Column(columnDefinition="LONGVARCHAR")
+   @Lob
+   @Column(length=10485760)
    private String archiveData;
   
     /**

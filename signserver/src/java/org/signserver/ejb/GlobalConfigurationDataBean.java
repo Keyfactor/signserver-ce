@@ -14,8 +14,10 @@
 
 package org.signserver.ejb;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 /**
@@ -36,6 +38,8 @@ public class GlobalConfigurationDataBean  {
 
 	@Id
 	private String propertyKey;
+    @Lob
+	@Column(length=1048576)
 	private String propertyValue;
  
     public String getPropertyKey(){

@@ -17,6 +17,7 @@ package org.signserver.ejb;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.apache.log4j.Logger;
@@ -47,7 +48,8 @@ public class WorkerConfigDataBean  {
 	
 	@Id
 	private int signerId;
-	@Column(columnDefinition="LONGVARCHAR")	
+    @Lob
+    @Column(length=1048576)
 	private String signerConfigData;
      
     /**

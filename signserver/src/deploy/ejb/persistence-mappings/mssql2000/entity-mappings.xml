@@ -3,26 +3,5 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_1_0.xsd"
   version="1.0">
-   <entity class="org.signserver.ejb.ArchiveDataBean">
-     <attributes>
-        <basic name="archiveData">
-          <column column-definition="TEXT"/>
-        </basic>  
-      </attributes>
-    </entity>
-    <entity class="org.signserver.ejb.GlobalConfigurationDataBean">
-     <attributes>
-        <basic name="propertyValue">
-          <column column-definition="TEXT"/>
-        </basic>  
-      </attributes>
-    </entity>
-    <entity class="org.signserver.ejb.WorkerConfigDataBean">
-     <attributes>
-        <basic name="signerConfigData">
-          <column column-definition="TEXT"/>
-        </basic>  
-      </attributes>
-    </entity>
 </entity-mappings>
 

@@ -147,7 +147,7 @@ public class SignServerWS implements ISignServerWS {
 
 
    /**
-    * @see  org.signserver.protocol.ws.ISignServerWS#signData(String, Collection)
+    * @see  org.signserver.protocol.ws.ISignServerWS#process(String, Collection)
     */
 	public Collection<ProcessResponseWS> process(String workerIdOrName,
 			Collection<ProcessRequestWS> requests)

@@ -24,5 +24,12 @@
         </basic>
       </attributes>
     </entity>
+    <entity class="org.signserver.groupkeyservice.ejb.GroupKeyDataBean">
+     <attributes>
+        <basic name="encryptedData">
+          <column column-definition="BYTEA"/>
+        </basic>
+      </attributes>
+    </entity>
 </entity-mappings>
 

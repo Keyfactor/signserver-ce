@@ -61,6 +61,7 @@
 	<import file="./mailsigner.xmli" />
 	<import file="${custom.build.xml}" optional="true"/>
 	
+	<property name="signserver.cli.jar" value="dist-client/signserver-cli.jar" />
 	
 	<property name="build.mode" value="SIGNSERVER" />
 	<condition property="buildMailSigner">		
@@ -70,7 +71,7 @@
     <!-- =================================================================== -->
     <!-- Build ALL                                                           -->
     <!-- =================================================================== -->
-	<target name="build" depends="signserver, mailsigner" />
+	<target name="build" depends="signserver, mailsigner, signserver-cli" />
 	
 
 
@@ -181,6 +182,22 @@
            </fileset>	      
        </copy>
      </target>
+	
+    <target name="signserver-cli" depends="signserver, mailsigner">
+    	<mkdir dir="dist-client/lib" />    	
+    	<copy file="${env.JBOSS_HOME}/client/jbossall-client.jar" todir="dist-client/lib"/>    	
+	    <jar destfile="${signserver.cli.jar}" basedir="${build}">
+	      <manifest>	        
+	        <attribute name="Main-Class" value="org.signserver.cli.signserver"/>
+	      </manifest>
+	      <include name="org/signserver/cli/**/**"/>
+	      <include name="org/signserver/mailsigner/cli/**/**"/>
+	      <include name="org/signserver/common/**/**"/>
+	      <include name="org/signserver/ejb/interfaces/**/**"/>
+	      <include name="org/signserver/groupkeyservice/common/**/**"/>
+	      <include name="org/signserver/validationservice/common/**/**"/>
+	    </jar>    	
+    </target>
  
     
     <!-- =================================================================== -->

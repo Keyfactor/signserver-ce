@@ -118,6 +118,10 @@ public class signserver {
         	propsfile = System.getenv("SIGNSERVER_HOME") + "/"+ propsfile;
         }
         
+        if(System.getenv("SIGNSRV_HOME") != null){
+        	propsfile = System.getenv("SIGNSRV_HOME") + "/"+ propsfile;
+        }
+        
         InputStream is = new FileInputStream(propsfile);
         Properties properties = new Properties();
         properties.load(is);

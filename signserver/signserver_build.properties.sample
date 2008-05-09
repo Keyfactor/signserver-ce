@@ -72,7 +72,7 @@
 # The password used to protect the web servers SSL keystore.
 #httpsserver.password=serverpwd
 
-# The password used to protect the web servers SSL keystore.
+# The path to the web servers SSL keystore.
 # Default: p12/tomcat.jks
 #httpsserver.keystore=p12/tomcat.jks
 

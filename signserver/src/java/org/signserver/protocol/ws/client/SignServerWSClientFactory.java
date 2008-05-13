@@ -33,7 +33,7 @@ public class SignServerWSClientFactory {
 	public static final String CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK = "org.signserver.protocol.ws.client.CallFirstNodeWithStatusOKWSClient";
 
 	/** Default timeout in milliseconds */
-    public static final int DEFAULT_TIMEOUT = 10000; // 10s
+    public static final int DEFAULT_TIMEOUT = 20000; // 10s
     
     /** Default port of the server */
     public static final int DEFAULT_PORT = 8080;

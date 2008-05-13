@@ -34,7 +34,6 @@ import org.signserver.protocol.ws.gen.WorkerStatusWS;
 public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	    private static Logger log = Logger.getLogger(CallFirstNodeWithStatusOKWSClient.class);
 		
-
 	    
 	    private String[] hosts;
 	    private int timeOut;
@@ -45,6 +44,7 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 		private String  wSDLURL = null;
 		
 		private HashMap<String, SignServerWS> serviceMap = new HashMap<String, SignServerWS>();
+		
 
 
 
@@ -162,8 +162,11 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	    String getFastestHost(String workerId, IFaultCallback errorCallback) {
 	        this.fastestHost = null;
 	        
-	        for(int i=0; i<hosts.length ; i++)
-	            new Thread(new StatusChecker(workerId, "ID " + i,hosts[i],errorCallback)).start();
+	        Thread[] threads = new Thread[hosts.length];
+	        for(int i=0; i<hosts.length ; i++){
+	        	threads[i] = new Thread(new StatusChecker(workerId, "ID " + i,hosts[i],errorCallback));
+	        	threads[i].start();
+	        }
 	        synchronized( this ) {
 	            try {
 	                this.wait(timeOut);
@@ -171,6 +174,8 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	                throw new Error(e);
 	            }
 	        }
+	        
+
 	        return fastestHost;
 	    }
 
@@ -192,47 +197,49 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 			final private String workerId;
 
 			public StatusChecker(String workerId, String id, String host, IFaultCallback errorCallback){
-	    		super();
-	    		this.workerId = workerId;
-	    		this.id = id;
-	    		this.host = host;
-	    		this.errorCallback = errorCallback;    		
-	    	}
-	    	
+				super();
+				this.workerId = workerId;
+				this.id = id;
+				this.host = host;
+				this.errorCallback = errorCallback;    		
+			}
+
 			@SuppressWarnings("synthetic-access")
-	        public void run() {
-			    boolean statusOK = false;
-			    logStatusChecker.debug("Thread with id : " + id + " started.");
-			    try{
-			    	if(connectToHost(host) != null){
-			    		List<WorkerStatusWS> result = connectToHost(host).getStatus(workerId);
-			    		if(result != null && result.size() == 1){
-			    			WorkerStatusWS status = result.get(0);
-			    			if(status.getOverallStatus().equals(org.signserver.protocol.ws.WorkerStatusWS.OVERALLSTATUS_ALLOK)){
-			    				statusOK = true;
-			    			} else {
-			    				errorCallback.addCommunicationError(new GenericCommunicationFault("Error the node responded status ERROR :" + status.getErrormessage(),host ));			        			
-			    			}
-			    		}
-			    	}else{
-			    		errorCallback.addCommunicationError(new GenericCommunicationFault("Error Couldn't connect to host : " + host ,host));
-			    	}
-			    }catch (InvalidWorkerIdException_Exception e) {
-			    	errorCallback.addCommunicationError(new GenericCommunicationFault(host,new org.signserver.common.InvalidWorkerIdException(e.getMessage())));
+			public void run() {
+				boolean statusOK = false;
+				logStatusChecker.debug("Thread with id : " + id + " started.");
+
+				try{
+					if(connectToHost(host) != null){
+						List<WorkerStatusWS> result = connectToHost(host).getStatus(workerId);
+						if(result != null && result.size() == 1){
+							WorkerStatusWS status = result.get(0);
+							if(status.getOverallStatus().equals(org.signserver.protocol.ws.WorkerStatusWS.OVERALLSTATUS_ALLOK)){
+								statusOK = true;
+							} else {
+								errorCallback.addCommunicationError(new GenericCommunicationFault("Error the node responded status ERROR :" + status.getErrormessage(),host ));			        			
+							}
+						}
+					}else{
+						errorCallback.addCommunicationError(new GenericCommunicationFault("Error Couldn't connect to host : " + host ,host));
+					}
+				}catch (InvalidWorkerIdException_Exception e) {
+					errorCallback.addCommunicationError(new GenericCommunicationFault(host,new org.signserver.common.InvalidWorkerIdException(e.getMessage())));
 				}catch (Throwable e){
 					errorCallback.addCommunicationError(new GenericCommunicationFault(host,e));
-					serviceMap.remove(host);
+					serviceMap.remove(host);			    		
 				}
-			    logStatusChecker.debug("Thread with id : " + id + " finished.");
-			    synchronized( CallFirstNodeWithStatusOKWSClient.this ) {
-			        if ( fastestHost==null && statusOK ) {
-			            fastestHost = host;
-			            CallFirstNodeWithStatusOKWSClient.this.notifyAll();
-	                }
-			    }
+				logStatusChecker.debug("Thread with id : " + id + " finished.");
+				synchronized( CallFirstNodeWithStatusOKWSClient.this ) {
+					if ( fastestHost==null && statusOK ) {
+						fastestHost = host;			            
+						CallFirstNodeWithStatusOKWSClient.this.notifyAll();
+					}
+				}
 			}
 	    }
+}
 
 
-	}
+	
 

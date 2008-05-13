@@ -21,6 +21,7 @@
     	<fileset dir="lib/ext/james" includes="mail-1.4.jar" />
     	<fileset dir="lib/ext/james" includes="james-2.3.1.jar" />
     	<fileset dir="lib/ext/ejb" includes="jboss-ejb3x.jar" />
+    	<fileset dir="lib/ext/ejb" includes="ejb3-persistence.jar" />
     </path>
 	
     <path id="mailsigner.ext.classpath">
@@ -91,6 +92,10 @@ rmi.server.port           = ${rmi.server.port}
 	        <attribute name="Class-Path" value=""/>	        
 	      </manifest>
 	    </jar>
+    </target>
+	
+	<target name="mailsigner-pkgdist"  if="buildMailSigner">
+	  <echo>Binary Distribution packaging for the MailSigner isn't implemented yet.</echo>
     </target>
 	
 	

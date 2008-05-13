@@ -4,7 +4,6 @@
 	   <import file="./build.xml"/>
 	
 	   <property name="java.trustpassword" value="changeit" />
-	   <property name="java.trustcert" value="p12/rootcert.cer" />
 	   <property name="httpsserver.password" value="serverpwd" />
 
 
@@ -22,6 +21,9 @@
 
 	   <property name="performanceTestToolBuild" location="${bin}/performanceTestTool"/>
 	   <property name="performanceTestToolJar" location="${client.dist.dir}/performanceTestTool.jar"/>
+	
+	   <property name="genServerCertJar" value="genservercert.jar"/>
+
 
 	   <property name="web.src" value="${src}/web/pub" />
 	   <property name="webwar" value="${server.dist.dir}/web.war" />
@@ -35,6 +37,8 @@
 	
 	   <property name="signserverws.enabled" value="true" />
 	   <property name="validationws.enabled" value="false" />
+	   <property name="timestampclient.enabled" value="true" />
+	   <property name="pdfperformancetest.enabled" value="false" />
 	
 	   <path id="signserver.compile.classpath">
 	        <path refid="signserver.ext.classpath" />
@@ -105,7 +109,8 @@
         <property name="httpsserver.bindaddress.pubhttps" value="0.0.0.0" />
         <property name="httpsserver.bindaddress.privhttps" value="0.0.0.0" />
 	    <property name="httpsserver.password" value="serverpwd" />
-	    <property name="httpsserver.keystore" value="p12/tomcat.jks" />	
+	    <property name="httpsserver.keystore" value="p12/tomcat.jks" />
+	    <property name="truststore.keystore" value="p12/truststore.jks" />
 	    <property name="web.contentencoding" value="ISO-8859-1" />
 	    <property name="deploy.ssh.user" value="jboss" />
 	    <property name="deploy.ssh.keyfilepath" value="/home/jboss/.ssh/id_rsa" />
@@ -113,25 +118,44 @@
 	    <property name="deploy.ssh.appsrvhome" value="/home/jboss/jboss" />
 	    <property name="deploy.tomcat.version" value="tomcat55" />
 	
-    <target name="signserver.init" unless="buildMailSigner">
+    <target name="signserver.init"  unless="buildMailSigner">
     	<antcall target="j2ee:check"/>
         <echo>
 ---------- CONFIGURATION PROPERTIES ----------
-build.mode             = ${build.mode}
-appserver.home         = ${appserver.home}
-web.contentencoding    = ${web.contentencoding}
-datasource.jndi-name   = ${datasource.jndi-name}
+build.mode                  = ${build.mode}
+appserver.home              = ${appserver.home}
+web.contentencoding         = ${web.contentencoding}
+datasource.jndi-name        = ${datasource.jndi-name}
 datasource.jndi-name-prefix = ${datasource.jndi-name-prefix}
-database.name          = ${database.name}
-datasource.mapping     = ${datasource.mapping}
-database.url           = ${database.url}
-database.driver        = ${database.driver}
-database.username      = ${database.username}
-database.password      = ${database.password}
- 
+database.name               = ${database.name}
+datasource.mapping          = ${datasource.mapping}
+database.url                = ${database.url}
+database.driver             = ${database.driver}
+database.username           = ${database.username}
+database.password           = ${database.password}
+signserverws.enabled        = ${signserverws.enabled}
+validationws.enabled        = ${validationws.enabled}
+timestampclient.enabled     = ${timestampclient.enabled}
+pdfperformancetest.enabled  = ${pdfperformancetest.enabled}
       </echo>
     </target>
 	
+	
+	
+		<condition property="signserverws.conditionenabled">
+			<istrue value="${signserverws.enabled}"/>
+		</condition>
+	    <condition property="validationws.conditionenabled">
+	        <istrue value="${validationws.enabled}"/>
+	    </condition>
+	    <condition property="timestampclient.conditionenabled">
+	        <istrue value="${timestampclient.enabled}"/>
+	    </condition>
+	    <condition property="pdfperformancetest.conditionenabled">
+	        <istrue value="${pdfperformancetest.enabled}"/>
+	    </condition>
+	
+
 	    <!-- =================================================================== -->
 	    <!-- Clean SignServer related ALL                                                           -->
 	    <!-- =================================================================== -->
@@ -169,7 +193,7 @@ database.password      = ${database.password}
 	   <!-- =================================================================== -->
 	    <!-- Build signserver ejb part                                           -->
 	    <!-- =================================================================== -->
-	    <target name="signserver-ejb.jar" depends="timeStampTestClient, performanceTestTool, signserver:compile" description="Creates master ejb.jar" unless="buildMailSigner">
+	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile" description="Creates master ejb.jar" unless="buildMailSigner">
 
 	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
 	            <manifest>
@@ -240,7 +264,7 @@ database.password      = ${database.password}
 	        </taskdef>
 	    </target>
 		
-	    <target name="ws.init" depends="init, signserverwsconditioncheck, ws.common.init" if="signserverws.conditionenabled">
+	    <target name="ws.init" depends="init,  ws.common.init" if="signserverws.conditionenabled">
 	    	<mkdir dir="tmp/jaxws/gen-classes/server"/>
 	    	<mkdir dir="tmp/jaxws/gen-classes/client"/>
 	    	
@@ -250,10 +274,10 @@ database.password      = ${database.password}
 	
 
 		
-		<target depends="ws.init" name="ws.gen.server" if="signserverws.conditionenabled" >
+		<target depends="ws.init" name="ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
 	       <wsgen  fork="true" sei="org.signserver.protocol.ws.server.SignServerWS"
 	       	     genwsdl="true" destdir="tmp/jaxws/gen-classes/server" 	            
-	            debug="true" >
+	            debug="true" xendorsed="true">
 	       	  
 			 <classpath>
 			  <path refid="jaxws.classpath" /> 
@@ -262,16 +286,8 @@ database.password      = ${database.password}
 
 			  </wsgen>
 		</target>
-
 		
-
-		<target name="signserverwsconditioncheck" unless="buildMailSigner">
-			<condition property="signserverws.conditionenabled">
-				<istrue value="${signserverws.enabled}"/>
-			</condition>
-		</target>
-		
-	    <target name="signserverws.war" depends="ws.gen.server, ws.gen.client" if="signserverws.conditionenabled" >
+	    <target name="signserverws.war" depends="ws.gen.server, ws.gen.client" if="signserverws.conditionenabled" unless="buildMailSigner">
 	        <copy todir="tmp/jaxws/gen-classes/server">
 	    	  <fileset dir="${build}">
 	            <include name="org/signserver/protocol/ws/*.class"/> 
@@ -292,14 +308,14 @@ database.password      = ${database.password}
 	    </target>
 		
 		
-	    <target name="ws.gen.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled">	    	
+	    <target name="ws.gen.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">	    	
 	        <wsimport 
 	                destdir="tmp/jaxws/gen-classes/client"
 	                wsdl="tmp/jaxws/gen-classes/server/SignServerWSService.wsdl">	          
 	        </wsimport>
 	    </target>
 	    
-	    <target name="ws.compile.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled">	    	
+	    <target name="ws.compile.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">	    	
 	        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
 	            <classpath refid="server.compile.classpath" />
 	            <src path="${src.java}" /> 	        	
@@ -378,26 +394,21 @@ database.password      = ${database.password}
 	        </jar>    	    	
 	    </target>
 
-	    <target name="signserverws.client" depends="signserverwsconditioncheck,ws.build.client" if="signserverws.conditionenabled" />
+	    <target name="signserverws.client" depends="ws.build.client" if="signserverws.conditionenabled" />
 
 	   <!-- =================================================================== -->
 	   <!-- Build Validation Service Web Service                                -->
-	   <!-- =================================================================== -->	        		
-	   <target name="validationwsconditioncheck" unless="buildMailSigner">
-	      <condition property="validationws.conditionenabled">
-	        <istrue value="${validationws.enabled}"/>
-	      </condition>
-	  </target>		
+	   <!-- =================================================================== -->	        			
 	  
-	  <target name="validationws.init" depends="init, validationwsconditioncheck, ws.common.init" if="validationws.conditionenabled">
+	  <target name="validationws.init" depends="init,  ws.common.init" if="validationws.conditionenabled" unless="buildMailSigner">
 	      <mkdir dir="tmp/validationws/gen-classes/server"/>
 	      <mkdir dir="tmp/validationws/gen-classes/client"/>
 	  </target>
 	        	
-	  <target depends="validationws.init" name="validationws.gen.server" if="validationws.conditionenabled" >
+	  <target depends="validationws.init" name="validationws.gen.server" if="validationws.conditionenabled" unless="buildMailSigner">
 	     <wsgen  fork="true" sei="org.signserver.protocol.validationservice.ws.server.ValidationWS"
 	        	       	     genwsdl="true" destdir="tmp/validationws/gen-classes/server" 	            
-	        	            debug="true" >
+	        	            debug="true" xendorsed="true">
 	        <classpath>
 	          <path refid="jaxws.classpath" /> 
 	          <pathelement location="src" /> 
@@ -405,7 +416,7 @@ database.password      = ${database.password}
          </wsgen>
 	  </target>
 
-	  <target name="validationws.war" depends="validationws.gen.server, validationws.gen.client" if="validationws.conditionenabled" >
+	  <target name="validationws.war" depends="validationws.gen.server, validationws.gen.client" if="validationws.conditionenabled" unless="buildMailSigner">
 	     <copy todir="tmp/validationws/gen-classes/server">
 	        <fileset dir="${build}">
 	        	<include name="org/signserver/protocol/validationservice/ws/*.class"/> 
@@ -421,7 +432,7 @@ database.password      = ${database.password}
 	    </war>
 	   </target>
 	        			        		
-	   <target name="validationws.gen.client" depends="validationws.init, validationws.gen.server" if="validationws.conditionenabled">	    	
+	   <target name="validationws.gen.client" depends="validationws.init, validationws.gen.server" if="validationws.conditionenabled" unless="buildMailSigner">	    	
 	      <wsimport destdir="tmp/validationws/gen-classes/client"
 	        	    wsdl="tmp/validationws/gen-classes/server/ValidationWSService.wsdl">	          
 	      </wsimport>
@@ -457,13 +468,6 @@ database.password      = ${database.password}
         <antcall target="j2ee:deploy" />
     </target>
 	
-    <target name="install"  description="Install">
-        <echo message="Removing old cacerts and add root cert to be trusted  ..."/>
-        <echo message="Make sure you have write access to JAVA_HOME/jre/lib/security/cacerts  ..."/>
-        <delete file="${java.home}/lib/security/cacerts"/>
-        <keytool arg="-v -alias SIGNSERVER -import -file '${java.trustcert}' -keystore '${java.home}/lib/security/cacerts' -storepass ${java.trustpassword} -noprompt"/>
-    </target>
-	
     <target name="test:signserver:compile" description="compile JUnit testcases" depends="ws.compile.client" unless="buildMailSigner">
         <mkdir dir="${test.dir}" />
         <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled, and HTTPS be turned off.</echo>
@@ -491,9 +495,12 @@ database.password      = ${database.password}
             <batchtest fork="yes" todir="${test.dir}/reports">
                 <fileset dir="${test.dir}">                  
                     <include name="**/ejb/Test*" /> 
+                	<include name="**/common/Test*" />
                     <include name="**/server/Test*" />
                 	<include name="**/server/service/Test*" />
                 	<include name="**/server/validcache/Test*" />
+                	<include name="**/server/statistics/Test*" />
+                	<include name="**/server/statistics/nonpersistent/Test*" />
                 	<include name="**/groupkeyservice/Test*" /> 
                 	<include name="**/cli/TestSignServer*" />
                 	<include name="**/protocol/validationservice/ws/Test*" />
@@ -515,18 +522,19 @@ database.password      = ${database.password}
         </junitreport> 
     </target>
 
-    <target name="test:signserver:performance" description="run performance test locally" unless="buildMailSigner">
+    <target name="test:signserver:pdfperformance" description="run performance test locally" unless="buildMailSigner">
         <available file="${performanceTestToolJar}" property="perfTestExists"/>
-        <antcall target="test:signserver:initperformance" />
+        <antcall target="test:signserver:initpdfperformance" />
         <antcall target="j2ee:assert-run" />
       	<property name="performancetest.host" value="http://localhost:8080/signserver/" />
-       	<property name="performancetest.runtime" value="1200" />
+       	<property name="performancetest.runtime" value="3000" />
        	<property name="performancetest.threads" value="10" />
-       	<property name="performancetest.intervalsize" value="30" />
+       	<property name="performancetest.intervalsize" value="1" />
        	<property name="performancetest.statisticsdir" value="tmp/statistics/" />
+    	<mkdir dir="${performancetest.statisticsdir}"/>
         <echo>Starting performance tests..</echo>
         <echo>Assuming: </echo>
-        <echo> - collected data to be found in ${performancetest.statisticsdir} (set by GLOB.STATISTICS.OUTPUTDIR).</echo>
+        <echo> - collected data to be found in ${performancetest.statisticsdir} (set by worker property STATISTICS.CSVFILE.OUTPUTDIR).</echo>
         <echo> - A PDF worker with name "PDFSigner" exists.</echo>
         <echo />
         <echo>Processed data can be found in ${performancetest.statisticsdir}.</echo>
@@ -540,14 +548,97 @@ database.password      = ${database.password}
         </java>
     </target>
 
-    <target name="test:signserver:initperformance" unless="perfTestExists" >
+    <target name="test:signserver:initpdfperformance" unless="perfTestExists" >
         <antcall target="build" />
     </target>
 
+   <target name="genservercert.jar" depends="signserver" unless="buildMailSigner">
+    		<jar destfile="${tmp}/${genServerCertJar}" basedir="${build}">
+  	          <manifest>
+  	          	<attribute name="Class-Path" value="lib/bcprov-jdk.jar"/>
+  	            <attribute name="Main-Class" value="org.signserver.cli.genservercert.GenServerCertificate"/>
+  	          </manifest>
+              <include name="org/signserver/cli/genservercert/*.class"/>    	          
+    		</jar>
+   	
+    </target>
+    		
+	<target name="signserver-pkgdist" depends="genservercert.jar" unless="buildMailSigner">
+	  <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
+	  	<isset property="${env.DESTDIR}"/>
+	  </condition>
+		
+	   <mkdir dir="${pkgdist.destdir}"/>
+		
+	   <property name="pkgdist.deploydir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/deploy"/>
+	   <mkdir dir="${pkgdist.deploydir}"/>
+	   <copy todir="${pkgdist.deploydir}" >
+		  <fileset dir="dist-server">
+		  	<include name="signserver.ear"/>
+		  </fileset>
+		  <fileset dir="src/appserver/jboss">
+		  	<include name="signserver-ds.xml"/>
+		  	<include name="signserver-mysql-cluster-ds.xml"/>
+		  </fileset>
+	   </copy>
+	   <property name="pkgdist.webconfdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/webconf"/>
+	   <mkdir dir="${pkgdist.webconfdir}"/>	
+	   <copy todir="${pkgdist.webconfdir}" >
+	       <fileset dir="src/appserver/jboss">
+			 <include name="tomcat*/**"/>			 
+			</fileset>
+		</copy>	
+		<property name="pkgdist.gencertdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/genservercert"/>
+		<mkdir dir="${pkgdist.gencertdir}/lib"/>
+		<copy todir="${pkgdist.gencertdir}" >
+		   <fileset dir="${tmp}">
+		     <include name="${genServerCertJar}"/>			 
+		   </fileset>
+	    </copy>	
+		<copy todir="${pkgdist.gencertdir}/lib" >
+		   <fileset dir="${lib}/1.5">
+		     <include name="bcprov-jdk.jar"/>			 
+		   </fileset>
+	    </copy>	
+		
+		<property name="pkgdist.bindir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/bin" />
+		<mkdir dir="${pkgdist.bindir}/lib"/>
+		<copy todir="${pkgdist.bindir}">
+		   <fileset dir="bin">
+		     <include name="signserver.sh"/>
+		   	 <include name="signserver_cli.properties"/>
+		   	 <include name="log4j.properties"/>
+		   </fileset>
+	    </copy>		
+		<copy todir="${pkgdist.bindir}/lib">
+		   <fileset dir="${client.dist.dir}">
+		     <include name="signserver-cli.jar"/>		   	 
+		   </fileset>
+		   <fileset dir="${client.dist.dir}/lib">
+			 <include name="jbossall-client.jar"/>		   	 
+		   </fileset>
+		   <fileset dir="${lib}">
+		     <include name="log4j.jar"/>
+			 <include name="ejbca-util.jar"/>
+			 <include name="commons-lang-2.0.jar"/>
+		  </fileset>
+	      <fileset dir="${lib}/1.5">
+			 <include name="bcprov-jdk.jar"/>
+			 <include name="bcmail-jdk.jar"/>
+		  </fileset>
+		  <fileset dir="${lib}/ext/ejb">
+		     <include name="jboss-ejb3x.jar"/>
+		  </fileset>	
+	      <fileset dir="${lib}/ext/james">
+			 <include name="james-2.3.1.jar"/>
+		  </fileset>
+	    </copy>	
+    </target>
+	
 	 <!--                                                   -->
 	 <!-- Target used to build the Performace-test          -->
 	 <!--                                                   -->
-	  <target name="performanceTestTool" depends="signserver:compile" unless="buildMailSigner">
+	  <target name="PDFPerformanceTestTool" depends="signserver:compile" unless="buildMailSigner" if="pdfperformancetest.conditionenabled">
 	    <mkdir dir="${performanceTestToolBuild}"/>
 	    <javac srcdir="${src.java}" destdir="${performanceTestToolBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
 		   <include name="org/signserver/client/PerformanceTest*"/>
@@ -572,7 +663,7 @@ database.password      = ${database.password}
 	 <!--                                                   -->
 	 <!-- Target Used to test the TimeStamp communication     -->
 	 <!--                                                   -->
-	  <target name="timeStampTestClient" depends="signserver:compile" unless="buildMailSigner">
+	  <target name="timeStampTestClient" depends="signserver:compile" unless="buildMailSigner" if="timestampclient.conditionenabled" >
 	    <mkdir dir="${timeStampClientBuild}"/>
 	    <javac srcdir="${src.java}" destdir="${timeStampClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
 		   <include name="org/signserver/client/TimeStampClient.java"/> 	       

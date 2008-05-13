@@ -28,7 +28,8 @@
 	
     <import file="bin/jboss.xml" />
 
-
+    <property name="signserver.configfile" value="/etc/signserver/signserver.conf" />
+	
     <!-- set global properties for this build -->
 	<property name="tmp" value="./tmp" />
     <property name="bin" value="./${tmp}/bin" />
@@ -51,6 +52,7 @@
     <property name="test.src.dir" location="${src}/test" />
     <property name="server.dist.dir" location="dist-server" />
     <property name="client.dist.dir" location="dist-client" />
+	<property name="pkg.dist.dir" location="dist-pkg" />
     <property name="apidoc" value="./doc/api" />  
 	
 	<property name="custom.commandfactory" value="org.signserver.cli.DefaultSignServerCommandFactory"/>
@@ -110,6 +112,7 @@
         <delete dir="${build}" />
         <delete dir="${server.dist.dir}" />
         <delete dir="${client.dist.dir}" />
+    	<delete dir="${pkg.dist.dir}" />
         <delete dir="${apidoc}" />
         <delete dir="${tmp}"/>	
     </target>
@@ -157,6 +160,7 @@
 				<replacestring from="@healthcheck.minimumfreememory@" to="${healthcheck.minimumfreememory}"/>
 				<replacestring from="@healthcheck.checkdbstring@" to="${healthcheck.checkdbstring}"/>
 				<replacestring from="@SignServerCommandFactory@" to="${custom.commandfactory}"/>
+				<replacestring from="@signserver.configfile@" to="${signserver.configfile}"/>
 			</tokenfilter>
 			</filterchain>
 	    </copy>
@@ -199,7 +203,13 @@
 	    </jar>    	
     </target>
  
-    
+	   <!-- =================================================================== -->
+	    <!-- Build preparation for package distribution                         -->
+	    <!-- =================================================================== -->
+    	    <target name="pkgdist" depends="signserver, mailsigner, signserver-pkgdist, mailsigner-pkgdist">
+
+    	    </target>
+    		
     <!-- =================================================================== -->
     <!-- Build Javadoc part                                                  -->
     <!-- =================================================================== -->

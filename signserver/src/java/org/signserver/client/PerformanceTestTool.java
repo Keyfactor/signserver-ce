@@ -58,6 +58,7 @@ public class PerformanceTestTool {
 		String statisticsDirectory = null;
 		File dir = null;
 		final String info = "Parameters: <directory of CSV files from statistics collection> <time interval size in seconds> <offset in seconds from the first value>\n";
+		
 		if (args.length>1) {
 			statisticsDirectory = args[1];
 			dir = new File(statisticsDirectory);
@@ -208,8 +209,9 @@ public class PerformanceTestTool {
 			baseURLString = "http://localhost:8080/signserver/";
 		}
 		String info =
-			"To enable collection of statistics on the target server(s) " + "GLOB.STATISTICS.ENABLED" + ", " + "STATISTICS.MINFLUSHINTERVAL" +
-			" and " + "GLOB.STATISTICS.OUTPUTDIR" + " should be set.\n\n" +
+			"To enable collection of statistics on the target server(s) be sure it's configured properly. \n " +
+			"See the file 'sample-configs/qs_pdfsigner_withcsvfilestatistics_configuration.properties for an example configuration"+
+			"\n\n" +
 			"Parameters: <runtime for each test seconds> <number of threads> <base-URL>\n\n" +
 			"Runtime: " + runTime/1000 + " seconds\n" +
 			"Threads: " + threads + "\n" +
@@ -231,7 +233,7 @@ public class PerformanceTestTool {
 		for (int i = 0; i<numberOfThreads; i++) {
 			PerformanceTestTask performanceTestTask = null;
 			try {
-				Class implClass = Class.forName(className);
+				Class<?> implClass = Class.forName(className);
 				performanceTestTask = (PerformanceTestTask) implClass.newInstance();
 			} catch (Exception e) {
 				e.printStackTrace();

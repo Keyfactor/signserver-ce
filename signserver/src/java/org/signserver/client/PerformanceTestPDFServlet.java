@@ -169,14 +169,12 @@ public class PerformanceTestPDFServlet implements PerformanceTestTask {
 	private final int COLUMN_INVOCATIONS_PER_SECOND = 2;
 	private final int COLUMN_AVERAGE_PDF_SIZE = 4;
 	private final int COLUMN_DATAFLOW = 5;
-	private final String className = "org.signserver.server.signers.PDFSigner";
+	
 
 	/** @see org.signserver.client.PerformanceTestTask */
 	public void createDiagrams(String currentFileName, String statisticsDirectory, ArrayList<String> explanationRow, ArrayList<ArrayList<Double>> processedData) {
 		explanationRow.set(COLUMN_DATAFLOW, "Data throughput (bytes/second)");	// Set nicer explanation
-		if (!currentFileName.contains(className)) {
-			return;
-		}
+
 		if (!statisticsDirectory.endsWith("/")) {
 			statisticsDirectory += "/";
 		}
@@ -218,7 +216,7 @@ public class PerformanceTestPDFServlet implements PerformanceTestTask {
 		renderer2.setSeriesPaint(0, Color.BLUE);
 		plot.setRenderer(1, renderer2);
 		final ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
-		final File file = new File(statisticsDirectory + className + "-" + xRow + "" + y1Row + "" + y2Row + ".png");
+		final File file = new File(statisticsDirectory + "PDF Signatures" + "-" + xRow + "" + y1Row + "" + y2Row + ".png");
         int imageWidth = 800;
         int imageHeight = 600;
         try {

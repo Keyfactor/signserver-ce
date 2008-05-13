@@ -50,6 +50,12 @@ public class RequestContext implements Serializable{
 	public static final String CALLED_FROM_CLI    = "CALLED_FROM_CLI";
 	
 	/**
+	 * The current statistics event that a worker can use to add custom data.
+	 * Is null if no statistics is performed.
+	 */
+	public static final String STATISTICS_EVENT    = "STATISTICS_EVENT";
+	
+	/**
 	 * Default constructor creating an empty context.
 	 */
 	public RequestContext(){}

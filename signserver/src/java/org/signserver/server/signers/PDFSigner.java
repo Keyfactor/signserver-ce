@@ -35,9 +35,9 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
-import org.signserver.common.StatisticsCollector;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.statistics.Event;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfReader;
@@ -60,7 +60,7 @@ public class PDFSigner extends BaseSigner{
 	
     /** Log4j instance for actual implementation class */
     public transient Logger log = Logger.getLogger(this.getClass());
-	private final StatisticsCollector statisticsCollector = StatisticsCollector.getInstance(this.getClass().getName(), "PDF size in bytes");
+	//private final CSVFileStatisticsCollector cSVFileStatisticsCollector = CSVFileStatisticsCollector.getInstance(this.getClass().getName(), "PDF size in bytes");
     
 	//Private Property constants
 	private static final String REASON = "REASON";
@@ -124,8 +124,9 @@ public class PDFSigner extends BaseSigner{
 			byte[] pdfbytes = (byte[])sReq.getRequestData();
 			byte[] fpbytes = CertTools.generateSHA1Fingerprint(pdfbytes);
 			String fp = new String(Hex.encode(fpbytes));
-			if (statisticsCollector != null) {
-				statisticsCollector.addRow(""+pdfbytes.length);
+			if (requestContext.get(RequestContext.STATISTICS_EVENT) != null) {
+				Event event = (Event) requestContext.get(RequestContext.STATISTICS_EVENT);
+				event.addCustomStatistics("PDFBYTES", pdfbytes.length);				
 			}
 			try {
 				// Thanks to Ezizmuhamet Muhammetkuliyev for this PDF signing snippet 

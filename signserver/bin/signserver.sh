@@ -92,6 +92,10 @@ done
 for i in "${SIGNSRV_HOME}"/lib/*.jar
 do
 	CP="$i":"$CP"
+done´
+for i in "${SIGNSRV_HOME}"/bin/lib/*.jar
+do
+	CP="$i":"$CP"
 done
 for i in "${SIGNSRV_HOME}"/lib/1.5/*.jar
 do

@@ -6,7 +6,7 @@ if "%SIGNSERVER_HOME%" == "" (
   rem It must work to call both as bin\signserver.cmd or from within bin
   if not exist signserver.cmd set SIGNSRV_HOME=.
  ) else (
-    set SIGNSRV_HOME="%SIGNSERVER_HOME%"
+    set SIGNSRV_HOME=%SIGNSERVER_HOME%
 ) 
   
 set SIGNSERVER_CP=%SIGNSRV_HOME%\lib\log4j.jar;%SIGNSRV_HOME%\lib\1.5\bcprov-jdk.jar;%SIGNSRV_HOME%\lib\1.5\bcmail-jdk.jar;%SIGNSRV_HOME%\lib\ejbca-util.jar;%SIGNSRV_HOME%\lib\commons-lang-2.0.jar;%SIGNSRV_HOME%\lib\ext\ejb\jboss-ejb3x.jar;%SIGNSRV_HOME%\lib\ext\james\james-2.3.1.jar

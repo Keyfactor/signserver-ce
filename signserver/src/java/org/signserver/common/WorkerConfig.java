@@ -14,6 +14,8 @@
 
 package org.signserver.common;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Properties;
@@ -103,14 +105,28 @@ public  class WorkerConfig extends UpgradeableDataHashMap {
 	
 	
 	/**
-	 * Returns all the signers propertis.
-	 * @return the signers properties.
+	 * Returns all the workers properties.
+	 * @return the workers properties.
 	 */
 	public Properties getProperties(){		
 		return ((Properties) data.get(PROPERTIES));
 	}
 	
-
+	/**
+	 * Returns the specific property from the configuration
+	 * @return the value corresponding to that property.
+	 */
+	public String getProperty(String key){		
+		return ((Properties) data.get(PROPERTIES)).getProperty(key);
+	}
+	
+	/**
+	 * Returns the specific property from the configuration with a defaultValue option
+	 * @return the value corresponding to that property.
+	 */
+	public String getProperty(String key, String defaultValue){		
+		return ((Properties) data.get(PROPERTIES)).getProperty(key,defaultValue);
+	}
 	
 	/**
 	 * Special method to ge access to the complete data field
@@ -143,13 +159,36 @@ public  class WorkerConfig extends UpgradeableDataHashMap {
 			nodeId = System.getenv(NODEID_ENVVAR);
 			
 			if(nodeId == null){
+				File confFile = new File(getSignServerConfigFile());
+			    if(confFile.exists() && confFile.isFile() && confFile.canRead()){
+			    	try {
+						nodeId = SignServerUtil.readValueFromConfigFile("signserver_nodeid",confFile);
+					} catch (IOException e) {
+						log.error("Error reading node id from signserver configuration file '" + getSignServerConfigFile() + "' : " + e.getMessage());
+					}
+			    }
+			}
+			
+			if(nodeId == null){
 				log.error("Error, required environment variable " + NODEID_ENVVAR + " isn't set.");
 			}
 		}
 		
 		return nodeId;
 	}
-    private static String nodeId = null;
+
+	private static String nodeId = null;
+    
+    private static String getSignServerConfigFile(){
+    	if(SIGNSERVER_CONFIGFILE.startsWith("@signserver.configfile")){
+    		return "/etc/signserver/signserver.conf";
+    	}
+    	
+    	return SIGNSERVER_CONFIGFILE;
+    }
+    
+    private static String SIGNSERVER_CONFIGFILE = "@signserver.configfile@";
+    
 	
 
 }

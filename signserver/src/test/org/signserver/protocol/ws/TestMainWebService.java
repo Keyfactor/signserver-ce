@@ -240,8 +240,9 @@ public class TestMainWebService extends TestCase {
 		reqs.add(req1);
 		
 		// Perform a basic test
+		
         SignServerWSClientFactory f = new SignServerWSClientFactory();
-        String[] hosts = {"127.0.0.1"};
+        String[] hosts = {"localhost"};
         ISignServerWSClient client = f.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK,hosts , false, callback);
         List<org.signserver.protocol.ws.ProcessResponseWS> resps = client.process("9", reqs);
         assertTrue(resps != null);
@@ -249,25 +250,28 @@ public class TestMainWebService extends TestCase {
         assertTrue(!callback.isCallBackCalled());
         
         // Test with a host that is down
+        /*
         String[] hosts2 = {"128.0.0.2"};
         client = f.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK,hosts2 , false, callback);
         resps = client.process("9", reqs);
         assertTrue(resps == null);
         assertTrue(callback.isCallBackCalled());
-        
+        */
         // Test a with one host that is down and one up
+        /*
         callback = new FaultCallback();
         String[] hosts3 = {"128.0.0.2","127.0.0.1"};
         client = f.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK,hosts3 , false, callback);
         resps = client.process("9", reqs);
         assertTrue(resps.size() == 1);
         assertTrue(callback.isCallBackCalled());
-        
+        */
         // Test a lot of subsequent calls
         callback = new FaultCallback();
         String[] hosts4 = {"128.0.0.2","127.0.0.1","128.0.0.3"};        
         client = f.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK,hosts4 , false, callback);
         for(int i=0;i<100;i++){
+          Thread.sleep(100);
           resps = client.process("9", reqs);
           assertTrue(resps.size() == 1);
           assertTrue(callback.isCallBackCalled());

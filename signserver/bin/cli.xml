@@ -56,7 +56,7 @@
         <attribute name="arg"/>
         <sequential>
         <echo message="@{name} @{arg}"/>
-        <java classname="se.primeKey.signserver.primekey.@{name}" classpathref="classpath">
+        <java classname="se.primeKey.signserver.cli.@{name}" classpathref="classpath">
             <arg line="@{arg}"/>
         </java>
         </sequential>

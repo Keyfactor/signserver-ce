@@ -324,9 +324,9 @@ public class TestSignServerCLI extends TestCase {
 	
 	public void testRemoveGroupKeyService(){
 		// Remove and restore
-		assertSuccessfulExecution(new String[] {"setproperties",
-				signserverhome +"/src/test/test_rem_groupkeyservice_configuration.properties"});		
-		assertTrue(TestUtils.grepTempOut("Removing the property NAME  for worker 1023"));
+		assertSuccessfulExecution(new String[] {"removeworker",
+				"Test1"});		
+		assertTrue(TestUtils.grepTempOut("Property 'NAME' removed"));
 				
 		assertSuccessfulExecution(new String[] {"reload",
 				TESTGSID});

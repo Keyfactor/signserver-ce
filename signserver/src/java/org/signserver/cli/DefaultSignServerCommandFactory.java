@@ -64,6 +64,9 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         if (args[0].equalsIgnoreCase("removeproperty")) {
             return new RemovePropertyCommand(args);
         }
+        if (args[0].equalsIgnoreCase("removeworker")) {
+            return new RemoveWorkerPropertyCommand(args);
+        }        
         if (args[0].equalsIgnoreCase("dumpproperties")) {
             return new DumpPropertiesCommand(args);
         }
@@ -161,7 +164,7 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
 	    	if(CommonAdminInterface.isSignServerMode()){
 	    		usageString +="| resync ";
 	    	}
-	    	usageString +="| setproperty | setproperties | setpropertyfromfile | removeproperty | dumpproperties ";
+	    	usageString +="| setproperty | setproperties | setpropertyfromfile | removeproperty | removeworker | dumpproperties ";
 	    	if(CommonAdminInterface.isSignServerMode()){
 	    	  usageString +="| listauthorizedclients | addauthorizedclient | removeauthorizedclient ";
 	    	}else{

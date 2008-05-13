@@ -45,7 +45,7 @@ public class RemovePropertyCommand extends BaseCommand {
      */
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
         if (args.length != 3) {
-	       throw new IllegalAdminCommandException("Usage: signserver <-host hostname (optional)> removeproperty  <signerid | signerName | global | node> <propertykey>\n" + 
+	       throw new IllegalAdminCommandException("Usage: signserver <-host hostname (optional)> removeproperty  <workerid | workerName | global | node> <propertykey>\n" + 
 	       		                                  "Example 1 : signserver removeproperty 1 defaultKey\n" +
 	                                              "Example 2 : signserver removeproperty -host node3.someorg.com mySigner defaultKey\n\n");		       
 	    }	
@@ -97,8 +97,17 @@ public class RemovePropertyCommand extends BaseCommand {
     	this.getOutputStream().println("removing the global property " + key + " with scope " + scope + "\n");
     	this.getOutputStream().println("See current configuration with the getconfig command, activate it with the reload command");
     
-    	getCommonAdminInterface(hostname).removeGlobalProperty(scope, key);
-		
+    	if(key.toUpperCase().startsWith("GLOB.")){
+    		key = key.substring("GLOB.".length());
+    	}
+    	if(key.toUpperCase().startsWith("NODE.")){
+    		key = key.substring("NODE.".length());
+    	}
+    	if(getCommonAdminInterface(hostname).removeGlobalProperty(scope, key)){
+    		this.getOutputStream().println("  Property Removed\n");	
+    	}else{
+    		this.getOutputStream().println("  Error, the property "+ key + " doesn't seem to exist\n");
+    	}    	
 	}
 	
 	private void removeWorkerProperty(int workerId, String hostname, String propertykey) throws RemoteException, Exception{

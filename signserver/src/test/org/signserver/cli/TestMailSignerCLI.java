@@ -189,9 +189,9 @@ public class TestMailSignerCLI extends TestCase {
 	public void testRemoveDummyMailSigner(){
 
 		// Remove and restore
-		assertSuccessfulExecution(new String[] {"setproperties",
-				signserverhome +"/src/test/test_rem_dummymailsigner_configuration.properties"});		
-		assertTrue(TestUtils.grepTempOut("Removing the property NAME  for worker 1000"));
+		assertSuccessfulExecution(new String[] {"removeworker",
+				"dummyMailSigner1000"});		
+		assertTrue(TestUtils.grepTempOut("Property 'NAME' removed"));
 		
 		assertSuccessfulExecution(new String[] {"getconfig",
                 TESTTSID});	

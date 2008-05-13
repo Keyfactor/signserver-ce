@@ -9,6 +9,7 @@
 	<property name="jboss.lib.dir" location="${appserver.home}/server/${jboss.config}/lib"/>
 	<property name="jboss.server.home.dir" location="${jboss.deploy.dir}/.."/>
 	<property name="keystore.file" value="conf/keystore/keystore.jks"/>
+	<property name="truststore.file" value="conf/keystore/truststore.jks"/>
 	<property name="remote.keystore.path" value="conf"/>
 	
 	<!--
@@ -28,7 +29,6 @@
         <fail message="'appserver.home' (${appserver.home}) does not seem to be a valid JBoss home directory" unless="appserver.home.valid"/>
         <echo message="Using appserver.home : ${appserver.home}"/>
 	</target>
-
 
 
 	<target name="j2ee:configure"  unless="deploy.hostname.node1" description="Configure the J2EE server with appropriate settings">
@@ -61,7 +61,21 @@
         </copy>
     	<move file="${tmp}/signserver-mysql-cluster-ds.xml" tofile="${tmp}/signserver-ds.xml"/>
 	</target>
-	
+
+
+	<target name="j2ee:deploytruststore">
+		<!-- copy the truststore file to the server -->
+		<available file="${truststore.keystore}" property="truststore.file.present"/>
+		<fail message="Missing JKS truststorestore file in 'truststore.keystore'" unless="truststore.file.present"/>
+		<condition property="javatrust.password.present">
+			<isset property="java.trustpassword"/> 
+		</condition>
+		<fail message="Missing Truststore password '${java.trustpassword}'" unless="javatrust.password.present"/>
+		
+		<copy file="${truststore.keystore}" tofile="${jboss.server.home.dir}/${truststore.file}" overwrite="true"/>
+		<chmod file="${jboss.server.home.dir}/${truststore.file}" perm="600"/>		
+	</target>
+			
 	<target name="j2ee:web-configure"  unless="j2ee.web-nohttps"  description="Configure the servlet container">
         <echo message="Using JBoss deploy directory ${jboss.deploy.dir}"/>
 
@@ -75,11 +89,12 @@
 
 		<copy file="${httpsserver.keystore}" tofile="${jboss.server.home.dir}/${keystore.file}"/>
         <!-- detect jboss web version -->
-        <available file="${jboss.deploy.dir}/jbossweb-tomcat41.sar" type="dir" property="jboss.web" value="tomcat41"/>
-        <available file="${jboss.deploy.dir}/jbossweb-tomcat50.sar" type="dir" property="jboss.web" value="tomcat50"/>
         <available file="${jboss.deploy.dir}/jbossweb-tomcat55.sar" type="dir" property="jboss.web" value="tomcat55"/>
         <available file="${jboss.deploy.dir}/jboss-web.deployer" type="dir" property="jboss.web" value="tomcat60"/>
         <fail message="Could not detect JBoss Servlet container version" unless="jboss.web"/>
+		
+		<!-- Also deploy the truststore -->
+        <antcall target="j2ee:deploytruststore" />
 		
 		<!-- configure the tomcat bundle -->
 		<!-- For JBoss 4.0.x tomcat is bundled in jbossweb-tomcat55.sar dir -->
@@ -92,6 +107,8 @@
 			<tokenfilter>
 		    	<replacestring from="@keystore.file@" to="${keystore.file}"/>
 		    	<replacestring from="@httpsserver.password@" to="${httpsserver.password}"/>
+				<replacestring from="@truststore.file@" to="${truststore.file}"/>
+				<replacestring from="@java.trustpassword@" to="${java.trustpassword}"/>
 		    	<replacestring from="@httpserver.pubhttp@" to="${httpserver.pubhttp}"/>
 		    	<replacestring from="@httpserver.pubhttps@" to="${httpserver.pubhttps}"/>
 		    	<replacestring from="@httpserver.privhttps@" to="${httpserver.privhttps}"/>
@@ -244,6 +261,17 @@
 		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${remote.keystore.path}" passphrase="${tmp.passphrase}">
 		     	<fileset file="tmp/keystore.jks"/>   		
 		   </scp>
+		<available file="${truststore.keystore}" property="truststore.file.present"/>
+		<fail message="Missing JKS truststore file in '${basedir}/${truststore.keystore}'" unless="truststore.file.present"/>
+		<condition property="truststore.password.present">
+			<isset property="truststore.password"/> 
+		</condition>
+		<fail message="Missing JKS password '${truststore.password}'" unless="truststore.password.present"/>
+		<copy file="${truststore.keystore}" tofile="tmp/truststore.jks"/>
+		<scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${remote.keystore.path}" passphrase="${tmp.passphrase}">
+		     	<fileset file="tmp/truststore.jks"/>   		
+		   </scp>
         <!-- detect jboss web version -->
 		
 		<!-- configure the tomcat bundle -->
@@ -254,6 +282,8 @@
 			<tokenfilter>
 		    	<replacestring from="@keystore.file@" to="${remote.keystore.path}/keystore.jks"/>
 		    	<replacestring from="@httpsserver.password@" to="${httpsserver.password}"/>
+				<replacestring from="@truststore.file@" to="${truststore.file}"/>
+				<replacestring from="@java.trustpassword@" to="${java.trustpassword}"/>
 		    	<replacestring from="@httpserver.pubhttp@" to="${httpserver.pubhttp}"/>
 		    	<replacestring from="@httpserver.pubhttps@" to="${httpserver.pubhttps}"/>
 		    	<replacestring from="@httpserver.privhttps@" to="${httpserver.privhttps}"/>

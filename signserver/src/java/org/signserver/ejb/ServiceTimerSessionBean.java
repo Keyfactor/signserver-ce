@@ -159,7 +159,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 			}
 
 			if(run){
-				if(serviceConfig != null){
+				if(serviceConfig != null){					
 					try{
 						if(timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE){				
 							timedService.work();

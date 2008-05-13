@@ -50,7 +50,7 @@ public class ListAuthorizedClientsCommand extends BaseCommand {
         	int signerid = getWorkerId(args[1], hostname);
         	checkThatWorkerIsProcessable(signerid,hostname);
         	
-        	WorkerConfig config = this.getCommonAdminInterface(hostname).getCurrentSignerConfig(signerid);
+        	WorkerConfig config = this.getCommonAdminInterface(hostname).getCurrentWorkerConfig(signerid);
         	
         	this.getOutputStream().println(
          			                       "OBSERVE that this command displays the current configuration which\n"+

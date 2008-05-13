@@ -56,6 +56,8 @@ import org.signserver.server.IAuthorizer;
 import org.signserver.server.IProcessable;
 import org.signserver.server.IWorker;
 import org.signserver.server.WorkerFactory;
+import org.signserver.server.statistics.Event;
+import org.signserver.server.statistics.StatisticsManager;
 
 /**
  * The main worker session bean
@@ -114,6 +116,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
         if(processable.getStatus().getActiveSignerConfig().getProperties().getProperty(SignServerConstants.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
         	throw new CryptoTokenOfflineException("Error Signer : " + workerId + " is disabled and cannot perform any signature operations");
         }
+        WorkerConfig awc = processable.getStatus().getActiveSignerConfig();
+        Event event = StatisticsManager.startEvent(workerId, awc, em);
+        requestContext.put(RequestContext.STATISTICS_EVENT, event);
         
         ProcessResponse res = null;
 		try {
@@ -131,6 +136,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	        	}
 	        }
 	        
+	        StatisticsManager.endEvent(workerId, awc, em, event);
 	        if(res instanceof ISignResponse){
 	          log.info("Worker " + workerId + " Processed request " + ((ISignResponse) res).getRequestID() + " successfully");
 	        }else{
@@ -177,7 +183,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 */
 	public void reloadConfiguration(int workerId) {
 		if(workerId == 0){
-		  globalConfigurationSession.reload();
+		  globalConfigurationSession.reload();		  
 		}else{
 			WorkerFactory.getInstance().reloadWorker(workerId, workerConfigService, globalConfigurationSession,em);
 		}
@@ -186,6 +192,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 		  serviceTimerSession.unload(workerId);
 		  serviceTimerSession.load(workerId);
 		}
+		
+		StatisticsManager.flush(workerId);
 	}
 
 	/* (non-Javadoc)
@@ -226,17 +234,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	}
 
 	/* (non-Javadoc)
-	 * @see org.signserver.ejb.ISignServerSession#getCurrentSignerConfig(int)
+	 * @see org.signserver.ejb.IWorkerSession#getCurrentSignerConfig(int)
 	 */
-	public WorkerConfig getCurrentSignerConfig(int signerId){
-        return getSignerConfig(signerId); 				
+	public WorkerConfig getCurrentWorkerConfig(int signerId){
+        return getWorkerConfig(signerId); 				
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#setWorkerProperty(int, java.lang.String, java.lang.String)
 	 */
 	public void setWorkerProperty(int workerId, String key, String value){
-		WorkerConfig config = getSignerConfig(workerId);
+		WorkerConfig config = getWorkerConfig(workerId);
 		config.setProperty(key.toUpperCase(),value);
 		workerConfigService.setWorkerConfig(workerId, config);		
 	}
@@ -246,7 +254,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 */	
 	public boolean removeWorkerProperty(int workerId, String key){
 		boolean result = false;
-		WorkerConfig config = getSignerConfig(workerId);
+		WorkerConfig config = getWorkerConfig(workerId);
 				
 		result = config.removeProperty(key.toUpperCase());
 		if(config.getProperties().size() == 0){
@@ -262,14 +270,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#getAuthorizedClients(int)
 	 */
 	public Collection<AuthorizedClient> getAuthorizedClients(int signerId){
-		return new ProcessableConfig( getSignerConfig(signerId)).getAuthorizedClients();
+		return new ProcessableConfig( getWorkerConfig(signerId)).getAuthorizedClients();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#addAuthorizedClient(int, org.signserver.common.AuthorizedClient)
 	 */
 	public void addAuthorizedClient(int signerId, AuthorizedClient authClient){
-		WorkerConfig config = getSignerConfig(signerId);
+		WorkerConfig config = getWorkerConfig(signerId);
 		(new ProcessableConfig(config)).addAuthorizedClient(authClient);
 		workerConfigService.setWorkerConfig(signerId, config);		
 	}
@@ -279,7 +287,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 */
 	public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient){
 		boolean result = false;
-		WorkerConfig config = getSignerConfig(signerId);
+		WorkerConfig config = getWorkerConfig(signerId);
 		
 		
 		result = (new ProcessableConfig(config)).removeAuthorizedClient(authClient);
@@ -326,7 +334,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#uploadSignerCertificate(int, java.security.cert.X509Certificate, java.lang.String)
 	 */
 	public void uploadSignerCertificate(int signerId, X509Certificate signerCert, String scope){		
-		WorkerConfig config = getSignerConfig(signerId);
+		WorkerConfig config = getWorkerConfig(signerId);
 
 		( new ProcessableConfig(config)).setSignerCertificate(signerCert,scope);
 		workerConfigService.setWorkerConfig(signerId, config);
@@ -337,7 +345,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 */
 	public void uploadSignerCertificateChain(int signerId, Collection<Certificate> signerCerts, String scope){		
 		
-		WorkerConfig config = getSignerConfig(signerId);
+		WorkerConfig config = getWorkerConfig(signerId);
 		(new ProcessableConfig( config)).setSignerCertificateChain(signerCerts, scope);
 		workerConfigService.setWorkerConfig(signerId, config);
 	}
@@ -406,13 +414,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	}	
 	
 	
-	private WorkerConfig getSignerConfig(int signerId){
-		WorkerConfig signerConfig = workerConfigService.getWorkerConfig(signerId);
-	    if(signerConfig == null){
+	private WorkerConfig getWorkerConfig(int signerId){
+		WorkerConfig workerConfig = workerConfigService.getWorkerConfig(signerId);
+	    if(workerConfig == null){
 	    	workerConfigService.create(signerId, WorkerConfig.class.getName());
-			signerConfig = workerConfigService.getWorkerConfig(signerId);
+	    	workerConfig = workerConfigService.getWorkerConfig(signerId);
 		}
-		return signerConfig;	
+		return workerConfig;	
 	}
 	
 

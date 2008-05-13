@@ -175,14 +175,14 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.ejb.WorkerSessionBean#getCurrentSignerConfig(int)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getCurrentSignerConfig(int)
 	 */	
-	public WorkerConfig getCurrentSignerConfig(int signerId)
+	public WorkerConfig getCurrentWorkerConfig(int signerId)
 			throws RemoteException {
 		WorkerConfig retval = null;
 		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().getCurrentSignerConfig(signerId);
+			retval = getIMailSignerRMI().getCurrentWorkerConfig(signerId);
 		}
 		if(isSignServerMode()){
-			retval = getWorkerSession().getCurrentSignerConfig(signerId);		
+			retval = getWorkerSession().getCurrentWorkerConfig(signerId);		
 		}
 		return retval;
 	}

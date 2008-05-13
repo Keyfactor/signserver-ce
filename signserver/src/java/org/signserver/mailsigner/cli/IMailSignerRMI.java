@@ -146,7 +146,7 @@ public interface IMailSignerRMI extends Remote{
 	 * 
 	 *  
 	 */
-	public WorkerConfig getCurrentSignerConfig(int signerId) throws RemoteException;
+	public WorkerConfig getCurrentWorkerConfig(int signerId) throws RemoteException;
 	
 	/**
 	 * Sets a parameter in a worker configuration

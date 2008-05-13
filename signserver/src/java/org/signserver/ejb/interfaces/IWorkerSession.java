@@ -100,7 +100,7 @@ public interface IWorkerSession  {
 			InvalidWorkerIdException;
 
 	/**
-	 * Returns the current configuration of a signer.
+	 * Returns the current configuration of a worker.
 	 * 
 	 * Observe that this config might not be active until a reload command have been excecuted.
 	 * 
@@ -109,7 +109,7 @@ public interface IWorkerSession  {
 	 * @return the current (not always active) configuration
 	 * 
 	 */
-	WorkerConfig getCurrentSignerConfig(int signerId);
+	WorkerConfig getCurrentWorkerConfig(int signerId);
 
 	/**
 	 * Sets a parameter in a workers configuration

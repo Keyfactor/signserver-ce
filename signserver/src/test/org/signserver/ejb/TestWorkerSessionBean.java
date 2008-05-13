@@ -139,7 +139,7 @@ public class TestWorkerSessionBean extends TestCase {
 	public void test05SetProperty() throws Exception{		
 		sSSession.setWorkerProperty(3,"test", "Hello World");
 		
-		Properties props = sSSession.getCurrentSignerConfig(3).getProperties();
+		Properties props = sSSession.getCurrentWorkerConfig(3).getProperties();
 		assertTrue(props.getProperty("TEST").equals("Hello World"));
 	}
 	/*
@@ -148,7 +148,7 @@ public class TestWorkerSessionBean extends TestCase {
 	public void test06RemoveProperty() throws Exception{		
 		sSSession.removeWorkerProperty(3,"test");
 		
-		Properties props = sSSession.getCurrentSignerConfig(3).getProperties();
+		Properties props = sSSession.getCurrentWorkerConfig(3).getProperties();
 		assertNull(props.getProperty("test"));
 	}
 	/*
@@ -158,7 +158,7 @@ public class TestWorkerSessionBean extends TestCase {
 		AuthorizedClient authClient = new AuthorizedClient("123456","CN=testca");
 		sSSession.addAuthorizedClient(3,authClient);
 		
-		Collection<?> result = new ProcessableConfig(sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
+		Collection<?> result = new ProcessableConfig(sSSession.getCurrentWorkerConfig(3)).getAuthorizedClients();
 		boolean exists = false;
 		Iterator<?> iter =result.iterator();
 		while(iter.hasNext()){
@@ -172,11 +172,11 @@ public class TestWorkerSessionBean extends TestCase {
 	 * Test method for 'org.signserver.ejb.SignSessionBean.RemoveAuthorizedClient(int, AuthorizedClient)'
 	 */
 	public void test08RemoveAuthorizedClient() throws Exception{		
-		int initialsize = new ProcessableConfig( sSSession.getCurrentSignerConfig(3)).getAuthorizedClients().size();
+		int initialsize = new ProcessableConfig( sSSession.getCurrentWorkerConfig(3)).getAuthorizedClients().size();
 		AuthorizedClient authClient = new AuthorizedClient("123456","CN=testca");
 		assertTrue(sSSession.removeAuthorizedClient(3,authClient));
 		
-		Collection<?> result = new ProcessableConfig( sSSession.getCurrentSignerConfig(3)).getAuthorizedClients();
+		Collection<?> result = new ProcessableConfig( sSSession.getCurrentWorkerConfig(3)).getAuthorizedClients();
 		assertTrue(result.size() == initialsize-1);
 		
 		boolean exists = false;

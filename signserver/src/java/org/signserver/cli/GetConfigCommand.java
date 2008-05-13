@@ -101,7 +101,7 @@ public class GetConfigCommand extends BaseCommand {
 	}
 	
 	private void displayWorkerConfig(int workerId, String hostname) throws RemoteException, Exception{
-       	WorkerConfig config = this.getCommonAdminInterface(hostname).getCurrentSignerConfig(workerId);
+       	WorkerConfig config = this.getCommonAdminInterface(hostname).getCurrentWorkerConfig(workerId);
     	
     	        	
     	this.getOutputStream().println(

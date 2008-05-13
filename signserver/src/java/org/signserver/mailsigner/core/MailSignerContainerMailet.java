@@ -280,9 +280,9 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	}
 	
 	/**
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getCurrentSignerConfig(int)
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getCurrentWorkerConfig(int)
 	 */
-	public WorkerConfig getCurrentSignerConfig(int signerId) {		
+	public WorkerConfig getCurrentWorkerConfig(int signerId) {		
 		return PropertyFileStore.getInstance().getWorkerProperties(signerId);
 	}
 

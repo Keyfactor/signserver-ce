@@ -105,7 +105,7 @@ public class DumpPropertiesCommand extends BaseCommand {
 		iter = workers.iterator();
 		while(iter.hasNext()){
 			Integer next = (Integer) iter.next();
-			WorkerConfig workerConfig = getCommonAdminInterface(hostname).getCurrentSignerConfig(next.intValue());
+			WorkerConfig workerConfig = getCommonAdminInterface(hostname).getCurrentWorkerConfig(next.intValue());
 			Enumeration<?> e = workerConfig.getProperties().keys();
 			Properties workerProps = workerConfig.getProperties();
 			while(e.hasMoreElements()){
@@ -125,7 +125,7 @@ public class DumpPropertiesCommand extends BaseCommand {
 			}
 		}	
 		
-		WorkerConfig workerConfig = getCommonAdminInterface(hostname).getCurrentSignerConfig(signerId);
+		WorkerConfig workerConfig = getCommonAdminInterface(hostname).getCurrentWorkerConfig(signerId);
 		Enumeration<?> e = workerConfig.getProperties().keys();
 		Properties workerProps = workerConfig.getProperties();
 		while(e.hasMoreElements()){

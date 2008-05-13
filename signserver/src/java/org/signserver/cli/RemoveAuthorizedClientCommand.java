@@ -67,7 +67,7 @@ public class RemoveAuthorizedClientCommand extends BaseCommand {
         		this.getOutputStream().println("  Error, the given client doesn't seem to exist\n");
         	}
         	
-        	printAuthorizedClients(getCommonAdminInterface(hostname).getCurrentSignerConfig(signerid));
+        	printAuthorizedClients(getCommonAdminInterface(hostname).getCurrentWorkerConfig(signerid));
         	
     		this.getOutputStream().println("\n\n");
         	

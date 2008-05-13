@@ -68,7 +68,7 @@ public class AddAuthorizedClientCommand extends BaseCommand {
         	getCommonAdminInterface(hostname).addAuthorizedClient(signerid,authClient);        	        	
         	
 
-        	printAuthorizedClients(getCommonAdminInterface(hostname).getCurrentSignerConfig(signerid));
+        	printAuthorizedClients(getCommonAdminInterface(hostname).getCurrentWorkerConfig(signerid));
         	
     		this.getOutputStream().println("\n\n");
         	

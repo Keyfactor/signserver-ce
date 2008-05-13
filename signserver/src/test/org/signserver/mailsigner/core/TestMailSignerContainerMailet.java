@@ -80,7 +80,7 @@ public class TestMailSignerContainerMailet extends TestCase {
 		
 		mc.setWorkerProperty(3, "TESTKEY", "TESTVAL");
 		
-		WorkerConfig wc = mc.getCurrentSignerConfig(3);
+		WorkerConfig wc = mc.getCurrentWorkerConfig(3);
 		MailSignerConfig msc = new MailSignerConfig(wc);
 		assertTrue(msc.getWorkerConfig().getProperties().getProperty("TESTKEY").equals("TESTVAL"));
 		
@@ -99,14 +99,14 @@ public class TestMailSignerContainerMailet extends TestCase {
 	public void testSetWorkerProperty() {
 		mc.setWorkerProperty(3,"test", "Hello World");
 		
-		Properties props = mc.getCurrentSignerConfig(3).getProperties();
+		Properties props = mc.getCurrentWorkerConfig(3).getProperties();
 		assertTrue(props.getProperty("TEST").equals("Hello World"));
 	}
 	
 	public void testRemoveWorkerProperty() {
 		mc.removeWorkerProperty(3,"test");
 		
-		Properties props = mc.getCurrentSignerConfig(3).getProperties();
+		Properties props = mc.getCurrentWorkerConfig(3).getProperties();
 		assertNull(props.getProperty("test"));
 	}
 

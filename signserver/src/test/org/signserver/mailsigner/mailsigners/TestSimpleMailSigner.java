@@ -145,7 +145,7 @@ public class TestSimpleMailSigner extends BaseMailSignerTester {
 
 	@Override
 	protected int getWorkerId() {
-		return 10;
+		return 11;
 	}
 	
 	@Override

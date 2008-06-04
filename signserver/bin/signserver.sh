@@ -92,7 +92,7 @@ done
 for i in "${SIGNSRV_HOME}"/lib/*.jar
 do
 	CP="$i":"$CP"
-done´
+done
 for i in "${SIGNSRV_HOME}"/bin/lib/*.jar
 do
 	CP="$i":"$CP"

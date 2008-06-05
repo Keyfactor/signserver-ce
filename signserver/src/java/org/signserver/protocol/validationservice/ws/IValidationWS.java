@@ -15,7 +15,6 @@ package org.signserver.protocol.validationservice.ws;
 
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
-import org.signserver.validationservice.common.ValidationServiceConstants.CertType;
 
 
 
@@ -42,7 +41,7 @@ public interface IValidationWS {
 	 * @throws OperationFailedException if operation couldn't be performed due to application error or communication problems
 	 * with underlying systems.
 	 */
-	ValidationResponse isValid(String serviceName, String base64Cert, CertType certType)
+	ValidationResponse isValid(String serviceName, String base64Cert, String certType)
 			throws IllegalRequestException, SignServerException;
 
 	/**

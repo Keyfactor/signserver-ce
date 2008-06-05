@@ -22,7 +22,6 @@ import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestAndResponseManager;
-import org.signserver.validationservice.common.ValidationServiceConstants.CertType;
 import org.signserver.validationservice.server.ICertificateManager;
 
 /**
@@ -40,7 +39,7 @@ public class ValidateRequest extends ProcessRequest {
 	// Not really used in this case.	
 	private transient ICertificate certificate;
 	private byte[] certificateData;
-	private ValidationServiceConstants.CertType certType;
+	private String certType;
 
     /**
      * Default constructor used during serialization
@@ -52,7 +51,7 @@ public class ValidateRequest extends ProcessRequest {
 	 * returning the complete chain of the certificates
 	 * @throws CertificateEncodingException 
 	 */
-	public ValidateRequest(ICertificate certificate, ValidationServiceConstants.CertType certType) throws CertificateEncodingException {
+	public ValidateRequest(ICertificate certificate, String certType) throws CertificateEncodingException {
 		super();
 		this.certificate = certificate;
 		this.certificateData = certificate.getEncoded();
@@ -81,7 +80,7 @@ public class ValidateRequest extends ProcessRequest {
 	/**
 	 * @return the certType the client want's to check that the certificate can be used for.
 	 */
-	public ValidationServiceConstants.CertType getCertType() {
+	public String getCertType() {
 		return certType;
 	}
 
@@ -95,14 +94,14 @@ public class ValidateRequest extends ProcessRequest {
 		int stringLen = in.readInt();
 		byte[] stringData = new byte[stringLen];
 		in.readFully(stringData);
-		this.certType = CertType.valueOf(new String(stringData,"UTF-8"));
+		this.certType = new String(stringData,"UTF-8");
 	}
 
 	public void serialize(DataOutput out) throws IOException {
 		out.writeInt(RequestAndResponseManager.RESPONSETYPE_VALIDATE);
 		out.writeInt(certificateData.length);
 		out.write(certificateData);
-		byte[] stringData = certType.name().getBytes("UTF-8");
+		byte[] stringData = certType.getBytes("UTF-8");
 		out.writeInt(stringData.length);
 		out.write(stringData);
 	}

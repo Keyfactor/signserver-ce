@@ -15,7 +15,6 @@ package org.signserver.validationservice.server;
 
 import org.signserver.common.WorkerConfig;
 import org.signserver.validationservice.common.ICertificate;
-import org.signserver.validationservice.common.ValidationServiceConstants;
 
 /**
  * 
@@ -36,9 +35,9 @@ public interface ICertTypeChecker {
 	 * requirements of a specific certificate type
 	 * 
 	 * @param cert the certificate to check
-	 * @param certType one of ValidationServiceConstants.CertType enum values
+	 * @param certType one of ValidationServiceConstants.CERTTYPE_ constants
 	 * @return true if the certificate fulfills the requirements otherwise false.
 	 */
-	boolean checkType(ICertificate cert, ValidationServiceConstants.CertType certType);
+	boolean checkType(ICertificate cert, String certType);
 
 }

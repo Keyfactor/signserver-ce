@@ -20,18 +20,21 @@ package org.signserver.validationservice.common;
  */
 public class ValidationServiceConstants {
 	
-	public enum CertType {
-		ANY,
-		/**
-		 * Certificate type used by client that want to check that the requested 
-		 * certificate might be used for signing.
-		 */
-		ELECTRONIC_SIGNATURE, 
-		/**
-		 * Certificate type used by client that want to check that the requested 
-		 * certificate might be used for identification.
-		 */
-		IDENTIFICATION};
+	/**
+	 * No specific certificate type.
+	 */
+	public static String CERTTYPE_ANY = "ANY"; 
+		
+	/**
+	 * Certificate type used by client that want to check that the requested 
+	 * certificate might be used for signing.
+	 */
+	public static String CERTTYPE_ELECTRONIC_SIGNATURE = "ELECTRONIC_SIGNATURE"; 
+	/**
+	 * Certificate type used by client that want to check that the requested 
+	 * certificate might be used for identification.
+	 */
+	public static String CERTTYPE_IDENTIFICATION = "IDENTIFICATION";
 
 	/**
 	 * Setting indicating the type of validation service to instantiate when

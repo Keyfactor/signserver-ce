@@ -58,7 +58,7 @@ import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.common.ValidationServiceConstants.CertType;
+import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.server.ICertificateManager;
 import org.signserver.validationservice.server.ValidationTestUtils;
 
@@ -206,7 +206,7 @@ public class TestMainWebService extends TestCase {
 		}catch(InvalidWorkerIdException_Exception e){}
 		
 		
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(validCert1), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(validCert1), ValidationServiceConstants.CERTTYPE_ANY);
 		
         req1 = new ProcessRequestWS(req);
 

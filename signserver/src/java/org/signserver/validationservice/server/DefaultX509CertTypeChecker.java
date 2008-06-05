@@ -17,7 +17,7 @@ import java.security.cert.X509Certificate;
 
 import org.signserver.common.WorkerConfig;
 import org.signserver.validationservice.common.ICertificate;
-import org.signserver.validationservice.common.ValidationServiceConstants.CertType;
+import org.signserver.validationservice.common.ValidationServiceConstants;
 
 /**
  * Default Certificate Type Checker used check the key usage against 
@@ -43,21 +43,17 @@ public class DefaultX509CertTypeChecker implements ICertTypeChecker {
 	 * </p>
 	 * @see org.signserver.validationservice.server.ICertTypeChecker#checkType(org.signserver.validationservice.common.ICertificate, org.signserver.validationservice.common.ValidationServiceConstants.CertType)
 	 */
-	public boolean checkType(ICertificate cert, CertType certType) {
+	public boolean checkType(ICertificate cert, String certType) {
 		boolean retval = false;
 		
 		if(cert instanceof java.security.cert.X509Certificate){
 			java.security.cert.X509Certificate c = (X509Certificate) cert;
-			switch (certType) {
-			case ANY:
+			if(certType.equalsIgnoreCase(ValidationServiceConstants.CERTTYPE_ANY)){
 				retval = true;
-				break;
-			case IDENTIFICATION:
-				retval = c.getKeyUsage() != null  && c.getKeyUsage()[0] == true && c.getKeyUsage()[2] == true;
-				break;
-			case ELECTRONIC_SIGNATURE:
+			}else if (certType.equalsIgnoreCase(ValidationServiceConstants.CERTTYPE_IDENTIFICATION)){
+				retval = c.getKeyUsage() != null  && c.getKeyUsage()[0] == true && c.getKeyUsage()[2] == true;				
+			}else if (certType.equalsIgnoreCase(ValidationServiceConstants.CERTTYPE_ELECTRONIC_SIGNATURE)){
 				retval = c.getKeyUsage() != null  && c.getKeyUsage()[1] == true;
-				break;
 			}
 		}
 		return retval;

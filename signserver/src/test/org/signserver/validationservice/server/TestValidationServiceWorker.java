@@ -23,7 +23,7 @@ import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.common.ValidationServiceConstants.CertType;
+import org.signserver.validationservice.common.ValidationServiceConstants;
 
 public class TestValidationServiceWorker extends TestCase {
 
@@ -152,7 +152,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 	
 	public void test01BasicValidation() throws Exception{
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(validCert1), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(validCert1), ValidationServiceConstants.CERTTYPE_ANY);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -167,7 +167,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 	
 	public void test02RevokedCertificate() throws Exception{
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(revokedCert1), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(revokedCert1), ValidationServiceConstants.CERTTYPE_ANY);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -184,7 +184,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 	
 	public void test03ExpiredCertificate() throws Exception{
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(expiredCert1), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(expiredCert1), ValidationServiceConstants.CERTTYPE_ANY);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -198,7 +198,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 
 	public void test04NotYetValidCertificate() throws Exception{
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(noYetValidCert1), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(noYetValidCert1), ValidationServiceConstants.CERTTYPE_ANY);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -212,7 +212,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 	
 	public void test05BadSignatureCertificate() throws Exception{
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(badSigCert1), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(badSigCert1), ValidationServiceConstants.CERTTYPE_ANY);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -226,7 +226,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 	
 	public void test06signedByExpiredRootCertificate() throws Exception{
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(certByExpiredRoot), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(certByExpiredRoot), ValidationServiceConstants.CERTTYPE_ANY);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -240,7 +240,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 
 	public void test07signedByNotYetValidSubCA() throws Exception{
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(certByNotYetValidSub), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(certByNotYetValidSub), ValidationServiceConstants.CERTTYPE_ANY);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -255,7 +255,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 	
 	public void test08signedByNotYetValidSubCA() throws Exception{
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(certByNotYetValidSub), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(certByNotYetValidSub), ValidationServiceConstants.CERTTYPE_ANY);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -270,7 +270,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 	
 	public void test09signedByRevocedRootCA() throws Exception{
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(certByRevocedRoot), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(certByRevocedRoot), ValidationServiceConstants.CERTTYPE_ANY);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -286,7 +286,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 	
 	public void test10LongChainValidation() throws Exception{
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(certSignedByLongChain), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(certSignedByLongChain), ValidationServiceConstants.CERTTYPE_ANY);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -304,7 +304,7 @@ public class TestValidationServiceWorker extends TestCase {
 	}
 	
 	public void test11CertType() throws Exception{
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(identificationCert1), CertType.IDENTIFICATION);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(identificationCert1), ValidationServiceConstants.CERTTYPE_IDENTIFICATION);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -316,7 +316,7 @@ public class TestValidationServiceWorker extends TestCase {
 		assertTrue(cAChain.get(0).getSubject().equals("CN=ValidSubCA1"));
 		assertTrue(cAChain.get(1).getSubject().equals("CN=ValidRootCA1"));
 		
-		req = new ValidateRequest(ICertificateManager.genICertificate(identificationCert1), CertType.ELECTRONIC_SIGNATURE);
+		req = new ValidateRequest(ICertificateManager.genICertificate(identificationCert1), ValidationServiceConstants.CERTTYPE_ELECTRONIC_SIGNATURE);
 		res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		val = res.getValidation();
@@ -328,7 +328,7 @@ public class TestValidationServiceWorker extends TestCase {
 		assertTrue(cAChain.get(0).getSubject().equals("CN=ValidSubCA1"));
 		assertTrue(cAChain.get(1).getSubject().equals("CN=ValidRootCA1"));
 		
-		req = new ValidateRequest(ICertificateManager.genICertificate(esigCert1), CertType.ELECTRONIC_SIGNATURE);
+		req = new ValidateRequest(ICertificateManager.genICertificate(esigCert1), ValidationServiceConstants.CERTTYPE_ELECTRONIC_SIGNATURE);
 		res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		val = res.getValidation();
@@ -340,7 +340,7 @@ public class TestValidationServiceWorker extends TestCase {
 		assertTrue(cAChain.get(0).getSubject().equals("CN=ValidSubCA1"));
 		assertTrue(cAChain.get(1).getSubject().equals("CN=ValidRootCA1"));
 		
-		req = new ValidateRequest(ICertificateManager.genICertificate(esigCert1), CertType.IDENTIFICATION);
+		req = new ValidateRequest(ICertificateManager.genICertificate(esigCert1), ValidationServiceConstants.CERTTYPE_IDENTIFICATION);
 		res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		val = res.getValidation();
@@ -352,7 +352,7 @@ public class TestValidationServiceWorker extends TestCase {
 		assertTrue(cAChain.get(0).getSubject().equals("CN=ValidSubCA1"));
 		assertTrue(cAChain.get(1).getSubject().equals("CN=ValidRootCA1"));
 		
-		req = new ValidateRequest(ICertificateManager.genICertificate(badKeyUsageCert1), CertType.IDENTIFICATION);
+		req = new ValidateRequest(ICertificateManager.genICertificate(badKeyUsageCert1), ValidationServiceConstants.CERTTYPE_IDENTIFICATION);
 		res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		val = res.getValidation();
@@ -364,7 +364,7 @@ public class TestValidationServiceWorker extends TestCase {
 		assertTrue(cAChain.get(0).getSubject().equals("CN=ValidSubCA1"));
 		assertTrue(cAChain.get(1).getSubject().equals("CN=ValidRootCA1"));
 		
-		req = new ValidateRequest(ICertificateManager.genICertificate(badKeyUsageCert1), CertType.ELECTRONIC_SIGNATURE);
+		req = new ValidateRequest(ICertificateManager.genICertificate(badKeyUsageCert1), ValidationServiceConstants.CERTTYPE_ELECTRONIC_SIGNATURE);
 		res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		val = res.getValidation();
@@ -376,7 +376,7 @@ public class TestValidationServiceWorker extends TestCase {
 		assertTrue(cAChain.get(0).getSubject().equals("CN=ValidSubCA1"));
 		assertTrue(cAChain.get(1).getSubject().equals("CN=ValidRootCA1"));
 		
-		req = new ValidateRequest(ICertificateManager.genICertificate(validCert1), CertType.ELECTRONIC_SIGNATURE);
+		req = new ValidateRequest(ICertificateManager.genICertificate(validCert1), ValidationServiceConstants.CERTTYPE_ELECTRONIC_SIGNATURE);
 		res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		val = res.getValidation();
@@ -398,7 +398,7 @@ public class TestValidationServiceWorker extends TestCase {
 		sSSession.reloadConfiguration(15);
 		
 		
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(validCert1), CertType.ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(validCert1), ValidationServiceConstants.CERTTYPE_ANY);
 		ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		Validation val = res.getValidation();
@@ -421,7 +421,7 @@ public class TestValidationServiceWorker extends TestCase {
 		assertTrue(cAChain.get(0).getSubject().equals("CN=ValidSubCA1"));
 		assertTrue(cAChain.get(1).getSubject().equals("CN=ValidRootCA1"));
 		
-		req = new ValidateRequest(ICertificateManager.genICertificate(certSignedByLongChain), CertType.ANY);
+		req = new ValidateRequest(ICertificateManager.genICertificate(certSignedByLongChain), ValidationServiceConstants.CERTTYPE_ANY);
 		res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
 		
 		val = res.getValidation();

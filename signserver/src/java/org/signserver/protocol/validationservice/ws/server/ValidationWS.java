@@ -18,6 +18,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Resource;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -42,8 +44,8 @@ import org.signserver.protocol.validationservice.ws.ValidationResponse;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
+import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.common.ValidationStatus;
-import org.signserver.validationservice.common.ValidationServiceConstants.CertType;
 import org.signserver.validationservice.server.ICertificateManager;
 import org.signserver.validationservice.server.ValidationServiceWorker;
 import org.signserver.web.SignServerHealthCheck;
@@ -68,7 +70,8 @@ public class ValidationWS implements IValidationWS {
 	/**
 	 * @see se.primekey.chambersign.validationservice.ws.IValidationWS#isValid(String, CertType)
 	 */
-	public ValidationResponse isValid(String serviceName, String base64Cert, CertType certType)  throws IllegalRequestException, SignServerException{
+	@WebMethod
+	public ValidationResponse isValid(@WebParam(name="serviceName")String serviceName, @WebParam(name="base64Cert") String base64Cert,@WebParam(name="certType") String certType)  throws IllegalRequestException, SignServerException{
 		ICertificate reqCert;
 		int workerId = getWorkerId(serviceName);
 		
@@ -87,7 +90,9 @@ public class ValidationWS implements IValidationWS {
 		}
 		
 		if(certType == null){
-			certType = CertType.ANY;
+			certType = ValidationServiceConstants.CERTTYPE_ANY;
+		}else{
+			certType = certType.trim();
 		}
 		
 		ValidateResponse res = null;
@@ -133,7 +138,8 @@ public class ValidationWS implements IValidationWS {
 	/**
 	 * @see se.primekey.chambersign.validationservice.ws.IValidationWS#getStatus()
 	 */
-	public String getStatus(String serviceName) throws IllegalRequestException{
+	@WebMethod
+	public String getStatus(@WebParam(name="serviceName") String serviceName) throws IllegalRequestException{
 		
 		int workerId = getWorkerId(serviceName);
 		

@@ -189,7 +189,7 @@
 	
     <target name="signserver-cli" depends="signserver, mailsigner">
     	<mkdir dir="dist-client/lib" />    	
-    	<copy file="${env.JBOSS_HOME}/client/jbossall-client.jar" todir="dist-client/lib"/>    	
+    	<copy file="${appserver.home}/client/jbossall-client.jar" todir="dist-client/lib"/>    	
 	    <jar destfile="${signserver.cli.jar}" basedir="${build}">
 	      <manifest>	        
 	        <attribute name="Main-Class" value="org.signserver.cli.signserver"/>

@@ -27,11 +27,13 @@ import java.util.Properties;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.ejbca.core.model.ca.caadmin.CA;
 import org.ejbca.util.CertTools;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidationServiceConstants;
+import org.signserver.validationservice.common.X509Certificate;
 
 
 /**
@@ -53,8 +55,28 @@ public abstract class BaseValidator implements IValidator{
 	protected EntityManager em;
 	protected ICryptoToken ct;
 	
-	protected HashMap<String, List<ICertificate>> certChainMap = new HashMap<String, List<ICertificate>>();
+	private HashMap<String, List<ICertificate>> certChainMap = null;
 	private HashMap<Integer,Properties> issuerProperties = null;
+
+	/*
+	 * certificate chains for all issuers
+	 */
+	protected HashMap<String, List<ICertificate>> getCertChainMap() {
+		
+		if(certChainMap == null){
+			certChainMap = new HashMap<String, List<ICertificate>>();
+			for(Integer issuerId : getIssuerProperties().keySet()){
+				Properties issuerProps =  getIssuerProperties().get(issuerId);
+				
+				List<ICertificate> certChain = getCertChainFromProps(issuerId,issuerProps);
+				if(certChain != null){
+				  certChainMap.put(certChain.get(0).getSubject(),certChain);
+				}
+			}						
+		}
+		
+		return certChainMap;
+	}
 	
 	/**
 	 * @see org.signserver.validationservice.server.IValidator#init(int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.IExtendedCryptoToken)
@@ -72,17 +94,17 @@ public abstract class BaseValidator implements IValidator{
 	 * @see org.signserver.validationservice.server.IValidator#getCertificateChain(org.signserver.validationservice.common.ICertificate)
 	 */
 	public List<ICertificate> getCertificateChain(ICertificate cert) {
-		if(certChainMap.get(cert.getIssuer()) == null){			
-			for(Integer issuerId : getIssuerProperties().keySet()){
-				Properties issuerProps =  getIssuerProperties().get(issuerId);
-				
-				List<ICertificate> certChain = getCertChainFromProps(issuerId,issuerProps);
-				if(certChain != null){
-				  certChainMap.put(certChain.get(0).getSubject(),certChain);
-				}
-			}						
-		}
-		return certChainMap.get(cert.getIssuer());
+		
+		if( getCertChainMap() == null)
+			return null;
+		
+		// if it is end entity certificate return ful chain as specified in properties
+		// if it is CA certificate return "cut off certificate chain"
+		X509Certificate x509cert = (X509Certificate)cert;
+		if(x509cert.getBasicConstraints() == -1)
+			return getCertChainMap().get(cert.getIssuer());
+		else
+			return getCertificateChainForCACertificate(cert);
 	}
 	
 	/**
@@ -176,6 +198,75 @@ public abstract class BaseValidator implements IValidator{
 		
 	    return issuerProperties;	
 	}
+
+	/**
+	 * get properties of the issuer that is configured to accept this certificate (through certchain)
+	 * have to match using rootCert since in case of the intermediate CA certificate the chain will be cut off.
+	 */
+	protected Properties getIssuerProperties(ICertificate cert){
+		
+		if(getCertificateChain(cert) == null)
+			return null;
+		
+		List<ICertificate> certChain = null;
+		for(Integer issuerId : getIssuerProperties().keySet())
+		{
+			certChain= getCertChainFromProps(issuerId, getIssuerProperties().get(issuerId));
+			if(certChain != null 
+					&& certChain.get(certChain.size() - 1).equals(getCertificateChain(cert).get(getCertificateChain(cert).size() -1)))
+				  return getIssuerProperties().get(issuerId);
+		}
+		
+	    return null;	
+	}
+
+	/**
+	 * Retrieve "cut off certificate chain" for the ca certificate given
+	 * Certificate chain will be retrieved from configured certchain properties for issuers 
+	 * 
+	 * @return  
+	 * 
+	 * certificates starting from (not included) cACert up to root certificate, if cACert is intermediate CA certificate
+	 * null if passed in certificate is not found in any configured chains or if cACert is root certificate
+	 *  
+	 */
+	protected List<ICertificate> getCertificateChainForCACertificate(ICertificate cACert) {
+		
+		int indx = -1;
+		for(String certDN : getCertChainMap().keySet())
+		{
+			indx = getCertChainMap().get(certDN).indexOf(cACert);
+			if(indx != -1 && indx + 1 < getCertChainMap().get(certDN).size())
+			{
+				// found chain containing cACert
+				// return sublist containing chain from this certificate (excluded) to root certificate (included)
+				return getCertChainMap().get(certDN).subList(indx + 1, getCertChainMap().get(certDN).size());
+			}
+		}
+		
+		return null;
+	}
 	
+	/**
+	 * @return true if passed in certificate is found as root certificate in any of configured issuers
+	 * 		   false otherwise 
+	 */
+	protected boolean isTrustAnchor(X509Certificate rootCACert)
+	{
+		if(getCertChainMap() == null)
+			return false;
+	
+		// is it really a self signed certificate
+		if(!rootCACert.getSubjectX500Principal().equals(rootCACert.getIssuerX500Principal()))
+			return false;
+		
+		for(String certDN : getCertChainMap().keySet())
+		{
+			if(getCertChainMap().get(certDN).contains(rootCACert))
+				return true;
+		}
+		
+		return false;
+	}
 	
 }

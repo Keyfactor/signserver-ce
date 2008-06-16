@@ -74,27 +74,30 @@ public class DefaultValidationService extends BaseValidationService {
 				if(validation == null){
                    throw new IllegalRequestException("Error no validators in validation service " + workerId + " supports the issuer of given CA " + validationRequest.getCertificate().getIssuer());
 				}
-				if(validation.getStatus().equals(Validation.Status.VALID)){
-					for(ICertificate cacert : cAChain){
-						Validation cavalidation = validationCache.get(validationRequest.getCertificate());
-						if(cavalidation == null){
-							for(IValidator validator : validators.values()){
-								cavalidation = validator.validate(cacert);
-								if(cavalidation != null){
-									validationCache.put(cacert, cavalidation);
-									break;
-								}
-							}
-						}
-						if(cavalidation == null){
-			                   throw new IllegalRequestException("Error no validators in validation service " + workerId + " supports the issuer of given CA " + validationRequest.getCertificate().getIssuer());
-						}
-						if(cavalidation != null && !cavalidation.getStatus().equals(Validation.Status.VALID)){
-							validation = new Validation(validationRequest.getCertificate(),cAChain,Validation.Status.CAREVOKED," Error CA issuing the requested certificate was revoked",cavalidation.getRevokedDate(),cavalidation.getRevokationReason());
-							break;	
-						}
-					}				
-				}
+				// code below was used to walk through the certificate chain and 
+				// call validate on validator for each cert found in chain
+				// it is not necessary though, since the validate called on the requested certificate validates whole chain 
+//				if(validation.getStatus().equals(Validation.Status.VALID)){
+//					for(ICertificate cacert : cAChain){
+//						Validation cavalidation = validationCache.get(validationRequest.getCertificate());
+//						if(cavalidation == null){
+//							for(IValidator validator : validators.values()){
+//								cavalidation = validator.validate(cacert);
+//								if(cavalidation != null){
+//									validationCache.put(cacert, cavalidation);
+//									break;
+//								}
+//							}
+//						}
+//						if(cavalidation == null){
+//			                   throw new IllegalRequestException("Error no validators in validation service " + workerId + " supports the issuer of given CA " + validationRequest.getCertificate().getIssuer());
+//						}
+//						if(cavalidation != null && !cavalidation.getStatus().equals(Validation.Status.VALID)){
+//							validation = new Validation(validationRequest.getCertificate(),cAChain,Validation.Status.CAREVOKED," Error CA issuing the requested certificate was revoked",cavalidation.getRevokedDate(),cavalidation.getRevokationReason());
+//							break;	
+//						}
+//					}				
+//				}
 			}
 		}
 		

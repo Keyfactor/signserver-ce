@@ -76,4 +76,14 @@ public class ValidationServiceConstants {
 	 */
 	public static final String VALIDATIONSERVICE_CERTTYPECHECKER = "CERTTYPECHECKER";
 	public static final String DEFAULT_CERTTYPECHECKER = "org.signserver.validationservice.server.DefaultX509CertTypeChecker";
+
+	/**
+	 * Setting indicating crl paths for given issuer , crls should be VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER delimited URLs 
+	 */
+	public static final String VALIDATIONSERVICE_ISSUERCRLPATHS = "CRLPATHS";
+	
+	/**
+	 * Setting indicating what delimiter is used for specifying multiple CRLs in VALIDATIONSERVICE_ISSUERCRLPATHS property
+	 */
+	public static final String VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER = ",";
 }

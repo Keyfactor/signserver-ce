@@ -187,10 +187,6 @@ public class CRLValidator extends BaseValidator {
 			
 			// retrieve and add the crls from CRLPath property of issuer to certStore
 			// in case all certificates have CDP extension, CRLPath is ignored
-			System.out.println("atLeastOneCDPNotFound : " + atLeastOneCDPNotFound);
-			if(CRLPaths != null)
-				System.out.println("CRLPaths count : " + CRLPaths.size());
-
 			if(atLeastOneCDPNotFound && CRLPaths != null)
 			{
 				for(URL url: CRLPaths)

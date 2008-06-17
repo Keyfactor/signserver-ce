@@ -87,7 +87,7 @@ public class CRLValidator extends BaseValidator {
 		} catch (CertificateExpiredException e1) {
 			return new Validation(cert,null,Validation.Status.EXPIRED,"Certificate has expired. " + e1.toString());
 		} catch (CertificateNotYetValidException e1) {
-			return new Validation(cert,null,Validation.Status.EXPIRED,"Certificate is not yet valid. " + e1.toString());
+			return new Validation(cert,null,Validation.Status.NOTYETVALID,"Certificate is not yet valid. " + e1.toString());
 		}
 		
 		// if no chain found for this certificate and if it is not trust anchor (as configured in properties) return null
@@ -116,6 +116,19 @@ public class CRLValidator extends BaseValidator {
 		for(ICertificate currentCert = cert; ;currentCert = cACerts.next())
 		{
 			x509CurrentCert = (X509Certificate) currentCert; 
+			
+			// check validity of CA certificate
+			if(!x509CurrentCert.equals(xcert))
+			{
+				try {
+					x509CurrentCert.checkValidity();
+				} catch (CertificateExpiredException e1) {
+					return new Validation(cert,null,Validation.Status.CAEXPIRED,"CA Certificate : " + x509CurrentCert.getSubjectDN() + " has expired. " + e1.toString());
+				} catch (CertificateNotYetValidException e1) {
+					return new Validation(cert,null,Validation.Status.CANOTYETVALID,"CA Certificate : " + x509CurrentCert.getSubjectDN()+ " is not yet valid. " + e1.toString());
+				}
+			}
+			
 			try {
 
 				certURL = CertTools.getCrlDistributionPoint(x509CurrentCert);

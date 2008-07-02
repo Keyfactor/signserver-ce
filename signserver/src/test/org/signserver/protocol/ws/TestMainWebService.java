@@ -267,6 +267,7 @@ public class TestMainWebService extends TestCase {
         assertTrue(callback.isCallBackCalled());
         */
         // Test a lot of subsequent calls
+
         callback = new FaultCallback();
         String[] hosts4 = {"128.0.0.2","127.0.0.1","128.0.0.3"};        
         client = f.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK,hosts4 , false, callback);

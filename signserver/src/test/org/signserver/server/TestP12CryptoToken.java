@@ -48,7 +48,7 @@ public class TestP12CryptoToken extends TestCase {
         String signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
         props.setProperty("KEYSTOREPATH",signserverhome +"/src/test/timestamp1.p12");
-        signToken.init(props);
+        signToken.init(1, props);
         
         signToken.activate("foo123");
         

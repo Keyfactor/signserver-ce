@@ -89,7 +89,7 @@ public class TestCustomAuth extends TestCase {
 		}catch(IllegalRequestException e){}
 		
 		HardCodedCryptoToken token = new HardCodedCryptoToken();
-		token.init(new Properties());
+		token.init(1,new Properties());
 		X509Certificate cert = (X509Certificate) token.getCertificate(ICryptoToken.PROVIDERUSAGE_SIGN);
 		//System.out.println(CertTools.stringToBCDNString(cert.getSubjectDN().toString()));
 		

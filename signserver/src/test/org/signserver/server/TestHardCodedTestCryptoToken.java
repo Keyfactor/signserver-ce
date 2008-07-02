@@ -42,7 +42,7 @@ public class TestHardCodedTestCryptoToken extends TestCase {
         String signatureAlgorithm = "SHA256WITHRSAANDMGF1";
 
         HardCodedCryptoToken signToken = new HardCodedCryptoToken();
-        signToken.init(null);
+        signToken.init(0,null);
         
 		try
 		{

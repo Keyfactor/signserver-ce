@@ -22,6 +22,9 @@ import org.signserver.cli.archive.FindFromRequestIPCommand;
 import org.signserver.cli.groupkeyservice.PregenerateKeyCommand;
 import org.signserver.cli.groupkeyservice.RemoveGroupKeysCommand;
 import org.signserver.cli.groupkeyservice.SwitchEncKeyCommand;
+import org.signserver.cli.module.AddModuleCommand;
+import org.signserver.cli.module.ListModulesCommand;
+import org.signserver.cli.module.RemoveModuleCommand;
  
 /**
  * Factory for General signserver Commands.
@@ -109,6 +112,9 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         if (args[0].equalsIgnoreCase("groupkeyservice") && CommonAdminInterface.isSignServerMode()) {
             return getGroupKeyServiceCommand(args);
         }
+        if (args[0].equalsIgnoreCase("module") && CommonAdminInterface.isSignServerMode()) {
+            return getModuleCommand(args);
+        }
         return null;
         
         
@@ -130,6 +136,26 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         
         if (args[1].equalsIgnoreCase("pregeneratekeys")) {
             return new PregenerateKeyCommand(args);
+        }
+		
+		return null;
+	}
+	
+	private IAdminCommand getModuleCommand(String[] args) {
+	   	if (args.length < 2) {
+            return null;
+        }
+    	 
+        if (args[1].equalsIgnoreCase("add")) {
+            return new AddModuleCommand(args);
+        }
+
+        if (args[1].equalsIgnoreCase("remove")) {
+            return new RemoveModuleCommand(args);
+        }
+        
+        if (args[1].equalsIgnoreCase("list")) {
+            return new ListModulesCommand(args);
         }
 		
 		return null;
@@ -172,13 +198,14 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
 	    	}
 	    	usageString +="| uploadsignercertificate | uploadsignercertificatechain | activatecryptotoken | deactivatecryptotoken | generatecertreq ";
 	    	if(CommonAdminInterface.isSignServerMode()){	
-	    		usageString +="| archive | groupkeyservice";
+	    		usageString +="| archive | groupkeyservice | module";
 	    	}
 	        usageString+= "> \n";
 	        out.println(usageString);
 	    	if(CommonAdminInterface.isSignServerMode()){
 	    		out.println("Available archive commands : signserver archive < findfromarchiveid | findfromrequestip | findfromrequestcert > \n");
 	    		out.println("Available groupkeyservice commands : signserver groupkeyservice < switchenckey | removegroupkeys | pregeneratekeys > \n");
+	    		out.println("Available module commands : signserver module < add | remove | list > \n");
 	    	}
 	    	out.println("Each basic command give more help");
 

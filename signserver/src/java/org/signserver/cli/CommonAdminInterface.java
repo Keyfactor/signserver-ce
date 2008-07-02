@@ -47,6 +47,7 @@ import org.signserver.common.ResyncException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.ejb.interfaces.IClusterClassLoaderManagerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession.IRemote;
@@ -71,7 +72,7 @@ public class CommonAdminInterface  {
     private String hostname = null;
     
 	// Not final so it can be used in test scripts
-	static  String BUILDMODE = "@BUILDMODE@";
+	public static  String BUILDMODE = "@BUILDMODE@";
 	
 	public CommonAdminInterface(String hostname){
 		this.hostname = hostname;
@@ -494,6 +495,46 @@ public class CommonAdminInterface  {
 		return null;
 	}
 	
+	public void addResource(String moduleName, String part, int version, String jarName, String resourceName, String implInterfaces, String description, String comment, byte[] resourceData) throws RemoteException {
+		if(isSignServerMode()){
+			getClusterClassLoaderManagerSession().addResource(moduleName, part, version, jarName, resourceName, implInterfaces, description, comment, resourceData);
+		}		
+	}
+
+	public void removeModulePart(String moduleName, String part, int version) throws RemoteException {
+		if(isSignServerMode()){
+			getClusterClassLoaderManagerSession().removeModulePart(moduleName, part, version);
+		}
+	}
+	
+	public String[] listAllModules() throws RemoteException {
+		if(isSignServerMode()){
+			return getClusterClassLoaderManagerSession().listAllModules();
+		}
+		return null;
+	}
+	
+	public Integer[] listAllModuleVersions(String moduleName) throws RemoteException {
+		if(isSignServerMode()){
+			return getClusterClassLoaderManagerSession().listAllModuleVersions(moduleName);
+		}
+		return null;
+	}
+	
+	public String[] listAllModuleParts(String moduleName, int version) throws RemoteException {
+		if(isSignServerMode()){
+			return getClusterClassLoaderManagerSession().listAllModuleParts(moduleName, version);
+		}
+		return null;
+	}
+	
+	public String[] getJarNames(String moduleName, String part, int version) throws RemoteException {
+		if(isSignServerMode()){
+			return getClusterClassLoaderManagerSession().getJarNames(moduleName, part, version);
+		}
+		return null;
+	}
+	
 
 	
 	private IMailSignerRMI getIMailSignerRMI() throws RemoteException{
@@ -554,6 +595,26 @@ public class CommonAdminInterface  {
      } // getSignSession
     /** The SignSession home bean */
 	private IWorkerSession.IRemote signsession;
+	
+    /** Gets SignServerSession Remote
+     * @return SignServerSession
+     * @throws RemoteException 
+     */
+    private IClusterClassLoaderManagerSession.IRemote getClusterClassLoaderManagerSession() throws RemoteException{
+    	 
+    	if(cclms == null){    		
+			try {
+				Context context = getInitialContext();
+				cclms = (IClusterClassLoaderManagerSession.IRemote) context.lookup(IClusterClassLoaderManagerSession.IRemote.JNDI_NAME);
+			} catch (NamingException e) {
+				log.error("Error looking up cluster class loader manager interface");
+				throw new RemoteException(e.getMessage());
+			}		    		
+    	}
+		return cclms;
+     } // getSignSession
+    /** The SignSession home bean */
+	private IClusterClassLoaderManagerSession.IRemote cclms;
 	
     /**
      * Gets InitialContext

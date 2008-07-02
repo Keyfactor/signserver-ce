@@ -27,13 +27,16 @@ public class TestGlobalConfiguration extends TestCase {
 
 	private static IGlobalConfigurationSession.IRemote  globalConfigSession;
 	
+	private static String signserverhome;
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 			    
 		Context context = getInitialContext();
 		globalConfigSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
 
-		
+		signserverhome = System.getenv("SIGNSERVER_HOME");
+		assertNotNull(signserverhome);
 	}
 	
     /**

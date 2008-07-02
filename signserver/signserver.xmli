@@ -39,6 +39,9 @@
 	   <property name="validationws.enabled" value="false" />
 	   <property name="timestampclient.enabled" value="true" />
 	   <property name="pdfperformancetest.enabled" value="false" />
+	   <property name="useclusterclassloader" value="false" />
+	   <property name="clusterclassloader.useclassversions" value="true" />
+	   <property name="clusterclassloader.requiresignature" value="false" />
 	
 	   <path id="signserver.compile.classpath">
 	        <path refid="signserver.ext.classpath" />
@@ -46,8 +49,10 @@
 	        <fileset dir="lib/itext" includes="*.jar" />
 	   	    <fileset dir="lib/quartz" includes="*.jar" />
 	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
-	   	    <fileset dir="lib/jaxws" includes="*.jar" />	   	    
+	   	    <fileset dir="lib/jaxws" includes="*.jar" />	 
+	     	<fileset dir="lib/asm" includes="*.jar" />
     	    <fileset dir="lib/ext/james" includes="james-2.3.1.jar" />
+	   	    <fileset dir="${ant.home}/lib" includes="ant.jar" />
 	        <path refid="j2ee.classpath" />
 	        
             <path location="tmp/jaxws/gen-classes/client" />
@@ -55,12 +60,12 @@
 	    </path>
 
 	    <path id="server.compile.classpath">
-	        <path refid="signserver.compile.classpath" />
+	        <path refid="signserver.compile.classpath" />	    	
 	    </path>
 		
 		
 	    <path id="client.compile.classpath">
-	        <fileset dir="${client.primeCard.dist}" includes="*.jar" />
+	        <fileset dir="${client.primeCard.dist}" includes="*.jar" />	    	
 	        <path refid="signserver.compile.classpath" />
 	    </path>
 	
@@ -122,21 +127,24 @@
     	<antcall target="j2ee:check"/>
         <echo>
 ---------- CONFIGURATION PROPERTIES ----------
-build.mode                  = ${build.mode}
-appserver.home              = ${appserver.home}
-web.contentencoding         = ${web.contentencoding}
-datasource.jndi-name        = ${datasource.jndi-name}
-datasource.jndi-name-prefix = ${datasource.jndi-name-prefix}
-database.name               = ${database.name}
-datasource.mapping          = ${datasource.mapping}
-database.url                = ${database.url}
-database.driver             = ${database.driver}
-database.username           = ${database.username}
-database.password           = ${database.password}
-signserverws.enabled        = ${signserverws.enabled}
-validationws.enabled        = ${validationws.enabled}
-timestampclient.enabled     = ${timestampclient.enabled}
-pdfperformancetest.enabled  = ${pdfperformancetest.enabled}
+build.mode                          = ${build.mode}
+appserver.home                      = ${appserver.home}
+web.contentencoding                 = ${web.contentencoding}
+datasource.jndi-name                = ${datasource.jndi-name}
+datasource.jndi-name-prefix         = ${datasource.jndi-name-prefix}
+database.name                       = ${database.name}
+datasource.mapping                  = ${datasource.mapping}
+database.url                        = ${database.url}
+database.driver                     = ${database.driver}
+database.username                   = ${database.username}
+database.password                   = ${database.password}
+signserverws.enabled                = ${signserverws.enabled}
+validationws.enabled                = ${validationws.enabled}
+timestampclient.enabled             = ${timestampclient.enabled}
+pdfperformancetest.enabled          = ${pdfperformancetest.enabled}
+useclusterclassloader               = ${useclusterclassloader}
+clusterclassloader.useclassversions = ${clusterclassloader.useclassversions}
+clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
       </echo>
     </target>
 	
@@ -453,6 +461,7 @@ pdfperformancetest.enabled  = ${pdfperformancetest.enabled}
 	            	<include name="${lib}/commons-lang-2.0.jar" />
 	            	<include name="${lib}/itext/*.jar" />
 	            	<include name="${lib}/quartz/*.jar" />
+	            	<include name="${lib}/asm/*.jar" />
 	            </fileset>
 	            <fileset dir="${server.dist.dir}">
 	                <include name="*-ejb.jar" />
@@ -496,10 +505,12 @@ pdfperformancetest.enabled  = ${pdfperformancetest.enabled}
                 <fileset dir="${test.dir}">                  
                     <include name="**/ejb/Test*" /> 
                 	<include name="**/common/Test*" />
+                	<include name="**/common/clusterclassloader/Test*" />
                     <include name="**/server/Test*" />
                 	<include name="**/server/service/Test*" />
                 	<include name="**/server/validcache/Test*" />
                 	<include name="**/server/statistics/Test*" />
+                	<include name="**/server/clusterclassloader/Test*" />
                 	<include name="**/server/statistics/nonpersistent/Test*" />
                 	<include name="**/groupkeyservice/Test*" /> 
                 	<include name="**/cli/TestSignServer*" />
@@ -567,6 +578,7 @@ pdfperformancetest.enabled  = ${pdfperformancetest.enabled}
 	  <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
 	  	<isset property="${env.DESTDIR}"/>
 	  </condition>
+		<echo>DESTDIR : ${env.DESTDIR}</echo>
 		
 	   <mkdir dir="${pkgdist.destdir}"/>
 		
@@ -625,6 +637,10 @@ pdfperformancetest.enabled  = ${pdfperformancetest.enabled}
 	      <fileset dir="${lib}/1.5">
 			 <include name="bcprov-jdk.jar"/>
 			 <include name="bcmail-jdk.jar"/>
+		  </fileset>
+		  <fileset dir="${lib}/asm">
+		     <include name="asm-3.1.jar"/>
+		     <include name="asm-commons-3.1.jar"/>
 		  </fileset>
 		  <fileset dir="${lib}/ext/ejb">
 		     <include name="jboss-ejb3x.jar"/>
@@ -689,6 +705,25 @@ pdfperformancetest.enabled  = ${pdfperformancetest.enabled}
 	      </manifest>
 	    </jar>
 	  </target>
+	
+
+    <target name="martest">
+    <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" classpathref="signserver.test.compile.classpath"/>
+    	   <taskdef name="part" classname="org.signserver.anttasks.PartAntTask" classpathref="signserver.test.compile.classpath"/>
+    	<mar version="3" verbose="true" destfile="tmp/test.mar">
+    		<part name="test">
+    	         <fileset dir="${lib}/ext">
+    	           <include name="commons-cli-1.0.jar"/>
+    	         </fileset>
+    		</part>
+            <part name="test2">
+                   <fileset dir="${lib}">
+                     <include name="*.jar"/>
+                   </fileset>
+            </part>
+    	</mar>
+	</target>
+	
 
 
 </project>	

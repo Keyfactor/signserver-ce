@@ -258,6 +258,39 @@ timestampclient.enabled=true
 # Default: false
 pdfperformancetest.enabled=false
 
+# -------------- Cluster Class Loader Configurations ----------------
+#
+# Set to true to enable the use of the cluster class loader
+#
+# Warning: the cluster class loader is still experimental and should
+# be used for development purposes only.
+#
+# Default: false
+useclusterclassloader=false
+
+# Set to false if class versions should be disabled (good for
+# development purposes when remote debugging is required).
+#
+# Default: true
+clusterclassloader.useclassversions=true
+
+# Set to true if signing of resource data should be required.
+#
+# Default: false
+clusterclassloader.requiresignature=false
+
+# Setting indicating the path to the truststore file
+# that contains all CA certificates that is trusted
+# for signing of resource data.
+#
+# Only used if clusterclassloader.requiresignedresources is set to true.
+clusterclassloader.pathtotruststore=
+
+# Password locking the truststore specified above.
+#
+# Only used if clusterclassloader.requiresignedresources is set to true.
+clusterclassloader.truststorepwd=
+
 # -------------- Status And Health Check Configuration -----------
 #
 # Parameters configuring how health check and status should be

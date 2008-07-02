@@ -21,6 +21,8 @@
     	<fileset dir="lib/ext/james" includes="mail-1.4.jar" />
     	<fileset dir="lib/ext/james" includes="james-2.3.1.jar" />
     	<fileset dir="lib/ext/ejb" includes="jboss-ejb3x.jar" />
+    	<fileset dir="lib/asm" includes="*.jar" />
+    	<fileset dir="${ant.home}/lib" includes="ant.jar" />
     	<fileset dir="lib/ext/ejb" includes="ejb3-persistence.jar" />
     </path>
 	

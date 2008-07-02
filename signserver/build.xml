@@ -159,6 +159,11 @@
 				<replacestring from="@healthcheck.authorizedips@" to="${healthcheck.authorizedips}"/>
 				<replacestring from="@healthcheck.minimumfreememory@" to="${healthcheck.minimumfreememory}"/>
 				<replacestring from="@healthcheck.checkdbstring@" to="${healthcheck.checkdbstring}"/>
+				<replacestring from="@signserver.useclusterclassloader@" to="${useclusterclassloader}"/>
+				<replacestring from="@signserver.useclassversions@" to="${clusterclassloader.useclassversions}"/>
+				<replacestring from="@signserver.requiresignature@" to="${clusterclassloader.requiresignature}"/>
+				<replacestring from="@signserver.pathtotruststore@" to="${clusterclassloader.pathtotruststore}"/>
+				<replacestring from="@signserver.truststorepwd@" to="${clusterclassloader.truststorepwd}"/>
 				<replacestring from="@SignServerCommandFactory@" to="${custom.commandfactory}"/>
 				<replacestring from="@signserver.configfile@" to="${signserver.configfile}"/>
 			</tokenfilter>
@@ -200,6 +205,7 @@
 	      <include name="org/signserver/ejb/interfaces/**/**"/>
 	      <include name="org/signserver/groupkeyservice/common/**/**"/>
 	      <include name="org/signserver/validationservice/common/**/**"/>
+	      <include name="org/signserver/server/**/**"/>
 	    </jar>    	
     </target>
  

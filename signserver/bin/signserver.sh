@@ -101,6 +101,10 @@ for i in "${SIGNSRV_HOME}"/lib/1.5/*.jar
 do
 	CP="$i":"$CP"
 done
+for i in "${SIGNSRV_HOME}"/lib/asm/*.jar
+do
+    CP="$i":"$CP"
+done
 for i in "${SIGNSRV_HOME}"/lib/ext/ejb/*.jar
 do
 	CP="$i":"$CP"

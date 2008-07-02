@@ -25,16 +25,15 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.ejb.EJBException;
 
-import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.ISignRequest;
 import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignRequest;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 
@@ -48,7 +47,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
 
 public class MRTDSigner extends BaseSigner {
 	
-	private transient Logger log = Logger.getLogger(this.getClass());
+	//private transient Logger log = Logger.getLogger(this.getClass());
 	
 	public MRTDSigner(){
 	}
@@ -131,9 +130,8 @@ public class MRTDSigner extends BaseSigner {
     /**
      * Not supported yet
      */
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
-		log.error("Error : genCertificateRequest called for MRTDSigner which isn't supportet yet");
-		return null;
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{		
+		return getCryptoToken().genCertificateRequest(info);
 	}
 
 

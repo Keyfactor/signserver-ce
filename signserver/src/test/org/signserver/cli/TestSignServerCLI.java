@@ -247,9 +247,6 @@ public class TestSignServerCLI extends TestCase {
 		
 		TestingSecurityManager.remove();
 	}
-	
-
-	
 	public void testRemoveTimeStamp(){
 		// Remove and restore
 		assertSuccessfulExecution(new String[] {"setproperties",
@@ -270,7 +267,6 @@ public class TestSignServerCLI extends TestCase {
          
 		TestingSecurityManager.remove();
 	}
-	
 	public void testSetupGroupKeyService() throws Exception{
 		assertSuccessfulExecution(new String[] {"reload",
 				"all"});
@@ -321,7 +317,6 @@ public class TestSignServerCLI extends TestCase {
 				
 		TestingSecurityManager.remove();
 	}
-	
 	public void testRemoveGroupKeyService(){
 		// Remove and restore
 		assertSuccessfulExecution(new String[] {"removeworker",
@@ -334,6 +329,74 @@ public class TestSignServerCLI extends TestCase {
          
 		TestingSecurityManager.remove();
 	}
+	
+	public void testSetupModules() throws Exception{		
+		
+		assertSuccessfulExecution(new String[] {"module", "add",
+				signserverhome +"/src/test/testmodule-withoutdescr.mar"});		
+	    assertTrue(TestUtils.grepTempOut("Loading module TESTMODULE-WITHOUTDESCR with version 1"));
+	    assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+		
+		assertSuccessfulExecution(new String[] {"module", "add",
+				signserverhome +"/src/test/testmodule-withdescr.mar"});
+	    
+		assertTrue(TestUtils.grepTempOut("Loading module TESTMODULE-WITHDESCR with version 2"));
+	    assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+	    assertTrue(TestUtils.grepTempOut("Setting the property ENV to PROD for worker 4321"));
+	    
+		assertSuccessfulExecution(new String[] {"module", "add",
+				signserverhome +"/src/test/testmodule-withdescr.mar", "devel"});
+		assertTrue(TestUtils.grepTempOut("Setting the property ENV to DEVEL for worker 3433"));
+		
+		assertSuccessfulExecution(new String[] {"module", "list"});
+	    
+		assertTrue(TestUtils.grepTempOut("Module : TESTMODULE-WITHDESCR, version 2"));
+	    assertTrue(TestUtils.grepTempOut("part1"));
+	    assertTrue(TestUtils.grepTempOut("part2"));
+		assertTrue(TestUtils.grepTempOut("Module : TESTMODULE-WITHOUTDESCR, version 1"));
+	    assertTrue(TestUtils.grepTempOut("server"));
+	    assertFalse(TestUtils.grepTempOut(".jar"));
+	    
+		assertSuccessfulExecution(new String[] {"module", "list", "showjars"});
+	    
+		assertTrue(TestUtils.grepTempOut("Module : TESTMODULE-WITHDESCR, version 2"));
+	    assertTrue(TestUtils.grepTempOut("part1"));
+	    assertTrue(TestUtils.grepTempOut("part2"));
+		assertTrue(TestUtils.grepTempOut("Module : TESTMODULE-WITHOUTDESCR, version 1"));
+	    assertTrue(TestUtils.grepTempOut("server"));
+	    assertTrue(TestUtils.grepTempOut("testjar.jar"));
+	    assertTrue(TestUtils.grepTempOut("testjar2.jar"));
+	    
+		
+		TestingSecurityManager.remove();
+	}
+	
+	public void testremoves(){
+		// Remove and restore
+		assertSuccessfulExecution(new String[] {"module", "remove",
+				"testmodule-withoutdescr","1"});		
+		assertTrue(TestUtils.grepTempOut("Removing module TESTMODULE-WITHOUTDESCR version 1"));
+		assertTrue(TestUtils.grepTempOut("Removal of module successful."));
+
+		assertSuccessfulExecution(new String[] {"module", "remove",
+				"testmodule-withdescr","2"});		
+		assertTrue(TestUtils.grepTempOut("Removing module TESTMODULE-WITHDESCR version 2"));
+		assertTrue(TestUtils.grepTempOut("Removal of module successful."));
+		
+		assertSuccessfulExecution(new String[] {"removeworker",
+		"6543"});
+		
+		assertSuccessfulExecution(new String[] {"removeworker",
+		"4321"});
+		
+		assertSuccessfulExecution(new String[] {"removeworker",
+		"3433"});
+		
+		
+		
+		TestingSecurityManager.remove();
+	}
+	
 	
 	private void assertSuccessfulExecution(String[] args){
 		try {

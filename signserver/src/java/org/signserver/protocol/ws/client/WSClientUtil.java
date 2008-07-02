@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.signserver.protocol.ws.Certificate;
 import org.signserver.protocol.ws.gen.ProcessRequestWS;
 import org.signserver.protocol.ws.gen.ProcessResponseWS;
 
@@ -58,6 +59,17 @@ public class WSClientUtil {
 			ProcessResponseWS next =  iterator.next();	
 			org.signserver.protocol.ws.ProcessResponseWS temp = new org.signserver.protocol.ws.ProcessResponseWS();
 			temp.setResponseDataBase64(next.getResponseDataBase64());
+			temp.setRequestID(next.getRequestID());
+			if(next.getSignerCertificate()!=null){
+			  temp.setSignerCertificate(convertCertificate(next.getSignerCertificate()));
+			}
+			if(next.getSignerCertificateChain() != null){
+				ArrayList<Certificate> certChain = new ArrayList<Certificate>();
+				for(org.signserver.protocol.ws.gen.Certificate cert : next.getSignerCertificateChain()){
+					certChain.add(convertCertificate(cert));
+				}
+				temp.setSignerCertificateChain(certChain);
+			}			
 			retval.add(temp);
 		}
 		return retval;
@@ -68,12 +80,12 @@ public class WSClientUtil {
 	 * @param signerCertificate
 	 * @return
 	 */
-	/*
+	
 	private static org.signserver.protocol.ws.Certificate convertCertificate(
 			org.signserver.protocol.ws.gen.Certificate certificate) {
 		org.signserver.protocol.ws.Certificate retval = new  org.signserver.protocol.ws.Certificate();
 		retval.setCertificateBase64(certificate.getCertificateBase64());
 		return retval;
-	}*/
+	}
 	
 }

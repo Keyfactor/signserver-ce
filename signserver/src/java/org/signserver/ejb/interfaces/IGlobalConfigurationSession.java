@@ -4,6 +4,8 @@ package org.signserver.ejb.interfaces;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 
+import org.signserver.common.ResyncException;
+
 /**
  * Common interface containing all the session bean methods
  */

@@ -73,7 +73,7 @@ public class P12CryptoToken implements ICryptoToken {
 	/**
 	 * @see org.signserver.server.cryptotokens.ICryptoToken#init(java.util.Properties)
 	 */
-	public void init(Properties props) {
+	public void init(int workerId, Properties props) {
 		keystorepath = props.getProperty(KEYSTOREPATH);
 		keystorepassword = props.getProperty(KEYSTOREPASSWORD);  	 
 	}

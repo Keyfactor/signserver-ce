@@ -145,7 +145,7 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	
 	private PrivateKey privateKey = null;
 	
-	public void init(Properties props) throws CryptoTokenInitializationFailureException {
+	public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
 		
 		try
 		{

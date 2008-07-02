@@ -47,7 +47,7 @@ public interface ICryptoToken {
     * Method called after creation of instance.
     *
     */	
-	public abstract void init(Properties props) throws CryptoTokenInitializationFailureException;
+	public abstract void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException;
 	
 	/**
 	 *  Method that returns the current status of the crypto token.

@@ -53,7 +53,7 @@ public class PrimeCardHSMCryptoToken extends CryptoTokenBase implements ICryptoT
 	 * Method initializing the primecardHSM device 
 	 * 
 	 */
-	public void init(Properties props) {
+	public void init(int workerId, Properties props) {
 		log.debug(">init");
 		String signaturealgoritm = props.getProperty(WorkerConfig.SIGNERPROPERTY_SIGNATUREALGORITHM);
 		props = fixUpProperties(props);

@@ -18,6 +18,8 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * Value object containing the global configuration, both global and
@@ -29,6 +31,8 @@ import java.util.Map;
  * $Id: GlobalConfiguration.java,v 1.5 2007-12-29 10:43:53 herrvendil Exp $
  */
 public class GlobalConfiguration implements Serializable{
+	
+  private static transient Logger log = Logger.getLogger(GlobalConfiguration.class);
    
   private static final long serialVersionUID = 1L;
   
@@ -55,7 +59,83 @@ public class GlobalConfiguration implements Serializable{
   
 	// Current version of the application.    
   public static final String VERSION = "@signserver.version@";
+	// Indicates if ClusterClassLoading should be enabled    
+  public static final String CLUSTERCLASSLOADERENABLED = "@signserver.useclusterclassloader@";
 
+  private static Boolean clusterClassLoaderEnabled = null;
+  public static boolean isClusterClassLoaderEnabled(){
+	  if(clusterClassLoaderEnabled == null){
+		  if(CLUSTERCLASSLOADERENABLED.startsWith("@signserver.useclusterclassloader")){
+			  clusterClassLoaderEnabled=true;
+		  }else{
+			  clusterClassLoaderEnabled= Boolean.parseBoolean(CLUSTERCLASSLOADERENABLED.trim());
+		  }
+	  }
+	  return clusterClassLoaderEnabled;
+  }
+  
+	// Indicates if ClusterClassLoading should support class versions    
+  public static final String USECLASSVERSIONS = "@signserver.useclassversions@";
+
+  private static Boolean useClassVersions = null;
+  public static boolean isUseClassVersions(){
+	  if(useClassVersions == null){
+		  if(USECLASSVERSIONS.startsWith("@signserver.useclassversions")){
+			  useClassVersions=true;
+		  }else{
+			  useClassVersions= Boolean.parseBoolean(USECLASSVERSIONS.trim());
+		  }
+	  }
+	  return useClassVersions;
+  }
+
+  
+	// Indicates if ClusterClassLoading should require signing   
+  public static final String REQUIRESIGNING = "@signserver.requiresignature@";
+
+  private static Boolean requireSigning = null;
+  public static boolean isRequireSigning(){
+	  if(requireSigning == null){
+		  if(REQUIRESIGNING.startsWith("@signserver.requiresignature")){
+			  requireSigning=false;
+		  }else{
+			  requireSigning= Boolean.parseBoolean(REQUIRESIGNING.trim());
+		  }
+	  }
+	  return requireSigning;
+  }
+
+
+  // Indicates if ClusterClassLoading the full path to the jks trust store 
+  public static final String PATHTOTRUSTSTORE = "@signserver.pathtotruststore@";
+
+  private static String pathToTrustStore = null;
+  public static String getPathToTrustStore(){
+	  if(pathToTrustStore == null){
+		  if(!PATHTOTRUSTSTORE.startsWith("@signserver.pathtotruststore")){
+			  pathToTrustStore= PATHTOTRUSTSTORE;
+		  }
+	  }
+	  return pathToTrustStore;
+  }
+
+//The password to unlock the truststore password
+  
+  // Indicates if ClusterClassLoading the full path to the jks trust store 
+  public static final String CCLTRUSTSTOREPWD = "@signserver.truststorepwd@";
+
+  private static char[] cclTrustStorePWD = null;
+  public static char[] getCCLTrustStorePasswd() {
+	  if(cclTrustStorePWD == null){
+		  if(CCLTRUSTSTOREPWD.startsWith("@signserver.truststorepwd") || CCLTRUSTSTOREPWD.trim().equals("")){
+			  log.error("Error cluster classloader truststore password isn't configured");
+		  }else{
+			  cclTrustStorePWD= CCLTRUSTSTOREPWD.toCharArray();			  
+		  }
+	  }
+	  return cclTrustStorePWD;
+  }
+  
   
   /**
    * Constructor that should only be called within
@@ -138,6 +218,10 @@ public Iterator<String> getKeyIterator(){
   public String getAppVersion(){
 	  return VERSION;
   }
+
+
+
+
 	
 	
 }

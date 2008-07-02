@@ -32,4 +32,19 @@ public class SignServerConstants {
 	 * Set propery to TRUE to start archiving
 	 */
 	public static final String ARCHIVE          = "ARCHIVE";
+	
+	/**
+	 * Constant indicating which module that should be used with
+	 * the cluster class loader.
+	 */
+	public static final String MODULENAME          = "MODULENAME";
+	
+	/**
+	 * Constant indicating which module version that should be used
+	 * by the cluster class loader for the given worker.
+	 * 
+	 * If no module version is specified will the latest available
+	 * version be used.
+	 */
+	public static final String MODULEVERSION          = "MODULEVERSION";
 }

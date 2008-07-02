@@ -127,7 +127,7 @@ public abstract class BaseMailProcessor  implements IMailProcessor {
 					Class<?> implClass = Class.forName(classpath);
 					Object obj = implClass.newInstance();
 					cryptoToken = (ICryptoToken) obj;
-					cryptoToken.init(config.getProperties());								 
+					cryptoToken.init(workerId, config.getProperties());								 
 				} 
 			}catch(CryptoTokenInitializationFailureException e){
 				log.error("Error instanciating SignerToken",e);

@@ -35,11 +35,15 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.GlobalConfigurationCache;
 import org.signserver.server.GlobalConfigurationFileParser;
-import org.signserver.server.timedservices.ITimedService;
 import org.signserver.server.IProcessable;
+import org.signserver.server.IWorker;
+import org.signserver.server.WorkerFactory;
+import org.signserver.server.timedservices.ITimedService;
 
 /**
- * The implementation of the GlobalConfiguration Session Bean
+ * The implementation of the GlobalConfiguration Session Bean.
+ * 
+ * 
  * 
  * 
  * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession 
@@ -178,7 +182,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 	}
 	
 	private List<Integer> getWorkerHelper(List<Integer> retval, GlobalConfiguration gc, String key, int workerType, boolean signersOnly){
-		try{
+		
    		String unScopedKey = key.substring("GLOB.".length());
    		log.debug("unScopedKey : " + unScopedKey);
 		String strippedKey = key.substring("GLOB.WORKER".length());
@@ -191,19 +195,14 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 				if(workerType == GlobalConfiguration.WORKERTYPE_ALL){
 					retval.add(new Integer(id));
 				}else{
-					if(workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE){
-						String classPath = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, unScopedKey);
-						log.debug("Found Classpath " + classPath);
-						Object obj = this.getClass().getClassLoader().loadClass(classPath).newInstance();
+					IWorker obj = WorkerFactory.getInstance().getWorker(id, new WorkerConfigDataService(em), this, em);
+					if(workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE){						
 						if(obj instanceof IProcessable){
 							log.debug("Adding Signer " + id);
 							retval.add(new Integer(id));        			   
 						}
 					}else{
 						if(workerType == GlobalConfiguration.WORKERTYPE_SERVICES && !signersOnly){
-							String classPath = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, unScopedKey);
-							log.debug("Found Classpath " + classPath);
-							Object obj = this.getClass().getClassLoader().loadClass(classPath).newInstance();
 							if(obj instanceof ITimedService){
 								log.debug("Adding Service " + id);
 								retval.add(new Integer(id));        			   
@@ -213,13 +212,6 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 				}
 
 			}
-		}
-		} catch (ClassNotFoundException e) {
-			log.error("Error in global configuration for configurared workers, classpath not found",e);
-		} catch (InstantiationException e) {
-			log.error("Error in global configuration for configurared workers, classpath not found",e);
-		} catch (IllegalAccessException e) {
-			log.error("Error in global configuration for configurared workers, classpath not found",e);
 		}
 		
 		return retval;
@@ -304,7 +296,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 		// Set the state to insync.
 		GlobalConfigurationCache.setCurrentState(GlobalConfiguration.STATE_INSYNC);		
 	}
-	
+		
 
 	/**
 	 * Helper method used to set properties in a table.

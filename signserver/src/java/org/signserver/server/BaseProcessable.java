@@ -84,7 +84,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 					Class<?> implClass = Class.forName(classpath);
 					Object obj = implClass.newInstance();
 					cryptoToken = (ICryptoToken) obj;
-					cryptoToken.init(config.getProperties());								 
+					cryptoToken.init(workerId, config.getProperties());								 
 				} 
 			}catch(CryptoTokenInitializationFailureException e){
 				throw new EJBException(e);

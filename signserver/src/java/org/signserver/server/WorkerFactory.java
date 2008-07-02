@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJBException;
@@ -26,12 +27,12 @@ import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessableConfig;
+import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.WorkerConfigDataService;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.server.timedservices.ITimedService;
-import org.signserver.server.IProcessable;
+import org.signserver.server.clusterclassloader.ClusterClassLoader;
 
 
 /**
@@ -54,6 +55,8 @@ public  class WorkerFactory {
 	private Map<Integer, IWorker> workerStore = null;
 	private Map<Integer, IAuthorizer> authenticatorStore = null;
 	private Map<String, Integer> nameToIdMap = null;
+	private Map<Integer, ClassLoader> workerClassLoaderMap = null;
+	
 	
 	
 	
@@ -143,6 +146,7 @@ public  class WorkerFactory {
 		   if(workerStore == null){
               workerStore = new HashMap<Integer, IWorker>();
               nameToIdMap = new HashMap<String,Integer>();
+              workerClassLoaderMap=  new HashMap<Integer,ClassLoader>();
 			   
 			  Collection<Integer> workers = gCSession.getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
 			  GlobalConfiguration gc = gCSession.getGlobalConfiguration();
@@ -151,20 +155,20 @@ public  class WorkerFactory {
 				  Integer nextId = (Integer) iter.next();				   
 				  try{	
 					  String classpath = gc.getWorkerClassPath(nextId.intValue());						
-					  if(classpath != null){					
-						  Class<?> implClass =  Class.forName(classpath);
+					  if(classpath != null){
+						  WorkerConfig config = getWorkerProperties(nextId.intValue(), workerConfigHome);
+						  						  
+						  ClassLoader cl = getClassLoader(em, nextId,config);
+						  Class<?>  implClass =  cl.loadClass(classpath);
+						  
 						  Object obj = implClass.newInstance();
 						  
-						  WorkerConfig config = null;
 						  if(obj instanceof IProcessable){
 							  config = getWorkerProperties(nextId.intValue(), workerConfigHome);
 							  if(config.getProperties().getProperty(ProcessableConfig.NAME) != null){
 								  
 								  getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), nextId); 
 							  }  
-						  }
-						  if(obj instanceof ITimedService){
-							  config = getWorkerProperties(nextId.intValue(), workerConfigHome);
 						  }
 
 						  ((IWorker) obj).init(nextId.intValue(), config, em);						  
@@ -184,7 +188,62 @@ public  class WorkerFactory {
 	}
 	
 
-	
+	/**
+	 * Method that manages all available class loaders in the system.
+	 * 
+	 * It looks up the version used in the worker configuration by the 
+	 * properties MODULENAME, and MODULEVERSION, the the setting doesn't exist will
+	 * the latest available version be used.
+	 * 
+	 * If MODULENAME isn't specified will the default app server
+	 * class loader be used.
+	 * 
+	 * @param config the worker configuration
+	 * @return the class loader specific for the given worker.
+	 */
+	@SuppressWarnings("unchecked")
+	private ClassLoader getClassLoader(EntityManager em, int workerId, WorkerConfig config) {
+		ClassLoader retval = workerClassLoaderMap.get(workerId);
+		if(retval == null){
+			retval = this.getClass().getClassLoader();
+			String moduleName = config.getProperty(SignServerConstants.MODULENAME);
+			if(GlobalConfiguration.isClusterClassLoaderEnabled() && config.getProperty("MODULENAME") != null){
+				boolean exists = false;
+			   	try{
+		    		List<String> results = em.createNamedQuery("ClusterClassLoaderDataBean.findAllModules")
+		    		.getResultList();
+		    		if(results.contains(moduleName)){
+		    			exists = true;
+		    		}
+			   	}catch(javax.persistence.NoResultException e){}
+
+			   	if(exists){
+			   		Integer moduleVersion = null;
+			   		try{
+			   			if(config.getProperty(SignServerConstants.MODULEVERSION) != null){
+			   				moduleVersion = Integer.parseInt(config.getProperty(SignServerConstants.MODULEVERSION));
+			   			}
+			   		}catch(NumberFormatException e){
+			   			log.error("Error: Worker with id " + workerId + " is missconfigured property " + SignServerConstants.MODULEVERSION + " should only contain digits but has the value "
+			   					+ config.getProperty(SignServerConstants.MODULEVERSION));
+			   		}
+			   		
+			   		if(moduleVersion == null){
+			   			retval = new ClusterClassLoader(this.getClass().getClassLoader(),em,moduleName,"server");
+			   		}else{
+			   			retval = new ClusterClassLoader(this.getClass().getClassLoader(),em,moduleName,"server",moduleVersion);
+			   		}			   		
+			   	}else{
+			   		log.error("Error in Worker Configuration for worker with id " + workerId + ", the module with name " + moduleName + " doesn't seem to exist.");
+			   	}
+			}
+			
+			workerClassLoaderMap.put(workerId, retval);
+
+		}
+		return retval;
+	}
+
 	/**
 	 * Method used to force reinitialization of all the signers.
 	 * Should be called from the GlobalConfigurationFileParser.reloadConfiguration() method
@@ -195,6 +254,7 @@ public  class WorkerFactory {
 			workerStore = null;
 			nameToIdMap = null;	
 			authenticatorStore = null;
+			workerClassLoaderMap = null;
 		}
 	}
 	
@@ -214,53 +274,58 @@ public  class WorkerFactory {
 			authenticatorStore = Collections.synchronizedMap(new HashMap<Integer, IAuthorizer>());
 		}
 		
+		if(workerClassLoaderMap == null){
+			workerClassLoaderMap = Collections.synchronizedMap(new HashMap<Integer, ClassLoader>());
+		}
+		
 		synchronized(nameToIdMap){	
 			synchronized(workerStore){
 				synchronized(authenticatorStore){
-					if(id != 0){
+					synchronized(workerClassLoaderMap){
+						if(id != 0){
 
-						workerStore.put(new Integer(id),null);
-						authenticatorStore.put(id, null);
-						Iterator<String> iter = nameToIdMap.keySet().iterator();
-						while(iter.hasNext()){
-							String next = (String) iter.next();
-							if(nameToIdMap.get(next) != null && 
-									((Integer) nameToIdMap.get(next)).intValue() == id){
-								iter.remove();
+							workerStore.put(new Integer(id),null);
+							authenticatorStore.put(id, null);
+							workerClassLoaderMap.put(id, null);
+							Iterator<String> iter = nameToIdMap.keySet().iterator();
+							while(iter.hasNext()){
+								String next = (String) iter.next();
+								if(nameToIdMap.get(next) != null && 
+										((Integer) nameToIdMap.get(next)).intValue() == id){
+									iter.remove();
+								}
 							}
 						}
-					}
-					GlobalConfiguration gc = gCSession.getGlobalConfiguration();
+						GlobalConfiguration gc = gCSession.getGlobalConfiguration();
 
-					try{	
-						String classpath = gc.getWorkerClassPath(id);						
-						if(classpath != null){					
-							Class<?> implClass = Class.forName(classpath);
-							Object obj = implClass.newInstance();
+						try{							
+							String classpath = gc.getWorkerClassPath(id);						
+							if(classpath != null){	
+								WorkerConfig config = getWorkerProperties(id, workerConfigHome);
+								ClassLoader cl = getClassLoader(em, id,config);
+								Class<?>  implClass =  cl.loadClass(classpath);
 
-							WorkerConfig config = null;
-							if(obj instanceof IProcessable){
-								config = getWorkerProperties(id, workerConfigHome);
-								if(config.getProperties().getProperty(ProcessableConfig.NAME) != null){
-									getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), new Integer(id)); 
-								}  
-							}
-							if(obj instanceof ITimedService){
-								config = getWorkerProperties(id, workerConfigHome);
-							}
+								Object obj = implClass.newInstance();
 
-							((IWorker) obj).init(id, config, em);						  
-							getWorkerStore().put(new Integer(id),(IWorker) obj);
-						}  
-					}catch(ClassNotFoundException e){
-						throw new EJBException(e);
+								if(obj instanceof IProcessable){
+									if(config.getProperties().getProperty(ProcessableConfig.NAME) != null){
+										getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), new Integer(id)); 
+									}  
+								}
+
+								((IWorker) obj).init(id, config, em);						  
+								getWorkerStore().put(new Integer(id),(IWorker) obj);
+							}  
+						}catch(ClassNotFoundException e){
+							throw new EJBException(e);
+						}
+						catch(IllegalAccessException iae){
+							throw new EJBException(iae);
+						}
+						catch(InstantiationException ie){
+							throw new EJBException(ie);
+						} 
 					}
-					catch(IllegalAccessException iae){
-						throw new EJBException(iae);
-					}
-					catch(InstantiationException ie){
-						throw new EJBException(ie);
-					} 
 				}
 			}
 		}
@@ -283,7 +348,7 @@ public  class WorkerFactory {
 			}else{
 
 				try {
-					Class<?> c = this.getClass().getClassLoader().loadClass(authType);
+					Class<?> c = getClassLoader(em,workerId,config).loadClass(authType);
 					auth = (IAuthorizer) c.newInstance();
 				} catch (ClassNotFoundException e) {
 					log.error("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.",e);

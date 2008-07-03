@@ -473,7 +473,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
     <!-- ======================================================================= -->
     <!-- Deploy Sign Server ear to JBoss                                               -->
     <!-- ======================================================================= -->
-    <target name="deploy" depends="signserver.ear" unless="buildMailSigner">
+    <target name="deploy" depends="signserver.ear, signserver-cli" unless="buildMailSigner">
         <antcall target="j2ee:deploy" />
     </target>
 	
@@ -492,7 +492,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	
     <target name="test:signserver:run" depends="test:signserver:compile" description="run JUnit testcases" unless="buildMailSigner">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
-        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled, and HTTPS be turned off.</echo>
+        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
         <delete dir="${test.dir}/reports" />
         <mkdir dir="${test.dir}/reports/html" />
         <junit printsummary="yes" haltonfailure="no">

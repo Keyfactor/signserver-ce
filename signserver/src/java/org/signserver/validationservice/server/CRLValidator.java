@@ -67,7 +67,7 @@ public class CRLValidator extends BaseValidator {
 
 	}
 
-	@Override
+
 	public void testConnection() throws ConnectException, SignServerException {
 		// TODO Test Internet connectivity, which is needed to fetch CRLs.
 		// throw exception if not online 
@@ -75,7 +75,7 @@ public class CRLValidator extends BaseValidator {
 
 	}
 
-	@Override
+
 	public Validation validate(ICertificate cert)
 	throws IllegalRequestException, CryptoTokenOfflineException,
 	SignServerException {

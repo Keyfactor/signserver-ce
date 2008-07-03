@@ -230,7 +230,7 @@ public class ClusterClassLoaderUtils {
 			try {				
 				retval = verifySignature(getCACertificatesFromKeyStore(trustStore), null, retval, new Date());
 			} catch (KeyStoreException e) {
-				throw new IOException("Error reading certificates from truststore : " + e.getMessage(),e);
+				throw new IOException("Error reading certificates from truststore : " + e.getMessage());
 			}
 		}else{
 			if(trustStore != null){

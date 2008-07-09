@@ -14,6 +14,7 @@
 
 package org.signserver.cli;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -114,11 +115,15 @@ public class signserver {
     private Properties getProperties() throws IOException{
         String propsfile = "signserver_cli.properties";
         
-        if(System.getenv("SIGNSERVER_HOME") != null){
-        	propsfile = System.getenv("SIGNSERVER_HOME") + "/"+ propsfile;
-        }else{        
-          if(System.getenv("SIGNSRV_HOME") != null){
-        	propsfile = System.getenv("SIGNSRV_HOME") + "/"+ propsfile;
+        File unixConfigFile = new File("/etc/signserver/signserver.conf");
+        if(unixConfigFile.exists()){
+          propsfile = unixConfigFile.getPath();
+          if(System.getenv("SIGNSERVER_HOME") != null){
+        	 propsfile = System.getenv("SIGNSERVER_HOME") + "/"+ propsfile;
+          }else{        
+            if(System.getenv("SIGNSRV_HOME") != null){
+        	  propsfile = System.getenv("SIGNSRV_HOME") + "/"+ propsfile;
+            }            
           }
         }
         

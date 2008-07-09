@@ -319,7 +319,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    <target name="ws.gen.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">	    	
 	        <wsimport 
 	                destdir="tmp/jaxws/gen-classes/client"
-	                wsdl="tmp/jaxws/gen-classes/server/SignServerWSService.wsdl">	          
+	                wsdl="tmp/jaxws/gen-classes/server/SignServerWSService.wsdl" >	        	
 	        </wsimport>
 	    </target>
 	    
@@ -578,7 +578,6 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	  <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
 	  	<isset property="${env.DESTDIR}"/>
 	  </condition>
-		<echo>DESTDIR : ${env.DESTDIR}</echo>
 		
 	   <mkdir dir="${pkgdist.destdir}"/>
 		
@@ -618,6 +617,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		<copy todir="${pkgdist.bindir}">
 		   <fileset dir="bin">
 		     <include name="signserver.sh"/>
+		   	 <include name="signserver.cmd"/>
 		   	 <include name="signserver_cli.properties"/>
 		   	 <include name="log4j.properties"/>
 		   </fileset>
@@ -649,6 +649,13 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 			 <include name="james-2.3.1.jar"/>
 		  </fileset>
 	    </copy>	
+		<property name="pkgdist.sampleconfigdir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/sample-configs" />
+		<mkdir dir="${pkgdist.sampleconfigdir}"/>
+	    <copy todir="${pkgdist.sampleconfigdir}">
+	       <fileset dir="sample-configs">
+	         <include name="*.*"/>
+	       </fileset>
+	    </copy> 
     </target>
 	
 	 <!--                                                   -->

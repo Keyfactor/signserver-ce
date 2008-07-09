@@ -57,11 +57,17 @@ class_name=org.signserver.cli.signserver
 #fi
 
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
+  if [ -f /etc/signserver/signservermgmt.env ]; then
+     . /etc/signserver/signservermgmt.env
+  fi
   if [ -f /usr/share/signserver/bin/signserver.sh ]; then
      SIGNSRV_HOME=/usr/share/signserver
   fi
   if [ -f /opt/signserver/bin/signserver.sh ]; then
      SIGNSRV_HOME=/opt/signserver
+  fi
+  if [ -f /usr/local/bin/signserver.sh ]; then
+     SIGNSRV_HOME=/usr/local/signserver
   fi
   if [ -f /usr/local/signserver/bin/signserver.sh ]; then
      SIGNSRV_HOME=/usr/local/signserver

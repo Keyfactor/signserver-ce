@@ -117,7 +117,7 @@ public class signserver {
         
         File unixConfigFile = new File("/etc/signserver/signserver.conf");
         if(unixConfigFile.exists()){
-          propsfile = unixConfigFile.getPath();
+          propsfile = "/etc/signserver/signserver.conf";
           if(System.getenv("SIGNSERVER_HOME") != null){
         	 propsfile = System.getenv("SIGNSERVER_HOME") + "/"+ propsfile;
           }else{        

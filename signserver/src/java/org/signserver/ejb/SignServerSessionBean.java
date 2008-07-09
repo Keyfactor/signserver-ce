@@ -41,6 +41,7 @@ import org.signserver.common.InvalidSignerIdException;
 import org.signserver.common.SignTokenAuthenticationFailureException;
 import org.signserver.common.SignTokenOfflineException;
 import org.signserver.common.SignerConfig;
+import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.IWorker;
@@ -163,7 +164,8 @@ public class SignServerSessionBean extends BaseSessionBean {
         	throw new IllegalSignRequestException("Worker exists but isn't a signer.");
         }
 		ISigner signer = (ISigner) worker;
-        
+        if ( signer.getStatus() instanceof SignerStatus && ((SignerStatus)signer.getStatus()).getTokenStatus()==SignerStatus.STATUS_OFFLINE )
+            throw new SignTokenOfflineException("Signer token is offline");
         if(signer.getAuthenticationType() == ISigner.AUTHTYPE_CLIENTCERT){
         	if(clientCert == null){
         		throw new IllegalSignRequestException("Error, client authentication is required.");   

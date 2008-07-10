@@ -113,23 +113,23 @@ public abstract class BaseValidationService implements IValidationService {
 	}
 	
 	
-	private ICertTypeChecker certTypeChecker = null;
+	private ICertPurposeChecker certTypeChecker = null;
 	/**
 	 * Method returning the configured cert type checker if it wasn't configured properly.
 	 */
-	protected ICertTypeChecker getCertTypeChecker() throws SignServerException{
+	protected ICertPurposeChecker getCertPurposeChecker() throws SignServerException{
 		if(certTypeChecker == null){
-			String classpath = config.getProperties().getProperty(ValidationServiceConstants.VALIDATIONSERVICE_CERTTYPECHECKER,ValidationServiceConstants.DEFAULT_CERTTYPECHECKER);
+			String classpath = config.getProperties().getProperty(ValidationServiceConstants.VALIDATIONSERVICE_CERTPURPOSECHECKER,ValidationServiceConstants.DEFAULT_CERTPURPOSECHECKER);
 			try {
 				Class<?> c = ValidationHelper.class.getClassLoader().loadClass(classpath);
-				certTypeChecker = (ICertTypeChecker) c.newInstance();
+				certTypeChecker = (ICertPurposeChecker) c.newInstance();
 				certTypeChecker.init(config);
 			} catch (ClassNotFoundException e) {
-				throw new SignServerException("Error Validation Service with workerId " + workerId + " have got bad classpath  " + classpath + " for the setting " +  ValidationServiceConstants.VALIDATIONSERVICE_CERTTYPECHECKER);
+				throw new SignServerException("Error Validation Service with workerId " + workerId + " have got bad classpath  " + classpath + " for the setting " +  ValidationServiceConstants.VALIDATIONSERVICE_CERTPURPOSECHECKER);
 			} catch (InstantiationException e) {
-				throw new SignServerException("Error Validation Service with workerId " + workerId + " have got bad classpath  " + classpath + " for the setting " +  ValidationServiceConstants.VALIDATIONSERVICE_CERTTYPECHECKER);
+				throw new SignServerException("Error Validation Service with workerId " + workerId + " have got bad classpath  " + classpath + " for the setting " +  ValidationServiceConstants.VALIDATIONSERVICE_CERTPURPOSECHECKER);
 			} catch (IllegalAccessException e) {
-				throw new SignServerException("Error Validation Service with workerId " + workerId + " have got bad classpath  " + classpath + " for the setting " +  ValidationServiceConstants.VALIDATIONSERVICE_CERTTYPECHECKER);
+				throw new SignServerException("Error Validation Service with workerId " + workerId + " have got bad classpath  " + classpath + " for the setting " +  ValidationServiceConstants.VALIDATIONSERVICE_CERTPURPOSECHECKER);
 			}					
 		}
 		return certTypeChecker;

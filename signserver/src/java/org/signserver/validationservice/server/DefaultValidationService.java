@@ -52,12 +52,13 @@ public class DefaultValidationService extends BaseValidationService {
 		}
 		// Verify and check validity
 		Validation validation = ICertificateManager.verifyCertAndChain(validationRequest.getCertificate(),cAChain);
-
+		
+		String[] validPurposes = null;
 		if(validation.getStatus().equals(Status.VALID)){
 
-			// Check Certificate type
-			if(!getCertTypeChecker().checkType(validationRequest.getCertificate(), validationRequest.getCertType())){
-                validation = new Validation(validationRequest.getCertificate(),cAChain,Validation.Status.BADCERTTYPE,"Error certificate doesn't fulfill the specification of the requested certificate type");
+			// Check Certificate purposes			
+			if(validationRequest.getCertPurposes() != null && (validPurposes = getCertPurposeChecker().checkCertPurposes(validationRequest.getCertificate(), validationRequest.getCertPurposes())) == null){
+                validation = new Validation(validationRequest.getCertificate(),cAChain,Validation.Status.BADCERTPURPOSE,"Error certificate doesn't fulfill any of the specified certificate purposes in the request.");
 			}else{
 				// Check revocation of the certificate and for the entire chain.
 				validation = validationCache.get(validationRequest.getCertificate());
@@ -103,7 +104,7 @@ public class DefaultValidationService extends BaseValidationService {
 		
 		
 		
-		return new ValidateResponse(validation);
+		return new ValidateResponse(validation, validPurposes);
 	}
 
 

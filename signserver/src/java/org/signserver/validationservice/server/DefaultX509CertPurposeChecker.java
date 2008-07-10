@@ -14,6 +14,7 @@
 package org.signserver.validationservice.server;
 
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 
 import org.signserver.common.WorkerConfig;
 import org.signserver.validationservice.common.ICertificate;
@@ -29,7 +30,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
  * @version $Id: DefaultX509CertTypeChecker.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
  */
 
-public class DefaultX509CertTypeChecker implements ICertTypeChecker {
+public class DefaultX509CertPurposeChecker implements ICertPurposeChecker {
 
 	/**
 	 * Does the following checks
@@ -41,29 +42,38 @@ public class DefaultX509CertTypeChecker implements ICertTypeChecker {
 	 * If the certificate have certType : ELECTRONIC_SIGNATURE it checks for
 	 * key usage non-repudiation
 	 * </p>
-	 * @see org.signserver.validationservice.server.ICertTypeChecker#checkType(org.signserver.validationservice.common.ICertificate, org.signserver.validationservice.common.ValidationServiceConstants.CertType)
+	 * @see org.signserver.validationservice.server.ICertPurposeChecker#checkCertPurposes(org.signserver.validationservice.common.ICertificate, String[])
 	 */
-	public boolean checkType(ICertificate cert, String certType) {
-		boolean retval = false;
+	public String[] checkCertPurposes(ICertificate cert, String[] certPurposes) {
+		String[] retval = null;
 		
-		if(cert instanceof java.security.cert.X509Certificate){
-			java.security.cert.X509Certificate c = (X509Certificate) cert;
-			if(certType.equalsIgnoreCase(ValidationServiceConstants.CERTTYPE_ANY)){
-				retval = true;
-			}else if (certType.equalsIgnoreCase(ValidationServiceConstants.CERTTYPE_IDENTIFICATION)){
-				retval = c.getKeyUsage() != null  && c.getKeyUsage()[0] == true && c.getKeyUsage()[2] == true;				
-			}else if (certType.equalsIgnoreCase(ValidationServiceConstants.CERTTYPE_ELECTRONIC_SIGNATURE)){
-				retval = c.getKeyUsage() != null  && c.getKeyUsage()[1] == true;
+		for(String certPurpose : certPurposes){
+			ArrayList<String> approvedCertPurposes = new ArrayList<String>();
+			if(cert instanceof java.security.cert.X509Certificate){
+				java.security.cert.X509Certificate c = (X509Certificate) cert;
+				if (certPurpose.equalsIgnoreCase(ValidationServiceConstants.CERTPURPOSE_IDENTIFICATION)){
+					if(c.getKeyUsage() != null  && c.getKeyUsage()[0] == true && c.getKeyUsage()[2] == true){
+						approvedCertPurposes.add(certPurpose);
+					}
+				}else if (certPurpose.equalsIgnoreCase(ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE)){
+					if(c.getKeyUsage() != null  && c.getKeyUsage()[1] == true){
+						approvedCertPurposes.add(certPurpose);
+					}
+				}
+			}
+			if(approvedCertPurposes.size() > 0){
+				retval = approvedCertPurposes.toArray(new String[approvedCertPurposes.size()]);
 			}
 		}
 		return retval;
 	}
 
 	/**
-	 * @see org.signserver.validationservice.server.ICertTypeChecker#init(org.signserver.common.WorkerConfig)
+	 * @see org.signserver.validationservice.server.ICertPurposeChecker#init(org.signserver.common.WorkerConfig)
 	 */
 	public void init(WorkerConfig config) {
 		// Not used
 	}
+
 
 }

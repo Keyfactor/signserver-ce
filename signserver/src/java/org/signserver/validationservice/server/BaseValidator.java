@@ -27,7 +27,6 @@ import java.util.Properties;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.ejbca.core.model.ca.caadmin.CA;
 import org.ejbca.util.CertTools;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;

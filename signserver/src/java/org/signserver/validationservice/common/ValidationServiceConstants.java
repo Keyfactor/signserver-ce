@@ -21,20 +21,20 @@ package org.signserver.validationservice.common;
 public class ValidationServiceConstants {
 	
 	/**
-	 * No specific certificate type.
+	 * Dont check for any specific certificate purpose
 	 */
-	public static String CERTTYPE_ANY = "ANY"; 
-		
+	public static String CERTPURPOSE_NO_PURPOSE = null;
+
 	/**
-	 * Certificate type used by client that want to check that the requested 
+	 * Certificate purpose used by client that want to check that the requested 
 	 * certificate might be used for signing.
 	 */
-	public static String CERTTYPE_ELECTRONIC_SIGNATURE = "ELECTRONIC_SIGNATURE"; 
+	public static String CERTPURPOSE_ELECTRONIC_SIGNATURE = "ELECTRONIC_SIGNATURE"; 
 	/**
 	 * Certificate type used by client that want to check that the requested 
 	 * certificate might be used for identification.
 	 */
-	public static String CERTTYPE_IDENTIFICATION = "IDENTIFICATION";
+	public static String CERTPURPOSE_IDENTIFICATION = "IDENTIFICATION";
 
 	/**
 	 * Setting indicating the type of validation service to instantiate when
@@ -74,8 +74,8 @@ public class ValidationServiceConstants {
 	/**
 	 * Setting indicating the which cert type checker to instantiate
 	 */
-	public static final String VALIDATIONSERVICE_CERTTYPECHECKER = "CERTTYPECHECKER";
-	public static final String DEFAULT_CERTTYPECHECKER = "org.signserver.validationservice.server.DefaultX509CertTypeChecker";
+	public static final String VALIDATIONSERVICE_CERTPURPOSECHECKER = "CERTPURPOSECHECKER";
+	public static final String DEFAULT_CERTPURPOSECHECKER = "org.signserver.validationservice.server.DefaultX509CertPurposeChecker";
 
 	/**
 	 * Setting indicating crl paths for given issuer , crls should be VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER delimited URLs 

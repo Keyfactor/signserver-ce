@@ -26,7 +26,7 @@ import org.signserver.validationservice.common.ICertificate;
  * @version $Id: ICertTypeChecker.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
  */
 
-public interface ICertTypeChecker {
+public interface ICertPurposeChecker {
 	
 	void init(WorkerConfig config);
 	
@@ -35,9 +35,9 @@ public interface ICertTypeChecker {
 	 * requirements of a specific certificate type
 	 * 
 	 * @param cert the certificate to check
-	 * @param certType one of ValidationServiceConstants.CERTTYPE_ constants
-	 * @return true if the certificate fulfills the requirements otherwise false.
+	 * @param certPurposes one of ValidationServiceConstants.CERTPURPOSE_ constants or other custom defined.
+	 * @return a subset of fullfilled certificate purposes or NULL if no purposes were valid.
 	 */
-	boolean checkType(ICertificate cert, String certType);
+	String[] checkCertPurposes(ICertificate cert, String[] certPurposes);
 
 }

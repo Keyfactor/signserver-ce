@@ -44,7 +44,7 @@ public class TestValidationSerialization extends TestCase {
 		  ArrayList<ICertificate> caChain = new ArrayList<ICertificate>();		  
 		  caChain.add(ICertificateManager.genICertificate(validSubCA1));
 		  caChain.add(ICertificateManager.genICertificate(validRootCA1));
-		  Validation val = new Validation(ICertificateManager.genICertificate(validCert1),caChain,Validation.Status.BADCERTTYPE,null);
+		  Validation val = new Validation(ICertificateManager.genICertificate(validCert1),caChain,Validation.Status.BADCERTPURPOSE,null);
 		  
 		  ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		  DataOutputStream out = new DataOutputStream(baos);
@@ -56,7 +56,7 @@ public class TestValidationSerialization extends TestCase {
 		  
 		  Validation val2 = new Validation();
 		  val2.parse(ois);
-		  assertTrue(val2.getStatus() == Status.BADCERTTYPE);
+		  assertTrue(val2.getStatus() == Status.BADCERTPURPOSE);
 		  assertTrue(Math.abs(System.currentTimeMillis() -  val2.getValidationDate().getTime()) < 1000); 
 		  assertTrue(val2.getStatusMessage() == null);
 		  assertTrue(val2.getRevokationReason() == 0);

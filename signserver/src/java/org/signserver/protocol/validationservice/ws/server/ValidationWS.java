@@ -44,7 +44,6 @@ import org.signserver.protocol.validationservice.ws.ValidationResponse;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
-import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.common.ValidationStatus;
 import org.signserver.validationservice.server.ICertificateManager;
 import org.signserver.validationservice.server.ValidationServiceWorker;
@@ -71,7 +70,7 @@ public class ValidationWS implements IValidationWS {
 	 * @see se.primekey.chambersign.validationservice.ws.IValidationWS#isValid(String, CertType)
 	 */
 	@WebMethod
-	public ValidationResponse isValid(@WebParam(name="serviceName")String serviceName, @WebParam(name="base64Cert") String base64Cert,@WebParam(name="certType") String certType)  throws IllegalRequestException, SignServerException{
+	public ValidationResponse isValid(@WebParam(name="serviceName")String serviceName, @WebParam(name="base64Cert") String base64Cert,@WebParam(name="certPurposes") String certPurposes)  throws IllegalRequestException, SignServerException{
 		ICertificate reqCert;
 		int workerId = getWorkerId(serviceName);
 		
@@ -89,22 +88,22 @@ public class ValidationWS implements IValidationWS {
 			}
 		}
 		
-		if(certType == null){
-			certType = ValidationServiceConstants.CERTTYPE_ANY;
+		if(certPurposes == null){
+			certPurposes = "";
 		}else{
-			certType = certType.trim();
+			certPurposes = certPurposes.trim();
 		}
 		
 		ValidateResponse res = null;
 		try {
-			ValidateRequest req = new ValidateRequest(reqCert,certType);
+			ValidateRequest req = new ValidateRequest(reqCert,certPurposes);
 			res = (ValidateResponse) getWorkerSession().process(workerId, req, genRequestContext());
 		} catch (CertificateEncodingException e) {
 			throw new IllegalRequestException("Error in request, the requested certificate seem to have a unsupported encoding : " + e.getMessage());
 		} catch (CryptoTokenOfflineException e) {
 			throw new SignServerException("Error using cryptotoken when validating certificate, it seems to be offline : " + e.getMessage());
 		}
-		return new ValidationResponse(res.getValidation());
+		return new ValidationResponse(res.getValidation(), res.getValidCertificatePurposes());
 	}
 	
 	/**

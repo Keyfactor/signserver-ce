@@ -39,7 +39,7 @@ public class ValidateRequest extends ProcessRequest {
 	// Not really used in this case.	
 	private transient ICertificate certificate;
 	private byte[] certificateData;
-	private String certType;
+	private String certPurposes;
 
     /**
      * Default constructor used during serialization
@@ -51,11 +51,11 @@ public class ValidateRequest extends ProcessRequest {
 	 * returning the complete chain of the certificates
 	 * @throws CertificateEncodingException 
 	 */
-	public ValidateRequest(ICertificate certificate, String certType) throws CertificateEncodingException {
+	public ValidateRequest(ICertificate certificate, String certPurposes) throws CertificateEncodingException {
 		super();
 		this.certificate = certificate;
 		this.certificateData = certificate.getEncoded();
-		this.certType = certType;
+		this.certPurposes = certPurposes;
 
 	}
 	
@@ -78,10 +78,20 @@ public class ValidateRequest extends ProcessRequest {
 
 
 	/**
-	 * @return the certType the client want's to check that the certificate can be used for.
+	 * @return the certPurposes the client want's to check that the certificate can be used for a list that is splitted by ","
 	 */
-	public String getCertType() {
-		return certType;
+	public String[] getCertPurposes() {
+		
+		String[] retval = null;
+		if(certPurposes != null && !certPurposes.trim().equals("")){
+			retval = certPurposes.split(",");
+
+			for(String purpose : retval){
+				purpose = purpose.trim();
+			}
+		}
+		
+		return retval;
 	}
 
 
@@ -92,18 +102,24 @@ public class ValidateRequest extends ProcessRequest {
 		certificateData = new byte[dataSize];
 		in.readFully(certificateData);
 		int stringLen = in.readInt();
-		byte[] stringData = new byte[stringLen];
-		in.readFully(stringData);
-		this.certType = new String(stringData,"UTF-8");
+		if(stringLen > 0){
+		  byte[] stringData = new byte[stringLen];
+		  in.readFully(stringData);
+		  this.certPurposes = new String(stringData,"UTF-8");
+		}
 	}
 
 	public void serialize(DataOutput out) throws IOException {
 		out.writeInt(RequestAndResponseManager.RESPONSETYPE_VALIDATE);
 		out.writeInt(certificateData.length);
 		out.write(certificateData);
-		byte[] stringData = certType.getBytes("UTF-8");
-		out.writeInt(stringData.length);
-		out.write(stringData);
+		if(certPurposes != null){
+		  byte[] stringData = certPurposes.getBytes("UTF-8");
+		  out.writeInt(stringData.length);
+		  out.write(stringData);
+		}else{
+		  out.writeInt(0);
+		}
 	}
 
 

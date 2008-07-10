@@ -33,15 +33,17 @@ public class ValidationResponse {
 	private Date validationDate;
 	private Date revocationDate;
 	private int revocationReason;
+	private String validCertificatePurposes;
 	
 	
-	public ValidationResponse(Validation validation) {
+	public ValidationResponse(Validation validation, String validCertificatePurposes) {
 		super();
 		this.status = validation.getStatus();
 		this.statusMessage = validation.getStatusMessage();
 		this.validationDate = validation.getValidationDate();
 		this.revocationDate = validation.getRevokedDate();
 		this.revocationReason = validation.getRevokationReason();
+		this.validCertificatePurposes = validCertificatePurposes;
 	}
 	
 	public ValidationResponse() {
@@ -116,6 +118,20 @@ public class ValidationResponse {
 	 */
 	public void setRevocationReason(int revocationReason) {
 		this.revocationReason = revocationReason;
+	}
+
+	/**
+	 * @return the validCertificatePurposes, a ',' separated string of valid requested purposes.
+	 */
+	public String getValidCertificatePurposes() {
+		return validCertificatePurposes;
+	}
+
+	/**
+	 * @param validCertificatePurposes, a ',' separated string of valid requested purposes.
+	 */
+	public void setValidCertificatePurposes(String validCertificatePurposes) {
+		this.validCertificatePurposes = validCertificatePurposes;
 	}
 	
 }

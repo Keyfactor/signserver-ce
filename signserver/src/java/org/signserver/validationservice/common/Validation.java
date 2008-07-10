@@ -51,7 +51,7 @@ public class Validation{
 		                  CAREVOKED,
 		                  CANOTYETVALID,
 		                  CAEXPIRED,
-		                  BADCERTTYPE		
+		                  BADCERTPURPOSE		
 	};
 
 	

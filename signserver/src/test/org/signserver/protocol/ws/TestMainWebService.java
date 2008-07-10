@@ -206,7 +206,7 @@ public class TestMainWebService extends TestCase {
 		}catch(InvalidWorkerIdException_Exception e){}
 		
 		
-		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(validCert1), ValidationServiceConstants.CERTTYPE_ANY);
+		ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(validCert1), ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
 		
         req1 = new ProcessRequestWS(req);
 

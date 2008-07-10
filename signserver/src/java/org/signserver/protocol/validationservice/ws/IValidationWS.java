@@ -35,13 +35,13 @@ public interface IValidationWS {
 	 * 
 	 * @param serviceName id or name of the validation service to validate the certificate
 	 * @param base64Cert the certificate to check in base64 encoding. 
-	 * @param certType the intended purposes that the client want to use the certificate for. 
+	 * @param certPurposes the intended purposes that the client want to use the certificate for a ',' separated string (optional). 
 	 * @return A response containing the status of the certificate.
 	 * @throws IllegalRequestException if the request contains illegal data.
 	 * @throws OperationFailedException if operation couldn't be performed due to application error or communication problems
 	 * with underlying systems.
 	 */
-	ValidationResponse isValid(String serviceName, String base64Cert, String certType)
+	ValidationResponse isValid(String serviceName, String base64Cert, String certPurposes)
 			throws IllegalRequestException, SignServerException;
 
 	/**

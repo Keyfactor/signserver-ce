@@ -105,7 +105,7 @@ public class TestValidationWS extends TestCase {
 	}
 
 	public void test02TestWSisValid() throws Exception{
-		ValidationResponse res = validationWS.isValid("ValTest", validCert1, ValidationServiceConstants.CERTTYPE_ANY);
+		ValidationResponse res = validationWS.isValid("ValTest", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
 		assertTrue(res != null);
 		assertTrue(res.getStatusMessage() != null);
 		assertTrue(res.getStatus().toString().equals(Status.VALID.toString()));
@@ -113,7 +113,7 @@ public class TestValidationWS extends TestCase {
 		assertTrue(res.getRevocationReason() == 0);
 		assertTrue(res.getRevocationDate() == null);
 		
-		res = validationWS.isValid("16", validCert1, ValidationServiceConstants.CERTTYPE_ANY);
+		res = validationWS.isValid("16", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
 		assertTrue(res != null);
 		assertTrue(res.getStatusMessage() != null);
 		assertTrue(res.getStatus().toString().equals(Status.VALID.toString()));
@@ -122,20 +122,20 @@ public class TestValidationWS extends TestCase {
 		assertTrue(res.getRevocationDate() == null);
 		
 		try{
-			validationWS.isValid("17", validCert1, ValidationServiceConstants.CERTTYPE_ANY);
+			validationWS.isValid("17", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
 			assertTrue(false);
 		}catch(IllegalRequestException_Exception e){}
 		try{
-			validationWS.isValid("asfd", validCert1, ValidationServiceConstants.CERTTYPE_ANY);
+			validationWS.isValid("asfd", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
 			assertTrue(false);
 		}catch(IllegalRequestException_Exception e){}
 		
 		try{
-			validationWS.isValid("asfd", "1234", ValidationServiceConstants.CERTTYPE_ANY);
+			validationWS.isValid("asfd", "1234", ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
 			assertTrue(false);
 		}catch(IllegalRequestException_Exception e){}
 		
-		res = validationWS.isValid("ValTest", revokedCert1,  ValidationServiceConstants.CERTTYPE_ANY);
+		res = validationWS.isValid("ValTest", revokedCert1,  ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
 		assertTrue(res != null);
 		assertTrue(res.getStatusMessage() != null);
 		assertTrue(res.getStatus().toString().equals(Status.REVOKED.toString()));
@@ -143,10 +143,10 @@ public class TestValidationWS extends TestCase {
 		assertTrue(res.getRevocationReason() == 3);
 		assertTrue(res.getRevocationDate() != null);
 		
-		res = validationWS.isValid("ValTest", identificationCert1, ValidationServiceConstants.CERTTYPE_ELECTRONIC_SIGNATURE);
+		res = validationWS.isValid("ValTest", identificationCert1, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
 		assertTrue(res != null);
 		assertTrue(res.getStatusMessage() != null);
-		assertTrue(res.getStatus().toString().equals(Status.BADCERTTYPE.toString()));
+		assertTrue(res.getStatus().toString().equals(Status.BADCERTPURPOSE.toString()));
 		assertTrue(res.getValidationDate() != null);
 		assertTrue(res.getRevocationReason() == 0);
 		assertTrue(res.getRevocationDate() == null);

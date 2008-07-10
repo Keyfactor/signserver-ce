@@ -23,7 +23,7 @@
 	   <property name="performanceTestToolJar" location="${client.dist.dir}/performanceTestTool.jar"/>
 	
 	   <property name="genServerCertJar" value="genservercert.jar"/>
-
+       <property name="setDBTypeJar" value="setdbtype.jar"/>
 
 	   <property name="web.src" value="${src}/web/pub" />
 	   <property name="webwar" value="${server.dist.dir}/web.war" />
@@ -573,8 +573,18 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
     		</jar>
    	
     </target>
+    <target name="setdbtype.jar" depends="signserver" unless="buildMailSigner">
+    		<jar destfile="${tmp}/${setDBTypeJar}" basedir="${build}">
+  	          <manifest>
+  	          	<attribute name="Class-Path" value=""/>
+  	            <attribute name="Main-Class" value="org.signserver.cli.setdbtype.SetDBType"/>
+  	          </manifest>
+              <include name="org/signserver/cli/setdbtype/*.class"/>    	          
+    		</jar>
+   	
+    </target>
     		
-	<target name="signserver-pkgdist" depends="genservercert.jar" unless="buildMailSigner">
+	<target name="signserver-pkgdist" depends="genservercert.jar, setdbtype.jar" unless="buildMailSigner">
 	  <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
 	  	<isset property="${env.DESTDIR}"/>
 	  </condition>
@@ -599,7 +609,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 			 <include name="tomcat*/**"/>			 
 			</fileset>
 		</copy>	
-		<property name="pkgdist.gencertdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/genservercert"/>
+		<property name="pkgdist.gencertdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/bin/genservercert"/>
 		<mkdir dir="${pkgdist.gencertdir}/lib"/>
 		<copy todir="${pkgdist.gencertdir}" >
 		   <fileset dir="${tmp}">
@@ -609,6 +619,13 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		<copy todir="${pkgdist.gencertdir}/lib" >
 		   <fileset dir="${lib}/1.5">
 		     <include name="bcprov-jdk.jar"/>			 
+		   </fileset>
+	    </copy>	
+	    <property name="pkgdist.setdbtypedir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/bin/setdbtype"/>
+		<mkdir dir="${pkgdist.setdbtypedir}"/>
+		<copy todir="${pkgdist.setdbtypedir}" >
+		   <fileset dir="${tmp}">
+		     <include name="${setDBTypeJar}"/>			 
 		   </fileset>
 	    </copy>	
 		

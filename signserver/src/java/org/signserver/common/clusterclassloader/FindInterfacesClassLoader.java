@@ -79,7 +79,10 @@ public class FindInterfacesClassLoader extends ClassLoader {
 		Class<?> c = null;
 
 		try {
-			c = findClass(ClusterClassLoaderUtils.getClassNameFromResourcePath(resourcePath));
+			String classNameFromResourcePath = ClusterClassLoaderUtils.getClassNameFromResourcePath(resourcePath);
+			if(classNameFromResourcePath != null){
+			  c = findClass(classNameFromResourcePath);
+			}
 		} catch (ClassNotFoundException e) {
 		}
 

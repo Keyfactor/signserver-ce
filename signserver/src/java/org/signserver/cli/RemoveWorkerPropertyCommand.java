@@ -49,8 +49,8 @@ public class RemoveWorkerPropertyCommand extends BaseCommand {
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
         if (args.length != 2) {
 	       throw new IllegalAdminCommandException("Usage: signserver <-host hostname (optional)> removeworker  <workerid | workerName> \n" + 
-	       		                                  "Example 1 : signserver removeproperty 1 defaultKey\n" +
-	                                              "Example 2 : signserver removeproperty -host node3.someorg.com mySigner defaultKey\n\n");		       
+	       		                                  "Example 1 : signserver removeworker 1 \n" +
+	                                              "Example 2 : signserver removeworker -host node3.someorg.com mySigner\n\n");		       
 	    }	
         try {            
         	

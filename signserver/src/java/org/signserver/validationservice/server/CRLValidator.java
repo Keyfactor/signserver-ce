@@ -1,7 +1,24 @@
+
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
+
 package org.signserver.validationservice.server;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,7 +29,6 @@ import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
@@ -21,8 +37,6 @@ import java.security.cert.PKIXCertPathValidatorResult;
 import java.security.cert.PKIXParameters;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509CRL;
-import java.security.cert.X509CRLSelector;
-import java.security.cert.X509CertSelector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,9 +64,9 @@ import org.signserver.validationservice.common.X509Certificate;
  * CRL path discovery : look for certificate CRL Distribution points extension first (OID = 2.5.29.31)
  * if extension does not exist then look for  ISSUERX.CRLPATHS property to fetch CRL for issuer
  * 
- * NOTE : com.sun.security.enableCRLDP not used for CertPath validation, since the effect is unknown
+ * NOTE : com.sun.security.enableCRLDP not used for CertPath validation, since it affects entire jvm.
  *  
- * @author 
+ * @author rayback2
  *
  */
 
@@ -245,20 +259,57 @@ public class CRLValidator extends BaseValidator {
 
 	/**
 	 * retrieve X509CRL from specified URL
+	 * @throws SignServerException 
 	 */
-	private X509CRL fetchCRLFromURL(URL url, CertificateFactory certFactory) throws IOException, CRLException {
+	private X509CRL fetchCRLFromURL(URL url, CertificateFactory certFactory) throws IOException, CRLException, SignServerException {
 		URLConnection connection = url.openConnection();
 		connection.setDoInput(true);
 		connection.setUseCaches(false);
-		DataInputStream inStream =
-			new DataInputStream(connection.getInputStream());
-		X509CRL crl = (X509CRL)certFactory.generateCRL(inStream);
-		inStream.close();
+
+		byte[] responsearr = null;		
+		InputStream reader = connection.getInputStream();
+		int responselen = connection.getContentLength();
+		
+		if(responselen != -1) 
+		{
+						
+			//header indicating content-length is present, so go ahead and use it
+			responsearr = new byte[responselen];
+
+			int offset = 0;
+			int bread;
+			while ((responselen > 0) && (bread = reader.read(responsearr, offset, responselen))!=-1) {
+				offset += bread;
+				responselen -= bread;
+			}
+			
+			//read.read returned -1 but we expect inputstream to contain more data
+			//is it a dreadful unexpected EOF we were afraid of ??
+			if (responselen > 0) {
+				throw new SignServerException("Unexpected EOF encountered while reading crl from : " + url.toString());
+			}
+		}
+		else
+		{
+			//getContentLength() returns -1. no panic , perfect normal value if header indicating length is missing (javadoc)
+			//try to read response manually byte by byte (small response expected , no need to buffer)
+			ByteArrayOutputStream baos  = new ByteArrayOutputStream();
+			int b;
+			while ((b = reader.read())!=-1) {
+				baos.write(b);
+			}
+			
+			responsearr = baos.toByteArray();
+		}
+
+		ByteArrayInputStream bis = new ByteArrayInputStream(responsearr);
+		X509CRL crl = (X509CRL)certFactory.generateCRL(bis);
+		
 		return crl;
 	}
 
 	/**
-	 * find the issuer of this certificate and get the CRLPaths property which contains ; separated
+	 * find the issuer of this certificate and get the CRLPaths property which contains VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER separated
 	 * list of URLs for accessing crls for that specific issuer
 	 * and return as List of URLs
 	 * @throws SignServerException 

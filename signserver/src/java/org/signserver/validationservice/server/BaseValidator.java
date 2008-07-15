@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -97,13 +98,11 @@ public abstract class BaseValidator implements IValidator{
 		if( getCertChainMap() == null)
 			return null;
 		
-		// if it is end entity certificate return ful chain as specified in properties
-		// if it is CA certificate return "cut off certificate chain"
 		X509Certificate x509cert = (X509Certificate)cert;
 		if(x509cert.getBasicConstraints() == -1)
-			return getCertChainMap().get(cert.getIssuer());
+			return getCertificateChainForEndEntityCertificate(x509cert);
 		else
-			return getCertificateChainForCACertificate(cert);
+			return getCertificateChainForCACertificate(cert, false);
 	}
 	
 	/**
@@ -219,27 +218,113 @@ public abstract class BaseValidator implements IValidator{
 	    return null;	
 	}
 
+	
 	/**
-	 * Retrieve "cut off certificate chain" for the ca certificate given
+	 * Retrieves certificate chain for the end entity certificate given
 	 * Certificate chain will be retrieved from configured certchain properties for issuers 
 	 * 
 	 * @return  
 	 * 
-	 * certificates starting from (not included) cACert up to root certificate, if cACert is intermediate CA certificate
-	 * null if passed in certificate is not found in any configured chains or if cACert is root certificate
+	 * certificates starting from the CA certificate issuing this end entity cert up to root certificate, if issuer is found in configured chains
+	 * null if passed in certificate's issuer is not in any of the configured chains 
 	 *  
 	 */
-	protected List<ICertificate> getCertificateChainForCACertificate(ICertificate cACert) {
+	protected List<ICertificate> getCertificateChainForEndEntityCertificate(X509Certificate x509Cert) {
+		List<ICertificate> retVal= null;
+		//first look if the end entity certificate is directly issued by CA that is in the beginning of the one of configured chains
+		//"in the beginning" here means that the issuer of the certificate is at position 0 after sortCerts method is called
+		//it is easy to check since the CA Certificate at position 0 is the key to HashMap holding certificate chains
+		retVal = getCertChainMap().get(x509Cert.getIssuer());
+		if(retVal == null)
+		{
+			//look if end entity cert is issued by some CA that is in the middle of the one of configured chains
+			//"in the middle" here means that issuer of this certificate is not at position 0 after sortCerts method is called
+			//match is done on issuerDN and authorityKeyIdentifier (if exists)
+			X509Certificate issuerCACert = null;
+			byte[] aki = null;
+			boolean issuerFound = false;
+			for(String certDN : getCertChainMap().keySet())
+			{
+				for(ICertificate cACert : getCertChainMap().get(certDN))
+				{
+					issuerCACert = (X509Certificate)cACert;
+					
+					//check if subject of CA and the issuer of our certificate match
+					if(issuerCACert.getSubjectX500Principal().equals(x509Cert.getIssuerX500Principal()))
+					{
+						//now check if AuthorityKeyIdentifier of our cert (if exists) match the SubjectKeyIdentifier of CA
+						try {
+							if((aki = CertTools.getAuthorityKeyId(x509Cert)) != null && aki.length > 0)
+							{
+								byte[] ski = CertTools.getSubjectKeyId(issuerCACert);
+								if(ski != null && Arrays.equals(aki, ski)) //if end entity contains AKI then CA must contain SKI.
+								{
+									issuerFound = true;
+									break;
+								}
+							}
+							else
+							{
+								//authority key identifier extension is not found
+								//so match on SubjectDN is considered good enough
+								issuerFound = true;
+								break;
+							}
+						} catch (IOException e) {
+							// eat up the exception to continue looping
+							e.printStackTrace();
+						}
+						
+					}
+				}
+				
+				if(issuerFound)
+					break;
+			}
+			
+			//if issuer is found then IssuerCACert holds our issuer certificate
+			//so return certificate chain INCLUDING the issuer and up to root
+			if(issuerFound)
+			{
+				retVal =getCertificateChainForCACertificate(issuerCACert, true); 
+			}
+		}
+		
+		return retVal;
+	}
+	
+	/**
+	 * Retrieve "cut off certificate chain" for the ca certificate given
+	 * Certificate chain will be retrieved from configured certchain properties for issuers 
+	 * 
+	 * @param cACert - CA Certificate whose chain is sought
+	 * @param includeSelfInReturn - if true cACert is included in returned List of certificates, if false it is excluded
+	 * @return  
+	 * 
+	 * certificates starting from cACert up to root certificate, if cACert is intermediate CA certificate.  
+	 * null if passed in certificate is not found in any configured chains or if cACert is root certificate and includeSelfInReturn parameter is false
+	 *  
+	 */
+	protected List<ICertificate> getCertificateChainForCACertificate(ICertificate cACert, boolean includeSelfInReturn) {
 		
 		int indx = -1;
+		int fromindex;
 		for(String certDN : getCertChainMap().keySet())
 		{
 			indx = getCertChainMap().get(certDN).indexOf(cACert);
-			if(indx != -1 && indx + 1 < getCertChainMap().get(certDN).size())
+			if(indx != -1)
 			{
-				// found chain containing cACert
-				// return sublist containing chain from this certificate (excluded) to root certificate (included)
-				return getCertChainMap().get(certDN).subList(indx + 1, getCertChainMap().get(certDN).size());
+				if(includeSelfInReturn)
+					fromindex= indx;
+				else
+					fromindex = indx + 1;
+				
+				if(fromindex < getCertChainMap().get(certDN).size())
+				{
+					// found chain containing cACert
+					// return sublist containing chain sought
+					return getCertChainMap().get(certDN).subList(fromindex, getCertChainMap().get(certDN).size());
+				}
 			}
 		}
 		

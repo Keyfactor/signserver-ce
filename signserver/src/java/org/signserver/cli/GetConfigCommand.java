@@ -121,10 +121,10 @@ public class GetConfigCommand extends BaseCommand {
     		this.getOutputStream().println("  " + key + "=" + config.getProperties().getProperty(key) + "\n");
     	}
     	
-    	
-    	if(config.getProperties().getProperty("SIGNERCERT") !=null){
+    	ProcessableConfig pConfig = new ProcessableConfig(config);
+    	if(pConfig.getSignerCertificate() != null){
     		this.getOutputStream().println(" The current configuration use the following signer certificate : \n");
-    		WorkerStatus.printCert(new ProcessableConfig(config).getSignerCertificate(), getOutputStream()); 
+    		WorkerStatus.printCert(pConfig.getSignerCertificate(), getOutputStream()); 
     	}else{
     		this.getOutputStream().println(" Either this isn't a Signer or no Signer Certificate have been uploaded to it.\n");    		
     	}

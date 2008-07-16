@@ -18,7 +18,6 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.signserver.testutils.ExitException;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -51,46 +50,46 @@ public class TestMailSignerCLI extends TestCase {
 	
 	public void testBasicSetup() {
 
-		assertSuccessfulExecution(new String[] {"noarguments"});
+		TestUtils.assertSuccessfulExecution(new String[] {"noarguments"});
 		assertTrue(TestUtils.grepTempOut("Usage: signserver"));
 		
 				
-		assertSuccessfulExecution(new String[] {"setproperty",
+		TestUtils.assertSuccessfulExecution(new String[] {"setproperty",
                 "global",
                 "WORKER" + TESTID + ".CLASSPATH",
                 "org.signserver.server.signers.TimeStampSigner"});
 		
-		assertSuccessfulExecution(new String[] {"getconfig",
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig",
                 "global"});	
 		
 		assertTrue(TestUtils.grepTempOut("WORKER" + TESTID + ".CLASSPATH"));
 		
-		assertSuccessfulExecution(new String[] {"setproperty",
+		TestUtils.assertSuccessfulExecution(new String[] {"setproperty",
                 TESTID,
                 "TESTKEY",
                 "TESTVALUE"});	
 		
-		assertSuccessfulExecution(new String[] {"getconfig",
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig",
         TESTID});
 		
 		assertTrue(TestUtils.grepTempOut("TESTKEY"));
 		
-		assertSuccessfulExecution(new String[] {"removeproperty",
+		TestUtils.assertSuccessfulExecution(new String[] {"removeproperty",
                 TESTID,
                 "TESTKEY"});
-		assertSuccessfulExecution(new String[] {"removeproperty",
+		TestUtils.assertSuccessfulExecution(new String[] {"removeproperty",
                 "global",
                 "WORKER" + TESTID + ".CLASSPATH"});
 
-		assertSuccessfulExecution(new String[] {"getconfig",
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig",
 		        "global"});
 		assertFalse(TestUtils.grepTempOut("WORKER" + TESTID + ".CLASSPATH"));
 
-		assertSuccessfulExecution(new String[] {"getconfig",
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig",
 		        "" + TESTID});		
 		assertFalse(TestUtils.grepTempOut("TESTKEY"));
 		
-		assertSuccessfulExecution(new String[] {"getconfig", 
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig", 
 				"-host",
 				"localhost",
 		        "" + TESTID});
@@ -99,76 +98,76 @@ public class TestMailSignerCLI extends TestCase {
 	}
 	
 	public void testSetupDummyMailSigner() {
-			assertSuccessfulExecution(new String[] {"setproperties",
+			TestUtils.assertSuccessfulExecution(new String[] {"setproperties",
 					signserverhome +"/src/test/test_add_dummymailsigner_configuration.properties"});		
 			assertTrue(TestUtils.grepTempOut("Setting the property NAME to dummyMailSigner1000 for worker 1000"));
 
-			assertSuccessfulExecution(new String[] {"getstatus",
+			TestUtils.assertSuccessfulExecution(new String[] {"getstatus",
 					"complete",
 					TESTTSID});	
 
-			assertSuccessfulExecution(new String[] {"setproperty",
+			TestUtils.assertSuccessfulExecution(new String[] {"setproperty",
 					TESTTSID,
 					"TESTKEY",
 			"TESTVALUE"});	
 
-			assertSuccessfulExecution(new String[] {"getstatus",
+			TestUtils.assertSuccessfulExecution(new String[] {"getstatus",
 					"complete",
 					TESTTSID});	
 			assertFalse(TestUtils.grepTempOut("TESTKEY"));
 
-			assertSuccessfulExecution(new String[] {"reload",
+			TestUtils.assertSuccessfulExecution(new String[] {"reload",
 					TESTTSID});
 			assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
 
 
-			assertSuccessfulExecution(new String[] {"getstatus",
+			TestUtils.assertSuccessfulExecution(new String[] {"getstatus",
 					"complete",
 					TESTTSID});	
 			assertTrue(TestUtils.grepTempOut("NAME=dummyMailSigner1000"));
 			assertTrue(TestUtils.grepTempOut("TESTKEY"));
 
 			// Test token operations
-			assertFailedExecution(new String[] {"activatesigntoken",
+			TestUtils.assertFailedExecution(new String[] {"activatesigntoken",
 					TESTTSID,
 			"9876"});
-			assertSuccessfulExecution(new String[] {"activatesigntoken",
+			TestUtils.assertSuccessfulExecution(new String[] {"activatesigntoken",
 					TESTTSID,
 			"1234"});
 			assertTrue(TestUtils.grepTempOut("Activation of worker was successful"));
 
 
-			assertSuccessfulExecution(new String[] {"deactivatesigntoken",
+			TestUtils.assertSuccessfulExecution(new String[] {"deactivatesigntoken",
 					TESTTSID});
 			assertTrue(TestUtils.grepTempOut("Deactivation of worker was successful"));
 
 
 			// Test operations by name
-			assertSuccessfulExecution(new String[] {"activatecryptotoken",
+			TestUtils.assertSuccessfulExecution(new String[] {"activatecryptotoken",
 					"dummyMailSigner1000",
 			"1234"});
 			assertTrue(TestUtils.grepTempOut("Activation of worker was successful"));
-			assertSuccessfulExecution(new String[] {"activatecryptotoken",
+			TestUtils.assertSuccessfulExecution(new String[] {"activatecryptotoken",
 					"DUMMYMAILSIGNER1000",
 			"1234"});
-			assertFailedExecution(new String[] {"activatecryptotoken",
+			TestUtils.assertFailedExecution(new String[] {"activatecryptotoken",
 					"DUMMYMAILSIGNER2000",
 			"1234"});
 			
 			
-			assertSuccessfulExecution(new String[] {"addauthorizeduser",
+			TestUtils.assertSuccessfulExecution(new String[] {"addauthorizeduser",
 					"test1",
 					"pwd1"});	
-			assertSuccessfulExecution(new String[] {"listauthorizedusers"});
+			TestUtils.assertSuccessfulExecution(new String[] {"listauthorizedusers"});
 			assertTrue(TestUtils.grepTempOut("TEST1"));
 			
-			assertSuccessfulExecution(new String[] {"removeauthorizeduser",
+			TestUtils.assertSuccessfulExecution(new String[] {"removeauthorizeduser",
 					"test1"});	
-			assertSuccessfulExecution(new String[] {"listauthorizedusers"});
+			TestUtils.assertSuccessfulExecution(new String[] {"listauthorizedusers"});
 			assertFalse(TestUtils.grepTempOut("TEST1"));
 			
 			// Dump
-			assertSuccessfulExecution(new String[] {"dumpproperties",
+			TestUtils.assertSuccessfulExecution(new String[] {"dumpproperties",
 					"DUMMYMAILSIGNER1000",
 					signserverhome + "/tmp/testdump.properties"});		
 			assertTrue(TestUtils.grepTempOut("Properties successfully dumped into file"));
@@ -189,19 +188,19 @@ public class TestMailSignerCLI extends TestCase {
 	public void testRemoveDummyMailSigner(){
 
 		// Remove and restore
-		assertSuccessfulExecution(new String[] {"removeworker",
+		TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
 				"dummyMailSigner1000"});		
 		assertTrue(TestUtils.grepTempOut("Property 'NAME' removed"));
 		
-		assertSuccessfulExecution(new String[] {"getconfig",
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig",
                 TESTTSID});	
          assertFalse(TestUtils.grepTempOut("NAME=dummyMailSigner1000"));
 		
- 		assertSuccessfulExecution(new String[] {"removeproperty",
+ 		TestUtils.assertSuccessfulExecution(new String[] {"removeproperty",
                 TESTTSID,
                 "TESTKEY"});
          
-		assertSuccessfulExecution(new String[] {"reload",
+		TestUtils.assertSuccessfulExecution(new String[] {"reload",
 				TESTTSID});
 		assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
          
@@ -211,26 +210,6 @@ public class TestMailSignerCLI extends TestCase {
 	
 
 
-	private void assertSuccessfulExecution(String[] args){
-		try {
-			TestUtils.flushTempOut();
-			signserver.main(args);		
-		}catch(ExitException e) {
-			TestUtils.printTempErr();
-			TestUtils.printTempOut();
-			assertTrue(false);
-		}		
-	}
-	
-	private void assertFailedExecution(String[] args){
-		try {
-			TestUtils.flushTempOut();
-			signserver.main(args);
-			TestUtils.printTempErr();
-			TestUtils.printTempOut();
-			assertTrue(false);
-		}catch(ExitException e) {
-		}		
-	}
+
 
 }

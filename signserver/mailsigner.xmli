@@ -72,6 +72,7 @@ rmi.server.port           = ${rmi.server.port}
         	<exclude name="org/signserver/appserver/**"/>        	
         	<exclude name="org/signserver/client/**"/>        	
         	<exclude name="org/signserver/ejb/**"/>  
+        	<exclude name="org/signserver/module/**"/>
         	<exclude name="org/signserver/server/*.java"/>
         	<exclude name="org/signserver/server/signers/**"/>
         	<exclude name="org/signserver/server/timedservices/**"/>

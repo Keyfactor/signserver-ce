@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
 
-package org.signserver.server.signers;
+package org.signserver.module.pdfsigner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,6 +37,7 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.statistics.Event;
 
 import com.lowagie.text.DocumentException;

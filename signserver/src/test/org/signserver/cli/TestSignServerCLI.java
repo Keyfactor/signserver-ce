@@ -57,46 +57,46 @@ public class TestSignServerCLI extends TestCase {
 	
 	public void testBasicSetup() throws Exception{
 
-		assertSuccessfulExecution(new String[] {"noarguments"});
+		TestUtils.assertSuccessfulExecution(new String[] {"noarguments"});
 		assertTrue(TestUtils.grepTempOut("Usage: signserver"));
 		
 				
-		assertSuccessfulExecution(new String[] {"setproperty",
+		TestUtils.assertSuccessfulExecution(new String[] {"setproperty",
                 "global",
                 "WORKER" + TESTID + ".CLASSPATH",
                 "org.signserver.server.signers.TimeStampSigner"});
 		
-		assertSuccessfulExecution(new String[] {"getconfig",
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig",
                 "global"});	
 		
 		assertTrue(TestUtils.grepTempOut("WORKER" + TESTID + ".CLASSPATH"));
 		
-		assertSuccessfulExecution(new String[] {"setproperty",
+		TestUtils.assertSuccessfulExecution(new String[] {"setproperty",
                 TESTID,
                 "TESTKEY",
                 "TESTVALUE"});	
 		
-		assertSuccessfulExecution(new String[] {"getconfig",
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig",
         TESTID});
 		
 		assertTrue(TestUtils.grepTempOut("TESTKEY"));
 		
-		assertSuccessfulExecution(new String[] {"removeproperty",
+		TestUtils.assertSuccessfulExecution(new String[] {"removeproperty",
                 "" + TESTID,
                 "TESTKEY"});
-		assertSuccessfulExecution(new String[] {"removeproperty",
+		TestUtils.assertSuccessfulExecution(new String[] {"removeproperty",
                 "global",
                 "WORKER" + TESTID + ".CLASSPATH"});
 
-		assertSuccessfulExecution(new String[] {"getconfig",
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig",
 		        "global"});
 		assertFalse(TestUtils.grepTempOut("WORKER" + TESTID + ".CLASSPATH"));
 
-		assertSuccessfulExecution(new String[] {"getconfig",
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig",
 		        "" + TESTID});		
 		assertFalse(TestUtils.grepTempOut("TESTKEY"));
 		
-		assertSuccessfulExecution(new String[] {"getconfig", 
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig", 
 				"-host",
 				"localhost",
 		        "" + TESTID});
@@ -104,100 +104,100 @@ public class TestSignServerCLI extends TestCase {
 	}
 	
 	public void testSetupTimeStamp() throws Exception{
-		assertSuccessfulExecution(new String[] {"reload",
+		TestUtils.assertSuccessfulExecution(new String[] {"reload",
 				"all"});
 		
 		assertTrue(new File(signserverhome +"/src/test/test_add_timestamp_configuration.properties").exists());
-		assertSuccessfulExecution(new String[] {"setproperties",
+		TestUtils.assertSuccessfulExecution(new String[] {"setproperties",
 				signserverhome +"/src/test/test_add_timestamp_configuration.properties"});		
 	    assertTrue(TestUtils.grepTempOut("Setting the property NAME to timestampSigner1000 for worker 1000"));
 		
-	    assertSuccessfulExecution(new String[] {"getstatus",
+	    TestUtils.assertSuccessfulExecution(new String[] {"getstatus",
                 "complete",
                 TESTTSID});	
        
-		assertSuccessfulExecution(new String[] {"setproperty",
+		TestUtils.assertSuccessfulExecution(new String[] {"setproperty",
 				TESTTSID,
                 "TESTKEY",
                 "TESTVALUE"});	
 		
-	    assertSuccessfulExecution(new String[] {"getstatus",
+	    TestUtils.assertSuccessfulExecution(new String[] {"getstatus",
                 "complete",
                 TESTTSID});	
 	    
-		assertSuccessfulExecution(new String[] {"reload",
+		TestUtils.assertSuccessfulExecution(new String[] {"reload",
 				TESTTSID});
 		assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
 		
 		
-		assertSuccessfulExecution(new String[] {"getstatus",
+		TestUtils.assertSuccessfulExecution(new String[] {"getstatus",
 		                                        "complete",
 		                                        TESTTSID});	
 		assertTrue(TestUtils.grepTempOut("NAME=timestampSigner1000"));
 		assertTrue(TestUtils.grepTempOut("TESTKEY"));
 	    
 	    
-		assertSuccessfulExecution(new String[] {"reload",
+		TestUtils.assertSuccessfulExecution(new String[] {"reload",
 				TESTTSID});
 		assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
 		
 		
-		assertSuccessfulExecution(new String[] {"getstatus",
+		TestUtils.assertSuccessfulExecution(new String[] {"getstatus",
 		                                        "complete",
 		                                        TESTTSID});	
 		assertTrue(TestUtils.grepTempOut("NAME=timestampSigner1000"));
 		
 		// Test token operations
-		assertFailedExecution(new String[] {"activatesigntoken",
+		TestUtils.assertFailedExecution(new String[] {"activatesigntoken",
 				TESTTSID,
                 "9876"});
-		assertSuccessfulExecution(new String[] {"activatesigntoken",
+		TestUtils.assertSuccessfulExecution(new String[] {"activatesigntoken",
 				TESTTSID,
                 "1234"});
 		assertTrue(TestUtils.grepTempOut("Activation of worker was successful"));
 		
 		
-		assertSuccessfulExecution(new String[] {"deactivatesigntoken",
+		TestUtils.assertSuccessfulExecution(new String[] {"deactivatesigntoken",
 				TESTTSID});
 		assertTrue(TestUtils.grepTempOut("Deactivation of worker was successful"));
 		
 		
         // Test operations by name
-		assertSuccessfulExecution(new String[] {"activatecryptotoken",
+		TestUtils.assertSuccessfulExecution(new String[] {"activatecryptotoken",
 				"timestampSigner1000",
                 "1234"});
 		assertTrue(TestUtils.grepTempOut("Activation of worker was successful"));
-		assertSuccessfulExecution(new String[] {"activatecryptotoken",
+		TestUtils.assertSuccessfulExecution(new String[] {"activatecryptotoken",
 				"TIMESTAMPSIGNER1000",
                 "1234"});
-		assertFailedExecution(new String[] {"activatecryptotoken",
+		TestUtils.assertFailedExecution(new String[] {"activatecryptotoken",
 				"TIMESTAMPSIGNER2000",
                 "1234"});
 		
 		// Test authorized clients
-		assertSuccessfulExecution(new String[] {"addauthorizedclient",
+		TestUtils.assertSuccessfulExecution(new String[] {"addauthorizedclient",
 				"TIMESTAMPSIGNER1000",
                 "EF34242D2324",
                 "CN=Test Root CA"});
 		assertTrue(TestUtils.grepTempOut("Adding the client certificate with sn EF34242D2324"));
 		
-		assertSuccessfulExecution(new String[] {"listauthorizedclients",
+		TestUtils.assertSuccessfulExecution(new String[] {"listauthorizedclients",
 				"TIMESTAMPSIGNER1000"});
 		assertTrue(TestUtils.grepTempOut("ef34242d2324, CN=Test Root CA"));
 		
-		assertSuccessfulExecution(new String[] {"removeauthorizedclient",
+		TestUtils.assertSuccessfulExecution(new String[] {"removeauthorizedclient",
 				"TIMESTAMPSIGNER1000",
                 "EF34242D2324",
                 "CN=Test Root CA"});
 		assertTrue(TestUtils.grepTempOut("Client Removed"));
 		
-		assertSuccessfulExecution(new String[] {"listauthorizedclients",
+		TestUtils.assertSuccessfulExecution(new String[] {"listauthorizedclients",
 		"TIMESTAMPSIGNER1000"});
         assertFalse(TestUtils.grepTempOut("ef34242d2324, CN=Test Root CA"));
 		
 		
 		// Dump
-		assertSuccessfulExecution(new String[] {"dumpproperties",
+		TestUtils.assertSuccessfulExecution(new String[] {"dumpproperties",
 				"TIMESTAMPSIGNER1000",
                 signserverhome + "/tmp/testdump.properties"});		
 		assertTrue(TestUtils.grepTempOut("Properties successfully dumped into file"));
@@ -223,7 +223,7 @@ public class TestSignServerCLI extends TestCase {
 			String archiveId = tsr.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16);
 			assertNotNull(archiveId);
 			
-			assertSuccessfulExecution(new String[] {"archive", 
+			TestUtils.assertSuccessfulExecution(new String[] {"archive", 
 					                  "findfromarchiveid",
 					                  TESTTSID,
 					                  archiveId,
@@ -231,7 +231,7 @@ public class TestSignServerCLI extends TestCase {
 			File datafile = new File(signserverhome + "/tmp/" +archiveId);
 			assertTrue(datafile.exists());
 			datafile.delete();
-			assertSuccessfulExecution(new String[] {"archive", 
+			TestUtils.assertSuccessfulExecution(new String[] {"archive", 
 	                  "findfromrequestip",
 	                  TESTTSID,
 	                  "127.0.0.1",
@@ -249,53 +249,53 @@ public class TestSignServerCLI extends TestCase {
 	}
 	public void testRemoveTimeStamp(){
 		// Remove and restore
-		assertSuccessfulExecution(new String[] {"setproperties",
+		TestUtils.assertSuccessfulExecution(new String[] {"setproperties",
 				signserverhome +"/src/test/test_rem_timestamp_configuration.properties"});		
 		assertTrue(TestUtils.grepTempOut("Removing the property NAME  for worker 1000"));
 		
-		assertSuccessfulExecution(new String[] {"getconfig",
+		TestUtils.assertSuccessfulExecution(new String[] {"getconfig",
                 TESTTSID});	
          assertFalse(TestUtils.grepTempOut("NAME=timestampSigner1000"));
          
-  		assertSuccessfulExecution(new String[] {"removeproperty",
+  		TestUtils.assertSuccessfulExecution(new String[] {"removeproperty",
                 TESTTSID,
                 "TESTKEY"});
 		
-		assertSuccessfulExecution(new String[] {"reload",
+		TestUtils.assertSuccessfulExecution(new String[] {"reload",
 				TESTTSID});
 		assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
          
 		TestingSecurityManager.remove();
 	}
 	public void testSetupGroupKeyService() throws Exception{
-		assertSuccessfulExecution(new String[] {"reload",
+		TestUtils.assertSuccessfulExecution(new String[] {"reload",
 				"all"});
 		
 		assertTrue(new File(signserverhome +"/src/test/test_add_groupkeyservice_configuration.properties").exists());
-		assertSuccessfulExecution(new String[] {"setproperties",
+		TestUtils.assertSuccessfulExecution(new String[] {"setproperties",
 				signserverhome +"/src/test/test_add_groupkeyservice_configuration.properties"});		
 	    assertTrue(TestUtils.grepTempOut("Setting the property NAME to Test1 for worker 1023"));
 		
-	    assertSuccessfulExecution(new String[] {"getstatus",
+	    TestUtils.assertSuccessfulExecution(new String[] {"getstatus",
                 "complete",
                 TESTGSID});	
 	    
-		assertSuccessfulExecution(new String[] {"groupkeyservice",
+		TestUtils.assertSuccessfulExecution(new String[] {"groupkeyservice",
 				"switchenckey", "" + TESTGSID});
 		assertTrue(TestUtils.grepTempOut("key switched successfully"));
-		assertSuccessfulExecution(new String[] {"groupkeyservice",
+		TestUtils.assertSuccessfulExecution(new String[] {"groupkeyservice",
 				"switchenckey", "Test1"});
 		assertTrue(TestUtils.grepTempOut("key switched successfully"));
 
-		assertSuccessfulExecution(new String[] {"groupkeyservice",
+		TestUtils.assertSuccessfulExecution(new String[] {"groupkeyservice",
 				"pregeneratekeys", "" + TESTGSID, "1"});
 		assertTrue(TestUtils.grepTempOut("1 Pregenerated successfully"));
 		
-		assertSuccessfulExecution(new String[] {"groupkeyservice",
+		TestUtils.assertSuccessfulExecution(new String[] {"groupkeyservice",
 				"pregeneratekeys", "" + TESTGSID, "101"});
 		assertTrue(TestUtils.grepTempOut("101 Pregenerated successfully"));
 		
-		assertSuccessfulExecution(new String[] {"groupkeyservice",
+		TestUtils.assertSuccessfulExecution(new String[] {"groupkeyservice",
 				"pregeneratekeys", "" + TESTGSID, "1000"});
 		assertTrue(TestUtils.grepTempOut("1000 Pregenerated successfully"));
 		
@@ -303,15 +303,15 @@ public class TestSignServerCLI extends TestCase {
 		String startDate = dateFormat.format(new Date(0));
 		String endDate = dateFormat.format(new Date(System.currentTimeMillis() + 120000));
 		
-		assertSuccessfulExecution(new String[] {"groupkeyservice",
+		TestUtils.assertSuccessfulExecution(new String[] {"groupkeyservice",
 				"removegroupkeys", "" + TESTGSID, "created", startDate, endDate});		
 		assertTrue(TestUtils.grepTempOut("1102 Group keys removed"));
 		
-		assertSuccessfulExecution(new String[] {"groupkeyservice",
+		TestUtils.assertSuccessfulExecution(new String[] {"groupkeyservice",
 				"removegroupkeys", "" + TESTGSID, "FIRSTUSED", startDate, endDate});
 		assertTrue(TestUtils.grepTempOut("0 Group keys removed"));
 		
-		assertSuccessfulExecution(new String[] {"groupkeyservice",
+		TestUtils.assertSuccessfulExecution(new String[] {"groupkeyservice",
 				"removegroupkeys", "" + TESTGSID, "LASTFETCHED", startDate, endDate});		
 		assertTrue(TestUtils.grepTempOut("0 Group keys removed"));
 				
@@ -319,11 +319,11 @@ public class TestSignServerCLI extends TestCase {
 	}
 	public void testRemoveGroupKeyService(){
 		// Remove and restore
-		assertSuccessfulExecution(new String[] {"removeworker",
+		TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
 				"Test1"});		
 		assertTrue(TestUtils.grepTempOut("Property 'NAME' removed"));
 				
-		assertSuccessfulExecution(new String[] {"reload",
+		TestUtils.assertSuccessfulExecution(new String[] {"reload",
 				TESTGSID});
 		assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
          
@@ -332,23 +332,23 @@ public class TestSignServerCLI extends TestCase {
 	
 	public void testSetupModules() throws Exception{		
 		
-		assertSuccessfulExecution(new String[] {"module", "add",
+		TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
 				signserverhome +"/src/test/testmodule-withoutdescr.mar"});		
 	    assertTrue(TestUtils.grepTempOut("Loading module TESTMODULE-WITHOUTDESCR with version 1"));
 	    assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 		
-		assertSuccessfulExecution(new String[] {"module", "add",
+	    TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
 				signserverhome +"/src/test/testmodule-withdescr.mar"});
 	    
 		assertTrue(TestUtils.grepTempOut("Loading module TESTMODULE-WITHDESCR with version 2"));
 	    assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 	    assertTrue(TestUtils.grepTempOut("Setting the property ENV to PROD for worker 4321"));
 	    
-		assertSuccessfulExecution(new String[] {"module", "add",
+	    TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
 				signserverhome +"/src/test/testmodule-withdescr.mar", "devel"});
 		assertTrue(TestUtils.grepTempOut("Setting the property ENV to DEVEL for worker 3433"));
 		
-		assertSuccessfulExecution(new String[] {"module", "list"});
+		TestUtils.assertSuccessfulExecution(new String[] {"module", "list"});
 	    
 		assertTrue(TestUtils.grepTempOut("Module : TESTMODULE-WITHDESCR, version 2"));
 	    assertTrue(TestUtils.grepTempOut("part1"));
@@ -357,7 +357,7 @@ public class TestSignServerCLI extends TestCase {
 	    assertTrue(TestUtils.grepTempOut("server"));
 	    assertFalse(TestUtils.grepTempOut(".jar"));
 	    
-		assertSuccessfulExecution(new String[] {"module", "list", "showjars"});
+	    TestUtils.assertSuccessfulExecution(new String[] {"module", "list", "showjars"});
 	    
 		assertTrue(TestUtils.grepTempOut("Module : TESTMODULE-WITHDESCR, version 2"));
 	    assertTrue(TestUtils.grepTempOut("part1"));
@@ -373,23 +373,23 @@ public class TestSignServerCLI extends TestCase {
 	
 	public void testremoves(){
 		// Remove and restore
-		assertSuccessfulExecution(new String[] {"module", "remove",
+		TestUtils.assertSuccessfulExecution(new String[] {"module", "remove",
 				"testmodule-withoutdescr","1"});		
 		assertTrue(TestUtils.grepTempOut("Removing module TESTMODULE-WITHOUTDESCR version 1"));
 		assertTrue(TestUtils.grepTempOut("Removal of module successful."));
 
-		assertSuccessfulExecution(new String[] {"module", "remove",
+		TestUtils.assertSuccessfulExecution(new String[] {"module", "remove",
 				"testmodule-withdescr","2"});		
 		assertTrue(TestUtils.grepTempOut("Removing module TESTMODULE-WITHDESCR version 2"));
 		assertTrue(TestUtils.grepTempOut("Removal of module successful."));
 		
-		assertSuccessfulExecution(new String[] {"removeworker",
+		TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
 		"6543"});
 		
-		assertSuccessfulExecution(new String[] {"removeworker",
+		TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
 		"4321"});
 		
-		assertSuccessfulExecution(new String[] {"removeworker",
+		TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
 		"3433"});
 		
 		
@@ -397,25 +397,6 @@ public class TestSignServerCLI extends TestCase {
 		TestingSecurityManager.remove();
 	}
 	
-	
-	private void assertSuccessfulExecution(String[] args){
-		try {
-			TestUtils.flushTempOut();
-			signserver.main(args);			
-		}catch(ExitException e) {
-			TestUtils.printTempErr();
-			TestUtils.printTempOut();
-			assertTrue(false);
-		}		
-	}
-	
-	private void assertFailedExecution(String[] args){
-		try {
-			TestUtils.flushTempOut();
-			signserver.main(args);
-			assertTrue(false);
-		}catch(ExitException e) {
-		}		
-	}
+
 
 }

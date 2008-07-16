@@ -4,6 +4,7 @@
 	<property name="app.name" value="signserver" />
     <property name="app.name.cap" value="Sign Server" />
 	<property name="app.version" value="${app.name.cap} 3.1Beta" />
+	<property name="mar.versions" value="3100" />
 	
     <property environment="env" />
 
@@ -57,7 +58,7 @@
 	
 	<property name="custom.commandfactory" value="org.signserver.cli.DefaultSignServerCommandFactory"/>
 
-    <property name="jar.extclasspath" value="lib/${server.java.target}/bcmail-jdk.jar lib/${server.java.target}/bcprov-jdk.jar lib/${server.java.target}/bctsp-jdk.jar lib/log4j.jar lib/ejbca-util.jar lib/caToken.jar lib/commons-lang-2.0.jar lib/ldap.jar lib/itext.jar"/>
+    <property name="jar.extclasspath" value="lib/${server.java.target}/bcmail-jdk.jar lib/${server.java.target}/bcprov-jdk.jar lib/${server.java.target}/bctsp-jdk.jar lib/log4j.jar lib/ejbca-util.jar lib/caToken.jar lib/commons-lang-2.0.jar lib/ldap.jar"/>
 
 	<import file="./signserver.xmli" />
 	<import file="./mailsigner.xmli" />
@@ -111,7 +112,7 @@
         <!-- Delete the ${build} and ${server.dist.dir} directory trees -->
         <delete dir="${build}" />
         <delete dir="${server.dist.dir}" />
-        <delete dir="${client.dist.dir}" />
+        <delete dir="${client.dist.dir}"  />
     	<delete dir="${pkg.dist.dir}" />
         <delete dir="${apidoc}" />
         <delete dir="${tmp}"/>	

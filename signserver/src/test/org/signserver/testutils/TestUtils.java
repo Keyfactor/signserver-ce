@@ -19,6 +19,11 @@ import java.io.PrintStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
+import org.signserver.cli.signserver;
+
 
 
 
@@ -125,4 +130,23 @@ public class TestUtils {
 	   stdOut.print(tempErrorStream);
    }
 
+	public static void assertSuccessfulExecution(String[] args){
+		try {
+			TestUtils.flushTempOut();
+			signserver.main(args);			
+		}catch(ExitException e) {
+			TestUtils.printTempErr();
+			TestUtils.printTempOut();
+			Assert.assertTrue(false);
+		}		
+	}
+	
+	public static void assertFailedExecution(String[] args){
+		try {
+			TestUtils.flushTempOut();
+			signserver.main(args);
+			Assert.assertTrue(false);
+		}catch(ExitException e) {
+		}		
+	}
 }

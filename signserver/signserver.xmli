@@ -2,6 +2,7 @@
 <project name="signserver_specific" basedir=".">
 	   
 	   <import file="./build.xml"/>
+	   <import file="./module-builds/pdfsigner.xml"/>
 	
 	   <property name="java.trustpassword" value="changeit" />
 	   <property name="httpsserver.password" value="serverpwd" />
@@ -46,7 +47,6 @@
 	   <path id="signserver.compile.classpath">
 	        <path refid="signserver.ext.classpath" />
 	        <fileset dir="lib" includes="*.jar" />
-	        <fileset dir="lib/itext" includes="*.jar" />
 	   	    <fileset dir="lib/quartz" includes="*.jar" />
 	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
 	   	    <fileset dir="lib/jaxws" includes="*.jar" />	 
@@ -122,6 +122,8 @@
 	    <property name="deploy.ssh.knownhostsfile" value="/home/jboss/.ssh/known_hosts" />
 	    <property name="deploy.ssh.appsrvhome" value="/home/jboss/jboss" />
 	    <property name="deploy.tomcat.version" value="tomcat55" />
+	    
+	    
 	
     <target name="signserver.init"  unless="buildMailSigner">
     	<antcall target="j2ee:check"/>
@@ -185,8 +187,10 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
 	            <classpath refid="server.compile.classpath" />
 	            <src path="${src.java}" /> 
+	        	<exclude name="org/signserver/module/**"/>
 	        	<exclude name="org/signserver/mailsigner/**"/>
-	        	<exclude name="org/signserver/appserver/**"/> 
+	        	<exclude name="org/signserver/appserver/**"/>
+	        	<exclude name="org/signserver/module/**"/> 
 	        	<exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>	        	
 	        	<exclude name="org/signserver/protocol/ws/client/**"/>
 	        	<exclude name="org/signserver/client/PerformanceTest*"/>
@@ -449,7 +453,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client" unless="buildMailSigner" >
+	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />
@@ -459,7 +463,6 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	                <include name="${lib}/ejbca-util.jar" />   
 	                <include name="${lib}/ldap.jar" />
 	            	<include name="${lib}/commons-lang-2.0.jar" />
-	            	<include name="${lib}/itext/*.jar" />
 	            	<include name="${lib}/quartz/*.jar" />
 	            	<include name="${lib}/asm/*.jar" />
 	            </fileset>
@@ -506,6 +509,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
                     <include name="**/ejb/Test*" /> 
                 	<include name="**/common/Test*" />
                 	<include name="**/common/clusterclassloader/Test*" />
+                	<include name="**/module/**/Test*" />
                     <include name="**/server/Test*" />
                 	<include name="**/server/service/Test*" />
                 	<include name="**/server/validcache/Test*" />
@@ -687,7 +691,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		   <classpath refid="signserver.compile.classpath"/> 
 	    </javac>
 	    
-	    <unzip src="${lib}/itext/itext.jar" dest="${performanceTestToolBuild}/" />
+	    <unzip src="${lib}/module/pdfsigner/itext/itext.jar" dest="${performanceTestToolBuild}/" />
 	    <unzip src="${lib}/reports/jcommon-1.0.12.jar" dest="${performanceTestToolBuild}/" />
 	    <unzip src="${lib}/reports/jfreechart-1.0.9.jar" dest="${performanceTestToolBuild}/" />
 

@@ -58,11 +58,7 @@ public class SetPropertiesCommand extends BaseCommand {
         	Properties properties = loadProperties(args[1]);
         
         	getOutputStream().println("Configuring properties as defined in the file : " + args[1]);
-        	Enumeration<?> iter = properties.keys();
-        	while(iter.hasMoreElements()){
-        		String key = (String) iter.nextElement();
-        		helper.processKey(key.toUpperCase(), properties.getProperty(key));
-        	}
+            helper.process(properties);
 
         	this.getOutputStream().println("\n\n");
 

@@ -19,6 +19,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.signserver.common.InvalidWorkerIdException;
  
 
 
@@ -73,6 +75,10 @@ public class signserver {
                 System.out.println(e.getMessage());                
                 System.exit(-1);
             } catch (ErrorAdminCommandException e) {
+            	if(e.getCause() instanceof InvalidWorkerIdException){
+            	  System.out.println(e.getMessage());                
+                  System.exit(-1);	
+            	}
             	System.out.println(e.getMessage()); 
                 e.printStackTrace();
                 System.out.println("Caused by :" );

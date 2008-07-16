@@ -16,12 +16,18 @@ package org.signserver.cli;
 
 import java.io.FileOutputStream;
 import java.rmi.RemoteException;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.ejbca.util.Base64;
+import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 
  
@@ -105,17 +111,11 @@ public class DumpPropertiesCommand extends BaseCommand {
 		iter = workers.iterator();
 		while(iter.hasNext()){
 			Integer next = (Integer) iter.next();
-			WorkerConfig workerConfig = getCommonAdminInterface(hostname).getCurrentWorkerConfig(next.intValue());
-			Enumeration<?> e = workerConfig.getProperties().keys();
-			Properties workerProps = workerConfig.getProperties();
-			while(e.hasMoreElements()){
-				String key = (String) e.nextElement();
-				outProps.setProperty("WORKER" + next +"."+key, workerProps.getProperty(key));
-			}
+			dumpWorkerProperties(hostname, next, outProps);
 		}				
 	}
 
-	private void dumpWorkerProperties(String hostname, int signerId, Properties outProps) throws RemoteException, Exception {
+	private void dumpWorkerProperties(String hostname, int workerId, Properties outProps) throws RemoteException, Exception {
 		GlobalConfiguration gc = getCommonAdminInterface(hostname).getGlobalConfiguration();
 		Iterator<?> iter = gc.getKeyIterator();
 		while(iter.hasNext()){
@@ -125,13 +125,45 @@ public class DumpPropertiesCommand extends BaseCommand {
 			}
 		}	
 		
-		WorkerConfig workerConfig = getCommonAdminInterface(hostname).getCurrentWorkerConfig(signerId);
+		WorkerConfig workerConfig = getCommonAdminInterface(hostname).getCurrentWorkerConfig(workerId);
 		Enumeration<?> e = workerConfig.getProperties().keys();
 		Properties workerProps = workerConfig.getProperties();
 		while(e.hasMoreElements()){
 			String key = (String) e.nextElement();
-			outProps.setProperty("WORKER" + signerId +"."+key, workerProps.getProperty(key));
+			outProps.setProperty("WORKER" + workerId +"."+key, workerProps.getProperty(key));
 		}
+		
+		// Also dump Authorized Clients and/or signer certificates
+		ProcessableConfig pConfig = new ProcessableConfig(workerConfig);
+		if(pConfig.getSignerCertificate() != null){
+			X509Certificate cert = pConfig.getSignerCertificate();
+			outProps.setProperty("WORKER" + workerId+SetPropertiesHelper.SIGNERCERTIFICATE, new String(Base64.encode(cert.getEncoded(), false)));
+		}
+		if(pConfig.getSignerCertificateChain() != null){
+			Collection<Certificate> certs = pConfig.getSignerCertificateChain();
+			Iterator<Certificate> iter2 = certs.iterator(); 
+			String chainValue = "";
+			for(int i=1;iter2.hasNext();i++){
+			  Certificate cert =iter2.next();
+			  String certData = new String(Base64.encode(cert.getEncoded(), false));
+			  if(chainValue.equals("")){
+				  chainValue = certData;
+			  }else{
+				  chainValue += ";" + certData;
+			  }
+			}
+			
+			outProps.setProperty("WORKER" + workerId+SetPropertiesHelper.SIGNERCERTCHAIN, chainValue);
+		}
+		
+		if(pConfig.getAuthorizedClients().size() > 0){
+			Collection<AuthorizedClient> aClients = pConfig.getAuthorizedClients();
+			int i = 1;
+			for(AuthorizedClient client : aClients){
+				outProps.setProperty("WORKER" + workerId+SetPropertiesHelper.AUTHCLIENT + i , client.getCertSN() + ";" + client.getIssuerDN());								
+				i++;
+			}
+		}				
 	}
 
 	// execute

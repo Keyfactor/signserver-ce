@@ -27,6 +27,8 @@ import java.util.jar.JarInputStream;
 import org.signserver.cli.ErrorAdminCommandException;
 import org.signserver.cli.IllegalAdminCommandException;
 import org.signserver.cli.SetPropertiesHelper;
+import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.SignServerConstants;
 import org.signserver.common.clusterclassloader.ClusterClassLoaderUtils;
 import org.signserver.common.clusterclassloader.FindInterfacesClassLoader;
 import org.signserver.common.clusterclassloader.MARFileParser;
@@ -210,10 +212,11 @@ public class AddModuleCommand extends BaseModuleCommand {
 			}else{
 			  getOutputStream().println("Configuring properties included in the part : " + part + ", for the environment " + environment);
 			}
-			Enumeration<?> iter = partProperties.keys();
-			while(iter.hasMoreElements()){
-				String key = (String) iter.nextElement();
-				helper.processKey(key.toUpperCase(), partProperties.getProperty(key));
+			helper.process(partProperties);
+			// for each declared worker, add module name and version
+			for(Integer workerId : helper.getKeyWorkerDeclarations()){
+			   helper.processKey(GlobalConfiguration.WORKERPROPERTY_BASE + workerId + "." + SignServerConstants.MODULENAME, fileParser.getModuleName());
+			   helper.processKey(GlobalConfiguration.WORKERPROPERTY_BASE + workerId + "." + SignServerConstants.MODULEVERSION, "" + fileParser.getVersionFromMARFile());
 			}
 		}
 

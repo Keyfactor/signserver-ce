@@ -414,11 +414,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	}	
 	
 	
-	private WorkerConfig getWorkerConfig(int signerId){
-		WorkerConfig workerConfig = workerConfigService.getWorkerConfig(signerId);
+	private WorkerConfig getWorkerConfig(int workerId){
+		WorkerConfig workerConfig = workerConfigService.getWorkerConfig(workerId);
 	    if(workerConfig == null){
-	    	workerConfigService.create(signerId, WorkerConfig.class.getName());
-	    	workerConfig = workerConfigService.getWorkerConfig(signerId);
+	    	workerConfigService.create(workerId, WorkerConfig.class.getName());
+	    	workerConfig = workerConfigService.getWorkerConfig(workerId);
 		}
 		return workerConfig;	
 	}

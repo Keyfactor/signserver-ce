@@ -19,7 +19,6 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarInputStream;
@@ -86,7 +85,7 @@ public class AddModuleCommand extends BaseModuleCommand {
         
         File marFile = new File(marPath);
         if(!marFile.exists() || !marFile.isFile() || !marFile.canRead()){
- 	       throw new IllegalAdminCommandException("Usage: Error path to msodule archive " + marPath + " doesn't seem valid, make" +
+ 	       throw new IllegalAdminCommandException("Usage: Error path to module archive " + marPath + " doesn't seem valid, make" +
  	       		                                  "sure the file exists and is readable.");
         }
         

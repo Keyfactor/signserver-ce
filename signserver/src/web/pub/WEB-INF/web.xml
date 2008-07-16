@@ -1,16 +1,12 @@
 <?xml version = '1.0' encoding = 'ISO-8859-1'?>
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
-    <display-name>Time Stamp Server Servlet Configuration</display-name>
+    <display-name>SignServer Server Servlet Configuration</display-name>
+
     <servlet>
-        <servlet-name>TSAHTTPServlet</servlet-name>
-        <display-name>Time Stamp Server Servlet</display-name>
-        <servlet-class>org.signserver.web.TSAHTTPServlet</servlet-class>
-    </servlet> 
-    <servlet>
-        <servlet-name>PDFHTTPServlet</servlet-name>
-        <display-name>PDF Signer Servlet</display-name>
-        <servlet-class>org.signserver.web.PDFHTTPServlet</servlet-class>
+        <servlet-name>GenericProcessServlet</servlet-name>
+        <display-name>Generic Process Servlet</display-name>
+        <servlet-class>org.signserver.web.GenericProcessServlet</servlet-class>
     </servlet> 
     <servlet>
         <servlet-name>StartServiceServlet</servlet-name>
@@ -19,12 +15,16 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>TSAHTTPServlet</servlet-name>
+        <servlet-name>GenericProcessServlet</servlet-name>
         <url-pattern>/tsa</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>PDFHTTPServlet</servlet-name>
+        <servlet-name>GenericProcessServlet</servlet-name>
         <url-pattern>/pdf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GenericProcessServlet</servlet-name>
+        <url-pattern>/process</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StartServiceServlet</servlet-name>

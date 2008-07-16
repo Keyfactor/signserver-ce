@@ -40,15 +40,17 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.bouncycastle.tsp.TimeStampTokenGenerator;
 import org.signserver.common.ArchiveData;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericServletRequest;
+import org.signserver.common.GenericServletResponse;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.ISignRequest;
 import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignRequest;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ITimeSource;
@@ -164,7 +166,7 @@ public class TimeStampSigner extends BaseSigner{
 	public ProcessResponse processData(ProcessRequest signRequest,
 			RequestContext requestContext) throws IllegalRequestException,
 			CryptoTokenOfflineException {
-		boolean returnbytearray = false;
+		
 		
 		ISignRequest sReq = (ISignRequest) signRequest;
 		// Check that the request contains a valid TimeStampRequest object.
@@ -177,17 +179,11 @@ public class TimeStampSigner extends BaseSigner{
 			throw new IllegalRequestException("Recieved request data wasn't a expected TimeStampRequest. ");
 		}
 		
-		
-		
-		
-		
-        
         GenericSignResponse signResponse = null;
 		try {
 			TimeStampRequest timeStampRequest = null;
 			
-			timeStampRequest = new TimeStampRequest((byte[]) sReq.getRequestData());
-			returnbytearray = true;
+			timeStampRequest = new TimeStampRequest((byte[]) sReq.getRequestData());		
 
 			TimeStampTokenGenerator timeStampTokenGen = getTimeStampTokenGenerator(timeStampRequest);
 			
@@ -196,13 +192,16 @@ public class TimeStampSigner extends BaseSigner{
 		    timeStampRequest.validate(this.getAcceptedAlgorithms(), this.getAcceptedPolicies(), this.getAcceptedExtensions(), "BC");
 		    
 		    TimeStampResponse timeStampResponse = timeStampResponseGen.generate(timeStampRequest,getSerialNumber(),getTimeSource().getGenTime(),getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
-			if(returnbytearray){
-				signResponse = new GenericSignResponse(sReq.getRequestID(),timeStampResponse.getEncoded(),getSigningCertificate(),
-                        timeStampResponse.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16), new ArchiveData(timeStampResponse.getEncoded()));				
-			}else{
-			  signResponse = new GenericSignResponse(sReq.getRequestID(),timeStampResponse.getEncoded(),getSigningCertificate(),
-					                               timeStampResponse.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16), new ArchiveData(timeStampResponse.getEncoded()));
-			}
+
+		    if(signRequest instanceof GenericServletRequest){
+		    	signResponse = new GenericServletResponse(sReq.getRequestID(),timeStampResponse.getEncoded(),getSigningCertificate(),
+		    			timeStampResponse.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16), new ArchiveData(timeStampResponse.getEncoded()),"application/timestamp-reply");
+		    }else{
+		    	signResponse = new GenericSignResponse(sReq.getRequestID(),timeStampResponse.getEncoded(),getSigningCertificate(),
+		    			timeStampResponse.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16), new ArchiveData(timeStampResponse.getEncoded()));
+		    }
+
+
 		} catch (InvalidAlgorithmParameterException e) {
 			log.error("InvalidAlgorithmParameterException: ", e);
 			throw new IllegalRequestException("InvalidAlgorithmParameterException: " + e.getMessage());

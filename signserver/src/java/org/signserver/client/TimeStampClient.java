@@ -85,7 +85,7 @@ public class TimeStampClient {
       Option verifyopt = new Option( "verify", false, "Give this option if verification of a stored reply should be done, work together with inrep and cafile. If given, no request to the TSA will happen.");
       
       OptionBuilder.hasArg();     
-      OptionBuilder.withDescription(  "Url of TSA, e.g. http://127.0.0.1:8080/signserver/tsa?signerId=1." );
+      OptionBuilder.withDescription(  "Url of TSA, e.g. http://127.0.0.1:8080/signserver/process?workerId=1." );
       OptionBuilder.withArgName( "url" );
       Option url = OptionBuilder.create( "url" );
 

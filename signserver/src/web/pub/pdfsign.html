@@ -42,7 +42,7 @@ function check()
 </div>
 <p>
 Simply upload a PDF document (small please) to the PDF signer and you will get back the same PDF, but signed by the signserver. This is a central organization signature.
-    <form name="recievefile" action="/signserver/pdf?signerName=PDFSigner" method="post" enctype='multipart/form-data' >
+    <form name="recievefile" action="/signserver/process?workerName=PDFSigner" method="post" enctype='multipart/form-data' >
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
     <tr id="Row2"> 
       <td width="49%" valign="top" align="right">Select PDF file to upload and sign</td>

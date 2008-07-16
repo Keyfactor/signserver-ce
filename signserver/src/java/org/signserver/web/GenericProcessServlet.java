@@ -13,7 +13,9 @@
 
 package org.signserver.web;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Random;
@@ -28,13 +30,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.IllegalRequestException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericServletRequest;
+import org.signserver.common.GenericServletResponse;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -42,41 +41,39 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  
 
 /**
- * TSAHTTPServlet
+ * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
+ * workerId or workerName parameters.
  * 
- * Processes Time Stamp Requests over HTTP
+ * It will create a GenericServletRequest that is sent to the worker and expects a GenericServletResponse
+ * sent back to the client.
  * 
- * Use the request parameter 'signerId' to specify the timestamp signer.
  * 
  * @author Philip Vendil
- * @version $Id: TSAHTTPServlet.java,v 1.9 2007-12-12 14:24:56 herrvendil Exp $
  */
 
-public class TSAHTTPServlet extends HttpServlet {
+public class GenericProcessServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 
-	private static Logger log = Logger.getLogger(TSAHTTPServlet.class);
+	private static Logger log = Logger.getLogger(GenericProcessServlet.class);
 	
+	private static final String WORKERID_PROPERTY_NAME = "workerId";
+	private static final String WORKERNAME_PROPERTY_NAME = "workerName";
 
-	private IWorkerSession.ILocal signserversession;
+	private IWorkerSession.ILocal workersession;
 	
-    private IWorkerSession.ILocal getSignServerSession(){
-    	if(signserversession == null){
+    private IWorkerSession.ILocal getWorkerSession(){
+    	if(workersession == null){
     		try{
     		  Context context = new InitialContext();
-    		  signserversession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
+    		  workersession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
     		}catch(NamingException e){
     			log.error(e);
     		}
     	}
     	
-    	return signserversession;
+    	return workersession;
     }
-	
-	private static final String SIGNERID_PROPERTY_NAME = "signerId";
-
-	
 
 	
 	public void init(ServletConfig config) {
@@ -96,7 +93,69 @@ public class TSAHTTPServlet extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res)
         throws IOException, ServletException {
         log.debug(">doPost()");
-        doGet(req, res);
+        int workerId = 1;
+        if(req.getParameter(WORKERNAME_PROPERTY_NAME) != null){
+        	workerId = getWorkerSession().getWorkerId(req.getParameter(WORKERNAME_PROPERTY_NAME));
+        	log.debug("Found a signerName in the request");
+        }
+        if(req.getParameter(WORKERID_PROPERTY_NAME) != null){
+        	workerId = Integer.parseInt(req.getParameter(WORKERID_PROPERTY_NAME));
+        	log.debug("Found a signerid in the request");
+        }
+        log.debug("Using signerId: "+workerId);
+                 
+        String remoteAddr = req.getRemoteAddr();
+        log.info("Recieved HTTP process request for worker " + workerId+", from ip "+remoteAddr);
+        
+        // 
+        Certificate clientCertificate = null;
+       	Certificate[] certificates = (X509Certificate[]) req.getAttribute( "javax.servlet.request.X509Certificate" );
+    	if(certificates != null){
+    		clientCertificate = certificates[0];
+    	}
+    	// Limit the maximum size of input to 100MB (100*1024*1024)
+    	log.debug("Received a request with length: "+req.getContentLength());
+		if (req.getContentLength() > 104857600){
+			log.error("Content length exceeds 100MB, not processed: "+req.getContentLength());
+			throw new ServletException("Error. Maximum content lenght is 100MB.");
+		}
+
+    	// Get an input stream and read the pdf bytes from the stream
+        InputStream in = req.getInputStream();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        int len = 0;
+        byte[] buf = new byte[1024];
+        while ((len = in.read(buf)) > 0) {
+            os.write(buf, 0, len);
+        }
+        in.close();
+        os.close();
+        byte[] inbytes = os.toByteArray();
+        log.debug("Received bytes of length: "+inbytes.length);
+        
+        Random rand = new Random();        
+        int requestId = rand.nextInt();
+
+        GenericServletResponse response = null;
+        try {
+        	response = (GenericServletResponse) getWorkerSession().process(workerId, new GenericServletRequest(requestId, inbytes,req),new RequestContext((X509Certificate) clientCertificate, remoteAddr));
+		} catch (IllegalRequestException e) {
+			 throw new ServletException(e);
+		} catch (CryptoTokenOfflineException e) {
+			 throw new ServletException(e);
+	    } catch (SignServerException e) {
+	    	throw new ServletException(e);
+		}
+		
+		if(response.getRequestID() != requestId){
+			throw new ServletException("Error in process operation, response id didn't match request id");
+		}
+		byte[] processedBytes =  (byte[])response.getProcessedData();
+		
+		res.setContentType(response.getContentType());
+		res.setContentLength(processedBytes.length);
+		res.getOutputStream().write(processedBytes);
+		res.getOutputStream().close();
         log.debug("<doPost()");
     } //doPost
 
@@ -112,66 +171,11 @@ public class TSAHTTPServlet extends HttpServlet {
 	 */
     public void doGet(HttpServletRequest req,  HttpServletResponse res) throws java.io.IOException, ServletException {
         log.debug(">doGet()");
-
-        int signerId = 1;
-        if(req.getParameter(SIGNERID_PROPERTY_NAME) != null){
-        	signerId = Integer.parseInt(req.getParameter(SIGNERID_PROPERTY_NAME));
-        }
-                 
-        log.debug("Recieved Timestamp request for signer " + signerId);
-        
-        Certificate clientCertificate = null;
-       	Certificate[] certificates = (X509Certificate[]) req.getAttribute( "javax.servlet.request.X509Certificate" );
-    	if(certificates != null){
-    		clientCertificate = certificates[0];
-    	}        
-    	// Limit the maximum size of input to 100MB (100*1024*1024)
-    	log.debug("Received a request with length: "+req.getContentLength());
-		if (req.getContentLength() > 104857600){
-			log.error("Content length exceeds 100MB, not processed: "+req.getContentLength());
-			throw new ServletException("Error. Maximum content lenght is 100MB.");
-		}
-
-        TimeStampRequest timeStampRequest = new TimeStampRequest(req.getInputStream());
-        
-        Random rand = new Random();        
-        int requestId = rand.nextInt();
-        
-        GenericSignResponse signResponse = null;
-        try {
-			signResponse = (GenericSignResponse) getSignServerSession().process(signerId, new GenericSignRequest(requestId, timeStampRequest.getEncoded()), new RequestContext((X509Certificate) clientCertificate, req.getRemoteAddr()));
-		} catch (IllegalRequestException e) {
-			 throw new ServletException(e);
-		} catch (CryptoTokenOfflineException e) {
-			 throw new ServletException(e);
-	    } catch (SignServerException e) {
-	    	throw new ServletException(e);
-		}
-		
-		if(signResponse.getRequestID() != requestId){
-			throw new ServletException("Error in signing operation, response id didn't match request id");
-		}
-		Object response =  signResponse.getProcessedData();
-		
-		TimeStampResponse timeStampResponse = null;
-		if(response instanceof byte[]){
-			
-			try {
-				timeStampResponse = new TimeStampResponse((byte[]) response);
-			} catch (TSPException e) {
-				throw new ServletException(e);
-			}
-		}else{
-			timeStampResponse = (TimeStampResponse) response;
-		}
-
-		res.setContentType("application/timestamp-reply");
-		res.setContentLength(timeStampResponse.getEncoded().length);
-		res.getOutputStream().write(timeStampResponse.getEncoded());
-		res.getOutputStream().close();
-        
-
+        doGet(req, res);
+        log.debug("<doGet()");        
     } // doGet
 	
+	
+
 
 }

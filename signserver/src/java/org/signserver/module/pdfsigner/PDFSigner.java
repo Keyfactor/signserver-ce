@@ -26,6 +26,8 @@ import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericServletRequest;
+import org.signserver.common.GenericServletResponse;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.ICertReqData;
@@ -149,7 +151,11 @@ public class PDFSigner extends BaseSigner{
 				stp.close();
 				fout.close();
 				byte[] signedbytes = fout.toByteArray();
-				signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));				
+				if(signRequest instanceof GenericServletRequest){
+					signResponse = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes),"application/pdf");
+				}else{
+					signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));
+				}
 			} catch (DocumentException e) {
 				log.error("Error signing PDF: ", e);
 				throw new IllegalRequestException("DocumentException: " + e.getMessage());
@@ -157,6 +163,7 @@ public class PDFSigner extends BaseSigner{
 				log.error("Error signing PDF: ", e);
 				throw new IllegalRequestException("IOException: " + e.getMessage());
 			}
+						
 		
 		return signResponse;
 	}

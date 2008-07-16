@@ -224,6 +224,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	            <fileset dir="${build}">
 	          	  <exclude name="org/signserver/cli/**" />
 	          	  <exclude name="org/signserver/client/**" />
+	          	  <exclude name="org/signserver/module/**" />
 	          	  <exclude  name="org/signserver/protocol/validationservice/ws/**" />
 	              <exclude  name="org/signserver/protocol/ws/**" />
 		          <exclude name="org/signserver/mailsigner/**" />

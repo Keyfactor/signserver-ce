@@ -113,7 +113,6 @@ public class FindInterfacesClassLoader extends ClassLoader {
 			  if(loadedClasses.containsKey(name)){
 				  retval = loadedClasses.get(name);
 			  }else{
-				System.out.println("name : " + name);
 			    retval = defineClass(name, classData, 0, classData.length);
 			    loadedClasses.put(name, retval);
 			  }

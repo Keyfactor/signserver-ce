@@ -58,7 +58,7 @@
 	
 	<property name="custom.commandfactory" value="org.signserver.cli.DefaultSignServerCommandFactory"/>
 
-    <property name="jar.extclasspath" value="lib/${server.java.target}/bcmail-jdk.jar lib/${server.java.target}/bcprov-jdk.jar lib/${server.java.target}/bctsp-jdk.jar lib/log4j.jar lib/ejbca-util.jar lib/caToken.jar lib/commons-lang-2.0.jar lib/ldap.jar"/>
+    <property name="jar.extclasspath" value="lib/${server.java.target}/bcmail-jdk.jar lib/${server.java.target}/bcprov-jdk.jar lib/module/tsa/${server.java.target}/bctsp-jdk.jar lib/log4j.jar lib/ejbca-util.jar lib/caToken.jar lib/commons-lang-2.0.jar lib/ldap.jar"/>
 
 	<import file="./signserver.xmli" />
 	<import file="./mailsigner.xmli" />

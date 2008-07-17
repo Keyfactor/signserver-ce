@@ -3,6 +3,8 @@
 	   
 	   <import file="./build.xml"/>
 	   <import file="./module-builds/pdfsigner.xml"/>
+	   <import file="./module-builds/mrtdsigner.xml"/>
+	   <import file="./module-builds/tsa.xml"/>
 	
 	   <property name="java.trustpassword" value="changeit" />
 	   <property name="httpsserver.password" value="serverpwd" />
@@ -49,6 +51,8 @@
 	        <fileset dir="lib" includes="*.jar" />
 	   	    <fileset dir="lib/quartz" includes="*.jar" />
 	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
+	    	
+            <fileset dir="lib/module/tsa/${client.java.target}" includes="*.jar" />   
 	   	    <fileset dir="lib/jaxws" includes="*.jar" />	 
 	     	<fileset dir="lib/asm" includes="*.jar" />
     	    <fileset dir="lib/ext/james" includes="james-2.3.1.jar" />
@@ -65,7 +69,7 @@
 		
 		
 	    <path id="client.compile.classpath">
-	        <fileset dir="${client.primeCard.dist}" includes="*.jar" />	    	
+	        <fileset dir="${client.primeCard.dist}" includes="*.jar" />  	
 	        <path refid="signserver.compile.classpath" />
 	    </path>
 	
@@ -454,7 +458,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar" unless="buildMailSigner" >
+	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, tsamar, mrtdsignermar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />
@@ -717,9 +721,11 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 
 	    <copy todir="${client.dist.dir}" >
 	      <fileset dir="${lib}/${client.java.target}">
-	        <include name="bcprov-jdk.jar"/>
-	        <include name="bctsp-jdk.jar"/>
+	        <include name="bcprov-jdk.jar"/>	        
 	      	<include name="bcmail-jdk.jar"/>
+	      </fileset>
+	      <fileset dir="${lib}/module/tsa/${client.java.target}">
+	        <include name="bctsp-jdk.jar"/>
 	      </fileset>
 	    </copy>
        <copy todir="${client.dist.dir}/lib" >

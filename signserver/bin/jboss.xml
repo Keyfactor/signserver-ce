@@ -170,8 +170,7 @@
     		<fileset dir="${server.dist.dir}" includes="*.ear"/>    		
     	</copy>
     	<copy todir="${jboss.lib.dir}">	
-    		<fileset dir="${lib}/${server.java.target}" >
-               <include name="bctsp-jdk.jar"/>    			
+    		<fileset dir="${lib}/${server.java.target}" >               			
                <include name="bcprov-jdk.jar"/>
                <include name="bcmail-jdk.jar"/>
    			</fileset>
@@ -219,8 +218,7 @@
 	   </scp>
 		   <scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
 		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/lib" passphrase="${tmp.passphrase}"> 
-	    		<fileset dir="${lib}/${server.java.target}" >
-	               <include name="bctsp-jdk.jar"/>    			
+	    		<fileset dir="${lib}/${server.java.target}" >   			
 	               <include name="bcprov-jdk.jar"/>
 	               <include name="bcmail-jdk.jar"/>
 	   			</fileset>

@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
 
-package org.signserver.server.signers;
+package org.signserver.module.tsa;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -55,6 +55,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ITimeSource;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.signers.BaseSigner;
  
 
 /**

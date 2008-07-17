@@ -75,7 +75,9 @@ import org.signserver.common.PKCS10CertReqInfo;
         		 throw new Exception("Base64SignerCertReqData returned was null. Unable to generate certificate request.");
         	 }
         	 FileOutputStream fos = new FileOutputStream(filename);
+        	 fos.write("-----BEGIN CERTIFICATE REQUEST-----\n".getBytes());
         	 fos.write(reqData.getBase64CertReq());
+        	 fos.write("\n-----END CERTIFICATE REQUEST-----\n".getBytes());
         	 fos.close();
          
         	 getOutputStream().println(resources[SUCCESS] + filename);

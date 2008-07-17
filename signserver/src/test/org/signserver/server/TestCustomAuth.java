@@ -35,9 +35,9 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.module.tsa.TimeStampSigner;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.server.cryptotokens.ICryptoToken;
-import org.signserver.server.signers.TimeStampSigner;
 
 
 public class TestCustomAuth extends TestCase {

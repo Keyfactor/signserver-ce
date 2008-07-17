@@ -120,7 +120,7 @@ public class DumpPropertiesCommand extends BaseCommand {
 		Iterator<?> iter = gc.getKeyIterator();
 		while(iter.hasNext()){
 			String next = (String) iter.next();
-			if(next.substring(5).startsWith("WORKER")){
+			if(next.substring(5).startsWith("WORKER" + workerId)){
 			  outProps.put(next, gc.getProperty(next));
 			}
 		}	

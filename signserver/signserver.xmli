@@ -40,7 +40,7 @@
 	   <property name="validationws.enabled" value="false" />
 	   <property name="timestampclient.enabled" value="true" />
 	   <property name="pdfperformancetest.enabled" value="false" />
-	   <property name="useclusterclassloader" value="false" />
+	   <property name="useclusterclassloader" value="true" />
 	   <property name="clusterclassloader.useclassversions" value="true" />
 	   <property name="clusterclassloader.requiresignature" value="false" />
 	

@@ -265,8 +265,8 @@ pdfperformancetest.enabled=false
 # Warning: the cluster class loader is still experimental and should
 # be used for development purposes only.
 #
-# Default: false
-useclusterclassloader=false
+# Default: true
+useclusterclassloader=true
 
 # Set to false if class versions should be disabled (good for
 # development purposes when remote debugging is required).

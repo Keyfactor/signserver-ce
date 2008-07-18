@@ -682,6 +682,13 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	         <include name="*.*"/>
 	       </fileset>
 	    </copy> 
+	    <property name="pkgdist.moduledir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/modules" />
+        <mkdir dir="${pkgdist.moduledir}"/>
+        <copy todir="${pkgdist.moduledir}">
+           <fileset dir="dist-server">
+             <include name="*.mar"/>
+           </fileset>
+        </copy>
     </target>
 	
 	 <!--                                                   -->

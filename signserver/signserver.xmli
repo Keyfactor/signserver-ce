@@ -644,6 +644,13 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		     <include name="${setDBTypeJar}"/>			 
 		   </fileset>
 	    </copy>	
+	    <property name="pkgdist.initscriptdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/bin"/>
+	    <mkdir dir="${pkgdist.initscriptdir}"/>
+	    <copy todir="${pkgdist.initscriptdir}" >
+	      <fileset dir="src/install/common">
+	        <include name="*.sh"/>           
+	      </fileset>
+	    </copy> 
 		
 		<property name="pkgdist.bindir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/bin" />
 		<mkdir dir="${pkgdist.bindir}/lib"/>

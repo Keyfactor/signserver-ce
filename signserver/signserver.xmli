@@ -618,6 +618,13 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 			 <include name="tomcat*/**"/>			 
 			</fileset>
 		</copy>	
+	   <property name="pkgdist.dbconfdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/dbconf"/>
+       <mkdir dir="${pkgdist.dbconfdir}"/> 
+       <copy todir="${pkgdist.dbconfdir}" >
+           <fileset dir="src/deploy/ejb/persistence-mappings">
+             <include name="**/**"/>            
+            </fileset>
+        </copy> 
 		<property name="pkgdist.gencertdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/bin/genservercert"/>
 		<mkdir dir="${pkgdist.gencertdir}/lib"/>
 		<copy todir="${pkgdist.gencertdir}" >

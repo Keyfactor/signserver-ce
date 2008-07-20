@@ -1,4 +1,3 @@
-
 /*************************************************************************
  *                                                                       *
  *  SignServer: The OpenSource Automated Signing Server                  *
@@ -16,7 +15,6 @@ package org.signserver.validationservice.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
@@ -90,6 +88,21 @@ public class CRLValidator extends BaseValidator {
 	}
 
 
+	/**
+	 * this method is introduced for calling validator from other validators, not defined in config
+	 * @param cert
+	 * @param props
+	 * @return
+	 * @throws IllegalRequestException
+	 * @throws CryptoTokenOfflineException
+	 * @throws SignServerException
+	 */
+	public Validation validate(ICertificate cert, Properties props) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException
+	{
+		this.props = props;
+		return validate(cert);		
+	}
+	
 	public Validation validate(ICertificate cert)
 	throws IllegalRequestException, CryptoTokenOfflineException,
 	SignServerException {
@@ -109,11 +122,14 @@ public class CRLValidator extends BaseValidator {
 		// NOTE : framework does not support validating trust anchors for now (Talk to Philip) so trust anchor will return issuer not supported
 		if(getCertificateChain(cert) == null ){
 			if(isTrustAnchor(xcert))
+			{
 				return new Validation(cert,Collections.singletonList(cert),Validation.Status.VALID,"This certificate is defined as Trust Anchor.");
+			}
 			else
-				return null;				
+			{
+				return null;
+			}
 		}
-		
 		
 		ICertificate rootCert = null; // represents root Certificate of the certificate in question
 		List<X509Certificate> certChainWithoutRootCert = new ArrayList<X509Certificate>(); // chain without root for CertPath construction 
@@ -249,7 +265,6 @@ public class CRLValidator extends BaseValidator {
 			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid. Trust anchor for certificate is :" + cpv_result.getTrustAnchor().getTrustedCert().getSubjectDN());
 
 		} catch (CertPathValidatorException e) {
-//			throw new SignServerException("Exception on validation. certificate causing exception : " + ((X509Certificate)e.getCertPath().getCertificates().get(e.getIndex())).getSubjectDN() + e.toString());
 			return new Validation(cert,getCertificateChain(cert),Validation.Status.DONTVERIFY,"Exception on validation. certificate causing exception : " + ((X509Certificate)e.getCertPath().getCertificates().get(e.getIndex())).getSubjectDN() + e.toString());
 		} catch (InvalidAlgorithmParameterException e) {
 			throw new SignServerException(e.toString());

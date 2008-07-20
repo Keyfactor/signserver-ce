@@ -46,7 +46,7 @@ import org.signserver.validationservice.common.X509Certificate;
  */
 
 public abstract class BaseValidator implements IValidator{
-	
+
 	private transient Logger log = Logger.getLogger(this.getClass());
 
 	protected int workerId;
@@ -54,7 +54,7 @@ public abstract class BaseValidator implements IValidator{
 	protected Properties props;
 	protected EntityManager em;
 	protected ICryptoToken ct;
-	
+
 	private HashMap<String, List<ICertificate>> certChainMap = null;
 	private HashMap<Integer,Properties> issuerProperties = null;
 
@@ -62,22 +62,22 @@ public abstract class BaseValidator implements IValidator{
 	 * certificate chains for all issuers
 	 */
 	protected HashMap<String, List<ICertificate>> getCertChainMap() {
-		
+
 		if(certChainMap == null){
 			certChainMap = new HashMap<String, List<ICertificate>>();
 			for(Integer issuerId : getIssuerProperties().keySet()){
 				Properties issuerProps =  getIssuerProperties().get(issuerId);
-				
+
 				List<ICertificate> certChain = getCertChainFromProps(issuerId,issuerProps);
 				if(certChain != null){
-				  certChainMap.put(certChain.get(0).getSubject(),certChain);
+					certChainMap.put(certChain.get(0).getSubject(),certChain);
 				}
 			}						
 		}
-		
+
 		return certChainMap;
 	}
-	
+
 	/**
 	 * @see org.signserver.validationservice.server.IValidator#init(int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.IExtendedCryptoToken)
 	 */
@@ -94,17 +94,17 @@ public abstract class BaseValidator implements IValidator{
 	 * @see org.signserver.validationservice.server.IValidator#getCertificateChain(org.signserver.validationservice.common.ICertificate)
 	 */
 	public List<ICertificate> getCertificateChain(ICertificate cert) {
-		
+
 		if( getCertChainMap() == null)
 			return null;
-		
+
 		X509Certificate x509cert = (X509Certificate)cert;
 		if(x509cert.getBasicConstraints() == -1)
 			return getCertificateChainForEndEntityCertificate(x509cert);
 		else
 			return getCertificateChainForCACertificate(cert, false);
 	}
-	
+
 	/**
 	 * Fetches certificate chain.
 	 * 
@@ -115,7 +115,7 @@ public abstract class BaseValidator implements IValidator{
 		List<ICertificate> retval = null;
 		if(issuerProps.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN) == null){
 			log.error("Error required issuer setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer " + 
-					  issuerId + ", validator id " + validatorId + ", worker id" + workerId);
+					issuerId + ", validator id " + validatorId + ", worker id" + workerId);
 		}else{
 			try {
 				Collection<?> certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(issuerProps.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN).getBytes()));
@@ -129,15 +129,15 @@ public abstract class BaseValidator implements IValidator{
 				if(retval.size() != initialSize){
 					retval = null;
 				}
-				
+
 			} catch (CertificateException e) {
 				log.error("Error constructing certificate chain from setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer " + 
-						  issuerId + ", validator id " + validatorId + ", worker id" + workerId,e);
+						issuerId + ", validator id " + validatorId + ", worker id" + workerId,e);
 			} catch (IOException e) {
 				log.error("Error constructing certificate chain from setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer " + 
-						  issuerId + ", validator id " + validatorId + ", worker id" + workerId,e);			}
+						issuerId + ", validator id " + validatorId + ", worker id" + workerId,e);			}
 		}
-		
+
 		return retval;
 	}
 
@@ -148,22 +148,22 @@ public abstract class BaseValidator implements IValidator{
 	 */
 	ArrayList<ICertificate> sortCerts(int issuerid, ArrayList<ICertificate> icerts) {
 		ArrayList<ICertificate> retval = new ArrayList<ICertificate>();
-		
+
 		// Start with finding root
 		ICertificate currentCert = null;
 		for(ICertificate icert : icerts){
-          if(icert.getIssuer().equals(icert.getSubject())){
-        	  retval.add(0,icert);         	  
-        	  currentCert = icert;
-        	  break;
-          }
+			if(icert.getIssuer().equals(icert.getSubject())){
+				retval.add(0,icert);         	  
+				currentCert = icert;
+				break;
+			}
 		}
 		icerts.remove(currentCert);
-		
+
 		if(retval.size() == 0){
 			log.error("Error in certificate chain, no root certificate for issuer " + issuerid + ", validator " + validatorId + " worker " + workerId);
 		}
-		
+
 		int tries = 10;
 		while(icerts.size() > 0 && tries > 0){
 			for(ICertificate icert : icerts){
@@ -179,22 +179,22 @@ public abstract class BaseValidator implements IValidator{
 				log.error("Error constructing a complete ca certificate chain for issuer " + issuerid + ", validator " + validatorId + " worker " + workerId);
 			}
 		}
-		
+
 		return retval;
 	}
 
 	protected HashMap<Integer, Properties> getIssuerProperties(){
 		if(issuerProperties == null){
-		  issuerProperties = new HashMap<Integer, Properties>();
-		  for(int i=1;i< ValidationServiceConstants.NUM_OF_SUPPORTED_ISSUERS;i++){
-			  Properties issuerProps = ValidationHelper.getIssuerProperties(i, props);
-			  if(issuerProps != null){
-				  issuerProperties.put(i, issuerProps);
-			  }
-		  }
+			issuerProperties = new HashMap<Integer, Properties>();
+			for(int i=1;i< ValidationServiceConstants.NUM_OF_SUPPORTED_ISSUERS;i++){
+				Properties issuerProps = ValidationHelper.getIssuerProperties(i, props);
+				if(issuerProps != null){
+					issuerProperties.put(i, issuerProps);
+				}
+			}
 		}
-		
-	    return issuerProperties;	
+
+		return issuerProperties;	
 	}
 
 	/**
@@ -202,23 +202,23 @@ public abstract class BaseValidator implements IValidator{
 	 * have to match using rootCert since in case of the intermediate CA certificate the chain will be cut off.
 	 */
 	protected Properties getIssuerProperties(ICertificate cert){
-		
+
 		if(getCertificateChain(cert) == null)
 			return null;
-		
+
 		List<ICertificate> certChain = null;
 		for(Integer issuerId : getIssuerProperties().keySet())
 		{
 			certChain= getCertChainFromProps(issuerId, getIssuerProperties().get(issuerId));
 			if(certChain != null 
 					&& certChain.get(certChain.size() - 1).equals(getCertificateChain(cert).get(getCertificateChain(cert).size() -1)))
-				  return getIssuerProperties().get(issuerId);
+				return getIssuerProperties().get(issuerId);
 		}
-		
-	    return null;	
+
+		return null;	
 	}
 
-	
+
 	/**
 	 * Retrieves certificate chain for the end entity certificate given
 	 * Certificate chain will be retrieved from configured certchain properties for issuers 
@@ -248,7 +248,7 @@ public abstract class BaseValidator implements IValidator{
 				for(ICertificate cACert : getCertChainMap().get(certDN))
 				{
 					issuerCACert = (X509Certificate)cACert;
-					
+
 					//check if subject of CA and the issuer of our certificate match
 					if(issuerCACert.getSubjectX500Principal().equals(x509Cert.getIssuerX500Principal()))
 					{
@@ -274,25 +274,25 @@ public abstract class BaseValidator implements IValidator{
 							// eat up the exception to continue looping
 							e.printStackTrace();
 						}
-						
+
 					}
 				}
-				
+
 				if(issuerFound)
 					break;
 			}
-			
+
 			//if issuer is found then IssuerCACert holds our issuer certificate
 			//so return certificate chain INCLUDING the issuer and up to root
 			if(issuerFound)
 			{
-				retVal =getCertificateChainForCACertificate(issuerCACert, true); 
+				retVal = getCertificateChainForCACertificate(issuerCACert, true); 
 			}
 		}
-		
+
 		return retVal;
 	}
-	
+
 	/**
 	 * Retrieve "cut off certificate chain" for the ca certificate given
 	 * Certificate chain will be retrieved from configured certchain properties for issuers 
@@ -306,7 +306,7 @@ public abstract class BaseValidator implements IValidator{
 	 *  
 	 */
 	protected List<ICertificate> getCertificateChainForCACertificate(ICertificate cACert, boolean includeSelfInReturn) {
-		
+
 		int indx = -1;
 		int fromindex;
 		for(String certDN : getCertChainMap().keySet())
@@ -318,7 +318,7 @@ public abstract class BaseValidator implements IValidator{
 					fromindex= indx;
 				else
 					fromindex = indx + 1;
-				
+
 				if(fromindex < getCertChainMap().get(certDN).size())
 				{
 					// found chain containing cACert
@@ -327,10 +327,10 @@ public abstract class BaseValidator implements IValidator{
 				}
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * @return true if passed in certificate is found as root certificate in any of configured issuers
 	 * 		   false otherwise 
@@ -339,18 +339,19 @@ public abstract class BaseValidator implements IValidator{
 	{
 		if(getCertChainMap() == null)
 			return false;
-	
-		// is it really a self signed certificate
-		if(!rootCACert.getSubjectX500Principal().equals(rootCACert.getIssuerX500Principal()))
+
+		// is it really a self signed certificate CA certificate
+		if(rootCACert.getBasicConstraints() == -1 || !rootCACert.getSubjectX500Principal().equals(rootCACert.getIssuerX500Principal()))
 			return false;
+
 		
 		for(String certDN : getCertChainMap().keySet())
 		{
 			if(getCertChainMap().get(certDN).contains(rootCACert))
 				return true;
 		}
-		
+
 		return false;
 	}
-	
+
 }

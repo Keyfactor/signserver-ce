@@ -52,14 +52,14 @@ import org.signserver.validationservice.common.X509Certificate;
 
 public class OCSPValidator extends BaseValidator {
 	
-	@Override
+
 	public void testConnection() throws ConnectException, SignServerException {
 		// TODO Test Internet connectivity, which is needed to access ocsp servers.
 		// throw exception if not online
 
 	}
 
-	@Override
+
 	public Validation validate(ICertificate cert)
 	throws IllegalRequestException, CryptoTokenOfflineException,
 	SignServerException {

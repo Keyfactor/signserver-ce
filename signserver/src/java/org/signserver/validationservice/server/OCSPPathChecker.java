@@ -153,7 +153,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 	{
 		//check if url is missing 
 		//throw exception (for now, later maybe change to look for predefined ocsp url for each issuer ?)
-		if(oCSPURLString == null || oCSPURLString.isEmpty())
+		if(oCSPURLString == null || oCSPURLString.length() == 0)
 		{
 			throw new SignServerException("OCSP service locator url missing");
 		}

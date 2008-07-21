@@ -471,6 +471,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	            	<include name="${lib}/commons-lang-2.0.jar" />
 	            	<include name="${lib}/quartz/*.jar" />
 	            	<include name="${lib}/asm/*.jar" />
+	            	<include name="${lib}/${server.java.target}/*.jar" />
 	            </fileset>
 	            <fileset dir="${server.dist.dir}">
 	                <include name="*-ejb.jar" />

@@ -265,7 +265,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 		BasicOCSPResp basicOCSPResponse = (BasicOCSPResp)ocspresp.getResponseObject();
 		
 		if (basicOCSPResponse == null) {
-			throw new SignServerException("Could not construst BasicOCSPResp object from response. Only BasicOCSPResponse as defined in RFC 2560 is supported.");
+			throw new SignServerException("Could not construct BasicOCSPResp object from response. Only BasicOCSPResponse as defined in RFC 2560 is supported.");
 		}
 		
 		//OCSP response might be signed by CA issuing the certificate or  
@@ -291,7 +291,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 			throw new SignServerException("Certificate signing the ocsp response is not found in ocsp response's certificate chain received");
 				
 		// validating ocsp signers certificate
-		// Check if responders certificate has id-pkix-ocsp-nocheck extension, in which case we do not validate (revocation) ocsp certs for lifetime of certificate
+		// Check if responders certificate has id-pkix-ocsp-nocheck extension, in which case we do not validate (perform revocation check on ) ocsp certs for lifetime of certificate
 		// using CRL RFC 2560 sect 4.2.2.2.1
 		// TODO : RFC States the extension value should be NULL, so maybe bare existence of the extension is not sufficient ??
 		if(ocspRespSignerCertificate.getExtensionValue(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck.getId()) != null)

@@ -13,12 +13,18 @@
 
 package org.signserver.validationservice.server;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.ConnectException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
@@ -27,15 +33,21 @@ import java.security.cert.PKIXCertPathValidatorResult;
 import java.security.cert.PKIXParameters;
 import java.security.cert.TrustAnchor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
+import org.ejbca.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
+import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.common.X509Certificate;
 
 /**
@@ -63,7 +75,7 @@ public class OCSPValidator extends BaseValidator {
 	public Validation validate(ICertificate cert)
 	throws IllegalRequestException, CryptoTokenOfflineException,
 	SignServerException {
-
+		
 		//check certificate validity 
 		X509Certificate xcert = (X509Certificate) cert;
 		try {
@@ -136,7 +148,7 @@ public class OCSPValidator extends BaseValidator {
 			// disable default crl validaton
 			params.setRevocationEnabled(false);
 			// add custom ocsp pathchecker
-			params.addCertPathChecker(new OCSPPathChecker((X509Certificate)rootCert, this.props));
+			params.addCertPathChecker(new OCSPPathChecker((X509Certificate)rootCert, this.props, getIssuerAuthorizedOCSPResponderCertificates(cert)));
 			
 		} catch (Exception e) {
 			throw new SignServerException(e.toString());
@@ -157,6 +169,36 @@ public class OCSPValidator extends BaseValidator {
 		}
 
 	}
+	
+	/**
+	 * Find the issuer of this certificate and get the Authorized OCSP Responder Certificates
+	 * @throws SignServerException 
+	 * @throws IOException 
+	 * @throws CertificateException 
+	 */
+	private List<X509Certificate> getIssuerAuthorizedOCSPResponderCertificates(ICertificate cert) throws SignServerException, CertificateException, IOException { 
+		ArrayList<X509Certificate> x509Certs = new ArrayList<X509Certificate>();
+		Properties props = getIssuerProperties(cert);
+		if(props == null)
+			return null;
+		String key;
+		for(int i = 1;i<=ValidationServiceConstants.NUM_OF_SUPPORTED_AUTHORIZED_OCSP_RESPONDER_CERTS;i++)
+		{
+			
+			key = ValidationServiceConstants.AUTHORIZED_OCSP_RESPONDER_CERT_PREFIX + i;
+			if(props.containsKey(key))
+			{
+				Collection<?> certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(props.getProperty(key).getBytes()));				
+				Iterator<?> certiter = certs.iterator();
+				while(certiter.hasNext()){
+					x509Certs.add(X509Certificate.getInstance((java.security.cert.X509Certificate)certiter.next()));
+				}
+			}
+		}
+		
+		return x509Certs;
+	}
+
 
 
 }

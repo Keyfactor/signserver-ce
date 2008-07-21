@@ -86,4 +86,14 @@ public class ValidationServiceConstants {
 	 * Setting indicating what delimiter is used for specifying multiple CRLs in VALIDATIONSERVICE_ISSUERCRLPATHS property
 	 */
 	public static final String VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER = ",";
+	
+	/**
+	 * Setting indicating the max number of Authorized OCSP Responder certificates , that can be enlisted in properties of OCSP Validator
+	 */
+	public static final int NUM_OF_SUPPORTED_AUTHORIZED_OCSP_RESPONDER_CERTS = 5;
+	
+	/**
+	 * Setting indicating the prefix that should be used to indicate an  Authorized OCSP Responder certificate, in OCSP Validator
+	 */
+	public static final String AUTHORIZED_OCSP_RESPONDER_CERT_PREFIX = "AUTHORIZEDOCSPRESPONDERCERT";
 }

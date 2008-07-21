@@ -36,6 +36,7 @@ import java.security.cert.X509CertSelector;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -75,14 +76,15 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 	X509Certificate cACert;  
 	X509Certificate rootCACert;
 	Properties props;
+	List<X509Certificate> authorizedOCSPResponderCerts;
 
-	public OCSPPathChecker(X509Certificate rootCACert, Properties props)
+	public OCSPPathChecker(X509Certificate rootCACert, Properties props, List<X509Certificate> authorizedOCSPResponderCerts)
 	{
 		this.rootCACert = rootCACert;
 		this.props = props;
+		this.authorizedOCSPResponderCerts = authorizedOCSPResponderCerts;
 	}
 	
-	@Override
 	public void init(boolean forward) throws CertPathValidatorException {
 		// initialize state of the checker
 		cACert = null;
@@ -93,7 +95,6 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 		}
 	}
 
-	@Override
 	public void check(Certificate cert, Collection<String> unresolvedCritExts)
 	throws CertPathValidatorException {
 
@@ -119,12 +120,10 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 		cACert = x509Cert;
 	}
 
-	@Override
 	public Set<String> getSupportedExtensions() {
 		return null;
 	}
 
-	@Override
 	public boolean isForwardCheckingSupported() { 
 		return false;
 	}
@@ -271,25 +270,31 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 		//OCSP response might be signed by CA issuing the certificate or  
 		//the Authorized OCSP responder certificate containing the id-kp-OCSPSigning extended key usage extension
 		
-		//TODO : RFC defines certs field as OPTIONAL so we need a configuration value responses without certificates??
-		//TODO : introduce ISSUERX.AutorizedOCSPResponderCert1....n , in properties
+		X509Certificate ocspRespSignerCertificate  = null;
 		if(basicOCSPResponse.getCerts("BC") == null)
-			throw new SignServerException("OCSP Response does not contain certificate chain.");
-		
-		//first check if CA issuing certificate signed the response
-		//since it is expected to be the most common case
-		X509Certificate ocspRespSignerCertificate = getIssuerCertificateFromOCSPResponse(x509Cert, basicOCSPResponse);
-		if(ocspRespSignerCertificate == null)
 		{
-			//the response was not signed by CA issuing certificate but maybe by Authorized OCSP Responder itself
-			//look for existence of Authorized OCSP responder
-			ocspRespSignerCertificate = getAuthorizedOCSPRespondersCertificateFromOCSPResponse(basicOCSPResponse);
+			//certificate chain is not present in response received, try to verify using one of the configured AuthorizedOCSPResponderCerts 
+			ocspRespSignerCertificate = getAuthorizedOCSPRespondersCertificateFromProperties(basicOCSPResponse);
+			if(ocspRespSignerCertificate == null)
+				throw new SignServerException("OCSP Response does not contain certificate chain, and response is not signed by any of the configured Authorized OCSP Responders.");
+		}
+		else
+		{
+			//first check if CA issuing certificate signed the response
+			//since it is expected to be the most common case
+			ocspRespSignerCertificate = getIssuerCertificateFromOCSPResponse(x509Cert, basicOCSPResponse);
+			if(ocspRespSignerCertificate == null)
+			{
+				//the response was not signed by CA issuing certificate but maybe by Authorized OCSP Responder itself
+				//look for existence of Authorized OCSP responder
+				ocspRespSignerCertificate = getAuthorizedOCSPRespondersCertificateFromOCSPResponse(basicOCSPResponse);
+			}
+			
+			//could not find the certificate signing the OCSP response in the ocsp response
+			if(ocspRespSignerCertificate == null)
+				throw new SignServerException("Certificate signing the ocsp response is not found in ocsp response's certificate chain received");
 		}
 		
-		//could not find the certificate signing the OCSP response in the ocsp response 
-		if(ocspRespSignerCertificate == null)
-			throw new SignServerException("Certificate signing the ocsp response is not found in ocsp response's certificate chain received");
-				
 		// validating ocsp signers certificate
 		// Check if responders certificate has id-pkix-ocsp-nocheck extension, in which case we do not validate (perform revocation check on ) ocsp certs for lifetime of certificate
 		// using CRL RFC 2560 sect 4.2.2.2.1
@@ -443,13 +448,34 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 	}
 	
 	/**
+	 * Method that traverses all configured AuthorizedOCSPResponderCert properties for the issuer of certficate passed originally to the validators validate() method 
+	 * and tries to find the one that signed the ocsp response
+	 * @param basicOCSPResponse - response that is tried to be verified
+	 * @return - Authorized ocsp responder's certificate, or null if none found that verifies ocsp response received
+	 * @throws NoSuchProviderException
+	 * @throws OCSPException
+	 */
+	protected X509Certificate getAuthorizedOCSPRespondersCertificateFromProperties(BasicOCSPResp basicOCSPResponse) throws NoSuchProviderException, OCSPException
+	{
+		if(this.authorizedOCSPResponderCerts == null || this.authorizedOCSPResponderCerts.size() == 0)
+			return null;
+		
+		for(X509Certificate ocspCert : this.authorizedOCSPResponderCerts)
+		{
+			if(basicOCSPResponse.verify(ocspCert.getPublicKey(), "BC"))
+				return ocspCert;
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * 
 	 * Since we are implementing stateful checker we ought to override clone method for proper functionality
 	 * clone is used by certpath builder to backtrack and try another path when potential certificate path reaches dead end.
 	 * 
 	 * @throws SignServerException 
 	 */
-	@Override
 	public Object clone() 
 	{
 		// TODO research how clone is properly implemented in java instead of this custom tailored solution
@@ -463,8 +489,8 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 				clonedPrevCert =  (X509Certificate)certFact.generateCertificate(bis);
 			}
 			
-			//do not need to clone trust anchor and props since it does not change
-			clonedOCSPPathChecker = new OCSPPathChecker(rootCACert, this.props);
+			//do not need to clone other properties since they do not change
+			clonedOCSPPathChecker = new OCSPPathChecker(rootCACert, this.props, this.authorizedOCSPResponderCerts);
 			clonedOCSPPathChecker.cACert = clonedPrevCert;
 			return clonedOCSPPathChecker;
 
@@ -475,5 +501,4 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 
 		return null;
 	}
-
 }

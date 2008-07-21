@@ -198,6 +198,7 @@ public abstract class BaseValidator implements IValidator{
 	}
 
 	/**
+	 * TODO : The logic is wrong, since in case two issuers share the same root the returned issuer would be the first one found
 	 * get properties of the issuer that is configured to accept this certificate (through certchain)
 	 * have to match using rootCert since in case of the intermediate CA certificate the chain will be cut off.
 	 */
@@ -217,7 +218,6 @@ public abstract class BaseValidator implements IValidator{
 
 		return null;	
 	}
-
 
 	/**
 	 * Retrieves certificate chain for the end entity certificate given

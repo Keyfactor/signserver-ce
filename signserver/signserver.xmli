@@ -617,7 +617,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	   <mkdir dir="${pkgdist.webconfdir}"/>	
 	   <copy todir="${pkgdist.webconfdir}" >
 	       <fileset dir="src/install/common">
-			 <include name="server*.xml"/>			 
+			 <include name="tomcat-server*.xml"/>			 
 			</fileset>
 		</copy>	
 	   <property name="pkgdist.dbconfdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/dbconf"/>

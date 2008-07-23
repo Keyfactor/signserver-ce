@@ -15,7 +15,7 @@ set J2EE_CP=%SIGNSRV_HOME%\dist-client\lib\jbossall-client.jar
 set SIGNSERVER_PKG_CP=%SIGNSRV_HOME%\bin\lib\asm-3.1.jar;%SIGNSRV_HOME%\bin\lib\asm-commons-3.1.jar;%SIGNSRV_HOME%\bin\lib\bcmail-jdk.jar;%SIGNSRV_HOME%\bin\lib\bcprov-jdk.jar;%SIGNSRV_HOME%\bin\lib\commons-lang-2.0.jar;%SIGNSRV_HOME%\bin\lib\ejbca-util.jar;%SIGNSRV_HOME%\bin\lib\james-2.3.1.jar;%SIGNSRV_HOME%\bin\lib\jbossall-client.jar;%SIGNSRV_HOME%\bin\lib\jboss-ejb3x.jar;%SIGNSRV_HOME%\bin\lib\log4j.jar;%SIGNSRV_HOME%\bin\lib\signserver-cli.jar
 
 rem check that we have built the classes
-if not exists %SIGNSRV_HOME%\bin\lib\signserver-cli.jar (
+if not exist %SIGNSRV_HOME%\bin\lib\signserver-cli.jar (
   if not exist %SIGNSRV_HOME%\dist-client\signserver-cli.jar  (
     echo You must build SIGNSERVER before using the cli, use 'ant'.
     goto end

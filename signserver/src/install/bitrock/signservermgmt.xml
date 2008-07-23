@@ -2,9 +2,9 @@
     <shortName>signservermgmt</shortName>
     <fullName>SignServerMgmt</fullName>
     <version>3.1</version>
-    <readmeFile>../../../doc/README.txt</readmeFile>
+    <readmeFile>../common/README.txt</readmeFile>
     <licenseFile>../../../doc/lgpl-2.1.txt</licenseFile>
-    <registerWithPackageDatabase>1</registerWithPackageDatabase>
+    <!-- <registerWithPackageDatabase>1</registerWithPackageDatabase> -->
     <vendor>PrimeKey Solutions AB</vendor>
     <summary>CLI interface for managing a SignServer Cluster.</summary>
     <release>3.1</release>
@@ -13,6 +13,15 @@
         <setInstallerVariable>
                 <name>installdir</name>
                 <value>/opt/signserver-${product_version}</value>
+                <ruleList>
+                  <platformTest>                    
+                    <type>linux</type>
+                  </platformTest>                
+                </ruleList>
+        </setInstallerVariable>
+        <setInstallerVariable>
+                <name>uninstallerName</name>
+                <value>uninstall-${product_shortname}</value>
                 <ruleList>
                   <platformTest>                    
                     <type>linux</type>
@@ -259,18 +268,7 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
                             <origin>../../../dist-pkg/signserver-mgmt/usr/share/signserver/bin</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/signserver-mgmt/usr/share/signserver/sample-configs</origin>
-                        </distributionDirectory>
-                    </distributionFileList>
-                </folder>
-                <folder>
-                    <description>Program Files</description>
-                    <destination>${installdir}</destination>
-                    <name>programfileswindows</name>
-                    <platforms>windows</platforms>
-                    <distributionFileList>
-                        <distributionDirectory>
-                            <origin>../../../dist-pkg/signserver-mgmt/usr/share/signserver/bin</origin>
+                            <origin>../../../dist-pkg/signserver-mgmt/usr/share/signserver/modules</origin>
                         </distributionDirectory>
                         <distributionDirectory>
                             <origin>../../../dist-pkg/signserver-mgmt/usr/share/signserver/sample-configs</origin>

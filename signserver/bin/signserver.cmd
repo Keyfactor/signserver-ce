@@ -12,14 +12,18 @@ if "%SIGNSERVER_HOME%" == "" (
 set SIGNSERVER_CP=%SIGNSRV_HOME%\lib\log4j.jar;%SIGNSRV_HOME%\lib\1.5\bcprov-jdk.jar;%SIGNSRV_HOME%\lib\1.5\bcmail-jdk.jar;%SIGNSRV_HOME%\lib\ejbca-util.jar;%SIGNSRV_HOME%\lib\commons-lang-2.0.jar;%SIGNSRV_HOME%\lib\ext\ejb\jboss-ejb3x.jar;%SIGNSRV_HOME%\lib\ext\james\james-2.3.1.jar;%SIGNSRV_HOME%\lib\asm\asm-3.1.jar;%SIGNSRV_HOME%\lib\asm\asm-commons-3.1.jar
 set J2EE_CP=%SIGNSRV_HOME%\dist-client\lib\jbossall-client.jar
 
+set SIGNSERVER_PKG_CP=%SIGNSRV_HOME%\bin\lib\asm-3.1.jar;%SIGNSRV_HOME%\bin\lib\asm-commons-3.1.jar;%SIGNSRV_HOME%\bin\lib\bcmail-jdk.jar;%SIGNSRV_HOME%\bin\lib\bcprov-jdk.jar;%SIGNSRV_HOME%\bin\lib\commons-lang-2.0.jar;%SIGNSRV_HOME%\bin\lib\ejbca-util.jar;%SIGNSRV_HOME%\bin\lib\james-2.3.1.jar;%SIGNSRV_HOME%\bin\lib\jbossall-client.jar;%SIGNSRV_HOME%\bin\lib\jboss-ejb3x.jar;%SIGNSRV_HOME%\bin\lib\log4j.jar;%SIGNSRV_HOME%\bin\lib\signserver-cli.jar
 
 rem check that we have built the classes
-if not exist %SIGNSRV_HOME%\dist-client\signserver-cli.jar (
+if not exists %SIGNSRV_HOME%\bin\lib\signserver-cli.jar (
+  if not exist %SIGNSRV_HOME%\dist-client\signserver-cli.jar  (
     echo You must build SIGNSERVER before using the cli, use 'ant'.
     goto end
+  )
 )
 
-set CLASSPATH=%J2EE_CP%;%SIGNSERVER_CP%;%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\dist-client\signserver-cli.jar
+
+set CLASSPATH=%J2EE_CP%;%SIGNSERVER_CP%;%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\dist-client\signserver-cli.jar;%SIGNSERVER_PKG_CP%
 rem echo %CLASSPATH%
 
 rem Fixup arguments, we have to do this since windows normally only 

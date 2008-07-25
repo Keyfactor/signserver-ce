@@ -92,17 +92,84 @@ public abstract class BaseValidator implements IValidator{
 
 	/**
 	 * @see org.signserver.validationservice.server.IValidator#getCertificateChain(org.signserver.validationservice.common.ICertificate)
+	 * 
+	 * Retrieves certificate chain for certificate given
+	 * Certificate chain will be retrieved from configured certchain properties for issuers 
+	 * 
+	 * @return  
+	 * 
+	 * certificates starting from the CA certificate issuing this end entity cert up to root certificate, if issuer is found in configured chains
+	 * null if passed in certificate's issuer is not in any of the configured chains
+	 * 
 	 */
 	public List<ICertificate> getCertificateChain(ICertificate cert) {
 
 		if( getCertChainMap() == null)
 			return null;
 
-		X509Certificate x509cert = (X509Certificate)cert;
-		if(x509cert.getBasicConstraints() == -1)
-			return getCertificateChainForEndEntityCertificate(x509cert);
-		else
-			return getCertificateChainForCACertificate(cert, false);
+		X509Certificate x509Cert = (X509Certificate)cert;
+		
+		List<ICertificate> retVal= null;
+		//first look if the certificate is directly issued by CA that is in the beginning of the one of configured chains
+		//"in the beginning" here means that the issuer of the certificate is at position 0 after sortCerts method is called
+		//it is easy to check since the CA Certificate at position 0 is the key to HashMap holding certificate chains
+		retVal = getCertChainMap().get(x509Cert.getIssuer());
+		if(retVal == null)
+		{
+			//look if cert is issued by some CA that is in the middle of the one of configured chains
+			//"in the middle" here means that issuer of this certificate is not at position 0 after sortCerts method is called
+			//match is done on issuerDN and authorityKeyIdentifier (if exists)
+			X509Certificate issuerCACert = null;
+			byte[] aki = null;
+			boolean issuerFound = false;
+			for(String certDN : getCertChainMap().keySet())
+			{
+				for(ICertificate cACert : getCertChainMap().get(certDN))
+				{
+					issuerCACert = (X509Certificate)cACert;
+
+					//check if subject of CA and the issuer of our certificate match
+					if(issuerCACert.getSubjectX500Principal().equals(x509Cert.getIssuerX500Principal()))
+					{
+						//now check if AuthorityKeyIdentifier of our cert (if exists) match the SubjectKeyIdentifier of CA
+						try {
+							if((aki = CertTools.getAuthorityKeyId(x509Cert)) != null && aki.length > 0)
+							{
+								byte[] ski = CertTools.getSubjectKeyId(issuerCACert);
+								if(ski != null && Arrays.equals(aki, ski)) //if cert contains AKI then CA must contain SKI.
+								{
+									issuerFound = true;
+									break;
+								}
+							}
+							else
+							{
+								//authority key identifier extension is not found
+								//so match on SubjectDN is considered good enough
+								issuerFound = true;
+								break;
+							}
+						} catch (IOException e) {
+							// eat up the exception to continue looping
+							e.printStackTrace();
+						}
+
+					}
+				}
+
+				if(issuerFound)
+					break;
+			}
+
+			//if issuer is found then IssuerCACert holds our issuer certificate
+			//so return certificate chain INCLUDING the issuer and up to root
+			if(issuerFound)
+			{
+				retVal = getCertificateChainForCACertificate(issuerCACert, true); 
+			}
+		}
+
+		return retVal;
 	}
 
 	/**
@@ -198,99 +265,46 @@ public abstract class BaseValidator implements IValidator{
 	}
 
 	/**
-	 * TODO : The logic is wrong, since in case two issuers share the same root the returned issuer would be the first one found
 	 * get properties of the issuer that is configured to accept this certificate (through certchain)
-	 * have to match using rootCert since in case of the intermediate CA certificate the chain will be cut off.
+	 * have to match using rootCert and down the chain, until the chain for cert is exhausted 
 	 */
 	protected Properties getIssuerProperties(ICertificate cert){
 
-		if(getCertificateChain(cert) == null)
+		List<ICertificate> certChain = getCertificateChain(cert);
+		if(certChain == null)
 			return null;
 
-		List<ICertificate> certChain = null;
+		List<ICertificate> tempCertChain = null;
+		
+		//first search for exact match
 		for(Integer issuerId : getIssuerProperties().keySet())
 		{
-			certChain= getCertChainFromProps(issuerId, getIssuerProperties().get(issuerId));
-			if(certChain != null 
-					&& certChain.get(certChain.size() - 1).equals(getCertificateChain(cert).get(getCertificateChain(cert).size() -1)))
-				return getIssuerProperties().get(issuerId);
+			tempCertChain = getCertChainFromProps(issuerId, getIssuerProperties().get(issuerId));
+			if(tempCertChain != null)
+			{
+				if(tempCertChain.equals(certChain))
+				{
+					log.debug("issuer id of certificate " + cert.getSubject() + " is " + issuerId + " Exact match");
+					return getIssuerProperties().get(issuerId);
+				}
+			}
+		}
+		
+		//exact match not found , find containing
+		for(Integer issuerId : getIssuerProperties().keySet())
+		{
+			tempCertChain = getCertChainFromProps(issuerId, getIssuerProperties().get(issuerId));
+			if(tempCertChain != null)
+			{
+				if(tempCertChain.containsAll(certChain))
+				{
+					log.debug("issuer id of certificate " + cert.getSubject() + " is " + issuerId + " ContainsAll match");
+					return getIssuerProperties().get(issuerId);
+				}
+			}
 		}
 
 		return null;	
-	}
-
-	/**
-	 * Retrieves certificate chain for the end entity certificate given
-	 * Certificate chain will be retrieved from configured certchain properties for issuers 
-	 * 
-	 * @return  
-	 * 
-	 * certificates starting from the CA certificate issuing this end entity cert up to root certificate, if issuer is found in configured chains
-	 * null if passed in certificate's issuer is not in any of the configured chains 
-	 *  
-	 */
-	protected List<ICertificate> getCertificateChainForEndEntityCertificate(X509Certificate x509Cert) {
-		List<ICertificate> retVal= null;
-		//first look if the end entity certificate is directly issued by CA that is in the beginning of the one of configured chains
-		//"in the beginning" here means that the issuer of the certificate is at position 0 after sortCerts method is called
-		//it is easy to check since the CA Certificate at position 0 is the key to HashMap holding certificate chains
-		retVal = getCertChainMap().get(x509Cert.getIssuer());
-		if(retVal == null)
-		{
-			//look if end entity cert is issued by some CA that is in the middle of the one of configured chains
-			//"in the middle" here means that issuer of this certificate is not at position 0 after sortCerts method is called
-			//match is done on issuerDN and authorityKeyIdentifier (if exists)
-			X509Certificate issuerCACert = null;
-			byte[] aki = null;
-			boolean issuerFound = false;
-			for(String certDN : getCertChainMap().keySet())
-			{
-				for(ICertificate cACert : getCertChainMap().get(certDN))
-				{
-					issuerCACert = (X509Certificate)cACert;
-
-					//check if subject of CA and the issuer of our certificate match
-					if(issuerCACert.getSubjectX500Principal().equals(x509Cert.getIssuerX500Principal()))
-					{
-						//now check if AuthorityKeyIdentifier of our cert (if exists) match the SubjectKeyIdentifier of CA
-						try {
-							if((aki = CertTools.getAuthorityKeyId(x509Cert)) != null && aki.length > 0)
-							{
-								byte[] ski = CertTools.getSubjectKeyId(issuerCACert);
-								if(ski != null && Arrays.equals(aki, ski)) //if end entity contains AKI then CA must contain SKI.
-								{
-									issuerFound = true;
-									break;
-								}
-							}
-							else
-							{
-								//authority key identifier extension is not found
-								//so match on SubjectDN is considered good enough
-								issuerFound = true;
-								break;
-							}
-						} catch (IOException e) {
-							// eat up the exception to continue looping
-							e.printStackTrace();
-						}
-
-					}
-				}
-
-				if(issuerFound)
-					break;
-			}
-
-			//if issuer is found then IssuerCACert holds our issuer certificate
-			//so return certificate chain INCLUDING the issuer and up to root
-			if(issuerFound)
-			{
-				retVal = getCertificateChainForCACertificate(issuerCACert, true); 
-			}
-		}
-
-		return retVal;
 	}
 
 	/**
@@ -340,7 +354,7 @@ public abstract class BaseValidator implements IValidator{
 		if(getCertChainMap() == null)
 			return false;
 
-		// is it really a self signed certificate CA certificate
+		// is it really a self signed CA certificate
 		if(rootCACert.getBasicConstraints() == -1 || !rootCACert.getSubjectX500Principal().equals(rootCACert.getIssuerX500Principal()))
 			return false;
 

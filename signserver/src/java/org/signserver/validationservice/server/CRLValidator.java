@@ -27,6 +27,7 @@ import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertStore;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
@@ -46,6 +47,7 @@ import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
 
+import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -70,6 +72,7 @@ import org.signserver.validationservice.common.X509Certificate;
 
 public class CRLValidator extends BaseValidator {
 
+	private static final Logger log = Logger.getLogger(CRLValidator.class);
 	/**
 	 * @see org.signserver.validationservice.server.IValidator#init(int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.IExtendedCryptoToken)
 	 */
@@ -99,6 +102,8 @@ public class CRLValidator extends BaseValidator {
 	 */
 	public Validation validate(ICertificate cert, Properties props) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException
 	{
+		log.debug("CRL Validator's validate called with explicit properties");
+		
 		this.props = props;
 		return validate(cert);		
 	}
@@ -107,6 +112,8 @@ public class CRLValidator extends BaseValidator {
 	throws IllegalRequestException, CryptoTokenOfflineException,
 	SignServerException {
 
+		log.debug("CRL Validator's validate called with certificate " + cert.getSubject());
+		
 		//check certificate validity 
 		X509Certificate xcert = (X509Certificate) cert;
 		try {
@@ -117,10 +124,17 @@ public class CRLValidator extends BaseValidator {
 			return new Validation(cert,null,Validation.Status.NOTYETVALID,"Certificate is not yet valid. " + e1.toString());
 		}
 		
+		List<ICertificate> certChain = getCertificateChain(cert);
+		
+		log.debug("***********************");
+		log.debug("printing certchain for "+ cert.getSubject());
+		for(ICertificate tempcert : certChain)
+			log.debug(tempcert.getSubject());
+		log.debug("***********************");
+		
 		// if no chain found for this certificate and if it is not trust anchor (as configured in properties) return null
 		// if it is trust anchor return valid
-		// NOTE : framework does not support validating trust anchors for now (Talk to Philip) so trust anchor will return issuer not supported
-		if(getCertificateChain(cert) == null ){
+		if(certChain == null ){
 			if(isTrustAnchor(xcert))
 			{
 				return new Validation(cert,Collections.singletonList(cert),Validation.Status.VALID,"This certificate is defined as Trust Anchor.");
@@ -140,7 +154,7 @@ public class CRLValidator extends BaseValidator {
 		URL certURL = null;
 		X509Certificate x509CurrentCert = null;
 		boolean atLeastOneCDPNotFound = false;
-		Iterator<ICertificate> cACerts = getCertificateChain(cert).iterator();
+		Iterator<ICertificate> cACerts = certChain.iterator();
 
 		//initialize first iteration with requested certificate and subsequent iterations with certificates from chain
 		for(ICertificate currentCert = cert; ;currentCert = cACerts.next())
@@ -180,17 +194,22 @@ public class CRLValidator extends BaseValidator {
 				{
 					if((rootCert == null || !Arrays.equals(rootCert.getEncoded(), currentCert.getEncoded())))
 					{
+						log.debug("CDP not found for non root certificate " + x509CurrentCert.getSubject());
 						// non root certificate
 						if(CRLPaths == null)
 						{
 							// the CDP could not be found for this non root certificate 
 							// and the CRLPath property is not present for the issuer of this certificate
 							// validation can not proceed
-							throw new SignServerException("no CRL Distribution point specified for non root certificate : " 
-									+ x509CurrentCert.getSubject() + ", and no CRLPath configured for Issuer");
+							String msg ="no CRL Distribution point specified for non root certificate : " 
+								+ x509CurrentCert.getSubject() + ", and no CRLPath configured for Issuer";
+							
+							log.error(msg);
+							throw new SignServerException(msg);
 						}
 						else
 						{
+							log.debug("setting atLeastOneCDPNotFound to true, to signal usage of configured CRLPaths");
 							// signal that at least one CDP not found, so validation has to include CRLPaths
 							atLeastOneCDPNotFound = true;
 						}
@@ -219,7 +238,7 @@ public class CRLValidator extends BaseValidator {
 			certFactory = CertificateFactory.getInstance("X509", "BC");
 
 			// Initialize certStore with certificate chain and certificate in question
-			certsAndCRLS.addAll(getCertificateChain(cert));
+			certsAndCRLS.addAll(certChain);
 			certsAndCRLS.add(cert);
 
 			//fetch CRLs obtained form the CDP extension of certificates
@@ -240,8 +259,24 @@ public class CRLValidator extends BaseValidator {
 
 			certStore  = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certsAndCRLS));
 			
+			log.debug("***********************");
+			log.debug("printing certs in certstore");
+			Iterator tempIter = certStore.getCertificates(null).iterator();
+			while(tempIter.hasNext())
+			{
+				X509Certificate tempcert = (X509Certificate)tempIter.next();
+				log.debug(tempcert.getSubject() + " issuer is " + tempcert.getIssuer());
+			}
+			log.debug("***********************");
+			
 			// CertPath Construction
 			certPath = certFactory.generateCertPath(certChainWithoutRootCert);
+			
+			log.debug("***********************");
+			log.debug("printing certs in certpath");
+			for(Certificate tempcert : certPath.getCertificates())
+				log.debug(((X509Certificate)tempcert).getSubject() + " issuer is " + ((X509Certificate)tempcert).getIssuer());
+			log.debug("***********************");
 			
 			// init cerpathvalidator 
 			validator = CertPathValidator.getInstance("PKIX", "BC");
@@ -252,7 +287,12 @@ public class CRLValidator extends BaseValidator {
 			params.addCertStore(certStore);
 			params.setDate(new Date());
 			
+			log.debug("***********************");
+			log.debug("printing trust anchor "+ trustAnc.getTrustedCert().getSubjectDN().getName());
+			log.debug("***********************");
+			
 		} catch (Exception e) {
+			log.error("Exception on preparing parameters for validation", e);
 			throw new SignServerException(e.toString());
 		}
 
@@ -262,12 +302,14 @@ public class CRLValidator extends BaseValidator {
 		try {
 			cpv_result = (PKIXCertPathValidatorResult)validator.validate(certPath, params);
 			//if we are down here then validation is successful
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid. Trust anchor for certificate is :" + cpv_result.getTrustAnchor().getTrustedCert().getSubjectDN());
+			return new Validation(cert,certChain,Validation.Status.VALID,"This certificate is valid. Trust anchor for certificate is :" + cpv_result.getTrustAnchor().getTrustedCert().getSubjectDN());
 
 		} catch (CertPathValidatorException e) {
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.DONTVERIFY,"Exception on validation. certificate causing exception : " + ((X509Certificate)e.getCertPath().getCertificates().get(e.getIndex())).getSubjectDN() + e.toString());
+			log.error("Exception on valdiation", e);
+			return new Validation(cert,certChain,Validation.Status.DONTVERIFY,"Exception on validation. certificate causing exception : " + ((X509Certificate)e.getCertPath().getCertificates().get(e.getIndex())).getSubjectDN() + e.toString());
 		} catch (InvalidAlgorithmParameterException e) {
-			throw new SignServerException(e.toString());
+			log.error("Exception on valdiation", e);
+			return new Validation(cert,getCertificateChain(cert),Validation.Status.DONTVERIFY,"Exception on validation." + e.toString());
 		}
 
 	}
@@ -341,14 +383,19 @@ public class CRLValidator extends BaseValidator {
 		StringTokenizer strTokenizer = new StringTokenizer(props.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS),
 				ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER);
 		
+		log.debug("***********************");
+		log.debug("printing CRLPATHS ");
 		while(strTokenizer.hasMoreTokens())
 		{
-			try {				
-				retval.add(new URL(strTokenizer.nextToken()));
+			try {
+				String nextToken = strTokenizer.nextToken().trim();
+				log.debug(nextToken);
+				retval.add(new URL(nextToken));
 			} catch (MalformedURLException e) {
 				throw new SignServerException("URL in CRLPATHS property for issuer is not valid. : " + e.toString());
 			}	
 		}
+		log.debug("***********************");
 		
 		return retval;
 	}

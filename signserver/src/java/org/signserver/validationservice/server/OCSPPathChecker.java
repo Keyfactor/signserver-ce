@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.ocsp.BasicOCSPResp;
 import org.bouncycastle.ocsp.CertificateID;
@@ -49,6 +50,7 @@ import org.bouncycastle.ocsp.OCSPReqGenerator;
 import org.bouncycastle.ocsp.OCSPResp;
 import org.bouncycastle.ocsp.OCSPRespStatus;
 import org.bouncycastle.ocsp.SingleResp;
+import org.ejbca.core.model.ca.certificateprofiles.OCSPSignerCertificateProfile;
 import org.ejbca.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -78,6 +80,8 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 	Properties props;
 	List<X509Certificate> authorizedOCSPResponderCerts;
 
+	private static final Logger log = Logger.getLogger(OCSPPathChecker.class);
+	
 	public OCSPPathChecker(X509Certificate rootCACert, Properties props, List<X509Certificate> authorizedOCSPResponderCerts)
 	{
 		this.rootCACert = rootCACert;
@@ -88,7 +92,6 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 	public void init(boolean forward) throws CertPathValidatorException {
 		// initialize state of the checker
 		cACert = null;
-		
 		if(rootCACert == null)
 		{
 			throw new CertPathValidatorException("Root CA Certificate passed in constructor can not be null");
@@ -98,10 +101,17 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 	public void check(Certificate cert, Collection<String> unresolvedCritExts)
 	throws CertPathValidatorException {
 
+		if (!(cert instanceof X509Certificate)) {
+		    throw new CertPathValidatorException("Certificate passed to check method of OCSPPathChecker is not of type X509Certificate");
+		}
+			
 		if(cACert == null )
 			cACert = rootCACert;
 		
 		X509Certificate x509Cert = (X509Certificate)cert;
+		
+		log.debug("check method called with certificate " + x509Cert.getSubject());
+		
 		try {
 			//generate ocsp request for current certificate and send to ocsp responder
 			if(cACert != null)
@@ -113,7 +123,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 			
 		} catch (Exception e) {
 			//re-throw all exceptions received
-//			System.out.println("EXCEPTIOOONNN : " + e);
+			log.error("Exception occured on validion of certificate using OCSPPathChecker ", e);
 			throw new CertPathValidatorException(e);
 		} 
 
@@ -271,30 +281,39 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 		//the Authorized OCSP responder certificate containing the id-kp-OCSPSigning extended key usage extension
 		
 		X509Certificate ocspRespSignerCertificate  = null;
-		if(basicOCSPResponse.getCerts("BC") == null)
+		
+		//first check if CA issuing certificate signed the response
+		//since it is expected to be the most common case
+		if(basicOCSPResponse.verify(cACert.getPublicKey(), "BC"))
+			ocspRespSignerCertificate = cACert;
+		
+		//if CA did not sign the ocsp response, look for authorized ocsp responses from properties or from certificate chain received with response
+		if(ocspRespSignerCertificate == null)
 		{
-			//certificate chain is not present in response received, try to verify using one of the configured AuthorizedOCSPResponderCerts 
-			ocspRespSignerCertificate = getAuthorizedOCSPRespondersCertificateFromProperties(basicOCSPResponse);
-			if(ocspRespSignerCertificate == null)
-				throw new SignServerException("OCSP Response does not contain certificate chain, and response is not signed by any of the configured Authorized OCSP Responders.");
-		}
-		else
-		{
-			//first check if CA issuing certificate signed the response
-			//since it is expected to be the most common case
-			ocspRespSignerCertificate = getIssuerCertificateFromOCSPResponse(x509Cert, basicOCSPResponse);
-			if(ocspRespSignerCertificate == null)
+			log.debug("OCSP Response is not signed by issuing CA. Looking for authorized responders");
+			if(basicOCSPResponse.getCerts("BC") == null)
 			{
-				//the response was not signed by CA issuing certificate but maybe by Authorized OCSP Responder itself
-				//look for existence of Authorized OCSP responder
-				ocspRespSignerCertificate = getAuthorizedOCSPRespondersCertificateFromOCSPResponse(basicOCSPResponse);
+				log.debug("OCSP Response does not contain certificate chain, trying to verify response using one of configured authorized ocsp responders");
+
+				//certificate chain is not present in response received 
+				//try to verify using one of the configured AuthorizedOCSPResponderCerts
+				ocspRespSignerCertificate = getAuthorizedOCSPRespondersCertificateFromProperties(basicOCSPResponse);
+
+				if(ocspRespSignerCertificate == null)
+					throw new SignServerException("OCSP Response does not contain certificate chain, and response is not signed by any of the configured Authorized OCSP Responders or CA issuing certificate.");
 			}
-			
-			//could not find the certificate signing the OCSP response in the ocsp response
-			if(ocspRespSignerCertificate == null)
-				throw new SignServerException("Certificate signing the ocsp response is not found in ocsp response's certificate chain received");
+			else
+			{
+				//look for existence of Authorized OCSP responder inside the cert chain in ocsp response
+				ocspRespSignerCertificate = getAuthorizedOCSPRespondersCertificateFromOCSPResponse(basicOCSPResponse);
+
+				//could not find the certificate signing the OCSP response in the ocsp response
+				if(ocspRespSignerCertificate == null)
+					throw new SignServerException("Certificate signing the ocsp response is not found in ocsp response's certificate chain received and is not signed by CA issuing certificate");
+			}
 		}
 		
+		log.debug("OCSP response signed by :  " + ocspRespSignerCertificate.getSubject());
 		// validating ocsp signers certificate
 		// Check if responders certificate has id-pkix-ocsp-nocheck extension, in which case we do not validate (perform revocation check on ) ocsp certs for lifetime of certificate
 		// using CRL RFC 2560 sect 4.2.2.2.1
@@ -319,7 +338,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 
 			
 			//verify certificate using CRL Validator
-			//TODO : refactor Validators to follow factory pattern (talk to Philip)
+			//TODO : refactor Validators to follow factory pattern (discuss)
 			CRLValidator crlValidator = new CRLValidator();
 			Validation valresult = crlValidator.validate(ocspRespSignerCertificate, this.props);
 			if(valresult.getStatus() != Validation.Status.VALID)
@@ -398,55 +417,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 		
 		return retCert;
 	}
-	
-	/**
-	 * Method returning issuer certificate of the passed in x509Cert, search is done on certificates retrieved from basicOCSPResponse
-	 * Issuer certificate is only returned if it is found and verifies response's certificate 
-	 * 
-	 * @param x509Cert - the certificate whose issuer is searched
-	 * @param basicOCSPResponse - the ocsp response which contains certificates to search from
-	 * @return
-	 * @throws NoSuchAlgorithmException
-	 * @throws NoSuchProviderException
-	 * @throws OCSPException
-	 * @throws IOException
-	 * @throws CertStoreException
-	 */
-	protected X509Certificate getIssuerCertificateFromOCSPResponse(X509Certificate x509Cert, BasicOCSPResp basicOCSPResponse) throws NoSuchAlgorithmException, NoSuchProviderException, OCSPException, IOException, CertStoreException
-	{
-		X509Certificate retCert = null;
 		
-		CertStore ocspRespCertStore = basicOCSPResponse.getCertificates("Collection", "BC");
-		X509CertSelector certSel = new X509CertSelector();
-
-		//using issuer subject and key identifier (if certificate has authority key identifier) for finding issuer
-		certSel.setSubject(x509Cert.getIssuerX500Principal());
-		
-		byte[] aki = null;
-		if((aki = CertTools.getAuthorityKeyId(x509Cert)) != null && aki.length > 0)
-			certSel.setSubjectKeyIdentifier(aki);
-		
-		//get the CA certificate that issued x509Cert
-		//there should be one CA that is issuer of x509Cert so get the first found (if any) 
-		Iterator certsIter = ocspRespCertStore.getCertificates(certSel).iterator();
-		if(certsIter.hasNext())
-		{
-			try {
-				// direct cast to org.signserver.validationservice.common.X509Certificate fails
-				retCert = X509Certificate.getInstance((java.security.cert.X509Certificate)certsIter.next());
-			} catch (Exception e) {
-				//eat up exception 
-				retCert = null;
-			}
-		}
-		
-		//if we found a certificate and it verifies the signature on the response then we are done
-		if(retCert != null && basicOCSPResponse.verify(retCert.getPublicKey(), "BC"))
-			return retCert;
-		
-		return retCert;
-	}
-	
 	/**
 	 * Method that traverses all configured AuthorizedOCSPResponderCert properties for the issuer of certficate passed originally to the validators validate() method 
 	 * and tries to find the one that signed the ocsp response
@@ -457,17 +428,23 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 	 */
 	protected X509Certificate getAuthorizedOCSPRespondersCertificateFromProperties(BasicOCSPResp basicOCSPResponse) throws NoSuchProviderException, OCSPException
 	{
+		log.debug("Searching for Authorized OCSP Responder certificate from PROPERTIES");
 		if(this.authorizedOCSPResponderCerts == null || this.authorizedOCSPResponderCerts.size() == 0)
 			return null;
 		
 		for(X509Certificate ocspCert : this.authorizedOCSPResponderCerts)
 		{
 			if(basicOCSPResponse.verify(ocspCert.getPublicKey(), "BC"))
+			{
+				log.debug("Found Authorized OCSP Responder's certificate, signing ocsp response. found cert : " + ocspCert.getSubject());
 				return ocspCert;
+			}
 		}
 		
+		log.debug("Authorized OCSP Responder is not found");
 		return null;
 	}
+	
 	
 	/**
 	 * 
@@ -484,7 +461,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 			X509Certificate clonedPrevCert = null;
 			if(cACert != null)
 			{
-				CertificateFactory certFact = CertificateFactory.getInstance("X509");
+				CertificateFactory certFact = CertificateFactory.getInstance("X509", "BC");
 				ByteArrayInputStream bis = new ByteArrayInputStream(cACert.getEncoded());
 				clonedPrevCert =  (X509Certificate)certFact.generateCertificate(bis);
 			}
@@ -495,8 +472,9 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 			return clonedOCSPPathChecker;
 
 		} catch (CertificateException e) {
-			// eat up exception, since clone does not support throwing SignServerException
-			e.printStackTrace();
+			log.error("Exception occured on clone of OCSPPathChecker", e);
+		} catch (NoSuchProviderException e) {
+			log.error("Exception occured on clone of OCSPPathChecker", e);
 		} 
 
 		return null;

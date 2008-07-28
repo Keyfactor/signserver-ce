@@ -82,7 +82,7 @@ fi
 # Check that classes exist
 if [ ! -f ${SIGNSRV_HOME}/dist-client/signserver-cli.jar ]
 then    
-    if [ ! -f ${SIGNSRV_HOME}/bin/lib/signserver-cli.jar ]
+    if [ ! -f ${SIGNSRV_HOME}/lib/signserver-cli.jar ]
     then
         echo "You must build SIGNSERVER before using the cli, use 'ant'."
         exit 1
@@ -96,10 +96,6 @@ do
 	CP="$i":"$CP"
 done
 for i in "${SIGNSRV_HOME}"/lib/*.jar
-do
-	CP="$i":"$CP"
-done
-for i in "${SIGNSRV_HOME}"/bin/lib/*.jar
 do
 	CP="$i":"$CP"
 done

@@ -1,14 +1,14 @@
 <project>
-    <shortName>signserversrv</shortName>
-    <fullName>SignServerSRV</fullName>
+    <shortName>signservernode</shortName>
+    <fullName>SignServer Node</fullName>
     <version>3.1</version>
     <readmeFile>../common/README.txt</readmeFile>
     <licenseFile>../../../doc/lgpl-2.1.txt</licenseFile>
     <!--<registerWithPackageDatabase>1</registerWithPackageDatabase> -->
     <vendor>PrimeKey Solutions AB</vendor>
-    <summary>Server package for node in a SignServer Cluster</summary>
+    <summary>Server package for a node in a SignServer Cluster</summary>
     <release>3.1</release>
-    <description>Server package for node in a SignServer Cluster</description>
+    <description>Server package for a node in a SignServer Cluster</description>
     <preInstallationActionList>
         <setInstallerVariable>
                 <name>installdir</name>
@@ -238,6 +238,22 @@
                   <target>${installdir}/bin/signserver_jboss_init.sh</target>
                 </createSymLink> 
                 <createSymLink>
+                   <linkName>/etc/rc0.d/K01signserver</linkName>
+                   <target>/etc/init.d/signserver</target>                   
+                </createSymLink>
+                <createSymLink>
+                   <linkName>/etc/rc1.d/K01signserver</linkName>
+                   <target>/etc/init.d/signserver</target>                   
+                </createSymLink>
+                <createSymLink>
+                   <linkName>/etc/rc2.d/K01signserver</linkName>
+                   <target>/etc/init.d/signserver</target>                   
+                </createSymLink>
+                <createSymLink>
+                   <linkName>/etc/rc3.d/S99signserver</linkName>
+                   <target>/etc/init.d/signserver</target>                   
+                </createSymLink>
+                <createSymLink>
                    <linkName>/etc/rc3.d/S99signserver</linkName>
                    <target>/etc/init.d/signserver</target>                   
                 </createSymLink>
@@ -450,14 +466,14 @@ during evaluation and test and not for production systems.
             </actionGroup>
                 <createSymLink>
                   <linkName>${installdir}/jboss/server/default/deploy/jboss-web.deployer/server.xml</linkName>
-                  <target>${installdir}/webconf/server-unix.xml</target>
+                  <target>${installdir}/webconf/tomcat-server.xml</target>
                 </createSymLink> 
                 <createSymLink>
                   <linkName>/etc/signserver/webserver-conf.xml</linkName>
-                  <target>${installdir}/webconf/server-unix.xml</target>
+                  <target>${installdir}/webconf/tomcat-server.xml</target>
                 </createSymLink>
                 <substitute>
-                  <files>${installdir}/webconf/server-unix.xml</files>
+                  <files>${installdir}/webconf/tomcat-server.xml</files>
                   <substitutionList>
                     <substitution>
                       <pattern>@keystore.file@</pattern>
@@ -784,11 +800,26 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
               </ruleList>
             </actionGroup> 
             <deleteFile>
+              <path>/etc/rc0.d/K01signserver</path>
+            </deleteFile> 
+            <deleteFile>
+              <path>/etc/rc1.d/K01signserver</path>
+            </deleteFile> 
+            <deleteFile>
+              <path>/etc/rc2.d/K01signserver</path>
+            </deleteFile>      
+            <deleteFile>
               <path>/etc/rc3.d/S99signserver</path>
+            </deleteFile> 
+            <deleteFile>
+              <path>/etc/rc4.d/S99signserver</path>
             </deleteFile>      
             <deleteFile>
               <path>/etc/rc5.d/S99signserver</path>
-            </deleteFile>         
+            </deleteFile>  
+            <deleteFile>
+              <path>/etc/rc6.d/K01signserver</path>
+            </deleteFile>       
             <deleteFile>
               <path>/etc/init.d/signserver</path>
             </deleteFile>
@@ -868,6 +899,9 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
                             <origin>../../../dist-pkg/signserver-server/usr/share/signserver/bin</origin>
                         </distributionDirectory>
                         <distributionDirectory>
+                            <origin>../../../dist-pkg/signserver-server/usr/share/signserver/lib</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
                             <origin>../../../dist-pkg/signserver-server/usr/share/signserver/deploy</origin>
                         </distributionDirectory>
                         <distributionDirectory>
@@ -913,20 +947,6 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
                         </distributionDirectory>
                         <distributionDirectory>
                             <origin>${env(JBOSS_PREP)}/readme.html</origin>
-                        </distributionDirectory>
-                    </distributionFileList>
-                </folder>
-                <folder>
-                    <description>Program Files</description>
-                    <destination>${installdir}</destination>
-                    <name>programfileswindows</name>
-                    <platforms>windows</platforms>
-                    <distributionFileList>
-                        <distributionDirectory>
-                            <origin>../../../dist-pkg/signserver-mgmt/usr/share/signserver/bin</origin>
-                        </distributionDirectory>
-                        <distributionDirectory>
-                            <origin>../../../dist-pkg/signserver-mgmt/usr/share/signserver/sample-configs</origin>
                         </distributionDirectory>
                     </distributionFileList>
                 </folder>
@@ -1237,13 +1257,6 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
             <width>40</width>
         </directoryParameter>
     </parameterList>
-    <platformOptionsList>
-        <platformOptions>
-            <fullName>SignServer-Srv</fullName>
-            <installerFilename>dist-pkg/signserver-mgmt-${product_version}-${platform_name}-installer.${platform_exec_suffix}</installerFilename>
-            <platform>windows</platform>
-        </platformOptions>
-    </platformOptionsList>
 
 </project>
 

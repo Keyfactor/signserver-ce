@@ -15,6 +15,8 @@ package org.signserver.validationservice.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
 
@@ -47,7 +50,7 @@ import org.signserver.validationservice.common.X509Certificate;
 
 public abstract class BaseValidator implements IValidator{
 
-	private transient Logger log = Logger.getLogger(this.getClass());
+	protected transient Logger log = Logger.getLogger(this.getClass());
 
 	protected int workerId;
 	protected int validatorId;
@@ -368,4 +371,38 @@ public abstract class BaseValidator implements IValidator{
 		return false;
 	}
 
+	/**
+	 * find the issuer of this certificate and get the CRLPaths property which contains VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER separated
+	 * list of URLs for accessing crls for that specific issuer
+	 * and return as List of URLs
+	 * @throws SignServerException 
+	 */
+	protected List<URL> getIssuerCRLPaths(ICertificate cert) throws SignServerException { 
+		ArrayList<URL> retval = null;
+		Properties props = getIssuerProperties(cert);
+		if(props == null 
+				|| !props.containsKey(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS))
+			return null;
+		
+		retval = new ArrayList<URL>();
+		
+		StringTokenizer strTokenizer = new StringTokenizer(props.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS),
+				ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER);
+		
+		log.debug("***********************");
+		log.debug("printing CRLPATHS ");
+		while(strTokenizer.hasMoreTokens())
+		{
+			try {
+				String nextToken = strTokenizer.nextToken().trim();
+				log.debug(nextToken);
+				retval.add(new URL(nextToken));
+			} catch (MalformedURLException e) {
+				throw new SignServerException("URL in CRLPATHS property for issuer is not valid. : " + e.toString());
+			}	
+		}
+		log.debug("***********************");
+		
+		return retval;
+	}
 }

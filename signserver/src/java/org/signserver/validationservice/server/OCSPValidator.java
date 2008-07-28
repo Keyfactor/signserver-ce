@@ -16,8 +16,6 @@ package org.signserver.validationservice.server;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
@@ -39,9 +37,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -56,7 +52,7 @@ import org.signserver.validationservice.common.X509Certificate;
  * OCSP validator used for validating certificates using OCSP only for revocation checking
  * 
  * NOTE : properties introduced in J2SE5 such as : ocsp.enable,ocsp.responderURL and etc..  are not used since they
- * automatically failover to CRL in case OCSP encounters any problem. 
+ * automatically fail over to CRL in case OCSP encounters any problem. 
  * 
  * 
  * @author rayback2
@@ -64,8 +60,6 @@ import org.signserver.validationservice.common.X509Certificate;
  */
 
 public class OCSPValidator extends BaseValidator {
-
-	private static final Logger log = Logger.getLogger(OCSPValidator.class);
 
 	public void testConnection() throws ConnectException, SignServerException {
 		// TODO Test Internet connectivity, which is needed to access ocsp servers.
@@ -78,7 +72,7 @@ public class OCSPValidator extends BaseValidator {
 	throws IllegalRequestException, CryptoTokenOfflineException,
 	SignServerException {
 		
-		log.debug("OCSP Validator's validate called with certificate " + cert.getSubject());
+		log.debug("Validator's validate called with certificate " + cert.getSubject());
 		
 		//check certificate validity 
 		X509Certificate xcert = (X509Certificate) cert;
@@ -179,7 +173,7 @@ public class OCSPValidator extends BaseValidator {
 			// disable default crl validaton
 			params.setRevocationEnabled(false);
 			// add custom ocsp pathchecker
-			params.addCertPathChecker(new OCSPPathChecker((X509Certificate)rootCert, this.props, getIssuerAuthorizedOCSPResponderCertificates(cert)));
+			addCertPathCheckers(cert, params, rootCert);
 			
 		} catch (Exception e) {
 			log.error("Exception on preparing parameters for validation", e);
@@ -203,6 +197,21 @@ public class OCSPValidator extends BaseValidator {
 		}
 
 	}
+
+	/**
+	 * adding custom path checker
+	 * @param cert
+	 * @param params
+	 * @param rootCert
+	 * @throws SignServerException
+	 * @throws CertificateException
+	 * @throws IOException
+	 */
+	protected void addCertPathCheckers(ICertificate cert,
+			PKIXParameters params, ICertificate rootCert)
+			throws SignServerException, CertificateException, IOException {
+		params.addCertPathChecker(new OCSPPathChecker((X509Certificate)rootCert, this.props, getIssuerAuthorizedOCSPResponderCertificates(cert)));
+	}
 	
 	/**
 	 * Find the issuer of this certificate and get the Authorized OCSP Responder Certificates
@@ -210,7 +219,7 @@ public class OCSPValidator extends BaseValidator {
 	 * @throws IOException 
 	 * @throws CertificateException 
 	 */
-	private List<X509Certificate> getIssuerAuthorizedOCSPResponderCertificates(ICertificate cert) throws SignServerException, CertificateException, IOException { 
+	protected List<X509Certificate> getIssuerAuthorizedOCSPResponderCertificates(ICertificate cert) throws SignServerException, CertificateException, IOException { 
 		ArrayList<X509Certificate> x509Certs = new ArrayList<X509Certificate>();
 		Properties props = getIssuerProperties(cert);
 		if(props == null)

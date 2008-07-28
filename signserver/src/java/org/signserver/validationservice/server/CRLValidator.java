@@ -13,16 +13,9 @@
 
 package org.signserver.validationservice.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.ConnectException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.cert.CRLException;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
@@ -35,7 +28,6 @@ import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.PKIXCertPathValidatorResult;
 import java.security.cert.PKIXParameters;
 import java.security.cert.TrustAnchor;
-import java.security.cert.X509CRL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +35,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
 
@@ -55,7 +46,6 @@ import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.common.X509Certificate;
 
 /**
@@ -244,7 +234,7 @@ public class CRLValidator extends BaseValidator {
 			//fetch CRLs obtained form the CDP extension of certificates
 			for(URL url: cDPURLs)
 			{
-				certsAndCRLS.add(fetchCRLFromURL(url,certFactory));
+				certsAndCRLS.add(ValidationUtils.fetchCRLFromURL(url,certFactory));
 			}
 			
 			// retrieve and add the crls from CRLPath property of issuer to certStore
@@ -253,7 +243,7 @@ public class CRLValidator extends BaseValidator {
 			{
 				for(URL url: CRLPaths)
 				{
-					certsAndCRLS.add(fetchCRLFromURL(url,certFactory));
+					certsAndCRLS.add(ValidationUtils.fetchCRLFromURL(url,certFactory));
 				}
 			}
 
@@ -312,92 +302,6 @@ public class CRLValidator extends BaseValidator {
 			return new Validation(cert,getCertificateChain(cert),Validation.Status.DONTVERIFY,"Exception on validation." + e.toString());
 		}
 
-	}
-
-	/**
-	 * retrieve X509CRL from specified URL
-	 * @throws SignServerException 
-	 */
-	private X509CRL fetchCRLFromURL(URL url, CertificateFactory certFactory) throws IOException, CRLException, SignServerException {
-		URLConnection connection = url.openConnection();
-		connection.setDoInput(true);
-		connection.setUseCaches(false);
-
-		byte[] responsearr = null;		
-		InputStream reader = connection.getInputStream();
-		int responselen = connection.getContentLength();
-		
-		if(responselen != -1) 
-		{
-						
-			//header indicating content-length is present, so go ahead and use it
-			responsearr = new byte[responselen];
-
-			int offset = 0;
-			int bread;
-			while ((responselen > 0) && (bread = reader.read(responsearr, offset, responselen))!=-1) {
-				offset += bread;
-				responselen -= bread;
-			}
-			
-			//read.read returned -1 but we expect inputstream to contain more data
-			//is it a dreadful unexpected EOF we were afraid of ??
-			if (responselen > 0) {
-				throw new SignServerException("Unexpected EOF encountered while reading crl from : " + url.toString());
-			}
-		}
-		else
-		{
-			//getContentLength() returns -1. no panic , perfect normal value if header indicating length is missing (javadoc)
-			//try to read response manually byte by byte (small response expected , no need to buffer)
-			ByteArrayOutputStream baos  = new ByteArrayOutputStream();
-			int b;
-			while ((b = reader.read())!=-1) {
-				baos.write(b);
-			}
-			
-			responsearr = baos.toByteArray();
-		}
-
-		ByteArrayInputStream bis = new ByteArrayInputStream(responsearr);
-		X509CRL crl = (X509CRL)certFactory.generateCRL(bis);
-		
-		return crl;
-	}
-
-	/**
-	 * find the issuer of this certificate and get the CRLPaths property which contains VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER separated
-	 * list of URLs for accessing crls for that specific issuer
-	 * and return as List of URLs
-	 * @throws SignServerException 
-	 */
-	private List<URL> getIssuerCRLPaths(ICertificate cert) throws SignServerException { 
-		ArrayList<URL> retval = null;
-		Properties props = getIssuerProperties(cert);
-		if(props == null 
-				|| !props.containsKey(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS))
-			return null;
-		
-		retval = new ArrayList<URL>();
-		
-		StringTokenizer strTokenizer = new StringTokenizer(props.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS),
-				ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER);
-		
-		log.debug("***********************");
-		log.debug("printing CRLPATHS ");
-		while(strTokenizer.hasMoreTokens())
-		{
-			try {
-				String nextToken = strTokenizer.nextToken().trim();
-				log.debug(nextToken);
-				retval.add(new URL(nextToken));
-			} catch (MalformedURLException e) {
-				throw new SignServerException("URL in CRLPATHS property for issuer is not valid. : " + e.toString());
-			}	
-		}
-		log.debug("***********************");
-		
-		return retval;
 	}
 
 }

@@ -32,7 +32,6 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.PKIXCertPathChecker;
-import java.security.cert.X509CertSelector;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -50,7 +49,6 @@ import org.bouncycastle.ocsp.OCSPReqGenerator;
 import org.bouncycastle.ocsp.OCSPResp;
 import org.bouncycastle.ocsp.OCSPRespStatus;
 import org.bouncycastle.ocsp.SingleResp;
-import org.ejbca.core.model.ca.certificateprofiles.OCSPSignerCertificateProfile;
 import org.ejbca.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -80,7 +78,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 	Properties props;
 	List<X509Certificate> authorizedOCSPResponderCerts;
 
-	private static final Logger log = Logger.getLogger(OCSPPathChecker.class);
+	protected transient Logger log = Logger.getLogger(this.getClass());
 	
 	public OCSPPathChecker(X509Certificate rootCACert, Properties props, List<X509Certificate> authorizedOCSPResponderCerts)
 	{
@@ -113,15 +111,25 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 		log.debug("check method called with certificate " + x509Cert.getSubject());
 		
 		try {
-			//generate ocsp request for current certificate and send to ocsp responder
-			if(cACert != null)
-			{
-				OCSPReq req = generateOCSPRequest(cACert, x509Cert);
-				byte[] derocspresponse = sendOCSPRequest(req, CertTools.getAuthorityInformationAccessOcspUrl(x509Cert));
-				parseAndVerifyOCSPResponse(x509Cert, derocspresponse);
-			}
 			
-		} catch (Exception e) {
+			//check if url is missing 
+			//throw exception (for now, later maybe change to look for predefined ocsp url for each issuer ?)
+			String oCSPURLString = CertTools.getAuthorityInformationAccessOcspUrl(x509Cert);
+			if(oCSPURLString == null || oCSPURLString.length() == 0)
+			{
+				throw new SignServerException("OCSP service locator url missing for certificate " + x509Cert.getSubject());
+			}
+						
+			if(cACert == null)
+				throw new SignServerException("Issuer of certificate : " + x509Cert.getSubject() + " not passed to OCSPPathChecker");
+						
+			//generate ocsp request for current certificate and send to ocsp responder
+			OCSPReq req = generateOCSPRequest(cACert, x509Cert);
+			byte[] derocspresponse = sendOCSPRequest(req, oCSPURLString);
+			parseAndVerifyOCSPResponse(x509Cert, derocspresponse);
+			
+		}
+		catch (Exception e) {
 			//re-throw all exceptions received
 			log.error("Exception occured on validion of certificate using OCSPPathChecker ", e);
 			throw new CertPathValidatorException(e);
@@ -160,13 +168,6 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 	 */
 	protected byte[] sendOCSPRequest(OCSPReq ocspRequest, String oCSPURLString) throws IOException, SignServerException
 	{
-		//check if url is missing 
-		//throw exception (for now, later maybe change to look for predefined ocsp url for each issuer ?)
-		if(oCSPURLString == null || oCSPURLString.length() == 0)
-		{
-			throw new SignServerException("OCSP service locator url missing");
-		}
-		
 		// get der encoded ocsp request 
 		byte[] reqarray = ocspRequest.getEncoded();
 
@@ -352,9 +353,9 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 			if(singleResponse.getCertID().getSerialNumber().equals(x509Cert.getSerialNumber()))
 			{
 				//found our response
-				//check if response is OK
+				//check if response is OK, and if not throw OCSPStatusNotGoodException
 				if(singleResponse.getCertStatus() != null)
-					throw new SignServerException("Responce for queried certificate is not good. Certificate status returned : " + singleResponse.getCertStatus());
+					throw new OCSPStatusNotGoodException("Responce for queried certificate is not good. Certificate status returned : " + singleResponse.getCertStatus(), singleResponse.getCertStatus());
 				
 				//check the dates ThisUpdate and NextUpdate RFC 2560 sect : 4.2.2.1
 				if(singleResponse.getNextUpdate() != null && (new Date()).compareTo(singleResponse.getNextUpdate()) >= 0)
@@ -455,7 +456,6 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 	 */
 	public Object clone() 
 	{
-		// TODO research how clone is properly implemented in java instead of this custom tailored solution
 		try {
 			OCSPPathChecker clonedOCSPPathChecker = null;
 			X509Certificate clonedPrevCert = null;

@@ -641,7 +641,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		     <include name="${genServerCertJar}"/>			 
 		   </fileset>
 	    </copy>	
-		<copy todir="${pkgdist.gencertdir}/lib" >
+		<copy todir="${pkgdist.gencertdir}" >
 		   <fileset dir="${lib}/1.5">
 		     <include name="bcprov-jdk.jar"/>			 
 		   </fileset>
@@ -663,7 +663,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		
 		<property name="pkgdist.bindir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/bin" />
 		<property name="pkgdist.clilibdir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/lib" />
-		<mkdir dir="${pkgdist.bindir}/lib"/>
+		<mkdir dir="${pkgdist.bindir}"/>
 		<copy todir="${pkgdist.bindir}">
 		   <fileset dir="bin">
 		     <include name="signserver.sh"/>

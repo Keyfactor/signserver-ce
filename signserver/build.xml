@@ -213,7 +213,7 @@
 	   <!-- =================================================================== -->
 	    <!-- Build preparation for package distribution                         -->
 	    <!-- =================================================================== -->
-    	    <target name="pkgdist" depends="signserver, mailsigner, signserver-pkgdist, mailsigner-pkgdist">
+    	    <target name="pkgdist" depends="signserver, mailsigner, signserver-cli, signserver-pkgdist, mailsigner-pkgdist">
 
     	    </target>
     		

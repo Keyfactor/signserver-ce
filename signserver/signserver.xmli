@@ -577,7 +577,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
    <target name="genservercert.jar" depends="signserver" unless="buildMailSigner">
     		<jar destfile="${tmp}/${genServerCertJar}" basedir="${build}">
   	          <manifest>
-  	          	<attribute name="Class-Path" value="lib/bcprov-jdk.jar"/>
+  	          	<attribute name="Class-Path" value="bcprov-jdk.jar"/>
   	            <attribute name="Main-Class" value="org.signserver.cli.genservercert.GenServerCertificate"/>
   	          </manifest>
               <include name="org/signserver/cli/genservercert/*.class"/>    	          
@@ -634,8 +634,8 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	         <include name="jboss-log4j*.xml"/>            
 	      </fileset>
 	    </copy>
-	    <property name="pkgdist.gencertdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/bin/genservercert"/>
-	    <mkdir dir="${pkgdist.gencertdir}/lib"/>
+	    <property name="pkgdist.gencertdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/lib"/>
+	    <mkdir dir="${pkgdist.gencertdir}"/>
 	    <copy todir="${pkgdist.gencertdir}" >
 		   <fileset dir="${tmp}">
 		     <include name="${genServerCertJar}"/>			 
@@ -646,7 +646,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		     <include name="bcprov-jdk.jar"/>			 
 		   </fileset>
 	    </copy>	
-	    <property name="pkgdist.setdbtypedir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/bin/setdbtype"/>
+	    <property name="pkgdist.setdbtypedir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/lib"/>
 		<mkdir dir="${pkgdist.setdbtypedir}"/>
 		<copy todir="${pkgdist.setdbtypedir}" >
 		   <fileset dir="${tmp}">
@@ -662,16 +662,16 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    </copy> 
 		
 		<property name="pkgdist.bindir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/bin" />
+		<property name="pkgdist.clilibdir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/lib" />
 		<mkdir dir="${pkgdist.bindir}/lib"/>
 		<copy todir="${pkgdist.bindir}">
 		   <fileset dir="bin">
 		     <include name="signserver.sh"/>
 		   	 <include name="signserver.cmd"/>
-		   	 <include name="signserver_cli.properties"/>
 		   	 <include name="log4j.properties"/>
 		   </fileset>
 	    </copy>		
-		<copy todir="${pkgdist.bindir}/lib">
+		<copy todir="${pkgdist.clilibdir}">
 		   <fileset dir="${client.dist.dir}">
 		     <include name="signserver-cli.jar"/>		   	 
 		   </fileset>

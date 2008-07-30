@@ -26,6 +26,7 @@
 	   <property name="performanceTestToolJar" location="${client.dist.dir}/performanceTestTool.jar"/>
 	
 	   <property name="genServerCertJar" value="genservercert.jar"/>
+	   <property name="genServerCertBin" value="genservercert.sh"/>
        <property name="setDBTypeJar" value="setdbtype.jar"/>
 
 	   <property name="web.src" value="${src}/web/pub" />
@@ -594,15 +595,18 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
     		</jar>
    	
     </target>
+
+ 	<target name="signserver-pkgdist" depends="signserver-pkgdist-server, signserver-pkgdist-mgmt,genservercert.jar, setdbtype.jar" unless="buildMailSigner">
+	</target>
     		
-	<target name="signserver-pkgdist" depends="genservercert.jar, setdbtype.jar" unless="buildMailSigner">
+	<target name="signserver-pkgdist-server" depends="genservercert.jar, setdbtype.jar" unless="buildMailSigner">
 	  <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
 	  	<isset property="${env.DESTDIR}"/>
 	  </condition>
 		
 	   <mkdir dir="${pkgdist.destdir}"/>
-		
-	   <property name="pkgdist.deploydir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/deploy"/>
+
+	   <property name="pkgdist.deploydir" value="${pkgdist.destdir}/usr/share/signserver-server/deploy"/>
 	   <mkdir dir="${pkgdist.deploydir}"/>
 	   <copy todir="${pkgdist.deploydir}" >
 		  <fileset dir="dist-server">
@@ -613,28 +617,29 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		  	<include name="signserver-mysql-cluster-ds.xml"/>
 		  </fileset>
 	   </copy>
-	   <property name="pkgdist.webconfdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/webconf"/>
+
+	   <property name="pkgdist.webconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/webconf"/>
 	   <mkdir dir="${pkgdist.webconfdir}"/>	
 	   <copy todir="${pkgdist.webconfdir}" >
 	       <fileset dir="src/install/common">
 			 <include name="tomcat-server*.xml"/>			 
 			</fileset>
 		</copy>	
-	   <property name="pkgdist.dbconfdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/dbconf"/>
+	   <property name="pkgdist.dbconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/dbconf"/>
          <mkdir dir="${pkgdist.dbconfdir}"/> 
          <copy todir="${pkgdist.dbconfdir}" >
              <fileset dir="src/deploy/ejb/persistence-mappings">
                <include name="**/**"/>            
               </fileset>
          </copy> 
-	   <property name="pkgdist.logconfdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/logconf"/>
+	   <property name="pkgdist.logconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/logconf"/>
 	   <mkdir dir="${pkgdist.logconfdir}"/> 
 	   <copy todir="${pkgdist.logconfdir}" >
 	      <fileset dir="src/install/common">
 	         <include name="jboss-log4j*.xml"/>            
 	      </fileset>
 	    </copy>
-	    <property name="pkgdist.gencertdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/lib"/>
+	    <property name="pkgdist.gencertdir" value="${pkgdist.destdir}/usr/share/signserver-server/lib"/>
 	    <mkdir dir="${pkgdist.gencertdir}"/>
 	    <copy todir="${pkgdist.gencertdir}" >
 		   <fileset dir="${tmp}">
@@ -646,24 +651,39 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		     <include name="bcprov-jdk.jar"/>			 
 		   </fileset>
 	    </copy>	
-	    <property name="pkgdist.setdbtypedir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/lib"/>
+	    <property name="pkgdist.setdbtypedir" value="${pkgdist.destdir}/usr/share/signserver-server/lib"/>
 		<mkdir dir="${pkgdist.setdbtypedir}"/>
 		<copy todir="${pkgdist.setdbtypedir}" >
 		   <fileset dir="${tmp}">
 		     <include name="${setDBTypeJar}"/>			 
 		   </fileset>
 	    </copy>	
-	    <property name="pkgdist.initscriptdir" value="${pkgdist.destdir}/signserver-server/usr/share/signserver/bin"/>
+	    <property name="pkgdist.initscriptdir" value="${pkgdist.destdir}/usr/share/signserver-server/bin"/>
 	    <mkdir dir="${pkgdist.initscriptdir}"/>
 	    <copy todir="${pkgdist.initscriptdir}" >
 	      <fileset dir="src/install/common">
 	        <include name="*.sh"/>           
 	      </fileset>
-	    </copy> 
-		
-		<property name="pkgdist.bindir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/bin" />
-		<property name="pkgdist.clilibdir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/lib" />
+	      <fileset dir="bin">
+		     <include name="genservercert.sh"/>
+		   </fileset>
+	    </copy>		
+
+	 </target>
+	 	
+	 <target name="signserver-pkgdist-mgmt" depends="genservercert.jar, setdbtype.jar" unless="buildMailSigner">
+	    <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
+    	  <isset property="${env.DESTDIR}"/>
+    	</condition>
+	
+	    <mkdir dir="${pkgdist.destdir}"/>
+	 		
+		<property name="pkgdist.bindir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/bin" />
 		<mkdir dir="${pkgdist.bindir}"/>
+		
+		<property name="pkgdist.clilibdir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/lib" />
+     	<mkdir dir="${pkgdist.clilibdir}"/>
+     		
 		<copy todir="${pkgdist.bindir}">
 		   <fileset dir="bin">
 		     <include name="signserver.sh"/>
@@ -698,14 +718,16 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 			 <include name="james-2.3.1.jar"/>
 		  </fileset>
 	    </copy>	
-		<property name="pkgdist.sampleconfigdir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/sample-configs" />
+
+		<property name="pkgdist.sampleconfigdir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/sample-configs" />
 		<mkdir dir="${pkgdist.sampleconfigdir}"/>
 	    <copy todir="${pkgdist.sampleconfigdir}">
 	       <fileset dir="sample-configs">
 	         <include name="*.*"/>
 	       </fileset>
 	    </copy> 
-	    <property name="pkgdist.moduledir" value="${pkgdist.destdir}/signserver-mgmt/usr/share/signserver/modules" />
+
+	    <property name="pkgdist.moduledir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/modules" />
         <mkdir dir="${pkgdist.moduledir}"/>
         <copy todir="${pkgdist.moduledir}">
            <fileset dir="dist-server">

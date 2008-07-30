@@ -9,6 +9,8 @@
     <summary>Server package for a node in a SignServer Cluster</summary>
     <release>3.1</release>
     <description>Server package for a node in a SignServer Cluster</description>
+    <rebootRequired>0</rebootRequired>    
+    <startMenuGroupName></startMenuGroupName>
     <preInstallationActionList>
         <setInstallerVariable>
                 <name>installdir</name>
@@ -369,6 +371,26 @@
                      </compareText>             
                   </ruleList>
                 </actionGroup>
+                <actionGroup>
+                   <actionList>
+                     <setInstallerVariable>
+                       <name>databaseurl</name>
+                       <value>jdbc:jtds:sqlserver://${databasehosts}:${databaseport}/${databasename}</value>
+                    </setInstallerVariable> 
+                    <setInstallerVariable>
+                       <name>databasedriver</name>
+                       <value>net.sourceforge.jtds.jdbc.Driver</value>
+                    </setInstallerVariable>
+                   </actionList>
+                   <ruleEvaluationLogic>or</ruleEvaluationLogic>
+                   <ruleList>
+                     <compareText>
+                       <text>${databasetype}</text>
+                       <logic>equals</logic>
+                       <value>mssql2000</value>
+                     </compareText>             
+                  </ruleList>
+                </actionGroup>
                 <substitute>
                   <files>${installdir}/deploy/*.xml</files>
                   <substitutionList>
@@ -404,8 +426,8 @@
                 </substitute>
                 <runProgram>
                   <program>${java_executable}</program>
-               <programArguments> -jar setdbtype.jar ${installdir}/deploy/signserver.ear ${installdir}/dbconf/${databasetype}/entity-mappings.xml</programArguments>
-               <workingDirectory>${installdir}/bin/setdbtype</workingDirectory>
+               <programArguments> -Xmx256m -jar setdbtype.jar ${installdir}/deploy/signserver.ear ${installdir}/dbconf/${databasetype}/entity-mappings.xml</programArguments>
+               <workingDirectory>${installdir}/lib</workingDirectory>
            </runProgram>
            <actionGroup>
              <actionList>
@@ -439,7 +461,7 @@ during evaluation and test and not for production systems.
                 <runProgram>
                   <program>${java_executable}</program>
                   <programArguments> -jar genservercert.jar "CN=SignServer Demo CA,SN=${caserialnumber}" "CN=${httphostname} O=SignServer Demo CA" /etc/signserver ${httpserverpassword} ${httptrustpassword} foo123</programArguments>
-                  <workingDirectory>${installdir}/bin/genservercert</workingDirectory>
+                  <workingDirectory>${installdir}/lib</workingDirectory>
                 </runProgram>
                 <changePermissions>
                   <files>/etc/signserver/*.jks</files>
@@ -999,6 +1021,10 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
                 <value>postgres</value>
                 <text>Postgres</text>
               </option>
+              <option>
+                <value>mssql2000</value>
+                <text>Microsoft SQL Server</text>
+              </option>
             </optionList>
             <ruleEvaluationLogic>or</ruleEvaluationLogic>
             <ruleList>
@@ -1048,7 +1074,7 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
           <name>databaseport</name>
           <default></default>
           <description>Database Port</description>
-          <explanation>Enter the port of the backend database, (Standard is 3306 for Mysql, Mysql NDB Cluster and 5432 for Postgres.</explanation>
+          <explanation>Enter the port of the backend database, (Standard is 3306 for Mysql, Mysql NDB Cluster, 5432 for Postgres and 1433 for MS SQL Server.</explanation>
             <allowEmptyValue>0</allowEmptyValue>
             <ask>yes</ask>
             <cliOptionName>databaseport</cliOptionName>

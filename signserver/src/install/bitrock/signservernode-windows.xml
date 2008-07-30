@@ -1,5 +1,5 @@
 <project>
-    <shortName>signserversrv</shortName>
+    <shortName>signservernode</shortName>
     <fullName>SignServer Node</fullName>
     <version>3.1</version>
     <readmeFile>../common/README.txt</readmeFile>
@@ -9,6 +9,8 @@
     <summary>Server package for a node in a SignServer Cluster</summary>
     <release>3.1</release>
     <description>Server package for a node in a SignServer Cluster</description>
+    <rebootRequired>0</rebootRequired>    
+    <startMenuGroupName></startMenuGroupName>
     <preInstallationActionList>
         <setInstallerVariable>
                 <name>installdir</name>
@@ -21,7 +23,7 @@
         <setInstallerVariable>
             <name>conffile</name>
             <persist>1</persist>
-            <value>${env(SYSTEMROOT)}/signserver.conf</value>
+            <value>${env(SYSTEMROOT)}\signserver.conf</value>
         </setInstallerVariable>
         <setInstallerVariable>
             <name>servicename</name>
@@ -226,7 +228,7 @@
                 <addEnvironmentVariable>
                     <name>JBOSS_HOME</name>
                     <scope>system</scope>
-                    <value>${installdir}/bin</value>
+                    <value>${installdir}\jboss</value>
                 </addEnvironmentVariable>
                 <addEnvironmentVariable>
                     <name>JBOSS_OPTS</name>
@@ -234,7 +236,7 @@
                     <value>-Xms512m -Xmx512m</value>
                 </addEnvironmentVariable>
                 <addEnvironmentVariable>
-                    <name>JBOSS_HOSTS</name>
+                    <name>JBOSS_HOST</name>
                     <scope>system</scope>
                     <value>0.0.0.0</value>
                 </addEnvironmentVariable>
@@ -343,6 +345,26 @@
                      </compareText>             
                   </ruleList>
                 </actionGroup>
+                <actionGroup>
+                   <actionList>
+                     <setInstallerVariable>
+                       <name>databaseurl</name>
+                       <value>jdbc:jtds:sqlserver://${databasehosts}:${databaseport}/${databasename}</value>
+                    </setInstallerVariable> 
+                    <setInstallerVariable>
+                       <name>databasedriver</name>
+                       <value>net.sourceforge.jtds.jdbc.Driver</value>
+                    </setInstallerVariable>
+                   </actionList>
+                   <ruleEvaluationLogic>or</ruleEvaluationLogic>
+                   <ruleList>
+                     <compareText>
+                       <text>${databasetype}</text>
+                       <logic>equals</logic>
+                       <value>mssql2000</value>
+                     </compareText>             
+                  </ruleList>
+                </actionGroup>
                 <substitute>
                   <files>${installdir}/jboss/server/default/deploy/signserver-ds.xml</files>
                   <substitutionList>
@@ -378,18 +400,18 @@
                 </substitute>
                 <runProgram>
                   <program>${java_executable}</program>
-                  <programArguments> -jar setdbtype.jar ${installdir}/deploy/signserver.ear ${installdir}/dbconf/${databasetype}/entity-mappings.xml</programArguments>
-                  <workingDirectory>${installdir}/bin/setdbtype</workingDirectory>
+                  <programArguments>  -Xmx256m -jar setdbtype.jar ${installdir}/deploy/signserver.ear ${installdir}/dbconf/${databasetype}/entity-mappings.xml</programArguments>
+                  <workingDirectory>${installdir}/lib</workingDirectory>
                 </runProgram>
            <actionGroup>
              <actionList>
                 <setInstallerVariable>
                   <name>httpserverstorepath</name>
-                  <value>/etc/signserver/tomcat.jks</value>
+                  <value>${installdir}\tomcat.jks</value>
                 </setInstallerVariable>
                 <setInstallerVariable>
                   <name>httptruststorepath</name>
-                  <value>/etc/signserver/truststore.jks</value>
+                  <value>${installdir}\truststore.jks</value>
                 </setInstallerVariable>
                 <generateRandomValue>
                   <variable>httpserverpassword</variable>
@@ -413,7 +435,7 @@ during evaluation and test and not for production systems.
                 <runProgram>
                   <program>${java_executable}</program>
                   <programArguments> -jar genservercert.jar "CN=SignServer Demo CA,SN=${caserialnumber}" "CN=${httphostname} O=SignServer Demo CA" ${installdir} ${httpserverpassword} ${httptrustpassword} foo123</programArguments>
-                  <workingDirectory>${installdir}/bin/genservercert</workingDirectory>
+                  <workingDirectory>${installdir}/lib</workingDirectory>
                 </runProgram>
               </actionList>
               <ruleEvaluationLogic>or</ruleEvaluationLogic>
@@ -643,6 +665,11 @@ Before uninstalling the SignServer must JBoss be stopped. This might take a few 
              <port>1099</port>
              <timeout>240000</timeout>
            </waitForPort>
+                <runProgram>
+                  <program>service.bat</program>
+                  <programArguments> uninstall</programArguments>
+                  <workingDirectory>${installdir}/jboss/bin</workingDirectory>
+                </runProgram>
          </actionList>
          <ruleList>
            <portTest>
@@ -675,11 +702,6 @@ Do you want to remove the configuration file ${conffile} ?</text>
                  </compareText>
               </ruleList>
             </actionGroup> 
-            <runProgram>
-               <program>service.bat</program>
-               <programArguments> uninstall</programArguments>
-               <workingDirectory>${installdir}/jboss/bin</workingDirectory>
-           </runProgram>
            <deleteEnvironmentVariable>
                     <name>SIGNSERVER_HOME</name>
                     <scope>system</scope>
@@ -698,6 +720,15 @@ Do you want to remove the configuration file ${conffile} ?</text>
             </deleteEnvironmentVariable>
             <deleteFile>
               <path>${installdir}/jboss</path>
+            </deleteFile>
+            <deleteFile>
+              <path>${installdir}/dbconf</path>
+            </deleteFile>
+            <deleteFile>
+              <path>${installdir}/*.pem</path>
+            </deleteFile>
+            <deleteFile>
+              <path>${installdir}/*.jks</path>
             </deleteFile>
             <actionGroup>
              <actionList>
@@ -737,7 +768,7 @@ Do you want to remove the configuration file ${conffile} ?</text>
                     <description>Program Files</description>
                     <destination>${installdir}</destination>
                     <name>programfiles</name>
-                    <platforms>all</platforms>
+                    <platforms>all</platforms>                    
                     <shortcutList>
                         <shortcut>
                             <comment>Uninstall</comment>
@@ -752,6 +783,46 @@ Do you want to remove the configuration file ${conffile} ?</text>
                             <windowsIcon></windowsIcon>
                             <windowsPath>${installdir}</windowsPath>
                         </shortcut>
+                        <fileShortcut>
+                            <comment>SignServer installation configuration</comment>
+                            <filePath>${conffile}</filePath>
+                            <icon></icon>
+                            <name>signserver.conf</name>
+                            <platforms>windows</platforms>
+                            <runInTerminal>0</runInTerminal>
+                            <windowsIcon></windowsIcon>
+                            <windowsPath>${installdir}</windowsPath>
+                        </fileShortcut>
+                        <fileShortcut>
+                            <comment>SignServer log configuration</comment>
+                            <filePath>${installdir}/jboss/server/default/conf/jboss-log4j.xml</filePath>
+                            <icon></icon>
+                            <name>log-conf.xml</name>
+                            <platforms>windows</platforms>
+                            <runInTerminal>0</runInTerminal>
+                            <windowsIcon></windowsIcon>
+                            <windowsPath>${installdir}</windowsPath>
+                        </fileShortcut>
+                        <fileShortcut>
+                            <comment>SignServer database configuration</comment>
+                            <filePath>${installdir}/jboss/server/default/server/deploy/signserver-ds.xml</filePath>
+                            <icon></icon>
+                            <name>database-conf.xml</name>
+                            <platforms>windows</platforms>
+                            <runInTerminal>0</runInTerminal>
+                            <windowsIcon></windowsIcon>
+                            <windowsPath>${installdir}</windowsPath>
+                        </fileShortcut>
+                        <fileShortcut>
+                            <comment>SignServer web server configuration</comment>
+                            <filePath>${installdir}/jboss/server/default/deploy/jboss-web.deployer/server.xml</filePath>
+                            <icon></icon>
+                            <name>webserver-conf.xml</name>
+                            <platforms>windows</platforms>
+                            <runInTerminal>0</runInTerminal>
+                            <windowsIcon></windowsIcon>
+                            <windowsPath>${installdir}</windowsPath>
+                        </fileShortcut>
                     </shortcutList>
                 </folder>
                 <folder>
@@ -859,6 +930,10 @@ Do you want to remove the configuration file ${conffile} ?</text>
                 <value>postgres</value>
                 <text>Postgres</text>
               </option>
+              <option>
+                <value>mssql2000</value>
+                <text>Microsoft SQL Server</text>
+              </option>
             </optionList>
             <ruleEvaluationLogic>or</ruleEvaluationLogic>
             <ruleList>
@@ -908,7 +983,7 @@ Do you want to remove the configuration file ${conffile} ?</text>
           <name>databaseport</name>
           <default></default>
           <description>Database Port</description>
-          <explanation>Enter the port of the backend database, (Standard is 3306 for Mysql, Mysql NDB Cluster and 5432 for Postgres.</explanation>
+          <explanation>Enter the port of the backend database, (Standard is 3306 for Mysql, Mysql NDB Cluster, 5432 for Postgres and 1433 for MS SQL Server.</explanation>
             <allowEmptyValue>0</allowEmptyValue>
             <ask>yes</ask>
             <cliOptionName>databaseport</cliOptionName>

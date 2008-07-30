@@ -5,6 +5,9 @@
     <installerFilename></installerFilename>
     <readmeFile>../common/README.txt</readmeFile>
     <licenseFile>../../../doc/lgpl-2.1.txt</licenseFile>
+    <description>CLI interface for managing a SignServer Cluster</description>
+    <rebootRequired>0</rebootRequired>    
+    <startMenuGroupName></startMenuGroupName>
     <preInstallationActionList>
         <setInstallerVariable>
             <name>installdir</name>
@@ -19,7 +22,7 @@
         <setInstallerVariable>
             <name>conffile</name>
             <persist>1</persist>
-            <value>${env(SYSTEMROOT)}/signserver.conf</value>
+            <value>${env(SYSTEMROOT)}\signserver.conf</value>
         </setInstallerVariable>
         <autodetectJava>
             <promptUser>0</promptUser>

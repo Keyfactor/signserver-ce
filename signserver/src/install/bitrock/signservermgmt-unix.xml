@@ -9,6 +9,8 @@
     <summary>CLI interface for managing a SignServer Cluster.</summary>
     <release>3.1</release>
     <description>CLI interface for managing a SignServer Cluster</description>
+    <rebootRequired>0</rebootRequired>    
+    <startMenuGroupName></startMenuGroupName>
     <preInstallationActionList>
         <setInstallerVariable>
                 <name>installdir</name>

@@ -9,5 +9,7 @@ ant
 ant pkgdist
 
 cd src/install/bitrock
-builder build signservermgmt.xml linux
-builder build signserversrv.xml linux
+builder build signservermgmt-unix.xml linux
+builder build signservernode-unix.xml linux
+builder build signservernode-windows.xml windows 
+builder build signservernode-windows.xml windows

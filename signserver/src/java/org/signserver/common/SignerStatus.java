@@ -52,7 +52,6 @@ public class SignerStatus extends CryptoTokenStatus{
 	/**
 	 * Method used to retrieve the currently used signercertficate.
 	 * Use this method when checking status and not from config, since the cert isn't always in db.
-	 * @return
 	 */
 	public Certificate getSignerCertificate(){
 		return signerCertificate;

@@ -15,8 +15,9 @@
 package org.signserver.common;
 
 import java.io.Serializable;
+import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -36,7 +37,7 @@ public class GlobalConfiguration implements Serializable{
    
   private static final long serialVersionUID = 1L;
   
-  private Map<?,?> config;  
+  private Properties config;  
   private String state;
     
   public static final String SCOPE_GLOBAL = "GLOB.";
@@ -141,7 +142,7 @@ public class GlobalConfiguration implements Serializable{
    * Constructor that should only be called within
    * the GlobalConfigurationSessionBean.
    */
-  public GlobalConfiguration(Map<?,?> config, String state){
+  public GlobalConfiguration(Properties config, String state){
 	  this.config = config;
 	  this.state = state;
   }
@@ -153,7 +154,7 @@ public class GlobalConfiguration implements Serializable{
    * @return the currently set global property or null if it doesn't exist.
    */
   public String getProperty(String scope, String property) {
-	return (String) config.get((scope + property).toUpperCase());
+	return (String) config.getProperty((scope + property).toUpperCase());
   }
   
   /**
@@ -165,15 +166,15 @@ public class GlobalConfiguration implements Serializable{
    * @return the currently set global property or null if it doesn't exist.
    */
   public String getProperty(String propertyWithScope) {
-	return (String) config.get(propertyWithScope);
+	return (String) config.getProperty(propertyWithScope);
   }
  
   /**
    * @return Returns an iterator to all configured properties
    */
   @SuppressWarnings("unchecked")
-public Iterator<String> getKeyIterator(){	  
-	  return (Iterator<String>) config.keySet().iterator();
+public Enumeration<String> getKeyEnumeration(){	  
+	  return (Enumeration<String>) config.propertyNames();
   }
  
   /**

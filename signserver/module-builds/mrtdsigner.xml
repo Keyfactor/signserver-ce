@@ -2,7 +2,7 @@
 
 
        
-<target name="mrtdsignermar">
+<target name="mrtdsignermar" unless="buildMailSigner">
     <path id="mrtdsigner.build.classpath">
       <path refid="signserver.compile.classpath" />
       <path location="${build}" />

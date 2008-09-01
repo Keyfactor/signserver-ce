@@ -2,7 +2,7 @@
 
 
        
-<target name="pdfsignermar">
+<target name="pdfsignermar" unless="buildMailSigner">
     <path id="pdfsigner.build.classpath">
       <path refid="signserver.compile.classpath" />
       <path location="${build}" />

@@ -14,6 +14,7 @@
 package org.signserver.common.clusterclassloader;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,15 +48,20 @@ public class FindInterfacesClassLoader extends ClassLoader {
 	 * HashMap containing loaded classes by class name and Class
 	 */
 	HashMap<String, Class<?>> loadedClasses = new HashMap<String,Class<?>>();
+
+	private PrintStream output;
 	
 	/**
 	 * Constructor generating all classes in the MARFileParser
 	 * So it is possible to search for implemented interfaces.
 	 * @param MARFileParser to use as repository.
 	 * @param part to generate classes for.
+	 * @param output were warning, and error messages are sent.
 	 * @throws IOException if something unexpected happened reading the Module Archive
 	 */
-	public FindInterfacesClassLoader(MARFileParser mARFileParser, String part) throws IOException{
+	public FindInterfacesClassLoader(MARFileParser mARFileParser, String part, PrintStream output) throws IOException{
+		this.output = output;
+		
 		Map<String, JarInputStream> jarFiles = mARFileParser.getJARFiles(part);
 		for(String jarName : jarFiles.keySet()){
 			Map<String, byte[]> resources = mARFileParser.getJarContent(jarFiles.get(jarName));
@@ -113,8 +119,12 @@ public class FindInterfacesClassLoader extends ClassLoader {
 			  if(loadedClasses.containsKey(name)){
 				  retval = loadedClasses.get(name);
 			  }else{
-			    retval = defineClass(name, classData, 0, classData.length);
-			    loadedClasses.put(name, retval);
+				  if(classData == null){
+				    output.println("Warning : no class data found for resource with name : " + name + ".");
+				  }else{
+			         retval = defineClass(name, classData, 0, classData.length);
+			         loadedClasses.put(name, retval);
+				  }
 			  }
 		}
 		

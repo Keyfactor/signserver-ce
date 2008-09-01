@@ -45,7 +45,9 @@ import org.signserver.common.ServiceConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.server.IWorker;
+import org.signserver.server.IWorkerConfigDataService;
 import org.signserver.server.ServiceExecutionFailedException;
+import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.timedservices.ITimedService;
 
@@ -66,7 +68,9 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 	@EJB
 	private IGlobalConfigurationSession.ILocal globalConfigurationSession;
 	
-	private WorkerConfigDataService workerConfigService = null;
+	private IWorkerConfigDataService workerConfigService = null;
+	
+	
 	
 	private static final long serialVersionUID = 1L;
   
@@ -78,7 +82,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
      */
 	@PostConstruct
     public void create(){    	    
-    	workerConfigService = new WorkerConfigDataService(em);	
+    	workerConfigService = new WorkerConfigDataService(em);
     }		
     
     /**
@@ -112,11 +116,11 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 			UserTransaction ut = sessionCtx.getUserTransaction();
 			try{
 				ut.begin();
-				IWorker worker = WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, em);
+				IWorker worker = WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, new SignServerContext(em));
 				if(worker != null){
-					serviceConfig = new ServiceConfig( WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession,em).getStatus().getActiveSignerConfig());
+					serviceConfig = new ServiceConfig( WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession,new SignServerContext(em)).getStatus().getActiveSignerConfig());
 					if(serviceConfig != null){					
-						timedService = (ITimedService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession,em);
+						timedService = (ITimedService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession,new SignServerContext(em));
 						sessionCtx.getTimerService().createTimer(timedService.getNextInterval(), timerInfo);
 						isSingleton = timedService.isSingleton();
 						if(!isSingleton){
@@ -207,7 +211,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 			while(iter.hasNext()){
 				Integer nextId = (Integer) iter.next();								
 				if(!existingTimers.contains(nextId)){					
-					ITimedService timedService = (ITimedService) WorkerFactory.getInstance().getWorker(nextId.intValue(), workerConfigService, globalConfigurationSession, em);
+					ITimedService timedService = (ITimedService) WorkerFactory.getInstance().getWorker(nextId.intValue(), workerConfigService, globalConfigurationSession, new SignServerContext(em));
 					if(timedService != null && timedService.isActive()  && timedService.getNextInterval() != ITimedService.DONT_EXECUTE){
 					  sessionCtx.getTimerService().createTimer((timedService.getNextInterval()), nextId);
 					}

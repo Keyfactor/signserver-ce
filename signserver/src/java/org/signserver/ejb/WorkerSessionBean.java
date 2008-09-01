@@ -55,6 +55,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.IAuthorizer;
 import org.signserver.server.IProcessable;
 import org.signserver.server.IWorker;
+import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
@@ -75,6 +76,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 
 	@EJB
 	private IServiceTimerSession.ILocal serviceTimerSession; 
+		
 	
 	/** Log4j instance for actual implementation class */
 	public transient Logger log = Logger.getLogger(this.getClass());
@@ -89,6 +91,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	public void create() {
     	workerConfigService = new WorkerConfigDataService(em);
     	archiveDataService = new ArchiveDataService(em);
+    	
+    
 	}
 	
 	
@@ -99,7 +103,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	public ProcessResponse process(int workerId, ProcessRequest request, RequestContext requestContext) throws IllegalRequestException,
 		CryptoTokenOfflineException, SignServerException {
 		log.debug(">signData ");
-		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession,em);
+		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession,new SignServerContext(em));
 		
         if(worker == null){
         	throw new IllegalRequestException("Non-existing signerId");
@@ -161,7 +165,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#getStatus(int)
 	 */
 	public WorkerStatus getStatus(int workerId) throws InvalidWorkerIdException{
-		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession,em);
+		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession,new SignServerContext(em));
 		if(worker == null){
 			throw new InvalidWorkerIdException("Given SignerId " + workerId + " doesn't exist");
 		}
@@ -174,7 +178,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#getWorkerId(java.lang.String)
 	 */
 	public int getWorkerId(String signerName) {
-		return WorkerFactory.getInstance().getWorkerIdFromName(signerName.toUpperCase(), workerConfigService, globalConfigurationSession,em);		
+		return WorkerFactory.getInstance().getWorkerIdFromName(signerName.toUpperCase(), workerConfigService, globalConfigurationSession,new SignServerContext(em));		
 	}
 	 
 	
@@ -185,7 +189,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 		if(workerId == 0){
 		  globalConfigurationSession.reload();		  
 		}else{
-			WorkerFactory.getInstance().reloadWorker(workerId, workerConfigService, globalConfigurationSession,em);
+			WorkerFactory.getInstance().reloadWorker(workerId, workerConfigService, globalConfigurationSession,new SignServerContext(em));
 		}
 		
 		if(workerId == 0 || globalConfigurationSession.getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES).contains(new Integer(workerId))){
@@ -202,7 +206,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	public void activateSigner(int signerId, String authenticationCode)
 		throws CryptoTokenAuthenticationFailureException,
 		CryptoTokenOfflineException, InvalidWorkerIdException {
-		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession,em);
+		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession,new SignServerContext(em));
 		if(worker == null){
 			throw new InvalidWorkerIdException("Given SignerId " + signerId + " doesn't exist");
 		}
@@ -220,7 +224,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 */
 	public boolean deactivateSigner(int signerId)
 		throws CryptoTokenOfflineException, InvalidWorkerIdException {
-		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession,em);
+		IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession,new SignServerContext(em));
 		if(worker == null){
 			throw new InvalidWorkerIdException("Given SignerId " + signerId + " doesn't exist");
 		}
@@ -300,7 +304,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 */
 	public ICertReqData getCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws		
 		CryptoTokenOfflineException, InvalidWorkerIdException {
-			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession,em);
+			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession,new SignServerContext(em));
 			if(worker == null){
 				throw new InvalidWorkerIdException("Given SignerId " + signerId + " doesn't exist");
 			}
@@ -317,7 +321,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#destroyKey(int, int)
 	 */
 	public boolean destroyKey(int signerId, int purpose) throws	InvalidWorkerIdException {
-			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession,em);
+			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession,new SignServerContext(em));
 			if(worker == null){
 				throw new InvalidWorkerIdException("Given SignerId " + signerId + " doesn't exist");
 			}

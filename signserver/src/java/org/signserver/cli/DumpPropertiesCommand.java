@@ -103,12 +103,12 @@ public class DumpPropertiesCommand extends BaseCommand {
 		
 		// First output all global properties
 		GlobalConfiguration gc = getCommonAdminInterface(hostname).getGlobalConfiguration();
-		Iterator<?> iter = gc.getKeyIterator();
-		while(iter.hasNext()){
-			String next = (String) iter.next();
+		Enumeration<String> en = gc.getKeyEnumeration();
+		while(en.hasMoreElements()){
+			String next =  en.nextElement();
 			outProps.put(next, gc.getProperty(next));
 		}
-		iter = workers.iterator();
+		Iterator<Integer> iter = workers.iterator();
 		while(iter.hasNext()){
 			Integer next = (Integer) iter.next();
 			dumpWorkerProperties(hostname, next, outProps);
@@ -117,9 +117,9 @@ public class DumpPropertiesCommand extends BaseCommand {
 
 	private void dumpWorkerProperties(String hostname, int workerId, Properties outProps) throws RemoteException, Exception {
 		GlobalConfiguration gc = getCommonAdminInterface(hostname).getGlobalConfiguration();
-		Iterator<?> iter = gc.getKeyIterator();
-		while(iter.hasNext()){
-			String next = (String) iter.next();
+		Enumeration<String> en = gc.getKeyEnumeration();
+		while(en.hasMoreElements()){
+			String next = en.nextElement();
 			if(next.substring(5).startsWith("WORKER" + workerId)){
 			  outProps.put(next, gc.getProperty(next));
 			}

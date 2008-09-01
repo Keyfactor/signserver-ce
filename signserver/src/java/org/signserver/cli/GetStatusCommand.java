@@ -15,6 +15,7 @@ package org.signserver.cli;
 
 import java.rmi.RemoteException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -118,13 +119,13 @@ public class GetStatusCommand extends BaseCommand {
 		GlobalConfiguration gc = getCommonAdminInterface(hostname).getGlobalConfiguration();
 		this.getOutputStream().println("The Global Configuration of Properties are :\n" );
 								
-		if(!gc.getKeyIterator().hasNext()){
+		if(!gc.getKeyEnumeration().hasMoreElements()){
 			this.getOutputStream().println("  No properties exists in global configuration\n");
 		}
 
-		Iterator<?> propertyKeys = gc.getKeyIterator();
-		while(propertyKeys.hasNext()){
-			String key = (String) propertyKeys.next();
+		Enumeration<String> propertyKeys = gc.getKeyEnumeration();
+		while(propertyKeys.hasMoreElements()){
+			String key = (String) propertyKeys.nextElement();
 			this.getOutputStream().println("  " + key + "=" + gc.getProperty(key) + "\n");
 		}        		
 

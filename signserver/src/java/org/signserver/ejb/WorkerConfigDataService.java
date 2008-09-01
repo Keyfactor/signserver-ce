@@ -24,6 +24,7 @@ import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.IWorkerConfigDataService;
 
 /**
  * Entity Service class that acts as migration layer for
@@ -34,7 +35,7 @@ import org.signserver.common.WorkerConfig;
  */
 
 
-public class WorkerConfigDataService {
+public class WorkerConfigDataService implements IWorkerConfigDataService {
  
 	public transient Logger log = Logger.getLogger(this.getClass());
 	
@@ -116,7 +117,6 @@ public class WorkerConfigDataService {
     /**
      * Method that saves the Worker Config to database.
      */
-    @SuppressWarnings("unchecked")
 	public void setWorkerConfig(int workerId, WorkerConfig signconf){
         setWorkerConfig(workerId, signconf, null);
     }
@@ -167,6 +167,20 @@ public class WorkerConfigDataService {
     		throw new EJBException(e);
     	}	
     }
+    
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IWorkerConfigDataService#getWorkerProperties(int)
+	 */
+	public WorkerConfig getWorkerProperties(int workerId){
+
+		WorkerConfig workerConfig = getWorkerConfig(workerId);
+		if(workerConfig == null){			
+			create(workerId,  WorkerConfig.class.getName());
+			workerConfig = getWorkerConfig(workerId);
+		}
+
+		return workerConfig;
+	}
 
 
 }

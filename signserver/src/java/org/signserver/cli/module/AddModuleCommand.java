@@ -115,7 +115,7 @@ public class AddModuleCommand extends BaseModuleCommand {
     						
     		for(String part : parts){
     		  getOutputStream().println("Loading part " + part + " ....");
-    		  FindInterfacesClassLoader ficl = new FindInterfacesClassLoader(mARFileParser,part);
+    		  FindInterfacesClassLoader ficl = new FindInterfacesClassLoader(mARFileParser,part,getOutputStream());
     		  Map<String, JarInputStream> jarContents = mARFileParser.getJARFiles(part);
     		  for(String jarName : jarContents.keySet()){
     			Map<String, byte[]> jarContent = mARFileParser.getJarContent(jarContents.get(jarName));
@@ -126,10 +126,10 @@ public class AddModuleCommand extends BaseModuleCommand {
     			}			
     		  }
     		  addPartProperties(hostname, mARFileParser, part, environment);
-
-    		  
-    		  getOutputStream().println("Module loaded successfully.");
     		}
+    		//Signal to save (only used by the mailsigner, ignored by the signserver)
+    		getCommonAdminInterface(hostname).addResource(null, null, 0, null, null, null, null, null,null );
+    		getOutputStream().println("Module loaded successfully.");
         } catch (IllegalAdminCommandException e) {
         	throw e;                    
         } catch (Exception e) {

@@ -15,7 +15,6 @@ package org.signserver.common;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -66,12 +65,12 @@ public class MailSignerConfig {
 	}
 	
 	
-	private void put(String key, Serializable value){
-		workerConfig.getData().put(key, value);
+	private void put(String key, String value){
+		workerConfig.setProperty(key, value);
 	}
 	
-	private Object get(Object key){
-		return workerConfig.getData().get(key);
+	private String get(String key){
+		return workerConfig.getProperty(key);
 	}
 
 	
@@ -86,6 +85,8 @@ public class MailSignerConfig {
 		if(stringcert == null || stringcert.equals("")){
 			stringcert = (String) get(WorkerConfig.getNodeId() + "." + SIGNERCERT);
 		}
+		
+		
 		
 		if(stringcert != null && !stringcert.equals("")){
 			Collection<?> certs;
@@ -105,6 +106,7 @@ public class MailSignerConfig {
 		if(result==null){
 			// try fetch certificate from certificate chain
 			Collection<?> chain = getSignerCertificateChain();
+
 			if(chain != null){
 				Iterator<?> iter = chain.iterator();
 				while(iter.hasNext()){
@@ -130,13 +132,14 @@ public class MailSignerConfig {
 	public Collection<X509Certificate> getSignerCertificateChain() {
 		Collection<X509Certificate> result = null;
 		String stringcert = (String) get(SIGNERCERTCHAIN);
+
 		if(stringcert == null || stringcert.equals("")){
 			stringcert = (String) get(WorkerConfig.getNodeId() +"."+ SIGNERCERTCHAIN);
 		}
 
 		if(stringcert != null && !stringcert.equals("")){
 			try {
-				result =  CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));				
+				result =  CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
 			} catch (CertificateException e) {
 				log.error(e); 
 			} catch (IOException e) {

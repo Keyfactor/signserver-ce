@@ -15,6 +15,7 @@
 package org.signserver.cli;
 
 import java.rmi.RemoteException;
+import java.util.Enumeration;
 import java.util.Iterator;
 
 import org.signserver.common.GlobalConfiguration;
@@ -87,9 +88,9 @@ public class RemoveWorkerPropertyCommand extends BaseCommand {
 	
     private void removeGlobalProperties(int workerid, String hostname) throws RemoteException, Exception {
         GlobalConfiguration gc = getCommonAdminInterface(hostname).getGlobalConfiguration();
-        Iterator<String> iter = gc.getKeyIterator();
-        while(iter.hasNext()){
-        	String key = iter.next();
+        Enumeration<String> en = gc.getKeyEnumeration();
+        while(en.hasMoreElements()){
+        	String key = en.nextElement();
         	if(key.toUpperCase().startsWith("GLOB.WORKER" + workerid)){
         		
         		key = key.substring("GLOB.".length());

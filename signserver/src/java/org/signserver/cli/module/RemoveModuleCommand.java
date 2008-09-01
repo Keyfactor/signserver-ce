@@ -66,7 +66,7 @@ public class RemoveModuleCommand extends BaseModuleCommand {
     	try {    
 
     		String[] moduleNames = getCommonAdminInterface(hostname).listAllModules();
-    		if(Arrays.binarySearch(moduleNames, moduleName) < 0){        		
+    		if(!Arrays.asList(moduleNames).contains(moduleName)){        		
     			getOutputStream().println("  Error module with name " + moduleName + " not found.");
 
     		}else{

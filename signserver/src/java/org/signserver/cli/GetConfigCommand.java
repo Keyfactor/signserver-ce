@@ -16,7 +16,6 @@ package org.signserver.cli;
 
 import java.rmi.RemoteException;
 import java.util.Enumeration;
-import java.util.Iterator;
 
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ProcessableConfig;
@@ -88,10 +87,10 @@ public class GetConfigCommand extends BaseCommand {
 
 	private void displayGlobalConfiguration(String hostname) throws RemoteException, Exception {
 		GlobalConfiguration gc = getCommonAdminInterface(hostname).getGlobalConfiguration();
-		Iterator<?> iter = gc.getKeyIterator();
+		Enumeration<String> en = gc.getKeyEnumeration();
 		this.getOutputStream().println(" This node " + hostname + " have the following Global Configuration:");
-		while(iter.hasNext()){
-			String key = (String) iter.next();
+		while(en.hasMoreElements()){
+			String key = en.nextElement();
 			this.getOutputStream().println("   Key : " + key + " Value : " + gc.getProperty(key));
 		}
 	}

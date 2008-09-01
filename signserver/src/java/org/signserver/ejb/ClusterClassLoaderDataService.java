@@ -14,11 +14,12 @@
 package org.signserver.ejb;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.signserver.server.clusterclassloader.BaseClusterClassLoaderDataService;
+import org.signserver.server.clusterclassloader.IClusterClassLoaderDataBean;
 
 /**
  * Contains help method to make queries to the
@@ -26,53 +27,31 @@ import org.apache.log4j.Logger;
  */
 
 
-public class ClusterClassLoaderDataService {
+public class ClusterClassLoaderDataService extends BaseClusterClassLoaderDataService {
  
 	public transient Logger log = Logger.getLogger(this.getClass());
-	
-	private EntityManager em;
 
-	private String moduleName;
-
-	private String part;
-
-	private int version;
-	
-	private static HashMap<String, String> typeMapper = new HashMap<String,String>();
-	// Add typeMapper mappings, should be all lower case.
-	static{
-		typeMapper.put("jpg", "jpeg");
-	}
 	
 	public ClusterClassLoaderDataService(EntityManager em, String moduleName){
-		this.em = em;
-		this.moduleName = moduleName;
-		this.part = "server";
-		this.version = 1;
+		super(em,moduleName);
 	}
 	
 	public ClusterClassLoaderDataService(EntityManager em, String moduleName, int version){
-		this.em = em;
-		this.moduleName = moduleName;
-		this.part = "server";
-		this.version = version;
+		super(em,moduleName,version);
 	}
 	
 	public ClusterClassLoaderDataService(EntityManager em, String moduleName, String part, int version){
-		this.em = em;
-		this.moduleName = moduleName;
-		this.part = part;
-		this.version = version;
+		super(em,moduleName,part, version);
 	}
 
 
     
-	/**
-     * Method to find resource data for a given resource name.
-     */
-    public ClusterClassLoaderDataBean findByResourceName(String resourceName){    	
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataService#findByResourceName(java.lang.String)
+	 */
+    public IClusterClassLoaderDataBean findByResourceName(String resourceName){    	
     	try{
-    		return (ClusterClassLoaderDataBean) em.createNamedQuery("ClusterClassLoaderDataBean.findByResourceName")
+    		return (IClusterClassLoaderDataBean) em.createNamedQuery("ClusterClassLoaderDataBean.findByResourceName")
     		.setParameter(1, resourceName)
     		.setParameter(2, moduleName)
     		.setParameter(3, part)
@@ -83,10 +62,9 @@ public class ClusterClassLoaderDataService {
     	return null;
     }
 	
-	/**
-     * Method to find the latest version of the resource of
-     * 0 in no resource of that name could be found.
-     */
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataService#findLatestVersionOfResource(java.lang.String)
+	 */
     public int findLatestVersionOfResource(String resourceName){    	
     	try{
     		return (Integer) em.createNamedQuery("ClusterClassLoaderDataBean.findLatestVersionOfResource")
@@ -97,10 +75,9 @@ public class ClusterClassLoaderDataService {
     	return 0;
     }
     
-	/**
-     * Method to find the latest version of the resource of
-     * 0 in no resource of that name could be found.
-     */
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataService#findLatestVersionOfModule(java.lang.String)
+	 */
     public int findLatestVersionOfModule(String moduleName){    	
     	try{
     		return (Integer) em.createNamedQuery("ClusterClassLoaderDataBean.findLatestVersionOfModule")
@@ -112,8 +89,11 @@ public class ClusterClassLoaderDataService {
     }
     
     
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataService#findResources()
+	 */
 	@SuppressWarnings("unchecked")
-	public java.util.Collection<ClusterClassLoaderDataBean> findResources(){
+	public java.util.Collection<IClusterClassLoaderDataBean> findResources(){
     	try{
     		return em.createNamedQuery("ClusterClassLoaderDataBean.findResources")
     		.setParameter(1, moduleName)
@@ -121,22 +101,28 @@ public class ClusterClassLoaderDataService {
     		.setParameter(3, version)
     		.getResultList();
     	}catch(javax.persistence.NoResultException e){}
-    	return new ArrayList<ClusterClassLoaderDataBean>();
+    	return new ArrayList<IClusterClassLoaderDataBean>();
     }
 	
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataService#findAllResourcesInModule()
+	 */
 	@SuppressWarnings("unchecked")
-	public java.util.Collection<ClusterClassLoaderDataBean> findAllResourcesInModule(){
+	public java.util.Collection<IClusterClassLoaderDataBean> findAllResourcesInModule(){
     	try{
     		return em.createNamedQuery("ClusterClassLoaderDataBean.findAllResourcesInModule")
     		.setParameter(1, moduleName)
     		.setParameter(2, version)
     		.getResultList();
     	}catch(javax.persistence.NoResultException e){}
-    	return new ArrayList<ClusterClassLoaderDataBean>();
+    	return new ArrayList<IClusterClassLoaderDataBean>();
     }
 	
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataService#findImplementorsInModule(java.lang.String)
+	 */
 	@SuppressWarnings("unchecked")
-	public java.util.Collection<ClusterClassLoaderDataBean> findImplementorsInModule(String interfaceName){
+	public java.util.Collection<IClusterClassLoaderDataBean> findImplementorsInModule(String interfaceName){
     	try{
     		return em.createNamedQuery("ClusterClassLoaderDataBean.findImplementorsInModule")
     		.setParameter(1, interfaceName)
@@ -145,28 +131,10 @@ public class ClusterClassLoaderDataService {
     		.setParameter(4, version)
     		.getResultList();
     	}catch(javax.persistence.NoResultException e){}
-    	return new ArrayList<ClusterClassLoaderDataBean>();
+    	return new ArrayList<IClusterClassLoaderDataBean>();
     }
 	
 	
 		
-    
-    /**
-     * Method generating type from a resource name postfix, supports
-     * multiple names for one type of file, for instance will
-     * both 'jpeg' and 'jpg' result in the type 'jpeg'.
-     * @param resourceName
-     * @return
-     */
-    public static String getType(String resourceName) {
-    	if(resourceName.endsWith(".")){
-    		return "";
-    	}
-		String type = resourceName.substring(resourceName.lastIndexOf('.') + 1);
-		type = type.toLowerCase();
-		if(typeMapper.get(type) != null){
-			type = typeMapper.get(type);
-		}
-		return type;
-	}
+
 }

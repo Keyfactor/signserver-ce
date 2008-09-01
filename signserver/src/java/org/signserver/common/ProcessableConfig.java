@@ -72,11 +72,18 @@ public class ProcessableConfig  {
 	
 	
 	private void put(String key,Serializable value){
-		workerConfig.getData().put(key, value);
+		if(value instanceof String){
+		  workerConfig.setProperty(key, (String) value);	
+		}else{
+		  workerConfig.getData().put(key, value);
+		}
 	}
 	
 	private Serializable get(String key){
-		return workerConfig.getData().get(key);
+		if(workerConfig.getProperty(key) == null){
+		  return workerConfig.getData().get(key);
+		}
+		return workerConfig.getProperty(key);
 	}
 	
 	/**

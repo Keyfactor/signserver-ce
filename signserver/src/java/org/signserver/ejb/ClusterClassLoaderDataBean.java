@@ -23,6 +23,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.signserver.server.clusterclassloader.IClusterClassLoaderDataBean;
+
 
 
 
@@ -66,7 +68,7 @@ import javax.persistence.Table;
 		 @NamedQuery(name="ClusterClassLoaderDataBean.findAllResourcesInJar",query="SELECT a from ClusterClassLoaderDataBean a WHERE a.moduleName = ?1 AND a.part = ?2 AND a.version = ?3 AND a.jarName=?4"),
 		 @NamedQuery(name="ClusterClassLoaderDataBean.findImplementorsInModule",query="SELECT a from ClusterClassLoaderDataBean a WHERE a.implInterfaces LIKE ?1 AND a.moduleName=?2 AND a.part=?3")
 		})
-public class ClusterClassLoaderDataBean  {
+public class ClusterClassLoaderDataBean implements IClusterClassLoaderDataBean  {
 
    @Id
    @GeneratedValue
@@ -97,218 +99,185 @@ public class ClusterClassLoaderDataBean  {
    private String comment;
 
   
-    /**
-     * Unique Id of the class, auto generated value
-     *
-     * @return unique Id and primary key
-     */	
+    /* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getId()
+	 */	
     public  int getId(){
     	return id;
     }
 
-	/**
-	 * @param id the id to set
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setId(int)
 	 */
 	public void setId(int id) {
 		this.id = id;
 	}
 
-	/**
-	 * @return the resourceName (could be class name ) in path format.
-	 * i.e a class called org.acme.AcmeWorker will have the path org/acme/AcmeWorker.class 
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getResourceName()
 	 */
 	public String getResourceName() {
 		return resourceName;
 	}
 
 
-	/**
-	 * @param resourceName  (could be class name ) in path format.
-	 * i.e a class called org.acme.AcmeWorker will have the path org/acme/AcmeWorker.class
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setResourceName(java.lang.String)
 	 */
 	public void setResourceName(String resourceName) {
 		this.resourceName = resourceName;
 	}
 
 
-	/**
-	 * @return the full interface names of all interfaces this
-	 * class and all super classes is implementing, the String is
-	 * ';' separated. Return "" if no interfaces is implemented.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getImplInterfaces()
 	 */
 	public String getImplInterfaces() {
 		return implInterfaces;
 	}
 
 
-	/**
-	 * @param implInterfaces the full interface names of all interfaces this
-	 * class and all super classes is implementing, the String is
-	 * ';' separated. Return "" if no interfaces is implemented.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setImplInterfaces(java.lang.String)
 	 */
 	public void setImplInterfaces(String implInterfaces) {
 		this.implInterfaces = implInterfaces;
 	}
 
 
-	/**
-	 * @return version of the plug-in, should be one number for
-	 * a classes in one zip. The greater number, the later version.
-	 * If a Worker haven't got a version number defined in it's worker
-	 * properties will the latest version be used.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getVersion()
 	 */
 	public int getVersion() {
 		return version;
 	}
 
 	
-	/**
-	 * @return the type of file, i.e the postfix of the resource name in lower case without the '.'
-	 * for example a classfile will have the name 'class' a someimage.jpg will have 'jpg'.
-	 * 
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getType()
 	 */
 	public String getType() {
 		return type;
 	}
 
-	/**
-	 * @param type of file, i.e the postfix of the resource name in lower case without the '.'
-	 * for example a classfile will have the name 'class' a someimage.jpg will have 'jpg'.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setType(java.lang.String)
 	 */
 	public void setType(String type) {
 		this.type = type;
 	}
 
-	/**
-	 * @param version  of the plug-in, should be one number for
-	 * a classes in one zip. The greater number, the later version.
-	 * If a Worker haven't got a version number defined in it's worker
-	 * properties will the latest version be used.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setVersion(int)
 	 */
 	public void setVersion(int version) {
 		this.version = version;
 	}
 
 
-	/**
-	 * @return the name of the jar-file in the zip that 
-	 * contained this class.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getJarName()
 	 */
 	public String getJarName() {
 		return jarName;
 	}
 
 
-	/**
-	 * @param jarName the name of the jar-file in the zip that 
-	 * contained this class.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setJarName(java.lang.String)
 	 */
 	public void setJarName(String jarName) {
 		this.jarName = jarName;
 	}
 	
-	/**
-	 * @return the name of the MAR file  
-	 * contained this class.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getModuleName()
 	 */
 	public String getModuleName() {
 		return moduleName;
 	}
 
 
-	/**
-	 * @param moduleName the name of the MAR file that 
-	 * contained this class.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setModuleName(java.lang.String)
 	 */
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
 	}
 	
-	/**
-	 * Returns all files specified in one part of the module archive
-	 * 
-	 * @return the part could be 'server' for server related resources
-	 * or 'adminweb' for administrative web related resources or any
-	 * other defined string supported by the rest of the system.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getPart()
 	 */
 	public String getPart() {
 		return part;
 	}
 
-	/**
-	 * @param part could be 'server' for server related resources
-	 * or 'adminweb' for administrative web related resources or any
-	 * other defined string supported by the rest of the system.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setPart(java.lang.String)
 	 */
 	public void setPart(String part) {
 		this.part = part;
 	}
 
 
-	/**
-	 * @return the actual data of the resource, i.e class data
-	 * or other file data.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getResourceData()
 	 */
 	public byte[] getResourceData() {
 		return resourceData;
 	}
 
 
-	/**
-	 * @param resourceData the actual data of the resource, i.e class data
-	 * or other file data.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setResourceData(byte[])
 	 */
 	public void setResourceData(byte[] resourceData) {
 		this.resourceData = resourceData;
 	}
 
 
-	/**
-	 * @return the timeStamp when the zip was uploaded.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getTimeStamp()
 	 */
 	public long getTimeStamp() {
 		return timeStamp;
 	}
 
 
-	/**
-	 * @param timeStamp when the zip was uploaded.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setTimeStamp(long)
 	 */
 	public void setTimeStamp(long timeStamp) {
 		this.timeStamp = timeStamp;
 	}
 
 
-	/**
-	 * @return an optional description of the resource, reserved
-	 * for future uses.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getDescription()
 	 */
 	public String getDescription() {
 		return description;
 	}
 
 
-	/**
-	 * @param description an optional description of the resource, reserved
-	 * for future uses.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setDescription(java.lang.String)
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 
-	/**
-	 * @return an optional comment about the resource. Reserved
-	 * for future use.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#getComment()
 	 */
 	public String getComment() {
 		return comment;
 	}
 
 
-	/**
-	 * @param comment an optional comment about the resource. Reserved
-	 * for future use.
+	/* (non-Javadoc)
+	 * @see org.signserver.ejb.IClusterClassLoaderDataBean#setComment(java.lang.String)
 	 */
 	public void setComment(String comment) {
 		this.comment = comment;

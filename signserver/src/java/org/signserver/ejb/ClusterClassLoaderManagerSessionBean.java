@@ -24,6 +24,8 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.signserver.ejb.interfaces.IClusterClassLoaderManagerSession;
+import org.signserver.server.clusterclassloader.IClusterClassLoaderDataBean;
+import org.signserver.server.clusterclassloader.IClusterClassLoaderDataService;
 
 /**
  * The implementation of the IClusterClassLoaderManagerSession
@@ -66,11 +68,16 @@ public class ClusterClassLoaderManagerSessionBean implements IClusterClassLoader
 	 * @param comment optional comment of the resource
 	 * @param resourceData the actual resource data
 	 */
-	public void addResource(String moduleName, String part, int version, String jarName, String resourceName, String implInterfaces, String description, String comment, byte[] resourceData){		
+	public void addResource(String moduleName, String part, int version, String jarName, String resourceName, String implInterfaces, String description, String comment, byte[] resourceData){
+		if(moduleName == null){
+			// special case where a XML back end i signaled to save it's data, but this is just ignored
+			// for DB back ends.
+			return;
+		}
 		log.debug("Creating resource data for resource name=" + resourceName + ", modulename=" + moduleName + ", part=" + part + ", version " +version);
-		ClusterClassLoaderDataService s = new ClusterClassLoaderDataService(em,moduleName,part,version);
+		IClusterClassLoaderDataService s = new ClusterClassLoaderDataService(em,moduleName,part,version);
 		
-		ClusterClassLoaderDataBean cldb = s.findByResourceName(resourceName);
+		IClusterClassLoaderDataBean cldb = s.findByResourceName(resourceName);
 		if(cldb == null){
 			cldb = new ClusterClassLoaderDataBean();
 		}
@@ -97,8 +104,8 @@ public class ClusterClassLoaderManagerSessionBean implements IClusterClassLoader
 	 */
 	public void removeModulePart(String moduleName, String part, int version){		
 		ClusterClassLoaderDataService s = new ClusterClassLoaderDataService(em,moduleName,part,version);
-		Collection<ClusterClassLoaderDataBean> result = s.findAllResourcesInModule();
-		for(ClusterClassLoaderDataBean next : result){
+		Collection<IClusterClassLoaderDataBean> result = s.findResources();
+		for(IClusterClassLoaderDataBean next : result){
 			em.remove(next);
 		}
 	}

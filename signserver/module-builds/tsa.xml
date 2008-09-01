@@ -2,7 +2,7 @@
 
 
        
-<target name="tsamar">
+<target name="tsamar" unless="buildMailSigner">
     <path id="tsamar.build.classpath">
       <path refid="signserver.compile.classpath" />
       <path location="${build}" />

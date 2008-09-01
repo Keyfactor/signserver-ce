@@ -35,14 +35,15 @@ public class MailSignerStatus extends CryptoTokenStatus{
 	
 	private static final long serialVersionUID = 1L;
 
-	private Certificate signerCertificate = null;
+	private Certificate signerCert = null;
+
 	
 	/** 
 	 * Main constructor
 	 */
-	public MailSignerStatus(int workerId, int tokenStatus, MailSignerConfig config, Certificate signerCertificate){
-		super(workerId, tokenStatus, config.getWorkerConfig());		
-	    this.signerCertificate = signerCertificate;
+	public MailSignerStatus(int workerId, int tokenStatus, MailSignerConfig config, Certificate signerCert){
+		super(workerId, tokenStatus, config.getWorkerConfig());			
+		this.signerCert = signerCert;
 	}
 
 
@@ -51,10 +52,12 @@ public class MailSignerStatus extends CryptoTokenStatus{
 	/**
 	 * Method used to retrieve the currently used signer certficate.
 	 * Use this method when checking status and not from config, since the cert isn't always in db.
-	 * @return
 	 */
 	public Certificate getSignerCertificate(){
-		return signerCertificate;
+		if(signerCert != null){
+			return signerCert;
+		}		
+		return new MailSignerConfig(getActiveSignerConfig()).getSignerCertificate();
 	}
 
 	@Override

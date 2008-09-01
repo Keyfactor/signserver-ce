@@ -496,18 +496,27 @@ public class CommonAdminInterface  {
 	}
 	
 	public void addResource(String moduleName, String part, int version, String jarName, String resourceName, String implInterfaces, String description, String comment, byte[] resourceData) throws RemoteException {
+		if(isMailSignerMode()){
+			getIMailSignerRMI().addResource(moduleName, part, version, jarName, resourceName, implInterfaces, description, comment, resourceData);
+		}
 		if(isSignServerMode()){
 			getClusterClassLoaderManagerSession().addResource(moduleName, part, version, jarName, resourceName, implInterfaces, description, comment, resourceData);
 		}		
 	}
 
 	public void removeModulePart(String moduleName, String part, int version) throws RemoteException {
+		if(isMailSignerMode()){
+			getIMailSignerRMI().removeModulePart(moduleName, part, version);
+		}
 		if(isSignServerMode()){
 			getClusterClassLoaderManagerSession().removeModulePart(moduleName, part, version);
 		}
 	}
 	
 	public String[] listAllModules() throws RemoteException {
+		if(isMailSignerMode()){
+			return getIMailSignerRMI().listAllModules();
+		}
 		if(isSignServerMode()){
 			return getClusterClassLoaderManagerSession().listAllModules();
 		}
@@ -515,6 +524,9 @@ public class CommonAdminInterface  {
 	}
 	
 	public Integer[] listAllModuleVersions(String moduleName) throws RemoteException {
+		if(isMailSignerMode()){
+			return getIMailSignerRMI().listAllModuleVersions(moduleName);
+		}
 		if(isSignServerMode()){
 			return getClusterClassLoaderManagerSession().listAllModuleVersions(moduleName);
 		}
@@ -522,6 +534,9 @@ public class CommonAdminInterface  {
 	}
 	
 	public String[] listAllModuleParts(String moduleName, int version) throws RemoteException {
+		if(isMailSignerMode()){
+			return getIMailSignerRMI().listAllModuleParts(moduleName, version);
+		}
 		if(isSignServerMode()){
 			return getClusterClassLoaderManagerSession().listAllModuleParts(moduleName, version);
 		}
@@ -529,6 +544,9 @@ public class CommonAdminInterface  {
 	}
 	
 	public String[] getJarNames(String moduleName, String part, int version) throws RemoteException {
+		if(isMailSignerMode()){
+			return getIMailSignerRMI().getJarNames(moduleName, part, version);
+		}
 		if(isSignServerMode()){
 			return getClusterClassLoaderManagerSession().getJarNames(moduleName, part, version);
 		}

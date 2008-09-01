@@ -18,6 +18,7 @@ package org.signserver.ejb;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -37,6 +38,7 @@ import org.signserver.server.GlobalConfigurationCache;
 import org.signserver.server.GlobalConfigurationFileParser;
 import org.signserver.server.IProcessable;
 import org.signserver.server.IWorker;
+import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.timedservices.ITimedService;
 
@@ -57,6 +59,8 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     
 	private static final long serialVersionUID = 1L;
 	
+	
+	
 	static{
 		SignServerUtil.installBCProvider();
 	}
@@ -68,8 +72,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 	 * 
 	 */
 	public GlobalConfigurationSessionBean() {
-		super();
-		// Do Nothing     
+		super();		
 	}
 	
 	/**
@@ -166,9 +169,9 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 		ArrayList<Integer> retval = new ArrayList<Integer>();
         GlobalConfiguration gc = getGlobalConfiguration();
         
-        Iterator<String> iter = gc.getKeyIterator();
-        while(iter.hasNext()){
-        	String key =  iter.next();  
+        Enumeration<String> en = gc.getKeyEnumeration();
+        while(en.hasMoreElements()){
+        	String key =  en.nextElement();  
         	log.debug("getWorkers, processing key : " + key);
         	if(key.startsWith("GLOB.WORKER")){
                 retval = (ArrayList<Integer>) getWorkerHelper(retval,gc,key,workerType,false);
@@ -195,7 +198,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 				if(workerType == GlobalConfiguration.WORKERTYPE_ALL){
 					retval.add(new Integer(id));
 				}else{
-					IWorker obj = WorkerFactory.getInstance().getWorker(id, new WorkerConfigDataService(em), this, em);
+					IWorker obj = WorkerFactory.getInstance().getWorker(id, new WorkerConfigDataService(em), this, new SignServerContext(em));
 					if(workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE){						
 						if(obj instanceof IProcessable){
 							log.debug("Adding Signer " + id);

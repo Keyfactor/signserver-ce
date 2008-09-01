@@ -18,13 +18,11 @@ package org.signserver.mailsigner;
 import javax.mail.MessagingException;
 
 import org.apache.mailet.Mail;
-import org.apache.mailet.MailetContext;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
+import org.signserver.server.IWorker;
 
 /**
  * Interface used by all MailSigner plug-ins in order to 
@@ -34,7 +32,7 @@ import org.signserver.common.WorkerStatus;
  * @author Philip Vendil
  * $Id: IMailProcessor.java,v 1.1 2008-01-19 03:41:57 herrvendil Exp $
  */
-public interface IMailProcessor {
+public interface IMailProcessor extends IWorker{
 		
 	/**
 	 * Main method used when processing mails
@@ -68,21 +66,7 @@ public interface IMailProcessor {
 	 * @return true if removal was successful.
 	 */
 	 boolean destroyKey(int purpose);
-	 
-		/**
-		 * Initialization method that should be called directly after creation.
-		 * @param workerId the unique id of the worker
-		 * @param config the configuration stored in database
-		 * @param the mailet context containing the mail signer configuration.
-		 */
-		public void init(int workerId, WorkerConfig config, MailetContext mailetContext);
-		
-		/**
-		 * Should return the actual status of the worker, status could be if
-		 * the signer is activated or not, or equivalent for a service.
-		 * @return a WorkerStatus object.
-		 */
-		public WorkerStatus getStatus();
+
 
 
 

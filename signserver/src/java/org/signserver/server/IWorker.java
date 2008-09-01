@@ -13,8 +13,6 @@
 
 package org.signserver.server;
 
-import javax.persistence.EntityManager;
-
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
  
@@ -33,8 +31,10 @@ public interface IWorker {
 	 * Initialization method that should be called directly after creation.
 	 * @param workerId the unique id of the worker
 	 * @param config the configuration stored in database
+	 * @param workerContext this should be a SignServerContext for SignServer
+	 * implementation and MailSignerContext for mail processors.
 	 */
-	public void init(int workerId, WorkerConfig config, EntityManager em);
+	public void init(int workerId, WorkerConfig config, WorkerContext workerContext);
 	
 	/**
 	 * Should return the actual status of the worker, status could be if

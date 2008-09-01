@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
 
-package org.signserver.mailsigner.mailsigners;
+package org.signserver.mailsigner.module.simplemailsigner;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;

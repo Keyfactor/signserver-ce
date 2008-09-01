@@ -47,6 +47,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.PropertyFileStore;
 
 
 /**
@@ -202,8 +203,12 @@ public class SoftCryptoToken implements ICryptoToken {
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
 			oos.writeObject(newKeys);
 			
-			getWorkerSession().setWorkerProperty(workerId, PROPERTY_KEYDATA, new String(Base64.encode(baos.toByteArray())));
-
+			try{
+			  getWorkerSession().setWorkerProperty(workerId, PROPERTY_KEYDATA, new String(Base64.encode(baos.toByteArray())));
+		    }catch(NamingException e){
+		    	// If not in SignServer, try to save mail signer style.
+		      PropertyFileStore.getInstance().setWorkerProperty(workerId, PROPERTY_KEYDATA, new String(Base64.encode(baos.toByteArray())));
+		    }
 			if(info instanceof PKCS10CertReqInfo){
 				PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info; 
 				PKCS10CertificationRequest pkcs10;
@@ -238,14 +243,10 @@ public class SoftCryptoToken implements ICryptoToken {
 	
 	private IWorkerSession.ILocal workerSession;
 	
-    protected IWorkerSession.ILocal getWorkerSession(){
-    	if(workerSession == null){
-    		try{
+    protected IWorkerSession.ILocal getWorkerSession() throws NamingException{
+    	if(workerSession == null){    		
     		  Context context = new InitialContext();
     		  workerSession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
-    		}catch(NamingException e){
-    			log.error(e);
-    		}
     	}
     	
     	return workerSession;

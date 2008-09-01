@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.mailsigner.core;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -19,7 +20,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ResyncException;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.mailsigner.IMailProcessor;
+import org.signserver.server.PropertyFileStore;
+import org.signserver.server.WorkerFactory;
 
 /**
  * Class in charge of the Non-EJB representation of the global configuration.
@@ -30,12 +35,12 @@ import org.signserver.mailsigner.IMailProcessor;
  * @author Philip Vendil
  * $id$
  */
-public class NonEJBGlobalConfigurationSession {
+public class NonEJBGlobalConfigurationSession implements IGlobalConfigurationSession{
 	
 	/** Log4j instance for actual implementation class */
 	private transient Logger log = Logger.getLogger(this.getClass());
 	private GlobalConfiguration cachedGlobalConfiguration;	
-	private ConcurrentHashMap<Integer, Vector<Integer>> workers = new ConcurrentHashMap<Integer, Vector<Integer>>();
+	private ConcurrentHashMap<Integer, Vector<Integer>> workersTypes = new ConcurrentHashMap<Integer, Vector<Integer>>();
 	
 	
 	private static NonEJBGlobalConfigurationSession instance = null;
@@ -63,7 +68,7 @@ public class NonEJBGlobalConfigurationSession {
 	public void setProperty(String scope, String key, String value) {									           
 		PropertyFileStore.getInstance().setGlobalProperty(scope, key, value);
 		cachedGlobalConfiguration = null;
-		workers = new ConcurrentHashMap<Integer, Vector<Integer>>();
+		workersTypes = new ConcurrentHashMap<Integer, Vector<Integer>>();
 	}
 	
 	
@@ -83,7 +88,7 @@ public class NonEJBGlobalConfigurationSession {
 		if(getGlobalConfiguration().getProperty(scope, key) != null){
 		  PropertyFileStore.getInstance().removeGlobalProperty(scope, key);
 		  cachedGlobalConfiguration = null;
-		  workers = new ConcurrentHashMap<Integer, Vector<Integer>>();
+		  workersTypes = new ConcurrentHashMap<Integer, Vector<Integer>>();
 		  retval = true;
 		}
 
@@ -116,15 +121,15 @@ public class NonEJBGlobalConfigurationSession {
 	public List<Integer> getWorkers(int workerType){
 		Vector<Integer> retval = null;
 		
-		retval = workers.get(workerType);
+		retval = workersTypes.get(workerType);
 		
 		if(retval == null){
 			retval = new Vector<Integer>();
 			GlobalConfiguration gc = getGlobalConfiguration();
 
-			Iterator<?> iter = gc.getKeyIterator();
-			while(iter.hasNext()){
-				String key = (String) iter.next();  
+			Enumeration<String> en = gc.getKeyEnumeration();
+			while(en.hasMoreElements()){
+				String key = (String) en.nextElement();  
 				log.debug("getWorkers, processing key : " + key);
 				if(key.startsWith("GLOB.WORKER")){
 					retval = (Vector<Integer>) getWorkerHelper(retval,gc,key,workerType);
@@ -132,7 +137,7 @@ public class NonEJBGlobalConfigurationSession {
 
 			}
 			
-			workers.put(workerType, retval);
+			workersTypes.put(workerType, retval);
 			
 		}
         return retval;
@@ -162,11 +167,11 @@ public class NonEJBGlobalConfigurationSession {
 				}
 			}
 		} catch (ClassNotFoundException e) {
-			log.error("Error in global configuration for configurared workers, classpath not found",e);
+			log.error("Error in global configuration for configurared workersTypes, classpath not found",e);
 		} catch (InstantiationException e) {
-			log.error("Error in global configuration for configurared workers, classpath not found",e);
+			log.error("Error in global configuration for configurared workersTypes, classpath not found",e);
 		} catch (IllegalAccessException e) {
-			log.error("Error in global configuration for configurared workers, classpath not found",e);
+			log.error("Error in global configuration for configurared workersTypes, classpath not found",e);
 		}
 
 		return retval;
@@ -181,7 +186,14 @@ public class NonEJBGlobalConfigurationSession {
 	public void reload() {
         PropertyFileStore.getInstance().reload();
         cachedGlobalConfiguration = null;
-        workers = new ConcurrentHashMap<Integer, Vector<Integer>>();
+        workersTypes = new ConcurrentHashMap<Integer, Vector<Integer>>();
+        WorkerFactory.getInstance().flush();
+	}
+
+	/**
+	 * Method not supported
+	 */
+	public void resync() throws ResyncException {		
 	}
 	
 

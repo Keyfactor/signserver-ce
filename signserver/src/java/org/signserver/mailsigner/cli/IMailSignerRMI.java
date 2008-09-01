@@ -35,7 +35,7 @@ import org.signserver.common.MailSignerUser;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
-public interface IMailSignerRMI extends Remote{
+public interface IMailSignerRMI extends Remote {
 	
 	/**
 	 * Returns the current status of a mail signer. 
@@ -233,4 +233,53 @@ public interface IMailSignerRMI extends Remote{
 		 * @return A list of all authorized users sorted by user name. Never null.
 		 */
 		List<MailSignerUser> getAuthorizedUsers()  throws java.rmi.RemoteException;
+		
+		   /**
+		 * Method used to add a resource to the cluster class loader.
+		 * @param moduleName the name of the module
+		 * @param part the name of the module part
+		 * @param version the version of the module
+		 * @param jarName the name of the jar containing the resource
+		 * @param resourceName the full name of the resource
+		 * @param implInterfaces all interfaces implemented if the resource is a class.
+		 * @param description optional description of the resource
+		 * @param comment optional comment of the resource
+		 * @param resourceData the actual resource data
+		 */
+		public void addResource(String moduleName, String part, int version, String jarName, String resourceName, String implInterfaces, String description, String comment, byte[] resourceData) throws RemoteException;
+		
+		/**
+		 * Method removing the specified part of the given module
+		 * @param moduleName the name of the module.
+		 * @param part the part of the module to remove
+		 * @param version the version of the module
+		 */
+		public void removeModulePart(String moduleName, String part, int version) throws RemoteException;
+		
+		/**
+		 * 
+		 * @return a list of all module names in the system.
+		 */
+		public String[] listAllModules() throws RemoteException;
+		
+		/**
+		 * 
+		 * @return a list of all version for the specified module.
+		 */
+		public Integer[] listAllModuleVersions(String moduleName)throws RemoteException; 
+		
+		/**
+		 * 
+		 * @return a list of all parts for the specified module.
+		 */
+		public String[] listAllModuleParts(String moduleName, int version) throws RemoteException;
+		
+		/**
+		 * Lists all jars in the given module part.
+		 * @param moduleName the name of the module
+		 * @param part the name of the part in the module
+		 * @param version the version
+		 * @return an array of jar names in the module.
+		 */
+		public String[] getJarNames(String moduleName, String part, int version) throws RemoteException;
 }

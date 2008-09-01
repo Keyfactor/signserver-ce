@@ -16,6 +16,7 @@ package org.signserver.mailsigner.core;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -187,9 +188,9 @@ public class MailSignerUserRepository implements UsersRepository {
 		if(users == null){
 			users = new HashMap<String,MailSignerUser>();
 			String prefix = GlobalConfiguration.SCOPE_GLOBAL + SMTPAUTH_PREFIX;
-            Iterator<String> iter = gcSession.getGlobalConfiguration().getKeyIterator();
-            while(iter.hasNext()){
-            	String key = iter.next();
+            Enumeration<String> en = gcSession.getGlobalConfiguration().getKeyEnumeration();
+            while(en.hasMoreElements()){
+            	String key = en.nextElement();
             	if(key.startsWith(prefix)){
             		String username = key.substring(prefix.length());
             		users.put(username, new MailSignerUser(username, gcSession.getGlobalConfiguration().getProperty(key)));

@@ -47,7 +47,8 @@ public abstract class BaseWorker implements IWorker {
     
     protected WorkerConfig config = null;
 
-	protected EntityManager em; 
+	protected SignServerContext signServerContext;
+	protected EntityManager em;
     
     protected BaseWorker(){
 
@@ -56,10 +57,11 @@ public abstract class BaseWorker implements IWorker {
     /**
      * Initialization method that should be called directly after creation
      */
-    public void init(int workerId, WorkerConfig config, EntityManager em){
+    public void init(int workerId, WorkerConfig config, WorkerContext workerContext){
       this.workerId = workerId;
       this.config = config;
-      this.em = em;
+      this.signServerContext = (SignServerContext) workerContext;
+      this.em = signServerContext.getEntityManager();
     }
 	
 }

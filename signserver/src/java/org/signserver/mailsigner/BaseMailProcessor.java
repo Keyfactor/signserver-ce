@@ -32,6 +32,7 @@ import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.mailsigner.core.NonEJBGlobalConfigurationSession;
+import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 
 /**
@@ -68,6 +69,8 @@ public abstract class BaseMailProcessor  implements IMailProcessor {
     
     protected WorkerConfig config = null;
 
+    protected MailSignerContext mailSignerContext = null;
+    
 	protected MailetContext mailetContext; 
     
     protected BaseMailProcessor(){
@@ -77,10 +80,11 @@ public abstract class BaseMailProcessor  implements IMailProcessor {
     /**
      * Initialization method that should be called directly after creation
      */
-    public void init(int workerId, WorkerConfig config, MailetContext mailetContext){
+    public void init(int workerId, WorkerConfig config, WorkerContext workerContext){
       this.workerId = workerId;
       this.config = config;
-      this.mailetContext = mailetContext;
+      this.mailSignerContext = (MailSignerContext) workerContext;
+      this.mailetContext = mailSignerContext.getMailetContext();
     }
 	    
 	public void activateCryptoToken(String authenticationCode)

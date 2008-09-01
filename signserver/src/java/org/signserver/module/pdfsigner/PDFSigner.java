@@ -19,8 +19,6 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Collection;
 
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
@@ -38,6 +36,7 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.statistics.Event;
@@ -73,8 +72,8 @@ public class PDFSigner extends BaseSigner{
 	private static final String RECTANGLE = "RECTANGLE";
 	private static final String RECTANGLEDEFAULT = "400,700,500,800";
 		
-	public void init(int signerId, WorkerConfig config, EntityManager em) {
-		super.init(signerId, config, em);				                                 
+	public void init(int signerId, WorkerConfig config, WorkerContext workerContext) {
+		super.init(signerId, config, workerContext);				                                 
 	}
 
 	/**

@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
 
-package org.signserver.mailsigner.core;
+package org.signserver.server;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +26,7 @@ import org.signserver.common.WorkerConfig;
 
 /**
  * Class in charge of storing/loading the current configuration from file
- * in a Property format.
+ * in a Property format. This is used in the MailSigner build.
  * 
  * It manages GlobalConfiguration and WorkerConfigurations in much the same way
  * as the EJB variant, but in the back-end stores everything to file.
@@ -129,7 +129,7 @@ public class PropertyFileStore {
 	 * @param value of the configuration.
 	 */
 	public void setGlobalProperty(String scope, String key, String value){
-		propertyStore.put(propertyKeyHelper(scope, key), value);		
+		propertyStore.setProperty(propertyKeyHelper(scope, key), value);		
 		save();
 	}
 	
@@ -140,14 +140,14 @@ public class PropertyFileStore {
 	 * @param key the key used
 	 */
 	public void removeGlobalProperty(String scope, String key){
-		propertyStore.remove(propertyKeyHelper(scope, key));		
+		propertyStore.remove(propertyKeyHelper(scope, key));
 		save();
+		reload();
 	}
 	
 	/**
 	 * Returns the current GlobalConfiguration read from file.
 	 * 
-	 * @return
 	 */
 	public GlobalConfiguration getGlobalConfiguration(){
 		Properties properties = new Properties();
@@ -195,7 +195,7 @@ public class PropertyFileStore {
 	 *  
 	 */
 	public void setWorkerProperty(int workerId, String key, String value){
-		propertyStore.put(GlobalConfiguration.WORKERPROPERTY_BASE + workerId + "." + key.toUpperCase(), value);		
+		propertyStore.setProperty(GlobalConfiguration.WORKERPROPERTY_BASE + workerId + "." + key.toUpperCase(), value);		
 		save();
 	}
 	

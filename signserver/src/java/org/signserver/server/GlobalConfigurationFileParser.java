@@ -118,7 +118,6 @@ public class GlobalConfigurationFileParser  implements java.io.Serializable {
      * 
      * This method supports the old version of properties
      * and converts them to global scoped variables.
-     * @return
      */
     public Properties getStaticGlobalConfiguration(){
     	

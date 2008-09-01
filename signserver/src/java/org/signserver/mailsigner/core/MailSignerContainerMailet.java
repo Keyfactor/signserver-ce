@@ -26,11 +26,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.mail.MessagingException;
 
@@ -51,7 +49,12 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.mailsigner.BaseMailProcessor;
 import org.signserver.mailsigner.IMailProcessor;
+import org.signserver.mailsigner.MailSignerContext;
 import org.signserver.mailsigner.cli.IMailSignerRMI;
+import org.signserver.server.IWorker;
+import org.signserver.server.PropertyFileStore;
+import org.signserver.server.WorkerFactory;
+import org.signserver.server.clusterclassloader.xmlpersistence.XMLCCLResourceManager;
 
 /**
  * MailSignerContainerMailet is the base James Mailet that reads the 
@@ -69,9 +72,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 
 	public static final String TESTMODE_SETTING = "TESTMODE";
 	
-	private static transient Logger log = Logger.getLogger(MailSignerContainerMailet.class.getName());
-	
-    private ConcurrentHashMap<Integer, IMailProcessor> mailProcessors = new ConcurrentHashMap<Integer, IMailProcessor>();
+	private static transient Logger log = Logger.getLogger(MailSignerContainerMailet.class.getName());	    
 	
     private MailSignerUserRepository userRepository = new MailSignerUserRepository();
 
@@ -239,10 +240,9 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 			throws RemoteException {
 		if(workerId == 0){
 		  NonEJBGlobalConfigurationSession.getInstance().reload();
-		  mailProcessors.clear();
 		}else{
-		  mailProcessors.remove(workerId);
-		}		
+		  WorkerFactory.getInstance().reloadWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), new MailSignerContext((getMailContext) ? getMailetContext() : null));
+		}
 	}
 
 	/**
@@ -353,47 +353,20 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	/**
 	 * Method that finds and initializes a MailSigner
 	 */
-	private IMailProcessor getMailSigner(int signerId) throws InvalidWorkerIdException{
-		IMailProcessor retval = mailProcessors.get(signerId);
-				
-		if(retval == null){
-			List<Integer> mailIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
-			for (Integer id : mailIds) {
-				if(id.equals(signerId)){
-					GlobalConfiguration gc = NonEJBGlobalConfigurationSession.getInstance().getGlobalConfiguration();
-					String classPath = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, GlobalConfiguration.WORKERPROPERTY_BASE + id + GlobalConfiguration.WORKERPROPERTY_CLASSPATH);
-					
-					try {
-						IMailProcessor mailProcessor = (IMailProcessor) this.getClass().getClassLoader().loadClass(classPath).newInstance();
-						mailProcessor.init(id, cloneWorkerProperties(PropertyFileStore.getInstance().getWorkerProperties(id)),  (getMailContext) ? getMailetContext() : null);
-						mailProcessors.put(id, mailProcessor);
-						retval = mailProcessor;
-					} catch (Exception e) {
-						log.error("Error creating an instance of mail signer with Id " + id,e);
-					} 				
-					break;
-				}
-			}			
+	private IMailProcessor getMailSigner(int workerId) throws InvalidWorkerIdException{
+		
+		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), new MailSignerContext((getMailContext) ? getMailetContext() : null));
+		if(!(worker instanceof IMailProcessor)){
+			log.error("Error: mail signer with id '" + workerId + " doesn't implement the required IMailProcessor interface");
 		}
 		
-		if(retval == null){
-			throw new InvalidWorkerIdException("Error, couldn't find signer id in global configuration.");
+		if(worker == null){
+			throw new InvalidWorkerIdException("Error, couldn't find worker id in global configuration.");
 		}
-		
-		return retval;
+		return (IMailProcessor) worker;
 	}
 
-	private WorkerConfig cloneWorkerProperties(WorkerConfig workerProperties) {
-		WorkerConfig retval = new WorkerConfig();
-		
-		Enumeration<Object> en = workerProperties.getProperties().keys();
-		while(en.hasMoreElements()){
-			String key = (String) en.nextElement();
-			retval.getProperties().setProperty(key, workerProperties.getProperties().getProperty(key));
-		}
-		
-		return retval;
-	}
+
 
 	/**
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#addAuthorizedUser(String, String)
@@ -418,6 +391,51 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#addResource(String, String, int, String, String, String, String, String, byte[])
+	 */
+	public void addResource(String moduleName, String part, int version,
+			String jarName, String resourceName, String implInterfaces,
+			String description, String comment, byte[] resourceData) {
+		XMLCCLResourceManager.addResource(moduleName, part, version, jarName, resourceName, implInterfaces, description, comment, resourceData);
+		
+	}
+
+	/**
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getJarNames(String, String, int)
+	 */
+	public String[] getJarNames(String moduleName, String part, int version) {
+		return XMLCCLResourceManager.getJarNames(moduleName, part, version);
+	}
+
+	/**
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#listAllModuleParts(String, int)
+	 */
+	public String[] listAllModuleParts(String moduleName, int version) {
+		return XMLCCLResourceManager.listAllModuleParts(moduleName, version);
+	}
+
+	/**
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#listAllModuleVersions(String)
+	 */
+	public Integer[] listAllModuleVersions(String moduleName) {		
+		return XMLCCLResourceManager.listAllModuleVersions(moduleName);
+	}
+
+	/**
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#listAllModules()
+	 */
+	public String[] listAllModules() {
+		return XMLCCLResourceManager.listAllModules();
+	}
+
+	/**
+	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#removeModulePart(String, String, int)
+	 */
+	public void removeModulePart(String moduleName, String part, int version) {
+        XMLCCLResourceManager.removeModulePart(moduleName, part, version);		
 	}
 
 }

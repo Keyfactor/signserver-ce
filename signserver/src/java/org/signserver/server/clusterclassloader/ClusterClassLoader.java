@@ -33,8 +33,8 @@ import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerException;
 import org.signserver.common.clusterclassloader.ClusterClassLoaderUtils;
-import org.signserver.ejb.ClusterClassLoaderDataBean;
 import org.signserver.ejb.ClusterClassLoaderDataService;
+import org.signserver.server.clusterclassloader.xmlpersistence.XMLClusterClassLoaderDataService;
 
 /**
  * Class loader used to find all classes that implements interfaces 
@@ -66,7 +66,7 @@ public class ClusterClassLoader extends ClassLoader {
 	 */
 	HashMap<String, String> mappings = new HashMap<String, String>();
 	
-	private ClusterClassLoaderDataService cclds = null;
+	private IClusterClassLoaderDataService cclds = null;
 
 	private int version;
 	
@@ -74,14 +74,19 @@ public class ClusterClassLoader extends ClassLoader {
     /**
      * Constructor used when no version is configured, will find and use the
      * latest version of the given module.
-     * @param em the Entity Manager 
+     * @param em the Entity Manager, if null will the XMLPersistence be used instead of database. 
      * @param moduleName the name of the module
      * @param part the part that this cluster class loader should use as repository. 
      * 
      */
 	public ClusterClassLoader(ClassLoader parent, EntityManager em, String moduleName, String part) {
 		super(parent);
-        ClusterClassLoaderDataService cclds = new ClusterClassLoaderDataService(em,moduleName);
+		IClusterClassLoaderDataService cclds;
+		if(em != null){
+          cclds = new ClusterClassLoaderDataService(em,moduleName);
+		}else{
+			cclds = new XMLClusterClassLoaderDataService(moduleName);			
+		}
 		int version = cclds.findLatestVersionOfModule(moduleName);
 		init(em,GlobalConfiguration.isUseClassVersions(),moduleName,part,version);
 	}
@@ -103,25 +108,29 @@ public class ClusterClassLoader extends ClassLoader {
 	
 	private void init(EntityManager em, boolean useClassVersions, String moduleName, String part,
 			int version) {
-		try{
+		try{			
 			this.useClassVersions = useClassVersions;
-			cclds = new ClusterClassLoaderDataService(em,moduleName,part,version);
+			if(em != null){
+			  cclds = new ClusterClassLoaderDataService(em,moduleName,part,version);
+			}else{
+				cclds = new XMLClusterClassLoaderDataService(moduleName,part,version);
+			}
 			this.version = version;
-			Collection<ClusterClassLoaderDataBean> result = cclds.findAllResourcesInModule();
+			Collection<IClusterClassLoaderDataBean> result = cclds.findResources();
 			if(useClassVersions){
-				for(ClusterClassLoaderDataBean next : result){
+				for(IClusterClassLoaderDataBean next : result){
 					if(next.getResourceName().endsWith(".class")){	
 						String strippedResourceName = ClusterClassLoaderUtils.stripClassPostfix(next.getResourceName());
 						mappings.put(strippedResourceName, "v"+version+"/" + strippedResourceName);
 					}
 				}
-				for(ClusterClassLoaderDataBean next : result){
+				for(IClusterClassLoaderDataBean next : result){
 					if(next.getResourceName().endsWith(".class")){				
 						availableClasses.put("v"+ version + "." + ClusterClassLoaderUtils.getClassNameFromResourcePath(next.getResourceName()), ClusterClassLoaderUtils.addVersionToClass(mappings, getVerifyResourceData(next.getResourceData())));					
 					}
 				}
 			}else{
-				for(ClusterClassLoaderDataBean next : result){
+				for(IClusterClassLoaderDataBean next : result){
 					if(next.getResourceName().endsWith(".class")){				
 						availableClasses.put(ClusterClassLoaderUtils.getClassNameFromResourcePath(next.getResourceName()), getVerifyResourceData(next.getResourceData()));					
 					}
@@ -178,7 +187,7 @@ public class ClusterClassLoader extends ClassLoader {
 	 */
 	@Override
 	public InputStream getResourceAsStream(String name) {
-		ClusterClassLoaderDataBean data = cclds.findByResourceName(name);
+		IClusterClassLoaderDataBean data = cclds.findByResourceName(name);
 		if(data == null){
 			return getParent().getResourceAsStream(name);
 		}

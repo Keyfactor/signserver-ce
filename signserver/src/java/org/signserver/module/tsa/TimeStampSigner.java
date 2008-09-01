@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.ejb.EJBException;
-import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.GeneralName;
@@ -54,6 +53,7 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ITimeSource;
+import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
  
@@ -135,8 +135,8 @@ public class TimeStampSigner extends BaseSigner{
 	//private String defaultDigestOID = null;
 	private String defaultTSAPolicyOID = null;
 	
-	public void init(int signerId, WorkerConfig config, EntityManager em) {
-		super.init(signerId, config,em);
+	public void init(int signerId, WorkerConfig config, WorkerContext workerContext) {
+		super.init(signerId, config,workerContext);
 		// Check that the timestamp server is properly configured
 	    timeSource = getTimeSource();
 	    if(timeSource == null){

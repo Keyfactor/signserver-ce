@@ -86,7 +86,6 @@ public class StatisticsManager {
 	 * Method in charge of creating and maintaining an workers statistics collector.
 	 * @param workerId 
 	 * @param config the active worker configuration
-	 * @return 
 	 */
 	public static IStatisticsCollector getStatisticsCollector(int workerId,
 			WorkerConfig config, EntityManager em) {

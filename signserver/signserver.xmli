@@ -16,14 +16,14 @@
 	   <property name="caear" value="${server.dist.dir}/${app.name}.ear" />
 	
 		
-	   <property name="timeStampClientBuild" location="${bin}/timeStampClient"/>
-	   <property name="timeStampClientJar" location="${client.dist.dir}/timeStampClient.jar"/>
-	   <property name="server.primeCard.dist" location="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
-	   <property name="server.primeCard.catoken" location="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
-	   <property name="client.primeCard.dist" location="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
+	   <property name="timeStampClientBuild" value="${bin}/timeStampClient"/>
+	   <property name="timeStampClientJar" value="${client.dist.dir}/timeStampClient.jar"/>
+	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
+	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
+	   <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
 
-	   <property name="performanceTestToolBuild" location="${bin}/performanceTestTool"/>
-	   <property name="performanceTestToolJar" location="${client.dist.dir}/performanceTestTool.jar"/>
+	   <property name="performanceTestToolBuild" value="${bin}/performanceTestTool"/>
+	   <property name="performanceTestToolJar" value="${client.dist.dir}/performanceTestTool.jar"/>
 	
 	   <property name="genServerCertJar" value="genservercert.jar"/>
 	   <property name="genServerCertBin" value="genservercert.sh"/>
@@ -283,7 +283,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	        </taskdef>
 	    </target>
 		
-	    <target name="ws.init" depends="init,  ws.common.init" if="signserverws.conditionenabled">
+	    <target name="ws.init" depends="init,  ws.common.init" if="signserverws.conditionenabled" unless="buildMailSigner">
 	    	<mkdir dir="tmp/jaxws/gen-classes/server"/>
 	    	<mkdir dir="tmp/jaxws/gen-classes/client"/>
 	    	
@@ -343,7 +343,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	        </javac>
 	    </target>
 
-	    <target name="ws.build.client" depends="ws.init, ws.compile.client" if="signserverws.conditionenabled">
+	    <target name="ws.build.client" depends="ws.init, ws.compile.client" if="signserverws.conditionenabled" unless="buildMailSigner">
 	    	
 	    	<mkdir dir="tmp/signserverwscli.jar"/>
 	    	<mkdir dir="tmp/signserverwscli.jar/META-INF"/>

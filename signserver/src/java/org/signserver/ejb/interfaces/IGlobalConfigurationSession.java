@@ -30,7 +30,7 @@ public interface IGlobalConfigurationSession
 
    /**
     * Method that returns all the global properties with Global Scope and Node scopes properties for this node.
-    * @return A GlobalConfiguration Object, nevel null
+    * @return A GlobalConfiguration Object, never null
     */
    org.signserver.common.GlobalConfiguration getGlobalConfiguration(  );
 

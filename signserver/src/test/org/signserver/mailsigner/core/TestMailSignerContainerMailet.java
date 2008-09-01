@@ -15,6 +15,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.server.PropertyFileStore;
 import org.signserver.server.cryptotokens.ICryptoToken;
 
 public class TestMailSignerContainerMailet extends TestCase {

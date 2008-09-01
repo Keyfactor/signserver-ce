@@ -52,12 +52,12 @@ public class TestingSecurityManager extends SecurityManager {
         throw new ExitException(status);
 	}
     @Override
-    public void checkPermission(@SuppressWarnings("unused")Permission perm) {
+    public void checkPermission(Permission perm) {
         // do nothing
     }
     @Override
-    public void checkPermission(@SuppressWarnings("unused")Permission perm,
-                                @SuppressWarnings("unused")Object context) {
+    public void checkPermission(Permission perm,
+                                Object context) {
         //do nothing
     }
 }

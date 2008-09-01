@@ -19,11 +19,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ServiceExecutionFailedException;
+import org.signserver.server.WorkerContext;
 
 /**
  * Dummy Service that is used for testing and demonstration purposes.
@@ -42,8 +41,8 @@ public class DummyTimedService extends BaseTimedService {
     String outPath = null;
 	
 	@Override
-	public void init(int workerId, WorkerConfig config, EntityManager em) {
-		super.init(workerId, config, em);
+	public void init(int workerId, WorkerConfig config, WorkerContext workerContext) {
+		super.init(workerId, config, workerContext);
 		
 		outPath = config.getProperties().getProperty("OUTPATH");
 		

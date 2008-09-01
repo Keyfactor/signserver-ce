@@ -3,6 +3,7 @@ package org.signserver.mailsigner.core;
 import java.util.List;
 
 import org.signserver.common.MailSignerUser;
+import org.signserver.server.PropertyFileStore;
 
 import junit.framework.TestCase;
 

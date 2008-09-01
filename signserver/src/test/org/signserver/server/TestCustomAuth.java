@@ -27,23 +27,30 @@ import junit.framework.TestCase;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.tsa.TimeStampSigner;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.testutils.TestUtils;
+import org.signserver.testutils.TestingSecurityManager;
 
 
 public class TestCustomAuth extends TestCase {
 
 	private static IGlobalConfigurationSession.IRemote gCSession = null;
 	private static IWorkerSession.IRemote sSSession = null;
+	private String signserverhome;
+	private int moduleVersion;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -51,25 +58,46 @@ public class TestCustomAuth extends TestCase {
 		Context context = getInitialContext();
 		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
 		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
-
+		TestUtils.redirectToTempOut();
+		TestUtils.redirectToTempErr();
+		TestingSecurityManager.install();
+        signserverhome = System.getenv("SIGNSERVER_HOME");
+        assertNotNull(signserverhome);
+        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
+	}
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		TestingSecurityManager.remove();
 	}
 	
 	public void test00SetupDatabase() throws Exception{
-		   
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH", "org.signserver.server.signers.TimeStampSigner");
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
-		
-		  
-		  sSSession.setWorkerProperty(9, "AUTHTYPE", "org.signserver.server.DummyAuthorizer");
-		  sSSession.setWorkerProperty(9, "TESTAUTHPROP", "DATA");
-		  String signserverhome = System.getenv("SIGNSERVER_HOME");
-		  assertNotNull(signserverhome);
-		  sSSession.setWorkerProperty(9,"KEYSTOREPATH",signserverhome +"/src/test/timestamp1.p12");
-		  sSSession.setWorkerProperty(9, "KEYSTOREPASSWORD", "foo123");
-		  sSSession.setWorkerProperty(9,TimeStampSigner.DEFAULTTSAPOLICYOID,"1.0.1.2.33");
-		  sSSession.setWorkerProperty(9,TimeStampSigner.TSA,"CN=TimeStampTest1");
-		  
-		  sSSession.reloadConfiguration(9);	
+		MARFileParser marFileParser = new MARFileParser(signserverhome +"/dist-server/tsa.mar");
+		moduleVersion = marFileParser.getVersionFromMARFile();
+		TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
+				signserverhome +"/dist-server/tsa.mar"});		
+		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+
+		gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH", "org.signserver.module.tsa.TimeStampSigner");
+		gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
+
+
+		sSSession.setWorkerProperty(9, "AUTHTYPE", "org.signserver.server.DummyAuthorizer");
+		sSSession.setWorkerProperty(9, "TESTAUTHPROP", "DATA");
+		String signserverhome = System.getenv("SIGNSERVER_HOME");
+		assertNotNull(signserverhome);
+		sSSession.setWorkerProperty(9,"KEYSTOREPATH",signserverhome +"/src/test/timestamp1.p12");
+		sSSession.setWorkerProperty(9, "KEYSTOREPASSWORD", "foo123");
+		sSSession.setWorkerProperty(9,TimeStampSigner.DEFAULTTSAPOLICYOID,"1.0.1.2.33");
+		sSSession.setWorkerProperty(9,TimeStampSigner.TSA,"CN=TimeStampTest1");
+		sSSession.setWorkerProperty(9,SignServerConstants.MODULENAME,"TSA");
+		sSSession.setWorkerProperty(9,SignServerConstants.MODULEVERSION,moduleVersion+"");
+
+		sSSession.reloadConfiguration(9);	
 	}
 
 
@@ -124,18 +152,10 @@ public class TestCustomAuth extends TestCase {
 
 
 	public void test99TearDownDatabase() throws Exception{
-		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH");
-		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.SIGNERTOKEN.CLASSPATH");
-		
+		 TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
+		 "9"});
 		  
-		  sSSession.removeWorkerProperty(9, "AUTHTYPE");
-		  sSSession.removeWorkerProperty(9, "TESTAUTHPROP");
-		  String signserverhome = System.getenv("SIGNSERVER_HOME");
-		  assertNotNull(signserverhome);
-		  sSSession.removeWorkerProperty(9,"KEYSTOREPATH");
-		  sSSession.removeWorkerProperty(9, "KEYSTOREPASSWORD");
-		  sSSession.removeWorkerProperty(9,TimeStampSigner.DEFAULTTSAPOLICYOID);
-		  sSSession.removeWorkerProperty(9,TimeStampSigner.TSA);
+		  TestUtils.assertSuccessfulExecution(new String[] {"module", "remove","TSA", "" + moduleVersion});
 		  
 		  sSSession.reloadConfiguration(9);
 	}

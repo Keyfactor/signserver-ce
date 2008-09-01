@@ -22,7 +22,7 @@ public class TestFindInterfacesClassLoader extends TestCase {
 	}
 
 	public void testGetImplementedInterfaces() throws IOException {
-		FindInterfacesClassLoader ficl = new FindInterfacesClassLoader(mARFileParser,"server");
+		FindInterfacesClassLoader ficl = new FindInterfacesClassLoader(mARFileParser,"server", System.out);
 		Collection<String> interfaces = ficl.getImplementedInterfaces("testPackage/SysPropTest.class");
 		assertNotNull(interfaces);
 		assertTrue(interfaces.size() == 0);

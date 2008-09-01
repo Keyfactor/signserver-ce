@@ -2,6 +2,7 @@ package org.signserver.mailsigner.core;
 
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.mailsigner.mailsigners.DummyMailSigner;
+import org.signserver.server.PropertyFileStore;
 
 import junit.framework.TestCase;
 

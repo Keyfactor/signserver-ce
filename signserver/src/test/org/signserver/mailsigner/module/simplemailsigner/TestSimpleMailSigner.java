@@ -1,4 +1,4 @@
-package org.signserver.mailsigner.mailsigners;
+package org.signserver.mailsigner.module.simplemailsigner;
 
 import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
@@ -14,14 +14,38 @@ import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.mail.smime.SMIMESigned;
 import org.ejbca.util.CertTools;
+import org.signserver.cli.CommonAdminInterface;
+import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.mailsigner.core.SMIMEHelper;
+import org.signserver.mailsigner.mailsigners.BaseMailSignerTester;
+import org.signserver.mailsigner.module.simplemailsigner.SimpleMailSigner;
 import org.signserver.server.cryptotokens.P12CryptoToken;
+import org.signserver.testutils.TestUtils;
+import org.signserver.testutils.TestingSecurityManager;
 
 public class TestSimpleMailSigner extends BaseMailSignerTester {
+
+	private int moduleVersion;
+	private String signserverhome;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		
+		TestUtils.redirectToTempOut();
+		TestUtils.redirectToTempErr();
+		TestingSecurityManager.install();
+        signserverhome = System.getenv("SIGNSERVER_HOME");
+        assertNotNull(signserverhome);
+        CommonAdminInterface.BUILDMODE = "MAILSIGNER";
+		
+		MARFileParser marFileParser = new MARFileParser(signserverhome +"/dist-server/simplemailsigner.mar");
+		moduleVersion = marFileParser.getVersionFromMARFile();
+		
+		TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
+				signserverhome +"/dist-server/simplemailsigner.mar", "junittest"});		
+	    assertTrue(TestUtils.grepTempOut("Loading module SIMPLEMAILSIGNER"));
+	    assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+	    
 		// Set SimpleMailSigner properties
 		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.REQUIRESMTPAUTH, "TRUE");
 		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.FROMADDRESS, "mailsigner@someorg.org");		
@@ -33,29 +57,10 @@ public class TestSimpleMailSigner extends BaseMailSignerTester {
 		iMailSignerRMI.setWorkerProperty(getWorkerId(), P12CryptoToken.KEYSTOREPATH, signServerHome + "/src/test/mailsigner_test1.p12");
 		iMailSignerRMI.setWorkerProperty(getWorkerId(), P12CryptoToken.KEYSTOREPASSWORD, "foo123");
 		
-		iMailSignerRMI.reloadConfiguration(getWorkerId());
+		iMailSignerRMI.reloadConfiguration(0);
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		// Set SimpleMailSigner properties
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.REQUIRESMTPAUTH);
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.FROMADDRESS);
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNERADDRESS);	
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SMIMEHelper.EXPLAINATION_TEXT);
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.FROMNAME);
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNERNAME);
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.REPLYTOADDRESS);
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.REPLYTONAME);
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.USEREBUILDFROM);
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.CHANGEREPLYTO);
-		
-		// crypto token properties
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), P12CryptoToken.KEYSTOREPATH);
-		iMailSignerRMI.removeWorkerProperty(getWorkerId(), P12CryptoToken.KEYSTOREPASSWORD);
 
-		iMailSignerRMI.reloadConfiguration(getWorkerId());
-	}
 	
 	public void test01TestSimpleMailSigner() throws Exception{
 		
@@ -132,6 +137,35 @@ public class TestSimpleMailSigner extends BaseMailSignerTester {
 		assertNull(mail4);
 		
 	}
+	
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		// Set SimpleMailSigner properties
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.REQUIRESMTPAUTH);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.FROMADDRESS);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNERADDRESS);	
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SMIMEHelper.EXPLAINATION_TEXT);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.FROMNAME);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNERNAME);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.REPLYTOADDRESS);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.REPLYTONAME);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.USEREBUILDFROM);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.CHANGEREPLYTO);
+		
+		// crypto token properties
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), P12CryptoToken.KEYSTOREPATH);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), P12CryptoToken.KEYSTOREPASSWORD);
+
+		TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
+		"" + getWorkerId()});
+		
+		TestUtils.assertSuccessfulExecution(new String[] {"module", "remove","SIMPLEMAILSIGNER", "" + moduleVersion});		
+		assertTrue(TestUtils.grepTempOut("Removal of module successful."));
+		
+		iMailSignerRMI.reloadConfiguration(0);
+		
+		TestingSecurityManager.remove();
+	}
 
 	@Override
 	protected String getCryptoTokenClasspath() {		
@@ -145,7 +179,7 @@ public class TestSimpleMailSigner extends BaseMailSignerTester {
 
 	@Override
 	protected int getWorkerId() {
-		return 11;
+		return 4433;
 	}
 	
 	@Override

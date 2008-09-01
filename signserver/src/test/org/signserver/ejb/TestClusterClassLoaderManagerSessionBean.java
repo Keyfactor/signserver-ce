@@ -108,7 +108,7 @@ public class TestClusterClassLoaderManagerSessionBean extends TestCase {
 	}
 	
 	public void testRemoveModules() throws Exception{
-		cclMan.removeModulePart("TESTMODULE-WITHOUTDESCR", "SERVER", 1);
+		cclMan.removeModulePart("TESTMODULE-WITHOUTDESCR", "server", 1);
 		cclMan.removeModulePart("TESTMODULE-WITHDESCR", "part1", 2);
 		cclMan.removeModulePart("TESTMODULE-WITHDESCR", "part2", 2);
 		
@@ -126,7 +126,7 @@ public class TestClusterClassLoaderManagerSessionBean extends TestCase {
 		String[] parts = mARFileParser.getMARParts();
 						
 		for(String part : parts){
-		  FindInterfacesClassLoader ficl = new FindInterfacesClassLoader(mARFileParser,part);
+		  FindInterfacesClassLoader ficl = new FindInterfacesClassLoader(mARFileParser,part, System.out);
 		  Map<String, JarInputStream> jarContents = mARFileParser.getJARFiles(part);
 		  for(String jarName : jarContents.keySet()){
 			Map<String, byte[]> jarContent = mARFileParser.getJarContent(jarContents.get(jarName));

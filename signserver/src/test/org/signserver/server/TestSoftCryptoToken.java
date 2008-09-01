@@ -29,6 +29,7 @@ import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.KeyTools;
+import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
@@ -37,16 +38,22 @@ import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
+import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.testutils.TestUtils;
+import org.signserver.testutils.TestingSecurityManager;
 
 
 public class TestSoftCryptoToken extends TestCase {
 
 	private static IGlobalConfigurationSession.IRemote gCSession = null;
 	private static IWorkerSession.IRemote sSSession = null;
+	private String signserverhome;
+	private int moduleVersion;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -54,12 +61,32 @@ public class TestSoftCryptoToken extends TestCase {
 		Context context = getInitialContext();
 		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
 		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+		TestUtils.redirectToTempOut();
+		TestUtils.redirectToTempErr();
+		TestingSecurityManager.install();
+        signserverhome = System.getenv("SIGNSERVER_HOME");
+        assertNotNull(signserverhome);
+        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
 
 	}
 	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		TestingSecurityManager.remove();
+	}
+	
 	public void test00SetupDatabase() throws Exception{
-		   
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.CLASSPATH", "org.signserver.server.signers.MRTDSigner");
+		MARFileParser marFileParser = new MARFileParser(signserverhome +"/dist-server/mrtdsigner.mar");
+		moduleVersion = marFileParser.getVersionFromMARFile();
+		TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
+				signserverhome +"/dist-server/mrtdsigner.mar"});		
+		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+
+		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.CLASSPATH", "org.signserver.module.mrtdsigner.MRTDSigner");
 		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
 		
 		  
@@ -67,7 +94,9 @@ public class TestSoftCryptoToken extends TestCase {
 		  String signserverhome = System.getenv("SIGNSERVER_HOME");
 		  assertNotNull(signserverhome);
 		  sSSession.setWorkerProperty(88,"KEYALG","RSA");
-		  sSSession.setWorkerProperty(88, "KEYSPEC", "2048");		  
+		  sSSession.setWorkerProperty(88, "KEYSPEC", "2048");
+		  sSSession.setWorkerProperty(88,SignServerConstants.MODULENAME,"MRTDSIGNER");
+	      sSSession.setWorkerProperty(88,SignServerConstants.MODULEVERSION,moduleVersion+"");
 		  
 		  sSSession.reloadConfiguration(88);	
 	}
@@ -154,16 +183,11 @@ public class TestSoftCryptoToken extends TestCase {
 
 
 	public void test99TearDownDatabase() throws Exception{
-		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.CLASSPATH");
-		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.SIGNERTOKEN.CLASSPATH");
-		
+		 TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
+		 "88"});
 		  
-		  sSSession.removeWorkerProperty(88, "AUTHTYPE");
-		  String signserverhome = System.getenv("SIGNSERVER_HOME");
-		  assertNotNull(signserverhome);
-		  sSSession.removeWorkerProperty(88,"KEYALG");
-		  sSSession.removeWorkerProperty(88, "KEYALG");
-		  sSSession.removeWorkerProperty(88,"KEYDATA");
+		  TestUtils.assertSuccessfulExecution(new String[] {"module", "remove","MRTDSIGNER", "" + moduleVersion});
+		  
 		  
 		  sSSession.reloadConfiguration(88);
 	}

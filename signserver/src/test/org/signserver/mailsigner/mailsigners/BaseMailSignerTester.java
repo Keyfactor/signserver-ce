@@ -85,8 +85,13 @@ public abstract class BaseMailSignerTester extends TestCase {
 	 * @throws Exception
 	 */
 	protected MimeMessage readTestInbox() throws Exception {
-		Thread.sleep(2000);
 		File testInbox = new File(signServerHome + "/tmp/testmail");
+		for(int i=0;i<10;i++){
+		  if(!testInbox.exists()){
+			  Thread.sleep(1000);
+		  }
+		}
+				
 		if(testInbox.exists()){
 		   Session session = Session.getInstance(System.getProperties(), null);
 		   FileInputStream fis = new FileInputStream(testInbox);

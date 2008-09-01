@@ -33,6 +33,7 @@ import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.ejbca.util.KeyTools;
+import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
@@ -40,7 +41,9 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.RequestAndResponseManager;
+import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.tsa.TimeStampSigner;
@@ -54,6 +57,8 @@ import org.signserver.protocol.ws.gen.ProcessResponseWS;
 import org.signserver.protocol.ws.gen.SignServerWS;
 import org.signserver.protocol.ws.gen.SignServerWSService;
 import org.signserver.protocol.ws.gen.WorkerStatusWS;
+import org.signserver.testutils.TestUtils;
+import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -69,6 +74,8 @@ public class TestMainWebService extends TestCase {
 	
 	private static X509Certificate validCert1;
 	private SignServerWS signServerWS;
+	private String signserverhome;
+	private int moduleVersion;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -80,11 +87,31 @@ public class TestMainWebService extends TestCase {
 		QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
 		SignServerWSService signServerWSService = new SignServerWSService(new URL("http://localhost:8080/signserver/signserverws/signserverws?wsdl"),qname);
 		signServerWS =  signServerWSService.getSignServerWSPort();
+		TestUtils.redirectToTempOut();
+		TestUtils.redirectToTempErr();
+		TestingSecurityManager.install();
+        signserverhome = System.getenv("SIGNSERVER_HOME");
+        assertNotNull(signserverhome);
+        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
+	}
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		TestingSecurityManager.remove();
 	}
 	
 	public void test00SetupDatabase() throws Exception{
-		   
-		gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH", "org.signserver.server.signers.TimeStampSigner");
+		MARFileParser marFileParser = new MARFileParser(signserverhome +"/dist-server/tsa.mar");
+		moduleVersion = marFileParser.getVersionFromMARFile();
+		TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
+				signserverhome +"/dist-server/tsa.mar"});		
+		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+		
+		gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH", "org.signserver.module.tsa.TimeStampSigner");
 		gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
 
 
@@ -97,6 +124,8 @@ public class TestMainWebService extends TestCase {
 		//sSSession.setWorkerProperty(9, "KEYSTOREPASSWORD", "foo123");
 		sSSession.setWorkerProperty(9,TimeStampSigner.DEFAULTTSAPOLICYOID,"1.0.1.2.33");
 		sSSession.setWorkerProperty(9,TimeStampSigner.TSA,"CN=TimeStampTest1");
+		sSSession.setWorkerProperty(9,SignServerConstants.MODULENAME,"TSA");
+		sSSession.setWorkerProperty(9,SignServerConstants.MODULEVERSION,moduleVersion+"");
 
 		sSSession.reloadConfiguration(9);	
 
@@ -290,18 +319,11 @@ public class TestMainWebService extends TestCase {
 	
 	
 	public void test99TearDownDatabase() throws Exception{
-		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH");
-		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.SIGNERTOKEN.CLASSPATH");
-		
+		 TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
+		 "9"});
 		  
-		  sSSession.removeWorkerProperty(9, "AUTHTYPE");
-		  sSSession.removeWorkerProperty(9, "TESTAUTHPROP");
-		  String signserverhome = System.getenv("SIGNSERVER_HOME");
-		  assertNotNull(signserverhome);
-		  sSSession.removeWorkerProperty(9,"KEYSTOREPATH");
-		  sSSession.removeWorkerProperty(9, "KEYSTOREPASSWORD");
-		  sSSession.removeWorkerProperty(9,TimeStampSigner.DEFAULTTSAPOLICYOID);
-		  sSSession.removeWorkerProperty(9,TimeStampSigner.TSA);
+		  TestUtils.assertSuccessfulExecution(new String[] {"module", "remove","TSA", "" + moduleVersion});
+		  
 		  
 		  sSSession.reloadConfiguration(9);
 		  

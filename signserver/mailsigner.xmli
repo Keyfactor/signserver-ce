@@ -101,11 +101,108 @@ rmi.server.port           = ${rmi.server.port}
 	    </jar>
     </target>
 	
-	<target name="mailsigner-pkgdist"  if="buildMailSigner">
-	  <echo>Binary Distribution packaging for the MailSigner isn't implemented yet.</echo>
+    <target name="mailsigner-pkgdist"  depends="mailsigner-pkgdist-server, mailsigner-pkgdist-mgmt" if="buildMailSigner">	  
     </target>
 	
+    <target name="mailsigner-pkgdist-server" depends="setup-james" if="buildMailSigner">
+	  <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
+	  	<isset property="${env.DESTDIR}"/>
+	  </condition>
+		
+	   <mkdir dir="${pkgdist.destdir}"/>
+
+	   <property name="pkgdist.deploydir" value="${pkgdist.destdir}/usr/share/mailsigner-server/james"/>
+	   <mkdir dir="${pkgdist.deploydir}"/>
+	   <copy todir="${pkgdist.deploydir}" >
+		  <fileset dir="extapps/james">
+		  	<include name="**"/>
+		  </fileset>
+	   </copy>	
+	   <property name="pkgdist.logconfdir" value="${pkgdist.destdir}/usr/share/mailsigner-server/logconf"/>
+	   <mkdir dir="${pkgdist.logconfdir}"/> 
+	   <copy todir="${pkgdist.logconfdir}" >
+	      <fileset dir="src/install/common">
+	         <include name="james-log*.xml"/>            
+	      </fileset>
+	    </copy>
+          <!--
+	    <property name="pkgdist.initscriptdir" value="${pkgdist.destdir}/usr/share/mailsigner-server/bin"/>
+	    <mkdir dir="${pkgdist.initscriptdir}"/>
+	    <copy todir="${pkgdist.initscriptdir}" >
+	      <fileset dir="src/install/common">
+	        <include name="*.sh"/>           
+	      </fileset>
+	    </copy>-->
+
+	 </target>
+	 	
+	 <target name="mailsigner-pkgdist-mgmt" if="buildMailSigner">
+	    <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
+    	      <isset property="${env.DESTDIR}"/>
+    	    </condition>
 	
+	    <mkdir dir="${pkgdist.destdir}"/>
+	 		
+	    <property name="pkgdist.bindir" value="${pkgdist.destdir}/usr/share/mailsigner-mgmt/bin" />
+	    <mkdir dir="${pkgdist.bindir}"/>
+		
+	    <property name="pkgdist.clilibdir" value="${pkgdist.destdir}/usr/share/mailsigner-mgmt/lib" />
+     	    <mkdir dir="${pkgdist.clilibdir}"/>
+     		
+	    <copy todir="${pkgdist.bindir}">
+		 <fileset dir="bin">
+		    <include name="signserver.sh"/>
+		    <include name="signserver.cmd"/>
+		    <include name="log4j.properties"/>
+		 </fileset>
+	    </copy>	
+          <move file="${pkgdist.bindir}/signserver.sh" tofile="${pkgdist.bindir}/mailsigner.sh"/>	
+          <move file="${pkgdist.bindir}/signserver.cmd" tofile="${pkgdist.bindir}/mailsigner.cmd"/>	
+	    <copy todir="${pkgdist.clilibdir}">
+		 <fileset dir="${client.dist.dir}">
+		   <include name="signserver-cli.jar"/>		   	 
+		 </fileset>
+		 <fileset dir="${client.dist.dir}/lib">
+		   <include name="jbossall-client.jar"/>		   	 
+		 </fileset>
+		 <fileset dir="${lib}">
+		    <include name="log4j.jar"/>
+		    <include name="ejbca-util.jar"/>
+		    <include name="commons-lang-2.0.jar"/>
+		 </fileset>
+	       <fileset dir="${lib}/1.5">
+			 <include name="bcprov-jdk.jar"/>
+			 <include name="bcmail-jdk.jar"/>
+		  </fileset>
+		  <fileset dir="${lib}/asm">
+		     <include name="asm-3.1.jar"/>
+		     <include name="asm-commons-3.1.jar"/>
+		  </fileset>
+		  <fileset dir="${lib}/ext/ejb">
+		     <include name="jboss-ejb3x.jar"/>
+		  </fileset>	
+	        <fileset dir="${lib}/ext/james">
+			 <include name="james-2.3.1.jar"/>
+		  </fileset>
+	    </copy>	
+
+		<property name="pkgdist.sampleconfigdir" value="${pkgdist.destdir}/usr/share/mailsigner-mgmt/sample-configs" />
+		<mkdir dir="${pkgdist.sampleconfigdir}"/>
+	    <copy todir="${pkgdist.sampleconfigdir}">
+	       <fileset dir="sample-configs">
+	         <include name="*.*"/>
+	       </fileset>
+	    </copy> 
+
+	    <property name="pkgdist.moduledir" value="${pkgdist.destdir}/usr/share/mailsigner-mgmt/modules" />
+          <mkdir dir="${pkgdist.moduledir}"/>
+          <copy todir="${pkgdist.moduledir}">
+           <fileset dir="dist-server">
+             <include name="*.mar"/>
+           </fileset>
+          </copy>
+    </target>
+
 	
 	<target name="setup-james"  if="buildMailSigner">
 	  <delete file="${james-dir}/apps/james/SAR-INF/config.xml"/>

@@ -167,6 +167,7 @@
 				<replacestring from="@signserver.truststorepwd@" to="${clusterclassloader.truststorepwd}"/>
 				<replacestring from="@SignServerCommandFactory@" to="${custom.commandfactory}"/>
 				<replacestring from="@signserver.configfile@" to="${signserver.configfile}"/>
+				<replacestring from="@BUILDMODE@" to="${build.mode}"/>
 			</tokenfilter>
 			</filterchain>
 	    </copy>

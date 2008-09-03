@@ -16,7 +16,6 @@ package org.signserver.common;
 
 import java.io.Serializable;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -34,6 +33,8 @@ import org.apache.log4j.Logger;
 public class GlobalConfiguration implements Serializable{
 	
   private static transient Logger log = Logger.getLogger(GlobalConfiguration.class);
+  
+  private static final transient String BUILDMODE = "@BUILDMODE@";
    
   private static final long serialVersionUID = 1L;
   
@@ -221,7 +222,17 @@ public Enumeration<String> getKeyEnumeration(){
   }
 
 
-
+  private static transient String buildMode = null;
+  public static String getBuildMode(){
+	  if(buildMode== null){
+		  if(BUILDMODE.startsWith("@BUILDMODE")){
+			  buildMode = "SIGNSERVER";
+		  }else{
+			  buildMode = BUILDMODE;
+		  }
+	  }
+	  return buildMode;
+  }
 
 	
 	

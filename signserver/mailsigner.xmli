@@ -25,6 +25,7 @@
     	<fileset dir="lib/asm" includes="*.jar" />
     	<fileset dir="${ant.home}/lib" includes="ant.jar" />
     	<fileset dir="lib/ext/ejb" includes="ejb3-persistence.jar" />
+    	<fileset dir="lib/jaxws" includes="jaxb*.jar" />
     </path>
 	
     <path id="mailsigner.ext.classpath">
@@ -224,9 +225,12 @@ rmi.server.port           = ${rmi.server.port}
       	<fileset dir="lib/${server.java.target}">
       	  <include name="*.jar"/>
       	</fileset>
-        <fileset dir="lib/asm">
-         <include name="*.jar"/>
-       </fileset>
+            <fileset dir="lib/asm">
+              <include name="*.jar"/>
+            </fileset>
+            <fileset dir="lib/jaxws">
+              <include name="jaxb*.jar"/>
+            </fileset>
       </copy>
             
 	</target>

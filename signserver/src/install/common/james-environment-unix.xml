@@ -30,6 +30,7 @@
           <!-- Log messages to a file and rotate it everyday at midnight -->
           <appender name="DATE_LOGFILE" class="org.apache.log4j.DailyRollingFileAppender">
             <param name="File" value="/var/log/mailsigner/james.log"/>
+            <param name="Threshold" value="INFO"/>
             <param name="Append" value="true"/>
             <!-- Rollover at midnight each day -->
             <param name="DatePattern" value="'.'yyyy-MM-dd"/>

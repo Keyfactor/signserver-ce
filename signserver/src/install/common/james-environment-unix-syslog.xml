@@ -31,6 +31,7 @@
           <appender name="DATE_LOGFILE" class="org.apache.log4j.DailyRollingFileAppender">
             <param name="File" value="/var/log/mailsigner/james.log"/>
             <param name="Append" value="true"/>
+            <param name="Threshold" value="INFO"/>
             <!-- Rollover at midnight each day -->
             <param name="DatePattern" value="'.'yyyy-MM-dd"/>
             <!-- Message layout format -->
@@ -42,6 +43,7 @@
           <!-- Syslog events -->
           <appender name="SYSLOG" class="org.apache.log4j.net.SyslogAppender">              
             <param name="Facility" value="LOCAL7"/>
+            <param name="Threshold" value="INFO"/>
             <param name="FacilityPrinting" value="true"/>
             <param name="SyslogHost" value="@SYSLOG_HOST@"/>
             <layout class="org.apache.log4j.PatternLayout">

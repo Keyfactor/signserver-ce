@@ -123,18 +123,28 @@ public class signserver {
         
         File unixConfigFile = new File("/etc/signserver/signserver.conf");
         File windowsConfigFile = new File(System.getenv("SYSTEMROOT") +"/signserver.conf");
+        File mailSignerUnixConfigFile = new File("/etc/mailsigner/mailsigner.conf");
+        File mailSignerWindowsConfigFile = new File(System.getenv("SYSTEMROOT") +"/mailsigner.conf");
         if(unixConfigFile.exists()){
         	propsfile = "/etc/signserver/signserver.conf";
         }else{
         	if(windowsConfigFile.exists()){
         		propsfile = System.getenv("SYSTEMROOT") +"/signserver.conf";
         	}else{
-        		if(System.getenv("SIGNSERVER_HOME") != null){
-        			propsfile = System.getenv("SIGNSERVER_HOME") + "/"+ propsfile;
-        		}else{        
-        			if(System.getenv("SIGNSRV_HOME") != null){
-        				propsfile = System.getenv("SIGNSRV_HOME") + "/"+ propsfile;
-        			}            
+                if(mailSignerUnixConfigFile.exists()){
+                	propsfile = "/etc/mailsigner/mailsigner.conf";
+                }else{
+                	if(mailSignerWindowsConfigFile.exists()){
+                		propsfile = System.getenv("SYSTEMROOT") +"/mailsigner.conf";
+                	}else{
+                		if(System.getenv("SIGNSERVER_HOME") != null){
+                			propsfile = System.getenv("SIGNSERVER_HOME") + "/"+ propsfile;
+                		}else{        
+                			if(System.getenv("SIGNSRV_HOME") != null){
+                				propsfile = System.getenv("SIGNSRV_HOME") + "/"+ propsfile;
+                			}      
+                		}
+                	}
         		}
         	}
         }

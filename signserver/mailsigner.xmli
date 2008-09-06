@@ -122,17 +122,17 @@ rmi.server.port           = ${rmi.server.port}
 	   <mkdir dir="${pkgdist.logconfdir}"/> 
 	   <copy todir="${pkgdist.logconfdir}" >
 	      <fileset dir="src/install/common">
-	         <include name="james-log*.xml"/>            
+	         <include name="james-environment*.xml"/>            
 	      </fileset>
 	    </copy>
-          <!--
+          
 	    <property name="pkgdist.initscriptdir" value="${pkgdist.destdir}/usr/share/mailsigner-server/bin"/>
 	    <mkdir dir="${pkgdist.initscriptdir}"/>
 	    <copy todir="${pkgdist.initscriptdir}" >
 	      <fileset dir="src/install/common">
-	        <include name="*.sh"/>           
+	        <include name="mailsigner*.sh"/>           
 	      </fileset>
-	    </copy>-->
+	    </copy>
 
 	 </target>
 	 	

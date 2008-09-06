@@ -662,7 +662,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    <mkdir dir="${pkgdist.initscriptdir}"/>
 	    <copy todir="${pkgdist.initscriptdir}" >
 	      <fileset dir="src/install/common">
-	        <include name="*.sh"/>           
+	        <include name="signserver*.sh"/>           
 	      </fileset>
 	      <fileset dir="bin">
 		     <include name="genservercert.sh"/>

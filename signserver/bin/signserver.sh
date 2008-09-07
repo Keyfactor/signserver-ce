@@ -60,6 +60,9 @@ if [ ! -n "${SIGNSERVER_HOME}" ]; then
   if [ -f /etc/signserver/signservermgmt.env ]; then
      . /etc/signserver/signservermgmt.env
   fi
+  if [ -f /etc/mailsigner/mailsignermgmt.env ]; then
+     . /etc/mailsigner/mailsignermgmt.env
+  fi
   if [ -f /usr/share/signserver/bin/signserver.sh ]; then
      SIGNSRV_HOME=/usr/share/signserver
   fi

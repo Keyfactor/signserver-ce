@@ -36,7 +36,7 @@
                 <validVersion>
                     <maxVersion></maxVersion>
                     <minVersion>1.5.0</minVersion>
-                    <requireJDK>0</requireJDK>
+                    <requireJDK>1</requireJDK>
                     <vendor>sun</vendor>
                 </validVersion>
             </validVersionList>
@@ -256,11 +256,15 @@
                    <target>/etc/init.d/signserver</target>                   
                 </createSymLink>
                 <createSymLink>
-                   <linkName>/etc/rc3.d/S99signserver</linkName>
+                   <linkName>/etc/rc4.d/S99signserver</linkName>
                    <target>/etc/init.d/signserver</target>                   
                 </createSymLink>
                 <createSymLink>
                    <linkName>/etc/rc5.d/S99signserver</linkName>
+                   <target>/etc/init.d/signserver</target>                   
+                </createSymLink>
+                <createSymLink>
+                   <linkName>/etc/rc6.d/K01signserver</linkName>
                    <target>/etc/init.d/signserver</target>                   
                 </createSymLink>
                 <createSymLink>

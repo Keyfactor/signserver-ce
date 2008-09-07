@@ -1,18 +1,18 @@
 <project>
-    <shortName>signservermgmt</shortName>
-    <fullName>SignServer Management</fullName>
+    <shortName>mailsignermgmt</shortName>
+    <fullName>SignServer MailSigner Management</fullName>
     <version>3.1</version>
     <installerFilename></installerFilename>
-    <readmeFile>../common/README.txt</readmeFile>
+    <readmeFile>../common/README-MailSigner.txt</readmeFile>
     <licenseFile>../../../doc/lgpl-2.1.txt</licenseFile>
-    <description>CLI interface for managing a SignServer Cluster</description>
+    <description>CLI interface for managing a MailSigner Server.</description>
     <rebootRequired>0</rebootRequired>    
     <startMenuGroupName></startMenuGroupName>
     <preInstallationActionList>
         <setInstallerVariable>
             <name>installdir</name>
             <persist>0</persist>
-            <value>${env(PROGRAMFILES)}/SignServer/SignServer-${product_version}</value>
+            <value>${env(PROGRAMFILES)}/MailSigner/MailSigner-${product_version}</value>
         </setInstallerVariable>
         <setInstallerVariable>
             <name>uninstallerName</name>
@@ -22,7 +22,7 @@
         <setInstallerVariable>
             <name>conffile</name>
             <persist>1</persist>
-            <value>${env(SYSTEMROOT)}\signserver.conf</value>
+            <value>${env(SYSTEMROOT)}\mailsigner.conf</value>
         </setInstallerVariable>
         <autodetectJava>
             <promptUser>0</promptUser>
@@ -80,7 +80,7 @@
                 </addDirectoryToPath>
                 <addTextToFile>
                     <file>${conffile}</file>
-                    <text>#SignServer properties file.</text>
+                    <text>#MailSigner properties file.</text>
                     <ruleList>
                         <fileTest>
                             <condition>not_exists</condition>
@@ -91,12 +91,12 @@
                 <propertiesFileSet>
                     <file>${conffile}</file>
                     <key>hostname.masternode</key>
-                    <value>${masternode}</value>
+                    <value>${serverhost}</value>
                 </propertiesFileSet>
                 <propertiesFileSet>
                     <file>${conffile}</file>
                     <key>hostname.allnodes</key>
-                    <value>${allnodes}</value>
+                    <value>${serverhost}</value>
                 </propertiesFileSet>
                 <addEnvironmentVariable>
                     <name>SIGNSERVER_HOME</name>
@@ -151,12 +151,12 @@ Do you want to remove the configuration file ${conffile} ?</text>
             </ruleList>
         </actionGroup>
     </postUninstallationActionList>
-    <description>CLI interface for managing a SignServer Cluster</description>
+    <description>CLI interface for managing a MailSigner Server.</description>
     <enableRollback>1</enableRollback>
     <release>3.1</release>
     <requireInstallationByRootUser>1</requireInstallationByRootUser>
     <saveRelativePaths>1</saveRelativePaths>
-    <summary>CLI interface for managing a SignServer Cluster.</summary>
+    <summary>CLI interface for managing a MailSigner Server.</summary>
 
 	<!-- <registerWithPackageDatabase>1</registerWithPackageDatabase> -->
 	<vendor>PrimeKey Solutions AB</vendor>
@@ -188,10 +188,10 @@ Do you want to remove the configuration file ${conffile} ?</text>
                             <windowsPath>${installdir}</windowsPath>
                         </shortcut>
                         <fileShortcut>
-                            <comment>SignServer installation configuration</comment>
+                            <comment>MailSigner installation configuration</comment>
                             <filePath>${conffile}</filePath>
                             <icon></icon>
-                            <name>signserver.conf</name>
+                            <name>mailsigner.conf</name>
                             <platforms>windows</platforms>
                             <runInTerminal>0</runInTerminal>
                             <windowsIcon></windowsIcon>
@@ -206,16 +206,16 @@ Do you want to remove the configuration file ${conffile} ?</text>
                     <platforms>windows</platforms>
                     <distributionFileList>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/usr/share/signserver-mgmt/bin</origin>
+                            <origin>../../../dist-pkg/usr/share/mailsigner-mgmt/bin</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/usr/share/signserver-mgmt/lib</origin>
+                            <origin>../../../dist-pkg/usr/share/mailsigner-mgmt/lib</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/usr/share/signserver-mgmt/modules</origin>
+                            <origin>../../../dist-pkg/usr/share/mailsigner-mgmt/modules</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/usr/share/signserver-mgmt/sample-configs</origin>
+                            <origin>../../../dist-pkg/usr/share/mailsigner-mgmt/sample-configs</origin>
                         </distributionDirectory>
                     </distributionFileList>
                 </folder>
@@ -224,14 +224,14 @@ Do you want to remove the configuration file ${conffile} ?</text>
     </componentList>
     <parameterList>
         <stringParameter>
-            <name>masternode</name>
-            <description>Master Node</description>
-            <explanation>Enter the hostname of your SignServer master node, this is the node that will primarily be used by the CLI interface.</explanation>
+            <name>serverhost</name>
+            <description>Server Hostname</description>
+            <explanation>Enter the hostname of your MailSigner server, this is the hostname that will primarily be used by the CLI interface.</explanation>
             <value></value>
             <default>localhost</default>
             <allowEmptyValue>0</allowEmptyValue>
             <ask>yes</ask>
-            <cliOptionName>masternode</cliOptionName>
+            <cliOptionName>serverhost</cliOptionName>
             <ruleEvaluationLogic>or</ruleEvaluationLogic>
             <width>30</width>
             <ruleList>
@@ -244,24 +244,6 @@ Do you want to remove the configuration file ${conffile} ?</text>
                     <path>${conffile}</path>
                     <text>hostname.masternode</text>
                 </fileContentTest>
-            </ruleList>
-        </stringParameter>
-        <stringParameter>
-            <name>allnodes</name>
-            <description>All Nodes, separated by ';'</description>
-            <explanation>Enter the hostnames of all the nodes in the SignServer Cluster.</explanation>
-            <value></value>
-            <default>localhost</default>
-            <allowEmptyValue>0</allowEmptyValue>
-            <ask>yes</ask>
-            <cliOptionName>allnodes</cliOptionName>
-            <ruleEvaluationLogic>or</ruleEvaluationLogic>
-            <width>30</width>
-            <ruleList>
-                <fileTest>
-                    <condition>not_exists</condition>
-                    <path>${conffile}</path>
-                </fileTest>
                 <fileContentTest>
                     <logic>does_not_contain</logic>
                     <path>${conffile}</path>

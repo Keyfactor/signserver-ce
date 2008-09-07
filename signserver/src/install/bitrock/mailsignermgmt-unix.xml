@@ -1,20 +1,20 @@
 <project>
-    <shortName>signservermgmt</shortName>
-    <fullName>SignServer Management</fullName>
+    <shortName>mailsignermgmt</shortName>
+    <fullName>SignServer MailSigner Management</fullName>
     <version>3.1</version>
-    <readmeFile>../common/README.txt</readmeFile>
+    <readmeFile>../common/README-MailSigner.txt</readmeFile>
     <licenseFile>../../../doc/lgpl-2.1.txt</licenseFile>
     <!-- <registerWithPackageDatabase>1</registerWithPackageDatabase> -->
     <vendor>PrimeKey Solutions AB</vendor>
-    <summary>CLI interface for managing a SignServer Cluster.</summary>
+    <summary>CLI interface for managing a MailSigner Server.</summary>
     <release>3.1</release>
-    <description>CLI interface for managing a SignServer Cluster</description>
+    <description>CLI interface for managing a MailSigner Server</description>
     <rebootRequired>0</rebootRequired>    
     <startMenuGroupName></startMenuGroupName>
     <preInstallationActionList>
         <setInstallerVariable>
                 <name>installdir</name>
-                <value>/opt/signserver-${product_version}</value>
+                <value>/opt/mailsigner-${product_version}</value>
                 <ruleList>
                   <platformTest>                    
                     <type>linux</type>
@@ -44,38 +44,38 @@
         <addUser>
             <abortOnError>0</abortOnError>
             <showMessageOnError>0</showMessageOnError>
-            <username>signserver</username>
+            <username>mailsigner</username>
         </addUser>
         <addGroup>
             <abortOnError>0</abortOnError>
-            <groupname>signserver</groupname>
+            <groupname>mailsigner</groupname>
             <showMessageOnError>0</showMessageOnError>
         </addGroup>
         <addGroupToUser>
-            <groupname>signserver</groupname>
-            <username>signserver</username>
+            <groupname>mailsigner</groupname>
+            <username>mailsigner</username>
         </addGroupToUser>
         <actionGroup>
             <actionList>
               <propertiesFileGet>
-                <file>/etc/signserver/signserver.conf</file>
+                <file>/etc/mailsigner/mailsigner.conf</file>
                 <variable>masternode</variable>
                 <key>hostname.masternode</key>
                 <ruleList>
                   <fileContentTest>
-                    <path>/etc/signserver/signserver.conf</path>
+                    <path>/etc/mailsigner/mailsigner.conf</path>
                     <logic>contains</logic>
                     <text>hostname.masternode</text>
                   </fileContentTest>
                 </ruleList>
               </propertiesFileGet>
               <propertiesFileGet>
-                <file>/etc/signserver/signserver.conf</file>
+                <file>/etc/mailsigner/mailsigner.conf</file>
                 <variable>allnodes</variable>
                 <key>hostname.allnodes</key>
                 <ruleList>
                   <fileContentTest>
-                    <path>/etc/signserver/signserver.conf</path>
+                    <path>/etc/mailsigner/mailsigner.conf</path>
                     <logic>contains</logic>
                     <text>hostname.allnodes</text>
                   </fileContentTest>
@@ -88,7 +88,7 @@
                     <type>linux</type>
                 </platformTest>
                 <fileTest>                    
-                  <path>/etc/signserver/signserver.conf</path>
+                  <path>/etc/mailsigner/mailsigner.conf</path>
                   <condition>exists</condition>
                 </fileTest>
             </ruleList>
@@ -101,37 +101,37 @@
                     <files>*/*.sh</files>
                 </dos2unix>
                 <createDirectory>
-                    <path>/etc/signserver</path>
+                    <path>/etc/mailsigner</path>
                 </createDirectory>
                 <createSymLink>
-                  <linkName>/usr/local/bin/signserver.sh</linkName>
-                  <target>${installdir}/bin/signserver.sh</target>
+                  <linkName>/usr/local/bin/mailsigner.sh</linkName>
+                  <target>${installdir}/bin/mailsigner.sh</target>
                 </createSymLink>    
                 <addTextToFile>
-                  <file>/etc/signserver/signserver.conf</file>
-                  <text>#SignServer properties file.</text>
+                  <file>/etc/mailsigner/mailsigner.conf</file>
+                  <text>#MailSigner properties file.</text>
                   <ruleList>
                     <fileTest>                    
-                      <path>/etc/signserver/signserver.conf</path>
+                      <path>/etc/mailsigner/mailsigner.conf</path>
                       <condition>not_exists</condition>
                     </fileTest>
                   </ruleList>
                 </addTextToFile>
                 <propertiesFileSet>
-                  <file>/etc/signserver/signserver.conf</file>
+                  <file>/etc/mailsigner/mailsigner.conf</file>
                   <key>hostname.masternode</key>
-                  <value>${masternode}</value>
+                  <value>${serverhost}</value>
                 </propertiesFileSet>
                 <propertiesFileSet>
-                  <file>/etc/signserver/signserver.conf</file>
+                  <file>/etc/mailsigner/mailsigner.conf</file>
                   <key>hostname.allnodes</key>
-                  <value>${allnodes}</value>
+                  <value>${serverhost}</value>
                 </propertiesFileSet>  
                 <deleteFile>
-                  <path>/etc/signserver/signservermgmt.env</path>
+                  <path>/etc/mailsigner/mailsignermgmt.env</path>
                 </deleteFile>
                 <addTextToFile>
-                  <file>/etc/signserver/signservermgmt.env</file>
+                  <file>/etc/mailsigner/mailsignermgmt.env</file>
                   <text>export SIGNSRV_HOME=${installdir}</text>
                 </addTextToFile>
             </actionList>
@@ -150,7 +150,7 @@
             <showQuestion>
             <text>
 
-Do you want to remove the user 'signserver'?</text>
+Do you want to remove the user 'mailsigner'?</text>
              <variable>remove_user</variable>
             </showQuestion>
             <actionGroup>
@@ -158,11 +158,11 @@ Do you want to remove the user 'signserver'?</text>
                 <deleteUser>
                   <abortOnError>0</abortOnError>
                   <showMessageOnError>0</showMessageOnError>
-                  <username>signserver</username>            
+                  <username>mailsigner</username>            
                 </deleteUser>
                 <deleteGroup>
                   <abortOnError>0</abortOnError>
-                  <groupname>signserver</groupname>
+                  <groupname>mailsigner</groupname>
                   <showMessageOnError>0</showMessageOnError>
                 </deleteGroup>
               </actionList>
@@ -177,17 +177,17 @@ Do you want to remove the user 'signserver'?</text>
             <showQuestion>
             <text>
 
-Do you want to remove the configuration files in '/etc/signserver' ?</text>
+Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
              <variable>remove_config</variable>
              <default>no</default>
             </showQuestion>
             <actionGroup>
              <actionList>
                <deleteFile>
-                 <path>/etc/signserver/signserver.conf</path>
+                 <path>/etc/mailsigner/mailsigner.conf</path>
                </deleteFile>
                <deleteFile>
-                 <path>/etc/signserver/signservermgmt.env</path>
+                 <path>/etc/mailsigner/mailsignermgmt.env</path>
                </deleteFile>
               </actionList>
               <ruleList>
@@ -199,7 +199,7 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
               </ruleList>
             </actionGroup>
             <deleteFile>
-              <path>/usr/local/bin/signserver.sh</path>
+              <path>/usr/local/bin/mailsigner.sh</path>
             </deleteFile>
             <createDirectory>
                 <path>/usr/local/bin</path>
@@ -219,8 +219,8 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
             </ruleList>
       </actionGroup>
     </postUninstallationActionList>
-    <defaultUnixGroup>signserver</defaultUnixGroup>
-    <defaultUnixOwner>signserver</defaultUnixOwner>
+    <defaultUnixGroup>mailsigner</defaultUnixGroup>
+    <defaultUnixOwner>mailsigner</defaultUnixOwner>
     <enableRollback>1</enableRollback>
     <requireInstallationByRootUser>1</requireInstallationByRootUser>
     <saveRelativePaths>1</saveRelativePaths>
@@ -267,16 +267,16 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
                     </actionList>
                     <distributionFileList>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/usr/share/signserver-mgmt/bin</origin>
+                            <origin>../../../dist-pkg/usr/share/mailsigner-mgmt/bin</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/usr/share/signserver-mgmt/lib</origin>
+                            <origin>../../../dist-pkg/usr/share/mailsigner-mgmt/lib</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/usr/share/signserver-mgmt/modules</origin>
+                            <origin>../../../dist-pkg/usr/share/mailsigner-mgmt/modules</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/usr/share/signserver-mgmt/sample-configs</origin>
+                            <origin>../../../dist-pkg/usr/share/mailsigner-mgmt/sample-configs</origin>
                         </distributionDirectory>
                     </distributionFileList>
                 </folder>
@@ -285,47 +285,32 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
     </componentList>
     <parameterList>
         <stringParameter>
-          <name>masternode</name>
+          <name>serverhost</name>
           <default>localhost</default>
-          <description>Master Node</description>
-          <explanation>Enter the hostname of your SignServer master node, this is the node that will primarily be used by the CLI interface.</explanation>
+          <description>Server Hostname</description>
+          <explanation>Enter the hostname of your MailSigner server, this is the hostname that will primarily be used by the CLI interface.</explanation>
             <allowEmptyValue>0</allowEmptyValue>
             <ask>yes</ask>
-            <cliOptionName>masternode</cliOptionName>
+            <cliOptionName>serverhost</cliOptionName>
             <ruleEvaluationLogic>or</ruleEvaluationLogic>
             <ruleList>
                 <fileTest>                    
-                  <path>/etc/signserver/signserver.conf</path>
+                  <path>/etc/mailsigner/mailsigner.conf</path>
                   <condition>not_exists</condition>
                 </fileTest>
                 <fileContentTest>
-                  <path>/etc/signserver/signserver.conf</path>
+                  <path>/etc/mailsigner/mailsigner.conf</path>
                   <logic>does_not_contain</logic>
                   <text>hostname.masternode</text>
                 </fileContentTest>
-            </ruleList>
-        </stringParameter>
-        <stringParameter>
-          <name>allnodes</name>
-          <default>localhost</default>
-          <description>All Nodes, separated by ';'</description>
-          <explanation>Enter the hostnames of all the nodes in the SignServer Cluster.</explanation>
-            <allowEmptyValue>0</allowEmptyValue>
-            <ask>yes</ask>
-            <cliOptionName>allnodes</cliOptionName>
-            <ruleEvaluationLogic>or</ruleEvaluationLogic>
-            <ruleList>     
-                <fileTest>                    
-                  <path>/etc/signserver/signserver.conf</path>
-                  <condition>not_exists</condition>
-                </fileTest>           
                 <fileContentTest>
-                  <path>/etc/signserver/signserver.conf</path>
+                  <path>/etc/mailsigner/mailsigner.conf</path>
                   <logic>does_not_contain</logic>
                   <text>hostname.allnodes</text>
                 </fileContentTest>
             </ruleList>
         </stringParameter>
+
         <directoryParameter>
             <name>installdir</name>
             <description>Installer.Parameter.installdir.description</description>

@@ -56,7 +56,7 @@ public class PropertyFileStore {
 			   String phoenixhome = System.getenv("PHOENIX_HOME");
 			   File confDir = new File(phoenixhome +"/conf");
 			   if(phoenixhome != null && confDir.exists()){
-				   instance = new PropertyFileStore(phoenixhome +"/james/conf/mailsignerdata.properties");
+				   instance = new PropertyFileStore(phoenixhome +"/conf/mailsignerdata.properties");
 			   }			   
 		}
 		

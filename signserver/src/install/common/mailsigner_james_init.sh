@@ -67,6 +67,7 @@ done
 
 # Get standard environment variables
 PHOENIX_HOME=@PHOENIX_HOME@
+export PHOENIX_HOME
 JAVA_EXE=@JAVA_EXE@
 
 #setup time between signals to kill phoenix 

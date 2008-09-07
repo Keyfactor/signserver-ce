@@ -281,6 +281,13 @@ public class XMLCCLResourceManager {
 
 	private static String getXMLFileLocation() {
 		if(xMLFileLocation == null){
+			   String phoenixhome = System.getenv("PHOENIX_HOME");
+			   File confDir = new File(phoenixhome +"/james/conf");
+			   if(phoenixhome != null && confDir.exists()){
+				   xMLFileLocation  = phoenixhome +"/james/conf/cclresources.xml";
+			   }			   
+		}
+		if(xMLFileLocation == null){
 			   String signserverhome = System.getenv("SIGNSERVER_HOME");
 			   if(signserverhome == null){
 				   log.error("Error: Environment variable SIGNSERVER_HOME isn't set");

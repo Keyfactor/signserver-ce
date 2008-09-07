@@ -53,6 +53,14 @@ public class PropertyFileStore {
 	 */
 	public static PropertyFileStore getInstance(){
 		if(instance == null){
+			   String phoenixhome = System.getenv("PHOENIX_HOME");
+			   File confDir = new File(phoenixhome +"/james/conf");
+			   if(phoenixhome != null && confDir.exists()){
+				   instance = new PropertyFileStore(phoenixhome +"/james/conf/mailsignerdata.properties");
+			   }			   
+		}
+		
+		if(instance == null){
 		   String signserverhome = System.getenv("SIGNSERVER_HOME");
 		   if(signserverhome == null){
 			   log.error("Error: Environment variable SIGNSERVER_HOME isn't set");

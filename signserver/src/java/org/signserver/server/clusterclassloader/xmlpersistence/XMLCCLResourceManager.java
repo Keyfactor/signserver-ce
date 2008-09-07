@@ -282,9 +282,9 @@ public class XMLCCLResourceManager {
 	private static String getXMLFileLocation() {
 		if(xMLFileLocation == null){
 			   String phoenixhome = System.getenv("PHOENIX_HOME");
-			   File confDir = new File(phoenixhome +"/james/conf");
+			   File confDir = new File(phoenixhome +"/conf");
 			   if(phoenixhome != null && confDir.exists()){
-				   xMLFileLocation  = phoenixhome +"/james/conf/cclresources.xml";
+				   xMLFileLocation  = phoenixhome +"/conf/cclresources.xml";
 			   }			   
 		}
 		if(xMLFileLocation == null){

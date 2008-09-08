@@ -598,8 +598,8 @@ Regards, Postmaster XXX.YYY
              
             <!-- <gateway>gateway.someorg.org</gateway> 
              <gatewayPort>25</gatewayPort> -->
-             <!--@GATEWAYHOST@@-->
-             <!--@GATEWAYPORT@@-->
+             <!--@GATEWAYHOST1@<@GATEWAYHOST2@-->
+             <!--@GATEWAYPORT1@<@GATEWAYPORT2@-->
             <!-- If the gateway requires smtp authentication the following directives -->
             <!-- (gatewayusername/gatewayPassword) can be used. -->
             <!--

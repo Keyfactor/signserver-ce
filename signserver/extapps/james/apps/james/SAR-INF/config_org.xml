@@ -595,9 +595,11 @@ Regards, Postmaster XXX.YYY
             <!-- multiple gateway elements, each of which may also have a port -->
             <!-- e.g., mygateway:2525 -->
             <!-- the gatewayPort element is used as a default -->
-
-            <!--usegateway <gateway>gateway.someorg.org</gateway> 
-             <gatewayPort>25</gatewayPort> usegateway-->
+             
+            <!-- <gateway>gateway.someorg.org</gateway> 
+             <gatewayPort>25</gatewayPort> -->
+             <!--@GATEWAYHOST@@-->
+             <!--@GATEWAYPORT@@-->
             <!-- If the gateway requires smtp authentication the following directives -->
             <!-- (gatewayusername/gatewayPassword) can be used. -->
             <!--

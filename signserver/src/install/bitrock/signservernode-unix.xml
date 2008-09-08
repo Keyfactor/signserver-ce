@@ -922,22 +922,22 @@ Do you want to remove the configuration files in '/etc/signserver' ?</text>
                     </actionList>
                     <distributionFileList>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/signserver-server/usr/share/signserver/bin</origin>
+                            <origin>../../../dist-pkg/usr/share/signserver-server/bin</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/signserver-server/usr/share/signserver/lib</origin>
+                            <origin>../../../dist-pkg/usr/share/signserver-server/lib</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/signserver-server/usr/share/signserver/deploy</origin>
+                            <origin>../../../dist-pkg/usr/share/signserver-server/deploy</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/signserver-server/usr/share/signserver/webconf</origin>
+                            <origin>../../../dist-pkg/usr/share/signserver-server/webconf</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/signserver-server/usr/share/signserver/dbconf</origin>
+                            <origin>../../../dist-pkg/usr/share/signserver-server/dbconf</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../dist-pkg/signserver-server/usr/share/signserver/logconf</origin>
+                            <origin>../../../dist-pkg/usr/share/signserver-server/logconf</origin>
                         </distributionDirectory>
                     </distributionFileList>
                 </folder>

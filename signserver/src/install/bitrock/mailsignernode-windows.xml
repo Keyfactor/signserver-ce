@@ -14,21 +14,21 @@
     <preInstallationActionList>
         <setInstallerVariable>
                 <name>installdir</name>
-                <value>/opt/mailsigner-${product_version}</value>
-                <ruleList>
-                  <platformTest>                    
-                    <type>linux</type>
-                  </platformTest>                
-                </ruleList>
+                <value>${env(PROGRAMFILES)}/MailSigner/MailSigner-${product_version}</value>
         </setInstallerVariable>
         <setInstallerVariable>
                 <name>uninstallerName</name>
                 <value>uninstall-${product_shortname}</value>
-                <ruleList>
-                  <platformTest>                    
-                    <type>linux</type>
-                  </platformTest>                
-                </ruleList>
+        </setInstallerVariable>
+        <setInstallerVariable>
+            <name>conffile</name>
+            <persist>1</persist>
+            <value>${env(SYSTEMROOT)}\mailsigner.conf</value>
+        </setInstallerVariable>
+        <setInstallerVariable>
+            <name>servicename</name>
+            <persist>1</persist>
+            <value>MailSigner</value>
         </setInstallerVariable>
         <autodetectJava>
             <promptUser>0</promptUser>
@@ -40,115 +40,101 @@
                     <vendor>sun</vendor>
                 </validVersion>
             </validVersionList>
-            <promptUser>1</promptUser>
-        </autodetectJava>
-        <addUser>
-            <abortOnError>0</abortOnError>
-            <showMessageOnError>0</showMessageOnError>
-            <username>mailsigner</username>
-        </addUser>
-        <addGroup>
-            <abortOnError>0</abortOnError>
-            <groupname>mailsigner</groupname>
-            <showMessageOnError>0</showMessageOnError>
-        </addGroup>
-        <addGroupToUser>
-            <groupname>mailsigner</groupname>
-            <username>mailsigner</username>
-        </addGroupToUser>
+            <promptUser>0</promptUser>
+        </autodetectJava>        
         <actionGroup>
             <actionList>
               <propertiesFileGet>
-                <file>/etc/mailsigner/mailsigner.conf</file>
+                <file>${conffile}</file>
                 <variable>smtpport</variable>
                 <key>mailsigner.smtpport</key>
                 <ruleList>
                   <fileContentTest>
-                    <path>/etc/mailsigner/mailsigner.conf</path>
+                    <path>${conffile}</path>
                     <logic>contains</logic>
                     <text>mailsigner.smtpport</text>
                   </fileContentTest>
                 </ruleList>
               </propertiesFileGet>
               <propertiesFileGet>
-                <file>/etc/mailsigner/mailsigner.conf</file>
+                <file>${conffile}</file>
                 <variable>primarydns</variable>
                 <key>mailsigner.primarydns</key>
                 <ruleList>
                   <fileContentTest>
-                    <path>/etc/mailsigner/mailsigner.conf</path>
+                    <path>${conffile}</path>
                     <logic>contains</logic>
                     <text>mailsigner.primarydns</text>
                   </fileContentTest>
                 </ruleList>
               </propertiesFileGet>
               <propertiesFileGet>
-                <file>/etc/mailsigner/mailsigner.conf</file>
+                <file>${conffile}</file>
                 <variable>secondarydns</variable>
                 <key>mailsigner.secondarydns</key>
                 <ruleList>
                   <fileContentTest>
-                    <path>/etc/mailsigner/mailsigner.conf</path>
+                    <path>${conffile}</path>
                     <logic>contains</logic>
                     <text>mailsigner.secondarydns</text>
                   </fileContentTest>
                 </ruleList>
               </propertiesFileGet>
               <propertiesFileGet>
-                <file>/etc/mailsigner/mailsigner.conf</file>
+                <file>${conffile}</file>
                 <variable>postmaster</variable>
                 <key>mailsigner.postmaster</key>
                 <ruleList>
                   <fileContentTest>
-                    <path>/etc/mailsigner/mailsigner.conf</path>
+                    <path>${conffile}</path>
                     <logic>contains</logic>
                     <text>mailsigner.postmaster</text>
                   </fileContentTest>
                 </ruleList>
               </propertiesFileGet>
               <propertiesFileGet>
-                <file>/etc/mailsigner/mailsigner.conf</file>
+                <file>${conffile}</file>
                 <variable>smtpauth</variable>
                 <key>mailsigner.smtpauth</key>
                 <ruleList>
                   <fileContentTest>
-                    <path>/etc/mailsigner/mailsigner.conf</path>
+                    <path>${conffile}</path>
                     <logic>contains</logic>
                     <text>mailsigner.smtpauth</text>
                   </fileContentTest>
                 </ruleList>
               </propertiesFileGet>
               <propertiesFileGet>
-                <file>/etc/mailsigner/mailsigner.conf</file>
+                <file>${conffile}</file>
                 <variable>gatewayhost</variable>
                 <key>mailsigner.gatewayhost</key>
                 <ruleList>
                   <fileContentTest>
-                    <path>/etc/mailsigner/mailsigner.conf</path>
+                    <path>${conffile}</path>
                     <logic>contains</logic>
                     <text>mailsigner.gatewayhost</text>
                   </fileContentTest>
                 </ruleList>
               </propertiesFileGet>
               <propertiesFileGet>
-                <file>/etc/mailsigner/mailsigner.conf</file>
+                <file>${conffile}</file>
                 <variable>gatewayport</variable>
                 <key>mailsigner.gatewayport</key>
                 <ruleList>
                   <fileContentTest>
-                    <path>/etc/mailsigner/mailsigner.conf</path>
+                    <path>${conffile}</path>
                     <logic>contains</logic>
                     <text>mailsigner.gatewayport</text>
                   </fileContentTest>
                 </ruleList>
-              </propertiesFileGet>  
+              </propertiesFileGet>
               <propertiesFileGet>
-                <file>/etc/mailsigner/mailsigner.conf</file>
+                <file>${conffile}</file>
                 <variable>sysloghostname</variable>
                 <key>syslog.hostname</key>
                 <ruleList>
                   <fileContentTest>
-                    <path>/etc/mailsigner/mailsigner.conf</path>
+                    <path>${conffile}</path>
                     <logic>contains</logic>
                     <text>syslog.hostname</text>
                   </fileContentTest>
@@ -158,10 +144,10 @@
             <ruleEvaluationLogic>and</ruleEvaluationLogic>
             <ruleList>
                 <platformTest>                    
-                    <type>linux</type>
+                    <type>windows</type>
                 </platformTest>
                 <fileTest>                    
-                  <path>/etc/mailsigner/mailsigner.conf</path>
+                  <path>${conffile}</path>
                   <condition>exists</condition>
                 </fileTest>
             </ruleList>
@@ -170,52 +156,26 @@
     <postInstallationActionList>
         <actionGroup>
             <actionList>
-                <dos2unix>
-                    <files>*/*.sh</files>
-                </dos2unix>
-                <createDirectory>
-                    <path>/etc/mailsigner</path>
-                </createDirectory>
-                <createSymLink>
-                  <linkName>/etc/init.d/mailsigner</linkName>
-                  <target>${installdir}/bin/mailsigner_james_init.sh</target>
-                </createSymLink> 
-                <createSymLink>
-                   <linkName>/etc/rc0.d/K01mailsigner</linkName>
-                   <target>/etc/init.d/mailsigner</target>                   
-                </createSymLink>
-                <createSymLink>
-                   <linkName>/etc/rc1.d/K01mailsigner</linkName>
-                   <target>/etc/init.d/mailsigner</target>                   
-                </createSymLink>
-                <createSymLink>
-                   <linkName>/etc/rc2.d/K01mailsigner</linkName>
-                   <target>/etc/init.d/mailsigner</target>                   
-                </createSymLink>
-                <createSymLink>
-                   <linkName>/etc/rc3.d/S99mailsigner</linkName>
-                   <target>/etc/init.d/mailsigner</target>                   
-                </createSymLink>
-                <createSymLink>
-                   <linkName>/etc/rc4.d/S99mailsigner</linkName>
-                   <target>/etc/init.d/mailsigner</target>                   
-                </createSymLink>
-                <createSymLink>
-                   <linkName>/etc/rc5.d/S99mailsigner</linkName>
-                   <target>/etc/init.d/mailsigner</target>                   
-                </createSymLink>
-                <createSymLink>
-                   <linkName>/etc/rc6.d/K01mailsigner</linkName>
-                   <target>/etc/init.d/mailsigner</target>                   
-                </createSymLink>
+                <runProgram>
+                  <program>Wrapper.exe</program>
+                  <programArguments> -i ..\conf\wrapper_mailsigner.conf</programArguments>
+                  <workingDirectory>${installdir}/james/bin</workingDirectory>
+                </runProgram>
+                <addEnvironmentVariable>
+                    <name>SIGNSERVER_HOME</name>
+                    <scope>system</scope>
+                    <value>${installdir}</value>
+                </addEnvironmentVariable>
+                <addEnvironmentVariable>
+                    <name>PHOENIX_HOME</name>
+                    <scope>system</scope>
+                    <value>${installdir}\james</value>
+                </addEnvironmentVariable>
+
                 <copyFile>
 		  <origin>${installdir}/james/apps/james/SAR-INF/config_org.xml</origin>
 		  <destination>${installdir}/james/apps/james/SAR-INF/config.xml</destination>
                 </copyFile>
-                <createSymLink>
-                   <linkName>/etc/mailsigner/mailsigner_config.xml</linkName>
-                   <target>${installdir}/james/apps/james/SAR-INF/config.xml</target>                   
-                </createSymLink>
                 <substitute>
                   <files>${installdir}/james/apps/james/SAR-INF/config.xml</files>
                   <substitutionList>
@@ -249,7 +209,7 @@
                     </substitution>
                   </substitutionList>
                 </substitute>
-                <substitute>
+               <substitute>
                   <files>${installdir}/james/apps/james/SAR-INF/config.xml</files>
                   <substitutionList>
                     <substitution>
@@ -275,16 +235,16 @@
                        <ruleEvaluationLogic>and</ruleEvaluationLogic>
                        <ruleList>
                           <fileTest>                    
-                            <path>/etc/mailsigner/mailsigner.conf</path>
+                            <path>${conffile}</path>
                             <condition>exists</condition>
                           </fileTest>
                           <fileContentTest>
-                            <path>/etc/mailsigner/mailsigner.conf</path>
+                            <path>${conffile}</path>
                             <logic>contains</logic>
                             <text>mailsigner.gatewayhost</text>
                           </fileContentTest>
                           <fileContentTest>
-                            <path>/etc/mailsigner/mailsigner.conf</path>
+                            <path>${conffile}</path>
                             <logic>contains</logic>
                             <text>mailsigner.gatewayport</text>
                           </fileContentTest>
@@ -297,44 +257,23 @@
                      </compareText>
                    </ruleList>
                 </substitute>
-                <substitute>
-                  <files>${installdir}/bin/mailsigner_james_init.sh</files>
-                  <substitutionList>
-                    <substitution>
-                      <pattern>@PHOENIX_HOME@</pattern>
-                      <value>${installdir}/james</value>
-                    </substitution>
-                    <substitution>
-                      <pattern>@JAVA_EXE@</pattern>
-                      <value>${java_executable}</value>
-                    </substitution>
-                  </substitutionList>
-                </substitute>
+                
                 <createDirectory>
                    <path>${installdir}/james/ext</path>
                 </createDirectory>
                 <createDirectory>
-                   <path>/var/log/mailsigner</path>
+                   <path>${installdir}/james/logs</path>
                 </createDirectory>
-                <changeOwnerAndGroup>
-                  <files>/var/log/mailsigner</files>
-                  <owner>mailsigner</owner>
-                  <group>mailsigner</group>
-                </changeOwnerAndGroup>
 
                 <actionGroup>
                    <actionList>
-                     <createSymLink>
-                       <linkName>/etc/mailsigner/log-conf.xml</linkName>
-                       <target>${installdir}/logconf/james-environment-unix.xml</target>
-                     </createSymLink> 
                      <deleteFile>
                        <path>${installdir}/james/apps/james/SAR-INF/environment.xml</path>
                      </deleteFile>
-                     <createSymLink>
-                       <linkName>${installdir}/james/apps/james/SAR-INF/environment.xml</linkName>
-                       <target>${installdir}/logconf/james-environment-unix.xml</target>
-                     </createSymLink> 
+                     <copyFile>
+                       <destination>${installdir}/james/apps/james/SAR-INF/environment.xml</destination>
+                       <origin>${installdir}/logconf/james-environment-windows.xml</origin>
+                     </copyFile> 
                    </actionList>
                    <ruleEvaluationLogic>or</ruleEvaluationLogic>
                    <ruleList>
@@ -344,11 +283,11 @@
                       <value>0</value>
                      </compareText> 
                      <fileTest>                    
-                        <path>/etc/mailsigner/mailsigner.conf</path>
+                        <path>${conffile}</path>
                         <condition>not_exists</condition>
                      </fileTest>
                      <fileContentTest>
-                        <path>/etc/mailsigner/mailsigner.conf</path>
+                        <path>${conffile}</path>
                         <logic>does_not_contain</logic>
                         <text>syslog.hostname</text>
                      </fileContentTest>                     
@@ -356,19 +295,15 @@
                 </actionGroup>
                 <actionGroup>
                    <actionList>
-                     <createSymLink>
-                       <linkName>/etc/mailsigner/log-conf.xml</linkName>
-                       <target>${installdir}/logconf/james-environment-unix-syslog.xml</target>
-                     </createSymLink> 
                      <deleteFile>
                        <path>${installdir}/james/apps/james/SAR-INF/environment.xml</path>
                      </deleteFile>
-                     <createSymLink>
-                       <linkName>${installdir}/james/apps/james/SAR-INF/environment.xml</linkName>
-                       <target>${installdir}/logconf/james-environment-unix-syslog.xml</target>
-                     </createSymLink> 
+                     <copyFile>
+                       <destination>${installdir}/james/apps/james/SAR-INF/environment.xml</destination>
+                       <origin>${installdir}/logconf/james-environment-windows-syslog.xml</origin>
+                     </copyFile> 
                      <substitute>
-                       <files>${installdir}/logconf/james-environment-unix-syslog.xml</files>
+                       <files>${installdir}/james/apps/james/SAR-INF/environment.xml</files>
                        <substitutionList>
                          <substitution>
                            <pattern>@SYSLOG_HOST@</pattern>
@@ -383,11 +318,11 @@
                        <ruleEvaluationLogic>and</ruleEvaluationLogic>
                        <ruleList>
                           <fileTest>                    
-                            <path>/etc/mailsigner/mailsigner.conf</path>
+                            <path>${conffile}</path>
                             <condition>exists</condition>
                           </fileTest>
                           <fileContentTest>
-                            <path>/etc/mailsigner/mailsigner.conf</path>
+                            <path>${conffile}</path>
                             <logic>contains</logic>
                             <text>syslog.hostname</text>
                           </fileContentTest>
@@ -401,44 +336,44 @@
                    </ruleList>
                 </actionGroup>
                 <addTextToFile>
-                  <file>/etc/mailsigner/mailsigner.conf</file>
+                  <file>${conffile}</file>
                   <text>#MailSigner properties file.</text>
                   <ruleList>
                     <fileTest>                    
-                      <path>/etc/mailsigner/mailsigner.conf</path>
+                      <path>${conffile}</path>
                       <condition>not_exists</condition>
                     </fileTest>
                   </ruleList>
                 </addTextToFile>                                           
                 <propertiesFileSet>
-                  <file>/etc/mailsigner/mailsigner.conf</file>
+                  <file>${conffile}</file>
                   <key>mailsigner.smtpport</key>
                   <value>${smtpport}</value>
                 </propertiesFileSet>
                 <propertiesFileSet>
-                  <file>/etc/mailsigner/mailsigner.conf</file>
+                  <file>${conffile}</file>
                   <key>mailsigner.primarydns</key>
                   <value>${primarydns}</value>
                 </propertiesFileSet>
                 <propertiesFileSet>
-                  <file>/etc/mailsigner/mailsigner.conf</file>
+                  <file>${conffile}</file>
                   <key>mailsigner.secondarydns</key>
                   <value>${secondarydns}</value>
                 </propertiesFileSet> 
                 <propertiesFileSet>
-                  <file>/etc/mailsigner/mailsigner.conf</file>
+                  <file>${conffile}</file>
                   <key>mailsigner.postmaster</key>
                   <value>${postmaster}</value>
                 </propertiesFileSet> 
                 <propertiesFileSet>
-                  <file>/etc/mailsigner/mailsigner.conf</file>
+                  <file>${conffile}</file>
                   <key>mailsigner.smtpauth</key>
                   <value>${smtpauth}</value>
                 </propertiesFileSet> 
                 <actionGroup>
                   <actionList>
                     <propertiesFileSet>
-                      <file>/etc/mailsigner/mailsigner.conf</file>
+                      <file>${conffile}</file>
                       <key>mailsigner.gatewayhost</key>
                       <value>${gatewayhost}</value>
                     </propertiesFileSet> 
@@ -449,11 +384,11 @@
                        <ruleEvaluationLogic>and</ruleEvaluationLogic>
                        <ruleList>
                           <fileTest>                    
-                            <path>/etc/mailsigner/mailsigner.conf</path>
+                            <path>${conffile}</path>
                             <condition>exists</condition>
                           </fileTest>
                           <fileContentTest>
-                            <path>/etc/mailsigner/mailsigner.conf</path>
+                            <path>${conffile}</path>
                             <logic>contains</logic>
                             <text>gatewayhost</text>
                           </fileContentTest>
@@ -469,7 +404,7 @@
                 <actionGroup>
                   <actionList>
                     <propertiesFileSet>
-                      <file>/etc/mailsigner/mailsigner.conf</file>
+                      <file>${conffile}</file>
                       <key>mailsigner.gatewayport</key>
                       <value>${gatewayport}</value>
                     </propertiesFileSet> 
@@ -480,11 +415,11 @@
                        <ruleEvaluationLogic>and</ruleEvaluationLogic>
                        <ruleList>
                           <fileTest>                    
-                            <path>/etc/mailsigner/mailsigner.conf</path>
+                            <path>${conffile}</path>
                             <condition>exists</condition>
                           </fileTest>
                           <fileContentTest>
-                            <path>/etc/mailsigner/mailsigner.conf</path>
+                            <path>${conffile}</path>
                             <logic>contains</logic>
                             <text>gatewayport</text>
                           </fileContentTest>
@@ -500,7 +435,7 @@
                 <actionGroup>
                   <actionList>
                     <propertiesFileSet>
-                      <file>/etc/mailsigner/mailsigner.conf</file>
+                      <file>${conffile}</file>
                       <key>syslog.hostname</key>
                       <value>${sysloghostname}</value>
                     </propertiesFileSet> 
@@ -511,11 +446,11 @@
                        <ruleEvaluationLogic>and</ruleEvaluationLogic>
                        <ruleList>
                           <fileTest>                    
-                            <path>/etc/mailsigner/mailsigner.conf</path>
+                            <path>${conffile}</path>
                             <condition>exists</condition>
                           </fileTest>
                           <fileContentTest>
-                            <path>/etc/mailsigner/mailsigner.conf</path>
+                            <path>${conffile}</path>
                             <logic>contains</logic>
                             <text>syslog.hostname</text>
                           </fileContentTest>
@@ -528,29 +463,20 @@
                      </compareText>
                    </ruleList>
                 </actionGroup>
-                <deleteFile>
-                  <path>/etc/mailsigner/mailsignermgmt.env</path>
-                </deleteFile>
-                <addTextToFile>
-                  <file>/etc/mailsigner/mailsignermgmt.env</file>
-                  <text>export SIGNSRV_HOME=${installdir}</text>
-                </addTextToFile>
                 <showInfo>
                   <text>
 
 About to start the James MailSigner Server. This will be done in the background and will be ready to process requests in about 1 minute.
 </text>
                 </showInfo>
-                <runProgram>
-                  <program>/etc/init.d/mailsigner</program>
-                  <programArguments> start</programArguments>
-                  <workingDirectory>/</workingDirectory>
-                </runProgram>
+                <startWindowsService>
+                  <serviceName>${servicename}</serviceName>
+                </startWindowsService>
             </actionList>
             <ruleEvaluationLogic>or</ruleEvaluationLogic>
             <ruleList>
                 <platformTest>                    
-                    <type>linux</type>
+                    <type>windows</type>
                 </platformTest>
             </ruleList>
         </actionGroup>
@@ -567,16 +493,19 @@ Before uninstalling the MailSigner must James MailSigner be stopped. This might 
 </text>
           
            </showInfo>
-           <runProgram>
-              <program>/etc/init.d/mailsigner</program>
-              <programArguments> stop</programArguments>
-              <workingDirectory>/</workingDirectory>
-           </runProgram>
+           <stopWindowsService>
+             <serviceName>${servicename}</serviceName>
+           </stopWindowsService>
            <waitForPort>
              <state>free</state>
              <port>1099</port>
              <timeout>240000</timeout>
            </waitForPort>
+           <runProgram>
+             <program>Wrapper.exe</program>
+             <programArguments> -r ..\conf\wrapper_mailsigner.conf</programArguments>
+             <workingDirectory>${installdir}/james/bin</workingDirectory>
+           </runProgram>
          </actionList>
          <ruleList>
            <portTest>
@@ -591,63 +520,14 @@ Before uninstalling the MailSigner must James MailSigner be stopped. This might 
           <actionList>
             <showQuestion>
             <text>
-
-Do you want to remove the user 'mailsigner'?</text>
-             <variable>remove_user</variable>
-            </showQuestion>
-            <actionGroup>
-             <actionList>
-                <deleteUser>
-                  <abortOnError>0</abortOnError>
-                  <showMessageOnError>0</showMessageOnError>
-                  <username>mailsigner</username>            
-                </deleteUser>
-                <deleteGroup>
-                  <abortOnError>0</abortOnError>
-                  <groupname>mailsigner</groupname>
-                  <showMessageOnError>0</showMessageOnError>
-                </deleteGroup>
-              </actionList>
-              <ruleList>
-                 <compareText>
-                    <text>${remove_user}</text>
-                    <logic>equals</logic>
-                    <value>yes</value>
-                 </compareText>
-              </ruleList>
-            </actionGroup>
-            <showQuestion>
-            <text>
-
-Do you want to remove the log files in '/var/log/mailsigner' ?</text>
-             <variable>remove_log</variable>
-             <default>yes</default>
-            </showQuestion>
-            <actionGroup>
-             <actionList>
-               <deleteFile>
-                 <path>/var/log/mailsigner</path>
-               </deleteFile>
-              </actionList>
-              <ruleList>
-                 <compareText>
-                    <text>${remove_log}</text>
-                    <logic>equals</logic>
-                    <value>yes</value>
-                 </compareText>
-              </ruleList>
-            </actionGroup> 
-            <showQuestion>
-            <text>
-
-Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
+Do you want to remove the configuration file ${conffile} ?</text>
              <variable>remove_config</variable>
              <default>no</default>
             </showQuestion>
             <actionGroup>
              <actionList>
                <deleteFile>
-                 <path>/etc/mailsigner</path>
+                 <path>${conffile}</path>
                </deleteFile>
               </actionList>
               <ruleList>
@@ -658,30 +538,14 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
                  </compareText>
               </ruleList>
             </actionGroup> 
-            <deleteFile>
-              <path>/etc/rc0.d/K01mailsigner</path>
-            </deleteFile> 
-            <deleteFile>
-              <path>/etc/rc1.d/K01mailsigner</path>
-            </deleteFile> 
-            <deleteFile>
-              <path>/etc/rc2.d/K01mailsigner</path>
-            </deleteFile>      
-            <deleteFile>
-              <path>/etc/rc3.d/S99mailsigner</path>
-            </deleteFile> 
-            <deleteFile>
-              <path>/etc/rc4.d/S99mailsigner</path>
-            </deleteFile>      
-            <deleteFile>
-              <path>/etc/rc5.d/S99mailsigner</path>
-            </deleteFile>  
-            <deleteFile>
-              <path>/etc/rc6.d/K01mailsigner</path>
-            </deleteFile>       
-            <deleteFile>
-              <path>/etc/init.d/mailsigner</path>
-            </deleteFile>
+           <deleteEnvironmentVariable>
+                    <name>SIGNSERVER_HOME</name>
+                    <scope>system</scope>
+            </deleteEnvironmentVariable>
+           <deleteEnvironmentVariable>
+                    <name>PHEONIX_HOME</name>
+                    <scope>system</scope>
+            </deleteEnvironmentVariable>
             <deleteFile>
               <path>${installdir}/james</path>
             </deleteFile>
@@ -702,13 +566,11 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
             <ruleEvaluationLogic>or</ruleEvaluationLogic>
             <ruleList>
                 <platformTest>                    
-                    <type>linux</type>
+                    <type>windows</type>
                 </platformTest>
             </ruleList>
       </actionGroup>
     </postUninstallationActionList>
-    <defaultUnixGroup>mailsigner</defaultUnixGroup>
-    <defaultUnixOwner>mailsigner</defaultUnixOwner>
     <enableRollback>1</enableRollback>
     <requireInstallationByRootUser>1</requireInstallationByRootUser>
     <saveRelativePaths>1</saveRelativePaths>
@@ -740,19 +602,43 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
                             <windowsIcon></windowsIcon>
                             <windowsPath>${installdir}</windowsPath>
                         </shortcut>
+                        <fileShortcut>
+                            <comment>MailSigner installation configuration</comment>
+                            <filePath>${conffile}</filePath>
+                            <icon></icon>
+                            <name>mailsigner.conf</name>
+                            <platforms>windows</platforms>
+                            <runInTerminal>0</runInTerminal>
+                            <windowsIcon></windowsIcon>
+                            <windowsPath>${installdir}</windowsPath>
+                        </fileShortcut>
+                        <fileShortcut>
+                            <comment>MailSigner log configuration</comment>
+                            <filePath>${installdir}/james/apps/james/SAR-INF/environment.xml</filePath>
+                            <icon></icon>
+                            <name>log-conf.xml</name>
+                            <platforms>windows</platforms>
+                            <runInTerminal>0</runInTerminal>
+                            <windowsIcon></windowsIcon>
+                            <windowsPath>${installdir}</windowsPath>
+                        </fileShortcut>
+                        <fileShortcut>
+                            <comment>MailSigner SMTP configuration</comment>
+                            <filePath>${installdir}/james/apps/james/SAR-INF/config.xml</filePath>
+                            <icon></icon>
+                            <name>mailsigner-conf.xml</name>
+                            <platforms>windows</platforms>
+                            <runInTerminal>0</runInTerminal>
+                            <windowsIcon></windowsIcon>
+                            <windowsPath>${installdir}</windowsPath>
+                        </fileShortcut>
                     </shortcutList>
                 </folder>
                 <folder>
                     <description>Program Files</description>
                     <destination>${installdir}</destination>
-                    <name>programfileslinux</name>
-                    <platforms>linux</platforms>
-                    <actionList>
-                      <changePermissions>
-                      <files>*/*.sh</files>
-                      <permissions>744</permissions>
-                      </changePermissions>
-                    </actionList>
+                    <name>programfileswindows</name>
+                    <platforms>windows</platforms>
                     <distributionFileList>
                         <distributionDirectory>
                             <origin>../../../dist-pkg/usr/share/mailsigner-server/bin</origin>
@@ -781,11 +667,11 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
             <ruleEvaluationLogic>or</ruleEvaluationLogic>
             <ruleList>
               <fileTest>                    
-                <path>/etc/mailsigner/mailsigner.conf</path>
+                <path>${conffile}</path>
                 <condition>not_exists</condition>
               </fileTest>
               <fileContentTest>
-                <path>/etc/mailsigner/mailsigner.conf</path>
+                <path>${conffile}</path>
                 <logic>does_not_contain</logic>
                 <text>mailsigner.smtpport</text>
               </fileContentTest>
@@ -814,19 +700,19 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
             <ruleEvaluationLogic>or</ruleEvaluationLogic>
             <ruleList>
               <fileTest>                    
-                <path>/etc/mailsigner/mailsigner.conf</path>
+                <path>${conffile}</path>
                 <condition>not_exists</condition>
               </fileTest>
               <ruleGroup>
                 <ruleEvaluationLogic>and</ruleEvaluationLogic>
                 <ruleList>
                   <fileContentTest>
-                    <path>/etc/mailsigner/mailsigner.conf</path>
+                    <path>${conffile}</path>
                     <logic>does_not_contain</logic>
                     <text>mailsigner.primarydns</text>
                   </fileContentTest>
                   <fileContentTest>
-                    <path>/etc/mailsigner/mailsigner.conf</path>
+                    <path>${conffile}</path>
                     <logic>does_not_contain</logic>
                     <text>mailsigner.secondarydns</text>
                   </fileContentTest>
@@ -845,11 +731,11 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
             <ruleEvaluationLogic>or</ruleEvaluationLogic>
             <ruleList>
                <fileTest>                    
-                  <path>/etc/mailsigner/mailsigner.conf</path>
+                  <path>${conffile}</path>
                   <condition>not_exists</condition>
                </fileTest>
                <fileContentTest>
-                 <path>/etc/mailsigner/mailsigner.conf</path>
+                 <path>${conffile}</path>
                  <logic>does_not_contain</logic>
                  <text>mailsigner.postmaster</text>
                </fileContentTest>
@@ -879,11 +765,11 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
             <ruleEvaluationLogic>or</ruleEvaluationLogic>
             <ruleList>
                 <fileTest>                    
-                  <path>/etc/mailsigner/mailsigner.conf</path>
+                  <path>${conffile}</path>
                   <condition>not_exists</condition>
                 </fileTest>
                 <fileContentTest>
-                  <path>/etc/mailsigner/mailsigner.conf</path>
+                  <path>${conffile}</path>
                   <logic>does_not_contain</logic>
                   <text>mailsigner.smtpauth</text>
                 </fileContentTest>
@@ -899,11 +785,11 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
           <ruleEvaluationLogic>or</ruleEvaluationLogic>
           <ruleList>
                <fileTest>                    
-                 <path>/etc/mailsigner/mailsigner.conf</path>
+                 <path>${conffile}</path>
                  <condition>not_exists</condition>
                </fileTest>
                <fileContentTest>
-                 <path>/etc/mailsigner/mailsigner.conf</path>
+                 <path>${conffile}</path>
                  <logic>does_not_contain</logic>
                  <text>mailsigner.gatewayhost</text>
                </fileContentTest>
@@ -923,11 +809,11 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
                 <ruleEvaluationLogic>or</ruleEvaluationLogic>
                 <ruleList>
                    <fileTest>                    
-                     <path>/etc/mailsigner/mailsigner.conf</path>
+                     <path>${conffile}</path>
                      <condition>not_exists</condition>
                    </fileTest>
                    <fileContentTest>
-                      <path>/etc/mailsigner/mailsigner.conf</path>
+                      <path>${conffile}</path>
                       <logic>does_not_contain</logic>
                       <text>mailsigner.gatewayhost</text>
                    </fileContentTest>
@@ -954,11 +840,11 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
                 <ruleEvaluationLogic>or</ruleEvaluationLogic>
                 <ruleList>
                    <fileTest>                    
-                     <path>/etc/mailsigner/mailsigner.conf</path>
+                     <path>${conffile}</path>
                      <condition>not_exists</condition>
                    </fileTest>
                    <fileContentTest>
-                      <path>/etc/mailsigner/mailsigner.conf</path>
+                      <path>${conffile}</path>
                       <logic>does_not_contain</logic>
                       <text>mailsigner.gatewayport</text>
                    </fileContentTest>
@@ -981,11 +867,11 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
           <ruleEvaluationLogic>or</ruleEvaluationLogic>
           <ruleList>
                <fileTest>                    
-                 <path>/etc/mailsigner/mailsigner.conf</path>
+                 <path>${conffile}</path>
                  <condition>not_exists</condition>
                </fileTest>
                <fileContentTest>
-                 <path>/etc/mailsigner/mailsigner.conf</path>
+                 <path>${conffile}</path>
                  <logic>does_not_contain</logic>
                  <text>syslog.hostname</text>
                </fileContentTest>
@@ -1005,11 +891,11 @@ Do you want to remove the configuration files in '/etc/mailsigner' ?</text>
                 <ruleEvaluationLogic>or</ruleEvaluationLogic>
                 <ruleList>
                    <fileTest>                    
-                     <path>/etc/mailsigner/mailsigner.conf</path>
+                     <path>${conffile}</path>
                      <condition>not_exists</condition>
                    </fileTest>
                    <fileContentTest>
-                      <path>/etc/mailsigner/mailsigner.conf</path>
+                      <path>${conffile}</path>
                       <logic>does_not_contain</logic>
                       <text>syslog.hostname</text>
                    </fileContentTest>

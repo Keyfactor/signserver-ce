@@ -64,7 +64,7 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
 		return cRLPaths;
 	}
 	
-	public OCSPCRLPathChecker(X509Certificate rootCACert, Properties props, List<X509Certificate> authorizedOCSPResponderCerts, List<URL> CRLPaths)
+	public OCSPCRLPathChecker(X509Certificate rootCACert, Properties props, List<X509Certificate> authorizedOCSPResponderCerts, List<URL> cRLPaths)
 	{
 		super(rootCACert, props, authorizedOCSPResponderCerts);
 		this.cRLPaths = cRLPaths;

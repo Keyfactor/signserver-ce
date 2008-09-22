@@ -16,6 +16,8 @@ package org.signserver.testutils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -140,12 +142,64 @@ public class TestUtils {
 		}		
 	}
 	
+	public static void assertSuccessfulExecution(Object o, String[] args){
+		try {
+			TestUtils.flushTempOut();
+			Method m = o.getClass().getMethod("main", String[].class);
+			Object[] arguments = {args};  
+			m.invoke(o,  arguments);
+		}catch(ExitException e) {
+			TestUtils.printTempErr();
+			TestUtils.printTempOut();
+			Assert.assertTrue(false);
+		} catch (SecurityException e) {
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			if(!(e.getTargetException() instanceof ExitException)){
+				Assert.assertTrue(false);
+				e.printStackTrace();
+			}
+		}		
+	}
+	
 	public static void assertFailedExecution(String[] args){
 		try {
 			TestUtils.flushTempOut();
 			signserver.main(args);
 			Assert.assertTrue(false);
 		}catch(ExitException e) {
+		}		
+	}
+	
+	public static void assertFailedExecution(Object o,String[] args){
+		try {
+			TestUtils.flushTempOut();
+			Method m = o.getClass().getMethod("main", String[].class);
+			Object[] arguments = {args};  
+			m.invoke(o,  arguments);
+			Assert.assertTrue(false);
+		}catch(ExitException e) {
+		}  catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			Assert.assertTrue(false);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			Assert.assertTrue(false);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			Assert.assertTrue(false);
+		} catch (InvocationTargetException e) {
+
 		}		
 	}
 }

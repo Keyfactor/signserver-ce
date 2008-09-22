@@ -12,4 +12,5 @@ The jars:
  
 This is version 1.6.0
 
-Used mainly to parse cron expressíons to the times services. 
+Used mainly to parse cron expressíons to the timed services in signserver
+and to schedule jobs in the mailsigner. 

@@ -21,7 +21,10 @@ import java.security.cert.Certificate;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import javax.mail.Address;
 import javax.mail.MessagingException;
@@ -38,6 +41,7 @@ import org.apache.mailet.MailAddress;
 import org.apache.mailet.RFC2822Headers;
 import org.bouncycastle.mail.smime.SMIMESignedGenerator;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.RequestContext;
 import org.signserver.mailsigner.BaseMailProcessor;
 import org.signserver.mailsigner.core.SMIMEHelper;
 import org.signserver.server.cryptotokens.ICryptoToken;
@@ -55,7 +59,8 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * Supported Properties:
  * EXPLAINATIONTEXT, USEREBUILDFROM, SIGNATUREALG, SIGNERNAME, FROMNAME,
  * REPLYTONAME, CHANGEREPLYTO, POSTMASTERSIGNS, REPLYTOADDRESS, SIGNERADDRESS,
- * FROMADDRESS, REQUIRESMTPAUTH
+ * FROMADDRESS, REQUIRESMTPAUTH, CHECKSMTPAUTHSENDER, SIGNBYDEFAULT, 
+ * OPTIN, OPTOUT, USESUBJECTTAGS
  * 
  * @author Philip Vendil 22 dec 2007
  *
@@ -144,14 +149,63 @@ public class SimpleMailSigner extends BaseMailProcessor {
 	public static final String RESENDUNSIGNEDMESSAGES = "RESENDUNSIGNEDMESSAGES";
 	public static final String DEFAULT_RESENDUNSIGNEDMESSAGES = "FALSE";
 	
+	/**
+	 * Setting defining if signatures should be done by default
+	 * or if the recipient domain must exists on the OPTIN list.
+	 * 
+	 * (Default is true, to sign by default).
+	 */
+	public static final String SIGNBYDEFAULT = "SIGNBYDEFAULT";
+	public static final String DEFAULT_SIGNBYDEFAULT = "TRUE";
+	
+	/**
+	 * Setting defining which recipient domains that always should
+	 * be signed. Used if SIGNBYDEFAULT is set to FALSE. Can
+	 * be overridden with subject tag.
+	 * 
+	 * 
+	 */
+	public static final String OPTIN = "OPTIN";
+
+	/**
+	 * Setting defining which recipient domains that never should
+	 * be signed. Used if SIGNBYDEFAULT is set to TRUE. Can
+	 * be overridden with subject tag.
+	 * 
+	 */
+	public static final String OPTOUT = "OPTOUT";
+	
+	/**
+	 * Setting defining if subject tags will be supported. If
+	 * used will the subject be searched for "SIGN" and "NOSIGN"
+	 * in the subject and act accordingly.
+	 * 
+	 * (Default is false, not to use subject tags).
+	 */
+	public static final String USESUBJECTTAGS = "USESUBJECTTAGS";
+	public static final String DEFAULT_USESUBJECTTAGS = "FALSE";
+	public static final String SUBJECTTAG_SIGN = "SIGN";
+	public static final String SUBJECTTAG_NOSIGN = "NOSIGN";
+	
+	/**
+	 * Setting used if it is desired to check that the sender address (name part)
+	 * is the same as the SMTP AUTH user. This can be used as an extra check
+	 * that the user don't send mails in someone else name. In hosted environment
+	 * it can be good to have this set to false.
+	 * 
+	 * Default: false
+	 */
+	public static final String CHECKSMTPAUTHSENDER = "CHECKSMTPAUTHSENDER";
+	public static final String DEFAULT_CHECKSMTPAUTHSENDER = "FALSE";
+	
 	public transient Logger log = Logger.getLogger(this.getClass());
 	
 	/**
-	 * @see org.signserver.mailsigner.IMailProcessor#service(org.apache.mailet.Mail)
+	 * @see org.signserver.mailsigner.IMailProcessor#service(Mail, RequestContext)
 	 */
-	public void service(Mail mail) throws MessagingException, CryptoTokenOfflineException{
+	public void service(Mail mail, RequestContext requestContext) throws MessagingException, CryptoTokenOfflineException{
 		try{
-			if (!isOkToSign(mail)) {
+			if (isOkToSign(mail).size() == 0) {
 				if(!isResendUnsignedMessages()){
 					mail.setState(Mail.ERROR);
 				}
@@ -161,6 +215,14 @@ public class SimpleMailSigner extends BaseMailProcessor {
 			MimeBodyPart wrapperBodyPart = SMIMEHelper.getWrapperBodyPart(mail,config);
 
 			MimeMessage originalMessage = mail.getMessage();
+	        if(getUseSubjectTags()){
+	        	if(mail.getMessage().getSubject().contains(SUBJECTTAG_NOSIGN)){
+	        		mail.getMessage().setSubject(mail.getMessage().getSubject().replaceFirst(SUBJECTTAG_NOSIGN, ""));
+	        	}
+	        	if(mail.getMessage().getSubject().contains(SUBJECTTAG_SIGN)){
+	        		mail.getMessage().setSubject(mail.getMessage().getSubject().replaceFirst(SUBJECTTAG_SIGN, ""));
+	        	}
+	        }
 
 			// do it
 			MimeMultipart signedMimeMultipart;
@@ -234,37 +296,29 @@ public class SimpleMailSigner extends BaseMailProcessor {
 	}
 
     /**
-     * <P>Checks if the mail can be signed.</P>
-     * <P>Rules:</P>
-     * <OL>
-     * <LI>The reverse-path != null (it is not a bounce).</LI>
-     * <LI>The sender user must have been SMTP authenticated (if required).</LI>
-     * <LI>Either:</LI>
-     * <UL>
-     * <LI>The reverse-path is the postmaster address and {@link #isPostmasterSigns} returns <I>true</I></LI>
-     * <LI>or the reverse-path == the authenticated user
-     * and there is at least one "From:" address == reverse-path.</LI>.
-     * </UL>
-     * <LI>The message has not already been signed (mimeType != <I>multipart/signed</I>
-     * and != <I>application/pkcs7-mime</I>).</LI>
-     * </OL>
+     * Method responsible for checking if the mail should be signed or not.
+     * 
+     * 
      * @param mail The mail object to check.
-     * @return True if can be signed.
+     * @return a collection of MailAddress of all recipients that is OK to sign the mail to. Empty
+     * collection means that the mail should'nt be signed at all.
      */
-    protected boolean isOkToSign(Mail mail) throws MessagingException {
-
+    @SuppressWarnings("unchecked")
+	protected Collection<?> isOkToSign(Mail mail) throws MessagingException {
+        HashSet retval = new HashSet();
+    	
         MailAddress reversePath = mail.getSender();
         
         // Is it a bounce?
         if (reversePath == null) {
-            return false;
+            return retval;
         }
         
         String authUser = (String) mail.getAttribute("org.apache.james.SMTPAuthUser");
         if(getRequireSMTPAUTH()){        	
         	// was the sender user SMTP authorized?
         	if (authUser == null) {
-        		return false;
+        		return retval;
         	}
         }
         
@@ -272,16 +326,18 @@ public class SimpleMailSigner extends BaseMailProcessor {
         if (mailetContext.getPostmaster().equals(reversePath)) {
             // should not sign postmaster sent messages?
             if (!isPostmasterSigns()) {
-                return false;
+                return retval;
             }
         } else {
             // is the reverse-path user different from the SMTP authorized user?
-            if (getRequireSMTPAUTH() && !reversePath.getUser().equals(authUser)) {
-                return false;
-            }
+        	if(getCheckSMTPAuthSender()){
+        		if (getRequireSMTPAUTH() && !reversePath.getUser().equals(authUser)) {
+        			return retval;
+        		}
+        	}
             // is there no "From:" address same as the reverse-path?
             if (!SMIMEHelper.fromAddressSameAsReverse(mail)) {
-                return false;
+                return retval;
             }
         }
         
@@ -289,11 +345,74 @@ public class SimpleMailSigner extends BaseMailProcessor {
         MimeMessage mimeMessage = mail.getMessage();
         if (mimeMessage.isMimeType("multipart/signed")
             || mimeMessage.isMimeType("application/pkcs7-mime")) {
-            return false;
+            return retval;
         }
         
-        return true;
+        if(getUseSubjectTags()){
+        	if(mail.getMessage().getSubject().contains(SUBJECTTAG_NOSIGN)){
+        		// Message subject contains NOSIGN        		
+        		return retval;
+        	}
+        	if(mail.getMessage().getSubject().contains(SUBJECTTAG_SIGN)){
+        		// Message subject contains SIGN
+        		return mail.getRecipients();
+        	}
+        }
+        
+        if(getSignByDefault()){
+            if(getOptOutValues().size() != 0){
+            	// Use Opt Out values 
+            	Collection<?> r = mail.getRecipients();
+            	Iterator<?> iter = r.iterator();
+            	while(iter.hasNext()){
+            		MailAddress mailAddress = (MailAddress) iter.next();
+            		if(!getOptOutValues().contains(mailAddress.getHost())){
+            			retval.add(mailAddress);
+            		}
+            	}
+            	
+            	
+            	return retval;
+            }
+        }else{
+            if(getOptInValues().size() != 0){
+            	// Use Opt In values
+            	Collection<?> r = mail.getRecipients();
+            	Iterator<?> iter = r.iterator();
+            	while(iter.hasNext()){
+            		MailAddress mailAddress = (MailAddress) iter.next();
+            		if(getOptInValues().contains(mailAddress.getHost())){
+            			retval.add(mailAddress);
+            		}
+            	}
+            	
+            	return retval;
+            }
+        }
+
+        if(retval.size() == 0){
+        	retval.addAll(mail.getRecipients());
+        }
+
+        
+        
+        return retval;
     }
+    
+    
+
+	/**
+	 * Matcher that matches the opt-in and opt-out settings against
+	 * the recipients.
+	 * 
+	 * @see org.signserver.mailsigner.BaseMailProcessor#match(org.apache.mailet.Mail)
+	 */
+	@Override
+	public Collection<?> match(Mail mail) throws MessagingException {		
+		return isOkToSign(mail);
+	}
+
+
 
 	private Boolean requireSMTPAUTH  = null;
 	private boolean getRequireSMTPAUTH() {
@@ -309,6 +428,86 @@ public class SimpleMailSigner extends BaseMailProcessor {
 			}
 		}
 		return requireSMTPAUTH;
+	}
+	
+	private Boolean checkSMTPAuthSender  = null;
+	private boolean getCheckSMTPAuthSender() {
+		if(checkSMTPAuthSender == null){
+			String value = config.getProperties().getProperty(CHECKSMTPAUTHSENDER,DEFAULT_CHECKSMTPAUTHSENDER ).trim();
+			if(value.equalsIgnoreCase("TRUE")){
+				checkSMTPAuthSender = true; 
+			}else if(value.equalsIgnoreCase("FALSE")){
+				checkSMTPAuthSender = false; 
+			}else{
+				log.error("Error MailSigner property " + CHECKSMTPAUTHSENDER + " is missconfigured, must be either true or false, using default value of " + DEFAULT_CHECKSMTPAUTHSENDER);
+				checkSMTPAuthSender = Boolean.parseBoolean(DEFAULT_CHECKSMTPAUTHSENDER);
+			}
+		}
+		return checkSMTPAuthSender;
+	}
+	
+	private Boolean useSubjectTags  = null;
+	private boolean getUseSubjectTags() {
+		if(useSubjectTags == null){
+			String value = config.getProperties().getProperty(USESUBJECTTAGS,DEFAULT_USESUBJECTTAGS ).trim();
+			if(value.equalsIgnoreCase("TRUE")){
+				useSubjectTags = true; 
+			}else if(value.equalsIgnoreCase("FALSE")){
+				useSubjectTags = false; 
+			}else{
+				log.error("Error MailSigner property " + USESUBJECTTAGS + " is missconfigured, must be either true or false, using default value of " + DEFAULT_USESUBJECTTAGS);
+				useSubjectTags = Boolean.parseBoolean(DEFAULT_USESUBJECTTAGS);
+			}
+		}
+		return useSubjectTags;
+	}
+	
+	private Boolean signByDefault  = null;
+	private boolean getSignByDefault() {
+		if(signByDefault == null){
+			String value = config.getProperties().getProperty(SIGNBYDEFAULT,DEFAULT_SIGNBYDEFAULT ).trim();
+			if(value.equalsIgnoreCase("TRUE")){
+				signByDefault = true; 
+			}else if(value.equalsIgnoreCase("FALSE")){
+				signByDefault = false; 
+			}else{
+				log.error("Error MailSigner property " + SIGNBYDEFAULT + " is missconfigured, must be either true or false, using default value of " + DEFAULT_SIGNBYDEFAULT);
+				signByDefault = Boolean.parseBoolean(DEFAULT_SIGNBYDEFAULT);
+			}
+		}
+		return signByDefault;
+	}
+	
+	private HashSet<String> oPTInValues = null;
+	private HashSet<String> getOptInValues(){
+		if(oPTInValues == null){
+			oPTInValues = new HashSet<String>();
+			String value = config.getProperties().getProperty(OPTIN);
+			if(value != null){
+				String[] values = value.split(",");
+				for(String optInVal : values){
+					oPTInValues.add(optInVal.trim());
+				}
+			}
+		}
+		
+		return oPTInValues;
+	}
+	
+	private HashSet<String> oPTOutValues = null;
+	private HashSet<String> getOptOutValues(){
+		if(oPTOutValues == null){
+			oPTOutValues = new HashSet<String>();
+			String value = config.getProperties().getProperty(OPTOUT);
+			if(value != null){
+				String[] values = value.split(",");
+				for(String optInVal : values){
+					oPTOutValues.add(optInVal.trim());
+				}
+			}
+		}
+		
+		return oPTOutValues;
 	}
 	
 	private Boolean postmasterSigns  = null;

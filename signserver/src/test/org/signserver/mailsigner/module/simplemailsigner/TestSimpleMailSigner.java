@@ -50,7 +50,7 @@ public class TestSimpleMailSigner extends BaseMailSignerTester {
 		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.REQUIRESMTPAUTH, "TRUE");
 		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.FROMADDRESS, "mailsigner@someorg.org");		
 		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNERADDRESS, "mailsigner@someorg.org");
-		
+		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.CHECKSMTPAUTHSENDER, "TRUE");
 		
 		
 		// Set crypto token properties
@@ -136,6 +136,82 @@ public class TestSimpleMailSigner extends BaseMailSignerTester {
 		MimeMessage mail4 = readTestInbox();
 		assertNull(mail4);
 		
+		// Test Opt-In
+		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.CHECKSMTPAUTHSENDER,"FALSE");
+		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNBYDEFAULT,"FALSE");
+		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.OPTIN,"someorg.org, localhost, someorg2.org");
+	    iMailSignerRMI.reloadConfiguration(getWorkerId());
+		clearTestInbox();
+		sendMail("dummy3@localhost", "dummy2@localhost", "DummyMessage", "This is a Dummy Message");
+		MimeMessage mail5 = readTestInbox();
+		assertNotNull(mail5);	
+		multiPart2 = (MimeMultipart) mail5.getContent();
+		assertTrue(""+multiPart2.getCount(), multiPart2.getCount()==2);
+		part20 = (MimeBodyPart) multiPart2.getBodyPart(0);	
+		subPart = (MimeMultipart) part20.getContent();
+		assertTrue(""+subPart.getCount(), subPart.getCount()==2);
+		data2 = (String) subPart.getBodyPart(0).getContent();
+		assertTrue(data2.trim().equals("This is a Dummy Message"));
+		signatureReasonText = (String) subPart.getBodyPart(1).getContent();
+		assertTrue(signatureReasonText.trim().equals("This is a signed email."));
+		assertTrue(subPart.getBodyPart(1).getFileName().equals("SignatureExplanation.txt"));
+		verifySMIMESig(multiPart2);
+		
+		clearTestInbox();
+		sendMail("dummy3@localhost", "dummy2@localhost2", "DummyMessage", "This is a Dummy Message");
+		MimeMessage mail6 = readTestInbox();
+		assertNull(mail6);	
+		
+		// Test subject tags
+		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.USESUBJECTTAGS,"TRUE");
+	    iMailSignerRMI.reloadConfiguration(getWorkerId());
+	    
+		clearTestInbox();
+		sendMail("dummy3@localhost", "dummy2@localhost2", "DummyMessage SIGN", "This is a Dummy Message");
+		MimeMessage mail7 = readTestInbox();
+		assertNotNull(mail7);	
+		multiPart2 = (MimeMultipart) mail7.getContent();
+		assertFalse(mail7.getSubject().contains("SIGN"));
+		assertTrue(""+multiPart2.getCount(), multiPart2.getCount()==2);
+		part20 = (MimeBodyPart) multiPart2.getBodyPart(0);	
+		subPart = (MimeMultipart) part20.getContent();
+		assertTrue(""+subPart.getCount(), subPart.getCount()==2);
+		data2 = (String) subPart.getBodyPart(0).getContent();
+		assertTrue(data2.trim().equals("This is a Dummy Message"));
+		signatureReasonText = (String) subPart.getBodyPart(1).getContent();
+		assertTrue(signatureReasonText.trim().equals("This is a signed email."));
+		assertTrue(subPart.getBodyPart(1).getFileName().equals("SignatureExplanation.txt"));
+		verifySMIMESig(multiPart2);
+				
+		clearTestInbox();
+		sendMail("dummy3@localhost", "dummy2@localhost", "DummyMessage NOSIGN", "This is a Dummy Message");
+		MimeMessage mail8 = readTestInbox();
+		assertNull(mail8);	
+		
+		// Test Opt-out		
+		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNBYDEFAULT,"TRUE");
+		iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.OPTOUT,"someorg.org, localhost2, someorg2.org");
+	    iMailSignerRMI.reloadConfiguration(getWorkerId());
+		clearTestInbox();
+		sendMail("dummy3@localhost", "dummy2@localhost", "DummyMessage", "This is a Dummy Message");
+		MimeMessage mail9 = readTestInbox();
+		assertNotNull(mail9);	
+		multiPart2 = (MimeMultipart) mail9.getContent();
+		assertTrue(""+multiPart2.getCount(), multiPart2.getCount()==2);
+		part20 = (MimeBodyPart) multiPart2.getBodyPart(0);	
+		subPart = (MimeMultipart) part20.getContent();
+		assertTrue(""+subPart.getCount(), subPart.getCount()==2);
+		data2 = (String) subPart.getBodyPart(0).getContent();
+		assertTrue(data2.trim().equals("This is a Dummy Message"));
+		signatureReasonText = (String) subPart.getBodyPart(1).getContent();
+		assertTrue(signatureReasonText.trim().equals("This is a signed email."));
+		assertTrue(subPart.getBodyPart(1).getFileName().equals("SignatureExplanation.txt"));
+		verifySMIMESig(multiPart2);
+		
+		clearTestInbox();
+		sendMail("dummy3@localhost", "dummy2@localhost2", "DummyMessage", "This is a Dummy Message");
+		MimeMessage mail10 = readTestInbox();
+		assertNull(mail10);	
 	}
 	
 	protected void tearDown() throws Exception {
@@ -151,6 +227,10 @@ public class TestSimpleMailSigner extends BaseMailSignerTester {
 		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.REPLYTONAME);
 		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.USEREBUILDFROM);
 		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.CHANGEREPLYTO);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.CHECKSMTPAUTHSENDER);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNBYDEFAULT);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.OPTIN);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.USESUBJECTTAGS);
 		
 		// crypto token properties
 		iMailSignerRMI.removeWorkerProperty(getWorkerId(), P12CryptoToken.KEYSTOREPATH);

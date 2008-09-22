@@ -15,8 +15,11 @@ package org.signserver.mailsigner;
 
 import java.security.cert.Certificate;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.mailet.Mail;
 import org.apache.mailet.MailetContext;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
@@ -54,10 +57,17 @@ public abstract class BaseMailProcessor  implements IMailProcessor {
 	}
 	
 	/**
-	 * Property indicating that the mail proce shouldn't be used.
+	 * Property indicating that the mail processor shouldn't be used.
 	 * Set property to TRUE to disable the signer.
 	 */
 	public static final String DISABLED          = "DISABLED";
+	
+	/**
+	 * A ',' separated list indicating that this mailprocessor
+	 * should be called only if one of the username was used through
+	 * STMP-AUTH
+	 */
+	public static final String VALIDUSERS          = "VALIDUSERS";
 	
     /** Log4j instance for actual implementation class */
     public transient Logger log = Logger.getLogger(this.getClass());
@@ -72,6 +82,8 @@ public abstract class BaseMailProcessor  implements IMailProcessor {
     protected MailSignerContext mailSignerContext = null;
     
 	protected MailetContext mailetContext; 
+	
+	protected HashSet<String> validUsers = null;
     
     protected BaseMailProcessor(){
 
@@ -85,6 +97,23 @@ public abstract class BaseMailProcessor  implements IMailProcessor {
       this.config = config;
       this.mailSignerContext = (MailSignerContext) workerContext;
       this.mailetContext = mailSignerContext.getMailetContext();
+      
+      if(config.getProperty(VALIDUSERS) != null){
+    	  String[] validUserStrings = config.getProperty(VALIDUSERS).split(",");
+    	  validUsers = new HashSet<String>();
+    	  for(String validUser : validUserStrings){
+    		  validUsers.add(validUser.trim());
+    	  }
+      }
+    }
+    
+    /**
+     * Simple matcher that returns all incomming recipients by default.
+     * 
+     * @see org.signserver.mailsigner.IMailProcessor#match(Mail)
+     */
+    public Collection<?> match(Mail mail) throws javax.mail.MessagingException{
+    	return mail.getRecipients();
     }
 	    
 	public void activateCryptoToken(String authenticationCode)
@@ -209,5 +238,14 @@ public abstract class BaseMailProcessor  implements IMailProcessor {
 		return NonEJBGlobalConfigurationSession.getInstance();
 	}
 	
-	
+	 /**
+	  * Method that should return all STMP-AUTH user names should apply
+	  * for this mail processor to be called.
+	  * 
+	  * @return all valid names or null if this processor always should 
+	  * be called.
+	  */
+	 public Set<String> getValidUsers(){
+		 return validUsers;
+	 }
 }

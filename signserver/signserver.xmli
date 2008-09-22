@@ -16,8 +16,12 @@
 	   <property name="caear" value="${server.dist.dir}/${app.name}.ear" />
 	
 		
-	   <property name="timeStampClientBuild" value="${bin}/timeStampClient"/>
-	   <property name="timeStampClientJar" value="${client.dist.dir}/timeStampClient.jar"/>
+       <property name="timeStampClientBuild" value="${bin}/timeStampClient"/>
+       <property name="timeStampClientDir" value="${client.dist.dir}/timestampclient"/>
+       <property name="timeStampClientJar" value="${timeStampClientDir}/timeStampClient.jar"/>
+       <property name="validationClientBuild" value="${bin}/validationClient"/>
+       <property name="validationClientDir" value="${client.dist.dir}/validationclient"/>
+       <property name="validationClientJar" value="${validationClientDir}/validate.jar"/>
 	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
 	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
 	   <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
@@ -42,6 +46,7 @@
 	   <property name="signserverws.enabled" value="true" />
 	   <property name="validationws.enabled" value="false" />
 	   <property name="timestampclient.enabled" value="true" />
+	   <property name="validationclient.enabled" value="true" />
 	   <property name="pdfperformancetest.enabled" value="false" />
 	   <property name="useclusterclassloader" value="true" />
 	   <property name="clusterclassloader.useclassversions" value="true" />
@@ -149,6 +154,7 @@ database.password                   = ${database.password}
 signserverws.enabled                = ${signserverws.enabled}
 validationws.enabled                = ${validationws.enabled}
 timestampclient.enabled             = ${timestampclient.enabled}
+validationclient.enabled            = ${validationclient.enabled}
 pdfperformancetest.enabled          = ${pdfperformancetest.enabled}
 useclusterclassloader               = ${useclusterclassloader}
 clusterclassloader.useclassversions = ${clusterclassloader.useclassversions}
@@ -166,6 +172,9 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    </condition>
 	    <condition property="timestampclient.conditionenabled">
 	        <istrue value="${timestampclient.enabled}"/>
+	    </condition>
+	    <condition property="validationclient.conditionenabled">
+	        <istrue value="${validationclient.enabled}"/>
 	    </condition>
 	    <condition property="pdfperformancetest.conditionenabled">
 	        <istrue value="${pdfperformancetest.enabled}"/>
@@ -199,6 +208,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	        	<exclude name="org/signserver/module/**"/> 
 	        	<exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>	        	
 	        	<exclude name="org/signserver/protocol/ws/client/**"/>
+	        	<exclude name="org/signserver/client/validationservice/**"/>
 	        	<exclude name="org/signserver/client/PerformanceTest*"/>
 	        </javac>
 	        <copy todir="${build}">
@@ -211,7 +221,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	   <!-- =================================================================== -->
 	    <!-- Build signserver ejb part                                           -->
 	    <!-- =================================================================== -->
-	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile" description="Creates master ejb.jar" unless="buildMailSigner">
+	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient" description="Creates master ejb.jar" unless="buildMailSigner">
 
 	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
 	            <manifest>
@@ -771,7 +781,8 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		   <classpath refid="signserver.compile.classpath"/> 
 	    </javac>
 
-	    <copy todir="${client.dist.dir}" >
+          <mkdir dir="${timeStampClientDir}/lib"/>
+	    <copy todir="${timeStampClientDir}/lib" >
 	      <fileset dir="${lib}/${client.java.target}">
 	        <include name="bcprov-jdk.jar"/>	        
 	      	<include name="bcmail-jdk.jar"/>
@@ -779,19 +790,73 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	      <fileset dir="${lib}/module/tsa/${client.java.target}">
 	        <include name="bctsp-jdk.jar"/>
 	      </fileset>
-	    </copy>
-       <copy todir="${client.dist.dir}/lib" >
-         <fileset dir="${lib}/ext">
-           <include name="commons-cli-1.0.jar"/>
-         </fileset>
-       </copy>
+            <fileset dir="${lib}/ext">
+              <include name="commons-cli-1.0.jar"/>
+            </fileset>
+          </copy>
 	    <jar destfile="${timeStampClientJar}" basedir="${timeStampClientBuild}">
 	      <manifest>
-	        <attribute name="Class-Path" value="bctsp-jdk.jar bcprov-jdk.jar bcmail-jdk.jar lib/commons-cli-1.0.jar"/>
+	        <attribute name="Class-Path" value="lib/bctsp-jdk.jar lib/bcprov-jdk.jar lib/bcmail-jdk.jar lib/commons-cli-1.0.jar"/>
 	        <attribute name="Main-Class" value="org.signserver.client.TimeStampClient"/>
 	      </manifest>
 	    </jar>
 	  </target>
+	
+    <!--                                                   -->
+     <!-- Target Used to test the TimeStamp communication     -->
+     <!--                                                   -->
+      <target name="validationClient" depends="signserver:compile, ws.gen.client, signserverws.client" unless="buildMailSigner" if="validationclient.conditionenabled" >
+        <mkdir dir="${validationClientBuild}"/>
+        <javac srcdir="${src.java}" destdir="${validationClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
+           <include name="org/signserver/client/validationservice/*.java"/>            
+           <classpath refid="signserver.compile.classpath"/> 
+        </javac>
+        <mkdir dir="${validationClientDir}/lib"/>
+        <copy todir="${validationClientDir}/lib" >
+          <fileset dir="dist-client/signserverwscli">
+              <include name="signserverwscli.jar"/>            
+          </fileset>
+          <fileset dir="${lib}/${client.java.target}">
+            <include name="bcprov-jdk.jar"/>            
+            <include name="bcmail-jdk.jar"/>
+          </fileset>
+          <fileset dir="${lib}">        
+	      <include name="log4j.jar"/>      
+	      <include name="commons-lang-2.0.jar"/>
+	      <include name="ejbca-util.jar"/>
+	    </fileset>	
+          <fileset dir="${lib}/ext">
+            <include name="commons-cli-1.0.jar"/>
+          </fileset>
+          <fileset dir="${lib}/jaxws">
+            <include name="activation.jar" />
+            <include name="FastInfoset.jar" />
+            <include name="http.jar" />
+            <include name="jaxb-api.jar" />
+            <include name="jaxb-impl.jar" />
+            <include name="jaxb-xjc.jar" />
+            <include name="jaxws-api.jar" />
+            <include name="jaxws-rt.jar" />
+            <include name="jaxws-tools.jar" />
+            <include name="jsr173_api.jar" />
+            <include name="jsr181-api.jar" />
+            <include name="jsr250-api.jar" />
+            <include name="mimepull.jar" />
+            <include name="resolver.jar" />
+            <include name="saaj-api.jar" />
+            <include name="saaj-impl.jar" />
+            <include name="sjsxp.jar" />
+            <include name="stax-ex.jar" />
+            <include name="streambuffer.jar" />
+         </fileset>
+       </copy>
+        <jar destfile="${validationClientJar}" basedir="${validationClientBuild}">
+          <manifest>
+            <attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/bcmail-jdk.jar lib/commons-cli-1.0.jar  lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar  lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jaxws-tools.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/mimepull.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/stax-ex.jar lib/streambuffer.jar lib/commons-lang-2.0.jar lib/signserverwscli.jar"/>
+            <attribute name="Main-Class" value="org.signserver.client.validationservice.ValidationCLI"/>
+          </manifest>
+        </jar>
+      </target>
 	
 
     <target name="martest">

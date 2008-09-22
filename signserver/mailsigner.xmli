@@ -22,7 +22,9 @@
     	<fileset dir="lib/ext/james" includes="mail-1.4.jar" />
     	<fileset dir="lib/ext/james" includes="james-2.3.1.jar" />
     	<fileset dir="lib/ext/ejb" includes="jboss-ejb3x.jar" />
+    	<fileset dir="lib/ext/ejb" includes="jboss-j2ee.jar" />
     	<fileset dir="lib/asm" includes="*.jar" />
+    	<fileset dir="lib/quartz" includes="*.jar" />
     	<fileset dir="${ant.home}/lib" includes="ant.jar" />
     	<fileset dir="lib/jaxws" includes="*.jar" />
     	<fileset dir="lib/ext/ejb" includes="ejb3-persistence.jar" />
@@ -81,7 +83,6 @@ rmi.server.port           = ${rmi.server.port}
             <exclude name="org/signserver/server/*TimeSource.java"/>
             <exclude name="org/signserver/server/Global*.java"/>
         	<exclude name="org/signserver/server/signers/**"/>
-        	<exclude name="org/signserver/server/timedservices/**"/>
         	<exclude name="org/signserver/validationservice/**"/>
         	<exclude name="org/signserver/groupkeyservice//**"/>        	
         	<exclude name="org/signserver/web/**"/>
@@ -222,11 +223,19 @@ rmi.server.port           = ${rmi.server.port}
       	<fileset dir="lib">
       	  <include name="ejbca-util.jar"/>
       	  <include name="commons-lang-2.0.jar"/>
+      	  <include name="commons-logging.jar"/>
       	</fileset>
       	<fileset dir="lib/${server.java.target}">
       	  <include name="*.jar"/>
       	</fileset>
             <fileset dir="lib/asm">
+              <include name="*.jar"/>
+            </fileset>
+            <fileset dir="lib/ext/ejb">
+              <include name="jboss-j2ee.jar"/>
+            </fileset>
+   
+            <fileset dir="lib/quartz">
               <include name="*.jar"/>
             </fileset>
             <fileset dir="lib/jaxws">
@@ -308,6 +317,7 @@ rmi.server.port           = ${rmi.server.port}
             <formatter type="xml" />
             <batchtest fork="yes" todir="${test.dir}/reports" >
                 <fileset dir="${test.dir}">    
+                    <include name="**/mailsigner/core/TestQ*" /> 
                 	<include name="**/cli/TestMail*" /> 
                 	<include name="**/server/TestHardCoded*" />
                 	<include name="**/server/TestP12SignToken*" />

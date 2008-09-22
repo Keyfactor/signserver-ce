@@ -60,8 +60,10 @@ public abstract class BaseWorker implements IWorker {
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext){
       this.workerId = workerId;
       this.config = config;
-      this.signServerContext = (SignServerContext) workerContext;
-      this.em = signServerContext.getEntityManager();
+      if(workerContext != null && workerContext instanceof SignServerContext){
+        this.signServerContext = (SignServerContext) workerContext;
+        this.em = signServerContext.getEntityManager();
+      }
     }
 	
 }

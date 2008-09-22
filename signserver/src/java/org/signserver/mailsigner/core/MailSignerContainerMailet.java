@@ -95,13 +95,24 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 			Registry registry = LocateRegistry.createRegistry(MailSignerConfig.getRMIRegistryPort());
 			Remote stup = UnicastRemoteObject.exportObject(this,MailSignerConfig.getRMIServerPort());
 			registry.rebind(MailSignerConfig.RMI_OBJECT_NAME, stup);
-			log.info("MailSigner RMI interface bound successfully with registry on port: " + MailSignerConfig.getRMIRegistryPort() + " and server on port: " + MailSignerConfig.getRMIServerPort());			
+			log.info("MailSigner RMI interface bound successfully with registry on port: " + MailSignerConfig.getRMIRegistryPort() + " and server on port: " + MailSignerConfig.getRMIServerPort());
+			
+			QuartzServiceTimer.getInstance().start();
 		}catch(AccessException e){
 			log.error("Failed binding MailSigner RMI interface.", e);
 		}catch (RemoteException e) {
 			log.error("Failed binding MailSigner RMI interface.", e);
 		}
 		
+	}
+	
+	/**
+	 * Stop all services when shutting down.
+	 */
+	@Override
+	protected void finalize() throws Throwable {
+		QuartzServiceTimer.getInstance().stop();
+		super.finalize();
 	}
 
 	/**
@@ -230,7 +241,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	public WorkerStatus getStatus(int workerId)
 			throws InvalidWorkerIdException, RemoteException {
 		
-		return getMailSigner(workerId).getStatus();
+		return WorkerFactory.getInstance().getWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), new MailSignerContext((getMailContext) ? getMailetContext() : null)).getStatus();
 	}
 
 	/**
@@ -243,6 +254,8 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 		}else{
 		  WorkerFactory.getInstance().reloadWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), new MailSignerContext((getMailContext) ? getMailetContext() : null));
 		}
+		
+		QuartzServiceTimer.getInstance().reload(workerId);
 	}
 
 	/**

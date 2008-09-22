@@ -13,7 +13,6 @@
 package org.signserver.mailsigner.core;
 
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +24,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.mailsigner.IMailProcessor;
 import org.signserver.server.PropertyFileStore;
 import org.signserver.server.WorkerFactory;
+import org.signserver.server.timedservices.ITimedService;
 
 /**
  * Class in charge of the Non-EJB representation of the global configuration.
@@ -159,6 +159,15 @@ public class NonEJBGlobalConfigurationSession implements IGlobalConfigurationSes
 							log.debug("Found Classpath " + classPath);
 							Object obj = this.getClass().getClassLoader().loadClass(classPath).newInstance();
 							if(obj instanceof IMailProcessor){
+								log.debug("Adding Mail Signer " + id);
+								retval.add(new Integer(id));        			   
+							}
+						}
+						if(workerType == GlobalConfiguration.WORKERTYPE_SERVICES){
+							String classPath = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, unScopedKey);
+							log.debug("Found Classpath " + classPath);
+							Object obj = this.getClass().getClassLoader().loadClass(classPath).newInstance();
+							if(obj instanceof ITimedService){
 								log.debug("Adding Mail Signer " + id);
 								retval.add(new Integer(id));        			   
 							}

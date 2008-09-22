@@ -119,6 +119,7 @@
    <matcherpackages>
       <matcherpackage>org.apache.james.transport.matchers</matcherpackage>
       <matcherpackage>org.apache.james.transport.matchers.smime</matcherpackage>
+      <matcherpackage>@mailsigner.mailetpackage@</matcherpackage>
    </matcherpackages>
 
    <!-- The James Spool Manager block  -->
@@ -485,7 +486,7 @@ Regards, Postmaster XXX.YYY
          </mailet>
          -->
 
-         <mailet match="All" class="@mailsigner.mailetname@" >
+         <mailet match="@mailsigner.mailetname@" class="@mailsigner.mailetname@" >
 
          </mailet> 
 

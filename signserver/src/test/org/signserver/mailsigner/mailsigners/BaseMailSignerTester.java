@@ -1,5 +1,7 @@
 package org.signserver.mailsigner.mailsigners;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.rmi.Naming;
@@ -86,7 +88,7 @@ public abstract class BaseMailSignerTester extends TestCase {
 	 */
 	protected MimeMessage readTestInbox() throws Exception {
 		File testInbox = new File(signServerHome + "/tmp/testmail");
-		for(int i=0;i<10;i++){
+		for(int i=0;i<20;i++){
 		  if(!testInbox.exists()){
 			  Thread.sleep(1000);
 		  }
@@ -95,7 +97,14 @@ public abstract class BaseMailSignerTester extends TestCase {
 		if(testInbox.exists()){
 		   Session session = Session.getInstance(System.getProperties(), null);
 		   FileInputStream fis = new FileInputStream(testInbox);
-		   MimeMessage msg = new MimeMessage(session,fis);	   		   
+		   ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		   int b=0;
+		   while((b=fis.read()) != -1){
+			   baos.write(b);
+		   }
+		   
+		   ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		   MimeMessage msg = new MimeMessage(session,bais);	   		   
 		   fis.close();
 		   return msg;
 		}

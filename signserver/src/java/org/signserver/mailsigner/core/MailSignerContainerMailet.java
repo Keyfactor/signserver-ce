@@ -26,9 +26,11 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.mail.MessagingException;
 
@@ -36,6 +38,8 @@ import org.apache.log4j.Logger;
 import org.apache.mailet.GenericMailet;
 import org.apache.mailet.Mail;
 import org.apache.mailet.MailetConfig;
+import org.apache.mailet.Matcher;
+import org.apache.mailet.MatcherConfig;
 import org.ejbca.util.CertTools;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -45,6 +49,8 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.MailSignerConfig;
 import org.signserver.common.MailSignerUser;
+import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.mailsigner.BaseMailProcessor;
@@ -55,6 +61,8 @@ import org.signserver.server.IWorker;
 import org.signserver.server.PropertyFileStore;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.clusterclassloader.xmlpersistence.XMLCCLResourceManager;
+import org.signserver.server.statistics.Event;
+import org.signserver.server.statistics.StatisticsManager;
 
 /**
  * MailSignerContainerMailet is the base James Mailet that reads the 
@@ -68,7 +76,7 @@ import org.signserver.server.clusterclassloader.xmlpersistence.XMLCCLResourceMan
  * @author Philip Vendil
  * $Id: MailSignerContainerMailet.java,v 1.6 2008-01-19 03:42:11 herrvendil Exp $
  */
-public class MailSignerContainerMailet extends GenericMailet implements IMailSignerRMI{
+public class MailSignerContainerMailet extends GenericMailet implements IMailSignerRMI, Matcher{
 
 	public static final String TESTMODE_SETTING = "TESTMODE";
 	
@@ -79,6 +87,8 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
     /*Boolean indicating this instance isn't run from a testscript */
 	private boolean getMailContext;
     
+	/* Not used for anything. */
+	private MatcherConfig matcherConfig;
     
     /**
      * Creates all the configured IMailProcessor plugins, initializes
@@ -98,6 +108,16 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 			log.info("MailSigner RMI interface bound successfully with registry on port: " + MailSignerConfig.getRMIRegistryPort() + " and server on port: " + MailSignerConfig.getRMIServerPort());
 			
 			QuartzServiceTimer.getInstance().start();
+			
+			List<Integer> mailIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
+			for (Integer id : mailIds) {
+				try {
+					getMailSigner(id);
+				} catch (InvalidWorkerIdException e) {
+					// Should never happen
+					log.error(e);
+				}
+			}
 		}catch(AccessException e){
 			log.error("Failed binding MailSigner RMI interface.", e);
 		}catch (RemoteException e) {
@@ -120,24 +140,58 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	 * In id order (ascending) order.
 	 */
 	public void service(Mail mail) throws MessagingException{
+				
 		List<Integer> mailIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
 		for (Integer id : mailIds) {
 			try {
 				IMailProcessor mailProcessor = getMailSigner(id);
-				
-				Properties activeProps = mailProcessor.getStatus().getActiveSignerConfig().getProperties();
-				if(!activeProps.getProperty(BaseMailProcessor.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
-				  getMailSigner(id).service(mail);
+				if(isValidUser(mail, mailProcessor)){
+					WorkerConfig awc = mailProcessor.getStatus().getActiveSignerConfig();
+					Event event = StatisticsManager.startEvent(id, awc, null);
+					RequestContext requestContext =  new RequestContext(); 
+					requestContext.put(RequestContext.STATISTICS_EVENT, event);
+
+					if(!awc.getProperty(BaseMailProcessor.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
+						getMailSigner(id).service(mail, requestContext);
+					}
+
+					StatisticsManager.endEvent(id, awc, null, event);
 				}
+				
 			} catch (InvalidWorkerIdException e) {
 				// Should never happen
 				log.error(e);
 			} catch (CryptoTokenOfflineException e){
 				log.error("CryptoTokenOfflineException : " + e.getMessage(),e);
 				throw new MessagingException(e.getMessage(),e);
+			} catch (SignServerException e) {
+				log.error(e);
 			}
 		}
 		mailTest(mail);
+	}
+
+	/**
+	 * Help method that checks if a smtp auth user is valid for
+	 * this mail processor.
+	 * 
+	 * @param mail the mail to check if the mail processor is valid.
+	 * @param mailProcessor 
+	 * @return true if the user is valid for this mailProcessor
+	 */
+	private boolean isValidUser(Mail mail, IMailProcessor mailProcessor) {
+		String authUser = (String) mail.getAttribute("org.apache.james.SMTPAuthUser");
+		
+		Set<String> validUsers = mailProcessor.getValidUsers();
+		if(validUsers == null){
+			return true;
+		}
+		
+		if(authUser == null){
+			return false;
+		}
+						
+		return validUsers.contains(authUser);
 	}
 
 	/**
@@ -251,8 +305,26 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 			throws RemoteException {
 		if(workerId == 0){
 		  NonEJBGlobalConfigurationSession.getInstance().reload();
+		  List<Integer> mailIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
+			for (Integer id : mailIds) {
+				try {
+					getMailSigner(id);
+				} catch (InvalidWorkerIdException e) {
+					// Should never happen
+					log.error(e);
+				}
+			}
 		}else{
 		  WorkerFactory.getInstance().reloadWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), new MailSignerContext((getMailContext) ? getMailetContext() : null));
+			try {
+				List<Integer> mailIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
+				if(mailIds.contains(workerId)){
+				  getMailSigner(workerId);
+				}
+			} catch (InvalidWorkerIdException e) {
+				// Should never happen
+				log.error(e);
+			}
 		}
 		
 		QuartzServiceTimer.getInstance().reload(workerId);
@@ -449,6 +521,47 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	 */
 	public void removeModulePart(String moduleName, String part, int version) {
         XMLCCLResourceManager.removeModulePart(moduleName, part, version);		
+	}
+
+
+	public MatcherConfig getMatcherConfig() {
+		return matcherConfig;
+	}
+
+
+	public String getMatcherInfo() {
+		return "MailSigner generinc Matcher";
+	}
+
+
+	public void init(MatcherConfig matcherConfig) throws MessagingException {
+		this.matcherConfig = matcherConfig;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<?> match(Mail mail) throws MessagingException {
+		HashSet retval = new HashSet();			
+		List<Integer> mailIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
+		for (Integer id : mailIds) {
+			try {
+				IMailProcessor mailProcessor = getMailSigner(id);
+				if(isValidUser(mail, mailProcessor)){
+					WorkerConfig awc = mailProcessor.getStatus().getActiveSignerConfig();
+
+					if(!awc.getProperty(BaseMailProcessor.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
+						retval.addAll(getMailSigner(id).match(mail));
+					}
+
+				}
+
+			} catch (InvalidWorkerIdException e) {
+				// Should never happen
+				log.error(e);
+			} 
+		}
+		return retval;
+
 	}
 
 }

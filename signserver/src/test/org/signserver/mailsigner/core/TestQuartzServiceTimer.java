@@ -60,7 +60,7 @@ public class TestQuartzServiceTimer extends TestCase {
 		qst.start();
 		
 		Thread.sleep(3400);	      
-		assertTrue(""+ readCount(srv1File), readCount(srv1File) == 3);
+		assertTrue(""+ readCount(srv1File), readCount(srv1File) == 2 || readCount(srv1File) == 3) ;
 		assertTrue(""+ readCount(srv2File), readCount(srv2File) == 1);
 		
 		qst.stop();

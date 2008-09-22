@@ -15,6 +15,7 @@ package org.signserver.mailsigner.mailsigners;
 
 import org.apache.log4j.Logger;
 import org.apache.mailet.Mail;
+import org.signserver.common.RequestContext;
 import org.signserver.mailsigner.BaseMailProcessor;
 
 /**
@@ -33,9 +34,9 @@ public class DummyMailSigner extends BaseMailProcessor {
 	public transient Logger log = Logger.getLogger(this.getClass());
 	
 	/**
-	 * @see org.signserver.mailsigner.IMailProcessor#service(org.apache.mailet.Mail)
+	 * @see org.signserver.mailsigner.IMailProcessor#service(Mail, RequestContext)
 	 */
-	public void service(Mail mail) {
+	public void service(Mail mail, RequestContext requestContext) {
 		log.info("Service called for mailsigner with id " + workerId);
 		
 		

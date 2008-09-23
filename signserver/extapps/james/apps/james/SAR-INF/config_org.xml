@@ -802,6 +802,7 @@ Regards, Postmaster XXX.YYY
       <!--
       <useTLS>true</useTLS>
       -->
+      <!--@USETLS1@>true<@USETLS2@-->
       <handler>
          <!-- This is the name used by the server to identify itself in the RemoteManager -->
          <!-- protocol.  If autodetect is TRUE, the server will discover its -->
@@ -867,6 +868,7 @@ Regards, Postmaster XXX.YYY
       <!--
       <useTLS>true</useTLS>
       -->
+      <!--@USETLS1@true<@USETLS2@-->
 
       <handler>
          <!-- This is the name used by the server to identify itself in the SMTP -->
@@ -1351,6 +1353,19 @@ Regards, Postmaster XXX.YYY
    <sockets>
       <server-sockets>
          <factory name="plain" class="org.apache.avalon.cornerstone.blocks.sockets.DefaultServerSocketFactory"/>
+          <!--@USETLS3@ name="ssl" class="org.apache.avalon.cornerstone.blocks.sockets.TLSServerSocketFactory">
+            <ssl-factory>
+               <keystore>
+                  <file>@mailsigner.tlskeystorepath@</file>
+                  <password>@mailsigner.tlskeystorepwd@</password>
+                  <key-password>@mailsigner.tlskeystorepwd@</key-password>
+                  <type>JKS</type>
+                  <protocol>TLS</protocol>
+                  <algorithm>SunX509</algorithm>
+                  <authenticate-client>false</authenticate-client>
+               </keystore>
+            </ssl-factory>
+         <@USETLS4@-->
          <!--
          <factory name="ssl" class="org.apache.avalon.cornerstone.blocks.sockets.TLSServerSocketFactory">
             <ssl-factory>

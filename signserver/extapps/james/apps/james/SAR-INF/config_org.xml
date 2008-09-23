@@ -802,7 +802,7 @@ Regards, Postmaster XXX.YYY
       <!--
       <useTLS>true</useTLS>
       -->
-      <!--@USETLS1@>true<@USETLS2@-->
+      
       <handler>
          <!-- This is the name used by the server to identify itself in the RemoteManager -->
          <!-- protocol.  If autodetect is TRUE, the server will discover its -->
@@ -868,7 +868,7 @@ Regards, Postmaster XXX.YYY
       <!--
       <useTLS>true</useTLS>
       -->
-      <!--@USETLS1@true<@USETLS2@-->
+      <!--@USETLS1@>true<@USETLS2@-->
 
       <handler>
          <!-- This is the name used by the server to identify itself in the SMTP -->

@@ -16,8 +16,7 @@ import org.quartz.JobExecutionException;
 public class DoNothingJob implements Job{
 
 	public DoNothingJob(){}
-	
-	@Override
+		
 	public void execute(JobExecutionContext arg0)
 			throws JobExecutionException {
 		// Do Nothing			

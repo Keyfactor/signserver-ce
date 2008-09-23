@@ -226,19 +226,16 @@ public class QuartzServiceTimer {
 			}
 			
 		}
-
-		@Override
+		
 		public String getName() {
 			return "" + workerId;
 		}
 
-		@Override
 		public void triggerComplete(Trigger arg0, JobExecutionContext arg1,
 				int arg2) {
               // Do Nothing			
 		}
 
-		@Override
 		public void triggerFired(Trigger arg0, JobExecutionContext arg1) {
 			try {
 				new ServiceConfig(timedService.getStatus().getActiveSignerConfig()).setLastRunTimestamp(new Date());
@@ -251,12 +248,10 @@ public class QuartzServiceTimer {
 			
 		}
 
-		@Override
 		public void triggerMisfired(Trigger arg0) {
 			log.error("Error service execution for service with Id " + workerId + " failed.");		
 		}
 
-		@Override
 		public boolean vetoJobExecution(Trigger arg0, JobExecutionContext arg1) {
 			return false;
 		}

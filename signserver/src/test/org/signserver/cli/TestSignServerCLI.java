@@ -60,7 +60,7 @@ public class TestSignServerCLI extends TestCase {
 	
 	public void testBasicSetup() throws Exception{
 
-		TestUtils.assertSuccessfulExecution(new String[] {"noarguments"});
+		TestUtils.assertFailedExecution(new String[] {"noarguments"});
 		assertTrue(TestUtils.grepTempOut("Usage: signserver"));
 		
 				

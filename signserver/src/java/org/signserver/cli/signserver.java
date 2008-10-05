@@ -70,6 +70,7 @@ public class signserver {
 	                
 	            } else {
 	            	getSignServerCommandFactory().outputHelp(System.out);
+	            	System.exit(-1);
 	            }
             } catch (IllegalAdminCommandException e) {
                 System.out.println(e.getMessage());                

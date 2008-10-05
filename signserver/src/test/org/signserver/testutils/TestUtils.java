@@ -172,16 +172,18 @@ public class TestUtils {
 		}		
 	}
 	
-	public static void assertFailedExecution(String[] args){
+	public static int assertFailedExecution(String[] args){
 		try {
 			TestUtils.flushTempOut();
 			signserver.main(args);
 			Assert.assertTrue(false);
 		}catch(ExitException e) {
+			return e.number;
 		}		
+		return 0;
 	}
 	
-	public static void assertFailedExecution(Object o,String[] args){
+	public static int assertFailedExecution(Object o,String[] args){
 		try {
 			TestUtils.flushTempOut();
 			Method m = o.getClass().getMethod("main", String[].class);
@@ -189,6 +191,7 @@ public class TestUtils {
 			m.invoke(o,  arguments);
 			Assert.assertTrue(false);
 		}catch(ExitException e) {
+			return e.number;
 		}  catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			Assert.assertTrue(false);
@@ -199,7 +202,10 @@ public class TestUtils {
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		} catch (InvocationTargetException e) {
-
+           if(e.getTargetException() instanceof ExitException){
+        	   return ((ExitException) e.getTargetException()).number;
+           }
 		}		
+		return 0;
 	}
 }

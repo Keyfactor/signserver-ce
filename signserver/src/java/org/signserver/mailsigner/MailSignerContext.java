@@ -30,11 +30,19 @@ public class MailSignerContext extends WorkerContext {
 	
 	private MailetContext mailetContext;
 	
+	private static MailSignerContext mailSignerContext = new MailSignerContext();
+	
+	public static MailSignerContext getInstance(){
+		return mailSignerContext;
+	}
+	
+	private MailSignerContext(){}
+	
 	/**
-	 * Default constructor.
+	 * initializes the context
 	 * @param mailetContext the Mailet Context
 	 */
-	public MailSignerContext(MailetContext mailetContext){
+	public void init(MailetContext mailetContext){
 	  this.mailetContext = mailetContext;	
 	}
 	

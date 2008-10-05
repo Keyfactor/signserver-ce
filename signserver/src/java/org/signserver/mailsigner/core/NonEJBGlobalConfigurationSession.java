@@ -22,6 +22,8 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ResyncException;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.mailsigner.IMailProcessor;
+import org.signserver.mailsigner.MailSignerContext;
+import org.signserver.server.IWorker;
 import org.signserver.server.PropertyFileStore;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.timedservices.ITimedService;
@@ -144,8 +146,7 @@ public class NonEJBGlobalConfigurationSession implements IGlobalConfigurationSes
 	}
 	
 	private List<Integer> getWorkerHelper(List<Integer> retval, GlobalConfiguration gc, String key, int workerType){
-		try{
-			String unScopedKey = key.substring("GLOB.".length());
+				
 			String strippedKey = key.substring("GLOB.WORKER".length());
 			String[] splittedKey = strippedKey.split("\\.");
 			if(splittedKey.length > 1){
@@ -154,20 +155,15 @@ public class NonEJBGlobalConfigurationSession implements IGlobalConfigurationSes
 					if(workerType == GlobalConfiguration.WORKERTYPE_ALL){
 						retval.add(new Integer(id));
 					}else{
+						IWorker worker = WorkerFactory.getInstance().getWorker(id, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), MailSignerContext.getInstance());
 						if(workerType == GlobalConfiguration.WORKERTYPE_MAILSIGNERS){
-							String classPath = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, unScopedKey);
-							log.debug("Found Classpath " + classPath);
-							Object obj = this.getClass().getClassLoader().loadClass(classPath).newInstance();
-							if(obj instanceof IMailProcessor){
+							if(worker instanceof IMailProcessor){
 								log.debug("Adding Mail Signer " + id);
 								retval.add(new Integer(id));        			   
 							}
 						}
-						if(workerType == GlobalConfiguration.WORKERTYPE_SERVICES){
-							String classPath = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, unScopedKey);
-							log.debug("Found Classpath " + classPath);
-							Object obj = this.getClass().getClassLoader().loadClass(classPath).newInstance();
-							if(obj instanceof ITimedService){
+						if(workerType == GlobalConfiguration.WORKERTYPE_SERVICES){							
+							if(worker instanceof ITimedService){
 								log.debug("Adding Mail Signer " + id);
 								retval.add(new Integer(id));        			   
 							}
@@ -175,13 +171,7 @@ public class NonEJBGlobalConfigurationSession implements IGlobalConfigurationSes
 					}
 				}
 			}
-		} catch (ClassNotFoundException e) {
-			log.error("Error in global configuration for configurared workersTypes, classpath not found",e);
-		} catch (InstantiationException e) {
-			log.error("Error in global configuration for configurared workersTypes, classpath not found",e);
-		} catch (IllegalAccessException e) {
-			log.error("Error in global configuration for configurared workersTypes, classpath not found",e);
-		}
+
 
 		return retval;
 	}

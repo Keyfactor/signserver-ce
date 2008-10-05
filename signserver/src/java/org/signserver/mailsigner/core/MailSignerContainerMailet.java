@@ -12,9 +12,6 @@
  *************************************************************************/
 package org.signserver.mailsigner.core;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.rmi.AccessException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -56,6 +53,7 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.mailsigner.BaseMailProcessor;
 import org.signserver.mailsigner.IMailProcessor;
 import org.signserver.mailsigner.MailSignerContext;
+import org.signserver.mailsigner.MailSignerUtil;
 import org.signserver.mailsigner.cli.IMailSignerRMI;
 import org.signserver.server.IWorker;
 import org.signserver.server.PropertyFileStore;
@@ -78,14 +76,13 @@ import org.signserver.server.statistics.StatisticsManager;
  */
 public class MailSignerContainerMailet extends GenericMailet implements IMailSignerRMI, Matcher{
 
-	public static final String TESTMODE_SETTING = "TESTMODE";
+	
 	
 	private static transient Logger log = Logger.getLogger(MailSignerContainerMailet.class.getName());	    
 	
     private MailSignerUserRepository userRepository = new MailSignerUserRepository();
 
-    /*Boolean indicating this instance isn't run from a testscript */
-	private boolean getMailContext;
+
     
 	/* Not used for anything. */
 	private MatcherConfig matcherConfig;
@@ -99,14 +96,14 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	@Override
 	public void init(MailetConfig mailetConfig) throws MessagingException {
 		super.init(mailetConfig);
-		getMailContext = true;
+		MailSignerContext.getInstance().init(mailetConfig.getMailetContext());
 		try{
-			     
+			     			
 			Registry registry = LocateRegistry.createRegistry(MailSignerConfig.getRMIRegistryPort());
 			Remote stup = UnicastRemoteObject.exportObject(this,MailSignerConfig.getRMIServerPort());
 			registry.rebind(MailSignerConfig.RMI_OBJECT_NAME, stup);
 			log.info("MailSigner RMI interface bound successfully with registry on port: " + MailSignerConfig.getRMIRegistryPort() + " and server on port: " + MailSignerConfig.getRMIServerPort());
-			
+						
 			QuartzServiceTimer.getInstance().start();
 			
 			List<Integer> mailIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
@@ -168,7 +165,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 				log.error(e);
 			}
 		}
-		mailTest(mail);
+		MailSignerUtil.mailTest(mail);
 	}
 
 	/**
@@ -194,38 +191,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 		return validUsers.contains(authUser);
 	}
 
-	/**
-	 * Method used to test a mail signer, checks if setting TESTMODE is set
-	 * to TRUE in global configuration. If so is the mail serialized and
-	 * written to the temporary directory for later inspection.
-	 * @param mail
-	 */
-	private void mailTest(Mail mail) {
-
-		if(mail.getState() != Mail.ERROR){
-			GlobalConfiguration gc = NonEJBGlobalConfigurationSession.getInstance().getGlobalConfiguration();
-			if(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, TESTMODE_SETTING)!= null &&
-					gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, TESTMODE_SETTING).equalsIgnoreCase("TRUE")){
-				String signserverhome = System.getenv("SIGNSERVER_HOME");
-				if(signserverhome == null){
-					log.error("Error performing test of mail signer, environment variable SIGNSERVER_HOME isn't set");
-				}
-
-				try {
-					FileOutputStream fos = new FileOutputStream(signserverhome + "/tmp/testmail");				
-					mail.getMessage().writeTo(fos);
-					fos.close();
-				} catch (FileNotFoundException e) {
-					log.error("Error performing test of mail signer : " + e.getMessage());
-				} catch (IOException e) {
-					log.error("Error performing test of mail signer : " + e.getMessage());
-				} catch (MessagingException e) {
-					log.error("Error performing test of mail signer : " + e.getMessage());
-				} 
-				mail.setState(Mail.GHOST);
-			}
-		}
-	}		
+		
 
 
 	/**
@@ -295,7 +261,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	public WorkerStatus getStatus(int workerId)
 			throws InvalidWorkerIdException, RemoteException {
 		
-		return WorkerFactory.getInstance().getWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), new MailSignerContext((getMailContext) ? getMailetContext() : null)).getStatus();
+		return WorkerFactory.getInstance().getWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), MailSignerContext.getInstance()).getStatus();
 	}
 
 	/**
@@ -315,7 +281,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 				}
 			}
 		}else{
-		  WorkerFactory.getInstance().reloadWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), new MailSignerContext((getMailContext) ? getMailetContext() : null));
+		  WorkerFactory.getInstance().reloadWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), MailSignerContext.getInstance());
 			try {
 				List<Integer> mailIds = NonEJBGlobalConfigurationSession.getInstance().getWorkers(GlobalConfiguration.WORKERTYPE_MAILSIGNERS);
 				if(mailIds.contains(workerId)){
@@ -440,7 +406,7 @@ public class MailSignerContainerMailet extends GenericMailet implements IMailSig
 	 */
 	private IMailProcessor getMailSigner(int workerId) throws InvalidWorkerIdException{
 		
-		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), new MailSignerContext((getMailContext) ? getMailetContext() : null));
+		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(),MailSignerContext.getInstance());
 		if(!(worker instanceof IMailProcessor)){
 			log.error("Error: mail signer with id '" + workerId + " doesn't implement the required IMailProcessor interface");
 		}

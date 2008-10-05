@@ -59,6 +59,7 @@ public class QuartzServiceTimer {
 	
 	private static QuartzServiceTimer instance = null;
 	
+	
 	public static QuartzServiceTimer getInstance(){
 		if(instance == null){
 			instance = new QuartzServiceTimer();
@@ -169,7 +170,7 @@ public class QuartzServiceTimer {
 	 */
 	private ITimedService getTimedService(int workerId) throws InvalidWorkerIdException{
 		
-		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), new MailSignerContext(null));
+		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), MailSignerContext.getInstance());
 		if(!(worker instanceof ITimedService)){
 			log.error("Error: timed service with id '" + workerId + " doesn't implement the required ITimedService interface");
 		}
@@ -257,6 +258,8 @@ public class QuartzServiceTimer {
 		}
 		
 	}
+
+
 	
 
 	

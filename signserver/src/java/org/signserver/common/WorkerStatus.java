@@ -54,6 +54,12 @@ public abstract class WorkerStatus implements Serializable{
 	    activeconfig = config;
 	}
 
+	/**
+	 * @return Returns the workerId.
+	 */
+	public int getWorkerId(){
+		return workerId;
+	}
 
 	/**
 	 * @return Returns the hostname.

@@ -128,7 +128,7 @@ public class ValidationResponse {
 	}
 
 	/**
-	 * @param validCertificatePurposes, a ',' separated string of valid requested purposes.
+	 * @param validCertificatePurposes a ',' separated string of valid requested purposes.
 	 */
 	public void setValidCertificatePurposes(String validCertificatePurposes) {
 		this.validCertificatePurposes = validCertificatePurposes;

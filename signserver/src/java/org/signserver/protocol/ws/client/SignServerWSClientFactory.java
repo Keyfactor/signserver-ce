@@ -13,6 +13,8 @@
 
 package org.signserver.protocol.ws.client;
 
+import javax.net.ssl.SSLSocketFactory;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -93,6 +95,23 @@ public class SignServerWSClientFactory {
      * @param customAppURI the path to the sign server URI where the WS is deployed.
      */
     public ISignServerWSClient generateSignServerWSClient(String clientType,String[] hosts,  boolean useHTTPS, IFaultCallback faultCallback, int port, int timeOut, String customAppURI){
+    	return generateSignServerWSClient(clientType, hosts, useHTTPS, faultCallback, DEFAULT_PORT, timeOut,DEFAULT_WSDL_URL,null);
+    }
+    
+    /**
+     * Generates a SignServerWSClient using specified
+     * port, timeout, wsdlURL and custom SSLSocketFactory specified.
+     * 
+     * @param clientType One of the CLIENTTYPE_ constants indication the High-Availability policy that should be used.
+     * @param hosts host names of the server to connect to.
+     * @param useHTTPS indicates if HTTPS should be used.
+     * @param port to connect to
+     * @param timeOut in milliseconds
+     * @param customAppURI the path to the sign server URI where the WS is deployed.
+     * @param sSLSocketFactory the SSLSocketFactory to use, null means that the Default 
+     * SSLSocketFactory will be used if necessary. 
+     */
+    public ISignServerWSClient generateSignServerWSClient(String clientType,String[] hosts,  boolean useHTTPS, IFaultCallback faultCallback, int port, int timeOut, String customAppURI, SSLSocketFactory sSLSocketFactory){
     	ISignServerWSClient retval = null;
     	try {
 			retval = (ISignServerWSClient) this.getClass().getClassLoader().loadClass(clientType).newInstance();
@@ -102,7 +121,7 @@ public class SignServerWSClientFactory {
 				tmpPort = SECURE_PORT;
 			}
 			
-			retval.init(hosts, tmpPort, timeOut, customAppURI, useHTTPS, faultCallback);
+			retval.init(hosts, tmpPort, timeOut, customAppURI, useHTTPS, faultCallback, sSLSocketFactory);
 			
 		} catch (Exception e) {
 			log.error("Error creating SignServiceWSClient of type " + clientType,e);

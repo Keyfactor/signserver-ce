@@ -15,12 +15,14 @@ package org.signserver.protocol.ws.client;
 
 import java.util.List;
 
+import javax.net.ssl.SSLSocketFactory;
+
 import org.signserver.protocol.ws.ProcessResponseWS;
 import org.signserver.protocol.ws.ProcessRequestWS;
 
 /**
  * Interface that should be implemented by all SignService WebService
- * clients. It contains two main methods, the first one used to signData
+ * clients. It contains two main methods, the first one used to process
  * the other one to initialize the client.
  * 
  * It's up to the implementing class to take care of high-availability
@@ -36,7 +38,7 @@ public interface ISignServerWSClient {
    
 	/**
      * Method used to initialize a SignServer client with a given
-     * high availablity policy.
+     * high availability policy.
      * 
      * @param host to connect to
      * @param port to connect to
@@ -44,10 +46,13 @@ public interface ISignServerWSClient {
      * @param wSDLURI the URL to the WSDL of the service appended to the host and port.
      * @param useHTTPS if HTTPS should be used to connect to the server. 
      * @param faultCallback an interface to which all the problems are reported
+     * @param sSLSocketFactory the SSLSocketFactory to use, null means that the Default 
+     * SSLSocketFactory will be used if necessary. 
 	 * this is mainly used to report problems when connecting to nodes. 
      */
 	void init(String[] hosts, int port, int timeOut, 
-         String wSDLURI, boolean useHTTPS, IFaultCallback faultCallback);
+         String wSDLURI, boolean useHTTPS, IFaultCallback faultCallback,
+         SSLSocketFactory sSLSocketFactory);
 
 	/**
 	 * The main method used to send process requests to a sign server.
@@ -56,11 +61,10 @@ public interface ISignServerWSClient {
 	 * the policy.
 	 * 
 	 * @param requests a list of requests to process
-	 * @param errorCallback an interface to which all the problems are reported
-	 * this is mainly used to report problems when connecting to nodes. 
+	 * @param workerIdOrName name or id of worker.
 	 * 
 	 */
-	List<ProcessResponseWS> process(String workerId, List<ProcessRequestWS> requests);
+	List<ProcessResponseWS> process(String workerIdOrName, List<ProcessRequestWS> requests);
 	
 
 

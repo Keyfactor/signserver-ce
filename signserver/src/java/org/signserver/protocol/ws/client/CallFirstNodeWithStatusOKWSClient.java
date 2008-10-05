@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 
@@ -18,6 +19,8 @@ import org.signserver.protocol.ws.gen.SignServerException_Exception;
 import org.signserver.protocol.ws.gen.SignServerWS;
 import org.signserver.protocol.ws.gen.SignServerWSService;
 import org.signserver.protocol.ws.gen.WorkerStatusWS;
+
+import com.sun.xml.ws.developer.JAXWSProperties;
 
 
 /**
@@ -42,6 +45,7 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 		private String protocol = SignServerWSClientFactory.PROTOCOL;
 		private int port = 0;
 		private String  wSDLURL = null;
+		private SSLSocketFactory sSLSocketFactory = null;
 		
 		private HashMap<String, SignServerWS> serviceMap = new HashMap<String, SignServerWS>();
 		
@@ -62,10 +66,13 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	     * @param timeOut in milliseconds
 	     * @param wSDLURL the URL to the WSDL of the service appended to the host and port.
 	     * @param useHTTPS if HTTPS should be used.  
-	     * 
+         * @param sSLSocketFactory the SSLSocketFactory to use, null means that the Default 
+         * SSLSocketFactory will be used if necessary. 
 	     */
 	    public void init(String[] hosts, int port, int timeOut, 
-	    		             String  wSDLURL, boolean useHTTPS, IFaultCallback faultCallback){
+	    		             String  wSDLURL, boolean useHTTPS, 
+	    		             IFaultCallback faultCallback, 
+	    		             SSLSocketFactory sSLSocketFactory){
 
 	        this.hosts = hosts;  
 	        this.timeOut = timeOut;
@@ -75,6 +82,8 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	        this.port = port;
 	        this.wSDLURL = wSDLURL;
 	        this.faultCallback = faultCallback;
+	        
+	        this.sSLSocketFactory = sSLSocketFactory;
 	        
 	        
 	        for (int i = 0; i < hosts.length; i++) {
@@ -102,6 +111,8 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	    						"com.sun.xml.ws.connect.timeout", timeOut  );
 	    				( ( BindingProvider ) retval ).getRequestContext().put(
 	    						"com.sun.xml.ws.request.timeout", timeOut  );
+	    				( ( BindingProvider ) retval ).getRequestContext().put(
+	    						JAXWSProperties.SSL_SOCKET_FACTORY, sSLSocketFactory  );
 	    			} 
 	    			serviceMap.put(host, retval);
 	    		} catch (MalformedURLException e) {

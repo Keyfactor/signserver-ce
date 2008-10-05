@@ -17,6 +17,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+
 import org.signserver.protocol.ws.Certificate;
 import org.signserver.protocol.ws.gen.ProcessRequestWS;
 import org.signserver.protocol.ws.gen.ProcessResponseWS;
@@ -33,6 +38,8 @@ import org.signserver.protocol.ws.gen.ProcessResponseWS;
 */
 public class WSClientUtil {
 
+	
+	
 	/**
 	 * Method used to convert a coded SignRequestWS to a auto generated SignRequestWS
 	 */
@@ -87,5 +94,38 @@ public class WSClientUtil {
 		retval.setCertificateBase64(certificate.getCertificateBase64());
 		return retval;
 	}
+	
+	/**
+	 * Method to generate a custom SSL Socket Factory from a
+	 * client key store JKS and a trust store JKS.
+	 * @param clientKeyStore Path to the client JKS used for client authentication
+	 * or null if no client authentication should be supported.
+	 * @param clientKeyStorePwd password to unlock key store or null
+	 * if no client authentication should be supported.
+	 * @param trustKeyStore Path to JKS containing all trusted CA certificates
+	 * @param trustKeyStorePwd password to unlock trust key store.
+	 * @return a generated custom SSLSocketFactory
+	 */
+	public static SSLSocketFactory genCustomSSLSocketFactory(String clientKeyStore,
+			String clientKeyStorePwd, String trustKeyStore, String trustKeyStorePwd) throws Exception{
+		TrustManager[] trustManagers =  new TrustManager[] {new CustomJKSTrustStoreManager(trustKeyStore, trustKeyStorePwd)}; 
+		
+		SSLContext sc = SSLContext.getInstance("SSL");
+				
+		if(clientKeyStore != null){
+		  KeyManager[] keyManagers = new KeyManager[] { new CustomJKSKeyManager(clientKeyStore,clientKeyStorePwd)};
+		  sc.init(keyManagers, trustManagers, new java.security.SecureRandom());
+		}else{
+		  sc.init(null, trustManagers, new java.security.SecureRandom());
+		}
+						
+		
+		return sc.getSocketFactory();
+	}
+	
+	
+
+	
+
 	
 }

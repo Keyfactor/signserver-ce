@@ -29,6 +29,7 @@
         <part>
             <fileset dir="dist-server">
                 <include name="simplemailsigner-module.jar"/>
+                <include name="mailsigner-module-common.jar"/>
             </fileset>
             <fileset dir="src/module-configs/simplemailsigner">
                 <include name="*.properties"/>

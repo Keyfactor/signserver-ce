@@ -103,6 +103,7 @@
     	<fileset dir="lib/ext" includes="mysql-connector-java-3.1.10-bin.jar" />
         <path refid="server.compile.classpath" />
         <path location="${build}" />
+        <path location="${validationClientBuild}" />
         <path refid="j2ee.classpath" />
         <path refid="jaxws.classpath" />
         
@@ -536,6 +537,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
                 	<include name="**/server/statistics/nonpersistent/Test*" />
                 	<include name="**/groupkeyservice/Test*" /> 
                 	<include name="**/cli/TestSignServer*" />
+                	<include name="**/client/validationservice/Test*" />
                 	<include name="**/protocol/validationservice/ws/Test*" />
                 	<include name="**/protocol/ws/Test*" />
                     <exclude name="**/*Continously*" />

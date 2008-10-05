@@ -79,7 +79,7 @@ public class DummyValidator extends BaseValidator {
 			return new Validation(cert,getCertificateChain(cert),Validation.Status.REVOKED,"This certificate is revoced", new Date(), 3);
 		}
 		if(xcert.getIssuer().equals("CN=revocedRootCA1")){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid");
+			return new Validation(cert,getCertificateChain(cert),Validation.Status.CAREVOKED,"This certificate is valid", new Date(), 3);
 		}
 		if(cert.getSubject().equals("CN=revokedCert1")){
 			return new Validation(cert,getCertificateChain(cert),Validation.Status.REVOKED,"This certificate is revoced", new Date(), 3);

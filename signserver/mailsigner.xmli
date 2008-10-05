@@ -64,7 +64,7 @@ rmi.server.port           = ${rmi.server.port}
     	<delete dir="${james-dir}/work" />
     </target>
 
-	<target name="mailsigner" depends="mailsigner-compile, mailsigner-build, setup-james, simplemailsignermar" if="buildMailSigner"/>
+	<target name="mailsigner" depends="mailsigner-compile, mailsigner-build, mailsigner-module-common, setup-james, simplemailsignermar" if="buildMailSigner"/>
 	    
 	
 
@@ -78,6 +78,7 @@ rmi.server.port           = ${rmi.server.port}
         	<exclude name="org/signserver/client/**"/>        	
         	<exclude name="org/signserver/ejb/**"/>  
         	<exclude name="org/signserver/module/**"/>        	
+        	<exclude name="org/signserver/mailsigner/module/**/**"/>
             <exclude name="org/signserver/server/*Authorizer.java"/>
             <exclude name="org/signserver/server/*Processable.java"/>
             <exclude name="org/signserver/server/*TimeSource.java"/>
@@ -103,6 +104,22 @@ rmi.server.port           = ${rmi.server.port}
 	      </manifest>
 	    </jar>
     </target>
+	
+    <property name="mailsigner-module-common.jar" value="${server.dist.dir}/mailsigner-module-common.jar"/>
+    <target name="mailsigner-module-common" depends="mailsigner-compile" if="buildMailSigner" >
+        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
+            <classpath refid="mailsigner.compile.classpath" />
+            <src path="${src.java}" />        
+        	<include name="org/signserver/mailsigner/module/common/**"/>
+        </javac>
+	    <jar destfile="${mailsigner-module-common.jar}" basedir="${build}">
+	      <manifest>
+	        <attribute name="Class-Path" value=""/>	        
+	      </manifest>
+            <include name="org/signserver/mailsigner/module/common/**"/>
+	    </jar>
+    </target>
+
 	
     <target name="mailsigner-pkgdist"  depends="mailsigner-pkgdist-server, mailsigner-pkgdist-mgmt" if="buildMailSigner">	  
     </target>

@@ -463,7 +463,7 @@ public class TestValidationServiceWorker extends TestCase {
 		assertTrue(cAChain.get(4).getSubject().equals("CN=ValidRootCA1"));
 		
 	}
-	
+
 	public void test99RemoveDatabase() throws Exception{
 				  
 		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.CLASSPATH");

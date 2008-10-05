@@ -69,7 +69,7 @@ public class TestQuartzServiceTimer extends TestCase {
 		assertTrue(""+ readCount(srv2File), readCount(srv2File) == 1);
 		
 		properties.setWorkerProperty(1718, ServiceConfig.ACTIVE, "FALSE");
-		WorkerFactory.getInstance().reloadWorker(1718, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), new MailSignerContext(null));
+		WorkerFactory.getInstance().reloadWorker(1718, MailSignerWorkerConfigService.getInstance(), NonEJBGlobalConfigurationSession.getInstance(), MailSignerContext.getInstance());
 		qst.start();
 		
 		qst.reload(1718);

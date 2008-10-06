@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.MailSignerConfig;
 import org.signserver.common.SignServerUtil;
+import org.signserver.mailsigner.MailSignerUtil;
 import org.signserver.mailsigner.cli.IMailSignerRMI;
 /**
  * Abstract test class containing a lot of help methods in setting up and
@@ -37,7 +38,7 @@ public abstract class BaseMailSignerTester extends TestCase {
 		SignServerUtil.installBCProvider();
 		iMailSignerRMI = getIMailSignerRMI();
 		
-		iMailSignerRMI.setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, SignServerUtil.TESTMODE_SETTING, "TRUE");
+		iMailSignerRMI.setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, MailSignerUtil.TESTMODE_SETTING, "TRUE");
 		
 		iMailSignerRMI.setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, GlobalConfiguration.WORKERPROPERTY_BASE + getWorkerId() + GlobalConfiguration.WORKERPROPERTY_CLASSPATH, getMailSignerClassPath());
 		if(getCryptoTokenClasspath() != null){
@@ -194,7 +195,7 @@ public abstract class BaseMailSignerTester extends TestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		iMailSignerRMI = getIMailSignerRMI();
-		iMailSignerRMI.removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, SignServerUtil.TESTMODE_SETTING);
+		iMailSignerRMI.removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, MailSignerUtil.TESTMODE_SETTING);
 		iMailSignerRMI.removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, GlobalConfiguration.WORKERPROPERTY_BASE + getWorkerId() + GlobalConfiguration.WORKERPROPERTY_CLASSPATH);
 		if(getCryptoTokenClasspath() != null){
 			iMailSignerRMI.removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, GlobalConfiguration.WORKERPROPERTY_BASE + getWorkerId() + GlobalConfiguration.CRYPTOTOKENPROPERTY_BASE + GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);

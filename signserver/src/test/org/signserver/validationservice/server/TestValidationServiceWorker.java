@@ -13,7 +13,7 @@ import javax.naming.InitialContext;
 import junit.framework.TestCase;
 
 import org.bouncycastle.jce.X509KeyUsage;
-import org.ejbca.util.KeyTools;
+import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;

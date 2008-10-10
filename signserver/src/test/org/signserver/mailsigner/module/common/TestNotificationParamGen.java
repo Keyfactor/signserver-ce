@@ -28,7 +28,7 @@ public class TestNotificationParamGen extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();		
 		SignServerUtil.installBCProvider();		
-		expireCert = CertTools.getCertfromByteArray(Base64.decode(expireCertData.getBytes()));	
+		expireCert = (X509Certificate)CertTools.getCertfromByteArray(Base64.decode(expireCertData.getBytes()));	
 	}
 	
 	public void testSubstitutions(){

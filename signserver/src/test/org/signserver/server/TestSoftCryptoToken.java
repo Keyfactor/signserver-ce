@@ -28,7 +28,7 @@ import junit.framework.TestCase;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
-import org.ejbca.util.KeyTools;
+import org.ejbca.util.keystore.KeyTools;
 import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;

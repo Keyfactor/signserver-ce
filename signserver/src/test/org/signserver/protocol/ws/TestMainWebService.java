@@ -32,7 +32,7 @@ import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
-import org.ejbca.util.KeyTools;
+import org.ejbca.util.keystore.KeyTools;
 import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;

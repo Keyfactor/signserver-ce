@@ -300,7 +300,7 @@ public class ValidationCLI {
 			}else{
 				byte[] data = new byte[fis.available()];
 				fis.read(data,0,fis.available());
-				cert = CertTools.getCertfromByteArray(data);
+				cert = (X509Certificate)CertTools.getCertfromByteArray(data);
 			}
 		}finally{
 			fis.close();

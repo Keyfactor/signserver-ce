@@ -57,7 +57,7 @@
 	        <fileset dir="lib" includes="*.jar" />
 	   	    <fileset dir="lib/quartz" includes="*.jar" />
 	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
-	    	
+	    
             <fileset dir="lib/module/tsa/${client.java.target}" includes="*.jar" />   
 	        <fileset dir="lib/module/pdfsigner/itext" includes="*.jar"/>
 	   	    <fileset dir="lib/jaxws" includes="*.jar" />	 
@@ -106,7 +106,6 @@
 
 	
       <path id="signserver.test.compile.classpath">
-    	<fileset dir="lib/ext" includes="mysql-connector-java-3.1.10-bin.jar" />
         <path refid="server.compile.classpath" />
         <path location="${build}" />
         <path location="${validationClientBuild}" />
@@ -485,7 +484,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	            <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
 	                 subdirectories though so we must flatten the structure. zipfileset is a good was of flattening the structure, so 
 	                 all jar files is directly in lib directory in the ear file -->
-	            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,ldap.jar,commons-lang-2.0.jar" prefix="lib"/>
+	            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,ldap.jar,commons-lang-2.0.jar" prefix="lib"/>
 	            <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>

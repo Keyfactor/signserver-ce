@@ -20,7 +20,7 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.ejbca.util.CertTools;
-import org.ejbca.util.KeyTools;
+import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.SignServerUtil;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.X509Certificate;

@@ -18,7 +18,7 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.ejbca.util.KeyTools;
+import org.ejbca.util.keystore.KeyTools;
 import org.signserver.validationservice.server.ValidationTestUtils;
 
 public class TestRequestAndResponseManager extends TestCase {

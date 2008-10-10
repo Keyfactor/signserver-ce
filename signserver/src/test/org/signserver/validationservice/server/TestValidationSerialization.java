@@ -11,7 +11,7 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.ejbca.util.KeyTools;
+import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.SignServerUtil;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;

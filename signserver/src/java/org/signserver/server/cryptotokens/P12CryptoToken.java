@@ -33,11 +33,11 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.ejbca.util.KeyTools;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
+import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.SignerStatus;
 
 

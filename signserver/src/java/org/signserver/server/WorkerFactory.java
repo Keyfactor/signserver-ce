@@ -78,7 +78,11 @@ public  class WorkerFactory {
 			
 	   loadWorkers(workerConfigHome,gCSession,workerContext);
 	   synchronized(workerStore){			   
-		   return (IWorker) workerStore.get(id);
+		   IWorker ret = (IWorker) workerStore.get(id);
+		   if (ret == null) {
+			   log.info("Trying to get worker with Id that does not exist: "+workerId);
+		   }
+		   return ret;
 	   }
 
 	}

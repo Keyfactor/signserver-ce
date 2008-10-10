@@ -79,7 +79,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 		
 	
 	/** Log4j instance for actual implementation class */
-	public transient Logger log = Logger.getLogger(this.getClass());
+	private static final Logger log = Logger.getLogger(WorkerSessionBean.class);
 
     /** The local home interface of Worker Config entity bean. */
     private WorkerConfigDataService workerConfigService = null;
@@ -102,7 +102,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 */
 	public ProcessResponse process(int workerId, ProcessRequest request, RequestContext requestContext) throws IllegalRequestException,
 		CryptoTokenOfflineException, SignServerException {
-		log.debug(">signData ");
+		log.debug(">process: "+workerId);
 		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession,new SignServerContext(em));
 		
         if(worker == null){

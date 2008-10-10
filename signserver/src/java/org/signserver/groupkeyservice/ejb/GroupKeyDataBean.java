@@ -24,6 +24,8 @@ import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 
@@ -72,8 +74,11 @@ public class GroupKeyDataBean  {
 	
 	private transient byte[] decryptedData;
 	
-	private Date creationDate;	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date creationDate;
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date firstUsedDate;	
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastFetchedDate;	
 	private String encKeyRef;
 	

@@ -85,15 +85,21 @@
         </path>
 
 	    <path id="j2ee.classpath">
-	        <fileset dir="${appserver.home}/lib">
-	            <include name="jboss-system.jar" />
-	        </fileset>
-        	<!-- jboss -->
-	        <fileset dir="${appserver.home}/client">
-	            <include name="jbossall-client.jar" />
-	            <include name="jboss-j2ee.jar" />
-	            <include name="ejb3-persistence.jar" />
-	            <include name="jboss-ejb3x.jar" />
+	        <fileset dir="${appserver.home}">
+	        	<!-- jboss -->
+	            <include name="client/jbossall-client.jar" />
+	            <include name="client/jboss-j2ee.jar" />
+	            <include name="client/ejb3-persistence.jar" />
+	            <include name="client/jboss-ejb3x.jar" />
+	        	<!-- glassfish -->
+	            <include name="lib/javaee.jar"/>
+	            <include name="lib/appserv-rt.jar"/>
+	        	<!-- weblogic -->
+	            <include name="server/lib/weblogic.jar"/>
+	        	<!-- oracle -->
+	            <include name="j2ee/home/oc4jclient.jar"/>
+	        	<!-- websphere -->
+	            <include name="runtimes/com.ibm.*.jar"/>
 	        </fileset>
 	    </path>
 
@@ -142,6 +148,7 @@
         <echo>
 ---------- CONFIGURATION PROPERTIES ----------
 build.mode                          = ${build.mode}
+appserver.type                      = ${appserver.type}
 appserver.home                      = ${appserver.home}
 web.contentencoding                 = ${web.contentencoding}
 datasource.jndi-name                = ${datasource.jndi-name}
@@ -204,6 +211,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	            <classpath refid="server.compile.classpath" />
 	            <src path="${src.java}" /> 
 	        	<exclude name="org/signserver/module/**"/>
+	        	<exclude name="org/signserver/common/MailSigner*"/>
 	        	<exclude name="org/signserver/mailsigner/**"/>
 	        	<exclude name="org/signserver/appserver/**"/>
 	        	<exclude name="org/signserver/module/**"/> 
@@ -225,11 +233,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient" description="Creates master ejb.jar" unless="buildMailSigner">
 
 	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
-	            <manifest>
-	                <!-- todo: autogenerate this from a fileset -->
-	                <attribute name="Class-Path" value="${jar.extclasspath}" />
-	            </manifest>
-	        	<metainf dir="${src}/appserver/jboss">
+	        	<metainf dir="${preprocessed}/appserver/${appserver.type}">
 	        			<include name="persistence.xml"/>
 	        	</metainf>
 	        	<metainf dir="${src}/deploy/ejb/persistence-mappings/${database.name}">
@@ -237,10 +241,11 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    	    </metainf>
 	        	
 	        	<fileset dir="." includes="signserver_server.properties"/>
-	        	<fileset dir="src/java" includes="profilemappings.properties"/>
+	        	<!-- This file is included automatically from ${build} <fileset dir="src/java" includes="profilemappings.properties"/> -->
 	            <fileset dir="${build}">
 	          	  <exclude name="org/signserver/cli/**" />
 	          	  <exclude name="org/signserver/client/**" />
+   	        	  <exclude name="org/signserver/common/MailSigner*"/>
 	          	  <exclude name="org/signserver/module/**" />
 	          	  <exclude  name="org/signserver/protocol/validationservice/ws/**" />
 	              <exclude  name="org/signserver/protocol/ws/**" />
@@ -476,15 +481,15 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />
 	            </fileset>
-	            <fileset dir=".">
-	                <include name="${lib}/log4j.jar" />
-	                <include name="${lib}/ejbca-util.jar" />   
-	                <include name="${lib}/ldap.jar" />
-	            	<include name="${lib}/commons-lang-2.0.jar" />
-	            	<include name="${lib}/quartz/*.jar" />
-	            	<include name="${lib}/asm/*.jar" />
-	            	<include name="${lib}/${server.java.target}/*.jar" />
-	            </fileset>
+	            
+	            <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
+	                 subdirectories though so we must flatten the structure. zipfileset is a good was of flattening the structure, so 
+	                 all jar files is directly in lib directory in the ear file -->
+	            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,ldap.jar,commons-lang-2.0.jar" prefix="lib"/>
+	            <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
+	            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
+	            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>
+	            
 	            <fileset dir="${server.dist.dir}">
 	                <include name="*-ejb.jar" />
 	                <include name="*.war" />

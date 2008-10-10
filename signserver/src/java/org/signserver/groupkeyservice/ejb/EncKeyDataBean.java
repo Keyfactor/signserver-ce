@@ -23,6 +23,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 
@@ -60,7 +62,9 @@ public class EncKeyDataBean  {
 	private String encKeyRef;
 	
 	private boolean inUse;
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date usageStarted;	
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date usageEnded;
 	private long numberOfEncryptions;
 	

@@ -642,6 +642,7 @@ public class CommonAdminInterface  {
     protected InitialContext getInitialContext() throws NamingException {
         log.debug(">getInitialContext()");
 
+    	InitialContext cacheCtx = null;
         try {
         	Hashtable<String, String> props = new Hashtable<String, String>();
         	props.put(
@@ -651,13 +652,19 @@ public class CommonAdminInterface  {
         		Context.URL_PKG_PREFIXES,
         		"org.jboss.naming:org.jnp.interfaces");
         	props.put(Context.PROVIDER_URL, "jnp://" + hostname +":1099");
-        	InitialContext cacheCtx = new InitialContext(props);
+        	cacheCtx =  new InitialContext(props);
             log.debug("<getInitialContext()");
-            return cacheCtx;
         } catch (NamingException e) {
             log.error("Can't get InitialContext", e);
-            throw e;
+            try {
+            	log.info("Trying with default/jndi.properties");
+            	cacheCtx =  new InitialContext();
+            } catch (NamingException e1) {
+                log.error("Can't get InitialContext", e1);
+                throw e;
+            }
         }
+        return cacheCtx;
     } // getInitialContext
 
 

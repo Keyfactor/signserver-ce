@@ -99,8 +99,8 @@ public class TestClusterClassLoaderManagerSessionBean extends TestCase {
 		allparts = cclMan.listAllModuleParts("TESTMODULE-WITHDESCR", 2);
 		assertNotNull(allparts);
 		assertTrue(allparts.length == 2);
-		assertTrue(allparts[0].equals("part1"));
-		assertTrue(allparts[1].equals("part2"));
+		assertEquals(allparts[0],"part1");
+		assertEquals(allparts[1],"part2");
 		
 		allJars = cclMan.getJarNames("TESTMODULE-WITHDESCR", "part2", 2);
 		assertNotNull(allJars);

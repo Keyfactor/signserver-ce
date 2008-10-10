@@ -75,7 +75,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 	private static final long serialVersionUID = 1L;
   
 	/** Log4j instance for actual implementation class */
-	public transient Logger log = Logger.getLogger(this.getClass());
+	private static final Logger log = Logger.getLogger(ServiceTimerSessionBean.class);
 	
     /**
      * Default create for SessionBean without any creation Arguments.

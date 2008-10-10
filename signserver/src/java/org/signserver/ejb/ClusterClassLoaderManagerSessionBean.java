@@ -34,7 +34,7 @@ import org.signserver.server.clusterclassloader.IClusterClassLoaderDataService;
  * 
  * @see org.signserver.ejb.interfaces.IClusterClassLoaderManagerSession 
  *           
- * @version $id$
+ * @version $Id$
  */
 @Stateless
 public class ClusterClassLoaderManagerSessionBean implements IClusterClassLoaderManagerSession.ILocal, IClusterClassLoaderManagerSession.IRemote {
@@ -45,7 +45,7 @@ public class ClusterClassLoaderManagerSessionBean implements IClusterClassLoader
 	
 	
 	/** Log4j instance for actual implementation class */
-	public transient Logger log = Logger.getLogger(this.getClass());
+	private static final Logger log = Logger.getLogger(ClusterClassLoaderManagerSessionBean.class);
  
 	/**
 	 * 

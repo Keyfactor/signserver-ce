@@ -5,7 +5,7 @@
     <property name="app.name.cap" value="Sign Server" />
 	<property name="app.version" value="${app.name.cap} 3.1Beta" />
 	<property name="mar.versions" value="3100" />
-	
+
     <property environment="env" />
 
     <!-- Give user a chance to override without editing this file
@@ -14,7 +14,10 @@
        net it checks the properties file here. -->
     <property file="${user.home}/${app.name}_build.properties" />
     <property file="${app.name}_build.properties" />
-	
+
+ 	<!-- default value, will not set value if it is set in ${app.name}_build.properties -->
+    <property name="appserver.type" value="jboss"/>
+
     <!-- A little special something to handle backward compatibility with 
 	       people using JBOSS_HOME. They can switch to APPSRV_HOME now, and both will work. 
 	  -->        
@@ -27,7 +30,7 @@
 	
 	<property name="ant.home" value="${env.ANT_HOME}"/>
 	
-    <import file="bin/jboss.xml" />
+	<import file="bin/${appserver.type}.xml" />
 
     <property name="signserver.configfile" value="/etc/signserver/signserver.conf" />
 	
@@ -57,8 +60,6 @@
     <property name="apidoc" value="./doc/api" />  
 	
 	<property name="custom.commandfactory" value="org.signserver.cli.DefaultSignServerCommandFactory"/>
-
-    <property name="jar.extclasspath" value="lib/${server.java.target}/bcmail-jdk.jar lib/${server.java.target}/bcprov-jdk.jar lib/module/tsa/${server.java.target}/bctsp-jdk.jar lib/log4j.jar lib/ejbca-util.jar lib/caToken.jar lib/commons-lang-2.0.jar lib/ldap.jar"/>
 
 	<import file="./signserver.xmli" />
 	<import file="./mailsigner.xmli" />
@@ -167,13 +168,15 @@
 				<replacestring from="@signserver.truststorepwd@" to="${clusterclassloader.truststorepwd}"/>
 				<replacestring from="@SignServerCommandFactory@" to="${custom.commandfactory}"/>
 				<replacestring from="@signserver.configfile@" to="${signserver.configfile}"/>
-				<replacestring from="@BUILDMODE@" to="${build.mode}"/>
 			</tokenfilter>
 			</filterchain>
 	    </copy>
 		<replace file="${preprocessed}/java/org/signserver/common/GlobalConfiguration.java" token="@signserver.version@" value="${app.version}"/>	
 		<!-- Make a copy of the signserver_cli.properties in bin dir -->
 		<copy file="signserver_cli.properties" todir="bin" />
+		<!-- Copy the correct jndi.properties for your appserver -->
+		<copy file="bin/jndi.properties.${appserver.type}" tofile="bin/jndi.properties" overwrite="false" failonerror="false"/>
+		<copy file="bin/jndi.properties.${appserver.type}" tofile="${src.java}/jndi.properties" overwrite="false" failonerror="false"/>
 	</target>
 	
 	<target name="preprocess-extjava"  if="custom.src.java">
@@ -195,8 +198,15 @@
      </target>
 	
     <target name="signserver-cli" depends="signserver, mailsigner">
-    	<mkdir dir="dist-client/lib" />    	
-    	<copy file="${appserver.home}/client/jbossall-client.jar" todir="${client.dist.dir}/lib"/>   	
+    	<mkdir dir="dist-client/lib" />
+    	<echo message="Ignore warnings about jar files that can not be copied, they are for other application servers"/>
+    	<!-- JBoss -->
+    	<copy file="${appserver.home}/client/jbossall-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/>
+    	<!-- Glassfish -->
+    	<copy file="${appserver.home}/lib/appserv-rt.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
+    	<copy file="${appserver.home}/lib/appserv-deployment-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
+    	<copy file="${appserver.home}/lib/appserv-ext.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
+
 	    <jar destfile="${signserver.cli.jar}" basedir="${build}">
 	      <manifest>	        
 	        <attribute name="Main-Class" value="org.signserver.cli.signserver"/>

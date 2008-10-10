@@ -5,6 +5,11 @@
 # 
 #
 
+# Which application server is used?
+# Possible values: jboss, glassfish
+# Default jboss
+#appserver.type=jboss
+
 # Application server used during development
 # Default: $APPSRV_HOME or $JBOSS_HOME
 #appserver.home=${basedir}/../../jboss-4.2.2

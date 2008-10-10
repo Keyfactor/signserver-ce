@@ -299,6 +299,9 @@ public class TestSignServerCLI extends TestCase {
 				signserverhome +"/src/test/test_add_groupkeyservice_configuration.properties"});		
 	    assertTrue(TestUtils.grepTempOut("Setting the property NAME to Test1 for worker 1023"));
 		
+		TestUtils.assertSuccessfulExecution(new String[] {"reload",
+				TESTGSID});
+
 	    TestUtils.assertSuccessfulExecution(new String[] {"getstatus",
                 "complete",
                 TESTGSID});	

@@ -66,7 +66,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 	}
 	
 	/** Log4j instance for actual implementation class */
-	public transient Logger log = Logger.getLogger(this.getClass());
+	private static final Logger log = Logger.getLogger(GlobalConfigurationSessionBean.class);
  
 	/**
 	 * 

@@ -15,11 +15,12 @@ package org.signserver.server.cryptotokens;
  
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -27,6 +28,11 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -63,7 +69,7 @@ import org.signserver.server.PropertyFileStore;
  * not for production.
  * 
  * Available properties are:
- * KEYALG : The algorithms of the keys generated. (Optional). If not set will "RSA" be used.
+ * KEYALG : The algorithms of the keys generated. (for future use, currently is only "RSA" supported and the one used by default).
  * KEYSPEC : The specification of the keys generated. (Optional). If not set will "2048" be used.
  * KEYDATA : The base64 encoded key data.
  * 
@@ -95,15 +101,35 @@ public class SoftCryptoToken implements ICryptoToken {
 		keyAlg = props.getProperty(PROPERTY_KEYALG,"RSA");  
 
 		if(props.getProperty(PROPERTY_KEYDATA) != null){
-		  byte[] keyData = Base64.decode(props.getProperty(PROPERTY_KEYDATA).getBytes());
-		  try {
-			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(keyData));
-			keys = (KeyPair) ois.readObject();
-		  } catch (IOException e) {
-			log.error("Error trying to deserialize keypair",e);
-		  } catch (ClassNotFoundException e) {
-			log.error("Error trying to deserialize keypair",e);
-		}
+			try{
+				KeyFactory keyFactory = KeyFactory.getInstance("RSA");	
+
+				byte[] keyData = Base64.decode(props.getProperty(PROPERTY_KEYDATA).getBytes());		  
+				ByteArrayInputStream bais = new ByteArrayInputStream(keyData);
+				DataInputStream dis = new DataInputStream(bais);
+
+				int pubKeySize = dis.readInt();
+				byte[] pubKeyData = new byte[pubKeySize];
+				dis.read(pubKeyData, 0, pubKeySize);
+				int privKeySize = dis.readInt();
+				byte[] privKeyData = new byte[privKeySize];
+				dis.read(privKeyData, 0, privKeySize);
+				// decode public key
+				X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(pubKeyData);
+				RSAPublicKey pubKey = (RSAPublicKey) keyFactory.generatePublic(pubSpec);
+
+				// decode private key
+				PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(privKeyData);
+				RSAPrivateKey privKey = (RSAPrivateKey) keyFactory.generatePrivate(privSpec);
+
+				keys = new KeyPair(pubKey,privKey);
+			}catch(NoSuchAlgorithmException e){
+				log.error("Error loading soft keys : ",e);
+			} catch (IOException e) {
+				log.error("Error loading soft keys : ",e);
+			} catch (InvalidKeySpecException e) {
+				log.error("Error loading soft keys : ",e);
+			}
 		}else{
 			active = false;
 		}
@@ -199,10 +225,16 @@ public class SoftCryptoToken implements ICryptoToken {
 		
 		try {
 			KeyPair newKeys = KeyTools.genKeys(keySpec, keyAlg);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(newKeys);
-			
+            
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        DataOutputStream dos = new DataOutputStream(baos);
+	        byte[] pubKeyData = newKeys.getPublic().getEncoded();
+	        byte[] prvKeyData = newKeys.getPrivate().getEncoded();
+	        dos.writeInt(pubKeyData.length);
+	        dos.write(pubKeyData);
+	        dos.writeInt(prvKeyData.length);
+	        dos.write(prvKeyData);
+	        
 			try{
 			  getWorkerSession().setWorkerProperty(workerId, PROPERTY_KEYDATA, new String(Base64.encode(baos.toByteArray())));
 		    }catch(NamingException e){

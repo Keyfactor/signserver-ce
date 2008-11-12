@@ -67,15 +67,15 @@ public class WSClientUtil {
 			org.signserver.protocol.ws.ProcessResponseWS temp = new org.signserver.protocol.ws.ProcessResponseWS();
 			temp.setResponseDataBase64(next.getResponseDataBase64());
 			temp.setRequestID(next.getRequestID());
-			if(next.getSignerCertificate()!=null){
-			  temp.setSignerCertificate(convertCertificate(next.getSignerCertificate()));
+			if(next.getWorkerCertificate()!=null){
+			  temp.setWorkerCertificate(convertCertificate(next.getWorkerCertificate()));
 			}
-			if(next.getSignerCertificateChain() != null){
+			if(next.getWorkerCertificateChain() != null){
 				ArrayList<Certificate> certChain = new ArrayList<Certificate>();
-				for(org.signserver.protocol.ws.gen.Certificate cert : next.getSignerCertificateChain()){
+				for(org.signserver.protocol.ws.gen.Certificate cert : next.getWorkerCertificateChain()){
 					certChain.add(convertCertificate(cert));
 				}
-				temp.setSignerCertificateChain(certChain);
+				temp.setWorkerCertificateChain(certChain);
 			}			
 			retval.add(temp);
 		}

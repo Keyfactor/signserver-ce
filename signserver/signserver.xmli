@@ -5,6 +5,8 @@
 	   <import file="./module-builds/pdfsigner.xml"/>
 	   <import file="./module-builds/mrtdsigner.xml"/>
 	   <import file="./module-builds/tsa.xml"/>
+	   <import file="./module-builds/dummyws.xml"/>
+	   <import file="./module-builds/wsra.xml"/>
 	
 	   <property name="java.trustpassword" value="changeit" />
 	   <property name="httpsserver.password" value="serverpwd" />
@@ -44,6 +46,7 @@
 	   <property name="healthcheck.checkdbstring" value="Select count(*) from signerconfigdata" />
 	
 	   <property name="signserverws.enabled" value="true" />
+	   <property name="genericws.enabled" value="true" />
 	   <property name="validationws.enabled" value="false" />
 	   <property name="timestampclient.enabled" value="true" />
 	   <property name="validationclient.enabled" value="true" />
@@ -63,6 +66,7 @@
 	   	    <fileset dir="lib/jaxws" includes="*.jar" />	 
 	     	<fileset dir="lib/asm" includes="*.jar" />
     	    <fileset dir="lib/ext/james" includes="james-2.3.1.jar" />
+	   	    <fileset dir="lib/ext/ejb" includes="hib*" /> 
 	   	    <fileset dir="${ant.home}/lib" includes="ant.jar" />
 	        <path refid="j2ee.classpath" />
 	        
@@ -109,9 +113,14 @@
         <path refid="server.compile.classpath" />
         <path location="${build}" />
         <path location="${validationClientBuild}" />
+        <path location="${wsraadminClientBuild}" />
+        <path location="${wsraadminWSClientBuild}" />
+        <path location="${dummywsClientBuild}" />
         <path refid="j2ee.classpath" />
         <path refid="jaxws.classpath" />
-        
+        <fileset dir="${lib}/module/wsra">
+	      <include name="*.jar"/>
+	  </fileset>
       </path>
 
 	   <!-- those are the default values used within JBoss for easy startup -->
@@ -159,6 +168,7 @@ database.driver                     = ${database.driver}
 database.username                   = ${database.username}
 database.password                   = ${database.password}
 signserverws.enabled                = ${signserverws.enabled}
+genericws.enabled                   = ${genericws.enabled}
 validationws.enabled                = ${validationws.enabled}
 timestampclient.enabled             = ${timestampclient.enabled}
 validationclient.enabled            = ${validationclient.enabled}
@@ -174,8 +184,18 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		<condition property="signserverws.conditionenabled">
 			<istrue value="${signserverws.enabled}"/>
 		</condition>
+		<condition property="genericws.conditionenabled">
+			<istrue value="${genericws.enabled}"/>
+		</condition>
 	    <condition property="validationws.conditionenabled">
 	        <istrue value="${validationws.enabled}"/>
+	    </condition>
+	    <condition property="includejaxws">
+              <or>
+                <istrue value="${signserverws.enabled}"/>
+                <istrue value="${genericws.enabled}"/>
+	          <istrue value="${validationws.enabled}"/>
+              </or>
 	    </condition>
 	    <condition property="timestampclient.conditionenabled">
 	        <istrue value="${timestampclient.enabled}"/>
@@ -247,6 +267,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
    	        	  <exclude name="org/signserver/common/MailSigner*"/>
 	          	  <exclude name="org/signserver/module/**" />
 	          	  <exclude  name="org/signserver/protocol/validationservice/ws/**" />
+                    <exclude name="org/signserver/server/genericws/**" />
 	              <exclude  name="org/signserver/protocol/ws/**" />
 		          <exclude name="org/signserver/mailsigner/**" />
 	        	</fileset>
@@ -337,7 +358,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	                    includes="*.wsdl, *.xsd"
 	                    prefix="WEB-INF/wsdl"/> -->
 	            <classes dir="tmp/jaxws/gen-classes/server"/>
-	         	<lib dir="lib/jaxws" includes="*.jar" />        		
+	         <!--<lib dir="lib/jaxws" includes="*.jar" />     --> 
 	        </war>
 	    </target>
 		
@@ -462,7 +483,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    <war warfile="${server.dist.dir}/validationws.war" webxml="${src}/validationws/web.xml">
 	        <webinf dir="src/validationws" includes="sun-jaxws.xml"/>
 	        	<classes dir="tmp/validationws/gen-classes/server"/>
-	        	<lib dir="lib/jaxws" includes="*.jar" />        		
+	        	<!--<lib dir="lib/jaxws" includes="*.jar" />     -->   		
 	    </war>
 	   </target>
 	        			        		
@@ -475,20 +496,21 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, tsamar, mrtdsignermar" unless="buildMailSigner" >
+	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, tsamar, mrtdsignermar, dummywsmar, wsramar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />
 	            </fileset>
-	            
-	            <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
+	            	 <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
 	                 subdirectories though so we must flatten the structure. zipfileset is a good was of flattening the structure, so 
 	                 all jar files is directly in lib directory in the ear file -->
 	            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,ldap.jar,commons-lang-2.0.jar" prefix="lib"/>
 	            <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>
-	            
+	            <zipfileset dir="lib/jaxws/" includes="*.jar" prefix="lib" >
+                     <include name="*.jar" if="includejaxws" />
+                  </zipfileset>
 	            <fileset dir="${server.dist.dir}">
 	                <include name="*-ejb.jar" />
 	                <include name="*.war" />
@@ -504,8 +526,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
     </target>
 	
     <target name="test:signserver:compile" description="compile JUnit testcases" depends="ws.compile.client" unless="buildMailSigner">
-        <mkdir dir="${test.dir}" />
-        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled, and HTTPS be turned off.</echo>
+        <mkdir dir="${test.dir}" />       
         <javac srcdir="${test.src.dir}" destdir="${test.dir}" debug="on" includeantruntime="no" encoding="iso8859-1"  target="${server.java.target}" source="${server.java.target}">
             <classpath refid="signserver.test.compile.classpath" />
         	<exclude name="org/signserver/mailsigner/**"/>
@@ -518,7 +539,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	
     <target name="test:signserver:run" depends="test:signserver:compile" description="run JUnit testcases" unless="buildMailSigner">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
-        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
+        <echo> Important, in order for all tests to complete must the web service, generic WS and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
         <delete dir="${test.dir}/reports" />
         <mkdir dir="${test.dir}/reports/html" />
         <junit printsummary="yes" haltonfailure="no">
@@ -537,6 +558,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
                 	<include name="**/server/service/Test*" />
                 	<include name="**/server/validcache/Test*" />
                 	<include name="**/server/statistics/Test*" />
+                  <include name="**/server/genericws/Test*" />
                 	<include name="**/server/clusterclassloader/Test*" />
                 	<include name="**/server/statistics/nonpersistent/Test*" />
                 	<include name="**/groupkeyservice/Test*" /> 
@@ -544,6 +566,8 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
                 	<include name="**/client/validationservice/Test*" />
                 	<include name="**/protocol/validationservice/ws/Test*" />
                 	<include name="**/protocol/ws/Test*" />
+                	<include name="**/wsra/Test*" />
+                	<include name="**/wsra/**/Test*" />
                     <exclude name="**/*Continously*" />
                     <exclude name="**/TestRunner*" />
                 	<exclude name="**/db/*" />
@@ -716,6 +740,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 		   </fileset>
 		   <fileset dir="${lib}">
 		     <include name="log4j.jar"/>
+			 <include name="cert-cvc.jar"/>
 			 <include name="ejbca-util.jar"/>
 			 <include name="commons-lang-2.0.jar"/>
 		  </fileset>
@@ -809,7 +834,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	  </target>
 	
     <!--                                                   -->
-     <!-- Target Used to test the TimeStamp communication     -->
+     <!-- Target Used to perform validations using CLI     -->
      <!--                                                   -->
       <target name="validationClient" depends="signserver:compile, ws.gen.client, signserverws.client" unless="buildMailSigner" if="validationclient.conditionenabled" >
         <mkdir dir="${validationClientBuild}"/>

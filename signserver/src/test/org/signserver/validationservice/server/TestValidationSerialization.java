@@ -59,7 +59,7 @@ public class TestValidationSerialization extends TestCase {
 		  assertTrue(val2.getStatus() == Status.BADCERTPURPOSE);
 		  assertTrue(Math.abs(System.currentTimeMillis() -  val2.getValidationDate().getTime()) < 1000); 
 		  assertTrue(val2.getStatusMessage() == null);
-		  assertTrue(val2.getRevokationReason() == 0);
+		  assertTrue(val2.getRevokationReason() == -1);
 		  assertTrue(val2.getRevokedDate() == null);
 		  assertTrue(val2.getCertificate().getSubject().equals("CN=ValidCert1"));
 		  assertTrue(val2.getCAChain().get(0).getSubject().equals("CN=ValidSubCA1"));

@@ -182,8 +182,8 @@ public class SignServerWS implements ISignServerWS {
 			if(resp instanceof ISignResponse){
 				wsresp.setRequestID(((ISignResponse)resp).getRequestID());
 				try {
-					wsresp.setSignerCertificate(new Certificate(((ISignResponse)resp).getSignerCertificate()));
-					wsresp.setSignerCertificateChain(signerCertificateChain);					
+					wsresp.setWorkerCertificate(new Certificate(((ISignResponse)resp).getSignerCertificate()));
+					wsresp.setWorkerCertificateChain(signerCertificateChain);					
 				} catch (CertificateEncodingException e) {
 					log.error(e);
 				}

@@ -35,7 +35,7 @@ public interface IWorkerSession  {
 	 * @throws IllegalRequestException if illegal request is sent to the method
 	 * @throws SignServerException if some other error occurred server side during process.
 	 */
-	ProcessResponse process(int signerId, ProcessRequest request,
+	ProcessResponse process(int workerId, ProcessRequest request,
 			RequestContext requestContext)
 			throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 

@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.apache.mailet.Mail;
 import org.apache.mailet.MailetContext;
@@ -84,6 +86,8 @@ public abstract class BaseMailProcessor  implements IMailProcessor {
 	protected MailetContext mailetContext; 
 	
 	protected HashSet<String> validUsers = null;
+	
+	protected EntityManager workerEntityManager;
     
     protected BaseMailProcessor(){
 
@@ -92,11 +96,12 @@ public abstract class BaseMailProcessor  implements IMailProcessor {
     /**
      * Initialization method that should be called directly after creation
      */
-    public void init(int workerId, WorkerConfig config, WorkerContext workerContext){
+    public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager){
       this.workerId = workerId;
       this.config = config;
       this.mailSignerContext = (MailSignerContext) workerContext;
       this.mailetContext = mailSignerContext.getMailetContext();
+      this.workerEntityManager = workerEntityManager;
       
       if(config.getProperty(VALIDUSERS) != null){
     	  String[] validUserStrings = config.getProperty(VALIDUSERS).split(",");

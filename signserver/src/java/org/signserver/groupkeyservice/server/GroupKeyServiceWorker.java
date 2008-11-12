@@ -13,6 +13,8 @@
 
 package org.signserver.groupkeyservice.server;
 
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -55,8 +57,8 @@ public class GroupKeyServiceWorker extends BaseProcessable {
 	 * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
 	 */
 	@Override
-	public void init(int workerId, WorkerConfig config, WorkerContext workerContext) {		
-		super.init(workerId, config, workerContext);
+	public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager) {		
+		super.init(workerId, config, workerContext, workerEntityManager);
 		
 		groupKeyService = createGroupService(config);
 	}

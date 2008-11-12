@@ -29,7 +29,7 @@ import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.server.clusterclassloader.ClusterClassLoader;
+import org.signserver.server.clusterclassloader.ExtendedClusterClassLoader;
 
 
 /**
@@ -180,7 +180,11 @@ public  class WorkerFactory {
 							  }  
 						  }
 
-						  ((IWorker) obj).init(nextId.intValue(), config, workerContext);						  
+						  if(getClassLoader(em, nextId.intValue(),config) instanceof ExtendedClusterClassLoader){
+							  ((IWorker) obj).init(nextId.intValue(), config, workerContext,((ExtendedClusterClassLoader) getClassLoader(em, nextId,config)).getWorkerEntityManger(config));
+						  }else{
+							  ((IWorker) obj).init(nextId.intValue(),config, workerContext,null);
+						  }
 						  getWorkerStore().put(nextId,(IWorker) obj);
 					  }  
 				  }catch(ClassNotFoundException e){
@@ -210,7 +214,7 @@ public  class WorkerFactory {
 	 * @param config the worker configuration
 	 * @return the class loader specific for the given worker.
 	 */	
-	private ClassLoader getClassLoader(EntityManager em, int workerId, WorkerConfig config) {
+	public ClassLoader getClassLoader(EntityManager em, int workerId, WorkerConfig config) {
 		ClassLoader retval = workerClassLoaderMap.get(workerId);
 		if(retval == null){
 			retval = this.getClass().getClassLoader();
@@ -227,9 +231,9 @@ public  class WorkerFactory {
 				}
 
 				if(moduleVersion == null){
-					retval = new ClusterClassLoader(this.getClass().getClassLoader(),em,moduleName,"server");
+					retval = new ExtendedClusterClassLoader(this.getClass().getClassLoader(),em,moduleName,"server");
 				}else{
-					retval = new ClusterClassLoader(this.getClass().getClassLoader(),em,moduleName,"server",moduleVersion);
+					retval = new ExtendedClusterClassLoader(this.getClass().getClassLoader(),em,moduleName,"server",moduleVersion);
 				}
 			}
 			
@@ -312,7 +316,11 @@ public  class WorkerFactory {
 									}  
 								}
 
-								((IWorker) obj).init(id, config, workerContext);						  
+								if(getClassLoader(em, id,config) instanceof ExtendedClusterClassLoader){
+								  ((IWorker) obj).init(id, config, workerContext, ((ExtendedClusterClassLoader) getClassLoader(em, id,config)).getWorkerEntityManger(config));
+								}else{
+								  ((IWorker) obj).init(id, config, workerContext,null);
+								}
 								getWorkerStore().put(new Integer(id),(IWorker) obj);
 							}  
 						}catch(ClassNotFoundException e){

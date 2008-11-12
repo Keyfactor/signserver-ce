@@ -13,6 +13,8 @@
 
 package org.signserver.server;
 
+import javax.persistence.EntityManager;
+
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
  
@@ -32,9 +34,10 @@ public interface IWorker {
 	 * @param workerId the unique id of the worker
 	 * @param config the configuration stored in database
 	 * @param workerContext this should be a SignServerContext for SignServer
+	 * @param workerEntityManager Worker specific JPA Entity Manager if worker is configured to use it.
 	 * implementation and MailSignerContext for mail processors.
 	 */
-	public void init(int workerId, WorkerConfig config, WorkerContext workerContext);
+	public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager);
 	
 	/**
 	 * Should return the actual status of the worker, status could be if

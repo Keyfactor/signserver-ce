@@ -50,21 +50,27 @@ public abstract class BaseWorker implements IWorker {
 	protected WorkerContext workerContext;
 	
 	protected EntityManager em;
+	
+	protected EntityManager workerEM;
     
     protected BaseWorker(){
 
     }
     
+
+    
     /**
      * Initialization method that should be called directly after creation
      */
-    public void init(int workerId, WorkerConfig config, WorkerContext workerContext){
-      this.workerId = workerId;
-      this.config = config;
-      this.workerContext = workerContext;
-      if(workerContext != null && workerContext instanceof SignServerContext){        
-        this.em = ((SignServerContext) workerContext).getEntityManager();
-      }
+    public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM){
+    	this.workerId = workerId;
+    	this.config = config;
+    	this.workerContext = workerContext;
+    	if(workerContext != null && workerContext instanceof SignServerContext){        
+    		this.em = ((SignServerContext) workerContext).getEntityManager();
+    	}
+
+    	this.workerEM = workerEM;
     }
 	
     protected SignServerContext getSignServerContext(){

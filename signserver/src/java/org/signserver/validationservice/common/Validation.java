@@ -63,7 +63,7 @@ public class Validation{
 	private String statusMessage;
 	private Date validationDate;
 	private Date revokedDate;
-	private int revokationReason = 0;
+	private int revokationReason = -1;
 	
 	/**
 	 * Default constructor used for serialization
@@ -81,7 +81,7 @@ public class Validation{
 	 */
 	public Validation(ICertificate certificate, List<ICertificate> cAChain, Status status,
 			String statusMessage) {
-		this(certificate, cAChain, status, statusMessage, null, 0);
+		this(certificate, cAChain, status, statusMessage, null, -1);
 
 	}
 
@@ -156,7 +156,7 @@ public class Validation{
 	}
 
 	/**
-	 * @return the revokationReason, one of the reasons specified in RFC3280, 0 if not revoked.
+	 * @return the revokationReason, one of the reasons specified in RFC3280, -1 if not revoked.
 	 */
 	public int getRevokationReason() {
 		return revokationReason;

@@ -106,7 +106,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession,new SignServerContext(em));
 		
         if(worker == null){
-        	throw new IllegalRequestException("Non-existing signerId");
+        	throw new IllegalRequestException("Non-existing workerId");
         }
         
         if(!(worker instanceof IProcessable)){

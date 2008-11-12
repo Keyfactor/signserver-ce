@@ -308,7 +308,7 @@ public class TestMainWebService extends TestCase {
         }
         
         // Test timeout
-        String[] hosts5 = {"127.0.0.1"};
+        String[] hosts5 = {"128.0.0.1"};
         client = f.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK,hosts5 , false, callback, 8080, 5);
         resps = client.process("9", reqs);
         assertTrue(resps == null);

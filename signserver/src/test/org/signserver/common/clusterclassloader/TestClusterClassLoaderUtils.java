@@ -34,6 +34,14 @@ public class TestClusterClassLoaderUtils extends TestCase {
 		assertTrue(ClusterClassLoaderUtils.getResourcePathFromClassName("org.signserver.test.Test").equals("org/signserver/test/Test.class"));		
 	}
 	
+	public void getInternalObjectName(){
+		assertTrue(ClusterClassLoaderUtils.getInternalObjectName(org.signserver.common.clusterclassloader.ClusterClassLoaderUtils.class.getName()).equals("org/signserver/common/clusterclassloader/ClusterClassLoaderUtils"));		
+	}
+	
+	public void getInternalObjectWithL(){
+		assertTrue(ClusterClassLoaderUtils.getInternalObjectNameWithL(org.signserver.common.clusterclassloader.ClusterClassLoaderUtils.class.getName()).equals("Lorg/signserver/common/clusterclassloader/ClusterClassLoaderUtils;"));		
+	}
+	
 	public void testRemovePath(){
 		assertTrue(ClusterClassLoaderUtils.removePath("org/signserver/test/Test.class"), ClusterClassLoaderUtils.removePath("org/signserver/test/Test.class").equals("Test.class"));
 	}
@@ -49,6 +57,12 @@ public class TestClusterClassLoaderUtils extends TestCase {
 	public void testStripClassPostfixTag(){		
 		assertTrue(ClusterClassLoaderUtils.stripClassPostfix("v1234/org/someorg/Test.class").equals("v1234/org/someorg/Test"));
 		assertTrue(ClusterClassLoaderUtils.stripClassPostfix("v1234/org/someorg/Test").equals("v1234/org/someorg/Test"));
+	}
+	
+	public void testPackageFromResourceName(){
+		assertTrue(ClusterClassLoaderUtils.getPackageFromResourceName("v1234/org/someorg/Test.class").equals("v1234.org.someorg"));
+		assertTrue(ClusterClassLoaderUtils.getPackageFromResourceName("v1234/org/someorg/").equals("v1234.org.someorg"));
+		assertTrue(ClusterClassLoaderUtils.getPackageFromResourceName("/org/someorg/Test.properties").equals("org.someorg"));
 	}
 	
 	public void testGenerateCMSMessageFromResource() throws Exception{

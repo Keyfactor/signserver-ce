@@ -13,6 +13,8 @@
 
 package org.signserver.validationservice.server;
 
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -47,12 +49,12 @@ public class ValidationServiceWorker extends BaseProcessable {
 
 	
 	/**
-	 * Initialization method creating the group key service
+	 * Initialization method creating the validation service
 	 * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
 	 */
 	@Override
-	public void init(int workerId, WorkerConfig config, WorkerContext workerContext) {		
-		super.init(workerId, config, workerContext);
+	public void init(int workerId, WorkerConfig config, WorkerContext workerContext,EntityManager workerEntityManager) {		
+		super.init(workerId, config, workerContext,workerEntityManager);
 		
 		validationService = createValidationService(config);
 	}
@@ -100,7 +102,7 @@ public class ValidationServiceWorker extends BaseProcessable {
 		if(processRequest instanceof ValidateRequest){
 			return validationService.validate((ValidateRequest) processRequest);
 		}else{
-		  throw new IllegalRequestException("The process request sent to group key service with id " + workerId + " isn't supported");
+		  throw new IllegalRequestException("The process request sent to validation service with id " + workerId + " isn't supported");
 		}
 	}
 

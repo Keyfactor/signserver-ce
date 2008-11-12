@@ -396,7 +396,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker
 
 		//search for certificate having OCSPSigner extension		
 		X509ExtendedKeyUsageExistsCertSelector certSel = new X509ExtendedKeyUsageExistsCertSelector("1.3.6.1.5.5.7.3.9");
-		Iterator certsIter = ocspRespCertStore.getCertificates(certSel).iterator();
+		Iterator<?> certsIter = ocspRespCertStore.getCertificates(certSel).iterator();
 		
 		while(certsIter.hasNext())
 		{

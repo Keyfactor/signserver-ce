@@ -251,7 +251,7 @@ public class CRLValidator extends BaseValidator {
 			
 			log.debug("***********************");
 			log.debug("printing certs in certstore");
-			Iterator tempIter = certStore.getCertificates(null).iterator();
+			Iterator<?> tempIter = certStore.getCertificates(null).iterator();
 			while(tempIter.hasNext())
 			{
 				X509Certificate tempcert = (X509Certificate)tempIter.next();

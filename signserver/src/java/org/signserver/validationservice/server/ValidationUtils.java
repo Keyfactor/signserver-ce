@@ -18,7 +18,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.NoSuchProviderException;
@@ -28,7 +27,6 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509CRLEntry;
 
-import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DEREnumerated;
 import org.bouncycastle.asn1.x509.CRLReason;
 import org.bouncycastle.asn1.x509.X509Extensions;

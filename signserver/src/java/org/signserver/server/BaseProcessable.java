@@ -114,7 +114,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 	 */
 	protected Certificate getSigningCertificate() throws CryptoTokenOfflineException {
 		if(cert==null){
-			cert = (X509Certificate) getCryptoToken().getCertificate(ICryptoToken.PURPOSE_SIGN);
+			if(getCryptoToken() != null){
+			  cert = (X509Certificate) getCryptoToken().getCertificate(ICryptoToken.PURPOSE_SIGN);
+			}
 			if(cert==null){
 			  cert=( new ProcessableConfig( config)).getSignerCertificate();
 			}
@@ -130,12 +132,15 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 	 */
 	protected Collection<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
 		if(certChain==null){
-			certChain =  getCryptoToken().getCertificateChain(ICryptoToken.PURPOSE_SIGN);
-			if(certChain==null){
-				log.debug("Signtoken did not contain a certificate chain, looking in config.");
-				certChain=(new ProcessableConfig(config)).getSignerCertificateChain();
-				if (certChain == null) {
-					log.error("Neither Signtoken or ProcessableConfig contains a certificate chain!");					
+			ICryptoToken cToken =  getCryptoToken();
+			if(cToken != null){
+				certChain =  cToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
+				if(certChain==null){
+					log.debug("Signtoken did not contain a certificate chain, looking in config.");
+					certChain=(new ProcessableConfig(config)).getSignerCertificateChain();
+					if (certChain == null) {
+						log.error("Neither Signtoken or ProcessableConfig contains a certificate chain!");					
+					}
 				}
 			}
 		}		

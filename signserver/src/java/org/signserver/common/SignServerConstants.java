@@ -47,4 +47,13 @@ public class SignServerConstants {
 	 * version be used.
 	 */
 	public static final String MODULEVERSION          = "MODULEVERSION";
+	
+	/**
+	 * Constant indicating if JPA should be used with the cluster
+	 * class loader, it is used to create DB access for a specific
+	 * worker in a MAR file.
+	 * 
+	 * 
+	 */
+	public static final String USEWORKERENTITYMANAGER = "USEWORKERENTITYMANAGER";
 }

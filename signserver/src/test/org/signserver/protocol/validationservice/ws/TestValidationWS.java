@@ -109,7 +109,7 @@ public class TestValidationWS extends TestCase {
 		assertTrue(res.getStatusMessage() != null);
 		assertTrue(res.getStatus().toString().equals(Status.VALID.toString()));
 		assertTrue(res.getValidationDate() != null);
-		assertTrue(res.getRevocationReason() == 0);
+		assertTrue(res.getRevocationReason() == -1);
 		assertTrue(res.getRevocationDate() == null);
 		
 		res = validationWS.isValid("16", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
@@ -117,7 +117,7 @@ public class TestValidationWS extends TestCase {
 		assertTrue(res.getStatusMessage() != null);
 		assertTrue(res.getStatus().toString().equals(Status.VALID.toString()));
 		assertTrue(res.getValidationDate() != null);
-		assertTrue(res.getRevocationReason() == 0);
+		assertTrue(res.getRevocationReason() == -1);
 		assertTrue(res.getRevocationDate() == null);
 		
 		try{
@@ -147,7 +147,7 @@ public class TestValidationWS extends TestCase {
 		assertTrue(res.getStatusMessage() != null);
 		assertTrue(res.getStatus().toString().equals(Status.BADCERTPURPOSE.toString()));
 		assertTrue(res.getValidationDate() != null);
-		assertTrue(res.getRevocationReason() == 0);
+		assertTrue(res.getRevocationReason() == -1);
 		assertTrue(res.getRevocationDate() == null);
 		
 	}

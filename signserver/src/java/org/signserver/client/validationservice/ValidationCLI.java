@@ -35,10 +35,8 @@ import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.Validation.Status;
 
 /**
- * CLI Tool used to perform validation lookups from
- * command line. Main target is to be used from scripts
- * for various usages. 
- * 
+ * CLI Tool used to administrate the data in the
+ * WSRA interface.
  * 
  * @author Philip Vendil 13 sep 2008
  *

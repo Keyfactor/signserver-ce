@@ -69,7 +69,7 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
 
 
 	/**
-	 * @see org.signserver.common.ProcessResponse#getSignerCertificate()
+	 * @see org.signserver.common.ProcessResponse#getCertificate()
 	 */
 	public Certificate getSignerCertificate() {
 		return signerCertificate;

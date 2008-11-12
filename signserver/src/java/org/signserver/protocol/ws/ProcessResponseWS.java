@@ -36,8 +36,8 @@ public class ProcessResponseWS {
 	
 	private int requestID;
 	private String responseDataBase64;
-	private Certificate signerCertificate;
-	private Collection<Certificate> signerCertificateChain;
+	private Certificate workerCertificate;
+	private Collection<Certificate> workerCertificateChain;
 	
 	/**
 	 * Default constructor
@@ -91,34 +91,34 @@ public class ProcessResponseWS {
 	 * 
 	 * @return the entire  signer certificate chain in WS format.
 	 */
-	public Collection<Certificate> getSignerCertificateChain() {
-		return signerCertificateChain;
+	public Collection<Certificate> getWorkerCertificateChain() {
+		return workerCertificateChain;
 	}
 	
 
 	/**
 	 * 
-	 * @return the signer certificate  in WS format.
+	 * @return the worker certificate  in WS format.
 	 */
-	public Certificate getSignerCertificate() {
-		return signerCertificate;
+	public Certificate getWorkerCertificate() {
+		return workerCertificate;
 	}
 
 	/**
 	 * 
-	 * @param signerCertificate the signer certificate  in WS format.
+	 * @param workerCertificate the worker certificate  in WS format.
 	 */
-	public void setSignerCertificate(Certificate signerCertificate) {
-		this.signerCertificate = signerCertificate;
+	public void setWorkerCertificate(Certificate workerCertificate) {
+		this.workerCertificate = workerCertificate;
 	}
 
 	/**
 	 * 
-	 * @param signerCertificateChain the entire  signer certificate chain in WS format.
+	 * @param workerCertificateChain the entire  worker certificate chain in WS format.
 	 */
-	public void setSignerCertificateChain(
-			Collection<Certificate> signerCertificateChain) {
-		this.signerCertificateChain = signerCertificateChain;
+	public void setWorkerCertificateChain(
+			Collection<Certificate> workerCertificateChain) {
+		this.workerCertificateChain = workerCertificateChain;
 	}
 	/**
 	 * Help method used to set the processed data from binary form. 

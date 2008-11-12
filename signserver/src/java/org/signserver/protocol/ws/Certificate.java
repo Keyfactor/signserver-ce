@@ -19,7 +19,10 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.ejbca.util.Base64;
+import org.signserver.validationservice.common.ICertificate;
 
 /**
  * Class representing a certificate sent through WebService in
@@ -36,6 +39,8 @@ public class Certificate {
 	
 	
 	private String certificateBase64;
+	private String certType = defaultCertType;
+	private String provider = defaultProvider;
 	private transient static String defaultCertType = "X.509"; // Default certificate type
 	private transient static String defaultProvider = "BC";// Default provider
 	
@@ -54,12 +59,12 @@ public class Certificate {
 	
 	/**
 	 * Constructor from  generated object
-	 * @param cert
+	 * @param cert an ICertificate
 	 * @throws CertificateEncodingException 
-	 *//*
-	public Certificate(org.signserver.protocol.ws.gen.Certificate cert){
-		setCertificateBase64(cert.getCertificateBase64());
-	}*/
+	 */
+	public Certificate(ICertificate cert) throws CertificateEncodingException{
+		setCertificateBase64(new String(Base64.encode(cert.getEncoded())));
+	}
 	
 	/**
 	 * 
@@ -85,11 +90,20 @@ public class Certificate {
 	 * @throws CertificateException 
 	 * @throws NoSuchProviderException 
 	 */
-	public java.security.cert.Certificate getSignerCertificate() throws CertificateException, NoSuchProviderException{
-
-		return getCertificate(defaultCertType, defaultProvider);
-	}
+	@XmlTransient
+	public java.security.cert.Certificate getCertificate() throws CertificateException, NoSuchProviderException{
+		String cType = defaultCertType;
+		String prov = defaultProvider;
+        if(certType != null){
+        	cType = certType;
+        }
+        if(prov != null){
+        	prov = provider;
+        }
 		
+		return getCertificate(cType, prov);
+	}
+
 	public java.security.cert.Certificate getCertificate(String certType, String provider) throws CertificateException, NoSuchProviderException{
 		if(certificateBase64 == null){
 			return null;
@@ -104,11 +118,27 @@ public class Certificate {
 	 * Help method used to set the certificate in java.security.cert.Certificate from
 	 * @param certificate the certificate to set.
 	 * @throws CertificateEncodingException
-	 */
+	 */	
 	public void setCertificate(java.security.cert.Certificate certificate) throws CertificateEncodingException{
 		if(certificate != null){
 		  certificateBase64 = new String(Base64.encode(certificate.getEncoded()));
 		}
+	}
+
+	public String getCertType() {
+		return certType;
+	}
+
+	public void setCertType(String certType) {
+		this.certType = certType;
+	}
+
+	public String getProvider() {
+		return provider;
+	}
+
+	public void setProvider(String provider) {
+		this.provider = provider;
 	}
 	
 	

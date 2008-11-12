@@ -68,7 +68,7 @@ public class TestTimeStampSigner extends TestCase {
 		TestingSecurityManager.remove();
 	}
 	
-	public void test00SetupDatabase() throws Exception{
+	public void test00SetupDatabase() throws Exception{				
 		   
 		MARFileParser marFileParser = new MARFileParser(signserverhome +"/dist-server/tsa.mar");
 		moduleVersion = marFileParser.getVersionFromMARFile();

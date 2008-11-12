@@ -18,6 +18,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -50,6 +52,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.EntityManager;
+
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
@@ -62,6 +66,9 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 import org.objectweb.asm.commons.SimpleRemapper;
 import org.signserver.common.SignServerException;
+import org.signserver.server.annotations.Transaction;
+import org.signserver.server.annotations.TransactionType;
+import org.signserver.server.annotations.WorkerEntityManager;
 
 
 
@@ -116,6 +123,27 @@ public class ClusterClassLoaderUtils {
 	public static String getResourcePathFromClassName(String className){
 		return className.replaceAll("\\.", "/") + ".class";
 	}
+	
+	/**
+	 * Method that takes a class name returned by class.getName()
+	 * and returns an internal name used in asm.
+	 * @param className the class name
+	 * @return the internal name.
+	 */
+	public static String getInternalObjectName(String className){
+		return className.replaceAll("\\.", "/");
+	}
+	
+	/**
+	 * Method that takes a class name returned by class.getName()
+	 * and returns an internal name used in asm with 'L' in front
+	 * and ';' in the end
+	 * @param className the class name
+	 * @return the internal name.
+	 */
+	public static String getInternalObjectNameWithL(String className){
+		return "L" + className.replaceAll("\\.", "/") +";";
+	}
 
 	/**
 	 * Method that removes the path of a resource and only returns
@@ -125,6 +153,42 @@ public class ClusterClassLoaderUtils {
 	 */
 	public static String removePath(String resourcePath) {
 		return resourcePath.substring(resourcePath.lastIndexOf("/")+1);		
+	}
+	
+	/**
+	 * Method that returns the package name from a resource name.
+	 * 
+	 * It stripps the last '/' and everything behind it and
+	 * replaces all '/' with '.' 
+	 * @param resourceName
+	 * @return the package name of the resource.
+	 */
+	public static String getPackageFromResourceName(String resourceName) {
+		String retval = "";
+		if(resourceName.length()>0){
+			String resName = normalizeResourcePath(resourceName);
+			if(resName.lastIndexOf("/") > 1){
+				retval = resName.substring(0,resName.lastIndexOf("/"));
+				retval = retval.replaceAll( "/","\\.");
+			}
+		}
+		return retval;	
+	}
+	
+	/**
+	 * Method that removes an initial '/' from the resource path
+	 * if it exists.
+	 * @param resourcePath
+	 * @return resourcePath without initial '/'
+	 */
+	public static String normalizeResourcePath(String resourcePath) {
+		String retval = resourcePath;
+		if(retval != null){
+			if(retval.startsWith("/")){
+				retval = retval.substring(1);
+			}
+		}
+		return retval;		
 	}
 	
 	/**
@@ -139,7 +203,7 @@ public class ClusterClassLoaderUtils {
 		ClassWriter cw = new ClassWriter(0);
 		SimpleRemapper sr = new SimpleRemapper(mappings);
 		RemappingClassAdapter cv = new RemappingClassAdapter(cw,sr);		
-		cr.accept(cv, 0);
+		cr.accept(cv, ClassReader.EXPAND_FRAMES);
 		return cw.toByteArray();
 	}
 	
@@ -399,5 +463,90 @@ public class ClusterClassLoaderUtils {
     	
     	return retval;
     }
+    
+    public static byte[] injectTransaction(byte[] classData){
+    	ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        ClassReader cr = new ClassReader(classData);
+        TransactionFinder tr = new TransactionFinder(cw);
+        cr.accept(tr, ClassReader.EXPAND_FRAMES);
+        return cw.toByteArray();
+    }
+    
+    /**
+     * Method that searches a class for a WorkerEntityManager annotated
+     * EntityManager field and returns a reference to it.
+     * 
+     * Used by the injectTransaction() method.
+     * 
+     * @param c the class
+     * @param o the object
+     * @return a reference to the worker entity manager or null if not found.
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws IllegalAccessException
+     */
+	public static EntityManager findWorkerEntityManager(Class<?> c, Object o) throws IllegalArgumentException, SecurityException, IllegalAccessException{
+		EntityManager workerEntityManager = null;	
+		
+		workerEntityManager = findWorkerEntityManagerFromFields(c.getDeclaredFields(),o);
+		if(workerEntityManager == null){
+			Class<?> sc = c.getSuperclass();
+			while(sc != null && !sc.getName().equals(Object.class.getName()) ){
+               workerEntityManager = findWorkerEntityManagerFromFields(sc.getDeclaredFields(),o);
+               sc = sc.getSuperclass();
+			}
+		}
+		
+		return workerEntityManager;
+	}
+	
+	private static EntityManager findWorkerEntityManagerFromFields(Field[] fields, Object object) throws IllegalArgumentException, IllegalAccessException{
+		EntityManager retval = null;
+		for(Field f : fields){
+			if(f.getAnnotation(WorkerEntityManager.class) != null){
+
+					boolean isAccessable = f.isAccessible();
+					f.setAccessible(true);
+					retval = (EntityManager) f.get(object);
+					f.setAccessible(isAccessable);
+					break;
+			}
+		}
+		return retval;		
+	}
+	
+	/**
+	 * Method that returns the transaction type of the calling method.
+	 * It assumes that the calling method have a Transaction annotation.
+	 * It looks up and returns the value of that annotation, default is 
+	 * TransactionType.Required
+	 * 
+	 * @param c the class
+	 * @param o an instanced object
+	 * @return the transaction type configured for the method-
+	 */
+	public static TransactionType findTransactionType(Class<?> c, Object o){
+		TransactionType transactionType = TransactionType.SUPPORTS;		
+
+		try
+		{
+			throw new Exception("");
+		}
+		catch( Exception e )
+		{
+			Method[] methods = c.getMethods();
+			for(Method m : methods){
+				if(m.getName().equals(e.getStackTrace()[1].getMethodName())){
+					if(m.getAnnotation(Transaction.class) != null){
+						transactionType = m.getAnnotation(Transaction.class).value();
+						break;
+					}
+				}
+			}            
+		}
+		return transactionType;
+	}
+	
+
 	
 }

@@ -83,13 +83,16 @@ public class FindInterfacesClassLoader extends ClassLoader {
 	public Collection<String> getImplementedInterfaces(String resourcePath){
 		Set<String> implInterfaces = new HashSet<String>();
 		Class<?> c = null;
-
-		try {
-			String classNameFromResourcePath = ClusterClassLoaderUtils.getClassNameFromResourcePath(resourcePath);
+		
+		String classNameFromResourcePath = ClusterClassLoaderUtils.getClassNameFromResourcePath(resourcePath);
+		try {		
 			if(classNameFromResourcePath != null){
 			  c = findClass(classNameFromResourcePath);
 			}
 		} catch (ClassNotFoundException e) {
+			output.println("Error extracting interfaces, classes refered to by " + classNameFromResourcePath + " not found in CLI classpath.");
+		} catch (NoClassDefFoundError e) {
+			output.println("Error extracting interfaces, class refered to by " + classNameFromResourcePath + " not found in CLI classpath.");
 		}
 
 		

@@ -222,7 +222,7 @@ public class TestMainWebService extends TestCase {
 	    assertTrue(resps.size() == 2);
 	    assertTrue(resps.get(0).getRequestID()==12);
 	    assertTrue(resps.get(1).getRequestID()==13);
-		assertNotNull(resps.get(0).getSignerCertificate());
+		assertNotNull(resps.get(0).getWorkerCertificate());
 
 		GenericSignResponse resp = (GenericSignResponse) RequestAndResponseManager.parseProcessResponse(WSClientUtil.convertProcessResponseWS(resps).get(0).getResponseData());
 		

@@ -67,7 +67,7 @@ public class ValidationWS implements IValidationWS {
 	private static final Logger log = Logger.getLogger(ValidationWS.class);
 	
 	/**
-	 * @see se.primekey.chambersign.validationservice.ws.IValidationWS#isValid(String, CertType)
+	 * @see org.signserver.protocol.validationservice.ws.IValidationWS#isValid(String, CertType)
 	 */
 	@WebMethod
 	public ValidationResponse isValid(@WebParam(name="serviceName")String serviceName, @WebParam(name="base64Cert") String base64Cert,@WebParam(name="certPurposes") String certPurposes)  throws IllegalRequestException, SignServerException{
@@ -135,7 +135,7 @@ public class ValidationWS implements IValidationWS {
 	}
 
 	/**
-	 * @see se.primekey.chambersign.validationservice.ws.IValidationWS#getStatus()
+	 * @see org.signserver.protocol.validationservice.ws.IValidationWS#getStatus()
 	 */
 	@WebMethod
 	public String getStatus(@WebParam(name="serviceName") String serviceName) throws IllegalRequestException{

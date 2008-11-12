@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 
 public class TestStatisticsEntry extends TestCase {
 	
-	private static Date expireDate = new Date(System.currentTimeMillis() + 1000);
+	private static Date expireDate = new Date(System.currentTimeMillis() + 2000);
 	private static StatisticsEntry sE = new StatisticsEntry(new Date(System.currentTimeMillis() - 100), new Date(System.currentTimeMillis() + 100),expireDate);
 	
 	public void testAddEvent() throws InterruptedException {
@@ -32,8 +32,9 @@ public class TestStatisticsEntry extends TestCase {
 	}
 
 	public void testGetDelay() throws InterruptedException {
+		Thread.sleep(100);
 		assertTrue(""+ sE.getDelay(TimeUnit.NANOSECONDS), sE.getDelay(TimeUnit.NANOSECONDS) > 0 );
-		Thread.sleep(1100);
+		Thread.sleep(2100);
 		assertTrue(sE.getDelay(TimeUnit.NANOSECONDS) < 0);
 	}
 	

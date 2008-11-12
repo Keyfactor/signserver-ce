@@ -67,7 +67,7 @@ public class TestSecondStatisticsCollector extends TestCase {
 		mc.addEvent(getEvent());
 		assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 3);
 		assertTrue(""+mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, new Date(System.currentTimeMillis() - 1000), null).size(), mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, new Date(System.currentTimeMillis() - 1000), null).size() == 1);
-		assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, new Date(System.currentTimeMillis() - 3100), new Date(System.currentTimeMillis() - 1100)).size() == 2);
+		assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, new Date(System.currentTimeMillis() - 3100), new Date(System.currentTimeMillis() - 1100)).size() > 1);
 		assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, new Date(System.currentTimeMillis() - 1000)).size() == 2);
 		
 		Thread.sleep(1050);

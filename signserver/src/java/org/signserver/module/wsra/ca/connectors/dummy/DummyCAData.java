@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -79,11 +80,14 @@ import org.signserver.validationservice.common.Validation.Status;
 
 public class DummyCAData implements Externalizable {
 	
+
+	private static final long serialVersionUID = 1L;
+
 	private static final int VERSION = 1;
 	
 	private transient Logger log = Logger.getLogger(this.getClass());
 	
-	public static final int DEFAULT_VALIDITY = 3650; // 10 years.
+	public static final long DEFAULT_VALIDITY = 3650L; // 10 years.
 	public static final String DEFAULT_SIGNALG = "SHA1WithRSA"; // 10 years.
 
 	private X509Certificate cACert;	
@@ -189,7 +193,8 @@ public class DummyCAData implements Externalizable {
 			Date firstDate = new Date();
 			firstDate.setTime(firstDate.getTime() - (10 * 60 * 1000));
 			Date lastDate = new Date();
-			lastDate.setTime(cACert.getNotAfter().getTime());
+			long untilTime =  1000L * 3600L * 24L *3651L;
+			lastDate.setTime(System.currentTimeMillis() + untilTime);			
 			X509V3CertificateGenerator certgen = new X509V3CertificateGenerator();
 
 			// Serialnumber is random bits, where random generator is initialized with Date.getTime() when this

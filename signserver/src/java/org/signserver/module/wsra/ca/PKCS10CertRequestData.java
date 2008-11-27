@@ -49,6 +49,7 @@ public class PKCS10CertRequestData implements ICertRequestData{
 	private String certificateProfile;
 	private String subjectAltName;
 	private String issuerDN;
+	private String subjectDN;
 	private byte[] pkcs10Data;
 	
 	/**
@@ -160,11 +161,15 @@ public class PKCS10CertRequestData implements ICertRequestData{
 	}
 
 	/**
+	 * Returns the Subject DN, either from the manually set 
+	 * subjectDN property or from the PKCS10.
 	 * 
 	 * @see org.signserver.module.wsra.ca.ICertRequestData#getSubjectDN()
-	 */
-	@XmlTransient
+	 */	
 	public String getSubjectDN() {
+		if(subjectDN != null){
+			return subjectDN;
+		}
 		if(pkcs10Data != null){
 			return getPKCS10CertificationRequest().getCertificationRequestInfo().getSubject().toString();
 		}
@@ -214,6 +219,15 @@ public class PKCS10CertRequestData implements ICertRequestData{
 	 */
 	public void setIssuerDN(String issuerDN) {
 		this.issuerDN = issuerDN;
+	}
+
+	/**
+	 * It is possible to override the DN specified in PKCS10
+	 * by setting the subject DN manually.
+	 * @param subjectDN the subjectDN to set
+	 */
+	public void setSubjectDN(String subjectDN) {
+		this.subjectDN = subjectDN;
 	}
 	
 	

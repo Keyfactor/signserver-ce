@@ -36,11 +36,13 @@ import javax.jws.WebService;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.ejbca.util.Base64;
+import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.module.wsra.beans.CertificateDataBean;
+import org.signserver.module.wsra.beans.DataBankDataBean;
 import org.signserver.module.wsra.beans.OrganizationDataBean;
 import org.signserver.module.wsra.beans.TokenDataBean;
 import org.signserver.module.wsra.beans.UserDataBean;
@@ -80,17 +82,6 @@ import org.signserver.validationservice.common.Validation;
  */
 
 @WebService(targetNamespace="gen.ws.wsra.module.signserver.org")
-/*@XmlSeeAlso({AuthDataBean.class,
-	         CertificateDataBean.class,
-	         OrganizationDataBean.class,
-	         PricingDataBean.class,
-	         ProductDataBean.class,
-	         TokenDataBean.class,
-	         UserDataBean.class,
-	         UserAliasDataBean.class,
-	         PKCS10CertRequestData.class,
-	         Validation.class,
-	         Certificate.class})*/
 public class WSRA extends BaseWS   {
 	
 	
@@ -161,7 +152,7 @@ public class WSRA extends BaseWS   {
      */
 	@WebMethod
 	@Transaction
-	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN})	
+	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.SMTPADMIN})	
 	public List<UserDataBean> listUsers(@WebParam(name="roles")List<String> roles) throws IllegalRequestException, SignServerException, AuthorizationDeniedException{
 		log.debug(">listUsers called ");
 		UserDataBean caller = initMethod();
@@ -169,7 +160,10 @@ public class WSRA extends BaseWS   {
 		OrganizationDataBean org = db.om.findOrganization(caller.getOrganizationId());
 		helper.checkStatus(caller, org, null, WSRAHelper.ALLOWED_CALLER_STATUSES, WSRAHelper.DEFAULT_ALLOWED_ORGANIZATION_STATUSES, null);
 		
-		List<UserDataBean> result = new ArrayList<UserDataBean>();		
+		List<UserDataBean> result = new ArrayList<UserDataBean>();
+		
+		roles = helper.filterRoles(roles,caller);
+		
 		if(roles != null){	
 			Set<UserDataBean> set = new HashSet<UserDataBean>();
 			for(String role : roles){
@@ -183,6 +177,7 @@ public class WSRA extends BaseWS   {
 		for(UserDataBean udb : result){
 			helper.removeSensitiveData(udb);
 		}
+		
 	   
 		log.debug("<listUsers found " + result.size() + " users");
 	   return result;
@@ -201,7 +196,7 @@ public class WSRA extends BaseWS   {
 	 * sufficient privileges to add the user data.
 	 */
 	@WebMethod
-	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN})
+	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.SMTPADMIN})
 	@Transaction
 	public void editUsers(@WebParam(name="userData")UserDataBean userData) throws IllegalRequestException, SignServerException, AuthorizationDeniedException{
 		log.debug(">editUser called, username : " + userData.getUserName());
@@ -210,7 +205,7 @@ public class WSRA extends BaseWS   {
 		try{
 			OrganizationDataBean org = db.om.findOrganization(caller.getOrganizationId());
 			helper.checkStatus(caller, org, null, WSRAHelper.ALLOWED_CALLER_STATUSES, WSRAHelper.DEFAULT_ALLOWED_ORGANIZATION_STATUSES, null);			
-			helper.checkRoles(userData.getRoles(),caller.getRoles());
+			helper.checkRolesForEdit(userData.getRoles(),caller.getRoles());
 
 			userData.setOrganizationId(caller.getOrganizationId());
 			db.um.editUser(userData);
@@ -220,6 +215,7 @@ public class WSRA extends BaseWS   {
 		}catch(Exception e){
 			log(ERROR,EVENT_EDITUSER,caller,e,"Error occured when editing user : %s , message : %eMsg",userData.getUserName());
 		}
+				
 	}
 	
 	/**
@@ -252,6 +248,7 @@ public class WSRA extends BaseWS   {
 		}
 
 		for(UserDataBean udb : retval){
+			helper.checkRolesForView(udb.getRoles(),caller.getRoles());
 			helper.removeSensitiveData(udb);
 		}
 		log.debug("<findUsersByAlias");
@@ -267,11 +264,11 @@ public class WSRA extends BaseWS   {
 	 * @throws IllegalRequestException if the request contained illegal data.
 	 * @throws SignServerException if internal server exception occurred.
 	 * @throws AuthorizationDeniedException if the user doesn't have
-	 * sufficient privileges to add the user data.
+	 * sufficient privileges to view the user data.
 	 */
 	@WebMethod
 	@Transaction
-	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.SMTPSERVER})	
+	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.SMTPADMIN, Roles.SMTPSERVER})	
 	public UserDataBean findUserByUsername(@WebParam(name="username")String username) throws IllegalRequestException, SignServerException, AuthorizationDeniedException{
 		log.debug(">findUserByUsername called, username : " + username);
 		UserDataBean caller = initMethod();
@@ -279,7 +276,9 @@ public class WSRA extends BaseWS   {
 		helper.checkStatus(caller, org, null, WSRAHelper.ALLOWED_CALLER_STATUSES, WSRAHelper.DEFAULT_ALLOWED_ORGANIZATION_STATUSES, null);
 		
 		UserDataBean retval = db.um.findUser(username, caller.getOrganizationId());
-				
+		if(retval != null){
+		  helper.checkRolesForView(retval.getRoles(),caller.getRoles());
+		}
 		helper.removeSensitiveData(retval);
 		log.debug("<findUserByUsername, username : " + username);
 		return retval;
@@ -298,7 +297,7 @@ public class WSRA extends BaseWS   {
 	 * sufficient privileges to add the user data.
 	 */
 	@WebMethod
-	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN})
+	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.SMTPADMIN})
 	@Transaction
 	public Certificate generateCertificateFromPKCS10(@WebParam(name="username")String username,
 			                          @WebParam(name="pkcs10ReqData")PKCS10CertRequestData pkcs10ReqData,
@@ -314,7 +313,7 @@ public class WSRA extends BaseWS   {
 			
 			OrganizationDataBean org = db.om.findOrganization(caller.getOrganizationId());
 			helper.checkStatus(caller, org, user, WSRAHelper.ALLOWED_CALLER_STATUSES, WSRAHelper.DEFAULT_ALLOWED_ORGANIZATION_STATUSES, WSRAHelper.ALLOW_ACTIVE_USER_STATUSES);
-
+            helper.checkRolesForEdit(user.getRoles(), caller.getRoles());
 			helper.checkValidRequest(caller,user, UserGeneratedTokenProfile.PROFILEID, pkcs10ReqData,null);
 
 			try{
@@ -379,7 +378,7 @@ public class WSRA extends BaseWS   {
 	 * sufficient privileges to add the user data.
 	 */
 	@WebMethod
-	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.SMTPSERVER})	
+	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.SMTPADMIN, Roles.SMTPSERVER})	
 	@Transaction
 	public TokenDataBean generateSoftToken(@WebParam(name="username")String username,
 			                        @WebParam(name="password")String password,
@@ -397,6 +396,7 @@ public class WSRA extends BaseWS   {
 			
 			OrganizationDataBean org = db.om.findOrganization(caller.getOrganizationId());
 			helper.checkStatus(caller, org, user, WSRAHelper.ALLOWED_CALLER_STATUSES, WSRAHelper.DEFAULT_ALLOWED_ORGANIZATION_STATUSES, WSRAHelper.ALLOW_ACTIVE_USER_STATUSES);
+			helper.checkRolesForEdit(user.getRoles(), caller.getRoles());
 			
 			if(helper.isCallerSMTPServer(caller)){
 				if(!tokenProfile.equals(SMTPTokenProfile.PROFILEID)){
@@ -609,7 +609,7 @@ public class WSRA extends BaseWS   {
 	 * sufficient privileges to add the user data.
 	 */
 	@WebMethod
-	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.USER})	
+	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.USER, Roles.SMTPADMIN})	
 	@Transaction
 	public void revokeToken(@WebParam(name="tokenSerialNumber")String tokenSerialNumber, @WebParam(name="revocationReason")int reason) throws IllegalRequestException, SignServerException, AuthorizationDeniedException{
 		log.debug(">revokeToken called ");
@@ -624,8 +624,11 @@ public class WSRA extends BaseWS   {
 				if(tdb == null){
 					throw new IllegalRequestException("Error, token serial number couldn't be found in database.");
 				}
+				
+				UserDataBean udb = db.um.findUser(tdb.getUserId());
 
 				helper.checkRegularUser(caller, tdb);
+				helper.checkRolesForEdit(udb.getRoles(), caller.getRoles());
 
 				for(CertificateDataBean cdb : tdb.getCertificates()){
 					try{
@@ -661,7 +664,7 @@ public class WSRA extends BaseWS   {
 	 * sufficient privileges to add the user data.
 	 */
 	@WebMethod
-	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN})
+	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.SMTPADMIN})
 	@Transaction
 	public void revokeUser(@WebParam(name="userName")String userName, @WebParam(name="revocationReason")int reason, @WebParam(name="newUserStatus")UserStatus newUserStatus) throws IllegalRequestException, SignServerException, AuthorizationDeniedException{
 		log.debug(">revokeUser called ");
@@ -669,7 +672,7 @@ public class WSRA extends BaseWS   {
 		UserDataBean caller = initMethod();
 		OrganizationDataBean o = db.om.findOrganization(caller.getOrganizationId());
 		helper.checkStatus(caller, o, null, WSRAHelper.ALLOWED_CALLER_STATUSES, WSRAHelper.DEFAULT_ALLOWED_ORGANIZATION_STATUSES, null);
-
+		
 		try{
 			try{
 				UserDataBean udb = db.um.findUser(userName, caller.getOrganizationId());
@@ -677,6 +680,8 @@ public class WSRA extends BaseWS   {
 				if(udb == null){
 					throw new IllegalRequestException("Error, user couldn't be found in database.");
 				}
+				
+				helper.checkRolesForEdit(udb.getRoles(), caller.getRoles());
 
 				for(TokenDataBean tdb : udb.getTokens()){
 					for(CertificateDataBean cdb : tdb.getCertificates()){
@@ -687,7 +692,7 @@ public class WSRA extends BaseWS   {
 					}
 				}
 
-				udb.setStatus(WSRAConstants.UserStatus.GENERATED);
+				udb.setStatus(newUserStatus);
 				db.um.editUser(udb);
 
 				log(INFO,EVENT_REVOKEUSER,caller,"Successfully revoked user : %s , reason : %d",userName,reason);
@@ -719,7 +724,7 @@ public class WSRA extends BaseWS   {
 	 */
 	@WebMethod
 	@Transaction
-	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.SMTPSERVER, Roles.USER})	
+	@AuthorizedRoles({Roles.RAADMIN, Roles.MAINADMIN, Roles.SMTPADMIN, Roles.SMTPSERVER, Roles.USER})	
 	public TokenDataBean getTokenData(@WebParam(name="tokenSerialNumber")String tokenSerialNumber, @WebParam(name="includeSensitiveData") boolean includeSensitiveData) throws IllegalRequestException, SignServerException, AuthorizationDeniedException{
 		log.debug(">getTokenData called ");
 
@@ -734,7 +739,8 @@ public class WSRA extends BaseWS   {
 			OrganizationDataBean o = db.om.findOrganization(caller.getOrganizationId());
 			UserDataBean user = db.um.findUser(tdb.getUserId());
 			helper.checkStatus(caller, o, user, WSRAHelper.ALLOWED_CALLER_STATUSES, WSRAHelper.DEFAULT_ALLOWED_ORGANIZATION_STATUSES, WSRAHelper.ALLOW_ACTIVE_USER_STATUSES);
-
+			helper.checkRolesForView(user.getRoles(),caller.getRoles());
+			
 			if(helper.isCallerSMTPServer(caller)){
 				if(!tdb.getProfile().equals(SMTPTokenProfile.PROFILEID)){
 					throw new IllegalRequestException("Error SMTP Servers are only allowed to fetch tokens with SMTPTokenProfile");
@@ -786,6 +792,104 @@ public class WSRA extends BaseWS   {
 		return tdb != null;
 	}
 	
+	/**
+	 * Method to retrieve UserData of the caller.
+	 * 
+	 * @return the UserDataBean of the caller or null if the caller doesn't exist.
+	 * @throws IllegalRequestException if the request contained illegal data.
+	 * @throws SignServerException if internal server exception occurred.
+	 * @throws AuthorizationDeniedException if the user doesn't have
+	 * sufficient privileges to add the user data.
+	 */
+	@WebMethod	
+	@Transaction
+	public UserDataBean getCallerUserData() throws IllegalRequestException, SignServerException, AuthorizationDeniedException{
+		log.debug(">getCallerUserData called ");
+
+		UserDataBean caller = initMethod();
+		if(caller.equals(UserManager.NO_USER)){
+			return null;
+		}
+		OrganizationDataBean o = db.om.findOrganization(caller.getOrganizationId());
+		helper.checkStatus(caller, o, null, WSRAHelper.ALLOWED_CALLER_STATUSES, WSRAHelper.DEFAULT_ALLOWED_ORGANIZATION_STATUSES, null);
+				
+		log.debug("<getCallerUserData");
+		return db.um.findUser(caller.getId());
+	}
+	
+	/**
+	 * Method to retrieve callers organization data
+	 * 
+	 * @return the OrganizationDataBean (no related users) of the caller or null if the caller doesn't exist.
+	 * @throws IllegalRequestException if the request contained illegal data.
+	 * @throws SignServerException if internal server exception occurred.
+	 * @throws AuthorizationDeniedException if the user doesn't have
+	 * sufficient privileges to add the user data.
+	 */
+	@WebMethod	
+	@Transaction
+	public OrganizationDataBean getCallerOrganizationData() throws IllegalRequestException, SignServerException, AuthorizationDeniedException{
+		log.debug(">getCallerOrganizationData called ");
+
+		UserDataBean caller = initMethod();
+		if(caller.equals(UserManager.NO_USER)){
+			return null;
+		}
+		OrganizationDataBean o = db.om.findOrganization(caller.getOrganizationId());
+		helper.checkStatus(caller, o, null, WSRAHelper.ALLOWED_CALLER_STATUSES, WSRAHelper.DEFAULT_ALLOWED_ORGANIZATION_STATUSES, null);
+		List<DataBankDataBean> related = db.dbm.getRelatedProperies(WSRAConstants.DATABANKTYPE_ORGANIZATION, o.getId());
+		if(related != null){
+			related.size();
+		}
+		o.setRelatedData(related);
+		if(o.getProducts() != null){
+			o.getProducts().size();
+		}
+		o.setUsers(null);
+	
+		
+		log.debug("<getCallerOrganizationData");
+		return o;
+	}
+	
+	
+	/**
+	 * Method to retrieve and issuers certificate chain (ie CA Chain) 
+	 * @return the OrganizationDataBean (no related users) of the caller or null if the caller doesn't exist.
+	 * @throws IllegalRequestException if the request contained illegal data.
+	 * @throws SignServerException if internal server exception occurred.
+	 * @throws AuthorizationDeniedException if the user doesn't have
+	 * sufficient privileges to add the user data.
+	 */
+	@WebMethod	
+	@Transaction
+	public List<Certificate> getCACertificateChain(String issuerDN) throws IllegalRequestException, SignServerException, AuthorizationDeniedException{
+		log.debug(">getCACertificateChain called :" +issuerDN);
+
+		UserDataBean caller = initMethod();
+		if(caller.equals(UserManager.NO_USER)){
+			return null;
+		}
+		OrganizationDataBean o = db.om.findOrganization(caller.getOrganizationId());
+		helper.checkStatus(caller, o, null, WSRAHelper.ALLOWED_CALLER_STATUSES, WSRAHelper.DEFAULT_ALLOWED_ORGANIZATION_STATUSES, null);
+		
+		issuerDN = CertTools.stringToBCDNString(issuerDN);
+		List<ICertificate> certs = getCAConnector(issuerDN).getCACertificateChain(issuerDN);
+		
+		List<Certificate> retval = new ArrayList<Certificate>();
+		try{
+			for(ICertificate ic : certs){
+				Certificate cert = new Certificate();
+				cert.setCertificateBase64(new String(Base64.encode(ic.getEncoded())));
+				retval.add(cert);
+			}
+		}catch(CertificateEncodingException e){
+			throw new SignServerException(e.getMessage());
+		}
+		
+		log.debug("<getCACertificateChain");
+		return retval;
+	}
 
 	
 	/**

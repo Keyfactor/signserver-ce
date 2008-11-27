@@ -19,6 +19,7 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -168,6 +169,7 @@ public class WSRAHelper {
 		Set<String> callerRoles = caller.getRoles();
 		if(callerRoles.contains(Roles.SUPERADMIN)||
 		   callerRoles.contains(Roles.MAINADMIN)||
+		   callerRoles.contains(Roles.SMTPADMIN)||
 		   callerRoles.contains(Roles.RAADMIN)){
 		   return;	
 		}
@@ -253,7 +255,7 @@ public class WSRAHelper {
 	
 	private IRequestDataChecker requestDataChecker;
 
-	void checkRoles(Set<String> roles, Set<String> callersRoles) throws AuthorizationDeniedException {
+	void checkRolesForEdit(Set<String> roles, Set<String> callersRoles) throws AuthorizationDeniedException {
 		if(callersRoles.contains(Roles.SUPERADMIN)){
 			return;
 		}
@@ -265,11 +267,44 @@ public class WSRAHelper {
 		}
 		if(callersRoles.contains(Roles.RAADMIN)){
 			for(String role : roles){
-				if(!role.equals(Roles.USER) && !role.equals(Roles.SMTPSERVER)){
-					throw new AuthorizationDeniedException("Error a RAADMIN can only add users with role USER or SMTPSERVER");
+				if(!role.equals(Roles.USER) && !role.equals(Roles.RAADMIN)){
+					throw new AuthorizationDeniedException("Error a RAADMIN can only edit users with role USER and RAADMIN");
 				}
 			}
-		}		
+		}	
+		if(callersRoles.contains(Roles.SMTPADMIN)){
+			for(String role : roles){
+				if(!role.equals(Roles.SMTPSERVER)){
+					throw new AuthorizationDeniedException("Error a SMTPADMIN can only edit users with role SMTPSERVER");
+				}
+			}
+		}
+	}
+	
+	void checkRolesForView(Set<String> roles, Set<String> callersRoles) throws AuthorizationDeniedException {
+		if(callersRoles.contains(Roles.SUPERADMIN)){
+			return;
+		}
+		if(callersRoles.contains(Roles.MAINADMIN)){
+			if(roles.contains(Roles.SUPERADMIN)){
+				throw new AuthorizationDeniedException("Error the caller doesn't have enought priviledges to view SUPERADMIN roles");
+			}
+			return;
+		}
+		if(callersRoles.contains(Roles.RAADMIN)){
+			for(String role : roles){
+				if(!role.equals(Roles.USER) && !role.equals(Roles.RAADMIN) && !role.equals(Roles.SMTPADMIN)){
+					throw new AuthorizationDeniedException("Error a RAADMIN can only view users with role USER, RAADMIN, SMTPADMIN");
+				}
+			}
+		}	
+		if(callersRoles.contains(Roles.SMTPADMIN)){
+			for(String role : roles){
+				if(!role.equals(Roles.SMTPSERVER)){
+					throw new AuthorizationDeniedException("Error a SMTPADMIN can only view users with role SMTPSERVER");
+				}
+			}
+		}
 	}
 
 	/**
@@ -445,14 +480,14 @@ public class WSRAHelper {
 		}
 		random.setSeed((new Date().getTime()));
 		random.nextBytes(serno);
-		String tokenSN = new java.math.BigInteger(serno).toString();
+		String tokenSN = new java.math.BigInteger(serno).abs().toString();
 		boolean freeSN = false;
 		while(!freeSN){			
 				if(db.tm.findToken(orgId, tokenSN, false) == null){
                    freeSN=true;
 				}else{
 					random.nextBytes(serno);
-					tokenSN = new java.math.BigInteger(serno).toString();
+					tokenSN = new java.math.BigInteger(serno).abs().toString();
 				}				
 		}
 		
@@ -580,7 +615,61 @@ public class WSRAHelper {
 		   
 	   }
 	}
-	
+
+
+    /**
+     * Method called from listUsers and that filter
+     * out all roles in a search query so only the 
+     * callers authorized roles will remain. For
+     * instance can a SMTPADMIN only see SMTPSERVERS
+     * @param roles requested roles
+     * @param caller user calling the method
+     * @return filtered set of roles
+     */
+	public List<String> filterRoles(List<String> roles, UserDataBean caller) {
+		Set<String> callerRoles = caller.getRoles();
+		if(callerRoles.contains(Roles.SUPERADMIN) ||
+		   callerRoles.contains(Roles.MAINADMIN)){
+			return roles;
+		}
+		
+		if(roles == null){
+			roles = new ArrayList<String>();
+			roles.add(Roles.MAINADMIN);
+			roles.add(Roles.RAADMIN);
+			roles.add(Roles.USER);
+			roles.add(Roles.SMTPSERVER);
+			roles.add(Roles.SMTPADMIN);
+		}
+		
+		while(roles.contains(Roles.SUPERADMIN)){
+			roles.remove(Roles.SUPERADMIN);
+		}
+		
+		if(!callerRoles.contains(Roles.SMTPADMIN)){
+			while(roles.contains(Roles.SMTPSERVER)){
+				roles.remove(Roles.SMTPSERVER);
+			}
+		}
+				
+		if(!callerRoles.contains(Roles.RAADMIN)){
+			while(roles.contains(Roles.USER)){
+				roles.remove(Roles.USER);
+			}
+			while(roles.contains(Roles.RAADMIN)){
+				roles.remove(Roles.RAADMIN);
+			}
+			while(roles.contains(Roles.MAINADMIN)){
+				roles.remove(Roles.MAINADMIN);
+			}
+
+			while(roles.contains(Roles.SMTPADMIN)){
+				roles.remove(Roles.SMTPADMIN);
+			}
+		}
+		
+		return roles;
+	}
 
 
 }

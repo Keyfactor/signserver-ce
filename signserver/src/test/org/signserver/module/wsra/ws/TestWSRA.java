@@ -85,6 +85,7 @@ public class TestWSRA extends CommonManagerTest {
 	private static RequestContext user2ctx = new RequestContext();
 	private static RequestContext sactx = new RequestContext();
 	private static RequestContext smtpctx = new RequestContext();
+	private static RequestContext smtpadmctx = new RequestContext();
 	private static RequestContext userctx = new RequestContext();
 	
 	private static X509Certificate cert1 = null;
@@ -92,6 +93,7 @@ public class TestWSRA extends CommonManagerTest {
 	private static X509Certificate cert3 = null;
 	private static X509Certificate cert4 = null;
 	private static X509Certificate cert5 = null;
+	private static X509Certificate cert6 = null;
 	
 	private static String issuerDN = "CN=testCA1";
 	
@@ -146,12 +148,14 @@ public class TestWSRA extends CommonManagerTest {
 			cert3 = CertTools.genSelfCert("CN=superadmin", 1, null, keys.getPrivate(), keys.getPublic(), "SHA1WithRSA", false);
 			cert4 = CertTools.genSelfCert("CN=smtpserver", 1, null, keys.getPrivate(), keys.getPublic(), "SHA1WithRSA", false);
 			cert5 = CertTools.genSelfCert("CN=regularuser", 1, null, keys.getPrivate(), keys.getPublic(), "SHA1WithRSA", false);
+			cert6 = CertTools.genSelfCert("CN=smtpadmin", 1, null, keys.getPrivate(), keys.getPublic(), "SHA1WithRSA", false);
 			
 			raadmin1ctx.put(RequestContext.CLIENT_CERTIFICATE, cert1);
 			user2ctx.put(RequestContext.CLIENT_CERTIFICATE, cert2);
 			sactx.put(RequestContext.CLIENT_CERTIFICATE, cert3);
 			smtpctx.put(RequestContext.CLIENT_CERTIFICATE, cert4);
 			userctx.put(RequestContext.CLIENT_CERTIFICATE, cert5);
+			smtpadmctx.put(RequestContext.CLIENT_CERTIFICATE, cert6);
 			
 			om = new OrganizationManager(workerEntityManager,um,pm);	
 			
@@ -173,8 +177,7 @@ public class TestWSRA extends CommonManagerTest {
 			orgId = orgWithId.getId();
 
 			HashSet<String> roles1 = new HashSet<String>();
-			roles1.add(Roles.RAADMIN);
-			roles1.add(Roles.SMTPSERVER);
+			roles1.add(Roles.RAADMIN);			
 			UserDataBean ud = new UserDataBean("test1","Test 1",roles1,orgId);
 			
 			ArrayList<UserAliasDataBean> aliases = new ArrayList<UserAliasDataBean>();
@@ -216,10 +219,19 @@ public class TestWSRA extends CommonManagerTest {
 			
 			ud = um.findUser("smtpserver", orgId);
 			tb();um.editAuthData(new AuthDataBean(at.getAuthType(),at.getMatchValue(smtpctx),ud.getId()));tc();
-				
+			
 			HashSet<String> roles5 = new HashSet<String>();
-			roles5.add(Roles.USER);
-			ud = new UserDataBean("regularuser","Regular User",roles5,orgId);
+			roles5.add(Roles.SMTPADMIN);
+			ud = new UserDataBean("smtpadmin","SMTP Admin",roles5,orgId);
+			tb();um.editUser(ud);tc();
+			
+			ud = um.findUser("smtpadmin", orgId);
+			tb();um.editAuthData(new AuthDataBean(at.getAuthType(),at.getMatchValue(smtpadmctx),ud.getId()));tc();
+				
+			
+			HashSet<String> roles6 = new HashSet<String>();
+			roles6.add(Roles.USER);
+			ud = new UserDataBean("regularuser","Regular User",roles6,orgId);
 			tb();um.editUser(ud);tc();
 			
 			ud = um.findUser("regularuser", orgId);
@@ -285,7 +297,7 @@ public class TestWSRA extends CommonManagerTest {
 	public void test02LightListUsers() throws Exception{
 		
 		
-		WSRA wSRA = genWSRA(workerId, workerEntityManager, wc, raadmin1ctx, null);
+		WSRA wSRA = genWSRA(workerId, workerEntityManager, wc, sactx, null);
 		
 		ArrayList<String> reqRoles = new ArrayList<String>();
 		reqRoles.add(Roles.SUPERADMIN);
@@ -295,7 +307,14 @@ public class TestWSRA extends CommonManagerTest {
 		reqRoles.add(Roles.USER);
 		assertTrue(wSRA.listUsers(reqRoles).size()==3);
 		
-		assertTrue(wSRA.listUsers(null).size()==5);
+		assertTrue(wSRA.listUsers(null).size()==6);
+		
+		wSRA = genWSRA(workerId, workerEntityManager, wc, raadmin1ctx, null);
+		reqRoles = new ArrayList<String>();
+		reqRoles.add(Roles.SUPERADMIN);
+		reqRoles.add(Roles.RAADMIN);
+		reqRoles.add(Roles.USER);
+		assertTrue(wSRA.listUsers(reqRoles).size()==3);
 	}
 	
 	public void test03LightEditUsers() throws Exception{
@@ -661,7 +680,7 @@ public class TestWSRA extends CommonManagerTest {
 			tr();
 		}
 		
-		wSRA = genWSRA(workerId, workerEntityManager, wc, raadmin1ctx, null);
+		wSRA = genWSRA(workerId, workerEntityManager, wc, sactx, null);
 		tb();wSRA.revokeUser("test1", WSRAConstants.REVOKATION_REASON_AACOMPROMISE, UserStatus.DISABLED);tc();
 		ud = wSRA.findUserByUsername("test1");
 		for(TokenDataBean t : ud.getTokens()){
@@ -670,6 +689,16 @@ public class TestWSRA extends CommonManagerTest {
 				assertTrue(vr.getStatus() == Status.REVOKED);
 			}
 		}
+	}
+	
+	public void test06LightGetCallerUserData() throws Exception{
+		
+		
+		WSRA wSRA = genWSRA(workerId, workerEntityManager, wc, sactx, null);
+		
+		UserDataBean udb = wSRA.getCallerUserData();
+		assertNotNull(udb);
+		assertTrue(udb.getUserName(), udb.getUserName().equals("superadmin"));
 	}
 	
 	public void test100SetupDatabase() throws Exception {
@@ -735,7 +764,7 @@ public class TestWSRA extends CommonManagerTest {
 
 	}
 	
-	public void test104LightManageCertificates() throws Exception{
+	public void test104WSManageCertificates() throws Exception{
 		keys = KeyTools.genKeys("512", "RSA");
 		PKCS10CertificationRequest p10 = new PKCS10CertificationRequest("SHA1WithRSA",
                 CertTools.stringToBcX509Name("CN=test1,O=Test Org"),
@@ -885,6 +914,12 @@ public class TestWSRA extends CommonManagerTest {
 				assertTrue(vr.getStatus().toString().equals(Status.REVOKED.toString()));
 			}
 		}
+	}
+	
+	public void test105WSGetCallerUserData() throws Exception {
+		org.signserver.module.wsra.ws.gen.UserDataBean udb = getWSRA().getCallerUserData();
+		assertNotNull(udb);
+		assertTrue(udb.getUserName(),udb.getUserName().equals("superadmin"));
 	}
 	
 	   public void test199RemoveDatabase() throws Exception {

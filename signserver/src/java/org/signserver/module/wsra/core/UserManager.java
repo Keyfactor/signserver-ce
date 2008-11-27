@@ -228,6 +228,18 @@ public class UserManager {
 			editUserAlias(uad);
 		  }
 		}
+		
+		if(!persist){
+			for(AuthDataBean udb : persistData.getAuthData()){
+				workerEntityManager.remove(udb);
+			} 	
+		}
+		if(userData.getAuthData() != null){
+		  for(AuthDataBean udb : userData.getAuthData()){
+			  udb.setUserId(persistData.getId());
+			  editAuthData(udb);
+		  }
+		}
 				
 		return persistData.getId();
 	}

@@ -157,6 +157,7 @@ public class OrganizationManager {
 		OrganizationDataBean retval = null;
 		try{
 			retval = (OrganizationDataBean) workerEntityManager.find(OrganizationDataBean.class, organizationId);
+					
 		}catch(NoResultException e){}
 
 		return retval;

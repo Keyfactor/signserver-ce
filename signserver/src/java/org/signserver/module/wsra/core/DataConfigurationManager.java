@@ -25,7 +25,6 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.module.wsra.beans.AuthDataBean;
 import org.signserver.module.wsra.beans.BackupRestoreBean;
 import org.signserver.module.wsra.beans.DataBankDataBean;
 import org.signserver.module.wsra.beans.OrganizationDataBean;
@@ -209,21 +208,9 @@ public class DataConfigurationManager {
 						for(UserDataBean user : users){							
 							UserDataBean existingUser = db.um.findUser(user.getUserName(), orgId);
 							
-							if(existingUser != null){
-								for(AuthDataBean adb : existingUser.getAuthData()){
-									db.um.removeAuthData(adb.getAuthType(), adb.getAuthValue());
-								}
-							}
 							user.setOrganizationId(orgId);
-							int userId = db.um.editUser(user);
-							
-							Collection<AuthDataBean> authDatas = user.getAuthData();
-							if(authDatas != null){
-								for(AuthDataBean adb : authDatas){
-                                  adb.setUserId(userId);
-                                  db.um.editAuthData(adb);
-								}
-							}
+							db.um.editUser(user);
+						
 							
 							if(includeTokens && tokenImportSupported){
 								Collection<TokenDataBean> tokens = user.getTokens();

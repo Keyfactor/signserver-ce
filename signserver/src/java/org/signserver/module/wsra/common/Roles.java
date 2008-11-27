@@ -55,6 +55,13 @@ public class Roles {
 	public static final String RAADMIN = "RAADMIN";
 	
 	/**
+	 * Role defining that the user is a SMTP Server Admin,
+	 * this is usually defining that the admin is allowed
+	 * to manage SMTP key store certificates
+	 */
+	public static final String SMTPADMIN = "SMTPADMIN";
+	
+	/**
 	 * Role defining that the user is a regular user
 	 * with no specific administrative rights.
 	 */

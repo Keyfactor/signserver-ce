@@ -169,7 +169,7 @@ public class ClusterClassLoader extends ClassLoader {
 	 */
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
-		
+		name = name.trim();		
 		Class<?> retval = null;
 		try{
 			retval = getParent().loadClass(name);

@@ -88,7 +88,7 @@ public class ClusterClassLoaderUtils {
 	 * to a valid class name.
 	 * 
 	 * @param resourcePath path of class with / and .class
-	 * @return a valid class name or null if it doesn't seem to ba a class
+	 * @return a valid class name or null if it doesn't seem to be a class
 	 */
 	public static String getClassNameFromResourcePath(String resourcePath){
 		if(resourcePath.endsWith(".class")){

@@ -128,12 +128,8 @@ public class MRTDSigner extends BaseSigner {
 
 
 
-    /**
-     * Not supported yet
-     */
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
-		log.error("Error : genCertificateRequest called for MRTDSigner which isn't supportet yet");
-		return null;
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{		
+		return getCryptoToken().genCertificateRequest(info);
 	}
 
 

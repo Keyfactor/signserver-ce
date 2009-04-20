@@ -110,7 +110,7 @@
           <include name="jboss-ejb3x.jar"/>
           <include name="jboss-j2ee.jar"/>                              
        </fileset>
-       <fileset dir="${jboss.home}/server/default/lib">
+       <fileset dir="${appserver.home}/server/default/lib">
           <include name="hsqldb.jar"/>
           <include name="dom4j.jar"/>
           <include name="cglib.jar"/>

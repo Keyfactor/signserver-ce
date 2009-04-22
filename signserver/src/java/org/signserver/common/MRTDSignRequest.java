@@ -25,7 +25,7 @@ import java.util.ArrayList;
  * 
  * 
  * @author Philip Vendil
- * $Id: MRTDSignRequest.java,v 1.6 2007-12-12 14:00:05 herrvendil Exp $
+ * $Id$
  */
 
 public class MRTDSignRequest extends ProcessRequest implements ISignRequest  {

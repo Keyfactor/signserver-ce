@@ -27,7 +27,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
  * 
  * @author Philip Vendil 1 dec 2007
  *
- * @version $Id: DefaultX509CertTypeChecker.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
+ * @version $Id$
  */
 
 public class DefaultX509CertPurposeChecker implements ICertPurposeChecker {

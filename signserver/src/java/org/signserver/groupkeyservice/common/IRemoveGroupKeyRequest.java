@@ -21,7 +21,7 @@ package org.signserver.groupkeyservice.common;
  * 
  * @author Philip Vendil 13 nov 2007
  *
- * @version $Id: IRemoveGroupKeyRequest.java,v 1.2 2007-12-12 14:00:05 herrvendil Exp $
+ * @version $Id$
  */
 public interface IRemoveGroupKeyRequest {
 

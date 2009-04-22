@@ -28,7 +28,7 @@ import org.signserver.common.WorkerStatus;
  * Gets the current configuration of the given signer, this might not be the same as
  * the active configuration.
  *
- * @version $Id: GetConfigCommand.java,v 1.7 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class GetConfigCommand extends BaseCommand {
 	

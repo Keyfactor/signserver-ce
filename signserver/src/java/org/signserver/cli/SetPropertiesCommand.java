@@ -24,7 +24,7 @@ import java.util.Properties;
  * 
  * See the manual for the syntax of the property file
  *
- * @version $Id: SetPropertiesCommand.java,v 1.5 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class SetPropertiesCommand extends BaseCommand {
 	

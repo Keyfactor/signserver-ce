@@ -29,7 +29,7 @@ import javax.persistence.Table;
  * propertyValue : String 
  * </pre>
  *
- * @version $Id: GlobalConfigurationDataBean.java,v 1.2 2007-10-28 12:25:22 herrvendil Exp $
+ * @version $Id$
  *
  */
 @Entity

@@ -27,7 +27,7 @@ import org.signserver.common.WorkerStatus;
 /**
  * Commands that uploads a PEM certificate to a singers config.
  *
- * @version $Id: UploadSignerCertificateCommand.java,v 1.6 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class UploadSignerCertificateCommand extends BaseCommand {
 	

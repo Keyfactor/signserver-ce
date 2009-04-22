@@ -56,7 +56,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementation of the Validation Service web interface.
  * 
  *
- * @version $Id: ValidationWS.java,v 1.6 2008-01-01 19:54:45 herrvendil Exp $
+ * @version $Id$
  */
 @WebService(targetNamespace="gen.ws.validationservice.protocol.signserver.org")
 public class ValidationWS implements IValidationWS {

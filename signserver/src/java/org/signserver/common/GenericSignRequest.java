@@ -24,7 +24,7 @@ import java.io.IOException;
  * Could be used for TimeStamp Request.
  * 
  * @author philip
- * $Id: GenericSignRequest.java,v 1.4 2007-12-12 14:00:05 herrvendil Exp $
+ * $Id$
  */
 public class GenericSignRequest extends ProcessRequest implements ISignRequest {
 

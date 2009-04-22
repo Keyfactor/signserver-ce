@@ -29,7 +29,7 @@ import org.signserver.groupkeyservice.common.TimeRemoveGroupKeyRequest;
  * Command used to tell a group key service to remove a specific
  * set of group keys.
  *
- * @version $Id: RemoveGroupKeysCommand.java,v 1.2 2008-01-08 16:03:47 herrvendil Exp $
+ * @version $Id$
  * @author Philip Vendil
  */
 public class RemoveGroupKeysCommand extends BaseGroupKeyServiceCommand {

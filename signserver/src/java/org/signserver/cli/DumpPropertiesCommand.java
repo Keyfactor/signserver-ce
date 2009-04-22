@@ -35,7 +35,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * Command used to dump all configured properties for a worker or all workers
  *
- * @version $Id: DumpPropertiesCommand.java,v 1.4 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class DumpPropertiesCommand extends BaseCommand {
 	

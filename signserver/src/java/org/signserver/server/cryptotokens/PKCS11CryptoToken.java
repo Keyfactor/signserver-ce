@@ -33,7 +33,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @see org.signserver.server.cryptotokens.ICryptoToken
  * @author Tomas Gustavsson, Philip Vendil
- * @version $Id: PKCS11CryptoToken.java,v 1.1 2007-11-27 06:05:08 herrvendil Exp $
+ * @version $Id$
  */
 
 public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken{

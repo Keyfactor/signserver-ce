@@ -26,7 +26,7 @@ import org.signserver.mailsigner.BaseMailProcessor;
  * 
  * @author Philip Vendil 23 sep 2007
  *
- * @version $Id: DummyMailSigner.java,v 1.2 2008-01-19 03:42:11 herrvendil Exp $
+ * @version $Id$
  */
 
 public class DummyMailSigner extends BaseMailProcessor {

@@ -36,7 +36,7 @@ import org.signserver.validationservice.common.ValidateResponse;
  * 
  * @author Philip Vendil 13 nov 2007
  *
- * @version $Id: IValidationService.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
+ * @version $Id$
  */
 
 public interface IValidationService {

@@ -24,7 +24,7 @@ import org.ejbca.util.CertTools;
  * Class representing an authorized client containing the  serial number and issuerDN of trusted client certs.
  * @author Philip Vendil
  * 
- * $Id: AuthorizedClient.java,v 1.2 2007-10-28 12:25:01 herrvendil Exp $
+ * $Id$
  *
  */
 public class AuthorizedClient implements Comparable<Object>, Serializable{

@@ -18,7 +18,7 @@ package org.signserver.cli;
 /**
  * Command used to deactivate a Crypto Token
  *
- * @version $Id: DeactivateCryptoTokenCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class DeactivateCryptoTokenCommand extends BaseCommand {
 	protected static final int HELP = 0;

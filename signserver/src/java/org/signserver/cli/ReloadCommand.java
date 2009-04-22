@@ -19,7 +19,7 @@ package org.signserver.cli;
 /**
  * Reloads the current configuration
  *
- * @version $Id: ReloadCommand.java,v 1.4 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class ReloadCommand extends BaseCommand {
     /**

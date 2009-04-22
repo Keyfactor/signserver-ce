@@ -21,7 +21,7 @@ package org.signserver.common;
  * 
  * @author Philip Vendil 23 nov 2007
  *
- * @version $Id: CryptoTokenStatus.java,v 1.3 2007-12-12 15:13:37 herrvendil Exp $
+ * @version $Id$
  */
 
 public abstract class CryptoTokenStatus extends WorkerStatus{

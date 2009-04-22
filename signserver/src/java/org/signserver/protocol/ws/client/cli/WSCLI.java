@@ -33,7 +33,7 @@ import org.signserver.protocol.ws.client.SignServerWSClientFactory;
  * 
  * @author Philip Vendil 15 dec 2007
  *
- * @version $Id: WSCLI.java,v 1.1 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id$
  */
 
 public class WSCLI {

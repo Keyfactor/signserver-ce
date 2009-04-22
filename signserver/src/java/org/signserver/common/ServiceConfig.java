@@ -23,7 +23,7 @@ import java.util.Date;
  * 
  * @author Philip Vendil 2007 jan 23
  *
- * @version $Id: ServiceConfig.java,v 1.4 2007-12-08 07:51:10 herrvendil Exp $
+ * @version $Id$
  */
  
 public class ServiceConfig {

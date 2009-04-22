@@ -22,7 +22,7 @@ import org.signserver.common.ResyncException;
 /**
  * Reloads the current configuration
  *
- * @version $Id: ResyncCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class ResyncCommand extends BaseCommand {
     /**

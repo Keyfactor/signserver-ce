@@ -26,7 +26,7 @@ import org.signserver.groupkeyservice.common.GroupKeyServiceStatus;
 /**
  * Command containing common help methods for group key service commands. 
  *
- * @version $Id: BaseGroupKeyServiceCommand.java,v 1.1 2008-01-08 15:17:08 herrvendil Exp $
+ * @version $Id$
  * @author Philip Vendil
  */
 public abstract class BaseGroupKeyServiceCommand extends BaseCommand {

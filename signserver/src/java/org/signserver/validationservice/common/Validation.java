@@ -34,7 +34,7 @@ import org.signserver.validationservice.server.ICertificateManager;
  * 
  * @author Philip Vendil 26 nov 2007
  *
- * @version $Id: Validation.java,v 1.4 2007-12-12 14:00:07 herrvendil Exp $
+ * @version $Id$
  */
 
 public class Validation{

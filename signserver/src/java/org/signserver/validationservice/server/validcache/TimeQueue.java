@@ -26,7 +26,7 @@ import org.signserver.validationservice.common.ICertificate;
  * 
  * @author Philip Vendil 26 nov 2007
  *
- * @version $Id: TimeQueue.java,v 1.2 2007-12-02 20:35:18 herrvendil Exp $
+ * @version $Id$
  */
 
 class TimeQueue {

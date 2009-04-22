@@ -27,7 +27,7 @@ import org.signserver.common.InvalidWorkerIdException;
 /**
  * Implements the signserver command line interface
  *
- * @version $Id: signserver.java,v 1.12 2007-12-04 15:35:10 herrvendil Exp $
+ * @version $Id$
  */
 public class signserver {
 	

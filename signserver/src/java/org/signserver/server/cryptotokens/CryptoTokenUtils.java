@@ -28,7 +28,7 @@ import org.signserver.common.IllegalRequestException;
  * 
  * @author Philip Vendil 21 nov 2007
  *
- * @version $Id: CryptoTokenUtils.java,v 1.1 2007-11-27 06:05:08 herrvendil Exp $
+ * @version $Id$
  */
 
 public class CryptoTokenUtils {

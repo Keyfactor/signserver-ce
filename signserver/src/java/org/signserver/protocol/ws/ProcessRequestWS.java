@@ -28,7 +28,7 @@ import org.signserver.common.RequestAndResponseManager;
  * 
  * @author Philip Vendil 28 okt 2007
  *
- * @version $Id: ProcessRequestWS.java,v 1.3 2007-12-12 14:00:08 herrvendil Exp $
+ * @version $Id$
  */
 
 public class ProcessRequestWS {

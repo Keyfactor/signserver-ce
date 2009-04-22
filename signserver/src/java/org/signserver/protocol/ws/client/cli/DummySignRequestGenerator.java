@@ -31,7 +31,7 @@ import org.signserver.protocol.ws.ProcessResponseWS;
  * 
  * @author Philip Vendil 17 dec 2007
  *
- * @version $Id: DummySignRequestGenerator.java,v 1.1 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id$
  */
 
 public class DummySignRequestGenerator implements IWSRequestGenerator{

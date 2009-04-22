@@ -23,7 +23,7 @@ import org.signserver.common.RequestAndResponseManager;
  * Response sent after processing the PregenerateKeysRequest
  * 
  * @author Philip Vendil
- * $Id: PregenerateKeysResponse.java,v 1.4 2007-12-12 14:00:05 herrvendil Exp $
+ * $Id$
  */
 public class PregenerateKeysResponse extends ProcessResponse {
 

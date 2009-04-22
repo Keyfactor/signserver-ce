@@ -18,7 +18,7 @@ package org.signserver.cli;
 /**
  * Adds an authorized user to a mail signer installation
  *
- * @version $Id: AddAuthorizedUserCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  * @author Philip Vendil
  */
 public class AddAuthorizedUserCommand extends BaseCommand {

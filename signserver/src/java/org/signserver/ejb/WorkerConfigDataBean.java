@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
  * signerConfigData (WorkerConfig in xml-encoding, String)
  * </pre>
  *
- * @version $Id: WorkerConfigDataBean.java,v 1.4 2007-10-28 12:25:22 herrvendil Exp $
+ * @version $Id$
  * 
  */
 @Entity

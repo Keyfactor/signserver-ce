@@ -24,7 +24,7 @@ import org.signserver.common.RequestAndResponseManager;
  * group key given a documentId.
  * 
  * @author Philip Vendil
- * $Id: FetchKeyRequest.java,v 1.4 2007-12-12 14:00:06 herrvendil Exp $
+ * $Id$
  */
 public class FetchKeyRequest extends ProcessRequest {
 	

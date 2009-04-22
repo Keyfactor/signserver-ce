@@ -50,7 +50,7 @@ import org.signserver.common.ArchiveDataVO;
  * archiveData              : String  
  * </pre>
  *
- * @version $Id: ArchiveDataBean.java,v 1.3 2007-10-28 17:20:24 herrvendil Exp $
+ * @version $Id$
  *
  */
 @Entity

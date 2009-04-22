@@ -52,7 +52,7 @@ import org.signserver.common.SignerStatus;
  * KEYSTOREPASSWORD : The password that locks the key store.
  * 
  * @author Philip Vendil
- * $Id: P12CryptoToken.java,v 1.2 2007-12-12 14:00:04 herrvendil Exp $
+ * $Id$
  */
 public class P12CryptoToken implements ICryptoToken {
 	

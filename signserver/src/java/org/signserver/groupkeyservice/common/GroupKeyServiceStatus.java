@@ -25,7 +25,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * 
  * @author Philip Vendil
- * $Id: GroupKeyServiceStatus.java,v 1.3 2007-12-12 14:00:06 herrvendil Exp $
+ * $Id$
  */
 public class GroupKeyServiceStatus extends CryptoTokenStatus {
 

@@ -29,7 +29,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @author Philip Vendil 23 nov 2007
  *
- * @version $Id: IAuthorizer.java,v 1.5 2008-01-19 03:41:15 herrvendil Exp $
+ * @version $Id$
  */
 public interface IAuthorizer {
 	

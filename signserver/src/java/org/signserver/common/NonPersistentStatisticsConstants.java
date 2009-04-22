@@ -16,7 +16,7 @@ package org.signserver.common;
  * Class containing constants common for the non persistent statistics configuration of the SignServer.
  * 
  * @author Philip Vendil
- * $Id: NonPersistentStatisticsConstants.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
+ * $Id$
  */
 public class NonPersistentStatisticsConstants {
 	

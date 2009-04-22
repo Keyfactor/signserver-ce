@@ -32,7 +32,7 @@ import org.signserver.protocol.ws.ProcessRequestWS;
  * 
  * @author Philip Vendil
  *
- * @version $Id: ISignServerWSClient.java,v 1.2 2007-12-12 14:00:07 herrvendil Exp $
+ * @version $Id$
  */
 public interface ISignServerWSClient {
    

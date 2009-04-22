@@ -23,7 +23,7 @@ import org.apache.james.services.User;
  * 
  * @author Philip Vendil 24 dec 2007
  *
- * @version $Id: MailSignerUser.java,v 1.1 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id$
  */
 
 public class MailSignerUser implements User, Serializable {

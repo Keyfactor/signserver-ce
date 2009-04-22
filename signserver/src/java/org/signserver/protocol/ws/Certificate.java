@@ -31,7 +31,7 @@ import org.signserver.validationservice.common.ICertificate;
  * 
  * @author Philip Vendil 29 okt 2007
  *
- * @version $Id: Certificate.java,v 1.1 2007-11-27 06:05:07 herrvendil Exp $
+ * @version $Id$
  */
 
 public class Certificate {

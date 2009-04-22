@@ -29,7 +29,7 @@ import org.signserver.cli.module.RemoveModuleCommand;
 /**
  * Factory for General signserver Commands.
  *
- * @version $Id: DefaultSignServerCommandFactory.java,v 1.4 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class DefaultSignServerCommandFactory implements ISignServerCommandFactory {
 

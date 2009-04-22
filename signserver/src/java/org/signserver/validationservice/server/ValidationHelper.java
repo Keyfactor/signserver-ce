@@ -27,7 +27,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
  * Class containing helper methods for the validation service sub framework
  * 
  * @author Philip Vendil
- * @version $Id: ValidationHelper.java,v 1.3 2008-01-19 03:40:47 herrvendil Exp $
+ * @version $Id$
  */
 public class ValidationHelper {
 	

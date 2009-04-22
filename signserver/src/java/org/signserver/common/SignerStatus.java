@@ -25,7 +25,7 @@ import java.util.Iterator;
  * the status of a specific signer
  * @author Philip Vendil
  *
- * $Id: SignerStatus.java,v 1.5 2007-12-12 14:00:05 herrvendil Exp $
+ * $Id$
  */
 
 public class SignerStatus extends CryptoTokenStatus{

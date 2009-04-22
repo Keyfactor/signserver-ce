@@ -16,7 +16,7 @@ package org.signserver.cli;
 /**
  * Exception throws when an error occurs in an Admin Command (IadminCommand)
  *
- * @version $Id: ErrorAdminCommandException.java,v 1.1 2007-02-27 16:18:07 herrvendil Exp $
+ * @version $Id$
  */
 public class ErrorAdminCommandException extends Exception{
 

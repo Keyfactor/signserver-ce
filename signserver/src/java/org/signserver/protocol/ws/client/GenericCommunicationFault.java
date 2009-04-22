@@ -26,7 +26,7 @@ import java.rmi.ServerException;
  * 
  * @author Philip Vendil
  *
- * @version $Id: GenericCommunicationFault.java,v 1.1 2007-11-27 06:05:11 herrvendil Exp $
+ * @version $Id$
  */
 
 public class GenericCommunicationFault implements ICommunicationFault {

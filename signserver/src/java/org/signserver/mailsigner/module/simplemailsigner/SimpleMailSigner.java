@@ -64,7 +64,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * 
  * @author Philip Vendil 22 dec 2007
  *
- * @version $Id: SimpleMailSigner.java,v 1.2 2008-01-19 03:42:11 herrvendil Exp $
+ * @version $Id$
  */
 
 public class SimpleMailSigner extends BaseMailProcessor {

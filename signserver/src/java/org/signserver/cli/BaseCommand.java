@@ -28,7 +28,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * Base for Commands, contains useful functions
  *
- * @version $Id: BaseCommand.java,v 1.7 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public abstract class BaseCommand implements IAdminCommand{
 	

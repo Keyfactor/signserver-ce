@@ -36,7 +36,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @author Philip Vendil 24 nov 2007
  *
- * @version $Id: ClientCertAuthorizer.java,v 1.4 2007-12-12 14:24:56 herrvendil Exp $
+ * @version $Id$
  */
 
 public class ClientCertAuthorizer implements IAuthorizer {

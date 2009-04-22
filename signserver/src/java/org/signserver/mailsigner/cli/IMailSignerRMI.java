@@ -17,7 +17,7 @@ package org.signserver.mailsigner.cli;
  * 
  * 
  * @author Philip Vendil
- * $Id: IMailSignerRMI.java,v 1.6 2008-01-19 03:42:11 herrvendil Exp $
+ * $Id$
  */
 import java.rmi.Remote;
 import java.rmi.RemoteException;

@@ -20,7 +20,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * Gets the current configurations list of authorized clients
  *
- * @version $Id: ListAuthorizedClientsCommand.java,v 1.5 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class ListAuthorizedClientsCommand extends BaseCommand {
 	

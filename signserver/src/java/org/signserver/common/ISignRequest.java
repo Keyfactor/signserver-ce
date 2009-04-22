@@ -7,7 +7,7 @@ package org.signserver.common;
  * 
  * 
  * @author Philip Vendil
- * $Id: ISignRequest.java,v 1.3 2007-12-12 14:00:04 herrvendil Exp $
+ * $Id$
  */
 public interface ISignRequest {
 

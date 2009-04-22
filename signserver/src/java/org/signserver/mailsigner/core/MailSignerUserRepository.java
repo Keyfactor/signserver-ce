@@ -36,7 +36,7 @@ import org.signserver.common.MailSignerUser;
  * 
  * @author Philip Vendil 24 dec 2007
  *
- * @version $Id: MailSignerUserRepository.java,v 1.1 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id$
  */
 
 public class MailSignerUserRepository implements UsersRepository {

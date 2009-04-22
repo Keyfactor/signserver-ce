@@ -59,7 +59,7 @@ import org.signserver.web.SignServerHealthCheck;
  * Implementor of the ISignServerWS interface.
  * 
  * @author Philip Vendil
- * $Id: SignServerWS.java,v 1.7 2008-01-01 19:54:45 herrvendil Exp $
+ * $Id$
  */
 
 @WebService(targetNamespace="gen.ws.protocol.signserver.org")

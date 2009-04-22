@@ -20,7 +20,7 @@ package org.signserver.protocol.ws.client.cli;
  * 
  * @author Philip Vendil 17 dec 2007
  *
- * @version $Id: ParseException.java,v 1.1 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id$
  */
 
 public class ParseException extends Exception {

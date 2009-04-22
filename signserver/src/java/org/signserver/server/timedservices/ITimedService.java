@@ -24,7 +24,7 @@ import org.signserver.server.ServiceExecutionFailedException;
  * 
  * 
  * @author Philip Vendil
- * $Id: ITimedService.java,v 1.1 2008-01-19 03:40:26 herrvendil Exp $
+ * $Id$
  */
 public interface ITimedService extends IWorker{
 	 

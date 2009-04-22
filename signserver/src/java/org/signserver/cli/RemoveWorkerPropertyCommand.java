@@ -27,7 +27,7 @@ import org.signserver.common.WorkerConfig;
 /**
  * removes a property for a given signer
  *
- * @version $Id: RemovePropertyCommand.java,v 1.5 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class RemoveWorkerPropertyCommand extends BaseCommand {
 	

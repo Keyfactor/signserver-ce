@@ -58,7 +58,7 @@ import com.lowagie.text.pdf.PdfStamper;
  * RECTANGLE = The location of the visible signature field (llx, lly, urx, ury)
  * 
  * @author Tomas Gustavsson
- * @version $Id: PDFSigner.java,v 1.7 2007-12-12 14:24:55 herrvendil Exp $
+ * @version $Id$
  */
 public class PDFSigner extends BaseSigner{
 	

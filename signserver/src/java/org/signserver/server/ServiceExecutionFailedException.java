@@ -20,7 +20,7 @@ package org.signserver.server;
  * 
  * 
  * @author Philip Vendil
- * $Id: ServiceExecutionFailedException.java,v 1.2 2008-01-19 03:41:15 herrvendil Exp $
+ * $Id$
  */
 public class ServiceExecutionFailedException extends Exception {
 

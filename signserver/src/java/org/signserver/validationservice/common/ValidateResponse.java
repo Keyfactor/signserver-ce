@@ -25,7 +25,7 @@ import org.signserver.common.RequestAndResponseManager;
  * 
  *
  * @author Philip Vendil
- * $Id: ValidateResponse.java,v 1.3 2007-12-12 14:00:07 herrvendil Exp $
+ * $Id$
  */
 public class ValidateResponse extends ProcessResponse{
 	private static final long serialVersionUID = 1L;

@@ -31,7 +31,7 @@ import org.ejbca.util.CertTools;
  * 
  * 
  * @author Philip Vendil
- * $Id: MRTDSignResponse.java,v 1.5 2007-12-12 14:00:05 herrvendil Exp $
+ * $Id$
  */
 
 public class MRTDSignResponse extends ProcessResponse {

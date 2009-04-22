@@ -24,7 +24,7 @@ import org.signserver.groupkeyservice.common.PregenerateKeysResponse;
 /**
  * Command used to tell a group key service to pregenerate a number of keys. 
  *
- * @version $Id: PregenerateKeyCommand.java,v 1.1 2008-01-08 15:17:08 herrvendil Exp $
+ * @version $Id$
  * @author Philip Vendil
  */
 public class PregenerateKeyCommand extends BaseGroupKeyServiceCommand {

@@ -32,7 +32,7 @@ import org.signserver.groupkeyservice.common.SwitchEncKeyRequest;
  * 
  * 
  * @author Philip Vendil
- *  $Id: BaseGroupKeyServiceAuthorizer.java,v 1.1 2007-12-12 14:24:56 herrvendil Exp $
+ *  $Id$
  */
 public abstract class BaseGroupKeyServiceAuthorizer implements IAuthorizer{
 

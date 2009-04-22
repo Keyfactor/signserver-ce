@@ -18,7 +18,7 @@ package org.signserver.common;
  * 
  * 
  * @author Philip Vendil
- * $Id: ResyncException.java,v 1.1 2007-02-27 16:18:10 herrvendil Exp $
+ * $Id$
  */
 public class ResyncException extends Exception {
 

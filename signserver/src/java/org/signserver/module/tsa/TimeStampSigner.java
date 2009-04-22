@@ -76,7 +76,7 @@ import org.signserver.server.signers.BaseSigner;
  * TSA = General name of the Time Stamp Authority.
  * 
  * @author philip
- * $Id: TimeStampSigner.java,v 1.10 2007-12-12 14:24:55 herrvendil Exp $
+ * $Id$
  */
 public class TimeStampSigner extends BaseSigner{
 	

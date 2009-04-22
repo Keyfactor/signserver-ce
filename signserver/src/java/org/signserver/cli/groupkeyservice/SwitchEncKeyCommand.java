@@ -25,7 +25,7 @@ import org.signserver.groupkeyservice.common.SwitchEncKeyResponse;
  * Command used to tell a group key service to switch the encryption key 
  * used to protect the group keys.
  *
- * @version $Id: SwitchEncKeyCommand.java,v 1.2 2008-01-08 16:03:47 herrvendil Exp $
+ * @version $Id$
  * @author Philip Vendil
  */
 public class SwitchEncKeyCommand extends BaseGroupKeyServiceCommand {

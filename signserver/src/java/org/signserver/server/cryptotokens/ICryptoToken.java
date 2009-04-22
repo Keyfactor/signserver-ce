@@ -30,7 +30,7 @@ import org.signserver.common.CryptoTokenOfflineException;
  *  All CryptoToken plug-ins must implement this interface.
  * 
  * @author Philip Vendil
- * @version $Id: ICryptoToken.java,v 1.3 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id$
  */
 
 

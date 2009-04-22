@@ -20,7 +20,7 @@ package org.signserver.common;
  * 
  * @author Philip Vendil 2007 feb 19
  *
- * @version $Id: ICertReqData.java,v 1.1 2007-12-12 14:00:05 herrvendil Exp $
+ * @version $Id$
  */
 
 public interface ICertReqData extends java.io.Serializable{

@@ -42,7 +42,7 @@ import javax.persistence.TemporalType;
  * </pre>
  *
  * @author Philip Vendil
- * @version $Id: EncKeyDataBean.java,v 1.1 2007-11-27 06:05:10 herrvendil Exp $
+ * @version $Id$
  * 
  */
 @Entity

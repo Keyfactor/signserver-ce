@@ -27,7 +27,7 @@ import java.io.ObjectOutput;
  * 
  * 
  * @author Philip Vendil
- * $Id: ProcessResponse.java,v 1.1 2007-12-12 14:00:05 herrvendil Exp $
+ * $Id$
  */
 
 public abstract class ProcessResponse implements Externalizable {

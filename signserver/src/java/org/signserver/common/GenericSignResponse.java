@@ -29,7 +29,7 @@ import org.ejbca.util.CertTools;
  * Could be used for TimeStamp Responses.
  * 
  * @author philip
- * $Id: GenericSignResponse.java,v 1.4 2007-12-12 14:00:05 herrvendil Exp $
+ * $Id$
  */
 public class GenericSignResponse extends ProcessResponse implements ISignResponse {
 

@@ -45,7 +45,7 @@ import org.signserver.common.SignerStatus;
  * 
  * @see org.signserver.server.cryptotokens.ICryptoToken
  * @author Philip Vendil, Tomas Gustavsson
- * @version $Id: CryptoTokenBase.java,v 1.2 2007-12-12 14:00:04 herrvendil Exp $
+ * @version $Id$
  */
 public abstract class CryptoTokenBase implements ICryptoToken{
 

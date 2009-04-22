@@ -24,7 +24,7 @@ import org.ejbca.core.model.UpgradeableDataHashMap;
  * 
  * 
  * @author Philip Vendil
- * $Id: ArchiveData.java,v 1.2 2007-10-28 12:25:01 herrvendil Exp $
+ * $Id$
  */
 public class ArchiveData extends UpgradeableDataHashMap {
 

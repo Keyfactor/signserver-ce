@@ -20,7 +20,7 @@ package org.signserver.common;
  * 
  * @author Philip Vendil 2007 feb 19
  *
- * @version $Id: ISignerCertReqInfo.java,v 1.1 2007-02-27 16:18:11 herrvendil Exp $
+ * @version $Id$
  */
 
 public interface ISignerCertReqInfo extends java.io.Serializable{

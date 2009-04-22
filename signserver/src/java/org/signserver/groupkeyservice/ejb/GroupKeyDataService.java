@@ -45,7 +45,7 @@ import org.signserver.server.cryptotokens.IExtendedCryptoToken;
  * 
  * @author Philip Vendil 19 nov 2007
  *
- * @version $Id: GroupKeyDataService.java,v 1.1 2007-11-27 06:05:10 herrvendil Exp $
+ * @version $Id$
  */
 
 public class GroupKeyDataService {

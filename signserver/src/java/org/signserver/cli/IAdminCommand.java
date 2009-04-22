@@ -16,7 +16,7 @@ package org.signserver.cli;
 /**
  * Interface for Commands used for admin cmdline GUI
  *
- * @version $Id: IAdminCommand.java,v 1.1 2007-02-27 16:18:07 herrvendil Exp $
+ * @version $Id$
  */
 public interface IAdminCommand {
     /**

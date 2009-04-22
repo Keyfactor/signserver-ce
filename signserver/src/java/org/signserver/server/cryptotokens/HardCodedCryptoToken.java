@@ -42,7 +42,7 @@ import org.signserver.common.SignerStatus;
 /**
  * Class used for testing purposes, contains soft dummy key and certificates 
  * @author Philip Vendil
- * @version $Id: HardCodedCryptoToken.java,v 1.2 2007-12-12 14:00:04 herrvendil Exp $
+ * @version $Id$
  */
 
 public class HardCodedCryptoToken implements ICryptoToken {

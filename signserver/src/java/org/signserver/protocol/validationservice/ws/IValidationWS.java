@@ -23,7 +23,7 @@ import org.signserver.common.SignServerException;
  * 
  *
  * @author Philip Vendil
- * @version $Id: IValidationWS.java,v 1.2 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id$
  */
 public interface IValidationWS {
 

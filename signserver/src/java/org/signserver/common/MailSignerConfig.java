@@ -29,7 +29,7 @@ import org.ejbca.util.CertTools;
  * 
  * @author Philip Vendil
  *
- * $Id: MailSignerConfig.java,v 1.1 2007-10-28 12:24:40 herrvendil Exp $
+ * $Id$
  */
 public class MailSignerConfig {
 

@@ -17,7 +17,7 @@ package org.signserver.cli;
 /**
  * Exception throws when illegal parameters are issued for an Admin Command (IadminCommand)
  *
- * @version $Id: IllegalAdminCommandException.java,v 1.1 2007-02-27 16:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class IllegalAdminCommandException extends Exception {
 

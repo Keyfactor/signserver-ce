@@ -44,7 +44,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @author Philip Vendil 22 dec 2007
  *
- * @version $Id: SMIMEHelper.java,v 1.1 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id$
  */
 
 public class SMIMEHelper {

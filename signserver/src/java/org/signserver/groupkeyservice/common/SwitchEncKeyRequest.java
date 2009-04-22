@@ -24,7 +24,7 @@ import org.signserver.common.RequestAndResponseManager;
  * used to encrypt the stored group keys in database.
  * 
  * @author Philip Vendil
- * $Id: SwitchEncKeyRequest.java,v 1.3 2007-12-12 14:00:06 herrvendil Exp $
+ * $Id$
  */
 public class SwitchEncKeyRequest extends ProcessRequest {
 	

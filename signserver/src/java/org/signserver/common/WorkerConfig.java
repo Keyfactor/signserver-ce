@@ -33,7 +33,7 @@ import org.ejbca.core.model.UpgradeableDataHashMap;
  * 
  * 
  * @author Philip Vendil
- * $Id: WorkerConfig.java,v 1.6 2007-10-28 12:25:01 herrvendil Exp $
+ * $Id$
  */
 public  class WorkerConfig extends UpgradeableDataHashMap {
 	

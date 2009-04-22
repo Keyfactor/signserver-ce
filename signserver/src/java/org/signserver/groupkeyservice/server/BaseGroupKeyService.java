@@ -25,7 +25,7 @@ import org.signserver.server.cryptotokens.IExtendedCryptoToken;
  * 
  * @author Philip Vendil 23 nov 2007
  *
- * @version $Id: BaseGroupKeyService.java,v 1.1 2007-11-27 06:05:09 herrvendil Exp $
+ * @version $Id$
  */
 
 public abstract class BaseGroupKeyService implements IGroupKeyService {

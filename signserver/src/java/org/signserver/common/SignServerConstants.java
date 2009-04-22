@@ -16,7 +16,7 @@ package org.signserver.common;
  * Class containing general constants in common for most components
  * in the signserver
  * @author Philip Vendil
- * $Id: SignServerConstants.java,v 1.1 2007-12-12 15:13:37 herrvendil Exp $
+ * $Id$
  *
  */
 public class SignServerConstants {

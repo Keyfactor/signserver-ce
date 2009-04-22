@@ -27,7 +27,7 @@ import org.signserver.common.IllegalRequestException;
  * 
  * @author Philip Vendil 16 nov 2007
  *
- * @version $Id: IExtendedCryptoToken.java,v 1.1 2007-11-27 06:05:08 herrvendil Exp $
+ * @version $Id$
  */
 
 public interface IExtendedCryptoToken extends ICryptoToken {

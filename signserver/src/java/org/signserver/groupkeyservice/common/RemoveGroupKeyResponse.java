@@ -29,7 +29,7 @@ import org.signserver.common.RequestAndResponseManager;
  * 
  * @author Philip Vendil 13 nov 2007
  *
- * @version $Id: RemoveGroupKeyResponse.java,v 1.3 2007-12-12 14:00:06 herrvendil Exp $
+ * @version $Id$
  */
 public class RemoveGroupKeyResponse extends ProcessResponse{
 

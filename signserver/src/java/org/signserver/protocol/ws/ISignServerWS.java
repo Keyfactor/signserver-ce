@@ -29,7 +29,7 @@ import org.signserver.common.SignServerException;
  * 
  * @author Philip Vendil 28 okt 2007
  *
- * @version $Id: ISignServerWS.java,v 1.1 2007-11-27 06:05:07 herrvendil Exp $
+ * @version $Id$
  */
 public interface ISignServerWS {
 	

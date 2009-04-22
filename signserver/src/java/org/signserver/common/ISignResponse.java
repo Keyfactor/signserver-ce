@@ -20,7 +20,7 @@ import java.security.cert.Certificate;
  * 
  * 
  * @author Philip Vendil
- * $Id: ISignResponse.java,v 1.2 2007-11-09 15:45:50 herrvendil Exp $
+ * $Id$
  */
 public interface ISignResponse extends IArchivableProcessResponse {
 	/**

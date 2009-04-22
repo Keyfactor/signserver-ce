@@ -50,7 +50,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * 
  * @author Philip Vendil 23 sep 2007
  *
- * @version $Id: BaseMailProcessor.java,v 1.1 2008-01-19 03:41:57 herrvendil Exp $
+ * @version $Id$
  */
 public abstract class BaseMailProcessor  implements IMailProcessor {
 	

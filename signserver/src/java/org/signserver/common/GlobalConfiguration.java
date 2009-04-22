@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  * Contains a merge of static and dynamically defined global properties
  * 
  * @author Philip Vendil
- * $Id: GlobalConfiguration.java,v 1.5 2007-12-29 10:43:53 herrvendil Exp $
+ * $Id$
  */
 public class GlobalConfiguration implements Serializable{
 	

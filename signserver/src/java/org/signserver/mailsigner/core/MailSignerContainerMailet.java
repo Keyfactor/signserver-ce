@@ -72,7 +72,7 @@ import org.signserver.server.statistics.StatisticsManager;
  * 
  * 
  * @author Philip Vendil
- * $Id: MailSignerContainerMailet.java,v 1.6 2008-01-19 03:42:11 herrvendil Exp $
+ * $Id$
  */
 public class MailSignerContainerMailet extends GenericMailet implements IMailSignerRMI, Matcher{
 

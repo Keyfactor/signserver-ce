@@ -31,7 +31,7 @@ import org.signserver.validationservice.common.Validation.Status;
  * 
  * @author Philip Vendil 29 nov 2007
  *
- * @version $Id: DefaultValidationService.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
+ * @version $Id$
  */
 
 public class DefaultValidationService extends BaseValidationService {

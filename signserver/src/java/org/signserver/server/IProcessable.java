@@ -32,7 +32,7 @@ import org.signserver.server.IWorker;
  * 
  * 
  * @author Philip Vendil
- * $Id: IProcessable.java,v 1.4 2008-01-19 03:41:15 herrvendil Exp $
+ * $Id$
  */
 public interface IProcessable extends IWorker{
 

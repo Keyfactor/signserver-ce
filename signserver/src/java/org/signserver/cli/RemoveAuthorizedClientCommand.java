@@ -24,7 +24,7 @@ import org.signserver.common.AuthorizedClient;
 /**
  * removes an authorized client from a given signer
  *
- * @version $Id: RemoveAuthorizedClientCommand.java,v 1.3 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class RemoveAuthorizedClientCommand extends BaseCommand {
 	

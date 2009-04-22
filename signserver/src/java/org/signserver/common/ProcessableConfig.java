@@ -35,7 +35,7 @@ import org.ejbca.util.CertTools;
  * 
  * @author Philip Vendil 2007 jan 23
  *
- * @version $Id: ProcessableConfig.java,v 1.1 2007-11-27 06:05:06 herrvendil Exp $
+ * @version $Id$
  */
 
 public class ProcessableConfig  {

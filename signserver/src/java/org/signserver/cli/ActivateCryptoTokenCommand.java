@@ -22,7 +22,7 @@ import org.signserver.common.SignerStatus;
 /**
  * Command used to activate a Crypto Token
  *
- * @version $Id: ActivateCryptoTokenCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class ActivateCryptoTokenCommand extends BaseCommand {
 	

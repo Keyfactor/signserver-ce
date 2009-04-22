@@ -28,7 +28,7 @@ import java.text.DateFormat;
  * 
  * @author Philip Vendil
  *
- * $Id: WorkerStatus.java,v 1.3 2007-12-12 14:00:05 herrvendil Exp $
+ * $Id$
  */
 
 public abstract class WorkerStatus implements Serializable{

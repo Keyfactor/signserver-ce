@@ -25,7 +25,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * @see org.signserver.server.cryptotokens.ICryptoToken
  * @author Philip Vendil
- * @version $Id: PrimeCardHSMCryptoToken.java,v 1.2 2007-12-12 15:13:37 herrvendil Exp $
+ * @version $Id$
  */
 
 public class PrimeCardHSMCryptoToken extends CryptoTokenBase implements ICryptoToken {

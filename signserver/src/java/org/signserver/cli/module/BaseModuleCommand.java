@@ -22,7 +22,7 @@ import org.signserver.common.GlobalConfiguration;
  * Command containing common help methods for module commands
  * used to manage the cluster class loader. 
  *
- * @version $Id: BaseModuleCommand.java,v 1.1 2008-01-08 15:17:08 herrvendil Exp $
+ * @version $Id$
  * @author Philip Vendil
  */
 public abstract class BaseModuleCommand extends BaseCommand {

@@ -27,7 +27,7 @@ import org.signserver.common.RequestAndResponseManager;
  * 
  * @author Philip Vendil
  * 
- * $Id: PregenerateKeysRequest.java,v 1.4 2007-12-12 14:00:06 herrvendil Exp $
+ * $Id$
  */
 public class PregenerateKeysRequest extends ProcessRequest{
 

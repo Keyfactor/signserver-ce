@@ -24,7 +24,7 @@ import org.signserver.common.WorkerConfig;
  * 
  * 
  * @author Philip Vendil
- * $Id: ValidationStatus.java,v 1.2 2007-12-12 14:00:07 herrvendil Exp $
+ * $Id$
  */
 public class GenericWSStatus extends CryptoTokenStatus {
 

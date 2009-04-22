@@ -32,7 +32,7 @@ import org.signserver.common.GlobalConfiguration;
  * through the global configuration session bean.
  * 
  *
- * @version $Id: GlobalConfigurationFileParser.java,v 1.4 2007-10-28 12:27:10 herrvendil Exp $
+ * @version $Id$
  */
 public class GlobalConfigurationFileParser  implements java.io.Serializable {
    

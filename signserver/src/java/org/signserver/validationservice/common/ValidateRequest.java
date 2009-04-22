@@ -29,7 +29,7 @@ import org.signserver.validationservice.server.ICertificateManager;
  * validate a certificate.
  * 
  * @author Philip Vendil
- * $Id: ValidateRequest.java,v 1.3 2007-12-12 14:00:07 herrvendil Exp $
+ * $Id$
  */
 public class ValidateRequest extends ProcessRequest {
 

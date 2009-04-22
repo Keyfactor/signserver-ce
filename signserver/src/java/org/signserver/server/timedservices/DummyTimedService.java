@@ -33,7 +33,7 @@ import org.signserver.server.WorkerContext;
  * 
  * @author Philip Vendil 2007 jan 23
  *
- * @version $Id: DummyTimedService.java,v 1.1 2008-01-19 03:40:26 herrvendil Exp $
+ * @version $Id$
  */
 
 public class DummyTimedService extends BaseTimedService {

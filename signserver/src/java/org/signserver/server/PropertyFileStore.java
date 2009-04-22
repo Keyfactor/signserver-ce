@@ -32,7 +32,7 @@ import org.signserver.common.WorkerConfig;
  * as the EJB variant, but in the back-end stores everything to file.
  * 
  * @author Philip Vendil
- * @version $Id: PropertyFileStore.java,v 1.1 2007-10-28 12:26:12 herrvendil Exp $
+ * @version $Id$
  */
 public class PropertyFileStore {
 	

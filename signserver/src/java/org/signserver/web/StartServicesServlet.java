@@ -33,7 +33,7 @@ import org.signserver.ejb.interfaces.IServiceTimerSession.ILocal;
  *
  * 
  * 
- * @version $Id: StartServicesServlet.java,v 1.3 2007-10-28 12:27:11 herrvendil Exp $
+ * @version $Id$
  */
 public class StartServicesServlet extends HttpServlet {
 

@@ -47,7 +47,7 @@ import org.signserver.validationservice.common.ValidateResponse;
  * 
  * @author Philip Vendil 9 dec 2007
  *
- * @version $Id: RequestAndResponseManager.java,v 1.2 2007-12-12 14:00:05 herrvendil Exp $
+ * @version $Id$
  */
 
 public class RequestAndResponseManager {

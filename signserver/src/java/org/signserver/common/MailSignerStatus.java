@@ -25,7 +25,7 @@ import java.util.Enumeration;
  * the status of a specific signer
  * @author Philip Vendil
  *
- * $Id: MailSignerStatus.java,v 1.3 2007-12-12 14:00:05 herrvendil Exp $
+ * $Id$
  */
 
 public class MailSignerStatus extends CryptoTokenStatus{

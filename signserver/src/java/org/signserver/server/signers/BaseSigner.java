@@ -25,7 +25,7 @@ import org.signserver.server.BaseProcessable;
  * 
  * @author Philip Vendil
  *
- * $Id: BaseSigner.java,v 1.7 2007-12-12 14:00:06 herrvendil Exp $
+ * $Id$
  */
 public abstract class BaseSigner extends BaseProcessable implements ISigner {
 	

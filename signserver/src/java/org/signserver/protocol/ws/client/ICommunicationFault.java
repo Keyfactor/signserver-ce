@@ -21,7 +21,7 @@ package org.signserver.protocol.ws.client;
  * 
  * @author Philip Vendil 
  *
- * @version $Id: ICommunicationFault.java,v 1.1 2007-11-27 06:05:11 herrvendil Exp $
+ * @version $Id$
  */
 
 public interface ICommunicationFault {

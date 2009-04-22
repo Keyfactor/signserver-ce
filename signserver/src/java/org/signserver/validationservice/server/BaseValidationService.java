@@ -37,7 +37,7 @@ import org.signserver.validationservice.server.validcache.ValidationCache;
  * 
  * @author Philip Vendil 23 nov 2007
  *
- * @version $Id: BaseValidationService.java,v 1.2 2007-12-12 14:00:08 herrvendil Exp $
+ * @version $Id$
  */
 
 public abstract class BaseValidationService implements IValidationService {

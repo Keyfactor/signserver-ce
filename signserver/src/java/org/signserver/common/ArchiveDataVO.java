@@ -22,7 +22,7 @@ import java.util.Date;
  * other data such as time of archival, requestorIP, type ...
  * 
  * @author Philip Vendil
- * $Id: ArchiveDataVO.java,v 1.1 2007-02-27 16:18:09 herrvendil Exp $
+ * $Id$
  */
 
 public class ArchiveDataVO implements Serializable{

@@ -23,7 +23,7 @@ import org.bouncycastle.asn1.ASN1Set;
  * 
  * @author Philip Vendil 2007 feb 19
  *
- * @version $Id: PKCS10CertReqInfo.java,v 1.4 2007-10-28 12:25:01 herrvendil Exp $
+ * @version $Id$
  */
 
 public class PKCS10CertReqInfo implements ISignerCertReqInfo {

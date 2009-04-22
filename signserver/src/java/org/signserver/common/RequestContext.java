@@ -24,7 +24,7 @@ import java.util.HashMap;
  * 
  * @author Philip Vendil 1 dec 2007
  *
- * @version $Id: RequestContext.java,v 1.1 2007-12-12 14:24:56 herrvendil Exp $
+ * @version $Id$
  */
 public class RequestContext implements Serializable{
 

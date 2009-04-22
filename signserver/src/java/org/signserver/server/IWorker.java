@@ -25,7 +25,7 @@ import org.signserver.common.WorkerStatus;
  * 
  * 
  * @author Philip Vendil
- * $Id: IWorker.java,v 1.2 2007-11-27 06:05:04 herrvendil Exp $
+ * $Id$
  */
 public interface IWorker {
 

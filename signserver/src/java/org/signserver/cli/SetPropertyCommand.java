@@ -23,7 +23,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Sets a property for a given workerid
  *
- * @version $Id: SetPropertyCommand.java,v 1.5 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class SetPropertyCommand extends BaseCommand {
 	

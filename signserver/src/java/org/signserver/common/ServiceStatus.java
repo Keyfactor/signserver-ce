@@ -25,7 +25,7 @@ import java.util.Enumeration;
  * the status of a specific service
  * @author Philip Vendil
  *
- * $Id: ServiceStatus.java,v 1.4 2007-12-12 14:00:05 herrvendil Exp $
+ * $Id$
  */
 
 public class ServiceStatus extends WorkerStatus{

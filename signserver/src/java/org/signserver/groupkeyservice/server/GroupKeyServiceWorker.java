@@ -40,7 +40,7 @@ import org.signserver.server.cryptotokens.IExtendedCryptoToken;
  * 
  * @author Philip Vendil 16 nov 2007
  *
- * @version $Id: GroupKeyServiceWorker.java,v 1.4 2007-12-12 14:24:56 herrvendil Exp $
+ * @version $Id$
  */
 
 public class GroupKeyServiceWorker extends BaseProcessable {

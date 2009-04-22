@@ -31,7 +31,7 @@ import org.signserver.validationservice.common.X509Certificate;
  * 
  * @author Philip Vendil
  * 
- * @version $Id: DummyValidator.java,v 1.3 2007-12-04 15:31:27 herrvendil Exp $
+ * @version $Id$
  */
 public class DummyValidator extends BaseValidator {
 	

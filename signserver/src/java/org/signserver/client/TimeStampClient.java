@@ -62,7 +62,7 @@ import org.bouncycastle.util.encoders.Hex;
  * Only works in unauthenticated mode.
  * 
  * @author philip
- * $Id: TimeStampClient.java,v 1.2 2007-10-28 12:25:02 herrvendil Exp $
+ * $Id$
  */
 
 public class TimeStampClient {

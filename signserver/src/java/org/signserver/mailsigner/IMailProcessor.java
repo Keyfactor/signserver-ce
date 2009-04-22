@@ -35,7 +35,7 @@ import org.signserver.server.IWorker;
  * 
  * 
  * @author Philip Vendil
- * $Id: IMailProcessor.java,v 1.1 2008-01-19 03:41:57 herrvendil Exp $
+ * $Id$
  */
 public interface IMailProcessor extends IWorker{
 		

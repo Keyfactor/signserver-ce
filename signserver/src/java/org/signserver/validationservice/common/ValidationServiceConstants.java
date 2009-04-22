@@ -16,7 +16,7 @@ package org.signserver.validationservice.common;
  * Class containing constants common for the ValidationService part of the SignServer.
  * 
  * @author Philip Vendil
- * $Id: ValidationServiceConstants.java,v 1.1 2007-12-02 20:35:17 herrvendil Exp $
+ * $Id$
  */
 public class ValidationServiceConstants {
 	

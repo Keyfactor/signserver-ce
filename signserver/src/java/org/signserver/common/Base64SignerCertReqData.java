@@ -21,7 +21,7 @@ package org.signserver.common;
  * 
  * @author Philip Vendil 2007 feb 19
  *
- * @version $Id: Base64SignerCertReqData.java,v 1.2 2007-12-12 14:00:05 herrvendil Exp $
+ * @version $Id$
  */
 
 public class Base64SignerCertReqData implements ICertReqData {

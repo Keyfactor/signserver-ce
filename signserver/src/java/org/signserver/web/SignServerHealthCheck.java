@@ -45,7 +45,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * * All SignerTokens are aktive if not set as offline.
  * 
  * @author Philip Vendil
- * @version $Id: SignServerHealthCheck.java,v 1.6 2008-01-01 12:31:21 herrvendil Exp $
+ * @version $Id$
  */
 
 public class SignServerHealthCheck implements IHealthCheck {

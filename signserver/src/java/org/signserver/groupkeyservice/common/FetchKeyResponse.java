@@ -26,7 +26,7 @@ import org.signserver.common.RequestAndResponseManager;
  * @author phive
  *
  * @author Philip Vendil
- * $Id: FetchKeyResponse.java,v 1.4 2007-12-12 14:00:06 herrvendil Exp $
+ * $Id$
  */
 public class FetchKeyResponse extends ProcessResponse{
 	private static final long serialVersionUID = 1L;

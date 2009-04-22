@@ -23,7 +23,7 @@ import org.signserver.validationservice.common.Validation;
  * 
  * @author Philip Vendil 2 dec 2007
  *
- * @version $Id: ValidationResponse.java,v 1.1 2007-12-02 20:35:18 herrvendil Exp $
+ * @version $Id$
  */
 
 public class ValidationResponse {

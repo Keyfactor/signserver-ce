@@ -23,7 +23,7 @@ import org.signserver.common.PKCS10CertReqInfo;
  /**
   * Commands that requests a signer to generate a PKCS10 certificate request 
   *
-  * @version $Id: GenerateCertReqCommand.java,v 1.7 2008-01-08 15:18:08 herrvendil Exp $
+  * @version $Id$
   */
  public class GenerateCertReqCommand extends BaseCommand {
 

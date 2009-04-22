@@ -31,7 +31,7 @@ import org.signserver.common.ArchiveDataVO;
 /**
  * Returns all archive datas requested from given IP
  *
- * @version $Id: FindFromRequestCertCommand.java,v 1.2 2008-01-08 15:18:08 herrvendil Exp $
+ * @version $Id$
  */
 public class FindFromRequestCertCommand extends BaseCommand {
 	

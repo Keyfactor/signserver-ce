@@ -16,7 +16,7 @@ package org.signserver.groupkeyservice.common;
  * Class containing constants common for the GroupKeyService part of the SignServer.
  * 
  * @author Philip Vendil
- * $Id: GroupKeyServiceConstants.java,v 1.2 2007-11-27 06:05:06 herrvendil Exp $
+ * $Id$
  */
 public class GroupKeyServiceConstants {
 	

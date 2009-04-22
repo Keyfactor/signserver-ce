@@ -61,7 +61,7 @@ import org.signserver.mailsigner.cli.IMailSignerRMI;
  * 
  * @author Philip Vendil 6 okt 2007
  *
- * @version $Id: CommonAdminInterface.java,v 1.7 2008-01-19 03:41:37 herrvendil Exp $
+ * @version $Id$
  */
 
 public class CommonAdminInterface  {

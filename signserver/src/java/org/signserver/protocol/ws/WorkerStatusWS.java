@@ -20,7 +20,7 @@ package org.signserver.protocol.ws;
  * 
  * @author Philip Vendil 28 okt 2007
  *
- * @version $Id: WorkerStatusWS.java,v 1.2 2007-12-11 05:37:33 herrvendil Exp $
+ * @version $Id$
  */
 
 public class WorkerStatusWS {

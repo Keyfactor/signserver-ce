@@ -32,7 +32,7 @@ import com.sun.xml.ws.developer.JAXWSProperties;
  * 
  * @author Philip Vendil 2007 feb 3
  *
- * @version $Id: CallFirstNodeWithStatusOKWSClient.java,v 1.2 2007-12-12 14:00:07 herrvendil Exp $
+ * @version $Id$
  */
 public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	    private static Logger log = Logger.getLogger(CallFirstNodeWithStatusOKWSClient.class);

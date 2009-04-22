@@ -28,7 +28,7 @@ import org.signserver.protocol.ws.ProcessResponseWS;
  * 
  * @author Philip Vendil 15 dec 2007
  *
- * @version $Id: IWSRequestGenerator.java,v 1.1 2007-12-29 10:43:53 herrvendil Exp $
+ * @version $Id$
  */
 
 public interface IWSRequestGenerator {

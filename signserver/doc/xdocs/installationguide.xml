@@ -33,8 +33,10 @@ This quick start guide assumes you are using JBoss and are running everything on
 <br/>It is possible to use 03 or earlier by disabling WebServices. This is described below. 
 </li>
 <li>Unzip JBoss to a new directory and set the APPSRV_HOME environment variable to point to this location. Ex:
-<br/># export APPSRV_HOME=/home/user/jboss-4.2.2
+<br/># export APPSRV_HOME=/home/user/jboss-4.2.3
 </li>
+<li>set the environment variable SIGNSERVER_NODEID
+<br/># export SIGNSERVER_NODEID=node1</li>
 <li>Copy build configuration sample file:
 <br/># cp signserver_build.properties.sample signserver_build.properties
 </li>
@@ -51,23 +53,20 @@ This quick start guide assumes you are using JBoss and are running everything on
 <br/># ./run.sh
 <br/>- verify that startup was ok. Tables have now been created in your database.
 </li>
-<li>Copy the sample timestamp service configuration:
-<br/># cp sample-configs/qs_timestamp_configuration.properties qs_timestamp_configuration.properties</li>
-<li>Edit the configuration to point to a sample signer keystore:
-<br/># vi qs_timestamp_configuration.properties
-<br/>- set WORKERGENID1.KEYSTOREPATH to point to signserver/src/test/timestamp1.p12
-</li>
-<li>Configure the signserver, staging, with the timestamp configuration:
-<br/># bin/signserver.sh setproperties qs_timestamp_configuration.properties</li>
+<li>Deploy the Timestamp demo module:
+<br/># bin/signserver.sh module add dist-server/tsa.mar demo</li>
 <li>Verify the configuration with:
 <br/># bin/signserver.sh getconfig 1
 </li>
 <li>Finally activate the configuration with:
 <br/># bin/signserver.sh reload 1
 </li>
+<li>You can check the configuration with:
+<br/># bin/signserver.sh getstatus complete all
+</li>
 <li>Run the test-client to see that everything is up.
-<br/># cd dist-client
-<br/># java -jar timeStampClient.jar http://localhost:8080/signserver/tsa?signerId=1
+<br/># cd dist-client/timestampclient
+<br/># java -jar timeStampClient.jar http://localhost:8080/signserver/process?workerName=TSA
 <br/>The message "TimeStampRequest Validated" should appear once a second. Also check JBOSS_HOME/server/default/log/server.log that successful messages appear.
 </li>
 </ol>

@@ -5,21 +5,6 @@
   </properties>
 
   <body>
-  <section name="Installation Guides">
-    <subsection name="SignServer 3.0 CentOS 4.4 Installation Guide">
-<p>
-Installation guide describing step-by-step how to setup a SignServer cluster on CentOS 4.4. Even if the document
-is specific for this OS is should be quite easy to adopt it to other environments as well. It 
-can be downloaded here either as <a href="docs/SignServer_3_0_Installation_Guide.pdf">PDF</a> or viewed as 
-<a href="docs/SignServer_3_0_Installation_Guide.html">HTML</a> 
-</p>
-</subsection>
-<subsection name="SignServer 2.0 CentOS 4.4 Installation Guide">
-<p>
-Version 2.0 of the same documentation.<a href="docs/SignServer_2_0_Installation_Guide.pdf">PDF</a> <a href="docs/SignServer_2_0_Installation_Guide.html">HTML</a> 
-</p>
-</subsection>
-</section>
 
 <section name="Quick start demo guide">
 <p>
@@ -56,10 +41,10 @@ This quick start guide assumes you are using JBoss and are running everything on
 <li>Deploy the Timestamp demo module:
 <br/># bin/signserver.sh module add dist-server/tsa.mar demo</li>
 <li>Verify the configuration with:
-<br/># bin/signserver.sh getconfig 1
+<br/># bin/signserver.sh getconfig tsa
 </li>
 <li>Finally activate the configuration with:
-<br/># bin/signserver.sh reload 1
+<br/># bin/signserver.sh reload tsa
 </li>
 <li>You can check the configuration with:
 <br/># bin/signserver.sh getstatus complete all
@@ -73,6 +58,40 @@ This quick start guide assumes you are using JBoss and are running everything on
 If you run into problems at any stage after JBoss has been started, check the JBoss server log in $JBOSS_HOME/server/default/log/server.log for
 error messages. Usually errors like database connection problems, or wrong path to the timestamp keystore will be clearly visible.
 </p>
+
+<subsection name="PDF signer">
+<p>
+To install the PDF signer you can issue the following commands (either instead of the TSA or in addition to the TSA).
+<ol>
+<li>Deploy the PDF signer demo module:
+<br/># bin/signserver.sh module add dist-server/pdfsigner.mar demo</li>
+<li>Verify the configuration with:
+<br/># bin/signserver.sh getconfig pdfsigner
+</li>
+<li>Finally activate the configuration with:
+<br/># bin/signserver.sh reload pdfsigner
+</li>
+</ol>
+You can now, with your web browser, access the url <a href="http://127.0.0.1:8080/signserver/pdfsign.html">http://127.0.0.1:8080/signserver/pdfsign.html</a> to get PDF documents signed. 
+</p>
+</subsection>
+
+</section>
+
+  <section name="Installation Guides">
+    <subsection name="Clustered SignServer 3.0 CentOS 4.4 Installation Guide">
+<p>
+Installation guide describing step-by-step how to setup a SignServer cluster on CentOS 4.4. Even if the document
+is specific for this OS is should be quite easy to adopt it to other environments as well. It 
+can be downloaded here either as <a href="docs/SignServer_3_0_Installation_Guide.pdf">PDF</a> or viewed as 
+<a href="docs/SignServer_3_0_Installation_Guide.html">HTML</a> 
+</p>
+</subsection>
+<subsection name="Clustered SignServer 2.0 CentOS 4.4 Installation Guide">
+<p>
+Version 2.0 of the same documentation.<a href="docs/SignServer_2_0_Installation_Guide.pdf">PDF</a> <a href="docs/SignServer_2_0_Installation_Guide.html">HTML</a> 
+</p>
+</subsection>
 </section>
 
   </body>

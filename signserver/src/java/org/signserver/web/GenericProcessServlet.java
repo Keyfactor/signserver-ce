@@ -49,8 +49,8 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * 
  * 
  * @author Philip Vendil
+ * @version $Id$
  */
-
 public class GenericProcessServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -171,11 +171,8 @@ public class GenericProcessServlet extends HttpServlet {
 	 */
     public void doGet(HttpServletRequest req,  HttpServletResponse res) throws java.io.IOException, ServletException {
         log.debug(">doGet()");
-        doGet(req, res);
+        doPost(req, res);
         log.debug("<doGet()");        
     } // doGet
 	
-	
-
-
 }

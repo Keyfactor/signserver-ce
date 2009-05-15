@@ -94,13 +94,15 @@ public class GenericProcessServlet extends HttpServlet {
         throws IOException, ServletException {
         log.debug(">doPost()");
         int workerId = 1;
-        if(req.getParameter(WORKERNAME_PROPERTY_NAME) != null){
-        	workerId = getWorkerSession().getWorkerId(req.getParameter(WORKERNAME_PROPERTY_NAME));
-        	log.debug("Found a signerName in the request");
+    	String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
+        if(name != null){
+        	log.debug("Found a signerName in the request: "+name);
+        	workerId = getWorkerSession().getWorkerId(name);
         }
-        if(req.getParameter(WORKERID_PROPERTY_NAME) != null){
-        	workerId = Integer.parseInt(req.getParameter(WORKERID_PROPERTY_NAME));
-        	log.debug("Found a signerid in the request");
+        String id = req.getParameter(WORKERID_PROPERTY_NAME);
+        if(id != null){
+        	log.debug("Found a signerId in the request: "+id);
+        	workerId = Integer.parseInt(id);
         }
         log.debug("Using signerId: "+workerId);
                  

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="SignServer" href="http://signserver.sourceforge.net/">
 
-    <title>SignServer 3.0</title>
+    <title>SignServer</title>
     <!--logo href="images/ant_logo_large.gif">Hard Token Management Framework</logo-->
 
     <body>
@@ -22,6 +22,7 @@
                 <item name="Installation Guide"	 href="/installationguide.html"/>                
                 <item name="Wiki" href="http://signserver.wiki.sourceforge.net/"/>                
                 <item name="FAQ"		  href="/faq.html"/>
+                <item name="Howto"		  href="/howto.html"/>
                 <item name="Changelog"    href="http://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel"/>
             </menu>
 

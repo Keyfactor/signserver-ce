@@ -74,7 +74,9 @@
     <!-- =================================================================== -->
     <!-- Build ALL                                                           -->
     <!-- =================================================================== -->
-	<target name="build" depends="signserver, mailsigner, signserver-cli" />
+	<target name="build" depends="signserver, mailsigner, signserver-cli">
+		<antcall target="showtime"/>
+	</target>
 	
 
 
@@ -450,6 +452,12 @@
 		</zip>
 		<delete file="LICENSE"/>
 	</target>
-	
+
+	<target name="showtime">
+		<tstamp>
+			<format property="completiontime" pattern="yyyy-MM-dd HH:mm:ss Z"/>
+		</tstamp>
+		<echo message="Task completed ${completiontime}."/>
+	</target>	
 
 </project>

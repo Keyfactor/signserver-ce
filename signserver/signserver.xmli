@@ -523,6 +523,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
     <!-- ======================================================================= -->
     <target name="deploy" depends="signserver.ear, signserver-cli" unless="buildMailSigner">
         <antcall target="j2ee:deploy" />
+	<antcall target="showtime" />
     </target>
 	
     <target name="test:signserver:compile" description="compile JUnit testcases" depends="ws.compile.client" unless="buildMailSigner">

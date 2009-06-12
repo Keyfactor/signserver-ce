@@ -14,10 +14,13 @@ package org.signserver.validationservice.server;
 
 import java.net.ConnectException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.persistence.EntityManager;
 
+import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
@@ -35,7 +38,11 @@ import org.signserver.validationservice.common.X509Certificate;
  */
 public class DummyValidator extends BaseValidator {
 	
+	protected transient static Logger log = Logger.getLogger(DummyValidator.class);
+	
 	long waitTime = 0;
+	
+	private static Map<String,Validation.Status> revokedMap = new HashMap<String,Validation.Status>();
 	
 	/**
 	 * @see org.signserver.validationservice.server.IValidator#init(int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.IExtendedCryptoToken)
@@ -52,6 +59,13 @@ public class DummyValidator extends BaseValidator {
 			waitTime = Long.parseLong(props.getProperty("WAITTIME"));
 		}
 
+		revokedMap.clear();
+		if(props.getProperty("REVOKED") != null) {
+			for(String dn : props.getProperty("REVOKED").split(";")) {
+				revokedMap.put(dn, Validation.Status.REVOKED);
+			}
+		}
+		
 	}
 
 	/**
@@ -110,6 +124,14 @@ public class DummyValidator extends BaseValidator {
 			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid");
 		}		
 		
+		Validation.Status status = revokedMap.get(xcert.getSubject());
+		if(status != null) {
+			return new Validation(cert, getCertificateChain(cert), status, "Not valid: " + status.toString());
+		} else if(cert.getSubject().equals("CN=xmlsigner2,O=SignServer Test,C=SE") || cert.getSubject().equals("CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE")) {
+			return new Validation(cert, getCertificateChain(cert), Validation.Status.VALID, "This certificate is valid");
+		} else if(cert.getSubject().equals("CN=FirstCA,O=EJBCA Testing,C=SE") || cert.getSubject().equals("CN=endentity1,O=EJBCA Testing,C=SE")) {
+			return new Validation(cert, getCertificateChain(cert), Validation.Status.VALID, "This certificate is valid");
+		}
 		
 		return null;
 	}

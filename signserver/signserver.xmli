@@ -8,6 +8,7 @@
 	   <import file="./module-builds/dummyws.xml"/>
 	   <import file="./module-builds/wsra.xml"/>
 	   <import file="./module-builds/xmlsigner.xml"/>
+	   <import file="./module-builds/xmlvalidator.xml"/>
 	
 	   <property name="java.trustpassword" value="changeit" />
 	   <property name="httpsserver.password" value="serverpwd" />
@@ -497,7 +498,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, xmlsignermar, tsamar, mrtdsignermar, dummywsmar, wsramar" unless="buildMailSigner" >
+	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, xmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, dummywsmar, wsramar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

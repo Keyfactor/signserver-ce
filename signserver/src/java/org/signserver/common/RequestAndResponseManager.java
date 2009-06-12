@@ -68,6 +68,9 @@ public class RequestAndResponseManager {
 	// Validation Service request types
 	public static final int REQUESTTYPE_VALIDATE         = 201;
 	
+	// Validation request types
+	public static final int REQUESTTYPE_GENERICVALIDATION	= 301;
+	
 	// Signer Response types
 	public static final int RESPONSETYPE_GENERICSIGNRESPONSE = 1;
 	public static final int RESPONSETYPE_MRTDSIGNRESPONSE    = 2;
@@ -81,6 +84,9 @@ public class RequestAndResponseManager {
 	// Validation Service request types
 	public static final int RESPONSETYPE_VALIDATE         = 201;
 	
+	// Validation response types
+	public static final int RESPONSETYPE_GENERICVALIDATION	= 301;
+		
 	public static HashMap<Integer, String> availableRequestTypes = new HashMap<Integer, String>();
 	public static HashMap<Integer, String> availableResponseTypes = new HashMap<Integer, String>();
 	
@@ -95,6 +101,7 @@ public class RequestAndResponseManager {
 		availableRequestTypes.put(REQUESTTYPE_GKS_SWITCHENCKEY,SwitchEncKeyRequest.class.getName());
 		availableRequestTypes.put(REQUESTTYPE_GKS_TIMEREMKEYS,TimeRemoveGroupKeyRequest.class.getName());
 		availableRequestTypes.put(REQUESTTYPE_VALIDATE,ValidateRequest.class.getName());
+		availableRequestTypes.put(REQUESTTYPE_GENERICVALIDATION,GenericValidationRequest.class.getName());
 		
 		availableResponseTypes.put(RESPONSETYPE_GENERICSIGNRESPONSE, GenericSignResponse.class.getName());
 		availableResponseTypes.put(RESPONSETYPE_MRTDSIGNRESPONSE, MRTDSignResponse.class.getName());
@@ -102,7 +109,8 @@ public class RequestAndResponseManager {
 		availableResponseTypes.put(RESPONSETYPE_GKS_PREGENKEYS, PregenerateKeysResponse.class.getName());
 		availableResponseTypes.put(RESPONSETYPE_GKS_REMOVEKEY, RemoveGroupKeyResponse.class.getName());
 		availableResponseTypes.put(RESPONSETYPE_GKS_SWITCHENCKEY, SwitchEncKeyResponse.class.getName());
-		availableResponseTypes.put(RESPONSETYPE_VALIDATE, ValidateResponse.class.getName());		
+		availableResponseTypes.put(RESPONSETYPE_VALIDATE, ValidateResponse.class.getName());
+		availableResponseTypes.put(RESPONSETYPE_GENERICVALIDATION, GenericValidationResponse.class.getName());
 	}
 	
 

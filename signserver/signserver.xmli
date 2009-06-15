@@ -29,6 +29,9 @@
 	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
 	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
 	   <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
+	   <property name="signingAndValidationBuild" value="${bin}/signingandvalidationapi"/>
+       <property name="signingAndValidationDir" value="${client.dist.dir}/signingandvalidationapi"/>
+       <property name="signingAndValidationJar" value="${signingAndValidationDir}/signingandvalidationapi.jar"/>
 
 	   <property name="performanceTestToolBuild" value="${bin}/performanceTestTool"/>
 	   <property name="performanceTestToolJar" value="${client.dist.dir}/performanceTestTool.jar"/>
@@ -53,6 +56,7 @@
 	   <property name="timestampclient.enabled" value="true" />
 	   <property name="validationclient.enabled" value="true" />
 	   <property name="pdfperformancetest.enabled" value="false" />
+	   <property name="signingandvalidationapi.enabled" value="true" />
 	   <property name="useclusterclassloader" value="true" />
 	   <property name="clusterclassloader.useclassversions" value="true" />
 	   <property name="clusterclassloader.requiresignature" value="false" />
@@ -118,6 +122,7 @@
         <path location="${wsraadminClientBuild}" />
         <path location="${wsraadminWSClientBuild}" />
         <path location="${dummywsClientBuild}" />
+        <path location="${signingAndValidationBuild}" />
         <path refid="j2ee.classpath" />
         <path refid="jaxws.classpath" />
         <fileset dir="${lib}/module/wsra">
@@ -178,6 +183,7 @@ pdfperformancetest.enabled          = ${pdfperformancetest.enabled}
 useclusterclassloader               = ${useclusterclassloader}
 clusterclassloader.useclassversions = ${clusterclassloader.useclassversions}
 clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
+signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
       </echo>
     </target>
 	
@@ -208,7 +214,10 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	    <condition property="pdfperformancetest.conditionenabled">
 	        <istrue value="${pdfperformancetest.enabled}"/>
 	    </condition>
-	
+		<condition property="signingandvalidationapi.conditionenabled">
+	        <istrue value="${signingandvalidationapi.enabled}"/>
+	    </condition>
+	    
 
 	    <!-- =================================================================== -->
 	    <!-- Clean SignServer related ALL                                                           -->
@@ -240,6 +249,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	        	<exclude name="org/signserver/protocol/ws/client/**"/>
 	        	<exclude name="org/signserver/client/validationservice/**"/>
 	        	<exclude name="org/signserver/client/PerformanceTest*"/>
+	        	<exclude name="org/signserver/client/api/**"/>
 	        </javac>
 	        <copy todir="${build}">
 	            <fileset dir="src/java">
@@ -251,7 +261,7 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 	   <!-- =================================================================== -->
 	    <!-- Build signserver ejb part                                           -->
 	    <!-- =================================================================== -->
-	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient" description="Creates master ejb.jar" unless="buildMailSigner">
+	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient, signingAndValidationAPI" description="Creates master ejb.jar" unless="buildMailSigner">
 
 	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
 	        	<metainf dir="${preprocessed}/appserver/${appserver.type}">
@@ -892,6 +902,38 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
         </jar>
       </target>
 	
+	 <!--                                                 -->
+     <!--   Target for building signingAndValidationAPI   -->
+     <!--                                                 -->
+      <target name="signingAndValidationAPI" depends="signserver:compile, signserverws.client, signserverws.client" unless="buildMailSigner" if="signingandvalidationapi.conditionenabled" >
+        <mkdir dir="${signingAndValidationBuild}"/>
+        <javac srcdir="${src.java}" destdir="${signingAndValidationBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
+           <include name="org/signserver/client/api/*.java"/>            
+           <classpath refid="signserver.compile.classpath"/> 
+        </javac>
+        
+        <mkdir dir="${signingAndValidationDir}/lib"/>
+        <copy todir="${signingAndValidationDir}/lib" >
+          <fileset dir="${lib}/${client.java.target}">
+            <include name="bcprov-jdk.jar"/>            
+          </fileset>
+          <fileset dir="${lib}">      
+          	<include name="cert-cvc.jar"/>  
+	      	<include name="log4j.jar"/>      
+	      	<include name="ejbca-util.jar"/>
+	      	<include name="commons-lang-2.0.jar"/>
+	    </fileset>	
+
+       </copy>
+        <jar destfile="${signingAndValidationJar}" basedir="${signingAndValidationBuild}">
+          <manifest>
+            <attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/cert-cvc.jar"/>
+          </manifest>
+          <fileset dir="tmp/jaxws/gen-classes/client">
+              <include name="**/*.class"/>
+            </fileset>	
+        </jar>
+      </target>
 
     <target name="martest">
     <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" classpathref="signserver.test.compile.classpath"/>

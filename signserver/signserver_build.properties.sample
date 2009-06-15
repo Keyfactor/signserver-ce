@@ -269,6 +269,13 @@ validationclient.enabled=true
 # Default: false
 pdfperformancetest.enabled=false
 
+# Set to true to enable build of the SigningAndValidationAPI.
+# For this to build must also signserverws.enabled be set
+# to true.
+#
+# Default: true
+signingandvalidationapi.enabled     = true
+
 # -------------- Cluster Class Loader Configurations ----------------
 #
 # Set to true to enable the use of the cluster class loader

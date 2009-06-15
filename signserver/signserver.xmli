@@ -577,6 +577,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
                 	<include name="**/groupkeyservice/Test*" /> 
                 	<include name="**/cli/TestSignServer*" />
                 	<include name="**/client/validationservice/Test*" />
+                	<include name="**/client/api/Test*" />
                 	<include name="**/protocol/validationservice/ws/Test*" />
                 	<include name="**/protocol/ws/Test*" />
                 	<include name="**/wsra/Test*" />

@@ -235,7 +235,7 @@
     <!-- =================================================================== -->
     <!-- Build Javadoc part                                                  -->
     <!-- =================================================================== -->
-    <target name="javadoc" depends="ws.gen.server, ws.gen.client">
+    <target name="javadoc" depends="build">
         <mkdir dir="${apidoc}" />
         <javadoc packagenames="org.signserver.*" maxmemory="256m" sourcepath="${src.java}" destdir="${apidoc}" 
         	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/ext/james:${lib}/asm:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/module/wsra:${lib}/reports:${lib}/quartz:${lib}/jaxws" 

@@ -39,21 +39,55 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
 		SignServerUtil.installBCProvider();
 	}
 	
+	/**
+	 * Creates an instance of SigningAndValidationWSBalanced using an 
+	 * ISignServerWSClient.
+	 * 
+	 * @param client The ISignServerWSClient to use.
+	 */
 	public SigningAndValidationWSBalanced(ISignServerWSClient client) {
 		this();
 		this.signserver = client;
 	}
 	
+	/**
+	 * Creates an instance of SigningAndValidationWSBalanced.
+	 * 
+     * @param clientType One of the CLIENTTYPE_ constants indication the High-Availability policy that should be used.
+     * @param hosts Host names of the servers to connect to.
+     * @param useHTTPS indicates if HTTPS should be used.
+     * @param port to connect to.
+     * @param timeOut in milliseconds.
+     * @param customAppURI the path to the sign server URI where the WS is deployed.
+     * @param clientFactory SignServerWSClientFactory to use for generating the client.
+     */
 	public SigningAndValidationWSBalanced(String clientType, String[] hosts, boolean useHTTPS, IFaultCallback faultCallback, int port, int timeOut, String customAppURI, SignServerWSClientFactory clientFactory) {
 		this();
 		this.signserver = clientFactory.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK, hosts, useHTTPS, new LogErrorCallback(), port, timeOut, customAppURI);
 	}
 	
+	/** 
+	 * Creates an instance of SigningAndValidationWSBalanced using host and port 
+	 * and default parameters.
+	 *  
+	 * @param host The remote host to connect to.
+	 * @param port The remote port to connect to.
+	 */
 	public SigningAndValidationWSBalanced(String host, int port) {
 		this();
 		this.signserver = new SignServerWSClientFactory().generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK, new String[]{host}, false, new LogErrorCallback(), port, SignServerWSClientFactory.DEFAULT_TIMEOUT, SignServerWSClientFactory.DEFAULT_WSDL_URL);
 	}
 	
+	/**
+	 * Creates an instance of SigningAndValidationWSBalanced using default client factory.
+	 * 
+     * @param clientType One of the CLIENTTYPE_ constants indication the High-Availability policy that should be used.
+     * @param hosts Host names of the servers to connect to.
+     * @param useHTTPS indicates if HTTPS should be used.
+     * @param port to connect to.
+     * @param timeOut in milliseconds.
+     * @param customAppURI the path to the sign server URI where the WS is deployed.
+     */
 	public SigningAndValidationWSBalanced(String clientType, String[] hosts, boolean useHTTPS, IFaultCallback faultCallback, int port, int timeOut, String customAppURI) {
 		this(clientType, hosts, useHTTPS, faultCallback, port, timeOut, customAppURI, new SignServerWSClientFactory());
 	}
@@ -68,9 +102,6 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
 			List<org.signserver.protocol.ws.ProcessResponseWS> resps;
 			
 			resps = signserver.process(xmlSignWorker, list);
-			
-			log.debug("resps.size: " + resps.size());
-			log.debug("0.id: " + resps.get(0).getRequestID());
 
 			org.signserver.protocol.ws.ProcessResponseWS theResponse = resps.get(0);
 			byte[] responseData = theResponse.getResponseData();
@@ -86,9 +117,6 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
 				throw new SignServerException("Unexpected request id " + resp.getRequestID() + " expected " + resps.get(0).getRequestID());
 			}
 
-			byte[] signedXml = resp.getProcessedData();
-
-			System.out.println("ProcessedData: " + signedXml);
 			return resp;
 
 		} catch (IOException ex) {
@@ -110,9 +138,6 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
 			if(resps == null) {
 				throw new SignServerException("Exception", exception);
 			}
-			
-			log.debug("resps.size: " + resps.size());
-			log.debug("0.id: " + resps.get(0).getRequestID());
 
 			org.signserver.protocol.ws.ProcessResponseWS theResponse = resps.get(0);
 			byte[] responseData = theResponse.getResponseData();

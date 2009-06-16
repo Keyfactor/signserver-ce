@@ -41,6 +41,13 @@ public class SigningAndValidationWS implements ISigningAndValidation {
 
 	private SignServerWS signserver;
 
+	
+	/**
+	 * Creates an instance of SigningAndValidationWS using an WebService host and port.
+	 * 
+	 * @param host The remote host to connect to.
+	 * @param port The remote port to connect to.
+	 */
 	public SigningAndValidationWS(String host, int port) {
 		String url = "http://" + host + ":" + port + "/signserver/signserverws/signserverws?wsdl";
 		SignServerWSService service;

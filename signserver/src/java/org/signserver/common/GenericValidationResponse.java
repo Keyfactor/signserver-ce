@@ -28,6 +28,9 @@ import org.signserver.validationservice.common.Validation;
 /**
  * A generic response class for validation results.
  * 
+ * The {@link GenericValidationResponse#isValid()} method can be used to see 
+ * if the document was found valid. 
+ * 
  * @author Markus Kilås
  * @version $Id$
  */
@@ -77,14 +80,23 @@ public class GenericValidationResponse extends ProcessResponse {
 		return requestID;
 	}
 
+	/**
+	 * @return True if the document was valid.
+	 */
 	public boolean isValid() {
 		return valid;
 	}
 
+	/**
+	 * @return The certificate validation response or null if it could not be performed.
+	 */
 	public ValidateResponse getCertificateValidateResponse() {
 		return certificateValidateResponse;
 	}
 
+	/**
+	 * @return The signer's certificate or null if it could not be determined.
+	 */
 	public ICertificate getSignerCertificate() {
 		if (certificateValidateResponse != null) {
 			return certificateValidateResponse.getValidation().getCertificate();
@@ -92,6 +104,9 @@ public class GenericValidationResponse extends ProcessResponse {
 		return null;
 	}
 
+	/**
+	 * @return The certificate validation result or null if it could not be performed.
+	 */
 	public Validation getCertificateValidation() {
 		if (certificateValidateResponse != null) {
 			return certificateValidateResponse.getValidation();
@@ -99,6 +114,9 @@ public class GenericValidationResponse extends ProcessResponse {
 		return null;
 	}
 
+	/**
+	 * @return The CA certificate chain included in the document.
+	 */
 	public List<ICertificate> getCAChain() {
 		if (certificateValidateResponse != null) {
 			return certificateValidateResponse.getValidation().getCAChain();
@@ -106,6 +124,13 @@ public class GenericValidationResponse extends ProcessResponse {
 		return Collections.emptyList();
 	}
 
+	/**
+	 * Deserializes this object from an InputStream.
+	 * 
+	 * @param in InputStream to read from.
+	 * @throws IOException If an I/O error occurred.
+	 * @throws IllegalArgumentException If the method was not called with an InputStream.
+	 */
 	public void parse(DataInput in) throws IOException {
 		log.debug(">parse");
 		in.readInt();
@@ -134,6 +159,13 @@ public class GenericValidationResponse extends ProcessResponse {
 		log.debug("<parse");
 	}
 
+	/**
+	 * Serializes this object and writes it to an DataOutput.
+	 * 
+	 * @param out DataOutput to write to.
+	 * @throws IOException If an I/O error occurred.
+	 * @throws IllegalArgumentException If the method was not called with an InputStream.
+	 */
 	public void serialize(DataOutput out) throws IOException {
 		log.debug(">serlialize");
 		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GENERICVALIDATION);

@@ -12,6 +12,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationRequest;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
@@ -68,14 +69,19 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
 
 	public GenericSignResponse sign(String signerIdOrName, byte[] xmlDocument) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 		GenericSignRequest request = new GenericSignRequest(1, xmlDocument);
-		ProcessResponse resp = signserver.process(getWorkerId(signerIdOrName), request, new RequestContext());
+		ProcessResponse resp = process(getWorkerId(signerIdOrName), request, new RequestContext());
+		if(!(resp instanceof GenericSignResponse)) {
+			throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
+		}
 		return (GenericSignResponse) resp; 
 	}
 
 	public GenericValidationResponse validate(String validatorIdOrName, byte[] xmlDocument) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-		GenericValidationRequest resp = new GenericValidationRequest(1, xmlDocument);
-		ProcessResponse resp2 = signserver.process(getWorkerId(validatorIdOrName), resp, new RequestContext());
-		return (GenericValidationResponse) resp2;
+		ProcessResponse resp = process(getWorkerId(validatorIdOrName), new GenericValidationRequest(1, xmlDocument), new RequestContext());
+		if(!(resp instanceof GenericValidationResponse)) {
+			throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
+		}
+		return (GenericValidationResponse) resp;
 	}
 
 	private int getWorkerId(String workerIdOrName) throws IllegalRequestException{
@@ -91,5 +97,9 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
     	}
     	return retval;
     }
+	
+	public ProcessResponse process(int workerId, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+		return signserver.process(workerId, request, context);
+	}
 	
 }

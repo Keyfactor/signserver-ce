@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -36,6 +37,7 @@ import org.signserver.client.api.SigningAndValidationWS;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.WorkerStatus;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -65,6 +67,8 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 	private static final String SIGNER1_WORKER					= "TestXMLSigner";
 	private static final String CERTVALIDATION_WORKER 			= "CRLValidationWorker2";
 	private static final String XMLVALIDATOR_WORKER				= "XMLValidatorWorker2";
+	
+	private static final String KEYSTORE8_PASSWORD				= "foo123";
 	
 	private static String signserverhome;
 	private static int moduleVersion;
@@ -96,15 +100,19 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 		TestingSecurityManager.remove();
 	}
 	
-	private ISigningAndValidation getSignserverXMLClient() {
-		return new SigningAndValidationWS("localhost", 8080);
-//		return new SignserverXMLClientWS2("localhost", 8080);
-//		try {
-//			return new SignserverXMLClientEJB();
-//		} catch(NamingException ex) {
-//			fail(ex.getMessage());
-//			return null;
-//		}
+	/**
+	 * Other test cases can override this method to run with a different 
+	 * client API implementation.
+	 * 
+	 * @return The ISigningAndValidation implementation to use.
+	 */
+	protected ISigningAndValidation getSigningAndValidationImpl() {
+		try {
+			return new SigningAndValidationEJB();
+		} catch(NamingException ex) {
+			fail(ex.getMessage());
+			return null;
+		}
 	}
 
 	public void test00SetupDatabase() throws Exception {
@@ -117,7 +125,8 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 		
 		// XMLSIGNER: endentity1
-		setupSigner(SIGNER1_WORKERID, SIGNER1_WORKER, keystoreFileEndentity8);
+		setupSigner(SIGNER1_WORKERID, SIGNER1_WORKER, keystoreFileEndentity8, KEYSTORE8_PASSWORD);
+		
 		
 		// VALIDATION
 		sSSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CRLPATHS", new File(signserverhome + File.separator + "src/test/org/signserver/client/api/EightCA-5.crl").toURI().toString());
@@ -139,14 +148,17 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 		sSSession.reloadConfiguration(XMLVALIDATOR_WORKERID);
 	}
 	
-	private void setupSigner(int workerId, String workerName, File keystore) throws Exception {
+	private void setupSigner(int workerId, String workerName, File keystore, String keystorePassword) throws Exception {
 		gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER"+workerId+".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
 		gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER"+workerId+".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
 		sSSession.setWorkerProperty(workerId, "NAME", workerName);
 		sSSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
 		sSSession.setWorkerProperty(workerId, P12CryptoToken.KEYSTOREPATH, keystore.getAbsolutePath());
-		sSSession.setWorkerProperty(workerId, P12CryptoToken.KEYSTOREPASSWORD, "foo123");
+		sSSession.setWorkerProperty(workerId, P12CryptoToken.KEYSTOREPASSWORD, keystorePassword);
 		sSSession.reloadConfiguration(workerId);
+		
+		// We are using a P12CryptoToken so we also need to activate it
+		sSSession.activateSigner(SIGNER1_WORKERID, KEYSTORE8_PASSWORD);
 	}
 	
 	private void setupValidation() {
@@ -162,7 +174,7 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 
 	public void test01SignAndValidate() throws Exception {
 
-		ISigningAndValidation signserver = getSignserverXMLClient();
+		ISigningAndValidation signserver = getSigningAndValidationImpl();
 		
 		GenericSignResponse result = signserver.sign(""+SIGNER1_WORKERID, SigningAndValidationTestData.DUMMY_XML1.getBytes());
 		byte[] data = result.getProcessedData();
@@ -193,7 +205,7 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 		// XML Document
 		checkXmlWellFormed(new ByteArrayInputStream(data));
 		
-		ISigningAndValidation signserver = getSignserverXMLClient();
+		ISigningAndValidation signserver = getSigningAndValidationImpl();
 		
 		GenericValidationResponse res = signserver.validate(XMLVALIDATOR_WORKER, data);
 		
@@ -212,7 +224,7 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 		// XML Document
 		checkXmlWellFormed(new ByteArrayInputStream(data));
 
-		ISigningAndValidation signserver = getSignserverXMLClient();
+		ISigningAndValidation signserver = getSigningAndValidationImpl();
 		
 		GenericValidationResponse res = signserver.validate(""+XMLVALIDATOR_WORKERID, data);
 
@@ -227,7 +239,7 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 		// XML Document
 		checkXmlWellFormed(new ByteArrayInputStream(data));
 		
-		ISigningAndValidation signserver = getSignserverXMLClient();			
+		ISigningAndValidation signserver = getSigningAndValidationImpl();			
 		GenericValidationResponse res = signserver.validate(""+XMLVALIDATOR_WORKERID, data);
 
 		assertFalse("invalid document", res.isValid());
@@ -241,7 +253,7 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 		// XML Document
 		checkXmlWellFormed(new ByteArrayInputStream(data));
 		
-		ISigningAndValidation signserver = getSignserverXMLClient();
+		ISigningAndValidation signserver = getSigningAndValidationImpl();
 		GenericValidationResponse res = signserver.validate(""+XMLVALIDATOR_WORKERID, data);
 
 		assertFalse("invalid document", res.isValid());
@@ -257,7 +269,7 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 			// XML Document
 			checkXmlWellFormed(new ByteArrayInputStream(data));
 			
-			ISigningAndValidation signserver = getSignserverXMLClient();
+			ISigningAndValidation signserver = getSigningAndValidationImpl();
 			GenericValidationResponse res = signserver.validate(""+XMLVALIDATOR_WORKERID, data);
 	
 			
@@ -278,7 +290,7 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 			// XML Document
 			checkXmlWellFormed(new ByteArrayInputStream(data));
 			
-			ISigningAndValidation signserver = getSignserverXMLClient();
+			ISigningAndValidation signserver = getSigningAndValidationImpl();
 			GenericValidationResponse res = signserver.validate(""+XMLVALIDATOR_WORKERID, data);
 			
 			// Check certificate
@@ -297,7 +309,7 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 		// XML Document
 		checkXmlWellFormed(new ByteArrayInputStream(data));
 		
-		ISigningAndValidation signserver = getSignserverXMLClient();
+		ISigningAndValidation signserver = getSigningAndValidationImpl();
 		GenericValidationResponse res = signserver.validate(""+XMLVALIDATOR_WORKERID, data);
 		
 		assertTrue("valid document", res.isValid());
@@ -326,7 +338,7 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 			// XML Document
 			checkXmlWellFormed(new ByteArrayInputStream(data));
 			
-			ISigningAndValidation signserver = getSignserverXMLClient();
+			ISigningAndValidation signserver = getSigningAndValidationImpl();
 			GenericValidationResponse res = signserver.validate(""+XMLVALIDATOR_WORKERID, data);
 			
 			assertFalse("invalid document", res.isValid());

@@ -3,6 +3,7 @@ package org.signserver.client.api;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +17,10 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationRequest;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestAndResponseManager;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.protocol.ws.client.WSClientUtil;
@@ -59,17 +63,32 @@ public class SigningAndValidationWS implements ISigningAndValidation {
 		signserver = service.getSignServerWSPort();
 		SignServerUtil.installBCProvider();
 	}
-
-	public GenericSignResponse sign(String signIdOrName, byte[] document) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+	
+	public ProcessResponse process(int workerId, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+		return process(""+workerId, request, context);
+	}
+	
+	public ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+		List<ProcessResponse> responses = process(workerIdOrName, Collections.singletonList(request), context);
+		if(responses.size() != 1) {
+			throw new SignServerException("Unexpected number of responses: " + responses.size());
+		}
+		return responses.get(0);
+	}
+	
+	public List<ProcessResponse> process(String workerIdOrName, List<ProcessRequest> requests, RequestContext context)  throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 		try {
-			ProcessRequestWS reqWS = new ProcessRequestWS();
-			reqWS.setRequestDataBase64(new String(Base64.encode(RequestAndResponseManager.serializeProcessRequest(new GenericSignRequest(1, document)))));
 			List<ProcessRequestWS> list = new LinkedList<ProcessRequestWS>();
-			list.add(reqWS);
+			
+			for(ProcessRequest req : requests) {
+				ProcessRequestWS reqWS = new ProcessRequestWS();
+				reqWS.setRequestDataBase64(new String(Base64.encode(RequestAndResponseManager.serializeProcessRequest(req))));
+				list.add(reqWS);
+			}
 
 			List<ProcessResponseWS> resps;
 			try {
-				resps = signserver.process(signIdOrName, list);
+				resps = signserver.process(workerIdOrName, list);
 			} catch (CryptoTokenOfflineException_Exception e) {
 				log.error(null, e);
 				throw new CryptoTokenOfflineException(e.getMessage());
@@ -86,59 +105,35 @@ public class SigningAndValidationWS implements ISigningAndValidation {
 
 			List<org.signserver.protocol.ws.ProcessResponseWS> responses2 = WSClientUtil.convertProcessResponseWS(resps);
 
-			org.signserver.protocol.ws.ProcessResponseWS theResponse = responses2.get(0);
-			byte[] responseData = theResponse.getResponseData();
-
-			GenericSignResponse resp = (GenericSignResponse) RequestAndResponseManager.parseProcessResponse(responseData);
-
-			if (resps.get(0).getRequestID() != resp.getRequestID()) {
-				log.error("Error, invalid request id " + resp.getRequestID() + " in responses");
-				throw new SignServerException("Unexpected request id " + resp.getRequestID() + " expected " + resps.get(0).getRequestID());
+			List<ProcessResponse> responses3 = new LinkedList<ProcessResponse>();
+			for(org.signserver.protocol.ws.ProcessResponseWS resp : responses2) {
+				responses3.add(RequestAndResponseManager.parseProcessResponse(resp.getResponseData()));
 			}
-
-			return resp;
+			
+			return responses3;
 
 		} catch (IOException ex) {
 			throw new SignServerException("Serialization/deserialization failed", ex);
 		}
 	}
 
+	public GenericSignResponse sign(String signIdOrName, byte[] document) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+			
+		ProcessResponse resp = process(signIdOrName, new GenericSignRequest(1, document), new RequestContext());
+
+		if(!(resp instanceof GenericSignResponse)) {
+			throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
+		}		
+		return (GenericSignResponse) resp;
+	}
+
 	public GenericValidationResponse validate(String validatorIdOrName, byte[] document) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-		try {
-			ProcessRequestWS reqWS = new ProcessRequestWS();
-			reqWS.setRequestDataBase64(new String(Base64.encode(RequestAndResponseManager.serializeProcessRequest(new GenericValidationRequest(1, document)))));
-			List<ProcessRequestWS> list = new LinkedList<ProcessRequestWS>();
-			list.add(reqWS);
+		ProcessResponse resp = process(validatorIdOrName, new GenericValidationRequest(1, document), new RequestContext());
 
-			List<ProcessResponseWS> resps;
-			try {
-				resps = signserver.process(validatorIdOrName, list);
-			} catch (CryptoTokenOfflineException_Exception e) {
-				log.error(null, e);
-				throw new CryptoTokenOfflineException(e.getMessage());
-			} catch (IllegalRequestException_Exception e) {
-				log.error(null, e);
-				throw new IllegalRequestException(e.getMessage());
-			} catch (InvalidWorkerIdException_Exception e) {
-				log.error(null, e);
-				throw new IllegalRequestException(e.getMessage());
-			} catch (SignServerException_Exception e) {
-				log.error(null, e);
-				throw new SignServerException(e.getMessage());
-			}
-			List<org.signserver.protocol.ws.ProcessResponseWS> responses2 = WSClientUtil.convertProcessResponseWS(resps);
-
-			org.signserver.protocol.ws.ProcessResponseWS theResponse = responses2.get(0);
-			byte[] responseData = theResponse.getResponseData();
-
-			GenericValidationResponse resp = (GenericValidationResponse) RequestAndResponseManager.parseProcessResponse(responseData);
-
-			log.debug("Valid: " + resp.isValid());
-			return resp;
-
-		} catch (IOException ex) {
-			throw new SignServerException("IOException", ex);
+		if(!(resp instanceof GenericValidationResponse)) {
+			throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
 		}
+		return (GenericValidationResponse) resp;
 	}
 
 }

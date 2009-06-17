@@ -68,20 +68,14 @@ public class ValidatorStatus extends WorkerStatus {
 				AuthorizedClient client = (AuthorizedClient) iter.next();
 				out.println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");
 			}
-//			if(getSignerCertificate() == null){
-//				out.println("Error: No Signer Certificate have been uploaded to this signer.\n");	
-//			}else{
-//				out.println("The current configuration use the following signer certificate : \n");
-//				printCert((X509Certificate) getSignerCertificate(),out );
-//			}
-			// TODO: Add validator specific status information here
+			// Validator specific status information can be added here
 		}		
 	}
 
 
 	@Override
 	public String isOK() {
-		return "Ok";
+		return null;
 	}
 		
 	

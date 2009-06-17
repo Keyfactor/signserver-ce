@@ -26,7 +26,7 @@ The SignServer have a ready to use:
 <li>TimeStamp Authority (RFC 3161 complaint)</li>
 <li>PDF Signer</li>
 <li>MRTD Signer</li>
-<li>XML Signer (XMLDsig)</li>
+<li>XML Signer/validator (XMLDsig)</li>
 <li>Validation Service Framework</li>
 <li>Group Key Service Framework</li>
 <li>Simple Mail Signer</li>

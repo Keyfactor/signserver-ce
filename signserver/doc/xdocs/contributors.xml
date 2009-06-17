@@ -15,7 +15,7 @@
 <li>Philip Vendil, philip(at)primekey.se, Project Manager, Main developer of the framework.</li>
 <li>Lars Silvèn, lars(at)primekey.se, SSL-RMI parts and the possibility to have custom web front end.</li>
 <li>Tomas Gustavsson, tomas(at)primekey.se, PDF Signer, PKCS11 sign token, Improved the TSA client with more arguments.</li>
-<li>Markus Kil&#229;s, markus(at)primekey.se, XML Signer.</li>
+<li>Markus Kil&#229;s, markus(at)primekey.se, XML Signer/validator.</li>
 </ul>
 </section>
 </body>

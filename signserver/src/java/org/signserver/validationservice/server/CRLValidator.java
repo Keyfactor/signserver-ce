@@ -24,6 +24,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.PKIXCertPathValidatorResult;
 import java.security.cert.PKIXParameters;
@@ -165,7 +166,14 @@ public class CRLValidator extends BaseValidator {
 			
 			try {
 
-				certURL = CertTools.getCrlDistributionPoint(x509CurrentCert);
+				try {
+					certURL = CertTools.getCrlDistributionPoint(x509CurrentCert);
+				} catch(CertificateParsingException ex) {
+					if(log.isDebugEnabled()) {
+						// CertTools.getCrlDistributionPoint throws an exception if it can't find an URL
+						log.debug("No CRL distribution point URL found: " + ex.getMessage(), ex);
+					}
+				}
 
 				if(rootCert == null 
 						&& x509CurrentCert.getSubjectX500Principal().equals(x509CurrentCert.getIssuerX500Principal()))
@@ -209,7 +217,7 @@ public class CRLValidator extends BaseValidator {
 					cDPURLs.add(certURL);
 
 			} catch (Exception e) {
-				throw new SignServerException(e.toString());
+				throw new SignServerException(e.toString(), e);
 			}
 
 			if(!cACerts.hasNext())
@@ -283,7 +291,7 @@ public class CRLValidator extends BaseValidator {
 			
 		} catch (Exception e) {
 			log.error("Exception on preparing parameters for validation", e);
-			throw new SignServerException(e.toString());
+			throw new SignServerException(e.toString(), e);
 		}
 
 

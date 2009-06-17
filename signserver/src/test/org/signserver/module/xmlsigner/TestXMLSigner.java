@@ -56,7 +56,6 @@ public class TestXMLSigner extends TestCase {
 	private static IWorkerSession.IRemote sSSession = null;
 	private static String signserverhome;
 	private static int moduleVersion;
-//	private static File keystoreFile;
 	
 	
 	protected void setUp() throws Exception {
@@ -70,11 +69,6 @@ public class TestXMLSigner extends TestCase {
 		signserverhome = System.getenv("SIGNSERVER_HOME");
 		assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
 		CommonAdminInterface.BUILDMODE = "SIGNSERVER";
-		
-//		keystoreFile = new File(signserverhome + File.separator + "src/test/org/signserver/module/xmlvalidator/keystore.p12");
-//		if(!keystoreFile.exists()) {
-//			throw new FileNotFoundException("Keystore file: " + keystoreFile.getAbsolutePath());
-//		}
 	}
 
 	@Override
@@ -91,10 +85,6 @@ public class TestXMLSigner extends TestCase {
 		TestUtils.assertSuccessfulExecution(new String[] { "module", "add", signserverhome + "/dist-server/xmlsigner.mar", "junittest" });
 		assertTrue(TestUtils.grepTempOut("Loading module XMLSIGNER"));
 		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
-		
-		// Set crypto token properties
-//		sSSession.setWorkerProperty(WORKERID, P12CryptoToken.KEYSTOREPATH, keystoreFile.getAbsolutePath());
-//		sSSession.setWorkerProperty(WORKERID, P12CryptoToken.KEYSTOREPASSWORD, "foo123");
 
 		sSSession.reloadConfiguration(WORKERID);
 	}
@@ -154,7 +144,6 @@ public class TestXMLSigner extends TestCase {
 		try {
 			DocumentBuilderFactory dBF = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = dBF.newDocumentBuilder();
-			// builder.setErrorHandler(new MyErrorHandler());
 
 			Document doc = builder.parse(in);
 			doc.toString();

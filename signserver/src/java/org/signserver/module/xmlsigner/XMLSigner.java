@@ -147,7 +147,7 @@ public class XMLSigner extends BaseSigner {
 		for(Certificate cert : certs) {
 			if(cert instanceof X509Certificate) {
 				x509CertChain.add((X509Certificate) cert);
-				System.out.println("Adding to chain: " + ((X509Certificate) cert).getSubjectDN());
+				log.debug("Adding to chain: " + ((X509Certificate) cert).getSubjectDN());
 			}
 		}
 		Certificate cert = this.getSigningCertificate();

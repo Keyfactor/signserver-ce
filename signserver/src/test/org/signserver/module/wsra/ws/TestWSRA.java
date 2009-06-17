@@ -695,8 +695,8 @@ public class TestWSRA extends CommonManagerTest {
 		
 		
 		WSRA wSRA = genWSRA(workerId, workerEntityManager, wc, sactx, null);
-		
-		UserDataBean udb = wSRA.getCallerUserData();
+
+		tb();UserDataBean udb = wSRA.getCallerUserData();tc();
 		assertNotNull(udb);
 		assertTrue(udb.getUserName(), udb.getUserName().equals("superadmin"));
 	}

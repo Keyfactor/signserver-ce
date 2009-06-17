@@ -107,8 +107,28 @@ public class XMLSigner extends BaseSigner {
 		}
 		
         byte[] data = (byte[]) sReq.getRequestData();
+        
+        // Try to skip data before and after root-tag
+        // This is a workaround until GenericProcessServlet supports multipart content
+        int start = 0;
+        int end = data.length-1;
+        for(int i = 0; i < data.length; i++) {
+        	if(data[i] == '<') {
+        		start = i;
+        		break;
+        	}
+        }
+        for(int i = data.length-1; i >= 0; i--) {
+        	if(data[i] == '>') {
+        		end = i;
+        		break;
+        	}
+        }
+        
         byte[] fpbytes = CertTools.generateSHA1Fingerprint(data);
 		String fp = new String(Hex.encode(fpbytes));
+		
+		
         
 		String providerName = System.getProperty("jsr105Provider", "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
 		XMLSignatureFactory fac;
@@ -167,7 +187,7 @@ public class XMLSigner extends BaseSigner {
         Document doc;
         
         try {
-        	doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
+        	doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data, start, end-start+1));
         } catch (SAXException ex) {
         	throw new SignServerException("Document parsing error", ex);
         } catch (ParserConfigurationException ex) {

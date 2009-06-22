@@ -332,8 +332,8 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    </target>
 		
 	    <target name="ws.init" depends="init,  ws.common.init" if="signserverws.conditionenabled" unless="buildMailSigner">
-	    	<mkdir dir="tmp/jaxws/gen-classes/server"/>
-	    	<mkdir dir="tmp/jaxws/gen-classes/client"/>
+	    	<mkdir dir="${tmp}/jaxws/gen-classes/server"/>
+	    	<mkdir dir="${tmp}/jaxws/gen-classes/client"/>
 	    	
 
 	    </target>
@@ -343,7 +343,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 		
 		<target depends="ws.init" name="ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
 	       <wsgen  fork="true" sei="org.signserver.protocol.ws.server.SignServerWS"
-	       	     genwsdl="true" destdir="tmp/jaxws/gen-classes/server" 	            
+	       	     genwsdl="true" destdir="${tmp}/jaxws/gen-classes/server"
 	            debug="true" xendorsed="true">
 	       	  
 			 <classpath>
@@ -355,7 +355,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 		</target>
 		
 	    <target name="signserverws.war" depends="ws.gen.server, ws.gen.client" if="signserverws.conditionenabled" unless="buildMailSigner">
-	        <copy todir="tmp/jaxws/gen-classes/server">
+	        <copy todir="${tmp}/jaxws/gen-classes/server">
 	    	  <fileset dir="${build}">
 	            <include name="org/signserver/protocol/ws/*.class"/> 
 	    	  	<include name="org/signserver/protocol/ws/server/*.class"/>  
@@ -369,16 +369,16 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	                    dir="tmp/jaxws/wsdl"
 	                    includes="*.wsdl, *.xsd"
 	                    prefix="WEB-INF/wsdl"/> -->
-	            <classes dir="tmp/jaxws/gen-classes/server"/>
+	            <classes dir="${tmp}/jaxws/gen-classes/server"/>
 	         <!--<lib dir="lib/jaxws" includes="*.jar" />     --> 
 	        </war>
 	    </target>
 		
 		
-	    <target name="ws.gen.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">	    	
+	    <target name="ws.gen.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
 	        <wsimport 
-	                destdir="tmp/jaxws/gen-classes/client"
-	                wsdl="tmp/jaxws/gen-classes/server/SignServerWSService.wsdl" >	        	
+	                destdir="${tmp}/jaxws/gen-classes/client"
+	                wsdl="${tmp}/jaxws/gen-classes/server/SignServerWSService.wsdl" >
 	        </wsimport>
 	    </target>
 	    
@@ -393,11 +393,11 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 
 	    <target name="ws.build.client" depends="ws.init, ws.compile.client" if="signserverws.conditionenabled" unless="buildMailSigner">
 	    	
-	    	<mkdir dir="tmp/signserverwscli.jar"/>
-	    	<mkdir dir="tmp/signserverwscli.jar/META-INF"/>
-	    	<mkdir dir="dist-client/signserverwscli/lib"/>
+	    	<mkdir dir="${tmp}/signserverwscli.jar"/>
+	    	<mkdir dir="${tmp}/signserverwscli.jar/META-INF"/>
+	    	<mkdir dir="${basedir}/dist-client/signserverwscli/lib"/>
 
-	        <copy todir="tmp/signserverwscli.jar">
+	        <copy todir="${tmp}/signserverwscli.jar">
 	            <fileset dir="${build}">
 	              <include name="org/signserver/protocol/ws/client/*.class"/>
 	              <include name="org/signserver/protocol/ws/client/cli/*.class"/>
@@ -407,7 +407,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	              <include name="org/signserver/groupkeyservice/common/*.class"/>
 	              <include name="org/signserver/validationservice/common/*.class"/>
 	            </fileset>	
-	            <fileset dir="tmp/jaxws/gen-classes/client">
+	            <fileset dir="${tmp}/jaxws/gen-classes/client">
 	              <include name="**/*.class"/>
 	            </fileset>	
 	            <fileset dir="${src.java}">
@@ -453,7 +453,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	            </fileset>
 	        </copy> 
 	    	              
-	        <jar destfile="dist-client/signserverwscli/signserverwscli.jar" basedir="tmp/signserverwscli.jar">
+	        <jar destfile="dist-client/signserverwscli/signserverwscli.jar" basedir="${tmp}/signserverwscli.jar">
 	          <manifest>
 	          	<attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar  lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jaxws-tools.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/mimepull.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/stax-ex.jar lib/streambuffer.jar lib/commons-lang-2.0.jar"/>
 	            <attribute name="Main-Class" value="org.signserver.protocol.ws.client.cli.WSCLI"/>
@@ -468,13 +468,13 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	   <!-- =================================================================== -->	        			
 	  
 	  <target name="validationws.init" depends="init,  ws.common.init" if="validationws.conditionenabled" unless="buildMailSigner">
-	      <mkdir dir="tmp/validationws/gen-classes/server"/>
-	      <mkdir dir="tmp/validationws/gen-classes/client"/>
+	      <mkdir dir="${tmp}/validationws/gen-classes/server"/>
+	      <mkdir dir="${tmp}/validationws/gen-classes/client"/>
 	  </target>
 	        	
 	  <target depends="validationws.init" name="validationws.gen.server" if="validationws.conditionenabled" unless="buildMailSigner">
 	     <wsgen  fork="true" sei="org.signserver.protocol.validationservice.ws.server.ValidationWS"
-	        	       	     genwsdl="true" destdir="tmp/validationws/gen-classes/server" 	            
+	        	       	     genwsdl="true" destdir="${tmp}/validationws/gen-classes/server"
 	        	            debug="true" xendorsed="true">
 	        <classpath>
 	          <path refid="jaxws.classpath" /> 
@@ -484,7 +484,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	  </target>
 
 	  <target name="validationws.war" depends="validationws.gen.server, validationws.gen.client" if="validationws.conditionenabled" unless="buildMailSigner">
-	     <copy todir="tmp/validationws/gen-classes/server">
+	     <copy todir="${tmp}/validationws/gen-classes/server">
 	        <fileset dir="${build}">
 	        	<include name="org/signserver/protocol/validationservice/ws/*.class"/> 
 	        	<include name="org/signserver/protocol/validationservice/ws/server/*.class"/>  
@@ -494,14 +494,14 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    <replace file="${eardd.src}/META-INF/application.xml" token="!--@validationws.war@-->" value="module>&lt;web>&lt;web-uri>validationws.war&lt;/web-uri>&lt;context-root>/signserver/validationws&lt;/context-root>&lt;/web>&lt;/module>"/>
 	    <war warfile="${server.dist.dir}/validationws.war" webxml="${src}/validationws/web.xml">
 	        <webinf dir="src/validationws" includes="sun-jaxws.xml"/>
-	        	<classes dir="tmp/validationws/gen-classes/server"/>
+	        	<classes dir="${tmp}/validationws/gen-classes/server"/>
 	        	<!--<lib dir="lib/jaxws" includes="*.jar" />     -->   		
 	    </war>
 	   </target>
 	        			        		
 	   <target name="validationws.gen.client" depends="validationws.init, validationws.gen.server" if="validationws.conditionenabled" unless="buildMailSigner">	    	
-	      <wsimport destdir="tmp/validationws/gen-classes/client"
-	        	    wsdl="tmp/validationws/gen-classes/server/ValidationWSService.wsdl">	          
+	      <wsimport destdir="${tmp}/validationws/gen-classes/client"
+	        	    wsdl="${tmp}/validationws/gen-classes/server/ValidationWSService.wsdl">
 	      </wsimport>
 	   </target>
 		
@@ -607,7 +607,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
        	<property name="performancetest.runtime" value="3000" />
        	<property name="performancetest.threads" value="10" />
        	<property name="performancetest.intervalsize" value="1" />
-       	<property name="performancetest.statisticsdir" value="tmp/statistics/" />
+       	<property name="performancetest.statisticsdir" value="${tmp}/statistics/" />
     	<mkdir dir="${performancetest.statisticsdir}"/>
         <echo>Starting performance tests..</echo>
         <echo>Assuming: </echo>
@@ -930,7 +930,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
           <manifest>
             <attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/cert-cvc.jar"/>
           </manifest>
-          <fileset dir="tmp/jaxws/gen-classes/client">
+          <fileset dir="${tmp}/jaxws/gen-classes/client">
               <include name="**/*.class"/>
             </fileset>	
         </jar>
@@ -939,7 +939,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
     <target name="martest">
     <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" classpathref="signserver.test.compile.classpath"/>
     	   <taskdef name="part" classname="org.signserver.anttasks.PartAntTask" classpathref="signserver.test.compile.classpath"/>
-    	<mar version="3" verbose="true" destfile="tmp/test.mar">
+    	<mar version="3" verbose="true" destfile="${tmp}/test.mar">
     		<part name="test">
     	         <fileset dir="${lib}/ext">
     	           <include name="commons-cli-1.0.jar"/>

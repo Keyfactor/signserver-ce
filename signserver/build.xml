@@ -35,10 +35,10 @@
     <property name="signserver.configfile" value="/etc/signserver/signserver.conf" />
 	
     <!-- set global properties for this build -->
-	<property name="tmp" value="./tmp" />
-    <property name="bin" value="./${tmp}/bin" />
+	<property name="tmp" location="tmp" /><!-- -->
+    <property name="bin" location="./bin" />
     <property name="build" value="${bin}/classes" />
-    <property name="lib" value="lib" />
+    <property name="lib" location="lib" />
 	<property name="preprocessed" value="${tmp}/preprocessed"/>
 
     <property name="src" value="${preprocessed}" />

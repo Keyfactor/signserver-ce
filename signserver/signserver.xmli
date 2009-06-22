@@ -555,15 +555,16 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
         <echo> Important, in order for all tests to complete must the web service, generic WS and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
         <delete dir="${test.dir}/reports" />
         <mkdir dir="${test.dir}/reports/html" />
-        <junit printsummary="yes" haltonfailure="no">
+        <junit printsummary="yes" haltonfailure="no" showoutput="true">
             <classpath>
                 <path refid="signserver.test.compile.classpath" />
                 <path location="${test.dir}" />
             </classpath>
-            <formatter type="xml" />
+            <formatter usefile="false" type="brief"/>
+            <formatter type="xml"/>
             <batchtest fork="yes" todir="${test.dir}/reports">
-                <fileset dir="${test.dir}">                  
-                    <include name="**/ejb/Test*" /> 
+                <fileset dir="${test.dir}">
+                    <include name="**/ejb/Test*" />
                 	<include name="**/common/Test*" />
                 	<include name="**/common/clusterclassloader/Test*" />
                 	<include name="**/module/**/Test*" />
@@ -574,7 +575,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
                   <include name="**/server/genericws/Test*" />
                 	<include name="**/server/clusterclassloader/Test*" />
                 	<include name="**/server/statistics/nonpersistent/Test*" />
-                	<include name="**/groupkeyservice/Test*" /> 
+                	<include name="**/groupkeyservice/Test*" />
                 	<include name="**/cli/TestSignServer*" />
                 	<include name="**/client/validationservice/Test*" />
                 	<include name="**/client/api/Test*" />

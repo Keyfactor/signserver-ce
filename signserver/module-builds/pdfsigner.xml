@@ -26,7 +26,7 @@
 		    <include name="org/signserver/module/pdfsigner/**"/>
 		</fileset>
     </jar>
-    <mar version="${mar.versions}" modulename="pdfsigner" verbose="true" destfile="dist-server/pdfsigner.mar">
+    <mar version="${mar.versions}" modulename="pdfsigner" verbose="true" destfile="${basedir}/dist-server/pdfsigner.mar">
         <part>
             <fileset dir="lib/module/pdfsigner/itext">
                 <include name="itext.jar"/>

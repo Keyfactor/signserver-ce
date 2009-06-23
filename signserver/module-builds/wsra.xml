@@ -56,8 +56,8 @@
      </copy> 
      <copy file="src/module-configs/wsra/sun-jaxws.xml" tofile="tmp/wsra/gen-classes/server/sun-jaxws.xml"/>
         
-     <wsimport destdir="tmp/wsra/gen-classes/client"
-        wsdl="tmp/wsra/gen-classes/server/WSRAService.wsdl" >              
+     <wsimport destdir="${tmp}/wsra/gen-classes/client"
+        wsdl="${tmp}/wsra/gen-classes/server/WSRAService.wsdl" >
      </wsimport>
 
 	<jar jarfile="dist-server/wsra-module.jar">
@@ -69,7 +69,7 @@
             <include name="org/signserver/protocol/validationservice/ws/ValidationResponse.class"/>            
         </fileset>
     </jar>
-    <mar version="${mar.versions}" modulename="wsra" verbose="true" destfile="dist-server/wsra.mar">
+    <mar version="${mar.versions}" modulename="wsra" verbose="true" destfile="${basedir}/dist-server/wsra.mar">
         <part>
             <fileset dir="dist-server">
                 <include name="wsra-module.jar"/>

@@ -25,7 +25,7 @@
 		    <include name="org/signserver/module/xmlvalidator/**"/>
 		</fileset>
     </jar>
-    <mar version="${mar.versions}" modulename="xmlvalidator" verbose="true" destfile="dist-server/xmlvalidator.mar">
+    <mar version="${mar.versions}" modulename="xmlvalidator" verbose="true" destfile="${basedir}/dist-server/xmlvalidator.mar">
         <part>
             <fileset dir="dist-server">
                 <include name="xmlvalidator-module.jar"/>

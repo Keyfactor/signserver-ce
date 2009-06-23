@@ -25,7 +25,7 @@
 		    <include name="org/signserver/module/mrtdsigner/**"/>
 		</fileset>
     </jar>
-    <mar version="${mar.versions}" modulename="mrtdsigner" verbose="true" destfile="dist-server/mrtdsigner.mar">
+    <mar version="${mar.versions}" modulename="mrtdsigner" verbose="true" destfile="${basedir}/dist-server/mrtdsigner.mar">
         <part>
             <fileset dir="dist-server">
                 <include name="mrtdsigner-module.jar"/>

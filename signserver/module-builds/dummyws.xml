@@ -58,10 +58,10 @@
            <include name="org/signserver/server/genericws/*DataBean.class"/>  
         </fileset>
      </copy> 
-     <copy file="${test.src.dir}/dummyws-sun-jaxws.xml" tofile="tmp/dummyws/gen-classes/server/sun-jaxws.xml"/>
+     <copy file="${test.src.dir}/dummyws-sun-jaxws.xml" tofile="${tmp}/dummyws/gen-classes/server/sun-jaxws.xml"/>
         
-     <wsimport destdir="tmp/dummyws/gen-classes/client"
-        wsdl="tmp/dummyws/gen-classes/server/DummyWSService.wsdl" >              
+     <wsimport destdir="${tmp}/dummyws/gen-classes/client"
+        wsdl="${tmp}/dummyws/gen-classes/server/DummyWSService.wsdl" >
      </wsimport>
 
 	<jar jarfile="dist-server/dummyws-module.jar">
@@ -76,7 +76,7 @@
             <include name="org/signserver/server/genericws/*.class"/>        
         </fileset>
     </jar>
-    <mar version="${mar.versions}" modulename="dummyws" verbose="true" destfile="dist-server/dummyws.mar">
+    <mar version="${mar.versions}" modulename="dummyws" verbose="true" destfile="${basedir}/dist-server/dummyws.mar">
         <part>
             <fileset dir="dist-server">
                 <include name="dummyws-module.jar"/>

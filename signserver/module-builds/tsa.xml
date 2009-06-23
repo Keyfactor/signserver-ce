@@ -26,7 +26,7 @@
 		    <include name="org/signserver/module/tsa/**"/>
 		</fileset>
     </jar>
-    <mar version="${mar.versions}" modulename="tsa" verbose="true" destfile="dist-server/tsa.mar">
+    <mar version="${mar.versions}" modulename="tsa" verbose="true" destfile="${basedir}/dist-server/tsa.mar">
         <part>
             <fileset dir="lib/module/tsa/${server.java.target}">
                 <include name="*.jar"/>

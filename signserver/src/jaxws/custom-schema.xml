@@ -24,9 +24,9 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns="http://java.sun.com/xml/ns/jaxb"
     version="1.0">    
-    <bindings schemaLocation="http://localhost:8080/signserver/signserverws/signserverws?xsd=1" node="/xsd:schema">
+    <bindings schemaLocation="http://localhost:8080/htmf/htmfadminws/htmfadminws?xsd=1" node="/xsd:schema">
         <schemaBindings>
-            <package name="org.signserver.protocol.ws.client.gen"/>
+            <package name="org.hardtokenmgmt.ws.client.gen"/>
         </schemaBindings>
     </bindings>
 </bindings>

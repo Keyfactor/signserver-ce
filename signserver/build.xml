@@ -84,6 +84,17 @@
     <!-- Create the time stamp and build directory -->
     <!-- =================================================================== -->
     <target name="init" depends="j2ee:check">
+        <echo>
+------------- SYSTEM PROPERTIES --------------
+ANT version                         = ${ant.version}
+JRE version                         = ${java.version}
+JRE vendor                          = ${java.vendor}
+Java home                           = ${java.home}
+Java extensions dir                 = ${java.ext.dirs}
+OS name                             = ${os.name}
+OS architecture                     = ${os.arch}
+OS version                          = ${os.version}
+        </echo>
     	<antcall target="signserver.init"/>
     	<antcall target="mailsigner.init"/>
 

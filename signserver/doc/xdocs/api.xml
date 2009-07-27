@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- $Id$ -->
+
+<document>
+	<properties>
+		<title>SignServer APIs</title>
+	</properties>
+
+	<body>
+
+		<section name="JavaDoc">
+			<p>
+				The JavaDoc for SignServer is available at SIGNSERVER_HOME/tmp/doc/index.html
+				after running "ant javadoc".
+			</p>
+
+		</section>
+		
+		<section name="Web Services">
+			<p>
+				See section 14.1 in the <a href="manual.html">manual</a> for information about this API.
+			</p>
+		</section>
+		
+		<section name="Java Client API">
+			<p>
+				See section 14.2 in the <a href="manual.html">manual</a> for information about this API.
+			</p>
+		</section>
+
+		<section name="SigningAndValidation API">
+			<p>
+				The SigningAndValidation API is a wrapper around the previous 
+				mentioned API in order to have a simplified interface that also 
+				is the same regardless if WebService or EJB Remote calls are used. 
+			</p>
+			<p>
+				To use the API include the file signingandvalidationapi.jar 
+				as well as all JAR-files in the lib-folder available in 
+				SIGNSERVER_HOME/dist-client/signingandvalidationapi/.
+			</p>
+			<subsection name="Sample Code">
+				<subsubsection name="Signing and validating an XML document">
+				<p>
+					<pre>
+try {
+    ISigningAndValidation signserver = new SigningAndValidationWS("localhost", 8080);
+
+    // Document to sign
+    byte[] unsigned = "<document><name>Some content</name></document>".getBytes();
+    byte[] signed;
+
+    // Signing
+    GenericSignResponse signResp = signserver.sign("XMLSigner", unsigned);
+    signed = signResp.getProcessedData();
+    System.out.println("Signed: " + new String(signed));
+
+    // Validating
+    GenericValidationResponse validateResp = signserver.validate("DemoXMLValidator", signed);
+    System.out.println("Valid: " + validateResp.isValid());
+
+    if(validateResp.getSignerCertificate() != null) {
+        if(validateResp.getSignerCertificate() instanceof X509Certificate) {
+            X509Certificate signerCert = (X509Certificate) validateResp.getSignerCertificate();
+            System.out.println("Signed by: " + signerCert.getSubjectDN().getName());
+        }
+    }
+} catch (Exception ex) {
+    ex.printStackTrace();
+}
+        			</pre>
+				</p>
+				</subsubsection>
+			
+			</subsection>
+		</section>
+
+	</body>
+</document>

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- $Id$ -->
+
 <document>
   <properties>
     <title>Installation Guide</title>
@@ -147,7 +150,7 @@ Then to install the XML validator you can issue the following commands:
 <br/>
 </li>
 </ol>
-Now the SignServer APIs can be used to request XML documents to be validated by the DemoXMLValidator worker.  
+Now <a href="api.html">the SignServer APIs</a> can be used to request XML documents to be validated by the DemoXMLValidator worker.  
 </p>
 </subsection>
 

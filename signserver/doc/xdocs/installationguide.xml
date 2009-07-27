@@ -154,6 +154,31 @@ Now <a href="api.html">the SignServer APIs</a> can be used to request XML docume
 </p>
 </subsection>
 
+<subsection name="MRTD signer">
+<p> 
+To install the MRTD signer you can issue the following commands:
+<ol>
+<li>Deploy the MRTD signer module and notice the worker ID (in this example: 4):<br/>
+<code># bin/signserver.sh module add dist-server/mrtdsigner.mar demo</code>
+<br/>
+</li>
+<li>Verify the configuration with:<br/>
+<code># bin/signserver.sh getconfig 4</code>
+<br/>
+</li>
+<li>Activate the configuration with:<br/>
+<code># bin/signserver.sh reload 4</code>
+<br/>
+</li>
+<li>The status of the Validator can now be viewed with:<br/>
+<code># bin/signserver.sh getstatus complete mrtdsigner</code>
+<br/>
+</li>
+</ol>
+Now <a href="api.html">the SignServer APIs</a> can be used to send MRTD sign requests the MRTDSigner.  
+</p>
+</subsection>
+
 </section>
 
   <section name="Installation Guides">

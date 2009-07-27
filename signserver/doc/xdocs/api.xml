@@ -72,6 +72,36 @@ try {
         			</pre>
 				</p>
 				</subsubsection>
+				
+				<subsubsection name="MRTD Signing">
+				<p>
+					<pre>
+try {
+    ISigningAndValidation signserver = new SigningAndValidationWS("localhost", 8080);
+
+    // Bytes to sign
+    ArrayList&lt;byte[]&gt; bytesToSign = new ArrayList&lt;byte[]&gt;();
+    bytesToSign.add("Sample data 1".getBytes());
+    bytesToSign.add("Sample data 2".getBytes());
+
+    // Signing
+    MRTDSignResponse signResp = (MRTDSignResponse) signserver.process(4, new MRTDSignRequest(1234, bytesToSign), new RequestContext());
+
+    System.out.println("Certificate: " + signResp.getSignerCertificate());
+
+    if(signResp.getProcessedData() instanceof Collection) {
+        Collection&lt;byte[]&gt; signed = (Collection) signResp.getProcessedData();
+        for(byte[] data : signed) {
+            System.out.println("Signed: " + new String(Base64.encode(data)));
+        }
+    }
+} catch (Exception ex) {
+    ex.printStackTrace();
+}
+        			</pre>
+				</p>
+				</subsubsection>				
+				
 			
 			</subsection>
 		</section>

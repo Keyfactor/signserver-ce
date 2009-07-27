@@ -76,6 +76,81 @@ You can now, with your web browser, access the url <a href="http://127.0.0.1:808
 </p>
 </subsection>
 
+<subsection name="XML signer">
+<p>
+To install the XML signer you can issue the following commands (either instead of the TSA or in addition to the TSA):
+<ol>
+<li>Deploy the XML signer module and notice the worker ID (in this example: 1):<br/>
+<code># bin/signserver.sh module add dist-server/xmlsigner.mar demo</code>
+<br/>
+</li>
+<li>Verify the configuration with:<br/>
+<code># bin/signserver.sh getconfig 1</code>
+<br/>
+</li>
+<li>Activate the configuration with:<br/>
+<code># bin/signserver.sh reload 1</code>
+<br/>
+</li>
+<li>The status of the Signer can now be viewed with:<br/>
+<code># bin/signserver.sh getstatus complete xmlsigner</code>
+<br/>
+</li>
+</ol>
+You can now, with your web browser, access the url <a href="http://127.0.0.1:8080/signserver/xmlsign.html">http://127.0.0.1:8080/signserver/xmlsign.html</a> to get XML documents signed. 
+</p>
+</subsection>
+
+<subsection name="XML validator">
+<p>
+An XML validator validates the signature of an XML document. It uses a 
+certificate validation service worker for validating the certificate so 
+that worker has to be configured first.
+</p>
+<p>
+To install a certificate validation service worker issue the following commands:
+</p>
+<ol>
+<li>Load the configuration and notice the worker ID (in this example: 2):<br/>
+<code># bin/signserver.sh setproperties sample-configs/qs_validator_dummy_configuration.properties</code>
+</li>
+<li>Verify the configuration with:<br/>
+<code># bin/signserver.sh getconfig 2</code>
+<br/>
+</li>
+<li>Activate the configuration with:<br/>
+<code># bin/signserver.sh reload 2</code>
+<br/>
+</li>
+<li>The status of the Worker can now be viewed with:<br/>
+<code># bin/signserver.sh getstatus complete CertValidationWorker</code>
+<br/>
+</li>
+</ol>
+<p> 
+Then to install the XML validator you can issue the following commands:
+<ol>
+<li>Deploy the XML signer module and notice the worker ID (in this example: 3):<br/>
+<code># bin/signserver.sh module add dist-server/xmlvalidator.mar demo</code>
+<br/>
+</li>
+<li>Verify the configuration with (notice that VALIDATIONSERVICEWORKER is set to "CertValidationWorker"):<br/>
+<code># bin/signserver.sh getconfig 3</code>
+<br/>
+</li>
+<li>Activate the configuration with:<br/>
+<code># bin/signserver.sh reload 3</code>
+<br/>
+</li>
+<li>The status of the Validator can now be viewed with:<br/>
+<code># bin/signserver.sh getstatus complete demoxmlvalidator</code>
+<br/>
+</li>
+</ol>
+Now the SignServer APIs can be used to request XML documents to be validated by the DemoXMLValidator worker.  
+</p>
+</subsection>
+
 </section>
 
   <section name="Installation Guides">

@@ -132,8 +132,7 @@ public class PDFSigner extends BaseSigner{
 				Event event = (Event) requestContext.get(RequestContext.STATISTICS_EVENT);
 				event.addCustomStatistics("PDFBYTES", pdfbytes.length);				
 			}
-			try {
-				// Thanks to Ezizmuhamet Muhammetkuliyev for this PDF signing snippet 
+			try { 
 				PdfReader reader = new PdfReader(pdfbytes);
 				ByteArrayOutputStream fout = new  ByteArrayOutputStream();
 				PdfStamper stp;

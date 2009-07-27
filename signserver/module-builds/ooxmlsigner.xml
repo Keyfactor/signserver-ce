@@ -1,0 +1,48 @@
+<project name="ooxmlsigner" default="ooxmlsignermar" basedir="..">
+
+
+
+	<target name="ooxmlsignermar" unless="buildMailSigner">
+		<path id="ooxmlsigner.build.classpath">
+			<path refid="signserver.compile.classpath" />
+			<path location="${build}" />
+		</path>
+
+		<taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" classpathref="ooxmlsigner.build.classpath" />
+
+		<taskdef name="part" classname="org.signserver.anttasks.PartAntTask" classpathref="ooxmlsigner.build.classpath" />
+
+		<javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
+			<classpath refid="ooxmlsigner.build.classpath" />
+			<src path="${src.java}" />
+			<include name="org/signserver/module/ooxmlsigner/*.java" />
+			<include name="org/openxml4j/opc/*.java" />
+		</javac>
+
+		<jar jarfile="dist-server/ooxmlsigner-module.jar">
+			<fileset dir="${build}">
+				<include name="org/signserver/module/ooxmlsigner/**" />
+				<include name="org/openxml4j/opc/**" />
+			</fileset>
+		</jar>
+		<mar version="${mar.versions}" modulename="ooxmlsigner" verbose="true" destfile="${basedir}/dist-server/ooxmlsigner.mar">
+			<part>
+				<fileset dir="lib/module/ooxmlsigner">
+					<include name="dom4j-1.6.1.jar" />
+					<include name="jaxen-1.1.jar" />
+					<include name="openxml4j-bin-beta.jar" />
+				</fileset>
+				<fileset dir="lib/1.5">
+					<include name="xmlsec-1.4.3.jar" />
+				</fileset>
+				<fileset dir="dist-server">
+					<include name="ooxmlsigner-module.jar" />
+				</fileset>
+				<fileset dir="src/module-configs/ooxmlsigner">
+					<include name="*.properties" />
+				</fileset>
+			</part>
+		</mar>
+	</target>
+
+</project>

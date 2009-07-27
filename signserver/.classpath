@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="lib" path="lib/1.5/xmlsec-1.4.3.jar"/>
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/client"/>
@@ -29,7 +30,6 @@
 	<classpathentry kind="lib" path="lib/jaxws/jsr250-api.jar"/>
 	<classpathentry kind="lib" path="lib/jaxws/mimepull.jar"/>
 	<classpathentry kind="lib" path="lib/ext/jdom-b9.jar"/>
-	<classpathentry kind="lib" path="lib/ext/xerces_2_3_0.jar"/>
 	<classpathentry kind="lib" path="lib/ext/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/cert-cvc.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.jar"/>
@@ -71,5 +71,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="tmp/dummyws/gen-classes/client"/>
 	<classpathentry kind="lib" path="tmp/wsra/gen-classes/client"/>
+	<classpathentry kind="lib" path="lib/ext/xercesImpl-2_9_1.jar"/>
+	<classpathentry kind="lib" path="lib/module/ooxmlsigner/jaxen-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/module/ooxmlsigner/openxml4j-bin-beta.jar"/>
+	<classpathentry kind="lib" path="lib/module/ooxmlsigner/dom4j-1.6.1.jar"/>
 	<classpathentry kind="output" path=".eclipse/out"/>
 </classpath>

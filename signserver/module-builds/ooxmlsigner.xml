@@ -27,6 +27,9 @@
 		</jar>
 		<mar version="${mar.versions}" modulename="ooxmlsigner" verbose="true" destfile="${basedir}/dist-server/ooxmlsigner.mar">
 			<part>
+				<fileset dir="lib/ext">
+					<include name="xercesImpl-2_9_1" />
+				</fileset>
 				<fileset dir="lib/module/ooxmlsigner">
 					<include name="dom4j-1.6.1.jar" />
 					<include name="jaxen-1.1.jar" />

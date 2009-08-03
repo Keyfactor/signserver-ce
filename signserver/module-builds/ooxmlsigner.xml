@@ -31,12 +31,14 @@
 					<include name="xercesImpl-2_9_1" />
 				</fileset>
 				<fileset dir="lib/module/ooxmlsigner">
-					<include name="dom4j-1.6.1.jar" />
+					
 					<include name="jaxen-1.1.jar" />
 					<include name="openxml4j-bin-beta.jar" />
 				</fileset>
 				<fileset dir="lib/endorsed">
 					<include name="xmlsec-1.4.3.jar" />
+					<include name="pull-parser-2.1.10.jar" />
+					<include name="xsdlib-20030807.jar" />
 				</fileset>
 				<fileset dir="dist-server">
 					<include name="ooxmlsigner-module.jar" />

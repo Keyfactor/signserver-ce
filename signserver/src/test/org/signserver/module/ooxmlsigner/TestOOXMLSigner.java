@@ -63,14 +63,14 @@ public class TestOOXMLSigner extends TestCase {
 	
 	public void test00SetupDatabase() throws Exception {
 
-		MARFileParser marFileParser = new MARFileParser(signserverhome + "/dist-server/ooxmlsigner.mar");
-		moduleVersion = marFileParser.getVersionFromMARFile();
-
-		TestUtils.assertSuccessfulExecution(new String[] { "module", "add", signserverhome + "/dist-server/ooxmlsigner.mar", "junittest" });
-		assertTrue(TestUtils.grepTempOut("Loading module OOXMLSIGNER"));
-		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
-
-		sSSession.reloadConfiguration(WORKERID);
+//		MARFileParser marFileParser = new MARFileParser(signserverhome + "/dist-server/ooxmlsigner.mar");
+//		moduleVersion = marFileParser.getVersionFromMARFile();
+//
+//		TestUtils.assertSuccessfulExecution(new String[] { "module", "add", signserverhome + "/dist-server/ooxmlsigner.mar", "junittest" });
+//		assertTrue(TestUtils.grepTempOut("Loading module OOXMLSIGNER"));
+//		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+//
+//		sSSession.reloadConfiguration(WORKERID);
 	}
 
 	public void test01SignDocx() throws Exception {
@@ -105,11 +105,11 @@ public class TestOOXMLSigner extends TestCase {
 	}
 
 	public void test99TearDownDatabase() throws Exception {
-		TestUtils.assertSuccessfulExecution(new String[] { "removeworker", ""+WORKERID });
-
-		TestUtils.assertSuccessfulExecution(new String[] { "module", "remove", "OOXMLSIGNER", "" + moduleVersion });
-		assertTrue(TestUtils.grepTempOut("Removal of module successful."));
-		sSSession.reloadConfiguration(WORKERID);
+//		TestUtils.assertSuccessfulExecution(new String[] { "removeworker", ""+WORKERID });
+//
+//		TestUtils.assertSuccessfulExecution(new String[] { "module", "remove", "OOXMLSIGNER", "" + moduleVersion });
+//		assertTrue(TestUtils.grepTempOut("Removal of module successful."));
+//		sSSession.reloadConfiguration(WORKERID);
 	}
 
 	/**

@@ -14,6 +14,7 @@
 
 		<javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
 			<classpath refid="ooxmlsigner.build.classpath" />
+			<compilerarg value="-Djava.endorsed.dirs=lib/endorsed"/>
 			<src path="${src.java}" />
 			<include name="org/signserver/module/ooxmlsigner/*.java" />
 			<include name="org/openxml4j/opc/*.java" />

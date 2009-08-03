@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="lib" path="lib/1.5/xmlsec-1.4.3.jar"/>
+	<classpathentry kind="lib" path="D:/My_Projects/SignServer_WorkSpace/SignServer/lib/endorsed/xmlsec-1.4.3.jar"/>
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/client"/>

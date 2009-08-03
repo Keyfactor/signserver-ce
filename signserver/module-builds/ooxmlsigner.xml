@@ -35,7 +35,7 @@
 					<include name="jaxen-1.1.jar" />
 					<include name="openxml4j-bin-beta.jar" />
 				</fileset>
-				<fileset dir="lib/1.5">
+				<fileset dir="lib/endorsed">
 					<include name="xmlsec-1.4.3.jar" />
 				</fileset>
 				<fileset dir="dist-server">

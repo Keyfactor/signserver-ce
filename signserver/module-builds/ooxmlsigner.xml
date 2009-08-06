@@ -6,6 +6,7 @@
 		<path id="ooxmlsigner.build.classpath">
 			<path refid="signserver.compile.classpath" />
 			<path location="${build}" />
+			<fileset dir="lib/endorsed" includes="*.jar" />
 		</path>
 
 		<taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" classpathref="ooxmlsigner.build.classpath" />
@@ -14,30 +15,23 @@
 
 		<javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
 			<classpath refid="ooxmlsigner.build.classpath" />
-			<compilerarg value="-Djava.endorsed.dirs=lib/endorsed"/>
+			<compilerarg value="-Djava.endorsed.dirs=lib/endorsed" />
 			<src path="${src.java}" />
 			<include name="org/signserver/module/ooxmlsigner/*.java" />
-			<include name="org/openxml4j/opc/*.java" />
 		</javac>
 
 		<jar jarfile="dist-server/ooxmlsigner-module.jar">
 			<fileset dir="${build}">
 				<include name="org/signserver/module/ooxmlsigner/**" />
-				<include name="org/openxml4j/opc/**" />
 			</fileset>
 		</jar>
+
 		<mar version="${mar.versions}" modulename="ooxmlsigner" verbose="true" destfile="${basedir}/dist-server/ooxmlsigner.mar">
 			<part>
-				<fileset dir="lib/ext">
-					<include name="xercesImpl-2_9_1" />
-				</fileset>
-				<fileset dir="lib/module/ooxmlsigner">
-					
-					<include name="jaxen-1.1.jar" />
-					<include name="openxml4j-bin-beta.jar" />
-				</fileset>
 				<fileset dir="lib/endorsed">
-					<include name="xmlsec-1.4.3.jar" />
+					<include name="xercesImpl.jar" />
+					<include name="jaxen-1.1.jar" />
+					<include name="openxml4j-signaturepatched.jar" />
 					<include name="pull-parser-2.1.10.jar" />
 					<include name="xsdlib-20030807.jar" />
 				</fileset>

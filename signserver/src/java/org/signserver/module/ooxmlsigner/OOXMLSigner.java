@@ -41,13 +41,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.Package;
-import org.openxml4j.opc.Package2;
 import org.openxml4j.opc.PackageAccess;
 import org.openxml4j.opc.PackagePart;
+import org.openxml4j.signaturehelpers.OPCSignatureHelper;
+import org.openxml4j.signaturehelpers.OPCURIDereferencer;
+import org.openxml4j.signaturehelpers.RelationshipTransformProvider;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletRequest;
@@ -68,13 +71,13 @@ import org.signserver.server.signers.BaseSigner;
 public class OOXMLSigner extends BaseSigner {
 
 	private String signatureId = "idPackageSignature";
-
+	private transient static final Logger log = Logger.getLogger(OOXMLSigner.class.getName());
 	@Override
 	public void init(int workerId, WorkerConfig config,
 			WorkerContext workerContext, EntityManager workerEM) {
 
 		// add opc relationship transform provider
-		Security.addProvider(new RelationshipTransformProvider());
+		Security.addProvider(new RelationshipTransformProvider()); 
 
 		super.init(workerId, config, workerContext, workerEM);
 	}
@@ -106,7 +109,7 @@ public class OOXMLSigner extends BaseSigner {
 		ByteArrayOutputStream boutTemp = new ByteArrayOutputStream();
 		Package docxPackage;
 		try {
-			docxPackage = Package2.open(new ByteArrayInputStream(data),
+			docxPackage = Package.open(new ByteArrayInputStream(data),
 					PackageAccess.READ_WRITE);
 		} catch (InvalidFormatException e) {
 			throw new SignServerException(
@@ -131,7 +134,7 @@ public class OOXMLSigner extends BaseSigner {
 				.toByteArray());
 		// open saved docxpackage ve imzala dene bakem
 		try {
-			docxPackage = Package2.open(binTemp, PackageAccess.READ_WRITE);
+			docxPackage = Package.open(binTemp, PackageAccess.READ_WRITE);
 		} catch (InvalidFormatException e) {
 			throw new SignServerException(
 					"Pre-formatted data is not in valid openxml package format",

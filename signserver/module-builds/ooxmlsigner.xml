@@ -28,13 +28,7 @@
 
 		<mar version="${mar.versions}" modulename="ooxmlsigner" verbose="true" destfile="${basedir}/dist-server/ooxmlsigner.mar">
 			<part>
-				<fileset dir="lib/endorsed">
-					<include name="xercesImpl.jar" />
-					<include name="jaxen-1.1.jar" />
-					<include name="openxml4j-signaturepatched.jar" />
-					<include name="pull-parser-2.1.10.jar" />
-					<include name="xsdlib-20030807.jar" />
-				</fileset>
+				
 				<fileset dir="dist-server">
 					<include name="ooxmlsigner-module.jar" />
 				</fileset>

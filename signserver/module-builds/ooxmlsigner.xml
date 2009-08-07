@@ -28,7 +28,6 @@
 
 		<mar version="${mar.versions}" modulename="ooxmlsigner" verbose="true" destfile="${basedir}/dist-server/ooxmlsigner.mar">
 			<part>
-				
 				<fileset dir="dist-server">
 					<include name="ooxmlsigner-module.jar" />
 				</fileset>
@@ -37,6 +36,22 @@
 				</fileset>
 			</part>
 		</mar>
+
+		<copy todir="${appserver.home}/lib/endorsed">
+			<fileset dir="${lib}/endorsed">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${lib}/module/wsra">
+				<include name="dom4j.jar" />
+			</fileset>
+			<fileset dir="${lib}">
+				<include name="log4j.jar" />
+			</fileset>
+			<fileset dir="${appserver.home}/lib">
+				<include name="commons-logging.jar" />
+			</fileset>
+		</copy>
+
 	</target>
 
 </project>

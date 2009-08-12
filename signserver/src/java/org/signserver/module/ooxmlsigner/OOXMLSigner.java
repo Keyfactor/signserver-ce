@@ -41,7 +41,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
 import org.openxml4j.exceptions.InvalidFormatException;
@@ -71,13 +70,13 @@ import org.signserver.server.signers.BaseSigner;
 public class OOXMLSigner extends BaseSigner {
 
 	private String signatureId = "idPackageSignature";
-	private transient static final Logger log = Logger.getLogger(OOXMLSigner.class.getName());
+
 	@Override
 	public void init(int workerId, WorkerConfig config,
 			WorkerContext workerContext, EntityManager workerEM) {
 
 		// add opc relationship transform provider
-		Security.addProvider(new RelationshipTransformProvider()); 
+		Security.addProvider(new RelationshipTransformProvider());
 
 		super.init(workerId, config, workerContext, workerEM);
 	}
@@ -119,10 +118,11 @@ public class OOXMLSigner extends BaseSigner {
 		}
 
 		// openxml4j formats document when writing parts to zip, which affects
-		// the signature (breaks)
-		// so first normalize document by opening and saving, then reopen the
-		// saved document to sign
-		// 1) save output to package (same document ama gor bak)
+		// the signature (breaks it).
+		// First "normalize" document by opening and saving, then reopen the
+		// saved document to sign.
+
+		// save output to package
 		try {
 			docxPackage.save(boutTemp);
 		} catch (IOException e) {
@@ -132,7 +132,8 @@ public class OOXMLSigner extends BaseSigner {
 
 		ByteArrayInputStream binTemp = new ByteArrayInputStream(boutTemp
 				.toByteArray());
-		// open saved docxpackage ve imzala dene bakem
+
+		// open saved docxpackage and sign
 		try {
 			docxPackage = Package.open(binTemp, PackageAccess.READ_WRITE);
 		} catch (InvalidFormatException e) {
@@ -321,9 +322,9 @@ public class OOXMLSigner extends BaseSigner {
 
 	/**
 	 * This method is signing the idPackageObject <Object>. This is workaraound
-	 * to bug in java XML DSig API is fixed, which processes Reference objects
+	 * to bug in java XML DSig API, which processes Reference objects
 	 * inside Manifest of xmlobject AFTER References in SignedInfo are processed
-	 * (thus failing validation)
+	 * (thus failing validation). BUG Id : 6867348 (sun internal bug tracking system)
 	 * 
 	 * @param docxPackage
 	 * @return

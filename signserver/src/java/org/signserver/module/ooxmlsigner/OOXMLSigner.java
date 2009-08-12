@@ -1,3 +1,16 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
+
 package org.signserver.module.ooxmlsigner;
 
 import java.io.ByteArrayInputStream;
@@ -67,6 +80,20 @@ import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
+/**
+ * A Signer signing Open Office XML files (ECMA 376) using the openxml4j library
+ * (signature patched version. Patch applied to revision 534 to
+ * https://openxml4j.svn.sourceforge.net. Patched version is available at :
+ * TODO: fill in temporary address in signserver svn.). 
+ * 
+ * Adds invisible singature to docx, xlsx, pptx files (created using MS Office 2007, or other ECMA 376 comformant application)
+ *  
+ * @see http://www.ecma-international.org/publications/standards/Ecma-376.htm
+ * @see http://sourceforge.net/projects/openxml4j/
+ * 
+ * @author Aziz Göktepe
+ * @version $Id: OOXMLSigner.java 550 2009-08-12 11:56:16Z rayback_2 $
+ */
 public class OOXMLSigner extends BaseSigner {
 
 	private String signatureId = "idPackageSignature";
@@ -322,9 +349,9 @@ public class OOXMLSigner extends BaseSigner {
 
 	/**
 	 * This method is signing the idPackageObject <Object>. This is workaraound
-	 * to bug in java XML DSig API, which processes Reference objects
-	 * inside Manifest of xmlobject AFTER References in SignedInfo are processed
-	 * (thus failing validation). BUG Id : 6867348 (sun internal bug tracking system)
+	 * to bug in java XML DSig API, which processes Reference objects inside
+	 * Manifest of xmlobject AFTER References in SignedInfo are processed (thus
+	 * failing validation). BUG Id : 6867348 (sun internal bug tracking system)
 	 * 
 	 * @param docxPackage
 	 * @return

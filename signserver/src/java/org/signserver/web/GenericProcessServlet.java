@@ -62,10 +62,16 @@ public class GenericProcessServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
+    private static final String METHOD_GET = "GET";
+
     private static Logger log = Logger.getLogger(GenericProcessServlet.class);
 
     private static final String WORKERID_PROPERTY_NAME = "workerId";
     private static final String WORKERNAME_PROPERTY_NAME = "workerName";
+    private static final String DATA_PROPERTY_NAME = "data";
+    private static final String ENCODING_PROPERTY_NAME = "encoding";
+    private static final String ENCODING_BASE64 = "base64";
     private static final long MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
     private IWorkerSession.ILocal workersession;
 
@@ -137,8 +143,7 @@ public class GenericProcessServlet extends HttpServlet {
                 throw new ServletException("Upload failed", ex);
             }
         } else {
-            log.info("Request Content-type: " + req.getContentType());
-            
+
             String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
             if(name != null){
                 log.debug("Found a signerName in the request: "+name);
@@ -150,24 +155,46 @@ public class GenericProcessServlet extends HttpServlet {
                 workerId = Integer.parseInt(id);
             }
 
-            // Get an input stream and read the bytes from the stream
-            InputStream in = req.getInputStream();
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            int len = 0;
-            byte[] buf = new byte[1024];
-            while ((len = in.read(buf)) > 0) {
-                os.write(buf, 0, len);
-            }
-            in.close();
-            os.close();
-            data = os.toByteArray();
+            if(METHOD_GET.equalsIgnoreCase(req.getMethod()) ||
+                    (req.getContentType() != null && req.getContentType().contains(FORM_URL_ENCODED))) {
+                log.info("Request is FORM_URL_ENCODED");
 
-            // Limit the maximum size of input
-            log.debug("Received a request with length: " + req.getContentLength());
-            if (data.length > MAX_UPLOAD_SIZE) {
-                log.error("Content length exceeds 100MB, not processed: " + req.getContentLength());
-                throw new ServletException("Error. Maximum content lenght is 100MB.");
+                if(req.getParameter(DATA_PROPERTY_NAME) == null) {
+                    throw new ServletException("Missing field 'data' in request");
+                }
+                data = req.getParameter(DATA_PROPERTY_NAME).getBytes();
+
+                String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
+                if(encoding != null && !"".equals(encoding)) {
+                    if(ENCODING_BASE64.equalsIgnoreCase(encoding)) {
+                        log.info("Decoding base64 data");
+                        data = org.ejbca.util.Base64.decode(data);
+                    } else {
+                        throw new ServletException("Unknown encoding for the 'data' field: " + encoding);
+                    }
+                }
+            } else {
+                log.info("Request Content-type: " + req.getContentType());
+
+                // Get an input stream and read the bytes from the stream
+                InputStream in = req.getInputStream();
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                int len = 0;
+                byte[] buf = new byte[1024];
+                while ((len = in.read(buf)) > 0) {
+                    os.write(buf, 0, len);
+                }
+                in.close();
+                os.close();
+                data = os.toByteArray();
             }
+        }
+
+        // Limit the maximum size of input
+        log.debug("Received a request with length: " + req.getContentLength());
+        if (data.length > MAX_UPLOAD_SIZE) {
+            log.error("Content length exceeds 100MB, not processed: " + req.getContentLength());
+            throw new ServletException("Error. Maximum content lenght is 100MB.");
         }
 
         processRequest(req, res, workerId, data, fileName);

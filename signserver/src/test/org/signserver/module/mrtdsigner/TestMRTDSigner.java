@@ -15,6 +15,7 @@ package org.signserver.module.mrtdsigner;
 
 import java.security.cert.Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 
 import javax.crypto.Cipher;
@@ -24,6 +25,8 @@ import javax.naming.InitialContext;
 import junit.framework.TestCase;
 
 import org.signserver.cli.CommonAdminInterface;
+import org.signserver.common.GenericSignRequest;
+import org.signserver.common.GenericSignResponse;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.RequestContext;
@@ -147,6 +150,25 @@ public class TestMRTDSigner extends TestCase {
 	  assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);		
       
 	}
+
+    public void testGenericSignData() throws Exception {
+
+        int reqid = 13;
+        byte[] signreq1 = "Hello World".getBytes();
+
+        GenericSignResponse res = (GenericSignResponse) sSSession.process(7890, new GenericSignRequest(reqid, signreq1), new RequestContext());
+        assertTrue(res != null);
+        assertTrue(reqid == res.getRequestID());
+        Certificate signercert = res.getSignerCertificate();
+        assertNotNull(signercert);
+
+        Cipher c = Cipher.getInstance("RSA", "BC");
+        c.init(Cipher.DECRYPT_MODE, signercert);
+
+        byte[] signres1 = c.doFinal(signreq1);
+
+        assertTrue(Arrays.equals(signreq1, signres1));
+    }
 	
 	public void test99TearDownDatabase() throws Exception{
 		TestUtils.assertSuccessfulExecution(new String[] {"removeworker",

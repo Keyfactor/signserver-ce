@@ -25,7 +25,14 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.ejb.EJBException;
 
+import org.bouncycastle.util.encoders.Hex;
+import org.ejbca.util.CertTools;
+import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericServletRequest;
+import org.signserver.common.GenericServletResponse;
+import org.signserver.common.GenericSignRequest;
+import org.signserver.common.GenericSignResponse;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignRequest;
 import org.signserver.common.ISignerCertReqInfo;
@@ -65,65 +72,50 @@ public class MRTDSigner extends BaseSigner {
 	
 	public ProcessResponse processData(ProcessRequest signRequest,
 	                              RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException{
-		
-		
-		ISignRequest sReq = (ISignRequest) signRequest;
-		if(!(signRequest instanceof MRTDSignRequest)){
-			throw new IllegalRequestException("Sign request with id :" + sReq.getRequestID() + " is of the wrong type :" 
-					                               + signRequest.getClass().getName() + " should be MRTDSignRequest ");
-		}
-		
-		MRTDSignRequest req = (MRTDSignRequest) signRequest;
-		
-        ArrayList<byte[]> genSignatures = new ArrayList<byte[]>();
-        
-		if(req.getRequestData() == null){
-			throw new IllegalRequestException("Signature request data cannot be null.");
-		}
-        
-        Iterator<?> iterator = ((ArrayList<?>) req.getRequestData()).iterator();
-        while(iterator.hasNext()){
-        	
-        	byte[] data = null;
-        	try{
-        	   data = (byte[]) iterator.next();	
-        	}catch(Exception e){
-        		throw new IllegalRequestException("Signature request data must be an ArrayList of byte[]");
-        	}
-        	
-        	
-        	Cipher c;
-			try {
-				c = Cipher.getInstance("RSA", getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
-			} catch (NoSuchAlgorithmException e) {
-				throw new EJBException(e);
-			} catch (NoSuchProviderException e) {
-				throw new EJBException(e);
-			} catch (NoSuchPaddingException e) {
-				throw new EJBException(e);
-			}
 
-            try {
-				c.init(Cipher.ENCRYPT_MODE, this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN));				
-			} catch (InvalidKeyException e) {
-				throw new EJBException(e);
-			}
+            ISignRequest sReq = (ISignRequest) signRequest;
 
-            byte[] result;
-			try {
-				result = c.doFinal(data);
-			} catch (IllegalBlockSizeException e) {
-				throw new EJBException(e);
-			} catch (BadPaddingException e) {
-				throw new EJBException(e);
-			}
+            if(sReq.getRequestData() == null){
+                throw new IllegalRequestException("Signature request data cannot be null.");
+            }
 
+            if(signRequest instanceof MRTDSignRequest) {
+                MRTDSignRequest req = (MRTDSignRequest) signRequest;
 
-            
-            genSignatures.add(result);	
-        }
-        
-		return new MRTDSignResponse(sReq.getRequestID(),genSignatures,getSigningCertificate());
+                ArrayList<byte[]> genSignatures = new ArrayList<byte[]>();
+
+                Iterator<?> iterator = ((ArrayList<?>) req.getRequestData()).iterator();
+                while(iterator.hasNext()){
+
+                    byte[] data = null;
+                    try{
+                       data = (byte[]) iterator.next();
+                    }catch(Exception e){
+                            throw new IllegalRequestException("Signature request data must be an ArrayList of byte[]");
+                    }
+
+                    genSignatures.add(encrypt(data));
+                }
+
+                return new MRTDSignResponse(req.getRequestID(),genSignatures,getSigningCertificate());
+
+            } else if(signRequest instanceof GenericSignRequest) {
+                GenericSignRequest req = (GenericSignRequest) signRequest;
+
+                byte[] bytes = req.getRequestData();
+		String fp = new String(Hex.encode(CertTools.generateSHA1Fingerprint(bytes)));
+
+                byte[] signedbytes = encrypt(bytes);
+
+                if(signRequest instanceof GenericServletRequest){
+                    return new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes), "application/octet-stream");
+                } else {
+                    return new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));
+                }
+            } else {
+                throw new IllegalRequestException("Sign request with id: " + sReq.getRequestID() + " is of the wrong type: "
+                                                                   + sReq.getClass().getName() + " should be MRTDSignRequest or GenericSignRequest");
+            }
 	} 
 
 
@@ -136,5 +128,33 @@ public class MRTDSigner extends BaseSigner {
 	}
 
 
+        private byte[] encrypt(byte[] data) throws CryptoTokenOfflineException {
+            Cipher c;
+            try {
+                c = Cipher.getInstance("RSA", getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+            } catch (NoSuchAlgorithmException e) {
+                throw new EJBException(e);
+            } catch (NoSuchProviderException e) {
+                throw new EJBException(e);
+            } catch (NoSuchPaddingException e) {
+                throw new EJBException(e);
+            }
+
+            try {
+                c.init(Cipher.ENCRYPT_MODE, this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN));
+            } catch (InvalidKeyException e) {
+                throw new EJBException(e);
+            }
+
+            byte[] result;
+            try {
+                result = c.doFinal(data);
+            } catch (IllegalBlockSizeException e) {
+                throw new EJBException(e);
+            } catch (BadPaddingException e) {
+                throw new EJBException(e);
+            }
+            return result;
+        }
 	
 }

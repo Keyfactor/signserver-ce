@@ -106,5 +106,42 @@ try {
 			</subsection>
 		</section>
 
+                <section name="Web Server Interface">
+			<p>
+				HTTP requests can be sent to the SignServer servlet GenericProcessServlet located at /signserver/process using
+                                either POST or GET.
+			</p>
+                        <p>
+                            <ul>
+                                <li>
+                                    HTTP GET:<br/>
+                                    Fields:<br/>
+                                    workerName<br/>
+                                    workerId<br/>
+                                    data<br/>
+                                    encoding<br/>
+                                    http://localhost:8080/signserver/process?workerName=XMLSigner&amp;data=%3Croot%3Ehej2%3C/root%3E<br/>
+                                    http://localhost:8080/signserver/process?workerName=XMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D
+                                </li>
+                                <li>
+                                    HTTP POST with multipart/form-data or x-www-form-urlencoded:<br/>
+                                    Fields:<br/>
+                                    workerName<br/>
+                                    workerId<br/>
+                                    data<br/>
+                                    encoding<br/>
+                                    For example see /signserver/xmlsign.html (multipart/form-data) and /signserver/genericsign.html (x-www-form-urlencoded).
+                                </li>
+                                <li>
+                                    HTTP POST with different content-type<br/>
+                                    If the content-type is specified but not as "application/x-www-form-urlencoded" the whole
+                                    body from the request is read and sent to the worker specified by workerName or workerId in the query string.<br/>
+                                    For instance see the TimeStampClient.
+                                </li>
+                            </ul>
+
+                        </p>
+		</section>
+
 	</body>
 </document>

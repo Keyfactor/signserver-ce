@@ -48,8 +48,9 @@ function check()
 <h2>XML file signing</h2>
 </div>
 
-<form id="recievefile" action="/signserver/process?workerName=XMLSigner"
+<form id="recievefile" action="/signserver/process"
 	method="post" enctype="multipart/form-data">
+    <input type="hidden" name="workerName" value="XMLSigner"/>
 	
 <p>Simply upload a XML document to the XML signer and you will get
 back the same XML, but signed by the signserver. This is a central

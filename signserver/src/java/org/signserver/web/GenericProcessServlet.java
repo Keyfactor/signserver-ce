@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import javax.naming.Context;
@@ -29,6 +31,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletRequest;
@@ -38,7 +45,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
- 
+
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
@@ -52,35 +59,32 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * @version $Id$
  */
 public class GenericProcessServlet extends HttpServlet {
-	
-	private static final long serialVersionUID = 1L;
 
-	private static Logger log = Logger.getLogger(GenericProcessServlet.class);
-	
-	private static final String WORKERID_PROPERTY_NAME = "workerId";
-	private static final String WORKERNAME_PROPERTY_NAME = "workerName";
+    private static final long serialVersionUID = 1L;
 
-	private IWorkerSession.ILocal workersession;
-	
-    private IWorkerSession.ILocal getWorkerSession(){
-    	if(workersession == null){
-    		try{
-    		  Context context = new InitialContext();
-    		  workersession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
-    		}catch(NamingException e){
-    			log.error(e);
-    		}
-    	}
-    	
-    	return workersession;
+    private static Logger log = Logger.getLogger(GenericProcessServlet.class);
+
+    private static final String WORKERID_PROPERTY_NAME = "workerId";
+    private static final String WORKERNAME_PROPERTY_NAME = "workerName";
+    private static final long MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
+    private IWorkerSession.ILocal workersession;
+
+    private IWorkerSession.ILocal getWorkerSession() {
+        if (workersession == null) {
+            try {
+                Context context = new InitialContext();
+                workersession = (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
+            } catch (NamingException e) {
+                log.error(e);
+            }
+        }
+
+        return workersession;
     }
 
-	
-	public void init(ServletConfig config) {
+    public void init(ServletConfig config) {
+    }
 
-	}
-
-	
     /**
      * handles http post
      *
@@ -91,90 +95,139 @@ public class GenericProcessServlet extends HttpServlet {
      * @throws ServletException error
      */
     public void doPost(HttpServletRequest req, HttpServletResponse res)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
         log.debug(">doPost()");
-        int workerId = 1;
-    	String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
-        if(name != null){
-        	log.debug("Found a signerName in the request: "+name);
-        	workerId = getWorkerSession().getWorkerId(name);
-        }
-        String id = req.getParameter(WORKERID_PROPERTY_NAME);
-        if(id != null){
-        	log.debug("Found a signerId in the request: "+id);
-        	workerId = Integer.parseInt(id);
-        }
-        log.debug("Using signerId: "+workerId);
-                 
-        String remoteAddr = req.getRemoteAddr();
-        log.info("Recieved HTTP process request for worker " + workerId+", from ip "+remoteAddr);
-        
-        // 
-        Certificate clientCertificate = null;
-       	Certificate[] certificates = (X509Certificate[]) req.getAttribute( "javax.servlet.request.X509Certificate" );
-    	if(certificates != null){
-    		clientCertificate = certificates[0];
-    	}
-    	// Limit the maximum size of input to 100MB (100*1024*1024)
-    	log.debug("Received a request with length: "+req.getContentLength());
-		if (req.getContentLength() > 104857600){
-			log.error("Content length exceeds 100MB, not processed: "+req.getContentLength());
-			throw new ServletException("Error. Maximum content lenght is 100MB.");
-		}
 
-    	// Get an input stream and read the pdf bytes from the stream
-        InputStream in = req.getInputStream();
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        int len = 0;
-        byte[] buf = new byte[1024];
-        while ((len = in.read(buf)) > 0) {
-            os.write(buf, 0, len);
+        int workerId = 1;
+        byte[] data = null;
+        String fileName = null;
+
+        if (ServletFileUpload.isMultipartContent(req)) {
+            FileItemFactory factory = new DiskFileItemFactory();
+            ServletFileUpload upload = new ServletFileUpload(factory);
+
+            // Limit the maximum size of input
+            upload.setSizeMax(MAX_UPLOAD_SIZE);
+
+            try {
+                List<FileItem> items = upload.parseRequest(req);
+                Iterator iter = items.iterator();
+                while (iter.hasNext()) {
+                    FileItem item = (FileItem) iter.next();
+
+                    if (item.isFormField()) {
+                        if (WORKERNAME_PROPERTY_NAME.equals(item.getFieldName())) {
+                            log.debug("Found a signerName in the request: " + item.getString());
+                            workerId = getWorkerSession().getWorkerId(item.getString());
+                        } else if (WORKERID_PROPERTY_NAME.equals(item.getFieldName())) {
+                            log.debug("Found a signerId in the request: " + item.getString());
+                            try {
+                                workerId = Integer.parseInt(item.getString());
+                            } catch (NumberFormatException ignored) {}
+                        }
+                    } else {
+                        fileName = item.getName();
+                        data = item.get();
+                        
+                        // We only care for one upload at a time right now
+                        break;
+                    }
+                }
+            } catch (FileUploadException ex) {
+                throw new ServletException("Upload failed", ex);
+            }
+        } else {
+            log.info("Request Content-type: " + req.getContentType());
+            
+            String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
+            if(name != null){
+                log.debug("Found a signerName in the request: "+name);
+                workerId = getWorkerSession().getWorkerId(name);
+            }
+            String id = req.getParameter(WORKERID_PROPERTY_NAME);
+            if(id != null){
+                log.debug("Found a signerId in the request: "+id);
+                workerId = Integer.parseInt(id);
+            }
+
+            // Get an input stream and read the bytes from the stream
+            InputStream in = req.getInputStream();
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            int len = 0;
+            byte[] buf = new byte[1024];
+            while ((len = in.read(buf)) > 0) {
+                os.write(buf, 0, len);
+            }
+            in.close();
+            os.close();
+            data = os.toByteArray();
+
+            // Limit the maximum size of input
+            log.debug("Received a request with length: " + req.getContentLength());
+            if (data.length > MAX_UPLOAD_SIZE) {
+                log.error("Content length exceeds 100MB, not processed: " + req.getContentLength());
+                throw new ServletException("Error. Maximum content lenght is 100MB.");
+            }
         }
-        in.close();
-        os.close();
-        byte[] inbytes = os.toByteArray();
-        log.debug("Received bytes of length: "+inbytes.length);
-        
-        Random rand = new Random();        
+
+        processRequest(req, res, workerId, data, fileName);
+
+        log.debug("<doPost()");
+    } //doPost
+
+    /**
+     * handles http get
+     *
+     * @param req servlet request
+     * @param res servlet response
+     *
+     * @throws IOException input/output error
+     * @throws ServletException error
+     * @throws
+     */
+    public void doGet(HttpServletRequest req, HttpServletResponse res) throws java.io.IOException, ServletException {
+        log.debug(">doGet()");
+        doPost(req, res);
+        log.debug("<doGet()");
+    } // doGet
+
+    private void processRequest(HttpServletRequest req, HttpServletResponse res, int workerId, byte[] data, String fileName) throws java.io.IOException, ServletException {
+        log.debug("Using signerId: " + workerId);
+
+        String remoteAddr = req.getRemoteAddr();
+        log.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
+
+        //
+        Certificate clientCertificate = null;
+        Certificate[] certificates = (X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate");
+        if (certificates != null) {
+            clientCertificate = certificates[0];
+        }
+
+        log.debug("Received bytes of length: " + data.length);
+
+        Random rand = new Random();
         int requestId = rand.nextInt();
 
         GenericServletResponse response = null;
         try {
-        	response = (GenericServletResponse) getWorkerSession().process(workerId, new GenericServletRequest(requestId, inbytes,req),new RequestContext((X509Certificate) clientCertificate, remoteAddr));
-		} catch (IllegalRequestException e) {
-			 throw new ServletException(e);
-		} catch (CryptoTokenOfflineException e) {
-			 throw new ServletException(e);
-	    } catch (SignServerException e) {
-	    	throw new ServletException(e);
-		}
-		
-		if(response.getRequestID() != requestId){
-			throw new ServletException("Error in process operation, response id didn't match request id");
-		}
-		byte[] processedBytes =  (byte[])response.getProcessedData();
-		
-		res.setContentType(response.getContentType());
-		res.setContentLength(processedBytes.length);
-		res.getOutputStream().write(processedBytes);
-		res.getOutputStream().close();
-        log.debug("<doPost()");
-    } //doPost
+            response = (GenericServletResponse) getWorkerSession().process(workerId, new GenericServletRequest(requestId, data, req), new RequestContext((X509Certificate) clientCertificate, remoteAddr));
+        } catch (IllegalRequestException e) {
+            throw new ServletException(e);
+        } catch (CryptoTokenOfflineException e) {
+            throw new ServletException(e);
+        } catch (SignServerException e) {
+            throw new ServletException(e);
+        }
 
-	/**
-	 * handles http get
-	 *
-	 * @param req servlet request
-	 * @param res servlet response
-	 *
-	 * @throws IOException input/output error
-	 * @throws ServletException error
-	 * @throws  
-	 */
-    public void doGet(HttpServletRequest req,  HttpServletResponse res) throws java.io.IOException, ServletException {
-        log.debug(">doGet()");
-        doPost(req, res);
-        log.debug("<doGet()");        
-    } // doGet
-	
+        if (response.getRequestID() != requestId) {
+            throw new ServletException("Error in process operation, response id didn't match request id");
+        }
+        byte[] processedBytes = (byte[]) response.getProcessedData();
+
+        res.setContentType(response.getContentType());
+        res.setContentLength(processedBytes.length);
+        res.getOutputStream().write(processedBytes);
+        res.getOutputStream().close();
+    }
 }

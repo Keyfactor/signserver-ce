@@ -264,7 +264,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	   <!-- =================================================================== -->
 	    <!-- Build signserver ejb part                                           -->
 	    <!-- =================================================================== -->
-	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient, signingAndValidationAPI" description="Creates master ejb.jar" unless="buildMailSigner">
+	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient, signingAndValidationAPI" unless="buildMailSigner">
 
 	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
 	        	<metainf dir="${preprocessed}/appserver/${appserver.type}">
@@ -511,7 +511,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, xmlsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, dummywsmar, wsramar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, xmlsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, dummywsmar, wsramar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />
@@ -536,7 +536,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
     <!-- ======================================================================= -->
     <!-- Deploy Sign Server ear to JBoss                                               -->
     <!-- ======================================================================= -->
-    <target name="deploy" depends="signserver.ear, signserver-cli" unless="buildMailSigner">
+    <target name="deploy" depends="signserver.ear, signserver-cli" unless="buildMailSigner" description="Deploys SignServer">
         <antcall target="j2ee:deploy" />
 	<antcall target="showtime" />
     </target>

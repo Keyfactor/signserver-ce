@@ -57,7 +57,7 @@
 
 # ------------ Web GUI configuration ---------------------
 
-# set this if HTTPS should be disabled.
+# set this if the web server should not be configured for HTTPS.
 #j2ee.web-nohttps=true
 
 # When upgrading, the important options are:

@@ -106,7 +106,7 @@ OS version                          = ${os.version}
         <mkdir dir="${client.dist.dir}/lib"/>
     </target>
 	
-	<target name="ant:configure" description="Copies required libraries to ant directory">
+	<target name="ant:configure">
         <fail message="Please set the environment variable 'ANT_HOME' before running this task." unless="ant.home"/>
         <available file="${ant.home}/lib" property="ant.home.valid"/>
         <fail message="'ant.home' (${ant.home}) does not seem to be a valid ant home directory" unless="ant.home.valid"/>

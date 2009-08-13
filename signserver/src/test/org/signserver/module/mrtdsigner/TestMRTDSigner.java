@@ -24,6 +24,7 @@ import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
 
+import org.bouncycastle.util.encoders.Hex;
 import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -165,7 +166,7 @@ public class TestMRTDSigner extends TestCase {
         Cipher c = Cipher.getInstance("RSA", "BC");
         c.init(Cipher.DECRYPT_MODE, signercert);
 
-        byte[] signres1 = c.doFinal(signreq1);
+        byte[] signres1 = c.doFinal(res.getProcessedData());
 
         assertTrue(Arrays.equals(signreq1, signres1));
     }

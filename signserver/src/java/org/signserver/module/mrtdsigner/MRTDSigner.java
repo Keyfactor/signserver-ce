@@ -130,6 +130,10 @@ public class MRTDSigner extends BaseSigner {
         private byte[] encrypt(byte[] data) throws CryptoTokenOfflineException {
             Cipher c;
             try {
+            	// Using a PKCS#11 HSM plain RSA Cipher does not work, but we have to use RSA/ECB/PKCS1Padding
+            	// It may be possible to use that, if the data is already padded correctly when it is sent as input, but only for 
+            	// PKCS#1, not PSS. Sun's PKCS#11 provider does not supoprt PSS (OAEP) padding yet as of 2009-08-14.
+            	// The below (plain RSA) works for soft keystores and PrimeCardHSM
                 c = Cipher.getInstance("RSA", getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
             } catch (NoSuchAlgorithmException e) {
                 throw new EJBException(e);

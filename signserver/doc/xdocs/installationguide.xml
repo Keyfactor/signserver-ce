@@ -177,6 +177,30 @@ To install the MRTD signer you can issue the following commands:
 </ol>
 Now <a href="api.html">the SignServer APIs</a> can be used to send MRTD sign requests the MRTDSigner.  
 </p>
+<subsubsection name="Producton configuration">
+<p>To install a production signer using an HSM instead of the demo signer you can edit src/module-configs/mrtdsigner/prod-part-config.properties and then run:
+</p>
+<source>
+ant
+bin/signserver.sh module add dist-server/mrtdsigner.mar prod
+bin/signserver.sh getconfig 1
+bin/signserver.sh reload 1
+bin/signserver.sh generatecertreq 1 "C=SE,CN=MRTD Signer" SHA256WithRSA mrtdsigner.req
+</source>
+<p>
+This will create a certificate request that you can get signed by your CA. When you have received the response you can import them with. 
+If you have the returned signer certificate as cert.pem and the CA certificate cacert.pem. 
+</p>
+<source>
+cat cert.pem cacert.pem> certchain.pem
+bin/signserver.sh uploadsignercertificate 1 glob ~/tmp/cert.pem
+bin/signserver.sh uploadsignercertificatechain 1 GLOB certchain.pem
+</source>
+<p>Hint: you can use EJBCA to create keys on a PKCS#11 HSM using clientToolBox.
+<br/>
+ejbcaClientToolBox.sh PKCS11HSMKeyTool generate ./slot5.cfg 2048 defaultSign
+</p>
+</subsubsection>
 </subsection>
 
 </section>

@@ -85,7 +85,7 @@ try {
     bytesToSign.add("Sample data 2".getBytes());
 
     // Signing
-    MRTDSignResponse signResp = (MRTDSignResponse) signserver.process(4, new MRTDSignRequest(1234, bytesToSign), new RequestContext());
+    MRTDSignResponse signResp = (MRTDSignResponse) signserver.process("MRTDSigner", new MRTDSignRequest(1234, bytesToSign), new RequestContext());
 
     System.out.println("Certificate: " + signResp.getSignerCertificate());
 

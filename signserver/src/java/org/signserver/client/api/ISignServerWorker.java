@@ -31,7 +31,7 @@ public interface ISignServerWorker {
 	/**
 	 * Send a request to a specified worker.
 	 * 
-	 * @param workerId Id of worker which should process the request.
+	 * @param workerIdOrName Id or name of worker which should process the request.
 	 * @param request The request.
 	 * @param context The context.
 	 * @return The response from the worker.
@@ -39,6 +39,6 @@ public interface ISignServerWorker {
 	 * @throws IllegalRequestException If illegal request is sent to the method.
 	 * @throws SignServerException If some other error occurred server side during process.
 	 */
-	public ProcessResponse process(int workerId, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+	public ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 	
 }

@@ -97,10 +97,6 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
 	}
 
 	@Override
-	public ProcessResponse process(int workerId, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-		return process(""+workerId, request, context);
-	}
-	
 	public ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 		List<ProcessResponse> responses = process(workerIdOrName, Collections.singletonList(request), context);
 		if(responses.size() != 1) {

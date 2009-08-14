@@ -33,14 +33,11 @@ import org.signserver.server.cryptotokens.ICryptoToken;
 
 public abstract class BaseProcessable extends BaseWorker implements IProcessable {
 	
+    /** Log4j instance for actual implementation class */
 	private transient Logger log = Logger.getLogger(this.getClass());
 
 	//Private Property constants
 
-
-    /** Log4j instance for actual implementation class */
-   // private transient Logger log = Logger.getLogger(this.getClass());
-    
     protected ICryptoToken cryptoToken = null;
 
     
@@ -75,11 +72,17 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 	
 	
 	protected ICryptoToken getCryptoToken() {
+		if (log.isTraceEnabled()) {
+			log.trace(">getCryptoToken");
+		}
 		if(cryptoToken == null){
 			GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
 			try{				
 				String classpath =gc.getCryptoTokenProperty(
 						workerId,GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);
+				if (log.isDebugEnabled()) {
+					log.debug("Found cryptotoken classpath: "+classpath);
+				}
 				if(classpath != null){		
 					Class<?> implClass = Class.forName(classpath);
 					Object obj = implClass.newInstance();
@@ -97,6 +100,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 			catch(InstantiationException ie){
 				throw new EJBException(ie);
 			}
+		}
+		if (log.isTraceEnabled()) {
+			log.trace("<getCryptoToken: "+cryptoToken!=null ? cryptoToken.getClass().getName() : "null");
 		}
 		
 		return cryptoToken;
@@ -152,8 +158,19 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 	 * @return the request or null if method isn't supported by signertoken.
 	 */
 	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
-		return getCryptoToken().genCertificateRequest(info);
-		 
+		if (log.isTraceEnabled()) {
+			log.trace(">genCertificateRequest");
+		}
+		ICryptoToken token = getCryptoToken();
+		if (log.isDebugEnabled()) {
+			log.debug("Found a crypto token of type: "+token.getClass().getName());
+			log.debug("Token status is: "+token.getCryptoTokenStatus());
+		}
+		ICertReqData data = token.genCertificateRequest(info);
+		if (log.isTraceEnabled()) {
+			log.trace("<genCertificateRequest");
+		}
+		return data;		 
 	}
 	
 	/**
@@ -162,6 +179,5 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 	public boolean destroyKey(int purpose) {
 		return getCryptoToken().destroyKey(purpose);
 	}
-	
 	
 }

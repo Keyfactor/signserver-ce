@@ -25,6 +25,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.ejb.EJBException;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;
@@ -33,9 +34,7 @@ import org.signserver.common.GenericServletRequest;
 import org.signserver.common.GenericServletResponse;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignRequest;
-import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
@@ -52,10 +51,9 @@ import org.signserver.server.signers.BaseSigner;
  * @author Philip Vendil
  * @version $Id$
  */
-
 public class MRTDSigner extends BaseSigner {
 	
-	//private transient Logger log = Logger.getLogger(this.getClass());
+	private static final Logger log = Logger.getLogger(MRTDSigner.class);
 	
 	public MRTDSigner(){
 	}
@@ -73,6 +71,11 @@ public class MRTDSigner extends BaseSigner {
 	public ProcessResponse processData(ProcessRequest signRequest,
 	                              RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException{
 
+		if (log.isTraceEnabled()) {
+			log.trace(">processData");
+		}
+		ProcessResponse ret = null;
+		
             ISignRequest sReq = (ISignRequest) signRequest;
 
             if(sReq.getRequestData() == null){
@@ -97,35 +100,31 @@ public class MRTDSigner extends BaseSigner {
                     genSignatures.add(encrypt(data));
                 }
 
-                return new MRTDSignResponse(req.getRequestID(),genSignatures,getSigningCertificate());
+                ret = new MRTDSignResponse(req.getRequestID(),genSignatures,getSigningCertificate());
 
             } else if(signRequest instanceof GenericSignRequest) {
                 GenericSignRequest req = (GenericSignRequest) signRequest;
 
                 byte[] bytes = req.getRequestData();
-		String fp = new String(Hex.encode(CertTools.generateSHA1Fingerprint(bytes)));
+                String fp = new String(Hex.encode(CertTools.generateSHA1Fingerprint(bytes)));
 
                 byte[] signedbytes = encrypt(bytes);
 
                 if(signRequest instanceof GenericServletRequest){
-                    return new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes), "application/octet-stream");
+                    ret = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes), "application/octet-stream");
                 } else {
-                    return new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));
+                    ret = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));
                 }
             } else {
                 throw new IllegalRequestException("Sign request with id: " + sReq.getRequestID() + " is of the wrong type: "
                                                                    + sReq.getClass().getName() + " should be MRTDSignRequest or GenericSignRequest");
             }
+    		if (log.isTraceEnabled()) {
+    			log.trace("<processData");
+    		}
+    		return ret;
 	} 
 
-
-
-    /**
-     * Not supported yet
-     */
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{		
-		return getCryptoToken().genCertificateRequest(info);
-	}
 
 
         private byte[] encrypt(byte[] data) throws CryptoTokenOfflineException {

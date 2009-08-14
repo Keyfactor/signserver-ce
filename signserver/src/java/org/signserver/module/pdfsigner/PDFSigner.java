@@ -168,12 +168,6 @@ public class PDFSigner extends BaseSigner{
 		return signResponse;
 	}
 
-    /**
-     * Not supported yet
-     */
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
-		return this.getCryptoToken().genCertificateRequest(info);
-	}
 }
 
 

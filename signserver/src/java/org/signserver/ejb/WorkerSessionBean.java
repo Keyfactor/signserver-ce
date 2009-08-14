@@ -304,6 +304,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	 */
 	public ICertReqData getCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws		
 		CryptoTokenOfflineException, InvalidWorkerIdException {
+		if (log.isTraceEnabled()) {
+			log.trace(">getCertificateRequest: signerId="+signerId);
+		}
 			IWorker worker = WorkerFactory.getInstance().getWorker(signerId, workerConfigService,globalConfigurationSession,new SignServerContext(em));
 			if(worker == null){
 				throw new InvalidWorkerIdException("Given SignerId " + signerId + " doesn't exist");
@@ -313,8 +316,15 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	        	throw new InvalidWorkerIdException("Worker exists but isn't a signer.");
 	        }
 			IProcessable processable = (IProcessable) worker;
+			if (log.isDebugEnabled()) {
+				log.debug("Found processable worker of type: "+processable.getClass().getName());
+			}
 			
-			return processable.genCertificateRequest(certReqInfo);
+			ICertReqData ret = processable.genCertificateRequest(certReqInfo);
+			if (log.isTraceEnabled()) {
+				log.trace("<getCertificateRequest: signerId="+signerId);
+			}
+			return ret;
 	}
 	
 	/* (non-Javadoc)

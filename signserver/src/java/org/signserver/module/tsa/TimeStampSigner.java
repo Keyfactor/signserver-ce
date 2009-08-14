@@ -423,12 +423,6 @@ public class TimeStampSigner extends BaseSigner{
         return serno;
     }
 
-    /**
-     * Not supported yet
-     */
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException{
-		return this.getCryptoToken().genCertificateRequest(info);
-	}
 }
 
 

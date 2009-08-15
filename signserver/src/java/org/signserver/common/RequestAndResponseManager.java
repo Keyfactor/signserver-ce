@@ -57,6 +57,7 @@ public class RequestAndResponseManager {
 	// Signer Request types
 	public static final int REQUESTTYPE_GENERICSIGNREQUEST = 1;
 	public static final int REQUESTTYPE_MRTDSIGNREQUEST    = 2;
+    public static final int REQUESTTYPE_SODSIGNREQUEST     = 3;
 	
 	// Group Key Service request types
 	public static final int REQUESTTYPE_GKS_SWITCHENCKEY = 101;
@@ -74,6 +75,7 @@ public class RequestAndResponseManager {
 	// Signer Response types
 	public static final int RESPONSETYPE_GENERICSIGNRESPONSE = 1;
 	public static final int RESPONSETYPE_MRTDSIGNRESPONSE    = 2;
+    public static final int RESPONSETYPE_SODSIGNRESPONSE     = 3;
     
 	// Group Key Service request types
 	public static final int RESPONSETYPE_GKS_SWITCHENCKEY = 101;
@@ -95,6 +97,7 @@ public class RequestAndResponseManager {
 	static{
 		availableRequestTypes.put(REQUESTTYPE_GENERICSIGNREQUEST,GenericSignRequest.class.getName());
 		availableRequestTypes.put(REQUESTTYPE_MRTDSIGNREQUEST,MRTDSignRequest.class.getName());
+        availableRequestTypes.put(REQUESTTYPE_SODSIGNREQUEST,SODSignRequest.class.getName());
 		availableRequestTypes.put(REQUESTTYPE_GKS_FETCHKEY,FetchKeyRequest.class.getName());
 		availableRequestTypes.put(REQUESTTYPE_GKS_IDREMKEYS,DocumentIDRemoveGroupKeyRequest.class.getName());
 		availableRequestTypes.put(REQUESTTYPE_GKS_PREGENKEYS,PregenerateKeysRequest.class.getName());
@@ -105,6 +108,7 @@ public class RequestAndResponseManager {
 		
 		availableResponseTypes.put(RESPONSETYPE_GENERICSIGNRESPONSE, GenericSignResponse.class.getName());
 		availableResponseTypes.put(RESPONSETYPE_MRTDSIGNRESPONSE, MRTDSignResponse.class.getName());
+        availableResponseTypes.put(RESPONSETYPE_SODSIGNRESPONSE, SODSignResponse.class.getName());
 		availableResponseTypes.put(RESPONSETYPE_GKS_FETCHKEY, FetchKeyResponse.class.getName());
 		availableResponseTypes.put(RESPONSETYPE_GKS_PREGENKEYS, PregenerateKeysResponse.class.getName());
 		availableResponseTypes.put(RESPONSETYPE_GKS_REMOVEKEY, RemoveGroupKeyResponse.class.getName());

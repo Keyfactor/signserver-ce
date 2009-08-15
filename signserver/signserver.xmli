@@ -4,6 +4,7 @@
 	   <import file="./build.xml"/>
 	   <import file="./module-builds/pdfsigner.xml"/>
 	   <import file="./module-builds/mrtdsigner.xml"/>
+       <import file="./module-builds/mrtdsodsigner.xml"/>	   
 	   <import file="./module-builds/tsa.xml"/>
 	   <import file="./module-builds/dummyws.xml"/>
 	   <import file="./module-builds/wsra.xml"/>
@@ -245,6 +246,8 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
 	            <classpath refid="server.compile.classpath" />
 	            <src path="${src.java}" /> 
+	        	<exclude name="net/sourceforge/scuba/**"/>
+	        	<exclude name="org/jmrtd/**"/>
 	        	<exclude name="org/signserver/module/**"/>
 	        	<exclude name="org/signserver/common/MailSigner*"/>
 	        	<exclude name="org/signserver/mailsigner/**"/>
@@ -513,7 +516,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, xmlsignermar,odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, dummywsmar, wsramar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, xmlsignermar,odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

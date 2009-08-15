@@ -34,6 +34,7 @@ import org.ejbca.util.CertTools;
 public class GenericSignResponse extends ProcessResponse implements ISignResponse {
 
 	private static final long serialVersionUID = 1L;
+    protected int tag = RequestAndResponseManager.RESPONSETYPE_GENERICSIGNRESPONSE;
 	private int requestID;
 	private byte[] processedData;
 	private Certificate signerCertificate;
@@ -122,7 +123,7 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
 	}
 
 	public void serialize(DataOutput out) throws IOException {
-		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GENERICSIGNRESPONSE);
+		out.writeInt(tag);
 		out.writeInt(this.requestID);
 		if(signerCertificate != null){
 			try {

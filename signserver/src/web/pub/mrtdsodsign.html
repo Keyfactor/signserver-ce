@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<title>MRTD SOD signing demo</title>
+<style type="text/css">
+<!--
+body {
+	width: 55em;
+	margin-left: 5em;
+	margin-top: 1em;
+}
+
+a:link {
+	color: #00007f;
+	text-decoration: none;
+}
+
+img {
+	border: 0px;
+}
+
+div.header {
+	font-size: 42px;
+	font-weight: bold;
+	margin-left: 2.5em;
+	margin-top: 15px;
+	font-style: italic;
+}
+-->
+</style>
+</head>
+<body>
+<div style="text-align: center;">
+<h2>MRTD SOD signing demo</h2>
+</div>
+
+<form id="requestform" action="/signserver/sod" method="post">
+    <input type="hidden" name="workerName" value="MRTDSODSigner"/>
+    <p>
+        DG1: <input type="text" size="80" name="dataGroup1"/><br/>
+        DG2: <input type="text" size="80" name="dataGroup2"/><br/>
+        DG3: <input type="text" size="80" name="dataGroup3"/><br/>
+        DG4: <input type="text" size="80" name="dataGroup4"/><br/>
+        DG5: <input type="text" size="80" name="dataGroup5"/><br/>
+        DG6: <input type="text" size="80" name="dataGroup6"/><br/>
+        DG7: <input type="text" size="80" name="dataGroup7"/><br/>
+        DG8: <input type="text" size="80" name="dataGroup8"/><br/>
+        DG9: <input type="text" size="80" name="dataGroup9"/><br/>
+        DG10: <input type="text" size="80" name="dataGroup10"/><br/>
+        DG11: <input type="text" size="80" name="dataGroup11"/><br/>
+        DG12: <input type="text" size="80" name="dataGroup12"/><br/>
+        DG13: <input type="text" size="80" name="dataGroup13"/><br/>
+        DG14: <input type="text" size="80" name="dataGroup14"/><br/>
+        DG15: <input type="text" size="80" name="dataGroup15"/><br/>
+        DG16: <input type="text" size="80" name="dataGroup16"/><br/>
+    </p>
+
+    <input type="submit" name="submit" value="Submit" /><br />
+</form>
+
+</body>
+</html>

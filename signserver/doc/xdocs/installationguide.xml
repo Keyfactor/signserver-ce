@@ -154,12 +154,15 @@ Now <a href="api.html">the SignServer APIs</a> can be used to request XML docume
 </p>
 </subsection>
 
-<subsection name="MRTD signer">
+<subsection name="MRTD SOD signer">
 <p> 
-To install the MRTD signer you can issue the following commands:
+The MRTD SOD signer takes as input data group hashes and creates a signed SO(d). This means that the signserver will function
+as a Document Signer for ePassports.</p>
+<p>
+To install the MRTD SOD signer you can issue the following commands:
 <ol>
-<li>Deploy the MRTD signer module and notice the worker ID (in this example: 4):<br/>
-<code># bin/signserver.sh module add dist-server/mrtdsigner.mar demo</code>
+<li>Deploy the MRTD SOD signer module and notice the worker ID (in this example: 4):<br/>
+<code># bin/signserver.sh module add dist-server/mrtdsodsigner.mar demo</code>
 <br/>
 </li>
 <li>Verify the configuration with:<br/>
@@ -170,22 +173,25 @@ To install the MRTD signer you can issue the following commands:
 <code># bin/signserver.sh reload 4</code>
 <br/>
 </li>
-<li>The status of the Validator can now be viewed with:<br/>
-<code># bin/signserver.sh getstatus complete mrtdsigner</code>
+<li>The status of the signer can now be viewed with:<br/>
+<code># bin/signserver.sh getstatus complete mrtdsodsigner</code>
 <br/>
 </li>
 </ol>
-Now <a href="api.html">the SignServer APIs</a> can be used to send MRTD sign requests the MRTDSigner.  
+Now <a href="api.html">the SignServer APIs</a> can be used to send MRTD SOD sign requests the MRTDSODSigner.
+<br/>
+Also you can use the HTML page http://&lt;signserverhost>:8080/signserver/mrtdsodsign.html to enter requests and get the SOD back.
+This HTML form functions as a sample to show how you can make http requests from the personalisation system to the Document Signer.  
 </p>
-<subsubsection name="Producton configuration">
-<p>To install a production signer using an HSM instead of the demo signer you can edit src/module-configs/mrtdsigner/prod-part-config.properties and then run:
+<subsubsection name="Production configuration with HSM">
+<p>To install a production signer using an HSM instead of the demo signer you can edit src/module-configs/mrtdsodsigner/hard-part-config.properties and then run:
 </p>
 <source>
 ant
-bin/signserver.sh module add dist-server/mrtdsigner.mar prod
-bin/signserver.sh getconfig 1
-bin/signserver.sh reload 1
-bin/signserver.sh generatecertreq 1 "C=SE,CN=MRTD Signer" SHA256WithRSA mrtdsigner.req
+bin/signserver.sh module add dist-server/mrtdsodsigner.mar hard
+bin/signserver.sh getconfig 4
+bin/signserver.sh reload 4
+bin/signserver.sh generatecertreq 4 "C=SE,CN=MRTD SOD Signer" SHA256WithRSA mrtdsodsigner.req
 </source>
 <p>
 This will create a certificate request that you can get signed by your CA. When you have received the response you can import them with. 
@@ -193,12 +199,12 @@ If you have the returned signer certificate as cert.pem and the CA certificate c
 </p>
 <source>
 cat cert.pem cacert.pem> certchain.pem
-bin/signserver.sh uploadsignercertificate 1 glob ~/tmp/cert.pem
-bin/signserver.sh uploadsignercertificatechain 1 GLOB certchain.pem
+bin/signserver.sh uploadsignercertificate 4 glob cert.pem
+bin/signserver.sh uploadsignercertificatechain 4 GLOB certchain.pem
 </source>
 <p>Hint: you can use EJBCA to create keys on a PKCS#11 HSM using clientToolBox.
 <br/>
-ejbcaClientToolBox.sh PKCS11HSMKeyTool generate ./slot5.cfg 2048 defaultSign
+ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so 2048 DSSignKey 5
 </p>
 </subsubsection>
 </subsection>

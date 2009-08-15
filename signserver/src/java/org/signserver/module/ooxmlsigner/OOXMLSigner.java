@@ -337,7 +337,7 @@ public class OOXMLSigner extends BaseSigner {
 		if (signRequest instanceof GenericServletRequest) {
 			signResponse = new GenericServletResponse(sReq.getRequestID(),
 					signedbytes, getSigningCertificate(), fp, new ArchiveData(
-							signedbytes), "text/xml");
+							signedbytes), "application/octet-stream");
 		} else {
 			signResponse = new GenericSignResponse(sReq.getRequestID(),
 					signedbytes, getSigningCertificate(), fp, new ArchiveData(

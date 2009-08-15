@@ -1,0 +1,52 @@
+<project name="odfsigner" default="odfsignermar" basedir="..">
+
+
+       
+<target name="odfsignermar" unless="buildMailSigner">
+    <path id="odfsigner.build.classpath">
+      	<path refid="signserver.compile.classpath" />
+      	<path location="${build}" />
+		<fileset dir="lib/module/odfsigner" includes="*.jar" />
+		<fileset dir="lib/endorsed" includes="*.jar" />
+    </path>
+
+    <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" 
+      classpathref="odfsigner.build.classpath"/>
+       
+    <taskdef name="part" classname="org.signserver.anttasks.PartAntTask" 
+      classpathref="odfsigner.build.classpath"/>
+ 
+    <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
+       <classpath refid="odfsigner.build.classpath" />
+    	<compilerarg value="-Djava.endorsed.dirs=lib/endorsed" />
+    	<src path="${src.java}" /> 
+       <include name="org/signserver/module/odfsigner/*.java"/>       
+    </javac>
+
+	<jar jarfile="dist-server/odfsigner-module.jar">
+		<fileset dir="${build}">
+		    <include name="org/signserver/module/odfsigner/**"/>
+		</fileset>
+    </jar>
+    <mar version="${mar.versions}" modulename="odfsigner" verbose="true" destfile="${basedir}/dist-server/odfsigner.mar">
+        <part>
+            <fileset dir="lib/module/odfsigner">
+                <include name="odfdom.jar"/>
+            </fileset>
+            <fileset dir="dist-server">
+                <include name="odfsigner-module.jar"/>
+            </fileset>
+            <fileset dir="src/module-configs/odfsigner">
+                <include name="*.properties"/>
+            </fileset>
+        </part>
+    </mar>
+	
+	<copy todir="${appserver.home}/lib/endorsed">
+		<fileset dir="${lib}/endorsed">
+			<include name="*.jar" />
+		</fileset>
+	</copy>
+</target>
+
+</project>

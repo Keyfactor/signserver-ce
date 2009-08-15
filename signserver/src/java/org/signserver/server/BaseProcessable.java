@@ -101,7 +101,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 			}
 		}
 		if (log.isTraceEnabled()) {
-			log.trace("<getCryptoToken: "+cryptoToken!=null ? cryptoToken.getClass().getName() : "null");
+			log.trace("<getCryptoToken: "+(cryptoToken!=null ? cryptoToken.getClass().getName() : "null"));
 		}
 		
 		return cryptoToken;

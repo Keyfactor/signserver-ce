@@ -61,14 +61,18 @@ public class MRTDSODSigner extends BaseSigner {
 
         // Construct SOD
         SODFile sod;
-        // getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)
-        // getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN)
         X509Certificate cert = (X509Certificate) getSigningCertificate();
         if (log.isDebugEnabled()) {
         	log.debug("Using signer certificate with subjectDN '"+CertTools.getSubjectDN(cert)+"', issuerDN '"+CertTools.getIssuerDN(cert)+", serNo "+CertTools.getSerialNumberAsString(cert));
         }
         try {
-            sod = new SODFile("SHA256", "SHA256withRSA", sodRequest.getDataGroupHashes(), getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN), cert, getCryptoToken().getProvider(ICryptoToken.PURPOSE_SIGN));
+        	// Create the SODFile using the data group hashes that was sent to us in the request.
+        	String digestAlgorithm = sodRequest.getDigestAlgorithm();
+        	String digestEncryptionAlgorithm = sodRequest.getDigestEncryptionAlgorithm();
+        	if (log.isDebugEnabled()) {
+        		log.debug("Using algorithms "+digestAlgorithm+", "+digestEncryptionAlgorithm);
+        	}
+            sod = new SODFile(digestAlgorithm, digestEncryptionAlgorithm, sodRequest.getDataGroupHashes(), getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN), cert, getCryptoToken().getProvider(ICryptoToken.PURPOSE_SIGN));
         } catch (NoSuchAlgorithmException ex) {
             throw new SignServerException("Problem constructing SOD", ex);
         } catch (CertificateException ex) {

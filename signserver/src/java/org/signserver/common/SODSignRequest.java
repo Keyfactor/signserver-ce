@@ -18,16 +18,19 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
+/** Request used for signing data groups hashes and requesting a signed SO(D) from the MRTD SOD Signer. Used for ePassports.
  * 
- * 
- * $Id:$
+ * @author Markus Kilas
+ * @version $Id$
  */
 public class SODSignRequest extends ProcessRequest implements ISignRequest {
 
     private static final long serialVersionUID = 1L;
     private int requestID;
+    /** The requested digestAlgorithm, for example SHA1, SHA256. Defaults to SHA256. */
+    private String digestAlgorithm = "SHA256"; 
+	/** The requested digestEncryptionAlgorithm, for example SHA1withRSA, SHA256withRSA, SHA256withECDSA. Defaults to SHA256withRSA. */
+    private String digestEncryptionAlgorithm = "SHA256withRSA"; 
     private Map<Integer, byte[]> dataGroupHashes;
 
     /**
@@ -37,7 +40,7 @@ public class SODSignRequest extends ProcessRequest implements ISignRequest {
     }
 
     /**
-     * Main constuctor.
+     * Main constructor using default SHA256 and SHA256WithRSA as digest and signature algorithms.
      *
      * @param requestID a unique id of the request
      * @param dataGroups the dataData hashes to sign
@@ -61,6 +64,22 @@ public class SODSignRequest extends ProcessRequest implements ISignRequest {
     public Object getRequestData() {
         return getDataGroupHashes();
     }
+
+    public String getDigestAlgorithm() {
+		return digestAlgorithm;
+	}
+
+	public void setDigestAlgorithm(String digestAlgorithm) {
+		this.digestAlgorithm = digestAlgorithm;
+	}
+
+	public String getDigestEncryptionAlgorithm() {
+		return digestEncryptionAlgorithm;
+	}
+
+	public void setDigestEncryptionAlgorithm(String digestEncryptionAlgorithm) {
+		this.digestEncryptionAlgorithm = digestEncryptionAlgorithm;
+	}
 
     public Map<Integer, byte[]> getDataGroupHashes() {
         return dataGroupHashes;

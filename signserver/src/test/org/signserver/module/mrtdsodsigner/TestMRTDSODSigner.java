@@ -41,7 +41,7 @@ import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
 /**
- * 
+ * @version $Id$
  */
 public class TestMRTDSODSigner extends TestCase {
 

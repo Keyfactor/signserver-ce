@@ -43,15 +43,13 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 
 
 /**
- * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
- * workerId or workerName parameters.
+ * SODProcessServlet is a Servlet that takes data group hashes from a htto post and puts them in a Map for passing
+ * to the MRTD SOD Signer. It uses the worker configured by either workerId or workerName parameters from the request, defaulting to workerId 1.
  * 
- * It will create a GenericServletRequest that is sent to the worker and expects a GenericServletResponse
- * sent back to the client.
+ * It will create a SODSignRequest that is sent to the worker and expects a SODSignResponse back from the signer.
  * 
- * 
- * @author Philip Vendil
- * @version $Id: GenericProcessServlet.java 559 2009-08-13 14:03:15Z netmackan $
+ * @author Markus Kilas
+ * @version $Id$
  */
 public class SODProcessServlet extends HttpServlet {
 
@@ -66,6 +64,9 @@ public class SODProcessServlet extends HttpServlet {
     private static final String DATAGROUP_PROPERTY_NAME = "dataGroup";
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     private static final String ENCODING_BASE64 = "base64";
+    private static final String DIGESTALG_PROPERTY_NAME = "digestAlgorithm";
+    private static final String DIGESTENCALG_PROPERTY_NAME = "digestEncryptionAlgorithm";
+
     private IWorkerSession.ILocal workersession;
 
     private IWorkerSession.ILocal getWorkerSession() {
@@ -112,6 +113,7 @@ public class SODProcessServlet extends HttpServlet {
             log.debug("Found a signerId in the request: "+id);
             workerId = Integer.parseInt(id);
         }
+
 
         String remoteAddr = req.getRemoteAddr();
         log.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
@@ -160,6 +162,7 @@ public class SODProcessServlet extends HttpServlet {
             log.debug("Received number of dataGroups: " + dataGroups.size());
         }
 
+        // Get the client certificate, if any is passed in an https exchange, to be used for client authentication
         Certificate clientCertificate = null;
         Certificate[] certificates = (X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate");
         if (certificates != null) {
@@ -169,9 +172,21 @@ public class SODProcessServlet extends HttpServlet {
         Random rand = new Random();
         int requestId = rand.nextInt();
 
+        SODSignRequest signRequest = new SODSignRequest(requestId, dataGroups);
+        String digestAlgorithm = req.getParameter(DIGESTALG_PROPERTY_NAME);
+        if(digestAlgorithm != null){
+            log.debug("Found a digestAlg in the request: "+digestAlgorithm);
+            signRequest.setDigestAlgorithm(digestAlgorithm);
+        }
+        String digestEncryptionAlgorithm = req.getParameter(DIGESTENCALG_PROPERTY_NAME);
+        if(digestEncryptionAlgorithm != null){
+            log.debug("Found a digestEncryptionAlgorithm in the request: "+digestEncryptionAlgorithm);
+            signRequest.setDigestEncryptionAlgorithm(digestEncryptionAlgorithm);
+        }
+
         SODSignResponse response = null;
         try {
-            response = (SODSignResponse) getWorkerSession().process(workerId, new SODSignRequest(requestId, dataGroups), new RequestContext((X509Certificate) clientCertificate, remoteAddr));
+            response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, new RequestContext((X509Certificate) clientCertificate, remoteAddr));
         } catch (IllegalRequestException e) {
             throw new ServletException(e);
         } catch (CryptoTokenOfflineException e) {

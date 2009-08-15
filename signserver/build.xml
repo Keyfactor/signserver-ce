@@ -296,9 +296,9 @@ OS version                          = ${os.version}
         </sequential>
     </macrodef>
 
-    <target name="test:compile"  depends="test:signserver:compile, test:mailsigner:compile" description="compile JUnit testcases"/>
+    <target name="test:compile"  depends="test:signserver:compile, test:mailsigner:compile"/>
  	
-    <target name="test:run" description="compile JUnit testcases">
+    <target name="test:run" description="Run all JUnit testcases">
         <antcall target="test:signserver:run"/>
     	<antcall target="test:mailsigner:run"/>
     </target>

@@ -30,9 +30,6 @@
     </jar>
     <mar version="${mar.versions}" modulename="odfsigner" verbose="true" destfile="${basedir}/dist-server/odfsigner.mar">
         <part>
-            <fileset dir="lib/module/odfsigner">
-                <include name="odfdom.jar"/>
-            </fileset>
             <fileset dir="dist-server">
                 <include name="odfsigner-module.jar"/>
             </fileset>

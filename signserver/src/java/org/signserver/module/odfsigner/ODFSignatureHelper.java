@@ -331,7 +331,6 @@ public class ODFSignatureHelper {
 		String signatureDateTimeFormatString = "yyyy-MM-dd'T'HH:mm:ss";
 		SimpleDateFormat sdf = new SimpleDateFormat(
 				signatureDateTimeFormatString);
-		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 
 		String dateFriendly = sdf.format(signingTime);
 

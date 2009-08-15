@@ -3,7 +3,7 @@
 
 	<property name="app.name" value="signserver" />
     <property name="app.name.cap" value="Sign Server" />
-	<property name="app.version" value="${app.name.cap} 3.1Beta" />
+	<property name="app.version" value="${app.name.cap} 3.1.0Beta" />
 	<property name="mar.versions" value="3100" />
 
     <property environment="env" />

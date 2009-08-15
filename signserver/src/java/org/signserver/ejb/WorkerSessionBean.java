@@ -106,11 +106,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 		IWorker worker = WorkerFactory.getInstance().getWorker(workerId, workerConfigService, globalConfigurationSession,new SignServerContext(em));
 		
         if(worker == null){
-        	throw new IllegalRequestException("Non-existing workerId");
+        	throw new IllegalRequestException("Non-existing workerId: "+workerId);
         }
         
         if(!(worker instanceof IProcessable)){
-        	throw new IllegalRequestException("Worker exists but isn't a processable.");
+        	throw new IllegalRequestException("Worker exists but isn't a processable: "+workerId);
         }
 		IProcessable processable = (IProcessable) worker;
         		

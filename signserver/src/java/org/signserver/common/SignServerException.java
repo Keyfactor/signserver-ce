@@ -19,9 +19,8 @@ package org.signserver.common;
  * the signing token isn't active. 
  * 
  * @author Philip Vendil
- * $id$
+ * @version $Id$
  */
-
 public class SignServerException extends Exception {
 
 	private static final long serialVersionUID = 1L;

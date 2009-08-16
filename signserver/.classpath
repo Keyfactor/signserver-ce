@@ -42,7 +42,7 @@
 	<classpathentry kind="var" path="JBOSS_HOME/client/jboss-j2ee.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/ejb3-persistence.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/jboss-ejb3x.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/ejbca-util.jar"/>
 	<classpathentry kind="lib" path="lib/jaxws/jaxws-tools.jar"/>

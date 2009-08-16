@@ -20,6 +20,8 @@ import java.util.Map;
 
 /** Request used for signing data groups hashes and requesting a signed SO(D) from the MRTD SOD Signer. Used for ePassports.
  * 
+ * This is not located in the mrtdsod module package because it has to be available at startup to map urls.
+ *
  * @author Markus Kilas
  * @version $Id$
  */

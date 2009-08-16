@@ -47,6 +47,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * to the MRTD SOD Signer. It uses the worker configured by either workerId or workerName parameters from the request, defaulting to workerId 1.
  * 
  * It will create a SODSignRequest that is sent to the worker and expects a SODSignResponse back from the signer.
+ * This is not located in the mrtdsod module package because it has to be available at startup to map urls.
  * 
  * @author Markus Kilas
  * @version $Id$

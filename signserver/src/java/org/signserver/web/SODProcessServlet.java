@@ -63,7 +63,9 @@ public class SODProcessServlet extends HttpServlet {
     private static final String WORKERID_PROPERTY_NAME = "workerId";
     private static final String WORKERNAME_PROPERTY_NAME = "workerName";
     private static final String DATAGROUP_PROPERTY_NAME = "dataGroup";
+    /** Specifies if the fields are encoded in any way */
     private static final String ENCODING_PROPERTY_NAME = "encoding";
+    /** if encoding = base64 values will be base64 decoded before use */
     private static final String ENCODING_BASE64 = "base64";
     private static final String DIGESTALG_PROPERTY_NAME = "digestAlgorithm";
     private static final String DIGESTENCALG_PROPERTY_NAME = "digestEncryptionAlgorithm";

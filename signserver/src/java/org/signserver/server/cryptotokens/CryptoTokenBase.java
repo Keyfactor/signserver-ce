@@ -115,8 +115,14 @@ public abstract class CryptoTokenBase implements ICryptoToken{
 	 * 
 	 * @return true if everything went successful
 	 */
-	public boolean deactivate() {
-		return catoken.deactivate();
+	public boolean deactivate() throws CryptoTokenOfflineException {
+		boolean ret = false;
+		try {
+			ret = catoken.deactivate();
+		} catch (Exception e) {
+			throw new CryptoTokenOfflineException(e);
+		}
+		return ret;
 	}
 	
 	/**

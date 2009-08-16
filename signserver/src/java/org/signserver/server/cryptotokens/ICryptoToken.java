@@ -71,7 +71,7 @@ public interface ICryptoToken {
      * 
      * @return true if deactivation was successful.
      */
-    public abstract boolean deactivate();    
+    public abstract boolean deactivate() throws CryptoTokenOfflineException;    
     
     /** Returns the private key (if possible) of token.
     *

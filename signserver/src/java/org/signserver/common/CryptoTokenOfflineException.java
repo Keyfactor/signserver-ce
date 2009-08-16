@@ -19,15 +19,17 @@ package org.signserver.common;
  * the signing token isn't active. 
  * 
  * @author Philip Vendil
- * $id$
+ * @version $Id$
  */
-
 public class CryptoTokenOfflineException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
 	public CryptoTokenOfflineException(String message) {
 		super(message);
+	}
+	public CryptoTokenOfflineException(Exception cause) {
+		super(cause);
 	}
 	
 	public String getMessage() {

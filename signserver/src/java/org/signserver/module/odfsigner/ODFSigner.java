@@ -61,7 +61,7 @@ import org.w3c.dom.Document;
  * 3.1 and respecting ODF standard)
  * 
  * @author Aziz Göktepe
- * @version $Id: ODFSigner.java 570 2009-08-15 12:40:16Z rayback_2 $
+ * @version $Id$
  * 
  */
 public class ODFSigner extends BaseSigner {

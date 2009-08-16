@@ -427,7 +427,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	        <copy todir="dist-client/signserverwscli/lib">
 	            <fileset dir="${lib}">        
 	              <include name="log4j.jar"/>      
-	              <include name="commons-lang-2.0.jar"/>
+	              <include name="commons-lang-2.4.jar"/>
 	              <include name="ejbca-util.jar"/>
 	            </fileset>	
 	            <fileset dir="${lib}/${client.java.target}">        
@@ -463,7 +463,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    	              
 	        <jar destfile="dist-client/signserverwscli/signserverwscli.jar" basedir="${tmp}/signserverwscli.jar">
 	          <manifest>
-	          	<attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar  lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jaxws-tools.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/mimepull.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/stax-ex.jar lib/streambuffer.jar lib/commons-lang-2.0.jar"/>
+	          	<attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar  lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jaxws-tools.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/mimepull.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/stax-ex.jar lib/streambuffer.jar lib/commons-lang-2.4.jar"/>
 	            <attribute name="Main-Class" value="org.signserver.protocol.ws.client.cli.WSCLI"/>
 	          </manifest>
 	        </jar>    	    	
@@ -524,7 +524,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	            	 <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
 	                 subdirectories though so we must flatten the structure. zipfileset is a good was of flattening the structure, so 
 	                 all jar files is directly in lib directory in the ear file -->
-	            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,ldap.jar,commons-lang-2.0.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar" prefix="lib"/>
+	            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,ldap.jar,commons-lang-2.4.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar" prefix="lib"/>
 	            <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/module/odfsigner" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
@@ -799,7 +799,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 		     <include name="log4j.jar"/>
 			 <include name="cert-cvc.jar"/>
 			 <include name="ejbca-util.jar"/>
-			 <include name="commons-lang-2.0.jar"/>
+			 <include name="commons-lang-2.4.jar"/>
 		  </fileset>
 	      <fileset dir="${lib}/1.5">
 			 <include name="bcprov-jdk.jar"/>
@@ -910,7 +910,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
           </fileset>
           <fileset dir="${lib}">        
 	      <include name="log4j.jar"/>      
-	      <include name="commons-lang-2.0.jar"/>
+	      <include name="commons-lang-2.4.jar"/>
 	      <include name="ejbca-util.jar"/>
 	    </fileset>	
           <fileset dir="${lib}/ext">
@@ -940,7 +940,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
        </copy>
         <jar destfile="${validationClientJar}" basedir="${validationClientBuild}">
           <manifest>
-            <attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/bcmail-jdk.jar lib/commons-cli-1.0.jar  lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar  lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jaxws-tools.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/mimepull.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/stax-ex.jar lib/streambuffer.jar lib/commons-lang-2.0.jar lib/signserverwscli.jar"/>
+            <attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/bcmail-jdk.jar lib/commons-cli-1.0.jar  lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar  lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jaxws-tools.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/mimepull.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/stax-ex.jar lib/streambuffer.jar lib/commons-lang-2.4.jar lib/signserverwscli.jar"/>
             <attribute name="Main-Class" value="org.signserver.client.validationservice.ValidationCLI"/>
           </manifest>
         </jar>
@@ -965,7 +965,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
           	<include name="cert-cvc.jar"/>  
 	      	<include name="log4j.jar"/>      
 	      	<include name="ejbca-util.jar"/>
-	      	<include name="commons-lang-2.0.jar"/>
+	      	<include name="commons-lang-2.4.jar"/>
 	    </fileset>	
 
        </copy>

@@ -188,7 +188,7 @@ rmi.server.port           = ${rmi.server.port}
 		 <fileset dir="${lib}">
 		    <include name="log4j.jar"/>
 		    <include name="ejbca-util.jar"/>
-		    <include name="commons-lang-2.0.jar"/>
+		    <include name="commons-lang-2.4.jar"/>
 		 </fileset>
 	       <fileset dir="${lib}/1.5">
 			 <include name="bcprov-jdk.jar"/>
@@ -239,7 +239,7 @@ rmi.server.port           = ${rmi.server.port}
       <copy todir="${james-dir}/apps/james/SAR-INF/lib">
       	<fileset dir="lib">
       	  <include name="ejbca-util.jar"/>
-      	  <include name="commons-lang-2.0.jar"/>
+      	  <include name="commons-lang-2.4.jar"/>
       	  <include name="commons-logging.jar"/>
       	</fileset>
       	<fileset dir="lib/${server.java.target}">

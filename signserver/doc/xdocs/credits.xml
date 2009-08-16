@@ -12,14 +12,15 @@
 <p>
 <ul>´
 <li><a href="http://james.apache.org">JAMES SMTP Server</a>, The great mail server the MailSigner is built on top of.</li>
-<li><a href="http://www.bouncycastle.org">Bouncy Castle</a>, An excellent cryptographic Java library</li>
-<li><a href="http://ant.apache.org/">Ant</a>, The Java build tool</li>
+<li><a href="http://www.bouncycastle.org">Bouncy Castle</a>, An excellent cryptographic Java library.</li>
+<li><a href="http://ant.apache.org/">Ant</a>, The Java build tool.</li>
 <li><a href="http://logging.apache.org/log4j/">log4j</a>, Logging library.</li>
 <li><a href="http://velocity.apache.org">Velocity</a>, used to generate the web site pages.</li>
-<li><a href="http://xml.apache.org/xerces-j/">Xerces</a></li>
-<li><a href="http://jakarta.apache.org/commons/cli/">commons-cli</a></li>
+<li><a href="http://xml.apache.org/xerces-j/">Xerces.</a></li>
+<li><a href="http://jakarta.apache.org/commons/cli/">commons-cli.</a></li>
 <li><a href="http://www.lowagie.com/iText/">iText</a>, A library that allows you to generate PDF files on the fly.</li>
-<li><a href="http://sourceforge.net/projects/jsch/">JSCH, a Java Implementation of SSH2</a></li>
+<li><a href="http://sourceforge.net/projects/jsch/">JSCH</a>, a Java Implementation of SSH2.</li>
+<li><a href="http://www.jmrtd.org/">JMRTD</a>, a free implementation of the Machine Readable Travel Document (MRTD) standards as specified by the International Civil Aviation Organization (ICAO).</li>
 </ul>
 </p>
 

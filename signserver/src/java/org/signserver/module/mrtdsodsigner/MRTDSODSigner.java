@@ -37,7 +37,13 @@ import org.signserver.server.signers.BaseSigner;
 
 /**
  * A Signer signing creating a signed SOD file to be stored in ePassports.
-
+ *
+ * Properties:
+ * <ul>
+ *  <li>DIGESTALGORITHM = Message digest algorithm applied to the datagroups. (Optional)</li>
+ *  <li>SIGNATUREALGORITHM = Signature algorithm for signing the SO(d), should match
+ *  the digest algorithm. (Optional)</li>
+ * </ul>
  * 
  * @author Markus Kilas
  * @version $Id$
@@ -45,6 +51,18 @@ import org.signserver.server.signers.BaseSigner;
 public class MRTDSODSigner extends BaseSigner {
 
     private static final Logger log = Logger.getLogger(MRTDSODSigner.class);
+
+    /** The digest algorithm, for example SHA1, SHA256. Defaults to SHA256. */
+    private static final String PROPERTY_DIGESTALGORITHM = "DIGESTALGORITHM";
+
+    /** Default value for the digestAlgorithm property */
+    private static final String DEFAULT_DIGESTALGORITHM = "SHA256";
+
+    /** The signature algorithm, for example SHA1withRSA, SHA256withRSA, SHA256withECDSA. Defaults to SHA256withRSA. */
+    private static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
+
+    /** Default value for the signature algorithm property */
+    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA256withRSA";
 
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (log.isTraceEnabled()) {
@@ -67,8 +85,8 @@ public class MRTDSODSigner extends BaseSigner {
         }
         try {
         	// Create the SODFile using the data group hashes that was sent to us in the request.
-        	String digestAlgorithm = sodRequest.getDigestAlgorithm();
-        	String digestEncryptionAlgorithm = sodRequest.getDigestEncryptionAlgorithm();
+        	String digestAlgorithm = config.getProperty(PROPERTY_DIGESTALGORITHM, DEFAULT_DIGESTALGORITHM);
+        	String digestEncryptionAlgorithm = config.getProperty(PROPERTY_SIGNATUREALGORITHM, DEFAULT_SIGNATUREALGORITHM);
         	if (log.isDebugEnabled()) {
         		log.debug("Using algorithms "+digestAlgorithm+", "+digestEncryptionAlgorithm);
         	}

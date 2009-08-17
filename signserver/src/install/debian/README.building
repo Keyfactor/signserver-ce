@@ -1,0 +1,8 @@
+svn co http://signserver.svn.sourceforge.net/viewvc/signserver/trunk/ signserver
+cd ..
+mv signserver signserver-x.y
+cd signserver-x.y
+ln -s src/install/debian .
+dch -i
+dpkg-buildpackage -r fakeroot
+

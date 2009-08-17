@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>FAQ</title>
+  </properties>
+
+  <faqsection title="FAQ">
+    <faq>
+      <question>
+        Can SignServer be deployed on other application servers than JBoss
+      </question>
+      <answer>
+        <p>
+         Not by default, but it shouldn't be much work do adopt the deployment scripts to fit
+         other application servers needs. Contact the development team for more information.         
+         </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>
+        I want to edit an article on Wiki, can I get an account.
+      </question>
+      <answer>
+        <p>
+        Sure, contact one of the Project Administrators and they will fix an account for you.
+        </p>
+      </answer>
+    </faq>
+    
+ 
+
+  </faqsection>
+
+</document>

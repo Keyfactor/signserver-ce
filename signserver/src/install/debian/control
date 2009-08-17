@@ -1,0 +1,25 @@
+Source: signserver
+Section: unknown
+Priority: extra
+Maintainer: Henrik Andreasson <debian@han.pp.se>
+Build-Depends: debhelper (>= 5), ant-optional, ant, sun-java6-jdk
+Standards-Version: 3.7.2
+
+Package: signserver-server
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, sun-java6-jre
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
+
+Package: signserver-mailserver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, sun-java6-jre
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
+
+
+Package: signserver-mgmt
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, sun-java6-jre
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

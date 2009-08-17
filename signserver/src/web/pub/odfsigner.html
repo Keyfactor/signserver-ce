@@ -1,0 +1,72 @@
+<html>
+	<head>
+		<title>ODF signing demo</title>
+		<style TYPE="text/css"> <!--
+		body {
+			width: 55em;
+			margin-left: 5em;
+			margin-top: 1em;
+		}
+		a:link {
+			color: #00007f;
+			text-decoration: none;
+		}
+		img {
+			border: 0px;
+		}
+		div.header {
+			font-size: 42px;
+			font-weight: bold;
+			margin-left: 2.5em;
+			margin-top: 15px;
+			font-style: italic;
+		}
+		--></style> 
+	</head>
+<body>
+<SCRIPT language="JavaScript">
+<!--  
+function check()
+{  
+  if(document.recievefile.filerecievefile.value == ''){   
+     alert("You must select a file"); 
+   }else{  
+     return true;  
+   }
+   return false;
+}
+-->
+</SCRIPT>
+<div style="text-align: center;">   
+   <h2>ODF document signing<br></h2>
+</div>
+<p>
+	Simply upload an ODF document (<b>note</b> : created Open Office 3.1 or later ; odt,ods,odp,odg) to the ODFSigner and you will get back the same document, but signed by the signserver. This is a central organization signature.
+	</p>
+	<p>
+		<b>NOTE :</b> You might need to save the output to a file and change file extension accordingly. 
+	</p>
+    <form name="recievefile" action="/signserver/process" method="post" enctype="multipart/form-data" >
+        <input type="hidden" name="workerName" value="ODFSigner"/>
+  <table width="100%" border="0" cellspacing="3" cellpadding="3">
+    <tr id="Row2"> 
+      <td width="49%" valign="top" align="right">Select document to upload and sign</td>
+      <td width="51%" valign="top">     
+        <input TYPE="FILE" NAME="filerecievefile">            
+        <input type="submit" name="buttonrecievefile" onClick='return check()' value="Submit" ><br><br>
+      </td>
+    </tr>
+  </table>
+    </form>
+</p>
+
+<h2>Verification of signature</h2>
+<p>
+You can display the signature very nicely in Open Office 3.1 or later. 
+</p>
+<p>
+If you want to verify the signed documents nicely you must download the CA certificate from your CA and install it windows certificate store (for windows users).
+</p>
+
+</body>
+</html>

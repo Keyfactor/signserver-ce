@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+
+<phoenix>
+    <embeddor role="org.apache.avalon.phoenix.interfaces.Embeddor"
+        class="org.apache.avalon.phoenix.components.embeddor.DefaultEmbeddor">
+
+        <component role="org.apache.avalon.phoenix.interfaces.Installer"
+            class="org.apache.avalon.phoenix.components.installer.DefaultInstaller"
+            logger="installer"/>
+
+        <component role="org.apache.avalon.phoenix.interfaces.Deployer"
+            class="org.apache.avalon.phoenix.components.deployer.DefaultDeployer"
+            logger="deployer"/>
+
+        <component role="org.apache.avalon.phoenix.interfaces.LogManager"
+            class="org.apache.avalon.phoenix.components.logger.DefaultLogManager"
+            logger="logs"/>
+
+        <!-- There is one JMX MBeanServer infrastructure currently
+             supported by Avalon, namely MX4J. Previously the JMX RI
+             was supported but due to severe bugs and lack of implementation
+             of certain features (such as ModelMBeans), support has been
+             dropped for the JMX RI implementation.
+
+            The MX4J manager using the MX4J adapter devewloped at SourceForge
+            See http://mx4j.sourceforge.net/ -
+
+              org.apache.avalon.phoenix.components.manager.MX4JSystemManager
+
+            There is an impl of system manager that does nothing and it is....
+
+              org.apache.avalon.phoenix.components.manager.NoopSystemManager
+
+            Alternatively, you could comment the whole SystemManager section out.
+        -->
+        
+        <!--
+            PLEASE NOTE: We changed the MX4JSystemManager to NoopSystemManager
+            because of the vulnerability described here:
+            http://issues.apache.org/bugzilla/show_bug.cgi?id=17241
+            Furthermore, commenting out the whole block you get an exception:
+            org.apache.avalon.framework.service.ServiceException: Unable to provide 
+                implementation for org.apache.avalon.phoenix.interfaces.SystemManager 
+                (Role='org.apache.avalon.phoenix.interfaces.SystemManager')]
+        -->
+
+        <component role="org.apache.avalon.phoenix.interfaces.SystemManager"
+            class="org.apache.avalon.phoenix.components.manager.NoopSystemManager"
+            logger="manager" />
+
+        <!--
+        <component role="org.apache.avalon.phoenix.interfaces.SystemManager"
+            class="org.apache.avalon.phoenix.components.manager.MX4JSystemManager"
+            logger="manager">
+	-->
+            <!--
+              By default the Mx4J Http Adaptor will bind a webserver to a
+              single network interface, localhost. If you wish to restrict it to
+              only one a different interface, include that below. To bind to all
+              interfaces, use 0.0.0.0 as the value.
+            -->
+            <!--
+            <manager-adaptor-host>localhost</manager-adaptor-host>
+            -->
+
+            <!--
+              This specifies the IP port which the Http Adaptor will bind on.
+            -->
+         <!--
+            <manager-adaptor-port>8082</manager-adaptor-port>
+         -->
+
+            <!--
+              If you wish to enable the HTTP adaptor altogether
+              then uncomment the following line.
+            -->
+            <!--<enable-http-adaptor>true</enable-http-adaptor>-->
+
+            <!--
+              The Http Adaptor will use the $PHOENIX_HOME/conf/xsl directory
+              by default to retrieve it's stylesheets.
+            -->
+            <!-- <stylesheets-dir>conf/xsl</stylesheets-dir> -->
+
+            <!--
+              If you want the HTTPAdaptor to require authentication then you need to specify
+              a username and password in the next xml block.
+            -->
+            <!--
+            <user>
+              <name>user</name>
+              <password>password</password>
+            </user>
+            -->
+
+            <!--
+              Mx4j is capable of exporting the MBeanServer over RMI. By default this is
+              disabled but it can be enabled by specifying true in enable-rmi-adaptor element
+              and specifying a particular naming factory.
+            -->
+            <!--
+            <enable-rmi-adaptor>true</enable-rmi-adaptor>
+            <rmi-naming-factory>com.sun.jndi.rmi.registry.RegistryContextFactory</rmi-naming-factory>
+            <rmi-registry-port>1099</rmi-registry-port>
+            -->
+        <!--
+        </component>
+        -->
+
+        <!--
+        This SystemManager is useful when you are Running Phoenix in a system
+        where a MBeanServer is already running. It will grab this MBeanServer and
+        use it to manage Phoenix.
+        <component role="org.apache.avalon.phoenix.interfaces.SystemManager"
+            class="org.apache.avalon.phoenix.components.manager.HostedSystemManager"
+            logger="manager" >
+        </component>
+        -->
+
+        <!--
+        This SystemManager is useful when you want to do arbitrary scripting of MBeans
+        to setup the MX manager. You can pretty much configure any mbean on the classpath
+        via this mechanism.
+        <component role="org.apache.avalon.phoenix.interfaces.SystemManager"
+            class="org.apache.avalon.phoenix.components.manager.ExtendedMX4JSystemManager"
+            logger="manager">
+
+            <mbean name="Http:name=XSLTProcessor" class="mx4j.adaptor.http.XSLTProcessor">
+                <attribute name="File" type="java.lang.String">conf/xsl</attribute>
+                <attribute name="UseCache" type="java.lang.Boolean">false</attribute>
+            </mbean>
+            <mbean name="Http:name=HttpAdaptor" class="mx4j.adaptor.http.HttpAdaptor">
+                <use name="ProcessorName">Http:name=XSLTProcessor</use>
+                <attribute name="Host" type="java.lang.String">localhost</attribute>
+                <attribute name="Port" type="java.lang.Integer">8082</attribute>
+                <attribute name="AuthenticationMethod" type="java.lang.String">basic</attribute>
+
+                <startup>
+                    <invoke name="addAuthorization">
+                        <parameter type="java.lang.String">jmx</parameter>
+                        <parameter type="java.lang.String">jmx</parameter>
+                    </invoke>
+                    <invoke name="start"/>
+                </startup>
+                <shutdown>
+                    <invoke name="stop"/>
+                </shutdown>
+            </mbean>
+
+            <mbean name="Naming:type=rmiregistry" class="mx4j.tools.naming.NamingService">
+                <startup>
+                    <invoke name="start"/>
+                </startup>
+                <shutdown>
+                    <invoke name="stop"/>
+                </shutdown>
+            </mbean>
+            <mbean name="Adaptor:protocol=JRMP" class="mx4j.adaptor.rmi.jrmp.JRMPAdaptor">
+                <attribute name="JNDIName" type="java.lang.String">jrmp</attribute>
+
+                <startup>
+                    <invoke name="start"/>
+                </startup>
+                <shutdown>
+                    <invoke name="stop"/>
+                </shutdown>
+            </mbean>
+
+        </component>
+        -->
+
+        <!-- There are two kernels
+          org.apache.avalon.phoenix.components.kernel.DefaultKernel
+            - The default one.
+          org.apache.avalon.phoenix.components.kernel.beanshell.BeanShellKernel
+            - One with a beanshell view at the application level.
+        -->
+        <component role="org.apache.avalon.phoenix.interfaces.Kernel"
+            class="org.apache.avalon.phoenix.components.kernel.DefaultKernel"
+            logger="kernel"/>
+
+        <component role="org.apache.avalon.phoenix.interfaces.ConfigurationRepository"
+            class="org.apache.avalon.phoenix.components.configuration.DefaultConfigurationRepository"
+            logger="config"/>
+
+        <!--
+        <component role="org.apache.avalon.phoenix.interfaces.ConfigurationRepository"
+            class="org.apache.avalon.phoenix.components.configuration.FileSystemPersistentConfigurationRepository"
+            logger="config"/>
+            -->
+
+        <component role="org.apache.avalon.phoenix.interfaces.ConfigurationValidator"
+            class="org.apache.avalon.phoenix.components.validator.DefaultConfigurationValidator"
+            logger="validator">
+            <schema-type name="relax-ng" uri="http://relaxng.org/ns/structure/1.0"/>
+        </component>
+
+        <component role="org.apache.avalon.phoenix.interfaces.ClassLoaderManager"
+            class="org.apache.avalon.phoenix.components.classloader.DefaultClassLoaderManager"
+            logger="classes"/>
+        <component role="org.apache.avalon.phoenix.components.extensions.pkgmgr.ExtensionManager"
+            class="org.apache.avalon.phoenix.components.extensions.DefaultExtensionManager"
+            logger="packages"/>
+        <!--
+                <component role="org.apache.avalon.phoenix.components.extensions.pkgmgr.ExtensionManager"
+                    class="org.apache.avalon.phoenix.components.extensions.pkgmgr.impl.NoopPackageRepository"
+                    logger="packages"/>
+        -->
+
+        <!--
+          Can disable the Hot-Deploy monitor by commenting out the next component.
+        -->
+        <component
+            class="org.apache.avalon.phoenix.components.monitor.DefaultDeploymentMonitor"
+            logger="monitor">
+            <!-- the amount of time in milliseconds between checks
+                 of deployment dir -->
+            <monitor-frequency>1000</monitor-frequency>
+        </component>
+
+        <component role="org.apache.excalibur.instrument.InstrumentManager"
+            class="org.apache.excalibur.instrument.manager.NoopInstrumentManager"
+            logger="instrument"/>
+
+        <!--
+                Use the DefaultInstrumentManager when you want to enable instrumentation of Phoenix and
+                hosted applications
+
+                You may also want to add:
+                    <!ENTITY % instrumentables.xml SYSTEM "instrumentables.xml">
+                to the top of the kernel (before the phoenix tag) to store instrumentable configuration
+                in a separate document
+                <component role="org.apache.excalibur.instrument.InstrumentManager"
+                    class="org.apache.excalibur.instrument.manager.DefaultInstrumentManager"
+                    logger="instrument">
+                        <name>phoenix</name>
+                        <description>Apache Avalon Phoenix</description>
+                        <connectors>
+                            <connector class="altrmi"/>
+                        </connectors>
+                        &instrumentables;
+                </component>
+                -->
+    </embeddor>
+</phoenix>

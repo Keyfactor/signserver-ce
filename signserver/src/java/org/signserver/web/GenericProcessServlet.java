@@ -253,6 +253,9 @@ public class GenericProcessServlet extends HttpServlet {
         byte[] processedBytes = (byte[]) response.getProcessedData();
 
         res.setContentType(response.getContentType());
+        if(fileName != null) {
+            res.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        }
         res.setContentLength(processedBytes.length);
         res.getOutputStream().write(processedBytes);
         res.getOutputStream().close();

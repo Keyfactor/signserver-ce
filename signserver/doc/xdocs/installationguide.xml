@@ -194,13 +194,15 @@ bin/signserver.sh reload 4
 bin/signserver.sh generatecertreq 4 "C=SE,CN=MRTD SOD Signer" SHA256WithRSA mrtdsodsigner.req
 </source>
 <p>
+Where 4 is the signerId that you got when running the 'module add' command.<br/>
 This will create a certificate request that you can get signed by your CA. When you have received the response you can import them with. 
 If you have the returned signer certificate as cert.pem and the CA certificate cacert.pem. 
 </p>
 <source>
 cat cert.pem cacert.pem> certchain.pem
 bin/signserver.sh uploadsignercertificate 4 glob cert.pem
-bin/signserver.sh uploadsignercertificatechain 4 GLOB certchain.pem
+bin/signserver.sh uploadsignercertificatechain 4 glob certchain.pem
+bin/signserver.sh reload 4
 </source>
 <p>Hint: you can use EJBCA to create keys on a PKCS#11 HSM using clientToolBox.
 <br/>

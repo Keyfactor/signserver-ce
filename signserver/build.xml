@@ -130,6 +130,7 @@ OS version                          = ${os.version}
         <delete dir="${tmp}"/>	
     	<delete dir="${client.dist.dir}" />
         <delete file="velocity.log" />
+        <delete dir="${test.dir}" />
     </target>
 	
 

@@ -39,9 +39,9 @@ import javax.xml.bind.annotation.XmlTransient;
  * id                        : (PrimaryKey, int) (Not Null)
  * type                      : int (not null)  
  * relatedId                 : related id of foreign object, could be organizationId or other depending on type
- * key                       : String (not null) 
- * value                     : String 
- * comment                   : String
+ * theKey                       : String (not null)
+ * theValue                     : String
+ * theComment                   : String
  * </pre>
  *
  * @author Philip Vendil
@@ -50,10 +50,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name="WSRADataBank")
 @NamedQueries(
-		{@NamedQuery(name="DataBankDataBean.findByKey",query="SELECT a from DataBankDataBean a WHERE a.type=?1 AND a.key=?2"),
+		{@NamedQuery(name="DataBankDataBean.findByKey",query="SELECT a from DataBankDataBean a WHERE a.type=?1 AND a.theKey=?2"),
 		 @NamedQuery(name="DataBankDataBean.findByType",query="SELECT a from DataBankDataBean a WHERE a.type=?1 "),
 		 @NamedQuery(name="DataBankDataBean.findByTypeAndRelatedId",query="SELECT a from DataBankDataBean a WHERE a.type=?1 AND a.relatedId=?2"),
-		 @NamedQuery(name="DataBankDataBean.findByTypeAndRelatedIdAndKey",query="SELECT a from DataBankDataBean a WHERE a.type=?1 AND a.relatedId=?2 AND a.key=?3"),
+		 @NamedQuery(name="DataBankDataBean.findByTypeAndRelatedIdAndKey",query="SELECT a from DataBankDataBean a WHERE a.type=?1 AND a.relatedId=?2 AND a.theKey=?3"),
 		 @NamedQuery(name="DataBankDataBean.findAll",query="SELECT a from DataBankDataBean a")
 		})
 public class DataBankDataBean {
@@ -69,11 +69,11 @@ public class DataBankDataBean {
    @Column(nullable=false)
    private int relatedId;
    @Column(nullable=false)
-   private String key;
+   private String theKey;
    @Column(length=64000)
-   private String value;
+   private String theValue;
    @Column(length=64000)
-   private String comment;
+   private String theComment;
    
    /**
     * Empty Constructor
@@ -92,8 +92,8 @@ public class DataBankDataBean {
 	   super();
 	   this.type = type;
 	   this.relatedId = 0;
-	   this.key = key;
-	   this.value = value;
+	   this.theKey = key;
+	   this.theValue = value;
    }
    
    /**
@@ -107,8 +107,8 @@ public class DataBankDataBean {
 	   super();
 	   this.type = type;
 	   this.relatedId = relatedId;
-	   this.key = key;
-	   this.value = value;
+	   this.theKey = key;
+	   this.theValue = value;
    }
    
    /**
@@ -120,8 +120,8 @@ public class DataBankDataBean {
     */
    public DataBankDataBean(String key, String value) {
 	   super();
-	   this.key = key;
-	   this.value = value;
+	   this.theKey = key;
+	   this.theValue = value;
    }
 
 	/**
@@ -159,14 +159,14 @@ public class DataBankDataBean {
 	 */
 	@XmlElement(required=true)
 	public String getKey() {
-		return key;
+		return theKey;
 	}
 
 	/**
 	 * @param key the key to set, can be custom specified.
 	 */
 	public void setKey(String key) {
-		this.key = key;
+		this.theKey = key;
 	}
 
 	/**
@@ -174,21 +174,21 @@ public class DataBankDataBean {
 	 */
 	@XmlElement(required=true)
 	public String getValue() {
-		return value;
+		return theValue;
 	}
 
 	/**
 	 * @param value the value to set
 	 */
 	public void setValue(String value) {
-		this.value = value;
+		this.theValue = value;
 	}
 
 	/**
 	 * @return The comment on this user data entry
 	 */
 	public String getComment() {
-		return comment;
+		return theComment;
 	}
 
 
@@ -196,7 +196,7 @@ public class DataBankDataBean {
 	 * @param comment The comment on this user data entry
 	 */
 	public void setComment(String comment) {
-		this.comment = comment;
+		this.theComment = comment;
 	}
 
 	/**

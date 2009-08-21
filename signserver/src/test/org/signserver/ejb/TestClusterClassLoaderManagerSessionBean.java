@@ -28,12 +28,17 @@ import org.signserver.common.clusterclassloader.FindInterfacesClassLoader;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IClusterClassLoaderManagerSession;
 
+/**
+ *
+ * @version $Id$
+ */
 public class TestClusterClassLoaderManagerSessionBean extends TestCase {
 
 	private static IClusterClassLoaderManagerSession.IRemote  cclMan;
 	
 	private static String signserverhome;
 	
+    @Override
 	protected void setUp() throws Exception {
 		super.setUp();
 			    
@@ -99,8 +104,8 @@ public class TestClusterClassLoaderManagerSessionBean extends TestCase {
 		allparts = cclMan.listAllModuleParts("TESTMODULE-WITHDESCR", 2);
 		assertNotNull(allparts);
 		assertTrue(allparts.length == 2);
-		assertEquals(allparts[0],"part1");
-		assertEquals(allparts[1],"part2");
+                assertTrue(Arrays.asList(allparts).contains("part1"));
+                assertTrue(Arrays.asList(allparts).contains("part2"));
 		
 		allJars = cclMan.getJarNames("TESTMODULE-WITHDESCR", "part2", 2);
 		assertNotNull(allJars);

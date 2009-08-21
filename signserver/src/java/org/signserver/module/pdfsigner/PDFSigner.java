@@ -47,6 +47,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import com.lowagie.text.pdf.PdfStamper;
+import com.sun.jndi.url.corbaname.corbanameURLContextFactory;
  
 
 /**
@@ -56,6 +57,11 @@ import com.lowagie.text.pdf.PdfStamper;
  * REASON = The reason shown in the PDF signature
  * LOCATION = The location shown in the PDF signature
  * RECTANGLE = The location of the visible signature field (llx, lly, urx, ury)
+ * 
+ * TSA_URL = The URL of the timestamp authority 
+ * TSA_ACCOUNT = Account (username) of the TSA
+ * TSA_PASSWORD = Password for TSA
+ * 
  * 
  * @author Tomas Gustavsson
  * @version $Id$
@@ -75,7 +81,7 @@ public class PDFSigner extends BaseSigner{
 	private static final String RECTANGLEDEFAULT = "400,700,500,800";
 		
 	public void init(int signerId, WorkerConfig config, WorkerContext workerContext,EntityManager workerEntityManager) {
-		super.init(signerId, config, workerContext,workerEntityManager);				                                 
+		super.init(signerId, config, workerContext,workerEntityManager);
 	}
 
 	/**
@@ -136,7 +142,7 @@ public class PDFSigner extends BaseSigner{
 				PdfReader reader = new PdfReader(pdfbytes);
 				ByteArrayOutputStream fout = new  ByteArrayOutputStream();
 				PdfStamper stp;
-				stp = PdfStamper.createSignature(reader, fout, '\0');
+				stp = PdfStamper.createSignature(reader, fout, '\0', null, true);
 				PdfSignatureAppearance sap = stp.getSignatureAppearance();
 				Collection<Certificate> certs = this.getSigningCertificateChain();
 				if (certs == null) {

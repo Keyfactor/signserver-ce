@@ -50,7 +50,6 @@
 	<classpathentry kind="lib" path="lib/quartz/quartz-1.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm-commons-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/module/pdfsigner/itext/itext.jar"/>
 	<classpathentry kind="lib" path="lib/1.5/bcmail-jdk.jar"/>
 	<classpathentry kind="lib" path="lib/1.5/bcprov-jdk.jar"/>
 	<classpathentry kind="lib" path="lib/ext/servlet-2.3.jar"/>
@@ -75,5 +74,6 @@
 	<classpathentry kind="lib" path="lib/endorsed/openxml4j-signaturepatched.jar"/>
 	<classpathentry kind="lib" path="lib/endorsed/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/module/odfsigner/odfdom.jar"/>
+	<classpathentry kind="lib" path="lib/module/pdfsigner/itext/itext.jar"/>
 	<classpathentry kind="output" path=".eclipse/out"/>
 </classpath>

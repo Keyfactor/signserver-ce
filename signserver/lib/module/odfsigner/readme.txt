@@ -6,3 +6,4 @@ Version : 0.7
 
 odfdom is used by ODFSigner module to parse odf documents.
 
+NOTE: odfdom.jar is deployed as a part of signserver.ear

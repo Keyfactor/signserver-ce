@@ -71,7 +71,7 @@ public class RemoveModuleCommand extends BaseModuleCommand {
 
     		}else{
     			Integer[] versions = getCommonAdminInterface(hostname).listAllModuleVersions(moduleName);
-    			if(Arrays.binarySearch(versions, version) < 0){        		
+    			if(!Arrays.asList(versions).contains(version)){
     				getOutputStream().println("  Error version " + version + " for module with name " + moduleName + " wasn't found.");
     			}else{
     				String[] parts = getCommonAdminInterface(hostname).listAllModuleParts(moduleName, version);

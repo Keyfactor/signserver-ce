@@ -30,9 +30,7 @@ import org.signserver.common.GenericServletRequest;
 import org.signserver.common.GenericServletResponse;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignRequest;
-import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
@@ -47,137 +45,158 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import com.lowagie.text.pdf.PdfStamper;
-import com.sun.jndi.url.corbaname.corbanameURLContextFactory;
- 
 
 /**
  * A Signer signing PDF files using the IText PDF library.
  * 
- * Implements a ISigner and have the following properties:
- * REASON = The reason shown in the PDF signature
- * LOCATION = The location shown in the PDF signature
+ * Implements a ISigner and have the following properties: REASON = The reason
+ * shown in the PDF signature LOCATION = The location shown in the PDF signature
  * RECTANGLE = The location of the visible signature field (llx, lly, urx, ury)
  * 
- * TSA_URL = The URL of the timestamp authority 
- * TSA_ACCOUNT = Account (username) of the TSA
- * TSA_PASSWORD = Password for TSA
+ * TSA_URL = The URL of the timestamp authority TSA_USERNAME = Account
+ * (username) of the TSA TSA_PASSWORD = Password for TSA
  * 
  * 
  * @author Tomas Gustavsson
  * @version $Id$
  */
-public class PDFSigner extends BaseSigner{
-	
-    /** Log4j instance for actual implementation class */
-    public transient Logger log = Logger.getLogger(this.getClass());
-	//private final CSVFileStatisticsCollector cSVFileStatisticsCollector = CSVFileStatisticsCollector.getInstance(this.getClass().getName(), "PDF size in bytes");
-    
-	//Private Property constants
+public class PDFSigner extends BaseSigner {
+
+	/** Log4j instance for actual implementation class */
+	public transient Logger log = Logger.getLogger(this.getClass());
+	// private final CSVFileStatisticsCollector cSVFileStatisticsCollector =
+	// CSVFileStatisticsCollector.getInstance(this.getClass().getName(),
+	// "PDF size in bytes");
+
+	// Private Property constants
 	private static final String REASON = "REASON";
 	private static final String REASONDEFAULT = "Signed by SignServer";
 	private static final String LOCATION = "LOCATION";
 	private static final String LOCATIONDEFAULT = "SignServer";
 	private static final String RECTANGLE = "RECTANGLE";
 	private static final String RECTANGLEDEFAULT = "400,700,500,800";
-		
-	public void init(int signerId, WorkerConfig config, WorkerContext workerContext,EntityManager workerEntityManager) {
-		super.init(signerId, config, workerContext,workerEntityManager);
+
+	private static final String TSA_URL = "TSA_URL";
+	private static final String TSA_USERNAME = "TSA_USERNAME";
+	private static final String TSA_PASSWORD = "TSA_PASSWORD";
+
+	public void init(int signerId, WorkerConfig config,
+			WorkerContext workerContext, EntityManager workerEntityManager) {
+		super.init(signerId, config, workerContext, workerEntityManager);
 	}
 
 	/**
-	 * The main method performing the actual signing operation.
-	 * Expects the signRequest to be a GenericSignRequest containing a signed PDF file
+	 * The main method performing the actual signing operation. Expects the
+	 * signRequest to be a GenericSignRequest containing a signed PDF file
 	 * 
-	 * @see org.signserver.server.signers.IProcessable#signData(org.signserver.common.ProcessRequest, java.security.cert.X509Certificate)
+	 * @see org.signserver.server.signers.IProcessable#signData(org.signserver.common.ProcessRequest,
+	 *      java.security.cert.X509Certificate)
 	 */
-	public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) 
-		throws IllegalRequestException, CryptoTokenOfflineException {
-		
+	public ProcessResponse processData(ProcessRequest signRequest,
+			RequestContext requestContext) throws IllegalRequestException,
+			CryptoTokenOfflineException {
+
 		ISignRequest sReq = (ISignRequest) signRequest;
-		// Check that the request contains a valid GenericSignRequest object with a byte[].
-		if(!(signRequest instanceof GenericSignRequest)){
-			throw new IllegalRequestException("Recieved request wasn't a expected GenericSignRequest.");
+		// Check that the request contains a valid GenericSignRequest object
+		// with a byte[].
+		if (!(signRequest instanceof GenericSignRequest)) {
+			throw new IllegalRequestException(
+					"Recieved request wasn't a expected GenericSignRequest.");
 		}
-		if(!(sReq.getRequestData() instanceof byte[]) ) {
-			throw new IllegalRequestException("Recieved request data wasn't a expected byte[].");
+		if (!(sReq.getRequestData() instanceof byte[])) {
+			throw new IllegalRequestException(
+					"Recieved request data wasn't a expected byte[].");
 		}
-		
+
 		// The reason shown in the PDF signature
 		String reason = REASONDEFAULT;
-		if(config.getProperties().getProperty(REASON) != null){
+		if (config.getProperties().getProperty(REASON) != null) {
 			reason = config.getProperties().getProperty(REASON);
 		}
-		log.debug("Using reason: "+reason);
+		log.debug("Using reason: " + reason);
 		// The location shown in the PDF signature
 		String location = LOCATIONDEFAULT;
-		if(config.getProperties().getProperty(LOCATION) != null){
+		if (config.getProperties().getProperty(LOCATION) != null) {
 			location = config.getProperties().getProperty(LOCATION);
 		}
-		log.debug("Using location: "+location);
+		log.debug("Using location: " + location);
 		// The location of the visible signature field (llx, lly, urx, ury)
 		String rectangle = RECTANGLEDEFAULT;
-		if(config.getProperties().getProperty(RECTANGLE) != null){
+		if (config.getProperties().getProperty(RECTANGLE) != null) {
 			rectangle = config.getProperties().getProperty(RECTANGLE);
 		}
-		log.debug("Using rectangle: "+rectangle);
+		log.debug("Using rectangle: " + rectangle);
 		String[] rect = rectangle.split(",");
-		if ( rect.length < 4) {
-			throw new IllegalRequestException("RECTANGLE property must contain 4 comma separated values with no spaces.");			
+		if (rect.length < 4) {
+			throw new IllegalRequestException(
+					"RECTANGLE property must contain 4 comma separated values with no spaces.");
 		}
 		int llx = Integer.valueOf(rect[0]);
 		int lly = Integer.valueOf(rect[1]);
 		int urx = Integer.valueOf(rect[2]);
 		int ury = Integer.valueOf(rect[3]);
-        
+
 		// Start processing the actual signature
-        GenericSignResponse signResponse = null;
-			byte[] pdfbytes = (byte[])sReq.getRequestData();
-			byte[] fpbytes = CertTools.generateSHA1Fingerprint(pdfbytes);
-			String fp = new String(Hex.encode(fpbytes));
-			if (requestContext.get(RequestContext.STATISTICS_EVENT) != null) {
-				Event event = (Event) requestContext.get(RequestContext.STATISTICS_EVENT);
-				event.addCustomStatistics("PDFBYTES", pdfbytes.length);				
+		GenericSignResponse signResponse = null;
+		byte[] pdfbytes = (byte[]) sReq.getRequestData();
+		byte[] fpbytes = CertTools.generateSHA1Fingerprint(pdfbytes);
+		String fp = new String(Hex.encode(fpbytes));
+		if (requestContext.get(RequestContext.STATISTICS_EVENT) != null) {
+			Event event = (Event) requestContext
+					.get(RequestContext.STATISTICS_EVENT);
+			event.addCustomStatistics("PDFBYTES", pdfbytes.length);
+		}
+		try {
+			byte[] signedbytes = addSignatureToPDF(reason, location, llx, lly,
+					urx, ury, pdfbytes);
+			if (signRequest instanceof GenericServletRequest) {
+				signResponse = new GenericServletResponse(sReq.getRequestID(),
+						signedbytes, getSigningCertificate(), fp,
+						new ArchiveData(signedbytes), "application/pdf");
+			} else {
+				signResponse = new GenericSignResponse(sReq.getRequestID(),
+						signedbytes, getSigningCertificate(), fp,
+						new ArchiveData(signedbytes));
 			}
-			try { 
-				PdfReader reader = new PdfReader(pdfbytes);
-				ByteArrayOutputStream fout = new  ByteArrayOutputStream();
-				PdfStamper stp;
-				stp = PdfStamper.createSignature(reader, fout, '\0', null, true);
-				PdfSignatureAppearance sap = stp.getSignatureAppearance();
-				Collection<Certificate> certs = this.getSigningCertificateChain();
-				if (certs == null) {
-					throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
-				}
-				Certificate[] certChain = (Certificate[])certs.toArray(new Certificate[0]);
-				PrivateKey privKey = this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
-				sap.setCrypto(privKey, certChain, null, PdfSignatureAppearance.WINCER_SIGNED);
-				sap.setReason(reason);
-				sap.setLocation(location);
-				sap.setVisibleSignature(new com.lowagie.text.Rectangle(llx, lly, urx, ury), 1, null);
-				stp.close();
-				fout.close();
-				byte[] signedbytes = fout.toByteArray();
-				if(signRequest instanceof GenericServletRequest){
-					signResponse = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes),"application/pdf");
-				}else{
-					signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));
-				}
-			} catch (DocumentException e) {
-				log.error("Error signing PDF: ", e);
-				throw new IllegalRequestException("DocumentException: " + e.getMessage());
-			} catch (IOException e) {
-				log.error("Error signing PDF: ", e);
-				throw new IllegalRequestException("IOException: " + e.getMessage());
-			}
-						
+		} catch (DocumentException e) {
+			log.error("Error signing PDF: ", e);
+			throw new IllegalRequestException("DocumentException: "
+					+ e.getMessage());
+		} catch (IOException e) {
+			log.error("Error signing PDF: ", e);
+			throw new IllegalRequestException("IOException: " + e.getMessage());
+		}
 		
+
 		return signResponse;
 	}
 
+	private byte[] addSignatureToPDF(String reason, String location, int llx,
+			int lly, int urx, int ury, byte[] pdfbytes) throws IOException,
+			DocumentException, CryptoTokenOfflineException {
+		PdfReader reader = new PdfReader(pdfbytes);
+		ByteArrayOutputStream fout = new ByteArrayOutputStream();
+		PdfStamper stp;
+		stp = PdfStamper.createSignature(reader, fout, '\0', null, true);
+		PdfSignatureAppearance sap = stp.getSignatureAppearance();
+		Collection<Certificate> certs = this.getSigningCertificateChain();
+		if (certs == null) {
+			throw new IllegalArgumentException(
+					"Null certificate chain. This signer needs a certificate.");
+		}
+		Certificate[] certChain = (Certificate[]) certs
+				.toArray(new Certificate[0]);
+		PrivateKey privKey = this.getCryptoToken().getPrivateKey(
+				ICryptoToken.PURPOSE_SIGN);
+		sap.setCrypto(privKey, certChain, null,
+				PdfSignatureAppearance.WINCER_SIGNED);
+		sap.setReason(reason);
+		sap.setLocation(location);
+		sap.setVisibleSignature(new com.lowagie.text.Rectangle(llx, lly, urx,
+				ury), 1, null);
+		stp.close();
+		fout.close();
+		return fout.toByteArray();
+	}
+
 }
-
-
-	
-
-	 
-	

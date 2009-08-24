@@ -163,12 +163,10 @@
 # Database username.
 # Default: sa (works with hsqldb)
 #database.username=signserver
-#database.username=postgres
 
 # Database password.
 # Default: (blank works with hsqldb)
-#database.password=foo123
-#database.password=postgres
+#database.password=signserver
 
 # ------------- Cluster Deployment Configuration ------------------------
 # Configuration used to centraly deploy the application server in a 

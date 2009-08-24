@@ -74,7 +74,7 @@ public class TestClusterClassLoaderManagerSessionBean extends TestCase {
 		String[] moduleNames = cclMan.listAllModules();
 		assertNotNull(moduleNames);
 		assertTrue(moduleNames.length > 0);
-		assertTrue(Arrays.binarySearch(moduleNames, "TESTMODULE-WITHOUTDESCR") >= 0);
+		assertTrue(Arrays.asList(moduleNames).contains("TESTMODULE-WITHOUTDESCR"));
 		
 		Integer[] versions = cclMan.listAllModuleVersions("TESTMODULE-WITHOUTDESCR");
 		assertNotNull(versions);
@@ -94,7 +94,7 @@ public class TestClusterClassLoaderManagerSessionBean extends TestCase {
 		moduleNames = cclMan.listAllModules();
 		assertNotNull(moduleNames);
 		assertTrue(moduleNames.length > 0);
-		assertTrue(Arrays.binarySearch(moduleNames, "TESTMODULE-WITHDESCR") >= 0);
+		assertTrue(Arrays.asList(moduleNames).contains("TESTMODULE-WITHDESCR"));
 		
 		versions = cclMan.listAllModuleVersions("TESTMODULE-WITHDESCR");
 		assertNotNull(versions);
@@ -119,9 +119,8 @@ public class TestClusterClassLoaderManagerSessionBean extends TestCase {
 		
 		String[] moduleNames = cclMan.listAllModules();
 		assertNotNull(moduleNames);		
-		assertTrue(Arrays.binarySearch(moduleNames, "TESTMODULE-WITHOUTDESCR") < 0);
-		assertTrue(Arrays.binarySearch(moduleNames, "TESTMODULE-WITHDESCR") < 0);
-		
+		assertFalse(Arrays.asList(moduleNames).contains("TESTMODULE-WITHOUTDESCR"));
+		assertFalse(Arrays.asList(moduleNames).contains("TESTMODULE-WITHDESCR"));
 	}
 	
 	private void addMAR(String marPath) throws Exception{

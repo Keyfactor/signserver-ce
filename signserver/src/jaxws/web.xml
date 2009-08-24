@@ -18,7 +18,7 @@
  own identifying information: Portions Copyright [yyyy]
  [name of copyright owner]
 -->
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:j2ee="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee">
   <display-name>signserverws</display-name>
   <description>signserverws</description>
   <listener>
@@ -38,7 +38,7 @@
   </session-config>
   <env-entry>
     <env-entry-name>DataSource</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
     <env-entry-value>@datasource.jndi-name-prefix@@datasource.jndi-name@</env-entry-value>
+    <env-entry-type>java.lang.String</env-entry-type>
   </env-entry>  
 </web-app>

@@ -67,8 +67,6 @@ public class SODProcessServlet extends HttpServlet {
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     /** if encoding = base64 values will be base64 decoded before use */
     private static final String ENCODING_BASE64 = "base64";
-    private static final String DIGESTALG_PROPERTY_NAME = "digestAlgorithm";
-    private static final String DIGESTENCALG_PROPERTY_NAME = "digestEncryptionAlgorithm";
 
     private IWorkerSession.ILocal workersession;
 
@@ -176,17 +174,6 @@ public class SODProcessServlet extends HttpServlet {
         int requestId = rand.nextInt();
 
         SODSignRequest signRequest = new SODSignRequest(requestId, dataGroups);
-        String digestAlgorithm = req.getParameter(DIGESTALG_PROPERTY_NAME);
-        if(digestAlgorithm != null){
-            log.debug("Found a digestAlg in the request: "+digestAlgorithm);
-            signRequest.setDigestAlgorithm(digestAlgorithm);
-        }
-        String digestEncryptionAlgorithm = req.getParameter(DIGESTENCALG_PROPERTY_NAME);
-        if(digestEncryptionAlgorithm != null){
-            log.debug("Found a digestEncryptionAlgorithm in the request: "+digestEncryptionAlgorithm);
-            signRequest.setDigestEncryptionAlgorithm(digestEncryptionAlgorithm);
-        }
-
         SODSignResponse response = null;
         try {
             response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, new RequestContext((X509Certificate) clientCertificate, remoteAddr));

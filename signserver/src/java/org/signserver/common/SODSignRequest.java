@@ -28,11 +28,7 @@ import java.util.Map;
 public class SODSignRequest extends ProcessRequest implements ISignRequest {
 
     private static final long serialVersionUID = 1L;
-    private int requestID;
-    /** The requested digestAlgorithm, for example SHA1, SHA256. Defaults to SHA256. */
-    private String digestAlgorithm = "SHA256"; 
-	/** The requested digestEncryptionAlgorithm, for example SHA1withRSA, SHA256withRSA, SHA256withECDSA. Defaults to SHA256withRSA. */
-    private String digestEncryptionAlgorithm = "SHA256withRSA"; 
+    private int requestID; 
     private Map<Integer, byte[]> dataGroupHashes;
 
     /**
@@ -66,22 +62,6 @@ public class SODSignRequest extends ProcessRequest implements ISignRequest {
     public Object getRequestData() {
         return getDataGroupHashes();
     }
-
-    public String getDigestAlgorithm() {
-		return digestAlgorithm;
-	}
-
-	public void setDigestAlgorithm(String digestAlgorithm) {
-		this.digestAlgorithm = digestAlgorithm;
-	}
-
-	public String getDigestEncryptionAlgorithm() {
-		return digestEncryptionAlgorithm;
-	}
-
-	public void setDigestEncryptionAlgorithm(String digestEncryptionAlgorithm) {
-		this.digestEncryptionAlgorithm = digestEncryptionAlgorithm;
-	}
 
     public Map<Integer, byte[]> getDataGroupHashes() {
         return dataGroupHashes;

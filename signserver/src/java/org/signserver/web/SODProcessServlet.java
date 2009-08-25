@@ -145,7 +145,9 @@ public class SODProcessServlet extends HttpServlet {
                         String dataStr = req.getParameter(key);
                         if ((dataStr != null) && (dataStr.length() > 0)) {
                         	byte[] data = dataStr.getBytes();
-                        	log.debug("Adding datagroup "+key+", with value "+dataStr);
+                        	if (log.isDebugEnabled()) {
+                            	log.debug("Adding datagroup "+key+", with value "+dataStr);                        		
+                        	}
                             dataGroups.put(dataGroupId, base64Encoded ? Base64.decode(data) : data);
                         }
                     } catch(NumberFormatException ex) {

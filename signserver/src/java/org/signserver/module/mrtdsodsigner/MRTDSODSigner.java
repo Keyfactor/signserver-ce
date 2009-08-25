@@ -15,11 +15,17 @@ package org.signserver.module.mrtdsodsigner;
 
 
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.jmrtd.SODFile;
 import org.signserver.common.ArchiveData;
@@ -64,6 +70,12 @@ public class MRTDSODSigner extends BaseSigner {
     /** Default value for the signature algorithm property */
     private static final String DEFAULT_SIGNATUREALGORITHM = "SHA256withRSA";
 
+    /** Determines if the the data group values should be hashed by the signer. If false we assume they are already hashed. */
+    private static final String PROPERTY_DODATAGROUPHASHING = "DODATAGROUPHASHING";
+
+    /** Default value if the data group values should be hashed by the signer. */
+    private static final String DEFAULT_DODATAGROUPHASHING = "false";
+
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (log.isTraceEnabled()) {
             log.trace(">processData");
@@ -90,7 +102,32 @@ public class MRTDSODSigner extends BaseSigner {
         	if (log.isDebugEnabled()) {
         		log.debug("Using algorithms "+digestAlgorithm+", "+digestEncryptionAlgorithm);
         	}
-            sod = new SODFile(digestAlgorithm, digestEncryptionAlgorithm, sodRequest.getDataGroupHashes(), getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN), cert, getCryptoToken().getProvider(ICryptoToken.PURPOSE_SIGN));
+        	String doHashing = config.getProperty(PROPERTY_DODATAGROUPHASHING, DEFAULT_DODATAGROUPHASHING);
+        	Map<Integer, byte[]> dgvalues = sodRequest.getDataGroupHashes();
+        	Map<Integer, byte[]> dghashes = dgvalues;
+        	if (StringUtils.equalsIgnoreCase(doHashing, "true")) {
+        		if (log.isDebugEnabled()) {
+                	log.debug("Converting data group values to hashes using algorithm "+digestAlgorithm);        			
+        		}
+        		// If true here the "data group hashes" are not really hashes but values that we must hash.
+            	// The input is already decoded (if needed) and nice, so we just need to hash it
+        		dghashes = new HashMap<Integer, byte[]>(16);
+        		for (Integer dgId : dgvalues.keySet()) {
+        			byte[] value = dgvalues.get(dgId);
+            		if (log.isDebugEnabled()) {
+            			log.debug("Hashing data group "+dgId+", value is of length: "+value.length);
+            		}
+        			if ( (value != null) && (value.length > 0) ) {
+                		MessageDigest digest = MessageDigest.getInstance("SHA1");
+        				byte[] result = digest.digest(value);
+                		if (log.isDebugEnabled()) {
+                			log.debug("Resulting hash is of length: "+result.length);
+                		}
+                    	dghashes.put(dgId, result);        				
+        			}
+				}
+        	}
+            sod = new SODFile(digestAlgorithm, digestEncryptionAlgorithm, dghashes, getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN), cert, getCryptoToken().getProvider(ICryptoToken.PURPOSE_SIGN));
         } catch (NoSuchAlgorithmException ex) {
             throw new SignServerException("Problem constructing SOD", ex);
         } catch (CertificateException ex) {

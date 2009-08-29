@@ -46,7 +46,7 @@ public interface ITimedService extends IWorker{
 	
 	/**
 	 * @return should return the milliseconds to next time the service should
-	 * execute, or -1 (DONE_EXECUTE) if the service should stop executing.´
+	 * execute, or -1 (DONE_EXECUTE) if the service should stop executing.
 	 * 
 	 * IMPORTANT, this have changed since 2.0 version were seconds were 
 	 * specified. This shouldn't be confused with the INTERVAL setting 

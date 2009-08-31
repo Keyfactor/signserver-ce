@@ -65,8 +65,10 @@ public class SODProcessServlet extends HttpServlet {
     private static final String DATAGROUP_PROPERTY_NAME = "dataGroup";
     /** Specifies if the fields are encoded in any way */
     private static final String ENCODING_PROPERTY_NAME = "encoding";
-    /** if encoding = base64 values will be base64 decoded before use */
+    /** Default, values will be base64 decoded before use */
     private static final String ENCODING_BASE64 = "base64";
+    /** if encoding = binary values will not be base64 decoded before use */
+    private static final String ENCODING_BINARY = "binary";
 
     private IWorkerSession.ILocal workersession;
 
@@ -119,17 +121,15 @@ public class SODProcessServlet extends HttpServlet {
         String remoteAddr = req.getRemoteAddr();
         log.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
 
-        boolean base64Encoded = false;
+        boolean base64Encoded = true;
         String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
         if(encoding != null && !"".equals(encoding)) {
-            if(ENCODING_BASE64.equalsIgnoreCase(encoding)) {
-                if(log.isDebugEnabled()) {
-                    log.debug("Will decode using Base64");
-                }
-                base64Encoded = true;
-            } else {
-                throw new ServletException("Unknown encoding for the 'data' field: " + encoding);
-            }
+            if(ENCODING_BINARY.equalsIgnoreCase(encoding)) {
+                base64Encoded = false;
+            }   
+        }
+        if(log.isDebugEnabled()) {
+            log.debug("Base64Encoded="+base64Encoded);
         }
 
         // Collect all [dataGroup1, dataGroup2, ..., dataGroupN]
@@ -142,13 +142,22 @@ public class SODProcessServlet extends HttpServlet {
                 if(key.startsWith(DATAGROUP_PROPERTY_NAME)) {
                     try {
                         Integer dataGroupId = new Integer(key.substring(DATAGROUP_PROPERTY_NAME.length()));
-                        String dataStr = req.getParameter(key);
-                        if ((dataStr != null) && (dataStr.length() > 0)) {
-                        	byte[] data = dataStr.getBytes();
+                        if ( (dataGroupId > -1) && (dataGroupId < 17) ) {
+                            String dataStr = req.getParameter(key);
+                            if ((dataStr != null) && (dataStr.length() > 0)) {
+                            	byte[] data = dataStr.getBytes();
+                            	if (log.isDebugEnabled()) {
+                                	log.debug("Adding data group "+key);
+                                	if (log.isTraceEnabled()) {
+                                    	log.trace("with value "+dataStr);                            		
+                                	}
+                            	}
+                                dataGroups.put(dataGroupId, base64Encoded ? Base64.decode(data) : data);
+                            }                        	
+                        } else {
                         	if (log.isDebugEnabled()) {
-                            	log.debug("Adding datagroup "+key+", with value "+dataStr);                        		
+                        		log.debug("Ignoring data group "+dataGroupId);
                         	}
-                            dataGroups.put(dataGroupId, base64Encoded ? Base64.decode(data) : data);
                         }
                     } catch(NumberFormatException ex) {
                         log.warn("Field does not start with \"" + DATAGROUP_PROPERTY_NAME + "\" and ends with a number: \"" + key + "\"");

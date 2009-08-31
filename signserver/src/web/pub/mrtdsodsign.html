@@ -37,14 +37,15 @@ div.header {
 
 <form id="requestform" action="/signserver/sod" method="post">
     <input type="hidden" name="workerName" value="MRTDSODSigner"/>
-    <!-- if encoding = base64 values will be base64 decoded before use -->
+    <!-- if encoding = binary values will not be base64 decoded before use -->
     <!--
-    <input type="hidden" name="encoding" value="base64"/>     
+    <input type="hidden" name="encoding" value="binary"/>     
      -->
+    <!-- a good test value, base64 encoded is Yy== -->
     <p>
-        DG1: <input type="text" size="80" name="dataGroup1"/><br/>
-        DG2: <input type="text" size="80" name="dataGroup2"/><br/>
-        DG3: <input type="text" size="80" name="dataGroup3"/><br/>
+        DG1: <input type="text" size="80" name="dataGroup1" value="Yy=="/><br/>
+        DG2: <input type="text" size="80" name="dataGroup2" value="Yy=="/><br/>
+        DG3: <input type="text" size="80" name="dataGroup3" value="Yy=="/><br/>
         DG4: <input type="text" size="80" name="dataGroup4"/><br/>
         DG5: <input type="text" size="80" name="dataGroup5"/><br/>
         DG6: <input type="text" size="80" name="dataGroup6"/><br/>

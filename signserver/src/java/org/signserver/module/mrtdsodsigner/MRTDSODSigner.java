@@ -17,15 +17,14 @@ package org.signserver.module.mrtdsodsigner;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.jmrtd.SODFile;
 import org.signserver.common.ArchiveData;
@@ -92,6 +91,9 @@ public class MRTDSODSigner extends BaseSigner {
         // Construct SOD
         SODFile sod;
         X509Certificate cert = (X509Certificate) getSigningCertificate();
+        ICryptoToken token = getCryptoToken();
+        PrivateKey privKey = token.getPrivateKey(ICryptoToken.PURPOSE_SIGN);
+        String provider = token.getProvider(ICryptoToken.PURPOSE_SIGN);
         if (log.isDebugEnabled()) {
         	log.debug("Using signer certificate with subjectDN '"+CertTools.getSubjectDN(cert)+"', issuerDN '"+CertTools.getIssuerDN(cert)+", serNo "+CertTools.getSerialNumberAsString(cert));
         }
@@ -127,7 +129,7 @@ public class MRTDSODSigner extends BaseSigner {
         			}
 				}
         	}
-            sod = new SODFile(digestAlgorithm, digestEncryptionAlgorithm, dghashes, getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN), cert, getCryptoToken().getProvider(ICryptoToken.PURPOSE_SIGN));
+            sod = new SODFile(digestAlgorithm, digestEncryptionAlgorithm, dghashes, privKey, cert, provider);
         } catch (NoSuchAlgorithmException ex) {
             throw new SignServerException("Problem constructing SOD", ex);
         } catch (CertificateException ex) {
@@ -147,7 +149,7 @@ public class MRTDSODSigner extends BaseSigner {
 		        // Return response
 		        byte[] signedbytes = sod.getEncoded();
 		        String fp = CertTools.getFingerprintAsString(signedbytes);
-		        ret = new SODSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));
+		        ret = new SODSignResponse(sReq.getRequestID(), signedbytes, cert, fp, new ArchiveData(signedbytes));
 			}
 		} catch (GeneralSecurityException e) {
 			log.error("Error verifying the SOD we signed ourselves. ", e);

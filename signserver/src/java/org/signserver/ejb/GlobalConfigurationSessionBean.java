@@ -50,7 +50,7 @@ import org.signserver.server.timedservices.ITimedService;
  * 
  * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession 
  *           
- * @version $id$
+ * @version $Id$
  */
 @Stateless
 public class GlobalConfigurationSessionBean implements IGlobalConfigurationSession.ILocal, IGlobalConfigurationSession.IRemote {

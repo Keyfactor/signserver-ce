@@ -120,7 +120,7 @@ public class MRTDSODSigner extends BaseSigner {
             			log.debug("Hashing data group "+dgId+", value is of length: "+value.length);
             		}
         			if ( (value != null) && (value.length > 0) ) {
-                		MessageDigest digest = MessageDigest.getInstance("SHA1");
+                		MessageDigest digest = MessageDigest.getInstance(digestAlgorithm);
         				byte[] result = digest.digest(value);
                 		if (log.isDebugEnabled()) {
                 			log.debug("Resulting hash is of length: "+result.length);

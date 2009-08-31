@@ -129,7 +129,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 			res = processable.processData(request,  requestContext);
 	        if(res instanceof IArchivableProcessResponse){
 	        	IArchivableProcessResponse arres = (IArchivableProcessResponse) res;
-	        	if(processable.getStatus().getActiveSignerConfig().getProperties().getProperty(SignServerConstants.ARCHIVE,"FALSE").equalsIgnoreCase("TRUE")){
+	        	if(awc.getProperties().getProperty(SignServerConstants.ARCHIVE,"FALSE").equalsIgnoreCase("TRUE")){
 	        		if(arres.getArchiveData() != null){ 
 	        			String requestIP = (String) requestContext.get(RequestContext.REMOTE_IP);
 	        			X509Certificate clientCert = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);

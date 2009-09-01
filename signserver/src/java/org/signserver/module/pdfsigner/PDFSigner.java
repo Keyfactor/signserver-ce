@@ -15,9 +15,24 @@ package org.signserver.module.pdfsigner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.SignatureException;
+import java.security.cert.CRL;
+import java.security.cert.CRLException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.CertificateParsingException;
+import java.security.cert.X509Certificate;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashMap;
 
 import javax.persistence.EntityManager;
 
@@ -35,16 +50,28 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.statistics.Event;
+import org.signserver.validationservice.server.ValidationUtils;
 
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.OcspClientBouncyCastle;
+import com.lowagie.text.pdf.PdfDate;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfPKCS7;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfSignature;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.PdfString;
+import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.TSAClient;
+import com.lowagie.text.pdf.TSAClientBouncyCastle;
 
 /**
  * A Signer signing PDF files using the IText PDF library.
@@ -68,17 +95,35 @@ public class PDFSigner extends BaseSigner {
 	// CSVFileStatisticsCollector.getInstance(this.getClass().getName(),
 	// "PDF size in bytes");
 
-	// Private Property constants
-	private static final String REASON = "REASON";
-	private static final String REASONDEFAULT = "Signed by SignServer";
-	private static final String LOCATION = "LOCATION";
-	private static final String LOCATIONDEFAULT = "SignServer";
-	private static final String RECTANGLE = "RECTANGLE";
-	private static final String RECTANGLEDEFAULT = "400,700,500,800";
+	// Configuration Property constants
+	// signature properties
+	public static final String REASON = "REASON";
+	public static final String REASONDEFAULT = "Signed by SignServer";
+	public static final String LOCATION = "LOCATION";
+	public static final String LOCATIONDEFAULT = "SignServer";
 
-	private static final String TSA_URL = "TSA_URL";
-	private static final String TSA_USERNAME = "TSA_USERNAME";
-	private static final String TSA_PASSWORD = "TSA_PASSWORD";
+	// properties that control signature visibility
+	public static final String ADD_VISIBLE_SIGNATURE = "ADD_VISIBLE_SIGNATURE";
+	public static final boolean ADD_VISIBLE_SIGNATURE_DEFAULT = false;
+	public static final String VISIBLE_SIGNATURE_PAGE = "VISIBLE_SIGNATURE_PAGE";
+	public static final String VISIBLE_SIGNATURE_PAGE_DEFAULT = "First";
+	public static final String VISIBLE_SIGNATURE_RECTANGLE = "VISIBLE_SIGNATURE_RECTANGLE";
+	public static final String VISIBLE_SIGNATURE_RECTANGLE_DEFAULT = "400,700,500,800";
+	public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64";
+	public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH";
+	public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_RESIZE_TO_RECTANGLE";
+	public static final boolean VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE_DEFAULT = true;
+
+	// properties that control timestamping of signature
+	public static final String TSA_URL = "TSA_URL";
+	public static final String TSA_USERNAME = "TSA_USERNAME";
+	public static final String TSA_PASSWORD = "TSA_PASSWORD";
+
+	// extra properties
+	public static final String EMBED_CRL = "EMBED_CRL";
+	public static final boolean EMBED_CRL_DEFAULT = false;
+	public static final String EMBED_OCSP_RESPONSE = "EMBED_OCSP_RESPONSE";
+	public static final boolean EMBED_OCSP_RESPONSE_DEFAULT = false;
 
 	public void init(int signerId, WorkerConfig config,
 			WorkerContext workerContext, EntityManager workerEntityManager) {
@@ -89,12 +134,14 @@ public class PDFSigner extends BaseSigner {
 	 * The main method performing the actual signing operation. Expects the
 	 * signRequest to be a GenericSignRequest containing a signed PDF file
 	 * 
+	 * @throws SignServerException
+	 * 
 	 * @see org.signserver.server.signers.IProcessable#signData(org.signserver.common.ProcessRequest,
 	 *      java.security.cert.X509Certificate)
 	 */
 	public ProcessResponse processData(ProcessRequest signRequest,
 			RequestContext requestContext) throws IllegalRequestException,
-			CryptoTokenOfflineException {
+			CryptoTokenOfflineException, SignServerException {
 
 		ISignRequest sReq = (ISignRequest) signRequest;
 		// Check that the request contains a valid GenericSignRequest object
@@ -108,33 +155,8 @@ public class PDFSigner extends BaseSigner {
 					"Recieved request data wasn't a expected byte[].");
 		}
 
-		// The reason shown in the PDF signature
-		String reason = REASONDEFAULT;
-		if (config.getProperties().getProperty(REASON) != null) {
-			reason = config.getProperties().getProperty(REASON);
-		}
-		log.debug("Using reason: " + reason);
-		// The location shown in the PDF signature
-		String location = LOCATIONDEFAULT;
-		if (config.getProperties().getProperty(LOCATION) != null) {
-			location = config.getProperties().getProperty(LOCATION);
-		}
-		log.debug("Using location: " + location);
-		// The location of the visible signature field (llx, lly, urx, ury)
-		String rectangle = RECTANGLEDEFAULT;
-		if (config.getProperties().getProperty(RECTANGLE) != null) {
-			rectangle = config.getProperties().getProperty(RECTANGLE);
-		}
-		log.debug("Using rectangle: " + rectangle);
-		String[] rect = rectangle.split(",");
-		if (rect.length < 4) {
-			throw new IllegalRequestException(
-					"RECTANGLE property must contain 4 comma separated values with no spaces.");
-		}
-		int llx = Integer.valueOf(rect[0]);
-		int lly = Integer.valueOf(rect[1]);
-		int urx = Integer.valueOf(rect[2]);
-		int ury = Integer.valueOf(rect[3]);
+		// retrieve and preprocess configuration parameter values
+		PDFSignerParameters params = new PDFSignerParameters(config);
 
 		// Start processing the actual signature
 		GenericSignResponse signResponse = null;
@@ -147,8 +169,7 @@ public class PDFSigner extends BaseSigner {
 			event.addCustomStatistics("PDFBYTES", pdfbytes.length);
 		}
 		try {
-			byte[] signedbytes = addSignatureToPDF(reason, location, llx, lly,
-					urx, ury, pdfbytes);
+			byte[] signedbytes = addSignatureToPDFDocument(params, pdfbytes);
 			if (signRequest instanceof GenericServletRequest) {
 				signResponse = new GenericServletResponse(sReq.getRequestID(),
 						signedbytes, getSigningCertificate(), fp,
@@ -166,19 +187,15 @@ public class PDFSigner extends BaseSigner {
 			log.error("Error signing PDF: ", e);
 			throw new IllegalRequestException("IOException: " + e.getMessage());
 		}
-		
 
 		return signResponse;
 	}
 
-	private byte[] addSignatureToPDF(String reason, String location, int llx,
-			int lly, int urx, int ury, byte[] pdfbytes) throws IOException,
-			DocumentException, CryptoTokenOfflineException {
-		PdfReader reader = new PdfReader(pdfbytes);
-		ByteArrayOutputStream fout = new ByteArrayOutputStream();
-		PdfStamper stp;
-		stp = PdfStamper.createSignature(reader, fout, '\0', null, true);
-		PdfSignatureAppearance sap = stp.getSignatureAppearance();
+	private byte[] addSignatureToPDFDocument(PDFSignerParameters params,
+			byte[] pdfbytes) throws IOException, DocumentException,
+			CryptoTokenOfflineException, SignServerException {
+
+		// get signing cert certificate chain and private key
 		Collection<Certificate> certs = this.getSigningCertificateChain();
 		if (certs == null) {
 			throw new IllegalArgumentException(
@@ -188,15 +205,151 @@ public class PDFSigner extends BaseSigner {
 				.toArray(new Certificate[0]);
 		PrivateKey privKey = this.getCryptoToken().getPrivateKey(
 				ICryptoToken.PURPOSE_SIGN);
-		sap.setCrypto(privKey, certChain, null,
-				PdfSignatureAppearance.WINCER_SIGNED);
-		sap.setReason(reason);
-		sap.setLocation(location);
-		sap.setVisibleSignature(new com.lowagie.text.Rectangle(llx, lly, urx,
-				ury), 1, null);
-		stp.close();
+
+		PdfReader reader = new PdfReader(pdfbytes);
+		ByteArrayOutputStream fout = new ByteArrayOutputStream();
+		PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', null,
+				true);
+		PdfSignatureAppearance sap = stp.getSignatureAppearance();
+
+		// include signer certificate crl inside cms package if requested
+		CRL[] crlList = null;
+		if (params.isEmbed_crl()) {
+			try {
+				URL certURL = CertTools.getCrlDistributionPoint(this
+						.getSigningCertificate());
+				CertificateFactory certFactory;
+				try {
+					certFactory = CertificateFactory.getInstance("X509", "BC");
+				} catch (CertificateException e) {
+					throw new SignServerException(
+							"Error creating Certificate Factory", e);
+				} catch (NoSuchProviderException e) {
+					throw new SignServerException(
+							"Error creating Certificate Factory", e);
+				}
+
+				try {
+					crlList = new CRL[1];
+					crlList[0] = ValidationUtils.fetchCRLFromURL(certURL,
+							certFactory);
+				} catch (CRLException e) {
+					throw new SignServerException("Error fetching CRL from "
+							+ certURL.toString(), e);
+				}
+			} catch (CertificateParsingException e) {
+				throw new SignServerException(
+						"Error obtaining CDP from signing certificate", e);
+			}
+		}
+		sap.setCrypto(null, certChain, crlList,
+				PdfSignatureAppearance.SELF_SIGNED);
+
+		// add visible signature if requested
+		if (params.isAdd_visible_signature()) {
+			sap.setVisibleSignature(new com.lowagie.text.Rectangle(params
+					.getVisible_sig_rectangle_llx(), params
+					.getVisible_sig_rectangle_lly(), params
+					.getVisible_sig_rectangle_urx(), params
+					.getVisible_sig_rectangle_ury()), 1, null);
+
+			// set custom image if requested
+			if (params.isUse_custom_image()) {
+				sap.setAcro6Layers(true);
+				PdfTemplate n2 = sap.getLayer(2);
+				params.getCustom_image().setAbsolutePosition(0, 0);
+				n2.addImage(params.getCustom_image());
+			}
+		}
+
+		PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, new PdfName(
+				"adbe.pkcs7.detached"));
+		dic.setReason(params.getReason());
+		dic.setLocation(params.getLocation());
+		dic.setDate(new PdfDate(Calendar.getInstance()));
+
+		sap.setCryptoDictionary(dic);
+
+		// add timestamp to signature if requested
+		TSAClient tsc = null;
+		if (params.isUse_timestamp()) {
+			tsc = new TSAClientBouncyCastle(params.getTsa_url(), params
+					.getTsa_username(), params.getTsa_password());
+		}
+
+		int contentEstimated = 15000;
+		HashMap exc = new HashMap();
+		exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
+		sap.preClose(exc);
+
+		PdfPKCS7 sgn;
+		try {
+			sgn = new PdfPKCS7(privKey, certChain, null, "SHA1", null, false);
+		} catch (InvalidKeyException e) {
+			throw new SignServerException("Error constructing PKCS7 package", e);
+		} catch (NoSuchProviderException e) {
+			throw new SignServerException("Error constructing PKCS7 package", e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new SignServerException("Error constructing PKCS7 package", e);
+		}
+
+		InputStream data = sap.getRangeStream();
+		MessageDigest messageDigest;
+		try {
+			messageDigest = MessageDigest.getInstance("SHA1");
+		} catch (NoSuchAlgorithmException e) {
+			throw new SignServerException("Error creating SHA1 digest", e);
+		}
+		byte buf[] = new byte[8192];
+		int n;
+		while ((n = data.read(buf)) > 0) {
+			messageDigest.update(buf, 0, n);
+		}
+		byte hash[] = messageDigest.digest();
+		Calendar cal = Calendar.getInstance();
+
+		// embed ocsp response in cms package if requested
+		// for ocsp request to be formed there needs to be issuer certificate in
+		// chain
+		byte[] ocsp = null;
+		if (params.isEmbed_ocsp_response() && certChain.length >= 2) {
+			String url;
+			try {
+				url = PdfPKCS7.getOCSPURL((X509Certificate) certChain[0]);
+				if (url != null && url.length() > 0)
+					ocsp = new OcspClientBouncyCastle(
+							(X509Certificate) certChain[0],
+							(X509Certificate) certChain[1], url).getEncoded();
+			} catch (CertificateParsingException e) {
+				throw new SignServerException(
+						"Error getting OCSP URL from certificate", e);
+			}
+
+		}
+
+		byte sh[] = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp);
+		try {
+			sgn.update(sh, 0, sh.length);
+		} catch (SignatureException e) {
+			throw new SignServerException("Error calculating signature", e);
+		}
+
+		byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
+
+		if (contentEstimated + 2 < encodedSig.length)
+			throw new SignServerException("Not enough space");
+
+		byte[] paddedSig = new byte[contentEstimated];
+		System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
+
+		PdfDictionary dic2 = new PdfDictionary();
+		dic2
+				.put(PdfName.CONTENTS, new PdfString(paddedSig)
+						.setHexWriting(true));
+		sap.close(dic2);
+		reader.close();
+
 		fout.close();
 		return fout.toByteArray();
 	}
-
 }

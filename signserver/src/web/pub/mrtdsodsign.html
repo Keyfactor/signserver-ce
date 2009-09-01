@@ -31,10 +31,8 @@ div.header {
 </style>
 </head>
 <body>
-<div style="text-align: center;">
 <h2>MRTD SOD signing demo</h2>
-</div>
-
+<p>Enter the data for the data groups to be stored on the passport as base64 encoded strings.</p>
 <form id="requestform" action="/signserver/sod" method="post">
     <input type="hidden" name="workerName" value="MRTDSODSigner"/>
     <!-- if encoding = binary values will not be base64 decoded before use -->
@@ -62,6 +60,14 @@ div.header {
     </p>
 
     <input type="submit" name="submit" value="Submit" /><br />
+</form>
+
+<h2>Display signing certificate</h2>
+<p>View the current document signer certificate.</p>
+<form id="displaycertform" action="/signserver/sod" method="post">
+    <input type="hidden" name="workerName" value="MRTDSODSigner"/>
+    <input type="hidden" name="displayCert" value="true"/>     
+    <input type="submit" name="submit" value="Display" /><br />
 </form>
 
 </body>

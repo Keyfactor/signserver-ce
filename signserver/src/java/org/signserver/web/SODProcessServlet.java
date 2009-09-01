@@ -34,10 +34,12 @@ import org.apache.log4j.Logger;
 import org.ejbca.util.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
+import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
 
@@ -58,8 +60,9 @@ public class SODProcessServlet extends HttpServlet {
 
     private static final String CONTENT_TYPE = "application/octet-stream";
 
-    private static Logger log = Logger.getLogger(SODProcessServlet.class);
+    private static final Logger log = Logger.getLogger(SODProcessServlet.class);
 
+    private static final String DISPLAYCERT_PROPERTY_NAME = "displayCert";
     private static final String WORKERID_PROPERTY_NAME = "workerId";
     private static final String WORKERNAME_PROPERTY_NAME = "workerName";
     private static final String DATAGROUP_PROPERTY_NAME = "dataGroup";
@@ -117,98 +120,120 @@ public class SODProcessServlet extends HttpServlet {
             workerId = Integer.parseInt(id);
         }
 
-
         String remoteAddr = req.getRemoteAddr();
-        log.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
 
-        boolean base64Encoded = true;
-        String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
-        if(encoding != null && !"".equals(encoding)) {
-            if(ENCODING_BINARY.equalsIgnoreCase(encoding)) {
-                base64Encoded = false;
-            }   
-        }
-        if(log.isDebugEnabled()) {
-            log.debug("Base64Encoded="+base64Encoded);
-        }
+        // If the command is to display the signer certificate, print it.
+        String displayCert = req.getParameter(DISPLAYCERT_PROPERTY_NAME);
+        if ( (displayCert != null) && (displayCert.length() > 0) ) {
+            log.info("Recieved display cert request for worker " + workerId + ", from ip " + remoteAddr);
+        	displaySignerCertificate(res, workerId);
+        } else {
+        	// If the command is to process the signing request, do that.
+            log.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
 
-        // Collect all [dataGroup1, dataGroup2, ..., dataGroupN]
-        Map<Integer, byte[]> dataGroups = new HashMap<Integer, byte[]>(16);
-        Enumeration en = req.getParameterNames();
-        while(en.hasMoreElements()) {
-            Object o = en.nextElement();
-            if(o instanceof String) {
-                String key = (String) o;
-                if(key.startsWith(DATAGROUP_PROPERTY_NAME)) {
-                    try {
-                        Integer dataGroupId = new Integer(key.substring(DATAGROUP_PROPERTY_NAME.length()));
-                        if ( (dataGroupId > -1) && (dataGroupId < 17) ) {
-                            String dataStr = req.getParameter(key);
-                            if ((dataStr != null) && (dataStr.length() > 0)) {
-                            	byte[] data = dataStr.getBytes();
-                            	if (log.isDebugEnabled()) {
-                                	log.debug("Adding data group "+key);
-                                	if (log.isTraceEnabled()) {
-                                    	log.trace("with value "+dataStr);                            		
+            boolean base64Encoded = true;
+            String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
+            if(encoding != null && !"".equals(encoding)) {
+                if(ENCODING_BINARY.equalsIgnoreCase(encoding)) {
+                    base64Encoded = false;
+                }   
+            }
+            if(log.isDebugEnabled()) {
+                log.debug("Base64Encoded="+base64Encoded);
+            }
+
+            // Collect all [dataGroup1, dataGroup2, ..., dataGroupN]
+            Map<Integer, byte[]> dataGroups = new HashMap<Integer, byte[]>(16);
+            Enumeration en = req.getParameterNames();
+            while(en.hasMoreElements()) {
+                Object o = en.nextElement();
+                if(o instanceof String) {
+                    String key = (String) o;
+                    if(key.startsWith(DATAGROUP_PROPERTY_NAME)) {
+                        try {
+                            Integer dataGroupId = new Integer(key.substring(DATAGROUP_PROPERTY_NAME.length()));
+                            if ( (dataGroupId > -1) && (dataGroupId < 17) ) {
+                                String dataStr = req.getParameter(key);
+                                if ((dataStr != null) && (dataStr.length() > 0)) {
+                                	byte[] data = dataStr.getBytes();
+                                	if (log.isDebugEnabled()) {
+                                    	log.debug("Adding data group "+key);
+                                    	if (log.isTraceEnabled()) {
+                                        	log.trace("with value "+dataStr);                            		
+                                    	}
                                 	}
+                                    dataGroups.put(dataGroupId, base64Encoded ? Base64.decode(data) : data);
+                                }                        	
+                            } else {
+                            	if (log.isDebugEnabled()) {
+                            		log.debug("Ignoring data group "+dataGroupId);
                             	}
-                                dataGroups.put(dataGroupId, base64Encoded ? Base64.decode(data) : data);
-                            }                        	
-                        } else {
-                        	if (log.isDebugEnabled()) {
-                        		log.debug("Ignoring data group "+dataGroupId);
-                        	}
+                            }
+                        } catch(NumberFormatException ex) {
+                            log.warn("Field does not start with \"" + DATAGROUP_PROPERTY_NAME + "\" and ends with a number: \"" + key + "\"");
                         }
-                    } catch(NumberFormatException ex) {
-                        log.warn("Field does not start with \"" + DATAGROUP_PROPERTY_NAME + "\" and ends with a number: \"" + key + "\"");
                     }
                 }
             }
+
+            if(dataGroups.size() == 0) {
+                throw new ServletException("Missing dataGroup fields in request");
+            }
+
+            if(log.isDebugEnabled()) {
+                log.debug("Received number of dataGroups: " + dataGroups.size());
+            }
+
+            // Get the client certificate, if any is passed in an https exchange, to be used for client authentication
+            Certificate clientCertificate = null;
+            Certificate[] certificates = (X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate");
+            if (certificates != null) {
+                clientCertificate = certificates[0];
+            }
+
+            Random rand = new Random();
+            int requestId = rand.nextInt();
+
+            SODSignRequest signRequest = new SODSignRequest(requestId, dataGroups);
+            SODSignResponse response = null;
+            try {
+                response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, new RequestContext((X509Certificate) clientCertificate, remoteAddr));
+            } catch (IllegalRequestException e) {
+                throw new ServletException(e);
+            } catch (CryptoTokenOfflineException e) {
+                throw new ServletException(e);
+            } catch (SignServerException e) {
+                throw new ServletException(e);
+            }
+
+            if (response.getRequestID() != requestId) {
+                throw new ServletException("Error in process operation, response id didn't match request id");
+            }
+            byte[] processedBytes = (byte[]) response.getProcessedData();
+
+            res.setContentType(CONTENT_TYPE);
+            res.setContentLength(processedBytes.length);
+            res.getOutputStream().write(processedBytes);
+            res.getOutputStream().close();        	
         }
 
-        if(dataGroups.size() == 0) {
-            throw new ServletException("Missing dataGroup fields in request");
-        }
-
-        if(log.isDebugEnabled()) {
-            log.debug("Received number of dataGroups: " + dataGroups.size());
-        }
-
-        // Get the client certificate, if any is passed in an https exchange, to be used for client authentication
-        Certificate clientCertificate = null;
-        Certificate[] certificates = (X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate");
-        if (certificates != null) {
-            clientCertificate = certificates[0];
-        }
-
-        Random rand = new Random();
-        int requestId = rand.nextInt();
-
-        SODSignRequest signRequest = new SODSignRequest(requestId, dataGroups);
-        SODSignResponse response = null;
-        try {
-            response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, new RequestContext((X509Certificate) clientCertificate, remoteAddr));
-        } catch (IllegalRequestException e) {
-            throw new ServletException(e);
-        } catch (CryptoTokenOfflineException e) {
-            throw new ServletException(e);
-        } catch (SignServerException e) {
-            throw new ServletException(e);
-        }
-
-        if (response.getRequestID() != requestId) {
-            throw new ServletException("Error in process operation, response id didn't match request id");
-        }
-        byte[] processedBytes = (byte[]) response.getProcessedData();
-
-        res.setContentType(CONTENT_TYPE);
-        res.setContentLength(processedBytes.length);
-        res.getOutputStream().write(processedBytes);
-        res.getOutputStream().close();
 
         log.debug("<doPost()");
     } //doPost
 
+    private void displaySignerCertificate(HttpServletResponse response, int workerId) throws IOException {
+    	log.debug(">displaySignerCertificate()");
+    	WorkerConfig config = getWorkerSession().getCurrentWorkerConfig(workerId);
+    	Certificate cert =(new ProcessableConfig( config)).getSignerCertificate();
+		response.setContentType("text/plain");
+    	if (cert != null) {
+    		response.getWriter().print(cert);
+    	} else {
+    		response.getWriter().print("No signing certificate found for worker with id "+workerId);
+    	}
+    	log.debug("<displaySignerCertificate()");
+    }
+    
     /**
      * handles http get
      *

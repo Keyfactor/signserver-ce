@@ -45,9 +45,11 @@ import org.signserver.server.signers.BaseSigner;
  *
  * Properties:
  * <ul>
- *  <li>DIGESTALGORITHM = Message digest algorithm applied to the datagroups. (Optional)</li>
+ *  <li>DIGESTALGORITHM = Message digest algorithm that is applied or should be applied to the values. (Optional)</li>
  *  <li>SIGNATUREALGORITHM = Signature algorithm for signing the SO(d), should match
  *  the digest algorithm. (Optional)</li>
+ *  <li>DODATAGROUPHASHING = True if this signer first should hash to values. Otherwise
+ * the values are assumed to be hashes</li>
  * </ul>
  * 
  * @author Markus Kilas

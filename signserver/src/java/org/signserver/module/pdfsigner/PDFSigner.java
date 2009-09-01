@@ -247,11 +247,12 @@ public class PDFSigner extends BaseSigner {
 
 		// add visible signature if requested
 		if (params.isAdd_visible_signature()) {
+			int signaturePage = getPageNumberForSignature(reader, params);
 			sap.setVisibleSignature(new com.lowagie.text.Rectangle(params
 					.getVisible_sig_rectangle_llx(), params
 					.getVisible_sig_rectangle_lly(), params
 					.getVisible_sig_rectangle_urx(), params
-					.getVisible_sig_rectangle_ury()), 1, null);
+					.getVisible_sig_rectangle_ury()), signaturePage, null);
 
 			// set custom image if requested
 			if (params.isUse_custom_image()) {
@@ -351,5 +352,34 @@ public class PDFSigner extends BaseSigner {
 
 		fout.close();
 		return fout.toByteArray();
+	}
+
+	/**
+	 * get the page number at which to draw signature rectangle 
+	 * @param pReader
+	 * @param pParams
+	 * @return
+	 */
+	private int getPageNumberForSignature(PdfReader pReader,
+			PDFSignerParameters pParams) {
+		int totalNumOfPages = pReader.getNumberOfPages();
+		if (pParams.getVisible_sig_page().trim().equals("First"))
+			return 1;
+		else if (pParams.getVisible_sig_page().trim().equals("Last"))
+			return totalNumOfPages;
+		else {
+			try {
+				int pNum = Integer.parseInt(pParams.getVisible_sig_page());
+				if( pNum < 1)
+					return 1;
+				else if (pNum > totalNumOfPages)
+					return totalNumOfPages;
+				else
+					return pNum;
+			} catch (NumberFormatException ex) {
+				//not a numeric argument draw on first line
+				return 1;
+			}
+		}
 	}
 }

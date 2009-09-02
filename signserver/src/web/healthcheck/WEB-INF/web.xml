@@ -9,7 +9,7 @@
         <!-- Required parameters -->
         <init-param>
             <param-name>HealthCheckClassPath</param-name>
-            <param-value>se.primeKey.signserver.web.SignServerHealthCheck</param-value>
+            <param-value>org.signserver.web.SignServerHealthCheck</param-value>
             <description>Class performing the healthcheck. Must implement the IHealthCheck interface.</description>
         </init-param>
         <init-param>

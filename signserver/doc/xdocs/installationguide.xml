@@ -41,13 +41,13 @@ This quick start guide assumes you are using JBoss and are running everything on
 <br/># ./run.sh
 <br/>- verify that startup was ok. Tables have now been created in your database.
 </li>
-<li>Deploy the Timestamp demo module:
+<li>Deploy the Timestamp demo module and notice the worker ID (in this example 1):
 <br/># bin/signserver.sh module add dist-server/tsa.mar demo</li>
 <li>Verify the configuration with:
-<br/># bin/signserver.sh getconfig tsa
+<br/># bin/signserver.sh getconfig 1
 </li>
 <li>Finally activate the configuration with:
-<br/># bin/signserver.sh reload tsa
+<br/># bin/signserver.sh reload 1
 </li>
 <li>You can check the configuration with:
 <br/># bin/signserver.sh getstatus complete all
@@ -66,13 +66,13 @@ error messages. Usually errors like database connection problems, or wrong path 
 <p>
 To install the PDF signer you can issue the following commands (either instead of the TSA or in addition to the TSA).
 <ol>
-<li>Deploy the PDF signer demo module:
+<li>Deploy the PDF signer demo module and notice the worker ID (in this example: 2):
 <br/># bin/signserver.sh module add dist-server/pdfsigner.mar demo</li>
 <li>Verify the configuration with:
-<br/># bin/signserver.sh getconfig pdfsigner
+<br/># bin/signserver.sh getconfig 2
 </li>
 <li>Finally activate the configuration with:
-<br/># bin/signserver.sh reload pdfsigner
+<br/># bin/signserver.sh reload 2
 </li>
 </ol>
 You can now, with your web browser, access the url <a href="http://127.0.0.1:8080/signserver/pdfsign.html">http://127.0.0.1:8080/signserver/pdfsign.html</a> to get PDF documents signed. 

@@ -247,9 +247,6 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
 	            <classpath refid="server.compile.classpath" />
 	            <src path="${src.java}" /> 
-	        	<exclude name="net/sourceforge/scuba/**"/>
-	        	<exclude name="org/jmrtd/**"/>
-	        	<exclude name="org/signserver/module/**"/>
 	        	<exclude name="org/signserver/common/MailSigner*"/>
 	        	<exclude name="org/signserver/mailsigner/**"/>
 	        	<exclude name="org/signserver/appserver/**"/>
@@ -270,8 +267,8 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	   <!-- =================================================================== -->
 	    <!-- Build signserver ejb part                                           -->
 	    <!-- =================================================================== -->
-	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient, signingAndValidationAPI" unless="buildMailSigner">
-
+	    <target name="signserver-ejb-jar-including-modules" if="includemodulesinbuild">
+	        <echo message="Including modules in main build"/>
 	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
 	        	<metainf dir="${preprocessed}/appserver/${appserver.type}">
 	        			<include name="persistence.xml"/>
@@ -286,13 +283,44 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	          	  <exclude name="org/signserver/cli/**" />
 	          	  <exclude name="org/signserver/client/**" />
    	        	  <exclude name="org/signserver/common/MailSigner*"/>
+   	        	  <!--
 	          	  <exclude name="org/signserver/module/**" />
+	          	  -->
 	          	  <exclude  name="org/signserver/protocol/validationservice/ws/**" />
-                    <exclude name="org/signserver/server/genericws/**" />
+                  <exclude name="org/signserver/server/genericws/**" />
 	              <exclude  name="org/signserver/protocol/ws/**" />
 		          <exclude name="org/signserver/mailsigner/**" />
 	        	</fileset>
 	        </jar>
+	    </target>
+	    <target name="signserver-ejb-jar-excluding-modules" unless="includemodulesinbuild">
+	        <echo message="Not including modules in main build"/>
+	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
+	        	<metainf dir="${preprocessed}/appserver/${appserver.type}">
+	        			<include name="persistence.xml"/>
+	        	</metainf>
+	        	<metainf dir="${src}/deploy/ejb/persistence-mappings/${database.name}">
+	    	            <include name="entity-mappings.xml"/>
+	    	    </metainf>
+	        	
+	        	<fileset dir="." includes="signserver_server.properties"/>
+	        	<!-- This file is included automatically from ${build} <fileset dir="src/java" includes="profilemappings.properties"/> -->
+	            <fileset dir="${build}">
+	          	  <exclude name="org/signserver/cli/**" />
+	          	  <exclude name="org/signserver/client/**" />
+   	        	  <exclude name="org/signserver/common/MailSigner*"/>
+	          	  <exclude name="net/sourceforge/scuba/**" />
+	          	  <exclude name="org/jmrtd/**" />
+	          	  <exclude name="org/signserver/module/**" />
+	          	  <exclude  name="org/signserver/protocol/validationservice/ws/**" />
+                  <exclude name="org/signserver/server/genericws/**" />
+	              <exclude  name="org/signserver/protocol/ws/**" />
+		          <exclude name="org/signserver/mailsigner/**" />
+	        	</fileset>
+	        </jar>
+	    </target>
+	    
+	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient, signingAndValidationAPI, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules" unless="buildMailSigner">
 	    </target>
 	       
 

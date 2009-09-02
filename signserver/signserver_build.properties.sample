@@ -276,6 +276,15 @@ signingandvalidationapi.enabled     = true
 
 # -------------- Cluster Class Loader Configurations ----------------
 #
+
+# Set to true to include all the module classes in the main signserver.ear.
+# If you do not enable the cluster class loader this option must be used 
+# in order for signers to be configured.
+# If the cluster classloader is used, this option should not be set.
+#
+# Default: empty (=false)
+#includemodulesinbuild=
+
 # Set to true to enable the use of the cluster class loader
 #
 # Warning: the cluster class loader is still experimental and should

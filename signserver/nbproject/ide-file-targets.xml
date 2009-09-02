@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir=".." name="SignServer-nb67-3-IDE">
+<project basedir=".." name="SignServer-IDE">
     <!-- This is for compiling the test classes -->
     <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#compilesingle) -->
     <target name="compile-selected-files-in-test">
@@ -54,7 +54,7 @@
             <pathelement location="dist-client/wsraadminclient/wsraadmin.jar"/>
             <pathelement location="tmp/bin/classes"/>
         </path>
-        <nbjpdastart addressproperty="jpda.address" name="SignServer-nb67-3" transport="dt_socket">
+        <nbjpdastart addressproperty="jpda.address" name="SignServer" transport="dt_socket">
             <classpath refid="cp"/>
         </nbjpdastart>
         <property name="run.testname" value="${debug.testname}"/>

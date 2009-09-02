@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir=".." name="SignServer-nb67-3">
+<project basedir=".." name="SignServer">
     <property file="nbproject/nbjdk.properties"/>
     <property location="${netbeans.user}/build.properties" name="user.properties.file"/>
     <property file="${user.properties.file}"/>

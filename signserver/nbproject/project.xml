@@ -11,7 +11,7 @@
             <properties/>
             <folders>
                 <source-folder>
-                    <label>SignServer-nb67-3</label>
+                    <label>SignServer</label>
                     <location>.</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>

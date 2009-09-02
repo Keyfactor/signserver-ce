@@ -429,8 +429,10 @@ OS version                          = ${os.version}
 		    	<exclude name=".classpath" />
 		    	<exclude name=".project" />
 		    	<exclude name=".eclipse/**" />
+                        <exclude name=".settings/**" />
 		    	<exclude name="**/.cvsignore" />
 		    	<exclude name="**/*.sh" />
+                        <exclude name="nbproject/**" />
 		    </zipfileset>
 		    <zipfileset dir="." prefix="signserver_lgpl_v3_version_${signserver.zipversion}" filemode="700" dirmode="700"> 
 		    	<include name="**/*.sh" />
@@ -459,8 +461,10 @@ OS version                          = ${os.version}
 		    	<exclude name=".classpath" />
 		    	<exclude name=".project" />
 		    	<exclude name=".eclipse/**" />
+                        <exclude name=".settings/**" />
 		    	<exclude name="**/.cvsignore" />
 		    	<exclude name="**/*.sh" />
+                        <exclude name="nbproject/**" />
 		    </zipfileset>
 		    <zipfileset dir="." prefix="signserver_lgpl_v21_version_${signserver.zipversion}" filemode="700" dirmode="700"> 
 		    	<include name="**/*.sh" />

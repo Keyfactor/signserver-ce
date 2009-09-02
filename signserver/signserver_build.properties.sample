@@ -320,6 +320,7 @@ clusterclassloader.truststorepwd=
 #
 # Parameters configuring how health check and status should be
 # configured.
+# Sample url: http://localhost:8080/signserver/healthcheck/signserverhealth
 #
 # Setting specifying which remote IPs that may call this healthcheck servlet. Use ';' for between multiple IPs. 
 # Default : 127.0.0.1

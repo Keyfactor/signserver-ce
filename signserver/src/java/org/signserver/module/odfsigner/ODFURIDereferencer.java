@@ -17,20 +17,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import javax.xml.crypto.Data;
+import javax.xml.crypto.OctetStreamData;
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.URIReference;
 import javax.xml.crypto.URIReferenceException;
 import javax.xml.crypto.XMLCryptoContext;
 
 import org.apache.xml.security.signature.XMLSignatureInput;
-import org.jcp.xml.dsig.internal.dom.ApacheOctetStreamData;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 
 /**
  * Implementation of URI Dereferencer for ODF
  * 
  * @author Aziz Göktepe
- * 
+ * $Id$
  */
 public class ODFURIDereferencer implements URIDereferencer {
 
@@ -68,8 +68,8 @@ public class ODFURIDereferencer implements URIDereferencer {
 			XMLSignatureInput retXMLSigInput = new XMLSignatureInput(bos
 					.toByteArray());
 
-			ApacheOctetStreamData retData = new ApacheOctetStreamData(
-					retXMLSigInput);
+			OctetStreamData retData = new OctetStreamData(
+					retXMLSigInput.getOctetStream(), retXMLSigInput.getSourceURI(), retXMLSigInput.getMIMEType());
 
 			return retData;
 

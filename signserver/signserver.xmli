@@ -250,7 +250,6 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	        	<exclude name="org/signserver/common/MailSigner*"/>
 	        	<exclude name="org/signserver/mailsigner/**"/>
 	        	<exclude name="org/signserver/appserver/**"/>
-	        	<exclude name="org/signserver/module/**"/> 
 	        	<exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>	        	
 	        	<exclude name="org/signserver/protocol/ws/client/**"/>
 	        	<exclude name="org/signserver/client/validationservice/**"/>

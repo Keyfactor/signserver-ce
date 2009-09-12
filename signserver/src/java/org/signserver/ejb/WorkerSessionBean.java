@@ -117,10 +117,10 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
         IAuthorizer auth = WorkerFactory.getInstance().getAuthenticator(workerId, processable.getAuthenticationType(), worker.getStatus().getActiveSignerConfig(), em);
         auth.isAuthorized(request, requestContext);
         
-        if(processable.getStatus().getActiveSignerConfig().getProperties().getProperty(SignServerConstants.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
+        WorkerConfig awc = processable.getStatus().getActiveSignerConfig();
+        if(awc.getProperties().getProperty(SignServerConstants.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
         	throw new CryptoTokenOfflineException("Error Signer : " + workerId + " is disabled and cannot perform any signature operations");
         }
-        WorkerConfig awc = processable.getStatus().getActiveSignerConfig();
         Event event = StatisticsManager.startEvent(workerId, awc, em);
         requestContext.put(RequestContext.STATISTICS_EVENT, event);
         

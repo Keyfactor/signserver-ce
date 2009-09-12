@@ -122,14 +122,17 @@ public class SignServerHealthCheck implements IHealthCheck {
 	
 	public static String checkDB(String checkDBString){
 		String retval = "";
+		Connection con = null;
 		try{	
-		  Connection con = JDBCUtil.getDBConnection(JNDINames.DATASOURCE);
+		  con = JDBCUtil.getDBConnection(JNDINames.DATASOURCE);
 		  Statement statement = con.createStatement();
-		  statement.execute(checkDBString);		  
-		  JDBCUtil.close(con);
+		  statement.execute(checkDBString);	
+		  statement.close();
 		}catch(Exception e){
 			retval = "\nError creating connection to SignServer Database.";
 			log.error("Error creating connection to SignServer Database.",e);
+		} finally {
+			JDBCUtil.close(con);			
 		}
 		return retval;
 	}

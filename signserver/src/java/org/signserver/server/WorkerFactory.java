@@ -149,6 +149,9 @@ public  class WorkerFactory {
 	 */
 	private synchronized void loadWorkers(IWorkerConfigDataService workerConfigHome, IGlobalConfigurationSession gCSession, WorkerContext workerContext){
 		   if(workerStore == null){
+			   if (log.isDebugEnabled()) {
+				   log.debug("Loading workers into WorkerFactory.");
+			   }
               workerStore = new HashMap<Integer, IWorker>();
               nameToIdMap = new HashMap<String,Integer>();
               workerClassLoaderMap=  new HashMap<Integer,ClassLoader>();
@@ -160,6 +163,9 @@ public  class WorkerFactory {
 				  Integer nextId = (Integer) iter.next();				   
 				  try{	
 					  String classpath = gc.getWorkerClassPath(nextId.intValue());						
+					   if (log.isDebugEnabled()) {
+						   log.debug("Loading worker with classpath: "+classpath);
+					   }
 					  if(classpath != null){
 						  WorkerConfig config = workerConfigHome.getWorkerProperties(nextId.intValue());
 						  						  
@@ -175,7 +181,6 @@ public  class WorkerFactory {
 						  if(obj instanceof IProcessable || obj.getClass().getSimpleName().equals("IMailProcessor")){
 							  config = workerConfigHome.getWorkerProperties(nextId.intValue());
 							  if(config.getProperties().getProperty(ProcessableConfig.NAME) != null){
-								  
 								  getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), nextId); 
 							  }  
 						  }

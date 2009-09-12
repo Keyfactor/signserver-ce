@@ -49,13 +49,24 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 	public void activateSigner(String authenticationCode)
 			throws CryptoTokenAuthenticationFailureException,
 			CryptoTokenOfflineException {		
-			    
+		if (log.isTraceEnabled()) {
+			log.trace(">activateSigner");
+		}	    
 		getCryptoToken().activate(authenticationCode);
-	    
+		if (log.isTraceEnabled()) {
+			log.trace("<activateSigner");
+		}	    
 	}
 
 	public boolean deactivateSigner() throws CryptoTokenOfflineException {
-		return getCryptoToken().deactivate();
+		if (log.isTraceEnabled()) {
+			log.trace(">deactivateSigner");
+		}
+		boolean ret = getCryptoToken().deactivate();
+		if (log.isTraceEnabled()) {
+			log.trace("<deactivateSigner");
+		}
+		return ret;
 	}
 	
 	/**
@@ -101,7 +112,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 			}
 		}
 		if (log.isTraceEnabled()) {
-			log.trace("<getCryptoToken: "+(cryptoToken!=null ? cryptoToken.getClass().getName() : "null"));
+			log.trace("<getCryptoToken: "+cryptoToken);
 		}
 		
 		return cryptoToken;

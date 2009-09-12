@@ -15,6 +15,7 @@ package org.signserver.web;
 
 import java.io.IOException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -58,11 +59,13 @@ public class SODProcessServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String CONTENT_TYPE = "application/octet-stream";
+    private static final String CONTENT_TYPE_BINARY = "application/octet-stream";
+    private static final String CONTENT_TYPE_TEXT = "text/plain";
 
     private static final Logger log = Logger.getLogger(SODProcessServlet.class);
 
     private static final String DISPLAYCERT_PROPERTY_NAME = "displayCert";
+    private static final String DOWNLOADCERT_PROPERTY_NAME = "downloadCert";
     private static final String WORKERID_PROPERTY_NAME = "workerId";
     private static final String WORKERNAME_PROPERTY_NAME = "workerName";
     private static final String DATAGROUP_PROPERTY_NAME = "dataGroup";
@@ -124,9 +127,13 @@ public class SODProcessServlet extends HttpServlet {
 
         // If the command is to display the signer certificate, print it.
         String displayCert = req.getParameter(DISPLAYCERT_PROPERTY_NAME);
+        String downloadCert = req.getParameter(DOWNLOADCERT_PROPERTY_NAME);
         if ( (displayCert != null) && (displayCert.length() > 0) ) {
             log.info("Recieved display cert request for worker " + workerId + ", from ip " + remoteAddr);
         	displaySignerCertificate(res, workerId);
+        } else if ( (downloadCert != null) && (downloadCert.length() > 0) ) {
+        	log.info("Recieved download cert request for worker " + workerId + ", from ip " + remoteAddr);
+        	sendSignerCertificate(res, workerId);
         } else {
         	// If the command is to process the signing request, do that.
             log.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
@@ -211,7 +218,7 @@ public class SODProcessServlet extends HttpServlet {
             }
             byte[] processedBytes = (byte[]) response.getProcessedData();
 
-            res.setContentType(CONTENT_TYPE);
+            res.setContentType(CONTENT_TYPE_BINARY);
             res.setContentLength(processedBytes.length);
             res.getOutputStream().write(processedBytes);
             res.getOutputStream().close();        	
@@ -225,7 +232,7 @@ public class SODProcessServlet extends HttpServlet {
     	log.debug(">displaySignerCertificate()");
     	WorkerConfig config = getWorkerSession().getCurrentWorkerConfig(workerId);
     	Certificate cert =(new ProcessableConfig( config)).getSignerCertificate();
-		response.setContentType("text/plain");
+        response.setContentType(CONTENT_TYPE_TEXT);
     	if (cert != null) {
     		response.getWriter().print(cert);
     	} else {
@@ -233,7 +240,30 @@ public class SODProcessServlet extends HttpServlet {
     	}
     	log.debug("<displaySignerCertificate()");
     }
-    
+
+    private void sendSignerCertificate(HttpServletResponse response, int workerId) throws IOException {
+    	log.debug(">sendSignerCertificate()");
+    	WorkerConfig config = getWorkerSession().getCurrentWorkerConfig(workerId);
+    	Certificate cert =(new ProcessableConfig( config)).getSignerCertificate();
+    	try {
+    		if (cert != null) {
+    			byte[] bytes;
+    			bytes = cert.getEncoded();
+    			response.setContentType(CONTENT_TYPE_BINARY);
+    	        response.setHeader("Content-Disposition", "filename=cert.crt");
+    			response.setContentLength(bytes.length);
+    			response.getOutputStream().write(bytes);
+    			response.getOutputStream().close();        	
+    		} else {
+    			response.getWriter().print("No signing certificate found for worker with id "+workerId);
+    		}
+    	} catch (CertificateEncodingException e) {
+			log.error("Error encoding certificate: ", e);
+			response.getWriter().print("Error encoding certificate: "+e.getMessage());
+    	}
+    	log.debug("<sendSignerCertificate()");
+    }
+
     /**
      * handles http get
      *

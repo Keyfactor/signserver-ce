@@ -70,5 +70,13 @@ div.header {
     <input type="submit" name="submit" value="Display" /><br />
 </form>
 
+<h2>Download signing certificate</h2>
+<p>Download the current document signer certificate in binary (der) format.</p>
+<form id="downloadcertform" action="/signserver/sod" method="post">
+    <input type="hidden" name="workerName" value="MRTDSODSigner"/>
+    <input type="hidden" name="downloadCert" value="true"/>     
+    <input type="submit" name="submit" value="Download" /><br />
+</form>
+
 </body>
 </html>

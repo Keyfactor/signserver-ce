@@ -67,7 +67,7 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
      */
 	public SigningAndValidationWSBalanced(String clientType, String[] hosts, boolean useHTTPS, IFaultCallback faultCallback, int port, int timeOut, String customAppURI, SignServerWSClientFactory clientFactory) {
 		this();
-		this.signserver = clientFactory.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK, hosts, useHTTPS, new LogErrorCallback(), port, timeOut, customAppURI);
+		this.signserver = clientFactory.generateSignServerWSClient(clientType, hosts, useHTTPS, faultCallback, port, timeOut, customAppURI);
 	}
 	
 	/** 

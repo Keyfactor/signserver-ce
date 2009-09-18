@@ -6,17 +6,23 @@
 
   <body>
     <section name="Sign Server Manual">
-    <subsection name="Version 3.0 Documentation">
+<subsection name="Version 3.1 Documentation">
 <p>
 The SignServer manual describing how to configure, use and develop plug-ins can can
-be downloaded here either as <a href="docs/SignServer_Manual_3_0.pdf">PDF</a> or viewed as 
-<a href="docs/SignServer_Manual_3_0.html">HTML</a> 
+be downloaded here either as <a href="docs/SignServer_Manual_3_1.pdf">PDF</a> or viewed as
+<a href="docs/SignServer_Manual_3_1.html">HTML</a>.
+</p>
+</subsection>
+<subsection name="Version 3.0 Documentation">
+<p>
+The documentation for version 3.0 can be found here:  <a href="docs/SignServer_Manual_3_0.pdf">PDF</a>
+<a href="docs/SignServer_Manual_3_0.html">HTML</a>.
 </p>
 </subsection>
 <subsection name="Version 2.0 Documentation">
 <p>
-The Documentation for version 2.0 can be found here: <a href="docs/SignServer_Manual_2_0.pdf">PDF</a>  
-<a href="docs/SignServer_Manual_2_0.html">HTML</a>
+The documentation for version 2.0 can be found here: <a href="docs/SignServer_Manual_2_0.pdf">PDF</a>
+<a href="docs/SignServer_Manual_2_0.html">HTML</a>.
 </p> 
 </subsection>
 

@@ -56,4 +56,17 @@ public class SignServerConstants {
 	 * 
 	 */
 	public static final String USEWORKERENTITYMANAGER = "USEWORKERENTITYMANAGER";
+	
+	/**
+	 * Constant indicating that a signers certificate should be checked for validity.
+	 * Set property to FALSE to ignore if the validity is not yet valid or has expired.
+	 */
+	public static final String CHECKCERTVALIDITY          = "CHECKCERTVALIDITY";
+
+	/**
+	 * Constant indicating that a signers certificate should be checked for validity of the private key (using the PrivateKeyUsagePeriod).
+	 * Set property to FALSE to ignore if the private key usage period is not yet valid or has expired.
+	 */
+	public static final String CHECKCERTPRIVATEKEYVALIDITY          = "CHECKCERTPRIVATEKEYVALIDITY";
+
 }

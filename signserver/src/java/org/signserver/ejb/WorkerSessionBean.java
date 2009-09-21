@@ -14,11 +14,15 @@
 
 package org.signserver.ejb;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,6 +33,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
+import org.bouncycastle.asn1.x509.X509Extensions;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
@@ -121,6 +130,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
         if(awc.getProperties().getProperty(SignServerConstants.DISABLED,"FALSE").equalsIgnoreCase("TRUE")){
         	throw new CryptoTokenOfflineException("Error Signer : " + workerId + " is disabled and cannot perform any signature operations");
         }
+        // Check if the signer has a signer certificate and if that certificate have ok validity and private key usage periods. 
+        checkCertificateValidity(workerId, awc);
+    	
         Event event = StatisticsManager.startEvent(workerId, awc, em);
         requestContext.put(RequestContext.STATISTICS_EVENT, event);
         
@@ -150,15 +162,87 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 			log.error("SignServerException calling signer with id " + workerId + " : " +e.getMessage(),e);
 			throw e;
 		}
-        
-
-        
+                
 		log.debug("<process " );
 		return res;
 	}
 
 
+	/** Verify the certificate validity times and also that the PrivateKeyUsagePeriod is ok
+	 * 
+	 * @param workerId
+	 * @param awc
+	 * @throws CryptoTokenOfflineException
+	 */
+	private void checkCertificateValidity(int workerId, WorkerConfig awc)
+			throws CryptoTokenOfflineException {
+    	boolean checkcertvalidity = awc.getProperties().getProperty(SignServerConstants.CHECKCERTVALIDITY,"TRUE").equalsIgnoreCase("TRUE");
+    	boolean checkprivatekeyvalidity = awc.getProperties().getProperty(SignServerConstants.CHECKCERTPRIVATEKEYVALIDITY,"TRUE").equalsIgnoreCase("TRUE");
+    	if (log.isDebugEnabled()) {
+        	log.debug("checkcertvalidity: "+checkcertvalidity);
+        	log.debug("checkprivatekeyvalidity: "+checkprivatekeyvalidity);    		
+    	}
 
+    	if (checkcertvalidity || checkprivatekeyvalidity) {
+    		// If the signer have a certificate, check that it is usable
+        	X509Certificate cert =(new ProcessableConfig(awc)).getSignerCertificate();
+        	if (cert != null) {
+        		// Check regular certificate validity
+            	Date notBefore = cert.getNotBefore();
+            	Date notAfter = cert.getNotAfter();
+            	if (log.isDebugEnabled()) {
+            		log.debug("The signer certificate is valid from '"+notBefore+"' until '"+notAfter+"'");
+            	}
+            	Date now = new Date();
+            	if (checkcertvalidity) {
+                	if (now.before(notBefore)) {
+                    	throw new CryptoTokenOfflineException("Error Signer " + workerId + " have a signing certificate that is not valid until "+notBefore);    		
+                	}
+                	if (now.after(notAfter)) {
+                    	throw new CryptoTokenOfflineException("Error Signer " + workerId + " have a signing certificate that expired at "+notAfter);    		
+                	}            		
+            	}
+            	if (checkprivatekeyvalidity) {
+                	// Check privateKeyUsagePeriod of it exists
+                	byte[] extvalue = cert.getExtensionValue(X509Extensions.PrivateKeyUsagePeriod.getId());
+                	if ( (extvalue != null) && (extvalue.length > 0) ) {
+                    	if (log.isDebugEnabled()) {
+                    		log.debug("Found a PrivateKeyUsagePeriod in the signer certificate.");
+                    	}
+            	        try {
+            	        	DEROctetString oct = (DEROctetString) (new ASN1InputStream(new ByteArrayInputStream(extvalue)).readObject());
+            	        	PrivateKeyUsagePeriod p = PrivateKeyUsagePeriod.getInstance((ASN1Sequence) new ASN1InputStream(
+            	        			new ByteArrayInputStream(oct.getOctets())).readObject());
+            	        	if (p != null) {
+            	        		notBefore = p.getNotBefore().getDate();
+            	        		notAfter = p.getNotAfter().getDate();
+            	            	if (log.isDebugEnabled()) {
+            	            		log.debug("The signer certificate has a private key usage period from '"+notBefore+"' until '"+notAfter+"'");
+            	            	}
+            	            	now = new Date();
+            	            	if (now.before(notBefore)) {
+            	                	throw new CryptoTokenOfflineException("Error Signer " + workerId + " have a private key that is not valid until "+notBefore);    		
+            	            	}
+            	            	if (now.after(notAfter)) {
+            	                	throw new CryptoTokenOfflineException("Error Signer " + workerId + " have a private key that expired at "+notAfter);    		
+            	            	}
+            	        	}
+            	        } catch (IOException e) {
+            	        	log.error(e);
+            	        	CryptoTokenOfflineException newe = new CryptoTokenOfflineException("Error Signer " + workerId + " have a problem with PrivateKeyUsagePeriod, check server log.");
+                        	newe.initCause(e);
+                        	throw newe;
+            	        } catch (ParseException e) {
+            	        	log.error(e);
+            	        	CryptoTokenOfflineException newe = new CryptoTokenOfflineException("Error Signer " + workerId + " have a problem with PrivateKeyUsagePeriod, check server log.");    		
+                        	newe.initCause(e);
+                        	throw newe;
+        				}
+                	}
+            	} // if (checkprivatekeyvalidity)
+        	} // if (cert != null)
+    	} // if (checkcertvalidity || checkprivatekeyvalidity) {
+	} // checkCertificateValidity
 
 
 	/* (non-Javadoc)

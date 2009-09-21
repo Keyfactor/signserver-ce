@@ -43,8 +43,11 @@ acronym {
     float: left;
     background-color: #FFFFFF;
     margin: 0px;
+    padding-bottom: 10px;
     width: 250px;
     height: 100%;
+    border-right: thin solid #ddd;
+    border-bottom: thin solid #ddd;
 }
 
 .menu {
@@ -171,7 +174,6 @@ h3 {
     font-weight: normal;
     letter-spacing: 1px;
     margin-top: 2em;
-    margin-right-value: 0px;
     margin-bottom: 0.5em;
     padding-top: 0px;
     padding-bottom: 0px;
@@ -180,9 +182,8 @@ h3 {
 h4 {
     font-family: Verdana,Arial,Helvetica,sans-serif;
     font-size: 90%;
-    font-style: bold;
     font-weight: bold;
-	border-bottom: 1px  black;
+    border-bottom: 1px  black;
 }
 
 .section {

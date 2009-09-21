@@ -37,6 +37,10 @@
                 <item name="Repositories"      href="/repositories.html"/>
             </menu>
 
+            <menu name="Continous integration">
+                <item name="Hudson" href="/hudson.html"/>
+            </menu>
+
         </menusection>
 
     </body>

@@ -14,8 +14,10 @@
 <li>Henrik Andréasson, kinneh(at)users.sourceforge.net, Project Manager and Initiator.</li>
 <li>Philip Vendil, philip(at)primekey.se, Project Manager, Main developer of the framework.</li>
 <li>Lars Silvèn, lars(at)primekey.se, SSL-RMI parts and the possibility to have custom web front end.</li>
-<li>Tomas Gustavsson, tomas(at)primekey.se, PDF Signer, PKCS11 sign token, Improved the TSA client with more arguments.</li>
-<li>Markus Kil&#229;s, markus(at)primekey.se, XML Signer/validator.</li>
+<li>Tomas Gustavsson, tomas(at)primekey.se, PDF Signer, PKCS11 sign token, Improved the TSA client with more arguments, MRTD SOD signer, lots of improvements</li>
+<li>Markus Kil&#229;s, markus(at)primekey.se, XML Signer/validator, MRTD SOG signer, lots of improvements.</li>
+<li>Ezizmuhamet Muhammetkuliyev, rayback2(at)gmail.com, OOXML, ODF Signer/validator, improvements to PDF signer, CRL/OCSP validators.</li>
+<li>Christophe Sahut, christophe.sahut(at)sgs.com, Install howto for SignServer 3.1 on RHEL systems.</li>
 </ul>
 </section>
 </body>

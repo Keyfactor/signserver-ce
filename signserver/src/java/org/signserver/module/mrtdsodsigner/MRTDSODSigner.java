@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.jmrtd.SODFile;
 import org.signserver.common.ArchiveData;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ISignRequest;
 import org.signserver.common.IllegalRequestException;
@@ -37,6 +38,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
+import org.signserver.common.SignerStatus;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -77,6 +79,8 @@ public class MRTDSODSigner extends BaseSigner {
     /** Default value if the data group values should be hashed by the signer. */
     private static final String DEFAULT_DODATAGROUPHASHING = "false";
 
+    private static Object syncObj = new Object();
+    
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (log.isTraceEnabled()) {
             log.trace(">processData");
@@ -90,15 +94,41 @@ public class MRTDSODSigner extends BaseSigner {
         }
         SODSignRequest sodRequest = (SODSignRequest) signRequest;
 
-        // Construct SOD
-        SODFile sod;
-        X509Certificate cert = (X509Certificate) getSigningCertificate();
         ICryptoToken token = getCryptoToken();
+        // Trying to do a workaround for issue when the PKCS#11 session becomes invalid
+        // If autoactivate is on, we can deactivate and re-activate the token.
+        synchronized (syncObj) {
+        	int status = token.getCryptoTokenStatus();
+        	if (log.isDebugEnabled()) {
+             	log.debug("Crypto token status: "+status);        		
+        	}
+        	if (status != SignerStatus.STATUS_ACTIVE) {
+            	log.info("Crypto token status is not active, will see if we can autoactivate.");
+        		String pin = config.getProperty("PIN");
+        		if (pin == null) {
+        			pin = config.getProperty("pin");
+        		}
+        		if (pin != null) {
+                	log.info("Deactivating and re-activating crypto token.");
+        			token.deactivate();
+        			try {
+        				token.activate(pin);
+        			} catch (CryptoTokenAuthenticationFailureException e) {
+        				throw new CryptoTokenOfflineException(e);
+        			}					
+        		} else {
+                	log.info("Autoactivation not enabled, can not re-activate crypto token.");
+        		}
+        	}
+        }
+        X509Certificate cert = (X509Certificate) getSigningCertificate();
         PrivateKey privKey = token.getPrivateKey(ICryptoToken.PURPOSE_SIGN);
         String provider = token.getProvider(ICryptoToken.PURPOSE_SIGN);
         if (log.isDebugEnabled()) {
         	log.debug("Using signer certificate with subjectDN '"+CertTools.getSubjectDN(cert)+"', issuerDN '"+CertTools.getIssuerDN(cert)+", serNo "+CertTools.getSerialNumberAsString(cert));
         }
+        // Construct SOD
+        SODFile sod;
         try {
         	// Create the SODFile using the data group hashes that was sent to us in the request.
         	String digestAlgorithm = config.getProperty(PROPERTY_DIGESTALGORITHM, DEFAULT_DIGESTALGORITHM);
@@ -140,6 +170,9 @@ public class MRTDSODSigner extends BaseSigner {
 
         // Verify the Signature before returning
         try {
+        	if (log.isDebugEnabled()) {
+        		log.debug("Verifying SOD signed by DS with issuer: "+sod.toString());
+        	}
 			boolean verify = sod.checkDocSignature(cert);
 			if (!verify) {
 				log.error("Failed to verify the SOD we signed ourselves.");
@@ -147,7 +180,9 @@ public class MRTDSODSigner extends BaseSigner {
 				log.error("SOD: "+sod);
 				throw new SignServerException("Failed to verify the SOD we signed ourselves.");
 			} else {
-				log.debug("SOD verified correctly, returning SOD.");
+	        	if (log.isDebugEnabled()) {
+	        		log.debug("SOD verified correctly, returning SOD.");
+	        	}
 		        // Return response
 		        byte[] signedbytes = sod.getEncoded();
 		        String fp = CertTools.getFingerprintAsString(signedbytes);

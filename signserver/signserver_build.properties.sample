@@ -66,7 +66,7 @@
 # Password for java trust keystore (p12/truststore.jks), default is changeit.
 #java.trustpassword=changeit
 
-#Path to the root certificate to be imported into the java truststore.
+# Path to the root certificate to be imported into the java truststore.
 #java.trustcert=p12/rootcert.cer
 
 # The password used to protect the web servers SSL keystore.
@@ -376,4 +376,4 @@ mailsigner.smtpauth=true
 # default 1099 and 2099
 #rmi.registry.port= 1099
 #rmi.server.port= 2099
-	
+

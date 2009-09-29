@@ -79,6 +79,41 @@ You can now, with your web browser, access the url <a href="http://127.0.0.1:808
 </p>
 </subsection>
 
+<subsection name="OOXML signer">
+<p>
+To install the OOXML signer you can issue the following commands
+<ol>
+<li>Deploy the OOXML signer demo module and notice the worker ID (in this example: 3):
+<br/># bin/signserver.sh module add dist-server/ooxmlsigner.mar demo</li>
+<li>Verify the configuration with:
+<br/># bin/signserver.sh getconfig 3
+</li>
+<li>Finally activate the configuration with:
+<br/># bin/signserver.sh reload 3
+</li>
+</ol>
+You can now, with your web browser, access the url <a href="http://127.0.0.1:8080/signserver/ooxmlsign.html">http://127.0.0.1:8080/signserver/ooxmlsign.html</a> to get any Open Office XML documents signed (ex: MS Office 2007 word document, excel document, power point presentation...). 
+</p>
+</subsection>
+
+<subsection name="ODF signer">
+<p>
+To install the ODF signer you can issue the following commands
+<ol>
+<li>Deploy the ODF signer demo module and notice the worker ID (in this example: 4):
+<br/># bin/signserver.sh module add dist-server/odfsigner.mar demo</li>
+<li>Verify the configuration with:
+<br/># bin/signserver.sh getconfig 4
+</li>
+<li>Finally activate the configuration with:
+<br/># bin/signserver.sh reload 4
+</li>
+</ol>
+You can now, with your web browser, access the url <a href="http://127.0.0.1:8080/signserver/odfsigner.html">http://127.0.0.1:8080/signserver/odfsigner.html</a> to get any Open Document Format documents signed (ex: word or spreadsheet document produced with Open Office 3.1). 
+</p>
+</subsection>
+
+
 <subsection name="XML signer">
 <p>
 To install the XML signer you can issue the following commands (either instead of the TSA or in addition to the TSA):

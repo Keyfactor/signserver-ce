@@ -183,6 +183,8 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
 						//eat up
 					}
 				}
+				
+				//TODO : throw exception at the end if no crl fits our needs ??
 			}
 		}
 		
@@ -240,6 +242,8 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
 		if(crlEntry != null)
 		{
 			msg = "The certificate " + x509Cert.getSubject() + " has been revoked on " + crlEntry.getRevocationDate();
+			
+			//TODO : crlEntry extension is OPTIONAL ?? if it is then throw exception if it has no extension
 			if(crlEntry.hasExtensions())
 			{
 				int reasonCode = CRLReason.unspecified;

@@ -41,7 +41,7 @@ public abstract class BaseModuleCommand extends BaseCommand {
     protected boolean isClusterClassLoaderEnabled(){
     	boolean retval = GlobalConfiguration.isClusterClassLoaderEnabled();
     	if(retval){
-    		getOutputStream().println("WARNING: Module functionality is still experimental.\n\n");
+    		getOutputStream().println("Using cluster class loader.\n");
     	}else{
     		getOutputStream().println("ERROR: Module (Cluster Class Loader) functionality is disabled");
     	}

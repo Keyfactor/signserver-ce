@@ -21,6 +21,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -178,12 +179,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 			throws CryptoTokenOfflineException {
     	boolean checkcertvalidity = awc.getProperties().getProperty(SignServerConstants.CHECKCERTVALIDITY,"TRUE").equalsIgnoreCase("TRUE");
     	boolean checkprivatekeyvalidity = awc.getProperties().getProperty(SignServerConstants.CHECKCERTPRIVATEKEYVALIDITY,"TRUE").equalsIgnoreCase("TRUE");
+    	int minremainingcertvalidity = Integer.valueOf(awc.getProperties().getProperty(SignServerConstants.MINREMAININGCERTVALIDITY,"0"));
     	if (log.isDebugEnabled()) {
         	log.debug("checkcertvalidity: "+checkcertvalidity);
         	log.debug("checkprivatekeyvalidity: "+checkprivatekeyvalidity);    		
+        	log.debug("minremainingcertvalidity: "+minremainingcertvalidity);    		
     	}
 
-    	if (checkcertvalidity || checkprivatekeyvalidity) {
+    	if (checkcertvalidity || checkprivatekeyvalidity || (minremainingcertvalidity > 0)) {
     		// If the signer have a certificate, check that it is usable
         	X509Certificate cert =(new ProcessableConfig(awc)).getSignerCertificate();
         	if (cert != null) {
@@ -194,14 +197,26 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
             		log.debug("The signer certificate is valid from '"+notBefore+"' until '"+notAfter+"'");
             	}
             	Date now = new Date();
+            	
+            	// Certificate validity period. Cert must not be expired.
             	if (checkcertvalidity) {
                 	if (now.before(notBefore)) {
-                    	throw new CryptoTokenOfflineException("Error Signer " + workerId + " have a signing certificate that is not valid until "+notBefore);    		
+                		String msg = "Error Signer " + workerId + " have a signing certificate that is not valid until "+notBefore;
+                		if (log.isDebugEnabled()) {
+                    		log.debug(msg);                			
+                		}
+                    	throw new CryptoTokenOfflineException(msg);    		
                 	}
                 	if (now.after(notAfter)) {
-                    	throw new CryptoTokenOfflineException("Error Signer " + workerId + " have a signing certificate that expired at "+notAfter);    		
+                		String msg = "Error Signer " + workerId + " have a signing certificate that expired at "+notAfter;
+                		if (log.isDebugEnabled()) {
+                    		log.debug(msg);                			
+                		}
+                    	throw new CryptoTokenOfflineException(msg);    		
                 	}            		
             	}
+            	
+            	// Private key usage period. Private key must not be expired
             	if (checkprivatekeyvalidity) {
                 	// Check privateKeyUsagePeriod of it exists
                 	byte[] extvalue = cert.getExtensionValue(X509Extensions.PrivateKeyUsagePeriod.getId());
@@ -221,10 +236,18 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
             	            	}
             	            	now = new Date();
             	            	if (now.before(notBefore)) {
-            	                	throw new CryptoTokenOfflineException("Error Signer " + workerId + " have a private key that is not valid until "+notBefore);    		
+                            		String msg = "Error Signer " + workerId + " have a private key that is not valid until "+notBefore;
+                            		if (log.isDebugEnabled()) {
+                                		log.debug(msg);                			
+                            		}
+            	                	throw new CryptoTokenOfflineException(msg);    		
             	            	}
             	            	if (now.after(notAfter)) {
-            	                	throw new CryptoTokenOfflineException("Error Signer " + workerId + " have a private key that expired at "+notAfter);    		
+                            		String msg = "Error Signer " + workerId + " have a private key that expired at "+notAfter;
+                            		if (log.isDebugEnabled()) {
+                                		log.debug(msg);                			
+                            		}
+            	                	throw new CryptoTokenOfflineException(msg);    		
             	            	}
             	        	}
             	        } catch (IOException e) {
@@ -240,7 +263,29 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
         				}
                 	}
             	} // if (checkprivatekeyvalidity)
-        	} // if (cert != null)
+            	
+            	// Check remaining validity of certificate. Must not be too short.
+            	if (minremainingcertvalidity > 0) {
+            		Calendar cal = Calendar.getInstance();
+            		cal.add(Calendar.DAY_OF_MONTH, minremainingcertvalidity);
+            		Date check = cal.getTime();
+            		if (log.isDebugEnabled()) {
+            			log.debug("Checking if signer certificate expires before: "+check);
+            		}
+                	if (check.after(notAfter)) {
+                		String msg = "Error Signer " + workerId + " have a signing certificate that expires within "+minremainingcertvalidity+" days.";
+                		if (log.isDebugEnabled()) {
+                    		log.debug(msg);                			
+                		}
+                    	throw new CryptoTokenOfflineException(msg);    		
+                	}            		
+            	}
+
+        	} else { // if (cert != null)
+        		if (log.isDebugEnabled()) {
+        			log.debug("Worker does not have a signing certificate. Worker: "+workerId);
+        		}
+        	}
     	} // if (checkcertvalidity || checkprivatekeyvalidity) {
 	} // checkCertificateValidity
 

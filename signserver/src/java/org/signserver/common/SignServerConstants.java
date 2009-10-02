@@ -69,4 +69,13 @@ public class SignServerConstants {
 	 */
 	public static final String CHECKCERTPRIVATEKEYVALIDITY          = "CHECKCERTPRIVATEKEYVALIDITY";
 
+	/**
+	 * Constant defining a minimum remaining certificate validity period for the signer to work. If the signer certificate has 
+	 * less days validity remaining than the number of days specified by this property, the signer will not work.
+	 * if ( (days until cert.getNotAfter) <  MINREMAININGCERTVALIDITY ) throw exception.
+	 * A value of 0 means unlimited, i.e. the property is not used.
+	 */
+	public static final String MINREMAININGCERTVALIDITY          = "MINREMAININGCERTVALIDITY";
+
+	
 }

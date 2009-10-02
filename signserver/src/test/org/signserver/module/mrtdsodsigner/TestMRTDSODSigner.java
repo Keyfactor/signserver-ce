@@ -17,6 +17,7 @@ import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,13 +34,17 @@ import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.jmrtd.SODFile;
 import org.signserver.cli.CommonAdminInterface;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
+import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -181,6 +186,32 @@ public class TestMRTDSODSigner extends TestCase {
         signHelper(WORKER4, 17, dataGroups3, true, "SHA512", "SHA512withRSA");
     }
 
+    public void test04MinRemainingCertVValidity() throws Exception {
+
+    	// A signing operation that will work
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
+        signHelper(WORKER1, 12, dataGroups1, false, "SHA256", "SHA256withRSA");
+
+        // Set property to limit remaining cert validity
+        CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
+        X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(HardCodedCryptoToken.certbytes));			
+
+        sSSession.uploadSignerCertificate(WORKER1, cert, GlobalConfiguration.SCOPE_GLOBAL);
+        sSSession.setWorkerProperty(WORKER1, SignServerConstants.MINREMAININGCERTVALIDITY, "6300");
+        sSSession.reloadConfiguration(WORKER1);
+    	// Signing operation should not work now
+        boolean thrown = false;
+        try {
+            signHelper(WORKER1, 12, dataGroups1, false, "SHA256", "SHA256withRSA");        	
+        } catch (CryptoTokenOfflineException e) {
+        	thrown = true;
+        }
+        assertTrue(thrown);
+
+    }
+
     private void signHelper(int workerId, int requestId, Map<Integer, byte[]> dataGroups, boolean signerDoesHashing, String digestAlg, String sigAlg) throws Exception {
 
         // Create expected hashes
@@ -221,16 +252,14 @@ public class TestMRTDSODSigner extends TestCase {
         MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
         return md.digest(data);
     }
-
-    /*
+    
+    /**
      * Test method for 'org.signserver.server.MRTDSigner.getStatus()'
      */
-    public void test03GetStatus() throws Exception {
+    public void test05GetStatus() throws Exception {
         SignerStatus stat = (SignerStatus) sSSession.getStatus(7897);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
-
     }
-
     
 
     public void test99TearDownDatabase() throws Exception {

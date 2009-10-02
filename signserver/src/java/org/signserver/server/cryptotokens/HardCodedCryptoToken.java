@@ -123,7 +123,7 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	"JebCC2FiSP88KPGGW5D351LJ+UL8En3oA5eHxZCy/LeGejPw0N02XjVFfBZEKnf6" +
 	"5a94").getBytes());*/
 
-	private static byte[] certbytes = Base64.decode((
+	public static byte[] certbytes = Base64.decode((
 	"MIIC5DCCAcygAwIBAgIIfZgsZqV8NDAwDQYJKoZIhvcNAQEFBQAwNzERMA8GA1UE" +
 	"AxMIQWRtaW5DQTExFTATBgNVBAoTDEVKQkNBIFNhbXBsZTELMAkGA1UEBhMCU0Uw" +
 	"HhcNMDYwNjAzMTUzMzM5WhcNMjYwNTI5MTU0MzM5WjA3MRYwFAYDVQQDEw10aW1l" +

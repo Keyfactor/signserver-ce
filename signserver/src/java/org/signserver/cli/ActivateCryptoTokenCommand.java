@@ -14,6 +14,7 @@
 
 package org.signserver.cli;
 
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.common.MailSignerStatus;
 import org.signserver.common.SignerStatus;
 
@@ -47,15 +48,22 @@ public class ActivateCryptoTokenCommand extends BaseCommand {
      * @throws ErrorAdminCommandException Error running command
      */
     protected void execute(String hostname,String[] resources) throws IllegalAdminCommandException, ErrorAdminCommandException {
-        if (args.length != 3) {
+        if (args.length < 2) {
 	       throw new IllegalAdminCommandException(resources[HELP]);	       
 	    }	
         try {            
         	
         	int workerid = getWorkerId(args[1], hostname);
         	checkThatWorkerIsProcessable(workerid,hostname);
-        	String authCode = args[2];
-        	        	
+        	String authCode = null;
+            if (args.length > 2) {
+            	authCode = args[2];
+            } else {
+                getOutputStream().print("Enter authorization code: ");
+                // Read the password, but mask it so we don't display it on the console
+                ConsolePasswordReader r = new ConsolePasswordReader();
+                authCode = String.valueOf(r.readPassword());            	
+            }
         	
         	this.getOutputStream().println( resources[TRYING]+ workerid + "\n");
         	this.getCommonAdminInterface(hostname).activateSigner(workerid, authCode);
@@ -83,8 +91,10 @@ public class ActivateCryptoTokenCommand extends BaseCommand {
     
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
     	String[] resources =  {"Usage: signserver activatesigntoken <worker id | worker name> <authentication code> \n" + 
-                               "Example 1 : signserver activatecryptotoken 1 123456 \n\n" +
-                               "Example 2 : signserver activatecryptotoken mySigner 123456 \n\n",
+    			               "Leaving out authorization code will prompt for it.\n\n" +                               
+    			               "Example 1 : signserver activatecryptotoken 1 123456 \n" +
+                               "Example 2 : signserver activatecryptotoken 1 \n" +
+                               "Example 3 : signserver activatecryptotoken mySigner 123456 \n\n",
                                "Trying to activate crypto token of worker with id : ",
                                "Activation of worker was successful\n\n",
                                "Activation of worker FAILED\n\n"};

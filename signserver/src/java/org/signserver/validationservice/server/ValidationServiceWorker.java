@@ -36,9 +36,8 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
  * 
  * @author Philip Vendil 16 nov 2007
  *
- * @version $$
+ * @version $Id$
  */
-
 public class ValidationServiceWorker extends BaseProcessable {
 	
 	private transient Logger log = Logger.getLogger(this.getClass());

@@ -13,10 +13,11 @@
 
 package org.signserver.common;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class GenericValidationResponse extends ProcessResponse {
 	private int requestID = 0;
 	private boolean valid = false;
 	private ValidateResponse certificateValidateResponse;
+        private byte[] processedData;
 
 	/**
 	 * Default constructor used during serialization
@@ -55,11 +57,24 @@ public class GenericValidationResponse extends ProcessResponse {
 	 * @param requestID The request id
 	 * @param valid True if the validated document was found valid
 	 * @param certificateValidateResponse The results from validating the certificate
+         * @param processedData For instance the validated document or some modification of it
 	 */
-	public GenericValidationResponse(int requestID, boolean valid, ValidateResponse certificateValidateResponse) {
+	public GenericValidationResponse(int requestID, boolean valid, ValidateResponse certificateValidateResponse, byte[] processedData) {
 		this.requestID = requestID;
 		this.valid = valid;
 		this.certificateValidateResponse = certificateValidateResponse;
+                this.processedData = processedData;
+	}
+
+        /**
+	 * Constructs a new GenericValidagtionResponse
+	 *
+	 * @param requestID The request id
+	 * @param valid True if the validated document was found valid
+	 * @param certificateValidateResponse The results from validating the certificate
+	 */
+	public GenericValidationResponse(int requestID, boolean valid, ValidateResponse certificateValidateResponse) {
+            this(requestID, valid, certificateValidateResponse, null);
 	}
 
 	/**
@@ -124,12 +139,18 @@ public class GenericValidationResponse extends ProcessResponse {
 		return Collections.emptyList();
 	}
 
+        /**
+         * @return Validator specific data (for instance the validated document) or null.
+         */
+        public byte[] getProcessedData() {
+            return processedData;
+        }
+
 	/**
 	 * Deserializes this object from an InputStream.
 	 * 
 	 * @param in InputStream to read from.
 	 * @throws IOException If an I/O error occurred.
-	 * @throws IllegalArgumentException If the method was not called with an InputStream.
 	 */
 	public void parse(DataInput in) throws IOException {
 		log.debug(">parse");
@@ -137,25 +158,17 @@ public class GenericValidationResponse extends ProcessResponse {
 		this.requestID = in.readInt();
 		this.valid = in.readBoolean();
 
-		// Not optimal but we need to know if the result contains an
-		// ValidateResponse and the ValidateResponse is consuming the tag
-		if (!(in instanceof InputStream)) {
-			throw new IllegalArgumentException("GenericValidationResponse.parse must be called with an InputStream");
-		}
-		if (((InputStream) in).available() > 0) {
+                int responseSize = in.readInt();
+		if (responseSize > 0) {
 			this.certificateValidateResponse = new ValidateResponse();
 			this.certificateValidateResponse.parse(in);
 		} else {
 			this.certificateValidateResponse = null;
 		}
-		// this.certificateValidateResponse = new ValidateResponse();
-		// int type = in.readInt();
-		// if(type == RequestAndResponseManager.RESPONSETYPE_VALIDATE) {
-		// this.certificateValidateResponse.parse(in);
-		// } else if(type != 0) {
-		// throw new IOException("Expected RESPONSETYPE_VALIDATE or 0, not " +
-		// type);
-		// }
+                int dataSize = in.readInt();
+                log.debug("dataSize: " + responseSize);
+                this.processedData = new byte[dataSize];
+                in.readFully(this.processedData);
 		log.debug("<parse");
 	}
 
@@ -173,12 +186,23 @@ public class GenericValidationResponse extends ProcessResponse {
 		out.writeBoolean(this.valid);
 
 		if (certificateValidateResponse != null) {
-			certificateValidateResponse.serialize(out);
-			// out.writeInt(0);
-		}
-		// else {
-		// certificateValidateResponse.serialize(out);
-		// }
+                    ByteArrayOutputStream resOut = new ByteArrayOutputStream();
+			certificateValidateResponse.serialize(new DataOutputStream(resOut));
+                    out.writeInt(resOut.size());
+                    log.debug("resOutSize: " + resOut.size());
+                    out.write(resOut.toByteArray());
+		} else {
+                    out.writeInt(0);
+                }
+
+                if(processedData != null) {
+                    out.writeInt(processedData.length);
+                    log.debug("processedDataSize: " + processedData.length);
+                    out.write(processedData);
+                } else {
+                    out.writeInt(0);
+                }
+		
 		log.debug("<serialize");
 	}
 

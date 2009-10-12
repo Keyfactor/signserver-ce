@@ -308,7 +308,80 @@ public class TestXMLValidator extends TestCase {
 		}
 	}
 	
-	public void test09SigOkCertRevoced() throws Exception {
+        public void test09DocumentNotReturned() throws Exception {
+
+            // Just some validation
+            int reqid = 19;
+            {
+                    byte[] data = XMLValidatorTestData.TESTXML5.getBytes();
+
+                    // XML Document
+                    checkXmlWellFormed(new ByteArrayInputStream(data));
+
+                    GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
+                    GenericValidationResponse res = (GenericValidationResponse) sSSession.process(
+                                    WORKERID, signRequest, new RequestContext());
+
+                    assertTrue("answer to right question", reqid == res.getRequestID());
+
+                    assertTrue("valid document", res.isValid());
+
+                    // Check certificate and path
+                    ICertificate signercert = res.getCertificateValidation().getCertificate();
+                    assertEquals("Signer certificate", "CN=xmlsigner2,O=SignServer Test,C=SE", signercert.getSubject());
+                    List<ICertificate> caChain = res.getCertificateValidation().getCAChain();
+                    assertEquals("ca certificate 0", "CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE", caChain.get(0).getSubject());
+                    assertEquals("caChain length", 1, caChain.size());
+                    log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
+                    assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
+
+                    // The test
+                    byte[] processedData = res.getProcessedData();
+                    assertTrue(processedData == null || processedData.length == 0);
+            }
+        }
+
+        public void test19DocumentReturnedWithoutSignature() throws Exception {
+
+            sSSession.setWorkerProperty(WORKERID, "RETURNDOCUMENT", "true");
+            sSSession.setWorkerProperty(WORKERID, "STRIPSIGNATURE", "true");
+            sSSession.reloadConfiguration(WORKERID);
+
+            // Just some validation
+            int reqid = 19;
+            {
+                    byte[] data = XMLValidatorTestData.TESTXML5.getBytes();
+
+                    // XML Document
+                    checkXmlWellFormed(new ByteArrayInputStream(data));
+
+                    GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
+                    GenericValidationResponse res = (GenericValidationResponse) sSSession.process(
+                                    WORKERID, signRequest, new RequestContext());
+
+                    assertTrue("answer to right question", reqid == res.getRequestID());
+
+                    assertTrue("valid document", res.isValid());
+
+                    // Check certificate and path
+                    ICertificate signercert = res.getCertificateValidation().getCertificate();
+                    assertEquals("Signer certificate", "CN=xmlsigner2,O=SignServer Test,C=SE", signercert.getSubject());
+                    List<ICertificate> caChain = res.getCertificateValidation().getCAChain();
+                    assertEquals("ca certificate 0", "CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE", caChain.get(0).getSubject());
+                    assertEquals("caChain length", 1, caChain.size());
+                    log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
+                    assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
+
+                    // The test
+                    byte[] processedData = res.getProcessedData();
+                    assertNotNull(processedData);
+                    String document = new String(processedData);
+                    assertTrue(document.indexOf("Signature") == -1);
+                    assertTrue(document.indexOf("<my-tag>") != -1);
+            }
+        }
+
+	public void test11SigOkCertRevoced() throws Exception {
 		
 		sSSession.setWorkerProperty(17, "VAL1.REVOKED", "CN=xmlsigner2,O=SignServer Test,C=SE");
 		sSSession.reloadConfiguration(17);
@@ -347,6 +420,8 @@ public class TestXMLValidator extends TestCase {
 		
 		TestUtils.assertSuccessfulExecution(new String[] { "module", "remove", "XMLVALIDATOR", "" + moduleVersion });
 		assertTrue(TestUtils.grepTempOut("Removal of module successful."));
+                sSSession.removeWorkerProperty(WORKERID, "RETURNDOCUMENT");
+                sSSession.removeWorkerProperty(WORKERID, "STRIPSIGNATURE");
 		sSSession.reloadConfiguration(WORKERID);
 		
 		// Remove validation service worker

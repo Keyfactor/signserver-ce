@@ -314,10 +314,12 @@ OS version                          = ${os.version}
     <property name="project.name" value="signserver"/>
     <property name="docs.src"     location="doc/xdocs"/>
     <property name="docs.dest"    location="tmp/htdocs"/>
+    <property name="docs.singlepages"    location="tmp/singledocs"/>
     <property name="project.file" value="stylesheets/project.xml" />
     <property name="templ.path"   location="${docs.src}/stylesheets" />
     <property name="velocity.props"   location="${docs.src}/velocity.properties" />
     <property name="include.xml"  value="**/*.xml" />
+    <property name="docs.fullmanual" location="${docs.src}/manual/complete.en.xml"/>
 
     <target name="prepare">
         <path id="anakia.classpath">
@@ -329,6 +331,15 @@ OS version                          = ${os.version}
                    property="AnakiaTask.present">
             <classpath refid="anakia.classpath"/>
         </available>
+        <path id="xmltask.classpath">
+            <fileset dir="lib/ext/">
+                <include name="xmltask.jar"/>
+            </fileset>
+        </path>
+        <available classname="com.oopsconsultancy.xmltask.ant.XmlTask"
+                   property="XmlTask.present">
+            <classpath refid="xmltask.classpath"/>
+        </available>
     </target>
 
     <target depends="prepare" name="prepare-error" unless="AnakiaTask.present">
@@ -339,12 +350,85 @@ OS version                          = ${os.version}
         <mkdir dir="${docs.dest}"/>
     </target>
 
-    <target name="doc" if="AnakiaTask.present" depends="prepare-error" description="Build EJBCA web site and docs">
+    <target name="doc:splitmanual" depends="prepare-error">
+
+        <mkdir dir="${docs.singlepages}/manual"/>
+        <copy todir="${docs.singlepages}/stylesheets">
+            <fileset dir="${templ.path}"/>
+        </copy>
+
+        <!-- Split full.xml into xml-files for each chapter -->
+        <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
+            <classpath refid="xmltask.classpath"/>
+        </taskdef>
+
+        <!-- call subtargets using the full manual as the driver -->
+        <xmltask source="${docs.fullmanual}">
+          <call path="/document/body/chapter" target="doc:splitmanual:singlepage" buffer="chapter_buffer" inheritAll="true">
+            <param name="1" path="@name"/>
+            <param name="2" path="@shortname"/>
+            <param name="3" value="${os.name}"/>
+            <param name="4" path="node()"/>
+          </call>
+        </xmltask>
+    </target>
+
+    <target name="doc:splitmanual:singlepage">
+        <xmltask dest="${docs.singlepages}/manual/${2}.xml">
+          <insert path="/">
+            <![CDATA[
+              <document>
+                <properties>
+                    <title/>
+                    <singlepage value="true"/>
+                </properties>
+                <body/>
+              </document>
+            ]]>
+          </insert>
+          <insert path="/document/properties/title">${1}</insert>
+          <insert path="/document/body" buffer="chapter_buffer" position="under"/>
+        </xmltask>
+    </target>
+
+    <target name="doc" if="AnakiaTask.present" depends="prepare-error, doc:splitmanual" description="Build SignServer web site and docs">
         <taskdef name="anakia" classname="org.apache.velocity.anakia.AnakiaTask">
             <classpath refid="anakia.classpath"/>
         </taskdef>
 
+        <!-- Use FOP for creating PDF-files -->
+        <!--<property name="fop.home" value="lib/ext/fop/"/>
+        <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop">
+	  <classpath>
+	    <fileset dir="${fop.home}/lib">
+	      <include name="*.jar"/>
+	    </fileset>
+	    <fileset dir="${fop.home}/build">
+	      <include name="fop.jar"/>
+	      <include name="fop-hyph.jar" />
+	    </fileset>
+	  </classpath>
+	</taskdef>-->
+
+        <echo message="docs.src: ${docs.src}"/>
+        <echo message="docs.dest: ${docs.dest}"/>
+        <echo message="project.file: ${project.file}"/>
+        <echo message="include.xml: ${include.xml}"/>
+        <echo message="templ.path: ${templ.path}"/>
+        <echo message="velocity.props: ${velocity.props}"/>
+
         <anakia basedir="${docs.src}" destdir="${docs.dest}"
+             extension=".html" style="./site.vsl"
+             projectFile="${project.file}"
+             excludes="**/stylesheets/**"
+             includes="${include.xml}"
+             lastModifiedCheck="true"
+             templatePath="${templ.path}"
+             velocityPropertiesFile="${velocity.props}">
+        </anakia>
+
+        <!-- Also for manual singlepages -->
+        <anakia basedir="${docs.singlepages}" destdir="${docs.dest}"
              extension=".html" style="./site.vsl"
              projectFile="${project.file}"
              excludes="**/stylesheets/**"

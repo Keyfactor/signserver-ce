@@ -1,0 +1,2734 @@
+<?xml version="1.0"?>
+<document>
+
+    <properties>
+        <title>SignServer Manual</title>
+    </properties>
+
+    <body>
+
+        <chapter name="Introduction" shortname="introduction">
+            <section name="Introduction/scope">
+                <p>
+The SignServer is an application framework performing cryptographic operations
+for other applications. It's intended to be used in environments where keys are
+supposed to be protected in hardware but there isn't possible to connect such
+hardware to existing enterprise applications or where the operations are
+considered extra sensitive so the hardware have to protected more carefully.
+Another usage is to provide a simplified method to provide signatures in
+different application managed from one location in the company.
+                </p>
+                <p>
+The SignServer have been designed for high-availability and can be clustered for maximum
+reliability.
+                </p>
+The SignServer comes with a RFC 3161 compliant Time-Stamp signer serving requests through
+http or client-authenticated https. A MRTD (Machine Readable Travel Document, i.e. electronic
+passport) signer. A PDF signer that adds a signature automatically to a uploaded PDF document,
+ODF signer that adds a signature automatically to uploaded ODF document, OOXML Signer that
+adds signature automatically to a uploaded OOXML document, and a validation service used to
+lookup the validation of a given certificate.
+                <p>
+From version 3.0 there also exists a mail signer framework that can be used to perform
+cryptographic operation on emails.
+                </p>
+                <p>
+                    <a href="../docs/SignServer_Manual_3_0_odt_m6a7f442a.jpg"><img src="../docs/SignServer_Manual_3_0_odt_m6a7f442a.jpg" align="middle" border="0" width="493" height="252" ALT="architecture"/></a><br/>
+                    Drawing 1: Overview of a possible set up of a highly available SignServer solution
+                </p>
+            </section>
+
+            <section name="Changes from previous versions">
+                <subsection name="Changes between Version 3.0 and Version 3.1">
+                    <ul>
+                        <li>
+A new Cluster Class Loader, simplifying the management of customized workers in a
+cluster. All the resource data including the classes themselves are stored in database and
+accessible from all nodes simultaneously. It is also possible to run multiple versions of the
+same worker in the same SignServer cluster, this is useful when migrating a worker to new
+code since both the old and new worker can be run at the same time.
+                        </li>
+                        <li>
+PDF Signer, Time-Stamp Authority and MRTD and their specific libraries have the
+possibility to build into separate module archives (MAR files) that have to be uploaded to
+the SignServer installation before usage, if the cluster classloader is enabled (default).
+New signing module : MRTD-SOD.
+                        </li>
+                        <li>
+Validators for several document types as well.
+                        </li>
+                        <li>
+For minor changes see the change log at http://jira.primekey.se
+                        </li>
+                        <li>
+Installation packages for Linux/Windows of both SignServer and MailSigner using
+generation software from Bitrock.
+                        </li>
+                        <li>
+A new ODF Signer module that adds signature to ODF documents, such as : odt,ods,odt
+(tested with open office 3.1.0). Simple web page is added where ODF document can be
+uploaded for signing, and resulted signed document downloaded.
+                        </li>
+                        <li>
+A new OOXML Signer Module that adds signature to Open Office XML documents, such as
+docx,xlsx,pptx (tested with Microsoft Office 2007).Simple web page is added where open
+office xml document can be uploaded for signing, and resulted signed document
+downloaded.
+                        </li>
+                </ul>
+                </subsection>
+                <subsection name="Changes between Version 2 and Version 3">
+                    <ul>
+                        <li>
+Complete refactorisation of J2EE from EJB2 to EJB3 to simplify further development.
+                        </li>
+                        <li>
+Renamed component "Service" to "TimedService" since 3.0 supports other services.
+                        </li>
+                        <li>
+A "TimedService” can now be configured with a 'cron-like' settings to have services
+executed in other than just periodical intervals.
+                        </li>
+                        <li>
+A Validation Service API used to validate certificate from different issuers. The Validation
+Service API have it's own easy to use Web Service used to integrate with other platforms.
+A Group Key Service API used to generate and manage group keys, symmetric or
+asymmetric.
+                        </li>
+                        <li>
+Possibility to have customized authorization of requests, not just the built in client certificate
+authorization list.
+                        </li>
+                        <li>
+The name SignToken is changed to CryptoToken and introduced a new concept of
+ExtendedCryptoToken that supports symmetric operations.
+                        </li>
+                        <li>
+The RMI-SSL interface have been removed and replaced with a JAX-WS interface with a
+simple client framework supporting different load-balance or high availability policies.
+                        </li>
+                        <li>
+All request data have changed from serialization to externalization to be easier to translate to
+other platforms.
+                        </li>
+                        <li>
+A completely new MailSigner API based upon the JAMES SMTP server to perform
+automated cryptographic operations on e-mails very similar to the plug-ins for the
+SignServer.
+                        </li>
+                        <li>
+Java 1.4 is no longer supported.
+                        </li>
+                        <li>
+A lot of new JUnit tests in the test suite.
+                        </li>
+                        <li>
+A PDF Signer that can add a signature to a PDF document through a simple HTML
+interface.
+                        </li>
+                        <li>
+PKCS11 Crypto Token to connect to different PKCS11 implementations.
+                        </li>
+                    </ul>
+                </subsection>
+                <subsection name="Changes between Version 1 and Version 2">
+                    <ul>
+                        <li>
+  signserver_server.property file have been removed and replaced with a global configuration
+  store.
+                        </li>
+                        <li>
+  It is now possible to dynamically add and remove available signers
+                        </li>
+                        <li>
+  A new type of component, "Service” that is run on a timely basis, used to perform
+  maintenance or report generation.
+                        </li>
+                        <li>
+  Improved cluster deployment functionality.
+                        </li>
+                        <li>
+  New CLI tools to batch configure the SignServer, and to backup a current configuration.
+                        </li>
+                        <li>
+  This makes it possible to set-up a configuration in test environment, dump the configuration
+  and configure the same it in production.
+                        </li>
+                    </ul>
+                </subsection>
+            </section>
+
+            <section name="Terms Used in This Document">
+                <table>
+                    <tr><td>Term</td><td>Explanation</td>
+                    </tr><tr><td>Signer</td><td>A Processable service performing signatures upon requests. This could be a ready made signer or a custom developed one.</td>
+                    </tr><tr><td>Crypto Token (former Sign Token)</td><td>A Crypto Token is a name for the entity containing the private key and is responsible for its cryptographic operations. Every Processable have a Crypto Token that can be a PKCS12, Smart Card or HSM connection.</td>
+                    </tr><tr><td>Extended Crypto Token</td><td>An enhanced Crypto Token with support for symmetric key operations.</td>
+                    </tr><tr><td>PKCS11CryptoToken</td><td>A Crypto Token able to communicate with Hardware Security Modules through the standard PKCS11 interface.</td>
+                    </tr><tr><td>TimedService (former Service)</td><td>A TimedService is a task that is run on a timely basis, performing maintenance tasks like changing active key or generate a report.</td>
+                    </tr><tr><td>Worker</td><td>A common name for Processable (Signer or other type of service), Mail Processor and TimedService</td>
+                    </tr><tr><td>Processable</td><td>A type of worker that is used to process requests, i.e. not a TimedService.</td>
+                    </tr><tr><td>Worker Configuration</td><td>Each Worker can be configured with properties specific for that worker. There are two sets of worker configuration one “Active” that is used by the signer and one “current” which is the one configured by the administrator. The current configuration isn't used in production until the administrator issued the reload command. This makes it possible for the administrator to configure multiple properties and double-check them before they are actually used.</td>
+                    </tr><tr><td>Global Configuration Store</td><td>Is a dynamic store used to define available Workers and their Crypto Tokens. But other data that needs to be read globally could be set there as well. The global configuration properties are activated immediately. There are two different scopes for the store data, Global Scope and Node Scope.</td>
+                    </tr><tr><td>Global Scope</td><td>Data stored in the global configuration that can be read by all nodes in the cluster.</td>
+                    </tr><tr><td>Node Scope</td><td>Data that is node specific and can only be read within the same node.</td>
+                    </tr><tr><td>Worker Id</td><td>Unique identifier of a worker, an integer larger than 0</td>
+                    </tr><tr><td>Worker Name</td><td>A name used as a human readable synonym for a Worker Id</td>
+                    </tr><tr><td>Mail Processor</td><td>A plug-in used for the mail signer to perform automated cryptographic operations on e-mails sent through the mail server. This could for instance be the Simple Mail Signer for attaching a SMIME signature to all mails.</td>
+                    </tr><tr><td>Validation Service </td><td>A Processable that checks if a certificate is valid or not. Have a Default Validation Service implementation that should work in most cases.<br/>A Validation Service should have one or more Validators configured.</td>
+                    </tr><tr><td>Group Key Service</td><td>A Processable that can be used to manage, generate and distribute group keys to a set of clients. The service support four types of calls, fetch group key (used by clients), pre-generate group keys, switch encryption key (key used to safely store the group keys in database) and remove group keys.  There exists a Default Group Key Service that should satisfy most use cases.</td>
+                    </tr><tr><td>Validator</td><td>A Validator is responsible for checking the status of one or more issuer's certificates. This could be as a OCSP client or a CRL checker or just looking up the status in a database.</td>
+                    </tr><tr><td>Authorizer</td><td>An interface that enables developers to integrate the authorization parts with existing authorization systems of who is authorized to perform requests to a Processable.</td>
+                    </tr><tr><td>Time Stamp Signer</td><td>A Signer that can be used to set up a Timestamp Authority according to RFC 3161. </td>
+                    </tr><tr><td>MRTD Signer</td><td>A Signer that performs signatures of MRTD (Machine Readable Travel Documents, i.e. Electronic Passports) blobs.</td>
+                    </tr><tr><td>PDF Signer</td><td>A Signer that attaches an electronic signature signature to a PDF document.</td>
+                    </tr><tr><td>ODF Signer</td><td>A Signer that attaches an electronic signature to an ODF document. ODF Signer is tested with documents produced by Open Office v 3.1.0</td>
+                    </tr><tr><td>ODF (Open Document Format ) Document</td><td>XML-based file format for representing electronic documents such as spreadsheets, charts, presentations and word processing documents.more..  </td>
+                    </tr><tr><td>OOXML (Open Office XML) Document</td><td>XML-based file format  for representing spreadsheets, charts, presentations and word processing documents.more..</td>
+                    </tr><tr><td>OOXML Signer</td><td>A Signer that attaches an electronic signature to an OOXML document.</td>
+                    </tr><tr><td>Simple Mail Signer</td><td>A Mail Processor that envelopes authorized mails with a SMIME signature.</td>
+                    </tr><tr><td>Cluster Class Loader</td><td>A Java Class Loader specific for the SignServer project. The class loader simplifies the distribution of new code to a cluster by uploading and fetching it from database. It also enables the use of multiple versions of the same worker code in the same cluster.</td>
+                    </tr><tr><td>Module Archive or MAR file</td><td>A 'Module Archive' is a specific packaging format used by the cluster class loader to upload code to a cluster. A MAR files is structured in a specific way with a descriptor containing module and version information.  The MAR file also contains one or more parts depending on were in the system the code will be deployed.<br/>A Module Archive have the postfix .mar and can be generated with a specific ANT-task.</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section name="Overall Architecture">
+                <p>
+Since the 3.0 version the SignServer project have two different builds, one is the classical SignServer and the other is a Mail Processing Server called the MailSigner.
+                </p>
+                <subsection name="SignServer">
+                    <p>
+The SignServer is a framework designed to perform different kind of cryptographic operations for different applications.
+                    </p>
+                    <p>
+Since the 3.0 version there are three kind of processable services. Signers (used to sign or in other way  process requested data). Validation Services used to verify the validity of a certificate against a set of backed issuers. The validation service can be used to simply the integration of PKIs into existing applications. The the third processable service is a group key service framework used to manage and to distribute group keys for different applications, these keys can be both symmetric and asymmetric. In addition to processable services there also exists another concept called Timed Service (called just 'service' in 2.0 edition) which are plug-ins run at defined intervals performing maintenance or reporting routines.
+                    </p>
+                    <p>
+Out-of-the-box are there three Signers ready to be used. They are a MRTD Signer used for signing Machine Readable Travel Documents (also known as Electronic Passports), a Timestamp Signer that can be used to set up a Timestamp Authority and a PDF signer that can be used to automatically sign documents.
+                    </p>
+                    <p>
+The main way of communicating with the SignServer is through a WebService interface (previous versions had a RMI-SSL interface, but that have been replaced by the WS for better platform independence.) but the Timestamp Signer is also available through HTTP communication and the PDF signer have a simple HTML page that allows users to upload documents to be signed.
+                    </p>
+                    <p>
+For an overview of the different concepts in the SignServer see illustration 1. The base component is called Worker which is assigned an id, optionally a name and a configuration. A sub component is a Processable which receives and processes requests. A Processable (optionally) have access to a cryptographic token (CryptoToken) in charge of managing the keys of a Processable. A CryptoToken can be either software or hardware based.
+                    </p>
+                    <p>
+The applications i administrated through a command-line interface, where the properties and access control can be configured.
+                    </p>
+                    <p>
+One SignServer can have multiple services for different purposes.
+                    </p>
+                </subsection>
+
+                <subsection name="MailSigner">
+                    <p>
+The MailSigner is a different build of the SignServer, targeted to perform automated cryptographic operations on e-mails. The MailSigner is an add-on to the James SMTP project and the James SMTP binaries is shipped along with the SignServer package for simplified set-up.
+                    </p>
+                    <p>
+The MailSigner's main component is the MailProcessor which is the base for all MailSigner plug-ins. There exists one ready to use MailSigner called the SimpleMailSigner. It generates a signed SMIME message of all mails sent to through the server.
+                    </p>
+                    <p>
+One instance can have more than one MailProcessor configured. Then will the plug-ins be called by worker id in ascending order.
+                    </p>
+                    <p>
+The MailSigner have similar CLI interface and is administrated much in the same way as the SignServer. The SMTP server have support for SMTP Authentication. For more information about the James SMTP server see http://james.apache.org .
+                    </p>
+                    <p>
+                        <a href="../docs/SignServer_Manual_3_0_odt_18c42972.png"><img src="../docs/SignServer_Manual_3_0_odt_18c42972.png" align="middle" border="0" width="493" height="252" alt="SignServer components"/></a><br/>
+                        Illustration 1: Components in the SignServer project
+                    </p>
+                </subsection>
+            </section>
+
+        </chapter>
+
+        <chapter name="Usage Guide" shortname="usageguide">
+            <section name="Introduction">
+                <p>   
+                </p>
+            </section>
+            <section name="Quick Start Guides">
+                <p>
+From from: installationguide.html, manual31.odt:ch3-4
+                </p>
+                <subsection name="Quick start of a Simple Time-stamp Server">
+                    <p>
+This section will show how to set up a quick and simple standalone time-stamp server, accepting
+time-stamp requests over plain HTTP.
+                    </p>
+                    <subsubsection name="Required Software">
+                        <ul>
+                            <li>Java 1.6 (or 1.5) (http://java.sun.com)</li>
+                            <li>JBoss-4.2.3.GA (http://www.jboss.org)</li>
+                            <li>Apache ant version 1.7 (http://ant.apache.org)</li>
+                            <li>SignServer-3.1 (http://www.signserver.org)</li>
+                            <li>1 web-server key-store in Java key-store format (JKS), (make sure that the server certificate have the right host name in it's CN, optional (used for HTTPS))</li>
+                            <li>1 Root certificate of the web-server in DER encoding (optional (used for HTTPS)).</li>
+                            <li>1 Time-stamp key-store in PKCS12 format</li>
+                        </ul>
+                    </subsubsection>
+                    <subsubsection name="Installation Steps">
+                        <ol>
+                            <li>
+                                <p>
+First make sure that ant, Java and JBoss is installed properly.
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+Set the JAVA_HOME, JBOSS_HOME and SIGNSERVER_HOME environment variables.
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+Set the SIGNSERVER_NODEID environment variable, it should be a server unique string
+identifying the node in a cluster. (optional for one node installations).
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+Unzip the SignServer package and go to it's home directory.
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+If you are going to protect the HTTP communication with SSL, you2 need a JKS SSL server
+key store. Rename the web server key store to tomcat.jks at put it in a 'p12' subdirectory.
+Also place the web server root certificate in DER encoding in the same directory, call it
+rootcert.cer
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+Then copy the signserver_build.properties.sample file to signserver_buld.properties and edit
+the file. At least configure the httpsserver.password property. If you are not using https
+uncomment the row "j2ee.web-nohttps=true”.
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+Do 'ant deploy' and then start JBoss (JBOSS_HOME\bin\run.sh) in another console.
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+Edit the signserver_cli.properties and set all properties starting with 'hostname.'
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+Use the signserver cli to upload the Time-Stamp Authority module to the SignServer . (if it's not executive use chmod +x bin/signserver.sh)
+                                </p>
+                                <pre>
+bin/signserver.sh module add dist-server/tsa.mar demo
+                                </pre>
+                                <p>
+This command uploads the Time-Stamp related code to the cluster and creates a demo configuration with a preconfigured soft key store and certificate.
+                                </p>
+                                <p>
+(In the path section, use '\\' for '\' in windows environment.)
+                                </p>
+                                <p>
+Then run
+                                </p>
+                                <pre>
+bin/signserver.sh getconfig 1
+                                </pre>
+                                <p>
+And double check the configuration. (Important, the properties are case sensitive).
+                                </p>
+                                <p>
+Finally run
+                                </p>
+                                <pre>
+bin/signserver.sh reload 1
+                                </pre>
+                                <p>
+To activate the configuration.
+                                </p>
+                            </li>
+                            <li>
+                                <p>Run the test-client to see that everything is up.</p>
+                                <pre>
+cd dist-client
+java -jar timeStampClient.jar "http://localhost:8080/signserver/process?workerId=1"
+                                </pre>
+                                <p>The message "TimeStampRequest Validated" should appear once a second.</p>
+                                <p>
+Also check JBOSS_HOME/server/default/log/server.log that successful messages appear.
+                                </p>
+                            </li>
+                        </ol>
+                    </subsubsection>
+                </subsection>
+
+                <!-- -->
+                <subsection name="Quick start of a Simple Mail Signer">
+                    <p>
+This section will do a fast and minimal configuration of a Mail Signer that will sign all authorized mails sent through it with a PKCS12 cryptographic token.
+                    </p>
+                    <subsubsection name="Required Software">
+                        <ul>
+                            <li>Java 1.6 (or 1.5) (http://java.sun.com)</li>
+                            <li>Ant version 1.7 (http://ant.apache.org)</li>
+                            <li>SignServer-3.0 (http://www.signserver.org)</li>
+                            <li>1 mail signing key-store in PKCS12 format (The key store should have a RFC822Name that matches the sender address that will be replaces by the Simple Mail Signer plug-in). There exists one keystore in src/test/mailsigner_test1.p12 with a RFC822Name of mailsigner@someorg.org that can be used for testing.</li>
+                        </ul>
+                    </subsubsection>
+                    <subsubsection name="Installation Steps">
+                        <ol>
+                            <li>
+First make sure that Ant and Java is installed properly.
+                            </li>
+                            <li>
+Set the JAVA_HOME and SIGNSERVER_HOME environment variables.
+                            </li>
+                            <li>
+Set the SIGNSERVER_NODEID environment variable, it should be a server unique string
+identifying the node in a cluster. (optional for one node installations).
+                            </li>
+                            <li>
+Unzip the SignServer package and go to it's home directory.
+                            </li>
+                            <li>
+Then copy the signserver_build.properties.sample file to signserver_buld.properties and edit
+the file. First uncomment row "build.mode=MAILSIGNER" to instruct that this installation is a MailSigner and not a SignServer. Then go to the end of the file and fill in the required properties: mailsigner.primarydns, mailsigner.secondarydns and mailsigner.postmaster.
+                            </li>
+                            <li>
+Then build the mail signer with the command 'ant' in the SIGNSERVER_HOME directory.
+                            </li>
+                            <li>
+Edit the sample-configs/qs_simplemailsigner_configuration.properties file and set the sender and from addresses as well as the path and password to the cryptographic token that should be used.
+                            </li>
+                            <li>
+Start the mail signer application with the command: ant run
+                            </li>
+                            <li>
+Open up another console, go to SIGNSERVER_HOME and use the signserver CLI to upload the configuration file. (if it's not executive use chmod +x bin/signserver.sh)
+                            </li>
+                            <li>
+                                <pre>
+bin/signserver.sh setproperties sample-configs/ qs_simplemailsigner_configuration.properties
+                                </pre>
+                                <p>
+Then run
+                                </p>
+                                <pre>
+bin/signserver.sh getconfig 1
+                                </pre>
+                                <p>
+Finally run
+                                </p>
+                                <pre>
+bin/signserver.sh reload 1
+To activate the configuration.
+                                </pre>
+                            </li>
+                            <li>
+Finally add an authorized SMTP user with the command:
+                                <pre>
+bin/signserver.sh addauthorizeduser &#60;username&gt; &#60;password&gt;
+                                </pre>
+                            </li>
+                            <li>
+Now is the simple mail signer ready to be used for signing outgoing emails. Configure you e-mail client to connect to the MailSigner server using the username and password you just provided and send a mail to a colleague to verify it is signed properly.
+                            </li>
+                        </ol>
+                    </subsubsection>
+                </subsection>
+            </section>
+            <section name="Building and deploying">
+                <p>
+SignServer or MailSigner - from manual31.odt:ch16
+                </p>
+                <p>
+The building of the SignServer framework is configured by copying the file signserver_build.properties.sample to signserver_build.properties. In this file it's possible to set which database that is going to be used, how the web container should be configured and how many nodes that is in the cluster. After it's configured issue the command 'ant' followed by 'ant deploy' to send it to the application server. Currently is JBoss the only supported application server and it requires the environment variable JBOSS_HOME to be set prior to the deploy command.
+                </p>
+                <p>
+How to set-up a highly available SignServer cluster is described in a separate document called
+SignServer_3_0_Installation_Guide.pdf that can be downloaded from http://www.signserver.org
+The document describes how to set it up in a Cent OS 4.4 environment with two service nodes and
+one management node, but should be rather easy to adjust to other platforms.
+                </p>
+                <p>
+Building the MailSigner is very similar to the SignServer. Just set the property 'build.mode' to 'MAILSIGNER' in the top of the build configuration file and set the required settings (such as DNS servers) in the bottom of the file. Then build the MailSigner with the command 'ant'.
+                </p>
+                <p>
+To start up the MailSigner application issue the command 'ant run'. If you want to debug the application in a IDE such as Eclipse issue the command  'ant debug'. This can be very helpful when developing MailProcessors. In Eclipse create a 'Remote Java Application' debug configuration and have it to connect to port 8000, then set a break point in your code and it will stop there the next time the MailSigner enters that state.
+                </p>
+                <p>
+Since the MailSigner is built upon the JAMES SMTP server it is possible to configure the SMTP server more than is available in the build configuration file. This is done in the file extapps/james/apps/james/SAR-INF/config.xml, see the JAMES documentation for more information about what is possible and how to do it.
+                </p>
+            </section>
+            <section name="Configuration/Administration">
+                <p>
+                    from manual31.odt:ch17
+                </p>
+                <p>
+                    The SignServer and the MailSigner is administrated using a common CLI interface located in bin/signserver.sh/cmd. Most of the commands work in the same way for both build.
+                </p>
+                <p>
+Every worker is identified by a id and optionally a name that can be used in all the CLI commands.
+                </p>
+                <p>
+It is possible to do configuration of a worker while it's in production. All configuration commands are cached until a reload command is issued and the configuration becomes active.
+                </p>
+                <p>
+There is a special property file for the cli interface called signserver_cli.properties defining which nodes that exists in the cluster. The properties are:
+                </p>
+                <p>
+<b>hostname.masternode</b> = Should only contain one of the nodes, specified as the default master node. Used by operations dealing with the database and where not all nodes in the cluster needs to be contacted. It is possible to override this setting in the CLI by using the -host &lt;host name&gt; parameter.
+                </p>
+                <p>
+<b>hostname.allnodes</b> = Should contain all the nodes in the cluster, separated by a ';'. Mainly used by the commands getStatus, activateCryptoToken and deactivateCryptoToken.
+                </p>
+                <p>
+Its possible to customize the CLI with your own code. How to do this is described in the development section.
+                </p>
+                <subsection name="Setup Workers">
+                    <p>TODO</p>
+                </subsection>
+                <subsection name="Command Line Interface">
+                    <subsubsection name="General Commands">
+                        <p>
+These commands applies for all types of workers and works in the same way for both the SignServer and MailSigner.
+                        </p>
+                        <p>
+<b>Get Status Command:</b>
+Returns the status of the given worker, it says if its crypto token is active or not and the loaded 'active' configuration. It is possible to get a brief summary or a complete listing for one worker or all configured workers. If all workers are displayed will also all the global configuration parameters be displayed.
+                        </p>
+                        <p>
+<b>Get Configuration Command:</b>
+Returns the current worker or global configuration depending on options.
+                        </p>
+                        <p>
+For worker configuration observe that this configuration might not have been activated yet, not until a 'reload' command is issued.
+                        </p>
+                        <p>
+<b>Set Property Command:</b>
+Sets a custom property used by the worker or crypto token, see reference for the given Worker and CryptoToken for available properties.
+                        </p>
+                        <p>
+                            <b>Set Properties Command</b>
+Command used to batch a set of properties, both for the global and worker configuration.
+It can be used to configure a Signer in a test environment, dump all the properties and upload it into production.
+                        </p>
+                        <p>
+It reads all the configuration properties form a property file and depending on the contents of the key it sets the given property. All properties will be set  according to the following defined rule set.
+                        </p>
+                        <table>
+                            <tr>
+                                <td>Rule</td>
+                                <td>Comment</td>
+                            </tr>
+                            <tr>
+                                <td>
+Properties starting with id&lt;num&gt;.
+                                </td>
+                                <td>
+Will set the property to the value of the given id to the worker with the given id.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+Properties starting with name&lt;name&gt;.
+                                </td>
+                                <td>
+Will set the property to a worker with the given name. (If the name doesn't exists a unique id will be generated and assigned).
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+Property keys containing GENID&lt;NUM&gt;, example WORKERGENID1 or GLOB. WORKERGENID1
+                                </td>
+                                <td>
+The SignServer will find a free unique id and assign substitute all GENID&lt;num&gt; with this id.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+Properties starting with glob.
+                                </td>
+                                <td>
+Will set a global property with global scope.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+Properties starting with node.
+                                </td>
+                                <td>
+Will set a global property with node scope.
+                                </td>
+                           </tr>
+                            <tr>
+                                <td>
+Properties starting with -&lt;other prefix&gt;&lt;value&gt;
+                                </td>
+                                <td>
+Will remove the property, either worker or global.
+                                </td>
+                            </tr>
+                        </table>
+                        <p>
+See the directory 'sample-configs' for examples.
+                        </p>
+                        <p>
+<b>Remove Property Command:</b>
+Removes a configured property
+                        </p>
+                        <p>
+<b>Dump Properties</b>
+This tool will dump all configured properties for one or all workers in the system into a property file. If the configuration for one worker is dumped it can be used to transfer the configuration from one installation to another. If all configurations is dumped, it can be used as a backup tool.
+                        </p>
+                        <p>
+<b>Upload Certificate Command:</b>
+Used to upload the certificate when the worker only needs the actual signing certificate and not the entire chain.
+                        </p>
+                        <p>
+<b>Upload Certificate Chain Command:</b>
+Used when uploading a complete certificate chain to the worker. Which command that is supposed to be used is depending on the worker and crypto token used.
+                        </p>
+                        <p>
+<b>Generate Certificate Request Command</b>
+Used to generate a certificate request for a worker to be signed by a certificate authority. It takes
+distinguished name and signature algorithm as parameters and writes the request in PEM format to
+file.
+                        </p>
+                        <p>
+<b>Activate Cryptographic Token Command:</b>
+Used to activate hard crypto tokens. Authentication code is usually the PIN used to unlock the keys  on the HSM. Not used if the token is set to auto-activation.
+                        </p>
+                        <p>
+<b>Deactivate Cryptographic Token Command:</b>
+Brings a crypto token off-line. Not used if token is set to auto-activation.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="SignServer Specific Commands">
+                        <p><b>Authorization Related</b></p>
+                        <p>
+These commands are used to configure the internal client certificate authorization when it is turned on. It controls which clients that is authorized to request a processable worker.
+                        </p>
+                        <p>
+<b>Add Authorized Client Command:</b>
+Adds a client certificate to a processable workers list of acceptable clients using this worker. Specify
+certificate serial number in hex and the Issuer DN of the client certificate.
+                        </p>
+                        <p>
+<b>Removes Authorized Certificate Command:</b>
+Removes added client certificate entries.
+                        </p>
+                        <p>
+<b>List Authorized Clients Commands:</b>
+Displays the current list of acceptable clients.
+                        </p>
+
+                        <p><b>Database Related</b></p>
+                        <p>
+<b>Resynchronize Database Command:</b>
+                        </p>
+                        <p>
+The 'resync' command is used after a SignServer had a complete database failure. When this happens  will the Global Configuration become in 'Off-line' mode and it's not possible for the nodes to communicate internally and the Global Configurations will not be in sync any more. After the database is up again can this command be sent to the node that have the most valid Global Configuration and write it to the database. After this will the Global Configuration be in 'On-line' mode again.
+                        </p>
+
+                        <p><b>Archive Related</b></p>
+                        <p>
+This commands can be used for processable workers that have archiving turned on. They are used to find specific archived responses. It's up to the implementation of the worker if it supports archiving or not.
+                        </p>
+                        <p>
+<b>Archive Find from Archive Id Command:</b>
+Command used to extract archived data from database identified by the archive Id.
+                        </p>
+                        <p>
+The Id depends on the worker, in case of the TSA is the TimeStampInfo serial number used.
+The data is stored with the same file name as the archive id in the specified path.
+                        </p>
+                        <p>
+<b>Archive Find from Request IP Command:</b>
+Used to extract all archived data requested from a specified IP address.
+                        </p>
+                        <p>
+All data is stored as separate files with the archive id as file name in the specified path.
+                        </p>
+                        <p>
+<b>Archive Find from Request Certificate Command:</b>
+Used to extract all archived data requested from a client by specified it's certificates serial number and  issuer DN.
+                        </p>
+                        <p>
+All data is stored as separate files with the archive id as file name in the specified path.
+                        </p>
+
+                        <p><b>Group Key Service Related</b></p>
+                        <p>
+These commands only applies for group key services.
+                        </p>
+                        <p>
+<b>Pregenerate Group Keys Command:</b>
+Command used to pregenerate a given number of group keys for a given group key service and stores them unassigned encrypted in the database. This commands can be used to let the cluster work on CPU insensitive key generation during low business hours.
+                        </p>
+                        <p>
+<b>Remove Group Keys Command:</b>
+Command used to remove group keys not used any more. A time range of when created, first used and last fetched can be used as criteria.
+                        </p>
+                        <p>
+<b>Switch Encryption Key Commands:</b>
+Command used manually switch the encryption key used to secure the group keys in database. Usually is the encryption key switched automatically but this command can be used to override this default behaviour.
+                        </p>
+
+                        <p><b>Module Archive Related</b></p>
+                        <p>
+There exists three commands for managing module archives in a cluster, they are quite straightforward. Use the command 'signserver.sh/cmd module' command for more details.
+                        </p>
+                        <p>
+<b>Add Module:</b>
+The 'add' command uploads a '.mar' file to the cluster. It is possible to define in which environment the module should be used, for instance 'production' or 'test' but this is all depending on which environments the module supports.
+                        </p>
+                        <p>
+If signature verification is required by the server it is also possible to specify a path to a JKS key store along with an alias and password to the key used.
+                        </p>
+                        <p>
+<b>Remove Module:</b>
+Command used to remove a specified version of a module.
+                        </p>
+                        <p>
+<b>List Modules:</b>
+Command to list all uploaded modules, it is also possible to see all JAR files that is included in the  modules.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="MailSigner Specific Commands">
+                        <p>
+<b>Add Authorized User Command:</b>
+Command to add a SMTP authorized user to a MailSigner, it applies for all configured MailProcessors.
+                        </p>
+                        <p>
+<b>Remove Authorized User Command:</b>
+Removes an authorized SMTP user.
+                        </p>
+                        <p>
+<b>List Authorized Users Command:</b>
+List currently authorized STMP users.
+                        </p>
+                    </subsubsection>
+                </subsection>
+            </section>
+
+            <section name="Making the SignServer highly-available">
+                <p>
+Here are some tips on configuration used to make the SignServer redundant. Usually is the SignServer set-up with three nodes (required minimum for MySQL cluster) where one node is a management node from were all deployment and administration is done and the other two services are service nodes processing the actual requests.
+                </p>
+                
+                <subsection name="HTTP access requires a load balancer">
+                    <p>
+HTTP based workers like the TSA can be clustered using a load balancer accessing a health check servlet returning the state of the SignServer. The basic settings of the health check servlet can be configured in the build configuration file but more advanced settings are done in 'src/web/healthcheck/WEB-INF/web.xml'. With the default settings will the servlet return the text 'ALLOK' when accessing the URL http://localhost:8080/signserver/healthcheck/signserverhealth. If something is wrong with the sign server will an error message be sent back instead.
+                    </p>
+                    <p>
+The health check servlet can also be used to monitor the SignServer by creating a script that monitors the URL periodically for error messages.
+                    </p>
+                    <p>
+Tip, heartbeat with ldirectord is a good solution for a load balancer and works well with the SignServer. KeepAlived is another open source solution.
+                    </p>
+                    <p>
+The Main WebService using the Java client API manages the HA parts itself and then isn't a load balancer necessary.
+                    </p>
+                </subsection>
+                <subsection name="Setting up a MySQL Cluster">
+                    <p>
+The database backed of the SignServer can be made redundant using MySQL Cluster. Details on how to set-up the MySQL cluster can be found in the document SignServer_3_Installation_Guide.pdf that can be downloaded from http://www.signserver.org.
+More information about the MySQL Cluster can be found at
+http://www.mysql.com/products/database/cluster/
+                    </p>
+               </subsection>
+               <subsection name="MailSigner">
+                    <p>
+The MailSigner have no built in support for high-availability instead are the standard SMTP approach used where multiple server can be set up with different priority in the DNS MX records.
+                    </p>
+                </subsection>
+            </section>
+
+            <section name="The Cluster Class Loader">
+                <p>
+Important, this feature is very new in version 3.1 and should still be considered experimental.
+                </p>
+                <p>
+New to SignServer 3.1.x is the Cluster Class Loader.  Simplifying the management of code in clusters. Instead of manually having to synchronize all the required JAR files to all nodes, it is possible to upload the code once and it will be accessible to all nodes in the cluster directly without having to restart the cluster. This is archived by storing the JAR resource data (such as class files) in database instead of in the application server class path.
+                </p>
+                <p>
+Each worker will have their own Cluster Class Loader instance that will be reinitialized upon reload.
+                </p>
+                <p>
+It is also possible to run multiple code versions of a worker simultaneously in a cluster, something that haven't been possible until now since only one version of class can exists in one JVM. This is a great feature for migration purposes where you have an old worker that is known to be stable, then it is possible to upload a new module beside the old one, with newer code, and migrate calling clients one by one.  Under the hood is actually a version prefix appended on the fly to the class name by the Cluster Class Loader when converting the byte code into a class. For example a class called somepkg.SomeWorker with version 3 will be called v3.somepkg.SomeWorker internally in the JVM. A developer should have to thing about this when developing his module but it might cause problems when remotely debugging the SignServer since the IDE won't find the source class to the modified code. If remote debugging is going to be used should class versioning be turned off.
+                </p>
+                <p>
+To improve the security of the code stored in database it is possible to enforce signature verification of all the uploaded code. This is a good feature if the database is in a different security zone or managed by different administrator than the SignServer nodes itself. If verification is turned on will the Cluster Class Loader check that the class is signed with a certificate issued by issuers stored in a specific trust key store for this purpose. Important, make sure the v the code signing certificate and it's issuers have a validity long enough to avoid production stop since the signature will not verify after the certificate have expired. The code is signed by a separate JKS key store when the module is uploaded to a cluster. The code signing certificate must have the extended key usage 'code signing' in order for the Cluster Class Loader to verify it.
+                </p>
+                <p>
+Before code can be uploaded to the Cluster Class Loader must it's JAR files be packaged in something called a Module Archive (MAR). See section 15.2 for details about generating a MAR file.
+                </p>
+
+                <subsection name="Building Module Archives">
+                    <p>
+A 'Module Archive' is a package containing all the jars required by the module along with a descriptor with information about the name of the module and it's version. A module archive is uploaded once and is then accessible for all the nodes in the cluster. A module archive can also have multiple parts indicating where in the system the code should be uploaded. In 3.1.x is only one part called 'server' supported, but in the future will other parts such as 'admin' exist. In that case will the code that should be executed on the server, such as worker code, be sent to the cluster, while the administrative part of the code is only sent to the node with an administrative web interface.
+                    </p>
+                    <p>
+A 'Module Archive' have the postfix '.mar' and is managed with the CLI interface using the 'module' commands.
+                    </p>
+                </subsection>
+
+                <subsection name="The MAR Descriptor">
+                    <p>
+Every Module archive should have a descriptor file in it's META-INF directory. It follows the JAVA Properties notation and is used to specify general information about the module such as version and name of the module. This file is generated automatically when using the ANT tasks.
+                    </p>
+                    <p>
+The MAR descriptor supports the following properties:
+                    </p>
+                    <table>
+                        <tr>
+                            <td>Property</td>
+                            <td>Description</td>
+                        </tr>
+                        <tr>
+                            <td>version</td>
+                            <td>The version of the module archive, can only contain digits. If not set will “1” be used. (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>modulename</td>
+                            <td>The name of the module, if not set will the MAR file name be used, but  without '.mar'. The name will always be converted to upper case. (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>default-description</td>
+                            <td>The default description of all the resources in the module (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>parts</td>
+                            <td>The parts in the module archive, if not set will only the 'server' part be used. (Optional)</td>
+                        </tr>
+                    </table>
+                </subsection>
+
+                <subsection name="Including Worker Configurations">
+                    <p>
+It is also possible to include a set of worker configurations in the 'server' part of the module archive, these settings is configured directly after all the JAR files have been uploaded. These worker configurations should be property files that follows the same notation as if they where used with the 'setproperties' CLI command.
+                    </p>
+                    <p>
+By default it should be named 'part-config.properties' and be in the 'server' part directory. It is also possible to have multiple configurations that is used depending on the environment the SignServer cluster is used. For instance it is possible to have one configuration file for test, another for production and a third for development. This makes it easy to manage the module since exactly the same file will be used in all environments. In case of multiple configurations should every property file be named '&lt;environment&gt;-part-config.properties', for instance test-part-config.properties. Later when the module is uploaded and the environment 'test' is specified will the test configuration be used.
+                    </p>
+                    <p>
+Important, if a part-config.properties file is included in the MAR file will the worker properties MODULENAME and MODULEVERION automatically the be set to all workers defined in the  configuration file and there is no need to manually define these settings.
+                    </p>
+                </subsection>
+
+                <subsection name="Using ANT">
+                    <p>
+The simplest way to build a Module Archive is by using ANT. The SignServer have provided two ant tasks to do this.
+                    </p>
+                    <p>
+All that is required to use these tasks is to add the following two lines in your target:
+                    </p>
+                    <pre>
+    &lt;taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
+       classpathref="signserver.test.compile.classpath"/&gt;
+    &lt;taskdef name="part" classname="org.signserver.anttasks.PartAntTask"
+       classpathref="signserver.test.compile.classpath"/&gt;
+                    </pre>
+                    <p>
+With these two lines included you will have access the the 'mar' and 'part' tasks. The tasks have the following properties.
+                    </p>
+                    <p>
+MAR Task Properties
+                    </p>
+                    <table>
+                        <tr>
+                            <td>Property</td>
+                            <td>Description</td>
+                        </tr>
+                        <tr>
+                            <td>version</td>
+                            <td>
+The version of the module archive, can only contain digits. If not set will “1” be used. (Optional)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>modulename</td>
+                            <td>
+The name of the module, if not set will the destfile property be used, but only the file name without '.mar'. Will always be converted to upper case. (Optional)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>description</td>
+                            <td>
+The default description of the module that is set in the MAR descriptor.(Optional)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>destfile</td>
+                            <td>
+The path and file name of the mar file to generate. (Required)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>verbose</td>
+                            <td>
+Set to true if verbose output should be done during execution.(Optional)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>part</td>
+                            <td>
+One or more 'part' tasks is required in order to generate a MAR file. (Required)
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p>
+PART Task Properties
+                    </p>
+                    <table>
+                        <tr>
+                            <td>Property</td>
+                            <td>Description</td>
+                        </tr>
+                        <tr>
+                            <td>name</td>
+                            <td>The name of the part, if not set will the default 'server' (and the only part supported in 3.1.x) be used. (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>fileset</td>
+                            <td>One or more 'filesets' are required containing JAR file or worker configurations. (Required)</td>
+                        </tr>
+                    </table>
+                    <p>
+Here is an example of a simple ANT task building a MAR file, it will have the module name of SOME, version of 3 and have a 'server' part with all the JARs in 'somejarlocation' and all the worker properties in the directory 'someworkerpropertieslocation' :
+                    </p>
+                    <pre>
+    &lt;target name="gensomemar" depends=”signserver.ear”&gt;
+    &lt;taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
+       classpathref="signserver.test.compile.classpath"/&gt;
+    &lt;taskdef name="part" classname="org.signserver.anttasks.PartAntTask"
+       classpathref="signserver.test.compile.classpath"/&gt;
+    	&lt;mar version="3" destfile="dist/some.mar" verbose="true"&gt;
+    		&lt;part&gt;
+    	         &lt;fileset dir="${somelibrarylocation}"&gt;
+    	           &lt;include name="*.jar"/&gt;
+    	         &lt;/fileset&gt;
+    	         &lt;fileset dir="${somejarlocation}"&gt;
+    	           &lt;include name="*.jar"/&gt;
+    	         &lt;/fileset&gt;
+    	         &lt;fileset dir="${someworkerproperiteslocation}"&gt;
+    	           &lt;include name="*.properties"/&gt;
+    	         &lt;/fileset&gt;
+    		&lt;/part&gt;
+    	&lt;/mar&gt;
+    &lt;/target&gt;
+                    </pre>
+
+
+                </subsection>
+
+                <subsection name="Building Manually">
+                    <p>
+A Module Archive is just like a JAR or EAR file basically a ZIP with a certain file structure. And it is quite easy to create one manually if the ANT task cannot be used. The following rules should be followed when creating a MAR file:
+                    </p>
+                    <p>
+The module descriptor file should be in META-INF/mar-descriptor.properties. If other than  just the 'server' part is used, then it is important that the 'parts' property is set correctly.
+Every part should have a directory with the same name as the part containing all the JAR files and worker configuration files. In 3.1.x is only one part supported and it should be named 'server'. No subdirectories should exists in the parts directory.
+                    </p>
+                </subsection>
+
+               <subsection name="Managing Module Archives">
+                    <p>
+Managing of MAR files is done using the CLI command 'signserver.sh/.cmd module' it have three subcommands: add, remove and list. See chapter 17.2.5 for more details.
+                    </p>
+                    <p>
+Here is an example usage of adding a module to a SignServer:
+                    </p>
+                    <pre>
+'bin/signserver.sh module add dist-server/tsa.mar demo'
+                    </pre>
+                    <p>
+This will load the Time-Stamp Authority module with the demo environment, this requires that the mar file have a file called demo-part-config.properties in the server directory.
+                    </p>
+                </subsection>
+
+                <subsection name="Changing the default configuration of the Cluster Class Loader">
+                    <p>
+                        When enabled, the default configuration of the Cluster Class Loader is to support multiple versions but not requiring signature verification. This behaviour can be changed in the signserver_build.properties file under the 'Cluster Class Loader Configurations' section.
+                    </p>
+                    <p>
+The following properties can be set:
+                    </p>
+                    <table>
+                        <tr>
+                            <td>Property</td>
+                            <td>Description</td>
+                        </tr>
+                        <tr>
+                            <td>useclusterclassloader</td>
+                            <td>Set to true to enable the use of the cluster class loader. Default is true.</td>
+                        </tr>
+                        <tr>
+                            <td>
+clusterclassloader.useclassversions
+                            </td>
+                            <td>
+Indicates if multiple versions of the same worker code should be supported. Default true. Turn this of if remote debugging should be used.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+clusterclassloader.requiresignature
+                            </td>
+                            <td>
+Set to true if signing of resource data should be required. Default false
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+clusterclassloader.pathtotruststore
+                            </td>
+                            <td>
+Path to the JKS trust store containing all CA certificates that is trusted for signing of resource data.
+                            
+Only required if signature verification is used.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+clusterclassloader.truststorepwd
+                            </td>
+                            <td>
+Password to unlock the trust store. Only required if signature verification is used.
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        Remember to do an 'ant clean' when changing settings in the signserver_build.properties
+                    </p>
+                </subsection>
+
+
+            </section>
+
+            <section name="Howtos">
+                <p>
+...
+                </p>
+            </section>
+  
+        </chapter>
+
+        <chapter name="Integration" shortname="integration">
+            <!--<p>
+                TODO: Introduction
+            </p>-->
+            <section name="JavaDoc">
+			<p>
+				The JavaDoc for SignServer is available at SIGNSERVER_HOME/tmp/doc/index.html
+				after running "ant javadoc".
+			</p>
+
+		</section>
+
+		<section name="Web Services">
+                    <p>
+New to version 3.0 is the Main WebService interface. It replaces the RMI-SSL interface in version 1.0 and 2.0 for two reasons, the RMI-SSL were based on a commercial library and it only worked for Java clients.
+                    </p>
+                    <p>
+The WebService interface have two calls, the main one is 'process' which takes a collection of process request to a processable worker and returns a collection of process responses, the second one is getStatus that performs a health check of the node and returns an OK message if the node is healthy.
+                    </p>
+                    <p>
+The WebService stack used is the JAX-WS stack from SUN. And the actual process data is a externalized Base64 byte-arrays. The reason why the are externalized is to simply the integration towards non-Java platforms. See the source of the actual request to see how the data is structured.
+                    </p>
+                    <p>
+The getStatus call can be used to implement high-availability towards the client. The Java client API described in the next section have built in support for different high availability policies.
+                    </p>
+                    <p>
+The WebService WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/signserverws/signserverws?wsdl
+                    </p>
+                    <p>
+It's possible to turn off the WebService interface by disabling it in the build configuration.
+                    </p>
+                    <p>
+Important, Due to class path conflict in JBoss 4.2.x own JBoss WebService stack and the JAX-WS stack used by the SignServer must the JBoss WebService stack be removed before the WebService is used. This is done by going to JBOSS_HOME/server/default/deploy and remove the directory jbossws.sar.
+                    </p>
+		</section>
+
+		<section name="Java Client API">
+                    <p>
+Built along with the WebService is a Java API that can be used by clients. It's located in dist-client/signserverwscli and the file signserverws.jar and all the files in the lib directory is required to use the API. The client API have support for different high availability policies to avoid the need for load balance hardware.
+                    </p>
+                    <p>
+The client classes is in the package org.signserver.protocol.ws.client and the main code are SignServerWSClientFactory creating a client using the specified load balance policy, it returns a
+ISignServerWSClient that is used to perform the actual process requests.
+                    </p>
+                    
+                    <subsection name="Load Balance Policies">
+                        <p>
+With version 3.0 is one load balance policy defined and it's called 'CallFirstNodeWithStatusOK' it calls the getStatus method on all the server nodes in the cluster simultaneously and the first node to respond OK it sends its process request to. This to ensure that only one node in the cluster actually performs the signing.
+                        </p>
+                        <p>
+Other future load balance policies could be round robin or that all nodes are called with the requests simultaneously and the first response is used.
+                        </p>
+                    </subsection>
+		</section>
+
+		<section name="SigningAndValidation API">
+			<p>
+				The SigningAndValidation API is a wrapper around the previous
+				mentioned API in order to have a simplified interface that also
+				is the same regardless if WebService or EJB Remote calls are used.
+			</p>
+			<p>
+				To use the API include the file signingandvalidationapi.jar
+				as well as all JAR-files in the lib-folder available in
+				SIGNSERVER_HOME/dist-client/signingandvalidationapi/.
+			</p>
+			<subsection name="Sample Code">
+				<subsubsection name="Signing and validating an XML document">
+				<p>
+					<pre>
+try {
+    ISigningAndValidation signserver = new SigningAndValidationWS("localhost", 8080);
+
+    // Document to sign
+    byte[] unsigned = "<document><name>Some content</name></document>".getBytes();
+    byte[] signed;
+
+    // Signing
+    GenericSignResponse signResp = signserver.sign("XMLSigner", unsigned);
+    signed = signResp.getProcessedData();
+    System.out.println("Signed: " + new String(signed));
+
+    // Validating
+    GenericValidationResponse validateResp = signserver.validate("DemoXMLValidator", signed);
+    System.out.println("Valid: " + validateResp.isValid());
+
+    if(validateResp.getSignerCertificate() != null) {
+        if(validateResp.getSignerCertificate() instanceof X509Certificate) {
+            X509Certificate signerCert = (X509Certificate) validateResp.getSignerCertificate();
+            System.out.println("Signed by: " + signerCert.getSubjectDN().getName());
+        }
+    }
+} catch (Exception ex) {
+    ex.printStackTrace();
+}
+        			</pre>
+				</p>
+				</subsubsection>
+
+				<subsubsection name="MRTD Signing">
+				<p>
+					<pre>
+try {
+    ISigningAndValidation signserver = new SigningAndValidationWS("localhost", 8080);
+
+    // Bytes to sign
+    ArrayList&lt;byte[]&gt; bytesToSign = new ArrayList&lt;byte[]&gt;();
+    bytesToSign.add("Sample data 1".getBytes());
+    bytesToSign.add("Sample data 2".getBytes());
+
+    // Signing
+    MRTDSignResponse signResp = (MRTDSignResponse) signserver.process("MRTDSigner", new MRTDSignRequest(1234, bytesToSign), new RequestContext());
+
+    System.out.println("Certificate: " + signResp.getSignerCertificate());
+
+    if(signResp.getProcessedData() instanceof Collection) {
+        Collection&lt;byte[]&gt; signed = (Collection) signResp.getProcessedData();
+        for(byte[] data : signed) {
+            System.out.println("Signed: " + new String(Base64.encode(data)));
+        }
+    }
+} catch (Exception ex) {
+    ex.printStackTrace();
+}
+        			</pre>
+				</p>
+				</subsubsection>
+			
+
+			</subsection>
+		</section>
+
+                <section name="Web Server Interface">
+                    <subsection name="GenericProcessServlet">
+                        <p>
+				HTTP requests can be sent to the SignServer servlet GenericProcessServlet located at /signserver/process using
+                                either POST or GET.
+			</p>
+                        <p>
+                            <table border="1">
+                                <tr>
+                                    <td>URL:</td><td><b>/signserver/process</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Method:</td><td><b>GET</b> or <b>POST</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Request content-type:</td><td><b>None</b>, <b>"x-www-form-urlencoded"</b>, <b>"multipart/form-data"</b> or <b>other<sup>*</sup></b></td>
+                                </tr>
+                                <tr>
+                                    <td>Request parameters:</td>
+                                    <td>
+                                        <ul>
+                                            <li><b>workerName</b> - Name of the worker that should handle the request. Required unless workerId specified.</li>
+                                            <li><b>workerId</b> - Id of the worker that should handle the request. Required unless workerName specified.</li>
+                                            <li><b>data</b> - The bytes that should be signed or validated. Required.</li>
+                                            <li><b>encoding</b> - Encoding of the data field. Optional. By specifying "base64" SignServer Base64-decodes
+                                            the data property before passing it to the worker.</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Response code:</td><td><b>200</b> (OK) or other in case of failure (i.e. 500 internal server error)</td>
+                                </tr>
+                                <tr>
+                                    <td>Response content-type:</td><td>Depending on the worker</td>
+                                </tr>
+                            </table>
+                            <sup>*</sup> if the request content-type in a POST is specified as something else than "x-www-form-urlencoded" or
+                            "multipart/form-data" the message body is not parsed but instead directly passed to the worker specified by workerName or workerId
+                            in the URI's query string.
+                        </p>
+
+                        <subsubsection name="Samples">
+                            <p>
+                            <ul>
+                                <li>
+                                    HTTP GET:<br/>
+                                    http://localhost:8080/signserver/process?workerName=XMLSigner&amp;data=%3Croot%3Ehej2%3C/root%3E<br/>
+                                    http://localhost:8080/signserver/process?workerName=XMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D<br/>
+                                    <br/>
+                                </li>
+                                <li>
+                                    HTTP POST with multipart/form-data or x-www-form-urlencoded:<br/>
+                                    For example see /signserver/xmlsign.html (multipart/form-data) and /signserver/genericsign.html (x-www-form-urlencoded).<br/>
+                                    <br/>
+                                </li>
+                                <li>
+                                    HTTP POST with other content-type:<br/>
+                                    See the TimeStampClient.<br/>
+                                    <br/>
+                                </li>
+                            </ul>
+                        </p>
+                        </subsubsection>
+
+                    </subsection>
+                    <subsection name="SODProcessServlet">
+                        <p>
+                            Servlet recieving HTTP POST requests containing data group hashes
+                            and creates a MRTDSODSignerRequest and passes it to the specified
+                            MRTDSODSigner. The response from the servlet is the signed security
+                            object in binary format.
+                        </p>
+                        <p>
+                            <table border="1">
+                                <tr>
+                                    <td>URL:</td><td><b>/signserver/sod</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Method:</td><td> <b>POST</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Request parameters:</td>
+                                    <td>
+                                        <ul>
+                                            <li><b>workerName</b> - Name of the worker that should handle the request. Required unless workerId specified.</li>
+                                            <li><b>workerId</b> - Id of the worker that should handle the request. Required unless workerName specified.</li>
+                                            <li><b>dataGroup1 to dataGroup16</b> - The data group hashes that should be put in the SO(d). At least one required.</li>
+                                            <li><b>encoding</b> - Encoding of the data group hash fields. Optional. By specifying "base64" SignServer Base64-decodes
+                                            the data property before passing it to the MRTDSODSigner.</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Response code:</td><td><b>200</b> (OK) or other in case of failure (i.e. 500 internal server error)</td>
+                                </tr>
+                                <tr>
+                                    <td>Response content-type:</td><td><b>application/octet-stream</b></td>
+                                </tr>
+                            </table>
+                        </p>
+
+                        <subsubsection name="Samples">
+                            <p>
+                            <ul>
+                                <li>
+                                    See /signserver/mrtdsodsign.html.<br/>
+                                    <br/>
+                                </li>
+                            </ul>
+                        </p>
+                        </subsubsection>
+                    </subsection>
+		</section>
+        </chapter>
+
+        <chapter name="Plugins" shortname="plugins">
+            <!--<p> TODO:
+from: manual31.odt:ch7, src
+There could also be a listing of all modules and for each module:
+a description of its purpose and
+description of each of its properties.
+            </p>-->
+            <section name="Configuring a plug-in">
+                <p>
+A worker component is configured by entering its class path (and optionally its crypto token class path)  in a memory bank called the global configuration and then issuing the reload command. There exists sample configurations for most of the plug-ins in the 'sample-configs' directory.
+                </p>
+            </section>
+
+            <section name="SignServer Signers">
+                <p>
+There currently exists five types of signers. The first one is the time stamp signer generating RFC 3161 compliant timestamps using the Bouncycastle library. A MRTD signer creating 'Machine Reader Travel Document' signatures using the RSA algorithm from pre-padded data. PDF Signer used for automatically signing requested PDF documents, ODF signer used for automatically signing requested ODF documents, OOXML Signer used for automatically signing requested OOXML documents.
+                </p>
+
+                <subsection name="Time-stamp Signer">
+                    <p>
+Important, From 3.1 must the Time-Stamp Authority module be uploaded to the SignServer before it can be used. This is done with the command:
+ 'bin/signserver.sh module add dist-server/tsa.mar'
+                    </p>
+                    <p>
+The time-stamp signer have the class path: org.signserver.server.signers.TimeStampSigner
+                    </p>
+
+                    <subsubsection name="Overview">
+                        <p>
+The time stamp server generates time stamp tokens and have the support for the following options:
+                        </p>
+                        <ul>
+                            <li>Set of accepted policies</li>
+                            <li>Set of accepted algorithms</li>
+                            <li>Set of accepted extensions</li>
+                            <li>Accuracy microseconds</li>
+                            <li>Accuracy milliseconds</li>
+                            <li>Accuracy seconds</li>
+                            <li>Included certificate chain (currently doesn't include CRLs)</li>
+                            <li>Ordering</li>
+                            <li>TSA name</li>
+                        </ul>
+                        <p>
+The time stamp signer currently don't support:
+                        </p>
+                        <ul>
+                            <li>CRL inclusion</li>
+                            <li>Signed attributes</li>
+                            <li>Unsigned attributes </li>
+                        </ul>
+                        <p>
+Timestamps requests are served through a http service at the URL:
+                        </p>
+                        <pre>
+'http://&lt;host name&gt;/signserver/process?workerId=&lt;worker Id&gt;'
+                        </pre>
+                        <p>
+If no 'worker Id' parameter is specified then will the id of 1 be used as default.
+                        </p>
+                        <p>
+The time-stamp signer requires a time-stamp certificate with the extended key usage 'time-stamp' only. The extended key usage extension must be critical.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Available Properties">
+                        <p>
+The following properties can be configured with the signer:
+                        </p>
+                        <p>
+<b>TIMESOURCE</b> = property containing the class path to the ITimeSource implementation that should be used. (OPTIONAL, default LocalComputerTimeSource)
+                        </p>
+                        <p>
+<b>ACCEPTEDALGORITHMS</b> = A ';' separated string containing accepted algorithms, can be null if it shouldn't be used. (OPTIONAL, Strongly recommended)
+Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, RIPEMD128, RIPEMD160, RIPEMD256
+                        </p>
+                        <p>
+<b>ACCEPTEDPOLICIES</b> =  A ';' separated string containing accepted policies, can be null if it shouldn't be used. (OPTIONAL, Recommended)
+                        </p>
+                        <p>
+<b>ACCEPTEDEXTENSIONS</b> = A ';' separated string containing accepted extensions, can be null if it shouldn't be used. (OPTIONAL)
+                        </p>
+                        <p>
+<b>DEFAULTTSAPOLICYOID</b> = The default policy ID of the time stamp authority (REQUIRED, if no policy OID is specified in the request then will this value be used.)
+                        </p>
+                        <p>
+<b>ACCURACYMICROS</b> = Accuracy in micro seconds, Only decimal number format, only one of the accuracy properties should be set (OPTIONAL)
+                        </p>
+                        <p>
+<b>ACCURACYMILLIS</b> = Accuracy in milliseconds, Only decimal number format, only one of the accuracy properties should be set (OPTIONAL)
+                        </p>
+                        <p>
+<b>ACCURACYSECONDS</b> = Accuracy in seconds. Only decimal number format, only one of the accuracy properties should be set (OPTIONAL)
+                        </p>
+                        <p>
+<b>ORDERING</b> = The ordering (OPTIONAL), default false.
+                        </p>
+                        <p>
+<b>TSA</b> = General name of the Time Stamp Authority. (OPTIONAL)
+                        </p>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="MRTD Signer">
+                    <p>
+Important, From 3.1 must the MRTD Signer module be uploaded to the SignServer before it can be used. This is done with the command:
+                    </p>
+                    <pre>
+ 'bin/signserver.sh module add dist-server/mrtdsigner.mar'
+                    </pre>
+                    <p>
+The MRTD signer have the class path: org.signserver.server.signers.MRTDSigner
+                    </p>
+                    <subsubsection name="Overview">
+                        <p>
+The MRTD Signer performs a RSA signing operation on incoming data. The data should already be padded. This signer i used to sign 'Machine Readable Travel Documents' i.e. electronic passports.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+No configuration properties exists.
+                        </p>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="PDF Signer">
+                    <p>
+Important, From 3.1 must the PDF Signer module be uploaded to the SignServer before it can be used. This is done with the command:
+                    </p>
+                    <pre>
+ 'bin/signserver.sh module add dist-server/pdfsigner.mar'
+                    </pre>
+                    <p>
+The PDF signer have the class path: org.signserver.server.signers.PDFSigner
+                    </p>
+
+                    <subsubsection name="Overview">
+                        <p>
+The PDF signer adds digital signatures to PDF documents. It supports addition of visible or invisible signatures. Both visible and invisible signatures serve the same purpose of signing document, and technically are equivalent in that sense. The difference is that when visible signature  is applied to a document, signature image (in shape of rectangle) is placed at the specified place in the document, clicking on which will allow seeing properties of the signature (Adobe Acrobat Reader). On the other hand when invisible signature is applied, signature properties are accessed through menu items. For visible signatures properties such as : custom signature image, signature rectangle, page at which signature rectangle to be drawn and others can be specified (see Available Properties below)
+                        </p>
+                        <p>
+PDF Signer can also apply timestamp to a signature. If the signature is timestamped, it can be viewable through signature properties in Adobe Acrobat Reader. Timestamping is used to prove that  document was signed before the time specified by timestamp token. If the signature is not timestamped then the signature time specified in the signature properties is not considered to be “safe”. It is strongly advised to apply timestamp to a signature, and TSA module can be used for this purpose.
+                        </p>
+                        <p>
+Also CRL or OCSP Response of the signer's certificate can be embedded inside the signature package. Embedding CRL or OCSP response with the package will help validate signature even after the signer's certificate is expired. (Though it will not totally guarantee the long term signature preservation. Topic of long term signature preservation for archival purposes is a large one and is discussed to be implemented in future versions of SignServer).
+                        </p>
+                        <p>
+PDF signing requests are served through a http service at the URL:
+                        </p>
+                        <pre>
+'http://&lt;host name&gt;/signserver/process?workerId=&lt;worker Id&gt;'
+                        </pre>
+                        <p>
+If no 'worker Id' parameter is specified then will the id of 1 be used as default.
+                        </p>
+                        <p>
+The PDF signer requires a signing keystore with a signing certificate.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Available Properties">
+                        <p>
+The following properties can be configured with the signer:
+                        </p>
+                        <p>
+<b>REASON</b> =
+	 The reason included in the PDF signature and displayed by the PDF reader. Default value is “Signed by SignServer”.
+                        </p>
+                        <p>
+<b>LOCATION</b> =
+	The location included in the PDF signature and displayed by the PDF reader. Default value is “SignServer”.
+                        </p>
+                        <p>
+<b>ADD_VISIBLE_SIGNATURE</b> =
+	Setting that control whether signature to be added should be visible or invisible. Possible values : True or False. Default is "False"
+                        </p>
+                        <p>
+<b>VISIBLE_SIGNATURE_PAGE</b> =
+	Specifies the page on which the visible signature will be drawn. This property is ignored if ADD_VISIBLE_SIGNATURE is set to False.
+                        </p>
+                        <p>
+Possible values :<br/>
+"First" : signature drawn on first page of the document,<br/>
+"Last"  : signature drawn on last page of the document,<br/>
+page_number : signature is drawn on a page specified by numeric argument. If specified page number exceeds page count of the document ,signature is drawn on last page. If page_number specified is not numeric (or negative number) the signature will be drawn on first page
+	                </p>
+                        <p>
+	Default value is "First".
+                        </p>
+                        <p>
+	<b>VISIBLE_SIGNATURE_RECTANGLE</b>=
+		Specifies the rectangle signature is going to be 	drawn in. This property is 	ignored if ADD_VISIBLE_SIGNATURE is set to False. Format 	is :
+		(llx,lly,urx,ury).
+	                        </p>
+                        <p>
+	Here :<br/>
+llx =left lower x coordinate,<br/>
+lly=left lower y coordinate,<br/>
+urx =upper right x coordinate,<br/>
+ury = upper right y coordinate<br/>
+                        </p>
+                        <p>
+Default value is "400,700,500,800".
+                        </p>
+                        <p>
+<b>VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 &amp; VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH</b> =
+	If we want the visible signature to contain custom image , specify image as base64 encoded byte array. Alternatively custom image can be specified by giving a path to image on file system.
+                        </p>
+                        <p>
+Note : if specifying a path to an image "\" should be escaped ( thus C:\photo.jpg => "C:\\photo.jpg" )
+                        </p>
+                        <p>
+Note : if specifying image as base64 encoded byte array "=" should be escaped (this "BBCXMI==" => "BBCXMI\=\=")
+                        </p>
+                        <p>
+If both of these properties are set then VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 will take priority.
+                        </p>
+                        <p>
+If we do not want this feature then do not set these properties.
+                        </p>
+                        <p>
+Default is not set (no custom image).
+                        </p>
+                        <p>
+These properties are ignored if ADD_VISIBLE_SIGNATURE is set to False.
+                        </p>
+                        <p>
+NOTE: in clustered environment it is more manageable and advised to specify image as base64 string, since image data will be stored in central database. Otherwise each node should contain copy of the image, and each image managed separately (ex : on image updates, or insertion of new image for different worker).
+                        </p>
+                        <p>
+<b>VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE</b>=
+	If we want our custom image to be resized to specified rectangle (set by VISIBLE_SIGNATURE_RECTANGLE) then set to True. If set to True image might look different that original (as an effect of resizing). If set to False the rectangle drawn will be resized to specified image's sizes.
+                        </p>
+                        <p>
+If set to False llx and lly coordinates specified by VISIBLE_SIGNATURE_RECTANGLE property will be used for drawing rectangle (urx and ury will be calculated from specified image's size).
+                        </p>
+                        <p>
+This property is ignored if ADD_VISIBLE_SIGNATURE is set to False or if custom image to use is not specified.
+                        </p>
+                        <p>
+Possible values : True, False. Default value is True.
+                        </p>
+                        <p>
+<b>TSA_URL</b>=
+	If we want to timestamp document signature, specify timestamp authority url.  If we do not want to timestamp document signature , do not set property.
+	                        </p>
+                        <p>
+Note : if path contains characters "\" or "=" , these characters should be escaped (thus "\" = "\\", "=" =>"\=")
+                        </p>
+                        <p>
+Default is not set (no timestamping).
+                        </p>
+                        <p>
+
+	<b>TSA_USERNAME &amp; TSA_PASSWORD</b>=
+		If tsa requires authentication for timestamping , specify username and password. If 	tsa does not require authentication, do not set these properties. These properties are ignored 	if TSA_URL is not set (no timestamping).
+                        </p>
+                        <p>
+		Default value is not set (tsa does not require authentication).
+                        </p>
+                        <p>
+	<b>EMBED_CRL</b>=
+		If we want to embedd the crl for signer certificate inside the signature package set to 	True, otherwise set to False.
+                        </p>
+                        <p>
+	Default value is False
+                        </p>
+                        <p>
+	<b>EMBED_OCSP_RESPONSE</b>=
+		If we want to embedd the ocsp responce for signer certificate inside the signature 	package set to True, otherwise set to False.
+                        </p>
+                        <p>
+		Note : issuer certificate (of signing certificate) should be in certificate chain.
+                        </p>
+                        <p>
+		Default value is False.
+                        </p>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="ODF Signer">
+                    <subsubsection name="Overview">
+                        <p>
+ODF Signer, which stands for Open Document Format Signer is a plug-in to SignServer that applies server side signature to documents in ODF format. It has been tested with Open Office 3.1.
+                        </p>
+                        <p>
+	   ODF Signer supports only "invisible" signatures, that is unlike PDF signer there's no pictorial representation of the digital signature. When you open signed document in Open Office you can verify signature using toolbars, or the notifier in status bar (red mark), which notifies user that the document is digitally signed.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+	  Other than standard worker properties, ODF Signer does not have any other custom ODF signer specific properties.
+                        </p>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="OOXML Signer">
+                    <subsubsection name="Overview">
+                        <p>
+OOXML Signer, which stands for Office Open XML Signer is a plug-in to SignServer that applies server side signature to documents in OOXML format. It has been tested with MS Office 2007.
+                        </p>
+                        <p>
+	   Currently OOXML Signer supports only "invisible" signatures , that is unlike PDF signer there's no pictorial representation of the digital signature. When you open signed document in MS Office you can verify signature using toolbars, or the notifier in status bar (red mark), which notifies user that the document is digitally signed.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+	  Other than standard worker properties, OOXML Signer does not have any other custom OOXML signer specific properties.
+                        </p>
+                        <p>
+NOTE : In later versions of OOXML Signer it is planned to add support for visible signatures and custom signature image.
+                        </p>
+                    </subsubsection>
+                </subsection>
+            </section>
+
+            <section name="SignServer Validation Service Framework">
+                <p>
+The validation service framework is used to validate certificates from one or more issuers. It can be used to  have one central point of performing revokation statuses to simplify the integration of external PKIs within an enterprise.
+                </p>
+                <p>
+The validation service framework also provides a validation cache that can be used to increase performance for those cases a application does multiple lookups of the same certificate within a short period of time.
+                </p>
+                <p>
+Out-of-the-Box there exists a DefaultValidationService that should satisfy most use cases but it's possible to develop a custom ValidationService if necessary. See the developer section for more details.
+                </p>
+                <p>
+All Validation Services is configured by specifying the org.signserver.validationservice.server.ValidationServiceWorker in the global configuration, then is the actual ValidationService configured in the worker configuration setting the class path in the property TYPE (Not necessary for the DefaultValidationService).
+                </p>
+                <p>
+The validation service framework is mostly used with X509v3 certificates but other kinds of certificates is supported as well by design.
+                </p>
+                <p>
+Another concept in the Validation Service Framework is that the client also can ask the service to check the type of certificate that the certificate might be used for. A certificate type could be IDENTIFICATION or ELECTRONIC SIGNATURE.
+                </p>
+                <subsection name="DefaultValidationService">
+                    <subsubsection name="Overview">
+                        <p>
+The default validation service have a set of Validators. A validator is responsible to checking the validity against one or more issuers using for example CRL check or OCSP/XKMS lookup or just by checking some database. Currently there are no ready to use validators, these remain to be developed in future versions of the SignServer.
+                        </p>
+                        <p>
+The Default Validation Service supports validations to be cached for some or all issuers for a specified amount of time.
+                        </p>
+                        <p>
+If not configured otherwise will the validation service use the DefaultX509CertTypeChecker that determines the certificate type from the key usage in the certificate.  Key Encipherment and Digital Signature indicates a IDENTIFICATION type and Non-reputation indicates ELECTRONIC SIGNATURE.
+                        </p>
+                        <p>
+There exists a validation specific WebService that can be used for platform independent client calls.
+The WebService must be enabled during the build and isn't by default. The WebService WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/validationws/validationws?wsdl and it contains two calls one is 'isValid' that performs the validation check and the other is a getStatus call that checks the health of the node and its underlying systems. The last calls can be used by clients for monitoring or implementing redundancy.
+                        </p>
+                        <p>
+Important, Due to class path conflict in JBoss 4.2.x own JBoss WebService stack and the JAX-WS stack used by the SignServer must the JBoss WebService stack be removed before the WebService is used. This is done by going to JBOSS_HOME/server/default/deploy and remove the directory jbossws.sar.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+The following properties can be configured with the default validation service:
+                        </p>
+                        <p>
+The validation service have three types of properties, general properties (that applies for the service and all configured validators), validator properties (that only applies for a specific validator) and issuer properties (that only applies for an issuer configured in a specific validator).
+                        </p>
+                        <p>
+<i>General Properties:</i><br/>
+                        </p>
+                        <p>
+<b>CACHEDISSUERS</b> = A ';' separated list of issuer names (usually issuer DNs)  (Optional, no validation is cached if unset.)
+                        </p>
+                        <p>
+<b>CERTTYPECHECKER</b> = Certificate type checker that should be used to determine the type of certificate (Optional, default is org.signserver.validationservice.server.DefaultX509CertTypeChecker)
+                        </p>
+                        <p>
+<b>TIMEINCACHE</b> = Time in seconds a certificates validation should be cached (Optional, default is 10 seconds)
+                        </p>
+                        <p>
+<i>Validator properties:</i><br/>
+Validator properties is specified with the prefix of 'validator&lt;validatorId&gt;.' or 'val&lt;validatorId&gt;.' were validator Id should be an integer between 1 and 255. For instance, to specify the type of a validator with an id of 1 then specify 'val1.classpath=some.classpath.SomeClass'. This validator will be initialized with all its validator specific properties (with 'val&lt;id&gt;.' prefix removed) as well as the general ones.
+                        </p>
+                        <p>
+<b>CLASSPATH</b> = Class path to the validator that should be used. (Required for each configured validator)
+                        </p>
+                        <p>
+<i>Issuer properties:</i>  Issuer properties are specified as 'val&lt;val id&gt;.issuer&lt;issuer id&gt;.&lt;property&gt;' were issuer id is a positive integer between 1 and 255. All generic and validator specific properties (with the given validator id) will also be propagated to the specific issuer configuration.
+                        </p>
+                        <p>
+<b>CERTCHAIN</b> = The certificate path of the CA certificates used to verify the certificate. Should be a appended BASE64 string. (Required for each configured issuer).
+                        </p>
+                        <p>
+Here is an example configuration of a validation service to clarify things even further
+                        </p>
+                        <pre>
+# Set up the worker -> validation service wrapper
+GLOB.WORKER1.CLASSPATH= org.signserver.validationservice .server.ValidationServiceWorker
+#Uncomment and set class path to custom validation service, othervise is default #used.
+#WORKER1.TYPE=
+
+# Name of Service (Optional)
+WORKER1.NAME=ValidationService1
+
+# Define TestCA2 and TestCA3 as a cached for 15 seconds, TestCA1 is Not cached.
+WORKER1.CACHEDISSUERS=CN=TestCA2;CN=TestCA3
+WORKER1.TIMEINCACHE=15
+
+# Define a validator in charge of issuer TestCA1 and TestCA2
+WORKER1.VAL1.CLASSPATH=&lt;Class path to some validator&gt;
+WORKER1.VAL1.ISSUER1.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....
+WORKER1.VAL1.ISSUER2.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....
+
+# Define a validator in charge of issuer TestCA3
+WORKER1.VAL2.CLASSPATH=&lt;Class path to some validator&gt;
+WORKER1.VAL2.ISSUER1.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....
+                        </pre>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="The Validation CLI interface.">
+                    <p>
+There exists a Java CLI tool that can be used to check the validity of a certificate from scripts. It supports a clustered SignServer installation by using the “Use first host that response OK” policy.
+                    </p>
+                    <p>
+When compiling, make sure that setting validationclient.enabled is set to “true” in the build properties. The client is found in dist-client/validationclient. Just copy the validate.jar and all the files in the 'lib' directory to the location where you want to use the client.
+                    </p>
+                    <p>
+Use the client with 'java -jar validate.jar &lt;options&gt;'.
+                    </p>
+                    <pre>
+Here is a list of available options:
+
+-cert &lt;cert-file&gt; 			: Path to certificate file (DER or PEM) (Required).
+-certpurposes &lt;certpurposes&gt;  	: A ',' separated string containing requested certificate purposes.
+-der                           			: Certificate is in DER format.
+-help                          			: Display this info
+-hosts &lt;hosts&gt;                 		: A ',' separated string containing the hostnames of the validation service nodes. Ex 'host1.someorg.org,host2.someorg.org' (Required)
+-pem                    	       		: Certificate is in PEM format (Default).
+-port &lt;port&gt;                   		: Remote port of service (Default is 8080 or 8442 for SSL).
+-service &lt;service-name&gt;        	: The name or id of the validation service to process request. (Required)
+-silent                        			: Don't produce any output, only return value.
+-truststore &lt;jks-file&gt;         		: Path to JKS truststore containing trusted CA for SSL Server certificates.(for HTTPS connections)
+-truststorepwd &lt;password&gt;      	: Password to unlock the truststore.
+
+
+The following return values is used:
+
+-2   : Error happened during execution
+-1   : Bad arguments
+0   : Certificate is valid
+1   : Certificate is revoked
+2   : Certificate is not yet valid
+3   : Certificate have expired
+4   : Certificate doesn't verify
+5   : CA Certificate have been revoked
+6   : CA Certificate is not yet valid
+7   : CA Certificate have expired.
+8   : Certificate have no valid certificate purpose.
+                   </pre>
+
+                </subsection>
+
+                <subsection name="SignServer Group Key Service Framework">
+                    <subsubsection name="Overview">
+                        <p>
+The group key service framework is used to manage and distribute group keys to clients in an organisation. The keys can be generated on demand or pre-generated at times when the system is not utilized a lot. The group keys can be both symmetric and asymmetric but one service can only distribute one type of key. If several kinds of keys are required should multiple services be set up within the same server.
+                        </p>
+                        <p>
+The group keys are stored encrypted in database. The encryption key can be configured to be switched automatically after a defined number of encryptions to avoid overexposure of the cryptographic data. It is also possible to switch the encryption key manually.
+                        </p>
+                        <p>
+The Framework requires an ExtendedCryptoToken, the difference are that the extended token have additional support for key export and symmetric key operations.
+                        </p>
+                        <p>
+The Group Key Service have CLI commands for administration of the service such as pre-generate keys, manual switch of encryption key and removal of group keys.
+                        </p>
+                        <p>
+The communication to the group key service is mainly done through the main Web Service interface. But other ways of communicating with the server might come in the future.
+                        </p>
+                        <p>
+Authorization to group keys is very important and therefore should a special plug-in be developed  that looks up which clients that should have access to a specific group key which fit into the organisation needs. See the authorization chapter of how to develop a customized authorization plug-in.
+                        </p>
+                        <p>
+The basic configuration of a group key service is very similar to that of a validation service. Two entries is required in the global configuration. The first is the class path for the Worker to GroupKeyService wrapper, then a class path reference to the extended crypto token used with the service. If not the default group key service should be used it is possible to define a custom one by specifying its class path in the TYPE worker property.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+<b>USEPREGENERATION</b> = Setting defining of keys should be pre-generated or generated on the fly when needed. If the pool of pre-generated keys gets empty will new keys always be generated automatically. (Optional, default is true)
+                        </p>
+                        <p>
+<b>ENCKEYALG</b> =  Encryption algorithm used to encrypt the group keys stored in database. ( Optional, default is “AES”)
+                        </p>
+                        <p>
+<b>ENCKEYSPEC</b> = Specification of the encryption key. (Optional, default is “256”)
+                        </p>
+                        <p>
+<b>GROUPKEYALG</b> =  Defines the type of group keys that this service should generate ( Optional, default is “AES”)
+                        </p>
+                        <p>
+<b>GROUPKEYSPEC</b> = Specification of the generated group keys. (Optional, default is “256”)
+                        </p>
+                        <p>
+<b>KEYSWITCHTHRESHOLD</b> = Setting defining the number of group keys that should be  encrypted by the same encryption key before it's switched. (Optional, default is 100000)
+                        </p>
+                    </subsubsection>
+                </subsection>
+            </section>
+
+            <section name="Mail Processors">
+                <p>
+This section lists the available plug-ins for the MailSigner. These plug-ins are configured in the exact same way with class path of both plug-in and its crypto token.
+                </p>
+                <subsection name="SimpleMailSigner">
+                    <p>
+Important, From 3.1 must the SimpleMailSigner module be uploaded to the MailSigner before it can be used. This is done with the command:
+ 'bin/signserver.sh module add dist-server/simplemailsigner.mar'
+                    </p>
+                    <subsubsection name="Overview">
+                        <p>
+The SimpleMailSigner is a plug-in that generates a signed SMIME message from any authorized mail sent through the MailSigner server. It can be used prove the origin of the message to the receivers .
+                        </p>
+                        <p>
+There exists a demo configuration in the 'sample-configs' directory.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+<b>EXPLAINATIONTEXT</b>  =  Text attached to the e-mail describing the signature for the recipient. (Optional)
+                        </p>
+                        <p>
+<b>USEREBUILDFROM</b> =  Setting indicating if the from field of the SMIME should be altered. (Optional, default is true)
+                        </p>
+                        <p>
+<b>SIGNATUREALG</b>  = Setting configuring the signature algorithm that should be used in the SMIME message. (Optional, default is DIGEST_SHA1)
+                        </p>
+                        <p>
+<b>POSTMASTERSIGNS</b> =  Indicates if postmaster mail should be signed. (Optional, default is false)
+                        </p>
+                        <p>
+<b>FROMADDRESS</b> = The from email address used if rebuild from is set. (Required if USEREBUILDFROM is true)
+                        </p>
+                        <p>
+<b>FROMNAME</b> = Readable name used in from address field. (Optional)
+                        </p>
+                        <p>
+<b>CHANGEREPLYTO</b> = Indicates if the reply-to field should be altered to the original sender. (Optional, default is false)
+                        </p>
+                        <p>
+<b>REPLYTOADDRESS</b> = The reply to email address if the reply always should be changed to
+a default address. (Required if CHANGEREPLYTO is true)
+                        </p>
+                        <p>
+<b>REPLYTONAME</b> = Readable name used in reply-to address field. (Optional)
+                        </p>
+                        <p>
+<b>SIGNERADDRESS</b> = The email address that should be in the sender field. (Required)
+                        </p>
+                        <p>
+<b>SIGNERNAME</b> = Readable name used in sender address field. (Optional)
+                        </p>
+                        <p>
+<b>REQUIRESMTPAUTH</b> = Setting defining if SMTP AUTH should be required to
+sign the mail. (Default is true).
+                        </p>
+                    </subsubsection>
+                </subsection>
+            </section>
+
+            <section name="Available CryptoTokens">
+                <p>
+                    There exists four types of crypto tokens (Formerly known as sign tokens), two for storing the keys in software, one general for communicating with cryptographic hardware through the PKCS11 interface and one for SmartCards. See the developer section for information about developing support for other HSMs.
+                </p>
+                <subsection name="P12CryptoToken">
+                    <p>
+The P12CryptoToken signer have the class path: org.signserver.server.cryptotokens.P12CryptoToken
+                    </p>
+                    
+                    <subsubsection name="Overview">
+                        <p>
+A CryptoToken using a PKCS 12 key-store in the file-system. Can only contain one signing key.
+                        </p>
+                        <p>
+In a clustered environment must the key store be at the same location at all nodes.
+                        </p>
+                        <p>
+The P12CryptoToken, doesn't support the destroyKey() method
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Available Properties">
+                        <p>
+ <b>KEYSTOREPATH</b> : The full path to the key-store to load. (required)
+                        </p>
+                        <p>
+<b>KEYSTOREPASSWORD</b> : The password that locks the key-store. Used for automatic activation.
+                        </p>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="PrimeCardHSMCryptoToken">
+                    <subsubsection name="Overview">
+                        <p>
+Using PrimeCardHSM it's possible to use a SmartCard to generate 2048-bit RSA signatures. The SmartCard can perform about one signature a second. PrimeCardHSM is proprietary software by PrimeKey Solutions AB.
+                        </p>
+                        <p>
+PrimeCardHSM requires PCSCD software and SmartCard drivers. See separate documentation about installing PrimeCardHSM.
+                        </p>
+                        <p>
+The PrimeCardHSMCryptoToken, doesn't support the destroyKey() method.
+                        </p>
+                        <p>
+The PrimeCardHSMCryptoToken signer have the class path: org.signserver.server.cryptotokens.PrimeCardHSMCryptoToken
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Available Properties">
+                        <p>
+<b>DEFAULTKEY</b> =   Hash value of the signing key on the card. See PrimeCardHSM documentation for more information.(Required)
+                        </p>
+                        <p>
+<b>AUTHCODE</b> = Authentication code for automatic activation (Optional).
+                        </p>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="PKCS11CryptoToken">
+                    <subsubsection name="Overview">
+                        <p>
+Using PKCS11 it's possible to use a HSM that has a PKCS11 module, such as Utimaco, nCipher or Eracom.
+                        </p>
+                        <p>
+The PKCS11CryptoToken have the class path: org.signserver.server.cryptotokens.PKCS11CryptoToken
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+<b>DEFAULTKEY</b> =   Hash value of the signing key on the card. (Required)
+                        </p>
+                        <p>
+<b>PIN</b> =   Authentication code for activation. (Required)
+                        </p>
+                        <p>
+<b>SHAREDLIBRARY</b> =   Full path to the library containing the PKCS11 interface. (Required)
+                        </p>
+                        <p>
+<b>SLOT</b> =   Slot to use (Required)
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Example usage">
+                        <p>
+Edit qs_pdfsigner_configuration.properties and choose the sign token setting for the PKCS11 sign token. Run the following command to set up a PDF signer using the PKCS11 properties configured:
+bin/signserver.sh setproperties qs_pdfsigner_configuration.properties
+                        </p>
+                        <p>
+You also need a certificate for the signer. Generate a certificate request with the command:
+bin/signserver.sh generatecertreq 8 "CN=PKCS11 Signer token" SHA1WithRSA /tmp/certreq.pem
+                        </p>
+                        <p>
+Add a user in EJBCA with a certificate profile suitable for signing, and enrol for a “Server Certificate” using the public web pages.
+                        </p>
+                        <p>
+Create the certificate chain file with the command:
+cat /tmp/cert.pem /tmp/AdminCA1.pem > /tmp/certchain.pem
+                        </p>
+                        <p>
+The signer certificate must be first, and the root CA certificate last.
+                        </p>
+                        <p>
+Upload the signing certificate chain to the signer using the command:
+bin/signserver.sh uploadsignercertificatechain 8 GLOB /tmp/certchain.pem
+                        </p>
+                        <p>
+After the certificate chain has been uploaded to the server, the configuration must be reloaded and the server must be restarted. It is not sufficient to only reload the configuration.
+                        </p>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="SoftCryptoToken">
+                    <subsubsection name="Overview">
+                        <p>
+The SoftCryptoToken is a simple token managing it's own soft keys instead through a pkcs12. It can be used for test and demonstration purposes. The keys are stored in the worker's properties and is generated when genCertificateRequest is called. One key is used for all purposes and a new key is generated for every certificate request.
+                        </p>
+                        <p>
+The method destroyKey is not supported.
+                        </p>
+                        <p>
+The SoftCryptoToken have the class path: org.signserver.server.cryptotokens.SoftCryptoToken
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+<b>KEYDATA</b> =   The serialized KeyPair generated by genCertificateRequest, usually is this setting configured by the SoftCryptoToken itself.
+                        </p>
+                        <p>
+<b>KEYALG</b> = The algorithm used when generating new keys. (Optional, default is “RSA”)
+                        </p>
+                        <p>
+<b>KEYSPEC</b> =   The key specification used when generating new keys. (Optional, default is “2048”)
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Example usage">
+                        <p>
+First change the global property of WORKER&lt;ID&gt;.CRYPTOTOKEN.CLASSPATH of the worker you want to use the SoftCryptoToken with. After reload will an empty and inactive SoftCryptoToken be created.
+                        </p>
+                        <p>
+Then generate a certificate request with the command, in this step will new keys be generated
+                        </p>
+                        <pre>
+bin/signserver.sh generatecertreq &lt;id&gt; "CN=Soft Signer token" SHA1WithRSA /tmp/certreq.pem
+                        </pre>
+                        <p>
+Then upload the signing certificate  to the worker using the command:
+                        </p>
+                        <pre>
+bin/signserver.sh uploadsignercertificatechain &lt;id&gt; GLOB /tmp/cert.pem
+                        </pre>
+                        <p>
+After the certificate chain has been uploaded to the server, the configuration must be reloaded and the SoftCryptoToken will be active and ready to use.
+                        </p>
+                    </subsubsection>
+                </subsection>
+            </section>
+        </chapter>
+
+        <chapter name="Development" shortname="development">
+            <p>
+This section describes the details of how to develop your own plug-ins for the SignServer API. It goes through most of the necessary interfaces to get going.
+            </p>
+            <section name="Building customized code">
+                <p>
+It is possible to have your own code in a separate code tree to avoid a mix of custom code with SignServer project code. This makes it easier to maintain and update the code for future versions. This is done by configuring one or more of the 'custom.' parameters in the build configuration file. The are each described here:
+                </p>
+                <p>
+<b>custom.src.java</b> = Should point to an external directory containing the package base of the Java code. These are then included in the compilation at build time.
+                </p>
+                <p>
+<b>custom.src.web</b> = Should point to the base of a WAR source tree with WEB-INF/web.xml included. This will replace the default WAR deployed during the build.
+                </p>
+                <p>
+<b>custom.build.xml</b> = This can point to a custom build.xml that will be imported from the main build.xml and lets the developer include his own ant tasks if necessary.
+                </p>
+                <p>
+<b>custom.commandfactory</b> = Should point to a custom implementation of the interface org.signserver.cli.ISignServerCommandFactory. This gives to ability to extend (or replace) the default CLI with another one. The best way of extending the CLI is to look at  how the DefaultSignServerCommandFactory  is structured.
+                </p>
+            </section>
+            <section name="Module development">
+                <p>
+The main component in the SignServer is the Worker from which most other components inherits. To get a better overview of how the different component types relate to one and another see illustration 1 in the Overview section.
+                </p>
+                <p>
+Most workers work in the same way but with different interfaces to implement but for all of them should the following steps be performed.
+                </p>
+                <ul>
+                    <li>
+Create a custom  class implementing the specified interface. There usually exists a base class implementing the most basic function to simply the implementation even further. If it exists it's recommended to inherit it.
+                    </li>
+                    <li>
+You can define your own properties that the worker can use for its configuration.
+                    </li>
+                    <li>
+Make sure the custom class is available to the application server
+                    </li>
+                    <li>
+Redeploy the SignServer.
+                    </li>
+                    <li>
+Register the worker in the application by setting a property WORKER&lt;id&gt;.CLASSPATH with a global scope in the global configuration. (Also make sure to set it's crypto tokens class-path, see separate section).
+                    </li>
+                    <li>
+Reload the service with the CLI reload command.
+                    </li>
+                </ul>
+                <subsection name="Implementing Workers">
+                    <subsubsection name="The ISigner Interface">
+                        <p>
+A Signer is a component used to perform some form of cryptographic processing of requested data and to create a custom signer class it should  implement the org.signserver.server.signers.ISigner interface. There exists a BaseSigner that can be inherited taking care of some of the functionality. If the BaseSigner is inherited the only method that needs to be implemented is 'processData() '.
+                        </p>
+                        <p>
+There exists a DummySigner implementation that is used for demonstration purposes.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="The ITimedService Interface">
+                        <p>
+There are two kinds of timed services, singleton or non-singleton. A singleton service is only run at one of the nodes at the time while non-singleton services are run at all nodes simultaneously. If a singleton service fails to run on one of the nodes will one of the other nodes take over the service
+automatically.
+                        </p>
+                        <p>
+If a service should be singleton or not is determined by a standard property SINGLETON defined
+in the ServiceConfig class.
+                        </p>
+                        <p>
+Other basic properties used to configure all services are:
+ACTIVE when set to “TRUE” means that the service is active and should be run.
+INTERVAL defining the interval in seconds of how often the service should be run.
+CRON used as a complement to INTERVAL to specify on a calendar basis.
+                        </p>
+                        <p>
+To create a custom timed service class it should implement the org.signserver.server.timedservices.ITimedService interface. There exists a BaseTimedService that can be inherited taking care of most of the basic functionality. If the BaseTimedService is inherited the the only method that needs to be implemented is the 'work()' method.
+                        </p>
+                        <p>
+The work method that needs to be implemented is described here:
+                        </p>
+                        <pre>
+/**
+ * Method that should do the actual work and should
+ * be implemented by all services. The method is run
+ * at a periodical interval defined in getNextInterval.
+ *
+ * @throws ServiceExecutionFailedException if execution of a service failed
+ */
+public void work() throws ServiceExecutionFailedException;
+                        </pre>
+                        <p>
+There exists a DummyTimedService implementation that is used for demonstration purposes.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="IValidationService Interface">
+                        <p>
+Just as the other worker plug-ins have the validator service a base class taking care of most of the common methods and the only method that needs to be implemented is the 'validate' method below. But for most applications should the DefaultValidationService work. What is probably more interesting is to develop a custom IValidator used to integrate the default validation service against different certificate status repositories. See section called 'Other Customizations' for details of how to implement a Validator.
+                        </p>
+                        <pre>
+/**
+ * Method used to check the validation of a certificate
+ *
+ * @param validationRequest
+ * @return a ValidateResponse
+ * @throws IllegalRequestException if data in the request didn't conform with the specification.
+ * @throws CryptoTokenOfflineException if the crypto token isn't online.
+ * @throws SignServerException for general failure exception during validation
+ * @see org.signserver.validationservice.common.ValidateRequest
+ * @see org.signserver.validationservice.common.ValidateResponse
+ */
+ValidateResponse validate(ValidateRequest validationRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+                        </pre>
+                    </subsubsection>
+
+                    <subsubsection name="IGroupKeyService Interface">
+                        <p>
+To customize a group key service is slightly more work. Then need five methods be implemented: 'fetchGroupKey', 'pregenerateGroupKeys', 'swithEncryptionKey', 'removeGroupKeys' and 'getStatus'. The default implementation stores the group keys in database with a reference to the encryption key used, the encryption key is stored in the extended key store. See the JavaDoc and the code for the default group key service for more details of implementing a customized one.
+                        </p>
+                        <pre>
+/**
+ * Main method of a Group Key Service responsible for fetching keys from
+ * the database.
+ *
+ * @param fetchKeyRequest
+ * @return a FetchKeyReponse
+ * @throws IllegalRequestException if data in the request didn't conform with the specification.
+ * @throws CryptoTokenOfflineException if the crypto token isn't online.
+ * @throws SignServerException for general failure exception during key generation.
+ * @see org.signserver.groupkeyservice.common.FetchKeyRequest
+ * @see org.signserver.groupkeyservice.common.FetchKeyResponse
+ */
+FetchKeyResponse fetchGroupKey(FetchKeyRequest fetchKeyRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+
+/**
+ * Method that instructs the group key service to pregenerate keys.
+ * This method is called at periods when the server is having
+ * a low load. This option is optional to implement, if the
+ * service doesn't support this method it should return null.
+ *
+ *
+ * @param pregenerateKeysRequest request data
+ * @return a response containing number of keys generated, etc
+ * @throws IllegalRequestException if requests contain unsupported data.
+ * @throws CryptoTokenOfflineException if the crypto token isn't online.
+ * @throws SignServerException for general failure exception during key generation.
+ * @see org.signserver.groupkeyservice.common.PregenerateKeysRequest
+ * @see org.signserver.groupkeyservice.common.PregenerateKeysResponse
+ */
+PregenerateKeysResponse pregenerateGroupKeys(PregenerateKeysRequest pregenerateKeysRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+
+
+/**
+ * Method instructing the key service to switch the encryption key for
+ * storing the group keys in the database. This to ensure that one encryption
+ * key isn't exposed through to much data.
+ *
+ * This method is optional for the implementing service to implement, if
+ * it's not implemented it should return null.
+ *
+ * @param switchEncKeyRequest request data.
+ * @return a response containing the result of the operation such as new key index.
+ * @throws IllegalRequestException if requests contain unsupported data.
+ * @throws CryptoTokenOfflineException if the crypto token isn't online.
+ * @throws SignServerException  for general failure exception during key generation.
+ * @see org.signserver.groupkeyservice.common.SwitchEncKeyRequest
+ * @see org.signserver.groupkeyservice.common.SwitchEncKeyResponse
+ */
+SwitchEncKeyResponse switchEncryptionKey(SwitchEncKeyRequest switchEncKeyRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+
+/**
+ * Method instructing the key service to remove old group keys not used anymore
+ * it up to the caller to check that the implementing service supports the type
+ * of IRemoveGroupKeyRequest used. The request should contain data specifying which
+ * keys that should be removed.
+ *
+ * This method is optional for the implementing service to implement, if
+ * it's not implemented it should return null.
+ *
+ * @param removeGroupKeyRequests request data.
+ * @return a response containing the result of the operation such as number of keys actually removed.
+ * @throws IllegalRequestException if requests contain unsupported data.
+ * @throws CryptoTokenOfflineException if the crypto token isn't online.
+ * @throws SignServerException  for general failure exception during key generation.
+ * @see org.signserver.groupkeyservice.common.RemoveGroupKeyResponse
+ * @see org.signserver.groupkeyservice.common.IRemoveGroupKeyRequest
+ */
+RemoveGroupKeyResponse removeGroupKeys(IRemoveGroupKeyRequest removeGroupKeyRequests) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+
+
+/**
+ * Should return the actual status of the worker, status could be if
+ * the signer is activated or not, or equivalent for a service.
+ * @return a WorkerStatus object.
+ */
+public WorkerStatus getStatus();
+                        </pre>
+                    </subsubsection>
+
+                    <subsubsection name="IMailProcessor Interface">
+                        <p>
+Implementing a MailProcessor for the MailSigner is almost exactly the same as for the other components but here it's the 'service' method that needs to be implemented. There also exists a utility class called SMIMEHelper that contains methods for securing emails.
+                        </p>
+                        <pre>
+/**
+ * Main method used when processing mails
+ * @param mail the mail sent through the SMTP server
+ * @throws MessagingException if error occurred during processing of mail.
+ * @throws CryptoTokenOfflineException if the signing token not available at the time of the process.
+ */
+void service(Mail mail) throws MessagingException, CryptoTokenOfflineException;
+                        </pre>
+                   </subsubsection>
+
+                </subsection>
+
+                <subsection name="Implementing Crypto Tokens">
+                    <subsubsection name="The ICryptoToken Interface">
+                        <ul>
+                            <li>
+A custom crypto token needs to implement the interface org.signserver.server.cryptotokens.ICryptoToken.  See P12CryptoToken for an example implementation.
+                            </li>
+                            <li>
+You can define own properties for a crypto token in the same way as for workers. The properties are sent to the crypto token upon initialization.
+                            </li>
+                            <li>
+Make sure the custom class is available to the application server
+                            </li>
+                            <li>
+Redeploy the SignServer.
+                            </li>
+                            <li>
+Register the crypto token to a worker in the application by setting a property WORKER&lt;id&gt;.CRYPTOTOKEN.CLASSPATH with a global scope in the global configuration. (Also make sure to set it's crypto tokens class-path, see next section).
+                            </li>
+                            <li>
+Reload the service with the CLI reload command.
+                            </li>
+                        </ul>
+                        <p>
+The ICryptoToken interface have the following methods that needs to be implemented:
+                        </p>
+                        <pre>
+public interface ICryptoToken {
+	public static final int PURPOSE_SIGN = 1;
+	public static final int PURPOSE_DECRYPT = 2;
+
+	public static final int PROVIDERUSAGE_SIGN    = 1;
+	public static final int PROVIDERUSAGE_DECRYPT = 2;
+
+   /**
+    * Method called after creation of instance.
+    *
+    */
+	public abstract void init(Properties props) throws CryptoTokenInitializationFailureException;
+
+	/**
+	 *  Method that returns the current status of the crypto token.
+	 *
+	 *  Should return one of the SignerStatus.STATUS_.. values
+	 */
+	public abstract int getCryptoTokenStatus();
+
+    /**
+     * Method used to activate SignTokens when connected after being off-line.
+     *
+     * @param authenticationcode used to unlock crypto token, i.e PIN for smartcard HSMs
+     * @throws CryptoTokenOfflineException if SignToken is not available or connected.
+     * @throws CryptoTokenAuthenticationFailureException with error message if authentication to crypto token fail.
+     */
+    public abstract void activate(String authenticationcode) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException;
+
+    /**
+     * Method used to deactivate crypto tokens.
+     * Used to set a crypto token too off-line status and to reset the HSMs authorization code.
+     *
+     * @return true if deactivation was successful.
+     */
+    public abstract boolean deactivate();
+
+    /** Returns the private key (if possible) of token.
+    *
+    * @param purpose should one of the PURPOSE_... constants
+    * @throws CryptoTokenOfflineException if CryptoToken is not available or connected.
+    * @return PrivateKey object
+    */
+    public abstract PrivateKey getPrivateKey(int purpose) throws CryptoTokenOfflineException;
+
+    /** Returns the public key (if possible) of token.
+    *
+    * @param purpose should one of the PURPOSE_... constants
+    * @throws CryptoTokenOfflineException if CryptoToken is not available or connected.
+    * @return PublicKey object
+    */
+    public abstract PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException;
+
+
+    /** Returns the signature Provider that should be used to sign things with
+     *  the PrivateKey object returned by this crypto device implementation.
+     *  @param providerUsage should be one if the ICryptoToken.PROVIDERUSAGE_ constants
+     *  specifying the usage of the private key.
+     * @return String the name of the Provider
+     */
+    public abstract String getProvider(int providerUsage);
+
+    /**
+     * Method returning the crypto tokens certificate if it's included in the token.
+     * This method should only be implemented by soft crypto tokens which have the certificate
+     * included in the key store.
+     *
+     * All other crypto tokens should return 'null' and let the signer fetch the certificate from database.
+     *
+     */
+
+    public abstract Certificate getCertificate(int purpose) throws CryptoTokenOfflineException;
+
+
+    /**
+     * Method returning the crypto tokens certificate chain if it's included in the token.
+     * This method should only be implemented by soft crypto tokens which have the certificates
+     * included in the key store.
+     *
+     * All other crypto tokens should return 'null' and let the signer fetch the certificate from database.
+     *
+     */
+
+    public abstract Collection&lt;Certificate&gt; getCertificateChain(int purpose) throws CryptoTokenOfflineException;
+
+	/**
+	 * Method used to tell the crypto token to create a certificate request using its crypto token.
+	 */
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException;
+
+	/**
+	 * Method used to remove a key in the signer that shouldn't be used any more
+	 * @param purpose on of ICryptoToken.PURPOSE_ constants
+	 * @return true if removal was successful.
+	 */
+	public boolean destroyKey(int purpose);
+}
+                        </pre>
+                    </subsubsection>
+
+                    <subsubsection name="The Extended Crypto Token Interface">
+                        <p>
+The default group key service need support for symmetric keys in addition the the functionality provided in the basic crypto token which mainly focuses on asymmetric key functionality.
+                        </p>
+                        <p>
+The extended crypto token adds four more methods that need implementation used to generate exportable keys (symmetric or asymmetric) and to encrypt/decrypt data using symmetric keys.
+                        </p>
+                        <pre>
+public interface IExtendedCryptoToken extends ICryptoToken {
+
+	/**
+	 * Method instructing the crypto token to generate a key that is returned
+	 *
+	 * @param keyAlg the key algorithm to generate, it's up to the caller to check that the crypto token
+	 * used supports the given value.
+	 * @param keySpec specification of the key, it's up to the caller to check that the crypto token
+	 * used supports the given value.
+	 * @return either a java.security.Key or a java.security.KeyPair depending on type of keyAlg sent to the the crypto token.
+	 * @throws IllegalRequestException if the token doesn't support the given key alg or key spec.
+	 * @throws CryptoTokenOfflineException if the token isn't online.
+	 */
+	Serializable genExportableKey(String keyAlg, String keySpec) throws IllegalRequestException, CryptoTokenOfflineException;
+
+	/**
+	 * Instructs the crypto token to generate a key stored in the device returning only
+	 * a alias reference to the key.
+	 *
+	 * @param keyAlg the key algorithm to generate, it's up to the caller to check that the crypto token
+	 * @param keySpec keySpec specification of the key, it's up to the caller to check that the crypto token
+	 * used supports the given value.
+	 * @return a reference to the key in that can be used later for encryption/decryption.
+	 *
+	 * @throws IllegalRequestException if the token doesn't support the given key alg or key spec.
+	 * @throws CryptoTokenOfflineException if the token isn't online.
+	 */
+	String genNonExportableKey(String keyAlg, String keySpec) throws IllegalRequestException,  CryptoTokenOfflineException;
+
+	/**
+	 * Method used to encrypt data using a key stored in the crypto token. This
+	 * method should mainly be used for symmetric encryption.
+	 * @param keyRef a alias reference to the key that should be used.
+	 * @param data the data to encrypt.
+	 * @return the encrypted data.
+	 * @throws CryptoTokenOfflineException if the token isn't online.
+	 */
+	byte[] encryptData(String keyRef, byte[] data) throws CryptoTokenOfflineException;
+
+	/**
+	 * Method used to decrypt data using a key stored in the crypto token. This
+	 * method should mainly be used for symmetric encryption.
+	 * @param keyRef a alias reference to the key that should be used.
+	 * @param data the data to decrypt.
+	 * @return the encrypted data.
+	 * @throws CryptoTokenOfflineException if the token isn't online.
+	 */
+	byte[] decryptData(String keyRef, byte[] data) throws CryptoTokenOfflineException;
+
+
+}
+                        </pre>
+                    </subsubsection>
+                </subsection>
+            </section>
+
+            <section name="Other Customizations">
+                <subsection name="The IValidator Interface">
+                    <p>
+A Validator is used in the DefaultValidationService to connect to different kinds of certificate status repositories, such as CRL, OCSP, XKMS, database etc. It contains two methods 'validate' used for the actual certificate validation and 'testConnection' used by health check related functionality to check that the connection to the underlying validator resource is alright.
+                    </p>
+                    <pre>
+/**
+ * Main method of a Validation Service responsible for validating certificates.
+ *
+ * Important a validator also have to support to check the revocation status of the
+ * involved CA certificates and should only return Validation object with status REVOKED or VALID
+ * If the validator doesn't support the given issuer it must return null.
+ *
+ *
+ * @param cert the certificate to validate.
+ * @return a Validation object or null if the certificate couldn't be looked up in this validator.
+ * @throws IllegalRequestException if data in the request didn't conform with the specification.
+ * @throws CryptoTokenOfflineException if the crypto token isn't online.
+ * @throws SignServerException for general failure exception during validation.
+ */
+Validation validate(ICertificate cert) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+
+
+
+
+
+
+/**
+ * Optional method used to test the connection to a specific underlying validator implementation.
+ *
+ * @throws ConnectException if connection to underlying validator implementation failed.
+ * @throws SignServerException for general failure exception during validation.
+ */
+void testConnection() throws ConnectException, SignServerException;
+                    </pre>
+                </subsection>
+
+                <subsection name="The IAuthorizer Interface">
+                    <p>
+It's possible to integrate the authorization of processable requests with external authorizations applications. All that is needed is a class implementing the IAuthorizer interface containing two methods, 'init' and 'isAuthorized'.
+                    </p>
+                    <p>
+To register that the customized authorizer should be used by a worker, all that's needed to be done is to set the property AUTHTYPE to the class path of the authorizer implementation.
+                    </p>
+                    <pre>
+public interface IAuthorizer {
+
+	/**
+	 * Method called by the worker upon first call to the authenticator after instantiation.
+	 *
+	 * @param workerId id of worker.
+	 * @param config active worker configuration of worker
+	 * @param em the SignServer EntityManager
+	 * @throws SignServerException if unexpected error occurred during initialization.
+	 */
+	void init(int workerId, WorkerConfig config, EntityManager em) throws SignServerException;
+
+	/**
+	 *
+	 * Main method determining if the requester is authorized to process the data in the request.
+	 *
+	 * @param request the request data sent to the worker to process.
+	 * @param requestContext containing the optional clientCert client certificate or remote IP of the user, may also contain customly defined data.
+	 * @throws SignServerException if unexpected error occurred during authorization.
+	 * @throws IllegalRequestException if the requester isn't authorized or couldn't be authenticated for some other reason.
+	 */
+	void isAuthorized(ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, SignServerException;
+}
+                    </pre>
+                </subsection>
+
+                <subsection name="Using the Global Configuration Store">
+                    <p>
+The global configuration store is a memory bank that workers can use to store data used
+in ongoing operations. The data can be either node (i.e. only read by the current node) or global
+scoped.
+                    </p>
+                    <p>
+To access the global configuration store use the getGlobalConfigurationSession() method
+from the BaseWorker (inherited by most of the base component implementations). The returned
+GlobalConfigurationSession have the following methods that can be used (the other ones should be
+avoided)
+                    </p>
+                    <pre>
+/**
+* Method setting a global configuration property. For node. prefix will the
+node id be appended.
+* @param scope, one of the GlobalConfiguration.SCOPE_ constants
+* @param key of the property should not have any scope prefix, never null
+* @param value the value, never null.
+*/
+public void setProperty( java.lang.String scope,java.lang.String
+key,java.lang.String value ) ;
+/**
+* Method used to remove a property from the global configuration.
+* @param scope, one of the GlobalConfiguration.SCOPE_ constants
+* @param key of the property should start with either glob. or node., never
+null
+* @return true if removal was successful, othervise false.
+*/
+public boolean removeProperty( java.lang.String scope,java.lang.String key )
+;
+/**
+* Method that returns all the global properties with Global Scope and Node
+scopes properties for this node.
+* @return A GlobalConfiguration Object, nevel null
+*/
+public org.signserver.common.GlobalConfiguration getGlobalConfiguration( ) ;
+                    </pre>
+                    <p>
+The getGlobalConfiguration returns a GlobalConfiguration and have a method
+String getProperty(String scope, String property) that can be used.
+
+The value of the property can be user-defined as long as it is guaranteed to be unique over the entire
+application.
+
+Reserved values are all property keys starting with "WORKER".
+                    </p>
+                </subsection>
+            </section>
+
+            <section name="Testing">
+                <p>
+                    There exists some test scripts used to test that the SignServer functions correctly. They are described here.
+                </p>
+
+                <subsection name="Automatic Junit Tests">
+                    <p>
+Automatic Junit tests lies in the directory 'src/tests'. There are two different test suites, one for the SignServer build and the other for the MailSigner. The same command applies for both.
+                    </p>
+                    <p>
+Important: For the SignServer test suite to run successful through all the tests must both the Main WebService and validation service WebService API be enabled in the build configuration.
+                    </p>
+                    <p>
+To run the test suite do the following:
+                    </p>
+                    <ul>
+<li>Set the environment variable SIGNSERVER_HOME</li>
+<li>Make sure the sign server is deployed and JBoss is running</li>
+<li>do 'ant test:run'</li>
+<li>A protocol is generated in the directory 'tmp/bin/junit'</li>
+                    </ul>
+                </subsection>
+
+                <subsection name="Testing the TimeStamp Authority">
+                    <subsubsection name="The TSA Test Client">
+                        <p>
+There exists a Time Stamp Authority test client that is built with the main distribution. For other workers it's recommended to test it with the WS CLI client described in the 'Main WebService' section.
+                        </p>
+                        <p>
+It only works without client authentication requirements and through HTTP.
+                        </p>
+                        <p>
+To run the client do
+                        </p>
+                        <pre>
+ant
+cd dist-client
+java -jar timeStampClient.jar "http://&lt;hostname&gt;:8080/signserver/tsa?signerId=1"
+                        </pre>
+                        <p>
+It will continuously make one request per second.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Manual Tests">
+                        <p>
+The time stamp signer have been tested with the OpenTSA client with both HTTP and HTTPS.
+                        </p>
+                    </subsubsection>
+                </subsection>
+            </section>
+        </chapter>
+
+        <chapter name="Miscellaneous" shortname="misc">
+            <section name="Setting Authorization Type">
+                <subsection name="SignServer">
+                    <p>
+By default is client-certificate authentication required for a signature request to be processed. This can be changed with the AUTHTYPE property.
+                    </p>
+                    <p>
+<b>AUTHTYPE</b> =  NOAUTH, sets the server to not require any authentication.
+                    </p>
+                    <p>
+<b>AUTHTYPE</b> =  CLIENTCERT (default) requires a certificate of all the clients. The certificates must be in the signers access control list and be trusted by the Java distribution, i.e imported in JAVA_HOME/jre/lib/security/cacerts. Authorized clients is configured manually using the CLI interface.
+                    </p>
+                    <p>
+This authorization functionality doesn't work for all use cases. Then it's possible to create a customized authorizer and specify it's class path as value in the AUTHTYPE property. The Processable will then automatically instantiate and use it. How to develop such a plug-in is explained in the developers section.
+                    </p>
+                </subsection>
+                <subsection name="MailSigner">
+                    <p>
+The MailSigner support SMTP Authentication which is configured in the build properties. It's then possible to authorize users by adding them manually through the CLI interface. SMTP authorization is global for all MailProcessors.
+                    </p>
+                </subsection>
+            </section>
+
+            <section name="Archiving Responses (SignServer only)">
+                <p>
+If there is a need to save all generated responses, then set the property “ARCHIVE” to “TRUE” and all generated responses for that signer will be saved to database.
+                </p>
+                <p>
+The archived responses can later be extracted from data base using the CLI interface. See the CLI section for more information.
+                </p>
+            </section>
+
+            <section name="Checking validity of signer certificates (SignServer only)">
+                <p>
+By default the SignServer checks if the signer certificate of a signer is valid before letting the signer process a request. If the signers certificate is not valid an error message is returned.
+There are two properties that can be set to disable this check:
+                </p>
+                <ul>
+                    <li>
+CHECKCERTVALIDITY: default value is true, meaning that the validity period of the certificate will be verified before processing. Set to false to ignore if the certificate is expired or not yet valid.
+                    </li>
+                    <li>
+CHECKCERTPRIVATEKEYVALIDITY: default value is true, meaning that the validity period in the PrivateKeyUsagePeriod of the certificate will be verified before processing. This is only done if this extension exists (it is optional in a certificate). Set to false to ignore the PrivateKeyUsagePeriod.
+                    </li>
+                    <li>
+MINREMAININGCERTVALIDITY: default value is 0. This property defines a minimum remaining validity time required of the signing certificate. If the signing certificate expires within the number of days specified an error occurs. Set to 0 (default) to disable this check.
+                    </li>
+                </ul>
+            </section>
+
+            <section name="The Global Configuration Store">
+                <p>
+The available workers and its crypto tokens and services is configured in something called the global configuration store that is slightly different from a worker configuration.
+                </p>
+                <p>
+Is is dynamically configured and activated immediately. I can contain any type of data (in string representation) and can be of two types, either with global scope or node scope. A Global scoped property can be accessed by  all nodes in the cluster while a Node scoped property in only used within a node and cannot be accessed by the other nodes.
+                </p>
+                <subsection name="SignServer specific">
+                    <p>
+Database failure is handled differently. If a node looses connection to the database it put itself in a state called 'unsynchronised' and will continue its operation without storing the data to database by using a cached global configuration. It is possible to later resynchronise one nodes cached global configuration data  with the database with a CLI command called 'resync'. But it is only possible to sync one of the nodes global configuration to the database.
+                    </p>
+                </subsection>
+                <subsection name="MailSigner Specific">
+                    <p>
+The MailSigner doesn't store its data in database but in a regular file handled internally. It have therefore no functionality for database fail-over and cannot be resynchronized. There currently aren't any difference in global and node scoped variables.
+                    </p>
+                </subsection>
+            </section>
+
+            <section name="Timed Services">
+                <p>
+A Timed Service (formerly called just service) is a task that is run on a timely basis, performing maintenance tasks like changing active key, or it could generate a report.
+                </p>
+                <p>
+Currently isn't the SignServer shipped with any services out of the box, but read the developer section about how to write custom services. The MailSigner although have a timed service that checks if a Mail Processor have an expiring certificate and sends e-mail notifications about this to the administrators.
+                </p>
+                <p>
+A Timed Service framework supports a couple basic properties that is used to calculate when and how a timed service should run. These properties are:
+                </p>
+                <p>
+<b>ACTIVE</b> =  "TRUE" if the service should be run, otherwise it is disabled.
+                </p>
+                <p>
+<b>SINGLETON</b> =  "TRUE" if the service only should be run on one of the nodes in the cluster at the time. If it's not set or set to FALSE is the service run simultaneously on all nodes in the cluster. If the node running a singleton service fails will another node sense this and start up the service. (Not used for the MailSigner)
+                </p>
+                <p>
+<b>INTERVAL</b> =  Property that should define the interval i seconds the service should run.
+                </p>
+                <p>
+<b>CRON</b> = Property that should define a CRON expression of how often the service should run.  It should conform to Unix CRON standard. (One of INTERVAL or CRON is required)
+                </p>
+
+                <subsection name="CertificateExpireTimedService (MailSigner only)">
+                    <subsubsection name="Overview">
+                        <p>
+The CertificateExpireTimedService  is a timed service specific for the MailSigner. It checks all available mail processors if they have a certificate about to expire. In that case a notification about this is sent to the administrators. By default is this done 30 days before expiration. If the Mail Processor isn't updated a reminder message is sent.
+                        </p>
+                        <p>
+The CertificateExpireTimedService have the class path: org.signserver.mailsigner.module.common. CertificateExpireTimedService and is compiled into a the dist-server/mailsigner-module-common.jar that can be included in MAR files that needs the service.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+<b>EXPIRETIMEDAYS</b> =   Number of remaining days of the certificate before a notification is sent.(Optional, default 30 days).
+                        </p>
+                        <p>
+<b>REMINDERTIMEDAYS</b> = Number of remaining days of the certificate before a reminder notification is sent.(Optional, default 10 days).
+                        </p>
+                        <p>
+<b>ADMINEMAIL</b> = The email address of were the notifications is sent. (Optional, default is the configured postmaster address.)
+                        </p>
+                        <p>
+<b>FROMEMAIL</b> =   The from email used in the notifications is sent.  (Optional, default is certexpire@&lt;postmaster-domain&gt;)
+                        </p>
+                        <p>
+<b>MESSAGESUBJECT</b>  =   The subject used in the first notification message.  (Optional, default is "WARNING: Mail Processor with id : ${WORKERID} is about to expire.")
+                        </p>
+                        <p>
+<b>REMINDERSUBJECT</b>  =   The subject used in the reminder notification message.  (Optional, default is "REMINDER: Mail Processor with id : ${WORKERID} is about to expire.")
+                        </p>
+                        <p>
+<b>EXPIREMESSAGE</b>  =   The message body in the notifications is sent.  (Optional, default is "A mail processor at host ${HOSTNAME} have a certificate about to expire.${NL}${NL}The Mail Processor have id ${WORKERID} and a certificate with DN '${cert.CERTSUBJECTDN}' and will expire the ${cert.EXPIREDATE}. ${NL}")
+                        </p>
+                        <p>
+<b>REMINDERMESSAGE</b> =   The message body in the remainder notifications is sent.  (Optional, default is "This is a reminder that a mail processor at host ${HOSTNAME} have a certificate about to expire.${NL}${NL}The Mail Processor have id ${WORKERID} and a certificate with DN '${cert.CERTSUBJECTDN}' and will expire the ${cert.EXPIREDATE}. ${NL}")
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Substitution Variables">
+                        <p>
+The following substitution variables can be used in notification subject and message bodys.
+                        </p>
+                        <p>
+                            <b>${NL}</b>  = New line<br/>
+                            <b>${DATE}</b>  = The current date<br/>
+                            <b>${HOSTNAME}</b>  = Name of the host running the application.<br/>
+                            <b>${WORKERID}</b>  = Id of the worker.<br/>
+                            <b>${WORKERNAME}</b>  = Name of the worker.<br/>
+                            <b>${cert.CERTSERIAL}</b>  = The serial number of the certificate about to expire.<br/>
+                            <b>${cert.EXPIREDATE}</b>  = The certificates expiration date.<br/>
+                            <b>${cert.CERTSUBJECTDN}</b>  = The certificate subject DN.<br/>
+                            <b>${cert.CERTISSUERDN}</b>  = The certificate issuer DN.<br/>
+                        </p>
+                    </subsubsection>
+                </subsection>
+            </section>
+
+            <section name="Installation Packages">
+                <p>
+                    TODO: See chapter 20 in manual31 pdf.
+                </p>
+            </section>
+
+            <section name="References">
+                <ul>
+                    <li>Java  (http://java.sun.com)</li>
+                    <li>Jboss  (http://www.jboss.org)</li>
+                    <li>Apache James mail server  (http://james.apache.org/)</li>
+                    <li>Apache Ant (http://ant.apache.org)</li>
+                    <li>Bouncycastle (http://www.bouncycastle.org)</li>
+                    <li>RFC3161, Time-Stamp Protocol (TSP) (http://www.ietf.org)</li>
+                </ul>
+            </section>
+            
+        </chapter>
+
+    </body>
+</document>
+

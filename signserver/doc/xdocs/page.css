@@ -322,3 +322,9 @@ a.externalLink, a.externalLink:link, a.externalLink:visited, a.externalLink:acti
     list-style-image: url('images/current.gif');
     font-weight: normal;
 }
+
+.chapterminitoc {
+    margin: 5px 5px 5px 5px;
+    list-style-image: url('images/current.gif');
+    font-weight: bold;
+}

@@ -249,9 +249,8 @@ The MailSigner have similar CLI interface and is administrated much in the same 
                 </p>
             </section>
             <section name="Quick Start Guides">
-                <p>
-From from: installationguide.html, manual31.odt:ch3-4
-                </p>
+                <!-- TODO: Add from installationguide.html -->
+                
                 <subsection name="Quick start of a Simple Time-stamp Server">
                     <p>
 This section will show how to set up a quick and simple standalone time-stamp server, accepting
@@ -440,9 +439,6 @@ Now is the simple mail signer ready to be used for signing outgoing emails. Conf
             </section>
             <section name="Building and deploying">
                 <p>
-SignServer or MailSigner - from manual31.odt:ch16
-                </p>
-                <p>
 The building of the SignServer framework is configured by copying the file signserver_build.properties.sample to signserver_build.properties. In this file it's possible to set which database that is going to be used, how the web container should be configured and how many nodes that is in the cluster. After it's configured issue the command 'ant' followed by 'ant deploy' to send it to the application server. Currently is JBoss the only supported application server and it requires the environment variable JBOSS_HOME to be set prior to the deploy command.
                 </p>
                 <p>
@@ -462,9 +458,6 @@ Since the MailSigner is built upon the JAMES SMTP server it is possible to confi
                 </p>
             </section>
             <section name="Configuration/Administration">
-                <p>
-                    from manual31.odt:ch17
-                </p>
                 <p>
                     The SignServer and the MailSigner is administrated using a common CLI interface located in bin/signserver.sh/cmd. Most of the commands work in the same way for both build.
                 </p>
@@ -487,7 +480,8 @@ There is a special property file for the cli interface called signserver_cli.pro
 Its possible to customize the CLI with your own code. How to do this is described in the development section.
                 </p>
                 <subsection name="Setup Workers">
-                    <p>TODO</p>
+                    <!-- TODO: Write instruction for how to setup workers -->
+                    <p>  </p>
                 </subsection>
                 <subsection name="Command Line Interface">
                     <subsubsection name="General Commands">
@@ -2712,8 +2706,245 @@ The following substitution variables can be used in notification subject and mes
 
             <section name="Installation Packages">
                 <p>
-                    TODO: See chapter 20 in manual31 pdf.
+From version 3.1 and upwards will there be binary installation packages released alongside the regular source packages. The packages includes all software necessary except for Java, were JDK 1.5+ is required (JRE will do for the MailSigner) before installing.
                 </p>
+                <p>
+At the current moment are the platforms Linux (mainly Debian distribution is tested but it should work for other distributions as well) and Windows XP/2003 supported. The SignServer have two packages, one server part that should be installed in every node in the cluster and one management package containing the CLI. The same goes for the MailSigner which is also separated into two parts, one containing the SMTP server and the other containing the management CLI.
+                </p>
+                <subsection name="Using the Installation Packages">
+                    <p>
+The installation package can be used either by using a GUI or on the command line by specifying the argument '–mode text'
+                    </p>
+                    <p>
+For an advanced set-up, for instance if many nodes should be installed with similar configuration, it is possible to preconfigure the installation by specifying a properties file containing some or all the properties asked during the installation. The properties will be used directly during installation and there will be no questions about it. See each package section for details about supported properties.
+                    </p>
+                    <p>
+The configuration file should be in the following locations:
+                    </p>
+                    <pre>
+Unix SignServer Installation            : /etc/signserver/signserver.conf
+Unix MailSigner Installation            : /etc/mailsigner/mailsigner.conf
+Windows SignServer Installation         : %SYSTEMROOT%\signserver.conf
+                                         (i.e C:\WINDOWS\signserver.conf)
+Windows MailSigner Installation	        : %SYSTEMROOT%\mailsigner.conf
+                    </pre>
+                    <p>
+After installation will all the settings be saved to the configuration file by the installation program to simplify re-installation.
+                    </p>
+                    <p>
+If all necessary properties is given in the property file, it's possible to install the package silently by specifying '--mode unattended' on the command line.
+                    </p>
+                    <subsubsection name="SignServer Node">
+                        <p>
+The server part of the SignServer package contains everything (except Java) that is needed to set-up a node in a cluster. It contains a preconfigured version of JBoss that is ready to use.
+                        </p>
+                        <p>
+The steps performed during the installation process are:
+                        </p>
+                        <p>
+	Unix:
+                        </p>
+                        <ul>
+                            <li>
+By default is everything unpacked in /opt/signserver-&lt;version&gt; .
+                            </li>
+                            <li>
+If a /etc/signserver/signserver.conf file exists, it's read and used during installation.
+                            </li>
+                            <li>
+The user and group 'signserver' is created
+                            </li>
+                            <li>
+JBoss init.d script is configured to run at runlevel 3,4,5
+                            </li>
+                            <li>
+Directory /etc/signserver/ is created to contain all configuration files
+                            </li>
+                            <li>
+Database configuration file /etc/signserver/database-conf.xml is populated.
+                            </li>
+                            <li>
+Log configuration file /etc/signserver/log-conf.xml is populated and configured to log to the directory /var/log/signserver
+                            </li>
+                            <li>
+If no HTTP SSL certificate is specified in the configuration file will dummy key stores be generated to /etc/signserver.
+                            </li>
+                            <li>
+Tomcat is configured for HTTPS and it's configuration file is placed in /etc/signserver/webserver-conf.xml
+                            </li>
+                            <li>
+Finally is Jboss started and ready to be used.
+                            </li>
+                        </ul>
+                        <p>
+	Windows:
+                        </p>
+                        <ul>
+                            <li>
+By default is everything unpacked in C:\Program\SignServer\SignServer-&lt;version&gt; .
+                            </li>
+                            <li>
+If a c:\WINDOWS\signserver.conf file exists it's read and used during installation.
+                            </li>
+                            <li>
+JBoss is configured to be run as a service that is started automatically.
+                            </li>
+                            <li>
+Database configuration file &lt;INSTALLDIR&gt;\database-conf.xml is populated.
+                            </li>
+                            <li>
+Log configuration file &lt;INSTALLDIR&gt;\log-conf.xml is populated and configured to log to the default directory &lt;INSTALLDIR&gt;\jboss\server\default\log
+                            </li>
+                            <li>
+If no HTTP SSL certificate is specified will dummy key stores be generated to &lt;INSTALLDIR&gt;
+                            </li>
+                            <li>
+Tomcat is configured for HTTPS and it's configuration file is placed in &lt;INSTALLDIR&gt;\webserver-conf.xml
+                            </li>
+                            <li>
+Finally is Jboss started and ready to be used.
+                            </li>
+                        </ul>
+                        <p>
+The supported properties in the configuration file /etc/signserver/signserver.conf (or %SYSTEMROOT%\signerserver.conf for windows) are:
+                        </p>
+                        <table>
+                            <tr><td>Property Name</td><td>Description</td><td>Example value</td><td>Where to manually reconfigure </td></tr>
+                            <tr><td>SIGNSERVER_NODEID</td><td>A unique string value (containing alphanumeric characters only) identifying the node in a cluster.</td><td>node1</td><td>Unix: /etc/signserver/signserver.conf<br/>Windows:<br/>%Systemroot%\signserver.conf</td></tr>
+                            <tr><td>database.type</td><td>Type of database, currently are Hypersonic, Mysql, Mysql Cluster, Postgres and MS SQL 2000 supported</td><td>hsqldb, mysql, mysqlndb,  postgres, mssql2000</td><td>Unix:<br/>/etc/signserver/database-conf.xml<br/>Windows: %Installdir%\database-conf.xml</td></tr>
+                            <tr><td>database.hosts</td><td>The hostnames of the databases used. (not used for hsqldb).</td><td>localhost</td><td>Unix:<br/>/etc/signserver/database-conf.xml<br/>Windows: %Installdir%\database-conf.xml</td></tr>
+                            <tr><td>database.port</td><td>The port of the database (not used for hsqldb).</td><td>1433</td><td>Unix:<br/>/etc/signserver/database-conf.xml<br/>Windows: %Installdir%\database-conf.xml</td></tr>
+                            <tr><td>database.name</td><td>The name of the database  (not used for hsqldb).</td><td>signserver</td><td>Unix:<br/>/etc/signserver/database-conf.xml<br/>Windows: %Installdir%\database-conf.xml</td></tr>
+                            <tr><td>database.username</td><td>The username used for authentication against the database (not used for hsqldb).</td><td>signserver</td><td>Unix:<br/>/etc/signserver/database-conf.xml<br/>Windows: %Installdir%\database-conf.xml</td></tr>
+                            <tr><td>database.password</td><td>The password used for authentication against the database (not used for hsqldb).</td><td>foo123</td><td>Unix:<br/>/etc/signserver/database-conf.xml<br/>Windows: %Installdir%\database-conf.xml</td></tr>
+                            <tr><td>httpserver.hostname</td><td>Hostname used as CN in generated SSL Server certificate.</td><td>host1.someorg</td><td>Only used during the of SSL Server certificate generation phase of installation.</td></tr>
+                            <tr><td>httpserver.storepath</td><td>Path to the key store (JKS file) containing the SSL server certificate.</td><td>/etc/signserver/tomcat.jks</td><td>Unix:<br/>/etc/signserver/webserver-conf.xml<br/>Windows: %Installdir%\webserver-conf.xml</td></tr>
+                            <tr><td>httpserver.password</td><td>Password to unlock the SSL server certificate key store.</td><td>foo123</td><td>Unix:<br/>/etc/signserver/webserver-conf.xml<br/>Windows: %Installdir%\webserver-conf.xml</td></tr>
+                            <tr><td>httptrust.storepath</td><td>Path to the key store (JKS file) containing the CA trust store.</td><td>/etc/signserver/truststore.jks</td><td>Unix:<br/>/etc/signserver/webserver-conf.xml<br/>Windows: %Installdir%\webserver-conf.xml</td></tr>
+                            <tr><td>httptrust.password</td><td>Password unlocking the CA truststore.</td><td>foo123</td><td>Unix:<br/>/etc/signserver/webserver-conf.xml<br/>Windows: %Installdir%\webserver-conf.xml</td></tr>
+                            <tr><td>syslog.hostname</td><td>Host name of the Syslog server. This setting also indicates that Syslog should be used.</td><td>loghost.someorg.org</td><td>Unix:<br/>/etc/signserver/log-conf.xml<br/>Windows: %Installdir%\log-conf.xml</td></tr>
+                        </table>
+                    </subsubsection>
+
+                    <subsubsection name="SignServer Management">
+                        <p>
+This package installs the CLI interface on the management station (which can be the same as a node). The following steps are performed during installation:
+                        </p>
+                        <p>
+	Unix:
+                        </p>
+                        <ul>
+                            <li>By default is everything unpacked in /opt/signserver-&lt;version&gt; .</li>
+                            <li>If a /etc/signserver/signserver.conf file exists it's read and used during installation.</li>
+                            <li>The user and group 'signserver' is created</li>
+                            <li>A link from /opt/signserver-&lt;version&gt;/bin/signserver.sh is done to /usr/local/bin.</li>
+                        </ul>
+                        <p>
+	Windows:
+                        </p>
+                        <ul>
+                            <li>Everything is unpacked in C:\Program\SignServer\SignServer-&lt;version&gt; by default.</li>
+                            <li>If a c:\WINDOWS\signserver.conf file exists it's read and used during installation.</li>
+                        </ul>
+                        <p>
+The signserver.conf supports the following settings:
+                        </p>
+                        <table>
+                            <tr><td>Property Name</td><td>Description</td><td>Example value</td><td>Where to manually reconfigure </td></tr>
+                            <tr><td>hostname.masternode</td><td> Hostname of master node in the cluster.</td><td>node1.someorg.org</td><td>Unix:<br/>/etc/signserver/signserver.conf<br/>Windows: %Installdir%\signserver.conf</td></tr>
+                            <tr><td>hostname.allnodes</td><td>Hostname of all hosts in cluster, separated by ';'. </td><td>node1.someorg.org;node2.someorg.org</td><td>Unix:<br/>/etc/signserver/signserver.conf<br/>Windows: %Installdir%\signserver.conf</td></tr>
+                        </table>
+                    </subsubsection>
+
+                    <subsubsection name="MailSigner Server">
+                        <p>
+The MailSigner package works much in the same way as the SignServer package with the difference that James SMTP server is included instead of Jboss.
+                        </p>
+                        <p>
+The steps performed during the installation process are:
+                        </p>
+                        <p>
+	Unix:
+                        </p>
+                        <ul>
+                            <li>By default is everything is unpacked in /opt/mailsigner-&lt;version&gt; .</li>
+                            <li>If a /etc/mailsigner/mailsigner.conf file exists it's read and used during installation.</li>
+                            <li>The user and group 'mailsigner' is created</li>
+                            <li>James init.d script is configured to run at runlevel 3,4,5</li>
+                            <li>Directory /etc/mailsigner/ is created to contain all configuration files</li>
+                            <li>James configuration file /etc/mailsigner/mailsigner_conf.xml is populated.</li>
+                            <li>Log configuration file /etc/mailsigner/log-conf.xml is populated and configured to log to the directory /var/log/mailsigner</li>
+                            <li>Finally is James started and ready to be used.</li>
+                        </ul>
+                        <p>
+	Windows:
+                        </p>
+                        <ul>
+                            <li>By default is everything is unpacked in C:\Program\MailSigner\MailSigner-&lt;version&gt; .</li>
+                            <li>If a c:\WINDOWS\mailsigner.conf file exists it's read and used during installation.</li>
+                            <li>James is configured to be run as a service that is started automatically.</li>
+                            <li>James configuration file &lt;INSTALLDIR&gt;\mailsigner_conf.xml is populated.</li>
+                            <li>Log configuration file &lt;INSTALLDIR&gt;\log-conf.xml is populated and configured to log to the default directory &lt;INSTALLDIR&gt;\james\logs</li>
+                            <li>Finally is James started and ready to be used.</li>
+                         </ul>
+                         <p>
+The supported properties in the configuration file /etc/mailsigner/mailsigner.conf (or %SYSTEMROOT%\mailsigner.conf for windows) are:
+                        </p>
+                        <table>
+                            <tr><td>Property Name</td><td>Description</td><td>Example value</td><td>Where to manually reconfigure </td></tr>
+                            <tr><td>mailsigner.smtpport</td><td>Port that the mailserver should listen on.</td><td>25</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner-config.xml</td></tr>
+                            <tr><td>mailsigner.primarydns</td><td>The IP address of the primary DNS server.</td><td>10.0.0.1</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner-config.xml</td></tr>
+                            <tr><td>mailsigner.secondarydns</td><td>The IP address of the secondary DNS server.</td><td>10.0.0.2</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
+                            <tr><td>mailsigner.postmaster</td><td>The email address of the main administrator.</td><td>mailadmin@someorg.org</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
+                            <tr><td>mailsigner.smtpauth</td><td>Indicates if SMTP AUTH should be used. Svalues are : 'true' which means required but announced only to not authorized addresses, 'false' and 'announce' which acts  like true, but always announce AUTH capability to clients.</td><td>true, false, announce</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
+                            <tr><td>mailsigner.gatewayhost</td><td>If emails should be forwarded to another SMTP server in the organisation should this and the 'mailsigner.gatewayport' setting be used. Enter the hostname of the other SMTP server.</td><td>smtp1.someorg.org</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
+                            <tr><td>mailsigner.gatewayport</td><td>The port of the SMTP server to forward messages to.</td><td>25</td><td>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
+                            <tr><td>mailsigner.tlskeystorepath</td><td> This setting indicates that the mailsigner should use SMTPS and point to a TLS JKS keystore.</td><td>/etc/mailsigner/tlskeystore.jks</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
+                            <tr><td>mailsigner.tlskeystorepwd</td><td>The password to unlock the TLS keystore</td><td>foo123</td><td>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
+                            <tr><td>syslog.hostname</td><td>Host name of the Syslog server. This setting also indicates that syslog should be used.</td><td>loghost.someorg.org</td><td>Unix:<br/>/etc/mailsigner/log-conf.xml<br/>Windows: %Installdir%\log-conf.xml</td></tr>
+                        </table>
+                    </subsubsection>
+
+                    <subsubsection name="MailSigner Management">
+                        <p>
+This package installs the CLI interface on the management station (which can be the same as the SMTP server). The following steps are performed during installation:
+                        </p>
+                        <p>
+	Unix:
+                        </p>
+                        <ul>
+                            <li>By default is everything is unpacked in /opt/mailsigner-&lt;version&gt; .</li>
+                            <li>If a /etc/mailsigner/mailsigner.conf file exists it's read and used during installation.</li>
+                            <li>The user and group 'mailsigner' is created</li>
+                            <li>A link from /opt/mailsigner-&lt;version&gt;/bin/mailsigner.sh is done to /usr/local/bin.</li>
+                        </ul>
+                        <p>
+
+	Windows:
+                        </p>
+                        <ul>
+                            <li>Everything is unpacked in C:\Program\MailSigner\MailSigner-&lt;version&gt; by default.</li>
+                            <li>If a c:\WINDOWS\mailsigner.conf file exists it's read and used during installation.</li>
+                        </ul>
+                        <p>
+The mailsigner.conf supports the following settings but it is important that 'hostname.masternode' and 'hostname.allnodes' must point to the same host:
+                        </p>
+                        <table>
+                            <tr><td>Property Name</td><td>Description</td><td>Example value</td><td>Where to manually reconfigure </td></tr>
+                            <tr><td>hostname.masternode</td><td>The hostname of the mailsigner to manage.</td><td>mailsigner.someorg.org</td><td>Unix:<br/>/etc/mailsigner/mailsigner.conf<br/>Windows: %Installdir%\mailsigner.conf</td></tr>
+                            <tr><td>hostname.allnodes</td><td>The hostname of the mailsigner to manage and should have the same value as master node. MailSigner doesn't support clustering</td><td>mailsigner.someorg.org</td><td>Unix:<br/>/etc/mailsigner/mailsigner .conf<br/>Windows: %Installdir%\mailsigner .conf</td></tr>
+                        </table>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="Generating Installation Packages">
+                    <p>
+Before generating a installation package must Bitrock InstallBuilder be installed on a Linux workstation. Then set the build mode in signserver_build.properties and go to src/install/bitrock. If a SignServer package should be generated must the environment variable JBOSS_PREP point the a prepared JBoss installation that will be included in the package.
+                    </p>
+                    <p>
+Then execute the script './buildsignserverpkgs.sh &lt;version&gt;' to start the generation process. The packages will be generated in BitRocks default output directory. For MailSigner use the script 'buildmailsignerpkgs.sh'.
+                    </p>
+                </subsection>
             </section>
 
             <section name="References">

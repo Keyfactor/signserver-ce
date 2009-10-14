@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
+<!-- $Id$ -->
+
 <document>
 
     <properties>
@@ -66,11 +68,11 @@ generation software from Bitrock.
                         </li>
                         <li>
 A new ODF Signer module that adds signature to ODF documents, such as : odt,ods,odt
-(tested with open office 3.1.0). Simple web page is added where ODF document can be
+(tested with OpenOffice.org 3.1.0). Simple web page is added where ODF document can be
 uploaded for signing, and resulted signed document downloaded.
                         </li>
                         <li>
-A new OOXML Signer Module that adds signature to Open Office XML documents, such as
+A new OOXML Signer Module that adds signature to Office Open XML documents, such as
 docx,xlsx,pptx (tested with Microsoft Office 2007).Simple web page is added where open
 office xml document can be uploaded for signing, and resulted signed document
 downloaded.
@@ -182,9 +184,9 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>Time Stamp Signer</td><td>A Signer that can be used to set up a Timestamp Authority according to RFC 3161. </td>
                     </tr><tr><td>MRTD Signer</td><td>A Signer that performs signatures of MRTD (Machine Readable Travel Documents, i.e. Electronic Passports) blobs.</td>
                     </tr><tr><td>PDF Signer</td><td>A Signer that attaches an electronic signature signature to a PDF document.</td>
-                    </tr><tr><td>ODF Signer</td><td>A Signer that attaches an electronic signature to an ODF document. ODF Signer is tested with documents produced by Open Office v 3.1.0</td>
-                    </tr><tr><td>ODF (Open Document Format ) Document</td><td>XML-based file format for representing electronic documents such as spreadsheets, charts, presentations and word processing documents.more..  </td>
-                    </tr><tr><td>OOXML (Open Office XML) Document</td><td>XML-based file format  for representing spreadsheets, charts, presentations and word processing documents.more..</td>
+                    </tr><tr><td>ODF Signer</td><td>A Signer that attaches an electronic signature to an ODF document. ODF Signer is tested with documents produced by <a href="http://www.openoffice.org">OpenOffice.org v 3.1.0</a></td>
+                    </tr><tr><td>ODF (Open Document Format ) Document</td><td>XML-based file format for representing electronic documents such as spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/OpenDocument">more...</a></td>
+                    </tr><tr><td>OOXML (Office Open XML) Document</td><td>XML-based file format  for representing spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/Office_Open_XML">more...</a></td>
                     </tr><tr><td>OOXML Signer</td><td>A Signer that attaches an electronic signature to an OOXML document.</td>
                     </tr><tr><td>Simple Mail Signer</td><td>A Mail Processor that envelopes authorized mails with a SMIME signature.</td>
                     </tr><tr><td>Cluster Class Loader</td><td>A Java Class Loader specific for the SignServer project. The class loader simplifies the distribution of new code to a cluster by uploading and fetching it from database. It also enables the use of multiple versions of the same worker code in the same cluster.</td>
@@ -232,7 +234,7 @@ The MailSigner's main component is the MailProcessor which is the base for all M
 One instance can have more than one MailProcessor configured. Then will the plug-ins be called by worker id in ascending order.
                     </p>
                     <p>
-The MailSigner have similar CLI interface and is administrated much in the same way as the SignServer. The SMTP server have support for SMTP Authentication. For more information about the James SMTP server see http://james.apache.org .
+The MailSigner have similar CLI interface and is administrated much in the same way as the SignServer. The SMTP server have support for SMTP Authentication. For more information about the James SMTP server see <a href="http://james.apache.org">http://james.apache.org</a>.
                     </p>
                     <p>
                         <a href="../docs/SignServer_Manual_3_0_odt_18c42972.png"><img src="../docs/SignServer_Manual_3_0_odt_18c42972.png" align="middle" border="0" width="493" height="252" alt="SignServer components"/></a><br/>
@@ -1542,10 +1544,10 @@ Default is not set (no timestamping).
                 <subsection name="ODF Signer">
                     <subsubsection name="Overview">
                         <p>
-ODF Signer, which stands for Open Document Format Signer is a plug-in to SignServer that applies server side signature to documents in ODF format. It has been tested with Open Office 3.1.
+ODF Signer, which stands for Open Document Format Signer is a plug-in to SignServer that applies server side signature to documents in ODF format. It has been tested with OpenOffice.org 3.1.
                         </p>
                         <p>
-	   ODF Signer supports only "invisible" signatures, that is unlike PDF signer there's no pictorial representation of the digital signature. When you open signed document in Open Office you can verify signature using toolbars, or the notifier in status bar (red mark), which notifies user that the document is digitally signed.
+	   ODF Signer supports only "invisible" signatures, that is unlike PDF signer there's no pictorial representation of the digital signature. When you open signed document in OpenOffice.org you can verify signature using toolbars, or the notifier in status bar (red mark), which notifies user that the document is digitally signed.
                         </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">
@@ -2949,12 +2951,12 @@ Then execute the script './buildsignserverpkgs.sh &lt;version&gt;' to start the 
 
             <section name="References">
                 <ul>
-                    <li>Java  (http://java.sun.com)</li>
-                    <li>Jboss  (http://www.jboss.org)</li>
-                    <li>Apache James mail server  (http://james.apache.org/)</li>
-                    <li>Apache Ant (http://ant.apache.org)</li>
-                    <li>Bouncycastle (http://www.bouncycastle.org)</li>
-                    <li>RFC3161, Time-Stamp Protocol (TSP) (http://www.ietf.org)</li>
+                    <li>Java  (<a href="http://java.sun.com">http://java.sun.com</a>)</li>
+                    <li>JBoss  (<a href="http://www.jboss.org">http://www.jboss.org</a>)</li>
+                    <li>Apache James mail server  (<a href="http://james.apache.org">http://james.apache.org</a>)</li>
+                    <li>Apache Ant (<a href="http://ant.apache.org">http://ant.apache.org</a>)</li>
+                    <li>Bouncycastle (<a href="http://www.bouncycastle.org">http://www.bouncycastle.org</a>)</li>
+                    <li>RFC3161, Time-Stamp Protocol (TSP) (<a href="http://www.ietf.org">http://www.ietf.org</a>)</li>
                 </ul>
             </section>
             

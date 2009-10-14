@@ -410,12 +410,12 @@ OS version                          = ${os.version}
 	  </classpath>
 	</taskdef>-->
 
-        <echo message="docs.src: ${docs.src}"/>
+        <!--<echo message="docs.src: ${docs.src}"/>
         <echo message="docs.dest: ${docs.dest}"/>
         <echo message="project.file: ${project.file}"/>
         <echo message="include.xml: ${include.xml}"/>
         <echo message="templ.path: ${templ.path}"/>
-        <echo message="velocity.props: ${velocity.props}"/>
+        <echo message="velocity.props: ${velocity.props}"/>-->
 
         <anakia basedir="${docs.src}" destdir="${docs.dest}"
              extension=".html" style="./site.vsl"

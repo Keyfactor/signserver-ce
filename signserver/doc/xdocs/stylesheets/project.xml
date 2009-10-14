@@ -19,8 +19,7 @@
 
             <menu name="Documentation">
                 <item name="Manual"	 href="/manual.html"/>
-                <item name="Installation Guide"	 href="/installationguide.html"/>                
-                <item name="API" href="/api.html"/>
+                <item name="Installation Guide"	 href="/installationguide.html"/>
                 <item name="Wiki" href="http://signserver.wiki.sourceforge.net/"/>                
                 <item name="FAQ"		  href="/faq.html"/>
                 <item name="Howto"		  href="/howto.html"/>

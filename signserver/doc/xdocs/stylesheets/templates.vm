@@ -203,7 +203,7 @@
       <div class="logobar">
           <table width="100%">
             <tr>
-                <td>Welcome to the SignServer Project</td>
+                <td><a href="http://www.signserver.org/"><img src="images/signserver.png" alt="SignServer" border="0"/></a></td>
                 <td style="text-align:right">
                     <div class="searchcaption">
                             Search signserver.org for:<br />

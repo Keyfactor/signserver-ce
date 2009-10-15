@@ -6,12 +6,10 @@
   </properties>
 
 <body>
-  <section name="Latest News">
+  <!--<section name="Latest News">
     <note>
-    After a lot of redesign work and new features is the version 3.0 Beta 1 of the SignServer ready to be released.
-    It have migrated into EJB3, and have new types of services available. See below for a list of changes in the new version.  
     </note>
-   </section>
+   </section>-->
 
 <section name="What's the SignServer?">
 <p>
@@ -24,10 +22,9 @@ From version 3.0 there also exists a mail signer framework that can be used to p
 The SignServer have a ready to use:
 <ul>
 <li>TimeStamp Authority (RFC 3161 complaint)</li>
-<li>PDF Signer</li>
-<li>MRTD Signer</li>
-<li>XML Signer/validator (XMLDsig)</li>
-<li>Validation Service Framework</li>
+<li>Signers for different documents: PDF, XML, ODF, OOXML, MRTD (ePassport)</li>
+<li>Validators for documents: XML</li>
+<li>Certificate Validation Service Framework for validing certificates using CRL:s or OCSP</li>
 <li>Group Key Service Framework</li>
 <li>Simple Mail Signer</li>
 </ul> 
@@ -44,28 +41,23 @@ Different kinds of sign tokens exist:
 </ul>
 </p>
 </section>
-<section name="What's new for SignServer 3.0?">
+<section name="What's new for SignServer 3.1?">
 <p>
-Some of the new features for version 3.0 are: 
+Some of the new features for version 3.1 are:
 <ul>
-<li>Complete refactorisation of J2EE from EJB2 to EJB3 to simplify further development.</li>
-<li>Renamed component Service to TimedService since 3.0 supports other services.</li>
-<li>A TimedService can now be configured with a 'cron-like' settings to have services executed in other than just periodical intervals.</li>
-<li>A Validation Service API used to validate certificate from different issuers. The Validation Service API have it's own easy to use Web Service used to integrate with other platforms.</li>
-<li>A Group Key Service API used to generate and manage group keys, symmetric or asymmetric.</li>
-<li>Possibility to have customized authorization of requests, not just the built in client certificate authorization list.</li>
-<li>The name SignToken is changed to CryptoToken and introduced a new concept of ExtendedCryptoToken that supports symmetric operations.</li>
-<li>The RMI-SSL interface have been removed and replaced with a JAX-WS interface with a simple client framework supporting different load-balance or high availability policies.</li>
-<li>All request data have changed from serialization to externalization to be easier to translate to other platforms.</li>
-<li>A completely new MailSigner API based upon the JAMES SMTP server to perform automated cryptographic operations on e-mails very similar to the plug-ins for the SignServer.</li>
-<li>Java 1.4 is no longer supported.</li>
-<li>A lot of new JUnit tests in the test suite.</li>
-<li>A PDF Signer that can add a signature to a PDF document through a simple HTML interface.</li>
-<li>PKCS11 Crypto Token to connect to different PKCS11 implementations.</li>
+<li>A new module system where the bytecode for a worker can
+be package as a separate module that can be loaded and unloaded at runtime</li>
+<li>XMLSigner/Validator</li>
+<li>ODFSigner</li>
+<li>OOXMLSigner</li>
+<li>CRLValidator</li>
+<li>OCSPValidator</li>
+<li>MRTDSODSigner</li>
 </ul>
 </p>
 <p>
-More information can be found in the manual
+More information can be found in the <a href="manual.html">manual</a> or in the
+<a href="http://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel">changelog</a>.
 </p>
 </section>
 <section name="Open Source">
@@ -74,7 +66,7 @@ This software is OSI Certified Open Source Software.
 OSI Certified is a certification mark of the Open Source Initiative.
 </p>
 <p>
-The source code of the SignServer is hosted on <a href="http://www.sf.net/">Sourceforge.net</a> and all downloads include the complete source code.
+The source code of the SignServer is hosted on <a href="http://www.sf.net/">SourceForge.net</a> and all downloads include the complete source code.
 </p>
 </section>
 

@@ -2,7 +2,6 @@
 <project name="SignServer" href="http://signserver.sourceforge.net/">
 
     <title>SignServer</title>
-    <!--logo href="images/ant_logo_large.gif">Hard Token Management Framework</logo-->
 
     <body>
        <menusection name="Home" index="0"         href="/index.html">

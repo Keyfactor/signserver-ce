@@ -172,16 +172,13 @@
         </li>
       #end
       
-      <li><div class="menuheader">Used Services</div>
-      <ul>
-      <div>
-	    <a href="http://sourceforge.net/">
-	    <img style="border:none" src="http://sourceforge.net/sflogo.php?group_id=39716&type=12" alt="Hosted on SourceForge"/>
-	    </a>
-	  </div>
-      </ul>    
-   	  </li>
-       	        
+        <li><div class="menuheader">Used Services</div>
+          <p>
+                <a href="http://sourceforge.net/">
+                <img style="border:none" src="http://sourceforge.net/sflogo.php?group_id=39716&amp;type=12" alt="Hosted on SourceForge"/>
+                </a>
+          </p>
+        </li>
       </ul>
     </div>
  	
@@ -204,24 +201,23 @@
     <body>
 
       <div class="logobar">
-      <table width="100%">
-      	<tr>
-      	<td>Welcome to the SignServer Project</td>
-      	<td style="text-align:right">
-      	<div class="searchcaption">
-		Search signserver.org for:<br />
-		<form id="searchForm" target="_blank" onsubmit="q.value = query.value + ' site:signserver.org'" action="http://www.google.com/search" method="get">
-		<input name="q" type="hidden">
-		<nobr>
-		<div style="height: 18px">
-		<input name="query" id="searchBox" maxlength="255" />
-		<input type="submit" value="Go" />
-		</div>
-		</nobr>
-		</form>
-      	</div>
-		</tr>
-		</table>
+          <table width="100%">
+            <tr>
+                <td>Welcome to the SignServer Project</td>
+                <td style="text-align:right">
+                    <div class="searchcaption">
+                            Search signserver.org for:<br />
+                            <form id="searchForm" target="_blank" onsubmit="q.value = query.value + ' site:signserver.org'" action="http://www.google.com/search" method="get">
+                                <input name="q" type="hidden">
+                                <div style="height: 18px; white-space: nowrap">
+                                    <input name="query" id="searchBox" maxlength="255" />
+                                    <input type="submit" value="Go" />
+                                </div>
+                            </form>
+                    </div>
+                </td>
+            </tr>
+          </table>
       </div>
 
       #makeMainNavigation()

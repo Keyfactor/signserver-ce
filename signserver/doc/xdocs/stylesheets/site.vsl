@@ -127,22 +127,24 @@
                         #if (!($singlepage == "true"))
                             [<a href="$shortname$htmlext">Page</a>]
                         #end
-                    </li>
                     
-                    #set ($sections = $chapter.getChildren("section"))
-                    <ul class="minitoc">
-                        #foreach ( $section in $sections )
-                            <li><a href="#$escape.getText($section.getAttributeValue("name"))">$section.getAttributeValue("name")</a></li>
-                            #set ($subsections = $section.getChildren("subsection"))
-                            #if ($subsections.size() > 0)
-                                 <ul class="minitoc">
-                                     #foreach ( $subsection in $subsections )
-                                       <li><a href="#$escape.getText($subsection.getAttributeValue("name"))">$subsection.getAttributeValue("name")</a></li>
-                                     #end
-                                 </ul>
+                        #set ($sections = $chapter.getChildren("section"))
+                        <ul class="minitoc">
+                            #foreach ( $section in $sections )
+                                <li><a href="#$escape.getText($section.getAttributeValue("name"))">$section.getAttributeValue("name")</a>
+                                    #set ($subsections = $section.getChildren("subsection"))
+                                    #if ($subsections.size() > 0)
+                                         <ul class="minitoc">
+                                             #foreach ( $subsection in $subsections )
+                                               <li><a href="#$escape.getText($subsection.getAttributeValue("name"))">$subsection.getAttributeValue("name")</a></li>
+                                             #end
+                                         </ul>
+                                    #end
+                                </li>
                             #end
-                        #end
-                    </ul>
+                        </ul>
+
+                    </li>
 
 
                  #end

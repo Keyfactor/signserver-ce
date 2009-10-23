@@ -8,9 +8,8 @@
 <body>
   <section name="SVN Repositories">
   <p>
-    From SignServer 3.0Beta have the project migrated from CVS to SVN and from then and 
-    on will be the only maintained repository. Check-ins to the CVS will not be included
-    in any releases.
+    From version 3.0 the project has migrated from CVS to SVN. 
+    SVN is now the only maintained repository.
   </p>
   <p>  
     The SVN URL is: https://signserver.svn.sourceforge.net/svnroot/signserver 

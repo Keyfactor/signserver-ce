@@ -1,11 +1,6 @@
 SignServer README
 
-This document contains some notes on how to get
-started with using the SignServer.
-
-There are two open office documents in this directory, the first
-one describing how to install and configure the SignServer and the
-other one explains how to use and develop applications using the framework.
+This document contains some notes on how to get started with using SignServer.
 
 It recommended that you first read at the SignServer web site
 at www.signserver.org. It contains the most recent information about
@@ -17,6 +12,6 @@ Licenses
 -----------------------------------------------------------------------------------
   SignServer License
   
-The SignServer is released under the LGPL license that you can find more
+SignServer is released under the LGPL license that you can find more
 information about at http://www.opensource.org/licenses/lgpl-license.php.
 

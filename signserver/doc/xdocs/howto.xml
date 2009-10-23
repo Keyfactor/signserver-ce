@@ -7,9 +7,9 @@
 
 <body>
 
-  <section name="Setting up an Apache Web Server as a proxy in front of EJBCA">
+  <section name="Setting up an Apache Web Server as a proxy in front of SignServer">
   <p>
-  This section will show you how to use an Apache Web Server Proxy in front of EJBCA.
+  This section will show you how to use an Apache Web Server Proxy in front of SignServer.
   <br/>The resulting server will
   </p>
   <ul>

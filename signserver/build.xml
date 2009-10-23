@@ -2,8 +2,9 @@
 <project name="signserver" default="build" basedir=".">
 
 	<property name="app.name" value="signserver" />
-    <property name="app.name.cap" value="Sign Server" />
-	<property name="app.version" value="${app.name.cap} 3.1.0Beta" />
+    <property name="app.name.cap" value="SignServer" />
+    <property name="app.version.number" value="3.1.0" />
+	<property name="app.version" value="${app.name.cap} ${app.version.number}" />
 	<property name="mar.versions" value="3100" />
 
     <property environment="env" />
@@ -486,45 +487,24 @@ OS version                          = ${os.version}
     </target>
 	
     	<target name="ziprelease" description="Make a zip files for SignServer release" >
-    		<input message="Version tag for zipfile (ex 3_0):" addproperty="signserver.zipversion" />
-    		<antcall target="ziprelease-lgpl3"/>
+
+    		<!-- A small script that converts the version x.y.z to x_y_z to be used in the file -->
+    		<scriptdef name="convertdot" language="javascript">
+    		    <![CDATA[
+    	          ver = project.getProperty("app.version.number");
+    			  relstring = ver.replace('.','_');
+    		      //self.log(ver);
+    		      //self.log(relstring);
+    			  project.setProperty("signserver.zipversion", relstring);
+    	          str = project.getProperty("signserver.zipversion");
+    		    ]]>
+    	    </scriptdef>
+    		<convertdot/> <!-- convert dots to underscores in version string -->
+    		<!-- <input message="Version tag for zipfile (ex 3_1_0):" addproperty="signserver.zipversion" /> -->
+    		
     		<antcall target="ziprelease-lgpl21"/>
     	</target>
     		
-    	
-    		
-	<target name="ziprelease-lgpl3" >
-		<antcall  target="clean"/>
-		<copy file="doc/lgpl-3.0.txt" tofile="LICENSE" />
-		<zip destfile="../signserver_lgpl_v3_version_${signserver.zipversion}.zip">
-		    <zipfileset dir="." prefix="signserver_lgpl_v3_version_${signserver.zipversion}" filemode="600" dirmode="700"> 
-		    	<include name="**/**" />
-		    	<exclude name="**/CVS/**" />
-		    	<exclude name="signserver_build.properties" />
-		    	<exclude name="doc/lgpl-**" />
-		    	<exclude name="tmp/**" />
-		    	<exclude name="p12/**" />
-		    	<exclude name="dist/**" />
-		    	<exclude name="dist-client/**" />
-		    	<exclude name="dist-server/**" />
-		    	<exclude name="out/**" />
-		    	<exclude name="eclipseBuild/**" />
-		    	<exclude name="**/*.class" />
-		    	<exclude name=".classpath" />
-		    	<exclude name=".project" />
-		    	<exclude name=".eclipse/**" />
-                        <exclude name=".settings/**" />
-		    	<exclude name="**/.cvsignore" />
-		    	<exclude name="**/*.sh" />
-                        <exclude name="nbproject/**" />
-		    </zipfileset>
-		    <zipfileset dir="." prefix="signserver_lgpl_v3_version_${signserver.zipversion}" filemode="700" dirmode="700"> 
-		    	<include name="**/*.sh" />
-		    </zipfileset>
-		</zip>
-		<delete file="LICENSE"/>
-	</target>
-	
 	<target name="ziprelease-lgpl21" >
 		<antcall  target="clean"/>  
 		<copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
@@ -555,6 +535,9 @@ OS version                          = ${os.version}
 		    </zipfileset>
 		</zip>
 		<delete file="LICENSE"/>
+        <checksum file="../signserver_lgpl_v21_version_${signserver.zipversion}.zip" algorithm="SHA1" forceOverwrite="yes"/>      
+        <checksum file="../signserver_lgpl_v21_version_${signserver.zipversion}.zip" algorithm="SHA1" property="signserverSHA1"/>      
+        <echo message="SHA1 checksum: ${signserverSHA1}" />
 	</target>
 
 	<target name="showtime">

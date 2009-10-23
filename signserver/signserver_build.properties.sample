@@ -19,8 +19,8 @@
 # default: javac
 #build.compiler=jikes
 
-# which java version to use 1.4, 1.5 or 1.6
-# default: 1.5
+# which java version to use. Only 1.6 is currently supported. 
+# default: 1.6
 #server.java.target=1.5
 #client.java.target=1.5
 

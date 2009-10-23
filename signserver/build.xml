@@ -48,10 +48,10 @@
 	<property name="src.external" location="${tmp}/external"/>
     <property name="resources.dir"  location="./src/resources"/>	
     
-    <property name="server.java.target" value="1.5" />
-    <property name="client.java.target" value="1.5" />
-<!-- the ejbca.target could have any valid value. no PrimeCard code dependent of ejbca is used -->
-    <property name="ejbca.target" value="3.2"/>
+    <property name="server.java.target" value="1.6" />
+    <property name="client.java.target" value="1.6" />
+<!-- the ejbca.target could have any valid value. no SignServer code dependent of ejbca is used -->
+    <property name="ejbca.target" value="3.9"/>
 
     <property name="test.dir" value="${bin}/junit" />
     <property name="test.src.dir" location="${src}/test" />

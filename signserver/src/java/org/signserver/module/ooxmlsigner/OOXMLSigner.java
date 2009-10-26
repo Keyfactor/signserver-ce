@@ -20,6 +20,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.Security;
 import java.util.Collections;
 import java.util.List;
@@ -180,8 +181,8 @@ public class OOXMLSigner extends BaseSigner {
 			throw new SignServerException("Document parsing error", e);
 		}
 
-		XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM",
-				new org.jcp.xml.dsig.internal.dom.XMLDSigRI());
+        // create XML signature factory (JSR-105)
+        final XMLSignatureFactory fac = createXMLSignatureFactory();
 
 		// create idpackageobject and idofficeobject reference (to add to
 		// signedinfo)
@@ -365,8 +366,7 @@ public class OOXMLSigner extends BaseSigner {
 		dbf.setNamespaceAware(true);
 		org.w3c.dom.Document doc = dbf.newDocumentBuilder().newDocument();
 
-		XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM",
-				new org.jcp.xml.dsig.internal.dom.XMLDSigRI());
+            final XMLSignatureFactory fac = createXMLSignatureFactory();
 
 		XMLObject idPackageObject = OPCSignatureHelper.CreateIdPackageObject(
 				docxPackage, fac, signatureId, doc, null);
@@ -412,4 +412,22 @@ public class OOXMLSigner extends BaseSigner {
 		return signature.getSignedInfo().getReferences();
 	}
 
+        public static XMLSignatureFactory createXMLSignatureFactory() throws
+                SignServerException {
+            final String providerName = System.getProperty("jsr105Provider",
+                    "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
+            try {
+                return XMLSignatureFactory.getInstance("DOM",
+                        (Provider) Class.forName(providerName).newInstance());
+            } catch (InstantiationException e) {
+                throw new SignServerException("Problem with JSR105 provider",
+                        e);
+            } catch (IllegalAccessException e) {
+                throw new SignServerException("Problem with JSR105 provider",
+                        e);
+            } catch (ClassNotFoundException e) {
+                throw new SignServerException("Problem with JSR105 provider",
+                        e);
+            }
+        }
 }

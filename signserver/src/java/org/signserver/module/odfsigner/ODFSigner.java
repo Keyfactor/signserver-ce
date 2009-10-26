@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.KeyException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
@@ -98,9 +99,20 @@ public class ODFSigner extends BaseSigner {
 					"Data received is not in valid openxml package format", e);
 		}
 
-		// create XML signature factory (JSR-105)
-		XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM",
-				new org.jcp.xml.dsig.internal.dom.XMLDSigRI());
+        // create XML signature factory (JSR-105)
+        final String providerName = System.getProperty("jsr105Provider",
+                "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
+        XMLSignatureFactory fac;
+        try {
+            fac = XMLSignatureFactory.getInstance("DOM",
+                    (Provider) Class.forName(providerName).newInstance());
+        } catch (InstantiationException e) {
+            throw new SignServerException("Problem with JSR105 provider", e);
+        } catch (IllegalAccessException e) {
+            throw new SignServerException("Problem with JSR105 provider", e);
+        } catch (ClassNotFoundException e) {
+            throw new SignServerException("Problem with JSR105 provider", e);
+        }
 
 		// Since ODFDOM is formatting document after a new part is added
 		// (content.xml and other parts)

@@ -4,8 +4,6 @@ JARS
 openxml4j-signaturepatched jar is a signature patched version of openxml4j library from http://sourceforge.net/projects/openxml4j/. Patch applied to revision 534 to
 of openxml4j (https://openxml4j.svn.sourceforge.net).  Used by ooxmlsigner to sign open office xml documents. License : LGPL
 
-xmlsec-1.4.3.jar is from http://santuario.apache.org/. As of JDK1.6 xmlsec library is also included in jdk. JDK version of xmlsec is not used, for compatibility to jdk1.5. Used by xmlsigner and ooxmlsigner to create xml digital signature.License : Apache License Version 2.0, January 2004.
-
 jaxen-1.1.jar is from http://jaxen.codehaus.org/index.html. Used by openxml4j for xml processing. License :  Apache-style open source license  (quote from http://jaxen.codehaus.org/faq.html)
 
 xercesImpl.jar is from http://xerces.apache.org/xerces2-j/ .Used by openxml4j for xml processing.  License :  Apache Software License.

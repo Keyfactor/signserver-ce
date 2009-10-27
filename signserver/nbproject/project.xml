@@ -398,8 +398,16 @@
             </compilation-unit>
         </java-data>
         <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
-            <module name="org-netbeans-modules-editor-indent"/>
+            <module name="org-netbeans-modules-editor-indent">
+                <node name="CodeStyle"/>
+            </module>
             <module name="org-netbeans-modules-hudson"/>
+            <module name="org-nbheaven-sqe-tools-checkstyle-codedefects-projects-freeform">
+                <property name="checkstyle.configuration.file" value="/home/markus/Documents/PrimeKey/CESECORE/sun_checks_CeSeCore.xml"/>
+                <property name="checkstyle.configuration.properties" value=""/>
+            </module>
+            <module name="org-nbheaven-sqe-tools-findbugs-codedefects-projects-freeform"/>
+            <module name="org-nbheaven-sqe-tools-pmd-codedefects-projects-freeform"/>
         </preferences>
     </configuration>
 </project>

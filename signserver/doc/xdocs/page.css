@@ -12,6 +12,8 @@ body {
 	background-color: #fff; 
 	margin: 0px; 
 	padding: 0px;
+        background-image: url(images/background_line.gif);
+        background-repeat: repeat-y;
 	}
 ul {
 	list-style-type:square;
@@ -41,13 +43,11 @@ acronym {
 
 .menucontainer {
     float: left;
-    background-color: #FFFFFF;
     margin: 0px;
     padding-bottom: 10px;
-    width: 280px;
+    width: 268px;
     height: 100%;
-    border-right: thin solid #ddd;
-    border-bottom: thin solid #ddd;
+    margin-bottom: 80px;
 }
 
 .menu {
@@ -66,9 +66,9 @@ acronym {
 .menu ul ul li  { list-style-type: disc; font-weight : normal; }
 
 .menuheader {
-	font:   normal 14pt verdana;
+	font: normal 12pt verdana;
 	letter-spacing: 1px;
-	border-bottom: 1px #688B9A;
+	border-bottom: 1px dashed #688B9A;
 	margin-top: 8px;
 	margin-bottom: 5px;
 	padding: 2px;
@@ -98,10 +98,10 @@ table .title { background-color: #FFFFFF; width:100%; border: 0px; }
     padding: 5px 5px 5px 10px;
 }
 
-.content .ForrestTable { width: 100%; background-color: #7099C5; color: #ffffff; font-size : 90%;}
+.content .ForrestTable { width: 100%; background-color: /*#f89d32*/ white; color: #ffffff; font-size : 90%;}
 .content .ForrestTable caption { text-align: left; color: black; font-weight: bold; }
-.content .ForrestTable th { text-align: center; }
-.content .ForrestTable td { background-color: #f0f0ff; color: black; }
+.content .ForrestTable th { background-color: #f89d32; text-align: center; }
+.content .ForrestTable td { background-color: #F5E49C; color: black; }
 
 .content .externals { width: 80%; background-color: #7099C5; color: #ffffff; font-size : 90%;}
 .content .externals caption { text-align: left; color: black; font-weight: bold; }
@@ -115,14 +115,15 @@ table .title { background-color: #FFFFFF; width:100%; border: 0px; }
 }
 
 .frame .label {
-  background: #369;
-  color: white;
-  font-weight: bold;
+    background: #f89d32;
+    color: black;
+    font-weight: normal;
   padding: 5px 10px;
+    font-size: medium;
 }
 .frame .content {
   padding: 5px 10px;
-  background: #F0F0FF;
+    background: #F5E49C;
   color: black;
   line-height: 120%;
   font-size: 90%;
@@ -142,7 +143,7 @@ table .title { background-color: #FFFFFF; width:100%; border: 0px; }
 .fixme { margin-top: 15px; margin-bottom: 15px; padding: 5px; border: solid 1px #C6C600; background-color: #FAF9C3; }
 .fixme .label { background-color: #C6C600; color: #ffffff; }
 
-.code { background-color:#FCF1D1; border-color: #CFDCED; border-style: dashed; border-width: 1px; margin: 5px; padding: 5px; }
+.code { background-color: #EEEEEE; border-color: #CFDCED; border-style: dashed; border-width: 1px; margin: 5px; padding: 5px; }
 .codefrag {	font-family: "Courier New", Courier, monospace; }
 
 .highlight { background-color: yellow; }
@@ -164,7 +165,7 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   	font-size: 20px;
   	font-weight: normal;
-    color: #666666;    
+    color: #005a9c;
 }
 
 h3 { 
@@ -228,13 +229,15 @@ h4 {
 .copyright {
     font-family: arial,helvetica,sanserif;
     font-size: 90%;
-    background-color: #F1F1F1;
+    background-color: #F5E49C;
     clear: both;
     text-align: left;
     margin: 0px;
     padding-left: 15px;
     border-top: thin solid #CCC;
-    border-bottom: thin solid #CCC;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 20px;
 }
 
 .bluebar {

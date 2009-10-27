@@ -6,10 +6,12 @@
   </properties>
 
 <body>
-  <!--<section name="Latest News">
+  <section name="Latest News">
     <note>
+        <strong>SignServer 3.1 is now out!</strong><br/>
+        Visit the <a href="download.html">download</a> section.
     </note>
-   </section>-->
+   </section>
 
 <section name="What is SignServer?">
 <p>

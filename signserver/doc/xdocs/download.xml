@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>Download</title>
+  </properties>
+
+<body>
+  <section name="Latest Release">
+    <note>
+    If you have problems with any of the download links below, try to download through the SourceForge <a href="http://sourceforge.net/projects/signserver/files/">download page</a>.
+    <br/><br/>
+    SignServer 3.1 is now available for <a
+    href="http://sourceforge.net/projects/signserver/files/signserver/3.1/signserver_3_1.zip/download">download</a>.
+    <br/>
+    SHA1 checksum: c31c----UPDATE-THIS---6407396686045be0
+    </note>
+  </section>
+  <section name="Main source packages">
+    <p>
+    Download any of the source packages from <a href="http://sourceforge.net/projects/signserver/files/">SourceForge</a>.
+    </p>
+  </section>
+
+</body>
+</document>
+

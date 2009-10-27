@@ -162,7 +162,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
 
             <section name="Terms Used in This Document">
                 <table>
-                    <tr><td>Term</td><td>Explanation</td>
+                    <tr><th>Term</th><th>Explanation</th>
                     </tr><tr><td>Signer</td><td>A Processable service performing signatures upon requests. This could be a ready made signer or a custom developed one.</td>
                     </tr><tr><td>Crypto Token (former Sign Token)</td><td>A Crypto Token is a name for the entity containing the private key and is responsible for its cryptographic operations. Every Processable have a Crypto Token that can be a PKCS12, Smart Card or HSM connection.</td>
                     </tr><tr><td>Extended Crypto Token</td><td>An enhanced Crypto Token with support for symmetric key operations.</td>
@@ -515,8 +515,8 @@ It reads all the configuration properties form a property file and depending on 
                         </p>
                         <table>
                             <tr>
-                                <td>Rule</td>
-                                <td>Comment</td>
+                                <th>Rule</th>
+                                <th>Comment</th>
                             </tr>
                             <tr>
                                 <td>
@@ -782,8 +782,8 @@ The MAR descriptor supports the following properties:
                     </p>
                     <table>
                         <tr>
-                            <td>Property</td>
-                            <td>Description</td>
+                            <th>Property</th>
+                            <th>Description</th>
                         </tr>
                         <tr>
                             <td>version</td>
@@ -823,12 +823,12 @@ The simplest way to build a Module Archive is by using ANT. The SignServer have 
                     <p>
 All that is required to use these tasks is to add the following two lines in your target:
                     </p>
-                    <pre>
+                    <source>
     &lt;taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
        classpathref="signserver.test.compile.classpath"/&gt;
     &lt;taskdef name="part" classname="org.signserver.anttasks.PartAntTask"
        classpathref="signserver.test.compile.classpath"/&gt;
-                    </pre>
+                    </source>
                     <p>
 With these two lines included you will have access the the 'mar' and 'part' tasks. The tasks have the following properties.
                     </p>
@@ -837,8 +837,8 @@ MAR Task Properties
                     </p>
                     <table>
                         <tr>
-                            <td>Property</td>
-                            <td>Description</td>
+                            <th>Property</th>
+                            <th>Description</th>
                         </tr>
                         <tr>
                             <td>version</td>
@@ -883,8 +883,8 @@ PART Task Properties
                     </p>
                     <table>
                         <tr>
-                            <td>Property</td>
-                            <td>Description</td>
+                            <th>Property</th>
+                            <th>Description</th>
                         </tr>
                         <tr>
                             <td>name</td>
@@ -898,7 +898,7 @@ PART Task Properties
                     <p>
 Here is an example of a simple ANT task building a MAR file, it will have the module name of SOME, version of 3 and have a 'server' part with all the JARs in 'somejarlocation' and all the worker properties in the directory 'someworkerpropertieslocation' :
                     </p>
-                    <pre>
+                    <source>
     &lt;target name="gensomemar" depends=”signserver.ear”&gt;
     &lt;taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
        classpathref="signserver.test.compile.classpath"/&gt;
@@ -917,8 +917,7 @@ Here is an example of a simple ANT task building a MAR file, it will have the mo
     	         &lt;/fileset&gt;
     		&lt;/part&gt;
     	&lt;/mar&gt;
-    &lt;/target&gt;
-                    </pre>
+    &lt;/target&gt;</source>
 
 
                 </subsection>
@@ -957,8 +956,8 @@ The following properties can be set:
                     </p>
                     <table>
                         <tr>
-                            <td>Property</td>
-                            <td>Description</td>
+                            <th>Property</th>
+                            <th>Description</th>
                         </tr>
                         <tr>
                             <td>useclusterclassloader</td>
@@ -1083,7 +1082,7 @@ Other future load balance policies could be round robin or that all nodes are ca
 			</p>
 			<subsection name="Sample Code">
 				<subsubsection name="Signing and validating an XML document">
-                                    <pre>
+                                    <source>
 try {
     ISigningAndValidation signserver = new SigningAndValidationWS("localhost", 8080);
 
@@ -1108,12 +1107,11 @@ try {
     }
 } catch (Exception ex) {
     ex.printStackTrace();
-}
-                                    </pre>
+}                                   </source>
 				</subsubsection>
 
 				<subsubsection name="MRTD Signing">
-                                    <pre>
+                                    <source>
 try {
     ISigningAndValidation signserver = new SigningAndValidationWS("localhost", 8080);
 
@@ -1135,8 +1133,7 @@ try {
     }
 } catch (Exception ex) {
     ex.printStackTrace();
-}
-                                </pre>
+}                               </source>
                             </subsubsection>
 			
 
@@ -2802,7 +2799,7 @@ Finally is Jboss started and ready to be used.
 The supported properties in the configuration file /etc/signserver/signserver.conf (or %SYSTEMROOT%\signerserver.conf for windows) are:
                         </p>
                         <table>
-                            <tr><td>Property Name</td><td>Description</td><td>Example value</td><td>Where to manually reconfigure </td></tr>
+                            <tr><th>Property Name</th><th>Description</th><th>Example value</th><th>Where to manually reconfigure </th></tr>
                             <tr><td>SIGNSERVER_NODEID</td><td>A unique string value (containing alphanumeric characters only) identifying the node in a cluster.</td><td>node1</td><td>Unix: /etc/signserver/signserver.conf<br/>Windows:<br/>%Systemroot%\signserver.conf</td></tr>
                             <tr><td>database.type</td><td>Type of database, currently are Hypersonic, Mysql, Mysql Cluster, Postgres and MS SQL 2000 supported</td><td>hsqldb, mysql, mysqlndb,  postgres, mssql2000</td><td>Unix:<br/>/etc/signserver/database-conf.xml<br/>Windows: %Installdir%\database-conf.xml</td></tr>
                             <tr><td>database.hosts</td><td>The hostnames of the databases used. (not used for hsqldb).</td><td>localhost</td><td>Unix:<br/>/etc/signserver/database-conf.xml<br/>Windows: %Installdir%\database-conf.xml</td></tr>
@@ -2843,7 +2840,7 @@ This package installs the CLI interface on the management station (which can be 
 The signserver.conf supports the following settings:
                         </p>
                         <table>
-                            <tr><td>Property Name</td><td>Description</td><td>Example value</td><td>Where to manually reconfigure </td></tr>
+                            <tr><th>Property Name</th><th>Description</th><th>Example value</th><th>Where to manually reconfigure </th></tr>
                             <tr><td>hostname.masternode</td><td> Hostname of master node in the cluster.</td><td>node1.someorg.org</td><td>Unix:<br/>/etc/signserver/signserver.conf<br/>Windows: %Installdir%\signserver.conf</td></tr>
                             <tr><td>hostname.allnodes</td><td>Hostname of all hosts in cluster, separated by ';'. </td><td>node1.someorg.org;node2.someorg.org</td><td>Unix:<br/>/etc/signserver/signserver.conf<br/>Windows: %Installdir%\signserver.conf</td></tr>
                         </table>
@@ -2884,7 +2881,7 @@ The steps performed during the installation process are:
 The supported properties in the configuration file /etc/mailsigner/mailsigner.conf (or %SYSTEMROOT%\mailsigner.conf for windows) are:
                         </p>
                         <table>
-                            <tr><td>Property Name</td><td>Description</td><td>Example value</td><td>Where to manually reconfigure </td></tr>
+                            <tr><th>Property Name</th><th>Description</th><th>Example value</th><th>Where to manually reconfigure </th></tr>
                             <tr><td>mailsigner.smtpport</td><td>Port that the mailserver should listen on.</td><td>25</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner-config.xml</td></tr>
                             <tr><td>mailsigner.primarydns</td><td>The IP address of the primary DNS server.</td><td>10.0.0.1</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner-config.xml</td></tr>
                             <tr><td>mailsigner.secondarydns</td><td>The IP address of the secondary DNS server.</td><td>10.0.0.2</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
@@ -2923,7 +2920,7 @@ This package installs the CLI interface on the management station (which can be 
 The mailsigner.conf supports the following settings but it is important that 'hostname.masternode' and 'hostname.allnodes' must point to the same host:
                         </p>
                         <table>
-                            <tr><td>Property Name</td><td>Description</td><td>Example value</td><td>Where to manually reconfigure </td></tr>
+                            <tr><th>Property Name</th><th>Description</th><th>Example value</th><th>Where to manually reconfigure </th></tr>
                             <tr><td>hostname.masternode</td><td>The hostname of the mailsigner to manage.</td><td>mailsigner.someorg.org</td><td>Unix:<br/>/etc/mailsigner/mailsigner.conf<br/>Windows: %Installdir%\mailsigner.conf</td></tr>
                             <tr><td>hostname.allnodes</td><td>The hostname of the mailsigner to manage and should have the same value as master node. MailSigner doesn't support clustering</td><td>mailsigner.someorg.org</td><td>Unix:<br/>/etc/mailsigner/mailsigner .conf<br/>Windows: %Installdir%\mailsigner .conf</td></tr>
                         </table>

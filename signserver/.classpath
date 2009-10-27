@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="lib" path="lib/endorsed/xmlsec-1.4.3.jar"/>
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/client"/>
@@ -50,8 +49,8 @@
 	<classpathentry kind="lib" path="lib/quartz/quartz-1.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm-commons-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/1.5/bcmail-jdk.jar"/>
-	<classpathentry kind="lib" path="lib/1.5/bcprov-jdk.jar"/>
+	<classpathentry kind="lib" path="lib/1.6/bcmail-jdk.jar"/>
+	<classpathentry kind="lib" path="lib/1.6/bcprov-jdk.jar"/>
 	<classpathentry kind="lib" path="lib/ext/servlet-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/ext/james/james-2.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/ext/james/mail-1.4.jar"/>
@@ -62,7 +61,7 @@
 	<classpathentry kind="lib" path="lib/ext/james/smtp.jar"/>
 	<classpathentry kind="lib" path="lib/reports/jcommon-1.0.12.jar"/>
 	<classpathentry kind="lib" path="lib/reports/jfreechart-1.0.9.jar"/>
-	<classpathentry kind="lib" path="lib/module/tsa/1.5/bctsp-jdk.jar"/>
+	<classpathentry kind="lib" path="lib/module/tsa/1.6/bctsp-jdk.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/hsqldb.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/dom4j.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/cglib.jar"/>
@@ -75,5 +74,6 @@
 	<classpathentry kind="lib" path="lib/endorsed/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/module/odfsigner/odfdom.jar"/>
 	<classpathentry kind="lib" path="lib/module/pdfsigner/itext/itext.jar"/>
+	<classpathentry kind="var" path="SIGNSERVER_HOME"/>
 	<classpathentry kind="output" path=".eclipse/out"/>
 </classpath>

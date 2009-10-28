@@ -1,69 +1,68 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
+# OS specific support.
+cygwin=false;
+case "`uname`" in
+  CYGWIN*) cygwin=true ;;
+esac
 
-genCertHelp() {
-
-    echo "$0 <IssuerDN> <SubjectDN> <Output Path> <tomcat.jks passwd> <truststore.jks passwd> <testclient.jks passwd>"
-    echo "to make new signserver certificates use something like this"
-    echo "$0 'CN=Signserver test CA,O=Acme,C=SE' 'CN=signserver.acme.local,O=Acme,C=SE' /etc/signserver/'
-}
-
-if [ "x$1" == "x--help" -o "x$1" == "x-h" ] ; then
-    genCertHelp
-    exit
-fi
-
-
-if [ "x$1" == "x" ] ; then
-    genCertHelp
-    exit
+JAVACMD=`which java`
+# Check that JAVA_HOME is set
+if [ ! -n "$JAVA_HOME" ]; then
+    if [ ! -n "$JAVACMD" ]
+    then
+        echo "You must set JAVA_HOME before running the SignServer cli."
+        exit 1
+    fi
 else
-    issuerDN=$1
+    JAVACMD=$JAVA_HOME/bin/java
 fi
 
-if [ "x$2" == "x" ] ; then
-    genCertHelp
-    exit
+
+class_name=org.signserver.cli.genservercert.GenServerCertificate
+
+if [ ! -n "${SIGNSERVER_HOME}" ]; then
+  if [ -f /etc/signserver/signservermgmt.env ]; then
+     . /etc/signserver/signservermgmt.env
+  fi
+  if [ -f /etc/mailsigner/mailsignermgmt.env ]; then
+     . /etc/mailsigner/mailsignermgmt.env
+  fi
+  if [ -f /usr/share/signserver/bin/signserver.sh ]; then
+     SIGNSRV_HOME=/usr/share/signserver
+  fi
+  if [ -f /opt/signserver/bin/signserver.sh ]; then
+     SIGNSRV_HOME=/opt/signserver
+  fi
+  if [ -f /usr/local/signserver/bin/signserver.sh ]; then
+     SIGNSRV_HOME=/usr/local/signserver
+  fi
+  if [ -f ./signserver.sh ]; then
+     SIGNSRV_HOME=..
+  fi
+  if [ -f bin/signserver.sh ]; then
+     SIGNSRV_HOME=.
+  fi
 else
-    subjectDN=$2
+  SIGNSRV_HOME=$SIGNSERVER_HOME
 fi
 
-if [ "x$3" == "x" ] ; then
-    genCertHelp
-    exit
-else
-    outputPath=$3
+# Check that classes exist
+if [ ! -f ${SIGNSRV_HOME}/tmp/genservercert.jar ]
+then
+    echo "You must build genservercert.jar before using the cli, use 'ant genservercert.jar'."
+    exit 1
 fi
 
+# library classpath
+CP="$SIGNSRV_HOME/lib/1.6/bcprov-jdk.jar:${SIGNSRV_HOME}/tmp/genservercert.jar"
 
-if [ "x$4" == "x" ] ; then
-    genCertHelp
-    exit
-else
-    tomcatJksPassword=$4
+
+export SIGNSRV_HOME
+
+# For Cygwin, switch paths to Windows format before running java
+if $cygwin; then
+  CP=`cygpath --path --windows "$CP"`
 fi
 
-if [ "x$5" == "x" ] ; then
-    genCertHelp
-    exit
-else
-    trustJksPassword=$5
-fi
-
-if [ "x$6" == "x" ] ; then
-    genCertHelp
-    exit
-else
-    testClientJksPassword=$6
-fi
-
-if [ -r /etc/signserver/signservermgmt.env ] ; then
-    . /etc/signserver/signservermgmt.env
-else
-    echo "signserver environment not setup properly"
-    echo "file: /etc/signserver/signservermgmt.env is missing"
-    exit
-fi
-
-java -jar ${SIGNSERVER_HOME}/lib/genservercert.jar ${issuerDN} ${subjectDN} ${outputPath} ${tomcatJksPassword} ${trustJksPassword} ${testclientJksPassword}
-
+exec "$JAVACMD" -cp $CP $class_name "$@"

@@ -54,18 +54,16 @@ code since both the old and new worker can be run at the same time.
 PDF Signer, Time-Stamp Authority and MRTD and their specific libraries have the
 possibility to build into separate module archives (MAR files) that have to be uploaded to
 the SignServer installation before usage, if the cluster classloader is enabled (default).
-New signing module : MRTD-SOD.
-                        </li>
-                        <li>
-Validators for several document types as well.
-                        </li>
-                        <li>
-For minor changes see the change log at http://jira.primekey.se
                         </li>
                         <li>
 Installation packages for Linux/Windows of both SignServer and MailSigner using
 generation software from Bitrock.
                         </li>
+                        <li>
+New extended module for signing ePassports: MRTD-SOD.
+                        </li>
+                        <li>
+New modules for signing and validating XML documents.
                         <li>
 A new ODF Signer module that adds signature to ODF documents, such as : odt,ods,odt
 (tested with OpenOffice.org 3.1.0). Simple web page is added where ODF document can be
@@ -76,6 +74,15 @@ A new OOXML Signer Module that adds signature to Office Open XML documents, such
 docx,xlsx,pptx (tested with Microsoft Office 2007).Simple web page is added where open
 office xml document can be uploaded for signing, and resulted signed document
 downloaded.
+                        </li>
+                        <li>
+Validators for several document types as well.
+                        </li>
+                        <li>
+Java 5 is no longer supported.
+                        </li>
+                        <li>
+For minor changes see the change log at http://jira.primekey.se
                         </li>
                 </ul>
                 </subsection>

@@ -70,10 +70,10 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="tmp/dummyws/gen-classes/client"/>
 	<classpathentry kind="lib" path="tmp/wsra/gen-classes/client"/>
-	<classpathentry kind="lib" path="lib/endorsed/openxml4j-signaturepatched.jar"/>
-	<classpathentry kind="lib" path="lib/endorsed/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/module/odfsigner/odfdom.jar"/>
 	<classpathentry kind="lib" path="lib/module/pdfsigner/itext/itext.jar"/>
 	<classpathentry kind="var" path="SIGNSERVER_HOME"/>
+	<classpathentry kind="lib" path="lib/module/ooxmlsigner/openxml4j-signaturepatched.jar"/>
+	<classpathentry kind="lib" path="lib/module/ooxmlsigner/xercesImpl.jar"/>
 	<classpathentry kind="output" path=".eclipse/out"/>
 </classpath>

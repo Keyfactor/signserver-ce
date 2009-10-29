@@ -6,7 +6,7 @@
 		<path id="ooxmlsigner.build.classpath">
 			<path refid="signserver.compile.classpath" />
 			<path location="${build}" />
-			<fileset dir="lib/endorsed" includes="*.jar" />
+			<fileset dir="lib/module/ooxmlsigner" includes="*.jar" />
 		</path>
 
 		<taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" classpathref="ooxmlsigner.build.classpath" />
@@ -15,7 +15,6 @@
 
 		<javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
 			<classpath refid="ooxmlsigner.build.classpath" />
-			<compilerarg value="-Djava.endorsed.dirs=lib/endorsed" />
 			<src path="${src.java}" />
 			<include name="org/signserver/module/ooxmlsigner/*.java" />
 		</javac>
@@ -37,21 +36,6 @@
 			</part>
 		</mar>
 
-		<copy todir="${appserver.home}/lib/endorsed">
-			<fileset dir="${lib}/endorsed">
-				<include name="*.jar" />
-			</fileset>
-			<fileset dir="${lib}/module/wsra">
-				<include name="dom4j.jar" />
-			</fileset>
-			<fileset dir="${lib}">
-				<include name="log4j.jar" />
-			</fileset>
-			<fileset dir="${appserver.home}/lib">
-				<include name="commons-logging.jar" />
-			</fileset>
-		</copy>
-
-	</target>
+			</target>
 
 </project>

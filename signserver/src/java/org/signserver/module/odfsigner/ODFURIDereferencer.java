@@ -13,6 +13,7 @@
 
 package org.signserver.module.odfsigner;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
@@ -23,7 +24,6 @@ import javax.xml.crypto.URIReference;
 import javax.xml.crypto.URIReferenceException;
 import javax.xml.crypto.XMLCryptoContext;
 
-import org.apache.xml.security.signature.XMLSignatureInput;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 
 /**
@@ -65,11 +65,9 @@ public class ODFURIDereferencer implements URIDereferencer {
 				bos.write(buff, 0, count);
 			}
 
-			XMLSignatureInput retXMLSigInput = new XMLSignatureInput(bos
-					.toByteArray());
+			ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
 
-			OctetStreamData retData = new OctetStreamData(
-					retXMLSigInput.getOctetStream(), retXMLSigInput.getSourceURI(), retXMLSigInput.getMIMEType());
+			OctetStreamData retData = new OctetStreamData(bis);
 
 			return retData;
 

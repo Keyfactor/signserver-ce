@@ -1,19 +1,20 @@
 package org.openxml4j.signaturehelpers;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Iterator;
 
 import javax.xml.crypto.Data;
+import javax.xml.crypto.NodeSetData;
+import javax.xml.crypto.OctetStreamData;
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.URIReference;
 import javax.xml.crypto.URIReferenceException;
 import javax.xml.crypto.XMLCryptoContext;
 
-import org.apache.xml.security.signature.XMLSignatureInput;
 import org.dom4j.Document;
 import org.dom4j.io.DOMWriter;
 import org.dom4j.io.SAXReader;
-import org.jcp.xml.dsig.internal.dom.ApacheNodeSetData;
-import org.jcp.xml.dsig.internal.dom.ApacheOctetStreamData;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagingURIHelper;
@@ -42,9 +43,9 @@ public class OPCURIDereferencer implements URIDereferencer {
 			return defaultURIDereferencer.dereference(arg0, arg1);
 		}
 
-		//remove ?ContenType=type_def from URI
+		// remove ?ContenType=type_def from URI
 		String partName = arg0.getURI().toString().split("\\?")[0];
-		
+
 		// open part for reading
 		SAXReader docReader = new SAXReader();
 		PackagePart part;
@@ -60,27 +61,20 @@ public class OPCURIDereferencer implements URIDereferencer {
 
 				// construct return data from doc4j document
 				org.dom4j.io.DOMWriter dw = new DOMWriter();
-				org.w3c.dom.Document docRes = dw.write(doc4jRet);
+				final org.w3c.dom.Document docRes = dw.write(doc4jRet);
 
-				XMLSignatureInput retXMLSigInput = new XMLSignatureInput(
-						docRes);
-				ApacheNodeSetData retData = new ApacheNodeSetData(
-						retXMLSigInput);
+				return new NodeSetData() {
+					public Iterator iterator() {
+						return Collections.singletonList(docRes).iterator();
 
-				return retData;
+					}
+				};
+
 			} else {
 				// if it is package part we are dereferencing then it should be
 				// dereferenced as octetstream
-				byte[] partContent = new byte[is.available()];
-				is.read(partContent, 0, partContent.length);
-
-				XMLSignatureInput retXMLSigInput = new XMLSignatureInput(
-						partContent);
+				return new OctetStreamData(is);
 				
-				ApacheOctetStreamData retData = new ApacheOctetStreamData(
-						retXMLSigInput);
-
-				return retData;
 			}
 
 		} catch (Exception e) {

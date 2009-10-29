@@ -3,18 +3,19 @@ package org.openxml4j.signaturehelpers;
 import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.Collections;
+import java.util.Iterator;
 
 import javax.xml.crypto.Data;
 import javax.xml.crypto.MarshalException;
+import javax.xml.crypto.NodeSetData;
 import javax.xml.crypto.XMLCryptoContext;
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dsig.TransformException;
 import javax.xml.crypto.dsig.TransformService;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
-import org.apache.xml.security.signature.XMLSignatureInput;
 import org.dom4j.io.DOMWriter;
-import org.jcp.xml.dsig.internal.dom.ApacheNodeSetData;
 import org.jcp.xml.dsig.internal.dom.DOMUtils;
 import org.openxml4j.opc.PackageNamespaces;
 import org.w3c.dom.Document;
@@ -108,7 +109,7 @@ public class RelationshipTransformService extends TransformService {
 	public Data transform(Data arg0, XMLCryptoContext arg1)
 			throws TransformException {
 		// implement the relationship transform
-		ApacheNodeSetData inData = (ApacheNodeSetData) arg0;
+		NodeSetData inData = (NodeSetData) arg0;
 
 		return transformIt(inData);
 	}
@@ -117,16 +118,15 @@ public class RelationshipTransformService extends TransformService {
 	public Data transform(Data arg0, XMLCryptoContext arg1, OutputStream arg2)
 			throws TransformException {
 		// implement the relationship transform
-		ApacheNodeSetData inData = (ApacheNodeSetData) arg0;
+		NodeSetData inData = (NodeSetData) arg0;
 
 		return transformIt(inData);
 	}
 
-	private Data transformIt(ApacheNodeSetData inData)
+	private Data transformIt(NodeSetData inData)
 			throws TransformException {
 		// get relationships node
-		org.w3c.dom.Node relationshipsNode = inData.getXMLSignatureInput()
-				.getSubNode().getFirstChild();
+		org.w3c.dom.Node relationshipsNode = ((Document)inData.iterator().next()).getFirstChild();
 
 		// convert relationships node to dom4j document
 		DOMReader2 dr = new DOMReader2();
@@ -139,14 +139,14 @@ public class RelationshipTransformService extends TransformService {
 
 			//convert transformed doc4j document to dom document
 			org.dom4j.io.DOMWriter dw = new DOMWriter();
-			org.w3c.dom.Document docRes = dw.write(doc4jRet);
+			final org.w3c.dom.Document docRes = dw.write(doc4jRet);
 			
-			//construct return data from transformed document
-			XMLSignatureInput retXMLSigInput = new XMLSignatureInput(
-					docRes);
-			ApacheNodeSetData retData = new ApacheNodeSetData(retXMLSigInput);
-			
-			return retData;
+			return new NodeSetData() {
+				public Iterator iterator() {
+					return Collections.singletonList(docRes).iterator();
+
+				}
+			};
 
 		} catch (Exception e) {
 			throw new TransformException(e);

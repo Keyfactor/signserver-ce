@@ -3,8 +3,6 @@ package org.openxml4j.signaturehelpers;
 import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.spec.AlgorithmParameterSpec;
-import java.util.Collections;
-import java.util.Iterator;
 
 import javax.xml.crypto.Data;
 import javax.xml.crypto.MarshalException;
@@ -20,7 +18,6 @@ import org.jcp.xml.dsig.internal.dom.DOMUtils;
 import org.openxml4j.opc.PackageNamespaces;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 
 /*
  * transform service that implements OOXML relationship transform as per ECMA376-2
@@ -66,7 +63,7 @@ public class RelationshipTransformService extends TransformService {
 		if (parent == null) {
 			throw new NullPointerException();
 		}
-				
+
 		transformElem = (Element) ((javax.xml.crypto.dom.DOMStructure) parent)
 				.getNode();
 		ownerDoc = DOMUtils.getOwnerDocument(transformElem);
@@ -74,7 +71,7 @@ public class RelationshipTransformService extends TransformService {
 		// for each relationshipId add relationship reference element
 		if (params != null && params.getRelationShipIdsToInclude() != null) {
 			for (String s : params.getRelationShipIdsToInclude()) {
-				
+
 				Element relationshipRef = DOMUtils
 						.createElement(
 								ownerDoc,
@@ -85,10 +82,11 @@ public class RelationshipTransformService extends TransformService {
 								relationshipRef,
 								RelationshipTransformService.RELATIONSHIP_REFERENCE_SOURCE_ID_ATTR_NAME,
 								s);
-				
-				//explicitly add namespace so it is not omitted during c18n
-				relationshipRef.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:mdssi", PackageNamespaces.DIGITAL_SIGNATURE);
-				
+
+				// explicitly add namespace so it is not omitted during c18n
+				relationshipRef.setAttributeNS("http://www.w3.org/2000/xmlns/",
+						"xmlns:mdssi", PackageNamespaces.DIGITAL_SIGNATURE);
+
 				transformElem.appendChild(relationshipRef);
 
 			}
@@ -123,30 +121,27 @@ public class RelationshipTransformService extends TransformService {
 		return transformIt(inData);
 	}
 
-	private Data transformIt(NodeSetData inData)
-			throws TransformException {
+	private Data transformIt(NodeSetData inData) throws TransformException {
 		// get relationships node
-		org.w3c.dom.Node relationshipsNode = ((Document)inData.iterator().next()).getFirstChild();
+
+		org.w3c.dom.Node relationshipsNode = ((OX4JNodeSetData) inData)
+				.getRootNode().getFirstChild();
 
 		// convert relationships node to dom4j document
 		DOMReader2 dr = new DOMReader2();
 		org.dom4j.Document doc4j = dr.read(relationshipsNode);
 		org.dom4j.Document doc4jRet = null;
 		try {
-			//perform transform on dom4j document
+			// perform transform on dom4j document
 			doc4jRet = RelationshipTransform.DoRelationshipTransform(doc4j,
 					params.getRelationShipIdsToInclude());
 
-			//convert transformed doc4j document to dom document
+			// convert transformed doc4j document to dom document
 			org.dom4j.io.DOMWriter dw = new DOMWriter();
 			final org.w3c.dom.Document docRes = dw.write(doc4jRet);
-			
-			return new NodeSetData() {
-				public Iterator iterator() {
-					return Collections.singletonList(docRes).iterator();
 
-				}
-			};
+			OX4JNodeSetData opcNodeSet = new OX4JNodeSetData(docRes);
+			return opcNodeSet;
 
 		} catch (Exception e) {
 			throw new TransformException(e);

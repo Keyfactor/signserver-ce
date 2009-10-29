@@ -1,11 +1,8 @@
 package org.openxml4j.signaturehelpers;
 
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Iterator;
 
 import javax.xml.crypto.Data;
-import javax.xml.crypto.NodeSetData;
 import javax.xml.crypto.OctetStreamData;
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.URIReference;
@@ -37,6 +34,7 @@ public class OPCURIDereferencer implements URIDereferencer {
 	public Data dereference(URIReference arg0, XMLCryptoContext arg1)
 			throws URIReferenceException {
 
+		System.out.println("trying dereferencing + " + arg0.getURI());
 		// if the URI to be dereferenced does not start with '/' character then
 		// it is not the package part [M1.4]
 		if (!arg0.getURI().startsWith("/")) {
@@ -63,18 +61,14 @@ public class OPCURIDereferencer implements URIDereferencer {
 				org.dom4j.io.DOMWriter dw = new DOMWriter();
 				final org.w3c.dom.Document docRes = dw.write(doc4jRet);
 
-				return new NodeSetData() {
-					public Iterator iterator() {
-						return Collections.singletonList(docRes).iterator();
-
-					}
-				};
+				OX4JNodeSetData opcNodeSet = new OX4JNodeSetData(docRes);
+				return opcNodeSet;
 
 			} else {
 				// if it is package part we are dereferencing then it should be
 				// dereferenced as octetstream
 				return new OctetStreamData(is);
-				
+
 			}
 
 		} catch (Exception e) {

@@ -23,7 +23,6 @@
 <li><a href="http://www.jmrtd.org/">JMRTD</a>, a free implementation of the Machine Readable Travel Document (MRTD) standards as specified by the International Civil Aviation Organization (ICAO).</li>
 <li><a href="http://odftoolkit.org/projects/odfdom">ODFDOM</a>, Library for parsing and manipulating odf documents.</li>
 <li><a href="http://sourceforge.net/projects/openxml4j/">openxml4j</a>, Library for parsing and manipulating open office xml documents.</li>
-<li><a href="http://santuario.apache.org/">XML Security library</a>, Library for digitally signing xml documents</li>
 <li><a href="http://jaxen.codehaus.org/index.html">Jaxen.</a></li>
 
 </ul>

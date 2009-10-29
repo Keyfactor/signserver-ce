@@ -16,7 +16,7 @@
 <li>Lars Silvèn, lars(at)primekey.se, SSL-RMI parts and the possibility to have custom web front end.</li>
 <li>Tomas Gustavsson, tomas(at)primekey.se, PDF Signer, PKCS11 sign token, Improved the TSA client with more arguments, MRTD SOD signer, lots of improvements</li>
 <li>Markus Kil&#229;s, markus(at)primekey.se, Core developer, XML Signer/validator, MRTD SOD signer, lots of improvements.</li>
-<li>Ezizmuhamet Muhammetkuliyev, rayback2(at)gmail.com, OOXML, ODF Signer/validator, improvements to PDF signer, CRL/OCSP validators.</li>
+<li>Ezizmuhammed Muhamedkuliyev, rayback2(at)gmail.com, OOXML, ODF Signer/validator, improvements to PDF signer, CRL/OCSP validators.</li>
 <li>Christophe Sahut, christophe.sahut(at)sgs.com, Install howto for SignServer 3.1 on RHEL systems.</li>
 </ul>
 </section>

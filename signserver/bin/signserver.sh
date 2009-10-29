@@ -128,5 +128,5 @@ if $cygwin; then
   CP=`cygpath --path --windows "$CP"`
 fi
 
-exec "$JAVACMD" -Djava.endorsed.dirs=%SIGNSRV_HOME%\lib\endorsed -cp $CP $class_name "$@"
+exec "$JAVACMD" -cp $CP $class_name "$@"
 

@@ -64,6 +64,7 @@ New extended module for signing ePassports: MRTD-SOD.
                         </li>
                         <li>
 New modules for signing and validating XML documents.
+                        </li>
                         <li>
 A new ODF Signer module that adds signature to ODF documents, such as : odt,ods,odt
 (tested with OpenOffice.org 3.1.0). Simple web page is added where ODF document can be

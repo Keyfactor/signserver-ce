@@ -8,17 +8,15 @@
 <body>
   <section name="Latest News">
     <note>
-        <strong>SignServer 3.1 is now out!</strong><br/>
-        Visit the <a href="download.html">download</a> section.
+        <strong>SignServer 3.1 is now out!</strong> A long awaited release with new exciting features such as signing of XML-, ODF- and OOXML documents.
+        <br/><br/>
+        Visit the <a href="download.html">download</a> section to get SignServer.
     </note>
    </section>
 
 <section name="What is SignServer?">
 <p>
 SignServer is an application framework performing cryptographic operations  for other applications. It's intended to be used in environments where keys are supposed to be protected in hardware but there isn't possible to connect such hardware to existing enterprise applications or where the operations are considered extra sensitive so the hardware have to protected more carefully. Another usage is to provide a simplified method to provide signatures in different application managed from one location in the company.
-</p>
-<p>
-From version 3.0 there also exists a mail signer framework that can be used to perform cryptographic operation on emails. 
 </p>
 <p> 
 SignServer have ready to use:

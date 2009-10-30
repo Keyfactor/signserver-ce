@@ -58,16 +58,7 @@ public class ODFURIDereferencer implements URIDereferencer {
 		try {
 			// return part content as octet stream data
 			InputStream is = odfDoc.getPackage().getInputStream(partPath);
-			int count = 0;
-			byte[] buff = new byte[1024];
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			while ((count = is.read(buff, 0, buff.length)) > 0) {
-				bos.write(buff, 0, count);
-			}
-
-			ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-
-			OctetStreamData retData = new OctetStreamData(bis);
+			OctetStreamData retData = new OctetStreamData(is);
 
 			return retData;
 

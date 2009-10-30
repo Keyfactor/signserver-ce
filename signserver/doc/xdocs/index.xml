@@ -19,7 +19,7 @@
 SignServer is an application framework performing cryptographic operations  for other applications. It's intended to be used in environments where keys are supposed to be protected in hardware but there isn't possible to connect such hardware to existing enterprise applications or where the operations are considered extra sensitive so the hardware have to protected more carefully. Another usage is to provide a simplified method to provide signatures in different application managed from one location in the company.
 </p>
 <p> 
-SignServer have ready to use:
+SignServer has ready to use:
 <ul>
 <li>TimeStamp Authority (RFC 3161 compliant)</li>
 <li>Signers for different documents: PDF, XML, ODF, OOXML, MRTD (ePassport)</li>
@@ -30,7 +30,7 @@ SignServer have ready to use:
 </ul> 
 </p>
 <p>
-The SignServer have been designed for high-availability and can be clustered for maximum reliability.
+SignServer has been designed for high-availability and can be clustered for maximum reliability.
 </p>
 <p>
 Different kinds of sign tokens exist:
@@ -66,7 +66,7 @@ This software is OSI Certified Open Source Software.
 OSI Certified is a certification mark of the Open Source Initiative.
 </p>
 <p>
-The source code of the SignServer is hosted on <a href="http://www.sf.net/">SourceForge.net</a> and all downloads include the complete source code.
+The source code of SignServer is hosted on <a href="http://www.sf.net/">SourceForge.net</a> and all downloads include the complete source code.
 </p>
 </section>
 

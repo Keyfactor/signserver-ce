@@ -174,8 +174,20 @@
       
         <li><div class="menuheader">Used Services</div>
           <p>
-                <a href="http://sourceforge.net/">
+                <a href="http://sourceforge.net/" target="sourceforge">
                 <img style="border:none; margin-left:20px" src="http://sourceforge.net/sflogo.php?group_id=39716&amp;type=12" alt="Hosted on SourceForge"/>
+                </a>
+          </p>
+        </li>
+        <li><div class="menuheader">PKI by PrimeKey</div>
+          <p>
+                <a href="http://www.primekey.se/Products/EJBCA+PKI/" target="ejbca">
+                <img style="border:none; margin-left:20px" src="./images/ejbca_pki_by_primekey.png" alt="EJBCA PKI by PrimeKey"/>
+                </a>
+          </p>
+          <p>
+                <a href="http://www.primekey.se/" target="primekey">
+                <img style="border:none; margin-left:20px" src="./images/logo-PrimeKey.png" alt="PKI by PrimeKey"/>
                 </a>
           </p>
         </li>
@@ -203,7 +215,7 @@
       <div class="logobar">
           <table width="100%">
             <tr>
-                <td><a href="http://www.signserver.org/"><img src="$relativePath/images/signserver.gif" alt="SignServer" width="212" height="71" style="border:none"/></a></td>
+                <td><a href="http://www.signserver.org/"><img src="$relativePath/images/SignServer_pki_by_primekey.png" alt="SignServer" width="212" height="71" style="border:none"/></a></td>
                 <td style="text-align:right">
                     <div class="searchcaption">
                             Search signserver.org for:<br />

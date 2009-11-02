@@ -16,6 +16,7 @@ It will let you quickly get a feeling how the structure of the SignServer works,
 </p>
 <p>
 This quick start guide assumes you are using JBoss and are running everything on localhost.
+</p>
 <ol>
 <li>Make sure you are using Sun JDK 1.6.0_04 or later. 04 is needed for using JAX-WS 2.1 that is used for WebServices. 
 <br/>It is possible to use 03 or earlier by disabling WebServices. This is described below. 
@@ -58,6 +59,7 @@ This quick start guide assumes you are using JBoss and are running everything on
 <br/>The message "TimeStampRequest Validated" should appear once a second. Also check JBOSS_HOME/server/default/log/server.log that successful messages appear.
 </li>
 </ol>
+<p>
 If you run into problems at any stage after JBoss has been started, check the JBoss server log in $JBOSS_HOME/server/default/log/server.log for
 error messages. Usually errors like database connection problems, or wrong path to the timestamp keystore will be clearly visible.
 </p>
@@ -65,6 +67,7 @@ error messages. Usually errors like database connection problems, or wrong path 
 <subsection name="PDF signer">
 <p>
 To install the PDF signer you can issue the following commands (either instead of the TSA or in addition to the TSA).
+</p>
 <ol>
 <li>Deploy the PDF signer demo module and notice the worker ID (in this example: 2):
 <br/># bin/signserver.sh module add dist-server/pdfsigner.mar demo</li>
@@ -75,6 +78,7 @@ To install the PDF signer you can issue the following commands (either instead o
 <br/># bin/signserver.sh reload 2
 </li>
 </ol>
+<p>
 You can now, with your web browser, access the url <a href="http://127.0.0.1:8080/signserver/pdfsign.html">http://127.0.0.1:8080/signserver/pdfsign.html</a> to get PDF documents signed. 
 </p>
 </subsection>
@@ -82,6 +86,7 @@ You can now, with your web browser, access the url <a href="http://127.0.0.1:808
 <subsection name="OOXML signer">
 <p>
 To install the OOXML signer you can issue the following commands
+</p>
 <ol>
 <li>Deploy the OOXML signer demo module and notice the worker ID (in this example: 3):
 <br/># bin/signserver.sh module add dist-server/ooxmlsigner.mar demo</li>
@@ -92,6 +97,7 @@ To install the OOXML signer you can issue the following commands
 <br/># bin/signserver.sh reload 3
 </li>
 </ol>
+<p>
 You can now, with your web browser, access the url <a href="http://127.0.0.1:8080/signserver/ooxmlsign.html">http://127.0.0.1:8080/signserver/ooxmlsign.html</a> to get any Open Office XML documents signed (ex: MS Office 2007 word document, excel document, power point presentation...). 
 </p>
 </subsection>
@@ -99,6 +105,7 @@ You can now, with your web browser, access the url <a href="http://127.0.0.1:808
 <subsection name="ODF signer">
 <p>
 To install the ODF signer you can issue the following commands
+</p>
 <ol>
 <li>Deploy the ODF signer demo module and notice the worker ID (in this example: 4):
 <br/># bin/signserver.sh module add dist-server/odfsigner.mar demo</li>
@@ -109,6 +116,7 @@ To install the ODF signer you can issue the following commands
 <br/># bin/signserver.sh reload 4
 </li>
 </ol>
+<p>
 You can now, with your web browser, access the url <a href="http://127.0.0.1:8080/signserver/odfsigner.html">http://127.0.0.1:8080/signserver/odfsigner.html</a> to get any Open Document Format documents signed (ex: word or spreadsheet document produced with Open Office 3.1). 
 </p>
 </subsection>
@@ -117,6 +125,7 @@ You can now, with your web browser, access the url <a href="http://127.0.0.1:808
 <subsection name="XML signer">
 <p>
 To install the XML signer you can issue the following commands (either instead of the TSA or in addition to the TSA):
+</p>
 <ol>
 <li>Deploy the XML signer module and notice the worker ID (in this example: 1):<br/>
 <code># bin/signserver.sh module add dist-server/xmlsigner.mar demo</code>
@@ -135,6 +144,7 @@ To install the XML signer you can issue the following commands (either instead o
 <br/>
 </li>
 </ol>
+<p>
 You can now, with your web browser, access the url <a href="http://127.0.0.1:8080/signserver/xmlsign.html">http://127.0.0.1:8080/signserver/xmlsign.html</a> to get XML documents signed. 
 </p>
 </subsection>
@@ -167,6 +177,7 @@ To install a certificate validation service worker issue the following commands:
 </ol>
 <p> 
 Then to install the XML validator you can issue the following commands:
+</p>
 <ol>
 <li>Deploy the XML signer module and notice the worker ID (in this example: 3):<br/>
 <code># bin/signserver.sh module add dist-server/xmlvalidator.mar demo</code>
@@ -185,6 +196,7 @@ Then to install the XML validator you can issue the following commands:
 <br/>
 </li>
 </ol>
+<p>
 Now <a href="api.html">the SignServer APIs</a> can be used to request XML documents to be validated by the DemoXMLValidator worker.  
 </p>
 </subsection>
@@ -195,6 +207,7 @@ The MRTD SOD signer takes as input data group hashes and creates a signed SO(d).
 as a Document Signer for ePassports.</p>
 <p>
 To install the MRTD SOD signer you can issue the following commands:
+</p>
 <ol>
 <li>Deploy the MRTD SOD signer module and notice the worker ID (in this example: 4):<br/>
 <code># bin/signserver.sh module add dist-server/mrtdsodsigner.mar demo</code>
@@ -213,6 +226,7 @@ To install the MRTD SOD signer you can issue the following commands:
 <br/>
 </li>
 </ol>
+<p>
 Now <a href="api.html">the SignServer APIs</a> can be used to send MRTD SOD sign requests the MRTDSODSigner.
 <br/>
 Also you can use the HTML page http://&lt;signserverhost>:8080/signserver/mrtdsodsign.html to enter requests and get the SOD back.

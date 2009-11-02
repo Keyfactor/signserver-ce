@@ -20,6 +20,7 @@ SignServer is an application framework performing cryptographic operations  for 
 </p>
 <p> 
 SignServer has ready to use:
+</p>
 <ul>
 <li>TimeStamp Authority (RFC 3161 compliant)</li>
 <li>Signers for different documents: PDF, XML, ODF, OOXML, MRTD (ePassport)</li>
@@ -28,22 +29,22 @@ SignServer has ready to use:
 <li>Group Key Service Framework</li>
 <li>Simple Mail Signer</li>
 </ul> 
-</p>
 <p>
 SignServer has been designed for high-availability and can be clustered for maximum reliability.
 </p>
 <p>
 Different kinds of sign tokens exist:
+</p>
 <ul>
 <li>Soft token using PKCS12 files.</li>
 <li>PKCS#11 HSM tokens, such as the Utimaco CryptoServer, SafeNet ProtectServer, nCipher nShield or AEP KeyPer.</li>
 <li>PrimeCardHSM using smart cards.</li>
 </ul>
-</p>
 </section>
 <section name="What's new in SignServer 3.1?">
 <p>
 Some of the new features in version 3.1 are:
+</p>
 <ul>
 <li>A new module system where the bytecode for a worker can
 be package as a separate module that can be loaded and unloaded at runtime</li>
@@ -54,7 +55,6 @@ be package as a separate module that can be loaded and unloaded at runtime</li>
 <li>OCSPValidator</li>
 <li>MRTDSODSigner</li>
 </ul>
-</p>
 <p>
 More information can be found in the <a href="manual.html">manual</a> or in the
 <a href="http://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel">changelog</a>.

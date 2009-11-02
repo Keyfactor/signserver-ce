@@ -14,15 +14,15 @@
         <subsection name="Chapter by Chapter">
             <p>
                 Browse the manual by chapter:<br/>
-                <ul>
-                   <li>Introduction [<a href="manual/introduction.html">HTML</a><!-- | <a href="manual/introduction.pdf">PDF</a>-->]</li>
-                   <li>Usage Guide [<a href="manual/usageguide.html">HTML</a><!-- | <a href="manual/usageguide.pdf">PDF</a>-->]</li>
-                   <li>Integration [<a href="manual/integration.html">HTML</a><!-- | <a href="manual/integration.pdf">PDF</a>-->]</li>
-                   <li>Plugins [<a href="manual/plugins.html">HTML</a><!-- | <a href="manual/plugins.pdf">PDF</a>-->]</li>
-                   <li>Development [<a href="manual/development.html">HTML</a><!-- | <a href="manual/development.pdf">PDF</a>-->]</li>
-                   <li>Miscellaneous [<a href="manual/misc.html">HTML</a><!-- | <a href="manual/misc.pdf">PDF</a>-->]</li>
-                </ul>
             </p>
+            <ul>
+               <li>Introduction [<a href="manual/introduction.html">HTML</a><!-- | <a href="manual/introduction.pdf">PDF</a>-->]</li>
+               <li>Usage Guide [<a href="manual/usageguide.html">HTML</a><!-- | <a href="manual/usageguide.pdf">PDF</a>-->]</li>
+               <li>Integration [<a href="manual/integration.html">HTML</a><!-- | <a href="manual/integration.pdf">PDF</a>-->]</li>
+               <li>Plugins [<a href="manual/plugins.html">HTML</a><!-- | <a href="manual/plugins.pdf">PDF</a>-->]</li>
+               <li>Development [<a href="manual/development.html">HTML</a><!-- | <a href="manual/development.pdf">PDF</a>-->]</li>
+               <li>Miscellaneous [<a href="manual/misc.html">HTML</a><!-- | <a href="manual/misc.pdf">PDF</a>-->]</li>
+            </ul>
         </subsection>
     </section>
     <section name="Previous SignServer Manuals">

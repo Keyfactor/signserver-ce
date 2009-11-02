@@ -9,7 +9,6 @@
 <p>
  Software that the SignServer uses library of and couldn't have been created without them:
 </p>
-<p>
 <ul>
 <li><a href="http://james.apache.org">JAMES SMTP Server</a>, The great mail server the MailSigner is built on top of.</li>
 <li><a href="http://www.bouncycastle.org">Bouncy Castle</a>, An excellent cryptographic Java library.</li>
@@ -26,7 +25,6 @@
 <li><a href="http://jaxen.codehaus.org/index.html">Jaxen.</a></li>
 
 </ul>
-</p>
 
 </section>
   </body>

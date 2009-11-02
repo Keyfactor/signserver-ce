@@ -173,7 +173,7 @@
       #end
       
         <li><div class="menuheader">Used Services</div>
-          <p>
+          <p><br/>
                 <a href="http://sourceforge.net/" target="sourceforge">
                 <img style="border:none; margin-left:20px" src="http://sourceforge.net/sflogo.php?group_id=39716&amp;type=12" alt="Hosted on SourceForge"/>
                 </a>
@@ -181,6 +181,7 @@
         </li>
         <li><div class="menuheader">PKI by PrimeKey</div>
           <p>
+          <br/>
                 <a href="http://www.primekey.se/Products/EJBCA+PKI/" target="ejbca">
                 <img style="border:none; margin-left:20px" src="$relativePath/images/ejbca_pki_by_primekey.png" alt="EJBCA PKI by PrimeKey"/>
                 </a>

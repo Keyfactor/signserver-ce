@@ -174,9 +174,7 @@
       
         <li><div class="menuheader">Used Services</div>
           <p><br/>
-                <a href="http://sourceforge.net/" target="sourceforge">
-                <img style="border:none; margin-left:20px" src="http://sourceforge.net/sflogo.php?group_id=39716&amp;type=12" alt="Hosted on SourceForge"/>
-                </a>
+          <a href="http://sourceforge.net/projects/signserver"><img style="border:none; margin-left:20px" src="http://sflogo.sourceforge.net/sflogo.php?group_id=190195&amp;type=13" width="120" height="30" alt="Get SignServer at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
           </p>
         </li>
         <li><div class="menuheader">PKI by PrimeKey</div>

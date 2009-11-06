@@ -94,6 +94,9 @@ public class SODFile extends PassportFile
 	private static final DERObjectIdentifier PKCS1_SHA384_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.12");
 	private static final DERObjectIdentifier PKCS1_SHA512_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.13");
 	private static final DERObjectIdentifier PKCS1_SHA224_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.14");
+	private static final DERObjectIdentifier X9_SHA1_WITH_ECDSA_OID = new DERObjectIdentifier("1.2.840.10045.4.1");
+	private static final DERObjectIdentifier X9_SHA224_WITH_ECDSA_OID = new DERObjectIdentifier("1.2.840.10045.4.3.1");
+	private static final DERObjectIdentifier X9_SHA256_WITH_ECDSA_OID = new DERObjectIdentifier("1.2.840.10045.4.3.2");
 
 	private SignedData signedData;
 
@@ -657,6 +660,9 @@ public class SODFile extends PassportFile
 		if (oid.equals(PKCS1_SHA384_WITH_RSA_OID)) { return "SHA384withRSA"; }
 		if (oid.equals(PKCS1_SHA512_WITH_RSA_OID)) { return "SHA512withRSA"; }
 		if (oid.equals(PKCS1_SHA224_WITH_RSA_OID)) { return "SHA224withRSA"; }
+		if (oid.equals(X9_SHA1_WITH_ECDSA_OID)) { return "SHA1withECDSA"; }
+		if (oid.equals(X9_SHA224_WITH_ECDSA_OID)) { return "SHA224withECDSA"; }
+		if (oid.equals(X9_SHA256_WITH_ECDSA_OID)) { return "SHA256withECDSA"; }
 		throw new NoSuchAlgorithmException("Unknown OID " + oid);
 	}
 
@@ -672,10 +678,13 @@ public class SODFile extends PassportFile
 		if(name.equals("SHA256")) { return NISTObjectIdentifiers.id_sha256; }
 		if(name.equals("SHA384")) { return NISTObjectIdentifiers.id_sha384; }
 		if(name.equals("SHA512")) { return NISTObjectIdentifiers.id_sha512; }
-		if (name.equals("SHA256withRSA")) { return PKCS1_SHA256_WITH_RSA_OID; }
-		if (name.equals("SHA384withRSA")) { return PKCS1_SHA384_WITH_RSA_OID; }
-		if (name.equals("SHA512withRSA")) { return PKCS1_SHA512_WITH_RSA_OID; }
-		if (name.equals("SHA224withRSA")) { return PKCS1_SHA224_WITH_RSA_OID; }
+		if (name.equalsIgnoreCase("SHA256withRSA")) { return PKCS1_SHA256_WITH_RSA_OID; }
+		if (name.equalsIgnoreCase("SHA384withRSA")) { return PKCS1_SHA384_WITH_RSA_OID; }
+		if (name.equalsIgnoreCase("SHA512withRSA")) { return PKCS1_SHA512_WITH_RSA_OID; }
+		if (name.equalsIgnoreCase("SHA224withRSA")) { return PKCS1_SHA224_WITH_RSA_OID; }
+		if (name.equalsIgnoreCase("SHA1withECDSA")) { return X9_SHA1_WITH_ECDSA_OID; }
+		if (name.equalsIgnoreCase("SHA224withECDSA")) { return X9_SHA224_WITH_ECDSA_OID; }
+		if (name.equalsIgnoreCase("SHA256withECDSA")) { return X9_SHA256_WITH_ECDSA_OID; }
 		throw new NoSuchAlgorithmException("Unknown OID " + name);
 	}
 }

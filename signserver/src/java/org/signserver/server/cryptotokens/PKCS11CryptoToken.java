@@ -53,7 +53,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken{
 		String signaturealgoritm = props.getProperty(WorkerConfig.SIGNERPROPERTY_SIGNATUREALGORITHM);
 		props = fixUpProperties(props);
 		try { 
-			((PKCS11CAToken)catoken).init(props, null, signaturealgoritm);	
+			((PKCS11CAToken)catoken).init(props, null, signaturealgoritm, workerId);	
 		} catch(Exception e) {
 			log.error("Error initializing PKCS11CryptoToken : " + e.getMessage(),e);
 		}

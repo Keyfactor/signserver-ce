@@ -58,7 +58,7 @@ public class PrimeCardHSMCryptoToken extends CryptoTokenBase implements ICryptoT
 		String signaturealgoritm = props.getProperty(WorkerConfig.SIGNERPROPERTY_SIGNATUREALGORITHM);
 		props = fixUpProperties(props);
 		try {
-			((ICAToken)catoken).init(props, null, signaturealgoritm);
+			((ICAToken)catoken).init(props, null, signaturealgoritm, workerId);
 		} catch (Exception e1) {
 			log.error("Error initializing PrimeCardHSM",e1);
 		}	

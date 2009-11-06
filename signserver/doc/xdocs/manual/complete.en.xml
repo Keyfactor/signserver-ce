@@ -187,13 +187,17 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>Mail Processor</td><td>A plug-in used for the mail signer to perform automated cryptographic operations on e-mails sent through the mail server. This could for instance be the Simple Mail Signer for attaching a SMIME signature to all mails.</td>
                     </tr><tr><td>Validation Service </td><td>A Processable that checks if a certificate is valid or not. Have a Default Validation Service implementation that should work in most cases.<br/>A Validation Service should have one or more Validators configured.</td>
                     </tr><tr><td>Group Key Service</td><td>A Processable that can be used to manage, generate and distribute group keys to a set of clients. The service support four types of calls, fetch group key (used by clients), pre-generate group keys, switch encryption key (key used to safely store the group keys in database) and remove group keys.  There exists a Default Group Key Service that should satisfy most use cases.</td>
-                    </tr><tr><td>Validator</td><td>A Validator is responsible for checking the status of one or more issuer's certificates. This could be as a OCSP client or a CRL checker or just looking up the status in a database.</td>
+                    </tr><tr><td>Certificate Validator (former Validator)</td><td>A Certificate Validator is responsible for checking the status of one or more issuer's certificates. This could be as an OCSP client or a CRL checker or just looking up the status in a database.</td>
+                    </tr><tr><td>Document Validator</td><td>A Document Validator is validating a signed document by checking its signature and corresponding certificate(s) and returns the validation result.</td>
                     </tr><tr><td>Authorizer</td><td>An interface that enables developers to integrate the authorization parts with existing authorization systems of who is authorized to perform requests to a Processable.</td>
                     </tr><tr><td>Time Stamp Signer</td><td>A Signer that can be used to set up a Timestamp Authority according to RFC 3161. </td>
                     </tr><tr><td>MRTD Signer</td><td>A Signer that performs signatures of MRTD (Machine Readable Travel Documents, i.e. Electronic Passports) blobs.</td>
+                    </tr><tr><td>MRTD SOD Signer</td><td>A Signer that creates the complete security object (SOd) for a MRTD (Machine Readable Travel Document, i.e. Electronic Passports) by signing the data groups.</td>
                     </tr><tr><td>PDF Signer</td><td>A Signer that attaches an electronic signature signature to a PDF document.</td>
+                    </tr><tr><td>XML Signer</td><td>A Signer that puts in an enveloped signature in XML documents (XMLDSig)</td>
+                    </tr><tr><td>XML Validator</td><td>A Document Validator that validates signed XML documents (XMLDSig)</td>
                     </tr><tr><td>ODF Signer</td><td>A Signer that attaches an electronic signature to an ODF document. ODF Signer is tested with documents produced by <a href="http://www.openoffice.org">OpenOffice.org v 3.1.0</a></td>
-                    </tr><tr><td>ODF (Open Document Format ) Document</td><td>XML-based file format for representing electronic documents such as spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/OpenDocument">more...</a></td>
+                    </tr><tr><td>ODF (Open Document Format) Document</td><td>XML-based file format for representing electronic documents such as spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/OpenDocument">more...</a></td>
                     </tr><tr><td>OOXML (Office Open XML) Document</td><td>XML-based file format  for representing spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/Office_Open_XML">more...</a></td>
                     </tr><tr><td>OOXML Signer</td><td>A Signer that attaches an electronic signature to an OOXML document.</td>
                     </tr><tr><td>Simple Mail Signer</td><td>A Mail Processor that envelopes authorized mails with a SMIME signature.</td>
@@ -268,7 +272,7 @@ time-stamp requests over plain HTTP.
                     </p>
                     <subsubsection name="Required Software">
                         <ul>
-                            <li>Java 1.6 (or 1.5) (http://java.sun.com)</li>
+                            <li>Sun JDK 6 Update 10 or later (http://java.sun.com)</li>
                             <li>JBoss-4.2.3.GA (http://www.jboss.org)</li>
                             <li>Apache ant version 1.7 (http://ant.apache.org)</li>
                             <li>SignServer-3.1 (http://www.signserver.org)</li>
@@ -379,7 +383,7 @@ This section will do a fast and minimal configuration of a Mail Signer that will
                     </p>
                     <subsubsection name="Required Software">
                         <ul>
-                            <li>Java 1.6 (or 1.5) (http://java.sun.com)</li>
+                            <li>Sun JDK 6 Update 10 or later (http://java.sun.com)</li>
                             <li>Ant version 1.7 (http://ant.apache.org)</li>
                             <li>SignServer-3.0 (http://www.signserver.org)</li>
                             <li>1 mail signing key-store in PKCS12 format (The key store should have a RFC822Name that matches the sender address that will be replaces by the Simple Mail Signer plug-in). There exists one keystore in src/test/mailsigner_test1.p12 with a RFC822Name of mailsigner@someorg.org that can be used for testing.</li>
@@ -453,7 +457,7 @@ The building of the SignServer framework is configured by copying the file signs
                 </p>
                 <p>
 How to set-up a highly available SignServer cluster is described in a separate document called
-SignServer_3_0_Installation_Guide.pdf that can be downloaded from http://www.signserver.org
+<a href="../docs/SignServer_3_0_Installation_Guide.pdf">SignServer_3_0_Installation_Guide.pdf</a> that can be downloaded from <a href="http://www.signserver.org">www.signserver.org</a>
 The document describes how to set it up in a Cent OS 4.4 environment with two service nodes and
 one management node, but should be rather easy to adjust to other platforms.
                 </p>
@@ -740,9 +744,9 @@ The Main WebService using the Java client API manages the HA parts itself and th
                 </subsection>
                 <subsection name="Setting up a MySQL Cluster">
                     <p>
-The database backed of the SignServer can be made redundant using MySQL Cluster. Details on how to set-up the MySQL cluster can be found in the document SignServer_3_Installation_Guide.pdf that can be downloaded from http://www.signserver.org.
+The database backed of the SignServer can be made redundant using MySQL Cluster. Details on how to set-up the MySQL cluster can be found in the document <a href="../docs/SignServer_3_0_Installation_Guide.pdf">SignServer_3_0_Installation_Guide.pdf</a> that can be downloaded from <a href="http://www.signserver.org">www.signserver.org</a>.
 More information about the MySQL Cluster can be found at
-http://www.mysql.com/products/database/cluster/
+<a href="http://www.mysql.com/products/database/cluster/">http://www.mysql.com/products/database/cluster/</a>.
                     </p>
                </subsection>
                <subsection name="MailSigner">
@@ -1273,7 +1277,10 @@ A worker component is configured by entering its class path (and optionally its 
 
             <section name="SignServer Signers">
                 <p>
-There currently exists five types of signers. The first one is the time stamp signer generating RFC 3161 compliant timestamps using the Bouncycastle library. A MRTD signer creating 'Machine Reader Travel Document' signatures using the RSA algorithm from pre-padded data. PDF Signer used for automatically signing requested PDF documents, ODF signer used for automatically signing requested ODF documents, OOXML Signer used for automatically signing requested OOXML documents.
+There exists multiple signers. One is the time stamp signer generating RFC 3161 compliant timestamps using the Bouncycastle library.
+An MRTD signer creating "Machine Reader Travel Document" signatures using the RSA algorithm from pre-padded data and
+another is the MRTD SOD Signer which creates the complete Security Object (SOd) by signing the datagroups for the passport.
+There are also signers for automatically signing of PDF, XML, ODF and OOXML signing requests.
                 </p>
 
                 <subsection name="Time-stamp Signer">
@@ -1553,6 +1560,22 @@ ODF Signer, which stands for Open Document Format Signer is a plug-in to SignSer
                     </subsubsection>
                 </subsection>
 
+                <subsection name="XML Signer">
+                    <subsubsection name="Overview">
+                        <p>
+The XML Signer creates enveloped XML signatures using XMLDSig.
+                        </p>
+                        <p>
+The signed XML document can be validated using the XML Validator.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+This signer has no extra properties above the standard worker properties.
+                        </p>
+                    </subsubsection>
+                </subsection>
+
                 <subsection name="OOXML Signer">
                     <subsubsection name="Overview">
                         <p>
@@ -1569,6 +1592,26 @@ OOXML Signer, which stands for Office Open XML Signer is a plug-in to SignServer
                         <p>
 NOTE : In later versions of OOXML Signer it is planned to add support for visible signatures and custom signature image.
                         </p>
+                    </subsubsection>
+                </subsection>
+            </section>
+
+            <section name="SignServer Document Validators">
+                <p>
+Document Validators checks the signature and the certificate(s) in documents.
+                </p>
+
+                <subsection name="XML Validator">
+
+                    <subsubsection name="Overview">
+                        <p>
+The XML validator validates the signature of XML documents. The certificate is checked by the configured certificate validation service.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p><b>VALIDATIONSERVICEWORKER</b> = Name or id of validation service worker for handling certificate validation</p>
+                        <p><b>RETURNDOCUMENT</b> = True if the response should contain the validated document</p>
+                        <p><b>STRIPSIGNATURE</b> = True if the signature should be removed from the document if it is returned</p>
                     </subsubsection>
                 </subsection>
             </section>

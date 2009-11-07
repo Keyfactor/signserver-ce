@@ -23,7 +23,7 @@ SignServer has ready to use:
 </p>
 <ul>
 <li>TimeStamp Authority (RFC 3161 compliant)</li>
-<li>Signers for different documents: PDF, XML, ODF, OOXML, MRTD (ePassport)</li>
+<li>Signers for different documents: PDF, XML, ODF, OOXML, MRTD (ePassport document signer)</li>
 <li>Validators for documents: XML</li>
 <li>Certificate Validation Service Framework for validating certificates using CRLs or OCSP</li>
 <li>Group Key Service Framework</li>
@@ -53,7 +53,7 @@ be package as a separate module that can be loaded and unloaded at runtime</li>
 <li>OOXMLSigner</li>
 <li>CRLValidator</li>
 <li>OCSPValidator</li>
-<li>MRTDSODSigner</li>
+<li>MRTDSODSigner (ePassport document signer)</li>
 </ul>
 <p>
 More information can be found in the <a href="manual.html">manual</a> or in the

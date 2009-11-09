@@ -1103,7 +1103,7 @@ try {
     byte[] signed;
 
     // Signing
-    GenericSignResponse signResp = signserver.sign("XMLSigner", unsigned);
+    GenericSignResponse signResp = signserver.sign("DemoXMLSigner", unsigned);
     signed = signResp.getProcessedData();
     System.out.println("Signed: " + new String(signed));
 
@@ -1197,8 +1197,8 @@ try {
                             <ul>
                                 <li>
                                     HTTP GET:<br/>
-                                    http://localhost:8080/signserver/process?workerName=XMLSigner&amp;data=%3Croot%3Ehej2%3C/root%3E<br/>
-                                    http://localhost:8080/signserver/process?workerName=XMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D<br/>
+                                    http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;data=%3Croot%3Ehej2%3C/root%3E<br/>
+                                    http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D<br/>
                                     <br/>
                                 </li>
                                 <li>

@@ -18,8 +18,8 @@ It will let you quickly get a feeling how the structure of the SignServer works,
 This quick start guide assumes you are using JBoss and are running everything on localhost.
 </p>
 <ol>
-<li>Make sure you are using Sun JDK 1.6.0_04 or later. 04 is needed for using JAX-WS 2.1 that is used for WebServices. 
-<br/>It is possible to use 03 or earlier by disabling WebServices. This is described below. 
+<li>Make sure you are using Sun JDK 1.6 Update 10 or later. Update 10 is needed for the ODF Signer and atleast update 04 is needed for using JAX-WS 2.1 that is used for WebServices.
+<br/>By disabling WebServices and not using the ODF Signer it is possible to use update 03 or earlier. This is described below.
 </li>
 <li>Unzip JBoss to a new directory and set the APPSRV_HOME environment variable to point to this location. Ex:
 <br/># export APPSRV_HOME=/home/user/jboss-4.2.3
@@ -140,7 +140,7 @@ To install the XML signer you can issue the following commands (either instead o
 <br/>
 </li>
 <li>The status of the Signer can now be viewed with:<br/>
-<code># bin/signserver.sh getstatus complete xmlsigner</code>
+<code># bin/signserver.sh getstatus complete DemoXMLSigner</code>
 <br/>
 </li>
 </ol>
@@ -192,12 +192,12 @@ Then to install the XML validator you can issue the following commands:
 <br/>
 </li>
 <li>The status of the Validator can now be viewed with:<br/>
-<code># bin/signserver.sh getstatus complete demoxmlvalidator</code>
+<code># bin/signserver.sh getstatus complete DemoXMLValidator</code>
 <br/>
 </li>
 </ol>
 <p>
-Now <a href="api.html">the SignServer APIs</a> can be used to request XML documents to be validated by the DemoXMLValidator worker.  
+Now <a href="manual/integration.html">the SignServer APIs</a> can be used to request XML documents to be validated by the DemoXMLValidator worker.
 </p>
 </subsection>
 
@@ -227,7 +227,7 @@ To install the MRTD SOD signer you can issue the following commands:
 </li>
 </ol>
 <p>
-Now <a href="api.html">the SignServer APIs</a> can be used to send MRTD SOD sign requests the MRTDSODSigner.
+Now <a href="manual/integration.html">the SignServer APIs</a> can be used to send MRTD SOD sign requests the MRTDSODSigner.
 <br/>
 Also you can use the HTML page http://&lt;signserverhost>:8080/signserver/mrtdsodsign.html to enter requests and get the SOD back.
 This HTML form functions as a sample to show how you can make http requests from the personalisation system to the Document Signer.  

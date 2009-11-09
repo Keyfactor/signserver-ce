@@ -76,9 +76,9 @@ import org.xml.sax.SAXException;
  */
 public class XMLValidator extends BaseValidator {
 
-	private transient static final Logger log = Logger.getLogger(XMLValidator.class.getName());
+	private static final Logger log = Logger.getLogger(XMLValidator.class.getName());
 	
-	transient static final String PROP_VALIDATIONSERVICEWORKER	= "VALIDATIONSERVICEWORKER";
+	static final String PROP_VALIDATIONSERVICEWORKER    = "VALIDATIONSERVICEWORKER";
         static final String PROP_RETURNDOCUMENT                         = "RETURNDOCUMENT";
         static final String PROP_STRIPSIGNATURE                         = "STRIPSIGNATURE";
 	

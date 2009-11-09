@@ -74,7 +74,11 @@ public class DummyValidator extends BaseValidator {
 	public Validation validate(ICertificate cert)
 			throws IllegalRequestException, CryptoTokenOfflineException,
 			SignServerException {
-		
+
+            if(log.isDebugEnabled()) {
+                log.debug("Validate certificate: " + cert.getSubject());
+            }
+
 		try {
 			Thread.sleep(waitTime);
 		} catch (InterruptedException e) {
@@ -131,7 +135,9 @@ public class DummyValidator extends BaseValidator {
 			return new Validation(cert, getCertificateChain(cert), Validation.Status.VALID, "This certificate is valid");
 		} else if(cert.getSubject().equals("CN=FirstCA,O=EJBCA Testing,C=SE") || cert.getSubject().equals("CN=endentity1,O=EJBCA Testing,C=SE")) {
 			return new Validation(cert, getCertificateChain(cert), Validation.Status.VALID, "This certificate is valid");
-		}
+		} else if(cert.getSubject().equals("CN=pdfsigner,C=SE")) {
+                    return new Validation(cert, getCertificateChain(cert), Validation.Status.VALID, "This certificate is valid");
+                }
 		
 		return null;
 	}

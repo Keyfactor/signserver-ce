@@ -123,7 +123,8 @@ public class TestOOXMLSigner extends TestCase {
 		fos.write((byte[]) data);
 		fos.close();
 
-		//TODO : add validation of document (core validation + reference validaton) when ooxmlvalidator is finished
+		
+		//TODO : validate signed document by calling ooxmlvalidator (first of course code one)
 		
 		// Check certificate
 		Certificate signercert = res.getSignerCertificate();

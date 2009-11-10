@@ -14,23 +14,25 @@ package org.signserver.server.cryptotokens;
 
 import java.util.Properties;
 
+
 /**
- * Class that uses a p12 file on the file system for signing. Only one key and purpose is supported
- * the same key for all purposes will be returned.
- * 
+ * Class that uses a jks file on the file system for signing. Only one key and
+ * purpose is supported the same key for all purposes will be returned.
+ *
  * loads on activation and releases the keys from memory when deactivating
- * 
+ *
  * Available properties are:
  * KEYSTOREPATH : The full path to the key store to load. (required)
  * KEYSTOREPASSWORD : The password that locks the key store.
- * 
- * $Id$
+ *
+ * $Id: P12CryptoToken.java 500 2009-04-22 12:10:07Z anatom $
  */
-public class P12CryptoToken extends KeystoreCryptoToken implements ICryptoToken {
+public class JKSCryptoToken extends KeystoreCryptoToken
+        implements ICryptoToken {
 
     @Override
     public void init(final int workerId, final Properties props) {
-        props.setProperty(KEYSTORETYPE, TYPE_PKCS12);
+        props.setProperty(KEYSTORETYPE, TYPE_JKS);
         super.init(workerId, props);
     }
 }

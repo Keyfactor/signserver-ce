@@ -25,7 +25,7 @@ import java.util.Properties;
  * KEYSTOREPATH : The full path to the key store to load. (required)
  * KEYSTOREPASSWORD : The password that locks the key store.
  *
- * $Id: P12CryptoToken.java 500 2009-04-22 12:10:07Z anatom $
+ * $Id$
  */
 public class JKSCryptoToken extends KeystoreCryptoToken
         implements ICryptoToken {

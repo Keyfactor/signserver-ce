@@ -51,7 +51,7 @@ import org.signserver.common.SignerStatus;
  * STORETYPE : PKCS12 or JKS. (required)
  *
  * @author Philip Vendil
- * $Id: P12CryptoToken.java 500 2009-04-22 12:10:07Z anatom $
+ * $Id$
  */
 public class KeystoreCryptoToken implements ICryptoToken {
 

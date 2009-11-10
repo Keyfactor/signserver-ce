@@ -24,6 +24,8 @@ import org.signserver.server.cryptotokens.JKSCryptoToken;
 
 /**
  * Tests for a crypto token that uses a Java Keystore (JKS) file.
+ *
+ * @version $Id$
  */
 public class TestJKSCryptoToken extends TestCase {
 

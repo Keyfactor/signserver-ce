@@ -99,6 +99,7 @@ public class TestXMLValidator extends TestCase {
 		sSSession.setWorkerProperty(17, "NAME", VALIDATION_WORKER);
 		sSSession.setWorkerProperty(17, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
 		sSSession.setWorkerProperty(17, "VAL1.ISSUER1.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + XMLValidatorTestData.CERT_ISSUER + "\n-----END CERTIFICATE-----\n");
+                sSSession.setWorkerProperty(17, "VAL1.ISSUER2.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + XMLValidatorTestData.CERT_ISSUER4 + "\n-----END CERTIFICATE-----\n");
 		sSSession.setWorkerProperty(17, "VAL1.TESTPROP", "TEST");
 		sSSession.setWorkerProperty(17, "VAL1.REVOKED", "");
 		sSSession.reloadConfiguration(17);
@@ -411,7 +412,44 @@ public class TestXMLValidator extends TestCase {
 		}
 	}
 
-	
+    public void test12SigOkCertOkDSA() {
+
+        // OK signature, OK cert
+        final int reqid = 18;
+
+        final byte[] data = XMLValidatorTestData.TESTXML1_DSA.getBytes();
+
+        // XML Document
+        checkXmlWellFormed(new ByteArrayInputStream(data));
+
+        try {
+            GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
+            GenericValidationResponse res = (GenericValidationResponse) sSSession.process(WORKERID, signRequest, new RequestContext());
+
+            assertTrue("answer to right question", reqid == res.getRequestID());
+
+            assertTrue("valid document", res.isValid());
+
+            // Check certificate and path
+            ICertificate signercert = res.getCertificateValidation().getCertificate();
+            assertEquals("Signer certificate", "CN=xmlsigner4", signercert.getSubject());
+            List<ICertificate> caChain = res.getCertificateValidation().getCAChain();
+            assertEquals("ca certificate 0", "CN=DemoRootCA2,OU=EJBCA,O=SignServer Sample,C=SE", caChain.get(0).getSubject());
+            assertEquals("caChain length", 1, caChain.size());
+            log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
+            assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
+
+        } catch (IllegalRequestException e) {
+            log.error("Illegal request", e);
+            fail(e.getMessage());
+        } catch (CryptoTokenOfflineException e) {
+            log.error("Crypto token offline", e);
+            fail(e.getMessage());
+        } catch (SignServerException e) {
+            log.error("SignServer error", e);
+            fail(e.getMessage());
+        }
+    }
 	
 
 	public void test99TearDownDatabase() throws Exception {

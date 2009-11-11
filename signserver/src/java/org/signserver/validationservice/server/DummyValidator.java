@@ -31,122 +31,181 @@ import org.signserver.validationservice.common.X509Certificate;
 
 /**
  * Dummy validator used for testing and demonstration purposes.
- * 
+ *
  * @author Philip Vendil
- * 
  * @version $Id$
  */
 public class DummyValidator extends BaseValidator {
-	
-	protected transient static Logger log = Logger.getLogger(DummyValidator.class);
-	
-	long waitTime = 0;
-	
-	private static Map<String,Validation.Status> revokedMap = new HashMap<String,Validation.Status>();
-	
-	/**
-	 * @see org.signserver.validationservice.server.IValidator#init(int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.IExtendedCryptoToken)
-	 */
-	public void init(int workerId, int validatorId, Properties props, EntityManager em,
-			ICryptoToken ct) throws SignServerException {
-		super.init(workerId, validatorId, props, em, ct);
-		
-		if(props.getProperty("TESTPROP") == null){
-			throw new SignServerException("Error property 'TESTPROP' is not set for validator " + validatorId  + " in worker " + workerId);
-		}
-		
-		if(props.getProperty("WAITTIME") != null){
-			waitTime = Long.parseLong(props.getProperty("WAITTIME"));
-		}
 
-		revokedMap.clear();
-		if(props.getProperty("REVOKED") != null) {
-			for(String dn : props.getProperty("REVOKED").split(";")) {
-				revokedMap.put(dn, Validation.Status.REVOKED);
-			}
-		}
-		
-	}
+    /** Logger. */
+    private static final Logger LOG = Logger.getLogger(DummyValidator.class);
 
-	/**
-	 * @see org.signserver.validationservice.server.IValidator#validate(java.security.cert.Certificate)
-	 */
-	public Validation validate(ICertificate cert)
-			throws IllegalRequestException, CryptoTokenOfflineException,
-			SignServerException {
+    /** Waiting time to simulate work. */
+    private transient long waitTime = 0;
 
-            if(log.isDebugEnabled()) {
-                log.debug("Validate certificate: " + cert.getSubject());
+    /** Map with revoked certificates. */
+    private static Map<String, Validation.Status> revokedMap =
+            new HashMap<String, Validation.Status>();
+
+    /**
+     *
+     * @param workerId
+     * @param validatorId
+     * @param props
+     * @param entityManager
+     * @param cryptoToken
+     * @throws SignServerException
+     * @see org.signserver.validationservice.server.IValidator#init(int,
+     * java.util.Properties, javax.persistence.EntityManager,
+     * org.signserver.server.cryptotokens.IExtendedCryptoToken)
+     */
+    @Override
+    public void init(final int workerId, final int validatorId,
+            final Properties props, final EntityManager entityManager,
+            final ICryptoToken cryptoToken) throws SignServerException {
+        super.init(workerId, validatorId, props, em, ct);
+
+        if (props.getProperty("TESTPROP") == null) {
+            throw new SignServerException(
+                    "Error property 'TESTPROP' is not set for validator " +
+                    validatorId + " in worker " + workerId);
+        }
+
+        if (props.getProperty("WAITTIME") != null) {
+            waitTime = Long.parseLong(props.getProperty("WAITTIME"));
+        }
+
+        revokedMap.clear();
+        if (props.getProperty("REVOKED") != null) {
+            for (String dn : props.getProperty("REVOKED").split(";")) {
+                revokedMap.put(dn, Validation.Status.REVOKED);
             }
+        }
 
-		try {
-			Thread.sleep(waitTime);
-		} catch (InterruptedException e) {
-			
-		}
-		
-		if(getCertificateChain(cert) == null && ((X509Certificate) cert).getBasicConstraints() == -1){
-			return null;
-		}
-		
-		X509Certificate xcert = (X509Certificate) cert;
-		if(xcert.getIssuer().equals("CN=cert1")){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.REVOKED,"This certificate is revoced", new Date(), 3);
-		}
-		if(xcert.getSubject().equals("CN=revocedRootCA1")){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.REVOKED,"This certificate is revoced", new Date(), 3);
-		}
-		if(xcert.getIssuer().equals("CN=revocedRootCA1")){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.CAREVOKED,"This certificate is valid", new Date(), 3);
-		}
-		if(cert.getSubject().equals("CN=revokedCert1")){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.REVOKED,"This certificate is revoced", new Date(), 3);
-		}
-		if(cert.getSubject().equals("CN=ValidRootCA1")){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid");
-		}
-		if(cert.getSubject().equals("CN=ValidSubCA1")){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid");
-		}
-		if(cert.getIssuer().equals("CN=ValidSubCA1")){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid");
-			
-		}
-		if(cert.getSubject().equals("CN=ValidSubCA2")  && validatorId == 2){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid");
-		}	
-		if(cert.getSubject().equals("CN=ValidSubSubCA2")  && validatorId == 2){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid");
-		}	
-		if(cert.getSubject().equals("CN=ValidSubSubSubCA2")  && validatorId == 2){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid");
-		}	
-		if(cert.getSubject().equals("CN=ValidSubSubSubSubCA2")  && validatorId == 2){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid");
-		}	
-		if(cert.getIssuer().equals("CN=ValidSubSubSubSubCA2") && validatorId == 2){
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid");
-		}		
-		
-		Validation.Status status = revokedMap.get(xcert.getSubject());
-		if(status != null) {
-			return new Validation(cert, getCertificateChain(cert), status, "Not valid: " + status.toString());
-		} else if(cert.getSubject().equals("CN=xmlsigner2,O=SignServer Test,C=SE") || cert.getSubject().equals("CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE")) {
-			return new Validation(cert, getCertificateChain(cert), Validation.Status.VALID, "This certificate is valid");
-		} else if(cert.getSubject().equals("CN=FirstCA,O=EJBCA Testing,C=SE") || cert.getSubject().equals("CN=endentity1,O=EJBCA Testing,C=SE")) {
-			return new Validation(cert, getCertificateChain(cert), Validation.Status.VALID, "This certificate is valid");
-		} else if(cert.getSubject().equals("CN=pdfsigner,C=SE")) {
-                    return new Validation(cert, getCertificateChain(cert), Validation.Status.VALID, "This certificate is valid");
-                }
-		
-		return null;
-	}
+    }
 
-	/**
-	 * @see org.signserver.validationservice.server.IValidator#testConnection()
-	 */
-	public void testConnection() throws ConnectException, SignServerException {
-		// Do nothing
-	}
-	
+    /**
+     * @param cert
+     * @see org.signserver.validationservice.server.IValidator#validate(
+     * java.security.cert.Certificate)
+     */
+    public Validation validate(final ICertificate cert)
+            throws IllegalRequestException, CryptoTokenOfflineException,
+            SignServerException {
+        LOG.trace(">validate");
+
+        Validation result = null;
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Validate certificate: " + cert.getSubject());
+        }
+
+        // Simulate work
+        try {
+            Thread.sleep(waitTime);
+        } catch (InterruptedException ignored) {}
+
+        if (getCertificateChain(cert) != null ||
+                ((X509Certificate) cert).getBasicConstraints() != -1) {
+            
+            final X509Certificate xcert = (X509Certificate) cert;
+
+            // First check this validator's own revocation list
+            final Validation.Status status = revokedMap.get(xcert.getSubject());
+            if (status != null) {
+                result = new Validation(cert, getCertificateChain(cert), status,
+                        "Not valid: " + status.toString());
+            }
+            // Then some special cases
+            else if(xcert.getIssuer().equals("CN=cert1")) {
+                result = new Validation(cert,
+                        getCertificateChain(cert),
+                        Validation.Status.REVOKED,
+                        "This certificate is revoced",
+                        new Date(), 3);
+            } else if(xcert.getSubject().equals("CN=revocedRootCA1")){
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.REVOKED,
+                        "This certificate is revoced", new Date(), 3);
+            } else if (xcert.getSubject().equals("CN=revocedRootCA1")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.REVOKED,
+                        "This certificate is revoced", new Date(), 3);
+            } else if (xcert.getIssuer().equals("CN=revocedRootCA1")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.CAREVOKED,
+                        "This certificate is valid", new Date(), 3);
+            } else if (cert.getSubject().equals("CN=revokedCert1")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.REVOKED,
+                        "This certificate is revoced", new Date(), 3);
+            } else if (cert.getSubject().equals("CN=ValidRootCA1")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            } else if (cert.getSubject().equals("CN=ValidSubCA1")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            } else if (cert.getIssuer().equals("CN=ValidSubCA1")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            } else if (cert.getSubject().equals("CN=ValidSubCA2")
+                    && validatorId == 2) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            } else if (cert.getSubject().equals("CN=ValidSubSubCA2")
+                    && validatorId == 2) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            } else if (cert.getSubject().equals("CN=ValidSubSubSubCA2")
+                    && validatorId == 2) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            } else if (cert.getSubject().equals("CN=ValidSubSubSubSubCA2")
+                    && validatorId == 2) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            } else if (cert.getIssuer().equals("CN=ValidSubSubSubSubCA2")
+                    && validatorId == 2) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            } else if (cert.getSubject().equals(
+                    "CN=xmlsigner2,O=SignServer Test,C=SE")
+                    || cert.getSubject().equals(
+                    "CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            } else if (cert.getSubject().equals(
+                    "CN=FirstCA,O=EJBCA Testing,C=SE")
+                    || cert.getSubject().equals(
+                    "CN=endentity1,O=EJBCA Testing,C=SE")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            } else if (cert.getSubject().equals("CN=pdfsigner,C=SE")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            }
+            // All other certificates issued by DemoRootCA1 is OK
+            else if (cert.getIssuer().equals(
+                    "CN=DemoRootCA1,OU=EJBCA,O=SignServer Sample,C=SE")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            }
+            // All other certificates issued by DemoRootCA2 is OK
+            else if (cert.getIssuer().equals(
+                    "CN=DemoRootCA2,OU=EJBCA,O=SignServer Sample,C=SE")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            }
+        }
+
+        LOG.trace("<validate");
+        return result;
+    }
+
+    /**
+     * @see org.signserver.validationservice.server.IValidator#testConnection()
+     */
+    public void testConnection() throws ConnectException, SignServerException {
+        // Do nothing
+    }
 }

@@ -215,50 +215,51 @@ public abstract class BaseValidator implements IValidator{
 		return retval;
 	}
 
-	/**
-	 * Method sorting the certificate with the root certificate last.
-	 * @param icerts ICertificates
-	 * @return
-	 */
-	ArrayList<ICertificate> sortCerts(int issuerid, ArrayList<ICertificate> icerts) {
-            LOG.debug(">sortCerts");
-		ArrayList<ICertificate> retval = new ArrayList<ICertificate>();
+    /**
+     * Method sorting the certificate with the root certificate last.
+     * @param icerts ICertificates
+     * @return
+     */
+    ArrayList<ICertificate> sortCerts(final int issuerid,
+            final ArrayList<ICertificate> icerts) {
+        LOG.trace(">sortCerts");
+        final ArrayList<ICertificate> retval = new ArrayList<ICertificate>();
 
-		// Start with finding root
-		ICertificate currentCert = null;
-		for(ICertificate icert : icerts){
-                    LOG.debug(icert.getIssuer() + " ?= " + icert.getSubject());
-			if(icert.getIssuer().equals(icert.getSubject())){
-				retval.add(0,icert);         	  
-				currentCert = icert;
-				break;
-			}
-		}
-		icerts.remove(currentCert);
+        // Start with finding root
+        ICertificate currentCert = null;
+        for (ICertificate icert : icerts) {
+            if (icert.getIssuer().equals(icert.getSubject())) {
+                retval.add(0, icert);
+                currentCert = icert;
+                break;
+            }
+        }
+        icerts.remove(currentCert);
 
-		if(retval.size() == 0){
-			LOG.error("Error in certificate chain, no root certificate for issuer " + issuerid + ", validator " + validatorId + " worker " + workerId);
-		}
+        if (retval.isEmpty()) {
+            LOG.error("Error in certificate chain, no root certificate for issuer "
+                    + issuerid + ", validator " + validatorId + " worker " + workerId);
+        }
 
-		int tries = 10;
-		while(icerts.size() > 0 && tries > 0){
-			for(ICertificate icert : icerts){
-				if(currentCert.getSubject().equals(icert.getIssuer())){
-					retval.add(0,icert); 		        	  
-					currentCert = icert;
-					break;
-				}
-			}
-			icerts.remove(currentCert);
-			tries--;
-			if(tries == 0){
-				LOG.error("Error constructing a complete ca certificate chain for issuer " + issuerid + ", validator " + validatorId + " worker " + workerId);
-			}
-		}
+        int tries = 10;
+        while (!icerts.isEmpty() && tries > 0) {
+            for (ICertificate icert : icerts) {
+                if (currentCert.getSubject().equals(icert.getIssuer())) {
+                    retval.add(0, icert);
+                    currentCert = icert;
+                    break;
+                }
+            }
+            icerts.remove(currentCert);
+            tries--;
+            if (tries == 0) {
+                LOG.error("Error constructing a complete ca certificate chain for issuer " + issuerid + ", validator " + validatorId + " worker " + workerId);
+            }
+        }
 
-            LOG.debug("<sortCerts");
-		return retval;
-	}
+        LOG.trace("<sortCerts");
+        return retval;
+    }
 
 	protected HashMap<Integer, Properties> getIssuerProperties(){
 		if(issuerProperties == null){

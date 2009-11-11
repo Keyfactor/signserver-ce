@@ -61,7 +61,7 @@ public class KeystoreCryptoToken implements ICryptoToken {
     public static final String KEYSTOREPASSWORD = "KEYSTOREPASSWORD";
     public static final String KEYSTORETYPE = "KEYSTORETYPE";
 
-    public static final String TYPE_PKCS12 = "PKS12";
+    public static final String TYPE_PKCS12 = "PKCS12";
     public static final String TYPE_JKS = "JKS";
 
     private String keystorepath = null;
@@ -105,16 +105,19 @@ public class KeystoreCryptoToken implements ICryptoToken {
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException {
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Keystore type is " + keystoretype +
+                    " and path is " + keystorepath);
+        }
 
         try {
             KeyStore ks;
-            if (TYPE_PKCS12.equals(keystoretype)) {
+            if (TYPE_PKCS12.equalsIgnoreCase(keystoretype)) {
                 ks = KeyStore.getInstance("PKCS12", "BC");
             } else {
                 ks = KeyStore.getInstance("JKS");
             }
             this.provider = ks.getProvider().getName();
-            LOG.debug("Reading keystore from: " + keystorepath);
             InputStream in = new FileInputStream(keystorepath);
             ks.load(in, authenticationcode.toCharArray());
             in.close();
@@ -145,8 +148,9 @@ public class KeystoreCryptoToken implements ICryptoToken {
                 certChain.add(chain[i]);
             }
 
-
-            LOG.debug("Loaded certificate chain with length " + chain.length + " from keystore.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Loaded certificate chain with length " + chain.length + " from keystore.");
+            }
 
             cert = (X509Certificate) chain[0];
         } catch (KeyStoreException e1) {
@@ -171,8 +175,6 @@ public class KeystoreCryptoToken implements ICryptoToken {
             LOG.error("Error :", e);
             throw new CryptoTokenAuthenticationFailureException("UnrecoverableKeyException " + e.getMessage());
         }
-
-
     }
 
     /**

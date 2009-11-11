@@ -87,22 +87,12 @@ public class XMLValidator extends BaseValidator {
 	
 	
     @Override
-	public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
-		super.init(workerId, config, workerContext, workerEM);
-		
-//		if(config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER) == null) {
-//			throw new IllegalArgumentException("Error property '" + PROP_VALIDATIONSERVICEWORKER + "' is not set for xmlvalidator worker " + workerId);
-//		}
-		
-		workersession = lookupWorkerSessionBean();
-		validationServiceWorkerId = workersession.getWorkerId(config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
-		log.info("XMLValidator["+workerId+"] will use validation service worker: " + validationServiceWorkerId);
-		
-		if(validationServiceWorkerId < 1) {
-//			throw new IllegalArgumentException("Could not find worker for property " + PROP_VALIDATIONSERVICEWORKER + ": " + config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
-			log.warn("Could not find worker for property " + PROP_VALIDATIONSERVICEWORKER + ": " + config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
-		}
-	}
+    public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
+        super.init(workerId, config, workerContext, workerEM);
+
+        workersession = lookupWorkerSessionBean();
+        getValidationServiceWorkerId();
+    }
 
 	public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         
@@ -208,8 +198,9 @@ public class XMLValidator extends BaseValidator {
 			}
 			
 			try {
-                                log.info("Requesting certificate validation from worker: " + validationServiceWorkerId);
-				response = workersession.process(validationServiceWorkerId, vr, new RequestContext());
+                            final int validationWorkerId = getValidationServiceWorkerId();
+                            log.info("Requesting certificate validation from worker: " + validationWorkerId);
+                            response = workersession.process(validationWorkerId, vr, new RequestContext());
 				log.info("ProcessResponse: " + response);
 				
 				if(response == null){
@@ -267,6 +258,24 @@ public class XMLValidator extends BaseValidator {
         } catch (NamingException ne) {
             throw new RuntimeException(ne);
         }
+    }
+
+    private int getValidationServiceWorkerId() {
+        if(validationServiceWorkerId < 1) {
+            validationServiceWorkerId = workersession.getWorkerId(
+                    config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
+
+            if(validationServiceWorkerId < 1) {
+                log.warn("XMLValidator["+workerId+"] " +
+                        "Could not find worker for property " +
+                        PROP_VALIDATIONSERVICEWORKER + ": " +
+                        config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
+            } else {
+                log.info("XMLValidator["+workerId+"] " +
+                        "Will use validation service worker: " + validationServiceWorkerId);
+            }
+        }
+        return validationServiceWorkerId;
     }
 
 //	@Override

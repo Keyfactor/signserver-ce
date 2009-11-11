@@ -46,7 +46,10 @@ import org.signserver.common.IllegalRequestException;
  * @version $Id$
  */
 
-public class CryptoTokenUtils {
+public final class CryptoTokenUtils {
+
+    /** No instances of this class */
+    private CryptoTokenUtils() {}
 
 	/**
 	 * Checks all installed key generator algorithms if the given one exists and
@@ -194,8 +197,9 @@ public class CryptoTokenUtils {
 		if (ks.containsAlias(alias)) {
 			Certificate[] certChain = ks.getCertificateChain(alias);
 			for (int i = 0; i < certChain.length; i++) {
-				if (i > 0)
+				if (i > 0) {
 					retVal += ";";
+                                }
 
 				retVal += new String(Base64.encode(certChain[i].getEncoded(),
 						false)).replace("=", "\\=");

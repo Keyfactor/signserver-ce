@@ -72,7 +72,7 @@ public class OCSPValidator extends BaseValidator {
 	throws IllegalRequestException, CryptoTokenOfflineException,
 	SignServerException {
 		
-		log.debug("Validator's validate called with certificate " + cert.getSubject());
+		LOG.debug("Validator's validate called with certificate " + cert.getSubject());
 		
 		//check certificate validity 
 		X509Certificate xcert = (X509Certificate) cert;
@@ -86,11 +86,11 @@ public class OCSPValidator extends BaseValidator {
 
 		List<ICertificate> certChain = getCertificateChain(cert);
 		
-		log.debug("***********************");
-		log.debug("printing certchain for "+ cert.getSubject());
+		LOG.debug("***********************");
+		LOG.debug("printing certchain for "+ cert.getSubject());
 		for(ICertificate tempcert : certChain)
-			log.debug(tempcert.getSubject());
-		log.debug("***********************");
+			LOG.debug(tempcert.getSubject());
+		LOG.debug("***********************");
 		
 		// if no chain found for this certificate and if it is not trust anchor (as configured in properties) return null
 		// if it is trust anchor return valid
@@ -119,15 +119,15 @@ public class OCSPValidator extends BaseValidator {
 			certs.add(cert);
 			certStore  = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certs), "BC");
 
-			log.debug("***********************");
-			log.debug("printing certs in certstore");
+			LOG.debug("***********************");
+			LOG.debug("printing certs in certstore");
 			Iterator<?> tempIter = certStore.getCertificates(null).iterator();
 			while(tempIter.hasNext())
 			{
 				X509Certificate tempcert = (X509Certificate)tempIter.next();
-				log.debug(tempcert.getSubject() + " issuer is " + tempcert.getIssuer());
+				LOG.debug(tempcert.getSubject() + " issuer is " + tempcert.getIssuer());
 			}
-			log.debug("***********************");
+			LOG.debug("***********************");
 			
 			
 			// CertPath Construction
@@ -151,11 +151,11 @@ public class OCSPValidator extends BaseValidator {
 			
 			certPath = certFactory.generateCertPath(certChainWithoutRootCert);
 			
-			log.debug("***********************");
-			log.debug("printing certs in certpath");
+			LOG.debug("***********************");
+			LOG.debug("printing certs in certpath");
 			for(Certificate tempcert : certPath.getCertificates())
-				log.debug(((X509Certificate)tempcert).getSubject() + " issuer is " + ((X509Certificate)tempcert).getIssuer());
-			log.debug("***********************");
+				LOG.debug(((X509Certificate)tempcert).getSubject() + " issuer is " + ((X509Certificate)tempcert).getIssuer());
+			LOG.debug("***********************");
 			
 			// init cerpathvalidator 
 			validator = CertPathValidator.getInstance("PKIX", "BC");
@@ -166,9 +166,9 @@ public class OCSPValidator extends BaseValidator {
 			params.addCertStore(certStore);
 			params.setDate(new Date());
 			
-			log.debug("***********************");
-			log.debug("printing trust anchor "+ trustAnc.getTrustedCert().getSubjectDN().getName());
-			log.debug("***********************");
+			LOG.debug("***********************");
+			LOG.debug("printing trust anchor "+ trustAnc.getTrustedCert().getSubjectDN().getName());
+			LOG.debug("***********************");
 			
 			// disable default crl validaton
 			params.setRevocationEnabled(false);
@@ -176,7 +176,7 @@ public class OCSPValidator extends BaseValidator {
 			addCertPathCheckers(cert, params, rootCert);
 			
 		} catch (Exception e) {
-			log.error("Exception on preparing parameters for validation", e);
+			LOG.error("Exception on preparing parameters for validation", e);
 			throw new SignServerException(e.toString());
 		}
 
@@ -189,10 +189,10 @@ public class OCSPValidator extends BaseValidator {
 			return new Validation(cert,getCertificateChain(cert),Validation.Status.VALID,"This certificate is valid. Trust anchor for certificate is :" + cpv_result.getTrustAnchor().getTrustedCert().getSubjectDN());
 
 		} catch (CertPathValidatorException e) {
-			log.error("Exception on validation", e);
+			LOG.error("Exception on validation", e);
 			return new Validation(cert,getCertificateChain(cert),Validation.Status.DONTVERIFY,"Exception on validation. certificate causing exception : " + ((X509Certificate)e.getCertPath().getCertificates().get(e.getIndex())).getSubjectDN() + " " + e.toString());
 		} catch (InvalidAlgorithmParameterException e) {
-			log.error("Exception on validation", e);
+			LOG.error("Exception on validation", e);
 			return new Validation(cert,getCertificateChain(cert),Validation.Status.DONTVERIFY,"Exception on validation." + e.toString());
 		}
 

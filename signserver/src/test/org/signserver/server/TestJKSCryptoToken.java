@@ -56,9 +56,9 @@ public class TestJKSCryptoToken extends TestCase {
      * certificate.
      * @throws Exception
      */
-    /*public final void testGetPrivateKeyWithDSA() throws Exception {
+    public final void testGetPrivateKeyWithDSA() throws Exception {
         signTester("SHA1WITHDSA", "/src/test/xmlsigner4.jks");
-    }*/
+    }
 
     public final void signTester(final String signatureAlg, final String file)
             throws Exception {

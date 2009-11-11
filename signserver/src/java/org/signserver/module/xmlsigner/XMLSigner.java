@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.module.xmlsigner;
 
 import java.io.ByteArrayInputStream;
@@ -74,7 +73,6 @@ import org.signserver.server.signers.BaseSigner;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-
 /**
  * A Signer signing XML documents.
  * 
@@ -86,53 +84,72 @@ import org.xml.sax.SAXException;
  */
 public class XMLSigner extends BaseSigner {
 
-	private transient static final Logger log = Logger.getLogger(XMLSigner.class.getName());
-	
-    @Override
-	public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
-		super.init(workerId, config, workerContext, workerEM);
-	}
+    private static final Logger LOG = Logger.getLogger(XMLSigner.class.getName());
 
-	public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        
-    	ProcessResponse signResponse;
+    @Override
+    public void init(final int workerId, final WorkerConfig config,
+            final WorkerContext workerContext, final EntityManager workerEM) {
+        super.init(workerId, config, workerContext, workerEM);
+    }
+
+    public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+
+        ProcessResponse signResponse;
         ISignRequest sReq = (ISignRequest) signRequest;
-        
-		// Check that the request contains a valid GenericSignRequest object with a byte[].
-		if(!(signRequest instanceof GenericSignRequest)){
-			throw new IllegalRequestException("Recieved request wasn't a expected GenericSignRequest.");
-		}
-		if(!(sReq.getRequestData() instanceof byte[]) ) {
-			throw new IllegalRequestException("Recieved request data wasn't a expected byte[].");
-		}
-		
+
+        // Check that the request contains a valid GenericSignRequest object with a byte[].
+        if (!(signRequest instanceof GenericSignRequest)) {
+            throw new IllegalRequestException("Recieved request wasn't a expected GenericSignRequest.");
+        }
+        if (!(sReq.getRequestData() instanceof byte[])) {
+            throw new IllegalRequestException("Recieved request data wasn't a expected byte[].");
+        }
+
         byte[] data = (byte[]) sReq.getRequestData();
         byte[] fpbytes = CertTools.generateSHA1Fingerprint(data);
-		String fp = new String(Hex.encode(fpbytes));
-		
-		
-        
-		String providerName = System.getProperty("jsr105Provider", "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
-		XMLSignatureFactory fac;
-		try {
-			fac = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
-		} catch (InstantiationException e) {
-			throw new SignServerException("Problem with JSR105 provider", e);
-		} catch (IllegalAccessException e) {
-			throw new SignServerException("Problem with JSR105 provider", e);
-		} catch (ClassNotFoundException e) {
-			throw new SignServerException("Problem with JSR105 provider", e);
-		}
-		
-		SignedInfo si;
+        String fp = new String(Hex.encode(fpbytes));
+
+
+
+        String providerName = System.getProperty("jsr105Provider", "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
+        XMLSignatureFactory fac;
+        try {
+            fac = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
+        } catch (InstantiationException e) {
+            throw new SignServerException("Problem with JSR105 provider", e);
+        } catch (IllegalAccessException e) {
+            throw new SignServerException("Problem with JSR105 provider", e);
+        } catch (ClassNotFoundException e) {
+            throw new SignServerException("Problem with JSR105 provider", e);
+        }
+
+        // Get certificate chain and signer certificate
+        Collection<Certificate> certs = this.getSigningCertificateChain();
+        if (certs == null) {
+            throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
+        }
+        List<X509Certificate> x509CertChain = new LinkedList<X509Certificate>();
+        for (Certificate cert : certs) {
+            if (cert instanceof X509Certificate) {
+                x509CertChain.add((X509Certificate) cert);
+                LOG.debug("Adding to chain: " + ((X509Certificate) cert).getSubjectDN());
+            }
+        }
+        Certificate cert = this.getSigningCertificate();
+        LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
+
+        // Private key
+        PrivateKey privKey = getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
+
+        SignedInfo si;
         try {
             Reference ref = fac.newReference("",
                     fac.newDigestMethod(DigestMethod.SHA1, null),
-                    Collections.singletonList(fac.newTransform(Transform.ENVELOPED, (XMLStructure)null)),
+                    Collections.singletonList(fac.newTransform(Transform.ENVELOPED, (XMLStructure) null)),
                     null, null);
 
-            si = fac.newSignedInfo(fac.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS, (XMLStructure)null),
-                    fac.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
+            si = fac.newSignedInfo(fac.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS, (XMLStructure) null),
+                    fac.newSignatureMethod(getSignatureMethod(privKey), null),
                     Collections.singletonList(ref));
 
         } catch (InvalidAlgorithmParameterException ex) {
@@ -141,22 +158,8 @@ public class XMLSigner extends BaseSigner {
             throw new SignServerException("XML signing algorithm error", ex);
         }
 
-        Collection<Certificate> certs = this.getSigningCertificateChain();
-		if (certs == null) {
-			throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
-		}
-		List<X509Certificate> x509CertChain = new LinkedList<X509Certificate>();
-		for(Certificate cert : certs) {
-			if(cert instanceof X509Certificate) {
-				x509CertChain.add((X509Certificate) cert);
-				log.debug("Adding to chain: " + ((X509Certificate) cert).getSubjectDN());
-			}
-		}
-		Certificate cert = this.getSigningCertificate();
-		log.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
-		
-        PrivateKey privKey = getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
-         
+
+
         KeyInfoFactory kif = fac.getKeyInfoFactory();
         X509Data x509d = kif.newX509Data(x509CertChain);
 
@@ -167,47 +170,62 @@ public class XMLSigner extends BaseSigner {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         Document doc;
-        
+
         try {
-        	doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
+            doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
         } catch (SAXException ex) {
-        	throw new SignServerException("Document parsing error", ex);
+            throw new SignServerException("Document parsing error", ex);
         } catch (ParserConfigurationException ex) {
-        	throw new SignServerException("Document parsing error", ex);
+            throw new SignServerException("Document parsing error", ex);
         } catch (IOException ex) {
-        	throw new SignServerException("Document parsing error", ex);
+            throw new SignServerException("Document parsing error", ex);
         }
         DOMSignContext dsc = new DOMSignContext(privKey, doc.getDocumentElement());
 
         XMLSignature signature = fac.newXMLSignature(si, ki);
         try {
-        	signature.sign(dsc);
+            signature.sign(dsc);
         } catch (MarshalException ex) {
-        	throw new SignServerException("Signature generation error", ex);
+            throw new SignServerException("Signature generation error", ex);
         } catch (XMLSignatureException ex) {
-        	throw new SignServerException("Signature generation error", ex);
-        } 
+            throw new SignServerException("Signature generation error", ex);
+        }
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        
+
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer trans;
         try {
-        	trans = tf.newTransformer();
-        	trans.transform(new DOMSource(doc), new StreamResult(bout));
+            trans = tf.newTransformer();
+            trans.transform(new DOMSource(doc), new StreamResult(bout));
         } catch (TransformerConfigurationException ex) {
             throw new SignServerException("XML transformation error", ex);
         } catch (TransformerException ex) {
-        	throw new SignServerException("XML transformation error", ex);
-        } 
-        
-        byte[] signedbytes = bout.toByteArray();
-        
-        if(signRequest instanceof GenericServletRequest){
+            throw new SignServerException("XML transformation error", ex);
+        }
+
+        final byte[] signedbytes = bout.toByteArray();
+
+        if (signRequest instanceof GenericServletRequest) {
             signResponse = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes), "text/xml");
-        } else{
+        } else {
             signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));
         }
         return signResponse;
+    }
+
+    private static String getSignatureMethod(final PrivateKey key)
+            throws NoSuchAlgorithmException {
+        String result;
+        
+        if("DSA".equals(key.getAlgorithm())) {
+            result = SignatureMethod.DSA_SHA1;
+        } else if("RSA".equals(key.getAlgorithm())) {
+            result = SignatureMethod.RSA_SHA1;
+        } else {
+            throw new NoSuchAlgorithmException("XMLSigner does not support algorithm: " + key.getAlgorithm());
+        }
+        
+        return result;
     }
 }

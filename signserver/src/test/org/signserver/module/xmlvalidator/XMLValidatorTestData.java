@@ -21,30 +21,61 @@ package org.signserver.module.xmlvalidator;
  */
 class XMLValidatorTestData {
 
-	/**
-	   * SerialNumber: 9072735712286141837
-	     IssuerDN: CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE
-	   Start Date: Mon May 18 16:46:59 CEST 2009
-	   Final Date: Wed May 18 16:46:59 CEST 2011
-	    SubjectDN: CN=xmlsigner2,O=SignServer Test,C=SE
-	   */
-	static final String CERT_XMLSIGNER = 
-		"MIIDejCCAmKgAwIBAgIIfejVD5fQ7Y0wDQYJKoZIhvcNAQEFBQAwPTEXMBUGA1UEAwwOQWRtaW5U"
-		+"cnVuazJDQTExFTATBgNVBAoMDEVKQkNBIFRydW5rMzELMAkGA1UEBhMCU0UwHhcNMDkwNTE4MTQ0"
-		+"NjU5WhcNMTEwNTE4MTQ0NjU5WjA8MRMwEQYDVQQDDAp4bWxzaWduZXIyMRgwFgYDVQQKDA9TaWdu"
-		+"U2VydmVyIFRlc3QxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA"
-		+"242WCkRvThZJR9YWr1R7Hpkjxzrvnzc5TeytbAmcA6ZMZYoroXEXQv2wW2yYoJl6UcSJCg7Z4Vr/"
-		+"Xdn5O7Nd/YXkAbjP1OflYFI/yE90uAAfz6eKtgfiu7xEmGRogQjBA7xsEWrmyB1GUJCovEXYupss"
-		+"jMKcnNQKO+FCKY7imTb0EWoc82f1Z1y7LG7PdpZqRZkCaEeVBrdJoBYLTVAJq89p/stsqiL8rdaE"
-		+"1Eq9DkY2JqjPcK+9dCJ+tVUbd0MReFC/NYkDBepCYWqs3AXSYmI7nb6pkfvxRitQ5mcecZg8Jcq/"
-		+"Gq0ZQ8mFJgnSVa3+vxMNa/E3EV4V3n1Ng1kk/QIDAQABo38wfTAdBgNVHQ4EFgQUkts3bypVw2DK"
-		+"XyVgEqiMN6ULPBwwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBRQyb5w7zsEEfalmYd7zvUzxENQ"
-		+"ZDAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3"
-		+"DQEBBQUAA4IBAQCc8LCp/lBBVeiuKDhwTqEnyKH8GQmDq1dRfuxAeUXfCVfzhnPTPTvpa3qDnNeE"
-		+"F9ftmaUK/c2ieSEeHHsIoNzZrFtQ1v2kDP6uRq1P5GVnSs/4UPazZDZDwDWIq8XNDeVpW4Ua0pqJ"
-		+"GmOdUSQPJUZvAJRlLkZ/9R/kygbG3n5GSVecDk1tNlOqGHLuclNSkLZwyIleJkysf9YQOKESoRSM"
-		+"X8NdNtXWjosoLA0NaNhQocuxThgLnI4k2T85wVfd69SqqbeakssW7ARIE9F1PIZa7LDQAVic7XIE"
-		+"fiKVZ4CQ01/QX+xn0pEhDjIHqfld5ghxDRJWxR9C2B4O2YDnfEOG";
+    /**
+       * SerialNumber: 9072735712286141837
+         IssuerDN: CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE
+       Start Date: Mon May 18 16:46:59 CEST 2009
+       Final Date: Wed May 18 16:46:59 CEST 2011
+        SubjectDN: CN=xmlsigner2,O=SignServer Test,C=SE
+       */
+    static final String CERT_XMLSIGNER =
+            "MIIDejCCAmKgAwIBAgIIfejVD5fQ7Y0wDQYJKoZIhvcNAQEFBQAwPTEXMBUGA1UEAwwOQWRtaW5U"
+            +"cnVuazJDQTExFTATBgNVBAoMDEVKQkNBIFRydW5rMzELMAkGA1UEBhMCU0UwHhcNMDkwNTE4MTQ0"
+            +"NjU5WhcNMTEwNTE4MTQ0NjU5WjA8MRMwEQYDVQQDDAp4bWxzaWduZXIyMRgwFgYDVQQKDA9TaWdu"
+            +"U2VydmVyIFRlc3QxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA"
+            +"242WCkRvThZJR9YWr1R7Hpkjxzrvnzc5TeytbAmcA6ZMZYoroXEXQv2wW2yYoJl6UcSJCg7Z4Vr/"
+            +"Xdn5O7Nd/YXkAbjP1OflYFI/yE90uAAfz6eKtgfiu7xEmGRogQjBA7xsEWrmyB1GUJCovEXYupss"
+            +"jMKcnNQKO+FCKY7imTb0EWoc82f1Z1y7LG7PdpZqRZkCaEeVBrdJoBYLTVAJq89p/stsqiL8rdaE"
+            +"1Eq9DkY2JqjPcK+9dCJ+tVUbd0MReFC/NYkDBepCYWqs3AXSYmI7nb6pkfvxRitQ5mcecZg8Jcq/"
+            +"Gq0ZQ8mFJgnSVa3+vxMNa/E3EV4V3n1Ng1kk/QIDAQABo38wfTAdBgNVHQ4EFgQUkts3bypVw2DK"
+            +"XyVgEqiMN6ULPBwwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBRQyb5w7zsEEfalmYd7zvUzxENQ"
+            +"ZDAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3"
+            +"DQEBBQUAA4IBAQCc8LCp/lBBVeiuKDhwTqEnyKH8GQmDq1dRfuxAeUXfCVfzhnPTPTvpa3qDnNeE"
+            +"F9ftmaUK/c2ieSEeHHsIoNzZrFtQ1v2kDP6uRq1P5GVnSs/4UPazZDZDwDWIq8XNDeVpW4Ua0pqJ"
+            +"GmOdUSQPJUZvAJRlLkZ/9R/kygbG3n5GSVecDk1tNlOqGHLuclNSkLZwyIleJkysf9YQOKESoRSM"
+            +"X8NdNtXWjosoLA0NaNhQocuxThgLnI4k2T85wVfd69SqqbeakssW7ARIE9F1PIZa7LDQAVic7XIE"
+            +"fiKVZ4CQ01/QX+xn0pEhDjIHqfld5ghxDRJWxR9C2B4O2YDnfEOG";
+
+    /**
+     * Certificate for xmlsigner4.
+     * <pre>
+     * Serial Number: 23:14:08:b6:eb:aa:42:dc
+     *  Signature Algorithm: dsaWithSHA1
+     *  Issuer: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
+     *  Validity
+     *      Not Before: Nov 10 11:22:11 2009 GMT
+     *      Not After : Nov 10 11:22:11 2019 GMT
+     *  Subject: CN=xmlsigner4
+     * </pre>
+     */
+    static final String CERT_XMLSIGNER4 =
+        "MIIDADCCAsCgAwIBAgIIIxQItuuqQtwwCQYHKoZIzjgEAzBPMRQwEgYDVQQDDAtE"
+        +"ZW1vUm9vdENBMjEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIg"
+        +"U2FtcGxlMQswCQYDVQQGEwJTRTAeFw0wOTExMTAxMTIyMTFaFw0xOTExMTAxMTIy"
+        +"MTFaMBUxEzARBgNVBAMMCnhtbHNpZ25lcjQwggG4MIIBLAYHKoZIzjgEATCCAR8C"
+        +"gYEA/X9TgR11EilS30qcLuzk5/YRt1I870QAwx4/gLZRJmlFXUAiUftZPY1Y+r/F"
+        +"9bow9subVWzXgTuAHTRv8mZgt2uZUKWkn5/oBHsQIsJPu6nX/rfGG/g7V+fGqKYV"
+        +"DwT7g/bTxR7DAjVUE1oWkTL2dfOuK2HXKu/yIgMZndFIAccCFQCXYFCPFSMLzLKS"
+        +"uYKi64QL8Fgc9QKBgQD34aCF1ps93su8q1w2uFe5eZSvu/o66oL5V0wLPQeCZ1FZ"
+        +"V4661FlP5nEHEIGAtEkWcSPoTCgWE7fPCTKMyKbhPBZ6i1R8jSjgo64eK7OmdZFu"
+        +"o38L+iE1YvH7YnoBJDvMpPG+qFGQiaiD3+Fa5Z8GkotmXoB7VSVkAUw7/s9JKgOB"
+        +"hQACgYEA1CXfT00olSOapmZl4zT1/tUQzOzttQ/DCB8qYwH5fKD4cw1O2IutdntO"
+        +"P+Pd+Q6PV6r/cckmpvO12/sMpxWOmY1oio44L8Pl76MWqKiBecAsNgxjXkXiFdJ8"
+        +"llhTj9Z8vSYP8TUyY4UaITm3oZOp60eamFL93LjvpOkrDj7orXijYDBeMB0GA1Ud"
+        +"DgQWBBRqEubbKMwapnZFeqgUNRFEkKGpWjAMBgNVHRMBAf8EAjAAMB8GA1UdIwQY"
+        +"MBaAFEnfFS7KXpmugPeUWbefD8CEI94lMA4GA1UdDwEB/wQEAwIGwDAJBgcqhkjO"
+        +"OAQDAy8AMCwCFDnp413fYl32LXvI/FrHLxfo5hW6AhRv3xxzl07QDdL/oWCtW0rs"
+        +"tmtQmg==";
 	  
 	/**
 	   * SerialNumber: 8811693520800705369
@@ -70,6 +101,39 @@ class XMLValidatorTestData {
 		+"140lqoeXrmm/nMMf/EM5Tqf2BiX/CgTwqiuY7Lf3Ov7QfepLI1AWgFabHkysU2YTvjDupNi5/+gB"
 		+"5jIA5vhavMpylDbucUdM9vAetXmqe1P3sOKipGKHvkWFNJNyOmDjN9wnr+i9PFxU0IehSRdim60x"
 		+"Cw3AxYWCo94Dz/6F";
+
+        /**
+         * Certificate for DemoRootCA2.
+         *
+         * <pre>
+         * Serial Number: 26:02:00:71:07:af:7f:95
+         *   Signature Algorithm: dsaWithSHA1
+         *   Issuer: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
+         *   Validity
+         *       Not Before: Nov  9 16:09:48 2009 GMT
+         *       Not After : Nov 10 16:09:48 2034 GMT
+         *   Subject: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
+         * </pre>
+         */
+        static final String CERT_ISSUER4 =
+            "MIIDPTCCAvygAwIBAgIIJgIAcQevf5UwCQYHKoZIzjgEAzBPMRQwEgYDVQQDDAtE"
+            +"ZW1vUm9vdENBMjEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIg"
+            +"U2FtcGxlMQswCQYDVQQGEwJTRTAeFw0wOTExMDkxNjA5NDhaFw0zNDExMTAxNjA5"
+            +"NDhaME8xFDASBgNVBAMMC0RlbW9Sb290Q0EyMQ4wDAYDVQQLDAVFSkJDQTEaMBgG"
+            +"A1UECgwRU2lnblNlcnZlciBTYW1wbGUxCzAJBgNVBAYTAlNFMIIBtzCCASsGByqG"
+            +"SM44BAEwggEeAoGBAI+d9uiMBBzqdvlV3wSMdwRv/Qx2POGqh+m0M0tMYEwIGBdZ"
+            +"Hm3+QSKIDTjcLRJgCGgTXSAJPCZtp43+kWCV5iGbbemBchOCh4Oe/4IPQERlfJhy"
+            +"MH0gXLglG9KSbuKkqMSzaZoZk06q750KBKusKhK+mvhp08++KyXZna3p6itdAhUA"
+            +"ntjYRJsYqqQtIt0htCGCEAHCkg8CgYA4E4VMplm16uizoUL+9erNtLI886f8pdO5"
+            +"vXhcQG9IpZ0J7N6M4WQy8CFzTKjRJLs27TO2gDP8BE50mMOnbRvYmGIJsQ9lZHTj"
+            +"UqltWh9PJ0VKF0fCwQbA3aY+v8PiHxELvami+YyBiYjE2C6b1ArKOw1QsEL0KakJ"
+            +"cr22yWFaKgOBhQACgYEAiTsSMcEKhYCWg2ULDwD/4ueYyDcRvyoSrT7uCdGU0Y/w"
+            +"2wPuI+kV5RfHxjs6YLDuJsQJg6rfi3RfgmwQJVzClDfgUN12qzRbSidepg/7ipkC"
+            +"Gk0/eyY1A99z3K+FUZm2MVgune4ywCorPUpxz6WHS7/dSWYMWtSrr92PzgnwZbKj"
+            +"YzBhMB0GA1UdDgQWBBRJ3xUuyl6ZroD3lFm3nw/AhCPeJTAPBgNVHRMBAf8EBTAD"
+            +"AQH/MB8GA1UdIwQYMBaAFEnfFS7KXpmugPeUWbefD8CEI94lMA4GA1UdDwEB/wQE"
+            +"AwIBhjAJBgcqhkjOOAQDAzAAMC0CFQCEGSmvJf6rxy6u7ZqY25qE7Hy21gIUPW4q"
+            +"++YIS2fHyu+H4Pjgnodx5zI=";
 	  
 	static final String CERT_OTHER =
 		 "MIIDTjCCAjagAwIBAgIIH51RSUxYOpYwDQYJKoZIhvcNAQEFBQAwPTEXMBUGA1UEAwwOQWRtaW5U"
@@ -94,6 +158,9 @@ class XMLValidatorTestData {
 		+"arILFJNyTPFBA7Ulzxj8KRBHPkzIzzxD0AaodBWDut7nMGqlu1NC1afcT1eNNxfDB02wIvy4E6VI"
 		+"/HfLN3uhTtOq50iPKT9x5M1znIIpnVlJlsTSmnGC7rMUaWDtpttF+LHBWQOnAFhSGS22mHQpbXXc"
 		+"ZoDA2iab5GkpvzzNIpjuUszZ8Ea968kK59IxQA==";
+
+    static final String SIGNATURE_BY_XMLSIGNER4 =
+            "gy+9iGYV0FjNscOyKGEy0rtsBWVjjSzonuk36nhzBGVKxWHSgLVtow==";
 	
 	static final String SIGNATURE_BY_OTHER =
 		"vNPmEQ9ckorNrQ793HZsVP8/NB07S2pNZkJ7JvfALNBkyDCntC+7UsiXWPRM1YMz3dnDF9WkjWHF"
@@ -187,5 +254,20 @@ class XMLValidatorTestData {
 		+"        </X509Data>"
 		+"    </KeyInfo>"
 		+"</Signature ></root>";
-	
+
+    /**
+     * Ok sig, ok cert. Using DSA
+     */
+    static final String TESTXML1_DSA =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
+            +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#dsa-sha1\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
+            +"    <SignatureValue>"+SIGNATURE_BY_XMLSIGNER4+"</SignatureValue>"
+            +"    <KeyInfo>"
+            +"        <X509Data>"
+            +"            <X509Certificate>"+CERT_XMLSIGNER4+"</X509Certificate>"
+            +"        <X509Certificate>"+CERT_ISSUER4+"</X509Certificate>"
+            +"        </X509Data>"
+            +"    </KeyInfo>"
+            +"</Signature ></root>";
 }

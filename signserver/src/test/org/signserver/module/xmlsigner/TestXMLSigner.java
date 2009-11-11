@@ -22,6 +22,7 @@ import java.util.Hashtable;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -48,110 +49,192 @@ import org.w3c.dom.Document;
  */
 public class TestXMLSigner extends TestCase {
 
-	private static Logger log = Logger.getLogger(TestXMLSigner.class);
+    private static final Logger LOG = Logger.getLogger(TestXMLSigner.class);
+
+    /** WORKERID used in this test case as defined in junittest-part-config.properties */
+    private static final int WORKERID = 5676;
+
+    /** WORKERID used in this test case as defined in junittest-part-config.properties */
+    private static final int WORKERID2 = 5679;
+
+    private static IWorkerSession.IRemote sSSession = null;
+    private static String signserverhome;
+    private static int moduleVersion;
 	
-	/** WORKERID used in this test case as defined in junittest-part-config.properties */
-	private static final int WORKERID = 5676;
 	
-	private static IWorkerSession.IRemote sSSession = null;
-	private static String signserverhome;
-	private static int moduleVersion;
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        SignServerUtil.installBCProvider();
+        final Context context = getInitialContext();
+        sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+        TestUtils.redirectToTempOut();
+        TestUtils.redirectToTempErr();
+        TestingSecurityManager.install();
+        signserverhome = System.getenv("SIGNSERVER_HOME");
+        assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
+        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        TestingSecurityManager.remove();
+    }	
 	
-	
-	protected void setUp() throws Exception {
-		super.setUp();
-		SignServerUtil.installBCProvider();
-		Context context = getInitialContext();
-		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
-		TestUtils.redirectToTempOut();
-		TestUtils.redirectToTempErr();
-		TestingSecurityManager.install();
-		signserverhome = System.getenv("SIGNSERVER_HOME");
-		assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
-		CommonAdminInterface.BUILDMODE = "SIGNSERVER";
-	}
+    public void test00SetupDatabase() throws Exception {
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		TestingSecurityManager.remove();
-	}	
-	
-	public void test00SetupDatabase() throws Exception {
+        final MARFileParser marFileParser = new MARFileParser(signserverhome
+                + "/dist-server/xmlsigner.mar");
+        moduleVersion = marFileParser.getVersionFromMARFile();
 
-		MARFileParser marFileParser = new MARFileParser(signserverhome + "/dist-server/xmlsigner.mar");
-		moduleVersion = marFileParser.getVersionFromMARFile();
+        TestUtils.assertSuccessfulExecution(new String[] {
+                "module",
+                "add",
+                signserverhome + "/dist-server/xmlsigner.mar",
+                "junittest"
+            });
+        assertTrue("Loading module",
+                TestUtils.grepTempOut("Loading module XMLSIGNER"));
+        assertTrue("Module loaded",
+                TestUtils.grepTempOut("Module loaded successfully."));
 
-		TestUtils.assertSuccessfulExecution(new String[] { "module", "add", signserverhome + "/dist-server/xmlsigner.mar", "junittest" });
-		assertTrue(TestUtils.grepTempOut("Loading module XMLSIGNER"));
-		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+        sSSession.reloadConfiguration(WORKERID);
 
-		sSSession.reloadConfiguration(WORKERID);
-	}
+        // Update path to JKS file
+        sSSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
+                new File(signserverhome + File.separator + "src" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
+        sSSession.reloadConfiguration(WORKERID2);
+    }
 
-	public void test01BasicXmlSign() throws Exception {
+    public void test01BasicXmlSignRSA() throws Exception {
 
-		int reqid = 13;
+        final int reqid = 13;
 
-		GenericSignRequest signRequest = new GenericSignRequest(13, TESTXML1.getBytes());
+        final GenericSignRequest signRequest =
+                new GenericSignRequest(reqid, TESTXML1.getBytes());
 
-		GenericSignResponse res = (GenericSignResponse) sSSession.process(WORKERID, signRequest, new RequestContext());
-		byte[] data = res.getProcessedData();
-		
-		// Answer to right question
-		assertTrue(reqid == res.getRequestID());
-		
-		// Output for manual inspection
-		File file = new File(signserverhome + File.separator + "tmp" + File.separator + "signedxml.xml");
-		FileOutputStream fos = new FileOutputStream(file);
-		fos.write((byte[]) data);
-		fos.close();
+        final GenericSignResponse res = 
+                (GenericSignResponse) sSSession.process(WORKERID,
+                    signRequest, new RequestContext());
+        final byte[] data = res.getProcessedData();
 
-		// Check certificate
-		Certificate signercert = res.getSignerCertificate();
-		assertNotNull(signercert);
+        // Answer to right question
+        assertSame("Request ID", reqid, res.getRequestID());
 
-		// XML Document
-		checkXmlWellFormed(new ByteArrayInputStream(data));
-	}
+        // Output for manual inspection
+        final FileOutputStream fos = new FileOutputStream(new File(signserverhome
+                + File.separator
+                + "tmp" + File.separator + "signedxml_rsa.xml"));
+        fos.write((byte[]) data);
+        fos.close();
 
-	public void test02GetStatus() throws Exception {
-		SignerStatus stat = (SignerStatus) sSSession.getStatus(WORKERID);
-		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
-	}
+        // Check certificate
+        final Certificate signercert = res.getSignerCertificate();
+        assertNotNull("Signer certificate", signercert);
 
-	public void test99TearDownDatabase() throws Exception {
-		TestUtils.assertSuccessfulExecution(new String[] { "removeworker", ""+WORKERID });
+        // XML Document
+        checkXmlWellFormed(new ByteArrayInputStream(data));
 
-		TestUtils.assertSuccessfulExecution(new String[] { "module", "remove", "XMLSIGNER", "" + moduleVersion });
-		assertTrue(TestUtils.grepTempOut("Removal of module successful."));
-		sSSession.reloadConfiguration(WORKERID);
-	}
+        // Check algorithm
+        assertTrue("Algorithm", usesAlgorithm(new String(data),
+                "http://www.w3.org/2000/09/xmldsig#rsa-sha1"));
+    }
 
-	/**
-	 * Get the initial naming context
-	 */
-	private Context getInitialContext() throws Exception {
-		Hashtable<String, String> props = new Hashtable<String, String>();
-		props.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-		props.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
-		props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-		Context ctx = new InitialContext(props);
-		return ctx;
-	}
+    public void test02GetStatus() throws Exception {
+        final SignerStatus stat = (SignerStatus) sSSession.getStatus(WORKERID);
+        assertSame("Status", stat.getTokenStatus(), SignerStatus.STATUS_ACTIVE);
+    }
 
-	private void checkXmlWellFormed(InputStream in) {
-		try {
-			DocumentBuilderFactory dBF = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = dBF.newDocumentBuilder();
+    public void test03BasicXmlSignDSA() throws Exception {
+        final int reqid = 15;
 
-			Document doc = builder.parse(in);
-			doc.toString();
-		} catch (Exception e) {
-			log.error("Not well formed XML", e);
-			fail("Not well formed XML: " + e.getMessage());
-		}
-	}
-	
-	private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
+        final GenericSignRequest signRequest =
+                new GenericSignRequest(reqid, TESTXML1.getBytes());
+
+        final GenericSignResponse res =
+                (GenericSignResponse) sSSession.process(WORKERID2,
+                    signRequest,
+                    new RequestContext());
+
+        final byte[] data = res.getProcessedData();
+
+        // Answer to right question
+        assertSame("Request ID", reqid, res.getRequestID());
+
+        // Output for manual inspection
+        final FileOutputStream fos = new FileOutputStream(
+                new File(signserverhome +
+                File.separator + "tmp" +
+                File.separator + "signedxml_dsa.xml"));
+        fos.write((byte[]) data);
+        fos.close();
+
+        // Check certificate
+        final Certificate signercert = res.getSignerCertificate();
+        assertNotNull("Signer certificate", signercert);
+
+        // XML Document
+        checkXmlWellFormed(new ByteArrayInputStream(data));
+
+        // Check algorithm
+        assertTrue("Algorithm", usesAlgorithm(new String(data),
+                "http://www.w3.org/2000/09/xmldsig#dsa-sha1"));
+    }
+
+    public void test99TearDownDatabase() throws Exception {
+        TestUtils.assertSuccessfulExecution(new String[] {
+            "removeworker",
+            String.valueOf(WORKERID)
+        });
+
+        TestUtils.assertSuccessfulExecution(new String[] {
+            "module",
+            "remove",
+            "XMLSIGNER",
+            String.valueOf(moduleVersion)
+        });
+        assertTrue("module remove",
+                TestUtils.grepTempOut("Removal of module successful."));
+        sSSession.reloadConfiguration(WORKERID);
+        sSSession.reloadConfiguration(WORKERID2);
+    }
+
+    /**
+     * Get the initial naming context
+     */
+    private Context getInitialContext() throws NamingException {
+        final Hashtable<String, String> props =
+                new Hashtable<String, String>();
+        props.put(Context.INITIAL_CONTEXT_FACTORY,
+                "org.jnp.interfaces.NamingContextFactory");
+        props.put(Context.URL_PKG_PREFIXES,
+                "org.jboss.naming:org.jnp.interfaces");
+        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
+        return new InitialContext(props);
+    }
+
+    private void checkXmlWellFormed(final InputStream input) {
+        try {
+            final DocumentBuilderFactory dBF = DocumentBuilderFactory.newInstance();
+            final DocumentBuilder builder = dBF.newDocumentBuilder();
+
+            final Document doc = builder.parse(input);
+            doc.toString();
+        } catch (Exception e) {
+            LOG.error("Not well formed XML", e);
+            fail("Not well formed XML: " + e.getMessage());
+        }
+    }
+
+    private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
+
+    /**
+     * Returns true if the signed XML document uses the specified algorithm.
+     * @param xml
+     * @param algorithm
+     */
+    private boolean usesAlgorithm(final String xml, final String algorithm) {
+        return xml.contains("Algorithm=\""+algorithm);
+    }
 }

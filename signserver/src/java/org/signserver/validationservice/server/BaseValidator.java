@@ -50,7 +50,7 @@ import org.signserver.validationservice.common.X509Certificate;
 
 public abstract class BaseValidator implements IValidator{
 
-	protected transient Logger log = Logger.getLogger(this.getClass());
+	protected static final Logger LOG = Logger.getLogger(BaseValidator.class);
 
 	protected int workerId;
 	protected int validatorId;
@@ -106,9 +106,11 @@ public abstract class BaseValidator implements IValidator{
 	 * 
 	 */
 	public List<ICertificate> getCertificateChain(ICertificate cert) {
+            LOG.trace(">getCertificateChain: " + cert.getSubject());
 
-		if( getCertChainMap() == null)
+		if(getCertChainMap() == null) {
 			return null;
+                }
 
 		X509Certificate x509Cert = (X509Certificate)cert;
 		
@@ -160,8 +162,9 @@ public abstract class BaseValidator implements IValidator{
 					}
 				}
 
-				if(issuerFound)
+				if(issuerFound) {
 					break;
+                                }
 			}
 
 			//if issuer is found then IssuerCACert holds our issuer certificate
@@ -172,6 +175,7 @@ public abstract class BaseValidator implements IValidator{
 			}
 		}
 
+                LOG.trace(">getCertificateChain");
 		return retVal;
 	}
 
@@ -184,7 +188,7 @@ public abstract class BaseValidator implements IValidator{
 	private List<ICertificate> getCertChainFromProps(int issuerId, Properties issuerProps) {
 		List<ICertificate> retval = null;
 		if(issuerProps.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN) == null){
-			log.error("Error required issuer setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer " + 
+			LOG.error("Error required issuer setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer " +
 					issuerId + ", validator id " + validatorId + ", worker id" + workerId);
 		}else{
 			try {
@@ -201,57 +205,61 @@ public abstract class BaseValidator implements IValidator{
 				}
 
 			} catch (CertificateException e) {
-				log.error("Error constructing certificate chain from setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer " + 
+				LOG.error("Error constructing certificate chain from setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer " +
 						issuerId + ", validator id " + validatorId + ", worker id" + workerId,e);
 			} catch (IOException e) {
-				log.error("Error constructing certificate chain from setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer " + 
+				LOG.error("Error constructing certificate chain from setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer " +
 						issuerId + ", validator id " + validatorId + ", worker id" + workerId,e);			}
 		}
 
 		return retval;
 	}
 
-	/**
-	 * Method sorting the certificate with the root certificate last.
-	 * @param icerts ICertificates
-	 * @return
-	 */
-	ArrayList<ICertificate> sortCerts(int issuerid, ArrayList<ICertificate> icerts) {
-		ArrayList<ICertificate> retval = new ArrayList<ICertificate>();
+    /**
+     * Method sorting the certificate with the root certificate last.
+     * @param icerts ICertificates
+     * @return
+     */
+    ArrayList<ICertificate> sortCerts(final int issuerid,
+            final ArrayList<ICertificate> icerts) {
+        LOG.trace(">sortCerts");
+        final ArrayList<ICertificate> retval = new ArrayList<ICertificate>();
 
-		// Start with finding root
-		ICertificate currentCert = null;
-		for(ICertificate icert : icerts){
-			if(icert.getIssuer().equals(icert.getSubject())){
-				retval.add(0,icert);         	  
-				currentCert = icert;
-				break;
-			}
-		}
-		icerts.remove(currentCert);
+        // Start with finding root
+        ICertificate currentCert = null;
+        for (ICertificate icert : icerts) {
+            if (icert.getIssuer().equals(icert.getSubject())) {
+                retval.add(0, icert);
+                currentCert = icert;
+                break;
+            }
+        }
+        icerts.remove(currentCert);
 
-		if(retval.size() == 0){
-			log.error("Error in certificate chain, no root certificate for issuer " + issuerid + ", validator " + validatorId + " worker " + workerId);
-		}
+        if (retval.isEmpty()) {
+            LOG.error("Error in certificate chain, no root certificate for issuer "
+                    + issuerid + ", validator " + validatorId + " worker " + workerId);
+        }
 
-		int tries = 10;
-		while(icerts.size() > 0 && tries > 0){
-			for(ICertificate icert : icerts){
-				if(currentCert.getSubject().equals(icert.getIssuer())){
-					retval.add(0,icert); 		        	  
-					currentCert = icert;
-					break;
-				}
-			}
-			icerts.remove(currentCert);
-			tries--;
-			if(tries == 0){
-				log.error("Error constructing a complete ca certificate chain for issuer " + issuerid + ", validator " + validatorId + " worker " + workerId);
-			}
-		}
+        int tries = 10;
+        while (!icerts.isEmpty() && tries > 0) {
+            for (ICertificate icert : icerts) {
+                if (currentCert.getSubject().equals(icert.getIssuer())) {
+                    retval.add(0, icert);
+                    currentCert = icert;
+                    break;
+                }
+            }
+            icerts.remove(currentCert);
+            tries--;
+            if (tries == 0) {
+                LOG.error("Error constructing a complete ca certificate chain for issuer " + issuerid + ", validator " + validatorId + " worker " + workerId);
+            }
+        }
 
-		return retval;
-	}
+        LOG.trace("<sortCerts");
+        return retval;
+    }
 
 	protected HashMap<Integer, Properties> getIssuerProperties(){
 		if(issuerProperties == null){
@@ -274,8 +282,9 @@ public abstract class BaseValidator implements IValidator{
 	protected Properties getIssuerProperties(ICertificate cert){
 
 		List<ICertificate> certChain = getCertificateChain(cert);
-		if(certChain == null)
+		if(certChain == null) {
 			return null;
+                }
 
 		List<ICertificate> tempCertChain = null;
 		
@@ -287,7 +296,7 @@ public abstract class BaseValidator implements IValidator{
 			{
 				if(tempCertChain.equals(certChain))
 				{
-					log.debug("issuer id of certificate " + cert.getSubject() + " is " + issuerId + " Exact match");
+					LOG.debug("issuer id of certificate " + cert.getSubject() + " is " + issuerId + " Exact match");
 					return getIssuerProperties().get(issuerId);
 				}
 			}
@@ -301,7 +310,7 @@ public abstract class BaseValidator implements IValidator{
 			{
 				if(tempCertChain.containsAll(certChain))
 				{
-					log.debug("issuer id of certificate " + cert.getSubject() + " is " + issuerId + " ContainsAll match");
+					LOG.debug("issuer id of certificate " + cert.getSubject() + " is " + issuerId + " ContainsAll match");
 					return getIssuerProperties().get(issuerId);
 				}
 			}
@@ -331,10 +340,12 @@ public abstract class BaseValidator implements IValidator{
 			indx = getCertChainMap().get(certDN).indexOf(cACert);
 			if(indx != -1)
 			{
-				if(includeSelfInReturn)
+				if(includeSelfInReturn) {
 					fromindex= indx;
-				else
+                                }
+				else {
 					fromindex = indx + 1;
+                                }
 
 				if(fromindex < getCertChainMap().get(certDN).size())
 				{
@@ -389,19 +400,19 @@ public abstract class BaseValidator implements IValidator{
 		StringTokenizer strTokenizer = new StringTokenizer(props.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS),
 				ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER);
 		
-		log.debug("***********************");
-		log.debug("printing CRLPATHS ");
+		LOG.debug("***********************");
+		LOG.debug("printing CRLPATHS ");
 		while(strTokenizer.hasMoreTokens())
 		{
 			try {
 				String nextToken = strTokenizer.nextToken().trim();
-				log.debug(nextToken);
+				LOG.debug(nextToken);
 				retval.add(new URL(nextToken));
 			} catch (MalformedURLException e) {
 				throw new SignServerException("URL in CRLPATHS property for issuer is not valid. : " + e.toString());
 			}	
 		}
-		log.debug("***********************");
+		LOG.debug("***********************");
 		
 		return retval;
 	}

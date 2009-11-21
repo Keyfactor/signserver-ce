@@ -15,24 +15,13 @@ package org.signserver.module.odfsigner;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.security.KeyException;
 import java.security.PrivateKey;
-import java.security.Provider;
-import java.util.Collections;
-import java.util.List;
-import java.util.Vector;
-
-import javax.xml.crypto.XMLStructure;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.crypto.dsig.keyinfo.KeyInfo;
-import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
-import javax.xml.crypto.dsig.keyinfo.X509Data;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import java.security.cert.X509Certificate;
 
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
+import org.odftoolkit.odfdom.crypto.dsig.DocumentSignatureManager;
+import org.odftoolkit.odfdom.crypto.dsig.SignatureCreationMode;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -48,7 +37,6 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
-import org.w3c.dom.Document;
 
 /**
  * A signer signing Open Document Format documents (ODF 1.1) .Using odfdom
@@ -96,113 +84,31 @@ public class ODFSigner extends BaseSigner {
 			odfDoc = OdfDocument.loadDocument(new ByteArrayInputStream(data));
 		} catch (Exception e) {
 			throw new SignServerException(
-					"Data received is not in valid openxml package format", e);
-		}
-
-        // create XML signature factory (JSR-105)
-        final String providerName = System.getProperty("jsr105Provider",
-                "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
-        XMLSignatureFactory fac;
-        try {
-            fac = XMLSignatureFactory.getInstance("DOM",
-                    (Provider) Class.forName(providerName).newInstance());
-        } catch (InstantiationException e) {
-            throw new SignServerException("Problem with JSR105 provider", e);
-        } catch (IllegalAccessException e) {
-            throw new SignServerException("Problem with JSR105 provider", e);
-        } catch (ClassNotFoundException e) {
-            throw new SignServerException("Problem with JSR105 provider", e);
-        }
-
-		// Since ODFDOM is formatting document after a new part is added
-		// (content.xml and other parts)
-		// we are adding documentsignature part with trash content first, save
-		// it to the output stream. Then we reopen file from stream and fill in
-		// the
-		// documentsignature part of the package
-
-		// create temporary place holder content for documentsignature.xml
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		dbf.setNamespaceAware(true);
-		org.w3c.dom.Document doc;
-		try {
-			doc = dbf.newDocumentBuilder().newDocument();
-		} catch (ParserConfigurationException e) {
-			throw new SignServerException("Error parsing document", e);
-		}
-
-		doc.appendChild(doc.createElement("TEMP_PLACE_HOLDER"));
-
-		// add part to package (adding necessary entries to manifes.xml too)
-		try {
-			ODFSignatureHelper.AddDocumentSignaturePart(odfDoc, doc);
-		} catch (Exception e) {
-			throw new SignServerException(
-					"Error adding temporary signature part to document", e);
-		}
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-		// save to output stream so all formatting by ODFDOM completes
-		try {
-			odfDoc.save(bos);
-		} catch (Exception e) {
-			throw new SignServerException(
-					"Error saving document to temporary output stream", e);
-		}
-		odfDoc.close();
-
-		// reopen stream to fill in documentsignatures.xml part content with
-		// real content
-		ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-		try {
-			odfDoc = OdfDocument.loadDocument(bis);
-		} catch (Exception e) {
-			throw new SignServerException(
-					"Error opening document from temporary input stream", e);
+					"Data received is not in valid odf format", e);
 		}
 
 		// get signing key and construct KeyInfo to be included in signature
-		PrivateKey privateKey = getCryptoToken().getPrivateKey(
+		PrivateKey signingPrivateKey = getCryptoToken().getPrivateKey(
 				ICryptoToken.PURPOSE_SIGN);
+		X509Certificate signingCertificate = (X509Certificate) getSigningCertificate();
 
-		KeyInfo ki = null;
-		KeyInfoFactory kif = fac.getKeyInfoFactory();
+		// create DocumentSignatureManager with OpenOffice31CompatibilityMode
+		// mode.
+		// we are using OpenOffice31CompatibilityMode , because user wants to
+		// see signatures (and if we are in draftv1.2 mode then open office cant
+		// show signatures
+		// because openoffice expects signatures to be placed in
+		// META-ING/documentsignatures.xml file)
+		DocumentSignatureManager dsm = new DocumentSignatureManager(odfDoc,
+				SignatureCreationMode.OpenOffice31CompatibilityMode);
 
-		KeyValue kv;
+		// sign document
+		// pForceCreateNewSignatureGroup parameter is false , because we are in
+		// OpenOffice31CompatibilityMode
 		try {
-			kv = kif.newKeyValue(getCryptoToken().getPublicKey(
-					ICryptoToken.PURPOSE_SIGN));
-		} catch (KeyException e) {
-			throw new SignServerException(
-					"Problem obtaining public key from crypto token", e);
-		}
-
-		X509Data x509d = kif.newX509Data(Collections
-				.singletonList(getSigningCertificate()));
-
-		List<XMLStructure> keyInfoContents = new Vector<XMLStructure>();
-		keyInfoContents.add(kv);
-		keyInfoContents.add(x509d);
-		ki = kif.newKeyInfo(keyInfoContents);
-
-		// again add signature part to package.
-		// NOTE: manifest.xml will not be changed since the required entries
-		// were already added and the content of documentsignatures.xml is going
-		// to be replaced with calculated signature content.
-		Document outputDoc;
-		try {
-			outputDoc = ODFSignatureHelper.CreateDigitalSignatureDocument(fac,
-					odfDoc, ki, privateKey);
+			dsm.SignDocument(signingPrivateKey, signingCertificate, false);
 		} catch (Exception e) {
-			throw new SignServerException(
-					"Error creating digital signature document for odf", e);
-		}
-
-		try {
-			ODFSignatureHelper.AddDocumentSignaturePart(odfDoc, outputDoc);
-		} catch (Exception e) {
-			throw new SignServerException(
-					"Error adding calculated signature part to document", e);
+			throw new SignServerException("Problem signing odf document", e);
 		}
 
 		// save document to output stream

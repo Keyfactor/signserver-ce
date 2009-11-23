@@ -22,6 +22,17 @@
     </p>
   </section>
 
+  <section name="Live CD">
+    <p>
+        Get up and running quicker by downloading and running our 
+        <a href="http://download.primekey.se/public/livecd.iso">LiveCD</a>. It
+        contains a sample installation of SignServer and also EJBCA.
+    </p>
+    <p>
+        Requires atleast 1024 MB of memory to run. Technical details can be found
+        <a href="http://wiki.ejbca.org/ejbcalivecd">here</a>.
+    </p>
+  </section>
 </body>
 </document>
 

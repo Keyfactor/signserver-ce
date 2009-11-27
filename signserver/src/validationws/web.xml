@@ -4,12 +4,12 @@
  of the Common Development and Distribution License
  (the "License").  You may not use this file except
  in compliance with the License.
- 
+
  You can obtain a copy of the license at
  https://jwsdp.dev.java.net/CDDLv1.0.html
  See the License for the specific language governing
  permissions and limitations under the License.
- 
+
  When distributing Covered Code, include this CDDL
  HEADER in each file and include the License file at
  https://jwsdp.dev.java.net/CDDLv1.0.html  If applicable,
@@ -18,27 +18,29 @@
  own identifying information: Portions Copyright [yyyy]
  [name of copyright owner]
 -->
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee">
-  <display-name>validationws</display-name>
-  <description>validationws</description>
-  <listener>
-    <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
-  </listener>
-  <servlet>
-    <servlet-name>validationws</servlet-name>
-    <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>validationws</servlet-name>
-    <url-pattern>/validationws</url-pattern>
-  </servlet-mapping>
-  <session-config>
-    <session-timeout>60</session-timeout>
-  </session-config>
-   <env-entry>
-  <env-entry-name>DataSource</env-entry-name>
-    <env-entry-value>@datasource.jndi-name-prefix@@datasource.jndi-name@</env-entry-value>
-    <env-entry-type>java.lang.String</env-entry-type>
-  </env-entry>    
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/javaee/web-app_2_4.xsd">
+    <display-name>validationws</display-name>
+    <description>validationws</description>
+    <listener>
+        <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
+    </listener>
+    <servlet>
+        <servlet-name>validationws</servlet-name>
+        <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>validationws</servlet-name>
+        <url-pattern>/validationws</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+    <env-entry>
+        <env-entry-name>DataSource</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>@datasource.jndi-name-prefix@@datasource.jndi-name@</env-entry-value>
+    </env-entry>
 </web-app>

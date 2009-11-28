@@ -53,12 +53,17 @@
 
 	
 	<target name="j2ee:deploy" description="Deploy the application"  depends="j2ee:compile-ds" >
+            <antcall target="j2ee:deploy:locally" inheritall="true"/>
+            <antcall target="j2ee:deploy:cluster" inheritall="true"/>
 	</target>
 	
 	<target name="j2ee:deploy:cluster" description="Deploy the application" if="deploy.hostname.node1" >
 	</target>
 	
 	<target name="j2ee:deploy:locally" description="Deploy the application" unless="deploy.hostname.node1" depends="j2ee:configure, j2ee:copyPrimeCardJars"  >
+            <copy todir="${glassfish.deploy.dir}">
+    		<fileset dir="${server.dist.dir}" includes="*.ear"/>
+            </copy>
 	</target>
 	
 	

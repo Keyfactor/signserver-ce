@@ -21,6 +21,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 
+import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -49,6 +50,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -65,32 +67,53 @@ import org.xml.sax.SAXException;
 
 /**
  * A Validator for XML documents.
- * 
+ *
  * Implements IValidator and have the following properties:
- * VALIDATIONSERVICEWORKER = Name or id of validation service worker for handling certificate validation
+ * VALIDATIONSERVICEWORKER = Name or id of validation service worker for
+ *                           handling certificate validation
  * RETURNDOCUMENT = True if the response should contain the validated document
- * STRIPSIGNATURE = True if the signature should be removed from the document if it is returned
- * 
+ * STRIPSIGNATURE = True if the signature should be removed from the document
+ *                  if it is returned
+ *
  * @author Markus Kilås
  * @version $Id$
  */
 public class XMLValidator extends BaseValidator {
 
-	private static final Logger log = Logger.getLogger(XMLValidator.class.getName());
-	
-	static final String PROP_VALIDATIONSERVICEWORKER    = "VALIDATIONSERVICEWORKER";
-        static final String PROP_RETURNDOCUMENT                         = "RETURNDOCUMENT";
-        static final String PROP_STRIPSIGNATURE                         = "STRIPSIGNATURE";
-	
-	private transient IWorkerSession.IRemote workersession;
-	private transient int validationServiceWorkerId;
+    /** Logger. */
+    private static final Logger LOG = Logger.getLogger(XMLValidator.class);
+
+    /** VALIDATIONSERVICEWORKER property. */
+    static final String PROP_VALIDATIONSERVICEWORKER =
+            "VALIDATIONSERVICEWORKER";
+
+    /** RETURNDOCUMENT property. */
+    static final String PROP_RETURNDOCUMENT = "RETURNDOCUMENT";
+
+    /** STRIPSIGNATURE property. */
+    static final String PROP_STRIPSIGNATURE = "STRIPSIGNATURE";
+
+    /** Worker session. */
+    @EJB
+    private transient IWorkerSession.IRemote workersession;
+
+    /** ID of validation service worker used for validating certificates. */
+    private transient int validationServiceWorkerId;
 	
 	
     @Override
-    public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
+    public void init(final int workerId, final WorkerConfig config,
+            final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
 
-        workersession = lookupWorkerSessionBean();
+        if (workersession == null) {
+            try {
+                workersession = ServiceLocator.getInstance().lookupRemote(
+                    IWorkerSession.IRemote.class);
+            } catch (NamingException ne) {
+                throw new RuntimeException(ne);
+            }
+        }
         getValidationServiceWorkerId();
     }
 
@@ -134,7 +157,7 @@ public class XMLValidator extends BaseValidator {
         }
         NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
         if (nl.getLength() == 0) {
-            log.info("Request " + requestId + ": No signature found");
+            LOG.info("Request " + requestId + ": No signature found");
             return new GenericValidationResponse(requestId, false);
         }
 
@@ -160,11 +183,11 @@ public class XMLValidator extends BaseValidator {
         } catch (MarshalException ex) {
         	throw new SignServerException("XML signature validation error", ex);
         } catch (XMLSignatureException ex) {
-        	log.info("Request " + requestId + ": XML signature validation error", ex);
+        	LOG.info("Request " + requestId + ": XML signature validation error", ex);
             return new GenericValidationResponse(requestId, false);
         }
 
-        log.info("Request " + requestId + " signature valid: " + validSignature);
+        LOG.info("Request " + requestId + " signature valid: " + validSignature);
         
         if(certAndKeySelector.getChoosenCert() == null) {
         	throw new RuntimeException("CertificateAndKeySelector.select() does not seem to have been called");
@@ -177,8 +200,8 @@ public class XMLValidator extends BaseValidator {
         
 		// No need to check certificate if the signature anyway is inconsistent
         if(validSignature) {
-	        if(log.isDebugEnabled()) {
-	            log.debug("Request "+requestId +": validateCertificate:request("
+	        if(LOG.isDebugEnabled()) {
+	            LOG.debug("Request "+requestId +": validateCertificate:request("
 	            	+ "\"" + choosenCert.getSubjectDN().toString() + "\", "
 	            	+ "\"" + choosenCert.getIssuerDN().toString() + "\", "
 	            	+ "\"" + choosenCert.getNotBefore() + "\", "
@@ -199,9 +222,9 @@ public class XMLValidator extends BaseValidator {
 			
 			try {
                             final int validationWorkerId = getValidationServiceWorkerId();
-                            log.info("Requesting certificate validation from worker: " + validationWorkerId);
+                            LOG.info("Requesting certificate validation from worker: " + validationWorkerId);
                             response = workersession.process(validationWorkerId, vr, new RequestContext());
-				log.info("ProcessResponse: " + response);
+				LOG.info("ProcessResponse: " + response);
 				
 				if(response == null){
 					throw new SignServerException("Error communicating with validation servers, no server in the cluster seem available.");
@@ -212,8 +235,8 @@ public class XMLValidator extends BaseValidator {
 				}
 				vresponse = (ValidateResponse) response;
 				
-				if(log.isDebugEnabled()) {
-		            log.debug("Request "+requestId +": validateCertificate:response("
+				if(LOG.isDebugEnabled()) {
+		            LOG.debug("Request "+requestId +": validateCertificate:response("
 		            	+ "\"" + vresponse.getValidation().getStatus() + "\", "
 		            	+ "\"" + (vresponse.getValidCertificatePurposes() == null ? "" :  vresponse.getValidCertificatePurposes()) + "\")");
 				}
@@ -224,13 +247,13 @@ public class XMLValidator extends BaseValidator {
 		        }
 				
 			} catch (IllegalRequestException e) {
-				log.warn("Error validating certificate", e);
+				LOG.warn("Error validating certificate", e);
 			} catch (CryptoTokenOfflineException e) {
-				log.warn("Error validating certificate", e);
+				LOG.warn("Error validating certificate", e);
 			} catch (SignServerException e) {
-				log.warn("Error validating certificate", e);
+				LOG.warn("Error validating certificate", e);
 			}
-	        log.info("Request " + requestId + " valid certificate: " + validCertificate);
+	        LOG.info("Request " + requestId + " valid certificate: " + validCertificate);
         }
         
             byte[] processedBytes = null;
@@ -266,12 +289,12 @@ public class XMLValidator extends BaseValidator {
                     config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
 
             if(validationServiceWorkerId < 1) {
-                log.warn("XMLValidator["+workerId+"] " +
+                LOG.warn("XMLValidator["+workerId+"] " +
                         "Could not find worker for property " +
                         PROP_VALIDATIONSERVICEWORKER + ": " +
                         config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
             } else {
-                log.info("XMLValidator["+workerId+"] " +
+                LOG.info("XMLValidator["+workerId+"] " +
                         "Will use validation service worker: " + validationServiceWorkerId);
             }
         }

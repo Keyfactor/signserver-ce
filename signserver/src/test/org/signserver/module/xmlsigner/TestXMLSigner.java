@@ -33,7 +33,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.testutils.ServiceLocator;
+import org.signserver.common.ServiceLocator;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import org.w3c.dom.Document;
@@ -63,7 +63,8 @@ public class TestXMLSigner extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        workerSession = ServiceLocator.getInstance().getWorkerSession();
+        workerSession = ServiceLocator.getInstance().lookupRemote(
+                IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -275,7 +276,8 @@ public class SignServerWS implements ISignServerWS {
       }
       return checkDBString;
     }
-    
+
+    @EJB
 	private IWorkerSession.ILocal workersession;
 	
     private IWorkerSession.ILocal getWorkerSession(){
@@ -290,7 +292,8 @@ public class SignServerWS implements ISignServerWS {
     	
     	return workersession;
     }
-    
+
+    @EJB
 	private IGlobalConfigurationSession.ILocal globalconfigsession;
 	
     private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession(){

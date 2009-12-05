@@ -19,11 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.cert.Certificate;
-import java.util.Hashtable;
 import java.util.List;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,15 +30,14 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.signserver.cli.CommonAdminInterface;
 import org.signserver.client.api.ISigningAndValidation;
-import org.signserver.client.api.SigningAndValidationWS;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.WorkerStatus;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.cryptotokens.P12CryptoToken;
+import org.signserver.common.ServiceLocator;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.common.ICertificate;
@@ -78,9 +74,11 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		Context context = getInitialContext();
-		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
-		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+		
+                gCSession = ServiceLocator.getInstance().lookupRemote(
+                        IGlobalConfigurationSession.IRemote.class);
+                sSSession = ServiceLocator.getInstance().lookupRemote(
+                    IWorkerSession.IRemote.class);
 		TestUtils.redirectToTempOut();
 		TestUtils.redirectToTempErr();
 		TestingSecurityManager.install();
@@ -389,18 +387,6 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 			return res.getCertificateValidation().getStatusMessage();
 		}
 		return "null";
-	}
-	
-	/**
-	 * Get the initial naming context
-	 */
-	private Context getInitialContext() throws Exception {
-		Hashtable<String, String> props = new Hashtable<String, String>();
-		props.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-		props.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
-		props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-		Context ctx = new InitialContext(props);
-		return ctx;
 	}
 
 	private void checkXmlWellFormed(InputStream in) {

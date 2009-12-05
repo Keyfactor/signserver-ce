@@ -10,11 +10,11 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.web;
 
 import java.io.IOException;
 
+import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -37,10 +37,10 @@ import org.signserver.ejb.interfaces.IServiceTimerSession.ILocal;
  */
 public class StartServicesServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 1L;
-	private static final Logger log = Logger.getLogger(StartServicesServlet.class);
-    
+    private static final long serialVersionUID = 1L;
+    private static final Logger log = Logger.getLogger(StartServicesServlet.class);
 
+    @EJB
     private IServiceTimerSession.ILocal timedServiceSession;
 
     private IServiceTimerSession.ILocal getTimedServiceSession(){
@@ -52,29 +52,23 @@ public class StartServicesServlet extends HttpServlet {
     			log.error(e);
     		}
     	}
-    	
+
     	return timedServiceSession;
     }
-    
+
     /**
      * Method used to remove all active timers
-	 * @see javax.servlet.GenericServlet#destroy()
-	 */
-	public void destroy() {		
+     * @see javax.servlet.GenericServlet#destroy()
+     */
+    public void destroy() {
         log.info("Destroy, Sign Server shutdown.");
-        
+
         log.debug(">destroy calling ServiceSession.unload");
 
         getTimedServiceSession().unload(0);
 
-		super.destroy();
-	}
-
-
-
- 
-
-      
+        super.destroy();
+    }
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -82,15 +76,11 @@ public class StartServicesServlet extends HttpServlet {
         log.info("Init, Sign Server startup.");
 
         log.debug(">init calling ServiceSession.load");
-
         getTimedServiceSession().load(0);
-
-
-
     } // init
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
         log.debug(">doPost()");
         doGet(req, res);
         log.debug("<doPost()");
@@ -101,5 +91,4 @@ public class StartServicesServlet extends HttpServlet {
         res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Servlet doesn't support requests is only loaded on startup.");
         log.debug("<doGet()");
     } // doGet
-
 }

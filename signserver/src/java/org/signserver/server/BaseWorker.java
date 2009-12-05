@@ -10,73 +10,75 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.ejb.EJB;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 
-
+/**
+ * Base class with common methods for workers.
+ *
+ * @version $Id$
+ */
 public abstract class BaseWorker implements IWorker {
-	
-	private transient Logger log = Logger.getLogger(this.getClass());
-	
-	private IGlobalConfigurationSession.ILocal globalConfigurationSession;
-	
-    protected IGlobalConfigurationSession.ILocal getGlobalConfigurationSession(){
-    	if(globalConfigurationSession == null){
-    		try{
-    		  Context context = new InitialContext();
-    		  globalConfigurationSession =  (org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal) context.lookup(IGlobalConfigurationSession.ILocal.JNDI_NAME);
-    		}catch(NamingException e){
-    			log.error(e);
-    		}
-    	}
-    	
-    	return globalConfigurationSession;
-    }
-	//Private Property constants
 
-    protected int workerId =0;
+    /** Logger. */
+    private static final Logger LOG = Logger.getLogger(BaseWorker.class);
     
+    /** The global configuration session. */
+    @EJB
+    private transient IGlobalConfigurationSession.ILocal globalConfig;
+
+    /**
+     * @return The global configuration session.
+     */
+    protected final IGlobalConfigurationSession.ILocal
+            getGlobalConfigurationSession() {
+        if (globalConfig == null) {
+            try {
+                globalConfig = ServiceLocator.getInstance().lookupLocal(
+                        IGlobalConfigurationSession.ILocal.class);
+            } catch (NamingException e) {
+                LOG.error(e);
+            }
+        }
+        return globalConfig;
+    }
+    
+    //Private Property constants
+    protected int workerId = 0;
     protected WorkerConfig config = null;
+    protected WorkerContext workerContext;
+    protected EntityManager em;
+    protected EntityManager workerEM;
 
-	protected WorkerContext workerContext;
-	
-	protected EntityManager em;
-	
-	protected EntityManager workerEM;
-    
-    protected BaseWorker(){
-
+    protected BaseWorker() {
     }
-    
 
-    
     /**
      * Initialization method that should be called directly after creation
      */
-    public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM){
-    	this.workerId = workerId;
-    	this.config = config;
-    	this.workerContext = workerContext;
-    	if(workerContext != null && workerContext instanceof SignServerContext){        
-    		this.em = ((SignServerContext) workerContext).getEntityManager();
-    	}
-
-    	this.workerEM = workerEM;
-    }
-	
-    protected SignServerContext getSignServerContext(){
-    	if(workerContext != null && workerContext instanceof SignServerContext){
-            return (SignServerContext) workerContext;            
+    public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
+        this.workerId = workerId;
+        this.config = config;
+        this.workerContext = workerContext;
+        if (workerContext != null && workerContext instanceof SignServerContext) {
+            this.em = ((SignServerContext) workerContext).getEntityManager();
         }
-    	return null;
+
+        this.workerEM = workerEM;
+    }
+
+    protected SignServerContext getSignServerContext() {
+        if (workerContext != null && workerContext instanceof SignServerContext) {
+            return (SignServerContext) workerContext;
+        }
+        return null;
     }
 }

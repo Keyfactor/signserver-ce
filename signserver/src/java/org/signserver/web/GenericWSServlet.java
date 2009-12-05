@@ -17,6 +17,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Random;
 
+import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -97,34 +98,37 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
      */
     private void forwardRequest(int requestType, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) throws ServletException{
     	
-    	int workerId = getWorkerId(request);
-    	if(workerId == 0){
-    		throw new ServletException("Error, couldn't parse worker name or id from request URI : " + request.getRequestURI());
-    	}
-    	
-        String remoteAddr = request.getRemoteAddr();
-           
-        
-        // 
-        Certificate clientCertificate = null;
-       	Certificate[] certificates = (X509Certificate[]) request.getAttribute( "javax.servlet.request.X509Certificate" );
-    	if(certificates != null){
-    		clientCertificate = certificates[0];
-    	}       
-    	
-        int requestId = rand.nextInt();    	        
+        if(GenericWSRequest.REQUESTTYPE_CONTEXT_INIT != requestType &&
+                GenericWSRequest.REQUESTTYPE_CONTEXT_DESTROYED != requestType) {
 
-        GenericWSRequest wsreq = new GenericWSRequest(requestId,requestType,request,response,getServletConfig(), servletContext);
-        try {
-        	getWorkerSession().process(workerId, wsreq, new RequestContext((X509Certificate) clientCertificate, remoteAddr));
-        } catch (IllegalRequestException e) {
-        	throw new ServletException(e);
-        } catch (CryptoTokenOfflineException e) {
-        	throw new ServletException(e);
-        } catch (SignServerException e) {
-        	throw new ServletException(e);
+            int workerId = getWorkerId(request);
+            if(workerId == 0){
+                    throw new ServletException("Error, couldn't parse worker name or id from request URI : " + request.getRequestURI());
+            }
+
+            String remoteAddr = request.getRemoteAddr();
+
+
+            //
+            Certificate clientCertificate = null;
+            Certificate[] certificates = (X509Certificate[]) request.getAttribute( "javax.servlet.request.X509Certificate" );
+            if(certificates != null){
+                    clientCertificate = certificates[0];
+            }
+
+            int requestId = rand.nextInt();
+
+            GenericWSRequest wsreq = new GenericWSRequest(requestId,requestType,request,response,getServletConfig(), servletContext);
+            try {
+                    getWorkerSession().process(workerId, wsreq, new RequestContext((X509Certificate) clientCertificate, remoteAddr));
+            } catch (IllegalRequestException e) {
+                    throw new ServletException(e);
+            } catch (CryptoTokenOfflineException e) {
+                    throw new ServletException(e);
+            } catch (SignServerException e) {
+                    throw new ServletException(e);
+            }
         }
-
     }
     
     /**
@@ -153,8 +157,8 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
     }
 
 
-
-	private IWorkerSession.ILocal workersession;
+    @EJB
+    private IWorkerSession.ILocal workersession;
 	
     private IWorkerSession.ILocal getWorkerSession(){
     	if(workersession == null){

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -73,6 +74,8 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     private static final String ENCODING_BASE64 = "base64";
     private static final long MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
+
+    @EJB
     private IWorkerSession.ILocal workersession;
 
     private IWorkerSession.ILocal getWorkerSession() {
@@ -146,12 +149,16 @@ public class GenericProcessServlet extends HttpServlet {
 
             String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
             if(name != null){
-                log.debug("Found a signerName in the request: "+name);
+                if(log.isDebugEnabled()) {
+                    log.debug("Found a signerName in the request: "+name);
+                }
                 workerId = getWorkerSession().getWorkerId(name);
             }
             String id = req.getParameter(WORKERID_PROPERTY_NAME);
             if(id != null){
-                log.debug("Found a signerId in the request: "+id);
+                if(log.isDebugEnabled()) {
+                    log.debug("Found a signerId in the request: "+id);
+                }
                 workerId = Integer.parseInt(id);
             }
 
@@ -238,7 +245,10 @@ public class GenericProcessServlet extends HttpServlet {
 
         GenericServletResponse response = null;
         try {
-            response = (GenericServletResponse) getWorkerSession().process(workerId, new GenericServletRequest(requestId, data, req), new RequestContext((X509Certificate) clientCertificate, remoteAddr));
+            response = (GenericServletResponse) getWorkerSession().process(workerId,
+                    new GenericServletRequest(requestId, data, req),
+                    new RequestContext((X509Certificate) clientCertificate,
+                            remoteAddr));
         } catch (IllegalRequestException e) {
             throw new ServletException(e);
         } catch (CryptoTokenOfflineException e) {

@@ -456,6 +456,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	              <include name="log4j.jar"/>      
 	              <include name="commons-lang-2.4.jar"/>
 	              <include name="ejbca-util.jar"/>
+	              <include name="cert-cvc.jar"/>
 	            </fileset>	
 	            <fileset dir="${lib}/${client.java.target}">        
 	              <include name="bcprov-jdk.jar"/>                  	
@@ -490,7 +491,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    	              
 	        <jar destfile="dist-client/signserverwscli/signserverwscli.jar" basedir="${tmp}/signserverwscli.jar">
 	          <manifest>
-	          	<attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/ejbca-util.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar  lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jaxws-tools.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/mimepull.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/stax-ex.jar lib/streambuffer.jar lib/commons-lang-2.4.jar"/>
+	          	<attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/ejbca-util.jar lib/cert-cvc.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar  lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jaxws-tools.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/mimepull.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/stax-ex.jar lib/streambuffer.jar lib/commons-lang-2.4.jar"/>
 	            <attribute name="Main-Class" value="org.signserver.protocol.ws.client.cli.WSCLI"/>
 	          </manifest>
 	        </jar>    	    	

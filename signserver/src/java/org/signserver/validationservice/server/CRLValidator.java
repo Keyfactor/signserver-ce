@@ -303,11 +303,11 @@ public class CRLValidator extends BaseValidator {
 			return new Validation(cert,certChain,Validation.Status.VALID,"This certificate is valid. Trust anchor for certificate is :" + cpv_result.getTrustAnchor().getTrustedCert().getSubjectDN());
 
 		} catch (CertPathValidatorException e) {
-			log.error("Exception on valdiation", e);
+			log.debug("certificate is not valid.", e);
 			return new Validation(cert,certChain,Validation.Status.DONTVERIFY,"Exception on validation. certificate causing exception : " + ((X509Certificate)e.getCertPath().getCertificates().get(e.getIndex())).getSubjectDN() + e.toString());
 		} catch (InvalidAlgorithmParameterException e) {
-			log.error("Exception on valdiation", e);
-			return new Validation(cert,getCertificateChain(cert),Validation.Status.DONTVERIFY,"Exception on validation." + e.toString());
+			log.error("Exception on validation", e);
+			throw new SignServerException("Exception on validation.",e);
 		}
 
 	}

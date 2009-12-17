@@ -33,7 +33,7 @@ div.header {
 <body>
 <h2>MRTD SOD signing demo</h2>
 <p>Enter the data for the data groups to be stored on the passport as base64 encoded strings.</p>
-<form id="requestform" action="/signserver/sod" method="post">
+<form id="requestform" action="sod" method="post">
     <input type="hidden" name="workerName" value="MRTDSODSigner"/>
     <!-- if encoding = binary values will not be base64 decoded before use -->
     <!--
@@ -64,7 +64,7 @@ div.header {
 
 <h2>Display signing certificate</h2>
 <p>View the current document signer certificate.</p>
-<form id="displaycertform" action="/signserver/sod" method="post">
+<form id="displaycertform" action="sod" method="post">
     <input type="hidden" name="workerName" value="MRTDSODSigner"/>
     <input type="hidden" name="displayCert" value="true"/>     
     <input type="submit" name="submit" value="Display" /><br />
@@ -72,7 +72,7 @@ div.header {
 
 <h2>Download signing certificate</h2>
 <p>Download the current document signer certificate in binary (der) format.</p>
-<form id="downloadcertform" action="/signserver/sod" method="post">
+<form id="downloadcertform" action="sod" method="post">
     <input type="hidden" name="workerName" value="MRTDSODSigner"/>
     <input type="hidden" name="downloadCert" value="true"/>     
     <input type="submit" name="submit" value="Download" /><br />

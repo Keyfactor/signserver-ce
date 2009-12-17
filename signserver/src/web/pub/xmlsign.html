@@ -48,21 +48,23 @@ function check()
 <h2>XML file signing</h2>
 </div>
 
-<form id="recievefile" action="/signserver/process"
+        <form id="recievefile" action="process"
 	method="post" enctype="multipart/form-data">
     <input type="hidden" name="workerName" value="XMLSigner"/>
 	
 <p>Simply upload a XML document to the XML signer and you will get
-back the same XML, but signed by the signserver. This is a central
+                back the same XML, but signed by SignServer. This is a central
 organization signature.</p>
 
 <table width="100%" border="0" cellspacing="3" cellpadding="3">
 	<tr id="Row2">
-		<td width="49%" valign="top" align="right">Select XML file to
-		upload and sign</td>
-		<td width="51%" valign="top"><input type="file"
-			name="filerecievefile" /> <input type="submit"
-			name="buttonrecievefile" onclick="return check()" value="Submit" /><br />
+                    <td width="49%" valign="top" align="right">
+                        Select XML file to upload and sign
+                    </td>
+                    <td width="51%" valign="top">
+                        <input type="file" name="filerecievefile" /> 
+                        <input type="submit" name="buttonrecievefile"
+                               onclick="return check()" value="Submit" /><br />
 		<br />
 		</td>
 	</tr>

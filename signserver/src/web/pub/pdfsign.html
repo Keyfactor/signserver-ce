@@ -42,7 +42,8 @@ function check()
 </div>
 <p>
 Simply upload a PDF document (small please) to the PDF signer and you will get back the same PDF, but signed by the signserver. This is a central organization signature.
-    <form name="recievefile" action="/signserver/process" method="post" enctype="multipart/form-data" >
+</p>
+    <form name="recievefile" action="process" method="post" enctype="multipart/form-data">
         <input type="hidden" name="workerName" value="PDFSigner"/>
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
     <tr id="Row2"> 
@@ -54,7 +55,6 @@ Simply upload a PDF document (small please) to the PDF signer and you will get b
     </tr>
   </table>
     </form>
-</p>
 
 <h2>Verification of signature</h2>
 <p>
@@ -62,12 +62,12 @@ You can display the signature very nicely in Acrobat reader with signing plug-in
 </p>
 <p>
 If you want to verify the signed PDFs nicely you must download the CA certificate from your CA and install it in acrobat reader.
+</p>
 <ul>
 <li>In Ubuntu you can enable the medibuntu repository and then <strong>apt-get install acroread acroread-plugins</strong>.</li>
 <li>You can also simply download Acrobat Reader from Adobe.</li>
-<li>Download the root CA certificate and install in Acrobat reader (v8) in </i>Document->Manage Trusted Identities->Display: Certificates->Add Contacts</i>. Edit Trust and enable at least <i>Signatures and as a trusted root</i></li>
+<li>Download the root CA certificate and install in Acrobat reader (v8) in <i>Document->Manage Trusted Identities->Display: Certificates->Add Contacts</i>. Edit Trust and enable at least <i>Signatures and as a trusted root</i></li>
 </ul>
-</p>
 
 </body>
 </html>

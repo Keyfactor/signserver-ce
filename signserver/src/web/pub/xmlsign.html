@@ -1,73 +1,75 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-<title>XML signing demo</title>
-<style type="text/css">
-<!--
-body {
-	width: 55em;
-	margin-left: 5em;
-	margin-top: 1em;
-}
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>XML signing demo</title>
+        <style type="text/css">
+            <!--
+            body {
+                width: 55em;
+                margin-left: 5em;
+                margin-top: 1em;
+            }
 
-a:link {
-	color: #00007f;
-	text-decoration: none;
-}
+            a:link {
+                color: #00007f;
+                text-decoration: none;
+            }
 
-img {
-	border: 0px;
-}
+            img {
+                border: 0px;
+            }
 
-div.header {
-	font-size: 42px;
-	font-weight: bold;
-	margin-left: 2.5em;
-	margin-top: 15px;
-	font-style: italic;
-}
--->
-</style>
-</head>
-<body>
-<script type="text/javascript">
-<!--  
-function check()
-{  
-  if(document.recievefile.filerecievefile.value == ''){   
-     alert("You must select a file"); 
-   }else{  
-     return true;  
-   }
-   return false;
-}
--->
-</script>
-<div style="text-align: center;">
-<h2>XML file signing</h2>
-</div>
+            div.header {
+                font-size: 42px;
+                font-weight: bold;
+                margin-left: 2.5em;
+                margin-top: 15px;
+                font-style: italic;
+            }
+            -->
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+            <!--
+            function check()
+            {
+                if(document.recievefile.filerecievefile.value == ''){
+                    alert("You must select a file");
+                }else{
+                    return true;
+                }
+                return false;
+            }
+            -->
+        </script>
+        <div style="text-align: center;">
+            <h2>XML file signing</h2>
+        </div>
 
-<form id="recievefile" action="/signserver/process"
-	method="post" enctype="multipart/form-data">
-    <input type="hidden" name="workerName" value="XMLSigner"/>
-	
-<p>Simply upload a XML document to the XML signer and you will get
-back the same XML, but signed by the signserver. This is a central
-organization signature.</p>
+        <form id="recievefile" action="process"
+              method="post" enctype="multipart/form-data">
+            <input type="hidden" name="workerName" value="XMLSigner"/>
 
-<table width="100%" border="0" cellspacing="3" cellpadding="3">
-	<tr id="Row2">
-		<td width="49%" valign="top" align="right">Select XML file to
-		upload and sign</td>
-		<td width="51%" valign="top"><input type="file"
-			name="filerecievefile" /> <input type="submit"
-			name="buttonrecievefile" onclick="return check()" value="Submit" /><br />
-		<br />
-		</td>
-	</tr>
-</table>
-</form>
+            <p>Simply upload a XML document to the XML signer and you will get
+                back the same XML, but signed by SignServer. This is a central
+                organization signature.</p>
 
-</body>
+            <table width="100%" border="0" cellspacing="3" cellpadding="3">
+                <tr id="Row2">
+                    <td width="49%" valign="top" align="right">
+                        Select XML file to upload and sign
+                    </td>
+                    <td width="51%" valign="top">
+                        <input type="file" name="filerecievefile" /> 
+                        <input type="submit" name="buttonrecievefile"
+                               onclick="return check()" value="Submit" /><br />
+                        <br />
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+    </body>
 </html>

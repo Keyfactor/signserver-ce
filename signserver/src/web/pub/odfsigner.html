@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>ODF signing demo</title>
+		<title>OpenDocument Format signing demo</title>
 		<style TYPE="text/css"> <!--
 		body {
 			width: 55em;
@@ -38,15 +38,15 @@ function check()
 -->
 </SCRIPT>
 <div style="text-align: center;">   
-   <h2>ODF document signing<br></h2>
+   <h2>OpenDocument Format document signing<br></h2>
 </div>
 <p>
-	Simply upload an ODF document (<b>note</b> : created Open Office 3.1 or later ; odt,ods,odp,odg) to the ODFSigner and you will get back the same document, but signed by the signserver. This is a central organization signature.
+	Simply upload an ODF document (<b>note</b>: created by OpenOffice.org 3.1 or later; odt,ods,odp,odg) to the ODFSigner and you will get back the same document, but signed by the signserver. This is a central organization signature.
 	</p>
 	<p>
-		<b>NOTE :</b> You might need to save the output to a file and change file extension accordingly. 
+		<b>NOTE:</b> You might need to save the output to a file and change file extension accordingly. 
 	</p>
-    <form name="recievefile" action="/signserver/process" method="post" enctype="multipart/form-data" >
+    <form name="recievefile" action="process" method="post" enctype="multipart/form-data" >
         <input type="hidden" name="workerName" value="ODFSigner"/>
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
     <tr id="Row2"> 
@@ -58,14 +58,13 @@ function check()
     </tr>
   </table>
     </form>
-</p>
 
 <h2>Verification of signature</h2>
 <p>
-You can display the signature very nicely in Open Office 3.1 or later. 
+You can display the signature very nicely in OpenOffice.org 3.1 or later.
 </p>
 <p>
-If you want to verify the signed documents nicely you must download the CA certificate from your CA and install it windows certificate store (for windows users).
+If you want to verify the signed documents nicely you must download the CA certificate from your CA and install it in Windows certificate store (for Windows users).
 </p>
 
 </body>

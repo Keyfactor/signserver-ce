@@ -300,7 +300,7 @@
                    <actionList>
                      <setInstallerVariable>
                        <name>databaseurl</name>
-                       <value>jdbc:hsqldb:@replace_varchars@jboss.server.data.dir}@replace_varchars@/}hypersonic@replace_varchars@/}localDB</value>
+                       <value>jdbc:hsqldb:@replace_varchars@jboss.server.data.dir}@replace_varchars@/}hypersonic@replace_varchars@/}SignServerLocalDB</value>
                     </setInstallerVariable> 
                     <setInstallerVariable>
                        <name>databasedriver</name>

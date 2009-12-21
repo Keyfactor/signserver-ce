@@ -143,7 +143,7 @@
 
 # Database connection url.
 # This is the URL used to connect to the database, used to configure a new datasource in JBoss.
-# Default: jdbc:hsqldb:${jboss.server.data.dir}${/}hypersonic${/}localDB
+# Default: jdbc:hsqldb:${jboss.server.data.dir}${/}hypersonic${/}SignServerLocalDB
 # Mysql standard
 #database.url=jdbc:mysql://127.0.0.1:3306/signserver
 #Mysql Clusters should use something like

@@ -15,6 +15,7 @@ package org.signserver.client.api;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -71,6 +72,10 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 	
 	private static File keystoreFileEndentity8;
 
+        private static File crlWithCertOk;
+        private static File crlWithCertRevoked;
+        private static File crlToUse;
+
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -90,6 +95,31 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 		if(!keystoreFileEndentity8.exists()) {
 			throw new FileNotFoundException("Keystore file: " + keystoreFileEndentity8.getAbsolutePath());
 		}
+                
+                crlWithCertOk = new File(signserverhome + File.separator
+                        + "src/test/org/signserver/client/api/EightCA-ok.crl");
+                crlWithCertRevoked = new File(signserverhome + File.separator
+                        + "src/test/org/signserver/client/api/EightCA-revoked.crl");
+                crlToUse  = new File(signserverhome + File.separator
+                        + "src/test/org/signserver/client/api/EightCA-use.crl");
+
+                if(!crlWithCertOk.exists()) {
+                    throw new FileNotFoundException("Missing CRL: "
+                            + crlWithCertOk.getAbsolutePath());
+                }
+                if(!crlWithCertRevoked.exists()) {
+                    throw new FileNotFoundException("Missing CRL: "
+                            + crlWithCertRevoked.getAbsolutePath());
+                }
+
+                // Start with CRL with no revoked certificate
+                crlToUse.delete();
+                copyFile(crlWithCertOk, crlToUse);
+
+                if(!crlToUse.exists()) {
+                    throw new FileNotFoundException("Missing CRL: "
+                            + crlToUse.getAbsolutePath());
+                }
 	}
 
 	@Override
@@ -127,7 +157,7 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 		
 		
 		// VALIDATION
-		sSSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CRLPATHS", new File(signserverhome + File.separator + "src/test/org/signserver/client/api/EightCA-5.crl").toURI().toString());
+		sSSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CRLPATHS", crlToUse.toURI().toString());
 		setupValidation();
 		
 		// XMLVALIDATOR: module
@@ -321,38 +351,65 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 		log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
 		assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
 	}
-	
-	public void test09SigOkCertRevoked() throws Exception {
-		log.info("test09SigOkCertRevoced");
-		
-		// Change to a CRL where endentity8 is revoked
-		sSSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CRLPATHS", new File(signserverhome + File.separator + "src/test/org/signserver/client/api/EightCA-6.crl").toURI().toString());
-		setupValidation();
-		
-		// OK signature, revoked cert
-		{
-			byte[] data = SigningAndValidationTestData.TESTXML10.getBytes();
-			
-			// XML Document
-			checkXmlWellFormed(new ByteArrayInputStream(data));
-			
-			ISigningAndValidation signserver = getSigningAndValidationImpl();
-			GenericValidationResponse res = signserver.validate(""+XMLVALIDATOR_WORKERID, data);
-			
-			assertFalse("invalid document", res.isValid());
-			
-			// Check certificate
-			assertNotNull(res.getCertificateValidation());
-			
-			// Note: The best would be if we could get REVOKED as status from the CRLValidator and could then test with:
-			//assertEquals(Validation.Status.REVOKED, res.getCertificateValidation().getStatus());
-			assertFalse(Validation.Status.VALID.equals(res.getCertificateValidation().getStatus()));
-			log.info("Revoked cert status: " + res.getCertificateValidation().getStatusMessage());
-			
-			ICertificate cert = res.getSignerCertificate();
-			assertNotNull(cert);
-		}
-	}
+
+    /**
+     * Changes the CRL to a CRL with the certificate revoked.
+     * @throws Exception
+     */
+    public void test09SigOkCertRevokedByUpdatingFile() throws Exception {
+        log.info("test09SigOkCertRevocedByUpdatingFile");
+
+        // Change the file to be one with CRL revoked
+        crlToUse.delete();
+        copyFile(crlWithCertRevoked, crlToUse);
+
+
+        // OK signature, revoked cert
+        assertCertRevoked();
+    }
+
+    /**
+     * Changes the URL to point to a CRL which is revoked.
+     * @throws Exception
+     */
+    public void test10SigOkCertRevoked() throws Exception {
+        log.info("test10SigOkCertRevoced");
+
+        // Change to a CRL where endentity8 is revoked
+        sSSession.setWorkerProperty(CERTVALIDATION_WORKERID,
+                "VAL1.ISSUER1.CRLPATHS", crlWithCertRevoked.toURI().toString());
+        setupValidation();
+
+        // OK signature, revoked cert
+        assertCertRevoked();
+    }
+
+    /** Ok signature, revoked cert. */
+    private void assertCertRevoked() throws Exception {
+        final byte[] data = SigningAndValidationTestData.TESTXML10.getBytes();
+
+        // XML Document
+        checkXmlWellFormed(new ByteArrayInputStream(data));
+
+        final ISigningAndValidation signserver = getSigningAndValidationImpl();
+        final GenericValidationResponse res = signserver.validate(
+                "" + XMLVALIDATOR_WORKERID, data);
+
+        assertFalse("invalid document", res.isValid());
+
+        // Check certificate
+        assertNotNull(res.getCertificateValidation());
+
+        // Note: The best would be if we could get REVOKED as status from the CRLValidator and could then test with:
+        //assertEquals(Validation.Status.REVOKED, res.getCertificateValidation().getStatus());
+        assertFalse(Validation.Status.VALID.equals(
+                res.getCertificateValidation().getStatus()));
+        log.info("Revoked cert status: "
+                + res.getCertificateValidation().getStatusMessage());
+
+        final ICertificate cert = res.getSignerCertificate();
+        assertNotNull(cert);
+    }
 
 	public void test99TearDownDatabase() throws Exception {
 		// XMLVALIDATOR
@@ -402,5 +459,24 @@ public class TestSigningAndValidationWithCRL extends TestCase {
 			fail("Not well formed XML: " + e.getMessage());
 		}
 	}
+
+    private void copyFile(final File in, final File out) throws Exception {
+        final FileInputStream fis = new FileInputStream(in);
+        final FileOutputStream fos = new FileOutputStream(out);
+        try {
+            final byte[] buf = new byte[1024];
+            int i = 0;
+            while ((i = fis.read(buf)) != -1) {
+                fos.write(buf, 0, i);
+            }
+        } finally {
+            if (fis != null) {
+                fis.close();
+            }
+            if (fos != null) {
+                fos.close();
+            }
+        }
+    }
 	
 }

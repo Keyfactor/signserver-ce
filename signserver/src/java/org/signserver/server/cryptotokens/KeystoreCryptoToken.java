@@ -118,6 +118,11 @@ public class KeystoreCryptoToken implements ICryptoToken {
                 ks = KeyStore.getInstance("JKS");
             }
             this.provider = ks.getProvider().getName();
+
+            if (keystorepath == null) {
+                throw new FileNotFoundException("Missing property "
+                        + KeystoreCryptoToken.KEYSTOREPATH + ".");
+            }
             InputStream in = new FileInputStream(keystorepath);
             ks.load(in, authenticationcode.toCharArray());
             in.close();

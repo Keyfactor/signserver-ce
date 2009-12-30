@@ -978,7 +978,7 @@ try {
                                     <ul>
                                         <li><b>workerName</b> - Name of the worker that should handle the request. Required unless workerId specified.</li>
                                         <li><b>workerId</b> - Id of the worker that should handle the request. Required unless workerName specified.</li>
-                                        <li><b>data</b> - The bytes that should be signed or validated. Required.</li>
+                                        <li><b>data</b> - The bytes that should be signed or validated. Required for x-www-form-urlencoded.</li>
                                         <li><b>encoding</b> - Encoding of the data field. Optional. By specifying "base64" SignServer Base64-decodes
                                         the data property before passing it to the worker.</li>
                                     </ul>

@@ -112,36 +112,50 @@ public class GenericProcessServlet extends HttpServlet {
         String fileName = null;
 
         if (ServletFileUpload.isMultipartContent(req)) {
-            FileItemFactory factory = new DiskFileItemFactory();
-            ServletFileUpload upload = new ServletFileUpload(factory);
+            final FileItemFactory factory = new DiskFileItemFactory();
+            final ServletFileUpload upload = new ServletFileUpload(factory);
 
             // Limit the maximum size of input
             upload.setSizeMax(MAX_UPLOAD_SIZE);
 
             try {
-                List<FileItem> items = upload.parseRequest(req);
-                Iterator iter = items.iterator();
+                final List<FileItem> items = upload.parseRequest(req);
+                final Iterator iter = items.iterator();
+                FileItem fileItem = null;
                 while (iter.hasNext()) {
-                    FileItem item = (FileItem) iter.next();
+                    final FileItem item = (FileItem) iter.next();
 
                     if (item.isFormField()) {
                         if (WORKERNAME_PROPERTY_NAME.equals(item.getFieldName())) {
-                            log.debug("Found a signerName in the request: " + item.getString());
+                            if (log.isDebugEnabled()) {
+                                log.debug("Found a signerName in the request: "
+                                        + item.getString());
+                            }
                             workerId = getWorkerSession().getWorkerId(item.getString());
                         } else if (WORKERID_PROPERTY_NAME.equals(item.getFieldName())) {
-                            log.debug("Found a signerId in the request: " + item.getString());
+                            if (log.isDebugEnabled()) {
+                                log.debug("Found a signerId in the request: "
+                                        + item.getString());
+                            }
                             try {
                                 workerId = Integer.parseInt(item.getString());
                             } catch (NumberFormatException ignored) {}
                         }
                     } else {
-                        fileName = item.getName();
-                        data = item.get();
-                        
                         // We only care for one upload at a time right now
-                        break;
+                        if (fileItem == null) {
+                            fileItem = item;
+                        }
                     }
                 }
+
+                if (fileItem == null) {
+                    throw new ServletException("Missing file content in upload");
+                }
+
+                fileName = fileItem.getName();
+                data = fileItem.get();
+
             } catch (FileUploadException ex) {
                 throw new ServletException("Upload failed", ex);
             }
@@ -164,7 +178,7 @@ public class GenericProcessServlet extends HttpServlet {
 
             if(METHOD_GET.equalsIgnoreCase(req.getMethod()) ||
                     (req.getContentType() != null && req.getContentType().contains(FORM_URL_ENCODED))) {
-                log.info("Request is FORM_URL_ENCODED");
+                log.debug("Request is FORM_URL_ENCODED");
 
                 if(req.getParameter(DATA_PROPERTY_NAME) == null) {
                     throw new ServletException("Missing field 'data' in request");
@@ -181,7 +195,11 @@ public class GenericProcessServlet extends HttpServlet {
                     }
                 }
             } else {
-                log.info("Request Content-type: " + req.getContentType());
+                // Pass-through the content to be handled by worker if
+                // unknown content-type
+                if(log.isDebugEnabled()) {
+                    log.debug("Request Content-type: " + req.getContentType());
+                }
 
                 // Get an input stream and read the bytes from the stream
                 InputStream in = req.getInputStream();
@@ -197,8 +215,12 @@ public class GenericProcessServlet extends HttpServlet {
             }
         }
 
+        if (log.isDebugEnabled()) {
+            log.debug("Received a request with length: "
+                    + req.getContentLength());
+        }
+
         // Limit the maximum size of input
-        log.debug("Received a request with length: " + req.getContentLength());
         if (data.length > MAX_UPLOAD_SIZE) {
             log.error("Content length exceeds 100MB, not processed: " + req.getContentLength());
             throw new ServletException("Error. Maximum content lenght is 100MB.");

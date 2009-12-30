@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.client;
 
 import java.awt.Color;
@@ -44,7 +43,10 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
- * Used for both loading the PDF servlet with requests and doing PDF-specific postprocessing.
+ * Used for both loading the PDF servlet with requests and doing PDF-specific
+ * postprocessing.
+ *
+ * @version $Id$
  */
 public class PerformanceTestPDFServlet implements PerformanceTestTask {
 
@@ -53,8 +55,13 @@ public class PerformanceTestPDFServlet implements PerformanceTestTask {
 	static final int MAX_PDF_SIZE = 5 * 1000 * 1000;
 	static final int DIFFERENT_PDF_SIZES = 20;
 
-	private final static String REQUEST_CONTENT_HEADER = "\r\n--signserver\r\n"
-		+ "content-disposition: attachment; name=\"datafile\"; filename=\"test.pdf\"\r\n"
+        private static final String REQUEST_CONTENT_BOUNDRY = "\r\n--signserver\r\n";
+        private static final String REQUEST_CONTENT_WORKERNAME =
+                REQUEST_CONTENT_BOUNDRY
+                + "Content-Disposition: form-data; name=\"workerName\"\r\n\r\n"
+                + "PDFSigner";
+	private final static String REQUEST_CONTENT_FILE = REQUEST_CONTENT_BOUNDRY
+		+ "Content-Disposition: form-data; name=\"datafile\"; filename=\"test.pdf\"\r\n"
 		+ "Content-Type: application/pdf\r\n"
 		+ "Content-Transfer-Encoding: binary\r\n\r\n";
 	private final static String REQUEST_CONTENT_END = "\r\n--signserver--\r\n";
@@ -77,14 +84,19 @@ public class PerformanceTestPDFServlet implements PerformanceTestTask {
 			InetAddress addr = InetAddress.getByName(target.getHost());
 			Socket socket = new Socket(addr, target.getPort());
 			OutputStream raw = socket.getOutputStream();
-			int contentLength = (testPDF.length + REQUEST_CONTENT_HEADER.length() + REQUEST_CONTENT_END.length());
-			String command =
-				"POST "+target.getPath() + "pdf?signerName=PDFSigner HTTP/1.0\r\n"
-				+ "Content-type: multipart/form-data, boundary=signserver\r\n"
-				+ "Content-length: " + contentLength + "\r\n"
-				+ "\r\n"	;
+			final int contentLength =
+                                REQUEST_CONTENT_WORKERNAME.length()
+                                + REQUEST_CONTENT_FILE.length()
+                                + testPDF.length
+                                + REQUEST_CONTENT_END.length();
+			final String command =
+				"POST "+target.getPath() + "pdf HTTP/1.0\r\n"
+				+ "Content-Type: multipart/form-data; boundary=signserver\r\n"
+				+ "Content-Length: " + contentLength + "\r\n"
+				+ "\r\n";
 			raw.write(command.getBytes());
-			raw.write(REQUEST_CONTENT_HEADER.getBytes());
+                        raw.write(REQUEST_CONTENT_WORKERNAME.getBytes());
+			raw.write(REQUEST_CONTENT_FILE.getBytes());
 			raw.write(testPDF);
 			raw.write(REQUEST_CONTENT_END.getBytes());
 			raw.flush( );

@@ -10,8 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
- 
 package org.signserver.client;
 
 import java.io.BufferedReader;
@@ -58,397 +56,507 @@ import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
- * class makeing a simple timestamp request to a timestamp server a tries to validate it.
- * Only works in unauthenticated mode.
- * 
+ * Class makeing a simple timestamp request to a timestamp server and tries to
+ * validate it.
+ *
+ * This client only works in unauthenticated mode.
+ *
  * @author philip
  * $Id$
  */
-
 public class TimeStampClient {
- 
-	private static final int PARAM_URL = 0; 
-	
-	private String urlstring = null;
-	private String outrepstring = null;
-	private String inrepstring = null;
-	private String outreqstring = null;
-	private String instring = null;
-	private String infilestring = null;
-	private String signerfilestring = null;
-	private boolean base64 = false;
-	private boolean verify = false;
 
-	public TimeStampClient(String[] args){
-      Option help = new Option( "help", false, "Print this message." );
-      Option b64 = new Option( "base64", false, "Give this option if the stored request/reply should be base64 encoded, default is not.");
-      Option verifyopt = new Option( "verify", false, "Give this option if verification of a stored reply should be done, work together with inrep and cafile. If given, no request to the TSA will happen.");
-      
-      OptionBuilder.hasArg();     
-      OptionBuilder.withDescription(  "Url of TSA, e.g. http://127.0.0.1:8080/signserver/process?workerId=1." );
-      OptionBuilder.withArgName( "url" );
-      Option url = OptionBuilder.create( "url" );
+    private static final int PARAM_URL = 0;
 
-      OptionBuilder.hasArg();     
-      OptionBuilder.withArgName( "file" );      
-      OptionBuilder.withDescription(  "Output file to store the recevied TSA reply, if not given the reply is not stored." );
-      Option outrep = OptionBuilder.create( "outrep" );
-      
-      OptionBuilder.hasArg();     
-      OptionBuilder.withArgName( "file" );      
-      OptionBuilder.withDescription(  "Input file containing an earlier stored base64 encoded response, to verify. You must specify the verify flag also." );
-      Option inrep = OptionBuilder.create( "inrep" );
+    private static TimeStampClient client;
 
-      OptionBuilder.hasArg();     
-      OptionBuilder.withArgName( "file" );      
-      OptionBuilder.withDescription(  "Input file containing the PEM encoded certificate of the TSA signer. Used to verify a stored response." );
-      Option cafileopt = OptionBuilder.create( "signerfile" );
+    private String urlstring;
 
-      OptionBuilder.hasArg();     
-      OptionBuilder.withArgName( "file" );      
-      OptionBuilder.withDescription(  "Output file to store the sent TSA request, if not given the request is not stored." );
-      Option outreq = OptionBuilder.create( "outreq" );
+    private String outrepstring;
 
-      OptionBuilder.hasArg();     
-      OptionBuilder.withArgName( "file" );      
-      OptionBuilder.withDescription(  "File containing message to time stamp." );
-      Option infile = OptionBuilder.create( "infile" );
-      
-      OptionBuilder.hasArg();     
-      OptionBuilder.withArgName( "file" );      
-      OptionBuilder.withDescription(  "String to be time stamped, if neither instr or infile is given, the client works in test-mode generating it's own message." );
-      Option instr = OptionBuilder.create( "instr" );      
-      
-      Options options = new Options();
-      options.addOption(help);
-      options.addOption(verifyopt);
-      options.addOption(url);
-      options.addOption(outrep);
-      options.addOption(inrep);
-      options.addOption(cafileopt);
-      options.addOption(outreq);
-      options.addOption(b64);
-      options.addOption(infile);
-      options.addOption(instr);
-      CommandLineParser parser = new GnuParser();
-      try {
-    	  CommandLine cmd = parser.parse( options, args);
-          if (cmd.hasOption("help")) {
-        	  usage(options);
-          }
-          if (cmd.hasOption("url")) {
-        	  urlstring = cmd.getOptionValue("url");        	  
-          }
-          if (cmd.hasOption("instr")) {
-        	  instring = cmd.getOptionValue("instr");
-          }
-          if (cmd.hasOption("infile")) {
-        	  infilestring = cmd.getOptionValue("infile");        	  
-          }
-          if (cmd.hasOption("outrep")) {
-        	  outrepstring = cmd.getOptionValue("outrep");
-          }
-          if (cmd.hasOption("inrep")) {
-        	  inrepstring = cmd.getOptionValue("inrep");
-          }
-          if (cmd.hasOption("signerfile")) {
-        	  signerfilestring = cmd.getOptionValue("signerfile");
-          }
-          if (cmd.hasOption("outreq")) {
-        	  outreqstring = cmd.getOptionValue("outreq");
-          }
-          if (cmd.hasOption("base64")) {
-        	  base64 = true;
-          }
-          if (cmd.hasOption("verify")) {
-        	  verify = true;
-          }
-          String[] strargs = cmd.getArgs();
-          if (strargs.length > 0) {
-        	  urlstring = strargs[PARAM_URL];	        	  
-          }
+    private String inrepstring;
 
-      } catch (ParseException e) {
-    	  // oops, something went wrong
-    	  System.err.println( "Parsing failed.  Reason: " + e.getMessage() );
-      }
+    private String outreqstring;
 
-	  if(args.length < 1){
-		  usage(options);
-	  }
-      if (Security.addProvider(new BouncyCastleProvider()) < 0) {
-          // If already installed, remove so we can handle redeploy
-          Security.removeProvider("BC");
-          if (Security.addProvider(new BouncyCastleProvider()) < 0) {
-              System.out.println("Cannot even install BC provider again!");
-          }
-      }
-	}
-	 
-	private void usage(Options options) {
-		// automatically generate the help statement
-		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp( "java -jar timeStampClient.jar <options> <url>", options );
-		System.exit(-1);
-	}
-	
-	private static TimeStampClient client = null; 
-	
-	/**
-	 * Use the TimeStamp Client with url to CRL server. 
-	 * 
-	 * @param args
-	 * 
-	 */
-	public static void main(String[] args) throws Exception{
-		client = new TimeStampClient(args);
-		
-		client.run();
-		
-	}
+    private String instring;
 
-	private void run()  throws Exception {
-		if (verify) {
-			tsaVerify();
-		} else {
-			tsaRequest();
-		}
+    private String infilestring;
 
-	}
+    private String signerfilestring;
 
-	private void tsaVerify() throws Exception {
-		if (inrepstring == null) {
-			System.out.println("Needs an inrep!");
-			return;
-		}
-		Collection<X509Certificate> col = getCertsFromPEM(signerfilestring);
-		X509Certificate[] list = (X509Certificate[])col.toArray(new X509Certificate[0]);
-		if (list.length == 0) {
-			System.out.println("No certificate found in file: "+signerfilestring);
-			return;			
-		}
-		byte[] b64Bytes = readFiletoBuffer(inrepstring);
-		byte[] replyBytes = Base64.decode(b64Bytes);
-		TimeStampResponse timeStampResponse = new TimeStampResponse(replyBytes);
-		TimeStampToken token = timeStampResponse.getTimeStampToken();
-		token.validate(list[0], "BC");
-		System.out.println("Token was validated successfully.");
-		TimeStampTokenInfo info = token.getTimeStampInfo();
-		System.out.println("Token was generated on: "+info.getGenTime());
-		if (info.getMessageImprintAlgOID().equals(TSPAlgorithms.SHA1)) {
-			System.out.println("Token hash alg: SHA1");
-		} else {
-			System.out.println("Token hash alg: "+info.getMessageImprintAlgOID());
-		}
-		byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
-		System.out.println("MessageDigest="+new String(hexDigest));
-	}
-	private void tsaRequest() throws Exception {
-		boolean doRun = true;
-		do{  
-			TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
-			
-			Random rand = new Random();
-			int nonce = rand.nextInt();
-            byte[] digest = new byte[20]; 
-			if (instring != null) {
-				byte[] digestBytes = instring.getBytes("UTF-8");
-                MessageDigest dig = MessageDigest.getInstance(TSPAlgorithms.SHA1, "BC");
+    private boolean base64;
+
+    private boolean verify;
+
+
+    /**
+     * Creates a new instance of TimeStampClient.
+     *
+     * @param args Command line arguments
+     */
+    public TimeStampClient(final String[] args) {
+
+        // Create options
+        final Option help = new Option("help", false, "Print this message.");
+        final Option b64 = new Option("base64", false,
+                "Give this option if the stored request/reply should be "
+                + "base64 encoded, default is not.");
+        final Option verifyopt = new Option("verify", false,
+                "Give this option if verification of a stored reply should "
+                + "be done, work together with inrep and cafile. If given, no "
+                + "request to the TSA will happen.");
+
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Url of TSA, e.g. "
+                + "http://127.0.0.1:8080/signserver/process?workerId=1.");
+        OptionBuilder.withArgName("url");
+        final Option url = OptionBuilder.create("url");
+
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("file");
+        OptionBuilder.withDescription("Output file to store the recevied TSA "
+                + "reply, if not given the reply is not stored.");
+        final Option outrep = OptionBuilder.create("outrep");
+
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("file");
+        OptionBuilder.withDescription("Input file containing an earlier stored "
+                + "base64 encoded response, to verify."
+                + "You must specify the verify flag also.");
+        final Option inrep = OptionBuilder.create("inrep");
+
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("file");
+        OptionBuilder.withDescription("Input file containing the PEM encoded "
+                + "certificate of the TSA signer."
+                + "Used to verify a stored response.");
+        final Option cafileopt = OptionBuilder.create("signerfile");
+
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("file");
+        OptionBuilder.withDescription("Output file to store the sent TSA "
+                + "request, if not given the request is not stored.");
+        final Option outreq = OptionBuilder.create("outreq");
+
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("file");
+        OptionBuilder.withDescription("File containing message to time stamp.");
+        final Option infile = OptionBuilder.create("infile");
+
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("file");
+        OptionBuilder.withDescription("String to be time stamped, if neither "
+                + "instr or infile is given, the client works in test-mode "
+                + "generating it's own message.");
+        final Option instr = OptionBuilder.create("instr");
+
+        // Add options
+        final Options options = new Options();
+        options.addOption(help);
+        options.addOption(verifyopt);
+        options.addOption(url);
+        options.addOption(outrep);
+        options.addOption(inrep);
+        options.addOption(cafileopt);
+        options.addOption(outreq);
+        options.addOption(b64);
+        options.addOption(infile);
+        options.addOption(instr);
+
+        final CommandLineParser parser = new GnuParser();
+        try {
+            final CommandLine cmd = parser.parse(options, args);
+            if (cmd.hasOption("help")) {
+                usage(options);
+            }
+            if (cmd.hasOption("url")) {
+                urlstring = cmd.getOptionValue("url");
+            }
+            if (cmd.hasOption("instr")) {
+                instring = cmd.getOptionValue("instr");
+            }
+            if (cmd.hasOption("infile")) {
+                infilestring = cmd.getOptionValue("infile");
+            }
+            if (cmd.hasOption("outrep")) {
+                outrepstring = cmd.getOptionValue("outrep");
+            }
+            if (cmd.hasOption("inrep")) {
+                inrepstring = cmd.getOptionValue("inrep");
+            }
+            if (cmd.hasOption("signerfile")) {
+                signerfilestring = cmd.getOptionValue("signerfile");
+            }
+            if (cmd.hasOption("outreq")) {
+                outreqstring = cmd.getOptionValue("outreq");
+            }
+            if (cmd.hasOption("base64")) {
+                base64 = true;
+            }
+            if (cmd.hasOption("verify")) {
+                verify = true;
+            }
+            final String[] strargs = cmd.getArgs();
+            if (strargs.length > 0) {
+                urlstring = strargs[PARAM_URL];
+            }
+
+        } catch (ParseException e) {
+            // oops, something went wrong
+            System.err.println("Parsing failed.  Reason: " + e.getMessage());
+        }
+
+        if (args.length < 1) {
+            usage(options);
+        }
+        if (Security.addProvider(new BouncyCastleProvider()) < 0) {
+            // If already installed, remove so we can handle redeploy
+            Security.removeProvider("BC");
+            if (Security.addProvider(new BouncyCastleProvider()) < 0) {
+                System.out.println("Cannot even install BC provider again!");
+            }
+        }
+    }
+
+    private void usage(final Options options) {
+        // automatically generate the help statement
+        final HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("java -jar timeStampClient.jar <options> <url>",
+                options);
+        System.exit(-1);
+    }
+
+    /**
+     * Use the TimeStamp Client with URL to the TSA server.
+     *
+     * @param args Command line arguments
+     */
+    public static void main(final String[] args) {
+        try {
+            client = new TimeStampClient(args);
+            client.run();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void run() throws Exception {
+        if (verify) {
+            tsaVerify();
+        } else {
+            tsaRequest();
+        }
+    }
+
+    private void tsaVerify() throws Exception {
+        if (inrepstring == null) {
+            System.out.println("Needs an inrep!");
+            return;
+        }
+        final Collection<X509Certificate> col =
+                getCertsFromPEM(signerfilestring);
+        final X509Certificate[] list = (X509Certificate[]) col.toArray(
+                new X509Certificate[0]);
+        if (list.length == 0) {
+            System.out.println("No certificate found in file: "
+                    + signerfilestring);
+            return;
+        }
+
+        final byte[] b64Bytes = readFiletoBuffer(inrepstring);
+        final byte[] replyBytes = Base64.decode(b64Bytes);
+        
+        final TimeStampResponse timeStampResponse =
+                new TimeStampResponse(replyBytes);
+        final TimeStampToken token = timeStampResponse.getTimeStampToken();
+        token.validate(list[0], "BC");
+        System.out.println("Token was validated successfully.");
+
+        final TimeStampTokenInfo info = token.getTimeStampInfo();
+        System.out.println("Token was generated on: " + info.getGenTime());
+
+        if (info.getMessageImprintAlgOID().equals(TSPAlgorithms.SHA1)) {
+            System.out.println("Token hash alg: SHA1");
+        } else {
+            System.out.println("Token hash alg: "
+                    + info.getMessageImprintAlgOID());
+        }
+        final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
+        System.out.println("MessageDigest=" + new String(hexDigest));
+    }
+
+    private void tsaRequest() throws Exception {
+        final Random rand = new Random();
+        boolean doRun = true;
+        do {
+            final TimeStampRequestGenerator timeStampRequestGenerator =
+                    new TimeStampRequestGenerator();
+
+            final int nonce = rand.nextInt();
+
+            byte[] digest = new byte[20];
+            if (instring != null) {
+                final byte[] digestBytes = instring.getBytes("UTF-8");
+                final MessageDigest dig = MessageDigest.getInstance(
+                        TSPAlgorithms.SHA1,
+                        "BC");
                 dig.update(digestBytes);
                 digest = dig.digest();
-				// When we have given input, we don't want to loop
-				doRun = false;
-			}
-			if (infilestring != null) {
+                // When we have given input, we don't want to loop
+                doRun = false;
+            }
+            if (infilestring != null) {
                 digest = digestFile(infilestring, TSPAlgorithms.SHA1);
-				doRun = false;
-			}
-			byte[] hexDigest = Hex.encode(digest);
-			System.out.println("MessageDigest="+new String(hexDigest));
-			TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, digest, BigInteger.valueOf(nonce));
-			byte[] requestBytes = timeStampRequest.getEncoded();
-			if (outreqstring != null) {
-				// Store request
-				byte[] outBytes;
-				if (base64) {
-					outBytes=Base64.encode(requestBytes);
-				} else {
-					outBytes = requestBytes;
-				}
-				FileOutputStream fos = null;
-				try {
-					fos = new FileOutputStream(outreqstring);
-					fos.write(outBytes);					
-				} finally {
-					if (fos != null) fos.close();
-				}
-			}
-			
-			URL                 url;
-			URLConnection urlConn;
-			DataOutputStream    printout;
-			DataInputStream     input;
-			
-			url = new URL (urlstring);
-			
-			urlConn = url.openConnection();
-			
-			urlConn.setDoInput (true);
-			urlConn.setDoOutput (true);
-			urlConn.setUseCaches (false);
-			urlConn.setRequestProperty("Content-Type", "application/timestamp-query");
-			// Send POST output.
-			printout = new DataOutputStream (urlConn.getOutputStream ());
-			
-			printout.write(requestBytes);
-			printout.flush ();
-			printout.close ();
-			// Get response data.
-			input = new DataInputStream (urlConn.getInputStream ());
-			while(input.available() == 0){
-				Thread.sleep(100);	    	
-			}
-			
-			byte[] ba = null;
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			do{
-				if(ba != null){
-					baos.write(ba);
-				}
-				ba = new byte[input.available()]; 
-				
-			}while(input.read(ba) != -1);
-			
-			byte[] replyBytes = baos.toByteArray();
-			if (outrepstring != null) {
-				// Store request
-				byte[] outBytes;
-				if (base64) {
-					outBytes=Base64.encode(replyBytes);
-				} else {
-					outBytes = replyBytes;
-				}
-				FileOutputStream fos = null;
-				try {
-					fos = new FileOutputStream(outrepstring);
-					fos.write(outBytes);					
-				} finally {
-					if (fos != null) fos.close();
-				}
-			}
+                doRun = false;
+            }
+            final byte[] hexDigest = Hex.encode(digest);
+            System.out.println("MessageDigest=" + new String(hexDigest));
+            
+            final TimeStampRequest timeStampRequest = timeStampRequestGenerator
+                    .generate(TSPAlgorithms.SHA1, digest, BigInteger.valueOf(
+                    nonce));
+            final byte[] requestBytes = timeStampRequest.getEncoded();
 
-			TimeStampResponse timeStampResponse = new TimeStampResponse(replyBytes);
-			timeStampResponse.validate(timeStampRequest);
-			System.out.print("TimeStampRequest validated\n");
-			Thread.sleep(1000);
-		}while(doRun);
-       // timeStampResponse.getTimeStampToken().validate();
-	}
-	
-	/**
+            if (outreqstring != null) {
+                // Store request
+                byte[] outBytes;
+                if (base64) {
+                    outBytes = Base64.encode(requestBytes);
+                } else {
+                    outBytes = requestBytes;
+                }
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(outreqstring);
+                    fos.write(outBytes);
+                } finally {
+                    if (fos != null) {
+                        fos.close();
+                    }
+                }
+            }
+
+            URL url;
+            URLConnection urlConn;
+            DataOutputStream printout;
+            DataInputStream input;
+
+            url = new URL(urlstring);
+
+            urlConn = url.openConnection();
+
+            urlConn.setDoInput(true);
+            urlConn.setDoOutput(true);
+            urlConn.setUseCaches(false);
+            urlConn.setRequestProperty("Content-Type",
+                    "application/timestamp-query");
+            
+            // Send POST output.
+            printout = new DataOutputStream(urlConn.getOutputStream());
+            printout.write(requestBytes);
+            printout.flush();
+            printout.close();
+
+            // Get response data.
+            input = new DataInputStream(urlConn.getInputStream());
+            while (input.available() == 0) {
+                Thread.sleep(100);
+            }
+
+            byte[] ba = null;
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            do {
+                if (ba != null) {
+                    baos.write(ba);
+                }
+                ba = new byte[input.available()];
+
+            } while (input.read(ba) != -1);
+
+            final byte[] replyBytes = baos.toByteArray();
+            if (outrepstring != null) {
+                // Store request
+                byte[] outBytes;
+                if (base64) {
+                    outBytes = Base64.encode(replyBytes);
+                } else {
+                    outBytes = replyBytes;
+                }
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(outrepstring);
+                    fos.write(outBytes);
+                } finally {
+                    if (fos != null) {
+                        fos.close();
+                    }
+                }
+            }
+
+            final TimeStampResponse timeStampResponse = new TimeStampResponse(
+                    replyBytes);
+            timeStampResponse.validate(timeStampRequest);
+
+            System.out.print("TimeStampRequest validated\n");
+
+            Thread.sleep(1000);
+        } while (doRun);
+    }
+
+    /**
      * Helpfunction to read a file to a byte array.
      *
      * @param file filename of file.
-     *
      * @return byte[] containing the contents of the file.
-     *
      * @throws IOException if the file does not exist or cannot be read.
      */
-    private byte[] readFiletoBuffer(String file) throws IOException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        InputStream in = new FileInputStream(file);
-        int len = 0;
-        byte[] buf = new byte[1024];
+    private byte[] readFiletoBuffer(final String file) throws IOException {
 
-        while ((len = in.read(buf)) > 0) {
-            os.write(buf, 0, len);
+        ByteArrayOutputStream os = null;
+        InputStream in = null;
+        try {
+            os = new ByteArrayOutputStream();
+            in = new FileInputStream(file);
+            int len = 0;
+            final byte[] buf = new byte[1024];
+
+            while ((len = in.read(buf)) > 0) {
+                os.write(buf, 0, len);
+            }
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace(System.err);
+                }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace(System.err);
+                }
+            }
         }
 
-        in.close();
-        os.close();
-
         return os.toByteArray();
-    } // readFiletoBuffer
-	
+    }
+
     /**
      * Helpfunction to calculate the digest of a big file.
      *
      * @param file filename of file.
-     *
+     * @param digestAlg the digest algorithm.
      * @return byte[] containing the digest of the file.
-     *
      * @throws IOException if the file does not exist or cannot be read.
      * @throws NoSuchProviderException if BC provider is not installed
-     * @throws NoSuchAlgorithmException if the given hash algorithm does not exist
+     * @throws NoSuchAlgorithmException if the given hash algorithm does not
+     * exist
      */
-    private byte[] digestFile(String file, String digestAlg) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
-        InputStream in = new FileInputStream(file);
-        MessageDigest dig = MessageDigest.getInstance(digestAlg, "BC");
-        int len = 0;
-        byte[] buf = new byte[2048];
-        while ((len = in.read(buf)) > 0) {
-            dig.update(buf, 0, len);
+    private byte[] digestFile(final String file, final String digestAlg) throws
+            IOException, NoSuchAlgorithmException, NoSuchProviderException {
+
+        final MessageDigest dig = MessageDigest.getInstance(digestAlg, "BC");
+
+        InputStream in = null;
+        try {
+            in = new FileInputStream(file);
+
+            final byte[] buf = new byte[2048];
+            int len = 0;
+            while ((len = in.read(buf)) > 0) {
+                dig.update(buf, 0, len);
+            }
+
+            return dig.digest();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace(System.err);
+                }
+            }
         }
-        byte[] digest = dig.digest();
-        in.close();
-        return digest;
-    } // digestFile
-    
-    /**
-     * Reads a certificate in PEM-format from a file. The file may contain other things,
-     * the first certificate in the file is read.
-     *
-     * @param certFile the file containing the certificate in PEM-format
-     * @return Ordered Collection of X509Certificate, first certificate first, or empty Collection
-     * @exception IOException if the filen cannot be read.
-     * @exception CertificateException if the filen does not contain a correct certificate.
-     */
-    private Collection<X509Certificate> getCertsFromPEM(String certFile) throws IOException, CertificateException {
-        InputStream inStrm = new FileInputStream(certFile);
-        Collection<X509Certificate> certs = getCertsFromPEM(inStrm);
-        return certs;
     }
 
     /**
-     * Reads a certificate in PEM-format from an InputStream. The stream may contain other things,
-     * the first certificate in the stream is read.
+     * Reads a certificate in PEM-format from a file.
      *
-     * @param certFile the input stream containing the certificate in PEM-format
-     * @return Ordered Collection of X509Certificate, first certificate first, or empty Collection
-     * @exception IOException if the stream cannot be read.
-     * @exception CertificateException if the stream does not contain a correct certificate.
+     * The file may contain other things, the first certificate in the file is
+     * read.
+     *
+     * @param certFile the file containing the certificate in PEM-format
+     * @return Ordered Collection of X509Certificate, first certificate first,
+     * or empty Collection
+     * @exception IOException if the filen cannot be read.
+     * @exception CertificateException if the filen does not contain a correct
+     * certificate.
      */
-    private Collection<X509Certificate> getCertsFromPEM(InputStream certstream)
-    throws IOException, CertificateException {
-        ArrayList<X509Certificate> ret = new ArrayList<X509Certificate>();
-        String beginKey = "-----BEGIN CERTIFICATE-----";
-        String endKey = "-----END CERTIFICATE-----";
-        BufferedReader bufRdr = new BufferedReader(new InputStreamReader(certstream));
+    private Collection<X509Certificate> getCertsFromPEM(final String certFile)
+            throws IOException, CertificateException {
+        final InputStream inStrm = new FileInputStream(certFile);
+        return getCertsFromPEM(inStrm);
+    }
+
+    /**
+     * Reads a certificate in PEM-format from an InputStream.
+     *
+     * The stream may contain other things, the first certificate in the
+     * stream is read.
+     *
+     * @param certstream the input stream containing the certificate in
+     * PEM-format
+     * @return Ordered Collection of X509Certificate, first certificate first,
+     * or empty Collection
+     * @exception IOException if the stream cannot be read.
+     * @exception CertificateException if the stream does not contain a
+     * correct certificate.
+     */
+    private Collection<X509Certificate> getCertsFromPEM(
+            final InputStream certstream) throws IOException,
+            CertificateException {
+        final ArrayList<X509Certificate> ret = new ArrayList<X509Certificate>();
+        final String beginKey = "-----BEGIN CERTIFICATE-----";
+        final String endKey = "-----END CERTIFICATE-----";
+        final BufferedReader bufRdr = new BufferedReader(new InputStreamReader(
+                certstream));
+
         while (bufRdr.ready()) {
-            ByteArrayOutputStream ostr = new ByteArrayOutputStream();
-            PrintStream opstr = new PrintStream(ostr);
+            final ByteArrayOutputStream ostr = new ByteArrayOutputStream();
+            final PrintStream opstr = new PrintStream(ostr);
             String temp;
-            while ((temp = bufRdr.readLine()) != null &&
-            !temp.equals(beginKey))
+            while ((temp = bufRdr.readLine()) != null
+                    && !temp.equals(beginKey)) {
                 continue;
-            if (temp == null)
-                throw new IOException("Error in " + certstream.toString() + ", missing " + beginKey + " boundary");
-            while ((temp = bufRdr.readLine()) != null &&
-            !temp.equals(endKey))
+            }
+            if (temp == null) {
+                throw new IOException("Error in " + certstream.toString()
+                        + ", missing " + beginKey + " boundary");
+            }
+            while ((temp = bufRdr.readLine()) != null
+                    && !temp.equals(endKey)) {
                 opstr.print(temp);
-            if (temp == null)
-                throw new IOException("Error in " + certstream.toString() + ", missing " + endKey + " boundary");
+            }
+            if (temp == null) {
+                throw new IOException("Error in " + certstream.toString()
+                        + ", missing " + endKey + " boundary");
+            }
             opstr.close();
 
-            byte[] certbuf = Base64.decode(ostr.toByteArray());
+            final byte[] certbuf = Base64.decode(ostr.toByteArray());
             ostr.close();
-            // Phweeew, were done, now decode the cert from file back to X509Certificate object
-            CertificateFactory cf = getCertificateFactory();
-            X509Certificate x509cert = (X509Certificate)cf.generateCertificate(new ByteArrayInputStream(certbuf));
+            // Phweeew, were done, now decode the cert from file back to
+            // X509Certificate object
+            final CertificateFactory cf = getCertificateFactory();
+            final X509Certificate x509cert =
+                    (X509Certificate) cf.generateCertificate(
+                    new ByteArrayInputStream(certbuf));
             ret.add(x509cert);
         }
         return ret;
-    } // getCertsFromPEM
+    }
 
     private CertificateFactory getCertificateFactory() {
         try {
@@ -460,5 +568,4 @@ public class TimeStampClient {
         }
         return null;
     }
-
 }

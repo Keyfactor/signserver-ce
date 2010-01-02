@@ -35,7 +35,9 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -45,6 +47,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -66,9 +69,16 @@ import org.bouncycastle.util.encoders.Hex;
  */
 public class TimeStampClient {
 
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(TimeStampClient.class);
+
     private static final int PARAM_URL = 0;
 
-    private static TimeStampClient client;
+    /** Begin key for certificates in PEM format. */
+    private static final String PEM_BEGIN = "-----BEGIN CERTIFICATE-----";
+
+    /** End key for certificates in PEM format. */
+    private static final String PEM_END = "-----END CERTIFICATE-----";
 
     private String urlstring;
 
@@ -144,7 +154,7 @@ public class TimeStampClient {
         final Option infile = OptionBuilder.create("infile");
 
         OptionBuilder.hasArg();
-        OptionBuilder.withArgName("file");
+        OptionBuilder.withArgName("string");
         OptionBuilder.withDescription("String to be time stamped, if neither "
                 + "instr or infile is given, the client works in test-mode "
                 + "generating it's own message.");
@@ -201,20 +211,22 @@ public class TimeStampClient {
                 urlstring = strargs[PARAM_URL];
             }
 
+            if (args.length < 1) {
+                usage(options);
+            } else if (urlstring == null) {
+                LOG.error("Missing URL");
+                usage(options);
+            } else if (Security.addProvider(new BouncyCastleProvider()) < 0) {
+                // If already installed, remove so we can handle redeploy
+                Security.removeProvider("BC");
+                if (Security.addProvider(new BouncyCastleProvider()) < 0) {
+                    LOG.error("Cannot even install BC provider again!");
+                }
+            }
         } catch (ParseException e) {
             // oops, something went wrong
-            System.err.println("Parsing failed.  Reason: " + e.getMessage());
-        }
-
-        if (args.length < 1) {
+            LOG.error(e.getMessage());
             usage(options);
-        }
-        if (Security.addProvider(new BouncyCastleProvider()) < 0) {
-            // If already installed, remove so we can handle redeploy
-            Security.removeProvider("BC");
-            if (Security.addProvider(new BouncyCastleProvider()) < 0) {
-                System.out.println("Cannot even install BC provider again!");
-            }
         }
     }
 
@@ -233,56 +245,66 @@ public class TimeStampClient {
      */
     public static void main(final String[] args) {
         try {
-            client = new TimeStampClient(args);
-            client.run();
+            new TimeStampClient(args).run();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
     }
 
     private void run() throws Exception {
+        // Take start time
+        final long startTime = System.nanoTime();
+        
         if (verify) {
             tsaVerify();
         } else {
             tsaRequest();
         }
+
+        // Take stop time
+        final long estimatedTime = System.nanoTime() - startTime;
+
+        LOG.info("Processing took "
+                + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
     }
 
     private void tsaVerify() throws Exception {
         if (inrepstring == null) {
-            System.out.println("Needs an inrep!");
-            return;
-        }
-        final Collection<X509Certificate> col =
-                getCertsFromPEM(signerfilestring);
-        final X509Certificate[] list = (X509Certificate[]) col.toArray(
-                new X509Certificate[0]);
-        if (list.length == 0) {
-            System.out.println("No certificate found in file: "
-                    + signerfilestring);
-            return;
-        }
-
-        final byte[] b64Bytes = readFiletoBuffer(inrepstring);
-        final byte[] replyBytes = Base64.decode(b64Bytes);
-        
-        final TimeStampResponse timeStampResponse =
-                new TimeStampResponse(replyBytes);
-        final TimeStampToken token = timeStampResponse.getTimeStampToken();
-        token.validate(list[0], "BC");
-        System.out.println("Token was validated successfully.");
-
-        final TimeStampTokenInfo info = token.getTimeStampInfo();
-        System.out.println("Token was generated on: " + info.getGenTime());
-
-        if (info.getMessageImprintAlgOID().equals(TSPAlgorithms.SHA1)) {
-            System.out.println("Token hash alg: SHA1");
+            LOG.error("Needs an inrep!");
+        } else if (signerfilestring == null) {
+            LOG.error("Needs a signerfile!");
         } else {
-            System.out.println("Token hash alg: "
-                    + info.getMessageImprintAlgOID());
+            final Collection<X509Certificate> col =
+                    getCertsFromPEM(signerfilestring);
+            final X509Certificate[] list = (X509Certificate[]) col.toArray(
+                    new X509Certificate[0]);
+            if (list.length == 0) {
+                LOG.error("No certificate found in file: " + signerfilestring);
+                return;
+            }
+
+            final byte[] b64Bytes = readFiletoBuffer(inrepstring);
+            final byte[] replyBytes = Base64.decode(b64Bytes);
+
+            final TimeStampResponse timeStampResponse =
+                    new TimeStampResponse(replyBytes);
+            final TimeStampToken token = timeStampResponse.getTimeStampToken();
+            token.validate(list[0], "BC");
+            LOG.info("Token was validated successfully.");
+
+            final TimeStampTokenInfo info = token.getTimeStampInfo();
+            LOG.info("Token was generated on: " + info.getGenTime());
+
+            if (LOG.isDebugEnabled()) {
+                if (info.getMessageImprintAlgOID().equals(TSPAlgorithms.SHA1)) {
+                    LOG.debug("Token hash alg: SHA1");
+                } else {
+                    LOG.debug("Token hash alg: " + info.getMessageImprintAlgOID());
+                }
+                final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
+                LOG.info("MessageDigest=" + new String(hexDigest));
+            }
         }
-        final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
-        System.out.println("MessageDigest=" + new String(hexDigest));
     }
 
     private void tsaRequest() throws Exception {
@@ -310,7 +332,10 @@ public class TimeStampClient {
                 doRun = false;
             }
             final byte[] hexDigest = Hex.encode(digest);
-            System.out.println("MessageDigest=" + new String(hexDigest));
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("MessageDigest=" + new String(hexDigest));
+            }
             
             final TimeStampRequest timeStampRequest = timeStampRequestGenerator
                     .generate(TSPAlgorithms.SHA1, digest, BigInteger.valueOf(
@@ -343,6 +368,9 @@ public class TimeStampClient {
 
             url = new URL(urlstring);
 
+            // Take start time
+            final long startTime = System.nanoTime();
+
             urlConn = url.openConnection();
 
             urlConn.setDoInput(true);
@@ -373,6 +401,12 @@ public class TimeStampClient {
 
             } while (input.read(ba) != -1);
 
+            // Take stop time
+            final long estimatedTime = System.nanoTime() - startTime;
+
+            LOG.info("Got reply after "
+                + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
+
             final byte[] replyBytes = baos.toByteArray();
             if (outrepstring != null) {
                 // Store request
@@ -397,9 +431,11 @@ public class TimeStampClient {
                     replyBytes);
             timeStampResponse.validate(timeStampRequest);
 
-            System.out.print("TimeStampRequest validated\n");
+            LOG.info("TimeStampRequest validated");
 
-            Thread.sleep(1000);
+            if (doRun) {
+                Thread.sleep(1000);
+            }
         } while (doRun);
     }
 
@@ -488,16 +524,23 @@ public class TimeStampClient {
      * read.
      *
      * @param certFile the file containing the certificate in PEM-format
-     * @return Ordered Collection of X509Certificate, first certificate first,
-     * or empty Collection
+     * @return Ordered List of X509Certificate, first certificate first,
+     * or empty List
      * @exception IOException if the filen cannot be read.
      * @exception CertificateException if the filen does not contain a correct
      * certificate.
      */
-    private Collection<X509Certificate> getCertsFromPEM(final String certFile)
+    private List<X509Certificate> getCertsFromPEM(final String certFile)
             throws IOException, CertificateException {
-        final InputStream inStrm = new FileInputStream(certFile);
-        return getCertsFromPEM(inStrm);
+        InputStream inStrm = null;
+        try {
+            inStrm = new FileInputStream(certFile);
+            return getCertsFromPEM(inStrm);
+        } finally {
+            if (inStrm != null) {
+                inStrm.close();
+            }
+        }
     }
 
     /**
@@ -508,18 +551,17 @@ public class TimeStampClient {
      *
      * @param certstream the input stream containing the certificate in
      * PEM-format
-     * @return Ordered Collection of X509Certificate, first certificate first,
-     * or empty Collection
+     * @return Ordered List of X509Certificate, first certificate first,
+     * or empty List
      * @exception IOException if the stream cannot be read.
      * @exception CertificateException if the stream does not contain a
      * correct certificate.
      */
-    private Collection<X509Certificate> getCertsFromPEM(
+    private List<X509Certificate> getCertsFromPEM(
             final InputStream certstream) throws IOException,
             CertificateException {
         final ArrayList<X509Certificate> ret = new ArrayList<X509Certificate>();
-        final String beginKey = "-----BEGIN CERTIFICATE-----";
-        final String endKey = "-----END CERTIFICATE-----";
+        
         final BufferedReader bufRdr = new BufferedReader(new InputStreamReader(
                 certstream));
 
@@ -528,20 +570,20 @@ public class TimeStampClient {
             final PrintStream opstr = new PrintStream(ostr);
             String temp;
             while ((temp = bufRdr.readLine()) != null
-                    && !temp.equals(beginKey)) {
+                    && !temp.equals(PEM_BEGIN)) {
                 continue;
             }
             if (temp == null) {
                 throw new IOException("Error in " + certstream.toString()
-                        + ", missing " + beginKey + " boundary");
+                        + ", missing " + PEM_BEGIN + " boundary");
             }
             while ((temp = bufRdr.readLine()) != null
-                    && !temp.equals(endKey)) {
+                    && !temp.equals(PEM_END)) {
                 opstr.print(temp);
             }
             if (temp == null) {
                 throw new IOException("Error in " + certstream.toString()
-                        + ", missing " + endKey + " boundary");
+                        + ", missing " + PEM_END + " boundary");
             }
             opstr.close();
 
@@ -562,9 +604,9 @@ public class TimeStampClient {
         try {
             return CertificateFactory.getInstance("X.509", "BC");
         } catch (NoSuchProviderException nspe) {
-            nspe.printStackTrace();
+            LOG.error("Error creating certificate factory", nspe);
         } catch (CertificateException ce) {
-            ce.printStackTrace();
+            LOG.error("Error creating certificate factory", ce);
         }
         return null;
     }

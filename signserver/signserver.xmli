@@ -896,12 +896,15 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	  <target name="timeStampTestClient" depends="signserver:compile" unless="buildMailSigner" if="timestampclient.conditionenabled" >
 	    <mkdir dir="${timeStampClientBuild}"/>
 	    <javac srcdir="${src.java}" destdir="${timeStampClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
-		   <include name="org/signserver/client/TimeStampClient.java"/> 	       
+		   <include name="org/signserver/client/TimeStampClient.java"/>
 		   <classpath refid="signserver.compile.classpath"/> 
 	    </javac>
 
           <mkdir dir="${timeStampClientDir}/lib"/>
 	    <copy todir="${timeStampClientDir}/lib" >
+              <fileset dir="${lib}">
+                <include name="log4j.jar"/>
+              </fileset>
 	      <fileset dir="${lib}/${client.java.target}">
 	        <include name="bcprov-jdk.jar"/>	        
 	      	<include name="bcmail-jdk.jar"/>
@@ -913,11 +916,17 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
               <include name="commons-cli-1.0.jar"/>
             </fileset>
           </copy>
+          
 	    <jar destfile="${timeStampClientJar}" basedir="${timeStampClientBuild}">
 	      <manifest>
-	        <attribute name="Class-Path" value="lib/bctsp-jdk.jar lib/bcprov-jdk.jar lib/bcmail-jdk.jar lib/commons-cli-1.0.jar"/>
+	        <attribute name="Class-Path" value="lib/bctsp-jdk.jar lib/bcprov-jdk.jar lib/bcmail-jdk.jar lib/commons-cli-1.0.jar lib/log4j.jar"/>
 	        <attribute name="Main-Class" value="org.signserver.client.TimeStampClient"/>
 	      </manifest>
+
+              <!-- Place log4j.properties in root of jar. Workaround until DSS-125 -->
+              <fileset dir="${src.java}/org/signserver/client">
+                  <include name="log4j.properties" />
+              </fileset>
 	    </jar>
 	  </target>
 	

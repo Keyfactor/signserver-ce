@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
 
- 
+
 package org.signserver.common;
 
 import java.io.DataInput;
@@ -25,9 +25,9 @@ import org.ejbca.util.CertTools;
 
 /**
  * A generic work response class implementing the minimal required functionality.
- * 
+ *
  * Could be used for TimeStamp Responses.
- * 
+ *
  * @author philip
  * $Id$
  */
@@ -40,19 +40,19 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
 	private Certificate signerCertificate;
 	private ArchiveData archiveData;
 	private String archiveId;
-	
+
     /**
      * Default constructor used during serialization
      */
 	public GenericSignResponse(){}
-	
+
 	/**
 	 * Creates a GenericWorkResponse, works as a simple VO.
-	 * 
+	 *
 	 * @see org.signserver.common.ProcessRequest
 	 */
-	public GenericSignResponse(int requestID, byte[] processedData, 
-			                   Certificate signerCertificate, 
+	public GenericSignResponse(int requestID, byte[] processedData,
+			                   Certificate signerCertificate,
 			                   String archiveId, ArchiveData archiveData) {
 		this.requestID = requestID;
 		this.processedData = processedData;
@@ -61,9 +61,9 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
 		this.archiveId = archiveId;
 	}
 
-	/**
-	 * @see org.signserver.common.ProcessResponse#getRequestID()
-	 */
+        /**
+         * @return the request ID
+         */
 	public int getRequestID() {
 		return requestID;
 	}
@@ -78,14 +78,14 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
 
 	/**
 	 * @see org.signserver.common.ProcessResponse#getArchiveData()
-	 */	
+	 */
 	public ArchiveData getArchiveData() {
 		return archiveData;
 	}
-	
+
 	/**
 	 * @see org.signserver.common.ProcessResponse#getArchiveId()
-	 */	
+	 */
 	public String getArchiveId() {
 		return archiveId;
 	}
@@ -102,7 +102,7 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
 	public void parse(DataInput in) throws IOException {
 		in.readInt();
 		this.requestID = in.readInt();
-		
+
 		int certSize = in.readInt();
 		if(certSize != 0){
 			byte[] certData = new byte[certSize];

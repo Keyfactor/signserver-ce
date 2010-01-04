@@ -25,11 +25,12 @@ import org.signserver.protocol.ws.client.ISignServerWSClient;
 import org.signserver.protocol.ws.client.SignServerWSClientFactory;
 
 /**
- * Implements ISigningAndValidation using SignServer WS Client interface that 
+ * Implements ISigningAndValidation using SignServer WS Client interface that
  * has support for load balancing etc.
- * 
- * @author Markus KilÃ¥s
- * @verion $Id$
+ *
+ * @author Markus Kilås
+ * @version
+ * $Id$
  */
 public class SigningAndValidationWSBalanced implements ISigningAndValidation {
 

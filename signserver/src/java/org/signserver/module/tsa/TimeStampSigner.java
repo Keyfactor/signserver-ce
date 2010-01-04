@@ -255,7 +255,7 @@ public class TimeStampSigner extends BaseSigner {
      *
      * @param signRequest
      * @param requestContext
-     * @return
+     * @return the sign response
      * @see org.signserver.server.signers.IProcessable#signData(
      *  org.signserver.common.ProcessRequest,
      *  java.security.cert.X509Certificate)

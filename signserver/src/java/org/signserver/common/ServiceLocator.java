@@ -84,7 +84,7 @@ public final class ServiceLocator {
 
         /**
      * @param <T> Type of class
-     * @param remoteInterface Remote interface to lookup
+     * @param localInterface Local interface to lookup
      * @return an instance of the remote interface
      * @throws NamingException in case of failure to lookup
      */

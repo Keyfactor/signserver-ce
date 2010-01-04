@@ -18,9 +18,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Request used for signing data groups hashes and requesting a signed SO(D) from the MRTD SOD Signer. Used for ePassports.
- * 
- * This is not located in the mrtdsod module package because it has to be available at startup to map urls.
+/**
+ * Request used for signing data groups hashes and requesting a signed SO(D)
+ * from the MRTD SOD Signer.
+ *
+ * Used for ePassports.
+ * This is not located in the mrtdsod module package because it has to be
+ * available at startup to map urls.
  *
  * @author Markus Kilas
  * @version $Id$
@@ -32,16 +36,17 @@ public class SODSignRequest extends ProcessRequest implements ISignRequest {
     private Map<Integer, byte[]> dataGroupHashes;
 
     /**
-     * Default constructor used during serialization
+     * Default constructor used during serialization.
      */
     public SODSignRequest() {
     }
 
     /**
-     * Main constructor using default SHA256 and SHA256WithRSA as digest and signature algorithms.
+     * Main constructor using default SHA256 and SHA256WithRSA as digest and
+     * signature algorithms.
      *
      * @param requestID a unique id of the request
-     * @param dataGroups the dataData hashes to sign
+     * @param dataGroupHashes the dataData hashes to sign
      */
     public SODSignRequest(int requestID, Map<Integer, byte[]> dataGroupHashes) {
         this.requestID = requestID;
@@ -49,20 +54,22 @@ public class SODSignRequest extends ProcessRequest implements ISignRequest {
     }
 
     /**
-     *
-     * @see org.signserver.common.ProcessRequest#getRequestID()
+     * @return The request ID
      */
     public int getRequestID() {
         return requestID;
     }
 
     /**
-     * Returns the signed data as an ArrayList of document objects to sign.
+     * @return the signed data as an ArrayList of document objects to sign
      */
     public Object getRequestData() {
         return getDataGroupHashes();
     }
 
+    /**
+     * @return the map of datagroup hashes
+     */
     public Map<Integer, byte[]> getDataGroupHashes() {
         return dataGroupHashes;
     }

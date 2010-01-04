@@ -92,7 +92,6 @@ public interface IWorkerSession {
      * Should be called from the command line.
      *
      * @param signerId of the signer
-     * @param authenticationCode (PIN) used to activate the token.
      * @return true if deactivation was successful
      * @throws CryptoTokenOfflineException
      * @throws CryptoTokenAuthenticationFailureException

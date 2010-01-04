@@ -48,17 +48,20 @@ import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
 /**
- * A Signer signing Open Office XML files (ECMA 376) using the openxml4j library
+ * A Signer signing Office Open XML files (ECMA 376) using the openxml4j library
  * (signature patched version. Patch applied to revision 534 to
  * https://openxml4j.svn.sourceforge.net. Patched version is available at :
  * TODO: fill in temporary address in signserver svn.).
  * 
  * Adds invisible singature to docx, xlsx, pptx files (created using MS Office
  * 2007, or other ECMA 376 comformant application)
- * 
- * @see http://www.ecma-international.org/publications/standards/Ecma-376.htm
- * @see http://sourceforge.net/projects/openxml4j/
- * 
+ *
+ * @see <a
+ * href="http://www.ecma-international.org/publications/standards/Ecma-376.htm">
+ * http://www.ecma-international.org/publications/standards/Ecma-376.htm</a>
+ * @see <a href="http://sourceforge.net/projects/openxml4j/">
+ * http://sourceforge.net/projects/openxml4j/</a>
+ *
  * @author Aziz Göktepe
  * @version $Id$
  */

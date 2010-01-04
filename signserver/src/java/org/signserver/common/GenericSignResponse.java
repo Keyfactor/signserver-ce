@@ -42,7 +42,7 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
 	private String archiveId;
 	
     /**
-     * Default constructor used during serialization
+     * Default constructor used during serialization.
      */
 	public GenericSignResponse(){}
 	
@@ -62,7 +62,7 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
 	}
 
 	/**
-	 * @see org.signserver.common.ProcessResponse#getRequestID()
+	 * @return the request ID
 	 */
 	public int getRequestID() {
 		return requestID;

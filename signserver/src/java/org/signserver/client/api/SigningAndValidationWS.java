@@ -35,9 +35,10 @@ import org.signserver.protocol.ws.gen.SignServerWSService;
 
 /**
  * Implements ISigningAndValidation using Web Services interface.
- * 
- * @author Markus KilÃ¥s
- * @verion $Id$
+ *
+ * @author Markus Kilås
+ * @version
+ *  $Id$
  */
 public class SigningAndValidationWS implements ISigningAndValidation {
 

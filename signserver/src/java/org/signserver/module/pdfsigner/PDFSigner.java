@@ -130,15 +130,15 @@ public class PDFSigner extends BaseSigner {
 		super.init(signerId, config, workerContext, workerEntityManager);
 	}
 
-	/**
-	 * The main method performing the actual signing operation. Expects the
-	 * signRequest to be a GenericSignRequest containing a signed PDF file
-	 * 
-	 * @throws SignServerException
-	 * 
-	 * @see org.signserver.server.signers.IProcessable#signData(org.signserver.common.ProcessRequest,
-	 *      java.security.cert.X509Certificate)
-	 */
+    /**
+     * The main method performing the actual signing operation. Expects the
+     * signRequest to be a GenericSignRequest containing a signed PDF file.
+     *
+     * @throws SignServerException
+     * @see org.signserver.server.IProcessable#processData(
+     * org.signserver.common.ProcessRequest,
+     * org.signserver.common.RequestContext)
+     */
 	public ProcessResponse processData(ProcessRequest signRequest,
 			RequestContext requestContext) throws IllegalRequestException,
 			CryptoTokenOfflineException, SignServerException {

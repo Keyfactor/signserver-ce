@@ -86,6 +86,9 @@ public class TimeStampClient {
 
     private String inrepstring;
 
+    /** Filename to read a pre-formatted request from. */
+    private String inreqstring;
+
     private String outreqstring;
 
     private String instring;
@@ -97,6 +100,9 @@ public class TimeStampClient {
     private boolean base64;
 
     private boolean verify;
+
+    /** Number of milliseconds to sleep after a request. */
+    private int sleep = 1000;
 
 
     /**
@@ -160,6 +166,19 @@ public class TimeStampClient {
                 + "generating it's own message.");
         final Option instr = OptionBuilder.create("instr");
 
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("file");
+        OptionBuilder.withDescription("Input file containing an earlier stored "
+                + "request to use instead of creating a new. "
+                + "You must specify the request flag also.");
+        final Option inreq = OptionBuilder.create("inreq");
+
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("num");
+        OptionBuilder.withDescription("Sleep a number of milliseconds after "
+                + "each request. Default 1000 ms.");
+        final Option optionSleep = OptionBuilder.create("sleep");
+
         // Add options
         final Options options = new Options();
         options.addOption(help);
@@ -172,6 +191,8 @@ public class TimeStampClient {
         options.addOption(b64);
         options.addOption(infile);
         options.addOption(instr);
+        options.addOption(inreq);
+        options.addOption(optionSleep);
 
         final CommandLineParser parser = new GnuParser();
         try {
@@ -205,6 +226,12 @@ public class TimeStampClient {
             }
             if (cmd.hasOption("verify")) {
                 verify = true;
+            }
+            if (cmd.hasOption("inreq")) {
+                inreqstring = cmd.getOptionValue("inreq");
+            }
+            if (cmd.hasOption("sleep")) {
+                sleep = Integer.parseInt(cmd.getOptionValue("sleep"));
             }
             final String[] strargs = cmd.getArgs();
             if (strargs.length > 0) {
@@ -309,10 +336,10 @@ public class TimeStampClient {
 
     private void tsaRequest() throws Exception {
         final Random rand = new Random();
+        final TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
         boolean doRun = true;
         do {
-            final TimeStampRequestGenerator timeStampRequestGenerator =
-                    new TimeStampRequestGenerator();
 
             final int nonce = rand.nextInt();
 
@@ -336,10 +363,17 @@ public class TimeStampClient {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("MessageDigest=" + new String(hexDigest));
             }
-            
-            final TimeStampRequest timeStampRequest = timeStampRequestGenerator
-                    .generate(TSPAlgorithms.SHA1, digest, BigInteger.valueOf(
-                    nonce));
+
+            final TimeStampRequest timeStampRequest;
+            if (inreqstring == null) {
+                LOG.debug("Generating a new request");
+                timeStampRequest = timeStampRequestGenerator.generate(
+                        TSPAlgorithms.SHA1, digest, BigInteger.valueOf(nonce));
+            } else {
+                LOG.debug("Reading request from file");
+                timeStampRequest = new TimeStampRequest(
+                        readFiletoBuffer(inreqstring));
+            }
             final byte[] requestBytes = timeStampRequest.getEncoded();
 
             if (outreqstring != null) {
@@ -434,7 +468,7 @@ public class TimeStampClient {
             LOG.info("TimeStampRequest validated");
 
             if (doRun) {
-                Thread.sleep(1000);
+                Thread.sleep(sleep);
             }
         } while (doRun);
     }

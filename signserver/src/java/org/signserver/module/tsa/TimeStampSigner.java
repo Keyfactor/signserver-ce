@@ -174,7 +174,7 @@ public class TimeStampSigner extends BaseSigner {
 
     private static final String DEFAULT_TIMESOURCE =
             "org.signserver.server.LocalComputerTimeSource";
-    
+
     private static final String[] ACCEPTEDALGORITHMSNAMES = {
         "GOST3411",
         "MD5",
@@ -187,7 +187,7 @@ public class TimeStampSigner extends BaseSigner {
         "RIPEMD160",
         "RIPEMD256"
     };
-    
+
     private static final String[] ACCEPTEDALGORITHMSOIDS = {
         TSPAlgorithms.GOST3411,
         TSPAlgorithms.MD5,
@@ -246,6 +246,11 @@ public class TimeStampSigner extends BaseSigner {
         if (defaultTSAPolicyOID == null) {
             LOG.error("Error: No default TSA Policy OID have been configured");
         }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("bctsp version: " + TimeStampResponseGenerator.class
+                .getPackage().getImplementationVersion());
+        }
     }
 
     /**
@@ -266,7 +271,7 @@ public class TimeStampSigner extends BaseSigner {
                 CryptoTokenOfflineException {
 
         final ISignRequest sReq = (ISignRequest) signRequest;
-        
+
         // Check that the request contains a valid TimeStampRequest object.
         if (!(signRequest instanceof GenericSignRequest)) {
             throw new IllegalRequestException(
@@ -290,36 +295,46 @@ public class TimeStampSigner extends BaseSigner {
             final TimeStampResponseGenerator timeStampResponseGen =
                     getTimeStampResponseGenerator(timeStampTokenGen);
 
-            timeStampRequest.validate(this.getAcceptedAlgorithms(),
-                    this.getAcceptedPolicies(),
-                    this.getAcceptedExtensions(), "BC");
+            final BigInteger serialNumber = getSerialNumber();
 
             final TimeStampResponse timeStampResponse =
                     timeStampResponseGen.generate(timeStampRequest,
-                        getSerialNumber(),
-                        getTimeSource().getGenTime(),
-                        getCryptoToken().getProvider(
-                            ICryptoToken.PROVIDERUSAGE_SIGN));
+                    serialNumber,
+                    getTimeSource().getGenTime(),
+                    getCryptoToken().getProvider(
+                        ICryptoToken.PROVIDERUSAGE_SIGN));
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Time stamp response status: "
+                        + timeStampResponse.getStatus() + ": "
+                        + timeStampResponse.getStatusString());
+            }
+
+            final String archiveId;
+            if (timeStampResponse.getTimeStampToken() == null) {
+                archiveId = serialNumber.toString(16);
+            } else {
+                archiveId = timeStampResponse.getTimeStampToken()
+                                        .getTimeStampInfo().getSerialNumber()
+                                        .toString(16);
+            }
 
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         timeStampResponse.getEncoded(),
                                     getSigningCertificate(),
-                                    timeStampResponse.getTimeStampToken()
-                                        .getTimeStampInfo().getSerialNumber()
-                                        .toString(16),
+                                    archiveId,
                                     new ArchiveData(
                                         timeStampResponse.getEncoded()),
                                         "application/timestamp-reply");
             } else {
-                signResponse = new GenericSignResponse(sReq.getRequestID(), 
+                signResponse = new GenericSignResponse(sReq.getRequestID(),
                         timeStampResponse.getEncoded(),
                         getSigningCertificate(),
-                        timeStampResponse.getTimeStampToken()
-                            .getTimeStampInfo().getSerialNumber().toString(16),
+                        archiveId,
                         new ArchiveData(timeStampResponse.getEncoded()));
             }
-            
+
         } catch (InvalidAlgorithmParameterException e) {
             LOG.error("InvalidAlgorithmParameterException: ", e);
             throw new IllegalRequestException(
@@ -461,7 +476,7 @@ public class TimeStampSigner extends BaseSigner {
         TimeStampTokenGenerator timeStampTokenGen = null;
         try {
             final String digestOID = timeStampRequest.getMessageImprintAlgOID();
-            
+
             /*if (digestOID == null) {
                 digestOID = defaultDigestOID;
             }*/
@@ -523,7 +538,7 @@ public class TimeStampSigner extends BaseSigner {
 
     private TimeStampResponseGenerator getTimeStampResponseGenerator(
             TimeStampTokenGenerator timeStampTokenGen) {
-        
+
         return new TimeStampResponseGenerator(timeStampTokenGen,
                 this.getAcceptedAlgorithms(),
                 this.getAcceptedPolicies(),

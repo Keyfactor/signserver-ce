@@ -21,6 +21,7 @@ import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 
 import org.bouncycastle.tsp.TSPAlgorithms;
@@ -57,6 +58,9 @@ public class TestTimeStampSigner extends TestCase {
 
     /** Worker ID for test worker. */
     private static final int WORKER2 = 8902;
+
+    /** Worker ID for test worker. */
+    private static final int WORKER3 = 8903;
 
     /**
      * Base64 encoded request with policy 1.2.3.5.
@@ -117,6 +121,7 @@ public class TestTimeStampSigner extends TestCase {
 
         sSSession.reloadConfiguration(WORKER1);
         sSSession.reloadConfiguration(WORKER2);
+        sSSession.reloadConfiguration(WORKER3);
     }
 
     public void test01BasicTimeStamp() throws Exception {
@@ -190,17 +195,62 @@ public class TestTimeStampSigner extends TestCase {
                 timeStampResponse.getStatus());
     }
 
+    /**
+     * Tests that the timestamp signer returnes a time stamp response with
+     * the timeNotAvailable status if the Date is null.
+     * @throws Exception in case of exception
+     */
+    public void test04timeNotAvailable() throws Exception {
+
+        final int reqid = 14;
+
+        final TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(114));
+        final byte[] requestBytes = timeStampRequest.getEncoded();
+
+        final GenericSignRequest signRequest =
+                new GenericSignRequest(reqid, requestBytes);
+
+
+        final GenericSignResponse res = (GenericSignResponse) sSSession.process(
+                WORKER3, signRequest, new RequestContext());
+
+        assertTrue(reqid == res.getRequestID());
+
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(
+                (byte[]) res.getProcessedData());
+        timeStampResponse.validate(timeStampRequest);
+
+        LOG.info("Response: " + timeStampResponse.getStatusString());
+
+        assertEquals("Token not granted", PKIStatus.REJECTION,
+                timeStampResponse.getStatus());
+
+        assertEquals("PKIFailureInfo.timeNotAvailable",
+                new PKIFailureInfo(PKIFailureInfo.timeNotAvailable),
+                timeStampResponse.getFailInfo());
+        
+        assertNull("No timestamp token",
+                timeStampResponse.getTimeStampToken());
+    }
+
     public void test99TearDownDatabase() throws Exception {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
                     String.valueOf(WORKER1)});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
                     String.valueOf(WORKER2)});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
+                    String.valueOf(WORKER3)});
 
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove", "TSA", ""
-                    + moduleVersion});
-        assertTrue(TestUtils.grepTempOut("Removal of module successful."));
+        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove",
+            "TSA", String.valueOf(moduleVersion)});
+        assertTrue("module remove", TestUtils.grepTempOut(
+                "Removal of module successful."));
         sSSession.reloadConfiguration(WORKER1);
         sSSession.reloadConfiguration(WORKER2);
+        sSSession.reloadConfiguration(WORKER3);
     }
 
     /**

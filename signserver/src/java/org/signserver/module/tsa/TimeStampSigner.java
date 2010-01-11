@@ -36,7 +36,7 @@ import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampResponseGenerator;
+import org.signserver.module.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.bouncycastle.tsp.TimeStampTokenGenerator;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -233,6 +233,12 @@ public class TimeStampSigner extends BaseSigner {
         if (timeSource == null) {
             LOG.error("Error: Timestamp signer :" + signerId +
                     " has a malconfigured timesource.");
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("TimeStampSigner[" + signerId + "]: "
+                        + "Using TimeSource: "
+                        + timeSource.getClass().getName());
+            }
         }
 
         /* defaultDigestOID =

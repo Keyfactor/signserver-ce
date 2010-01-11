@@ -2393,7 +2393,7 @@ The MAR descriptor supports the following properties:
                         </tr>
                         <tr>
                             <td>version</td>
-                            <td>The version of the module archive, can only contain digits. If not set will “1” be used. (Optional)</td>
+                            <td>The version of the module archive, can only contain digits. If not set "1" will be used. (Optional)</td>
                         </tr>
                         <tr>
                             <td>modulename</td>

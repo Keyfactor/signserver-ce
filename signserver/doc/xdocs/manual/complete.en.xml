@@ -1138,8 +1138,37 @@ The time-stamp signer requires a time-stamp certificate with the extended key us
 The following properties can be configured with the signer:
                         </p>
                         <p>
-<b>TIMESOURCE</b> = property containing the class path to the ITimeSource implementation that should be used. (OPTIONAL, default LocalComputerTimeSource)
+<b>TIMESOURCE</b> = property containing the fully qualified name of the class implementing  the ITimeSource that should be used. (OPTIONAL, default LocalComputerTimeSource)
                         </p>
+                        <table>
+<!-- LocalComputerTimeSource -->
+                            <tr>
+                                <td>
+<b>org.signserver.server.LocalComputerTimeSource</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+This is the default TimeSource and uses the time from the local computer and
+always returns the time.
+                                </td>
+                            </tr>
+
+<!-- StatusReadingLocalComputerTimeSource -->
+                            <tr>
+                                <td>
+<b>org.signserver.server.StatusReadingLocalComputerTimeSource</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+This TimeSource returns the time from the local computer but only if the
+status property <i>INSYNC</i> is returned as <i>true</i> from the
+Status Repository.
+                                </td>
+                            </tr>
+                        </table>
+                        
                         <p>
 <b>ACCEPTEDALGORITHMS</b> = A ';' separated string containing accepted algorithms, can be null if it shouldn't be used. (OPTIONAL, Strongly recommended)
 Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, RIPEMD128, RIPEMD160, RIPEMD256
@@ -1168,6 +1197,14 @@ Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, R
                         <p>
 <b>TSA</b> = General name of the Time Stamp Authority. (OPTIONAL)
                         </p>
+                    </subsubsection>
+
+                    <subsubsection name="TimeSourceS">
+                        <p>
+The TimeStampSigner uses the time from the TimeSource implementation specified by
+the TIMESOURCE property. Below are the built-in TimeSourceS available:
+                        </p>
+
                     </subsubsection>
                 </subsection>
 
@@ -2809,6 +2846,18 @@ The following substitution variables can be used in notification subject and mes
                         </p>
                     </subsubsection>
                 </subsection>
+            </section>
+
+            <section name="Status Repository">
+                <p>
+The status repository holds local (per JVM) status information (properties)
+with optional expiration times. After the expiration time the property is not
+returned.
+                </p>
+                <p>
+This could be used by having workers read status from the repository while it
+is an external service updating it.
+                </p>
             </section>
 
             <section name="Installation Packages">

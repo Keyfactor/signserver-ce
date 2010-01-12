@@ -15,6 +15,7 @@ package org.signserver.module.tsa;
 import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.util.Hashtable;
+import java.util.Random;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -36,6 +37,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.clusterclassloader.MARFileParser;
+import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
@@ -53,6 +55,9 @@ public class TestTimeStampSigner extends TestCase {
 
     private static IWorkerSession.IRemote sSSession = null;
 
+    /** The status repository session. */
+    private static IStatusRepositorySession.IRemote repository;
+
     /** Worker ID for test worker. */
     private static final int WORKER1 = 8901;
 
@@ -61,6 +66,9 @@ public class TestTimeStampSigner extends TestCase {
 
     /** Worker ID for test worker. */
     private static final int WORKER3 = 8903;
+
+        /** Worker ID for test worker. */
+    private static final int WORKER4 = 8904;
 
     /**
      * Base64 encoded request with policy 1.2.3.5.
@@ -82,6 +90,9 @@ public class TestTimeStampSigner extends TestCase {
     private static String signserverhome;
     private static int moduleVersion;
 
+    private Random random = new Random(4711);
+
+
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
@@ -89,6 +100,9 @@ public class TestTimeStampSigner extends TestCase {
         final Context context = getInitialContext();
         sSSession = (IWorkerSession.IRemote) context.lookup(
                 IWorkerSession.IRemote.JNDI_NAME);
+
+        repository = (IStatusRepositorySession.IRemote) context.lookup(
+                IStatusRepositorySession.IRemote.JNDI_NAME);
 
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
@@ -122,11 +136,15 @@ public class TestTimeStampSigner extends TestCase {
         sSSession.reloadConfiguration(WORKER1);
         sSSession.reloadConfiguration(WORKER2);
         sSSession.reloadConfiguration(WORKER3);
+        sSSession.reloadConfiguration(WORKER4);
     }
 
     public void test01BasicTimeStamp() throws Exception {
+        assertSuccessfulTimestamp(WORKER1);
+    }
 
-        int reqid = 12;
+    private void assertSuccessfulTimestamp(int worker) throws Exception {
+        int reqid = random.nextInt();
 
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
@@ -135,11 +153,11 @@ public class TestTimeStampSigner extends TestCase {
         byte[] requestBytes = timeStampRequest.getEncoded();
 
         GenericSignRequest signRequest =
-                new GenericSignRequest(12, requestBytes);
+                new GenericSignRequest(reqid, requestBytes);
 
 
         final GenericSignResponse res = (GenericSignResponse) sSSession.process(
-                WORKER1, signRequest, new RequestContext());
+                worker, signRequest, new RequestContext());
 
         assertTrue(reqid == res.getRequestID());
 
@@ -201,8 +219,27 @@ public class TestTimeStampSigner extends TestCase {
      * @throws Exception in case of exception
      */
     public void test04timeNotAvailable() throws Exception {
+        assertTimeNotAvailable(WORKER3);
+    }
 
-        final int reqid = 14;
+    /**
+     * Tests that the timestamp is only granted when the INSYNC property
+     * is set.
+     * @throws Exception in case of exception
+     */
+    public void test05ReadingStatusTimeSource() throws Exception {
+        
+        // Test with insync
+        repository.setProperty("INSYNC", "true");
+        assertSuccessfulTimestamp(WORKER4);
+
+        // Test without insync
+        repository.removeProperty("INSYNC");
+        assertTimeNotAvailable(WORKER4);
+    }
+
+    private void assertTimeNotAvailable(int worker) throws Exception {
+        final int reqid = random.nextInt();
 
         final TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
@@ -215,7 +252,7 @@ public class TestTimeStampSigner extends TestCase {
 
 
         final GenericSignResponse res = (GenericSignResponse) sSSession.process(
-                WORKER3, signRequest, new RequestContext());
+                worker, signRequest, new RequestContext());
 
         assertTrue(reqid == res.getRequestID());
 
@@ -231,7 +268,7 @@ public class TestTimeStampSigner extends TestCase {
         assertEquals("PKIFailureInfo.timeNotAvailable",
                 new PKIFailureInfo(PKIFailureInfo.timeNotAvailable),
                 timeStampResponse.getFailInfo());
-        
+
         assertNull("No timestamp token",
                 timeStampResponse.getTimeStampToken());
     }
@@ -251,6 +288,7 @@ public class TestTimeStampSigner extends TestCase {
         sSSession.reloadConfiguration(WORKER1);
         sSSession.reloadConfiguration(WORKER2);
         sSSession.reloadConfiguration(WORKER3);
+        sSSession.reloadConfiguration(WORKER4);
     }
 
     /**

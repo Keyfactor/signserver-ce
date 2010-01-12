@@ -24,7 +24,8 @@ import org.signserver.ejb.interfaces.IStatusRepositorySession;
  * ITimeSource taking the current time from the computer clock in case it has
  * not been manually disabled.
  *
- * Has no defined properties.
+ * It reads a status property INSYNC from the status repository.
+ * It has no defined worker properties.
  *
  * $Id$
  */

@@ -1138,7 +1138,7 @@ The time-stamp signer requires a time-stamp certificate with the extended key us
 The following properties can be configured with the signer:
                         </p>
                         <p>
-<b>TIMESOURCE</b> = property containing the fully qualified name of the class implementing  the ITimeSource that should be used. (OPTIONAL, default LocalComputerTimeSource)
+<b>TIMESOURCE</b> = property containing the fully qualified name of the class implementing  the ITimeSource that should be used (OPTIONAL). Below are the built-in TimeSourceS available:
                         </p>
                         <table>
 <!-- LocalComputerTimeSource -->
@@ -1197,14 +1197,6 @@ Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, R
                         <p>
 <b>TSA</b> = General name of the Time Stamp Authority. (OPTIONAL)
                         </p>
-                    </subsubsection>
-
-                    <subsubsection name="TimeSourceS">
-                        <p>
-The TimeStampSigner uses the time from the TimeSource implementation specified by
-the TIMESOURCE property. Below are the built-in TimeSourceS available:
-                        </p>
-
                     </subsubsection>
                 </subsection>
 

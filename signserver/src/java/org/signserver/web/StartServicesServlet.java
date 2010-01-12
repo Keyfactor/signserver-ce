@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession.ILocal;
+import org.signserver.ejb.interfaces.IStatusRepositorySession;
 
 /**
  * Servlet used to start services by calling the ServiceTimerSession.load() at startup<br>
@@ -43,6 +44,9 @@ public class StartServicesServlet extends HttpServlet {
     @EJB
     private IServiceTimerSession.ILocal timedServiceSession;
 
+    @EJB
+    private IStatusRepositorySession.ILocal statusRepositorySession;
+
     private IServiceTimerSession.ILocal getTimedServiceSession(){
     	if(timedServiceSession == null){
     		try{
@@ -54,6 +58,21 @@ public class StartServicesServlet extends HttpServlet {
     	}
 
     	return timedServiceSession;
+    }
+
+    private IStatusRepositorySession.ILocal getStatusRepositorySession() {
+        if (statusRepositorySession == null) {
+            try {
+                Context context = new InitialContext();
+
+                statusRepositorySession = (IStatusRepositorySession.ILocal) 
+                        context.lookup(
+                            IStatusRepositorySession.ILocal.JNDI_NAME);
+            } catch (NamingException e) {
+                log.error(e);
+            }
+        }
+        return statusRepositorySession;
     }
 
     /**
@@ -76,7 +95,14 @@ public class StartServicesServlet extends HttpServlet {
         log.info("Init, Sign Server startup.");
 
         log.debug(">init calling ServiceSession.load");
+        
+        // Start the timed services session
         getTimedServiceSession().load(0);
+
+        // Instantiate the status repository session and also set a value
+        getStatusRepositorySession().setProperty("INIT",
+                String.valueOf(System.currentTimeMillis()));
+
     } // init
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)

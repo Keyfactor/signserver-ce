@@ -467,6 +467,11 @@ public class TimeStampClient {
 
             LOG.info("TimeStampRequest validated");
 
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Status (" + timeStampResponse.getStatus() + "): "
+                        + timeStampResponse.getStatusString());
+            }
+
             if (doRun) {
                 Thread.sleep(sleep);
             }

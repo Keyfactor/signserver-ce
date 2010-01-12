@@ -10,31 +10,40 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.common;
 
-import java.util.Date;
-import java.util.Properties;
+import java.io.Serializable;
 
 /**
- * Interface defining an accurate time source, could be the local computer
- * clock or a connection to a time device.
  *
- * Its main function is getGenTime returning a java.util.Date
- *
- * @author philip
- * $Id$
+ * @author Markus Kilås
+ * @version $Id$
  */
-public interface ITimeSource {
+public class StatusRepositoryData implements Serializable {
 
-    /**
-     * Method called after creation of instance.
-     * @param props the signers properties
-     */
-    void init(Properties props);
+    /** Serialization version ID. */
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Main method that should retrieve the current time from the device.
-     * @return an accurate current time or null if it is not available.
-     */
-    Date getGenTime();
+    private String value;
+
+    private long expiration;
+
+
+    public StatusRepositoryData(String value) {
+        this.value = value;
+    }
+
+    public StatusRepositoryData(String value, long expiration) {
+        this.value = value;
+        this.expiration = expiration;
+    }
+
+    public long getExpiration() {
+        return expiration;
+    }
+
+    public String getValue() {
+        return value;
+    }
+    
 }

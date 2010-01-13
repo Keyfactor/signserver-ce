@@ -53,13 +53,14 @@ public class StatusRepositorySessionBean implements
         final StatusRepositoryData data = repository.get(key);
         final String property;
 
-        if (data != null) {
-            LOG.info("data.expire=" + data.getExpiration() + ", "
-                    + System.currentTimeMillis());
+        final long time = System.currentTimeMillis();
+
+        if (data != null && LOG.isDebugEnabled()) {
+            LOG.debug("data.expire=" + data.getExpiration() + ", " + time);
         }
 
         if (data != null && (data.getExpiration() == 0
-                || data.getExpiration() > System.currentTimeMillis())) {
+                || data.getExpiration() > time)) {
             property = data.getValue();
         } else {
             property = null;

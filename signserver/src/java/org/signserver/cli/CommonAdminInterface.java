@@ -22,6 +22,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
@@ -43,10 +44,12 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.ResyncException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
+import org.signserver.common.StatusRepositoryData;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IClusterClassLoaderManagerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.mailsigner.cli.IMailSignerRMI;
 
@@ -75,6 +78,9 @@ public class CommonAdminInterface  {
     
     /** The SignSession. */
     private transient IWorkerSession.IRemote signsession;
+
+    /** The StatusRepositorySession. */
+    private transient IStatusRepositorySession.IRemote statusRepository;
 
     private String hostname = null;
     
@@ -300,6 +306,39 @@ public class CommonAdminInterface  {
 			getGlobalConfigurationSession().setProperty(scope, key, value);	
 		}		
 	}
+
+        public void setStatusProperty(final String key, final String value)
+                throws RemoteException {
+            if (isMailSignerMode()) {
+                throw new UnsupportedOperationException("Not yet implemented");
+            }
+            if (isSignServerMode()) {
+                getStatusRepositorySession().setProperty(key, value);
+            }
+        }
+
+        public void setStatusProperty(final String key, final String value,
+                final long expiration) throws RemoteException {
+            if (isMailSignerMode()) {
+                throw new UnsupportedOperationException("Not yet implemented");
+            }
+            if (isSignServerMode()) {
+                getStatusRepositorySession().setProperty(key, value,
+                        expiration);
+            }
+        }
+
+        public String getStatusProperty(final String key)
+                throws RemoteException {
+            String value = null;
+            if (isMailSignerMode()) {
+                throw new UnsupportedOperationException("Not yet implemented");
+            }
+            if (isSignServerMode()) {
+                value = getStatusRepositorySession().getProperty(key);
+            }
+            return value;
+        }
 	
 	public List<Integer> getWorkers(int workerType) throws RemoteException {
 		if(isMailSignerMode()){
@@ -599,6 +638,27 @@ public class CommonAdminInterface  {
         }
         return globalConfig;
     }
+
+    /**
+     * Gets StatusRepositorySession Remote.
+     * @return SignServerSession
+     * @throws RemoteException in case the lookup failed
+     */
+    private IStatusRepositorySession.IRemote getStatusRepositorySession()
+            throws RemoteException {
+        if (statusRepository == null) {
+            try {
+                statusRepository =  ServiceLocator.getInstance().lookupRemote(
+                        IStatusRepositorySession.IRemote.class);
+            } catch (NamingException e) {
+                LOG.error("Error instanciating the StatusRepositorySession.", e);
+                throw new RemoteException(
+                        "Error instanciating the StatusRepositorySession", e);
+            }
+        }
+        return statusRepository;
+    }
+
 	
     /**
      * Gets SignServerSession Remote.
@@ -635,5 +695,9 @@ public class CommonAdminInterface  {
             }
         }
         return cclms;
+    }
+
+    public Map<String, StatusRepositoryData> getStatusProperties() throws RemoteException {
+        return getStatusRepositorySession().getProperties();
     }
 }

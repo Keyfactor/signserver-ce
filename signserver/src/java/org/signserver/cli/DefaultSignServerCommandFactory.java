@@ -115,6 +115,15 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         if (args[0].equalsIgnoreCase("module")) {
             return getModuleCommand(args);
         }
+        if (args[0].equalsIgnoreCase("setstatusproperty")) {
+            return new SetStatusPropertyCommand(args);
+        }
+        if (args[0].equalsIgnoreCase("getstatusproperty")) {
+            return new GetStatusPropertyCommand(args);
+        }
+        if (args[0].equalsIgnoreCase("getstatusproperties")) {
+            return new GetStatusPropertiesCommand(args);
+        }
         return null;
         
         
@@ -200,8 +209,9 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
 	    	if(CommonAdminInterface.isSignServerMode()){	
 	    		usageString +="| archive | groupkeyservice ";
 	    	}
-	    	usageString +="| module";
-	        usageString+= "> \n";
+	    	usageString += "| module";
+                usageString += "| getstatusproperty | getstatusproperties | setstatusproperty";
+	        usageString += " >\n";
 	        out.println(usageString);
 	    	if(CommonAdminInterface.isSignServerMode()){
 	    		out.println("Available archive commands : signserver archive < findfromarchiveid | findfromrequestip | findfromrequestcert > \n");

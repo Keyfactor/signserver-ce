@@ -3,7 +3,8 @@
  * markus_primekey-bouncycastle-tsp-timeNotAvailable-patch1.diff see
  * DSS-191.
  *
- * TODO: Insert link to Bouncy Castle's issue tracker.
+ * Change committed to Bouncy Castle CVS Jan 14 2010,
+ * TimeStampResponseGenerator.java version 1.3.
  *
  * More information and license
  * can be found at http://www.bouncycastle.org

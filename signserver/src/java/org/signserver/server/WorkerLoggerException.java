@@ -10,37 +10,25 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
- 
-package org.signserver.common;
+package org.signserver.server;
 
 /**
- * Exception thrown if a singing operation is performed but
- * the signing token isn't active. 
- * 
- * @author Philip Vendil
- * $id$
+ *
+ * @author Markus Kilås
+ * @version $Id$
  */
+public class WorkerLoggerException extends Exception {
 
-public class IllegalRequestException extends Exception {
+    public WorkerLoggerException(Throwable cause) {
+        super(cause);
+    }
 
-	private static final long serialVersionUID = 1L;
+    public WorkerLoggerException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public IllegalRequestException(String message) {
-		super(message);
-	}
-
-        public IllegalRequestException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-        public IllegalRequestException(Throwable cause) {
-		super(cause);
-	}
-	
-	public String getMessage() {
-		return super.getMessage();
-	}
-
+    public WorkerLoggerException(String message) {
+        super(message);
+    }
 
 }

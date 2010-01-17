@@ -15,6 +15,7 @@ package org.signserver.ejb;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
@@ -24,7 +25,10 @@ import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.ISystemLogger;
 import org.signserver.server.IWorkerConfigDataService;
+import org.signserver.server.SystemLoggerException;
+import org.signserver.server.SystemLoggerFactory;
 
 /**
  * Entity Service class that acts as migration layer for
@@ -38,6 +42,10 @@ import org.signserver.server.IWorkerConfigDataService;
 public class WorkerConfigDataService implements IWorkerConfigDataService {
  
 	public transient Logger log = Logger.getLogger(this.getClass());
+
+        /** Audit logger. */
+        private static final ISystemLogger AUDITLOG = SystemLoggerFactory
+            .getInstance().getLogger(GlobalConfigurationSessionBean.class);
 	
 	private EntityManager em;
 	
@@ -119,6 +127,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      */
 	public void setWorkerConfig(int workerId, WorkerConfig signconf){
         setWorkerConfig(workerId, signconf, null);
+        auditLog(workerId, "setWorkerConfig");
     }
     
     /**
@@ -182,5 +191,19 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
 		return workerConfig;
 	}
 
+    private void auditLog(final int workerId, final String operation) {
+         try {
+            final Map<String, String> logMap = new HashMap<String, String>();
 
+            logMap.put(ISystemLogger.LOG_CLASS_NAME,
+                    WorkerConfigDataService.class.getSimpleName());
+            logMap.put(ISystemLogger.LOG_WORKER_ID, String.valueOf(workerId));
+            logMap.put(IWorkerConfigDataService.LOG_OPERATION,
+                    operation);
+            AUDITLOG.log(logMap);
+        } catch (SystemLoggerException ex) {
+            log.error("Audit log failure", ex);
+            throw new EJBException("Audit log failure", ex);
+        }
+    }
 }

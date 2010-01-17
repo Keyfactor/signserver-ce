@@ -26,6 +26,10 @@ import org.signserver.common.ResyncException;
  */
 public interface IGlobalConfigurationSession {
 
+    String LOG_OPERATION = "GLOBALCONFIG_OPERATION";
+    String LOG_PROPERTY = "GLOBALCONFIG_PROPERTY";
+    String LOG_VALUE = "GLOBALCONFIG_VALUE";
+
     /**
      * Method setting a global configuration property. For node. prefix will the
      * node id be appended.

@@ -19,9 +19,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import javax.ejb.EJBException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -37,8 +40,11 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.GlobalConfigurationCache;
 import org.signserver.server.GlobalConfigurationFileParser;
 import org.signserver.server.IProcessable;
+import org.signserver.server.ISystemLogger;
 import org.signserver.server.IWorker;
 import org.signserver.server.SignServerContext;
+import org.signserver.server.SystemLoggerException;
+import org.signserver.server.SystemLoggerFactory;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.timedservices.ITimedService;
 
@@ -54,6 +60,11 @@ import org.signserver.server.timedservices.ITimedService;
  */
 @Stateless
 public class GlobalConfigurationSessionBean implements IGlobalConfigurationSession.ILocal, IGlobalConfigurationSession.IRemote {
+
+    /** Audit logger. */
+    private static final ISystemLogger AUDITLOG = SystemLoggerFactory
+            .getInstance().getLogger(GlobalConfigurationSessionBean.class);
+
     @PersistenceContext(unitName="SignServerJPA")
     EntityManager em;
     
@@ -78,7 +89,10 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 	/**
 	 * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#setProperty(String, String, String)
 	 */
-	public void setProperty(String scope, String key, String value) {				
+	public void setProperty(String scope, String key, String value) {
+
+            auditLog("setProperty", scope+key, value);
+
 		if(GlobalConfigurationCache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)){
 			GlobalConfigurationCache.getCachedGlobalConfig().setProperty(propertyKeyHelper(scope, key), value);
 		}else{									            
@@ -111,6 +125,8 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 	public boolean removeProperty(String scope, String key){
 		boolean retval = false;
 		
+                auditLog("removeProperty", scope+key, null);
+
 		if(GlobalConfigurationCache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)){
 			GlobalConfigurationCache.getCachedGlobalConfig().remove(propertyKeyHelper(scope, key));
 		}else{				
@@ -225,6 +241,8 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 	 * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#resync()
 	 */ 
 	public void resync() throws ResyncException{
+
+            auditLog("resync", null, null); // TODO Should handle errors
 		
 		if(GlobalConfigurationCache.getCurrentState() != GlobalConfiguration.STATE_OUTOFSYNC){
 			  String message = "Error it is only possible to resync a database that have the state " + GlobalConfiguration.STATE_OUTOFSYNC;
@@ -292,6 +310,8 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 	 * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#reload()
 	 */ 
 	public void reload() {
+            auditLog("reload", null, null);
+
         GlobalConfigurationFileParser.getInstance().reloadConfiguration();
         GlobalConfigurationCache.setCachedGlobalConfig(null);
         getGlobalConfiguration();
@@ -330,5 +350,25 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 	}
 
 	
+    private static void auditLog(final String operation, final String property,
+            final String value) {
+         try {
+            final Map<String, String> logMap = new HashMap<String, String>();
 
+            logMap.put(ISystemLogger.LOG_CLASS_NAME,
+                    GlobalConfigurationSessionBean.class.getSimpleName());
+            logMap.put(IGlobalConfigurationSession.LOG_OPERATION,
+                    operation);
+            logMap.put(IGlobalConfigurationSession.LOG_PROPERTY,
+                    property);
+            if (value != null) {
+                logMap.put(IGlobalConfigurationSession.LOG_VALUE,
+                        value);
+            }
+            AUDITLOG.log(logMap);
+        } catch (SystemLoggerException ex) {
+            log.error("Audit log failure", ex);
+            throw new EJBException("Audit log failure", ex);
+        }
+    }
 }

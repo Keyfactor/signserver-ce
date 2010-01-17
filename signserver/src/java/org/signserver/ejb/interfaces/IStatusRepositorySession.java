@@ -25,6 +25,11 @@ import org.signserver.common.StatusRepositoryData;
  */
 public interface IStatusRepositorySession {
 
+    String LOG_OPERATION = "STATUSREPO_OPERATION";
+    String LOG_PROPERTY = "STATUSREPO_PROPERTY";
+    String LOG_VALUE = "STATUSREPO_VALUE";
+    String LOG_EXPIRATION = "STATUSREPO_EXPIRATION";
+
     /**
      * Get a property.
      *

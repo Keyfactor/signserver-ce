@@ -14,7 +14,9 @@ package org.signserver.common;
 
 import java.io.Serializable;
 import java.security.cert.Certificate;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Object containing extra information about a request not sent by the client
@@ -54,6 +56,17 @@ public class RequestContext implements Serializable{
 	 * Is null if no statistics is performed.
 	 */
 	public static final String STATISTICS_EVENT    = "STATISTICS_EVENT";
+
+        /**
+         * The transaction ID.
+         * This value is set by the WorkerSessionBean but could be read by
+         * different workers in order for them to include it in logs to
+         * identify the current transaction.
+         * This value should only be set by the WorkerSessionBean.
+         */
+        public static final String TRANSACTION_ID = "TRANSACTION_ID";
+
+        public static final String LOGMAP = "LOGMAP";
 	
 	/**
 	 * Default constructor creating an empty context.
@@ -109,4 +122,8 @@ public class RequestContext implements Serializable{
 	   return retval;
 	}
 	
+        public Map<String, Object> asUnmodifiableMap() {
+            return Collections.unmodifiableMap(context);
+        }
+
 }

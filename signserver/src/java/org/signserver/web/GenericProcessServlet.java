@@ -18,8 +18,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.ejb.EJB;
@@ -45,6 +47,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.IWorkerLogger;
 
 
 
@@ -74,6 +77,8 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     private static final String ENCODING_BASE64 = "base64";
     private static final long MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
+
+    private final Random random = new Random();
 
     @EJB
     private IWorkerSession.ILocal workersession;
@@ -250,7 +255,7 @@ public class GenericProcessServlet extends HttpServlet {
     private void processRequest(HttpServletRequest req, HttpServletResponse res, int workerId, byte[] data, String fileName) throws java.io.IOException, ServletException {
         log.debug("Using signerId: " + workerId);
 
-        String remoteAddr = req.getRemoteAddr();
+        final String remoteAddr = req.getRemoteAddr();
         log.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
 
         //
@@ -260,17 +265,26 @@ public class GenericProcessServlet extends HttpServlet {
             clientCertificate = certificates[0];
         }
 
-        log.debug("Received bytes of length: " + data.length);
+        final RequestContext context = new RequestContext(clientCertificate,
+                remoteAddr);
+        final Map<String,String> logMap = new HashMap<String, String>();
+        context.put(RequestContext.LOGMAP, logMap);
 
-        Random rand = new Random();
-        int requestId = rand.nextInt();
+        // Add HTTP specific log entries
+        logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, req.getRequestURL()
+                .append("?").append(req.getQueryString()).toString());
+        logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH,
+                String.valueOf(data.length));
+        if (log.isDebugEnabled()) {
+            log.debug("Received bytes of length: " + data.length);
+        }
 
+        final int requestId = random.nextInt();
+        
         GenericServletResponse response = null;
         try {
             response = (GenericServletResponse) getWorkerSession().process(workerId,
-                    new GenericServletRequest(requestId, data, req),
-                    new RequestContext((X509Certificate) clientCertificate,
-                            remoteAddr));
+                    new GenericServletRequest(requestId, data, req), context);
         } catch (IllegalRequestException e) {
             throw new ServletException(e);
         } catch (CryptoTokenOfflineException e) {

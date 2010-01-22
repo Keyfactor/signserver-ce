@@ -33,28 +33,20 @@ import org.signserver.validationservice.server.ICertificateManager;
  * 
  * 
  * @author Philip Vendil 26 nov 2007
- *
+ * 
  * @version $Id$
  */
 
-public class Validation{
-	
+public class Validation {
+
 	private transient Logger log = Logger.getLogger(this.getClass());
-		
+
 	private static final long serialVersionUID = 1L;
-	
-	public enum    Status{VALID,
-		                  REVOKED,
-		                  NOTYETVALID,
-		                  EXPIRED,
-		                  DONTVERIFY,
-		                  CAREVOKED,
-		                  CANOTYETVALID,
-		                  CAEXPIRED,
-		                  BADCERTPURPOSE		
+
+	public enum Status {
+		VALID, REVOKED, NOTYETVALID, EXPIRED, DONTVERIFY, CAREVOKED, CANOTYETVALID, CAEXPIRED, BADCERTPURPOSE, ISSUERNOTSUPPORTED
 	};
 
-	
 	private transient ICertificate certificate;
 	private byte[] certificateData;
 	private transient List<ICertificate> cAChain;
@@ -64,40 +56,54 @@ public class Validation{
 	private Date validationDate;
 	private Date revokedDate;
 	private int revokationReason = -1;
-	
+
 	/**
 	 * Default constructor used for serialization
 	 */
-	public Validation(){}
-	
+	public Validation() {
+	}
+
 	/**
-	 * Constructor that should be used for validation that resulted in
-	 * a not revoked status.
+	 * Constructor that should be used for validation that resulted in a not
+	 * revoked status.
 	 * 
-	 * @param certificate the certificate that have been validated.
-	 * @param cAChain the CA certificate chain with the root CA last.
-	 * @param status one of the STATUS_ constants defining the status of the certificate.
-	 * @param statusMessage human readable status message of the validation.
+	 * @param certificate
+	 *            the certificate that have been validated.
+	 * @param cAChain
+	 *            the CA certificate chain with the root CA last.
+	 * @param status
+	 *            one of the STATUS_ constants defining the status of the
+	 *            certificate.
+	 * @param statusMessage
+	 *            human readable status message of the validation.
 	 */
-	public Validation(ICertificate certificate, List<ICertificate> cAChain, Status status,
-			String statusMessage) {
+	public Validation(ICertificate certificate, List<ICertificate> cAChain,
+			Status status, String statusMessage) {
 		this(certificate, cAChain, status, statusMessage, null, -1);
 
 	}
 
 	/**
-	 * Constructor that should be used for validation that resulted in
-	 * a revoked status.
+	 * Constructor that should be used for validation that resulted in a revoked
+	 * status.
 	 * 
-	 * @param certificate the certificate that have been validated.
-	 * @param cAChain the CA certificate chain with the root CA last.
-	 * @param status one of the STATUS_ constants defining the status of the certificate.
-	 * @param statusMessage human readable status message of the validation.
-	 * @param revokedDate null if not revoked.
-	 * @param revokationReason one of the reasons specified in RFC3280, 0 if not revoked.
+	 * @param certificate
+	 *            the certificate that have been validated.
+	 * @param cAChain
+	 *            the CA certificate chain with the root CA last.
+	 * @param status
+	 *            one of the STATUS_ constants defining the status of the
+	 *            certificate.
+	 * @param statusMessage
+	 *            human readable status message of the validation.
+	 * @param revokedDate
+	 *            null if not revoked.
+	 * @param revokationReason
+	 *            one of the reasons specified in RFC3280, 0 if not revoked.
 	 */
-	public Validation(ICertificate certificate, List<ICertificate> cAChain, Status status,
-			String statusMessage, Date revokedDate, int revokationReason) {
+	public Validation(ICertificate certificate, List<ICertificate> cAChain,
+			Status status, String statusMessage, Date revokedDate,
+			int revokationReason) {
 		super();
 		this.validationDate = new Date();
 		this.certificate = certificate;
@@ -109,10 +115,10 @@ public class Validation{
 		try {
 			this.certificateData = certificate.getEncoded();
 
-			if(cAChain != null){
+			if (cAChain != null) {
 				this.cAChainData = new ArrayList<byte[]>();
-				for(ICertificate cert : cAChain){
-					cAChainData.add(0,cert.getEncoded());
+				for (ICertificate cert : cAChain) {
+					cAChainData.add(0, cert.getEncoded());
 				}
 			}
 		} catch (CertificateEncodingException e) {
@@ -124,9 +130,10 @@ public class Validation{
 	 * @return the certificate that have been validated.
 	 */
 	public ICertificate getCertificate() {
-		if(certificate == null){
+		if (certificate == null) {
 			try {
-				certificate = ICertificateManager.genICertificate(CertTools.getCertfromByteArray(certificateData));
+				certificate = ICertificateManager.genICertificate(CertTools
+						.getCertfromByteArray(certificateData));
 			} catch (CertificateException e) {
 				log.error(e);
 			}
@@ -135,14 +142,16 @@ public class Validation{
 	}
 
 	/**
-	 * @return the status, one of the STATUS_ constants defining the status of the certificate.
+	 * @return the status, one of the STATUS_ constants defining the status of
+	 *         the certificate.
 	 */
 	public Status getStatus() {
 		return status;
 	}
 
 	/**
-	 * @return the statusMessage, human readable status message of the validation.
+	 * @return the statusMessage, human readable status message of the
+	 *         validation.
 	 */
 	public String getStatusMessage() {
 		return statusMessage;
@@ -156,7 +165,8 @@ public class Validation{
 	}
 
 	/**
-	 * @return the revokationReason, one of the reasons specified in RFC3280, -1 if not revoked.
+	 * @return the revokationReason, one of the reasons specified in RFC3280, -1
+	 *         if not revoked.
 	 */
 	public int getRevokationReason() {
 		return revokationReason;
@@ -166,15 +176,17 @@ public class Validation{
 	 * @return the CA certificate chain with the root CA last.
 	 */
 	public List<ICertificate> getCAChain() {
-		if(cAChain == null && cAChainData != null){
+		if (cAChain == null && cAChainData != null) {
 			cAChain = new ArrayList<ICertificate>();
-			for (byte[] certData : cAChainData){
+			for (byte[] certData : cAChainData) {
 				try {
-					ICertificate cACert = ICertificateManager.genICertificate(CertTools.getCertfromByteArray(certData));
-					cAChain.add(0,cACert);
+					ICertificate cACert = ICertificateManager
+							.genICertificate(CertTools
+									.getCertfromByteArray(certData));
+					cAChain.add(0, cACert);
 				} catch (CertificateException e) {
 					log.error(e);
-				}				
+				}
 			}
 		}
 		return cAChain;
@@ -187,72 +199,75 @@ public class Validation{
 		return validationDate;
 	}
 
-
 	public void parse(DataInput in) throws IOException {
-	       validationDate = new Date(in.readLong());
-	       int size = in.readInt();
-	       certificateData = new byte[size];
-	       in.readFully(certificateData);
-	      
-	       size = in.readInt();
-	       byte[] stringData = new byte[size];
-	       in.readFully(stringData);
-	       status = Status.valueOf(new String(stringData,"UTF-8"));
-	       
-	       size = in.readInt();
-	       if(size != 0){
-	         stringData = new byte[size];
-	         in.readFully(stringData);
-	         statusMessage = new String(stringData,"UTF-8");
-	       }
-			
-	       long time = in.readLong();
-	       if(time != 0){
-	    	   revokedDate = new Date(time);
-	       }
-	       
-	       revokationReason = in.readInt();
-	       
-	       cAChainData = new ArrayList<byte[]>();
-	       size = in.readInt();
-			for(int i =0 ;i<size; i++){
-				int dataLen = in.readInt();
-				byte[] data = new byte[dataLen];
-				in.readFully(data);
-				cAChainData.add(data.clone());
-			}      
+		validationDate = new Date(in.readLong());
+		int size = in.readInt();
+		certificateData = new byte[size];
+		in.readFully(certificateData);
+
+		size = in.readInt();
+		byte[] stringData = new byte[size];
+		in.readFully(stringData);
+		status = Status.valueOf(new String(stringData, "UTF-8"));
+
+		size = in.readInt();
+		if (size != 0) {
+			stringData = new byte[size];
+			in.readFully(stringData);
+			statusMessage = new String(stringData, "UTF-8");
+		}
+
+		long time = in.readLong();
+		if (time != 0) {
+			revokedDate = new Date(time);
+		}
+
+		revokationReason = in.readInt();
+
+		cAChainData = new ArrayList<byte[]>();
+		size = in.readInt();
+		for (int i = 0; i < size; i++) {
+			int dataLen = in.readInt();
+			byte[] data = new byte[dataLen];
+			in.readFully(data);
+			cAChainData.add(data.clone());
+		}
 	}
 
 	public void serialize(DataOutput out) throws IOException {
 		out.writeLong(validationDate.getTime());
 		out.writeInt(certificateData.length);
 		out.write(certificateData);
-		
-		byte[] stringData = status.name().getBytes("UTF-8"); 
+
+		byte[] stringData = status.name().getBytes("UTF-8");
 		out.writeInt(stringData.length);
 		out.write(stringData);
-		
-        if(statusMessage==null){
-        	out.writeInt(0);
-        }else{
-        	stringData = statusMessage.getBytes("UTF-8"); 
-    		out.writeInt(stringData.length);
-    		out.write(stringData);
-        }
-		
-        if(revokedDate == null){
-        	out.writeLong(0);
-        }else{
-        	out.writeLong(revokedDate.getTime());
-        }
 
-        out.writeInt(revokationReason);	
- 		
-		out.writeInt(cAChainData.size());
-		for(int i =0 ;i<cAChainData.size(); i++){
-			byte[] data = cAChainData.get(i);
-			out.writeInt(data.length);
-			out.write(data);
+		if (statusMessage == null) {
+			out.writeInt(0);
+		} else {
+			stringData = statusMessage.getBytes("UTF-8");
+			out.writeInt(stringData.length);
+			out.write(stringData);
+		}
+
+		if (revokedDate == null) {
+			out.writeLong(0);
+		} else {
+			out.writeLong(revokedDate.getTime());
+		}
+
+		out.writeInt(revokationReason);
+
+		if (cAChainData == null) {
+			out.writeInt(0);
+		} else {
+			out.writeInt(cAChainData.size());
+			for (int i = 0; i < cAChainData.size(); i++) {
+				byte[] data = cAChainData.get(i);
+				out.writeInt(data.length);
+				out.write(data);
+			}
 		}
 	}
 

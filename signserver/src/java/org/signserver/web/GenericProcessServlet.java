@@ -47,6 +47,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IWorkerLogger;
 
 
@@ -258,7 +259,7 @@ public class GenericProcessServlet extends HttpServlet {
         final String remoteAddr = req.getRemoteAddr();
         log.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
 
-        //
+        // Client certificate
         Certificate clientCertificate = null;
         Certificate[] certificates = (X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate");
         if (certificates != null) {
@@ -267,6 +268,16 @@ public class GenericProcessServlet extends HttpServlet {
 
         final RequestContext context = new RequestContext(clientCertificate,
                 remoteAddr);
+
+        if (clientCertificate instanceof X509Certificate) {
+            final X509Certificate cert = (X509Certificate) clientCertificate;
+            CertificateClientCredential credential
+                    = new CertificateClientCredential(
+                    cert.getSerialNumber().toString(16),
+                    cert.getIssuerDN().getName());
+            context.put(RequestContext.CLIENT_CREDENTIAL, credential);
+        }
+        
         final Map<String,String> logMap = new HashMap<String, String>();
         context.put(RequestContext.LOGMAP, logMap);
 

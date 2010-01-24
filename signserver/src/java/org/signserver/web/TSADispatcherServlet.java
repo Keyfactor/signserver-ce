@@ -53,6 +53,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.ISystemLogger;
 import org.signserver.server.IWorkerLogger;
+import org.signserver.server.NotGrantedException;
 import org.signserver.server.SystemLoggerException;
 import org.signserver.server.SystemLoggerFactory;
 
@@ -216,6 +217,7 @@ public class TSADispatcherServlet extends HttpServlet {
         final RequestContext context = new RequestContext(clientCertificate,
                 remoteAddr);
         context.put(RequestContext.LOGMAP, logMap);
+        context.put(RequestContext.CLIENT_CREDENTIAL, credential);
 
         // Add HTTP specific log entries
         logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, getFullURL(req));
@@ -248,7 +250,7 @@ public class TSADispatcherServlet extends HttpServlet {
 
         // Find to which worker the request should be dispatched
         int workerId = 0;
-        final String worker = getWorkerLookup().lockupClientAuthorizedWorker(
+        final String worker = getWorkerLookup().lookupClientAuthorizedWorker(
                 credential, context);
 
         byte[] processedBytes;
@@ -310,6 +312,32 @@ public class TSADispatcherServlet extends HttpServlet {
                         + "response id didn't match request id");
                 }
                 processedBytes = (byte[]) response.getProcessedData();
+            } catch (NotGrantedException ex) { // Purchase not granted
+                try {
+                    final TimeStampResponseGenerator gen =
+                            new TimeStampResponseGenerator(null, null);
+                    final TimeStampResponse resp = gen.generateFailResponse(
+                            PKIStatus.REJECTION, PKIFailureInfo.badRequest,
+                            ex.getMessage());
+                    processedBytes = resp.getEncoded();
+                } catch (TSPException tspe) {
+                    final String error = "Client was not granted purchase + "
+                        + tspe.getMessage();
+                    LOG.error(error, ex);
+
+                    // Auditlog
+                    logMap.put(IWorkerLogger.LOG_EXCEPTION, error);
+                    try {
+                        AUDITLOG.log(logMap);
+                    } catch (SystemLoggerException sle) {
+                        LOG.error("Audit log failure", sle);
+                    }
+
+                    final ServletException exception =
+                            new ServletException(tspe);
+                    LOG.error(exception);
+                    throw exception;
+                }
             } catch (Exception ex) {
 
                 try {

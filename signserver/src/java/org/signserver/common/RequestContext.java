@@ -67,6 +67,17 @@ public class RequestContext implements Serializable{
         public static final String TRANSACTION_ID = "TRANSACTION_ID";
 
         public static final String LOGMAP = "LOGMAP";
+
+        /**
+         * True if the worker has processed the request and is able to return
+         * the requested result.
+         * The Worker Session bean can now go on and charge the client for the
+         * request.
+         */
+        public static final String WORKER_FULFILLED_REQUEST
+                = "WORKER_GRANTED_REQUEST";
+
+        public static final String CLIENT_CREDENTIAL = "CLIENT_CREDENTIAL";
 	
 	/**
 	 * Default constructor creating an empty context.

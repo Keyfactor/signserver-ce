@@ -39,6 +39,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.genericws.GenericWSRequest;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.CertificateClientCredential;
 
 /**
  * A special servlet used to support custom Jax-WS WebServices in
@@ -115,12 +116,23 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
             if(certificates != null){
                     clientCertificate = certificates[0];
             }
+            RequestContext requestContext = new RequestContext(
+                    (X509Certificate) clientCertificate, remoteAddr);
+
+            if (clientCertificate instanceof X509Certificate) {
+                final X509Certificate cert = (X509Certificate) clientCertificate;
+                CertificateClientCredential credential
+                        = new CertificateClientCredential(
+                        cert.getSerialNumber().toString(16),
+                        cert.getIssuerDN().getName());
+                requestContext.put(RequestContext.CLIENT_CREDENTIAL, rand);
+            }
 
             int requestId = rand.nextInt();
 
             GenericWSRequest wsreq = new GenericWSRequest(requestId,requestType,request,response,getServletConfig(), servletContext);
             try {
-                    getWorkerSession().process(workerId, wsreq, new RequestContext((X509Certificate) clientCertificate, remoteAddr));
+                    getWorkerSession().process(workerId, wsreq, requestContext);
             } catch (IllegalRequestException e) {
                     throw new ServletException(e);
             } catch (CryptoTokenOfflineException e) {

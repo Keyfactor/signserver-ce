@@ -53,7 +53,9 @@ public class DefaultTimeStampLogger implements IWorkerLogger {
                 + "SIGNER_CERT_ISSUERDN: ${SIGNER_CERT_ISSUERDN}; "
                 + "TIMESTAMPREQUEST_ENCODED: ${TSA_TIMESTAMPREQUEST_ENCODED}; "
                 + "TSA_TIMESTAMPRESPONSE_ENCODED: ${TSA_TIMESTAMPRESPONSE_ENCODED}; "
-                + "TSA_EXCEPTION: ${TSA_EXCEPTION}";
+                + "PURCHASED: ${PURCHASED}; "
+                + "TSA_EXCEPTION: ${TSA_EXCEPTION}; "
+                + "EXCEPTION: ${EXCEPTION}";
 
     private static final String DEFAULT_LOGDATEFORMAT =
             "yyyy-MM-dd:HH:mm:ss:z";

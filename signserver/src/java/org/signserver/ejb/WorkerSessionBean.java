@@ -63,10 +63,13 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.AccounterException;
+import org.signserver.server.IClientCredential;
 import org.signserver.server.IProcessable;
 import org.signserver.server.ISystemLogger;
 import org.signserver.server.IWorker;
 import org.signserver.server.IWorkerLogger;
+import org.signserver.server.NotGrantedException;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.SystemLoggerException;
 import org.signserver.server.SystemLoggerFactory;
@@ -289,6 +292,42 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 logMap.put(IWorkerLogger.LOG_EXCEPTION, exception.getMessage());
                 workerLogger.log(logMap);
                 throw exception;
+            }
+
+            // Charge the client if the request was successfull
+            if (Boolean.TRUE.equals(requestContext.get(
+                    RequestContext.WORKER_FULFILLED_REQUEST))) {
+
+                // Billing time
+                boolean purchased = false;
+                try {
+                    IClientCredential credential =
+                            (IClientCredential) requestContext.get(
+                                        RequestContext.CLIENT_CREDENTIAL);
+
+                    purchased = WorkerFactory.getInstance().getAccounter(workerId,
+                                    worker.getStatus().getActiveSignerConfig(),
+                                    em).purchase(credential, request, res,
+                                            requestContext);
+
+                    logMap.put(IWorkerLogger.LOG_PURCHASED, "true");
+                } catch (AccounterException ex) {
+                    logMap.put(IWorkerLogger.LOG_PURCHASED, "false");
+                    final SignServerException exception =
+                            new SignServerException("Accounter failed: "
+                            + ex.getMessage(), ex);
+                    logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
+                    workerLogger.log(logMap);
+                    throw exception;
+                }
+                if (!purchased) {
+                    final String error = "Purchase not granted";
+                    logMap.put(IWorkerLogger.LOG_EXCEPTION, error);
+                    workerLogger.log(logMap);
+                    throw new NotGrantedException(error);
+                }
+            } else {
+                logMap.put(IWorkerLogger.LOG_PURCHASED, "false");
             }
 
             // Archiving

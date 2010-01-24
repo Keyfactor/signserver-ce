@@ -32,6 +32,7 @@ import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.tsp.TSPAlgorithms;
@@ -230,9 +231,7 @@ public class TimeStampSigner extends BaseSigner {
     //private String defaultDigestOID = null;
     private String defaultTSAPolicyOID = null;
 
-    private IWorkerLogger workerLogger;
-
-
+    
     public void init(final int signerId, final WorkerConfig config,
             final WorkerContext workerContext,
             final EntityManager workerEntityManager) {
@@ -272,7 +271,9 @@ public class TimeStampSigner extends BaseSigner {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("bctsp version: " + TimeStampResponseGenerator.class
-                .getPackage().getImplementationVersion());
+                .getPackage().getImplementationVersion() + ", "
+                + TimeStampRequest.class.getPackage()
+                    .getImplementationVersion());
         }
     }
 
@@ -413,7 +414,13 @@ public class TimeStampSigner extends BaseSigner {
                 logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
                         "timeSourceNotAvailable");
             }
-            
+
+            // We were able to fulfill the request so the worker session bean
+            // can go on and charge the client
+            if (timeStampResponse.getStatus() == PKIStatus.GRANTED) {
+                requestContext.put(RequestContext.WORKER_FULFILLED_REQUEST,
+                        true);
+            }
 
         } catch (InvalidAlgorithmParameterException e) {
             final IllegalRequestException exception =

@@ -40,7 +40,7 @@ public class GlobalConfigMappedTimeStampSignerLookup implements ITimeStampSigner
 
     private IGlobalConfigurationSession.ILocal gCSession;
 
-    public String lockupClientAuthorizedWorker(IClientCredential credential, RequestContext context) {
+    public String lookupClientAuthorizedWorker(IClientCredential credential, RequestContext context) {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">lockupClientAuthorizedWorker");
         }

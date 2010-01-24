@@ -468,7 +468,8 @@ public class TimeStampClient {
             LOG.info("TimeStampRequest validated");
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Status (" + timeStampResponse.getStatus() + "): "
+                LOG.debug("(Status: " + timeStampResponse.getStatus()
+                        + ", " + timeStampResponse.getFailInfo() + "): "
                         + timeStampResponse.getStatusString());
             }
 

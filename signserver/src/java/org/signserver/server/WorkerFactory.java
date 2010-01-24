@@ -44,6 +44,8 @@ public  class WorkerFactory {
 	public static transient Logger log = Logger.getLogger(WorkerFactory.class);
 
         private static final String WORKERLOGGER = "WORKERLOGGER";
+
+        private static final String ACCOUNTER = "ACCOUNTER";
   
 	private static WorkerFactory instance = new WorkerFactory();
 	
@@ -58,6 +60,7 @@ public  class WorkerFactory {
 	private Map<String, Integer> nameToIdMap = null;
 	private Map<Integer, ClassLoader> workerClassLoaderMap = null;
 	private Map<Integer, IWorkerLogger> workerLoggerStore;
+        private Map<Integer, IAccounter> accounterStore;
 	
 	
 	
@@ -262,6 +265,7 @@ public  class WorkerFactory {
 			authenticatorStore = null;
 			workerClassLoaderMap = null;
                         workerLoggerStore = null;
+                        accounterStore = null;
 		}
 	}
 	
@@ -288,67 +292,76 @@ public  class WorkerFactory {
                 if (workerLoggerStore == null) {
                     workerLoggerStore = Collections.synchronizedMap(new HashMap<Integer, IWorkerLogger>());
                 }
+
+                if (accounterStore == null) {
+                    accounterStore = Collections.synchronizedMap(new HashMap<Integer, IAccounter>());
+                }
 		
 		synchronized(nameToIdMap){	
 			synchronized(workerStore){
 				synchronized(authenticatorStore){
 					synchronized(workerClassLoaderMap){
                                             synchronized(workerLoggerStore) {
-						if(id != 0){
+                                                synchronized(accounterStore) {
+                                                    if(id != 0){
 
-							workerStore.put(id,null);
-							authenticatorStore.put(id, null);
-							workerClassLoaderMap.put(id, null);
-                                                        workerLoggerStore.put(id,
-                                                                null);
-							Iterator<String> iter = nameToIdMap.keySet().iterator();
-							while(iter.hasNext()){
-								String next = (String) iter.next();
-								if(nameToIdMap.get(next) != null && 
-										((Integer) nameToIdMap.get(next)).intValue() == id){
-									iter.remove();
-								}
-							}
-						}
-						GlobalConfiguration gc = gCSession.getGlobalConfiguration();
+                                                            workerStore.put(id,null);
+                                                            authenticatorStore.put(id, null);
+                                                            workerClassLoaderMap.put(id, null);
+                                                            workerLoggerStore.put(id,
+                                                                    null);
+                                                            accounterStore.put(
+                                                                    id,
+                                                                    null);
+                                                            Iterator<String> iter = nameToIdMap.keySet().iterator();
+                                                            while(iter.hasNext()){
+                                                                    String next = (String) iter.next();
+                                                                    if(nameToIdMap.get(next) != null &&
+                                                                                    ((Integer) nameToIdMap.get(next)).intValue() == id){
+                                                                            iter.remove();
+                                                                    }
+                                                            }
+                                                    }
+                                                    GlobalConfiguration gc = gCSession.getGlobalConfiguration();
 
-						try{							
-							String classpath = gc.getWorkerClassPath(id);						
-							if(classpath != null){	
-								WorkerConfig config = workerConfigHome.getWorkerProperties(id);
-								EntityManager em = null;
-								if(workerContext instanceof SignServerContext){
-									em = ((SignServerContext) workerContext).getEntityManager();
-								}
-								ClassLoader cl = getClassLoader(em, id,config);
-								Class<?>  implClass =  cl.loadClass(classpath);
+                                                    try{
+                                                            String classpath = gc.getWorkerClassPath(id);
+                                                            if(classpath != null){
+                                                                    WorkerConfig config = workerConfigHome.getWorkerProperties(id);
+                                                                    EntityManager em = null;
+                                                                    if(workerContext instanceof SignServerContext){
+                                                                            em = ((SignServerContext) workerContext).getEntityManager();
+                                                                    }
+                                                                    ClassLoader cl = getClassLoader(em, id,config);
+                                                                    Class<?>  implClass =  cl.loadClass(classpath);
 
-								Object obj = implClass.newInstance();
+                                                                    Object obj = implClass.newInstance();
 
-								if(obj instanceof IProcessable || obj.getClass().getSimpleName().equals("IMailProcessor")){
-									if(config.getProperties().getProperty(ProcessableConfig.NAME) != null){
-										getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), new Integer(id)); 
-									}  
-								}
+                                                                    if(obj instanceof IProcessable || obj.getClass().getSimpleName().equals("IMailProcessor")){
+                                                                            if(config.getProperties().getProperty(ProcessableConfig.NAME) != null){
+                                                                                    getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), new Integer(id));
+                                                                            }
+                                                                    }
 
-								if(getClassLoader(em, id,config) instanceof ExtendedClusterClassLoader){
-								  ((IWorker) obj).init(id, config, workerContext, ((ExtendedClusterClassLoader) getClassLoader(em, id,config)).getWorkerEntityManger(config));
-								}else{
-								  ((IWorker) obj).init(id, config, workerContext,null);
-								}
-								getWorkerStore().put(new Integer(id),(IWorker) obj);
-							}  
-						}catch(ClassNotFoundException e){
-							log.error("Error reloading worker : " + e.getMessage(), e);
-						}
-						catch(IllegalAccessException e){
-							log.error("Error reloading worker : " + e.getMessage(), e);
-						}
-						catch(InstantiationException e){
-							log.error("Error reloading worker : " + e.getMessage(), e);
-						}
+                                                                    if(getClassLoader(em, id,config) instanceof ExtendedClusterClassLoader){
+                                                                      ((IWorker) obj).init(id, config, workerContext, ((ExtendedClusterClassLoader) getClassLoader(em, id,config)).getWorkerEntityManger(config));
+                                                                    }else{
+                                                                      ((IWorker) obj).init(id, config, workerContext,null);
+                                                                    }
+                                                                    getWorkerStore().put(new Integer(id),(IWorker) obj);
+                                                            }
+                                                    }catch(ClassNotFoundException e){
+                                                            log.error("Error reloading worker : " + e.getMessage(), e);
+                                                    }
+                                                    catch(IllegalAccessException e){
+                                                            log.error("Error reloading worker : " + e.getMessage(), e);
+                                                    }
+                                                    catch(InstantiationException e){
+                                                            log.error("Error reloading worker : " + e.getMessage(), e);
+                                                    }
+                                                }
                                             }
-					}
+                                        }
 				}
 			}
 		}
@@ -453,6 +466,63 @@ public  class WorkerFactory {
             return getWorkerLoggerStore().get(workerId);
         }
 
+        public IAccounter getAccounter(final int workerId,
+                final WorkerConfig config, final EntityManager em) 
+                    throws IllegalRequestException {
+            IAccounter accounter = getAccounterStore().get(workerId);
+            if (accounter == null) {
+                    final String fullClassName =
+                            config.getProperty(ACCOUNTER);
+
+                    if (fullClassName == null || "".equals(fullClassName)) {
+                        accounter = new NoAccounter();
+                    } else {
+                        try {
+                            final Class<?> c = getClassLoader(em, workerId,
+                                    config).loadClass(fullClassName);
+                            accounter = (IAccounter) c.newInstance();
+                        } catch (ClassNotFoundException e) {
+                            final String error =
+                                    "Error worker with id " + workerId
+                                        + " missconfiguration, "
+                                        + ACCOUNTER + " setting : "
+                                        + fullClassName
+                                        + " is not a correct "
+                                        + "fully qualified class name "
+                                        + "of an IAccounter.";
+                                log.error(error, e);
+                                throw new IllegalRequestException(error);
+                        } catch (InstantiationException e) {
+                            final String error =
+                                    "Error worker with id " + workerId
+                                        + " missconfiguration, "
+                                        + ACCOUNTER + " setting : "
+                                        + fullClassName
+                                        + " is not a correct "
+                                        + "fully qualified class name "
+                                        + "of an IAccounter.";
+                            log.error(error, e);
+                            throw new IllegalRequestException(error);
+
+                        } catch (IllegalAccessException e) {
+                            final String error =
+                                    "Error worker with id " + workerId
+                                        + " missconfiguration, "
+                                        + ACCOUNTER + " setting : "
+                                        + fullClassName
+                                        + " is not a correct "
+                                        + "fully qualified class name "
+                                        + "of an IAccounter.";
+                            log.error(error, e);
+                            throw new IllegalRequestException(error);
+                        }
+                    }
+                    accounter.init(config.getProperties());
+                    getAccounterStore().put(workerId, accounter);
+            }
+            return getAccounterStore().get(workerId);
+        }
+
 	
 	private Map<String, Integer> getNameToIdMap(){
 		if(nameToIdMap == null){
@@ -485,4 +555,12 @@ public  class WorkerFactory {
 		return workerLoggerStore;
 
 	}
+        private Map<Integer, IAccounter> getAccounterStore() {
+            if(accounterStore == null) {
+                accounterStore = Collections.synchronizedMap(new HashMap<Integer, IAccounter>());
+            }
+            return accounterStore;
+	}
+
+
 }

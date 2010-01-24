@@ -61,7 +61,7 @@
 	<classpathentry kind="lib" path="lib/ext/james/smtp.jar"/>
 	<classpathentry kind="lib" path="lib/reports/jcommon-1.0.12.jar"/>
 	<classpathentry kind="lib" path="lib/reports/jfreechart-1.0.9.jar"/>
-	<classpathentry kind="lib" path="lib/module/tsa/1.6/bctsp-jdk.jar"/>
+	<classpathentry kind="lib" path="lib/1.6/bctsp-jdk.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/hsqldb.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/dom4j.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/cglib.jar"/>

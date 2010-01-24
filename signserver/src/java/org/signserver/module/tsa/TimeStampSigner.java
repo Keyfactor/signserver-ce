@@ -39,7 +39,7 @@ import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
-import org.signserver.module.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
+import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.bouncycastle.tsp.TimeStampTokenGenerator;
 import org.ejbca.util.Base64;
 import org.signserver.common.ArchiveData;

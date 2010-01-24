@@ -6,11 +6,14 @@
  * Change committed to Bouncy Castle CVS Jan 14 2010,
  * TimeStampResponseGenerator.java version 1.3.
  *
+ * Another change is the addition of the generateFailResponse method that has
+ * not yet been submitted (see DSS-213).
+ *
  * More information and license
  * can be found at http://www.bouncycastle.org
  *
  */
-package org.signserver.module.tsa.org.bouncycastle.tsp;
+package org.signserver.server.tsa.org.bouncycastle.tsp;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -106,6 +109,32 @@ public class TimeStampResponseGenerator
         }
 
         return new PKIStatusInfo(new DERSequence(v));
+    }
+
+    public TimeStampResponse generateFailResponse(
+            int status,
+            int failInfoField,
+            String statusString) 
+            throws TSPException
+    {
+        this.status = status;
+
+        this.setFailInfoField(failInfoField);
+        this.addStatusString(statusString);
+
+        PKIStatusInfo pkiStatusInfo = getPKIStatusInfo();
+
+        TimeStampResp resp = new TimeStampResp(pkiStatusInfo, null);
+
+        try
+        {
+            return new TimeStampResponse(resp);
+        }
+        catch (IOException e)
+        {
+            throw new TSPException("created badly formatted response!");
+        }
+
     }
 
     public TimeStampResponse generate(

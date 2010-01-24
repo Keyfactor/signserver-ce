@@ -26,6 +26,7 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import javax.ejb.EJBException;
 
 import javax.naming.Context;
@@ -44,16 +45,16 @@ import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
-import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletRequest;
 import org.signserver.common.GenericServletResponse;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.ISystemLogger;
 import org.signserver.server.IWorkerLogger;
+import org.signserver.server.SystemLoggerException;
+import org.signserver.server.SystemLoggerFactory;
 
 /**
  * Servlet for dispatching timestamping requests to the right TimeStampSigner
@@ -74,6 +75,10 @@ public class TSADispatcherServlet extends HttpServlet {
 
     private static final Logger LOG =
             Logger.getLogger(TSADispatcherServlet.class);
+
+    /** Audit logger. */
+    private static final ISystemLogger AUDITLOG = SystemLoggerFactory
+            .getInstance().getLogger(TSADispatcherServlet.class);
     
     private static final String REQUEST_CONTENT_TYPE
             = "application/timestamp-query";
@@ -116,6 +121,27 @@ public class TSADispatcherServlet extends HttpServlet {
             LOG.trace(">doPost()");
         }
 
+        // Start time
+        final long startTime = System.currentTimeMillis();
+
+        // Transaction ID
+        final String transactionID = generateTransactionID();
+
+        // Remote IP
+        final String remoteAddr = req.getRemoteAddr();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Received a request with length: "
+                    + req.getContentLength() + " from " + remoteAddr);
+        }
+
+        // Map of log entries
+        final Map<String, String> logMap = new HashMap<String, String>();
+
+        // Put in some log value
+        logMap.put(IWorkerLogger.LOG_TIME, String.valueOf(startTime));
+        logMap.put(IWorkerLogger.LOG_ID, transactionID);
+        logMap.put(IWorkerLogger.LOG_CLIENT_IP, remoteAddr);
+
         // Pass-through the content to be handled by worker if
         // unknown content-type
         if (LOG.isDebugEnabled()) {
@@ -124,15 +150,18 @@ public class TSADispatcherServlet extends HttpServlet {
 
         if (!REQUEST_CONTENT_TYPE.equals(req.getContentType())) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST);
+
+            // Auditlog
+            logMap.put(IWorkerLogger.LOG_EXCEPTION, "Unexpected content-type");
+            try {
+                AUDITLOG.log(logMap);
+            } catch (SystemLoggerException sle) {
+                LOG.error("Audit log failure", sle);
+            }
             return;
         }
 
-        final String remoteAddr = req.getRemoteAddr();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Received a request with length: "
-                    + req.getContentLength() + " from " + remoteAddr);
-        }
-
+        
         // Get an input stream and read the bytes from the stream
         final byte[] data;
         int totalLength = 0;
@@ -144,8 +173,18 @@ public class TSADispatcherServlet extends HttpServlet {
             os.write(buf, 0, len);
 
             if ((totalLength += len) > MAX_REQUEST_SIZE) {
-                LOG.error("Content length exceeds 10MB, not processed: "
-                        + req.getContentLength());
+                final String error =
+                        "Content length exceeds 10MB, not processed: "
+                        + req.getContentLength();
+                LOG.error(error);
+
+                // Auditlog
+                logMap.put(IWorkerLogger.LOG_EXCEPTION, error);
+                try {
+                    AUDITLOG.log(logMap);
+                } catch (SystemLoggerException sle) {
+                    LOG.error("Audit log failure", sle);
+                }
                 throw new ServletException("Error: Maximum request size exceded");
             }
         }
@@ -176,7 +215,6 @@ public class TSADispatcherServlet extends HttpServlet {
 
         final RequestContext context = new RequestContext(clientCertificate,
                 remoteAddr);
-        final Map<String, String> logMap = new HashMap<String, String>();
         context.put(RequestContext.LOGMAP, logMap);
 
         // Add HTTP specific log entries
@@ -187,6 +225,14 @@ public class TSADispatcherServlet extends HttpServlet {
         if (data.length < 1) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST,
                     "Malformed request");
+
+            // Auditlog
+            logMap.put(IWorkerLogger.LOG_EXCEPTION, "Malformed request");
+            try {
+                AUDITLOG.log(logMap);
+            } catch (SystemLoggerException sle) {
+                LOG.error("Audit log failure", sle);
+            }
             return;
         }
 
@@ -217,14 +263,34 @@ public class TSADispatcherServlet extends HttpServlet {
                         PKIStatus.REJECTION, PKIFailureInfo.badRequest,
                         "not authorized");
                 processedBytes = resp.getEncoded();
+
+                // Auditlog
+                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, "false");
+                logMap.put(IWorkerLogger.LOG_EXCEPTION, "not authorized");
+                try {
+                    AUDITLOG.log(logMap);
+                } catch (SystemLoggerException sle) {
+                    LOG.error("Audit log failure", sle);
+                }
             } catch (TSPException e) {
+                final String error = "not authorized + "
+                        + "error creating response: " + e.getMessage();
+                LOG.error(error, e);
+
+                // Auditlog
+                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, "false");
+                logMap.put(IWorkerLogger.LOG_EXCEPTION, error);
+                try {
+                    AUDITLOG.log(logMap);
+                } catch (SystemLoggerException sle) {
+                    LOG.error("Audit log failure", sle);
+                }
                 throw new ServletException(e);
             }
         } else {
             try {
                 workerId = Integer.parseInt(worker);
-            } catch (NumberFormatException ignored) {
-            }
+            } catch (NumberFormatException ignored) {}
 
             if (workerId < 1) {
                 workerId = getWorkerSession().getWorkerId(worker);
@@ -238,19 +304,41 @@ public class TSADispatcherServlet extends HttpServlet {
                 response = (GenericServletResponse) getWorkerSession().process(
                         workerId, new GenericServletRequest(requestId, data, req),
                         context);
-            } catch (IllegalRequestException e) {
-                throw new ServletException(e);
-            } catch (CryptoTokenOfflineException e) {
-                throw new ServletException(e);
-            } catch (SignServerException e) {
-                throw new ServletException(e);
-            }
-
-            if (response.getRequestID() != requestId) {
-                throw new ServletException("Error in process operation, "
+                
+                if (response.getRequestID() != requestId) {
+                    throw new ServletException("Error in process operation, "
                         + "response id didn't match request id");
+                }
+                processedBytes = (byte[]) response.getProcessedData();
+            } catch (Exception ex) {
+
+                try {
+                    final TimeStampResponseGenerator gen =
+                            new TimeStampResponseGenerator(null, null);
+                    final TimeStampResponse resp = gen.generateFailResponse(
+                            PKIStatus.REJECTION, PKIFailureInfo.systemFailure,
+                            ex.getMessage());
+                    processedBytes = resp.getEncoded();
+                } catch (TSPException tspe) {
+                    final String error = "Multiple errors processing request: "
+                        + ex.getMessage() + ", and: " 
+                        + tspe.getMessage();
+                    LOG.error(error, ex);
+
+                    // Auditlog
+                    logMap.put(IWorkerLogger.LOG_EXCEPTION, error);
+                    try {
+                        AUDITLOG.log(logMap);
+                    } catch (SystemLoggerException sle) {
+                        LOG.error("Audit log failure", sle);
+                    }
+
+                    final ServletException exception =
+                            new ServletException(tspe);
+                    LOG.error(exception);
+                    throw exception;
+                }                
             }
-            processedBytes = (byte[]) response.getProcessedData();
         }
 
         res.setContentType(RESPONSE_CONTENT_TYPE);
@@ -340,5 +428,9 @@ public class TSADispatcherServlet extends HttpServlet {
                     IGlobalConfigurationSession.ILocal.JNDI_NAME);
         }
         return gCSession;
+    }
+
+    private String generateTransactionID() {
+        return UUID.randomUUID().toString();
     }
 }

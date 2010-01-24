@@ -30,7 +30,6 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -135,8 +134,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         // Map of log entries
         final Map<String, String> logMap = getLogMap(requestContext);
                 
-        // Create transaction ID
-        final String transactionID = generateTransactionID();
+        // Get transaction ID or create new if not created yet
+        final String transactionID;
+        if (requestContext.get(RequestContext.TRANSACTION_ID) == null) {
+            transactionID = generateTransactionID();
+        } else {
+            transactionID = (String) requestContext.get(
+                    RequestContext.TRANSACTION_ID);
+        }
 
         // Store values for request context and logging
         requestContext.put(RequestContext.TRANSACTION_ID, transactionID);

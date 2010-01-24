@@ -20,6 +20,10 @@
         <servlet-name>SODProcessServlet</servlet-name>
         <servlet-class>org.signserver.web.SODProcessServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>TSADispatcherServlet</servlet-name>
+        <servlet-class>org.signserver.web.TSADispatcherServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GenericProcessServlet</servlet-name>
         <url-pattern>/tsa</url-pattern>

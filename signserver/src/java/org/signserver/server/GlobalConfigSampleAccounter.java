@@ -160,6 +160,22 @@ public class GlobalConfigSampleAccounter implements IAccounter {
                 result.put(keyvalue[0].trim(), keyvalue[1].trim());
             }
         }
+        if (LOG.isDebugEnabled()) {
+            final StringBuilder str = new StringBuilder();
+            str.append("Credential mapping: ");
+            str.append("\n");
+            for (Map.Entry<String, String> entry : result.entrySet()) {
+                str.append("\"");
+                str.append(entry.getKey());
+                str.append("\"");
+                str.append(" --> ");
+                str.append("\"");
+                str.append(entry.getValue());
+                str.append("\"");
+                str.append("\n");
+            }
+            LOG.debug(str.toString());
+        }
         return result;
     }
 
@@ -174,6 +190,20 @@ public class GlobalConfigSampleAccounter implements IAccounter {
             if (keyvalue.length == 2) {
                 result.put(keyvalue[0].trim(), Integer.parseInt(keyvalue[1].trim()));
             }
+        }
+        if (LOG.isDebugEnabled()) {
+            final StringBuilder str = new StringBuilder();
+            str.append("Accounts: ");
+            str.append("\n");
+            for (Map.Entry<String, Integer> entry : result.entrySet()) {
+                str.append("\"");
+                str.append(entry.getKey());
+                str.append("\"");
+                str.append(" --> ");
+                str.append(entry.getValue());
+                str.append("\n");
+            }
+            LOG.debug(str.toString());
         }
         return result;
     }

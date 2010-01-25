@@ -51,7 +51,7 @@ public class GlobalConfigMappedTimeStampSignerLookup implements ITimeStampSigner
                     "TIMESTAMPSIGNERMAPPING");
 
             final Map<String, String> lookupTable = parseMapping(mapping);
-
+            
             String key;
             if (credential instanceof CertificateClientCredential) {
                 final CertificateClientCredential certCred = 
@@ -76,13 +76,13 @@ public class GlobalConfigMappedTimeStampSignerLookup implements ITimeStampSigner
 
             if (key != null && context.get(
                     ITimeStampSignerLookup.TSA_REQUESTEDPOLICYOID) != null) {
-                key += "," + ITimeStampSignerLookup.TSA_REQUESTEDPOLICYOID;
+                key += "," + context.get(ITimeStampSignerLookup.TSA_REQUESTEDPOLICYOID);
             }
 
             final String worker = lookupTable.get(key);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Will return worker: " + worker);
+                LOG.debug("Request key: " + key + ", Will return worker: " + worker);
             }
 
             return worker;
@@ -122,6 +122,22 @@ public class GlobalConfigMappedTimeStampSignerLookup implements ITimeStampSigner
             if (keyvalue.length == 2) {
                 result.put(keyvalue[0].trim(), keyvalue[1].trim());
             }
+        }
+        if (LOG.isDebugEnabled()) {
+            final StringBuilder str = new StringBuilder();
+            str.append("Authorization mapping: ");
+            str.append("\n");
+            for (Map.Entry<String, String> entry : result.entrySet()) {
+                str.append("\"");
+                str.append(entry.getKey());
+                str.append("\"");
+                str.append(" --> ");
+                str.append("\"");
+                str.append(entry.getValue());
+                str.append("\"");
+                str.append("\n");
+            }
+            LOG.debug(str.toString());
         }
         return result;
     }

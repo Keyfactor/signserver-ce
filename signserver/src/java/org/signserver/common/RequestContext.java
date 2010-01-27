@@ -78,7 +78,18 @@ public class RequestContext implements Serializable{
                 = "WORKER_GRANTED_REQUEST";
 
         public static final String CLIENT_CREDENTIAL = "CLIENT_CREDENTIAL";
-	
+
+
+        /**
+         * A dispatcher such as the TSADispatcherServlet can set this value to
+         * Boolean.TRUE to indicate that authorization has been checked. The
+         * workers can be configured to use an IAuthorizer that only
+         * accepts requests with this value set. This value has no meaning if
+         * an other type of Authorizer is used.
+         */
+        public static final String DISPATCHER_AUTHORIZED_CLIENT =
+                "DISPATCHER_AUTHORIZED_CLIENT";
+
 	/**
 	 * Default constructor creating an empty context.
 	 */

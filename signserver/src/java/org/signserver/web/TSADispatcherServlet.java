@@ -44,6 +44,7 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.util.encoders.Base64;
 import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.signserver.common.GenericServletRequest;
 import org.signserver.common.GenericServletResponse;
@@ -66,6 +67,9 @@ import org.signserver.server.SystemLoggerFactory;
  * TSADISPATCHER_LOOKUPCLASS = Fully qualified name of class with an
  * implementation of IWorkerLookup for deciding of a request is authorized and
  * to which worker.
+ *
+ * TSADISPATCHER_AUTHREQUIRED = True if the Servlet should request
+ * authorization in case it gets a request without client certificate.
  * 
  * @author Markus Kilas
  * @version $Id$
@@ -89,9 +93,17 @@ public class TSADispatcherServlet extends HttpServlet {
     
     private static final String TSADISPATCHER_LOOKUPCLASS =
             "TSADISPATCHER_LOOKUPCLASS";
+
+    private static final String TSADISPATCHER_AUTHREQUIRED =
+            "TSADISPATCHER_AUTHREQUIRED";
     
     private static final String DEFAULT_WORKERLOOKUP_CLASS =
             DefaultTimeStampSignerLookup.class.getName();
+
+    private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
+
+    private static final String HTTP_AUTH_BASIC_WWW_AUTHENTICATE =
+            "WWW-Authenticate";
     
     private final Random random = new Random();
 
@@ -100,8 +112,9 @@ public class TSADispatcherServlet extends HttpServlet {
 
     private IWorkerLookup workerLookup;
     private String workerLookupClass;
-    
 
+    private String httpAuthBasicRealm = "TSA";
+    
     @Override
     public void init(ServletConfig config) {
     }
@@ -204,14 +217,41 @@ public class TSADispatcherServlet extends HttpServlet {
         }
 
         if (clientCertificate instanceof X509Certificate) {
+            LOG.debug("Authentication: certificate");
+
             final X509Certificate cert = (X509Certificate) clientCertificate;
             credential = new CertificateClientCredential(
                     cert.getSerialNumber().toString(16),
                     cert.getIssuerDN().getName());
         } else {
-            credential = new UsernamePasswordClientCredential(
-                    req.getParameter("username"),
-                    req.getParameter("password"));
+
+            // Check is client supplied basic-credentials
+            final String authorization =
+                        req.getHeader(HTTP_AUTH_BASIC_AUTHORIZATION);
+            if (authorization == null) {
+
+                if (isAuthenticationRequired()) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Sending back HTTP 401");
+                    }
+                    res.setHeader(HTTP_AUTH_BASIC_WWW_AUTHENTICATE,
+                            "Basic realm=\"" + httpAuthBasicRealm + "\"");
+                        res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                                "Authorization Required");
+                    return;
+                } else {
+                    LOG.debug("Authentication: none");
+                    credential = null;
+                }
+            } else {
+                LOG.debug("Authentication: password");
+
+                final String decoded[] = new String(Base64.decode(
+                        authorization.split("\\s")[1])).split(":", 2);
+
+                credential = new UsernamePasswordClientCredential(
+                    decoded[0], decoded[1]);
+            }
         }
 
         final RequestContext context = new RequestContext(clientCertificate,
@@ -297,6 +337,9 @@ public class TSADispatcherServlet extends HttpServlet {
             if (workerId < 1) {
                 workerId = getWorkerSession().getWorkerId(worker);
             }
+
+            // We have checked authorization
+            context.put(RequestContext.DISPATCHER_AUTHORIZED_CLIENT, true);
 
             // Create a signing request
             final int requestId = random.nextInt();
@@ -433,6 +476,19 @@ public class TSADispatcherServlet extends HttpServlet {
             str.append(request.getQueryString());
         }
         return str.toString();
+    }
+
+    private boolean isAuthenticationRequired() {
+        try {
+            final String value = getGlobalConfigurationSession()
+                    .getGlobalConfiguration().getProperty(
+                        GlobalConfiguration.SCOPE_GLOBAL,
+                        TSADISPATCHER_AUTHREQUIRED);
+
+                return value == null ? true : Boolean.valueOf(value);
+        } catch (Exception e) {
+            throw new EJBException("Error reading global config", e);
+        }
     }
 
     private IWorkerSession.ILocal getWorkerSession() {

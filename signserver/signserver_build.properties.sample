@@ -21,8 +21,8 @@
 
 # which java version to use. Only 1.6 is currently supported. 
 # default: 1.6
-#server.java.target=1.5
-#client.java.target=1.5
+#server.java.target=1.6
+#client.java.target=1.6
 
 # SignServer Mode
 # Setting defining in which mode the SignServer should be built

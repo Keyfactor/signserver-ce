@@ -238,7 +238,8 @@
 #
 # JAX-WS Web Service requires JAX-WS 2.1 to build. This is included in JDK 1.6.0_04 and later.
 #
-# Set to false to disable Main WebService deployment
+# Set to false to disable Main WebService deployment.
+# If set to false you must also disable the validationclient and signingandvalidationapi modules below.
 signserverws.enabled=true
 
 # Set to true to enable the Generic WS API

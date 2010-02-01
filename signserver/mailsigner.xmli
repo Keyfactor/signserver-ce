@@ -28,6 +28,7 @@
     	<fileset dir="${ant.home}/lib" includes="ant.jar" />
     	<fileset dir="lib/jaxws" includes="*.jar" />
     	<fileset dir="lib/ext/ejb" includes="ejb3-persistence.jar" />
+        <fileset dir="lib/ext/ejb" includes="hib*.jar" />
     	
     </path>
 	

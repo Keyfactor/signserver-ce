@@ -54,7 +54,7 @@ public class TestMailSignerCLI extends TestCase {
 	
 	public void testBasicSetup() {
 
-		TestUtils.assertSuccessfulExecution(new String[] {"noarguments"});
+		TestUtils.assertFailedExecution(new String[] {"noarguments"});
 		assertTrue(TestUtils.grepTempOut("Usage: signserver"));
 		
 				

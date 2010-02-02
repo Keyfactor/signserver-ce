@@ -43,7 +43,6 @@ public class TestNotificationParamGen extends TestCase {
 		assertTrue(params.get("cert.CERTISSUERDN").equals("CN=TEST"));
 		assertTrue(params.get("cert.CERTSERIAL").equals("63d517ec27f63821"));
 		assertTrue(params.get("cert.EXPIREDATE").contains("08"));
-		assertTrue(params.get("cert.EXPIREDATE").contains("20"));
 		assertTrue(params.get("WORKERID").equals("1"));
 		assertTrue(params.get("WORKERNAME").equals("TESTNAME"));
 		assertTrue(params.get("NL")!= null);

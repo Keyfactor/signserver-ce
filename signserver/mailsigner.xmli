@@ -253,6 +253,8 @@ rmi.server.port           = ${rmi.server.port}
             </fileset>
             <fileset dir="lib/ext/ejb">
               <include name="jboss-j2ee.jar"/>
+              <include name="ejb3-persistence.jar" />
+              <include name="hib*.jar" />
             </fileset>
    
             <fileset dir="lib/quartz">

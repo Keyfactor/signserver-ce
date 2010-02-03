@@ -336,7 +336,8 @@ rmi.server.port           = ${rmi.server.port}
                 <path refid="mailsigner.test.compile.classpath" />
                 <path location="${test.dir}" />
             </classpath>
-            <formatter type="xml" />
+            <formatter usefile="false" type="brief"/>
+            <formatter type="xml"/>
             <batchtest fork="yes" todir="${test.dir}/reports" >
                 <fileset dir="${test.dir}">    
                     <include name="**/mailsigner/core/TestQ*" /> 

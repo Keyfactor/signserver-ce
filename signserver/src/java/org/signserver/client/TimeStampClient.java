@@ -238,23 +238,23 @@ public class TimeStampClient {
                 urlstring = strargs[PARAM_URL];
             }
 
-            if (args.length < 1) {
-                usage(options);
+        if (args.length < 1) {
+            usage(options);
             } else if (urlstring == null) {
                 LOG.error("Missing URL");
                 usage(options);
             } else if (Security.addProvider(new BouncyCastleProvider()) < 0) {
-                // If already installed, remove so we can handle redeploy
-                Security.removeProvider("BC");
-                if (Security.addProvider(new BouncyCastleProvider()) < 0) {
+            // If already installed, remove so we can handle redeploy
+            Security.removeProvider("BC");
+            if (Security.addProvider(new BouncyCastleProvider()) < 0) {
                     LOG.error("Cannot even install BC provider again!");
-                }
             }
+        }
         } catch (ParseException e) {
             // oops, something went wrong
             LOG.error(e.getMessage());
             usage(options);
-        }
+    }
     }
 
     private void usage(final Options options) {
@@ -301,43 +301,43 @@ public class TimeStampClient {
         } else if (signerfilestring == null) {
             LOG.error("Needs a signerfile!");
         } else {
-            final Collection<X509Certificate> col =
-                    getCertsFromPEM(signerfilestring);
-            final X509Certificate[] list = (X509Certificate[]) col.toArray(
-                    new X509Certificate[0]);
-            if (list.length == 0) {
+        final Collection<X509Certificate> col =
+                getCertsFromPEM(signerfilestring);
+        final X509Certificate[] list = (X509Certificate[]) col.toArray(
+                new X509Certificate[0]);
+        if (list.length == 0) {
                 LOG.error("No certificate found in file: " + signerfilestring);
-                return;
-            }
+            return;
+        }
 
-            final byte[] b64Bytes = readFiletoBuffer(inrepstring);
-            final byte[] replyBytes = Base64.decode(b64Bytes);
+        final byte[] b64Bytes = readFiletoBuffer(inrepstring);
+        final byte[] replyBytes = Base64.decode(b64Bytes);
 
-            final TimeStampResponse timeStampResponse =
-                    new TimeStampResponse(replyBytes);
-            final TimeStampToken token = timeStampResponse.getTimeStampToken();
-            token.validate(list[0], "BC");
+        final TimeStampResponse timeStampResponse =
+                new TimeStampResponse(replyBytes);
+        final TimeStampToken token = timeStampResponse.getTimeStampToken();
+        token.validate(list[0], "BC");
             LOG.info("Token was validated successfully.");
 
-            final TimeStampTokenInfo info = token.getTimeStampInfo();
+        final TimeStampTokenInfo info = token.getTimeStampInfo();
             LOG.info("Token was generated on: " + info.getGenTime());
 
             if (LOG.isDebugEnabled()) {
-                if (info.getMessageImprintAlgOID().equals(TSPAlgorithms.SHA1)) {
+        if (info.getMessageImprintAlgOID().equals(TSPAlgorithms.SHA1)) {
                     LOG.debug("Token hash alg: SHA1");
-                } else {
+        } else {
                     LOG.debug("Token hash alg: " + info.getMessageImprintAlgOID());
-                }
-                final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
+        }
+        final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
                 LOG.info("MessageDigest=" + new String(hexDigest));
-            }
+    }
         }
     }
 
     private void tsaRequest() throws Exception {
         final Random rand = new Random();
-        final TimeStampRequestGenerator timeStampRequestGenerator =
-                new TimeStampRequestGenerator();
+            final TimeStampRequestGenerator timeStampRequestGenerator =
+                    new TimeStampRequestGenerator();
         boolean doRun = true;
         do {
 
@@ -363,7 +363,7 @@ public class TimeStampClient {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("MessageDigest=" + new String(hexDigest));
             }
-
+            
             final TimeStampRequest timeStampRequest;
             if (inreqstring == null) {
                 LOG.debug("Generating a new request");
@@ -412,7 +412,7 @@ public class TimeStampClient {
             urlConn.setUseCaches(false);
             urlConn.setRequestProperty("Content-Type",
                     "application/timestamp-query");
-            
+
             // Send POST output.
             printout = new DataOutputStream(urlConn.getOutputStream());
             printout.write(requestBytes);
@@ -466,12 +466,6 @@ public class TimeStampClient {
             timeStampResponse.validate(timeStampRequest);
 
             LOG.info("TimeStampRequest validated");
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("(Status: " + timeStampResponse.getStatus()
-                        + ", " + timeStampResponse.getFailInfo() + "): "
-                        + timeStampResponse.getStatusString());
-            }
 
             if (doRun) {
                 Thread.sleep(sleep);
@@ -575,11 +569,11 @@ public class TimeStampClient {
         InputStream inStrm = null;
         try {
             inStrm = new FileInputStream(certFile);
-            return getCertsFromPEM(inStrm);
+        return getCertsFromPEM(inStrm);
         } finally {
             if (inStrm != null) {
                 inStrm.close();
-            }
+    }
         }
     }
 

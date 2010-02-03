@@ -29,14 +29,6 @@ public class IllegalRequestException extends Exception {
 	public IllegalRequestException(String message) {
 		super(message);
 	}
-
-        public IllegalRequestException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-        public IllegalRequestException(Throwable cause) {
-		super(cause);
-	}
 	
 	public String getMessage() {
 		return super.getMessage();

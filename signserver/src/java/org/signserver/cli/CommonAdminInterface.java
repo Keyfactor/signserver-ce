@@ -21,9 +21,11 @@ import java.rmi.RemoteException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
@@ -42,45 +44,30 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ResyncException;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
-import org.signserver.common.StatusRepositoryData;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IClusterClassLoaderManagerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession.IRemote;
 import org.signserver.mailsigner.cli.IMailSignerRMI;
 
 /**
- * A class that maintains the type of sign server build
- * (SignServer of MailSigner),
+ * A class that maintains the type of sign server build (SignServer of MailSigner), 
  * and directs the CLI calls to the appropriate RMI implementation
- *
+ * 
  * All calls to the server should go through this class.
- *
+ * 
  * @author Philip Vendil 6 okt 2007
  *
  * @version $Id$
  */
+
 public class CommonAdminInterface  {
 	
-    /** Log4j instance. */
-    private static final Logger LOG = Logger.getLogger(
-            CommonAdminInterface.class);
-
-    /** The global configuration session. */
-    private transient IGlobalConfigurationSession.IRemote globalConfig;
-
-    /** The cluster class loader manager session. */
-    private transient IClusterClassLoaderManagerSession.IRemote cclms;
-    
-    /** The SignSession. */
-    private transient IWorkerSession.IRemote signsession;
-
-    /** The StatusRepositorySession. */
-    private transient IStatusRepositorySession.IRemote statusRepository;
+    /** Log4j instance  */
+    private static Logger log = Logger.getLogger(CommonAdminInterface.class);
 
     private String hostname = null;
     
@@ -306,39 +293,6 @@ public class CommonAdminInterface  {
 			getGlobalConfigurationSession().setProperty(scope, key, value);	
 		}		
 	}
-
-        public void setStatusProperty(final String key, final String value)
-                throws RemoteException {
-            if (isMailSignerMode()) {
-                throw new UnsupportedOperationException("Not yet implemented");
-            }
-            if (isSignServerMode()) {
-                getStatusRepositorySession().setProperty(key, value);
-            }
-        }
-
-        public void setStatusProperty(final String key, final String value,
-                final long expiration) throws RemoteException {
-            if (isMailSignerMode()) {
-                throw new UnsupportedOperationException("Not yet implemented");
-            }
-            if (isSignServerMode()) {
-                getStatusRepositorySession().setProperty(key, value,
-                        expiration);
-            }
-        }
-
-        public String getStatusProperty(final String key)
-                throws RemoteException {
-            String value = null;
-            if (isMailSignerMode()) {
-                throw new UnsupportedOperationException("Not yet implemented");
-            }
-            if (isSignServerMode()) {
-                value = getStatusRepositorySession().getProperty(key);
-            }
-            return value;
-        }
 	
 	public List<Integer> getWorkers(int workerType) throws RemoteException {
 		if(isMailSignerMode()){
@@ -609,9 +563,9 @@ public class CommonAdminInterface  {
 			try {
 				iMailSignerRMI = (IMailSignerRMI) Naming.lookup(lookupName);
 			} catch (MalformedURLException e) {
-				LOG.error("Error binding Mail Signer RMI Interface.",e);
+				log.error("Error binding Mail Signer RMI Interface.",e);
 			} catch (NotBoundException e) {
-				LOG.error("Error binding Mail Signer RMI Interface.",e);
+				log.error("Error binding Mail Signer RMI Interface.",e);
 			}
 		}
 		
@@ -620,84 +574,105 @@ public class CommonAdminInterface  {
 	
 	private IMailSignerRMI iMailSignerRMI = null;
 	
-    /**
-     * Gets GlobalConfigurationSession Remote.
-     * @return SignServerSession
-     * @throws RemoteException in case the lookup failed
+    /** Gets GlobalConfigurationSession Remote
+     *@return SignServerSession
      */
-    private IGlobalConfigurationSession.IRemote getGlobalConfigurationSession()
-            throws RemoteException {
-        if (globalConfig == null) {
-            try {
-                globalConfig =  ServiceLocator.getInstance().lookupRemote(
-                        IGlobalConfigurationSession.IRemote.class);
-            } catch (NamingException e) {
-                LOG.error("Error instanciating the GlobalConfigurationSession.", e);
-                throw new RemoteException("Error instanciating the GlobalConfigurationSession", e);
-            }
-        }
-        return globalConfig;
-    }
-
-    /**
-     * Gets StatusRepositorySession Remote.
+    private IGlobalConfigurationSession.IRemote getGlobalConfigurationSession() throws RemoteException{
+    	
+        if(globalConfigurationSession == null){	
+        	try{
+        		Context context = getInitialContext();        		            
+        		globalConfigurationSession = (IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
+        	}catch (NamingException e) {
+        		log.error("Error instanciating the GlobalConfigurationSession.",e);
+        		throw new RemoteException(e.getMessage());
+        	}
+        } 
+        
+		return globalConfigurationSession;
+     } 
+    
+	private IGlobalConfigurationSession.IRemote globalConfigurationSession;
+	
+    /** Gets SignServerSession Remote
      * @return SignServerSession
-     * @throws RemoteException in case the lookup failed
+     * @throws RemoteException 
      */
-    private IStatusRepositorySession.IRemote getStatusRepositorySession()
-            throws RemoteException {
-        if (statusRepository == null) {
-            try {
-                statusRepository =  ServiceLocator.getInstance().lookupRemote(
-                        IStatusRepositorySession.IRemote.class);
-            } catch (NamingException e) {
-                LOG.error("Error instanciating the StatusRepositorySession.", e);
-                throw new RemoteException(
-                        "Error instanciating the StatusRepositorySession", e);
-            }
-        }
-        return statusRepository;
-    }
-
+    private IWorkerSession.IRemote getWorkerSession() throws RemoteException{
+    	 
+    	if(signsession == null){    		
+			try {
+				Context context = getInitialContext();
+				signsession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+			} catch (NamingException e) {
+				log.error("Error looking up signserver interface");
+				throw new RemoteException(e.getMessage());
+			}		    		
+    	}
+		return signsession;
+     } // getSignSession
+    /** The SignSession home bean */
+	private IWorkerSession.IRemote signsession;
+	
+    /** Gets SignServerSession Remote
+     * @return SignServerSession
+     * @throws RemoteException 
+     */
+    private IClusterClassLoaderManagerSession.IRemote getClusterClassLoaderManagerSession() throws RemoteException{
+    	 
+    	if(cclms == null){    		
+			try {
+				Context context = getInitialContext();
+				cclms = (IClusterClassLoaderManagerSession.IRemote) context.lookup(IClusterClassLoaderManagerSession.IRemote.JNDI_NAME);
+			} catch (NamingException e) {
+				log.error("Error looking up cluster class loader manager interface");
+				throw new RemoteException(e.getMessage());
+			}		    		
+    	}
+		return cclms;
+     } // getSignSession
+    /** The SignSession home bean */
+	private IClusterClassLoaderManagerSession.IRemote cclms;
 	
     /**
-     * Gets SignServerSession Remote.
-     * @return SignServerSession
-     * @throws RemoteException in case the lookup failed
+     * Gets InitialContext
+     *
+     * @return InitialContext
      */
-    private IWorkerSession.IRemote getWorkerSession() throws RemoteException {
-        if (signsession == null) {
-            try {
-                signsession = ServiceLocator.getInstance().lookupRemote(
-                        IWorkerSession.IRemote.class);
-            } catch (NamingException e) {
-                LOG.error("Error looking up signserver interface");
-                throw new RemoteException("Error looking up signserver interface", e);
-            }
-        }
-        return signsession;
-    }
-	
-    /**
-     * Gets SignServerSession Remote.
-     * @return SignServerSession
-     * @throws RemoteException in case the lookup failed
-     */
-    private IClusterClassLoaderManagerSession.IRemote
-            getClusterClassLoaderManagerSession() throws RemoteException {
-        if (cclms == null) {
-            try {
-                cclms = ServiceLocator.getInstance().lookupRemote(
-                        IClusterClassLoaderManagerSession.IRemote.class);
-            } catch (NamingException e) {
-                LOG.error("Error looking up cluster class loader manager interface");
-                throw new RemoteException("Error looking up cluster class loader manager interface", e);
-            }
-        }
-        return cclms;
-    }
+    protected InitialContext getInitialContext() throws NamingException {
+        log.debug(">getInitialContext()");
 
-    public Map<String, StatusRepositoryData> getStatusProperties() throws RemoteException {
-        return getStatusRepositorySession().getProperties();
-    }
+    	InitialContext cacheCtx = null;
+        try {
+        	Hashtable<String, String> props = new Hashtable<String, String>();
+        	props.put(
+        		Context.INITIAL_CONTEXT_FACTORY,
+        		"org.jnp.interfaces.NamingContextFactory");
+        	props.put(
+        		Context.URL_PKG_PREFIXES,
+        		"org.jboss.naming:org.jnp.interfaces");
+        	props.put(Context.PROVIDER_URL, "jnp://" + hostname +":1099");
+        	cacheCtx =  new InitialContext(props);
+            log.debug("<getInitialContext()");
+        } catch (NamingException e) {
+            log.error("Can't get InitialContext", e);
+            try {
+            	log.info("Trying with default/jndi.properties");
+            	cacheCtx =  new InitialContext();
+            } catch (NamingException e1) {
+                log.error("Can't get InitialContext", e1);
+                throw e;
+            }
+        }
+        return cacheCtx;
+    } // getInitialContext
+
+
+
+
+
+
+
+
+
 }

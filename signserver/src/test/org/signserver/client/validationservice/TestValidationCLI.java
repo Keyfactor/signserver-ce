@@ -5,6 +5,10 @@ import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
 
@@ -15,7 +19,6 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.ServiceLocator;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.server.ValidationTestUtils;
@@ -38,10 +41,10 @@ public class TestValidationCLI extends TestCase {
 		super.setUp();
 		
 		SignServerUtil.installBCProvider();
-                gCSession = ServiceLocator.getInstance().lookupRemote(
-                        IGlobalConfigurationSession.IRemote.class);
-                sSSession = ServiceLocator.getInstance().lookupRemote(
-                        IWorkerSession.IRemote.class);
+		Context context = getInitialContext();
+		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
+		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+		
 		
 		TestUtils.redirectToTempOut();
 		TestUtils.redirectToTempErr();
@@ -149,4 +152,20 @@ public class TestValidationCLI extends TestCase {
 		  TestingSecurityManager.remove();
 	}
 	
+	protected Context getInitialContext() throws Exception {
+		Hashtable<String, String> props = new Hashtable<String, String>();
+		props.put(
+				Context.INITIAL_CONTEXT_FACTORY,
+		"org.jnp.interfaces.NamingContextFactory");
+		props.put(
+				Context.URL_PKG_PREFIXES,
+		"org.jboss.naming:org.jnp.interfaces");
+		props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
+		Context ctx = new InitialContext(props);
+		return ctx;
+	}
+
+	
+
+
 }

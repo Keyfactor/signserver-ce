@@ -15,14 +15,12 @@ package org.signserver.module.tsa;
 import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.util.Hashtable;
-import java.util.Random;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 
 import org.bouncycastle.tsp.TSPAlgorithms;
@@ -37,7 +35,6 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
@@ -55,20 +52,11 @@ public class TestTimeStampSigner extends TestCase {
 
     private static IWorkerSession.IRemote sSSession = null;
 
-    /** The status repository session. */
-    private static IStatusRepositorySession.IRemote repository;
-
     /** Worker ID for test worker. */
     private static final int WORKER1 = 8901;
 
     /** Worker ID for test worker. */
     private static final int WORKER2 = 8902;
-
-    /** Worker ID for test worker. */
-    private static final int WORKER3 = 8903;
-
-        /** Worker ID for test worker. */
-    private static final int WORKER4 = 8904;
 
     /**
      * Base64 encoded request with policy 1.2.3.5.
@@ -90,19 +78,13 @@ public class TestTimeStampSigner extends TestCase {
     private static String signserverhome;
     private static int moduleVersion;
 
-    private Random random = new Random(4711);
-
-
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        
+
         final Context context = getInitialContext();
         sSSession = (IWorkerSession.IRemote) context.lookup(
                 IWorkerSession.IRemote.JNDI_NAME);
-
-        repository = (IStatusRepositorySession.IRemote) context.lookup(
-                IStatusRepositorySession.IRemote.JNDI_NAME);
 
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
@@ -135,16 +117,11 @@ public class TestTimeStampSigner extends TestCase {
 
         sSSession.reloadConfiguration(WORKER1);
         sSSession.reloadConfiguration(WORKER2);
-        sSSession.reloadConfiguration(WORKER3);
-        sSSession.reloadConfiguration(WORKER4);
     }
 
     public void test01BasicTimeStamp() throws Exception {
-        assertSuccessfulTimestamp(WORKER1);
-    }
 
-    private void assertSuccessfulTimestamp(int worker) throws Exception {
-        int reqid = random.nextInt();
+        int reqid = 12;
 
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
@@ -153,11 +130,11 @@ public class TestTimeStampSigner extends TestCase {
         byte[] requestBytes = timeStampRequest.getEncoded();
 
         GenericSignRequest signRequest =
-                new GenericSignRequest(reqid, requestBytes);
+                new GenericSignRequest(12, requestBytes);
 
 
         final GenericSignResponse res = (GenericSignResponse) sSSession.process(
-                worker, signRequest, new RequestContext());
+                WORKER1, signRequest, new RequestContext());
 
         assertTrue(reqid == res.getRequestID());
 
@@ -194,7 +171,7 @@ public class TestTimeStampSigner extends TestCase {
         // Create an request with another policy (1.2.3.5 != 1.2.3)
         final TimeStampRequest timeStampRequest = new TimeStampRequest(
                 Base64.decode(REQUEST_WITH_POLICY1235.getBytes()));
-        
+
         final byte[] requestBytes = timeStampRequest.getEncoded();
 
         final GenericSignRequest signRequest = new GenericSignRequest(13,
@@ -213,82 +190,17 @@ public class TestTimeStampSigner extends TestCase {
                 timeStampResponse.getStatus());
     }
 
-    /**
-     * Tests that the timestamp signer returnes a time stamp response with
-     * the timeNotAvailable status if the Date is null.
-     * @throws Exception in case of exception
-     */
-    public void test04timeNotAvailable() throws Exception {
-        assertTimeNotAvailable(WORKER3);
-    }
-
-    /**
-     * Tests that the timestamp is only granted when the INSYNC property
-     * is set.
-     * @throws Exception in case of exception
-     */
-    public void test05ReadingStatusTimeSource() throws Exception {
-        
-        // Test with insync
-        repository.setProperty("INSYNC", "true");
-        assertSuccessfulTimestamp(WORKER4);
-
-        // Test without insync
-        repository.removeProperty("INSYNC");
-        assertTimeNotAvailable(WORKER4);
-    }
-
-    private void assertTimeNotAvailable(int worker) throws Exception {
-        final int reqid = random.nextInt();
-
-        final TimeStampRequestGenerator timeStampRequestGenerator =
-                new TimeStampRequestGenerator();
-        final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(114));
-        final byte[] requestBytes = timeStampRequest.getEncoded();
-
-        final GenericSignRequest signRequest =
-                new GenericSignRequest(reqid, requestBytes);
-
-
-        final GenericSignResponse res = (GenericSignResponse) sSSession.process(
-                worker, signRequest, new RequestContext());
-
-        assertTrue(reqid == res.getRequestID());
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
-        timeStampResponse.validate(timeStampRequest);
-
-        LOG.info("Response: " + timeStampResponse.getStatusString());
-
-        assertEquals("Token not granted", PKIStatus.REJECTION,
-                timeStampResponse.getStatus());
-
-        assertEquals("PKIFailureInfo.timeNotAvailable",
-                new PKIFailureInfo(PKIFailureInfo.timeNotAvailable),
-                timeStampResponse.getFailInfo());
-
-        assertNull("No timestamp token",
-                timeStampResponse.getTimeStampToken());
-    }
-
     public void test99TearDownDatabase() throws Exception {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
                     String.valueOf(WORKER1)});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
                     String.valueOf(WORKER2)});
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
-                    String.valueOf(WORKER3)});
 
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove",
-            "TSA", String.valueOf(moduleVersion)});
-        assertTrue("module remove", TestUtils.grepTempOut(
-                "Removal of module successful."));
+        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove", "TSA", ""
+                    + moduleVersion});
+        assertTrue(TestUtils.grepTempOut("Removal of module successful."));
         sSSession.reloadConfiguration(WORKER1);
         sSSession.reloadConfiguration(WORKER2);
-        sSSession.reloadConfiguration(WORKER3);
-        sSSession.reloadConfiguration(WORKER4);
     }
 
     /**

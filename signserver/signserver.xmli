@@ -73,6 +73,7 @@
             <fileset dir="lib/module/tsa/${client.java.target}" includes="*.jar" />   
 	        <fileset dir="lib/module/pdfsigner/itext" includes="*.jar"/>
 	        <fileset dir="lib/module/odfsigner" includes="*.jar"/>
+	        <fileset dir="lib/module/tsa/${client.java.target}" includes="bctsp-jdk.jar"/>
 	        <fileset dir="lib/module/ooxmlsigner" includes="*.jar"/>
 	   	    <fileset dir="lib/jaxws" includes="*.jar" />	 
 	     	<fileset dir="lib/asm" includes="*.jar" />
@@ -556,7 +557,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	            <zipfileset dir="lib/module/pdfsigner/itext" includes="*.jar"  prefix="lib"/>
 	            <zipfileset dir="lib/module/odfsigner" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/module/ooxmlsigner" includes="*.jar" prefix="lib"/>
-	            <!-- <zipfileset dir="lib/module/tsa/${client.java.target}" includes="bctsp-jdk.jar" prefix="lib"/> -->
+	            <zipfileset dir="lib/module/tsa/${client.java.target}" includes="bctsp-jdk.jar" prefix="lib"/>
 	            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/jaxws/" includes="*.jar" prefix="lib" >
@@ -895,7 +896,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	  <target name="timeStampTestClient" depends="signserver:compile" unless="buildMailSigner" if="timestampclient.conditionenabled" >
 	    <mkdir dir="${timeStampClientBuild}"/>
 	    <javac srcdir="${src.java}" destdir="${timeStampClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
-		   <include name="org/signserver/client/TimeStampClient.java"/>
+		   <include name="org/signserver/client/TimeStampClient.java"/> 	       
 		   <classpath refid="signserver.compile.classpath"/> 
 	    </javac>
 
@@ -907,11 +908,10 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	      <fileset dir="${lib}/${client.java.target}">
 	        <include name="bcprov-jdk.jar"/>	        
 	      	<include name="bcmail-jdk.jar"/>
-                <include name="bctsp-jdk.jar"/>
 	      </fileset>
-	      <!--<fileset dir="${lib}/module/tsa/${client.java.target}">
+	      <fileset dir="${lib}/module/tsa/${client.java.target}">
 	        <include name="bctsp-jdk.jar"/>
-	      </fileset>-->
+	      </fileset>
             <fileset dir="${lib}/ext">
               <include name="commons-cli-1.0.jar"/>
             </fileset>

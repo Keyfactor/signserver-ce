@@ -36,7 +36,6 @@ import org.signserver.validationservice.server.ICertificateManager;
  * 
  * @version $Id$
  */
-
 public class Validation {
 
 	private transient Logger log = Logger.getLogger(this.getClass());

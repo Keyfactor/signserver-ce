@@ -18,7 +18,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.cert.Certificate;
+import java.util.Hashtable;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -33,7 +37,6 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.ServiceLocator;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import org.w3c.dom.Document;
@@ -54,7 +57,7 @@ public class TestXMLSigner extends TestCase {
     /** WORKERID used in this test case as defined in junittest-part-config.properties */
     private static final int WORKERID2 = 5679;
 
-    private static IWorkerSession.IRemote workerSession;
+    private static IWorkerSession.IRemote sSSession = null;
     private static String signserverhome;
     private static int moduleVersion;
 	
@@ -63,8 +66,8 @@ public class TestXMLSigner extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        workerSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
+        final Context context = getInitialContext();
+        sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
@@ -96,12 +99,12 @@ public class TestXMLSigner extends TestCase {
         assertTrue("Module loaded",
                 TestUtils.grepTempOut("Module loaded successfully."));
 
-        workerSession.reloadConfiguration(WORKERID);
+        sSSession.reloadConfiguration(WORKERID);
 
         // Update path to JKS file
-        workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
+        sSSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
                 new File(signserverhome + File.separator + "src" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
-        workerSession.reloadConfiguration(WORKERID2);
+        sSSession.reloadConfiguration(WORKERID2);
     }
 
     public void test01BasicXmlSignRSA() throws Exception {
@@ -112,7 +115,7 @@ public class TestXMLSigner extends TestCase {
                 new GenericSignRequest(reqid, TESTXML1.getBytes());
 
         final GenericSignResponse res = 
-                (GenericSignResponse) workerSession.process(WORKERID,
+                (GenericSignResponse) sSSession.process(WORKERID,
                     signRequest, new RequestContext());
         final byte[] data = res.getProcessedData();
 
@@ -139,7 +142,7 @@ public class TestXMLSigner extends TestCase {
     }
 
     public void test02GetStatus() throws Exception {
-        final SignerStatus stat = (SignerStatus) workerSession.getStatus(WORKERID);
+        final SignerStatus stat = (SignerStatus) sSSession.getStatus(WORKERID);
         assertSame("Status", stat.getTokenStatus(), SignerStatus.STATUS_ACTIVE);
     }
 
@@ -150,7 +153,7 @@ public class TestXMLSigner extends TestCase {
                 new GenericSignRequest(reqid, TESTXML1.getBytes());
 
         final GenericSignResponse res =
-                (GenericSignResponse) workerSession.process(WORKERID2,
+                (GenericSignResponse) sSSession.process(WORKERID2,
                     signRequest,
                     new RequestContext());
 
@@ -193,8 +196,22 @@ public class TestXMLSigner extends TestCase {
         });
         assertTrue("module remove",
                 TestUtils.grepTempOut("Removal of module successful."));
-        workerSession.reloadConfiguration(WORKERID);
-        workerSession.reloadConfiguration(WORKERID2);
+        sSSession.reloadConfiguration(WORKERID);
+        sSSession.reloadConfiguration(WORKERID2);
+    }
+
+    /**
+     * Get the initial naming context
+     */
+    private Context getInitialContext() throws NamingException {
+        final Hashtable<String, String> props =
+                new Hashtable<String, String>();
+        props.put(Context.INITIAL_CONTEXT_FACTORY,
+                "org.jnp.interfaces.NamingContextFactory");
+        props.put(Context.URL_PKG_PREFIXES,
+                "org.jboss.naming:org.jnp.interfaces");
+        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
+        return new InitialContext(props);
     }
 
     private void checkXmlWellFormed(final InputStream input) {

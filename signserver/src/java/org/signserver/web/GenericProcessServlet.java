@@ -18,13 +18,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -47,8 +44,6 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.CertificateClientCredential;
-import org.signserver.server.IWorkerLogger;
 
 
 
@@ -78,10 +73,6 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     private static final String ENCODING_BASE64 = "base64";
     private static final long MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
-
-    private final Random random = new Random();
-
-    @EJB
     private IWorkerSession.ILocal workersession;
 
     private IWorkerSession.ILocal getWorkerSession() {
@@ -151,8 +142,8 @@ public class GenericProcessServlet extends HttpServlet {
                         // We only care for one upload at a time right now
                         if (fileItem == null) {
                             fileItem = item;
-                        }
                     }
+                }
                 }
 
                 if (fileItem == null) {
@@ -169,16 +160,12 @@ public class GenericProcessServlet extends HttpServlet {
 
             String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
             if(name != null){
-                if(log.isDebugEnabled()) {
-                    log.debug("Found a signerName in the request: "+name);
-                }
+                log.debug("Found a signerName in the request: "+name);
                 workerId = getWorkerSession().getWorkerId(name);
             }
             String id = req.getParameter(WORKERID_PROPERTY_NAME);
             if(id != null){
-                if(log.isDebugEnabled()) {
-                    log.debug("Found a signerId in the request: "+id);
-                }
+                log.debug("Found a signerId in the request: "+id);
                 workerId = Integer.parseInt(id);
             }
 
@@ -256,46 +243,24 @@ public class GenericProcessServlet extends HttpServlet {
     private void processRequest(HttpServletRequest req, HttpServletResponse res, int workerId, byte[] data, String fileName) throws java.io.IOException, ServletException {
         log.debug("Using signerId: " + workerId);
 
-        final String remoteAddr = req.getRemoteAddr();
+        String remoteAddr = req.getRemoteAddr();
         log.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
 
-        // Client certificate
+        //
         Certificate clientCertificate = null;
         Certificate[] certificates = (X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate");
         if (certificates != null) {
             clientCertificate = certificates[0];
         }
 
-        final RequestContext context = new RequestContext(clientCertificate,
-                remoteAddr);
+        log.debug("Received bytes of length: " + data.length);
 
-        if (clientCertificate instanceof X509Certificate) {
-            final X509Certificate cert = (X509Certificate) clientCertificate;
-            CertificateClientCredential credential
-                    = new CertificateClientCredential(
-                    cert.getSerialNumber().toString(16),
-                    cert.getIssuerDN().getName());
-            context.put(RequestContext.CLIENT_CREDENTIAL, credential);
-        }
-        
-        final Map<String,String> logMap = new HashMap<String, String>();
-        context.put(RequestContext.LOGMAP, logMap);
+        Random rand = new Random();
+        int requestId = rand.nextInt();
 
-        // Add HTTP specific log entries
-        logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, req.getRequestURL()
-                .append("?").append(req.getQueryString()).toString());
-        logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH,
-                String.valueOf(data.length));
-        if (log.isDebugEnabled()) {
-            log.debug("Received bytes of length: " + data.length);
-        }
-
-        final int requestId = random.nextInt();
-        
         GenericServletResponse response = null;
         try {
-            response = (GenericServletResponse) getWorkerSession().process(workerId,
-                    new GenericServletRequest(requestId, data, req), context);
+            response = (GenericServletResponse) getWorkerSession().process(workerId, new GenericServletRequest(requestId, data, req), new RequestContext((X509Certificate) clientCertificate, remoteAddr));
         } catch (IllegalRequestException e) {
             throw new ServletException(e);
         } catch (CryptoTokenOfflineException e) {

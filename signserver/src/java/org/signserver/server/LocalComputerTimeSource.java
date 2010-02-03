@@ -10,34 +10,36 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
+
 package org.signserver.server;
 
 import java.util.Date;
 import java.util.Properties;
 
 /**
- * Simple class implementing the ITimeSource interface taking the current time
- * from the computer clock.
- *
- * Has no defined properties.
- *
+ * Simple class implementing the ITimeSource interface taking the current time form the computer clock.
+ * 
+ * Have no defined properties.
+ * 
  * @author philip
  * $Id$
  */
 public class LocalComputerTimeSource implements ITimeSource {
+ 
+	/**
+	 * @see org.signserver.server.ITimeSource#init(java.util.Properties)
+	 */
+	public void init(Properties props) {
+		// No properties defined
 
-    /**
-     * @see org.signserver.server.ITimeSource#init(java.util.Properties)
-     */
-    public void init(final Properties props) {
-        // No properties defined
-    }
+	}
 
-    /**
-     * Method taking the local clock as time source
-     * @see org.signserver.server.ITimeSource#getGenTime()
-     */
-    public Date getGenTime() {
-        return new Date();
-    }
+	/**
+	 * Method taking the local clock as time source
+	 * @see org.signserver.server.ITimeSource#getGenTime()
+	 */
+	public Date getGenTime() {
+		return new Date();
+	}
+
 }

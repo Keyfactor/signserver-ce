@@ -29,7 +29,7 @@ import com.lowagie.text.Image;
 
 /**
  * Class that holds configuration values passed to pdfsigner.
- * 
+ *
  * @author rayback_2
  * @version $Id:
  */
@@ -259,7 +259,7 @@ public class PDFSignerParameters {
 
 	/**
 	 * Read byte[] data from file.
-	 *
+	 * 
 	 * @param pFilePath
 	 * @return content of file
 	 * @throws IOException

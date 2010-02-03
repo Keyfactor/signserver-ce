@@ -22,27 +22,22 @@ import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
+import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.bouncycastle.tsp.TimeStampTokenGenerator;
-import org.ejbca.util.Base64;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletRequest;
@@ -56,7 +51,6 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ITimeSource;
-import org.signserver.server.IWorkerLogger;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
@@ -178,12 +172,9 @@ public class TimeStampSigner extends BaseSigner {
     public static final String ORDERING = "ORDERING";
     public static final String TSA = "TSA";
 
-    private static final String DEFAULT_WORKERLOGGER =
-            DefaultTimeStampLogger.class.getName();
-
     private static final String DEFAULT_TIMESOURCE =
             "org.signserver.server.LocalComputerTimeSource";
-    
+
     private static final String[] ACCEPTEDALGORITHMSNAMES = {
         "GOST3411",
         "MD5",
@@ -196,7 +187,7 @@ public class TimeStampSigner extends BaseSigner {
         "RIPEMD160",
         "RIPEMD256"
     };
-    
+
     private static final String[] ACCEPTEDALGORITHMSOIDS = {
         TSPAlgorithms.GOST3411,
         TSPAlgorithms.MD5,
@@ -231,30 +222,17 @@ public class TimeStampSigner extends BaseSigner {
     //private String defaultDigestOID = null;
     private String defaultTSAPolicyOID = null;
 
-    
+
     public void init(final int signerId, final WorkerConfig config,
             final WorkerContext workerContext,
             final EntityManager workerEntityManager) {
         super.init(signerId, config, workerContext, workerEntityManager);
 
-        // Overrides the default worker logger to be this worker
-        //  implementation's default instead of the WorkerSessionBean's
-        if (config.getProperty("WORKERLOGGER") == null) {
-            config.setProperty("WORKERLOGGER", DEFAULT_WORKERLOGGER);
-        }
-
         // Check that the timestamp server is properly configured
         timeSource = getTimeSource();
         if (timeSource == null) {
-            final String error = "Error: Timestamp signer :" + signerId +
-                    " has a malconfigured timesource.";
-            LOG.error(error);
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("TimeStampSigner[" + signerId + "]: "
-                        + "Using TimeSource: "
-                        + timeSource.getClass().getName());
-            }
+            LOG.error("Error: Timestamp signer :" + signerId +
+                    " has a malconfigured timesource.");
         }
 
         /* defaultDigestOID =
@@ -271,9 +249,7 @@ public class TimeStampSigner extends BaseSigner {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("bctsp version: " + TimeStampResponseGenerator.class
-                .getPackage().getImplementationVersion() + ", "
-                + TimeStampRequest.class.getPackage()
-                    .getImplementationVersion());
+                .getPackage().getImplementationVersion());
         }
     }
 
@@ -294,102 +270,52 @@ public class TimeStampSigner extends BaseSigner {
                 IllegalRequestException,
                 CryptoTokenOfflineException {
 
-        // Log values
-        final Map<String, String> logMap =
-                (Map<String, String>) requestContext.get(RequestContext.LOGMAP);
-
         final ISignRequest sReq = (ISignRequest) signRequest;
 
         // Check that the request contains a valid TimeStampRequest object.
         if (!(signRequest instanceof GenericSignRequest)) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException(
+            throw new IllegalRequestException(
                     "Recieved request wasn't a expected GenericSignRequest. ");
-            throw exception;
         }
 
         if (!((sReq.getRequestData() instanceof TimeStampRequest)
                 || (sReq.getRequestData() instanceof byte[]))) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException(
+            throw new IllegalRequestException(
                 "Recieved request data wasn't a expected TimeStampRequest. ");
-            throw exception;
         }
-
-        final Date date = getTimeSource().getGenTime();
-        final BigInteger serialNumber = getSerialNumber();
-
-        // Log values
-        logMap.put(ITimeStampLogger.LOG_TSA_TIME, date == null ? null
-                : String.valueOf(date.getTime()));
-        logMap.put(ITimeStampLogger.LOG_TSA_SERIALNUMBER,
-                serialNumber.toString(16));
-
 
         GenericSignResponse signResponse;
         try {
             final TimeStampRequest timeStampRequest =
                     new TimeStampRequest((byte[]) sReq.getRequestData());
 
-            // Log values for timestamp request
-            logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CERTREQ,
-                    String.valueOf(timeStampRequest.getCertReq()));
-            logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CRITEXTOIDS,
-                    String.valueOf(timeStampRequest.getCriticalExtensionOIDs()));
-            logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED,
-                    new String(Base64.encode(timeStampRequest.getEncoded())));
-            logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NONCRITEXTOIDS,
-                    String.valueOf(timeStampRequest.getNonCriticalExtensionOIDs()));
-            logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NOUNCE,
-                    String.valueOf(timeStampRequest.getNonce()));
-            logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_VERSION,
-                    String.valueOf(timeStampRequest.getVersion()));
-            logMap.put(ITimeStampLogger
-                        .LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTALGOID,
-                    timeStampRequest.getMessageImprintAlgOID());
-            logMap.put(ITimeStampLogger
-                        .LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTDIGEST,
-                    new String(Base64.encode(
-                        timeStampRequest.getMessageImprintDigest())));
-
             final TimeStampTokenGenerator timeStampTokenGen =
-                    getTimeStampTokenGenerator(timeStampRequest, logMap);
+                    getTimeStampTokenGenerator(timeStampRequest);
 
             final TimeStampResponseGenerator timeStampResponseGen =
                     getTimeStampResponseGenerator(timeStampTokenGen);
 
+            final BigInteger serialNumber = getSerialNumber();
+
             final TimeStampResponse timeStampResponse =
                     timeStampResponseGen.generate(timeStampRequest,
                     serialNumber,
-                    date,
+                    getTimeSource().getGenTime(),
                     getCryptoToken().getProvider(
                         ICryptoToken.PROVIDERUSAGE_SIGN));
 
-            final TimeStampToken token = timeStampResponse.getTimeStampToken();
-
-            // Log values for timestamp response
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Time stamp response status: "
                         + timeStampResponse.getStatus() + ": "
                         + timeStampResponse.getStatusString());
             }
-            logMap.put(ITimeStampLogger.LOG_TSA_PKISTATUS,
-                    String.valueOf(timeStampResponse.getStatus()));
-            if (timeStampResponse.getFailInfo() != null) {
-                logMap.put(ITimeStampLogger.LOG_TSA_PKIFAILUREINFO, 
-                        String.valueOf(
-                            timeStampResponse.getFailInfo().intValue()));
-            }
-            logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED,
-                    new String(Base64.encode(timeStampResponse.getEncoded())));
-            logMap.put(ITimeStampLogger.LOG_TSA_PKISTATUS_STRING,
-                    timeStampResponse.getStatusString());
-            
+
             final String archiveId;
-            if (token == null) {
+            if (timeStampResponse.getTimeStampToken() == null) {
                 archiveId = serialNumber.toString(16);
             } else {
-                archiveId = token.getTimeStampInfo().getSerialNumber()
+                archiveId = timeStampResponse.getTimeStampToken()
+                                        .getTimeStampInfo().getSerialNumber()
                                         .toString(16);
             }
 
@@ -409,66 +335,29 @@ public class TimeStampSigner extends BaseSigner {
                         new ArchiveData(timeStampResponse.getEncoded()));
             }
 
-            // Put in log values
-            if (date == null) {
-                logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                        "timeSourceNotAvailable");
-            }
-
-            // We were able to fulfill the request so the worker session bean
-            // can go on and charge the client
-            if (timeStampResponse.getStatus() == PKIStatus.GRANTED) {
-                requestContext.put(RequestContext.WORKER_FULFILLED_REQUEST,
-                        true);
-            }
-
         } catch (InvalidAlgorithmParameterException e) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException(
-                    "InvalidAlgorithmParameterException: " + e.getMessage(), e);
             LOG.error("InvalidAlgorithmParameterException: ", e);
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                    exception.getMessage());
-            throw exception;
+            throw new IllegalRequestException(
+                    "InvalidAlgorithmParameterException: " + e.getMessage());
         } catch (NoSuchAlgorithmException e) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException(
-                        "NoSuchAlgorithmException: " + e.getMessage(), e);
             LOG.error("NoSuchAlgorithmException: ", e);
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                    exception.getMessage());
-            throw exception;
+            throw new IllegalRequestException("NoSuchAlgorithmException: "
+                    + e.getMessage());
         } catch (NoSuchProviderException e) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException(
-                    "NoSuchProviderException: " + e.getMessage(), e);
             LOG.error("NoSuchProviderException: ", e);
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                    exception.getMessage());
-            throw exception;
+            throw new IllegalRequestException("NoSuchProviderException: "
+                    + e.getMessage());
         } catch (CertStoreException e) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException("CertStoreException: "
-                    + e.getMessage(), e);
             LOG.error("CertStoreException: ", e);
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                    exception.getMessage());
-            throw exception;
+            throw new IllegalRequestException("CertStoreException: "
+                    + e.getMessage());
         } catch (IOException e) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException(
-                    "IOException: " + e.getMessage(), e);
             LOG.error("IOException: ", e);
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                    exception.getMessage());
-            throw exception;
+            throw new IllegalRequestException("IOException: "
+                    + e.getMessage());
         } catch (TSPException e) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException(e.getMessage(), e);
             LOG.error("TSPException: ", e);
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                    exception.getMessage());
-            throw exception;
+            throw new IllegalRequestException(e.getMessage());
         }
 
         return signResponse;
@@ -576,8 +465,7 @@ public class TimeStampSigner extends BaseSigner {
     }
 
     private TimeStampTokenGenerator getTimeStampTokenGenerator(
-            final TimeStampRequest timeStampRequest,
-            final Map<String, String> logMap) throws
+            final TimeStampRequest timeStampRequest) throws
                 IllegalRequestException,
                 CryptoTokenOfflineException,
                 InvalidAlgorithmParameterException,
@@ -588,7 +476,7 @@ public class TimeStampSigner extends BaseSigner {
         TimeStampTokenGenerator timeStampTokenGen = null;
         try {
             final String digestOID = timeStampRequest.getMessageImprintAlgOID();
-            
+
             /*if (digestOID == null) {
                 digestOID = defaultDigestOID;
             }*/
@@ -597,7 +485,6 @@ public class TimeStampSigner extends BaseSigner {
             if (tSAPolicyOID == null) {
                 tSAPolicyOID = defaultTSAPolicyOID;
             }
-            logMap.put(ITimeStampLogger.LOG_TSA_POLICYID, tSAPolicyOID);
 
             timeStampTokenGen = new TimeStampTokenGenerator(
                     this.getCryptoToken().getPrivateKey(
@@ -651,7 +538,7 @@ public class TimeStampSigner extends BaseSigner {
 
     private TimeStampResponseGenerator getTimeStampResponseGenerator(
             TimeStampTokenGenerator timeStampTokenGen) {
-        
+
         return new TimeStampResponseGenerator(timeStampTokenGen,
                 this.getAcceptedAlgorithms(),
                 this.getAcceptedPolicies(),

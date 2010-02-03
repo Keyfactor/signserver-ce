@@ -17,7 +17,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Random;
 
-import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -39,7 +38,6 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.genericws.GenericWSRequest;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.CertificateClientCredential;
 
 /**
  * A special servlet used to support custom Jax-WS WebServices in
@@ -99,48 +97,34 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
      */
     private void forwardRequest(int requestType, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) throws ServletException{
     	
-        if(GenericWSRequest.REQUESTTYPE_CONTEXT_INIT != requestType &&
-                GenericWSRequest.REQUESTTYPE_CONTEXT_DESTROYED != requestType) {
+    	int workerId = getWorkerId(request);
+    	if(workerId == 0){
+    		throw new ServletException("Error, couldn't parse worker name or id from request URI : " + request.getRequestURI());
+    	}
+    	
+        String remoteAddr = request.getRemoteAddr();
+           
+        
+        // 
+        Certificate clientCertificate = null;
+       	Certificate[] certificates = (X509Certificate[]) request.getAttribute( "javax.servlet.request.X509Certificate" );
+    	if(certificates != null){
+    		clientCertificate = certificates[0];
+    	}       
+    	
+        int requestId = rand.nextInt();    	        
 
-            int workerId = getWorkerId(request);
-            if(workerId == 0){
-                    throw new ServletException("Error, couldn't parse worker name or id from request URI : " + request.getRequestURI());
-            }
-
-            String remoteAddr = request.getRemoteAddr();
-
-
-            //
-            Certificate clientCertificate = null;
-            Certificate[] certificates = (X509Certificate[]) request.getAttribute( "javax.servlet.request.X509Certificate" );
-            if(certificates != null){
-                    clientCertificate = certificates[0];
-            }
-            RequestContext requestContext = new RequestContext(
-                    (X509Certificate) clientCertificate, remoteAddr);
-
-            if (clientCertificate instanceof X509Certificate) {
-                final X509Certificate cert = (X509Certificate) clientCertificate;
-                CertificateClientCredential credential
-                        = new CertificateClientCredential(
-                        cert.getSerialNumber().toString(16),
-                        cert.getIssuerDN().getName());
-                requestContext.put(RequestContext.CLIENT_CREDENTIAL, rand);
-            }
-
-            int requestId = rand.nextInt();
-
-            GenericWSRequest wsreq = new GenericWSRequest(requestId,requestType,request,response,getServletConfig(), servletContext);
-            try {
-                    getWorkerSession().process(workerId, wsreq, requestContext);
-            } catch (IllegalRequestException e) {
-                    throw new ServletException(e);
-            } catch (CryptoTokenOfflineException e) {
-                    throw new ServletException(e);
-            } catch (SignServerException e) {
-                    throw new ServletException(e);
-            }
+        GenericWSRequest wsreq = new GenericWSRequest(requestId,requestType,request,response,getServletConfig(), servletContext);
+        try {
+        	getWorkerSession().process(workerId, wsreq, new RequestContext((X509Certificate) clientCertificate, remoteAddr));
+        } catch (IllegalRequestException e) {
+        	throw new ServletException(e);
+        } catch (CryptoTokenOfflineException e) {
+        	throw new ServletException(e);
+        } catch (SignServerException e) {
+        	throw new ServletException(e);
         }
+
     }
     
     /**
@@ -169,8 +153,8 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
     }
 
 
-    @EJB
-    private IWorkerSession.ILocal workersession;
+
+	private IWorkerSession.ILocal workersession;
 	
     private IWorkerSession.ILocal getWorkerSession(){
     	if(workersession == null){

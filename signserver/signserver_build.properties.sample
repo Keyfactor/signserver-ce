@@ -13,7 +13,6 @@
 # Application server used during development
 # Default: $APPSRV_HOME or $JBOSS_HOME
 #appserver.home=${basedir}/../../jboss-4.2.2
-#appserver.home=/usr/local/SUNWappserver/
 #appserver.home=${env.APPSRV_HOME}
 
 # which compiler to use
@@ -50,9 +49,6 @@
 # Default : deploy
 #jboss.deploy=deploy
 
-# Glassfish domain
-# Default: ${appserver.home}/domains/domain1
-#glassfish.server.home.dir=/home/markus/.netbeans/6.7/GlassFishV2Domain
 
 #PrimeCardHSM Specific Properties
 #Uncomment to when using PrimeCardHSM, default false.
@@ -110,12 +106,10 @@
 #datasource.jndi-name=SignServerDS
 
 # Prefix for the jndi name of the datasource to use in deployment descriptors of ejbs. 
-# JBoss requires 'java:/' as prefix, while weblogic does not want anything ('') and
-# Glassfish uses jdbc/
+# JBoss requires 'java:/' as prefix, while weblogic does not want anything ('')
 # default: java:/
 #datasource.jndi-name-prefix=java:/
 #datasource.jndi-name-prefix=
-#datasource.jndi-name-prefix=jdbc/
 
 # The database name selected for deployment, used to copy XDoclet merge files.
 # All supported databases are defined below, others can easily be added
@@ -244,7 +238,7 @@
 #
 # JAX-WS Web Service requires JAX-WS 2.1 to build. This is included in JDK 1.6.0_04 and later.
 #
-# Set to false to disable Main WebService deployment. 
+# Set to false to disable Main WebService deployment.
 # If set to false you must also disable the validationclient and signingandvalidationapi modules below.
 signserverws.enabled=true
 
@@ -279,7 +273,7 @@ pdfperformancetest.enabled=false
 # to true.
 #
 # Default: true
-signingandvalidationapi.enabled=true
+signingandvalidationapi.enabled     = true
 
 # -------------- Cluster Class Loader Configurations ----------------
 #

@@ -14,9 +14,7 @@ package org.signserver.common;
 
 import java.io.Serializable;
 import java.security.cert.Certificate;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Object containing extra information about a request not sent by the client
@@ -56,40 +54,7 @@ public class RequestContext implements Serializable{
 	 * Is null if no statistics is performed.
 	 */
 	public static final String STATISTICS_EVENT    = "STATISTICS_EVENT";
-
-        /**
-         * The transaction ID.
-         * This value is set by the WorkerSessionBean but could be read by
-         * different workers in order for them to include it in logs to
-         * identify the current transaction.
-         * This value should only be set by the WorkerSessionBean.
-         */
-        public static final String TRANSACTION_ID = "TRANSACTION_ID";
-
-        public static final String LOGMAP = "LOGMAP";
-
-        /**
-         * True if the worker has processed the request and is able to return
-         * the requested result.
-         * The Worker Session bean can now go on and charge the client for the
-         * request.
-         */
-        public static final String WORKER_FULFILLED_REQUEST
-                = "WORKER_GRANTED_REQUEST";
-
-        public static final String CLIENT_CREDENTIAL = "CLIENT_CREDENTIAL";
-
-
-        /**
-         * A dispatcher such as the TSADispatcherServlet can set this value to
-         * Boolean.TRUE to indicate that authorization has been checked. The
-         * workers can be configured to use an IAuthorizer that only
-         * accepts requests with this value set. This value has no meaning if
-         * an other type of Authorizer is used.
-         */
-        public static final String DISPATCHER_AUTHORIZED_CLIENT =
-                "DISPATCHER_AUTHORIZED_CLIENT";
-
+	
 	/**
 	 * Default constructor creating an empty context.
 	 */
@@ -144,8 +109,4 @@ public class RequestContext implements Serializable{
 	   return retval;
 	}
 	
-        public Map<String, Object> asUnmodifiableMap() {
-            return Collections.unmodifiableMap(context);
-        }
-
 }

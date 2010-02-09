@@ -3,9 +3,9 @@
 
 	<property name="app.name" value="signserver" />
     <property name="app.name.cap" value="SignServer" />
-    <property name="app.version.number" value="3.1.1" />
+    <property name="app.version.number" value="3.2-svn" />
 	<property name="app.version" value="${app.name.cap} ${app.version.number}" />
-	<property name="mar.versions" value="3110" />
+	<property name="mar.versions" value="3200" />
 
     <property environment="env" />
 

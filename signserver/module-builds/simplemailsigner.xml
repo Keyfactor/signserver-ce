@@ -25,7 +25,7 @@
 		    <include name="org/signserver/mailsigner/module/simplemailsigner/**"/>
 		</fileset>
     </jar>
-    <mar version="${mar.versions}" modulename="simplemailsigner" verbose="true" destfile="dist-server/simplemailsigner.mar">
+    <mar version="${mar.versions}" modulename="simplemailsigner" verbose="true" destfile="${basedir}/dist-server/simplemailsigner.mar">
         <part>
             <fileset dir="dist-server">
                 <include name="simplemailsigner-module.jar"/>

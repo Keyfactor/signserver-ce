@@ -188,7 +188,30 @@ OS version                          = ${os.version}
 			</tokenfilter>
 			</filterchain>
 	    </copy>
-		<replace file="${preprocessed}/java/org/signserver/common/GlobalConfiguration.java" token="@signserver.version@" value="${app.version}"/>	
+
+            <propertyfile file="${preprocessed}/java/org/signserver/common/signservercompile.properties" comment="SignServer compile-time properties. Generated file do not edit manually!">
+                <entry key="appname" value="${app.name}"/>
+                <entry key="appname_capital" value="${app.name.cap}"/>
+                <entry key="rmiregistryport" value="${rmi.registry.port}"/>
+                <entry key="rmiserverport" value="${rmi.server.port}"/>
+                <entry key="mailsignerport" value="${mailsigner.smtpport}"/>
+                <entry key="buildmode" value="${build.mode}"/>
+                <entry key="datasource.jndi-name-prefix" value="${datasource.jndi-name-prefix}"/>
+                <entry key="datasource.jndi-name" value="${datasource.jndi-name}"/>
+                <entry key="healthcheck.authorizedips" value="${healthcheck.authorizedips}"/>
+                <entry key="healthcheck.minimumfreememory" value="${healthcheck.minimumfreememory}"/>
+                <entry key="healthcheck.checkdbstring" value="${healthcheck.checkdbstring}"/>
+                <entry key="signserver.useclusterclassloader" value="${useclusterclassloader}"/>
+                <entry key="signserver.useclassversions" value="${clusterclassloader.useclassversions}"/>
+                <entry key="signserver.requiresignature" value="${clusterclassloader.requiresignature}"/>
+                <entry key="signserver.pathtotruststore" value="${clusterclassloader.pathtotruststore}"/>
+                <entry key="signserver.truststorepwd" value="${clusterclassloader.truststorepwd}"/>
+                <entry key="SignServerCommandFactory" value="${custom.commandfactory}"/>
+                <entry key="signserver.configfile" value="${signserver.configfile}"/>
+                <entry key="signserver.version" value="${app.version}"/>
+            </propertyfile>
+
+
 		<!-- Make a copy of the signserver_cli.properties in bin dir -->
 		<copy file="signserver_cli.properties" todir="bin" />
 		<!-- Copy the correct jndi.properties for your appserver -->

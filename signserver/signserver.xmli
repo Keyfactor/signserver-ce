@@ -257,8 +257,11 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	        <copy todir="${build}">
 	            <fileset dir="src/java">
 	                <include name="profilemappings.properties"/>
-	            </fileset>	   
-		    </copy>
+	            </fileset>
+                    <fileset dir="${src.java}">
+                        <include name="**/*.properties"/>
+                    </fileset>
+                </copy>
 	    </target>
 	
 	   <!-- =================================================================== -->

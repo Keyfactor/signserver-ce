@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.common;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -21,9 +24,9 @@ import org.apache.log4j.Logger;
 /**
  * Value object containing the global configuration, both global and
  * node scoped.
- * 
+ *
  * Contains a merge of static and dynamically defined global properties
- * 
+ *
  * @author Philip Vendil
  * $Id$
  */
@@ -31,11 +34,13 @@ public class GlobalConfiguration implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG =
-            Logger.getLogger(GlobalConfiguration.class);
+    private static final Logger LOG = Logger.getLogger(GlobalConfiguration.class);
 
-    private static final transient String BUILDMODE = "@BUILDMODE@";
-    private static transient String buildMode = null;
+    /** Properties put together at compile-time. */
+    private static final Properties COMPILETIME_PROPERTIES = new Properties();
+
+    /** Default values for the compile-time properties. */
+    private static final Properties DEFAULT_PROPERTIES = new Properties();
 
     public static final String SCOPE_GLOBAL = "GLOB.";
     public static final String SCOPE_NODE = "NODE.";
@@ -51,34 +56,93 @@ public class GlobalConfiguration implements Serializable {
     public static final String OLD_CRYPTOTOKENPROPERTY_BASE = ".SIGNERTOKEN";
     public static final String CRYPTOTOKENPROPERTY_CLASSPATH = ".CLASSPATH";
 
-    // Current version of the application.
-    public static final String VERSION = "@signserver.version@";
+    private static final String PROPERTY_APPNAME
+            = "appname";
+    private static final String PROPERTY_APPNAME_CAP
+            = "appname_capital";
+    private static final String PROPERTY_RMIREGISTRYPORT
+            = "rmiregistryport";
+    private static final String PROPERTY_RMISERVERPORT
+            = "rmiserverport";
+    private static final String PROPERTY_MAILSIGNERPORT
+            = "mailsignerport";
+    private static final String PROPERTY_BUILDMODE
+            = "buildmode";
+    private static final String PROPERTY_DATASOURCE_JNDINAMEPREFIX
+            = "datasource.jndi-name-prefix";
+    private static final String PROPERTY_DATASOURCE_JNDINAME
+            = "datasource.jndi-name";
+    private static final String PROPERTY_HEALTHECK_AUTHORZEDIPS
+            = "healthcheck.authorizedips";
+    private static final String PROPERTY_HEALTHECK_MINIMUMFREEMEMORY
+            = "healthcheck.minimumfreememory";
+    private static final String PROPERTY_HEALTHECK_CHECKDBSTRING
+            = "healthcheck.checkdbstring";
+    private static final String PROPERTY_SIGNSERVER_USECLUSTERCLASSLOADER
+            = "signserver.useclusterclassloader";
+    private static final String PROPERTY_SIGNSERVER_USECLASSVERSIONS
+            = "signserver.useclassversions";
+    private static final String PROPERTY_SIGNSERVER_REQUIRESIGNATURE
+            = "signserver.requiresignature";
+    private static final String PROPERTY_SIGNSERVER_PATHTOTRUSTSTORE
+            = "signserver.pathtotruststore";
+    private static final String PROPERTY_SIGNSERVER_TRUSTSTOREPWD
+            = "signserver.truststorepwd";
+    private static final String PROPERTY_SIGNSERVERCOMMANDFACTORY
+            = "SignServerCommandFactory";
+    private static final String PROPERTY_SIGNSERVER_CONFIGFILE
+            = "signserver.configfile";
+    private static final String PROPERTY_SIGNSERVER_VERSION
+            = "signserver.version";
 
-    // Indicates if ClusterClassLoading should be enabled
-    public static final String CLUSTERCLASSLOADERENABLED = "@signserver.useclusterclassloader@";
-    private static Boolean clusterClassLoaderEnabled = null;
+    /** Indicates if ClusterClassLoading should be enabled. */
+    private static Boolean clusterClassLoaderEnabled;
 
-    // Indicates if ClusterClassLoading should support class versions
-    public static final String USECLASSVERSIONS = "@signserver.useclassversions@";
-    private static Boolean useClassVersions = null;
+    /** Indicates if ClusterClassLoading should support class versions. */
+    private static Boolean useClassVersions;
 
-    // Indicates if ClusterClassLoading the full path to the jks trust store
-    public static final String PATHTOTRUSTSTORE = "@signserver.pathtotruststore@";
-    private static String pathToTrustStore = null;
+    /** Indicates if ClusterClassLoading the full path to the jks trust store. */
+    private static String pathToTrustStore;
 
-    // Indicates if ClusterClassLoading should require signing
-    public static final String REQUIRESIGNING = "@signserver.requiresignature@";
-    private static Boolean requireSigning = null;
+    /** Indicates if ClusterClassLoading should require signing. */
+    private static Boolean requireSigning;
 
-    //The password to unlock the truststore password
-    // Indicates if ClusterClassLoading the full path to the jks trust store
-    public static final String CCLTRUSTSTOREPWD = "@signserver.truststorepwd@";
-    private static char[] cclTrustStorePWD = null;
+    /**
+     * The password to unlock the truststore password. Indicates if
+     * ClusterClassLoading the full path to the jks trust store.
+     */
+    private static char[] cclTrustStorePWD;
 
     private Properties config;
 
     private String state;
-    
+
+
+    static {
+        // Setup default properties
+        DEFAULT_PROPERTIES.put(PROPERTY_BUILDMODE, "SIGNSERVER");
+        DEFAULT_PROPERTIES.put(PROPERTY_SIGNSERVER_USECLUSTERCLASSLOADER,
+                Boolean.toString(true));
+        DEFAULT_PROPERTIES.put(PROPERTY_SIGNSERVER_USECLASSVERSIONS,
+                Boolean.toString(true));
+        DEFAULT_PROPERTIES.put(PROPERTY_SIGNSERVER_REQUIRESIGNATURE,
+                Boolean.toString(false));
+
+        // Load built-in compile-time properties
+        try {
+            final InputStream in = GlobalConfiguration.class
+                    .getResourceAsStream("signservercompile.properties");
+            if (in == null) {
+                throw new FileNotFoundException("signservercompile.properties");
+            }
+            COMPILETIME_PROPERTIES.load(in);
+        } catch (IOException ex) {
+            throw new RuntimeException(
+                    "Unable to load built-in signservercompile.properties", ex);
+        }
+    }
+
+
     /**
      * Constructor that should only be called within
      * the GlobalConfigurationSessionBean.
@@ -93,12 +157,9 @@ public class GlobalConfiguration implements Serializable {
      */
     public static boolean isClusterClassLoaderEnabled() {
         if (clusterClassLoaderEnabled == null) {
-            if (CLUSTERCLASSLOADERENABLED.startsWith("@signserver.useclusterclassloader")) {
-                clusterClassLoaderEnabled = true;
-            } else {
-                clusterClassLoaderEnabled = Boolean.parseBoolean(
-                        CLUSTERCLASSLOADERENABLED.trim());
-            }
+            clusterClassLoaderEnabled = Boolean.parseBoolean(
+                    COMPILETIME_PROPERTIES.getProperty(
+                    PROPERTY_SIGNSERVER_USECLUSTERCLASSLOADER).trim());
         }
         return clusterClassLoaderEnabled;
     }
@@ -108,11 +169,9 @@ public class GlobalConfiguration implements Serializable {
      */
     public static boolean isUseClassVersions() {
         if (useClassVersions == null) {
-            if (USECLASSVERSIONS.startsWith("@signserver.useclassversions")) {
-                useClassVersions = true;
-            } else {
-                useClassVersions = Boolean.parseBoolean(USECLASSVERSIONS.trim());
-            }
+            useClassVersions = Boolean.parseBoolean(
+                    COMPILETIME_PROPERTIES.getProperty(
+                    PROPERTY_SIGNSERVER_USECLASSVERSIONS).trim());
         }
         return useClassVersions;
     }
@@ -122,11 +181,9 @@ public class GlobalConfiguration implements Serializable {
      */
     public static boolean isRequireSigning() {
         if (requireSigning == null) {
-            if (REQUIRESIGNING.startsWith("@signserver.requiresignature")) {
-                requireSigning = false;
-            } else {
-                requireSigning = Boolean.parseBoolean(REQUIRESIGNING.trim());
-            }
+            requireSigning = Boolean.parseBoolean(
+                    COMPILETIME_PROPERTIES.getProperty(
+                    PROPERTY_SIGNSERVER_REQUIRESIGNATURE).trim());
         }
         return requireSigning;
     }
@@ -136,9 +193,8 @@ public class GlobalConfiguration implements Serializable {
      */
     public static String getPathToTrustStore() {
         if (pathToTrustStore == null) {
-            if (!PATHTOTRUSTSTORE.startsWith("@signserver.pathtotruststore")) {
-                pathToTrustStore = PATHTOTRUSTSTORE;
-            }
+            pathToTrustStore = COMPILETIME_PROPERTIES.getProperty(
+                    PROPERTY_SIGNSERVER_PATHTOTRUSTSTORE);
         }
         return pathToTrustStore;
     }
@@ -148,11 +204,12 @@ public class GlobalConfiguration implements Serializable {
      */
     public static char[] getCCLTrustStorePasswd() {
         if (cclTrustStorePWD == null) {
-            if (CCLTRUSTSTOREPWD.startsWith("@signserver.truststorepwd")
-                    || CCLTRUSTSTOREPWD.trim().equals("")) {
+            final String trustStoreValue = COMPILETIME_PROPERTIES.getProperty(
+                    PROPERTY_SIGNSERVER_TRUSTSTOREPWD);
+            if (trustStoreValue == null || trustStoreValue.trim().isEmpty()) {
                 LOG.error("Error cluster classloader truststore password isn't configured");
             } else {
-                cclTrustStorePWD = CCLTRUSTSTOREPWD.toCharArray();
+                cclTrustStorePWD = trustStoreValue.toCharArray();
             }
         }
         return cclTrustStorePWD;
@@ -231,19 +288,14 @@ public class GlobalConfiguration implements Serializable {
     /**
      * @return the version of the server
      */
-    public String getAppVersion(){
-	  return VERSION;
+    public String getAppVersion() {
+        return COMPILETIME_PROPERTIES.getProperty(PROPERTY_SIGNSERVER_VERSION);
     }
 
+    /**
+     * @return the build mode
+     */
     public static String getBuildMode() {
-        if (buildMode == null) {
-            if (BUILDMODE.startsWith("@BUILDMODE")) {
-                buildMode = "SIGNSERVER";
-            } else {
-                buildMode = BUILDMODE;
-            }
-        }
-        return buildMode;
+        return COMPILETIME_PROPERTIES.getProperty(PROPERTY_BUILDMODE).trim();
     }
-
 }

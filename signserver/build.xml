@@ -166,25 +166,14 @@ OS version                          = ${os.version}
 
 			<filterchain>
 			<tokenfilter>			    
-		        <replacestring from="@signserver@" to="${app.name}"/>
-		    	<replacestring from="@SIGNSERVER@" to="${app.name.cap}"/>
 				<replacestring from="@RMIREGISTRYPORT@" to="${rmi.registry.port}"/>
 				<replacestring from="@RMISERVERPORT@" to="${rmi.server.port}"/>
 				<replacestring from="@MAILSIGNERPORT@" to="${mailsigner.smtpport}"/>
-				<replacestring from="@BUILDMODE@" to="${build.mode}"/>
 				<replacestring from="@datasource.jndi-name-prefix@" to="${datasource.jndi-name-prefix}"/>
 				<replacestring from="@datasource.jndi-name@" to="${datasource.jndi-name}"/>
 				<replacestring from="@healthcheck.authorizedips@" to="${healthcheck.authorizedips}"/>
 				<replacestring from="@healthcheck.minimumfreememory@" to="${healthcheck.minimumfreememory}"/>
 				<replacestring from="@healthcheck.checkdbstring@" to="${healthcheck.checkdbstring}"/>
-				<replacestring from="@signserver.useclusterclassloader@" to="${useclusterclassloader}"/>
-				<replacestring from="@signserver.useclassversions@" to="${clusterclassloader.useclassversions}"/>
-				<replacestring from="@signserver.requiresignature@" to="${clusterclassloader.requiresignature}"/>
-				<replacestring from="@signserver.pathtotruststore@" to="${clusterclassloader.pathtotruststore}"/>
-				<replacestring from="@signserver.truststorepwd@" to="${clusterclassloader.truststorepwd}"/>
-				<replacestring from="@SignServerCommandFactory@" to="${custom.commandfactory}"/>
-				<replacestring from="@signserver.configfile@" to="${signserver.configfile}"/>
-				<replacestring from="@BUILDMODE@" to="${build.mode}"/>
 			</tokenfilter>
 			</filterchain>
 	    </copy>

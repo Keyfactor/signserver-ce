@@ -29,6 +29,7 @@ import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
@@ -85,7 +86,8 @@ public class CommonAdminInterface  {
     private String hostname = null;
     
 	// Not final so it can be used in test scripts
-	public static  String BUILDMODE = "@BUILDMODE@";
+	public static  String BUILDMODE = CompileTimeSettings.getInstance()
+                .getProperty(CompileTimeSettings.BUILDMODE);
 	
 	public CommonAdminInterface(String hostname){
 		this.hostname = hostname;

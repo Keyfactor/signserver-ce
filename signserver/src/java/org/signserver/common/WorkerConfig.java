@@ -189,15 +189,11 @@ public  class WorkerConfig extends UpgradeableDataHashMap {
 	private static String nodeId = null;
     
     private static String getSignServerConfigFile(){
-    	if(SIGNSERVER_CONFIGFILE.startsWith("@signserver.configfile")){
-    		return "/etc/signserver/signserver.conf";
+        String configFile = CompileTimeSettings.getInstance()
+                .getProperty(CompileTimeSettings.SIGNSERVER_CONFIGFILE);
+    	if(configFile == null || configFile.isEmpty()){
+            configFile = "/etc/signserver/signserver.conf";
     	}
-    	
-    	return SIGNSERVER_CONFIGFILE;
+    	return configFile;
     }
-    
-    private static String SIGNSERVER_CONFIGFILE = "@signserver.configfile@";
-    
-	
-
 }

@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import org.signserver.common.CompileTimeSettings;
 
 import org.signserver.common.InvalidWorkerIdException;
  
@@ -211,16 +212,18 @@ public class signserver {
 	}
 
     
-    private static final String SignServerCommandFactoryPath = "@SignServerCommandFactory@";
-    
     private ISignServerCommandFactory signServerCommandFactory = null;
     private ISignServerCommandFactory getSignServerCommandFactory(){
     	if(signServerCommandFactory == null){
-    	  if(SignServerCommandFactoryPath.startsWith("@SignServerCommandFact")){
+            final String commandFactoryClass =
+                    CompileTimeSettings.getInstance().getProperty(
+                        CompileTimeSettings.SIGNSERVERCOMMANDFACTORY);
+    	  if(commandFactoryClass == null) {
     		  signServerCommandFactory = new DefaultSignServerCommandFactory();
     	  }else{
     		  try{
-    		    Class<?> c = this.getClass().getClassLoader().loadClass(SignServerCommandFactoryPath);
+    		    final Class<?> c = this.getClass().getClassLoader()
+                            .loadClass(commandFactoryClass);
     		    signServerCommandFactory = (ISignServerCommandFactory) c.newInstance();
     		  }catch(Exception e){
     			  System.out.println("Error instanciating SignServerCommandFactory.");

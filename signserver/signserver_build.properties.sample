@@ -29,6 +29,7 @@
 # Setting defining in which mode the SignServer should be built
 # Uncomment the following setting to build a stand-alone MailSigner
 # instead of a SignServer cluster, or set it to MAILSIGNER.
+# default: SIGNSERVER
 #build.mode=MAILSIGNER
 
 ##########################################################################

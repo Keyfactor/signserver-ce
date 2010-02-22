@@ -1,3 +1,15 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.mailsigner.module.simplemailsigner;
 
 import java.security.cert.CertStore;
@@ -18,16 +30,21 @@ import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.mailsigner.core.SMIMEHelper;
 import org.signserver.mailsigner.mailsigners.BaseMailSignerTester;
-import org.signserver.mailsigner.module.simplemailsigner.SimpleMailSigner;
 import org.signserver.server.cryptotokens.P12CryptoToken;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
+/**
+ * Tests for the SimpleMailSigner.
+ *
+ * @version $Id$
+ */
 public class TestSimpleMailSigner extends BaseMailSignerTester {
 
 	private int moduleVersion;
 	private String signserverhome;
 
+    @Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -68,7 +85,7 @@ public class TestSimpleMailSigner extends BaseMailSignerTester {
 		clearTestInbox();
 		sendMail("dummy1@localhost", "dummy2@localhost", "DummyMessage", "This is a Dummy Message");
 		MimeMessage mail = readTestInbox();
-		assertNotNull(mail);
+		assertNotNull("message not null", mail);
 		assertTrue(mail.getSubject(), mail.getSubject().equals("DummyMessage"));
 		assertTrue(((InternetAddress )mail.getFrom()[0]).getPersonal(), ((InternetAddress )mail.getFrom()[0]).getPersonal()== null);
 		assertTrue(((InternetAddress )mail.getFrom()[0]).getAddress(), ((InternetAddress )mail.getFrom()[0]).getAddress().equals("mailsigner@someorg.org"));
@@ -82,8 +99,8 @@ public class TestSimpleMailSigner extends BaseMailSignerTester {
 		String data = (String) part0.getContent();
 		assertTrue(data.trim().equals("This is a Dummy Message"));
 		verifySMIMESig(multiPart);
-	    
-		
+
+	    		
 	    // Test with Explanation
 	    iMailSignerRMI.setWorkerProperty(getWorkerId(), SMIMEHelper.EXPLAINATION_TEXT, "This is a signed email.");
 	    iMailSignerRMI.setWorkerProperty(getWorkerId(), SimpleMailSigner.FROMNAME,"Test1 Test1");
@@ -211,9 +228,100 @@ public class TestSimpleMailSigner extends BaseMailSignerTester {
 		clearTestInbox();
 		sendMail("dummy3@localhost", "dummy2@localhost2", "DummyMessage", "This is a Dummy Message");
 		MimeMessage mail10 = readTestInbox();
-		assertNull(mail10);	
+		assertNull(mail10);
+
+
+                // TODO for some reason this method can not be run independantly.
+                // There might be a problem with the setUp/tearDown methods
+                // Running it directly here is a workeraround.
+                iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.FROMNAME);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNERNAME);
+                iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.CHANGEREPLYTO);
+                iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.REPLYTOADDRESS);
+                iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.REPLYTONAME);
+                iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.USEREBUILDFROM);
+                iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNBYDEFAULT);
+                iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.OPTOUT);
+                iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.CHECKSMTPAUTHSENDER);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNBYDEFAULT);
+		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.OPTIN);
+                iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.USESUBJECTTAGS);
+                iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.OPTOUT);
+                atest02SendernameTrue();
 	}
+
+        /**
+         * Tests the SENDERNAME property (DSS-228).
+         *
+         * When an optional property SENDERNAME is set to TRUE the From/Sender
+         * fields should be composed of the FROMADDRESS/SIGNERADDRESS and the
+         * name from the From field of the original e-mail.
+         *
+         * <pre>
+         *   Sending an original e-mail with:
+         *   From: Markus Kilas <markus.k@primekey.se>
+         *
+         *   Will result in the MailSigner sending an e-mail with:
+         *   From: Markus Kilas <mailsigner@mailsigner>
+         *   Sender: Markus Kilas <mailsigner@mailsigner>
+         *   Reply-To: Markus Kilas <markus.k@primekey.se>
+         * </pre>
+         *
+         * @throws Exception
+         */
+        public void atest02SendernameTrue() throws Exception {
+            // Test with SENDERNAME
+	    iMailSignerRMI.setWorkerProperty(getWorkerId(),
+                    SimpleMailSigner.SENDERNAME, "TRUE");
+	    iMailSignerRMI.reloadConfiguration(getWorkerId());
+
+            clearTestInbox();
+            sendMail("SenderFirstname SenderLastname <dummy1.test02@localhost>",
+                    "RecieverFirstname RecieverLastname <dummy2.test02@localhost>",
+                    "Test 02", "This is a dummy message.");
+
+            final MimeMessage mail1 = readTestInbox();
+
+            assertNotNull("message not null", mail1);
+            assertEquals("subject", "Test 02", mail1.getSubject());
+
+            final InternetAddress[] from = (InternetAddress[]) mail1.getFrom();
+            final InternetAddress sender = (InternetAddress) mail1.getSender();
+            final InternetAddress[] replyTo = (InternetAddress[]) mail1.getReplyTo();
+
+            System.out.println("Mail1: " + mail1);
+
+            // Assert from/sender address is the mailsigner address
+            assertEquals("from address", "mailsigner@someorg.org",
+                    from[0].getAddress());
+            assertEquals("sender address", "mailsigner@someorg.org",
+                    sender.getAddress());
+
+            // Assert from/sender names are taken from the mail
+            assertEquals("from name", "SenderFirstname SenderLastname",
+                    from[0].getPersonal());
+            assertEquals("sender name", "SenderFirstname SenderLastname",
+                    sender.getPersonal());
+
+            // Assert reply-to is taken from the "from" field of original mail
+            assertEquals("reply-to", "dummy1.test02@localhost", 
+                    replyTo[0].getAddress());
+
+            // Assert the message is signed
+            assertTrue("mime type",
+                    mail1.getContentType().startsWith("multipart/signed"));
+            assertTrue(mail1.getContent().getClass().getName(),
+                    mail1.getContent() instanceof MimeMultipart);
+            final MimeMultipart multiPart2 = (MimeMultipart) mail1.getContent();
+            verifySMIMESig(multiPart2);
+
+            // Test with SENDERNAME
+	    iMailSignerRMI.removeWorkerProperty(getWorkerId(),
+                    SimpleMailSigner.SENDERNAME);
+	    iMailSignerRMI.reloadConfiguration(getWorkerId());
+        }
 	
+    @Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		// Set SimpleMailSigner properties
@@ -231,6 +339,7 @@ public class TestSimpleMailSigner extends BaseMailSignerTester {
 		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.SIGNBYDEFAULT);
 		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.OPTIN);
 		iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.USESUBJECTTAGS);
+                iMailSignerRMI.removeWorkerProperty(getWorkerId(), SimpleMailSigner.SENDERNAME);
 		
 		// crypto token properties
 		iMailSignerRMI.removeWorkerProperty(getWorkerId(), P12CryptoToken.KEYSTOREPATH);

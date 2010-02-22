@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.mailsigner.module.simplemailsigner;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -60,7 +59,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * EXPLAINATIONTEXT, USEREBUILDFROM, SIGNATUREALG, SIGNERNAME, FROMNAME,
  * REPLYTONAME, CHANGEREPLYTO, POSTMASTERSIGNS, REPLYTOADDRESS, SIGNERADDRESS,
  * FROMADDRESS, REQUIRESMTPAUTH, CHECKSMTPAUTHSENDER, SIGNBYDEFAULT, 
- * OPTIN, OPTOUT, USESUBJECTTAGS
+ * OPTIN, OPTOUT, USESUBJECTTAGS, SENDERNAME
  * 
  * @author Philip Vendil 22 dec 2007
  *
@@ -131,7 +130,15 @@ public class SimpleMailSigner extends BaseMailProcessor {
 	 * (Required if USEREBUILDFROM is true)
 	 */
 	public static final String FROMADDRESS = "FROMADDRESS";
-	
+
+
+        /**
+         * If the From/Sender fields should be composed of the
+         * FROMADDRESS/SIGNERADDRESS and the name from the From field of the
+         * original e-mail.
+         */
+        public static final String SENDERNAME = "SENDERNAME";
+
 	/**
 	 * Setting defining if SMTP AUTH should be required to
 	 * sign the mail. (Default is true).
@@ -239,11 +246,25 @@ public class SimpleMailSigner extends BaseMailProcessor {
 				newMessage.addHeaderLine((String) headerEnum.nextElement());
 			}
 
-			newMessage.setSender(new InternetAddress(getSignerAddress(), getSignerName()));
+                        final String senderName;
+                        if (Boolean.parseBoolean(config.getProperties().getProperty(SENDERNAME))) {
+                            senderName = getSenderOrFromName(mail);
+                        } else {
+                            senderName = getSignerName();
+                        }
+
+			newMessage.setSender(new InternetAddress(getSignerAddress(), senderName));
 
 			if (isRebuildFrom()) {
-				// builds a new "mixed" "From:" header
-				InternetAddress modifiedFromIA = new InternetAddress(getFromAddress(), getFromName());
+                            // builds a new "mixed" "From:" header
+                            final String name;
+                            if (Boolean.parseBoolean(config.getProperties().getProperty(SENDERNAME))) {
+                                name = getSenderOrFromName(mail);
+                            } else {
+                                name = getFromName();
+                            }
+
+				InternetAddress modifiedFromIA = new InternetAddress(getFromAddress(), name);
 				newMessage.setFrom(modifiedFromIA);            
 			}
 
@@ -643,7 +664,24 @@ public class SimpleMailSigner extends BaseMailProcessor {
 	protected String getSignatureHashAlgorithm() {
 		return config.getProperties().getProperty(SIGNATUREALG,DEFAULT_SIGNATUREALG);
 	}
-	
 
-
+    /**
+     * Method for extracting the personal (name) of a mail-address. First it
+     * tries with the sender address and if that does not contain a name the
+     * first From address is used.
+     * @param mail The mail to read headers from.
+     * @return Name from the Sender or From headers.
+     * @throws MessagingException In case of problem reading the From field
+     */
+    private static String getSenderOrFromName(final Mail mail) throws MessagingException {
+        String name = mail.getSender().toInternetAddress().getPersonal();
+        if (name == null) {
+            final Address[] fromS = mail.getMessage().getFrom();
+            if (fromS != null && fromS.length > 0 && fromS[0] instanceof InternetAddress) {
+                final InternetAddress from = (InternetAddress) fromS[0];
+                name = from.getPersonal();
+            }
+        }
+        return name;
+    }
 }

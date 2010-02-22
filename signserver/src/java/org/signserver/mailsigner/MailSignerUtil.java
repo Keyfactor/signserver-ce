@@ -60,7 +60,9 @@ public class MailSignerUtil {
 	 * @param mail
 	 */
 	public static void mailTest(Mail mail) {
-		if(mail.getState() != Mail.ERROR){
+            if (Mail.ERROR.equals(mail.getState())) {
+                log.debug("Not creating test mail for mail in error state");
+            } else {
 			if(isTestMode()){
 			  try {
 				mailTest(mail.getMessage());

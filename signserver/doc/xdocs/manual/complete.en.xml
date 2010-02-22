@@ -1693,6 +1693,23 @@ a default address. (Required if CHANGEREPLYTO is true)
 <b>REQUIRESMTPAUTH</b> = Setting defining if SMTP AUTH should be required to
 sign the mail. (Default is true).
                         </p>
+                        <p>
+<b>SENDERNAME</b> = Indicates if the name of the sender (from Sender field or
+From field of the original message) should be used together with the configured
+mail address (SIGNERADDRESS/FROMADDRESS).
+                        </p>
+                        <p>
+Example:  Having SENDERNAME=TRUE, SIGNERADDRESS=mailsigner@mailsigner and sending a mail with:
+        <pre>
+         From: FromName &lt;fromname@primekey.se&gt;
+         </pre>
+         Will result in the MailSigner sending an e-mail with:
+         <pre>
+         From: FromName &lt;mailsigner@mailsigner&gt;
+         Sender: FromName &lt;mailsigner@mailsigner&gt;
+         Reply-To: FromName &lt;fromname@primekey.se&gt;
+         </pre>
+                        </p>
                     </subsubsection>
                 </subsection>
             </section>

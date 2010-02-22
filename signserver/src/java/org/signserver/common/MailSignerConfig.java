@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.common;
 
 import java.io.ByteArrayInputStream;
@@ -35,9 +34,6 @@ public class MailSignerConfig {
 
 	public static transient Logger log = Logger.getLogger(MailSignerConfig.class);
 	
-    private static final String RMIREGISTYPORT = "@RMIREGISTRYPORT@";
-    private static final String RMISERVERPORT  = "@RMISERVERPORT@";
-    
     public static final String RMI_OBJECT_NAME = "MailSignerCLI";
 	
 	private static final long serialVersionUID = 1L;
@@ -185,9 +181,11 @@ public class MailSignerConfig {
 	 */
     public static int getRMIRegistryPort(){
 	  int retval = 1099;
-	  if(!RMIREGISTYPORT.startsWith("@RMIREGISTRYPORT")){
+          final String rmiPort = CompileTimeSettings.getInstance().getProperty(
+                  CompileTimeSettings.RMIREGISTRYPORT);
+	  if(rmiPort != null){
 		  try{
-			  retval = Integer.parseInt(RMIREGISTYPORT.trim());
+			  retval = Integer.parseInt(rmiPort.trim());
 		  }catch(NumberFormatException e){
 			  log.error("RMI Registry Port settings is missconfigured, must be a number");
 		  }
@@ -201,9 +199,11 @@ public class MailSignerConfig {
 	 */
   public static int getRMIServerPort(){
 	  int retval = 2099;
-	  if(!RMISERVERPORT.startsWith("@RMISERVERPORT")){
+          final String rmiPort = CompileTimeSettings.getInstance().getProperty(
+                  CompileTimeSettings.RMISERVERPORT);
+	  if(rmiPort != null){
 		  try{
-			  retval = Integer.parseInt(RMISERVERPORT.trim());
+			  retval = Integer.parseInt(rmiPort.trim());
 		  }catch(NumberFormatException e){
 			  log.error("RMI Server Port settings is missconfigured, must be a number");
 		  }

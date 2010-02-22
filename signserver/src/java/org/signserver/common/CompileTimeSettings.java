@@ -21,7 +21,7 @@ import java.util.Properties;
  * Settings loaded from built-in properties-file signservercompile.properties
  * put together during compilation.
  *
- * @author Markus Kilås
+ * @author Markus Kilas
  * @version $Id$
  */
 public class CompileTimeSettings {

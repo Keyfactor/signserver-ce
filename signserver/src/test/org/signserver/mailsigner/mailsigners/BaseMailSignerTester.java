@@ -1,3 +1,15 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.mailsigner.mailsigners;
 
 import java.io.ByteArrayInputStream;
@@ -16,20 +28,22 @@ import javax.mail.internet.MimeMessage;
 
 import junit.framework.TestCase;
 
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.MailSignerConfig;
 import org.signserver.common.SignServerUtil;
 import org.signserver.mailsigner.MailSignerUtil;
 import org.signserver.mailsigner.cli.IMailSignerRMI;
+
 /**
  * Abstract test class containing a lot of help methods in setting up and
- * configuring a mail signer junit test. 
- * 
+ * configuring a mail signer junit test.
+ *
+ * @version $Id$
  */
 public abstract class BaseMailSignerTester extends TestCase {
 
 
-	private static final String PORT = "@MAILSIGNERPORT@";
 	protected static IMailSignerRMI iMailSignerRMI;
 	protected static String signServerHome = null;
 	
@@ -186,10 +200,12 @@ public abstract class BaseMailSignerTester extends TestCase {
 	}
 	
 	protected int getPort(){
-		if(PORT.startsWith("@MAILSIGNERPORT")){
+            final String port = CompileTimeSettings.getInstance()
+                    .getProperty(CompileTimeSettings.MAILSIGNERPORT);
+		if (port == null) {
 			return 26;
 		}
-		return Integer.parseInt(PORT);
+		return Integer.parseInt(port);
 	}
 	
 	protected void tearDown() throws Exception {

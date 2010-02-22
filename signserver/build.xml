@@ -141,34 +141,23 @@ OS version                          = ${os.version}
 	  Preprocesses Sign Server by replacing tags with correct version and application texts.
 	-->
 	<target name="preprocess" depends="preprocess-extjava, preprocess-extweb" >
+        
+        <!-- Copy all except xml-files. TODO: DSS-156: Remove this step somehow  -->
         <copy todir="${preprocessed}">
             <fileset dir="src">
               <include name="**"/>
-              <exclude name="**/*.java"/>
-              <exclude name="**/*.html"/>
-              <exclude name="**/*.htm"/>            	
               <exclude name="**/*.xml"/>
-              <exclude name="**/*.jsp"/>
-              <exclude name="**/*.jspf"/>
-              <exclude name="**/*.properties"/>
             </fileset>	      
 	    </copy>
+
+        <!-- Copy xml-files and replace some values -->
         <copy todir="${preprocessed}">
             <fileset dir="src">
-                <include name="**/*.java"/>
-                <include name="**/*.html"/>
-                <include name="**/*.htm"/>
                 <include name="**/*.xml"/>
-                <include name="**/*.jsp"/>
-                <include name="**/*.jspf"/>
-                <include name="**/*.properties"/>
             </fileset>	   
 
 			<filterchain>
 			<tokenfilter>			    
-				<replacestring from="@RMIREGISTRYPORT@" to="${rmi.registry.port}"/>
-				<replacestring from="@RMISERVERPORT@" to="${rmi.server.port}"/>
-				<replacestring from="@MAILSIGNERPORT@" to="${mailsigner.smtpport}"/>
 				<replacestring from="@datasource.jndi-name-prefix@" to="${datasource.jndi-name-prefix}"/>
 				<replacestring from="@datasource.jndi-name@" to="${datasource.jndi-name}"/>
 				<replacestring from="@healthcheck.authorizedips@" to="${healthcheck.authorizedips}"/>
@@ -176,7 +165,7 @@ OS version                          = ${os.version}
 				<replacestring from="@healthcheck.checkdbstring@" to="${healthcheck.checkdbstring}"/>
 			</tokenfilter>
 			</filterchain>
-	    </copy>
+        </copy>
 
             <propertyfile file="${preprocessed}/java/org/signserver/common/signservercompile.properties" comment="SignServer compile-time properties. Generated file do not edit manually!">
                 <entry key="appname" value="${app.name}"/>

@@ -93,7 +93,11 @@ rmi.server.port           = ${rmi.server.port}
         <copy todir="${build}">
             <fileset dir="src/java">
                 <include name="profilemappings.properties"/>
-            </fileset>	   
+            </fileset>
+            <!-- Include properties files (signservercompile.properties in special) -->
+            <fileset dir="${src.java}">
+                <include name="**/*.properties"/>
+            </fileset>
 	    </copy>
     </target>
 	

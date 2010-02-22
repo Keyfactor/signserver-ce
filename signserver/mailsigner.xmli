@@ -325,13 +325,14 @@ rmi.server.port           = ${rmi.server.port}
         </javac>
         <!-- jndi.properties needs to be in the classpath -->
         <copy file="${src.java}/jndi.properties" todir="${test.dir}" />
+        <copy file="${src.java}/log4j.properties" todir="${test.dir}" />
     </target>
 	
     <target name="test:mailsigner:run" depends="test:mailsigner:compile" description="run JUnit testcases" if="buildMailSigner">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
         <delete dir="${test.dir}/reports" />
         <mkdir dir="${test.dir}/reports/html" />
-        <junit printsummary="yes" haltonfailure="no" >
+        <junit printsummary="yes" haltonfailure="no" showoutput="true">
             <classpath>
                 <path refid="mailsigner.test.compile.classpath" />
                 <path location="${test.dir}" />
@@ -357,6 +358,36 @@ rmi.server.port           = ${rmi.server.port}
             </fileset>
             <report format="frames" todir="${test.dir}/reports/html" />
         </junitreport> 
+    </target>
 
+    <target name="test:mailsigner:runone" depends="test:mailsigner:compile" description="run a single JUnit-test specified -Dtest.runone=classname" if="buildMailSigner">
+        <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
+        <fail message="'test.runone' not set. Example -Dtest.runone=TestDummyMailSigner " unless="test.runone" />
+        <delete dir="${test.dir}/reports" />
+        <mkdir dir="${test.dir}/reports/html" />
+        <junit printsummary="yes" haltonfailure="no" showoutput="true">
+            <classpath>
+                <path refid="mailsigner.test.compile.classpath" />
+                <path location="${test.dir}" />
+            </classpath>
+            <formatter usefile="false" type="brief"/>
+            <formatter type="xml" />
+            <batchtest fork="yes" todir="${test.dir}/reports" >
+                <fileset dir="${test.dir}">
+                    <include name="**/${test.runone}.class" />
+                    <exclude name="**/*Continously*" />
+                    <exclude name="**/TestRunner*" />
+                    <exclude name="**/db/*" />
+                    <exclude name="**/cli/TestMail**" />
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <junitreport todir="${test.dir}/reports">
+            <fileset dir="${test.dir}/reports">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${test.dir}/reports/html" />
+        </junitreport>
     </target>
 </project>	

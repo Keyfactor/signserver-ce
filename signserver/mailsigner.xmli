@@ -90,11 +90,6 @@ rmi.server.port           = ${rmi.server.port}
         	<exclude name="org/signserver/web/**"/>
         	<exclude name="org/signserver/protocol/**/**"/>
         </javac>
-        <copy todir="${build}">
-            <fileset dir="src/java">
-                <include name="profilemappings.properties"/>
-            </fileset>	   
-	    </copy>
     </target>
 	
 	<property name="mailsigner.jar" value="${server.dist.dir}/mailsigner.jar"/>

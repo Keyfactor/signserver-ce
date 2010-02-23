@@ -23,11 +23,6 @@ import java.security.NoSuchProviderException;
 import java.util.Date;
 import java.util.Set;
 
-import org.bouncycastle.asn1.tsp.TimeStampResp;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cmp.PKIStatus;
-import org.bouncycastle.asn1.cmp.PKIStatusInfo;
-import org.bouncycastle.asn1.cmp.PKIFreeText;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DERBitString;
@@ -35,6 +30,11 @@ import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
+import org.bouncycastle.asn1.cmp.PKIFreeText;
+import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.cmp.PKIStatusInfo;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.tsp.TimeStampResp;
 import org.bouncycastle.tsp.*;
 
 /**
@@ -111,32 +111,20 @@ public class TimeStampResponseGenerator
         return new PKIStatusInfo(new DERSequence(v));
     }
 
-    public TimeStampResponse generateFailResponse(
-            int status,
-            int failInfoField,
-            String statusString) 
-            throws TSPException
-    {
-        this.status = status;
-
-        this.setFailInfoField(failInfoField);
-        this.addStatusString(statusString);
-
-        PKIStatusInfo pkiStatusInfo = getPKIStatusInfo();
-
-        TimeStampResp resp = new TimeStampResp(pkiStatusInfo, null);
-
-        try
-        {
-            return new TimeStampResponse(resp);
-        }
-        catch (IOException e)
-        {
-            throw new TSPException("created badly formatted response!");
-        }
-
-    }
-
+    /**
+     * Return an appropriate TimeStampResponse.
+     * <p>
+     * If genTime is null a timeNotAvailable error response will be returned.
+     *
+     * @param request the request this response is for.
+     * @param serialNumber serial number for the response token.
+     * @param genTime generation time for the response token.
+     * @param provider provider to use for signature calculation.
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     * @throws TSPException
+     */
     public TimeStampResponse generate(
         TimeStampRequest    request,
         BigInteger          serialNumber,
@@ -148,8 +136,9 @@ public class TimeStampResponseGenerator
 
         try
         {
-            if (genTime == null) {
-                throw new TSPValidationException("the time source is not available.", PKIFailureInfo.timeNotAvailable);
+            if (genTime == null)
+            {
+                throw new TSPValidationException("The time source is not available.", PKIFailureInfo.timeNotAvailable);
             }
 
             request.validate(acceptedAlgorithms, acceptedPolicies, acceptedExtensions, provider);
@@ -186,6 +175,44 @@ public class TimeStampResponseGenerator
 
             resp = new TimeStampResp(pkiStatusInfo, null);
         }
+
+        try
+        {
+            return new TimeStampResponse(resp);
+        }
+        catch (IOException e)
+        {
+            throw new TSPException("created badly formatted response!");
+        }
+    }
+
+    /**
+     * Generate a TimeStampResponse with choosen status and FailInfoField.
+     *
+     * @param status the PKIStatus to set.
+     * @param failInfoField the FailInfoFaild to set.
+     * @param statusString an optional string describing the failure.
+     * @return a TimeStampResponse with a failInfoField and optional statusString
+     * @throws TSPException in case the response could not be created
+     */
+    public TimeStampResponse generateFailResponse(
+            int status,
+            int failInfoField,
+            String statusString)
+            throws TSPException
+    {
+        this.status = status;
+
+        this.setFailInfoField(failInfoField);
+
+        if (statusString != null)
+        {
+            this.addStatusString(statusString);
+        }
+
+        PKIStatusInfo pkiStatusInfo = getPKIStatusInfo();
+
+        TimeStampResp resp = new TimeStampResp(pkiStatusInfo, null);
 
         try
         {

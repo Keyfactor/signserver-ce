@@ -255,9 +255,6 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	        	<exclude name="org/signserver/client/api/**"/>
 	        </javac>
 	        <copy todir="${build}">
-	            <fileset dir="src/java">
-	                <include name="profilemappings.properties"/>
-	            </fileset>
                     <fileset dir="${src.java}">
                         <include name="**/*.properties"/>
                     </fileset>
@@ -278,7 +275,6 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    	    </metainf>
 	        	
 	        	<fileset dir="." includes="signserver_server.properties"/>
-	        	<!-- This file is included automatically from ${build} <fileset dir="src/java" includes="profilemappings.properties"/> -->
 	            <fileset dir="${build}">
 	          	  <exclude name="org/signserver/cli/**" />
 	          	  <exclude name="org/signserver/client/**" />
@@ -304,7 +300,6 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    	    </metainf>
 	        	
 	        	<fileset dir="." includes="signserver_server.properties"/>
-	        	<!-- This file is included automatically from ${build} <fileset dir="src/java" includes="profilemappings.properties"/> -->
 	            <fileset dir="${build}">
 	          	  <exclude name="org/signserver/cli/**" />
 	          	  <exclude name="org/signserver/client/**" />
@@ -449,7 +444,6 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	            </fileset>	
 	            <fileset dir="${src.java}">
 		              <include name="log4j.properties"/>
-		              <include name="profilemappings.properties"/>
 		        </fileset>
 		    </copy> 
 	 

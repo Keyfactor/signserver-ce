@@ -91,9 +91,6 @@ rmi.server.port           = ${rmi.server.port}
         	<exclude name="org/signserver/protocol/**/**"/>
         </javac>
         <copy todir="${build}">
-            <fileset dir="src/java">
-                <include name="profilemappings.properties"/>
-            </fileset>
             <!-- Include properties files (signservercompile.properties in special) -->
             <fileset dir="${src.java}">
                 <include name="**/*.properties"/>

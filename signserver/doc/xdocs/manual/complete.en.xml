@@ -96,7 +96,7 @@ Complete refactorisation of J2EE from EJB2 to EJB3 to simplify further developme
 Renamed component "Service" to "TimedService" since 3.0 supports other services.
                         </li>
                         <li>
-A "TimedService” can now be configured with a 'cron-like' settings to have services
+A "TimedService" can now be configured with a 'cron-like' settings to have services
 executed in other than just periodical intervals.
                         </li>
                         <li>
@@ -151,7 +151,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
   It is now possible to dynamically add and remove available signers
                         </li>
                         <li>
-  A new type of component, "Service” that is run on a timely basis, used to perform
+  A new type of component, "Service" that is run on a timely basis, used to perform
   maintenance or report generation.
                         </li>
                         <li>
@@ -178,7 +178,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>TimedService (former Service)</td><td>A TimedService is a task that is run on a timely basis, performing maintenance tasks like changing active key or generate a report.</td>
                     </tr><tr><td>Worker</td><td>A common name for Processable (Signer or other type of service), Mail Processor and TimedService</td>
                     </tr><tr><td>Processable</td><td>A type of worker that is used to process requests, i.e. not a TimedService.</td>
-                    </tr><tr><td>Worker Configuration</td><td>Each Worker can be configured with properties specific for that worker. There are two sets of worker configuration one “Active” that is used by the signer and one “current” which is the one configured by the administrator. The current configuration isn't used in production until the administrator issued the reload command. This makes it possible for the administrator to configure multiple properties and double-check them before they are actually used.</td>
+                    </tr><tr><td>Worker Configuration</td><td>Each Worker can be configured with properties specific for that worker. There are two sets of worker configuration one "Active" that is used by the signer and one "current" which is the one configured by the administrator. The current configuration isn't used in production until the administrator issued the reload command. This makes it possible for the administrator to configure multiple properties and double-check them before they are actually used.</td>
                     </tr><tr><td>Global Configuration Store</td><td>Is a dynamic store used to define available Workers and their Crypto Tokens. But other data that needs to be read globally could be set there as well. The global configuration properties are activated immediately. There are two different scopes for the store data, Global Scope and Node Scope.</td>
                     </tr><tr><td>Global Scope</td><td>Data stored in the global configuration that can be read by all nodes in the cluster.</td>
                     </tr><tr><td>Node Scope</td><td>Data that is node specific and can only be read within the same node.</td>
@@ -316,7 +316,7 @@ rootcert.cer
                                 <p>
 Then copy the signserver_build.properties.sample file to signserver_buld.properties and edit
 the file. At least configure the httpsserver.password property. If you are not using https
-uncomment the row "j2ee.web-nohttps=true”.
+uncomment the row "j2ee.web-nohttps=true".
                                 </p>
                             </li>
                             <li>
@@ -1238,7 +1238,7 @@ The PDF signer have the class path: org.signserver.server.signers.PDFSigner
 The PDF signer adds digital signatures to PDF documents. It supports addition of visible or invisible signatures. Both visible and invisible signatures serve the same purpose of signing document, and technically are equivalent in that sense. The difference is that when visible signature  is applied to a document, signature image (in shape of rectangle) is placed at the specified place in the document, clicking on which will allow seeing properties of the signature (Adobe Acrobat Reader). On the other hand when invisible signature is applied, signature properties are accessed through menu items. For visible signatures properties such as : custom signature image, signature rectangle, page at which signature rectangle to be drawn and others can be specified (see Available Properties below)
                         </p>
                         <p>
-PDF Signer can also apply timestamp to a signature. If the signature is timestamped, it can be viewable through signature properties in Adobe Acrobat Reader. Timestamping is used to prove that  document was signed before the time specified by timestamp token. If the signature is not timestamped then the signature time specified in the signature properties is not considered to be “safe”. It is strongly advised to apply timestamp to a signature, and TSA module can be used for this purpose.
+PDF Signer can also apply timestamp to a signature. If the signature is timestamped, it can be viewable through signature properties in Adobe Acrobat Reader. Timestamping is used to prove that  document was signed before the time specified by timestamp token. If the signature is not timestamped then the signature time specified in the signature properties is not considered to be "safe". It is strongly advised to apply timestamp to a signature, and TSA module can be used for this purpose.
                         </p>
                         <p>
 Also CRL or OCSP Response of the signer's certificate can be embedded inside the signature package. Embedding CRL or OCSP response with the package will help validate signature even after the signer's certificate is expired. (Though it will not totally guarantee the long term signature preservation. Topic of long term signature preservation for archival purposes is a large one and is discussed to be implemented in future versions of SignServer).
@@ -1263,11 +1263,11 @@ The following properties can be configured with the signer:
                         </p>
                         <p>
 <b>REASON</b> =
-	 The reason included in the PDF signature and displayed by the PDF reader. Default value is “Signed by SignServer”.
+	 The reason included in the PDF signature and displayed by the PDF reader. Default value is "Signed by SignServer".
                         </p>
                         <p>
 <b>LOCATION</b> =
-	The location included in the PDF signature and displayed by the PDF reader. Default value is “SignServer”.
+	The location included in the PDF signature and displayed by the PDF reader. Default value is "SignServer".
                         </p>
                         <p>
 <b>ADD_VISIBLE_SIGNATURE</b> =
@@ -1563,10 +1563,10 @@ WORKER1.VAL2.ISSUER1.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....
 
                 <subsection name="The Validation CLI interface.">
                     <p>
-There exists a Java CLI tool that can be used to check the validity of a certificate from scripts. It supports a clustered SignServer installation by using the “Use first host that response OK” policy.
+There exists a Java CLI tool that can be used to check the validity of a certificate from scripts. It supports a clustered SignServer installation by using the "Use first host that response OK" policy.
                     </p>
                     <p>
-When compiling, make sure that setting validationclient.enabled is set to “true” in the build properties. The client is found in dist-client/validationclient. Just copy the validate.jar and all the files in the 'lib' directory to the location where you want to use the client.
+When compiling, make sure that setting validationclient.enabled is set to "true" in the build properties. The client is found in dist-client/validationclient. Just copy the validate.jar and all the files in the 'lib' directory to the location where you want to use the client.
                     </p>
                     <p>
 Use the client with 'java -jar validate.jar &lt;options&gt;'.
@@ -1633,16 +1633,16 @@ The basic configuration of a group key service is very similar to that of a vali
 <b>USEPREGENERATION</b> = Setting defining of keys should be pre-generated or generated on the fly when needed. If the pool of pre-generated keys gets empty will new keys always be generated automatically. (Optional, default is true)
                         </p>
                         <p>
-<b>ENCKEYALG</b> =  Encryption algorithm used to encrypt the group keys stored in database. ( Optional, default is “AES”)
+<b>ENCKEYALG</b> =  Encryption algorithm used to encrypt the group keys stored in database. (Optional, default is "AES")
                         </p>
                         <p>
-<b>ENCKEYSPEC</b> = Specification of the encryption key. (Optional, default is “256”)
+<b>ENCKEYSPEC</b> = Specification of the encryption key. (Optional, default is "256")
                         </p>
                         <p>
-<b>GROUPKEYALG</b> =  Defines the type of group keys that this service should generate ( Optional, default is “AES”)
+<b>GROUPKEYALG</b> =  Defines the type of group keys that this service should generate (Optional, default is "AES")
                         </p>
                         <p>
-<b>GROUPKEYSPEC</b> = Specification of the generated group keys. (Optional, default is “256”)
+<b>GROUPKEYSPEC</b> = Specification of the generated group keys. (Optional, default is "256")
                         </p>
                         <p>
 <b>KEYSWITCHTHRESHOLD</b> = Setting defining the number of group keys that should be  encrypted by the same encryption key before it's switched. (Optional, default is 100000)
@@ -1818,7 +1818,7 @@ You also need a certificate for the signer. Generate a certificate request with 
 bin/signserver.sh generatecertreq 8 "CN=PKCS11 Signer token" SHA1WithRSA /tmp/certreq.pem
                         </p>
                         <p>
-Add a user in EJBCA with a certificate profile suitable for signing, and enrol for a “Server Certificate” using the public web pages.
+Add a user in EJBCA with a certificate profile suitable for signing, and enrol for a "Server Certificate" using the public web pages.
                         </p>
                         <p>
 Create the certificate chain file with the command:
@@ -1854,10 +1854,10 @@ The SoftCryptoToken have the class path: org.signserver.server.cryptotokens.Soft
 <b>KEYDATA</b> =   The serialized KeyPair generated by genCertificateRequest, usually is this setting configured by the SoftCryptoToken itself.
                         </p>
                         <p>
-<b>KEYALG</b> = The algorithm used when generating new keys. (Optional, default is “RSA”)
+<b>KEYALG</b> = The algorithm used when generating new keys. (Optional, default is "RSA")
                         </p>
                         <p>
-<b>KEYSPEC</b> =   The key specification used when generating new keys. (Optional, default is “2048”)
+<b>KEYSPEC</b> =   The key specification used when generating new keys. (Optional, default is "2048")
                         </p>
                     </subsubsection>
                     <subsubsection name="Example usage">
@@ -1953,7 +1953,7 @@ in the ServiceConfig class.
                         </p>
                         <p>
 Other basic properties used to configure all services are:
-ACTIVE when set to “TRUE” means that the service is active and should be run.
+ACTIVE when set to "TRUE" means that the service is active and should be run.
 INTERVAL defining the interval in seconds of how often the service should be run.
 CRON used as a complement to INTERVAL to specify on a calendar basis.
                         </p>
@@ -2509,7 +2509,7 @@ MAR Task Properties
                         <tr>
                             <td>version</td>
                             <td>
-The version of the module archive, can only contain digits. If not set will “1” be used. (Optional)
+The version of the module archive, can only contain digits. If not set will "1" be used. (Optional)
                             </td>
                         </tr>
                         <tr>
@@ -2565,7 +2565,7 @@ PART Task Properties
 Here is an example of a simple ANT task building a MAR file, it will have the module name of SOME, version of 3 and have a 'server' part with all the JARs in 'somejarlocation' and all the worker properties in the directory 'someworkerpropertieslocation' :
                     </p>
                     <source>
-    &lt;target name="gensomemar" depends=”signserver.ear”&gt;
+    &lt;target name="gensomemar" depends="signserver.ear"&gt;
     &lt;taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
        classpathref="signserver.test.compile.classpath"/&gt;
     &lt;taskdef name="part" classname="org.signserver.anttasks.PartAntTask"
@@ -2750,7 +2750,7 @@ The MailSigner support SMTP Authentication which is configured in the build prop
 
             <section name="Archiving Responses (SignServer only)">
                 <p>
-If there is a need to save all generated responses, then set the property “ARCHIVE” to “TRUE” and all generated responses for that signer will be saved to database.
+If there is a need to save all generated responses, then set the property "ARCHIVE" to "TRUE" and all generated responses for that signer will be saved to database.
                 </p>
                 <p>
 The archived responses can later be extracted from data base using the CLI interface. See the CLI section for more information.

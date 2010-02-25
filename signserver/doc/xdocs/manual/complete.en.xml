@@ -1732,29 +1732,68 @@ Example:  Having SENDERNAME=TRUE, SIGNERADDRESS=mailsigner@mailsigner and sendin
                 <p>
                     There exists four types of crypto tokens (Formerly known as sign tokens), two for storing the keys in software, one general for communicating with cryptographic hardware through the PKCS11 interface and one for SmartCards. See the developer section for information about developing support for other HSMs.
                 </p>
+                <p>
+Which CryptoToken a worker is using is determined by the its SIGNERTOKEN.CLASSPATH
+property which should contain the fully qualified class name of the CryptoToken
+implementation. In addition to that property one must also make sure that the
+other properties needed by the particular crypto token are available.
+                </p>
+
                 <subsection name="P12CryptoToken">
-                    <p>
-The P12CryptoToken signer have the class path: org.signserver.server.cryptotokens.P12CryptoToken
-                    </p>
-                    
                     <subsubsection name="Overview">
                         <p>
-A CryptoToken using a PKCS 12 key-store in the file-system. Can only contain one signing key.
+A CryptoToken using a PKCS#12 (.p12/.pfx) key-store in the local file-system. It can only
+contain one signing key.
                         </p>
                         <p>
-In a clustered environment must the key store be at the same location at all nodes.
+In a clustered environment the key store must placed at the same location at all nodes.
                         </p>
                         <p>
 The P12CryptoToken, doesn't support the destroyKey() method
                         </p>
                     </subsubsection>
 
+                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
+                        <p>
+The fully qualified class name is: <b>org.signserver.server.cryptotokens.JKSCryptoToken</b>
+                        </p>
+                    </subsubsection>
+
                     <subsubsection name="Available Properties">
                         <p>
- <b>KEYSTOREPATH</b> : The full path to the key-store to load. (required)
+<b>KEYSTOREPATH</b>: The full path to the key-store file to load. (required)
                         </p>
                         <p>
-<b>KEYSTOREPASSWORD</b> : The password that locks the key-store. Used for automatic activation.
+<b>KEYSTOREPASSWORD</b>: The password that locks the key-store. Used for automatic activation.
+                        </p>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="JKSCryptoToken">
+                    <subsubsection name="Overview">
+                        <p>
+A CryptoToken using a Java Key Store (.jks) in the file-system. Can only contain one signing key.
+                        </p>
+                        <p>
+In a clustered environment must the key store be at the same location at all nodes.
+                        </p>
+                        <p>
+The JKSCryptoToken, doesn't support the destroyKey() method
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
+                        <p>
+The fully qualified class name is: <b>org.signserver.server.cryptotokens.P12CryptoToken</b>
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Available Properties">
+                        <p>
+<b>KEYSTOREPATH</b>: The full path to the key-store to load. (required)
+                        </p>
+                        <p>
+<b>KEYSTOREPASSWORD</b>: The password that locks the key-store. Used for automatic activation.
                         </p>
                     </subsubsection>
                 </subsection>
@@ -1770,8 +1809,11 @@ PrimeCardHSM requires PCSCD software and SmartCard drivers. See separate documen
                         <p>
 The PrimeCardHSMCryptoToken, doesn't support the destroyKey() method.
                         </p>
+                    </subsubsection>
+
+                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
                         <p>
-The PrimeCardHSMCryptoToken signer have the class path: org.signserver.server.cryptotokens.PrimeCardHSMCryptoToken
+The fully qualified class name is: <b>org.signserver.server.cryptotokens.PrimeCardHSMCryptoToken</b>
                         </p>
                     </subsubsection>
 
@@ -1788,10 +1830,12 @@ The PrimeCardHSMCryptoToken signer have the class path: org.signserver.server.cr
                 <subsection name="PKCS11CryptoToken">
                     <subsubsection name="Overview">
                         <p>
-Using PKCS11 it's possible to use a HSM that has a PKCS11 module, such as Utimaco, nCipher or Eracom.
+Using PKCS11 it's possible to use a HSM that has a PKCS11 module, such as Utimaco, nCipher or SafeNet/Eracom.
                         </p>
+                    </subsubsection>
+                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
                         <p>
-The PKCS11CryptoToken have the class path: org.signserver.server.cryptotokens.PKCS11CryptoToken
+The fully qualified class name is: <b>org.signserver.server.cryptotokens.PKCS11CryptoToken</b>
                         </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">
@@ -1845,8 +1889,10 @@ The SoftCryptoToken is a simple token managing it's own soft keys instead throug
                         <p>
 The method destroyKey is not supported.
                         </p>
+                    </subsubsection>
+                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
                         <p>
-The SoftCryptoToken have the class path: org.signserver.server.cryptotokens.SoftCryptoToken
+The fully qualified class name is: <b>org.signserver.server.cryptotokens.SoftCryptoToken</b>
                         </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">

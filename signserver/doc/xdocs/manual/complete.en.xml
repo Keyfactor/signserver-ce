@@ -1339,6 +1339,20 @@ This property is ignored if ADD_VISIBLE_SIGNATURE is set to False or if custom i
                         <p>
 Possible values : True, False. Default value is True.
                         </p>
+
+                        <p>
+<b>CERTIFICATION_LEVEL</b>=
+    Set this property to have the document certified with a certifying signature.
+                        </p>
+                        <p>
+Possible values:<br/>
+NOT_CERTIFIED: The document is not certified.<br/>
+FORM_FILLING: The document is certified but the form can be filled in without invalidating the signature.<br/>
+FORM_FILLING_AND_ANNOTATIONS: The document is certified but the form can be filled in and annotations added without invalidating the signature.<br/>
+NO_CHANGES_ALLOWED: The document is certified and no changes can be made.<br/>
+Default value is NOT_CERTIFIED.
+                        </p>
+
                         <p>
 <b>TSA_URL</b>=
 	If we want to timestamp document signature, specify timestamp authority url.  If we do not want to timestamp document signature , do not set property.

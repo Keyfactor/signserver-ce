@@ -1234,7 +1234,7 @@ The following properties can be configured with the signer:
                         </p>
                         <p>
 <b>REASON</b> =
-	 The reason included in the PDF signature and displayed by the PDF reader. Default value is “Signed by SignServer”.
+	 The reason included in the PDF signature and displayed by the PDF reader. Default value is "Signed by SignServer".
                         </p>
                         <p>
 <b>LOCATION</b> =
@@ -1537,7 +1537,7 @@ WORKER1.VAL2.ISSUER1.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....
 There exists a Java CLI tool that can be used to check the validity of a certificate from scripts. It supports a clustered SignServer installation by using the "Use first host that response OK" policy.
                     </p>
                     <p>
-When compiling, make sure that setting validationclient.enabled is set to “true” in the build properties. The client is found in dist-client/validationclient. Just copy the validate.jar and all the files in the 'lib' directory to the location where you want to use the client.
+When compiling, make sure that setting validationclient.enabled is set to "true" in the build properties. The client is found in dist-client/validationclient. Just copy the validate.jar and all the files in the 'lib' directory to the location where you want to use the client.
                     </p>
                     <p>
 Use the client with 'java -jar validate.jar &lt;options&gt;'.
@@ -1604,13 +1604,13 @@ The basic configuration of a group key service is very similar to that of a vali
 <b>USEPREGENERATION</b> = Setting defining of keys should be pre-generated or generated on the fly when needed. If the pool of pre-generated keys gets empty will new keys always be generated automatically. (Optional, default is true)
                         </p>
                         <p>
-<b>ENCKEYALG</b> =  Encryption algorithm used to encrypt the group keys stored in database. ( Optional, default is "AES")
+<b>ENCKEYALG</b> =  Encryption algorithm used to encrypt the group keys stored in database. (Optional, default is "AES")
                         </p>
                         <p>
-<b>ENCKEYSPEC</b> = Specification of the encryption key. (Optional, default is “256”)
+<b>ENCKEYSPEC</b> = Specification of the encryption key. (Optional, default is "256")
                         </p>
                         <p>
-<b>GROUPKEYALG</b> =  Defines the type of group keys that this service should generate ( Optional, default is "AES")
+<b>GROUPKEYALG</b> =  Defines the type of group keys that this service should generate (Optional, default is "AES")
                         </p>
                         <p>
 <b>GROUPKEYSPEC</b> = Specification of the generated group keys. (Optional, default is "256")
@@ -2480,7 +2480,7 @@ MAR Task Properties
                         <tr>
                             <td>version</td>
                             <td>
-The version of the module archive, can only contain digits. If not set will “1” be used. (Optional)
+The version of the module archive, can only contain digits. If not set will "1" be used. (Optional)
                             </td>
                         </tr>
                         <tr>
@@ -2536,7 +2536,7 @@ PART Task Properties
 Here is an example of a simple ANT task building a MAR file, it will have the module name of SOME, version of 3 and have a 'server' part with all the JARs in 'somejarlocation' and all the worker properties in the directory 'someworkerpropertieslocation' :
                     </p>
                     <source>
-    &lt;target name="gensomemar" depends=”signserver.ear”&gt;
+    &lt;target name="gensomemar" depends="signserver.ear"&gt;
     &lt;taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
        classpathref="signserver.test.compile.classpath"/&gt;
     &lt;taskdef name="part" classname="org.signserver.anttasks.PartAntTask"

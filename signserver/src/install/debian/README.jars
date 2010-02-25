@@ -1,60 +1,67 @@
-Packages as found in debian 2008-07-30
+Packages as found in debian 2008-07-30. 
+In 6th column packages as found in Ubuntu 10.04 alpha2 2010-02-25.
 Plan is to make a binary package of the "not found" packages and depend on that and the existing jars (this is not done yet tough)
 
-4243690 1620 -rw-r--r--   1 han      han       1653685 Jul 28 22:18 ./1.6/bcprov-jdk.jar			1.41 beta not found
-4243687 1624 -rw-r--r--   1 han      han       1657010 Jul 28 22:18 ./1.6/bcprov-jdk.139.jar			libbcprov-java 1.39-2
-2179285  212 -rw-r--r--   1 han      han        212232 Jul 11 22:50 ./1.6/bcmail-jdk.jar			libbcmail-java 1.39-2
-2589293  836 -rw-r--r--   1 han      han        849481 May  1 22:41 ./jaxws/jaxb-impl.jar			not found
-2589299  504 -rw-r--r--   1 han      han        509137 May  1 22:41 ./jaxws/jaxws-tools.jar			not found
-2589305   36 -rw-r--r--   1 han      han         36070 May  1 22:41 ./jaxws/jaxws-api.jar                       not found
-2589296  292 -rw-r--r--   1 han      han        291779 May  1 22:41 ./jaxws/FastInfoset.jar                     not found
-2589287 3060 -rw-r--r--   1 han      han       3126060 May  1 22:41 ./jaxws/jaxb-xjc.jar                        not found
-2589295   20 -rw-r--r--   1 han      han         18770 May  1 22:41 ./jaxws/saaj-api.jar                        not found
-2589297   64 -rw-r--r--   1 han      han         57960 May  1 22:41 ./jaxws/streambuffer.jar                    not found
-2589290 1168 -rw-r--r--   1 han      han       1187868 May  1 22:41 ./jaxws/jaxws-rt.jar                        not found
-2589289  276 -rw-r--r--   1 han      han        277026 May  1 22:41 ./jaxws/saaj-impl.jar                       not found
-2589288  328 -rw-r--r--   1 han      han        331011 May  1 22:41 ./jaxws/sjsxp.jar                           not found
-2589292   24 -rw-r--r--   1 han      han         23346 May  1 22:41 ./jaxws/jsr173_api.jar                      not found
-2589298   12 -rw-r--r--   1 han      han         11001 May  1 22:41 ./jaxws/stax-ex.jar                         not found
-2589303   72 -rw-r--r--   1 han      han         68177 May  1 22:41 ./jaxws/resolver.jar                        not found
-2589304   68 -rw-r--r--   1 han      han         62983 May  1 22:41 ./jaxws/activation.jar                      not found
-2589300   92 -rw-r--r--   1 han      han         89967 May  1 22:41 ./jaxws/jaxb-api.jar                        not found
-2589294   40 -rw-r--r--   1 han      han         37461 May  1 22:41 ./jaxws/mimepull.jar                        not found
-2589302    8 -rw-r--r--   1 han      han          7989 May  1 22:41 ./jaxws/jsr181-api.jar                      not found
-2589291   84 -rw-r--r--   1 han      han         81798 May  1 22:41 ./jaxws/http.jar                            not found
-2589301    8 -rw-r--r--   1 han      han          6165 May  1 22:41 ./jaxws/jsr250-api.jar			not found
-1605646  364 -rw-r--r--   1 han      han        367444 May  1 22:42 ./log4j.jar					liblog4j1.2-java 1.2.15-3
-7538181   28 -rw-r--r--   1 han      han         24942 Jul 28 22:18 ./module/tsa/1.6/bctsp-jdk.jar		libbctsp-java 1.39-2
-7538167   24 -rw-r--r--   1 han      han         23947 Jul 28 22:18 ./module/tsa/1.5/bctsp-jdk.jar		libbctsp-java 1.39-2 ???
-3293197 1136 -rw-r--r--   1 han      han       1155088 Jul 28 22:18 ./module/pdfsigner/itext/itext.jar		libitext-java 1.4.5-3
-1605647  436 -rw-r--r--   1 han      han        439100 May  1 22:42 ./ldap.jar					not found
-1605645  520 -rw-r--r--   1 han      han        528045 May  1 22:42 ./ejbca-util.jar				not found
-2506890  416 -rw-r--r--   1 han      han        421601 May  1 22:41 ./quartz/quartz-1.6.0.jar			libquartz-java (1.6.1~RC1-1)
-7538096 1564 -rw-r--r--   1 han      han       1594518 Jul 28 22:17 ./1.5/bcprov-jdk.jar			libbcprov-java (1.39-2) only compiled with gcj
-7537523 1568 -rw-r--r--   1 han      han       1598015 Jul 28 22:17 ./1.5/bcprov-jdk.139.jar			libbcprov-java (1.39-2) only compiled with gcj
-6193721  204 -rw-r--r--   1 han      han        204481 Jul 11 22:50 ./1.5/bcmail-jdk.jar			libbcprov-java (1.39-2) only compiled with gcj
-1524090   84 -rw-r--r--   1 han      han         79265 May  1 22:40 ./ext/servlet-2.3.jar			libservlet2.3-java 4.0-10
-1524094   32 -rw-r--r--   1 han      han         30117 May  1 22:40 ./ext/commons-cli-1.0.jar			libcommons-cli-java 1.1-3
-1704032   24 -rw-r--r--   1 han      han         23730 May  1 22:40 ./ext/james/smtp.jar			not found
-1704029  676 -rw-r--r--   1 han      han        686864 May  1 22:40 ./ext/james/james-2.3.1.jar			not found
-1704028   12 -rw-r--r--   1 han      han         10296 May  1 22:40 ./ext/james/mailet-2.3.jar			not found
-1704031    8 -rw-r--r--   1 han      han          6634 May  1 22:40 ./ext/james/mailet-api-2.3.jar		not found
-1704030  384 -rw-r--r--   1 han      han        388864 May  1 22:40 ./ext/james/mail-1.4.jar			not found
-1819009   56 -rw-r--r--   1 han      han         52220 May 21 19:40 ./ext/ejb/ejb3-persistence.jar		not found
-1818662   20 -rw-r--r--   1 han      han         20385 May  1 22:40 ./ext/ejb/jboss-ejb3x.jar			libjboss-ejb3x-java 4.2.2.GA-5
-1524092  128 -rw-r--r--   1 han      han        124724 May  1 22:40 ./ext/xml-apis.jar				libjaxp1.3-java	1.3.04-3
-1524095  124 -rw-r--r--   1 han      han        121070 May  1 22:40 ./ext/junit-3.8.1.jar			junit 3.8.2-1
-1524091  172 -rw-r--r--   1 han      han        171658 May  1 22:40 ./ext/jsch-0.1.32.jar			libjsch-java 0.1.37-3
-1524096  140 -rw-r--r--   1 han      han        137410 May  1 22:40 ./ext/jdom-b9.jar				libjdom1-java(1.0-4)
-1966304   72 -rw-r--r--   1 han      han         67115 May  1 22:40 ./ext/velocity/nekohtml.jar			libnekohtml-java 0.9.5+dfsg-1.1
-1966301  128 -rw-r--r--   1 han      han        124724 May  1 22:40 ./ext/velocity/xml-apis.jar			libxalan2-java 2.7.1-2
-1966302   48 -rw-r--r--   1 han      han         45386 May  1 22:40 ./ext/velocity/activation.jar		libgnujaf-java 1.1.1-4
-1966303  140 -rw-r--r--   1 han      han        137410 May  1 22:40 ./ext/velocity/jdom-b9.jar			libjdom1-java 1.0-4 
-1966300  512 -rw-r--r--   1 han      han        517761 May  1 22:40 ./ext/velocity/velocity-dep-1.4.jar		velocity 1.4-5
-1524093  872 -rw-r--r--   1 han      han        885362 May  1 22:40 ./ext/xerces_2_3_0.jar			libxerces2-java 2.9.1-2 /usr/share/java/xercesImpl.jar
-3345202 1268 -rw-r--r--   1 han      han       1291498 May  1 22:42 ./reports/jfreechart-1.0.9.jar 		libjfreechart-java 1.0.10-1
-3345201  308 -rw-r--r--   1 han      han        307734 May  1 22:42 ./reports/jcommon-1.0.12.jar		libjcommon-java 1.0.10.dfsg-1
-1605644  172 -rw-r--r--   1 han      han        169763 May  1 22:42 ./commons-lang-2.0.jar			libcommons-lang-java 2.4-1
-7604693   32 -rw-r--r--   1 han      han         32694 Jul  2 19:07 ./asm/asm-commons-3.1.jar			libasm3-java 3.1-2
-7604694   44 -rw-r--r--   1 han      han         43035 Jul  2 19:07 ./asm/asm-3.1.jar				libasm3-java 3.1-2
+																	in lucid
 
+4243690 1620 -rw-r--r--   1 han      han       1653685 Jul 28 22:18 ./1.6/bcprov-jdk.jar			1.41 beta not found	libbcprov-java (1.43-1ubuntu1)
+4243687 1624 -rw-r--r--   1 han      han       1657010 Jul 28 22:18 ./1.6/bcprov-jdk.139.jar			libbcprov-java 1.39-2
+2179285  212 -rw-r--r--   1 han      han        212232 Jul 11 22:50 ./1.6/bcmail-jdk.jar			libbcmail-java 1.39-2	libbcmail-java (1.43-1ubuntu1)
+2589293  836 -rw-r--r--   1 han      han        849481 May  1 22:41 ./jaxws/jaxb-impl.jar			not found		todo: needed?
+2589299  504 -rw-r--r--   1 han      han        509137 May  1 22:41 ./jaxws/jaxws-tools.jar			not found		todo: needed?
+2589305   36 -rw-r--r--   1 han      han         36070 May  1 22:41 ./jaxws/jaxws-api.jar                       not found		todo: needed?
+2589296  292 -rw-r--r--   1 han      han        291779 May  1 22:41 ./jaxws/FastInfoset.jar                     not found		todo: needed?
+2589287 3060 -rw-r--r--   1 han      han       3126060 May  1 22:41 ./jaxws/jaxb-xjc.jar                        not found		todo: needed?
+2589295   20 -rw-r--r--   1 han      han         18770 May  1 22:41 ./jaxws/saaj-api.jar                        not found		todo: needed?
+2589297   64 -rw-r--r--   1 han      han         57960 May  1 22:41 ./jaxws/streambuffer.jar                    not found		todo: needed?
+2589290 1168 -rw-r--r--   1 han      han       1187868 May  1 22:41 ./jaxws/jaxws-rt.jar                        not found		todo: needed?
+2589289  276 -rw-r--r--   1 han      han        277026 May  1 22:41 ./jaxws/saaj-impl.jar                       not found		todo: needed?
+2589288  328 -rw-r--r--   1 han      han        331011 May  1 22:41 ./jaxws/sjsxp.jar                           not found		todo: needed?
+2589292   24 -rw-r--r--   1 han      han         23346 May  1 22:41 ./jaxws/jsr173_api.jar                      not found		todo: needed?
+2589298   12 -rw-r--r--   1 han      han         11001 May  1 22:41 ./jaxws/stax-ex.jar                         not found		todo: needed?
+2589303   72 -rw-r--r--   1 han      han         68177 May  1 22:41 ./jaxws/resolver.jar                        not found		todo: needed?
+2589304   68 -rw-r--r--   1 han      han         62983 May  1 22:41 ./jaxws/activation.jar                      not found		todo: needed?
+2589300   92 -rw-r--r--   1 han      han         89967 May  1 22:41 ./jaxws/jaxb-api.jar                        not found		todo: needed?
+2589294   40 -rw-r--r--   1 han      han         37461 May  1 22:41 ./jaxws/mimepull.jar                        not found		todo: needed?
+2589302    8 -rw-r--r--   1 han      han          7989 May  1 22:41 ./jaxws/jsr181-api.jar                      not found		todo: needed?
+2589291   84 -rw-r--r--   1 han      han         81798 May  1 22:41 ./jaxws/http.jar                            not found		todo: needed?
+2589301    8 -rw-r--r--   1 han      han          6165 May  1 22:41 ./jaxws/jsr250-api.jar			not found		todo: needed?
+1605646  364 -rw-r--r--   1 han      han        367444 May  1 22:42 ./log4j.jar					liblog4j1.2-java 1.2.15-3	liblog4j1.2-java (1.2.15-9ubuntu2)
+7538181   28 -rw-r--r--   1 han      han         24942 Jul 28 22:18 ./module/tsa/1.6/bctsp-jdk.jar		libbctsp-java 1.39-2		libbctsp-java (1.43-1ubuntu1)
+7538167   24 -rw-r--r--   1 han      han         23947 Jul 28 22:18 ./module/tsa/1.5/bctsp-jdk.jar		libbctsp-java 1.39-2 ???	-
+3293197 1136 -rw-r--r--   1 han      han       1155088 Jul 28 22:18 ./module/pdfsigner/itext/itext.jar		libitext-java 1.4.5-3		libitext-java (2.1.7-1)
+1605647  436 -rw-r--r--   1 han      han        439100 May  1 22:42 ./ldap.jar					not found			-
+1605645  520 -rw-r--r--   1 han      han        528045 May  1 22:42 ./ejbca-util.jar				not found			needs packaging
+2506890  416 -rw-r--r--   1 han      han        421601 May  1 22:41 ./quartz/quartz-1.6.0.jar			libquartz-java (1.6.1~RC1-1)	libquartz-java (1.6.6-1)
+7538096 1564 -rw-r--r--   1 han      han       1594518 Jul 28 22:17 ./1.5/bcprov-jdk.jar			libbcprov-java (1.39-2) only compiled with gcj	-
+7537523 1568 -rw-r--r--   1 han      han       1598015 Jul 28 22:17 ./1.5/bcprov-jdk.139.jar			libbcprov-java (1.39-2) only compiled with gcj	-
+6193721  204 -rw-r--r--   1 han      han        204481 Jul 11 22:50 ./1.5/bcmail-jdk.jar			libbcprov-java (1.39-2) only compiled with gcj
+1524090   84 -rw-r--r--   1 han      han         79265 May  1 22:40 ./ext/servlet-2.3.jar			libservlet2.3-java 4.0-10	libservlet2.3-java (4.0-10ubuntu3)
+1524094   32 -rw-r--r--   1 han      han         30117 May  1 22:40 ./ext/commons-cli-1.0.jar			libcommons-cli-java 1.1-3	libcommons-cli-java (1.2-2ubuntu1)
+1704032   24 -rw-r--r--   1 han      han         23730 May  1 22:40 ./ext/james/smtp.jar			not found			needs packaging
+1704029  676 -rw-r--r--   1 han      han        686864 May  1 22:40 ./ext/james/james-2.3.1.jar			not found			needs packaging
+1704028   12 -rw-r--r--   1 han      han         10296 May  1 22:40 ./ext/james/mailet-2.3.jar			not found			needs packaging
+1704031    8 -rw-r--r--   1 han      han          6634 May  1 22:40 ./ext/james/mailet-api-2.3.jar		not found			needs packaging
+1704030  384 -rw-r--r--   1 han      han        388864 May  1 22:40 ./ext/james/mail-1.4.jar			not found			needs packaging
+1819009   56 -rw-r--r--   1 han      han         52220 May 21 19:40 ./ext/ejb/ejb3-persistence.jar		not found			todo: needed?
+1818662   20 -rw-r--r--   1 han      han         20385 May  1 22:40 ./ext/ejb/jboss-ejb3x.jar			libjboss-ejb3x-java 4.2.2.GA-5	libjboss-ejb3x-java (4.2.3.GA-1)
+1524092  128 -rw-r--r--   1 han      han        124724 May  1 22:40 ./ext/xml-apis.jar				libjaxp1.3-java	1.3.04-3	libjaxp1.3-java (1.3.04-5ubuntu2)
+1524095  124 -rw-r--r--   1 han      han        121070 May  1 22:40 ./ext/junit-3.8.1.jar			junit 3.8.2-1			junit (3.8.2-4)
+1524091  172 -rw-r--r--   1 han      han        171658 May  1 22:40 ./ext/jsch-0.1.32.jar			libjsch-java 0.1.37-3		libjsch-java (0.1.42-1build1)
+1524096  140 -rw-r--r--   1 han      han        137410 May  1 22:40 ./ext/jdom-b9.jar				libjdom1-java(1.0-4)		libjdom1-java (1.1.1+dfsg-1)
+1966304   72 -rw-r--r--   1 han      han         67115 May  1 22:40 ./ext/velocity/nekohtml.jar			libnekohtml-java 0.9.5+dfsg-1.1	libnekohtml-java (1.9.13-1)
+1966301  128 -rw-r--r--   1 han      han        124724 May  1 22:40 ./ext/velocity/xml-apis.jar			libxalan2-java 2.7.1-2		libxalan2-java (2.7.1-5ubuntu1)
+1966302   48 -rw-r--r--   1 han      han         45386 May  1 22:40 ./ext/velocity/activation.jar		libgnujaf-java 1.1.1-4		libgnujaf-java (1.1.1-5)
+1966303  140 -rw-r--r--   1 han      han        137410 May  1 22:40 ./ext/velocity/jdom-b9.jar			libjdom1-java 1.0-4 		libjdom1-java (1.1.1+dfsg-1)
+1966300  512 -rw-r--r--   1 han      han        517761 May  1 22:40 ./ext/velocity/velocity-dep-1.4.jar		velocity 1.4-5			velocity (1.6.2-3)
+1524093  872 -rw-r--r--   1 han      han        885362 May  1 22:40 ./ext/xerces_2_3_0.jar			libxerces2-java 2.9.1-2 /usr/share/java/xercesImpl.jar	libxerces2-java (2.9.1-4ubuntu1)
+3345202 1268 -rw-r--r--   1 han      han       1291498 May  1 22:42 ./reports/jfreechart-1.0.9.jar 		libjfreechart-java 1.0.10-1	libjfreechart-java (1.0.13-2)
+3345201  308 -rw-r--r--   1 han      han        307734 May  1 22:42 ./reports/jcommon-1.0.12.jar		libjcommon-java 1.0.10.dfsg-1	libjcommon-java (1.0.10.dfsg-1ubuntu1)
+1605644  172 -rw-r--r--   1 han      han        169763 May  1 22:42 ./commons-lang-2.0.jar			libcommons-lang-java 2.4-1	libcommons-lang-java (2.4-4)
+7604693   32 -rw-r--r--   1 han      han         32694 Jul  2 19:07 ./asm/asm-commons-3.1.jar			libasm3-java 3.1-2		libasm3-java (3.2-3ubuntu1)
+7604694   44 -rw-r--r--   1 han      han         43035 Jul  2 19:07 ./asm/asm-3.1.jar				libasm3-java 3.1-2		libasm3-java (3.2-3ubuntu1)
+
+Application Servers
+James																		needs packaging
+JBoss 4.2.3																	jbossas4 not complete, needs packaging
+GlassFish V2																	glassfish-appserv (2+b58g-3ubuntu1), not complete, needs packaging

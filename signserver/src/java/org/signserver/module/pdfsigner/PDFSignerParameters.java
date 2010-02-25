@@ -26,12 +26,13 @@ import org.signserver.common.WorkerConfig;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
+import com.lowagie.text.pdf.PdfSignatureAppearance;
 
 /**
  * Class that holds configuration values passed to pdfsigner.
  * 
  * @author rayback_2
- * @version $Id:
+ * @version $Id$
  */
 public class PDFSignerParameters {
 
@@ -54,6 +55,8 @@ public class PDFSignerParameters {
 	private String visible_sig_custom_image_base64;
 	private String visible_sig_custom_image_path;
 	private boolean visible_sig_custom_image_scale_to_rectangle = PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE_DEFAULT;
+
+        private int certification_level = PDFSigner.CERTIFICATION_LEVEL_DEFAULT;
 
 	private String tsa_url;
 	private String tsa_username;
@@ -255,6 +258,29 @@ public class PDFSignerParameters {
 				}
 			}
 		}
+
+                // Certification level
+                final String level = config.getProperty(PDFSigner.CERTIFICATION_LEVEL);
+                if (level != null) {
+                    if (level.equalsIgnoreCase("NO_CHANGES_ALLOWED")) {
+                        certification_level =
+                                PdfSignatureAppearance.CERTIFIED_NO_CHANGES_ALLOWED;
+                    } else if (level.equalsIgnoreCase("FORM_FILLING_AND_ANNOTATIONS")) {
+                        certification_level =
+                                PdfSignatureAppearance.CERTIFIED_FORM_FILLING_AND_ANNOTATIONS;
+                    } else if (level.equalsIgnoreCase("FORM_FILLING")) {
+                        certification_level =
+                                PdfSignatureAppearance.CERTIFIED_FORM_FILLING;
+                    } else if (level.equalsIgnoreCase("NOT_CERTIFIED")) {
+                        certification_level = PdfSignatureAppearance.NOT_CERTIFIED;
+                    } else {
+                        throw new SignServerException(
+                                "Unknown value for CERTIFICATION_LEVEL");
+                    }
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("using certification level: " + certification_level);
+                }
 	}
 
 	/**
@@ -384,4 +410,8 @@ public class PDFSignerParameters {
 	public boolean isEmbed_ocsp_response() {
 		return embed_ocsp_response;
 	}
+
+    public int getCertification_level() {
+        return certification_level;
+    }
 }

@@ -10,12 +10,14 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.module.pdfsigner;
 
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.io.FileOutputStream;
 import java.security.cert.Certificate;
 import java.util.Hashtable;
+import java.util.Random;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -24,9 +26,12 @@ import junit.framework.TestCase;
 
 import org.ejbca.util.Base64;
 import org.signserver.cli.CommonAdminInterface;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.clusterclassloader.MARFileParser;
@@ -34,14 +39,26 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
-
+/**
+ * Unit tests for the PDFSigner.
+ *
+ * @version $Id$
+ */
 public class TestPDFSigner extends TestCase {
+
+
+
+        private static final int WORKERID = 5675;
 
 	
 	private static IWorkerSession.IRemote sSSession = null;
 	
 	private static String signserverhome;
 	private static int moduleVersion;
+
+        private static Random random = new Random(WORKERID);
+
+        private static final String CERTIFICATION_LEVEL = "CERTIFICATION_LEVEL";
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -79,41 +96,132 @@ public class TestPDFSigner extends TestCase {
 	    assertTrue(TestUtils.grepTempOut("Loading module PDFSIGNER"));
 	    assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
-	    sSSession.reloadConfiguration(5675);
+	    sSSession.reloadConfiguration(WORKERID);
 	}
 
 
 
 	public void test01BasicPdfSign() throws Exception{
 
+            final GenericSignResponse res = signDocument(WORKERID, Base64.decode(
+                        (testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
 
-		int reqid = 13;
+            final PdfReader reader = new PdfReader(res.getProcessedData());
+            assertFalse("isTampered", reader.isTampered());
 
-		GenericSignRequest signRequest = new GenericSignRequest(13, Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
-
-
-		GenericSignResponse res = (GenericSignResponse) sSSession.process(5675,signRequest, new RequestContext()); 
-
-		assertTrue(reqid == res.getRequestID());
-
-		Certificate signercert = res.getSignerCertificate();
-
-		assertNotNull(signercert);
-
-		// TODO: verify PDF file
-		FileOutputStream fos = new FileOutputStream(signserverhome + "/tmp/signedpdf.pdf");
-		fos.write((byte[]) res.getProcessedData());
-		fos.close();
-		
+            // TODO: verify PDF file
+            FileOutputStream fos = new FileOutputStream(signserverhome + "/tmp/signedpdf.pdf");
+            fos.write((byte[]) res.getProcessedData());
+            fos.close();
 	}
 
 	public void test02GetStatus() throws Exception {
 		
 		
-		SignerStatus stat = (SignerStatus) sSSession.getStatus(5675);
+		SignerStatus stat = (SignerStatus) sSSession.getStatus(WORKERID);
 		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);		
 
 	}
+
+        /**
+         * Tests default certification level.
+         * @throws Exception in case of exception
+         */
+        public void test03CertificationLevelDefault() throws Exception {
+
+            // Test default which is no certification
+            sSSession.removeWorkerProperty(WORKERID, CERTIFICATION_LEVEL);
+            sSSession.reloadConfiguration(WORKERID);
+
+            final GenericSignResponse res = signDocument(WORKERID,
+                    Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
+
+            final PdfReader reader = new PdfReader(res.getProcessedData());
+
+            assertEquals("certificationLevel",
+                    PdfSignatureAppearance.NOT_CERTIFIED,
+                    reader.getCertificationLevel());
+        }
+
+        /**
+         * Tests certification level NOT_CERTIFIED.
+         * @throws Exception in case of exception
+         */
+        public void test04CertificationLevelNotCertified() throws Exception {
+
+            // Test default which is no certification
+            sSSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "NOT_CERTIFIED");
+            sSSession.reloadConfiguration(WORKERID);
+
+            final GenericSignResponse res = signDocument(WORKERID,
+                    Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
+
+            final PdfReader reader = new PdfReader(res.getProcessedData());
+
+            assertEquals("certificationLevel",
+                    PdfSignatureAppearance.NOT_CERTIFIED,
+                    reader.getCertificationLevel());
+        }
+
+        /**
+         * Tests certification level NO_CHANGES_ALLOWED.
+         * @throws Exception in case of exception
+         */
+        public void test05CertificationLevelNoChangesAllowed() throws Exception {
+
+            // Test default which is no certification
+            sSSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "NO_CHANGES_ALLOWED");
+            sSSession.reloadConfiguration(WORKERID);
+
+            final GenericSignResponse res = signDocument(WORKERID,
+                    Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
+
+            final PdfReader reader = new PdfReader(res.getProcessedData());
+
+            assertEquals("certificationLevel",
+                    PdfSignatureAppearance.CERTIFIED_NO_CHANGES_ALLOWED,
+                    reader.getCertificationLevel());
+        }
+
+        /**
+         * Tests certification level FORM_FILLING_AND_ANNOTATIONS
+         * @throws Exception in case of exception
+         */
+        public void test06CertificationLevelFormFillingAndAnnotations() throws Exception {
+
+            // Test default which is no certification
+            sSSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "FORM_FILLING_AND_ANNOTATIONS");
+            sSSession.reloadConfiguration(WORKERID);
+
+            final GenericSignResponse res = signDocument(WORKERID,
+                    Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
+
+            final PdfReader reader = new PdfReader(res.getProcessedData());
+
+            assertEquals("certificationLevel",
+                    PdfSignatureAppearance.CERTIFIED_FORM_FILLING_AND_ANNOTATIONS,
+                    reader.getCertificationLevel());
+        }
+
+        /**
+         * Tests certification level FORM_FILLING_AND_ANNOTATIONS
+         * @throws Exception in case of exception
+         */
+        public void test07CertificationLevelFormFillingAndAnnotations() throws Exception {
+
+            // Test default which is no certification
+            sSSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "FORM_FILLING");
+            sSSession.reloadConfiguration(WORKERID);
+
+            final GenericSignResponse res = signDocument(WORKERID,
+                   Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
+
+            final PdfReader reader = new PdfReader(res.getProcessedData());
+
+            assertEquals("certificationLevel",
+                    PdfSignatureAppearance.CERTIFIED_FORM_FILLING,
+                    reader.getCertificationLevel());
+        }
 
 	
 	public void test99TearDownDatabase() throws Exception{
@@ -122,12 +230,30 @@ public class TestPDFSigner extends TestCase {
 		
 		TestUtils.assertSuccessfulExecution(new String[] {"module", "remove","PDFSIGNER", "" + moduleVersion});		
 		assertTrue(TestUtils.grepTempOut("Removal of module successful."));
-	    sSSession.reloadConfiguration(5675);
+	    sSSession.reloadConfiguration(WORKERID);
 	    	    
 	}
 	
 
 
+    private static GenericSignResponse signDocument(final int workerId,
+            final byte[] data) throws IllegalRequestException,
+                CryptoTokenOfflineException, SignServerException {
+
+        final int requestId = random.nextInt();
+
+        final GenericSignRequest request = new GenericSignRequest(requestId,
+                data);
+
+        final GenericSignResponse response = (GenericSignResponse)
+                sSSession.process(workerId, request, new RequestContext());
+        assertEquals("requestId", requestId, response.getRequestID());
+
+        Certificate signercert = response.getSignerCertificate();
+        assertNotNull(signercert);
+
+        return response;
+    }
   
   /**
    * Get the initial naming context

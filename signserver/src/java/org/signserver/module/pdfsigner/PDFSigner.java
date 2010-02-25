@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.module.pdfsigner;
 
 import java.io.ByteArrayOutputStream;
@@ -82,7 +81,10 @@ import com.lowagie.text.pdf.TSAClientBouncyCastle;
  * 
  * TSA_URL = The URL of the timestamp authority TSA_USERNAME = Account
  * (username) of the TSA TSA_PASSWORD = Password for TSA
- * 
+ *
+ * CERTIFICATION_LEVEL = The level of certification for the document.
+ *  NOT_CERTIFIED, FORM_FILLING_AND_ANNOTATIONS, FORM_FILLING or NOT_CERTIFIED
+ *  (default: NOT_CERTIFIED).
  * 
  * @author Tomas Gustavsson
  * @version $Id$
@@ -113,6 +115,8 @@ public class PDFSigner extends BaseSigner {
 	public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH";
 	public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_RESIZE_TO_RECTANGLE";
 	public static final boolean VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE_DEFAULT = true;
+        public static final String CERTIFICATION_LEVEL = "CERTIFICATION_LEVEL";
+        public static final int CERTIFICATION_LEVEL_DEFAULT = PdfSignatureAppearance.NOT_CERTIFIED;
 
 	// properties that control timestamping of signature
 	public static final String TSA_URL = "TSA_URL";
@@ -262,6 +266,9 @@ public class PDFSigner extends BaseSigner {
 				n2.addImage(params.getCustom_image());
 			}
 		}
+
+                // Certification level
+                sap.setCertificationLevel(params.getCertification_level());
 
 		PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, new PdfName(
 				"adbe.pkcs7.detached"));

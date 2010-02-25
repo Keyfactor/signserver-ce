@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.module.pdfsigner;
 
 import java.io.ByteArrayOutputStream;
@@ -75,15 +74,18 @@ import com.lowagie.text.pdf.TSAClientBouncyCastle;
 
 /**
  * A Signer signing PDF files using the IText PDF library.
- * 
+ *
  * Implements a ISigner and have the following properties: REASON = The reason
  * shown in the PDF signature LOCATION = The location shown in the PDF signature
  * RECTANGLE = The location of the visible signature field (llx, lly, urx, ury)
- * 
+ *
  * TSA_URL = The URL of the timestamp authority TSA_USERNAME = Account
  * (username) of the TSA TSA_PASSWORD = Password for TSA
- * 
- * 
+ *
+ * CERTIFICATION_LEVEL = The level of certification for the document.
+ *  NOT_CERTIFIED, FORM_FILLING_AND_ANNOTATIONS, FORM_FILLING or NOT_CERTIFIED
+ *  (default: NOT_CERTIFIED).
+ *
  * @author Tomas Gustavsson
  * @version $Id$
  */
@@ -113,6 +115,8 @@ public class PDFSigner extends BaseSigner {
 	public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH";
 	public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_RESIZE_TO_RECTANGLE";
 	public static final boolean VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE_DEFAULT = true;
+        public static final String CERTIFICATION_LEVEL = "CERTIFICATION_LEVEL";
+        public static final int CERTIFICATION_LEVEL_DEFAULT = PdfSignatureAppearance.NOT_CERTIFIED;
 
 	// properties that control timestamping of signature
 	public static final String TSA_URL = "TSA_URL";
@@ -130,15 +134,15 @@ public class PDFSigner extends BaseSigner {
 		super.init(signerId, config, workerContext, workerEntityManager);
 	}
 
-        /**
-        * The main method performing the actual signing operation. Expects the
-        * signRequest to be a GenericSignRequest containing a signed PDF file.
-        *
-        * @throws SignServerException
-        * @see org.signserver.server.IProcessable#processData(
-        * org.signserver.common.ProcessRequest,
-        * org.signserver.common.RequestContext)
-        */
+    /**
+     * The main method performing the actual signing operation. Expects the
+     * signRequest to be a GenericSignRequest containing a signed PDF file.
+     *
+     * @throws SignServerException
+     * @see org.signserver.server.IProcessable#processData(
+     * org.signserver.common.ProcessRequest,
+     * org.signserver.common.RequestContext)
+     */
 	public ProcessResponse processData(ProcessRequest signRequest,
 			RequestContext requestContext) throws IllegalRequestException,
 			CryptoTokenOfflineException, SignServerException {
@@ -263,6 +267,9 @@ public class PDFSigner extends BaseSigner {
 			}
 		}
 
+                // Certification level
+                sap.setCertificationLevel(params.getCertification_level());
+
 		PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, new PdfName(
 				"adbe.pkcs7.detached"));
 		dic.setReason(params.getReason());
@@ -355,7 +362,7 @@ public class PDFSigner extends BaseSigner {
 	}
 
 	/**
-	 * get the page number at which to draw signature rectangle 
+	 * get the page number at which to draw signature rectangle
 	 * @param pReader
 	 * @param pParams
 	 * @return

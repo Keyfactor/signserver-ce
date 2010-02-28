@@ -54,6 +54,8 @@ public class RequestContext implements Serializable{
 	 * Is null if no statistics is performed.
 	 */
 	public static final String STATISTICS_EVENT    = "STATISTICS_EVENT";
+
+        public static final String CLIENT_CREDENTIAL = "CLIENT_CREDENTIAL";
 	
 	/**
 	 * Default constructor creating an empty context.

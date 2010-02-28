@@ -37,6 +37,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
+import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletRequest;
 import org.signserver.common.GenericServletResponse;
@@ -44,6 +46,9 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.CertificateClientCredential;
+import org.signserver.server.IClientCredential;
+import org.signserver.server.UsernamePasswordClientCredential;
 
 
 
@@ -74,6 +79,11 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String ENCODING_BASE64 = "base64";
     private static final long MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
     private IWorkerSession.ILocal workersession;
+
+    private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
+
+    private static final String HTTP_AUTH_BASIC_WWW_AUTHENTICATE =
+            "WWW-Authenticate";
 
     private IWorkerSession.ILocal getWorkerSession() {
         if (workersession == null) {
@@ -253,6 +263,37 @@ public class GenericProcessServlet extends HttpServlet {
             clientCertificate = certificates[0];
         }
 
+        // Create request context
+        final RequestContext context = new RequestContext(
+                (X509Certificate) clientCertificate, remoteAddr);
+
+        // Put in credentials
+        IClientCredential credential;
+        if (clientCertificate instanceof X509Certificate) {
+            final X509Certificate cert = (X509Certificate) clientCertificate;
+            log.debug("Authentication: certificate");
+            credential = new CertificateClientCredential(
+                    cert.getSerialNumber().toString(16),
+                    cert.getIssuerDN().getName());
+        } else {
+            // Check is client supplied basic-credentials
+            final String authorization =
+                        req.getHeader(HTTP_AUTH_BASIC_AUTHORIZATION);
+            if (authorization != null) {
+                log.debug("Authentication: password");
+
+                final String decoded[] = new String(Base64.decode(
+                        authorization.split("\\s")[1])).split(":", 2);
+
+                credential = new UsernamePasswordClientCredential(
+                    decoded[0], decoded[1]);
+            } else {
+                log.debug("Authentication: none");
+                credential = null;
+            }
+        }
+        context.put(RequestContext.CLIENT_CREDENTIAL, credential);
+
         log.debug("Received bytes of length: " + data.length);
 
         Random rand = new Random();
@@ -260,7 +301,19 @@ public class GenericProcessServlet extends HttpServlet {
 
         GenericServletResponse response = null;
         try {
-            response = (GenericServletResponse) getWorkerSession().process(workerId, new GenericServletRequest(requestId, data, req), new RequestContext((X509Certificate) clientCertificate, remoteAddr));
+            response = (GenericServletResponse) getWorkerSession().process(
+                    workerId, new GenericServletRequest(requestId, data, req),
+                    context);
+        } catch(AuthorizationRequiredException e) {
+            log.debug("Sending back HTTP 401");
+
+            final String httpAuthBasicRealm = "SignServer Worker " + workerId;
+
+            res.setHeader(HTTP_AUTH_BASIC_WWW_AUTHENTICATE,
+                    "Basic realm=\"" + httpAuthBasicRealm + "\"");
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                        "Authorization Required");
+            return;
         } catch (IllegalRequestException e) {
             throw new ServletException(e);
         } catch (CryptoTokenOfflineException e) {

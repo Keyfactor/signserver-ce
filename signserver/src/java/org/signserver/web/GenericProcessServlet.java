@@ -40,6 +40,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
+import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletRequest;
 import org.signserver.common.GenericServletResponse;
@@ -48,7 +50,9 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.CertificateClientCredential;
+import org.signserver.server.IClientCredential;
 import org.signserver.server.IWorkerLogger;
+import org.signserver.server.UsernamePasswordClientCredential;
 
 
 
@@ -78,6 +82,11 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     private static final String ENCODING_BASE64 = "base64";
     private static final long MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
+
+    private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
+
+    private static final String HTTP_AUTH_BASIC_WWW_AUTHENTICATE =
+            "WWW-Authenticate";
 
     private final Random random = new Random();
 
@@ -269,14 +278,33 @@ public class GenericProcessServlet extends HttpServlet {
         final RequestContext context = new RequestContext(clientCertificate,
                 remoteAddr);
 
+        IClientCredential credential;
+
         if (clientCertificate instanceof X509Certificate) {
             final X509Certificate cert = (X509Certificate) clientCertificate;
-            CertificateClientCredential credential
-                    = new CertificateClientCredential(
+            log.debug("Authentication: certificate");
+            credential = new CertificateClientCredential(
                     cert.getSerialNumber().toString(16),
                     cert.getIssuerDN().getName());
-            context.put(RequestContext.CLIENT_CREDENTIAL, credential);
+        } else {
+            // Check is client supplied basic-credentials
+            final String authorization =
+                        req.getHeader(HTTP_AUTH_BASIC_AUTHORIZATION);
+            if (authorization != null) {
+                log.debug("Authentication: password");
+
+                final String decoded[] = new String(Base64.decode(
+                        authorization.split("\\s")[1])).split(":", 2);
+
+                credential = new UsernamePasswordClientCredential(
+                    decoded[0], decoded[1]);
+            } else {
+                log.debug("Authentication: none");
+                credential = null;
+            }
         }
+        context.put(RequestContext.CLIENT_CREDENTIAL, credential);
+
         
         final Map<String,String> logMap = new HashMap<String, String>();
         context.put(RequestContext.LOGMAP, logMap);
@@ -296,6 +324,16 @@ public class GenericProcessServlet extends HttpServlet {
         try {
             response = (GenericServletResponse) getWorkerSession().process(workerId,
                     new GenericServletRequest(requestId, data, req), context);
+        } catch(AuthorizationRequiredException e) {
+            log.debug("Sending back HTTP 401");
+
+            final String httpAuthBasicRealm = "SignServer Worker " + workerId;
+
+            res.setHeader(HTTP_AUTH_BASIC_WWW_AUTHENTICATE,
+                    "Basic realm=\"" + httpAuthBasicRealm + "\"");
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                        "Authorization Required");
+            return;
         } catch (IllegalRequestException e) {
             throw new ServletException(e);
         } catch (CryptoTokenOfflineException e) {

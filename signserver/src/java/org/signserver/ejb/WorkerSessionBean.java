@@ -42,6 +42,7 @@ import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveDataVO;
+import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -207,6 +208,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                             em).isAuthorized(request, requestContext);
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
                         String.valueOf(true));
+            } catch (AuthorizationRequiredException ex) {
+                throw ex;
             } catch (IllegalRequestException ex) {
                 final IllegalRequestException exception =
                         new IllegalRequestException("Authorization failed: "

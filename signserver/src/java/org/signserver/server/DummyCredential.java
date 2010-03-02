@@ -14,26 +14,12 @@ package org.signserver.server;
 
 import java.io.Serializable;
 
-
-public class UsernamePasswordClientCredential implements IClientCredential,
-        Serializable {
-
+/**
+ * Dummy custom credential.
+ * 
+ * @author Markus Kilas
+ * @version $Id$
+ */
+class DummyCredential implements IClientCredential, Serializable {
     private static final long serialVersionUID = 1L;
-
-    private String username;
-    private String hashedPassword;
-
-    public UsernamePasswordClientCredential(final String username,
-            final String hashedPassword) {
-        this.username = username;
-        this.hashedPassword = hashedPassword;
-    }
-
-    public String getPassword() {
-        return hashedPassword;
-    }
-
-    public String getUsername() {
-        return username;
-    }
 }

@@ -30,7 +30,6 @@ Plan is to make a binary package of the "not found" packages and depend on that 
 7538181   28 -rw-r--r--   1 han      han         24942 Jul 28 22:18 ./module/tsa/1.6/bctsp-jdk.jar		libbctsp-java 1.39-2		libbctsp-java (1.43-1ubuntu1)
 7538167   24 -rw-r--r--   1 han      han         23947 Jul 28 22:18 ./module/tsa/1.5/bctsp-jdk.jar		libbctsp-java 1.39-2 ???	-
 3293197 1136 -rw-r--r--   1 han      han       1155088 Jul 28 22:18 ./module/pdfsigner/itext/itext.jar		libitext-java 1.4.5-3		libitext-java (2.1.7-1)
-1605647  436 -rw-r--r--   1 han      han        439100 May  1 22:42 ./ldap.jar					not found			-
 1605645  520 -rw-r--r--   1 han      han        528045 May  1 22:42 ./ejbca-util.jar				not found			needs packaging
 2506890  416 -rw-r--r--   1 han      han        421601 May  1 22:41 ./quartz/quartz-1.6.0.jar			libquartz-java (1.6.1~RC1-1)	libquartz-java (1.6.6-1)
 7538096 1564 -rw-r--r--   1 han      han       1594518 Jul 28 22:17 ./1.5/bcprov-jdk.jar			libbcprov-java (1.39-2) only compiled with gcj	-

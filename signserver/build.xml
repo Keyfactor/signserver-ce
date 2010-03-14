@@ -42,9 +42,9 @@
     <property name="lib" location="lib" />
 	<property name="preprocessed" value="${tmp}/preprocessed"/>
 
-    <property name="src" value="${preprocessed}" />
+    <property name="src" value="./src" />
     <property name="src.java" value="${src}/java" />
-    <property name="src.appserver" value="${src}/appserver/jboss" />
+    <property name="src.appserver" value="${preprocessed}/appserver/jboss" />
 	<property name="src.external" location="${tmp}/external"/>
     <property name="resources.dir"  location="./src/resources"/>	
     
@@ -141,14 +141,6 @@ OS version                          = ${os.version}
 	  Preprocesses Sign Server by replacing tags with correct version and application texts.
 	-->
 	<target name="preprocess" depends="preprocess-extjava, preprocess-extweb" >
-        
-        <!-- Copy all except xml-files. TODO: DSS-156: Remove this step somehow  -->
-        <copy todir="${preprocessed}">
-            <fileset dir="src">
-              <include name="**"/>
-              <exclude name="**/*.xml"/>
-            </fileset>	      
-	    </copy>
 
         <!-- Copy xml-files and replace some values -->
         <copy todir="${preprocessed}">
@@ -167,7 +159,9 @@ OS version                          = ${os.version}
 			</filterchain>
         </copy>
 
-            <propertyfile file="${preprocessed}/java/org/signserver/common/signservercompile.properties" comment="SignServer compile-time properties. Generated file do not edit manually!">
+        <mkdir dir="${build}/org/signserver/common"/>
+
+            <propertyfile file="${build}/org/signserver/common/signservercompile.properties" comment="SignServer compile-time properties. Generated file do not edit manually!">
                 <entry key="appname" value="${app.name}"/>
                 <entry key="appname_capital" value="${app.name.cap}"/>
                 <entry key="rmiregistryport" value="${rmi.registry.port}"/>

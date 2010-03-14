@@ -17,9 +17,9 @@
 	   <property name="httpsserver.password" value="serverpwd" />
 
 
-	   <property name="ejbdd.src" value="${src}/deploy/ejb" />
+	   <property name="ejbdd.src" value="${preprocessed}/deploy/ejb" />
 
-	   <property name="eardd.src" value="${src}/deploy/ear" />
+	   <property name="eardd.src" value="${preprocessed}/deploy/ear" />
 	   <property name="caear" value="${server.dist.dir}/${app.name}.ear" />
 	
 		
@@ -43,10 +43,12 @@
 	   <property name="genServerCertBin" value="genservercert.sh"/>
        <property name="setDBTypeJar" value="setdbtype.jar"/>
 
-	   <property name="web.src" value="${src}/web/pub" />
+           <property name="web.src" value="${src}/web/pub" />
+           <property name="webwebxml" value="${preprocessed}/web/pub/WEB-INF/web.xml"/>
 	   <property name="webwar" value="${server.dist.dir}/web.war" />
 		
 	   <property name="healthcheck.src" value="${src}/web/healthcheck" />
+           <property name="healthcheckwebxml" value="${preprocessed}/web/healthcheck/WEB-INF/web.xml"/>
 	   <property name="healthcheckwar" value="${server.dist.dir}/healthcheck.war" />
 
 	   <property name="healthcheck.authorizedips" value="127.0.0.1" />
@@ -54,8 +56,10 @@
 	   <property name="healthcheck.checkdbstring" value="Select count(*) from signerconfigdata" />
 	
 	   <property name="signserverws.enabled" value="true" />
+           <property name="signserverwswebxml" value="${preprocessed}/jaxws/web.xml"/>
 	   <property name="genericws.enabled" value="true" />
 	   <property name="validationws.enabled" value="false" />
+           <property name="validationwswebxml" value="${preprocessed}/validationws/web.xml"/>
 	   <property name="timestampclient.enabled" value="true" />
 	   <property name="validationclient.enabled" value="true" />
 	   <property name="pdfperformancetest.enabled" value="false" />
@@ -270,7 +274,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	        	<metainf dir="${preprocessed}/appserver/${appserver.type}">
 	        			<include name="persistence.xml"/>
 	        	</metainf>
-	        	<metainf dir="${src}/deploy/ejb/persistence-mappings/${database.name}">
+	        	<metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
 	    	            <include name="entity-mappings.xml"/>
 	    	    </metainf>
 	        	
@@ -295,7 +299,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	        	<metainf dir="${preprocessed}/appserver/${appserver.type}">
 	        			<include name="persistence.xml"/>
 	        	</metainf>
-	        	<metainf dir="${src}/deploy/ejb/persistence-mappings/${database.name}">
+	        	<metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
 	    	            <include name="entity-mappings.xml"/>
 	    	    </metainf>
 	        	
@@ -324,7 +328,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    <!-- Build web part                                                                                                                             -->
 	    <!-- =================================================================== -->
 	    <target name="web.war" depends="signserver:compile" unless="buildMailSigner">
-	        <war destfile="${webwar}" webxml="${web.src}/WEB-INF/web.xml">
+	        <war destfile="${webwar}" webxml="${webwebxml}">
 	            <fileset dir="${web.src}" excludes="WEB-INF/web.xml" />
 	        </war>
 	    </target>
@@ -333,7 +337,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    <!-- Build health check part                                                                                                                             -->
 	    <!-- =================================================================== -->
 	    <target name="healthcheck.war" depends="signserver:compile" unless="buildMailSigner">
-	        <war destfile="${healthcheckwar}" webxml="${healthcheck.src}/WEB-INF/web.xml">
+	        <war destfile="${healthcheckwar}" webxml="${healthcheckwebxml}">
 	            <fileset dir="${healthcheck.src}" excludes="WEB-INF/web.xml" />
 
 	        </war>
@@ -395,7 +399,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	        </copy>	
 	    	
 	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@signserverws.war@-->" value="module>&lt;web>&lt;web-uri>signserverws.war&lt;/web-uri>&lt;context-root>/signserver/signserverws&lt;/context-root>&lt;/web>&lt;/module>"/>
-	        <war warfile="${server.dist.dir}/signserverws.war" webxml="${src}/jaxws/web.xml">
+	        <war warfile="${server.dist.dir}/signserverws.war" webxml="${signserverwswebxml}">
 	            <webinf dir="src/jaxws" includes="sun-jaxws.xml"/>
 	            <!-- <zipfileset
 	                    dir="tmp/jaxws/wsdl"
@@ -524,7 +528,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    </copy>	
 	        	    	
 	    <replace file="${eardd.src}/META-INF/application.xml" token="!--@validationws.war@-->" value="module>&lt;web>&lt;web-uri>validationws.war&lt;/web-uri>&lt;context-root>/signserver/validationws&lt;/context-root>&lt;/web>&lt;/module>"/>
-	    <war warfile="${server.dist.dir}/validationws.war" webxml="${src}/validationws/web.xml">
+	    <war warfile="${server.dist.dir}/validationws.war" webxml="${validationwswebxml}">
 	        <webinf dir="src/validationws" includes="sun-jaxws.xml"/>
 	        	<classes dir="${tmp}/validationws/gen-classes/server"/>
 	        	<!--<lib dir="lib/jaxws" includes="*.jar" />     -->   		

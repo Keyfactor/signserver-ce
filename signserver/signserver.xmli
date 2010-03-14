@@ -589,12 +589,65 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
         <!-- jndi.properties needs to be in the classpath -->
         <copy file="${src.java}/jndi.properties" todir="${test.dir}" />
     </target>
-	
-    <target name="test:signserver:run" depends="test:signserver:compile" description="run JUnit testcases" unless="buildMailSigner">
+
+    <target name="test:signserver:pre-run">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
         <echo> Important, in order for all tests to complete must the web service, generic WS and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
         <delete dir="${test.dir}/reports" />
         <mkdir dir="${test.dir}/reports/html" />
+    </target>
+	
+    <target name="test:signserver:run" depends="test:signserver:compile, test:signserver:pre-run" description="Run the default JUnit testcases" unless="buildMailSigner">
+        <junit printsummary="yes" haltonfailure="no" showoutput="true">
+            <classpath>
+                <path refid="signserver.test.compile.classpath" />
+                <path location="${test.dir}" />
+            </classpath>
+            <formatter usefile="false" type="brief"/>
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="${test.dir}/reports">
+                <fileset dir="${test.dir}">
+                    <include name="**/ejb/Test*" />
+                	<include name="**/common/Test*" />
+                	<include name="**/common/clusterclassloader/Test*" />
+                	<include name="**/module/**/Test*" />
+                    <include name="**/server/Test*" />
+                	<include name="**/server/service/Test*" />
+                	<include name="**/server/validcache/Test*" />
+                	<include name="**/server/statistics/Test*" />
+                  <include name="**/server/genericws/Test*" />
+                	<include name="**/server/clusterclassloader/Test*" />
+                	<include name="**/server/statistics/nonpersistent/Test*" />
+                	<include name="**/groupkeyservice/Test*" />
+                	<include name="**/cli/TestSignServer*" />
+                	<include name="**/client/validationservice/Test*" />
+                	<include name="**/client/api/Test*" />
+                	<include name="**/protocol/validationservice/ws/Test*" />
+                	<include name="**/protocol/ws/Test*" />
+                	<include name="**/wsra/Test*" />
+                	<include name="**/wsra/**/Test*" />
+                    <exclude name="**/*Continously*" />
+                    <exclude name="**/TestRunner*" />
+                	<exclude name="**/db/*" />
+                	<exclude name="**/mailsigner/**" />
+                        <exclude name="**/cli/TestMail**" />
+                    
+                    <!-- DSS-236: MainWebService is slow so skip it for now -->
+                    <exclude name="**/TestMainWebService*" />
+
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <junitreport todir="${test.dir}/reports">
+            <fileset dir="${test.dir}/reports">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${test.dir}/reports/html" />
+        </junitreport> 
+    </target>
+
+    <target name="test:signserver:runall" depends="test:signserver:compile, test:signserver:pre-run" description="Run the all JUnit testcases" unless="buildMailSigner">
         <junit printsummary="yes" haltonfailure="no" showoutput="true">
             <classpath>
                 <path refid="signserver.test.compile.classpath" />
@@ -637,7 +690,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
                 <include name="TEST-*.xml" />
             </fileset>
             <report format="frames" todir="${test.dir}/reports/html" />
-        </junitreport> 
+        </junitreport>
     </target>
 
     <target name="test:signserver:runone" depends="test:signserver:compile" description="run a single JUnit-test specified -Dtest.runone=classname" unless="buildMailSigner">

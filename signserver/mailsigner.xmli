@@ -328,6 +328,11 @@ rmi.server.port           = ${rmi.server.port}
         <copy file="${src.java}/jndi.properties" todir="${test.dir}" />
         <copy file="${src.java}/log4j.properties" todir="${test.dir}" />
     </target>
+
+    <target name="test:mailsigner:runall" if="buildMailSigner">
+        <!-- Just run the default test cases -->
+        <antcall target="test:mailsigner:run" />
+    </target>
 	
     <target name="test:mailsigner:run" depends="test:mailsigner:compile" description="run JUnit testcases" if="buildMailSigner">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>

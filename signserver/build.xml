@@ -296,9 +296,14 @@ OS version                          = ${os.version}
 
     <target name="test:compile"  depends="test:signserver:compile, test:mailsigner:compile"/>
  	
-    <target name="test:run" description="Run all JUnit testcases">
+    <target name="test:run" description="Run the default JUnit testcases">
         <antcall target="test:signserver:run"/>
     	<antcall target="test:mailsigner:run"/>
+    </target>
+
+    <target name="test:runall" description="Run all JUnit testcases">
+        <antcall target="test:signserver:runall"/>
+    	<antcall target="test:mailsigner:runall"/>
     </target>
 
     <target name="test:runperf" description="Test performace of signing modules">

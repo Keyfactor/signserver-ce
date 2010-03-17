@@ -7,12 +7,12 @@
   <body>
 <section name="Required software">
 
-<subsection name="Ant">
+<subsection name="Apache Ant">
     <p>
     <a href="http://ant.apache.org/">Ant web site</a>
     </p>    
     <p>
-    Build tool used to build this framework. Version 1.6.5 and up should work.
+    Build tool used to build SignServer. Version 1.7.1 and up should work.
     </p>
 </subsection>
 <subsection name="JBoss, (Not MailSigner builds)">
@@ -20,7 +20,7 @@
     <a href="http://www.jboss.org/">JBoss web site</a>
     </p>    
     <p>
-    The recommended application server used by SignServer. Version 4.2.2 and up have been most tested.
+    The recommended application server used by SignServer. Version 4.2.3 is recommended.
     </p>
 </subsection>
 <subsection name="Java Development Kit">
@@ -28,15 +28,15 @@
     <a href="http://java.sun.com/">Java web site</a>
     </p>    
     <p>
-    The Java Development Kit is required to compile and execute. Version 1.5 and above is required.
+    The Java Development Kit is required to compile and execute. Version 1.6 or above is required.
     </p>
 </subsection>
-<subsection name="Database, MySQL Cluster is recommended.">
+<subsection name="Database">
     <p>
     <a href="http://www.mysql.com/">Mysql web site</a>
     </p>    
     <p>
-    MySQL NDB Cluster is needed for full High-Availability of a SignServer cluster. MySQL 5.0.27 is the most tested version. 
+    MySQL is recommended for a SignServer database. MySQL 5.1 is the most tested version. 
     </p>
 </subsection>
 </section>

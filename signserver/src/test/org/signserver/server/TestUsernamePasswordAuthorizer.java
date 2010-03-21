@@ -47,8 +47,8 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
     private static File signServerHome;
     private static int moduleVersion;
 
-    /** 
-     * WORKERID used in this test case as defined in 
+    /**
+     * WORKERID used in this test case as defined in
      * junittest-part-config.properties
      */
     private static final int WORKERID = 5676;
@@ -95,9 +95,18 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         workSession.setWorkerProperty(WORKERID, "AUTHTYPE",
                 "org.signserver.server.UsernamePasswordAuthorizer");
 
-        // Add a user account
+        // Add a user account: user1, foo123 (plain-text password)
         workSession.setWorkerProperty(WORKERID, "USER.USER1", "foo123");
-        
+
+        // Add a user account: user2, foo123 (SHA1 hashed password) = SHA1(foo123)
+        workSession.setWorkerProperty(WORKERID, "USER.USER2",
+                "3b303d8b0364d9265c06adc8584258376150c9b5:SHA1");
+
+        // Add a user account: user3, foo123 (SHA1 hashed password and salted
+        // with "salt123") = SHA1(foo123salt123)
+        workSession.setWorkerProperty(WORKERID, "USER.USER3",
+                "26c110963ad873c9b7db331e4c3130c266416d47:SHA1:salt123");
+
         workSession.reloadConfiguration(WORKERID);
     }
 
@@ -128,7 +137,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         }
 
         // With other type of credentials
-        
+
         context.put(RequestContext.CLIENT_CREDENTIAL, new DummyCredential());
         try {
              res = (GenericSignResponse) workSession.process(WORKERID,
@@ -167,7 +176,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         final GenericSignRequest request =
                 new GenericSignRequest(1, "<root/>".getBytes());
 
-        GenericSignResponse res;
+        final GenericSignResponse res;
 
         // With correct username password
         context.put(RequestContext.CLIENT_CREDENTIAL,
@@ -175,7 +184,59 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         try {
              res = (GenericSignResponse) workSession.process(WORKERID,
                     request, context);
-        } catch (AuthorizationRequiredException ok) {
+        } catch (AuthorizationRequiredException ex) {
+            fail("Username password not accepted!");
+        } catch (Exception ex) {
+            LOG.error("Wrong type of exception", ex);
+            fail("Exception: " + ex.getMessage());
+        }
+    }
+
+     /**
+     * Tests that the worker accepts a correct user/password.
+     * @throws Exception in case of exception
+     */
+    public void test03HashedPassword() throws Exception {
+        final RequestContext context = new RequestContext();
+
+        final GenericSignRequest request =
+                new GenericSignRequest(1, "<root/>".getBytes());
+
+        final GenericSignResponse res;
+
+        // With correct username password
+        context.put(RequestContext.CLIENT_CREDENTIAL,
+                new UsernamePasswordClientCredential("user2", "foo123"));
+        try {
+             res = (GenericSignResponse) workSession.process(WORKERID,
+                    request, context);
+        } catch (AuthorizationRequiredException ex) {
+            fail("Username password not accepted!");
+        } catch (Exception ex) {
+            LOG.error("Wrong type of exception", ex);
+            fail("Exception: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Tests that the worker accepts a correct user/password.
+     * @throws Exception in case of exception
+     */
+    public void test04HashedAndSaltedPassword() throws Exception {
+        final RequestContext context = new RequestContext();
+
+        final GenericSignRequest request =
+                new GenericSignRequest(1, "<root/>".getBytes());
+
+        GenericSignResponse res;
+
+        // With correct username password
+        context.put(RequestContext.CLIENT_CREDENTIAL,
+                new UsernamePasswordClientCredential("user3", "foo123"));
+        try {
+             res = (GenericSignResponse) workSession.process(WORKERID,
+                    request, context);
+        } catch (AuthorizationRequiredException ex) {
             fail("Username password not accepted!");
         } catch (Exception ex) {
             LOG.error("Wrong type of exception", ex);

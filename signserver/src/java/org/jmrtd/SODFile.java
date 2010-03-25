@@ -1,7 +1,7 @@
 /*
  * JMRTD - A Java API for accessing machine readable travel documents.
  *
- * Copyright (C) 2006 - 2008  The JMRTD team
+ * Copyright (C) 2006 - 2010  The JMRTD team
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
- * $Id: SODFile.java 894 2009-03-23 15:50:46Z martijno $
+ * $Id: SODFile.java 1106 2010-01-22 08:27:54Z martijno $
  */
 
 package org.jmrtd;
@@ -77,19 +77,26 @@ import org.bouncycastle.jce.provider.X509CertificateObject;
  * @author Wojciech Mostowski (woj@cs.ru.nl)
  * @author Martijn Oostdijk (martijn.oostdijk@gmail.com)
  * 
- * @version $Revision: 894 $
+ * @version $Revision: 1106 $
  */
 public class SODFile extends PassportFile
 {
-//	private static final DERObjectIdentifier SHA1_HASH_ALG_OID = new DERObjectIdentifier("1.3.14.3.2.26");
-//	private static final DERObjectIdentifier SHA1_WITH_RSA_ENC_OID = new DERObjectIdentifier("1.2.840.113549.1.1.5");
-//	private static final DERObjectIdentifier SHA256_HASH_ALG_OID = new DERObjectIdentifier("2.16.840.1.101.3.4.2.1");
-//	private static final DERObjectIdentifier E_CONTENT_TYPE_OID = new DERObjectIdentifier("1.2.528.1.1006.1.20.1");
+	//	private static final DERObjectIdentifier SHA1_HASH_ALG_OID = new DERObjectIdentifier("1.3.14.3.2.26");
+	//	private static final DERObjectIdentifier SHA1_WITH_RSA_ENC_OID = new DERObjectIdentifier("1.2.840.113549.1.1.5");
+	//	private static final DERObjectIdentifier SHA256_HASH_ALG_OID = new DERObjectIdentifier("2.16.840.1.101.3.4.2.1");
+	//	private static final DERObjectIdentifier E_CONTENT_TYPE_OID = new DERObjectIdentifier("1.2.528.1.1006.1.20.1");
+
 	private static final DERObjectIdentifier ICAO_SOD_OID = new DERObjectIdentifier("2.23.136.1.1.1");
 	private static final DERObjectIdentifier SIGNED_DATA_OID = new DERObjectIdentifier("1.2.840.113549.1.7.2");
 	private static final DERObjectIdentifier RFC_3369_CONTENT_TYPE_OID = new DERObjectIdentifier("1.2.840.113549.1.9.3");
 	private static final DERObjectIdentifier RFC_3369_MESSAGE_DIGEST_OID = new DERObjectIdentifier("1.2.840.113549.1.9.4");
 	private static final DERObjectIdentifier RSA_SA_PSS_OID = new DERObjectIdentifier("1.2.840.113549.1.1.10");
+
+	private static final DERObjectIdentifier PKCS1_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.1");
+	private static final DERObjectIdentifier PKCS1_MD2_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.2");
+	private static final DERObjectIdentifier PKCS1_MD4_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.3");
+	private static final DERObjectIdentifier PKCS1_MD5_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.4");
+	private static final DERObjectIdentifier PKCS1_SHA1_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.5");
 	private static final DERObjectIdentifier PKCS1_SHA256_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.11");
 	private static final DERObjectIdentifier PKCS1_SHA384_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.12");
 	private static final DERObjectIdentifier PKCS1_SHA512_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.13");
@@ -97,6 +104,7 @@ public class SODFile extends PassportFile
 	private static final DERObjectIdentifier X9_SHA1_WITH_ECDSA_OID = new DERObjectIdentifier("1.2.840.10045.4.1");
 	private static final DERObjectIdentifier X9_SHA224_WITH_ECDSA_OID = new DERObjectIdentifier("1.2.840.10045.4.3.1");
 	private static final DERObjectIdentifier X9_SHA256_WITH_ECDSA_OID = new DERObjectIdentifier("1.2.840.10045.4.3.2");
+	private static final DERObjectIdentifier IEEE_P1363_SHA1_OID = new DERObjectIdentifier("1.3.14.3.2.26");
 
 	private SignedData signedData;
 
@@ -365,7 +373,7 @@ public class SODFile extends PassportFile
         String[] sigAlgs = new String[] {"SHA1withRSA", "SHA1withRSA/PSS", "SHA256withRSA", "SHA256withRSA/PSS"};
 		 */
 	}
-	
+
 	/**
 	 * Gets a textual representation of this file.
 	 * 
@@ -379,15 +387,15 @@ public class SODFile extends PassportFile
 			return "SODFile";
 		}
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (obj == null) { return false; }
 		if (obj == this) { return true; }
-		if (obj.getClass() != SODFile.class) { return false; }
+		if (!obj.getClass().equals(this.getClass())) { return false; }
 		SODFile other = (SODFile)obj;
 		return Arrays.equals(getEncoded(), other.getEncoded());
 	}
-	
+
 	public int hashCode() {
 		return 11 * Arrays.hashCode(getEncoded()) + 111;
 	}
@@ -571,8 +579,13 @@ public class SODFile extends PassportFile
 	private static ASN1Sequence createCertificate(X509Certificate cert) throws CertificateException {
 		try {
 			byte[] certSpec = cert.getEncoded();
-			ASN1Sequence certSeq = (ASN1Sequence)(new ASN1InputStream(certSpec)).readObject();
-			return certSeq;
+			ASN1InputStream asn1In = new ASN1InputStream(certSpec);
+			try {
+				ASN1Sequence certSeq = (ASN1Sequence)(asn1In).readObject();
+				return certSeq;
+			} finally {
+				asn1In.close();
+			}
 		} catch (IOException ioe) {
 			throw new CertificateException("Could not construct certificate byte stream");
 		}
@@ -656,13 +669,19 @@ public class SODFile extends PassportFile
 		if(oid.equals(NISTObjectIdentifiers.id_sha256)) { return "SHA256"; }
 		if(oid.equals(NISTObjectIdentifiers.id_sha384)) { return "SHA384"; }
 		if(oid.equals(NISTObjectIdentifiers.id_sha512)) { return "SHA512"; }
+		if (oid.equals(X9_SHA1_WITH_ECDSA_OID)) { return "SHA1withECDSA"; }
+		if (oid.equals(X9_SHA224_WITH_ECDSA_OID)) { return "SHA224withECDSA"; }
+		if (oid.equals(X9_SHA256_WITH_ECDSA_OID)) { return "SHA256withECDSA"; }		
+		if (oid.equals(PKCS1_RSA_OID)) { return "RSA"; }
+		if (oid.equals(PKCS1_MD2_WITH_RSA_OID)) { return "MD2withRSA"; }
+		if (oid.equals(PKCS1_MD4_WITH_RSA_OID)) { return "MD4withRSA"; }
+		if (oid.equals(PKCS1_MD5_WITH_RSA_OID)) { return "MD5withRSA"; }
+		if (oid.equals(PKCS1_SHA1_WITH_RSA_OID)) { return "SHA1withRSA"; }
 		if (oid.equals(PKCS1_SHA256_WITH_RSA_OID)) { return "SHA256withRSA"; }
 		if (oid.equals(PKCS1_SHA384_WITH_RSA_OID)) { return "SHA384withRSA"; }
 		if (oid.equals(PKCS1_SHA512_WITH_RSA_OID)) { return "SHA512withRSA"; }
 		if (oid.equals(PKCS1_SHA224_WITH_RSA_OID)) { return "SHA224withRSA"; }
-		if (oid.equals(X9_SHA1_WITH_ECDSA_OID)) { return "SHA1withECDSA"; }
-		if (oid.equals(X9_SHA224_WITH_ECDSA_OID)) { return "SHA224withECDSA"; }
-		if (oid.equals(X9_SHA256_WITH_ECDSA_OID)) { return "SHA256withECDSA"; }
+		if (oid.equals(IEEE_P1363_SHA1_OID)) { return "SHA1"; }
 		throw new NoSuchAlgorithmException("Unknown OID " + oid);
 	}
 
@@ -673,11 +692,16 @@ public class SODFile extends PassportFile
 		if (name.equals("C")) { return X509ObjectIdentifiers.countryName; }
 		if (name.equals("ST")) { return X509ObjectIdentifiers.stateOrProvinceName; }
 		if (name.equals("L")) { return X509ObjectIdentifiers.localityName; }
-		if(name.equals("SHA1")) { return X509ObjectIdentifiers.id_SHA1; }
-		if(name.equals("SHA224")) { return NISTObjectIdentifiers.id_sha224; }
-		if(name.equals("SHA256")) { return NISTObjectIdentifiers.id_sha256; }
-		if(name.equals("SHA384")) { return NISTObjectIdentifiers.id_sha384; }
-		if(name.equals("SHA512")) { return NISTObjectIdentifiers.id_sha512; }
+		if(name.equalsIgnoreCase("SHA1")) { return X509ObjectIdentifiers.id_SHA1; }
+		if(name.equalsIgnoreCase("SHA224")) { return NISTObjectIdentifiers.id_sha224; }
+		if(name.equalsIgnoreCase("SHA256")) { return NISTObjectIdentifiers.id_sha256; }
+		if(name.equalsIgnoreCase("SHA384")) { return NISTObjectIdentifiers.id_sha384; }
+		if(name.equalsIgnoreCase("SHA512")) { return NISTObjectIdentifiers.id_sha512; }
+		if (name.equalsIgnoreCase("RSA")) { return PKCS1_RSA_OID; }
+		if (name.equalsIgnoreCase("MD2withRSA")) { return PKCS1_MD2_WITH_RSA_OID; } 
+		if (name.equalsIgnoreCase("MD4withRSA")) { return PKCS1_MD4_WITH_RSA_OID; } 
+		if (name.equalsIgnoreCase("MD5withRSA")) { return  PKCS1_MD5_WITH_RSA_OID; }
+		if (name.equalsIgnoreCase("SHA1withRSA")) { return  PKCS1_SHA1_WITH_RSA_OID; }
 		if (name.equalsIgnoreCase("SHA256withRSA")) { return PKCS1_SHA256_WITH_RSA_OID; }
 		if (name.equalsIgnoreCase("SHA384withRSA")) { return PKCS1_SHA384_WITH_RSA_OID; }
 		if (name.equalsIgnoreCase("SHA512withRSA")) { return PKCS1_SHA512_WITH_RSA_OID; }

@@ -48,9 +48,9 @@ import org.signserver.validationservice.common.X509Certificate;
  * NOTE2 : support for forward checking could be enabled by searching issuer certificate of certificate in question and making it stateless.
  * 
  * @author rayback2
+ * @version $Id$
  *
  */
-
 public class OCSPCRLPathChecker extends OCSPPathChecker {
 
 	
@@ -80,14 +80,14 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
 		    throw new CertPathValidatorException("Certificate passed to check method of OCSPCRLPathChecker is not of type X509Certificate");
 		}
 			
-		if(cACert == null )
+		if(cACert == null ) {
 			cACert = rootCACert;
-		
+		}
 		X509Certificate x509Cert = (X509Certificate)cert;
 		
-		if(cACert == null)
+		if(cACert == null) {
 			throw new CertPathValidatorException("Issuer of certificate : " + x509Cert.getSubject() + " not passed to OCSPCRLPathChecker");
-		
+		}
 		log.debug("check method called with certificate " + x509Cert.getSubject());
 		
 		//check if OCSP access address exists

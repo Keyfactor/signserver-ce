@@ -110,7 +110,7 @@ public abstract class BaseValidator implements IValidator{
 
 		if(getCertChainMap() == null) {
 			return null;
-                }
+		}
 
 		X509Certificate x509Cert = (X509Certificate)cert;
 		
@@ -164,7 +164,7 @@ public abstract class BaseValidator implements IValidator{
 
 				if(issuerFound) {
 					break;
-                                }
+				}
 			}
 
 			//if issuer is found then IssuerCACert holds our issuer certificate
@@ -284,7 +284,7 @@ public abstract class BaseValidator implements IValidator{
 		List<ICertificate> certChain = getCertificateChain(cert);
 		if(certChain == null) {
 			return null;
-                }
+		}
 
 		List<ICertificate> tempCertChain = null;
 		
@@ -342,10 +342,10 @@ public abstract class BaseValidator implements IValidator{
 			{
 				if(includeSelfInReturn) {
 					fromindex= indx;
-                                }
+				}
 				else {
 					fromindex = indx + 1;
-                                }
+				}
 
 				if(fromindex < getCertChainMap().get(certDN).size())
 				{
@@ -365,18 +365,19 @@ public abstract class BaseValidator implements IValidator{
 	 */
 	protected boolean isTrustAnchor(X509Certificate rootCACert)
 	{
-		if(getCertChainMap() == null)
+		if(getCertChainMap() == null) {
 			return false;
-
+		}
 		// is it really a self signed CA certificate
-		if(rootCACert.getBasicConstraints() == -1 || !rootCACert.getSubjectX500Principal().equals(rootCACert.getIssuerX500Principal()))
+		if(rootCACert.getBasicConstraints() == -1 || !rootCACert.getSubjectX500Principal().equals(rootCACert.getIssuerX500Principal())) {
 			return false;
-
+		}
 		
 		for(String certDN : getCertChainMap().keySet())
 		{
-			if(getCertChainMap().get(certDN).contains(rootCACert))
+			if(getCertChainMap().get(certDN).contains(rootCACert)) {
 				return true;
+			}
 		}
 
 		return false;
@@ -391,15 +392,15 @@ public abstract class BaseValidator implements IValidator{
 	protected List<URL> getIssuerCRLPaths(ICertificate cert) throws SignServerException { 
 		ArrayList<URL> retval = null;
 		Properties props = getIssuerProperties(cert);
-		if(props == null 
-				|| !props.containsKey(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS))
+		if(props == null || !props.containsKey(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS)) {
 			return null;
-		
+		}
 		retval = new ArrayList<URL>();
 		
 		StringTokenizer strTokenizer = new StringTokenizer(props.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS),
 				ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER);
-		
+
+		// Note that this DEBUG log loop also does some real work!
 		LOG.debug("***********************");
 		LOG.debug("printing CRLPATHS ");
 		while(strTokenizer.hasMoreTokens())

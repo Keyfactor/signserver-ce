@@ -640,11 +640,6 @@ public class SODFile extends PassportFile
 		return new DERSet(result);
 	}
 
-	private static ASN1Set createEmptySet() {
-		ASN1Encodable[] result = { };
-		return new DERSet(result);
-	}
-
 	private static ASN1Set createSingletonSet(ASN1Encodable e) {
 		ASN1Encodable[] result = { e };
 		return new DERSet(result);

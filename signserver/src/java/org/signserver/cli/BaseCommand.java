@@ -163,10 +163,11 @@ public abstract class BaseCommand implements IAdminCommand{
      * @param outStream stream where commands write its output
      */
     public void setOutputStream(PrintStream outStream) {
-    if( outStream == null )
-        this.outStream = System.out;
-    else
-        this.outStream = outStream;
+    	if( outStream == null ) {
+    		this.outStream = System.out;
+    	} else {
+    		this.outStream = outStream;
+    	}
     }   
     
     /**

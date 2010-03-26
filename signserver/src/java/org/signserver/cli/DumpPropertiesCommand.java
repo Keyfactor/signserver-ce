@@ -143,8 +143,8 @@ public class DumpPropertiesCommand extends BaseCommand {
 			Collection<Certificate> certs = pConfig.getSignerCertificateChain();
 			Iterator<Certificate> iter2 = certs.iterator(); 
 			String chainValue = "";
-			for(int i=1;iter2.hasNext();i++){
-			  Certificate cert =iter2.next();
+			while (iter2.hasNext()) {
+			  Certificate cert = iter2.next();
 			  String certData = new String(Base64.encode(cert.getEncoded(), false));
 			  if(chainValue.equals("")){
 				  chainValue = certData;

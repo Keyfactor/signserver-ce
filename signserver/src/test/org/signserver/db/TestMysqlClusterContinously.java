@@ -56,8 +56,9 @@ public class TestMysqlClusterContinously extends TestCase {
 			throw e; 
 		} finally {
 			try {
-				if(con != null)
+				if(con != null) {
 					con.close();
+				}
 			} catch(SQLException e) {}
 		}
 	}
@@ -83,8 +84,9 @@ public class TestMysqlClusterContinously extends TestCase {
 			throw e; 
 		} finally {
 			try {
-				if(con != null)
+				if(con != null) {
 					con.close();
+				}
 			} catch(SQLException e) {}
 		}
 	}	
@@ -146,8 +148,9 @@ public class TestMysqlClusterContinously extends TestCase {
 			throw e; 
 		} finally {
 			try {
-				if(con != null)
+				if(con != null) {
 					con.close();
+				}
 			} catch(SQLException e) {}
 		}
 	}
@@ -175,8 +178,9 @@ public class TestMysqlClusterContinously extends TestCase {
 			throw e; 
 		} finally {
 			try {
-				if(con != null)
+				if(con != null) {
 					con.close();
+				}
 			} catch(SQLException e) {}
 		}
 	}

@@ -30,15 +30,14 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.signserver.cli.CommonAdminInterface;
-import org.signserver.client.api.ISigningAndValidation;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.cryptotokens.P12CryptoToken;
-import org.signserver.common.ServiceLocator;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.common.ICertificate;

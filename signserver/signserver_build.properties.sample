@@ -62,8 +62,8 @@
 
 # ------------ Web GUI configuration ---------------------
 
-# set this if the web server should not be configured for HTTPS.
-#j2ee.web-nohttps=true
+# Comment this out with a # if the web server should be configured for HTTPS.
+j2ee.web-nohttps=true
 
 # When upgrading, the important options are:
 # - httpsserver.password

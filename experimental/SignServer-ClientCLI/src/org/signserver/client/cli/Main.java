@@ -51,6 +51,8 @@ public class Main {
             printUsage(COMMANDS);
         } else if ("signdocument".equals(args[0])) {
             DocumentSignerCLI.main(args);
+        } else if ("validatedocument".equals(args[0])) {
+            DocumentValidatorCLI.main(args);
         } else if ("timestamp".equals(args[0])) {
             try {
                 org.signserver.client.TimeStampClient.main(

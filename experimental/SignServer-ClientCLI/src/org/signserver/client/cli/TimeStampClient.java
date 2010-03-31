@@ -10,8 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
- 
 package org.signserver.client.cli;
 
 import java.io.BufferedReader;
@@ -62,7 +60,7 @@ import org.bouncycastle.util.encoders.Hex;
  * Only works in unauthenticated mode.
  * 
  * @author philip
- * $Id: TimeStampClient.java 500 2009-04-22 12:10:07Z anatom $
+ * $Id$
  */
 
 public class TimeStampClient {

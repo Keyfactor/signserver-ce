@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.naming.NamingException;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
 import org.signserver.client.api.ISignServerWorker;
 import org.signserver.client.api.SigningAndValidationEJB;
 import org.signserver.client.api.SigningAndValidationWS;
@@ -47,6 +48,10 @@ import org.signserver.common.SignServerException;
 public class HTTPDocumentSigner extends AbstractDocumentSigner {
     public static final String CRLF = "\r\n";
 
+    private static final String BASICAUTH_AUTHORIZATION = "Authorization";
+
+    private static final String BASICAUTH_BASIC = "Basic";
+
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(HTTPDocumentSigner.class);
 
@@ -56,12 +61,20 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
 
     private URL processServlet;
 
+    private String username;
+
+    private String password;
+
+
     private Random random = new Random();
 
     public HTTPDocumentSigner(final URL processServlet,
-            final String workerName) {
+            final String workerName, final String username,
+            final String password) {
         this.processServlet = processServlet;
         this.workerName = workerName;
+        this.username = username;
+        this.password = password;
     }
 
     protected void doSign(final byte[] data, final String encoding,
@@ -112,6 +125,13 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final URLConnection conn = processServlet.openConnection();
             conn.setDoOutput(true);
             conn.setAllowUserInteraction(false);
+
+            if (username != null && password != null) {
+                conn.setRequestProperty(BASICAUTH_AUTHORIZATION, 
+                        BASICAUTH_BASIC + " "
+                        + new String(Base64.encode(new String(
+                        username + ":" + password).getBytes())));
+            }
             
             final StringBuilder sb = new StringBuilder();
             sb.append("--" + BOUNDARY);

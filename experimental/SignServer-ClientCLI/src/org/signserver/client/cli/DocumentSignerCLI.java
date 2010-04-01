@@ -20,12 +20,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
+import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
@@ -72,6 +74,10 @@ public class DocumentSignerCLI {
     /** Option PROTOCOL. */
     public static final String PROTOCOL = "protocol";
 
+    public static final String USERNAME = "username";
+
+    public static final String PASSWORD = "password";
+
     /** The command line options. */
     private static final Options OPTIONS;
 
@@ -106,6 +112,8 @@ public class DocumentSignerCLI {
                 TEXTS.getString("PORT_DESCRIPTION"));
         OPTIONS.addOption(PROTOCOL, true,
                 TEXTS.getString("PROTOCOL_DESCRIPTION"));
+        OPTIONS.addOption(USERNAME, true, "Username for authentication.");
+        OPTIONS.addOption(PASSWORD, true, "Password for authentication.");
     }
 
     /** ID of worker who should perform the operation. */
@@ -135,6 +143,9 @@ public class DocumentSignerCLI {
     /** Protocol to use for contacting SignServer. */
     private transient Protocol protocol;
 
+    private transient String username;
+
+    private transient String password;
 
     /**
      * Creates an instance of DocumentSignerCLI.
@@ -186,6 +197,12 @@ public class DocumentSignerCLI {
             protocol = Protocol.valueOf(line.getOptionValue(
                     PROTOCOL, null));
         }
+        if (line.hasOption(USERNAME)) {
+            username = line.getOptionValue(USERNAME, null);
+        }
+        if (line.hasOption(PASSWORD)) {
+            password = line.getOptionValue(PASSWORD, null);
+        }
     }
 
     /**
@@ -225,7 +242,7 @@ public class DocumentSignerCLI {
             LOG.debug("Using HTTP as procotol");
             signer = new HTTPDocumentSigner(
                 new URL("http", host, port, "/signserver/process"),
-                workerIdOrName);
+                workerIdOrName, username, password);
         } else {
             LOG.debug("Using WebServices as procotol");
             signer = new WebServicesDocumentSigner(
@@ -261,6 +278,13 @@ public class DocumentSignerCLI {
         } catch (CryptoTokenOfflineException ex) {
             LOG.error(ex);
         } catch (SignServerException ex) {
+            LOG.error(ex);
+        } catch (SOAPFaultException ex) {
+            if (ex.getCause() instanceof AuthorizationRequiredException) {
+                final AuthorizationRequiredException authEx =
+                        (AuthorizationRequiredException) ex.getCause();
+                LOG.error("Authorization required: " + authEx.getMessage());
+            }
             LOG.error(ex);
         } catch (IOException ex) {
             LOG.error(ex);

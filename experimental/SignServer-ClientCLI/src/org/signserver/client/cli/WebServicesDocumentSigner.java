@@ -18,6 +18,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.naming.NamingException;
+import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.log4j.Logger;
 import org.signserver.client.api.ISignServerWorker;
 import org.signserver.client.api.SigningAndValidationEJB;
@@ -73,43 +74,43 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
         // Take start time
         final long startTime = System.nanoTime();
 
-        final ProcessResponse response = signServer.process(workerName,
-                new GenericSignRequest(requestId, data), new RequestContext());
+            final ProcessResponse response = signServer.process(workerName,
+                    new GenericSignRequest(requestId, data), new RequestContext());
 
-        // Take stop time
-        final long estimatedTime = System.nanoTime() - startTime;
+            // Take stop time
+            final long estimatedTime = System.nanoTime() - startTime;
 
-        if(response instanceof GenericSignResponse) {
-            final GenericSignResponse signResponse =
-                    (GenericSignResponse) response;
+            if(response instanceof GenericSignResponse) {
+                final GenericSignResponse signResponse =
+                        (GenericSignResponse) response;
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(String.format("Got sign response with id %d, "
-                        + "archive id %d, signed data of length %d bytes "
-                        + "signed by signer with certificate:\n%s.",
-                        signResponse.getRequestID(),
-                        signResponse.getArchiveId(),
-                        signResponse.getProcessedData().length,
-                        signResponse.getSignerCertificate()));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(String.format("Got sign response with id %d, "
+                            + "archive id %d, signed data of length %d bytes "
+                            + "signed by signer with certificate:\n%s.",
+                            signResponse.getRequestID(),
+                            signResponse.getArchiveId(),
+                            signResponse.getProcessedData().length,
+                            signResponse.getSignerCertificate()));
 
-//                LOG.debug("Got sign response with id "
-//                        + signResponse.getRequestID() + ", archive id "
-//                        + signResponse.getArchiveId()
-//                        + ", signed data of length "
-//                        + signResponse.getProcessedData().length + " bytes "
-//                        + "signed by signer with certificate:\n"
-//                        + signResponse.getSignerCertificate().toString() + ".");
+    //                LOG.debug("Got sign response with id "
+    //                        + signResponse.getRequestID() + ", archive id "
+    //                        + signResponse.getArchiveId()
+    //                        + ", signed data of length "
+    //                        + signResponse.getProcessedData().length + " bytes "
+    //                        + "signed by signer with certificate:\n"
+    //                        + signResponse.getSignerCertificate().toString() + ".");
+                }
+
+                // Write the signed data
+                out.write(signResponse.getProcessedData());
+
+                LOG.info("Processing took "
+                        + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
+            } else {
+                throw new SignServerException("Unexpected response type: "
+                        + response.getClass().getName());
             }
-
-            // Write the signed data
-            out.write(signResponse.getProcessedData());
-
-            LOG.info("Processing took "
-                    + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
-        } else {
-            throw new SignServerException("Unexpected response type: "
-                    + response.getClass().getName());
-        }
     }
 
 }

@@ -48,7 +48,7 @@ public class UsernamePasswordAuthorizer implements IAuthorizer {
      * USER.[NAME] = [HASHED_PASSWORD]:[HASH_ALGORITHM]
      * USER.[NAME] = [HASHED_PASSWORD]:[HASH_ALGORITHM]:[SALT]
      * </pre>
-     * SALT and DIGEST_ALGORITHMS are optionally.
+     * SALT and HASH_ALGORITHM are optionally.
      */
     private static final String USER_PREFIX = "USER.";
 
@@ -80,6 +80,10 @@ public class UsernamePasswordAuthorizer implements IAuthorizer {
                 throw new AuthorizationRequiredException(
                         "Authentication denied");
             }
+
+            // Put the authorized username in the log
+            logUsername(((UsernamePasswordClientCredential) o).getUsername(),
+                    requestContext);
         } else {
             throw new AuthorizationRequiredException(
                     "Username/password authentication required");
@@ -149,16 +153,19 @@ public class UsernamePasswordAuthorizer implements IAuthorizer {
             } else {
 
                 String password = credential.getPassword() + a.getSalt();
-                LOG.info("salted: " + password);
                 if (a.getDigest() != null) {
                     a.getDigest().reset();
                     password = new String(Hex.encode(a.getDigest().digest(password.getBytes())));
-                    LOG.info("hashed: " + password);
             }
                 result = password.equals(a.getPassword());
         }
         }
         return result;
+    }
+
+    private static void logUsername(final String username,
+            final RequestContext requestContext) {
+        LOG.info("AUTHORIZED_USER: " + username);
     }
 
     private static class Account {

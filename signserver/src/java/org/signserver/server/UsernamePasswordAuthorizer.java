@@ -153,11 +153,9 @@ public class UsernamePasswordAuthorizer implements IAuthorizer {
             } else {
 
                 String password = credential.getPassword() + a.getSalt();
-                LOG.info("salted: " + password);
                 if (a.getDigest() != null) {
                     a.getDigest().reset();
                     password = new String(Hex.encode(a.getDigest().digest(password.getBytes())));
-                    LOG.info("hashed: " + password);
                 }
                 result = password.equals(a.getPassword());
             }

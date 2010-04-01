@@ -2777,15 +2777,50 @@ The time stamp signer have been tested with the OpenTSA client with both HTTP an
                     <p>
 By default is client-certificate authentication required for a signature request to be processed. This can be changed with the AUTHTYPE property.
                     </p>
-                    <p>
-<b>AUTHTYPE</b> =  NOAUTH, sets the server to not require any authentication.
-                    </p>
-                    <p>
-<b>AUTHTYPE</b> =  CLIENTCERT (default) requires a certificate of all the clients. The certificates must be in the signers access control list and be trusted by the Java distribution, i.e imported in JAVA_HOME/jre/lib/security/cacerts. Authorized clients is configured manually using the CLI interface.
-                    </p>
-                    <p>
+                    <subsubsection name="No authentication">
+                        <p>
+<b>AUTHTYPE</b> =  NOAUTH
+                        </p>
+                        <p>
+Sets the server to not require any authentication.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Client certificate authentication">
+                        <p>
+<b>AUTHTYPE</b> =  CLIENTCERT
+                        </p>
+                        <p>
+ (default) requires a certificate of all the clients. The certificates must be in the signers access control list and be trusted by the Java distribution, i.e imported in JAVA_HOME/jre/lib/security/cacerts. Authorized clients is configured manually using the CLI interface.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Password-based authentication">
+                        <p>
+<b>AUTHTYPE</b> = org.signserver.server.UsernamePasswordAuthorizer
+                        </p>
+                        <p>
+<b>USER.[NAME]</b> = [PASSWORD]<br/>
+<b>USER.[NAME]</b> = [HASHED_PASSWORD]:[HASH_ALGORITHM]<br/>
+<b>USER.[NAME]</b> = [HASHED_PASSWORD]:[HASH_ALGORITHM]:[SALT]<br/>
+                        </p>
+                        <p>
+This authorizer requires a valid username and password. User accounts are
+configured by setting properties of the form shown above, where
+[NAME] is the username and [PASSWORD] is the clear-text password. In the second
+form [HASHED_PASSWORD] should be replaced with the output of the digest algorithm 
+specified in [HASH_ALGORITHM]. The third form uses a hash value that is appended 
+to the password before hashing it.
+                        </p>
+                        <p>
+If a valid username and
+password is not supplied the worker throws an AuthorizationRequiredException
+which in case of the HTTP interfaces causes a HTTP Basic Authentication (RFC 2617).
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Custom">
+                        <p>
 This authorization functionality doesn't work for all use cases. Then it's possible to create a customized authorizer and specify it's class path as value in the AUTHTYPE property. The Processable will then automatically instantiate and use it. How to develop such a plug-in is explained in the developers section.
-                    </p>
+                        </p>
+                    </subsubsection>
                 </subsection>
                 <subsection name="MailSigner">
                     <p>

@@ -32,7 +32,10 @@ import org.signserver.common.WorkerConfig;
  * @version $Id$
  */
 public interface IAuthorizer {
-	
+
+    /** Log entry for username (if supported) for the authorized user. */
+    String LOG_USERNAME = "AUTHORIZED_USERNAME";
+
 	/**
 	 * Method called by the worker upon first call to the authenticator after instantiation.
 	 * 

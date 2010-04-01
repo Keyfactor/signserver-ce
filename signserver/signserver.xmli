@@ -1048,7 +1048,8 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
       <target name="signingAndValidationAPI" depends="signserver:compile, signserverws.client, signserverws.client" unless="buildMailSigner" if="signingandvalidationapi.conditionenabled" >
         <mkdir dir="${signingAndValidationBuild}"/>
         <javac srcdir="${src.java}" destdir="${signingAndValidationBuild}" debug="on" target="${client.java.target}" source="${client.java.target}" encoding="iso8859-1">
-           <include name="org/signserver/client/api/*.java"/>            
+           <include name="org/signserver/client/api/*.java"/>
+           <include name="org/signserver/common/AuthorizationRequiredException.java"/>
            <classpath refid="signserver.compile.classpath"/> 
         </javac>
         

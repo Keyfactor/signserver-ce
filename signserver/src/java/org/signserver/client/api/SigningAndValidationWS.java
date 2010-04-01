@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -46,24 +47,50 @@ public class SigningAndValidationWS implements ISigningAndValidation {
 
 	private SignServerWS signserver;
 
-	
-	/**
+
+        /**
 	 * Creates an instance of SigningAndValidationWS using an WebService host and port.
-	 * 
+	 *
 	 * @param host The remote host to connect to.
 	 * @param port The remote port to connect to.
 	 */
-	public SigningAndValidationWS(String host, int port) {
-		String url = "http://" + host + ":" + port + "/signserver/signserverws/signserverws?wsdl";
-		SignServerWSService service;
-		try {
-			service = new SignServerWSService(new URL(url), new QName("gen.ws.protocol.signserver.org", "SignServerWSService"));
-		} catch (MalformedURLException ex) {
-			throw new IllegalArgumentException("Malformed URL: " + url, ex);
-		}
-		signserver = service.getSignServerWSPort();
-		SignServerUtil.installBCProvider();
+	public SigningAndValidationWS(final String host, final int port) {
+            this(host, port, null, null);
 	}
+
+    /**
+     * Creates an instance of SigningAndValidationWS using an WebService host and port.
+     *
+     * @param host The remote host to connect to.
+     * @param port The remote port to connect to.
+     * @param username Username for authentication.
+     * @param password Password for authentication.
+     */
+    public SigningAndValidationWS(final String host, final int port,
+            final String username, final String password) {
+        final String url = "http://" + host + ":" + port
+                + "/signserver/signserverws/signserverws?wsdl";
+        final SignServerWSService service;
+        try {
+            service = new SignServerWSService(new URL(url),
+                    new QName("gen.ws.protocol.signserver.org",
+                    "SignServerWSService"));
+        } catch (MalformedURLException ex) {
+            throw new IllegalArgumentException("Malformed URL: "
+                    + url, ex);
+        }
+        signserver = service.getSignServerWSPort();
+
+        // Authentication
+        if (username != null && password != null) {
+            ((BindingProvider) signserver).getRequestContext()
+                    .put(BindingProvider.USERNAME_PROPERTY, username);
+            ((BindingProvider) signserver).getRequestContext()
+                    .put(BindingProvider.PASSWORD_PROPERTY, password);
+        }
+
+        SignServerUtil.installBCProvider();
+    }
 	
 	public ProcessResponse process(int workerId, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 		return process(""+workerId, request, context);

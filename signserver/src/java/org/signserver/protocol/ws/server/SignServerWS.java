@@ -32,6 +32,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
@@ -53,6 +54,9 @@ import org.signserver.protocol.ws.ISignServerWS;
 import org.signserver.protocol.ws.ProcessRequestWS;
 import org.signserver.protocol.ws.ProcessResponseWS;
 import org.signserver.protocol.ws.WorkerStatusWS;
+import org.signserver.server.CertificateClientCredential;
+import org.signserver.server.IClientCredential;
+import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.web.SignServerHealthCheck;
 
 
@@ -70,8 +74,10 @@ public class SignServerWS implements ISignServerWS {
 	@Resource
 	private WebServiceContext wsContext;	
 
-	
 	private static final Logger log = Logger.getLogger(SignServerWS.class);
+
+        private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
+        
 
 	public Collection<WorkerStatusWS> getStatus(String workerIdOrName)
 			throws InvalidWorkerIdException {
@@ -156,9 +162,42 @@ public class SignServerWS implements ISignServerWS {
 			throws InvalidWorkerIdException, IllegalRequestException,
 			CryptoTokenOfflineException, SignServerException {
 		ArrayList<ProcessResponseWS> retval = new ArrayList<ProcessResponseWS>();
-		
-		X509Certificate clientCert = getClientCertificate();
-		String requestIP = getRequestIP();
+
+                final HttpServletRequest servletRequest =
+                        (HttpServletRequest) wsContext.getMessageContext()
+                        .get(MessageContext.SERVLET_REQUEST);
+                String requestIP = getRequestIP();
+		X509Certificate clientCertificate = getClientCertificate();
+                final RequestContext requestContext = new RequestContext(clientCertificate, requestIP);
+
+                IClientCredential credential;
+
+                if (clientCertificate instanceof X509Certificate) {
+                    final X509Certificate cert = (X509Certificate) clientCertificate;
+                    log.debug("Authentication: certificate");
+                    credential = new CertificateClientCredential(
+                            cert.getSerialNumber().toString(16),
+                            cert.getIssuerDN().getName());
+                } else {
+                    log.info("Message context: " + wsContext.getMessageContext());
+
+                    // Check is client supplied basic-credentials
+                    final String authorization = servletRequest.getHeader(
+                            HTTP_AUTH_BASIC_AUTHORIZATION);
+                    if (authorization != null) {
+                        log.debug("Authentication: password");
+
+                        final String decoded[] = new String(Base64.decode(
+                                authorization.split("\\s")[1])).split(":", 2);
+
+                        credential = new UsernamePasswordClientCredential(
+                            decoded[0], decoded[1]);
+                    } else {
+                        log.debug("Authentication: none");
+                        credential = null;
+                    }
+                }
+                requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
 		
 		int workerId = getWorkerId(workerIdOrName);
 		
@@ -173,7 +212,7 @@ public class SignServerWS implements ISignServerWS {
 				log.error("Error parsing process request",e1);
 				throw new IllegalRequestException(e1.getMessage());
 			}
-			ProcessResponse resp = getWorkerSession().process(workerId, req, new RequestContext(clientCert, requestIP));
+			ProcessResponse resp = getWorkerSession().process(workerId, req, requestContext);
 			ProcessResponseWS wsresp = new ProcessResponseWS();
 			try {
 				wsresp.setResponseData(RequestAndResponseManager.serializeProcessResponse(resp));

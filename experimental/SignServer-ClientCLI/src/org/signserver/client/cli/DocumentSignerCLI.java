@@ -248,7 +248,9 @@ public class DocumentSignerCLI {
             signer = new WebServicesDocumentSigner(
                 host,
                 port,
-                workerIdOrName);
+                workerIdOrName,
+                username,
+                password);
         }
         return signer;
     }

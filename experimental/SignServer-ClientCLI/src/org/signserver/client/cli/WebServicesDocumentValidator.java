@@ -55,8 +55,10 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
     private Random random = new Random();
 
     public WebServicesDocumentValidator(final String host, final int port,
-            final String workerName) {
-        this.signServer = new SigningAndValidationWS(host, port);
+            final String workerName, final String username,
+            final String password) {
+        this.signServer = new SigningAndValidationWS(host, port, username,
+                password);
         this.workerName = workerName;
     }
 

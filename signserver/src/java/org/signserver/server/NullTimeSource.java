@@ -16,17 +16,20 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- * Simple class implementing the ITimeSource interface taking the current time
- * from the computer clock.
+ * Simple class implementing the ITimeSource interface but always returns null
+ * for the time.
  *
- * Has no defined properties.
+ * This class can be used as time source for testing purposes.
  *
- * @author philip
+ * No defined properties.
+ *
+ * @author markus
  * $Id$
  */
-public class LocalComputerTimeSource implements ITimeSource {
+public class NullTimeSource implements ITimeSource {
 
     /**
+     * @param props unused
      * @see org.signserver.server.ITimeSource#init(java.util.Properties)
      */
     public void init(final Properties props) {
@@ -34,10 +37,10 @@ public class LocalComputerTimeSource implements ITimeSource {
     }
 
     /**
-     * Method taking the local clock as time source
+     * @return Always null simulating that the time source is not available.
      * @see org.signserver.server.ITimeSource#getGenTime()
      */
-    public Date getGenTime() {
-        return new Date();
+    public final Date getGenTime() {
+        return null;
     }
 }

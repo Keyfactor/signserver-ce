@@ -292,7 +292,7 @@ public class PDFSigner extends BaseSigner {
 
 		PdfPKCS7 sgn;
 		try {
-			sgn = new PdfPKCS7(privKey, certChain, null, "SHA1", null, false);
+			sgn = new PdfPKCS7(privKey, certChain, crlList, "SHA1", null, false);
 		} catch (InvalidKeyException e) {
 			throw new SignServerException("Error constructing PKCS7 package", e);
 		} catch (NoSuchProviderException e) {

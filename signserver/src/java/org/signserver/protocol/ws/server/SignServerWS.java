@@ -179,8 +179,6 @@ public class SignServerWS implements ISignServerWS {
                             cert.getSerialNumber().toString(16),
                             cert.getIssuerDN().getName());
                 } else {
-                    log.info("Message context: " + wsContext.getMessageContext());
-
                     // Check is client supplied basic-credentials
                     final String authorization = servletRequest.getHeader(
                             HTTP_AUTH_BASIC_AUTHORIZATION);

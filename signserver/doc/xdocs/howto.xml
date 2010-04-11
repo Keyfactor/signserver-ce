@@ -42,7 +42,7 @@
   <p>
   A sample configuration how to fix up nice URLs for OCSP so that you can point your TSA clients to http://tsa.company.com/ instead of http://tsa.company.com:8080/signserver/process?workerId=1.
   <br/>
-  This configuration combines mod_proxy with mod_reqrite to be able to set the workerName or workerId, so you can have different TSAs available on different URLs.
+  This configuration combines mod_proxy with mod_rewrite to be able to set the workerName or workerId, so you can have different TSAs available on different URLs.
   </p>
   <source>
 &lt;VirtualHost tsa.company.com:80>

@@ -23,15 +23,14 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.cert.CRL;
-import java.security.cert.CRLException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 import javax.persistence.EntityManager;
 
@@ -81,10 +80,10 @@ import com.lowagie.text.pdf.TSAClientBouncyCastle;
  * 
  * TSA_URL = The URL of the timestamp authority TSA_USERNAME = Account
  * (username) of the TSA TSA_PASSWORD = Password for TSA
- *
+ * 
  * CERTIFICATION_LEVEL = The level of certification for the document.
- *  NOT_CERTIFIED, FORM_FILLING_AND_ANNOTATIONS, FORM_FILLING or NOT_CERTIFIED
- *  (default: NOT_CERTIFIED).
+ * NOT_CERTIFIED, FORM_FILLING_AND_ANNOTATIONS, FORM_FILLING or NOT_CERTIFIED
+ * (default: NOT_CERTIFIED).
  * 
  * @author Tomas Gustavsson
  * @version $Id$
@@ -115,8 +114,8 @@ public class PDFSigner extends BaseSigner {
 	public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH";
 	public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_RESIZE_TO_RECTANGLE";
 	public static final boolean VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE_DEFAULT = true;
-        public static final String CERTIFICATION_LEVEL = "CERTIFICATION_LEVEL";
-        public static final int CERTIFICATION_LEVEL_DEFAULT = PdfSignatureAppearance.NOT_CERTIFIED;
+	public static final String CERTIFICATION_LEVEL = "CERTIFICATION_LEVEL";
+	public static final int CERTIFICATION_LEVEL_DEFAULT = PdfSignatureAppearance.NOT_CERTIFIED;
 
 	// properties that control timestamping of signature
 	public static final String TSA_URL = "TSA_URL";
@@ -134,15 +133,14 @@ public class PDFSigner extends BaseSigner {
 		super.init(signerId, config, workerContext, workerEntityManager);
 	}
 
-    /**
-     * The main method performing the actual signing operation. Expects the
-     * signRequest to be a GenericSignRequest containing a signed PDF file.
-     *
-     * @throws SignServerException
-     * @see org.signserver.server.IProcessable#processData(
-     * org.signserver.common.ProcessRequest,
-     * org.signserver.common.RequestContext)
-     */
+	/**
+	 * The main method performing the actual signing operation. Expects the
+	 * signRequest to be a GenericSignRequest containing a signed PDF file.
+	 * 
+	 * @throws SignServerException
+	 * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest,
+	 *      org.signserver.common.RequestContext)
+	 */
 	public ProcessResponse processData(ProcessRequest signRequest,
 			RequestContext requestContext) throws IllegalRequestException,
 			CryptoTokenOfflineException, SignServerException {
@@ -219,32 +217,7 @@ public class PDFSigner extends BaseSigner {
 		// include signer certificate crl inside cms package if requested
 		CRL[] crlList = null;
 		if (params.isEmbed_crl()) {
-			try {
-				URL certURL = CertTools.getCrlDistributionPoint(this
-						.getSigningCertificate());
-				CertificateFactory certFactory;
-				try {
-					certFactory = CertificateFactory.getInstance("X509", "BC");
-				} catch (CertificateException e) {
-					throw new SignServerException(
-							"Error creating Certificate Factory", e);
-				} catch (NoSuchProviderException e) {
-					throw new SignServerException(
-							"Error creating Certificate Factory", e);
-				}
-
-				try {
-					crlList = new CRL[1];
-					crlList[0] = ValidationUtils.fetchCRLFromURL(certURL,
-							certFactory);
-				} catch (CRLException e) {
-					throw new SignServerException("Error fetching CRL from "
-							+ certURL.toString(), e);
-				}
-			} catch (CertificateParsingException e) {
-				throw new SignServerException(
-						"Error obtaining CDP from signing certificate", e);
-			}
+			crlList = getCrlsForChain(this.getSigningCertificateChain());
 		}
 		sap.setCrypto(null, certChain, crlList,
 				PdfSignatureAppearance.SELF_SIGNED);
@@ -267,8 +240,8 @@ public class PDFSigner extends BaseSigner {
 			}
 		}
 
-                // Certification level
-                sap.setCertificationLevel(params.getCertification_level());
+		// Certification level
+		sap.setCertificationLevel(params.getCertification_level());
 
 		PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, new PdfName(
 				"adbe.pkcs7.detached"));
@@ -362,7 +335,44 @@ public class PDFSigner extends BaseSigner {
 	}
 
 	/**
-	 * get the page number at which to draw signature rectangle 
+	 * returns crl list containing crl for each certifcate in crl chain. CRLs
+	 * are fetched using address specified in CDP.
+	 * 
+	 * @return n
+	 * @throws SignServerException
+	 */
+	private CRL[] getCrlsForChain(Collection<Certificate> pCertChain)
+			throws SignServerException {
+
+		List<CRL> retCrls = new Vector<CRL>();
+		for (Certificate currCert : pCertChain) {
+			CRL currCrl = null;
+			try {
+				URL currCertURL = CertTools.getCrlDistributionPoint(currCert);
+				if (currCertURL == null) {
+					continue;
+				}
+				
+				currCrl = ValidationUtils.fetchCRLFromURL(currCertURL);
+			} catch (CertificateParsingException e) {
+				throw new SignServerException(
+						"Error obtaining CDP from signing certificate", e);
+			}
+
+			retCrls.add(currCrl);
+		}
+
+		if (retCrls.size() == 0) {
+			return null;
+		} else {
+			return retCrls.toArray(new CRL[0]);
+		}
+
+	}
+
+	/**
+	 * get the page number at which to draw signature rectangle
+	 * 
 	 * @param pReader
 	 * @param pParams
 	 * @return
@@ -377,14 +387,14 @@ public class PDFSigner extends BaseSigner {
 		else {
 			try {
 				int pNum = Integer.parseInt(pParams.getVisible_sig_page());
-				if( pNum < 1)
+				if (pNum < 1)
 					return 1;
 				else if (pNum > totalNumOfPages)
 					return totalNumOfPages;
 				else
 					return pNum;
 			} catch (NumberFormatException ex) {
-				//not a numeric argument draw on first line
+				// not a numeric argument draw on first line
 				return 1;
 			}
 		}

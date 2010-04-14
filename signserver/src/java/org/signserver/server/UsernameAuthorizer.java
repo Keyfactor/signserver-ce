@@ -13,7 +13,9 @@
 package org.signserver.server;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -151,7 +153,13 @@ public class UsernameAuthorizer implements IAuthorizer {
 
     private static void logUsername(final String username,
             final RequestContext requestContext) {
-        LOG.info("AUTHORIZED_USER: " + username);
+        Map<String, String> logMap = (Map)
+                requestContext.get(RequestContext.LOGMAP);
+        if (logMap == null) {
+            logMap = new HashMap<String, String>();
+            requestContext.put(RequestContext.LOGMAP, logMap);
+        }
+        logMap.put(IAuthorizer.LOG_USERNAME, username);
     }
 
 }

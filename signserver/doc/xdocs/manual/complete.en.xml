@@ -2793,7 +2793,7 @@ Sets the server to not require any authentication.
  (default) requires a certificate of all the clients. The certificates must be in the signers access control list and be trusted by the Java distribution, i.e imported in JAVA_HOME/jre/lib/security/cacerts. Authorized clients is configured manually using the CLI interface.
                         </p>
                     </subsubsection>
-                    <subsubsection name="Password-based authentication">
+                    <subsubsection name="Username/password-based authentication">
                         <p>
 <b>AUTHTYPE</b> = org.signserver.server.UsernamePasswordAuthorizer
                         </p>
@@ -2814,6 +2814,30 @@ to the password before hashing it.
 If a valid username and
 password is not supplied the worker throws an AuthorizationRequiredException
 which in case of the HTTP interfaces causes a HTTP Basic Authentication (RFC 2617).
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Username-based authentication">
+                        <p>
+<b>AUTHTYPE</b> = org.signserver.server.UsernameAuthorizer
+                        </p>
+                        <p>
+Form 1: ACCEPT_ALL_USERNAMES = false (default) and usernames are specified:<br/>
+<b>ACCEPT_ALL_USERNAMES</b> = false<br/>
+<b>ACCEPT_USERNAMES</b> = user1;user2;user3
+                        </p>
+                        <p>
+Form 2, ACCEPT_ALL_USERNAMES = true and no usernames are specified:<br/>
+<b>ACCEPT_ALL_USERNAMES</b> = true
+                        </p>
+                        <p>
+An Authorizer that can be used for instance if SignServer sits behind an Apache
+front-end which uses HTTP basic authentication. With this Authorizer the username
+is logged but the password is not checked as it is assumed to be checked by the
+front-end.
+                        </p>
+                        <p>
+The Authorizer can be configured to either accept all usernames or only accept
+those usernames listed in one of its properties.
                         </p>
                     </subsubsection>
                     <subsubsection name="Custom">

@@ -32,16 +32,16 @@ import org.signserver.common.WorkerConfig;
  * already have been checked by a proxy for instance).
  *
  * <p>
- * Properties: ACCEPT_USERNAMES, ACCEPT_ALL
+ * Properties: ACCEPT_USERNAMES, ACCEPT_ALL_USERNAMES
  * </p>
  *
  * <pre>
- * Form 1, ACCEPT_ALL = false (default) and usernames are specified:
- * ACCEPT_ALL = false
+ * Form 1, ACCEPT_ALL_USERNAMES = false (default) and usernames are specified:
+ * ACCEPT_ALL_USERNAMES = false
  * ACCEPT_USERNAMES = user1;user2;user3
  *
- * Form 2, ACCEPT_ALL = true and no usernames are specified:
- * ACCEPT_ALL = true
+ * Form 2, ACCEPT_ALL_USERNAMES = true and no usernames are specified:
+ * ACCEPT_ALL_USERNAMES = true
  * </pre>
  *
  *
@@ -56,8 +56,8 @@ public class UsernameAuthorizer implements IAuthorizer {
     /** Property AUTHORIZED_USERNAMES. */
     private static final String ACCEPT_USERNAMES = "ACCEPT_USERNAMES";
     
-    /** Property ACCEPT_ALL */
-    private static final String ACCEPT_ALL = "ACCEPT_ALL";
+    /** Property ACCEPT_ALL_USERNAMES */
+    private static final String ACCEPT_ALL_USERNAMES = "ACCEPT_ALL_USERNAMES";
 
     /** Set with all the accepted usernames. */
     private Set<String> acceptUsernames = Collections.emptySet();
@@ -82,12 +82,12 @@ public class UsernameAuthorizer implements IAuthorizer {
         this.workerId = workerId;
 
         acceptAllUsernames =
-                Boolean.parseBoolean(config.getProperty(ACCEPT_ALL));
+                Boolean.parseBoolean(config.getProperty(ACCEPT_ALL_USERNAMES));
         final String usernames = config.getProperty(ACCEPT_USERNAMES);
 
         if (acceptAllUsernames && usernames != null) {
             throw new SignServerException(
-                "Can not specify both ACCEPT_ALL=true and ACCEPT_USERNAMES");
+                "Can not specify both ACCEPT_ALL_USERNAMES=true and ACCEPT_USERNAMES");
         } else if(!acceptAllUsernames) {
             loadAccounts(usernames);
         }

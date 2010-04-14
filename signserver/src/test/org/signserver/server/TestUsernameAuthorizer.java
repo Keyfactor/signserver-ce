@@ -265,7 +265,7 @@ public class TestUsernameAuthorizer extends TestCase {
     public void test03AcceptAll() throws Exception {
 
         // Add users
-        workSession.setWorkerProperty(WORKERID, "ACCEPT_ALL", "true");
+        workSession.setWorkerProperty(WORKERID, "ACCEPT_ALL_USERNAMES", "true");
         workSession.removeWorkerProperty(WORKERID, "ACCEPT_USERNAMES");
         workSession.reloadConfiguration(WORKERID);
 

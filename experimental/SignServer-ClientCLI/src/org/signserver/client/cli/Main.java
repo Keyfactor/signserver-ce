@@ -36,7 +36,8 @@ public class Main {
             "signdocument",
             "validatedocument",
             "timestamp",
-            "validatecertificate");
+            "validatecertificate",
+            "signdatagroups");
 
 
     /** No instances of this class. */
@@ -53,6 +54,8 @@ public class Main {
             DocumentSignerCLI.main(args);
         } else if ("validatedocument".equals(args[0])) {
             DocumentValidatorCLI.main(args);
+        } else if ("signdatagroups".equals(args[0])) {
+            SODSignerCLI.main(args);
         } else if ("timestamp".equals(args[0])) {
             try {
                 org.signserver.client.TimeStampClient.main(

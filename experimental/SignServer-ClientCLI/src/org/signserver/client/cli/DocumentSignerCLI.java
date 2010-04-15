@@ -71,6 +71,8 @@ public class DocumentSignerCLI {
     /** Option PORT. */
     public static final String PORT = "port";
 
+    public static final String SERVLET = "servlet";
+
     /** Option PROTOCOL. */
     public static final String PROTOCOL = "protocol";
 
@@ -110,6 +112,8 @@ public class DocumentSignerCLI {
                 TEXTS.getString("HOST_DESCRIPTION"));
         OPTIONS.addOption(PORT, true,
                 TEXTS.getString("PORT_DESCRIPTION"));
+        OPTIONS.addOption(SERVLET, true,
+                TEXTS.getString("SERVLET_DESCRIPTION"));
         OPTIONS.addOption(PROTOCOL, true,
                 TEXTS.getString("PROTOCOL_DESCRIPTION"));
         OPTIONS.addOption(USERNAME, true, "Username for authentication.");
@@ -133,6 +137,8 @@ public class DocumentSignerCLI {
 
     /** TCP port number of the SignServer host. */
     private transient int port;
+
+    private transient String servlet = "/signserver/process";
 
     /** File to read the data from. */
     private transient File inFile;
@@ -183,6 +189,9 @@ public class DocumentSignerCLI {
         }
         if (line.hasOption(PORT)) {
             port = Integer.parseInt(line.getOptionValue(PORT, null));
+        }
+        if (line.hasOption(SERVLET)) {
+            servlet = line.getOptionValue(SERVLET, null);
         }
         if (line.hasOption(DATA)) {
             data = line.getOptionValue(DATA, null);
@@ -241,7 +250,7 @@ public class DocumentSignerCLI {
         if (Protocol.HTTP.equals(protocol)) {
             LOG.debug("Using HTTP as procotol");
             signer = new HTTPDocumentSigner(
-                new URL("http", host, port, "/signserver/process"),
+                new URL("http", host, port, servlet),
                 workerIdOrName, username, password);
         } else {
             LOG.debug("Using WebServices as procotol");

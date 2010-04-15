@@ -12,31 +12,18 @@
  *************************************************************************/
 package org.signserver.client.cli;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
-import org.signserver.client.api.ISignServerWorker;
-import org.signserver.client.api.SigningAndValidationEJB;
-import org.signserver.client.api.SigningAndValidationWS;
-import org.signserver.client.api.SigningAndValidationWSBalanced;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 
 
@@ -104,15 +91,14 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             LOG.debug(String.format("Got sign response "
                     + "with signed data of length %d bytes.",
                     response.getData().length));
+        }
 
-            // Write the signed data
-            out.write(response.getData());
+        // Write the signed data
+        out.write(response.getData());
 
+        if (LOG.isInfoEnabled()) {
             LOG.info("Processing took "
-                    + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
-        } else {
-            throw new SignServerException("Unexpected response type: "
-                    + response.getClass().getName());
+                + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
         }
     }
 

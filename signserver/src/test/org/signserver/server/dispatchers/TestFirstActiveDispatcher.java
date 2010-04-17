@@ -49,7 +49,7 @@ public class TestFirstActiveDispatcher extends TestCase {
 
     /**
      * WORKERID used in this test case as defined in
-     * junittest-part-config.properties
+     * junittest-part-config.properties.
      */
     private static final int WORKERID_DISPATCHER = 5680;
     private static final int WORKERID_1 = 5681;
@@ -220,7 +220,7 @@ public class TestFirstActiveDispatcher extends TestCase {
     }
 
     /**
-     * Get the initial naming context
+     * Get the initial naming context.
      */
     protected Context getInitialContext() throws Exception {
         Hashtable<String, String> props = new Hashtable<String, String>();
@@ -235,4 +235,3 @@ public class TestFirstActiveDispatcher extends TestCase {
         return ctx;
     }
 }
-

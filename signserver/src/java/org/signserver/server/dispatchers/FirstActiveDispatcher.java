@@ -27,12 +27,14 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.WorkerContext;
 
 /**
  * Dispatching requests to the first active worker found.
+ *
+ * Properties:<br/>
+ * WORKERS = Comma separated list of worker names
  *
  * @author markus
  * @version $Id$
@@ -43,9 +45,15 @@ public class FirstActiveDispatcher extends BaseDispatcher {
     private static final Logger LOG = Logger.getLogger(
             FirstActiveDispatcher.class);
 
+    /** Property WORKERS. */
+    private static final String PROPERTY_WORKERS = "WORKERS";
+
+    /** Workersession. */
     private IWorkerSession.IRemote workerSession;
 
+    /** List of workers. */
     private List<String> workers = new LinkedList<String>();
+
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
@@ -54,7 +62,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
             super.init(workerId, config, workerContext, workerEM);
 
             workers = new LinkedList<String>();
-            final String workersValue = config.getProperty("WORKERS");
+            final String workersValue = config.getProperty(PROPERTY_WORKERS);
             if (workersValue == null) {
                 LOG.error("Property WORKERS missing!");
             } else {

@@ -1463,6 +1463,31 @@ The XML validator validates the signature of XML documents. The certificate is c
                 </subsection>
             </section>
 
+            <section name="SignServer Dispatchers">
+                <p>
+Dispatchers are workers that forwards the request to other workers.
+                </p>
+
+                <subsection name="FirstActiveDispatcher">
+
+                    <p>
+Fully qualified class name: org.signserver.server.dispatchers.FirstActiveDispatcher
+                    </p>
+                        
+                    <subsubsection name="Overview">
+                        <p>
+Dispatches the request to the first of the configured workers that has an active
+cryptotoken. This dispatcher can be useful if you want to have one worker to call
+that forwards the request to any of the configured workers that has a valid
+certificate etc.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p><b>WORKERS</b> = Comma separated list of workerNameS to try to forward requests to.</p>
+                    </subsubsection>
+                </subsection>
+            </section>
+
             <section name="SignServer Validation Service Framework">
                 <p>
 The validation service framework is used to validate certificates from one or more issuers. It can be used to  have one central point of performing revokation statuses to simplify the integration of external PKIs within an enterprise.

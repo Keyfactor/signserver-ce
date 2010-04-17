@@ -278,6 +278,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             final ProcessResponse res;
             try {
                 res = processable.processData(request, requestContext);
+            } catch (AuthorizationRequiredException ex) {
+              throw ex; // This can happen in dispatching workers
             } catch (SignServerException e) {
                 final SignServerException exception = new SignServerException(
                         "SignServerException calling signer with id " + workerId

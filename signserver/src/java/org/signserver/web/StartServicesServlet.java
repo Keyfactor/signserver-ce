@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.web;
 
 import java.io.IOException;
@@ -29,7 +28,8 @@ import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession.ILocal;
 
 /**
- * Servlet used to start services by calling the ServiceTimerSession.load() at startup<br>
+ * Servlet used to start services by calling the ServiceTimerSession.load() at 
+ * startup.
  *
  * 
  * 
@@ -61,7 +61,7 @@ public class StartServicesServlet extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#destroy()
 	 */
 	public void destroy() {		
-        log.info("Destroy, Sign Server shutdown.");
+        log.info("Destroy, @signserver.version@ shutdown.");
         
         log.debug(">destroy calling ServiceSession.unload");
 
@@ -70,23 +70,14 @@ public class StartServicesServlet extends HttpServlet {
 		super.destroy();
 	}
 
-
-
- 
-
-      
-
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        log.info("Init, Sign Server startup.");
+        log.info("Init, @signserver.version@ startup.");
 
         log.debug(">init calling ServiceSession.load");
 
         getTimedServiceSession().load(0);
-
-
-
     } // init
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)

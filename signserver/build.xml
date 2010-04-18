@@ -185,6 +185,7 @@ OS version                          = ${os.version}
 				<replacestring from="@SignServerCommandFactory@" to="${custom.commandfactory}"/>
 				<replacestring from="@signserver.configfile@" to="${signserver.configfile}"/>
 				<replacestring from="@BUILDMODE@" to="${build.mode}"/>
+                                <replacestring from="@signserver.version@" to="${app.version}"/>
 			</tokenfilter>
 			</filterchain>
 	    </copy>

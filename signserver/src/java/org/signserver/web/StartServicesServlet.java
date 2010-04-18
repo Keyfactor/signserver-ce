@@ -25,14 +25,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession.ILocal;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
 
 /**
- * Servlet used to start services by calling the ServiceTimerSession.load() at startup<br>
- *
- * 
+ * Servlet used to start services by calling the ServiceTimerSession.load() at
+ * startup.
  * 
  * @version $Id$
  */
@@ -80,7 +80,8 @@ public class StartServicesServlet extends HttpServlet {
      * @see javax.servlet.GenericServlet#destroy()
      */
     public void destroy() {
-        log.info("Destroy, Sign Server shutdown.");
+        log.info("Destroy,  " + CompileTimeSettings.getInstance().getProperty(
+                CompileTimeSettings.SIGNSERVER_VERSION) + " shutdown.");
 
         log.debug(">destroy calling ServiceSession.unload");
 
@@ -92,7 +93,8 @@ public class StartServicesServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        log.info("Init, Sign Server startup.");
+        log.info("Init, " + CompileTimeSettings.getInstance().getProperty(
+                CompileTimeSettings.SIGNSERVER_VERSION) + " startup.");
 
         log.debug(">init calling ServiceSession.load");
         

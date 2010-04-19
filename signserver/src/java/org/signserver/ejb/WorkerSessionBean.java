@@ -32,6 +32,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -62,9 +63,11 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.BaseProcessable;
 import org.signserver.server.IAuthorizer;
 import org.signserver.server.IProcessable;
 import org.signserver.server.IWorker;
+import org.signserver.server.KeyUsageCounter;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.statistics.Event;
@@ -133,6 +136,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
         }
         // Check if the signer has a signer certificate and if that certificate have ok validity and private key usage periods. 
         checkCertificateValidity(workerId, awc);
+
+        // Check key usage limit
+        incrementAndCheckSignerKeyUsageCounter(processable, workerId, awc, em);
     	
         Event event = StatisticsManager.startEvent(workerId, awc, em);
         requestContext.put(RequestContext.STATISTICS_EVENT, event);
@@ -289,6 +295,69 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
     	} // if (checkcertvalidity || checkprivatekeyvalidity) {
 	} // checkCertificateValidity
 
+     /**
+     * Checks that if this worker has a certificate (ie the worker is a Signer)
+     * the counter of the usages of the key has not reached the configured
+     * limit.
+     * @param workerId
+     * @param awc
+     * @param em
+     * @throws CryptoTokenOfflineException
+     */
+    private void incrementAndCheckSignerKeyUsageCounter(final IProcessable worker,
+            final int workerId, final WorkerConfig awc, EntityManager em)
+        throws CryptoTokenOfflineException {
+
+        // If the signer have a certificate, check that the usage of the key
+        // has not reached the limit
+        Certificate cert = null;
+
+        if (worker instanceof BaseProcessable) {
+            cert = ((BaseProcessable) worker).getSigningCertificate();
+        } else {
+            // The following will not work for keystores where the SIGNSERCERT
+            // property is not set
+            cert = (new ProcessableConfig(awc)).getSignerCertificate();
+        }
+
+        if (cert != null) {
+            final long keyUsageLimit
+                    = Long.valueOf(awc.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
+
+            final String keyHash
+                    = KeyUsageCounter.createKeyHash(cert.getPublicKey());
+
+            if(log.isDebugEnabled()) {
+                log.debug("Worker[" + workerId +"]: "
+                        + "Key usage limit: " + keyUsageLimit);
+                log.debug("Worker[" + workerId +"]: "
+                        + "Key hash: " + keyHash);
+            }
+
+            final Query updateQuery;
+            if (keyUsageLimit < 0) {
+                updateQuery = em.createQuery("UPDATE KeyUsageCounter w SET w.counter = w.counter + 1 WHERE w.keyHash = :keyhash");
+            } else {
+                updateQuery = em.createQuery("UPDATE KeyUsageCounter w SET w.counter = w.counter + 1 WHERE w.keyHash = :keyhash AND w.counter < :limit");
+                updateQuery.setParameter("limit", keyUsageLimit);
+            }
+            updateQuery.setParameter("keyhash", keyHash);
+
+
+            if (updateQuery.executeUpdate() < 1) {
+                final String message
+                        = "Key usage limit exceeded or not initialized for worker "
+                        + workerId;
+                log.debug(message);
+                throw new CryptoTokenOfflineException(message);
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Worker[" + workerId + "]: "
+                    + "No certificate so not checking signing key usage counter");
+            }
+        }
+    }
 
 	/* (non-Javadoc)
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#getStatus(int)
@@ -319,7 +388,41 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 		  globalConfigurationSession.reload();		  
 		}else{
 			WorkerFactory.getInstance().reloadWorker(workerId, workerConfigService, globalConfigurationSession,new SignServerContext(em));
-		}
+
+         // Try to insert a key usage counter entry for this worker's public
+        // key
+        // Get worker instance
+        final IWorker worker = WorkerFactory.getInstance().getWorker(workerId,
+                workerConfigService, globalConfigurationSession,
+                new SignServerContext(em));
+            if (worker instanceof BaseProcessable) {
+                try {
+                    final Certificate cert = ((BaseProcessable)worker)
+                            .getSigningCertificate();
+                    if (cert != null) {
+                        final String keyHash = KeyUsageCounter
+                                .createKeyHash(cert.getPublicKey());
+
+                        KeyUsageCounter counter
+                                = em.find(KeyUsageCounter.class, keyHash);
+
+                        if (counter == null) {
+                            counter = new KeyUsageCounter(keyHash);
+                            em.persist(counter);
+                        }
+                        if (log.isDebugEnabled()) {
+                            log.debug("Worker[" + workerId + "]: "
+                                    + "key usage counter: " + counter.getCounter());
+                        }
+                    }
+                } catch (CryptoTokenOfflineException ex) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Worker[ " + workerId + "]: "
+                            + "Crypto token offline trying to create key usage counter");
+                    }
+                }
+            }
+                }
 		
 		if(workerId == 0 || globalConfigurationSession.getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES).contains(new Integer(workerId))){
 		  serviceTimerSession.unload(workerId);

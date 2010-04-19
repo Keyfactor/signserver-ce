@@ -77,5 +77,9 @@ public class SignServerConstants {
 	 */
 	public static final String MINREMAININGCERTVALIDITY          = "MINREMAININGCERTVALIDITY";
 
-	
+        /**
+         * Maximum number signings that are allowed to be performed by a key.
+         * A negative value means no limit (default).
+         */
+	public static final String KEYUSAGELIMIT = "KEYUSAGELIMIT";
 }

@@ -228,40 +228,51 @@ public class SODProcessServlet extends HttpServlet {
         log.debug("<doPost()");
     } //doPost
 
-    private void displaySignerCertificate(HttpServletResponse response, int workerId) throws IOException {
-    	log.debug(">displaySignerCertificate()");
-    	WorkerConfig config = getWorkerSession().getCurrentWorkerConfig(workerId);
-    	Certificate cert =(new ProcessableConfig( config)).getSignerCertificate();
+    private void displaySignerCertificate(final HttpServletResponse response,
+            final int workerId) throws IOException {
+        log.debug(">displaySignerCertificate()");
+        Certificate cert = null;
+        try {
+            cert = getWorkerSession().getSignerCertificate(workerId);
+        } catch (CryptoTokenOfflineException ignored) {}
         response.setContentType(CONTENT_TYPE_TEXT);
-    	if (cert != null) {
-    		response.getWriter().print(cert);
-    	} else {
-    		response.getWriter().print("No signing certificate found for worker with id "+workerId);
-    	}
-    	log.debug("<displaySignerCertificate()");
+        if (cert == null) {
+            response.getWriter().print(
+                    "No signing certificate found for worker with id "
+                    + workerId);
+        } else {
+            response.getWriter().print(cert);
+        }
+        log.debug("<displaySignerCertificate()");
     }
 
-    private void sendSignerCertificate(HttpServletResponse response, int workerId) throws IOException {
-    	log.debug(">sendSignerCertificate()");
-    	WorkerConfig config = getWorkerSession().getCurrentWorkerConfig(workerId);
-    	Certificate cert =(new ProcessableConfig( config)).getSignerCertificate();
-    	try {
-    		if (cert != null) {
-    			byte[] bytes;
-    			bytes = cert.getEncoded();
-    			response.setContentType(CONTENT_TYPE_BINARY);
-    	        response.setHeader("Content-Disposition", "filename=cert.crt");
-    			response.setContentLength(bytes.length);
-    			response.getOutputStream().write(bytes);
-    			response.getOutputStream().close();        	
-    		} else {
-    			response.getWriter().print("No signing certificate found for worker with id "+workerId);
-    		}
-    	} catch (CertificateEncodingException e) {
-			log.error("Error encoding certificate: ", e);
-			response.getWriter().print("Error encoding certificate: "+e.getMessage());
-    	}
-    	log.debug("<sendSignerCertificate()");
+    private void sendSignerCertificate(final HttpServletResponse response,
+            final int workerId) throws IOException {
+        log.debug(">sendSignerCertificate()");
+        Certificate cert = null;
+        try {
+            cert = getWorkerSession().getSignerCertificate(workerId);
+        } catch (CryptoTokenOfflineException ignored) {}
+        try {
+            if (cert == null) {
+                response.getWriter().print(
+                        "No signing certificate found for worker with id "
+                        + workerId);
+            } else {
+                byte[] bytes;
+                bytes = cert.getEncoded();
+                response.setContentType(CONTENT_TYPE_BINARY);
+                response.setHeader("Content-Disposition", "filename=cert.crt");
+                response.setContentLength(bytes.length);
+                response.getOutputStream().write(bytes);
+                response.getOutputStream().close();
+            }
+        } catch (CertificateEncodingException e) {
+            log.error("Error encoding certificate: ", e);
+            response.getWriter().print("Error encoding certificate: "
+                    + e.getMessage());
+        }
+        log.debug("<sendSignerCertificate()");
     }
 
     /**

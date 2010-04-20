@@ -32,14 +32,12 @@ div.header {
 </head>
 <body>
 <h2>MRTD SOD signing demo</h2>
-<p>Enter the data for the data groups to be stored on the passport as base64 encoded strings.</p>
+<p>Enter the data for the data groups to be stored on the passport.</p>
+<p>Note 1: Please provide the hashes of the respective data groups if the signer is configured to accept hashes instead of the actual data.</p>
+<p>Note 2: When submitting this form using a web browser it is not possible to enter binary data directly into the input fields. Then first base64 encode the data and choose the Base64 encoding option and the signer will decode the data before signing it.</p>
+
 <form id="requestform" action="sod" method="post">
     <input type="hidden" name="workerName" value="MRTDSODSigner"/>
-    <!-- if encoding = binary values will not be base64 decoded before use -->
-    <!--
-    <input type="hidden" name="encoding" value="binary"/>     
-     -->
-    <!-- a good test value, base64 encoded is Yy== -->
     <p>
         DG1: <input type="text" size="80" name="dataGroup1" value="Yy=="/><br/>
         DG2: <input type="text" size="80" name="dataGroup2" value="Yy=="/><br/>
@@ -58,25 +56,24 @@ div.header {
         DG15: <input type="text" size="80" name="dataGroup15"/><br/>
         DG16: <input type="text" size="80" name="dataGroup16"/><br/>
     </p>
+    <!-- if encoding = binary values will not be base64 decoded before use -->
+    <!-- a good test value, base64 encoded is Yy== -->
+    <p>
+	Encoding of datagroups:<br/>
+	<input type="radio" name="encoding" value="binary"/>None<br/>
+	<input type="radio" name="encoding" value="base64" checked="checked"/>Base64
+    </p>
 
     <input type="submit" name="submit" value="Submit" /><br />
 </form>
 
 <h2>Display signing certificate</h2>
 <p>View the current document signer certificate.</p>
-<form id="displaycertform" action="sod" method="post">
-    <input type="hidden" name="workerName" value="MRTDSODSigner"/>
-    <input type="hidden" name="displayCert" value="true"/>     
-    <input type="submit" name="submit" value="Display" /><br />
-</form>
+<p><a href="sod?workerName=MRTDSODSigner&amp;displayCert=true">Display</a></p>
 
 <h2>Download signing certificate</h2>
 <p>Download the current document signer certificate in binary (der) format.</p>
-<form id="downloadcertform" action="sod" method="post">
-    <input type="hidden" name="workerName" value="MRTDSODSigner"/>
-    <input type="hidden" name="downloadCert" value="true"/>     
-    <input type="submit" name="submit" value="Download" /><br />
-</form>
+<p><a href="sod?workerName=MRTDSODSigner&amp;downloadCert=true">Download</a></p>
 
 </body>
 </html>

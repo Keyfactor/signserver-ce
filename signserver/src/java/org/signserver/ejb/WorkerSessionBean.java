@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -74,8 +75,9 @@ import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
 
 /**
- * The main worker session bean
- * 
+ * The main worker session bean.
+ *
+ * @version $Id$
  */
 @Stateless
 public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.IRemote  {
@@ -559,6 +561,40 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 			return ret;
 	}
 	
+    /**
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificate(int) 
+     */
+    public Certificate getSignerCertificate(final int signerId) throws CryptoTokenOfflineException {
+        Certificate ret = null;
+        final IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
+                workerConfigService, globalConfigurationSession,
+                new SignServerContext(em));
+        if (worker instanceof BaseProcessable) {
+            ret = ((BaseProcessable) worker).getSigningCertificate();
+        }
+        return ret;
+    }
+
+    /**
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificateChain(int)
+     */
+    public List<Certificate> getSignerCertificateChain(final int signerId) throws CryptoTokenOfflineException {
+        List<Certificate> ret = null;
+        final IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
+                workerConfigService, globalConfigurationSession,
+                new SignServerContext(em));
+        if (worker instanceof BaseProcessable) {
+            Collection<Certificate> certs = ((BaseProcessable) worker)
+                    .getSigningCertificateChain();
+            if (certs instanceof List) {
+                ret = (List) certs;
+            } else {
+                ret = new LinkedList<Certificate>(certs);
+            }
+        }
+        return ret;
+    }
+
 	/* (non-Javadoc)
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#destroyKey(int, int)
 	 */

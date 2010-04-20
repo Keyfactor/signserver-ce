@@ -125,7 +125,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     private X509Certificate cert = null;	
  
 	/**
-	 * Private method that returns the certificate used when signing
+	 * Method that returns the certificate used when signing
 	 * @throws CryptoTokenOfflineException 
 	 */
 	public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
@@ -143,7 +143,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 	
 	private Collection<Certificate> certChain = null;
 	/**
-	 * Private method that returns the certificate used when signing
+	 * Method that returns the certificate chain used when signing
 	 * @throws CryptoTokenOfflineException 
 	 */
 	public Collection<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {

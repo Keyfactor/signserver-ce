@@ -168,6 +168,28 @@ public interface IWorkerSession {
             InvalidWorkerIdException;
 
     /**
+     * Method returning the current signing certificate for the signer.
+     * @param signerId Id of signer
+     * @return Current signing certificate if the worker is a signer and it has
+     * been configured. Otherwise null or an exception is thrown.
+     * @throws CryptoTokenOfflineException In case the crypto token or the worker
+     * is not active
+     */
+    Certificate getSignerCertificate(int signerId)
+            throws CryptoTokenOfflineException;
+
+    /**
+     * Method returning the current signing certificate chain for the signer.
+     * @param signerId Id of signer
+     * @return Current signing certificate chain if the worker is a signer and it
+     * has been configured. Otherwise null or an exception is thrown.
+     * @throws CryptoTokenOfflineException In case the crypto token or the worker
+     * is not active
+     */
+    public List<Certificate> getSignerCertificateChain(int signerId)
+            throws CryptoTokenOfflineException;
+
+    /**
      * Method used to remove a key from a signer.
      *
      * @param signerId id of the signer

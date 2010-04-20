@@ -15,10 +15,6 @@ package org.signserver.ejb;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
@@ -28,10 +24,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -39,7 +35,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import net.sourceforge.scuba.util.Hex;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -89,8 +84,9 @@ import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
 
 /**
- * The main worker session bean
+ * The main worker session bean.
  * 
+ * @version $Id$
  */
 @Stateless
 public class WorkerSessionBean implements IWorkerSession.ILocal,
@@ -848,6 +844,40 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         ICertReqData ret = processable.genCertificateRequest(certReqInfo);
         if (LOG.isTraceEnabled()) {
             LOG.trace("<getCertificateRequest: signerId=" + signerId);
+        }
+        return ret;
+    }
+
+    /**
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificate(int) 
+     */
+    public Certificate getSignerCertificate(final int signerId) throws CryptoTokenOfflineException {
+        Certificate ret = null;
+        final IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
+                workerConfigService, globalConfigurationSession,
+                new SignServerContext(em));
+        if (worker instanceof BaseProcessable) {
+            ret = ((BaseProcessable) worker).getSigningCertificate();
+        }
+        return ret;
+    }
+
+    /**
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificateChain(int)
+     */
+    public List<Certificate> getSignerCertificateChain(final int signerId) throws CryptoTokenOfflineException {
+        List<Certificate> ret = null;
+        final IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
+                workerConfigService, globalConfigurationSession,
+                new SignServerContext(em));
+        if (worker instanceof BaseProcessable) {
+            Collection<Certificate> certs = ((BaseProcessable) worker)
+                    .getSigningCertificateChain();
+            if (certs instanceof List) {
+                ret = (List) certs;
+            } else {
+                ret = new LinkedList<Certificate>(certs);
+            }
         }
         return ret;
     }

@@ -129,6 +129,7 @@ public class SignerStatusReportTimedService extends BaseTimedService {
                 } else {
                     LOG.debug("Worker: " + worker);
                     String statusString = STATUS_ACTIVE;
+                    KeyUsageCounter signings = null;
                     final String pk = getKeyHash(workerId);
                     if (pk == null) {
                         statusString = STATUS_OFFLINE;
@@ -143,16 +144,15 @@ public class SignerStatusReportTimedService extends BaseTimedService {
                         if (status == null || status.isOK() != null) {
                             statusString = STATUS_OFFLINE;
                         }
-                    }
-                    KeyUsageCounter signings = null;
 
-                    try {
+                        try {
                         signings = em.find(
                             KeyUsageCounter.class, pk);
-                    } catch (IllegalArgumentException ex) {
-                        LOG.warn(ex, ex);
+                        } catch (IllegalArgumentException ex) {
+                            LOG.warn(ex, ex);
+                        }
                     }
-
+                    
                     final StringBuilder sb = new StringBuilder();
                     sb.append("workerName=");
                     sb.append(worker);

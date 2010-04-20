@@ -87,9 +87,6 @@ public class SignerStatus extends CryptoTokenStatus{
                 out.println("\n\n");
 
 		if(complete){
-                    out.println("Key usage counter value is : " + keyUsageCounterValue);
-                    out.println();
-
 			out.println("Active Properties are :");
 
 

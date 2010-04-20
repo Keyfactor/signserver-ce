@@ -19,8 +19,8 @@ import java.security.PublicKey;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import net.sourceforge.scuba.util.Hex;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Hex;
 
 /**
  * Counter in database for number of signings made with a particular key.
@@ -64,7 +64,8 @@ public class KeyUsageCounter {
     public static String createKeyHash(PublicKey key) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA256", "BC");
-            final String res = Hex.bytesToHexString(md.digest(key.getEncoded()));
+            final String res = new String(
+                    Hex.encode(md.digest(key.getEncoded())));
             md.reset();
             return res;
         } catch (NoSuchProviderException ex) {

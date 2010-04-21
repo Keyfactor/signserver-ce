@@ -30,6 +30,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.CryptoTokenStatus;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.WorkerConfig;
@@ -142,6 +143,12 @@ public class SignerStatusReportTimedService extends BaseTimedService {
                             LOG.error("Invalid worker id: " + workerId, ex);
                         }
                         if (status == null || status.isOK() != null) {
+                            statusString = STATUS_OFFLINE;
+                        }
+
+                        if (status instanceof CryptoTokenStatus &&
+                                ((CryptoTokenStatus) status).getTokenStatus()
+                                    == CryptoTokenStatus.STATUS_OFFLINE) {
                             statusString = STATUS_OFFLINE;
                         }
 

@@ -184,6 +184,10 @@ public class TestXMLSigner extends TestCase {
             "removeworker",
             String.valueOf(WORKERID)
         });
+        TestUtils.assertSuccessfulExecution(new String[] {
+            "removeworker",
+            String.valueOf(WORKERID2)
+        });
 
         TestUtils.assertSuccessfulExecution(new String[] {
             "module",

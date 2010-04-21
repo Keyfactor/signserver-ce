@@ -27,6 +27,7 @@ import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
+import org.apache.log4j.Logger;
 
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -69,6 +70,8 @@ import org.signserver.validationservice.server.ValidationTestUtils;
 
 public class TestMainWebService extends TestCase {
 
+    private static final Logger LOG = Logger.getLogger(TestMainWebService.class);
+    
 	private static IGlobalConfigurationSession.IRemote gCSession = null;
 	private static IWorkerSession.IRemote sSSession = null;
 	
@@ -174,9 +177,17 @@ public class TestMainWebService extends TestCase {
 		assertTrue(statuses.get(0).getErrormessage() == null);
 		
 		statuses = signServerWS.getStatus(ISignServerWS.ALLWORKERS);
-		assertTrue(statuses.size() >= 2);
-		assertTrue(statuses.get(0).getWorkerName().equals("9") || statuses.get(0).getWorkerName().equals("16"));
-		assertTrue(statuses.get(1).getWorkerName().equals("9") || statuses.get(1).getWorkerName().equals("16"));
+                final StringBuilder sb = new StringBuilder();
+                for (WorkerStatusWS stat : statuses) {
+                    sb.append(stat.getWorkerName());
+                    sb.append(", ");
+                }
+                LOG.info("Got status for: " + sb.toString());
+                assertTrue(statuses.size() >= 2);
+                assertTrue("workerStatusesContains 9",
+                        workerStatusesContains(statuses, "9"));
+                assertTrue("workerStatusesContains 16",
+                        workerStatusesContains(statuses, "16"));
 		
 		try{
 		  signServerWS.getStatus("1991817");
@@ -353,6 +364,23 @@ public class TestMainWebService extends TestCase {
     	props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
     	Context ctx = new InitialContext(props);
     	return ctx;
+    }
+
+    /**
+     * @param statuses List of worker statuses
+     * @param workerName Name to search for
+     * @return true if found in list
+     */
+    private static boolean workerStatusesContains(final List<WorkerStatusWS> statuses,
+            final String workerName) {
+        boolean ret = false;
+        for (WorkerStatusWS stat : statuses) {
+            if (workerName.equals(stat.getWorkerName())) {
+                ret = true;
+                break;
+            }
+        }
+        return ret;
     }
     
 

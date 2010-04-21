@@ -2999,6 +2999,39 @@ The following substitution variables can be used in notification subject and mes
                         </p>
                     </subsubsection>
                 </subsection>
+
+                <subsection name="SignerStatusReportTimedService">
+                    <subsubsection name="Overview">
+                        <p>
+The SignerStatusReportTimedService is a timed service that outputs status for a
+set of signers to a file. The information includes each signers current status
+ACTIVE/OFFLINE and if available also the numbers of signings that has been
+performed with the key currently associated with the signer. If the signer has
+a configured limit of number of signers, this value is also included.
+                        </p>
+                        <p>
+Sample content of a produced output file:
+                        </p>
+                        <pre>
+workerName=Sod1, status=OFFLINE, signings=10000, signLimit=10000,
+workerName=Sod2, status=ACTIVE, signings=33524, signLimit=100000,
+workerName=Sod3, status=OFFLINE, signings=10000, signLimit=10000,
+workerName=Sod4, status=OFFLINE, signings=10000, signLimit=10000,
+workerName=Sod5, status=OFFLINE, signings=10000, signLimit=10000,
+workerName=Sod6, status=ACTIVE, signings=4676,
+workerName=Sod7, status=OFFLINE,
+                        </pre>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+<p><b>WORKERS</b> = Comma separated list of worker names (signers) that should
+be monitored.</p>
+<p><b>OUTPUTFILE</b> = File that the information will be written to. If the file
+exists the content will be overwritten. The application server needs to have write
+access to this file when the service is executed.
+
+                        </p>
+                    </subsubsection>
+                </subsection>
             </section>
 
             <section name="Status Repository">

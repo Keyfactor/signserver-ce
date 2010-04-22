@@ -23,9 +23,9 @@ import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.TestUtils;
@@ -45,6 +45,7 @@ public class TestLimitKeyUsages extends TestCase {
     private static IGlobalConfigurationSession.IRemote confSession;
     private static IWorkerSession.IRemote workSession;
     private static File signServerHome;
+    private static int moduleVersion;
 
     /** WORKERID used in this test case. */
     private static final int WORKERID_1 = 5802;
@@ -74,20 +75,21 @@ public class TestLimitKeyUsages extends TestCase {
 
     public void test00SetupDatabase() throws Exception {
 
-        confSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                "WORKER" + WORKERID_1 + ".CLASSPATH",
-                "org.signserver.module.xmlsigner.XMLSigner");
-        confSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                "WORKER" + WORKERID_1 + ".SIGNERTOKEN.CLASSPATH",
-                "org.signserver.server.cryptotokens.P12CryptoToken");
-        workSession.setWorkerProperty(WORKERID_1, "NAME",
-                "TestLimitKeyUsageSigner");
-        workSession.setWorkerProperty(WORKERID_1, "AUTHTYPE", "NOAUTH");
-        workSession.setWorkerProperty(WORKERID_1, "KEYSTOREPATH", 
-                getSignServerHome().getAbsolutePath()
-                + File.separator + "src" + File.separator + "test"
-                + File.separator + "test_keyusagelimit1.p12");
-        workSession.setWorkerProperty(WORKERID_1, "KEYSTOREPASSWORD", "foo123");
+        final MARFileParser marFileParser = new MARFileParser(getSignServerHome()
+                + "/dist-server/xmlsigner.mar");
+        moduleVersion = marFileParser.getVersionFromMARFile();
+
+        TestUtils.assertSuccessfulExecution(new String[] {
+                "module",
+                "add",
+                getSignServerHome() + "/dist-server/xmlsigner.mar",
+                "junittest"
+            });
+        assertTrue("Loading module",
+                TestUtils.grepTempOut("Loading module XMLSIGNER"));
+        assertTrue("Module loaded",
+                TestUtils.grepTempOut("Module loaded successfully."));
+
         workSession.setWorkerProperty(WORKERID_1, "KEYUSAGELIMIT",
                 String.valueOf(LIMIT));
 
@@ -141,6 +143,14 @@ public class TestLimitKeyUsages extends TestCase {
             "removeworker",
             String.valueOf(WORKERID_1)
         });
+        TestUtils.assertSuccessfulExecution(new String[] {
+            "module",
+            "remove",
+            "XMLSIGNER",
+            String.valueOf(moduleVersion)
+        });
+        assertTrue("module remove",
+                TestUtils.grepTempOut("Removal of module successful."));
 
         workSession.reloadConfiguration(WORKERID_1);
     }

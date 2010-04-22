@@ -1086,6 +1086,15 @@ An MRTD signer creating "Machine Reader Travel Document" signatures using the RS
 another is the MRTD SOD Signer which creates the complete Security Object (SOd) by signing the datagroups for the passport.
 There are also signers for automatically signing of PDF, XML, ODF and OOXML signing requests.
                 </p>
+                <p>
+<b>KEYUSAGELIMIT</b> = Sets how many signatures that are allowed to be created
+with the same key by this worker (default is -1 = no limit). After the limit has
+been reached the worker is considered offline.
+
+Note that the counter are per key and not per worker so if multiple workers share
+the same key they will all increment the counter. This also means that the worker
+is active again after it has got a new certificate/key.
+                </p>
 
                 <subsection name="Time-stamp Signer">
                     <p>

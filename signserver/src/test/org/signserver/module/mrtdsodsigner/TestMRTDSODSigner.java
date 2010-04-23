@@ -13,6 +13,7 @@
 package org.signserver.module.mrtdsodsigner;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -67,6 +68,9 @@ public class TestMRTDSODSigner extends TestCase {
     /** Worker7900: SHA512, DODATAGROUPHASHING=true */
     private static final int WORKER4 = 7900;
 
+    /** Worker7901: Same as WORKER1 but with P12CryptoToken. */
+    private static final int WORKER1B = 7901;
+
     private static IWorkerSession.IRemote sSSession = null;
     private static String signserverhome;
     private static int moduleVersion;
@@ -104,10 +108,17 @@ public class TestMRTDSODSigner extends TestCase {
         assertTrue(TestUtils.grepTempOut("Loading module MRTDSODSIGNER"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
+        // WORKER1B uses a P12 keystore
+        sSSession.setWorkerProperty(WORKER1B, "KEYSTOREPATH", signserverhome
+                + File.separator + "src" + File.separator + "test" 
+                + File.separator + "pdfsigner.p12");
+        sSSession.setWorkerProperty(WORKER1B, "KEYSTOREPASSWORD", "foo123");
+
         sSSession.reloadConfiguration(WORKER1);
         sSSession.reloadConfiguration(WORKER2);
         sSSession.reloadConfiguration(WORKER3);
         sSSession.reloadConfiguration(WORKER4);
+        sSSession.reloadConfiguration(WORKER1B);
     }
 
     /**
@@ -209,7 +220,30 @@ public class TestMRTDSODSigner extends TestCase {
         	thrown = true;
         }
         assertTrue(thrown);
+    }
 
+        public void test04bMinRemainingCertVValidityWithSoftKeystore()
+                throws Exception {
+
+    	// A signing operation that will work
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
+        signHelper(WORKER1B, 12, dataGroups1, false, "SHA256", "SHA256withRSA");
+
+        // Set property to limit remaining cert validity
+        sSSession.setWorkerProperty(WORKER1B,
+                SignServerConstants.MINREMAININGCERTVALIDITY, "6300");
+        sSSession.reloadConfiguration(WORKER1B);
+    	// Signing operation should not work now
+        boolean thrown = false;
+        try {
+            signHelper(WORKER1B, 12, dataGroups1, false, "SHA256",
+                    "SHA256withRSA");
+        } catch (CryptoTokenOfflineException e) {
+        	thrown = true;
+        }
+        assertTrue(thrown);
     }
 
     private void signHelper(int workerId, int requestId, Map<Integer, byte[]> dataGroups, boolean signerDoesHashing, String digestAlg, String sigAlg) throws Exception {
@@ -267,11 +301,13 @@ public class TestMRTDSODSigner extends TestCase {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER2});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER3});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER4});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1B});
         TestUtils.assertSuccessfulExecution(new String[]{"module", "remove", "MRTDSODSIGNER", "" + moduleVersion});
         sSSession.reloadConfiguration(WORKER1);
         sSSession.reloadConfiguration(WORKER2);
         sSSession.reloadConfiguration(WORKER3);
         sSSession.reloadConfiguration(WORKER4);
+        sSSession.reloadConfiguration(WORKER1B);
     }
 
     /**

@@ -196,8 +196,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 
     	if (checkcertvalidity || checkprivatekeyvalidity || (minremainingcertvalidity > 0)) {
     		// If the signer have a certificate, check that it is usable
-        	X509Certificate cert =(new ProcessableConfig(awc)).getSignerCertificate();
-        	if (cert != null) {
+            final Certificate signerCert = getSignerCertificate(workerId);
+            if (signerCert instanceof X509Certificate) {
+                final X509Certificate cert = (X509Certificate) signerCert;
         		// Check regular certificate validity
             	Date notBefore = cert.getNotBefore();
             	Date notAfter = cert.getNotAfter();

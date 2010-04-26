@@ -372,7 +372,8 @@ public class PDFSigner extends BaseSigner {
 
         static URL getCRLDistributionPoint(final Certificate certificate)
                 throws CertificateParsingException {
-            return CertTools.getCrlDistributionPoint(certificate);
+            return org.signserver.module.pdfsigner.org.ejbca.util
+                    .CertTools.getCrlDistributionPoint(certificate);
         }
 
 	/**

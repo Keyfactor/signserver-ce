@@ -348,7 +348,7 @@ public class PDFSigner extends BaseSigner {
 		for (Certificate currCert : pCertChain) {
 			CRL currCrl = null;
 			try {
-				URL currCertURL = CertTools.getCrlDistributionPoint(currCert);
+				URL currCertURL = getCRLDistributionPoint(currCert);
 				if (currCertURL == null) {
 					continue;
 				}
@@ -369,6 +369,11 @@ public class PDFSigner extends BaseSigner {
 		}
 
 	}
+
+        static URL getCRLDistributionPoint(final Certificate certificate)
+                throws CertificateParsingException {
+            return CertTools.getCrlDistributionPoint(certificate);
+        }
 
 	/**
 	 * get the page number at which to draw signature rectangle

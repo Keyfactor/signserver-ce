@@ -66,6 +66,7 @@ import org.signserver.server.IAuthorizer;
 import org.signserver.server.IProcessable;
 import org.signserver.server.IWorker;
 import org.signserver.server.SignServerContext;
+import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
@@ -152,13 +153,45 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	        		}
 	        	}
 	        }
-	        
+
 	        StatisticsManager.endEvent(workerId, awc, em, event);
-	        if(res instanceof ISignResponse){
-	          log.info("Worker " + workerId + " Processed request " + ((ISignResponse) res).getRequestID() + " successfully");
-	        }else{
-	          log.info("Worker " + workerId + " Processed request successfully");
-	        }
+                
+                // Logging
+                final StringBuilder logLine = new StringBuilder();
+                logLine.append("REQUEST_PROCESSED; ");
+
+                // Log: REQUESTID
+                if (res instanceof ISignResponse) {
+                    logLine.append("REQUESTID: ");
+                    logLine.append(((ISignResponse) res).getRequestID());
+                    logLine.append("; ");
+                }
+
+                // Log: WORKERID
+                logLine.append("WORKERID: ");
+                logLine.append(workerId);
+                logLine.append("; ");
+
+                // Log: USERNAME
+                final Object o
+                        = requestContext.get(RequestContext.CLIENT_CREDENTIAL);
+                if (o instanceof UsernamePasswordClientCredential) {
+                    logLine.append("USERNAME: ");
+                    logLine.append(((UsernamePasswordClientCredential) o)
+                            .getUsername());
+                    logLine.append("; ");
+                }
+
+                // Log: FILENAME
+                if (requestContext.get(RequestContext.FILENAME) != null) {
+                    logLine.append("FILENAME: ");
+                    logLine.append(requestContext.get(RequestContext.FILENAME));
+                    logLine.append("; ");
+                }
+
+                // Write to log
+                log.info(logLine.toString());
+
 		} catch (SignServerException e) {
 			log.error("SignServerException calling signer with id " + workerId + " : " +e.getMessage(),e);
 			throw e;

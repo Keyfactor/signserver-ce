@@ -294,6 +294,9 @@ public class GenericProcessServlet extends HttpServlet {
         }
         context.put(RequestContext.CLIENT_CREDENTIAL, credential);
 
+        // Log filename
+        context.put(RequestContext.FILENAME, fileName);
+
         log.debug("Received bytes of length: " + data.length);
 
         Random rand = new Random();

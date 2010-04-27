@@ -56,6 +56,11 @@ public class RequestContext implements Serializable{
 	public static final String STATISTICS_EVENT    = "STATISTICS_EVENT";
 
         public static final String CLIENT_CREDENTIAL = "CLIENT_CREDENTIAL";
+
+        /**
+         * Filename of file uploaded by client to the process servlet.
+         */
+        public static final String FILENAME = "FILENAME";
 	
 	/**
 	 * Default constructor creating an empty context.

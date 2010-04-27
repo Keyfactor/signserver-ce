@@ -42,6 +42,7 @@ public interface IWorkerLogger {
     String LOG_REQUEST_FULLURL = "REQUEST_FULLURL";
     String LOG_REQUEST_LENGTH = "REQUEST_LENGTH";
     String LOG_FILENAME = "FILENAME";
+    String LOG_XFORWARDEDFOR = "XFORWARDEDFOR";
 
     String LOG_PURCHASED = "PURCHASED";
 

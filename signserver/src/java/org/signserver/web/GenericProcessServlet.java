@@ -315,6 +315,9 @@ public class GenericProcessServlet extends HttpServlet {
         logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH,
                 String.valueOf(data.length));
         logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
+        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR,
+                req.getHeader("X-Forwarded-For"));
+
         if (log.isDebugEnabled()) {
             log.debug("Received bytes of length: " + data.length);
         }

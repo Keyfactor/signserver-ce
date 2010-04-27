@@ -44,6 +44,7 @@ import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericServletRequest;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IArchivableProcessResponse;
 import org.signserver.common.ICertReqData;
@@ -187,6 +188,23 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
                     logLine.append("FILENAME: ");
                     logLine.append(requestContext.get(RequestContext.FILENAME));
                     logLine.append("; ");
+                }
+
+                // Log: REMOTEIP
+                logLine.append("REMOTEIP: ");
+                logLine.append(requestContext.get(RequestContext.REMOTE_IP));
+                logLine.append("; ");
+
+                // Log: XFORWARDEDFOR
+                if (request instanceof GenericServletRequest) {
+                    final String xff = ((GenericServletRequest) request)
+                            .getHttpServletRequest()
+                            .getHeader("X-Forwarded-For");
+                    if (xff != null) {
+                        logLine.append("XFORWARDEDFOR: ");
+                        logLine.append(xff);
+                        logLine.append("; ");
+                    }
                 }
 
                 // Write to log

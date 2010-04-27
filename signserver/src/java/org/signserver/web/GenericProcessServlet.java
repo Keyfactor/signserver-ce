@@ -314,6 +314,7 @@ public class GenericProcessServlet extends HttpServlet {
                 .append("?").append(req.getQueryString()).toString());
         logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH,
                 String.valueOf(data.length));
+        logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
         if (log.isDebugEnabled()) {
             log.debug("Received bytes of length: " + data.length);
         }

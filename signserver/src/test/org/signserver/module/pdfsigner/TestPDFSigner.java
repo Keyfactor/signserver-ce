@@ -16,9 +16,7 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.net.URL;
-import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
 import java.util.Collection;
@@ -27,7 +25,6 @@ import java.util.Random;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.swing.JOptionPane;
 
 import junit.framework.TestCase;
 

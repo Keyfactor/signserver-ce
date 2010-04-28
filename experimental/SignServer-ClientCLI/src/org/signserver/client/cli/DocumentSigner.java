@@ -14,6 +14,7 @@ package org.signserver.client.cli;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
@@ -25,12 +26,12 @@ import org.signserver.common.SignServerException;
  */
 public interface DocumentSigner {
 
-    void sign(final byte[] data, final String encoding, final OutputStream out) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException;
+    void sign(final byte[] data, final String encoding, final OutputStream out, final Map<String,Object> requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException;
 
-    void sign(final byte[] data, final String encoding) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException;
+    void sign(final byte[] data, final String encoding, final Map<String,Object> requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException;
 
     void sign(final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException;
 
-    void sign(final byte[] data, final OutputStream out) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException;
+    void sign(final byte[] data, final OutputStream out, final Map<String,Object> requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException;
 
 }

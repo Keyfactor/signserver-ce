@@ -14,6 +14,8 @@ package org.signserver.client.cli;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
@@ -31,24 +33,32 @@ public abstract class AbstractDocumentSigner implements DocumentSigner {
     public AbstractDocumentSigner() {
     }
 
-    public void sign(final byte[] data, final String encoding, final OutputStream out) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
-        doSign(data, encoding, out);
+    public void sign(final byte[] data, final String encoding, 
+            final OutputStream out, final Map<String,Object> requestContext)
+            throws IllegalRequestException, CryptoTokenOfflineException,
+            SignServerException, IOException {
+        doSign(data, encoding, out, requestContext);
     }
 
-    public void sign(final byte[] data, final String encoding) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
-        sign(data, encoding, System.out);
+    public void sign(final byte[] data, final String encoding,
+            final Map<String,Object> requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
+        sign(data, encoding, System.out, requestContext);
     }
 
     public void sign(final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
-        sign(data, ENCODING_NONE, System.out);
+        sign(data, ENCODING_NONE, new HashMap<String, Object>());
     }
 
-    public void sign(final byte[] data, final OutputStream out) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
-        doSign(data, ENCODING_NONE, out);
+    public void sign(final byte[] data, final OutputStream out,
+            final Map<String, Object> requestContext) throws
+            IllegalRequestException, CryptoTokenOfflineException,
+            SignServerException, IOException {
+        doSign(data, ENCODING_NONE, out, requestContext);
     }
 
     protected abstract void doSign(final byte[] data, final String encoding,
-            final OutputStream out) throws IllegalRequestException,
+            final OutputStream out, final Map<String,Object> requestContext)
+            throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException,
                 IOException;
 

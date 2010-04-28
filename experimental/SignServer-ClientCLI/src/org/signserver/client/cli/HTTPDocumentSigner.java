@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
@@ -52,7 +53,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
 
     private String password;
 
-
+    
     private Random random = new Random();
 
     public HTTPDocumentSigner(final URL processServlet,
@@ -65,7 +66,8 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     }
 
     protected void doSign(final byte[] data, final String encoding,
-            final OutputStream out) throws IllegalRequestException,
+            final OutputStream out, final Map<String,Object> requestContext)
+            throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException,
                 IOException {
 
@@ -80,7 +82,8 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         // Take start time
         final long startTime = System.nanoTime();
 
-        final Response response = sendRequest(processServlet, workerName, data);
+        final Response response = sendRequest(processServlet, workerName, data,
+                requestContext);
 
         // Take stop time
         final long estimatedTime = System.nanoTime() - startTime;
@@ -103,7 +106,8 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     }
 
     private Response sendRequest(final URL processServlet,
-            final String workerName, final byte[] data) {
+            final String workerName, final byte[] data,
+            final Map<String, Object> requestContext) {
         
         OutputStream out = null;
         InputStream in = null;
@@ -129,7 +133,14 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             sb.append(CRLF);
             sb.append("--" + BOUNDARY);
             sb.append(CRLF);
-            sb.append("Content-Disposition: form-data; name=\"datafile\"; filename=\"document.dat\"");
+            sb.append("Content-Disposition: form-data; name=\"datafile\"");
+            sb.append("; filename=\"");
+            if (requestContext.get("FILENAME") == null) {
+                sb.append("noname.dat");
+            } else {
+                sb.append(requestContext.get("FILENAME"));
+            }
+            sb.append("\"");
             sb.append(CRLF);
             sb.append("Content-Type: application/octet-stream");
             sb.append(CRLF);

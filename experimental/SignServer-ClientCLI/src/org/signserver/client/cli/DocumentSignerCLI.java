@@ -15,10 +15,14 @@ package org.signserver.client.cli;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.CommandLine;
@@ -272,14 +276,29 @@ public class DocumentSignerCLI {
         try {
             final byte[] bytes;
 
+            Map<String, Object> requestContext = new HashMap<String, Object>();
             if (inFile == null) {
                 bytes = data.getBytes();
             } else {
+                requestContext.put("FILENAME", inFile.getName());
                 fin = new FileInputStream(inFile);
                 bytes = new byte[(int) inFile.length()];
                 fin.read(bytes);
             }
-            createSigner().sign(bytes);
+
+            OutputStream out = null;
+            try {
+                if (outFile == null) {
+                    out = System.out;
+                } else {
+                    out = new FileOutputStream(outFile);
+                }
+                createSigner().sign(bytes, out, requestContext);
+            } finally {
+                if (out != null) {
+                    out.close();
+                }
+            }
 
         } catch (FileNotFoundException ex) {
             LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),

@@ -14,6 +14,7 @@ package org.signserver.client.cli;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -61,7 +62,8 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
     }
 
     protected void doSign(final byte[] data, final String encoding,
-            final OutputStream out) throws IllegalRequestException,
+            final OutputStream out, final Map<String, Object> requestContext)
+            throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException,
                 IOException {
 

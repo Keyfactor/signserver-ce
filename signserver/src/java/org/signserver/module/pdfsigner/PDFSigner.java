@@ -79,6 +79,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
+import org.signserver.server.UsernamePasswordClientCredential;
 
 /**
  * A Signer signing PDF files using the IText PDF library.
@@ -144,7 +145,7 @@ public class PDFSigner extends BaseSigner {
         public static final String PROPERTY_ARCHIVETODISK_FILENAME_PATTERN = "ARCHIVETODISK_FILENAME_PATTERN";
 
         public static final String DEFAULT_ARCHIVETODISK_PATH_PATTERN = "${DATE:yyyy/MM/dd}";
-        public static final String DEFAULT_ARCHIVETODISK_FILENAME_PATTERN = "${WORKERID}-${REQUESTID}.pdf";
+        public static final String DEFAULT_ARCHIVETODISK_FILENAME_PATTERN = "${WORKERID}-${REQUESTID}-${DATE:HHmmssSSS}.pdf";
 
         private static final String ARCHIVETODISK_PATTERN_REGEX =
             "\\$\\{(.+?)\\}";
@@ -463,6 +464,13 @@ public class PDFSigner extends BaseSigner {
         fields.put("REMOTEIP", (String) requestContext.get(RequestContext.REMOTE_IP));
         fields.put("TRANSACTIONID", (String) requestContext.get(RequestContext.TRANSACTION_ID));
         fields.put("REQUESTID", String.valueOf(sReq.getRequestID()));
+
+        Object credential = requestContext.get(RequestContext.CLIENT_CREDENTIAL);
+        if (credential instanceof UsernamePasswordClientCredential) {
+            fields.put("USERNAME",
+                    ((UsernamePasswordClientCredential) credential)
+                    .getUsername());
+        }
 
         final String pathFromPattern = formatFromPattern(
                 archivetodiskPattern, config.getProperty(

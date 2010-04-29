@@ -1443,6 +1443,7 @@ Default is not set (no timestamping).
             <li>${REMOTEIP}</li>
             <li>${REQUESTID}</li>
             <li>${TRANSACTIONID}</li>
+            <li>${USERNAME}</li>
         </ul>
                         </p>
                         <p>
@@ -1454,7 +1455,7 @@ Default is not set (no timestamping).
         for the ARCHIVETODISK_PATH_PATTERN property can be used.
                         </p>
                         <p>
-        Default value is "${WORKERID}-${REQUESTID}.pdf".
+        Default value is "${WORKERID}-${REQUESTID}-${DATE:HHmmssSSS}.pdf".
                         </p>
                     </subsubsection>
                 </subsection>

@@ -475,7 +475,7 @@ public class PDFSigner extends BaseSigner {
                 pathFromPattern);
 
         if (!outputPath.exists()) {
-            if (outputPath.mkdirs()) {
+            if (!outputPath.mkdirs()) {
                 log.warn("Output path could not be created: "
                         + outputPath.getAbsolutePath());
             }

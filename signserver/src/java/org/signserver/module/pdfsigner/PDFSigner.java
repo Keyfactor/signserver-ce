@@ -70,6 +70,15 @@ import com.lowagie.text.pdf.PdfString;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.TSAClient;
 import com.lowagie.text.pdf.TSAClientBouncyCastle;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * A Signer signing PDF files using the IText PDF library.
@@ -91,7 +100,7 @@ import com.lowagie.text.pdf.TSAClientBouncyCastle;
 public class PDFSigner extends BaseSigner {
 
 	/** Log4j instance for actual implementation class */
-	public transient Logger log = Logger.getLogger(this.getClass());
+	public static final Logger log = Logger.getLogger(PDFSigner.class);
 	// private final CSVFileStatisticsCollector cSVFileStatisticsCollector =
 	// CSVFileStatisticsCollector.getInstance(this.getClass().getName(),
 	// "PDF size in bytes");
@@ -128,9 +137,41 @@ public class PDFSigner extends BaseSigner {
 	public static final String EMBED_OCSP_RESPONSE = "EMBED_OCSP_RESPONSE";
 	public static final boolean EMBED_OCSP_RESPONSE_DEFAULT = false;
 
+        // archivetodisk properties
+        public static final String PROPERTY_ARCHIVETODISK = "ARCHIVETODISK";
+        public static final String PROPERTY_ARCHIVETODISK_PATH_BASE = "ARCHIVETODISK_PATH_BASE";
+        public static final String PROPERTY_ARCHIVETODISK_PATH_PATTERN = "ARCHIVETODISK_PATH_PATTERN";
+        public static final String PROPERTY_ARCHIVETODISK_FILENAME_PATTERN = "ARCHIVETODISK_FILENAME_PATTERN";
+
+        public static final String DEFAULT_ARCHIVETODISK_PATH_PATTERN = "${DATE:yyyy/MM/dd}";
+        public static final String DEFAULT_ARCHIVETODISK_FILENAME_PATTERN = "${WORKERID}-${REQUESTID}.pdf";
+
+        private static final String ARCHIVETODISK_PATTERN_REGEX =
+            "\\$\\{(.+?)\\}";
+
+        private Pattern archivetodiskPattern;
+
 	public void init(int signerId, WorkerConfig config,
 			WorkerContext workerContext, EntityManager workerEntityManager) {
 		super.init(signerId, config, workerContext, workerEntityManager);
+
+                // Check properties for archive to disk
+                if (StringUtils.equalsIgnoreCase("TRUE",
+                        config.getProperty(PROPERTY_ARCHIVETODISK))) {
+                    log.debug("Archiving to disk");
+
+                    final String path = config.getProperty(PROPERTY_ARCHIVETODISK_PATH_BASE);
+                    if (path == null) {
+                        log.warn("Worker[" + workerId
+                                + "]: Archiving path missing");
+                    } else if (!new File(path).exists()) {
+                        log.warn("Worker[" + workerId
+                                + "]: Archiving path does not exists: "
+                                + path);
+                    }
+                }
+
+                archivetodiskPattern = Pattern.compile(ARCHIVETODISK_PATTERN_REGEX);
 	}
 
 	/**
@@ -181,6 +222,12 @@ public class PDFSigner extends BaseSigner {
 						signedbytes, getSigningCertificate(), fp,
 						new ArchiveData(signedbytes));
 			}
+
+                    // Archive to disk
+                    if (StringUtils.equalsIgnoreCase("TRUE",
+                        config.getProperty(PROPERTY_ARCHIVETODISK))) {
+                        archiveToDisk(sReq, signedbytes, requestContext);
+                    }
 		} catch (DocumentException e) {
 			log.error("Error signing PDF: ", e);
 			throw new IllegalRequestException("DocumentException: "
@@ -405,4 +452,126 @@ public class PDFSigner extends BaseSigner {
 			}
 		}
 	}
+
+    private void archiveToDisk(ISignRequest sReq, byte[] signedbytes, RequestContext requestContext) throws SignServerException {
+        log.debug("Archiving to disk");
+
+        // Fill in fields that can be used to construct path and filename
+        final Map<String, String> fields = new HashMap<String, String>();
+        fields.put("WORKERID", String.valueOf(workerId));
+        fields.put("WORKERNAME", config.getProperty("NAME"));
+        fields.put("REMOTEIP", (String) requestContext.get(RequestContext.REMOTE_IP));
+        fields.put("TRANSACTIONID", (String) requestContext.get(RequestContext.TRANSACTION_ID));
+        fields.put("REQUESTID", String.valueOf(sReq.getRequestID()));
+
+        final String pathFromPattern = formatFromPattern(
+                archivetodiskPattern, config.getProperty(
+                PROPERTY_ARCHIVETODISK_PATH_PATTERN,
+                DEFAULT_ARCHIVETODISK_PATH_PATTERN),
+                new Date(), fields);
+
+        final File outputPath = new File(new File(config.getProperty(
+                PROPERTY_ARCHIVETODISK_PATH_BASE)), 
+                pathFromPattern);
+
+        if (!outputPath.exists()) {
+            if (outputPath.mkdirs()) {
+                log.warn("Output path could not be created: "
+                        + outputPath.getAbsolutePath());
+            }
+        }
+
+        final String fileNameFromPattern = formatFromPattern(
+                archivetodiskPattern, config.getProperty(
+                PROPERTY_ARCHIVETODISK_FILENAME_PATTERN,
+                DEFAULT_ARCHIVETODISK_FILENAME_PATTERN),
+                new Date(), fields);
+
+        final File outputFile = new File(outputPath, fileNameFromPattern);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Worker[" + workerId +"]: Archive to file: "
+                    + outputFile.getAbsolutePath());
+        }
+
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(outputFile);
+            out.write(signedbytes);
+        } catch (IOException ex) {
+            throw new SignServerException(
+                    "Could not archive signed document",  ex);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    log.debug("Exception closing file", ex);
+                    throw new SignServerException(
+                    "Could not archive signed document",  ex);
+                }
+            }
+        }
+    }
+
+    /**
+     * Helper method for formatting a text given a set of fields and a date.
+     *
+     * Sample:
+     * "${WORKERID}-${REQUESTID}_${DATE:yyyy-MM-dd}.pdf"
+     * Could be:
+     * "42-123123123_2010-04-28.pdf"
+     * 
+     * @param pattern Pre-compiled pattern to use for parsing
+     * @param text The text that contains keys to be replaced with values
+     * @param date The date to use if date should be inserted
+     * @param fields Keys and their values that should be used if they exist in
+     * the text.
+     * @return The test with keys replaced with values from fields or by
+     * formatted date
+     * @see java.text.SimpleDateFormat
+     */
+    static String formatFromPattern(final Pattern pattern, final String text,
+            final Date date, final Map<String, String> fields) {
+        final String result;
+
+        if (log.isDebugEnabled()) {
+            log.debug("Input string: " + text);
+        }
+
+        final StringBuffer sb = new StringBuffer();
+        Matcher m = pattern.matcher(text);
+        while (m.find()) {
+            // when the pattern is ${identifier}, group 0 is 'identifier'
+            final String key = m.group(1);
+
+            final String value;
+            if (key.startsWith("DATE:")) {
+                final SimpleDateFormat sdf = new SimpleDateFormat(
+                        key.substring("DATE:".length()).trim());
+                value = sdf.format(date);
+            } else {
+                value = fields.get(key);
+            }
+
+            // if the pattern does exists, replace it by its value
+            // otherwise keep the pattern ( it is group(0) )
+            if (value != null) {
+                m.appendReplacement(sb, value);
+            } else {
+                // I'm doing this to avoid the backreference problem as there will be a $
+                // if I replace directly with the group 0 (which is also a pattern)
+                m.appendReplacement(sb, "");
+                final String unknown = m.group(0);
+                sb.append(unknown);
+            }
+        }
+        m.appendTail(sb);
+        result = sb.toString();
+
+        if (log.isDebugEnabled()) {
+            log.debug("Result: " + result);
+        }
+        return result;
+    }
 }

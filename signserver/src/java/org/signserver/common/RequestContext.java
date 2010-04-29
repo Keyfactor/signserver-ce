@@ -79,6 +79,10 @@ public class RequestContext implements Serializable{
 
         public static final String CLIENT_CREDENTIAL = "CLIENT_CREDENTIAL";
 
+        /**
+         * Filename of file uploaded by client to the process servlet.
+         */
+        public static final String FILENAME = "FILENAME";
 
         /**
          * A dispatcher such as the TSADispatcherServlet can set this value to

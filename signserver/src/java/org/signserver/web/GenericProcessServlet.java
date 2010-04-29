@@ -318,6 +318,9 @@ public class GenericProcessServlet extends HttpServlet {
         logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR,
                 req.getHeader("X-Forwarded-For"));
 
+        // Store filename for use by archiver etc
+        context.put(RequestContext.FILENAME, fileName);
+
         if (log.isDebugEnabled()) {
             log.debug("Received bytes of length: " + data.length);
         }

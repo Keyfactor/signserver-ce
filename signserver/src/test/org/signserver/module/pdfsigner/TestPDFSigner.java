@@ -15,13 +15,20 @@ package org.signserver.module.pdfsigner;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -252,6 +259,57 @@ public class TestPDFSigner extends TestCase {
             } catch (CertificateParsingException ex) {
                 fail("Exception: " + ex.getMessage());
             }
+        }
+
+        public void test09FormatFromPattern() throws Exception {
+            Pattern p1 = Pattern.compile("\\$\\{(.+?)\\}");
+
+            Calendar cal = Calendar.getInstance(Locale.US);
+            cal.set(Calendar.YEAR, 2010);
+            cal.set(Calendar.MONTH, 3);
+            Date date = cal.getTime();
+            Map<String, String> fields = new HashMap<String, String>();
+            fields.put("WORKERID", "4311");
+
+            String actual = PDFSigner.formatFromPattern(p1, 
+                    "${WORKERID}/${DATE: yyyy}/${DATE:MMMMMMMMM}", date, fields);
+            assertEquals("4311/2010/April", actual);
+        }
+
+        public void test10ArchiveToDisk() throws Exception {
+
+            final File archiveFolder = new File(signserverhome + File.separator
+                    + "tmp" + File.separator + "archivetest");
+
+            if (!archiveFolder.exists()) {
+                assertTrue("Create dir: " + archiveFolder, archiveFolder.mkdirs());
+            }
+
+            sSSession.setWorkerProperty(WORKERID, "ARCHIVETODISK", "True");
+            sSSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_BASE",
+                    archiveFolder.getAbsolutePath());
+            sSSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_PATTERN",
+                    "${DATE:yyyy}/${WORKERID}");
+            sSSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_FILENAME_PATTERN",
+                    "${REQUESTID}.pdf");
+            sSSession.reloadConfiguration(WORKERID);
+
+            final GenericSignResponse res = signDocument(WORKERID,
+                    Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
+
+            final Calendar cal = Calendar.getInstance();
+            final String year = String.valueOf(cal.get(Calendar.YEAR));
+
+            final File exptectedFile = new File(archiveFolder, 
+                    year + "/" + String.valueOf(WORKERID) + "/"
+                    + String.valueOf(res.getRequestID()) + ".pdf");
+
+            assertTrue("File: " +  exptectedFile, exptectedFile.exists());
+
+            final PdfReader reader = new PdfReader(res.getProcessedData());
+            assertNotNull("ok archived doc", reader);
+
+            exptectedFile.delete();
         }
 	
 	public void test99TearDownDatabase() throws Exception{

@@ -3087,7 +3087,7 @@ workerName=Sod2, status=ACTIVE, signings=33524, signLimit=100000,
 workerName=Sod3, status=OFFLINE, signings=10000, signLimit=10000,
 workerName=Sod4, status=OFFLINE, signings=10000, signLimit=10000,
 workerName=Sod5, status=OFFLINE, signings=10000, signLimit=10000,
-workerName=Sod6, status=ACTIVE, signings=4676,
+workerName=Sod6, status=ACTIVE, validityNotBefore=2010-04-04 01:37:21 CEST, validityNotAfter=2018-04-04 01:37:21 CEST, signings=4676,
 workerName=Sod7, status=OFFLINE,
                         </pre>
                     </subsubsection>

@@ -17,7 +17,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.cert.Certificate;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,6 +70,10 @@ public class SignerStatusReportTimedService extends BaseTimedService {
 
     /** List of worker names. */
     private List<String> workers = Collections.emptyList();
+
+    /** Validity date time format. */
+    private SimpleDateFormat dateFormat
+            = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
     /** Workersession. */
     @EJB
@@ -167,6 +173,28 @@ public class SignerStatusReportTimedService extends BaseTimedService {
                     sb.append("status=");
                     sb.append(statusString);
                     sb.append(SEPARATOR);
+
+                    // Output validities
+                    Date notBefore = null;
+                    Date notAfter = null;
+                    try {
+                        notBefore = workerSession.getSigningValidityNotBefore(
+                                workerId);
+                    } catch (CryptoTokenOfflineException ignored) {}
+                    if (notBefore != null) {
+                        sb.append("validityNotBefore=");
+                        sb.append(dateFormat.format(notBefore));
+                        sb.append(SEPARATOR);
+                    }
+                    try {
+                        notAfter = workerSession.getSigningValidityNotAfter(
+                                workerId);
+                    } catch (CryptoTokenOfflineException ignored) {}
+                    if (notAfter != null) {
+                        sb.append("validityNotAfter=");
+                        sb.append(dateFormat.format(notAfter));
+                        sb.append(SEPARATOR);
+                    }
 
                     if (signings != null) {
                         final long keyUsageLimit = Long.valueOf(

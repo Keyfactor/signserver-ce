@@ -115,7 +115,10 @@ public class TestMRTDSODSigner extends TestCase {
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
         // WORKER1B uses a P12 keystore
-        sSSession.setWorkerProperty(WORKER1B, "KEYSTOREPATH", "/home/markus/Documents/PrimeKey/SignServer/entity2-pkup.p12");
+        sSSession.setWorkerProperty(WORKER1B, "KEYSTOREPATH", signserverhome
+                + File.separator + "src" + File.separator + "test"
+                + File.separator + "pdfsigner.p12");
+        sSSession.setWorkerProperty(WORKER1B, "KEYSTOREPASSWORD", "foo123");
 
 //                signserverhome
 //                + File.separator + "src" + File.separator + "test"

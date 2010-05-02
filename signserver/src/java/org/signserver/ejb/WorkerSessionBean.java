@@ -266,7 +266,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             try {
                 // Check if the signer has a signer certificate and if that
                 // certificate have ok validity and private key usage periods.
-                checkCertificateValidity(workerId, awc, logMap);
+                checkSignerValidity(workerId, awc, logMap);
 
                 // Check key usage limit
                 incrementAndCheckSignerKeyUsageCounter(processable, workerId,
@@ -396,15 +396,145 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
     }
 
-    /** Verify the certificate validity times and also that the PrivateKeyUsagePeriod is ok
+    /**
+     * Verify the certificate validity times, the PrivateKeyUsagePeriod and
+     * that the minremaining validity is ok.
      *
      * @param workerId
      * @param awc
      * @throws CryptoTokenOfflineException
      */
-    private void checkCertificateValidity(final int workerId,
+    private void checkSignerValidity(final int workerId,
             final WorkerConfig awc, final Map<String, String> logMap)
             throws CryptoTokenOfflineException {
+
+        // If the signer have a certificate, check that it is usable
+        final Certificate signerCert = getSignerCertificate(workerId);
+        if (signerCert instanceof X509Certificate) {
+            final X509Certificate cert = (X509Certificate) signerCert;
+
+            // Log client certificate
+            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SUBJECTDN,
+                    cert.getSubjectDN().getName());
+            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_ISSUERDN,
+                    cert.getIssuerDN().getName());
+            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SERIALNUMBER,
+                    cert.getSerialNumber().toString(16));
+
+            // Check certificate, privatekey and minremaining validities
+            final Date notBefore =
+                    getSigningValidity(false, workerId, awc, cert);
+            final Date notAfter =
+                    getSigningValidity(true, workerId, awc, cert);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("The signer validity is from '"
+                        + notBefore + "' until '" + notAfter + "'");
+            }
+
+            // Compare with current date
+            final Date now = new Date();
+            if (notBefore != null && now.before(notBefore)) {
+                final String msg = "Error Signer " + workerId
+                        + " is not valid until " + notBefore;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(msg);
+                }
+                throw new CryptoTokenOfflineException(msg);
+            }
+            if (notAfter != null && now.after(notAfter)) {
+                String msg = "Error Signer " + workerId
+                        + " expired at " + notAfter;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(msg);
+                }
+                throw new CryptoTokenOfflineException(msg);
+            }
+        } else { // if (cert != null)
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Worker does not have a signing certificate. Worker: "
+                        + workerId);
+            }
+        }
+        
+    } // checkCertificateValidity
+
+    private static PrivateKeyUsagePeriod getPrivateKeyUsagePeriod(
+            final X509Certificate cert) throws IOException {
+        PrivateKeyUsagePeriod res = null;
+        final byte[] extvalue = cert.getExtensionValue(
+                X509Extensions.PrivateKeyUsagePeriod.getId());
+        
+        if ((extvalue != null) && (extvalue.length > 0)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(
+                    "Found a PrivateKeyUsagePeriod in the signer certificate.");
+            }
+            final DEROctetString oct = (DEROctetString) (new ASN1InputStream(
+                    new ByteArrayInputStream(extvalue)).readObject());
+
+            res = PrivateKeyUsagePeriod.
+                    getInstance((ASN1Sequence) new ASN1InputStream(
+                    new ByteArrayInputStream(oct.getOctets())).
+                    readObject());
+        }
+        return res;
+    }
+
+    /**
+     * Gets the last date the specified worker can do signings.
+     * @param workerId Id of worker to check.
+     * @return The last date or null if no last date (=unlimited).
+     * @throws CryptoTokenOfflineException In case the cryptotoken is offline
+     * for some reason.
+     */
+    public Date getSigningValidityNotAfter(final int workerId)
+            throws CryptoTokenOfflineException {
+        Date date = null;
+        final Certificate signerCert = getSignerCertificate(workerId);
+        if (signerCert instanceof X509Certificate) {
+            final X509Certificate cert = (X509Certificate) signerCert;
+            date = getSigningValidity(true, workerId,
+                    getWorkerConfig(workerId), cert);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Worker does not have a signing certificate. Worker: "
+                        + workerId);
+            }
+        }
+        return date;
+    }
+
+    /**
+     * Gets the first date the specified worker can do signings.
+     * @param workerId Id of worker to check.
+     * @return The first date or null if no last date (=unlimited).
+     * @throws CryptoTokenOfflineException In case the cryptotoken is offline
+     * for some reason.
+     */
+    public Date getSigningValidityNotBefore(final int workerId)
+            throws CryptoTokenOfflineException {
+        Date date = null;
+        final Certificate signerCert = getSignerCertificate(workerId);
+        if (signerCert instanceof X509Certificate) {
+            final X509Certificate cert = (X509Certificate) signerCert;
+            date = getSigningValidity(false, workerId,
+                    getWorkerConfig(workerId), cert);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Worker does not have a signing certificate. Worker: "
+                        + workerId);
+            }
+        }
+        return date;
+    }
+
+    private Date getSigningValidity(final boolean notAfter, final int workerId,
+            final WorkerConfig awc, final X509Certificate cert)
+            throws CryptoTokenOfflineException {
+        Date certDate = null;
+        Date privatekeyDate = null;
+        Date minreimainingDate = null;
+
         boolean checkcertvalidity = awc.getProperties().getProperty(
                 SignServerConstants.CHECKCERTVALIDITY, "TRUE").equalsIgnoreCase(
                 "TRUE");
@@ -413,151 +543,85 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 equalsIgnoreCase("TRUE");
         int minremainingcertvalidity = Integer.valueOf(awc.getProperties().
                 getProperty(SignServerConstants.MINREMAININGCERTVALIDITY, "0"));
+        
         if (LOG.isDebugEnabled()) {
             LOG.debug("checkcertvalidity: " + checkcertvalidity);
             LOG.debug("checkprivatekeyvalidity: " + checkprivatekeyvalidity);
             LOG.debug("minremainingcertvalidity: " + minremainingcertvalidity);
         }
 
-        if (checkcertvalidity || checkprivatekeyvalidity || (minremainingcertvalidity
-                > 0)) {
-            // If the signer have a certificate, check that it is usable
-            final Certificate signerCert = getSignerCertificate(workerId);
-            if (signerCert instanceof X509Certificate) {
-                final X509Certificate cert = (X509Certificate) signerCert;
+        // Certificate validity period. Cert must not be expired.
+        if (checkcertvalidity) {
+            certDate = notAfter ? cert.getNotAfter() : cert.getNotBefore();
+        }
 
-                // Log client certificate
-                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SUBJECTDN,
-                        cert.getSubjectDN().getName());
-                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_ISSUERDN,
-                        cert.getIssuerDN().getName());
-                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SERIALNUMBER,
-                        cert.getSerialNumber().toString(16));
-
-                // Check regular certificate validity
-                Date notBefore = cert.getNotBefore();
-                Date notAfter = cert.getNotAfter();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("The signer certificate is valid from '"
-                            + notBefore + "' until '" + notAfter + "'");
+        // Private key usage period. Private key must not be expired
+        if (checkprivatekeyvalidity) {
+            // Check privateKeyUsagePeriod of it exists
+            try {
+                final PrivateKeyUsagePeriod p = getPrivateKeyUsagePeriod(cert);
+                if (p != null) {
+                    privatekeyDate = notAfter ? p.getNotAfter().getDate()
+                            : p.getNotBefore().getDate();
                 }
-                Date now = new Date();
-
-                // Certificate validity period. Cert must not be expired.
-                if (checkcertvalidity) {
-                    if (now.before(notBefore)) {
-                        String msg = "Error Signer " + workerId
-                                + " have a signing certificate that is not valid until "
-                                + notBefore;
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug(msg);
-                        }
-                        throw new CryptoTokenOfflineException(msg);
-                    }
-                    if (now.after(notAfter)) {
-                        String msg = "Error Signer " + workerId
-                                + " have a signing certificate that expired at "
-                                + notAfter;
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug(msg);
-                        }
-                        throw new CryptoTokenOfflineException(msg);
-                    }
-                }
-
-                // Private key usage period. Private key must not be expired
-                if (checkprivatekeyvalidity) {
-                    // Check privateKeyUsagePeriod of it exists
-                    byte[] extvalue = cert.getExtensionValue(X509Extensions.PrivateKeyUsagePeriod.
-                            getId());
-                    if ((extvalue != null) && (extvalue.length > 0)) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug(
-                                    "Found a PrivateKeyUsagePeriod in the signer certificate.");
-                        }
-                        try {
-                            DEROctetString oct = (DEROctetString) (new ASN1InputStream(new ByteArrayInputStream(
-                                    extvalue)).readObject());
-                            PrivateKeyUsagePeriod p = PrivateKeyUsagePeriod.
-                                    getInstance((ASN1Sequence) new ASN1InputStream(
-                                    new ByteArrayInputStream(oct.getOctets())).
-                                    readObject());
-                            if (p != null) {
-                                notBefore = p.getNotBefore().getDate();
-                                notAfter = p.getNotAfter().getDate();
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("The signer certificate has a private key usage period from '"
-                                            + notBefore + "' until '" + notAfter
-                                            + "'");
-                                }
-                                now = new Date();
-                                if (now.before(notBefore)) {
-                                    String msg = "Error Signer " + workerId
-                                            + " have a private key that is not valid until "
-                                            + notBefore;
-                                    if (LOG.isDebugEnabled()) {
-                                        LOG.debug(msg);
-                                    }
-                                    throw new CryptoTokenOfflineException(msg);
-                                }
-                                if (now.after(notAfter)) {
-                                    String msg = "Error Signer " + workerId
-                                            + " have a private key that expired at "
-                                            + notAfter;
-                                    if (LOG.isDebugEnabled()) {
-                                        LOG.debug(msg);
-                                    }
-                                    throw new CryptoTokenOfflineException(msg);
-                                }
-                            }
-                        } catch (IOException e) {
-                            LOG.error(e);
-                            CryptoTokenOfflineException newe =
-                                    new CryptoTokenOfflineException(
-                                    "Error Signer " + workerId
-                                    + " have a problem with PrivateKeyUsagePeriod, check server log.");
-                            newe.initCause(e);
-                            throw newe;
-                        } catch (ParseException e) {
-                            LOG.error(e);
-                            CryptoTokenOfflineException newe =
-                                    new CryptoTokenOfflineException(
-                                    "Error Signer " + workerId
-                                    + " have a problem with PrivateKeyUsagePeriod, check server log.");
-                            newe.initCause(e);
-                            throw newe;
-                        }
-                    }
-                } // if (checkprivatekeyvalidity)
-
-                // Check remaining validity of certificate. Must not be too short.
-                if (minremainingcertvalidity > 0) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.add(Calendar.DAY_OF_MONTH, minremainingcertvalidity);
-                    Date check = cal.getTime();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Checking if signer certificate expires before: "
-                                + check);
-                    }
-                    if (check.after(notAfter)) {
-                        String msg = "Error Signer " + workerId
-                                + " have a signing certificate that expires within "
-                                + minremainingcertvalidity + " days.";
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug(msg);
-                        }
-                        throw new CryptoTokenOfflineException(msg);
-                    }
-                }
-
-            } else { // if (cert != null)
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Worker does not have a signing certificate. Worker: "
-                            + workerId);
-                }
+            } catch (IOException e) {
+                LOG.error(e);
+                CryptoTokenOfflineException newe =
+                        new CryptoTokenOfflineException(
+                        "Error Signer " + workerId
+                        + " have a problem with PrivateKeyUsagePeriod, check server log.");
+                newe.initCause(e);
+                throw newe;
+            } catch (ParseException e) {
+                LOG.error(e);
+                CryptoTokenOfflineException newe =
+                        new CryptoTokenOfflineException(
+                        "Error Signer " + workerId
+                        + " have a problem with PrivateKeyUsagePeriod, check server log.");
+                newe.initCause(e);
+                throw newe;
             }
-        } // if (checkcertvalidity || checkprivatekeyvalidity) {
-    } // checkCertificateValidity
+        }
+
+        // Check remaining validity of certificate. Must not be too short.
+        if (notAfter && minremainingcertvalidity > 0) {
+            final Date certNotAfter = cert.getNotAfter();
+            final Calendar cal = Calendar.getInstance();
+            cal.setTime(certNotAfter);
+            cal.add(Calendar.DAY_OF_MONTH, -minremainingcertvalidity);
+            minreimainingDate = cal.getTime();
+        }
+
+        Date res = null;
+
+        res = certDate;
+        res = max(notAfter, res, privatekeyDate);
+        res = max(notAfter, res, minreimainingDate);
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug((notAfter ? "min(" : "max(") + certDate + ", "
+                    + privatekeyDate + ", " + minreimainingDate + ") = "
+                    + res);
+        }
+        return res;
+    }
+
+    /**
+     * @param inv If the max function should be inverrted (min).
+     * @param date1 Operand 1
+     * @param date2 Operand 2
+     * @return The last of the two dates unless inv is true in which case it
+     * returns the first of the two.
+     */
+    private static Date max(final boolean inv, final Date date1,
+            final Date date2) {
+        if (date1 == null) {
+            return date2;
+        } else if (date2 == null) {
+            return date1;
+        }
+        return inv && date1.before(date2) ? date1 : date2;
+    }
 
     /**
      * Checks that if this worker has a certificate (ie the worker is a Signer)

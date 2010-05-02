@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Local;
@@ -187,6 +188,26 @@ public interface IWorkerSession {
      * is not active
      */
     public List<Certificate> getSignerCertificateChain(int signerId)
+            throws CryptoTokenOfflineException;
+
+    /**
+     * Gets the last date the specified worker can do signings.
+     * @param workerId Id of worker to check.
+     * @return The last date or null if no last date (=unlimited).
+     * @throws CryptoTokenOfflineException In case the cryptotoken is offline
+     * for some reason.
+     */
+    Date getSigningValidityNotAfter(int workerId)
+            throws CryptoTokenOfflineException;
+
+    /**
+     * Gets the first date the specified worker can do signings.
+     * @param workerId Id of worker to check.
+     * @return The first date or null if no last date (=unlimited).
+     * @throws CryptoTokenOfflineException In case the cryptotoken is offline
+     * for some reason.
+     */
+    Date getSigningValidityNotBefore(int workerId)
             throws CryptoTokenOfflineException;
 
     /**

@@ -21,6 +21,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -55,7 +57,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * @version $Id$
  */
 public class TestMRTDSODSigner extends TestCase {
-	
+
     /** Worker7897: Default algorithms, default hashing setting */
     private static final int WORKER1 = 7897;
 
@@ -70,6 +72,10 @@ public class TestMRTDSODSigner extends TestCase {
 
     /** Worker7901: Same as WORKER1 but with P12CryptoToken. */
     private static final int WORKER1B = 7901;
+
+    private static final int WORKER1C = 7902;
+
+    private static final int WORKER1D = 7903;
 
     private static IWorkerSession.IRemote sSSession = null;
     private static String signserverhome;
@@ -109,9 +115,11 @@ public class TestMRTDSODSigner extends TestCase {
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
         // WORKER1B uses a P12 keystore
-        sSSession.setWorkerProperty(WORKER1B, "KEYSTOREPATH", signserverhome
-                + File.separator + "src" + File.separator + "test" 
-                + File.separator + "pdfsigner.p12");
+        sSSession.setWorkerProperty(WORKER1B, "KEYSTOREPATH", "/home/markus/Documents/PrimeKey/SignServer/entity2-pkup.p12");
+
+//                signserverhome
+//                + File.separator + "src" + File.separator + "test"
+//                + File.separator + "pdfsigner.p12");
         sSSession.setWorkerProperty(WORKER1B, "KEYSTOREPASSWORD", "foo123");
 
         sSSession.reloadConfiguration(WORKER1);
@@ -119,6 +127,8 @@ public class TestMRTDSODSigner extends TestCase {
         sSSession.reloadConfiguration(WORKER3);
         sSSession.reloadConfiguration(WORKER4);
         sSSession.reloadConfiguration(WORKER1B);
+        sSSession.reloadConfiguration(WORKER1C);
+        sSSession.reloadConfiguration(WORKER1D);
     }
 
     /**
@@ -129,9 +139,9 @@ public class TestMRTDSODSigner extends TestCase {
     	Map<Integer, byte[]> dataGroupHashes = new HashMap<Integer, byte[]>();
     	dataGroupHashes.put(Integer.valueOf(1), "12345".getBytes());
     	dataGroupHashes.put(Integer.valueOf(4), "abcdef".getBytes());
-    	
+
     	KeyPair keys = KeyTools.genKeys("1024", "RSA");
-    	X509Certificate cert = CertTools.genSelfCert("CN=mrtdsodtest", 33, null, keys.getPrivate(), keys.getPublic(), "SHA256WithRSA", false); 
+    	X509Certificate cert = CertTools.genSelfCert("CN=mrtdsodtest", 33, null, keys.getPrivate(), keys.getPublic(), "SHA256WithRSA", false);
         SODFile sod = new SODFile("SHA256", "SHA256withRSA", dataGroupHashes, keys.getPrivate(), cert);
         assertNotNull(sod);
         boolean verify = sod.checkDocSignature(cert);
@@ -207,7 +217,7 @@ public class TestMRTDSODSigner extends TestCase {
 
         // Set property to limit remaining cert validity
         CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
-        X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(HardCodedCryptoToken.certbytes));			
+        X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(HardCodedCryptoToken.certbytes));
 
         sSSession.uploadSignerCertificate(WORKER1, cert, GlobalConfiguration.SCOPE_GLOBAL);
         sSSession.setWorkerProperty(WORKER1, SignServerConstants.MINREMAININGCERTVALIDITY, "6300");
@@ -215,7 +225,7 @@ public class TestMRTDSODSigner extends TestCase {
     	// Signing operation should not work now
         boolean thrown = false;
         try {
-            signHelper(WORKER1, 12, dataGroups1, false, "SHA256", "SHA256withRSA");        	
+            signHelper(WORKER1, 12, dataGroups1, false, "SHA256", "SHA256withRSA");
         } catch (CryptoTokenOfflineException e) {
         	thrown = true;
         }
@@ -242,8 +252,166 @@ public class TestMRTDSODSigner extends TestCase {
                     "SHA256withRSA");
         } catch (CryptoTokenOfflineException e) {
         	thrown = true;
-    }
+        }
         assertTrue(thrown);
+    }
+
+    /**
+     * Tests all validities: certificate, privatekey and min remaining period.
+     * @throws Exception in case of error.
+     */
+    public void test04cRemainingValidity() throws Exception {
+
+        Calendar cal = Calendar.getInstance();
+
+        sSSession.setWorkerProperty(WORKER1C, "CHECKCERTVALIDITY", "True");
+        sSSession.setWorkerProperty(WORKER1C, "CHECKCERTPRIVATEKEYVALIDITY",
+                "False");
+        sSSession.setWorkerProperty(WORKER1C, "MINREMAININGCERTVALIDITY", "0");
+
+        //    Certificate with: cert#1: priv=[2015, 2020], cert=[2025, 2030]
+        //              cert#2: priv=[2025, 2030], cert=[2015, 2020]
+        //
+        //
+        //    test#1: 	getSignerValidityNotAfter:  cert#1, bCert 	= 2030
+        Date d = sSSession.getSigningValidityNotAfter(WORKER1C);
+        assertNotNull("test#1 not null", d);
+        cal.setTime(d);
+        assertEquals(2030, cal.get(Calendar.YEAR));
+
+        //    test#2	getSignerValidityNotBefore: cert#1, bCert       = 2025
+        d = sSSession.getSigningValidityNotBefore(WORKER1C);
+        assertNotNull("test#2 not null", d);
+        cal.setTime(d);
+        assertEquals(2025, cal.get(Calendar.YEAR));
+
+        //    test#3: 	getSignerValidityNotAfter:  cert#1, bPriv       = 2020
+        sSSession.setWorkerProperty(WORKER1C, "CHECKCERTVALIDITY", "False");
+        sSSession.setWorkerProperty(WORKER1C, "CHECKCERTPRIVATEKEYVALIDITY",
+                "True");
+        d = sSSession.getSigningValidityNotAfter(WORKER1C);
+        assertNotNull("test#3 not null", d);
+        cal.setTime(d);
+        assertEquals(2020, cal.get(Calendar.YEAR));
+
+        //    test#4	getSignerValidityNotBefore: cert#1, bPriv       = 2015
+        d = sSSession.getSigningValidityNotBefore(WORKER1C);
+        assertNotNull("test#4 not null", d);
+        cal.setTime(d);
+        assertEquals(2015, cal.get(Calendar.YEAR));
+
+        //    test#5: 	getSignerValidityNotAfter:  cert#1, bCert, bPriv	  = 2020
+        sSSession.setWorkerProperty(WORKER1C, "CHECKCERTVALIDITY", "True");
+        d = sSSession.getSigningValidityNotAfter(WORKER1C);
+        assertNotNull("test#5 not null", d);
+        cal.setTime(d);
+        assertEquals(2020, cal.get(Calendar.YEAR));
+
+        //    test#6		getSignerValidityNotBefore: cert#1, bCert, bPrive = 2015
+        d = sSSession.getSigningValidityNotBefore(WORKER1C);
+        assertNotNull("test#6 not null", d);
+        cal.setTime(d);
+        assertEquals(2015, cal.get(Calendar.YEAR));
+
+        //    test#7: 	getSignerValidityNotAfter:  cert#1, bCert, r10 		  = 2020
+        sSSession.setWorkerProperty(WORKER1C, "CHECKCERTPRIVATEKEYVALIDITY",
+                "False");
+        sSSession.setWorkerProperty(WORKER1C, "MINREMAININGCERTVALIDITY", "3650");
+        d = sSSession.getSigningValidityNotAfter(WORKER1C);
+        assertNotNull("test#7 not null", d);
+        cal.setTime(d);
+        assertEquals(2020, cal.get(Calendar.YEAR));
+
+        //    test#8		getSignerValidityNotBefore: cert#1, bCert, r10	  = 2015
+        d = sSSession.getSigningValidityNotBefore(WORKER1C);
+        assertNotNull("test#8 not null", d);
+        cal.setTime(d);
+        assertEquals(2025, cal.get(Calendar.YEAR));
+
+        //    test#9: 	getSignerValidityNotAfter:  cert#1, bCert, r4 		  = 2026
+        sSSession.setWorkerProperty(WORKER1C, "MINREMAININGCERTVALIDITY", "1460");
+        d = sSSession.getSigningValidityNotAfter(WORKER1C);
+        assertNotNull("test#9 not null", d);
+        cal.setTime(d);
+        assertEquals(2026, cal.get(Calendar.YEAR));
+
+        //    test#10:	getSignerValidityNotBefore: cert#1, bCert, r4		  = 2025
+        d = sSSession.getSigningValidityNotBefore(WORKER1C);
+        assertNotNull("test#10 not null", d);
+        cal.setTime(d);
+        assertEquals(2025, cal.get(Calendar.YEAR));
+
+        //    test#21: 	getSignerValidityNotAfter:  cert#2, bCert 		  = 2020
+        sSSession.setWorkerProperty(WORKER1D, "CHECKCERTVALIDITY", "True");
+        sSSession.setWorkerProperty(WORKER1D, "CHECKCERTPRIVATEKEYVALIDITY",
+                "False");
+        sSSession.setWorkerProperty(WORKER1D, "MINREMAININGCERTVALIDITY", "0");
+        d = sSSession.getSigningValidityNotAfter(WORKER1D);
+        assertNotNull("test#21 not null", d);
+        cal.setTime(d);
+        assertEquals(2020, cal.get(Calendar.YEAR));
+
+        //    test#22		getSignerValidityNotBefore: cert#2, bCert	  = 2015
+        assertNotNull("test#22 not null", d);
+        d = sSSession.getSigningValidityNotBefore(WORKER1D);
+        cal.setTime(d);
+        assertEquals(2015, cal.get(Calendar.YEAR));
+
+        //    test#23: 	getSignerValidityNotAfter:  cert#2, bPriv 		  = 2030
+        sSSession.setWorkerProperty(WORKER1D, "CHECKCERTVALIDITY", "False");
+        sSSession.setWorkerProperty(WORKER1D, "CHECKCERTPRIVATEKEYVALIDITY",
+                "True");
+        d = sSSession.getSigningValidityNotAfter(WORKER1D);
+        assertNotNull("test#23 not null", d);
+        cal.setTime(d);
+        assertEquals(2030, cal.get(Calendar.YEAR));
+
+        //    test#24		getSignerValidityNotBefore: cert#2, bPriv	 = 2025
+        d = sSSession.getSigningValidityNotBefore(WORKER1D);
+        assertNotNull("test#24 not null", d);
+        cal.setTime(d);
+        assertEquals(2025, cal.get(Calendar.YEAR));
+
+        //    test#25: 	getSignerValidityNotAfter:  cert#2, bCert, bPriv	 = 2020
+        sSSession.setWorkerProperty(WORKER1D, "CHECKCERTVALIDITY", "True");
+        d = sSSession.getSigningValidityNotAfter(WORKER1D);
+        assertNotNull("test#25 not null", d);
+        cal.setTime(d);
+        assertEquals(2020, cal.get(Calendar.YEAR));
+
+        //    test#26		getSignerValidityNotBefore: cert#2, bCert, bPriv = 2025
+        d = sSSession.getSigningValidityNotBefore(WORKER1D);
+        assertNotNull("test#26 not null", d);
+        cal.setTime(d);
+        assertEquals(2025, cal.get(Calendar.YEAR));
+
+        //    test#27: 	getSignerValidityNotAfter:  cert#2, bCert, r10 		  = 2010 r10 -> 3650
+        sSSession.setWorkerProperty(WORKER1D, "CHECKCERTPRIVATEKEYVALIDITY",
+                "False");
+        sSSession.setWorkerProperty(WORKER1D, "MINREMAININGCERTVALIDITY", "3650");
+        d = sSSession.getSigningValidityNotAfter(WORKER1D);
+        assertNotNull("test#27 not null", d);
+        cal.setTime(d);
+        assertEquals(2010, cal.get(Calendar.YEAR));
+
+        //    test#28		getSignerValidityNotBefore: cert#2, bCert, r10	  = 2015
+        d = sSSession.getSigningValidityNotBefore(WORKER1D);
+        assertNotNull("test#28 not null", d);
+        cal.setTime(d);
+        assertEquals(2015, cal.get(Calendar.YEAR));
+
+        //    test#29: 	getSignerValidityNotAfter:  cert#2, bCert, r4 		  = 2016 r4 -> 1460
+        sSSession.setWorkerProperty(WORKER1D, "MINREMAININGCERTVALIDITY", "1460");
+        d = sSSession.getSigningValidityNotAfter(WORKER1D);
+        assertNotNull("test#29 not null", d);
+        cal.setTime(d);
+        assertEquals(2016, cal.get(Calendar.YEAR));
+
+        //    test#30:	getSignerValidityNotBefore: cert#2, bCert, r4		  = 2015
+        d = sSSession.getSigningValidityNotBefore(WORKER1D);
+        assertNotNull("test#30 not null", d);
+        cal.setTime(d);
+        assertEquals(2015, cal.get(Calendar.YEAR));
     }
 
     private void signHelper(int workerId, int requestId, Map<Integer, byte[]> dataGroups, boolean signerDoesHashing, String digestAlg, String sigAlg) throws Exception {
@@ -260,7 +428,7 @@ public class TestMRTDSODSigner extends TestCase {
     	} else {
             expectedHashes = dataGroups;
     	}
-    	
+
         SODSignResponse res = (SODSignResponse) sSSession.process(workerId, new SODSignRequest(requestId, dataGroups), new RequestContext());
         assertNotNull(res);
         assertEquals(requestId, res.getRequestID());
@@ -286,7 +454,7 @@ public class TestMRTDSODSigner extends TestCase {
         MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
         return md.digest(data);
     }
-    
+
     /**
      * Test method for 'org.signserver.server.MRTDSigner.getStatus()'
      */
@@ -294,7 +462,7 @@ public class TestMRTDSODSigner extends TestCase {
         SignerStatus stat = (SignerStatus) sSSession.getStatus(7897);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
     }
-    
+
 
     public void test99TearDownDatabase() throws Exception {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1});
@@ -302,12 +470,16 @@ public class TestMRTDSODSigner extends TestCase {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER3});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER4});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1B});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1C});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1D});
         TestUtils.assertSuccessfulExecution(new String[]{"module", "remove", "MRTDSODSIGNER", "" + moduleVersion});
         sSSession.reloadConfiguration(WORKER1);
         sSSession.reloadConfiguration(WORKER2);
         sSSession.reloadConfiguration(WORKER3);
         sSSession.reloadConfiguration(WORKER4);
         sSSession.reloadConfiguration(WORKER1B);
+        sSSession.reloadConfiguration(WORKER1C);
+        sSSession.reloadConfiguration(WORKER1D);
     }
 
     /**

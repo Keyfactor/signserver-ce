@@ -319,6 +319,7 @@ public class GenericProcessServlet extends HttpServlet {
                 req.getHeader("X-Forwarded-For"));
 
         // Store filename for use by archiver etc
+        fileName = stripPath(fileName);
         context.put(RequestContext.FILENAME, fileName);
 
         if (log.isDebugEnabled()) {
@@ -361,5 +362,19 @@ public class GenericProcessServlet extends HttpServlet {
         res.setContentLength(processedBytes.length);
         res.getOutputStream().write(processedBytes);
         res.getOutputStream().close();
+    }
+
+    /**
+     * @param fileName The original filename.
+     * @return The filename with file path removed.
+     */
+    static String stripPath(String fileName) {
+        if (fileName.contains("\\")) {
+            fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
+        }
+        if (fileName.contains("/")) {
+            fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+        }
+        return fileName;
     }
 }

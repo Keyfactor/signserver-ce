@@ -295,6 +295,7 @@ public class GenericProcessServlet extends HttpServlet {
         context.put(RequestContext.CLIENT_CREDENTIAL, credential);
 
         // Log filename
+        fileName = stripPath(fileName);
         context.put(RequestContext.FILENAME, fileName);
 
         log.debug("Received bytes of length: " + data.length);
@@ -337,5 +338,19 @@ public class GenericProcessServlet extends HttpServlet {
         res.setContentLength(processedBytes.length);
         res.getOutputStream().write(processedBytes);
         res.getOutputStream().close();
+    }
+
+    /**
+     * @param fileName The original filename.
+     * @return The filename with file path removed.
+     */
+    static String stripPath(String fileName) {
+        if (fileName.contains("\\")) {
+            fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
+        }
+        if (fileName.contains("/")) {
+            fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+        }
+        return fileName;
     }
 }

@@ -319,7 +319,9 @@ public class GenericProcessServlet extends HttpServlet {
                 req.getHeader("X-Forwarded-For"));
 
         // Store filename for use by archiver etc
-        fileName = stripPath(fileName);
+        if (fileName != null) {
+            fileName = stripPath(fileName);
+        }
         context.put(RequestContext.FILENAME, fileName);
 
         if (log.isDebugEnabled()) {

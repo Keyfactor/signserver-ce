@@ -295,7 +295,9 @@ public class GenericProcessServlet extends HttpServlet {
         context.put(RequestContext.CLIENT_CREDENTIAL, credential);
 
         // Log filename
-        fileName = stripPath(fileName);
+        if (fileName != null) {
+            fileName = stripPath(fileName);
+        }
         context.put(RequestContext.FILENAME, fileName);
 
         log.debug("Received bytes of length: " + data.length);

@@ -718,7 +718,7 @@ List currently authorized STMP users.
                     </subsubsection>
                 </subsection>
 
-                <subsection name="Setup Workers">
+                <subsection name="Working with Workers">
                     <p>
 In SignServer operations are performed by workers. There can be many workers 
 and each worker has its own configuration. Each worker is identified by an unique 
@@ -731,32 +731,6 @@ Workers are configured slitly differently depending on if the cluster class
 loader is used and the plugin is a separate module or if the plugin is built-in
 to SignServer.
                     </p>
-                    <subsubsection name="Configuring using a built-in plugin">
-                        <p>
-A worker is configured by setting properties for it. Specifically if the plugin
-is built-in it is specified by setting the property CLASSPATH to the fully
-qualified name of the class implementing the plugin.
-                        </p>
-                        <p>
-The properties can be set manually using the setproperty command or by loading
-them all at once from a configuration file using the setproperties command.
-Sample configuration files are available in SIGNSERVER_HOME/sample-configs.
-                        </p>
-                        <p>
-To setup a PDFSigner using the quick start configuration file issue the
-following command:
-                        </p>
-                        <source>
-bin/signserver.sh setproperties sample-configs/qs_pdfsigner_configuration.properties
-                        </source>
-                        <p>
-Notice the created workerId and use it when applying the configuration using the
-reload command:
-                        </p>
-                        <source>
-bin/signserver.sh reload WORKER-ID
-                        </source>
-                    </subsubsection>
                     <subsubsection name="Configuring using a module">
                         <p>
 To configure the worker using a module the cluster class loader must be 
@@ -783,7 +757,111 @@ reload command:
 bin/signserver.sh reload WORKER-ID
                         </source>
                     </subsubsection>
-                 
+                    <subsubsection name="Configuring using a built-in plugin">
+                    <p>Configuring using a build-in plugin only works if you have set the option includemodulesinbuild=true in signserver_build.properties.</p>
+                        <p>
+A worker is configured by setting properties for it. Specifically if the plugin
+is built-in it is specified by setting the property CLASSPATH to the fully
+qualified name of the class implementing the plugin.
+                        </p>
+                        <p>
+The properties can be set manually using the setproperty command or by loading
+them all at once from a configuration file using the setproperties command.
+Sample configuration files are available in SIGNSERVER_HOME/sample-configs.
+                        </p>
+                        <p>
+To setup a PDFSigner using the quick start configuration file issue the
+following command:
+                        </p>
+                        <source>
+bin/signserver.sh setproperties sample-configs/qs_pdfsigner_configuration.properties
+                        </source>
+                        <p>
+Notice the created workerId and use it when applying the configuration using the
+reload command:
+                        </p>
+                        <source>
+bin/signserver.sh reload WORKER-ID
+                        </source>
+                    </subsubsection>
+                <subsubsection name="Remove Workers">
+                    <p>
+                    You can list which workers you have with the command:
+                    </p>
+                    <source>
+bin/signserver.sh getstatus brief all                    
+                    </source>
+                    <p>
+                    If will display for example:
+                    </p>
+                    <source>
+===========================================
+Executing Command on host : localhost
+===========================================
+
+
+Current version of server is : SignServer 3.2-svn
+
+
+Status of Signer with Id 1 is :
+  SignToken Status : Offline
+  Signings: 0
+                    </source>
+                    <p>
+                    You can remove the worker with Id 1 with the command:                    
+					</p>
+                    <source>
+bin/signserver.sh removeworker 1
+bin/signserver.sh reload all                    
+                    </source>
+                </subsubsection>
+            </subsection>
+            <subsection name="Working with Modules">
+                <subsubsection name="Remove modules">
+					<p>
+					If you have made changes to the module, and you are using the cluser classloader (i.e. not built in modules) you have to remove the module before deploying a new one.
+					</p>
+                    <source>
+bin/signserver.sh modules list
+
+===========================================
+  Executing Command on host : localhost
+===========================================
+
+
+Using cluster class loader.
+
+Listing all available modules :
+  Module : MRTDSODSIGNER, version 3200
+    Parts : 
+      server
+
+bin/signserver.sh module remove MRTDSODSIGNER 3200
+
+===========================================
+  Executing Command on host : localhost
+===========================================
+
+
+Using cluster class loader.
+
+  Removing module MRTDSODSIGNER version 3200 ...
+  Removal of module successful.
+                    </source>
+                </subsubsection>
+                <subsubsection name="Add updated modules">
+					<note>
+					If you added configurations under src/module-configs you must rebuild the modules with the command 'ant', before you can use 'module add' with your updated configs.
+					</note>					
+					<p>
+					After rebuilding the modules you can add updated modules.
+					</p>                    
+					<source>
+bin/signserver.sh module add dist-server/pdfsigner.mar soft					
+bin/signserver.sh reload all
+bin/signserver.sh getstatus complete all
+					</source>
+				</subsubsection>                 
 
                 </subsection>
             </section>

@@ -12,18 +12,25 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import javax.swing.event.TableModelEvent;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.FrameView;
 import org.jdesktop.application.Task;
 import java.io.File;
+import java.io.IOException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.common.WorkerStatus;
 
@@ -35,34 +42,36 @@ import org.signserver.common.WorkerStatus;
  */
 public class InstallCertificatesView extends FrameView {
 
+    private Logger LOG = Logger.getLogger(InstallCertificatesView.class);
 
-    private Integer[] signerIds;
-    private String[] signerNames;
-    private Object[][] data;
-    private String[] columnNames = {
-        "Signer",
-        "Signer certificate",
-        "Certificate chain"
+    private Vector<Integer> signerIds;
+    private Vector<String> signerNames;
+    private Vector<Vector<String>> data;
+    private static Vector<String> columnNames = new Vector<String>();
+    static {
+        columnNames.add("Signer");
+        columnNames.add("Signer certificate");
+        columnNames.add("Certificate chain");
     };
-
+    
 
     public InstallCertificatesView(SingleFrameApplication app, Integer[] signerIds,
             String[] signerNames) {
         super(app);
 
-        this.signerIds = signerIds;
-        this.signerNames = signerNames;
+        this.signerIds = new Vector(Arrays.asList(signerIds));
+        this.signerNames = new Vector(Arrays.asList(signerNames));
         initComponents();
         getFrame().setTitle("Install certificates for " + signerIds.length + " signers");
-        data = new Object[signerIds.length][];
+        data = new Vector<Vector<String>>();
         for (int row = 0; row < signerIds.length; row++) {
-            data[row] = new Object[] {
-                SignServerAdminGUIApplication.getWorkerSession()
+            Vector<String> cols = new Vector<String>();
+            cols.add(SignServerAdminGUIApplication.getWorkerSession()
                     .getCurrentWorkerConfig(signerIds[row]).getProperty("NAME")
-                    + " (" + signerIds[row] + ")",
-                "",
-                ""
-            };
+                    + " (" + signerIds[row] + ")");
+            cols.add("");
+            cols.add("");
+            data.add(cols);
         }
         jTable1.setModel(new DefaultTableModel(data, columnNames) {
 
@@ -71,6 +80,21 @@ public class InstallCertificatesView extends FrameView {
                 return column > 0;
             }
 
+        });
+        jTable1.getModel().addTableModelListener(new TableModelListener() {
+
+            @Override
+            public void tableChanged(final TableModelEvent e) {
+                boolean enable = true;
+                for (int row = 0; row < jTable1.getRowCount(); row++) {
+                    if ("".equals(jTable1.getValueAt(row, 1))
+                            || "".equals(jTable1.getValueAt(row, 2))) {
+                        enable = false;
+                        break;
+                    }
+                }
+                jButtonInstall.setEnabled(enable);
+            }
         });
 
         final BrowseCellEditor editor = new BrowseCellEditor(new JTextField());
@@ -91,7 +115,7 @@ public class InstallCertificatesView extends FrameView {
 
         mainPanel = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        jButtonInstall = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
@@ -107,9 +131,10 @@ public class InstallCertificatesView extends FrameView {
         });
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(InstallCertificatesView.class, this);
-        jButton1.setAction(actionMap.get("installCertificates")); // NOI18N
-        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
-        jButton1.setName("jButton1"); // NOI18N
+        jButtonInstall.setAction(actionMap.get("installCertificates")); // NOI18N
+        jButtonInstall.setText(resourceMap.getString("jButtonInstall.text")); // NOI18N
+        jButtonInstall.setEnabled(false);
+        jButtonInstall.setName("jButtonInstall"); // NOI18N
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
@@ -152,7 +177,7 @@ public class InstallCertificatesView extends FrameView {
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
+                        .addComponent(jButtonInstall)))
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
@@ -162,7 +187,7 @@ public class InstallCertificatesView extends FrameView {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(jButtonInstall)
                     .addComponent(jButton2))
                 .addContainerGap())
         );
@@ -177,38 +202,39 @@ public class InstallCertificatesView extends FrameView {
     @Action(block = Task.BlockingScope.WINDOW)
     public void installCertificates() {
         final String hostname = null;
-
-        int res = JOptionPane.showConfirmDialog(null, "After installing a signer's certificate the signer will be put in offline mode and needs to be activated before it can perform any signings.");
         
-        if (res == JOptionPane.OK_OPTION) {
+        
 
-            for (int row = 0; row < data.length; row++) {
-                final int workerid = signerIds[row];
+        for (int row = 0; row < data.size(); row++) {
+            final int workerid = signerIds.get(row);
 
-                final File signerCertFile = new File((String) jTable1.getValueAt(row, 1));
-                final File signerChainFile = new File((String) jTable1.getValueAt(row, 2));
+            final File signerCertFile = new File((String) jTable1.getValueAt(row, 1));
+            final File signerChainFile = new File((String) jTable1.getValueAt(row, 2));
 
-                System.out.println("signer=" + workerid + "cert=\"" + signerCertFile + "\", signerChainFile=\"" + signerChainFile +"\"");
+            System.out.println("signer=" + workerid + "cert=\"" + signerCertFile + "\", signerChainFile=\"" + signerChainFile +"\"");
 
+
+            try {
+
+                final String scope = "GLOB";
+
+                Collection<Certificate> signerCerts = CertTools.getCertsFromPEM(signerCertFile.getAbsolutePath());
+                if(signerCerts.size() == 0){
+                    JOptionPane.showMessageDialog(getFrame(), "Problem with signer certificate file for signer " + workerid + ":\n" + "No certificate in file", "Install certificates", JOptionPane.ERROR_MESSAGE);
+                }
+                if (signerCerts.size() != 1) {
+                    // TODO: Warning more than one certificate
+                }
+                final X509Certificate signerCert = (X509Certificate) signerCerts.iterator().next();
+
+                Collection<Certificate> signerChain;
 
                 try {
-
-                    final String scope = "GLOB";
-
-                    Collection<Certificate> signerCerts = CertTools.getCertsFromPEM(signerCertFile.getAbsolutePath());
-                    if(signerCerts.size() == 0){
-                        throw new RuntimeException("Problem with signer cert file");
-                    }
-                    if (signerCerts.size() != 1) {
-                        // TODO: Warning more than one certificate
-                    }
-                    final X509Certificate signerCert = (X509Certificate) signerCerts.iterator().next();
-
-                    Collection<Certificate> signerChain = CertTools.getCertsFromPEM(signerChainFile.getAbsolutePath());
+                    signerChain = CertTools.getCertsFromPEM(signerChainFile.getAbsolutePath());
                     if(signerChain.size() == 0){
-                        throw new RuntimeException("Problem with signer cert chain file");
+                        JOptionPane.showMessageDialog(getFrame(), "Problem with certificate chain file for signer " + workerid + ":\n" + "No certificates in file", "Install certificates", JOptionPane.ERROR_MESSAGE);
                     }
-                    
+
 
                     Iterator<Certificate> iter = signerCerts.iterator();
                     while(iter.hasNext()){
@@ -221,17 +247,37 @@ public class InstallCertificatesView extends FrameView {
                     SignServerAdminGUIApplication.getWorkerSession().uploadSignerCertificate(workerid, signerCert, scope);
                     SignServerAdminGUIApplication.getWorkerSession().reloadConfiguration(workerid);
 
-            } catch (Exception e) {
-                    throw new RuntimeException(e.getMessage(), e);
+                    signerIds.remove(row);
+                    signerNames.remove(row);
+                    data.remove(row);
+                    row--;
+                    jTable1.revalidate();
+                } catch (IOException ex) {
+                    LOG.error("Problem with certificate chain file", ex);
+                    JOptionPane.showMessageDialog(getFrame(), "Problem with certificate chain file for signer " + workerid + ":\n" + ex.getMessage(), "Install certificates", JOptionPane.ERROR_MESSAGE);
+                } catch (CertificateException ex) {
+                    LOG.error("Problem with certificate chain file", ex);
+                    JOptionPane.showMessageDialog(getFrame(), "Problem with certificate chain file for signer " + workerid + ":\n" + ex.getMessage(), "Install certificates", JOptionPane.ERROR_MESSAGE);
+                }
+
+            } catch (IOException ex) {
+                LOG.error("Problem with signer certificate file", ex);
+                JOptionPane.showMessageDialog(getFrame(), "Problem with signer certificate file for signer " + workerid + ":\n" + ex.getMessage(), "Install certificates", JOptionPane.ERROR_MESSAGE);
+            } catch (CertificateException ex) {
+                LOG.error("Problem with signer certificate file", ex);
+                JOptionPane.showMessageDialog(getFrame(), "Problem with signer certificate file for signer " + workerid + ":\n" + ex.getMessage(), "Install certificates", JOptionPane.ERROR_MESSAGE);
             }
-            }
+        }
+        if (jTable1.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(getFrame(), "All certificates installed. Please verify the installed ceritifcates before activating the signers.");
+            getFrame().dispose();
         }
     }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonInstall;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JPanel mainPanel;

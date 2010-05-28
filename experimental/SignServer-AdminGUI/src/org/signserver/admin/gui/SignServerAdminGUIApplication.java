@@ -13,10 +13,10 @@
 package org.signserver.admin.gui;
 
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -29,6 +29,9 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * @version $Id$
  */
 public class SignServerAdminGUIApplication extends SingleFrameApplication {
+
+    private static Logger LOG
+            = Logger.getLogger(SignServerAdminGUIApplication.class);
 
     private static IGlobalConfigurationSession.IRemote gCSession;
     private static IWorkerSession.IRemote sSSession;
@@ -60,19 +63,24 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
      * Main method launching the application.
      */
     public static void main(String[] args) {
+        LOG.debug("SignServer Administration GUI startup");
 
         try {
-            System.out.println("startup");
             Context context = getInitialContext();
             gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
             sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
 
+            launch(SignServerAdminGUIApplication.class, args);
+
             System.out.println("sSSesssion: " + sSSession);
         } catch (Exception ex) {
-            Logger.getLogger(SignServerAdminGUIApplication.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.error("Startup error", ex);
+            JOptionPane.showMessageDialog(null, 
+                    "Startup failed. Are the application server running?\n"
+                    + ex.getMessage(),
+                    "SignServer Administration GUI startup",
+                    JOptionPane.ERROR_MESSAGE);
         }
-
-        launch(SignServerAdminGUIApplication.class, args);
     }
 
     public static IWorkerSession.IRemote getWorkerSession() {

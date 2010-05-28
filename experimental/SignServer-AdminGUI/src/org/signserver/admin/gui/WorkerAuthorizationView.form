@@ -20,7 +20,7 @@
                           <Component id="editButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="removeButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="572" max="32767" attributes="0"/>
+                          <EmptySpace pref="560" max="32767" attributes="0"/>
                           <Component id="refreshButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -167,6 +167,7 @@
               <action class="org.signserver.admin.gui.WorkerAuthorizationView" id="edit" methodName="edit"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="editButton.text"/>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="editButton" noResource="true"/>
           </Properties>
         </Component>
@@ -176,6 +177,7 @@
               <action class="org.signserver.admin.gui.WorkerAuthorizationView" id="remove" methodName="remove"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="removeButton.text"/>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="removeButton" noResource="true"/>
           </Properties>
         </Component>

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import javax.swing.event.ListSelectionEvent;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -29,6 +30,7 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.WorkerConfig;
@@ -59,6 +61,16 @@ public class WorkerAuthorizationView extends FrameView {
         this.workerIds = workerIds;
         initComponents();
         getFrame().setTitle("Authorizations for " + workerIds.length + " workers");
+
+        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                final boolean enable = jTable1.getSelectedRowCount() > 0;
+                editButton.setEnabled(enable);
+                removeButton.setEnabled(enable);
+            }
+        });
 
         // status bar initialization - message timeout, idle icon and busy animation, etc
         ResourceMap resourceMap = getResourceMap();
@@ -237,10 +249,12 @@ public class WorkerAuthorizationView extends FrameView {
 
         editButton.setAction(actionMap.get("edit")); // NOI18N
         editButton.setText(resourceMap.getString("editButton.text")); // NOI18N
+        editButton.setEnabled(false);
         editButton.setName("editButton"); // NOI18N
 
         removeButton.setAction(actionMap.get("remove")); // NOI18N
         removeButton.setText(resourceMap.getString("removeButton.text")); // NOI18N
+        removeButton.setEnabled(false);
         removeButton.setName("removeButton"); // NOI18N
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
@@ -257,7 +271,7 @@ public class WorkerAuthorizationView extends FrameView {
                         .addComponent(editButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(removeButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 572, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 560, Short.MAX_VALUE)
                         .addComponent(refreshButton)))
                 .addContainerGap())
         );
@@ -294,7 +308,7 @@ public class WorkerAuthorizationView extends FrameView {
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 657, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 655, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)

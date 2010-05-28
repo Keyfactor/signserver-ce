@@ -1,27 +1,26 @@
-/*
- * SignServerDesktopApplication1View.java
- */
-
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.admin.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.FrameView;
 import org.jdesktop.application.Task;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import org.signserver.common.Base64SignerCertReqData;
@@ -30,7 +29,9 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.PKCS10CertReqInfo;
 
 /**
- * The application's main frame.
+ * Frame for generating certificate requests.
+ * @author markus
+ * @version $Id$
  */
 public class GenerateRequestsView extends FrameView {
 
@@ -81,53 +82,6 @@ public class GenerateRequestsView extends FrameView {
         jTable1.getColumn("Signature algorithm").setCellEditor(textFieldEditor);
         jTable1.getColumn("DN").setCellEditor(textFieldEditor);
         
-    }
-
-
-     private static class BrowseCellEditor extends DefaultCellEditor implements ActionListener {
-
-        JButton customEditorButton = new JButton("...");
-        JTable table;
-        int row;
-        int column;
-
-        JFileChooser chooser = new JFileChooser();
-
-        public BrowseCellEditor(JTextField textField) {
-            super(textField);
-            customEditorButton.addActionListener(this);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            stopCellEditing();
-
-            File currentFile = new File((String) table.getValueAt(row, column));
-
-            chooser.setMultiSelectionEnabled(false);
-            chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-            chooser.setSelectedFile(currentFile);
-
-            chooser.showOpenDialog(null);
-
-            if (chooser.getSelectedFile() != null) {
-                table.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row, column);
-            }
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            JPanel panel = new JPanel(new BorderLayout());
-            panel.add(super.getTableCellEditorComponent(table, value, isSelected, row, column));
-            panel.add(customEditorButton, BorderLayout.EAST);
-            this.table = table;
-            this.row = row;
-            this.column = column;
-            return panel;
-        }
-
-
-
-
     }
 
     /** This method is called from within the constructor to
@@ -266,10 +220,6 @@ public class GenerateRequestsView extends FrameView {
             }
         }
     }
-
-    
-
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

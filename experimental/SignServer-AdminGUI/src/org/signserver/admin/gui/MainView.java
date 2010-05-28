@@ -1,11 +1,17 @@
-/*
- * SignServerDesktopApplication1View.java
- */
-
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.admin.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
 import javax.swing.event.ListSelectionEvent;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
@@ -13,42 +19,32 @@ import org.jdesktop.application.FrameView;
 import org.jdesktop.application.Task;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.basic.BasicListUI.ListSelectionHandler;
 import javax.swing.table.DefaultTableModel;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.TaskMonitor;
-import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
 /**
  * The application's main frame.
+ *
+ * @author markus
+ * @version $Id$
  */
 public class MainView extends FrameView {
 
@@ -89,8 +85,6 @@ public class MainView extends FrameView {
                 }
             }
         });
-
-//        refreshWorkers();
 
         workersModel = new DefaultTableModel(workersList, columnNames) {
 
@@ -446,7 +440,7 @@ public class MainView extends FrameView {
     }// </editor-fold>//GEN-END:initComponents
 
 
-                @Action(block = Task.BlockingScope.WINDOW)
+    @Action(block = Task.BlockingScope.WINDOW)
     public Task refreshWorkers() {
         return new RefreshWorkersTask(getApplication());
     }
@@ -461,36 +455,36 @@ public class MainView extends FrameView {
             workersList.clear();
 
             List<Integer> workerIds = SignServerAdminGUIApplication
-            .getGlobalConfigurationSession()
-            .getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+                .getGlobalConfigurationSession()
+                .getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
             for (Integer workerId : workerIds) {
 
-            final Vector<Object> workerInfo = new Vector<Object>();
-            final WorkerConfig config = SignServerAdminGUIApplication
-            .getWorkerSession().getCurrentWorkerConfig(workerId);
-            final String name = config.getProperty("NAME");
+                final Vector<Object> workerInfo = new Vector<Object>();
+                final WorkerConfig config = SignServerAdminGUIApplication
+                        .getWorkerSession().getCurrentWorkerConfig(workerId);
+                final String name = config.getProperty("NAME");
 
-            try {
-            final WorkerStatus status = SignServerAdminGUIApplication
-            .getWorkerSession()
-            .getStatus(workerId);
+                try {
+                    final WorkerStatus status = SignServerAdminGUIApplication
+                    .getWorkerSession()
+                    .getStatus(workerId);
 
-            workerInfo.add(status.isOK() == null ? "OK" : status.isOK());
-            } catch(InvalidWorkerIdException ex) {
-            workerInfo.add("Invalid");
-            }
+                    workerInfo.add(status.isOK() == null ? "OK" : status.isOK());
+                } catch(InvalidWorkerIdException ex) {
+                    workerInfo.add("Invalid");
+                }
 
-            workerInfo.add(workerId);
-            workerInfo.add(name);
+                workerInfo.add(workerId);
+                workerInfo.add(name);
 
-            System.out.println("workerId: " + workerId);
-            System.out.println("name: " + name);
+                System.out.println("workerId: " + workerId);
+                System.out.println("name: " + name);
 
-            workersList.add(workerInfo);
+                workersList.add(workerInfo);
 
-            jTable1.revalidate();
+                jTable1.revalidate();
 
-            workersModel.fireTableDataChanged();
+                workersModel.fireTableDataChanged();
             }
         }
         @Override protected Object doInBackground() {
@@ -516,8 +510,6 @@ public class MainView extends FrameView {
         }
 
         if (selected.length > 0) {
-//            WorkerFrame workerFrame = new WorkerFrame(workerIds);
-//            workerFrame.setVisible(true);
             getApplication().show(new WorkerStatusesView((SingleFrameApplication) this.getApplication(), workerIds));
         }
     }
@@ -536,21 +528,21 @@ public class MainView extends FrameView {
                         "Authentication failure activating worker "
                         + workersList.get(row).get(1) + ":\n" + ex.getMessage(),
                         "Activate workers", JOptionPane.ERROR_MESSAGE);
-                Logger.getLogger(SignServerAdminGUIApplicationView
+                Logger.getLogger(MainView
                         .class.getName()).log(Level.SEVERE, null, ex);
             } catch (CryptoTokenOfflineException ex) {
                 JOptionPane.showMessageDialog(getFrame(),
                         "Crypto token offline failure activating worker "
                         + workersList.get(row).get(1) + ":\n" + ex.getMessage(),
                         "Activate workers", JOptionPane.ERROR_MESSAGE);
-                Logger.getLogger(SignServerAdminGUIApplicationView
+                Logger.getLogger(MainView
                         .class.getName()).log(Level.SEVERE, null, ex);
             } catch (InvalidWorkerIdException ex) {
                 JOptionPane.showMessageDialog(getFrame(),
                         "Invalid worker activating worker "
                         + workersList.get(row).get(1) + ":\n" + ex.getMessage(),
                         "Activate workers", JOptionPane.ERROR_MESSAGE);
-                Logger.getLogger(SignServerAdminGUIApplicationView
+                Logger.getLogger(MainView
                         .class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -567,10 +559,10 @@ public class MainView extends FrameView {
                         .deactivateSigner((Integer) workersList.get(row)
                         .get(1));
             } catch (CryptoTokenOfflineException ex) {
-                Logger.getLogger(SignServerAdminGUIApplicationView
+                Logger.getLogger(MainView
                         .class.getName()).log(Level.SEVERE, null, ex);
             } catch (InvalidWorkerIdException ex) {
-                Logger.getLogger(SignServerAdminGUIApplicationView
+                Logger.getLogger(MainView
                         .class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -586,20 +578,14 @@ public class MainView extends FrameView {
         for (int row : selected) {
             // TODO: check that the worker is a signer
 
-
-
             signerIds.add((Integer) workersList.get(row).get(1));
             signerNames.add((String) workersList.get(row).get(2));
         }
-
-
 
         if (selected.length > 0) {
             getApplication().show(new GenerateRequestsView((SingleFrameApplication) this.getApplication(), signerIds.toArray(new Integer[0]), signerNames.toArray(new String[0])));
         }
     }
-
-
 
     private boolean isWorkersSelected = false;
     public boolean isIsWorkersSelected() {
@@ -621,12 +607,9 @@ public class MainView extends FrameView {
         for (int row : selected) {
             // TODO: check that the worker is a signer
 
-
-
             signerIds.add((Integer) workersList.get(row).get(1));
             signerNames.add((String) workersList.get(row).get(2));
         }
-
 
         if (selected.length > 0) {
             getApplication().show(new InstallCertificatesView((SingleFrameApplication) this.getApplication(), signerIds.toArray(new Integer[0]), signerNames.toArray(new String[0])));
@@ -644,8 +627,6 @@ public class MainView extends FrameView {
         }
 
         if (selected.length > 0) {
-//            WorkerFrame workerFrame = new WorkerFrame(workerIds);
-//            workerFrame.setVisible(true);
             getApplication().show(new WorkerAuthorizationView((SingleFrameApplication) this.getApplication(), workerIds));
         }
     }

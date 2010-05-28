@@ -83,7 +83,7 @@
                   <Component id="appHomepageLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="appDescLabel1" pref="127" max="32767" attributes="0"/>
+              <Component id="appDescLabel1" pref="141" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="closeButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>

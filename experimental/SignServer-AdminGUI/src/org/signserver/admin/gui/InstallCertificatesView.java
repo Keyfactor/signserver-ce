@@ -1,7 +1,15 @@
-/*
- * SignServerDesktopApplication1View.java
- */
-
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.admin.gui;
 
 import org.jdesktop.application.Action;
@@ -20,7 +28,10 @@ import org.ejbca.util.CertTools;
 import org.signserver.common.WorkerStatus;
 
 /**
- * The application's main frame.
+ * Form for installing certificates to signers.
+ *
+ * @author markus
+ * @version $Id$
  */
 public class InstallCertificatesView extends FrameView {
 
@@ -216,10 +227,6 @@ public class InstallCertificatesView extends FrameView {
             }
         }
     }
-
-    
-
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -21,7 +21,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" pref="468" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="472" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -111,7 +111,6 @@
             <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
               <action class="org.signserver.admin.gui.MainView" id="installCertificates" methodName="installCertificates"/>
             </Property>
-            <Property name="mnemonic" type="int" value="69"/>
             <Property name="text" type="java.lang.String" resourceKey="editMenu.text"/>
             <Property name="name" type="java.lang.String" value="editMenu" noResource="true"/>
           </Properties>
@@ -122,7 +121,6 @@
                   <action class="org.signserver.admin.gui.MainView" id="activateWorkers" methodName="activateWorkers"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="activateMenu.text"/>
-                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="activateMenu" noResource="true"/>
               </Properties>
             </MenuItem>
@@ -132,7 +130,6 @@
                   <action class="org.signserver.admin.gui.MainView" id="deactivateWorkers" methodName="deactivateWorkers"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="deactivateMenu.text"/>
-                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="deactivateMenu" noResource="true"/>
               </Properties>
             </MenuItem>
@@ -142,7 +139,6 @@
                   <action class="org.signserver.admin.gui.MainView" id="generateRequests" methodName="generateRequests"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="generateRequestMenu.text"/>
-                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="generateRequestMenu" noResource="true"/>
               </Properties>
             </MenuItem>
@@ -152,7 +148,6 @@
                   <action class="org.signserver.admin.gui.MainView" id="installCertificates" methodName="installCertificates"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="installCertificatesMenu.text"/>
-                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="installCertificatesMenu" noResource="true"/>
               </Properties>
             </MenuItem>
@@ -163,7 +158,6 @@
             <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
               <action class="org.signserver.admin.gui.MainView" id="viewAuthorizations" methodName="viewAuthorizations"/>
             </Property>
-            <Property name="mnemonic" type="int" value="86"/>
             <Property name="text" type="java.lang.String" resourceKey="viewMenu.text"/>
             <Property name="name" type="java.lang.String" value="viewMenu" noResource="true"/>
           </Properties>
@@ -183,7 +177,6 @@
                   <action class="org.signserver.admin.gui.MainView" id="showStatuses" methodName="showStatuses"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="statusMenu.text"/>
-                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="statusMenu" noResource="true"/>
               </Properties>
             </MenuItem>
@@ -193,7 +186,6 @@
                   <action class="org.signserver.admin.gui.MainView" id="viewAuthorizations" methodName="viewAuthorizations"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="authorizationsMenu.text"/>
-                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="authorizationsMenu" noResource="true"/>
               </Properties>
             </MenuItem>
@@ -282,7 +274,7 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="statusMessageLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="664" max="32767" attributes="0"/>
+                          <EmptySpace pref="662" max="32767" attributes="0"/>
                           <Component id="progressBar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="statusAnimationLabel" min="-2" max="-2" attributes="0"/>
@@ -350,7 +342,6 @@
               <action class="org.signserver.admin.gui.MainView" id="activateWorkers" methodName="activateWorkers"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="activateButton.text"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="activateButton" noResource="true"/>
           </Properties>
         </Component>
@@ -360,7 +351,6 @@
               <action class="org.signserver.admin.gui.MainView" id="deactivateWorkers" methodName="deactivateWorkers"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="deactivateButton.text"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="deactivateButton" noResource="true"/>
           </Properties>
         </Component>
@@ -370,7 +360,6 @@
               <action class="org.signserver.admin.gui.MainView" id="showStatuses" methodName="showStatuses"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="statusButton.text"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="statusButton" noResource="true"/>
           </Properties>
         </Component>
@@ -380,7 +369,6 @@
               <action class="org.signserver.admin.gui.MainView" id="generateRequests" methodName="generateRequests"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="generateRequestsButton.text"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="generateRequestsButton" noResource="true"/>
           </Properties>
         </Component>
@@ -390,7 +378,6 @@
               <action class="org.signserver.admin.gui.MainView" id="installCertificates" methodName="installCertificates"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="installCertificatesButton.text"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="installCertificatesButton" noResource="true"/>
           </Properties>
         </Component>
@@ -400,7 +387,6 @@
               <action class="org.signserver.admin.gui.MainView" id="viewAuthorizations" methodName="viewAuthorizations"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="autorizationsButton.text"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="autorizationsButton" noResource="true"/>
           </Properties>
         </Component>

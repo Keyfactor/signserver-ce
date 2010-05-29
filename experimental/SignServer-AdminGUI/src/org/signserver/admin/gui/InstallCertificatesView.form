@@ -28,7 +28,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" pref="370" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="368" max="32767" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jButtonInstall" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -55,7 +55,6 @@
               <action class="org.signserver.admin.gui.InstallCertificatesView" id="installCertificates" methodName="installCertificates"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="jButtonInstall.text"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="jButtonInstall" noResource="true"/>
           </Properties>
         </Component>

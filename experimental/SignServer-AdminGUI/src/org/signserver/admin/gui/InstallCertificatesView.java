@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.event.TableModelListener;
@@ -42,6 +43,7 @@ import org.signserver.common.WorkerStatus;
  */
 public class InstallCertificatesView extends FrameView {
 
+    /** Logger for this class. */
     private Logger LOG = Logger.getLogger(InstallCertificatesView.class);
 
     private Vector<Integer> signerIds;
@@ -97,7 +99,8 @@ public class InstallCertificatesView extends FrameView {
             }
         });
 
-        final BrowseCellEditor editor = new BrowseCellEditor(new JTextField());
+        final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
+                JFileChooser.OPEN_DIALOG);
         editor.setClickCountToStart(1);
         jTable1.getColumn("Signer certificate").setCellEditor(editor);
         jTable1.getColumn("Certificate chain").setCellEditor(editor);

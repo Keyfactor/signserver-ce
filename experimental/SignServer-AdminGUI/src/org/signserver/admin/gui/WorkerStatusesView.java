@@ -22,11 +22,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.security.cert.Certificate;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map.Entry;
+import java.util.Set;
 import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.table.DefaultTableModel;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
@@ -142,7 +149,7 @@ public class WorkerStatusesView extends FrameView {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane2 = new javax.swing.JTextPane();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        propertiesTable = new javax.swing.JTable();
         statusPanel = new javax.swing.JPanel();
         javax.swing.JSeparator statusPanelSeparator = new javax.swing.JSeparator();
         statusMessageLabel = new javax.swing.JLabel();
@@ -196,7 +203,7 @@ public class WorkerStatusesView extends FrameView {
         jScrollPane4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         jScrollPane4.setName("jScrollPane4"); // NOI18N
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        propertiesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {"ID", "71", null},
                 {"Name", "Sod1", null},
@@ -219,12 +226,11 @@ public class WorkerStatusesView extends FrameView {
                 return types [columnIndex];
             }
         });
-        jTable1.setEnabled(false);
-        jTable1.setName("jTable1"); // NOI18N
-        jScrollPane4.setViewportView(jTable1);
-        jTable1.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("jTable1.columnModel.title0")); // NOI18N
-        jTable1.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("jTable1.columnModel.title1")); // NOI18N
-        jTable1.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("jTable1.columnModel.title2")); // NOI18N
+        propertiesTable.setName("propertiesTable"); // NOI18N
+        jScrollPane4.setViewportView(propertiesTable);
+        propertiesTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("propertiesTable.columnModel.title0")); // NOI18N
+        propertiesTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("propertiesTable.columnModel.title1")); // NOI18N
+        propertiesTable.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("propertiesTable.columnModel.title2")); // NOI18N
 
         jTabbedPane1.addTab(resourceMap.getString("jScrollPane4.TabConstraints.tabTitle"), jScrollPane4); // NOI18N
 
@@ -245,7 +251,7 @@ public class WorkerStatusesView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
+                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addContainerGap())
@@ -270,7 +276,7 @@ public class WorkerStatusesView extends FrameView {
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 659, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 657, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -305,6 +311,16 @@ public class WorkerStatusesView extends FrameView {
             jTextPane2.setText("");
         } else {
             jTextPane2.setText(statusData.getStatuses()[row]);
+
+            propertiesTable.setModel(new DefaultTableModel(
+                statusData.getConfigData()[row], statusColumns) {
+
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+
+            });
         }
         jTextPane2.setCaretPosition(0);
     }
@@ -314,12 +330,14 @@ public class WorkerStatusesView extends FrameView {
         private String[] names;
         private String[] statuses;
         private Object[][][] statusData;
+        private Object[][][] configData;
 
         public StatusData(String[] names, String[] statuses,
-                Object[][][] statusData) {
+                Object[][][] statusData, Object[][][] configData) {
             this.names = names;
             this.statuses = statuses;
             this.statusData = statusData;
+            this.configData = configData;
         }
 
         public String[] getNames() {
@@ -332,6 +350,10 @@ public class WorkerStatusesView extends FrameView {
 
         public String[] getStatuses() {
             return statuses;
+        }
+
+        public Object[][][] getConfigData() {
+            return configData;
         }
 
     }
@@ -355,6 +377,7 @@ public class WorkerStatusesView extends FrameView {
             String[] names = new String[workerIds.length];
             String[] newStatuses = new String[workerIds.length];
             String[][][] newStatusData = new String[workerIds.length][][];
+            Object[][][] newConfigData = new Object[workerIds.length][][];
 
             setProgress(0);
 
@@ -369,6 +392,7 @@ public class WorkerStatusesView extends FrameView {
                     .getWorkerSession().getCurrentWorkerConfig(workerId);
 
                 names[i] = config.getProperty("NAME") + " (" + workerId + ")";
+                String tokenStatus;
                 WorkerStatus status = null;
                 try {
                     status = SignServerAdminGUIApplication.getWorkerSession()
@@ -376,12 +400,60 @@ public class WorkerStatusesView extends FrameView {
                     status.displayStatus(workerId,
                             new PrintStream(out), true);
                     newStatuses[i] = out.toString();
+                    tokenStatus = status.isOK() == null ? "ACTIVE" : "OFFLINE";
                 } catch (InvalidWorkerIdException ex) {
                     newStatuses[i] = ("No such worker");
+                    tokenStatus = "Unknown";
                 }
+
+                Date notBefore = null;
+                Date notAfter = null;
+                Certificate certificate = null;
+                Collection<Certificate> certificateChain = null;
+
+                newConfigData[i] = new Object[][] {
+                    {"ID", workerId},
+                    {"Name", names[i]},
+                    {"Token status", tokenStatus},
+                    {},
+                    {},
+                    {},
+                    {},
+                };
+
+                try {
+                    notBefore = SignServerAdminGUIApplication
+                            .getWorkerSession()
+                            .getSigningValidityNotBefore(workerId);
+                    notAfter = SignServerAdminGUIApplication
+                            .getWorkerSession()
+                            .getSigningValidityNotAfter(workerId);
+                    certificate = SignServerAdminGUIApplication
+                            .getWorkerSession().getSignerCertificate(workerId);
+                    certificateChain = SignServerAdminGUIApplication
+                            .getWorkerSession().getSignerCertificateChain(workerId);
+
+                    newConfigData[i][3] = new Object[] {
+                        "Validity not before:", notBefore
+                    };
+                    newConfigData[i][4] = new Object[] {
+                        "Validity not after:", notAfter
+                    };
+                    newConfigData[i][5] = new Object[] {
+                        "Signer certificate", certificate
+                    };
+                    newConfigData[i][6] = new Object[] {
+                        "Certificate chain:", certificateChain
+                    };
+
+                } catch (CryptoTokenOfflineException ex) {
+                    System.out.println("offline: " + workerId);
+                }
+
+
                 setProgress(i + 1, 0, workerIds.length);
             }
-            return new StatusData(names, newStatuses, newStatusData);
+            return new StatusData(names, newStatuses, newStatusData, newConfigData);
         }
         @Override protected void succeeded(Object result) {
             // Runs on the EDT.  Update the GUI based on
@@ -411,10 +483,10 @@ public class WorkerStatusesView extends FrameView {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JProgressBar progressBar;
+    private javax.swing.JTable propertiesTable;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;

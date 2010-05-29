@@ -22,52 +22,53 @@ import org.jdesktop.application.TaskMonitor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Vector;
+import java.io.PrintStream;
+import java.util.Map.Entry;
+import java.util.Set;
 import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import org.signserver.common.AuthorizedClient;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
 /**
- * Form for managing authorizations.
+ * Frame for displaying worker statuses.
  *
  * @author markus
- * @version $Id$
+ * @version $Id: WorkerStatusesView.java 1034 2010-05-28 18:48:15Z netmackan $
  */
-public class WorkerAuthorizationView extends FrameView {
+public class WorkerConfigurationView extends FrameView {
 
     private int[] workerIds;
 
-    private static Vector<String> authColumns = new Vector<String>();
-    static {
-        authColumns.add("Certificate serial number");
-        authColumns.add("Issuer DN");
-    }
+    private static String[] statusColumns = {
+        "Property", "Value"
+    };
 
-    private UpdatedData data;
+    private StatusData statusData;
 
 
-    public WorkerAuthorizationView(SingleFrameApplication app, int[] workerIds) {
+    public WorkerConfigurationView(SingleFrameApplication app, int[] workerIds) {
         super(app);
 
         this.workerIds = workerIds;
         initComponents();
-        getFrame().setTitle("Authorizations for " + workerIds.length + " workers");
+        getFrame().setTitle("Configuration of " + workerIds.length + " workers");
 
-        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        propertiesTable.getSelectionModel().addListSelectionListener(
+                new ListSelectionListener() {
 
             @Override
             public void valueChanged(final ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    final boolean enable = jTable1.getSelectedRowCount() > 0;
+                    final boolean enable
+                            = propertiesTable.getSelectedRowCount() > 0;
                     editButton.setEnabled(enable);
                     removeButton.setEnabled(enable);
                 }
@@ -128,7 +129,18 @@ public class WorkerAuthorizationView extends FrameView {
             }
         });
 
+//        getContext().getTaskService().execute(refreshView());
         refreshButton.doClick();
+    }
+
+    @Action
+    public void showAboutBox() {
+        if (aboutBox == null) {
+            JFrame mainFrame = SignServerAdminGUIApplication.getApplication().getMainFrame();
+            aboutBox = new SignServerAdminGUIApplicationAboutBox(mainFrame);
+            aboutBox.setLocationRelativeTo(mainFrame);
+        }
+        SignServerAdminGUIApplication.getApplication().show(aboutBox);
     }
 
     /** This method is called from within the constructor to
@@ -146,8 +158,9 @@ public class WorkerAuthorizationView extends FrameView {
         jScrollPane2 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        propertiesTable = new javax.swing.JTable();
         addButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
@@ -157,17 +170,17 @@ public class WorkerAuthorizationView extends FrameView {
         statusAnimationLabel = new javax.swing.JLabel();
         progressBar = new javax.swing.JProgressBar();
         editPanel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        editSerialNumberTextfield = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        editIssuerDNTextfield = new javax.swing.JTextField();
-        editUpdateAllCheckbox = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        editPropertyTextField = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        editPropertyValueTextArea = new javax.swing.JTextArea();
 
         mainPanel.setName("mainPanel"); // NOI18N
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(WorkerAuthorizationView.class, this);
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(WorkerConfigurationView.class, this);
         refreshButton.setAction(actionMap.get("refreshView")); // NOI18N
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(WorkerAuthorizationView.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(WorkerConfigurationView.class);
         refreshButton.setText(resourceMap.getString("refreshButton.text")); // NOI18N
         refreshButton.setName("refreshButton"); // NOI18N
 
@@ -196,58 +209,101 @@ public class WorkerAuthorizationView extends FrameView {
 
         jTabbedPane1.setName("jTabbedPane1"); // NOI18N
 
+        jPanel1.setName("jPanel1"); // NOI18N
+
         jScrollPane4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         jScrollPane4.setName("jScrollPane4"); // NOI18N
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        propertiesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {"ID", "71", null},
+                {"Name", "Sod1", null},
+                {"Token status", "ACTIVE", null},
+                {"Signatures:", "0", null},
+                {"Signature limit:", "100000", null},
+                {"Validity not before:", "2010-05-20", null},
+                {"Validity not after:", "2020-05-20", null},
+                {"Certificate chain:", "CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE", "..."}
             },
             new String [] {
-                "Certificate serial number", "Issuer DN"
+                "Property", "Value", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false
+                java.lang.Object.class, java.lang.Object.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
         });
-        jTable1.setName("jTable1"); // NOI18N
-        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane4.setViewportView(jTable1);
+        propertiesTable.setName("propertiesTable"); // NOI18N
+        jScrollPane4.setViewportView(propertiesTable);
+        propertiesTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("propertiesTable.columnModel.title0")); // NOI18N
+        propertiesTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("propertiesTable.columnModel.title1")); // NOI18N
+        propertiesTable.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("propertiesTable.columnModel.title2")); // NOI18N
 
-        jTabbedPane1.addTab(resourceMap.getString("jScrollPane4.TabConstraints.tabTitle"), jScrollPane4); // NOI18N
-
-        jSplitPane2.setBottomComponent(jTabbedPane1);
-
-        addButton.setAction(actionMap.get("add")); // NOI18N
         addButton.setText(resourceMap.getString("addButton.text")); // NOI18N
         addButton.setName("addButton"); // NOI18N
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
+            }
+        });
 
-        editButton.setAction(actionMap.get("edit")); // NOI18N
         editButton.setText(resourceMap.getString("editButton.text")); // NOI18N
+        editButton.setEnabled(false);
         editButton.setName("editButton"); // NOI18N
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
 
-        removeButton.setAction(actionMap.get("remove")); // NOI18N
         removeButton.setText(resourceMap.getString("removeButton.text")); // NOI18N
+        removeButton.setEnabled(false);
         removeButton.setName("removeButton"); // NOI18N
+        removeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(addButton)
+                    .addComponent(editButton)
+                    .addComponent(removeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addButton, editButton, removeButton});
+
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(addButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(editButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(removeButton)))
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab(resourceMap.getString("jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
+
+        jSplitPane2.setBottomComponent(jTabbedPane1);
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -257,14 +313,7 @@ public class WorkerAuthorizationView extends FrameView {
                 .addContainerGap()
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 817, Short.MAX_VALUE)
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(addButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(editButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(removeButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 560, Short.MAX_VALUE)
-                        .addComponent(refreshButton)))
+                    .addComponent(refreshButton))
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
@@ -273,11 +322,7 @@ public class WorkerAuthorizationView extends FrameView {
                 .addContainerGap()
                 .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(refreshButton)
-                    .addComponent(addButton)
-                    .addComponent(editButton)
-                    .addComponent(removeButton))
+                .addComponent(refreshButton)
                 .addContainerGap())
         );
 
@@ -320,47 +365,48 @@ public class WorkerAuthorizationView extends FrameView {
 
         editPanel.setName("editPanel"); // NOI18N
 
-        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
-        jLabel3.setName("jLabel3"); // NOI18N
+        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
+        jLabel1.setName("jLabel1"); // NOI18N
 
-        editSerialNumberTextfield.setName("editSerialNumberTextfield"); // NOI18N
+        editPropertyTextField.setEditable(false);
+        editPropertyTextField.setText(resourceMap.getString("editPropertyTextField.text")); // NOI18N
+        editPropertyTextField.setName("editPropertyTextField"); // NOI18N
 
-        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
-        jLabel4.setName("jLabel4"); // NOI18N
+        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
+        jLabel2.setName("jLabel2"); // NOI18N
 
-        editIssuerDNTextfield.setName("editIssuerDNTextfield"); // NOI18N
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        editUpdateAllCheckbox.setText(resourceMap.getString("editUpdateAllCheckbox.text")); // NOI18N
-        editUpdateAllCheckbox.setName("editUpdateAllCheckbox"); // NOI18N
+        editPropertyValueTextArea.setColumns(20);
+        editPropertyValueTextArea.setRows(5);
+        editPropertyValueTextArea.setName("editPropertyValueTextArea"); // NOI18N
+        jScrollPane1.setViewportView(editPropertyValueTextArea);
 
         javax.swing.GroupLayout editPanelLayout = new javax.swing.GroupLayout(editPanel);
         editPanel.setLayout(editPanelLayout);
         editPanelLayout.setHorizontalGroup(
             editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(editPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, editPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(editSerialNumberTextfield, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                    .addComponent(editIssuerDNTextfield, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                    .addComponent(editUpdateAllCheckbox, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE))
+                .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                    .addComponent(editPropertyTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
                 .addContainerGap())
         );
         editPanelLayout.setVerticalGroup(
             editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(editPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3)
+                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editSerialNumberTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel4)
+                .addComponent(editPropertyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editIssuerDNTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(editUpdateAllCheckbox)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         setComponent(mainPanel);
@@ -375,46 +421,128 @@ public class WorkerAuthorizationView extends FrameView {
         }
 }//GEN-LAST:event_jList1ValueChanged
 
-    private void displayStatus(final int row) {
-        Vector<Vector<String>> tableData = new Vector<Vector<String>>();
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        
+        editPropertyTextField.setText("");
+        editPropertyTextField.setEditable(true);
+        editPropertyValueTextArea.setText("");
 
-        jTable1.setEnabled(row != -1);
+        final int res = JOptionPane.showConfirmDialog(getFrame(), editPanel,
+                "Add property", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+        if (res == JOptionPane.OK_OPTION) {
+            int workerId = workerIds[jList1.getSelectedIndex()];
+
+
+            SignServerAdminGUIApplication.getWorkerSession()
+                    .setWorkerProperty(workerId,
+                    editPropertyTextField.getText(),
+                    editPropertyValueTextArea.getText());
+            SignServerAdminGUIApplication.getWorkerSession()
+                    .reloadConfiguration(workerId);
+
+            refreshButton.doClick();
+        }
+    }//GEN-LAST:event_addButtonActionPerformed
+
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        
+        final int row = propertiesTable.getSelectedRow();
+        
+        if (row != -1) {
+
+            editPropertyTextField.setText(
+                    (String) propertiesTable.getValueAt(row, 0));
+            editPropertyTextField.setEditable(true);
+            editPropertyValueTextArea.setText(
+                    (String) propertiesTable.getValueAt(row, 1));
+
+            final int res = JOptionPane.showConfirmDialog(getFrame(), editPanel,
+                    "Edit property", JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE);
+            if (res == JOptionPane.OK_OPTION) {
+                int workerId = workerIds[jList1.getSelectedIndex()];
+
+
+                SignServerAdminGUIApplication.getWorkerSession()
+                        .setWorkerProperty(workerId,
+                        editPropertyTextField.getText(),
+                        editPropertyValueTextArea.getText());
+                SignServerAdminGUIApplication.getWorkerSession()
+                        .reloadConfiguration(workerId);
+
+                refreshButton.doClick();
+            }
+        }
+    }//GEN-LAST:event_editButtonActionPerformed
+
+    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+        final int row = propertiesTable.getSelectedRow();
 
         if (row != -1) {
-            for (AuthorizedClient client : data.getClients()[row]) {
-                Vector rowData = new Vector<String>();
-                rowData.add(client.getCertSN());
-                rowData.add(client.getIssuerDN());
-                tableData.add(rowData);
+            final int res = JOptionPane.showConfirmDialog(getFrame(), "Are you sure you want to remove the property?",
+                    "Remove property", JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (res == JOptionPane.YES_OPTION) {
+                int workerId = workerIds[jList1.getSelectedIndex()];
+                SignServerAdminGUIApplication.getWorkerSession()
+                        .removeWorkerProperty(workerId,
+                        editPropertyTextField.getText());
+                SignServerAdminGUIApplication.getWorkerSession()
+                        .reloadConfiguration(workerId);
+
+                refreshButton.doClick();
             }
         }
+    }//GEN-LAST:event_removeButtonActionPerformed
 
-        jTable1.setModel(new DefaultTableModel(tableData, authColumns) {
+    private void displayStatus(final int row) {
+        if (row == -1) {
+            
+        } else {
+            
 
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+            propertiesTable.setModel(new DefaultTableModel(
+                statusData.getConfigData()[row], statusColumns) {
 
-        });
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+
+            });
+        }
     }
 
-     private static class UpdatedData {
+     private static class StatusData {
 
         private String[] names;
-        private Vector<AuthorizedClient>[] clients;
+        private String[] statuses;
+        private Object[][][] statusData;
+        private Object[][][] configData;
 
-        public UpdatedData(String[] names, Vector<AuthorizedClient>[] clients) {
+        public StatusData(String[] names, String[] statuses,
+                Object[][][] statusData, Object[][][] configData) {
             this.names = names;
-            this.clients = clients;
-        }
-
-        public Vector<AuthorizedClient>[] getClients() {
-            return clients;
+            this.statuses = statuses;
+            this.statusData = statusData;
+            this.configData = configData;
         }
 
         public String[] getNames() {
             return names;
+        }
+
+        public Object[][][] getStatusData() {
+            return statusData;
+        }
+
+        public String[] getStatuses() {
+            return statuses;
+        }
+
+        public Object[][][] getConfigData() {
+            return configData;
         }
 
     }
@@ -436,7 +564,9 @@ public class WorkerAuthorizationView extends FrameView {
             // on a background thread, so don't reference
             // the Swing GUI from here.
             String[] names = new String[workerIds.length];
-            Vector<AuthorizedClient>[] clients = new Vector[workerIds.length];
+            String[] newStatuses = new String[workerIds.length];
+            String[][][] newStatusData = new String[workerIds.length][][];
+            String[][][] newConfigData = new String[workerIds.length][][];
 
             setProgress(0);
 
@@ -449,30 +579,43 @@ public class WorkerAuthorizationView extends FrameView {
 
                 final WorkerConfig config = SignServerAdminGUIApplication
                     .getWorkerSession().getCurrentWorkerConfig(workerId);
+                Set<Entry<Object, Object>> entries
+                        = config.getProperties().entrySet();
+                newConfigData[i] = new String[entries.size()][];
+                int j = 0;
+                for (Entry<Object, Object> entry : entries) {
+                    newConfigData[i][j] = new String[2];
+                    newConfigData[i][j][0] = (String) entry.getKey();
+                    newConfigData[i][j][1] = (String) entry.getValue();
+                    System.out.println("Value: \"" + entry.getValue() + "\"");
+                    j++;
+                }
 
                 names[i] = config.getProperty("NAME") + " (" + workerId + ")";
                 WorkerStatus status = null;
-                
-                Collection<AuthorizedClient> client
-                        = SignServerAdminGUIApplication.getWorkerSession()
-                        .getAuthorizedClients(workerId);
-
-                clients[i] = new Vector<AuthorizedClient>(client);
-                
+                try {
+                    status = SignServerAdminGUIApplication.getWorkerSession()
+                            .getStatus(workerId);
+                    status.displayStatus(workerId,
+                            new PrintStream(out), true);
+                    newStatuses[i] = out.toString();
+                } catch (InvalidWorkerIdException ex) {
+                    newStatuses[i] = ("No such worker");
+                }
                 setProgress(i + 1, 0, workerIds.length);
             }
-            return new UpdatedData(names, clients);
+            return new StatusData(names, newStatuses, newStatusData, newConfigData);
         }
         @Override protected void succeeded(Object result) {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
-            final UpdatedData data = (UpdatedData) result;
+            final StatusData data = (StatusData) result;
 
-            WorkerAuthorizationView.this.data = data;
+            WorkerConfigurationView.this.statusData = data;
 
             final int selected = jList1.getSelectedIndex();
 
-            jList1.setListData(data.getNames());
+            jList1.setListData(WorkerConfigurationView.this.statusData.getNames());
 
             if (selected == -1) {
                 jList1.setSelectedIndex(0);
@@ -482,156 +625,25 @@ public class WorkerAuthorizationView extends FrameView {
         }
     }
 
-    @Action
-    public void add() {
-
-        editSerialNumberTextfield.setText("");
-        editSerialNumberTextfield.setEditable(true);
-        editIssuerDNTextfield.setText("");
-        editIssuerDNTextfield.setEditable(true);
-        editUpdateAllCheckbox.setSelected(false);
-
-        final int res = JOptionPane.showConfirmDialog(getFrame(), editPanel,
-                "Add authorized client", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE);
-        if (res == JOptionPane.OK_OPTION) {
-            int[] workers;
-            if (editUpdateAllCheckbox.isSelected()) {
-                workers = workerIds;
-            } else {
-                workers = new int[] { workerIds[jList1.getSelectedIndex()] };
-            }
-
-            System.out.println("Selected workers: " + Arrays.toString(workers));
-
-            for (int id : workers) {
-                AuthorizedClient client = new AuthorizedClient(
-                        editSerialNumberTextfield.getText(),
-                        editIssuerDNTextfield.getText());
-                SignServerAdminGUIApplication.getWorkerSession()
-                        .addAuthorizedClient(id, client);
-                SignServerAdminGUIApplication.getWorkerSession()
-                        .reloadConfiguration(id);
-            }
-            refreshButton.doClick();
-        }
-    }
-
-    @Action
-    public void edit() {
-
-        final int row = jTable1.getSelectedRow();
-        if (row != -1) {
-
-            final String serialNumberBefore =
-                    (String) jTable1.getValueAt(row, 0);
-            final String issuerDNBefore =
-                    (String) jTable1.getValueAt(row, 1);
-
-            editSerialNumberTextfield.setText(serialNumberBefore);
-            editSerialNumberTextfield.setEditable(true);
-            editIssuerDNTextfield.setText(issuerDNBefore);
-            editIssuerDNTextfield.setEditable(true);
-            editUpdateAllCheckbox.setSelected(false);
-
-            final int res = JOptionPane.showConfirmDialog(getFrame(), editPanel,
-                    "Edit authorized client", JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE);
-            if (res == JOptionPane.OK_OPTION) {
-                int[] workers;
-                if (editUpdateAllCheckbox.isSelected()) {
-                    workers = workerIds;
-                } else {
-                    workers = new int[] { workerIds[jList1.getSelectedIndex()] };
-                }
-
-                System.out.println("Selected workers: " + Arrays.toString(workers));
-
-                final AuthorizedClient oldAuthorizedClient =
-                    new AuthorizedClient(serialNumberBefore, issuerDNBefore);
-
-                final AuthorizedClient client = new AuthorizedClient(
-                            editSerialNumberTextfield.getText(),
-                            editIssuerDNTextfield.getText());
-
-                for (int id : workers) {
-                    SignServerAdminGUIApplication.getWorkerSession()
-                            .removeAuthorizedClient(id, oldAuthorizedClient);
-                    SignServerAdminGUIApplication.getWorkerSession()
-                            .addAuthorizedClient(id, client);
-                    SignServerAdminGUIApplication.getWorkerSession()
-                            .reloadConfiguration(id);
-                }
-            }
-            refreshButton.doClick();
-        }
-    }
-
-    @Action
-    public void remove() {
-        final int row = jTable1.getSelectedRow();
-        if (row != -1) {
-
-            final String serialNumberBefore =
-                    (String) jTable1.getValueAt(row, 0);
-            final String issuerDNBefore =
-                    (String) jTable1.getValueAt(row, 1);
-
-            editSerialNumberTextfield.setText(serialNumberBefore);
-            editSerialNumberTextfield.setEditable(false);
-            editIssuerDNTextfield.setText(issuerDNBefore);
-            editIssuerDNTextfield.setEditable(false);
-            editUpdateAllCheckbox.setSelected(false);
-
-            final int res = JOptionPane.showConfirmDialog(getFrame(), editPanel,
-                    "Edit authorized client", JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE);
-            if (res == JOptionPane.OK_OPTION) {
-                int[] workers;
-                if (editUpdateAllCheckbox.isSelected()) {
-                    workers = workerIds;
-                } else {
-                    workers = new int[] { workerIds[jList1.getSelectedIndex()] };
-                }
-
-                System.out.println("Selected workers: " + Arrays.toString(workers));
-
-                final AuthorizedClient oldAuthorizedClient =
-                    new AuthorizedClient(serialNumberBefore, issuerDNBefore);
-
-                final AuthorizedClient client = new AuthorizedClient(
-                            editSerialNumberTextfield.getText(),
-                            editIssuerDNTextfield.getText());
-
-                for (int id : workers) {
-                    SignServerAdminGUIApplication.getWorkerSession()
-                            .removeAuthorizedClient(id, oldAuthorizedClient);
-                    SignServerAdminGUIApplication.getWorkerSession()
-                            .reloadConfiguration(id);
-                }
-            }
-            refreshButton.doClick();
-        }
-    }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton editButton;
-    private javax.swing.JTextField editIssuerDNTextfield;
     private javax.swing.JPanel editPanel;
-    private javax.swing.JTextField editSerialNumberTextfield;
-    private javax.swing.JCheckBox editUpdateAllCheckbox;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JTextField editPropertyTextField;
+    private javax.swing.JTextArea editPropertyValueTextArea;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JList jList1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JProgressBar progressBar;
+    private javax.swing.JTable propertiesTable;
     private javax.swing.JButton refreshButton;
     private javax.swing.JButton removeButton;
     private javax.swing.JLabel statusAnimationLabel;

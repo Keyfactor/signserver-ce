@@ -74,6 +74,8 @@ public class MainView extends FrameView {
                     authorizationsMenu.setEnabled(active);
                     statusButton.setEnabled(active);
                     statusMenu.setEnabled(active);
+                    configurationButton.setEnabled(active);
+                    configurationMenu.setEnabled(active);
                     activateButton.setEnabled(active);
                     activateMenu.setEnabled(active);
                     deactivateButton.setEnabled(active);
@@ -187,6 +189,7 @@ public class MainView extends FrameView {
         viewMenu = new javax.swing.JMenu();
         refreshMenu = new javax.swing.JMenuItem();
         statusMenu = new javax.swing.JMenuItem();
+        configurationMenu = new javax.swing.JMenuItem();
         authorizationsMenu = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
@@ -203,6 +206,7 @@ public class MainView extends FrameView {
         generateRequestsButton = new javax.swing.JButton();
         installCertificatesButton = new javax.swing.JButton();
         autorizationsButton = new javax.swing.JButton();
+        configurationButton = new javax.swing.JButton();
 
         mainPanel.setName("mainPanel"); // NOI18N
 
@@ -264,38 +268,32 @@ public class MainView extends FrameView {
         menuBar.add(fileMenu);
 
         editMenu.setAction(actionMap.get("installCertificates")); // NOI18N
-        editMenu.setMnemonic('E');
         editMenu.setText(resourceMap.getString("editMenu.text")); // NOI18N
         editMenu.setName("editMenu"); // NOI18N
 
         activateMenu.setAction(actionMap.get("activateWorkers")); // NOI18N
         activateMenu.setText(resourceMap.getString("activateMenu.text")); // NOI18N
-        activateMenu.setEnabled(false);
         activateMenu.setName("activateMenu"); // NOI18N
         editMenu.add(activateMenu);
 
         deactivateMenu.setAction(actionMap.get("deactivateWorkers")); // NOI18N
         deactivateMenu.setText(resourceMap.getString("deactivateMenu.text")); // NOI18N
-        deactivateMenu.setEnabled(false);
         deactivateMenu.setName("deactivateMenu"); // NOI18N
         editMenu.add(deactivateMenu);
 
         generateRequestMenu.setAction(actionMap.get("generateRequests")); // NOI18N
         generateRequestMenu.setText(resourceMap.getString("generateRequestMenu.text")); // NOI18N
-        generateRequestMenu.setEnabled(false);
         generateRequestMenu.setName("generateRequestMenu"); // NOI18N
         editMenu.add(generateRequestMenu);
 
         installCertificatesMenu.setAction(actionMap.get("installCertificates")); // NOI18N
         installCertificatesMenu.setText(resourceMap.getString("installCertificatesMenu.text")); // NOI18N
-        installCertificatesMenu.setEnabled(false);
         installCertificatesMenu.setName("installCertificatesMenu"); // NOI18N
         editMenu.add(installCertificatesMenu);
 
         menuBar.add(editMenu);
 
-        viewMenu.setAction(actionMap.get("viewAuthorizations")); // NOI18N
-        viewMenu.setMnemonic('V');
+        viewMenu.setAction(actionMap.get("showConfiguration")); // NOI18N
         viewMenu.setText(resourceMap.getString("viewMenu.text")); // NOI18N
         viewMenu.setName("viewMenu"); // NOI18N
 
@@ -306,13 +304,16 @@ public class MainView extends FrameView {
 
         statusMenu.setAction(actionMap.get("showStatuses")); // NOI18N
         statusMenu.setText(resourceMap.getString("statusMenu.text")); // NOI18N
-        statusMenu.setEnabled(false);
         statusMenu.setName("statusMenu"); // NOI18N
         viewMenu.add(statusMenu);
 
+        configurationMenu.setAction(actionMap.get("showStatuses")); // NOI18N
+        configurationMenu.setText(resourceMap.getString("configurationMenu.text")); // NOI18N
+        configurationMenu.setName("configurationMenu"); // NOI18N
+        viewMenu.add(configurationMenu);
+
         authorizationsMenu.setAction(actionMap.get("viewAuthorizations")); // NOI18N
         authorizationsMenu.setText(resourceMap.getString("authorizationsMenu.text")); // NOI18N
-        authorizationsMenu.setEnabled(false);
         authorizationsMenu.setName("authorizationsMenu"); // NOI18N
         viewMenu.add(authorizationsMenu);
 
@@ -354,33 +355,31 @@ public class MainView extends FrameView {
 
         activateButton.setAction(actionMap.get("activateWorkers")); // NOI18N
         activateButton.setText(resourceMap.getString("activateButton.text")); // NOI18N
-        activateButton.setEnabled(false);
         activateButton.setName("activateButton"); // NOI18N
 
         deactivateButton.setAction(actionMap.get("deactivateWorkers")); // NOI18N
         deactivateButton.setText(resourceMap.getString("deactivateButton.text")); // NOI18N
-        deactivateButton.setEnabled(false);
         deactivateButton.setName("deactivateButton"); // NOI18N
 
         statusButton.setAction(actionMap.get("showStatuses")); // NOI18N
         statusButton.setText(resourceMap.getString("statusButton.text")); // NOI18N
-        statusButton.setEnabled(false);
         statusButton.setName("statusButton"); // NOI18N
 
         generateRequestsButton.setAction(actionMap.get("generateRequests")); // NOI18N
         generateRequestsButton.setText(resourceMap.getString("generateRequestsButton.text")); // NOI18N
-        generateRequestsButton.setEnabled(false);
         generateRequestsButton.setName("generateRequestsButton"); // NOI18N
 
         installCertificatesButton.setAction(actionMap.get("installCertificates")); // NOI18N
         installCertificatesButton.setText(resourceMap.getString("installCertificatesButton.text")); // NOI18N
-        installCertificatesButton.setEnabled(false);
         installCertificatesButton.setName("installCertificatesButton"); // NOI18N
 
         autorizationsButton.setAction(actionMap.get("viewAuthorizations")); // NOI18N
         autorizationsButton.setText(resourceMap.getString("autorizationsButton.text")); // NOI18N
-        autorizationsButton.setEnabled(false);
         autorizationsButton.setName("autorizationsButton"); // NOI18N
+
+        configurationButton.setAction(actionMap.get("showConfiguration")); // NOI18N
+        configurationButton.setText(resourceMap.getString("configurationButton.text")); // NOI18N
+        configurationButton.setName("configurationButton"); // NOI18N
 
         javax.swing.GroupLayout statusPanelLayout = new javax.swing.GroupLayout(statusPanel);
         statusPanel.setLayout(statusPanelLayout);
@@ -395,6 +394,8 @@ public class MainView extends FrameView {
                         .addComponent(deactivateButton)
                         .addGap(18, 18, 18)
                         .addComponent(statusButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(configurationButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(autorizationsButton)
                         .addGap(18, 18, 18)
@@ -422,7 +423,8 @@ public class MainView extends FrameView {
                     .addComponent(statusButton)
                     .addComponent(installCertificatesButton)
                     .addComponent(autorizationsButton)
-                    .addComponent(generateRequestsButton))
+                    .addComponent(generateRequestsButton)
+                    .addComponent(configurationButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(statusMessageLabel)
@@ -631,11 +633,28 @@ public class MainView extends FrameView {
         }
     }
 
+    @Action
+    public void showConfiguration() {
+        final int[] selected = jTable1.getSelectedRows();
+
+        final int[] workerIds = new int[selected.length];
+
+        for (int i = 0; i < selected.length; i++) {
+            workerIds[i] = (Integer) workersList.get(selected[i]).get(1);
+        }
+
+        if (selected.length > 0) {
+            getApplication().show(new WorkerConfigurationView((SingleFrameApplication) this.getApplication(), workerIds));
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton activateButton;
     private javax.swing.JMenuItem activateMenu;
     private javax.swing.JMenuItem authorizationsMenu;
     private javax.swing.JButton autorizationsButton;
+    private javax.swing.JButton configurationButton;
+    private javax.swing.JMenuItem configurationMenu;
     private javax.swing.JButton deactivateButton;
     private javax.swing.JMenuItem deactivateMenu;
     private javax.swing.JMenu editMenu;

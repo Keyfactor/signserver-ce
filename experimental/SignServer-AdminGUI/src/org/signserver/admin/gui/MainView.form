@@ -21,7 +21,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" pref="472" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="468" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -156,7 +156,7 @@
         <Menu class="javax.swing.JMenu" name="viewMenu">
           <Properties>
             <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView" id="viewAuthorizations" methodName="viewAuthorizations"/>
+              <action class="org.signserver.admin.gui.MainView" id="showConfiguration" methodName="showConfiguration"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="viewMenu.text"/>
             <Property name="name" type="java.lang.String" value="viewMenu" noResource="true"/>
@@ -178,6 +178,15 @@
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="statusMenu.text"/>
                 <Property name="name" type="java.lang.String" value="statusMenu" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="configurationMenu">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="org.signserver.admin.gui.MainView" id="showStatuses" methodName="showStatuses"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="configurationMenu.text"/>
+                <Property name="name" type="java.lang.String" value="configurationMenu" noResource="true"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="authorizationsMenu">
@@ -266,6 +275,8 @@
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="statusButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
+                          <Component id="configurationButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="autorizationsButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="generateRequestsButton" min="-2" max="-2" attributes="0"/>
@@ -274,7 +285,7 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="statusMessageLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="662" max="32767" attributes="0"/>
+                          <EmptySpace pref="664" max="32767" attributes="0"/>
                           <Component id="progressBar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="statusAnimationLabel" min="-2" max="-2" attributes="0"/>
@@ -295,6 +306,7 @@
                       <Component id="installCertificatesButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="autorizationsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="generateRequestsButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="configurationButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -388,6 +400,15 @@
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="autorizationsButton.text"/>
             <Property name="name" type="java.lang.String" value="autorizationsButton" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="configurationButton">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+              <action class="org.signserver.admin.gui.MainView" id="showConfiguration" methodName="showConfiguration"/>
+            </Property>
+            <Property name="text" type="java.lang.String" resourceKey="configurationButton.text"/>
+            <Property name="name" type="java.lang.String" value="configurationButton" noResource="true"/>
           </Properties>
         </Component>
       </SubComponents>

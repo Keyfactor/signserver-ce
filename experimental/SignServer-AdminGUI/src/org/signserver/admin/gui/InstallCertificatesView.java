@@ -33,6 +33,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
+import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerStatus;
 
 /**
@@ -46,6 +47,8 @@ public class InstallCertificatesView extends FrameView {
     /** Logger for this class. */
     private Logger LOG = Logger.getLogger(InstallCertificatesView.class);
 
+    private MainView mainView;
+
     private Vector<Integer> signerIds;
     private Vector<String> signerNames;
     private Vector<Vector<String>> data;
@@ -57,10 +60,10 @@ public class InstallCertificatesView extends FrameView {
     };
     
 
-    public InstallCertificatesView(SingleFrameApplication app, Integer[] signerIds,
-            String[] signerNames) {
+    public InstallCertificatesView(SingleFrameApplication app, 
+            MainView mainView, Integer[] signerIds, String[] signerNames) {
         super(app);
-
+        this.mainView = mainView;
         this.signerIds = new Vector(Arrays.asList(signerIds));
         this.signerNames = new Vector(Arrays.asList(signerNames));
         initComponents();
@@ -219,7 +222,7 @@ public class InstallCertificatesView extends FrameView {
 
             try {
 
-                final String scope = "GLOB";
+                final String scope = GlobalConfiguration.SCOPE_GLOBAL;
 
                 Collection<Certificate> signerCerts = CertTools.getCertsFromPEM(signerCertFile.getAbsolutePath());
                 if(signerCerts.size() == 0){
@@ -274,6 +277,7 @@ public class InstallCertificatesView extends FrameView {
         if (jTable1.getRowCount() == 0) {
             JOptionPane.showMessageDialog(getFrame(), "All certificates installed. Please verify the installed ceritifcates before activating the signers.");
             getFrame().dispose();
+            getContext().getTaskService().execute(mainView.refreshWorkers());
         }
     }
 

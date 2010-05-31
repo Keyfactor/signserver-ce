@@ -24,15 +24,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.security.cert.Certificate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Map.Entry;
-import java.util.Set;
+import javax.ejb.EJBException;
 import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.table.DefaultTableModel;
+import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerConfig;
@@ -45,6 +46,8 @@ import org.signserver.common.WorkerStatus;
  * @version $Id$
  */
 public class WorkerStatusesView extends FrameView {
+
+    private static final Logger LOG = Logger.getLogger(WorkerStatusesView.class);
 
     private int[] workerIds;
 
@@ -430,8 +433,16 @@ public class WorkerStatusesView extends FrameView {
                             .getSigningValidityNotAfter(workerId);
                     certificate = SignServerAdminGUIApplication
                             .getWorkerSession().getSignerCertificate(workerId);
-                    certificateChain = SignServerAdminGUIApplication
-                            .getWorkerSession().getSignerCertificateChain(workerId);
+                    try {
+                        certificateChain = SignServerAdminGUIApplication
+                            .getWorkerSession()
+                            .getSignerCertificateChain(workerId);
+                    } catch (EJBException ex) {
+                        // Handle problem caused by bug in server
+                        LOG.error("Error getting signer certificate chain",
+                                ex);
+                        certificateChain = Collections.emptyList();
+                    }
 
                     newConfigData[i][3] = new Object[] {
                         "Validity not before:", notBefore

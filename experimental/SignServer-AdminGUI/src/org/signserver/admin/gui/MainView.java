@@ -21,10 +21,9 @@ import org.jdesktop.application.FrameView;
 import org.jdesktop.application.Task;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
@@ -51,12 +50,10 @@ import org.apache.log4j.Logger;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.TaskMonitor;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
@@ -68,18 +65,12 @@ import org.signserver.common.WorkerStatus;
  */
 public class MainView extends FrameView {
 
+    /** Logger for this class. */
     private Logger LOG = Logger.getLogger(MainView.class);
-
-
-//    private Vector<Vector<Object>> workersList
-//            = new Vector<Vector<Object>>();
-
-    private Vector<String> columnNames = new Vector<String>();
 
     private DefaultTableModel workersModel;
 
-    private List<Worker> signers = new ArrayList<Worker>();
-
+    private List<Worker> allWorkers = new ArrayList<Worker>();
     private List<Worker> selectedWorkers = new ArrayList<Worker>();
     private Worker selectedWorker;
     private Worker selectedWorkerBeforeRefresh;
@@ -97,15 +88,12 @@ public class MainView extends FrameView {
     public MainView(SingleFrameApplication app) {
         super(app);
 
-        columnNames.add("Status");
-        columnNames.add("Id");
-        columnNames.add("Name");
-
         initComponents();
 
         jList1.setCellRenderer(new MyListCellRenderer());
 
-        jList1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        jList1.getSelectionModel().addListSelectionListener(
+                new ListSelectionListener() {
 
             @Override
             public void valueChanged(final ListSelectionEvent evt) {
@@ -146,12 +134,16 @@ public class MainView extends FrameView {
         jList2.setRenderer(new DefaultListCellRenderer() {
 
             @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            public Component getListCellRendererComponent(final JList list,
+                    Object value, final int index,
+                    final boolean isSelected, final boolean cellHasFocus) {
                 if (value instanceof Worker) {
                     final Worker signer  = (Worker) value;
-                    value = signer.getName() + " (" + signer.getWorkerId() + ")";
+                    value = signer.getName()
+                            + " (" + signer.getWorkerId() + ")";
                 }
-                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                return super.getListCellRendererComponent(list, value, index,
+                        isSelected, cellHasFocus);
             }
 
         });
@@ -159,12 +151,9 @@ public class MainView extends FrameView {
         jList2.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 if (jList2.getSelectedItem() instanceof Worker) {
-                    final Worker selectedWorker
-                            = (Worker) jList2.getSelectedItem();
-
-                    displayWorker(selectedWorker);
+                    displayWorker((Worker) jList2.getSelectedItem());
                 }
             }
         });
@@ -199,7 +188,8 @@ public class MainView extends FrameView {
 
         displayWorker(null);
 
-        // status bar initialization - message timeout, idle icon and busy animation, etc
+        // status bar initialization - message timeout, idle icon and busy
+        // animation, etc
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
         messageTimer = new Timer(messageTimeout, new ActionListener() {
@@ -208,9 +198,11 @@ public class MainView extends FrameView {
             }
         });
         messageTimer.setRepeats(false);
-        int busyAnimationRate = resourceMap.getInteger("StatusBar.busyAnimationRate");
+        int busyAnimationRate = resourceMap.getInteger(
+                "StatusBar.busyAnimationRate");
         for (int i = 0; i < busyIcons.length; i++) {
-            busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
+            busyIcons[i] = resourceMap.getIcon(
+                    "StatusBar.busyIcons[" + i + "]");
         }
         busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -223,9 +215,10 @@ public class MainView extends FrameView {
         progressBar.setVisible(false);
 
         // connecting action tasks to status bar via TaskMonitor
-        TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
-        taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+        TaskMonitor taskMonitor = new TaskMonitor(
+                getApplication().getContext());
+        taskMonitor.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
                 String propertyName = evt.getPropertyName();
                 if ("started".equals(propertyName)) {
                     if (!busyIconTimer.isRunning()) {
@@ -241,11 +234,11 @@ public class MainView extends FrameView {
                     progressBar.setVisible(false);
                     progressBar.setValue(0);
                 } else if ("message".equals(propertyName)) {
-                    String text = (String)(evt.getNewValue());
+                    String text = (String) evt.getNewValue();
                     statusMessageLabel.setText((text == null) ? "" : text);
                     messageTimer.restart();
                 } else if ("progress".equals(propertyName)) {
-                    int value = (Integer)(evt.getNewValue());
+                    int value = (Integer) evt.getNewValue();
                     progressBar.setVisible(true);
                     progressBar.setIndeterminate(false);
                     progressBar.setValue(value);
@@ -258,7 +251,8 @@ public class MainView extends FrameView {
     @Action
     public void showAboutBox() {
         if (aboutBox == null) {
-            JFrame mainFrame = SignServerAdminGUIApplication.getApplication().getMainFrame();
+            final JFrame mainFrame = SignServerAdminGUIApplication
+                    .getApplication().getMainFrame();
             aboutBox = new SignServerAdminGUIApplicationAboutBox(mainFrame);
             aboutBox.setLocationRelativeTo(mainFrame);
         }
@@ -679,7 +673,6 @@ public class MainView extends FrameView {
 
         menuBar.add(editMenu);
 
-        viewMenu.setAction(actionMap.get("showConfiguration")); // NOI18N
         viewMenu.setText(resourceMap.getString("viewMenu.text")); // NOI18N
         viewMenu.setName("viewMenu"); // NOI18N
 
@@ -1049,7 +1042,7 @@ public class MainView extends FrameView {
             editIssuerDNTextfield.setEditable(true);
             editUpdateAllCheckbox.setSelected(false);
 
-            final int res = JOptionPane.showConfirmDialog(getFrame(), 
+            final int res = JOptionPane.showConfirmDialog(getFrame(),
                     authEditPanel, "Edit authorized client",
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (res == JOptionPane.OK_OPTION) {
@@ -1150,9 +1143,8 @@ public class MainView extends FrameView {
         workerTabbedPane.setSelectedComponent(authorizationTab);
     }//GEN-LAST:event_authorizationsMenuActionPerformed
 
-
     private void displayWorker(final Worker worker) {
-        System.out.println("Display worker: " + worker);
+        LOG.debug("Display worker: " + worker);
         selectedWorker = worker;
         
         final boolean active = worker != null;
@@ -1293,7 +1285,7 @@ public class MainView extends FrameView {
                     .getStatus(workerId);
 
                     workerInfo.add(status.isOK() == null ? "OK" : status.isOK());
-                } catch(InvalidWorkerIdException ex) {
+                } catch (InvalidWorkerIdException ex) {
                     workerInfo.add("Invalid");
                 }
 
@@ -1312,7 +1304,6 @@ public class MainView extends FrameView {
                     configProperties[j] = new String[2];
                     configProperties[j][0] = (String) entry.getKey();
                     configProperties[j][1] = (String) entry.getValue();
-//                    System.out.println("Value: \"" + entry.getValue() + "\"");
                     j++;
                 }
 
@@ -1423,7 +1414,6 @@ public class MainView extends FrameView {
 
             jList1.revalidate();
             jList2.revalidate();
-            System.out.println("signers size: " + signers.size());
             jList1.setModel(new AbstractListModel() {
 
                 @Override
@@ -1439,34 +1429,19 @@ public class MainView extends FrameView {
 
             // New selection
             jList1.setSelectedIndices(ints);
-            System.out.println("Selecting: " + Arrays.toString(ints));
+            LOG.debug("Selecting: " + Arrays.toString(ints));
 
-            signers = newWorkers;
+            allWorkers = newWorkers;
         }
     }
 
-    @Action
-    public void showStatuses() {
-//        final int[] selected = jTable1.getSelectedRows();
-//
-//        final int[] workerIds = new int[selected.length];
-//
-//        for (int i = 0; i < selected.length; i++) {
-//            workerIds[i] = (Integer) workersList.get(selected[i]).get(1);
-//        }
-//
-//        if (selected.length > 0) {
-//            getApplication().show(new WorkerStatusesView((SingleFrameApplication) this.getApplication(), workerIds));
-//        }
-    }
-
-        @Action()
+    @Action()
     public void activateWorkers() {
         final int[] selected = jList1.getSelectedIndices();
 
         for (int row : selected) {
-            final String workerName = signers.get(row).getName();
-            final int workerId = signers.get(row).getWorkerId();
+            final String workerName = allWorkers.get(row).getName();
+            final int workerId = allWorkers.get(row).getWorkerId();
             try {
                 SignServerAdminGUIApplication.getWorkerSession()
                         .activateSigner(workerId, "");
@@ -1474,7 +1449,7 @@ public class MainView extends FrameView {
                 final String error =
                         "Authentication failure activating worker "
                         + workerId;
-                JOptionPane.showMessageDialog(getFrame(), 
+                JOptionPane.showMessageDialog(getFrame(),
                         error + ":\n" + ex.getMessage(),
                         "Activate workers", JOptionPane.ERROR_MESSAGE);
                 LOG.error(error, ex);
@@ -1504,7 +1479,7 @@ public class MainView extends FrameView {
         final int[] selected = jList1.getSelectedIndices();
 
         for (int row : selected) {
-            final int workerId = signers.get(row).getWorkerId();
+            final int workerId = allWorkers.get(row).getWorkerId();
             try {
                 SignServerAdminGUIApplication.getWorkerSession()
                         .deactivateSigner(workerId);
@@ -1521,7 +1496,8 @@ public class MainView extends FrameView {
     public void generateRequests() {
 
         if (selectedWorkers.size() > 0) {
-            GenerateRequestsDialog dlg = new GenerateRequestsDialog(getFrame(), true, selectedWorkers);
+            GenerateRequestsDialog dlg = new GenerateRequestsDialog(getFrame(),
+                    true, selectedWorkers);
             if (dlg.showRequestsDialog() == GenerateRequestsDialog.OK) {
                 getContext().getTaskService().execute(refreshWorkers());
             }
@@ -1542,42 +1518,12 @@ public class MainView extends FrameView {
     @Action
     public void installCertificates() {
         if (selectedWorkers.size() > 0) {
-            InstallCertificatesDialog dlg = new InstallCertificatesDialog(getFrame(),
-                    true, this, selectedWorkers);
+            InstallCertificatesDialog dlg = new InstallCertificatesDialog(
+                    getFrame(), true, this, selectedWorkers);
             if (dlg.showDialog() == InstallCertificatesDialog.OK) {
                 getContext().getTaskService().execute(refreshWorkers());
             }
         }
-    }
-
-    @Action
-    public void viewAuthorizations() {
-//        final int[] selected = jTable1.getSelectedRows();
-//
-//        final int[] workerIds = new int[selected.length];
-//
-//        for (int i = 0; i < selected.length; i++) {
-//            workerIds[i] = (Integer) workersList.get(selected[i]).get(1);
-//        }
-//
-//        if (selected.length > 0) {
-//            getApplication().show(new WorkerAuthorizationView((SingleFrameApplication) this.getApplication(), workerIds));
-//        }
-    }
-
-    @Action
-    public void showConfiguration() {
-//        final int[] selected = jTable1.getSelectedRows();
-//
-//        final int[] workerIds = new int[selected.length];
-//
-//        for (int i = 0; i < selected.length; i++) {
-//            workerIds[i] = (Integer) workersList.get(selected[i]).get(1);
-//        }
-//
-//        if (selected.length > 0) {
-//            getApplication().show(new WorkerConfigurationView((SingleFrameApplication) this.getApplication(), workerIds));
-//        }
     }
 
     private static class MyComboBoxModel extends AbstractListModel implements ComboBoxModel {

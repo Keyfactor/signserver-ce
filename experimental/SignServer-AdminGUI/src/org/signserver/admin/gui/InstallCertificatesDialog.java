@@ -41,25 +41,25 @@ import org.signserver.common.WorkerStatus;
 public class InstallCertificatesDialog extends javax.swing.JDialog {
 
     /** Logger for this class. */
-    private Logger LOG = Logger.getLogger(InstallCertificatesDialog.class);
+    private static final Logger LOG
+            = Logger.getLogger(InstallCertificatesDialog.class);
 
     public static final int CANCEL = 0;
     public static final int OK = 1;
 
-    private int resultCode = CANCEL;
-
-    private MainView mainView;
-
-//    private Vector<Integer> signerIds;
-//    private Vector<String> signerNames;
-    private List<Worker> signers;
-    private Vector<Vector<String>> data;
     private static Vector<String> columnNames = new Vector<String>();
     static {
         columnNames.add("Signer");
         columnNames.add("Signer certificate");
         columnNames.add("Certificate chain");
     };
+
+    private int resultCode = CANCEL;
+
+    private MainView mainView;
+
+    private List<Worker> signers;
+    private Vector<Vector<String>> data;
 
     /** Creates new form InstallCertificatesDialog */
     public InstallCertificatesDialog(java.awt.Frame parent, boolean modal,
@@ -217,31 +217,44 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             final Worker signer = signers.get(row);
             final int workerid = signer.getWorkerId();
 
-            final File signerCertFile = new File((String) jTable1.getValueAt(row, 1));
-            final File signerChainFile = new File((String) jTable1.getValueAt(row, 2));
+            final File signerCertFile = new File(
+                    (String) jTable1.getValueAt(row, 1));
+            final File signerChainFile = new File(
+                    (String) jTable1.getValueAt(row, 2));
 
-            System.out.println("signer=" + workerid + "cert=\"" + signerCertFile + "\", signerChainFile=\"" + signerChainFile +"\"");
-
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("signer=" + workerid + "cert=\"" + signerCertFile
+                        + "\", signerChainFile=\"" + signerChainFile +"\"");
+            }
 
             try {
 
                 final String scope = GlobalConfiguration.SCOPE_GLOBAL;
 
-                Collection<Certificate> signerCerts = CertTools.getCertsFromPEM(signerCertFile.getAbsolutePath());
+                Collection<Certificate> signerCerts = CertTools.getCertsFromPEM(
+                        signerCertFile.getAbsolutePath());
                 if(signerCerts.size() == 0){
-                    JOptionPane.showMessageDialog(this, "Problem with signer certificate file for signer " + workerid + ":\n" + "No certificate in file", "Install certificates", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, 
+                            "Problem with signer certificate file for signer "
+                            + workerid + ":\n" + "No certificate in file",
+                            "Install certificates", JOptionPane.ERROR_MESSAGE);
                 }
                 if (signerCerts.size() != 1) {
                     // TODO: Warning more than one certificate
                 }
-                final X509Certificate signerCert = (X509Certificate) signerCerts.iterator().next();
+                final X509Certificate signerCert
+                        = (X509Certificate) signerCerts.iterator().next();
 
                 Collection<Certificate> signerChain;
 
                 try {
-                    signerChain = CertTools.getCertsFromPEM(signerChainFile.getAbsolutePath());
+                    signerChain = CertTools.getCertsFromPEM(
+                            signerChainFile.getAbsolutePath());
                     if(signerChain.size() == 0){
-                        JOptionPane.showMessageDialog(this, "Problem with certificate chain file for signer " + workerid + ":\n" + "No certificates in file", "Install certificates", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this,
+                            "Problem with certificate chain file for signer "
+                            + workerid + ":\n" + "No certificates in file",
+                            "Install certificates", JOptionPane.ERROR_MESSAGE);
                     }
 
 
@@ -252,9 +265,14 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                         System.out.println("\n");
                     }
 
-                    SignServerAdminGUIApplication.getWorkerSession().uploadSignerCertificateChain(workerid, signerChain, scope);
-                    SignServerAdminGUIApplication.getWorkerSession().uploadSignerCertificate(workerid, signerCert, scope);
-                    SignServerAdminGUIApplication.getWorkerSession().reloadConfiguration(workerid);
+                    SignServerAdminGUIApplication.getWorkerSession()
+                            .uploadSignerCertificateChain(workerid,
+                                signerChain, scope);
+                    SignServerAdminGUIApplication.getWorkerSession()
+                            .uploadSignerCertificate(workerid, signerCert,
+                            scope);
+                    SignServerAdminGUIApplication.getWorkerSession()
+                            .reloadConfiguration(workerid);
 
                     signers.remove(signer);
                     data.remove(row);
@@ -262,22 +280,35 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                     jTable1.revalidate();
                 } catch (IOException ex) {
                     LOG.error("Problem with certificate chain file", ex);
-                    JOptionPane.showMessageDialog(this, "Problem with certificate chain file for signer " + workerid + ":\n" + ex.getMessage(), "Install certificates", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, 
+                            "Problem with certificate chain file for signer "
+                            + workerid + ":\n" + ex.getMessage(),
+                            "Install certificates", JOptionPane.ERROR_MESSAGE);
                 } catch (CertificateException ex) {
                     LOG.error("Problem with certificate chain file", ex);
-                    JOptionPane.showMessageDialog(this, "Problem with certificate chain file for signer " + workerid + ":\n" + ex.getMessage(), "Install certificates", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, 
+                            "Problem with certificate chain file for signer "
+                            + workerid + ":\n" + ex.getMessage(),
+                            "Install certificates", JOptionPane.ERROR_MESSAGE);
                 }
 
             } catch (IOException ex) {
                 LOG.error("Problem with signer certificate file", ex);
-                JOptionPane.showMessageDialog(this, "Problem with signer certificate file for signer " + workerid + ":\n" + ex.getMessage(), "Install certificates", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "Problem with signer certificate file for signer "
+                        + workerid + ":\n" + ex.getMessage(),
+                        "Install certificates", JOptionPane.ERROR_MESSAGE);
             } catch (CertificateException ex) {
                 LOG.error("Problem with signer certificate file", ex);
-                JOptionPane.showMessageDialog(this, "Problem with signer certificate file for signer " + workerid + ":\n" + ex.getMessage(), "Install certificates", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "Problem with signer certificate file for signer "
+                        + workerid + ":\n" + ex.getMessage(),
+                        "Install certificates", JOptionPane.ERROR_MESSAGE);
             }
         }
         if (jTable1.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "All certificates installed. Please verify the installed ceritifcates before activating the signers.");
+            JOptionPane.showMessageDialog(this,
+                    "All certificates installed. Please verify the installed ceritifcates before activating the signers.");
             dispose();
         }
     }//GEN-LAST:event_jButtonInstallActionPerformed

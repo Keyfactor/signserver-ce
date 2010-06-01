@@ -1,14 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * MyListCellRenderer.java
- *
- * Created on May 31, 2010, 10:26:26 PM
- */
-
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.admin.gui;
 
 import java.awt.Color;
@@ -17,10 +18,12 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicHTML;
 
 /**
- *
+ * Renderer for the main list of workers.
  * @author markus
+ * @version $Id$
  */
 public class MyListCellRenderer extends javax.swing.JPanel 
         implements ListCellRenderer {
@@ -31,9 +34,11 @@ public class MyListCellRenderer extends javax.swing.JPanel
     * <code>getListCellRendererComponent</code> method and set the border
     * of the returned component directly.
     */
-    private static final Border SAFE_NO_FOCUS_BORDER = new EmptyBorder(1, 1, 1, 1);
-    private static final Border DEFAULT_NO_FOCUS_BORDER = new EmptyBorder(1, 1, 1, 1);
-    protected static Border noFocusBorder = DEFAULT_NO_FOCUS_BORDER;
+    private static final Border SAFE_NO_FOCUS_BORDER
+            = new EmptyBorder(1, 1, 1, 1);
+    private static final Border DEFAULT_NO_FOCUS_BORDER
+            = new EmptyBorder(1, 1, 1, 1);
+    private static Border noFocusBorder = DEFAULT_NO_FOCUS_BORDER;
 
     /** Creates new form MyListCellRenderer */
     public MyListCellRenderer() {
@@ -105,9 +110,9 @@ public class MyListCellRenderer extends javax.swing.JPanel
     }
 
     @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-
-        
+    public Component getListCellRendererComponent(final JList list,
+            Object value, final int index, final boolean isSelected,
+            final boolean cellHasFocus) {
 
         setComponentOrientation(list.getComponentOrientation());
 
@@ -194,12 +199,13 @@ public class MyListCellRenderer extends javax.swing.JPanel
     * for more information.
     */
     @Override
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+    protected void firePropertyChange(final String propertyName,
+            final Object oldValue, final Object newValue) {
         // Strings get interned...
         if (propertyName == "text"
                 || ((propertyName == "font" || propertyName == "foreground")
                     && oldValue != newValue
-                    && getClientProperty(javax.swing.plaf.basic.BasicHTML.propertyKey) != null)) {
+                    && getClientProperty(BasicHTML.propertyKey) != null)) {
 
             super.firePropertyChange(propertyName, oldValue, newValue);
         }
@@ -211,6 +217,5 @@ public class MyListCellRenderer extends javax.swing.JPanel
     private javax.swing.JLabel listItemLabel1;
     private javax.swing.JLabel listItemLabel2;
     // End of variables declaration//GEN-END:variables
-
 
 }

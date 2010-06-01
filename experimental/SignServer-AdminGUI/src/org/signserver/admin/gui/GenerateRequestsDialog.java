@@ -23,6 +23,7 @@ import java.util.Vector;
 import javax.ejb.EJBException;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -40,20 +41,16 @@ import org.signserver.common.PKCS10CertReqInfo;
  * @author markus
  * @version $Id$
  */
-public class GenerateRequestsDialog extends javax.swing.JDialog {
+public class GenerateRequestsDialog extends JDialog {
 
+    /** Logger for this class. */
     private static final Logger LOG
             = Logger.getLogger(GenerateRequestsDialog.class);
 
     public static final int CANCEL = 0;
     public static final int OK = 1;
 
-    private int resultCode = CANCEL;
-
-//    private Vector<Integer> signerIds;
-//    private Vector<String> signerNames;
-    private Vector<Vector<String>> data;
-    private static Vector<String> columnNames = new Vector(Arrays.asList(
+    private static final Vector<String> COLUMN_NAMES = new Vector(Arrays.asList(
             new String[] {
         "Signer",
         "Signature algorithm",
@@ -61,6 +58,10 @@ public class GenerateRequestsDialog extends javax.swing.JDialog {
         "Filename"
     }));
 
+    private int resultCode = CANCEL;
+
+    private Vector<Vector<String>> data;
+    
     private JComboBox sigAlgComboBox = new JComboBox(new String[] {
         "SHA1WithRSA",
         "SHA256WithRSA",
@@ -92,7 +93,7 @@ public class GenerateRequestsDialog extends javax.swing.JDialog {
             cols.add("");
             data.add(cols);
         }
-        jTable1.setModel(new DefaultTableModel(data, columnNames) {
+        jTable1.setModel(new DefaultTableModel(data, COLUMN_NAMES) {
 
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -126,12 +127,15 @@ public class GenerateRequestsDialog extends javax.swing.JDialog {
         final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
                 JFileChooser.SAVE_DIALOG);
         editor.setClickCountToStart(1);
-        final DefaultCellEditor textFieldEditor = new DefaultCellEditor(new JTextField());
-        final DefaultCellEditor comboBoxFieldEditor = new DefaultCellEditor(sigAlgComboBox);
+        final DefaultCellEditor textFieldEditor
+                = new DefaultCellEditor(new JTextField());
+        final DefaultCellEditor comboBoxFieldEditor
+                = new DefaultCellEditor(sigAlgComboBox);
         comboBoxFieldEditor.setClickCountToStart(1);
         jTable1.getColumn("Filename").setCellEditor(editor);
         textFieldEditor.setClickCountToStart(1);
-        jTable1.getColumn("Signature algorithm").setCellEditor(comboBoxFieldEditor);
+        jTable1.getColumn("Signature algorithm").setCellEditor(
+                comboBoxFieldEditor);
         jTable1.getColumn("DN").setCellEditor(textFieldEditor);
     }
 

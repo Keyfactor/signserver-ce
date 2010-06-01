@@ -16,7 +16,7 @@ import java.util.Collection;
 import org.signserver.common.AuthorizedClient;
 
 /**
- *
+ * Class representing a worker and its status and configuration.
  * @author markus
  * @version $Id$
  */
@@ -33,7 +33,8 @@ public class Worker {
     public Worker(int workerId, String name, String statusSummary,
             final Object[][] statusProperties,
             final Object[][] configurationProperties,
-            final boolean active, final Collection<AuthorizedClient> authClients) {
+            final boolean active,
+            final Collection<AuthorizedClient> authClients) {
         this.workerId = workerId;
         this.name = name;
         this.statusSummary = statusSummary;
@@ -97,7 +98,4 @@ public class Worker {
     public String toString() {
         return "Worker[" + getName() + ", " + getWorkerId() + "]";
     }
-
-
-
 }

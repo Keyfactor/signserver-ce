@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import java.awt.SplashScreen;
 import java.util.Hashtable;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -24,12 +25,13 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * The main class of the application.
- * 
+ *
  * @author markus
  * @version $Id$
  */
 public class SignServerAdminGUIApplication extends SingleFrameApplication {
 
+    /** Logger for this class. */
     private static Logger LOG
             = Logger.getLogger(SignServerAdminGUIApplication.class);
 
@@ -65,17 +67,23 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
     public static void main(String[] args) {
         LOG.debug("SignServer Administration GUI startup");
 
+        final SplashScreen splash = SplashScreen.getSplashScreen();
+        if (splash == null) {
+            LOG.debug("No splash screen available.");
+        }
+
+
         try {
             Context context = getInitialContext();
-            gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
-            sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+            gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(
+                    IGlobalConfigurationSession.IRemote.JNDI_NAME);
+            sSSession = (IWorkerSession.IRemote) context.lookup(
+                    IWorkerSession.IRemote.JNDI_NAME);
 
             launch(SignServerAdminGUIApplication.class, args);
-
-            System.out.println("sSSesssion: " + sSSession);
         } catch (Exception ex) {
             LOG.error("Startup error", ex);
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(null,
                     "Startup failed. Are the application server running?\n"
                     + ex.getMessage(),
                     "SignServer Administration GUI startup",

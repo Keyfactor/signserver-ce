@@ -77,9 +77,14 @@ class BrowseCellEditor extends DefaultCellEditor implements ActionListener {
     }
 
     @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(super.getTableCellEditorComponent(table, value, isSelected, row, column));
+    public Component getTableCellEditorComponent(final JTable table,
+            final Object value, final boolean isSelected, final int row,
+            final int column) {
+        final JPanel panel = new JPanel(new BorderLayout());
+        final Component defaultComponent
+                = super.getTableCellEditorComponent(table, value, isSelected,
+                row, column);
+        panel.add(defaultComponent);
         panel.add(customEditorButton, BorderLayout.EAST);
         this.table = table;
         this.row = row;

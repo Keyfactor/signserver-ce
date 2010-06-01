@@ -1,13 +1,24 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.admin.gui;
+
+import java.util.Collection;
+import org.signserver.common.AuthorizedClient;
 
 /**
  *
  * @author markus
+ * @version $Id$
  */
 public class Worker {
 
@@ -17,17 +28,19 @@ public class Worker {
     private Object[][] statusProperties;
     private Object[][] configurationProperties;
     private boolean active;
+    private Collection<AuthorizedClient> authClients;
 
     public Worker(int workerId, String name, String statusSummary,
             final Object[][] statusProperties,
             final Object[][] configurationProperties,
-            final boolean active) {
+            final boolean active, final Collection<AuthorizedClient> authClients) {
         this.workerId = workerId;
         this.name = name;
         this.statusSummary = statusSummary;
         this.statusProperties = statusProperties;
         this.configurationProperties = configurationProperties;
         this.active = active;
+        this.authClients = authClients;
     }
 
     public String getName() {
@@ -52,6 +65,10 @@ public class Worker {
 
     public boolean isActive() {
         return active;
+    }
+
+    public Collection<AuthorizedClient> getAuthClients() {
+        return authClients;
     }
 
     @Override

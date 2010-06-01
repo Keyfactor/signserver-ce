@@ -21,7 +21,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jSplitPane1" pref="827" max="32767" attributes="0"/>
+                  <Component id="jSplitPane1" pref="823" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -85,7 +85,7 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jTabbedPane1" alignment="0" pref="814" max="32767" attributes="0"/>
+                              <Component id="workerTabbedPane" alignment="0" pref="814" max="32767" attributes="0"/>
                               <Component id="jList2" alignment="0" pref="814" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -98,7 +98,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jList2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="jTabbedPane1" pref="772" max="32767" attributes="0"/>
+                          <Component id="workerTabbedPane" pref="766" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -115,14 +115,14 @@
                     <Property name="name" type="java.lang.String" value="jList2" noResource="true"/>
                   </Properties>
                 </Component>
-                <Container class="javax.swing.JTabbedPane" name="jTabbedPane1">
+                <Container class="javax.swing.JTabbedPane" name="workerTabbedPane">
                   <Properties>
-                    <Property name="name" type="java.lang.String" value="jTabbedPane1" noResource="true"/>
+                    <Property name="name" type="java.lang.String" value="workerTabbedPane" noResource="true"/>
                   </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                   <SubComponents>
-                    <Container class="javax.swing.JScrollPane" name="jScrollPane4">
+                    <Container class="javax.swing.JScrollPane" name="statusSummaryTab">
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -130,12 +130,12 @@
                           </Border>
                         </Property>
                         <Property name="verticalScrollBarPolicy" type="int" value="22"/>
-                        <Property name="name" type="java.lang.String" value="jScrollPane4" noResource="true"/>
+                        <Property name="name" type="java.lang.String" value="statusSummaryTab" noResource="true"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                           <JTabbedPaneConstraints tabName="Status Summary">
-                            <Property name="tabTitle" type="java.lang.String" resourceKey="jScrollPane4.TabConstraints.tabTitle"/>
+                            <Property name="tabTitle" type="java.lang.String" resourceKey="statusSummaryTab.TabConstraints.tabTitle"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -151,15 +151,15 @@
                         </Component>
                       </SubComponents>
                     </Container>
-                    <Container class="javax.swing.JScrollPane" name="jScrollPane5">
+                    <Container class="javax.swing.JScrollPane" name="statusPropertiesTab">
                       <Properties>
                         <Property name="verticalScrollBarPolicy" type="int" value="22"/>
-                        <Property name="name" type="java.lang.String" value="jScrollPane5" noResource="true"/>
+                        <Property name="name" type="java.lang.String" value="statusPropertiesTab" noResource="true"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                           <JTabbedPaneConstraints tabName="Status Properties">
-                            <Property name="tabTitle" type="java.lang.String" resourceKey="jScrollPane5.TabConstraints.tabTitle"/>
+                            <Property name="tabTitle" type="java.lang.String" resourceKey="statusPropertiesTab.TabConstraints.tabTitle"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -210,9 +210,9 @@
                         </Component>
                       </SubComponents>
                     </Container>
-                    <Container class="javax.swing.JPanel" name="jPanel2">
+                    <Container class="javax.swing.JPanel" name="configurationTab">
                       <Properties>
-                        <Property name="name" type="java.lang.String" value="jPanel2" noResource="true"/>
+                        <Property name="name" type="java.lang.String" value="configurationTab" noResource="true"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
@@ -243,7 +243,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jScrollPane6" alignment="0" pref="707" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane6" alignment="0" pref="699" max="32767" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="addButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -341,14 +341,14 @@
                         </Component>
                       </SubComponents>
                     </Container>
-                    <Container class="javax.swing.JPanel" name="jPanel3">
+                    <Container class="javax.swing.JPanel" name="authorizationTab">
                       <Properties>
-                        <Property name="name" type="java.lang.String" value="jPanel3" noResource="true"/>
+                        <Property name="name" type="java.lang.String" value="authorizationTab" noResource="true"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                           <JTabbedPaneConstraints tabName="Authorization">
-                            <Property name="tabTitle" type="java.lang.String" resourceKey="jPanel3.TabConstraints.tabTitle"/>
+                            <Property name="tabTitle" type="java.lang.String" resourceKey="authorizationTab.TabConstraints.tabTitle"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -361,7 +361,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="authAddButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
                                       <Component id="authEditButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                                      <Component id="removeButton1" linkSize="2" alignment="1" min="-2" pref="99" max="-2" attributes="0"/>
+                                      <Component id="authRemoveButton" linkSize="2" alignment="1" min="-2" pref="99" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -382,13 +382,13 @@
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="authEditButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="removeButton1" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="620" max="32767" attributes="0"/>
+                                  <Component id="authRemoveButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="606" max="32767" attributes="0"/>
                               </Group>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane7" pref="707" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane7" pref="699" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -425,30 +425,32 @@
                         </Container>
                         <Component class="javax.swing.JButton" name="authAddButton">
                           <Properties>
-                            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                              <action class="org.signserver.admin.gui.WorkerAuthorizationView" id="add" methodName="add"/>
-                            </Property>
                             <Property name="text" type="java.lang.String" resourceKey="authAddButton.text"/>
                             <Property name="name" type="java.lang.String" value="authAddButton" noResource="true"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="authAddButtonActionPerformed"/>
+                          </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="authEditButton">
                           <Properties>
-                            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                              <action class="org.signserver.admin.gui.WorkerAuthorizationView" id="edit" methodName="edit"/>
-                            </Property>
                             <Property name="text" type="java.lang.String" resourceKey="authEditButton.text"/>
+                            <Property name="enabled" type="boolean" value="false"/>
                             <Property name="name" type="java.lang.String" value="authEditButton" noResource="true"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="authEditButtonActionPerformed"/>
+                          </Events>
                         </Component>
-                        <Component class="javax.swing.JButton" name="removeButton1">
+                        <Component class="javax.swing.JButton" name="authRemoveButton">
                           <Properties>
-                            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                              <action class="org.signserver.admin.gui.WorkerAuthorizationView" id="remove" methodName="remove"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" resourceKey="removeButton1.text"/>
-                            <Property name="name" type="java.lang.String" value="removeButton1" noResource="true"/>
+                            <Property name="text" type="java.lang.String" resourceKey="authRemoveButton.text"/>
+                            <Property name="enabled" type="boolean" value="false"/>
+                            <Property name="name" type="java.lang.String" value="authRemoveButton" noResource="true"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="authRemoveButtonActionPerformed"/>
+                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -559,32 +561,41 @@
                 <Property name="name" type="java.lang.String" value="refreshMenu" noResource="true"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="statusMenu">
+            <MenuItem class="javax.swing.JMenuItem" name="statusSummaryMenu">
               <Properties>
-                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                  <action class="org.signserver.admin.gui.MainView" id="showStatuses" methodName="showStatuses"/>
-                </Property>
-                <Property name="text" type="java.lang.String" resourceKey="statusMenu.text"/>
-                <Property name="name" type="java.lang.String" value="statusMenu" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="statusSummaryMenu.text"/>
+                <Property name="name" type="java.lang.String" value="statusSummaryMenu" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="statusSummaryMenuActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="statusPropertiesMenu">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="statusPropertiesMenu.text"/>
+                <Property name="name" type="java.lang.String" value="statusPropertiesMenu" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="statusPropertiesMenuActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="configurationMenu">
               <Properties>
-                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                  <action class="org.signserver.admin.gui.MainView" id="showConfiguration" methodName="showConfiguration"/>
-                </Property>
                 <Property name="text" type="java.lang.String" resourceKey="configurationMenu.text"/>
                 <Property name="name" type="java.lang.String" value="configurationMenu" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="configurationMenuActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="authorizationsMenu">
               <Properties>
-                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                  <action class="org.signserver.admin.gui.MainView" id="viewAuthorizations" methodName="viewAuthorizations"/>
-                </Property>
                 <Property name="text" type="java.lang.String" resourceKey="authorizationsMenu.text"/>
                 <Property name="name" type="java.lang.String" value="authorizationsMenu" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="authorizationsMenuActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -704,7 +715,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="919" max="32767" attributes="0"/>
+                  <EmptySpace pref="921" max="32767" attributes="0"/>
                   <Component id="progressBar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="statusAnimationLabel" min="-2" pref="37" max="-2" attributes="0"/>
@@ -899,6 +910,76 @@
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="listItemLabel2.text"/>
             <Property name="name" type="java.lang.String" value="listItemLabel2" noResource="true"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="authEditPanel">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="authEditPanel" noResource="true"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="editSerialNumberTextfield" alignment="0" pref="376" max="32767" attributes="0"/>
+                      <Component id="jLabel4" alignment="0" pref="376" max="32767" attributes="0"/>
+                      <Component id="editIssuerDNTextfield" alignment="0" pref="376" max="32767" attributes="0"/>
+                      <Component id="jLabel5" alignment="0" pref="376" max="32767" attributes="0"/>
+                      <Component id="editUpdateAllCheckbox" alignment="0" pref="376" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="editSerialNumberTextfield" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="editIssuerDNTextfield" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="editUpdateAllCheckbox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="28" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabel4">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="jLabel4.text"/>
+            <Property name="name" type="java.lang.String" value="jLabel4" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="editSerialNumberTextfield">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="editSerialNumberTextfield" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel5">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="jLabel5.text"/>
+            <Property name="name" type="java.lang.String" value="jLabel5" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="editIssuerDNTextfield">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="editIssuerDNTextfield" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="editUpdateAllCheckbox">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="editUpdateAllCheckbox.text"/>
+            <Property name="name" type="java.lang.String" value="editUpdateAllCheckbox" noResource="true"/>
           </Properties>
         </Component>
       </SubComponents>

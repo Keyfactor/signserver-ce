@@ -22,6 +22,9 @@ import org.jdesktop.application.Task;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
@@ -48,10 +51,12 @@ import org.apache.log4j.Logger;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.TaskMonitor;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
@@ -326,10 +331,6 @@ public class MainView extends FrameView {
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         editPropertyValueTextArea = new javax.swing.JTextArea();
-        listItemPanel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        listItemLabel1 = new javax.swing.JLabel();
-        listItemLabel2 = new javax.swing.JLabel();
         authEditPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         editSerialNumberTextfield = new javax.swing.JTextField();
@@ -343,7 +344,7 @@ public class MainView extends FrameView {
 
         jScrollPane2.setMinimumSize(new java.awt.Dimension(250, 26));
         jScrollPane2.setName("jScrollPane2"); // NOI18N
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(530, 202));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(550, 202));
 
         jList1.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -863,45 +864,6 @@ public class MainView extends FrameView {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        listItemPanel.setName("listItemPanel"); // NOI18N
-
-        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
-        jLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jLabel3.setName("jLabel3"); // NOI18N
-
-        listItemLabel1.setFont(resourceMap.getFont("listItemLabel1.font")); // NOI18N
-        listItemLabel1.setText(resourceMap.getString("listItemLabel1.text")); // NOI18N
-        listItemLabel1.setName("listItemLabel1"); // NOI18N
-
-        listItemLabel2.setText(resourceMap.getString("listItemLabel2.text")); // NOI18N
-        listItemLabel2.setName("listItemLabel2"); // NOI18N
-
-        javax.swing.GroupLayout listItemPanelLayout = new javax.swing.GroupLayout(listItemPanel);
-        listItemPanel.setLayout(listItemPanelLayout);
-        listItemPanelLayout.setHorizontalGroup(
-            listItemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(listItemPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(listItemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(listItemLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
-                    .addComponent(listItemLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        listItemPanelLayout.setVerticalGroup(
-            listItemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(listItemPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(listItemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(listItemPanelLayout.createSequentialGroup()
-                        .addComponent(listItemLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                        .addComponent(listItemLabel2))
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1557,19 +1519,12 @@ public class MainView extends FrameView {
 
     @Action
     public void generateRequests() {
-        final int[] selected = jList1.getSelectedIndices();
-        final List<Integer> signerIds = new ArrayList<Integer>();
-        final List<String> signerNames = new ArrayList<String>();
 
-        for (int row : selected) {
-            // TODO: check that the worker is a signer
-
-            signerIds.add((Integer) signers.get(row).getWorkerId());
-            signerNames.add(signers.get(row).getName());
-        }
-
-        if (selected.length > 0) {
-            getApplication().show(new GenerateRequestsView((SingleFrameApplication) this.getApplication(), signerIds.toArray(new Integer[0]), signerNames.toArray(new String[0])));
+        if (selectedWorkers.size() > 0) {
+            GenerateRequestsDialog dlg = new GenerateRequestsDialog(getFrame(), true, selectedWorkers);
+            if (dlg.showRequestsDialog() == GenerateRequestsDialog.OK) {
+                getContext().getTaskService().execute(refreshWorkers());
+            }
         }
     }
 
@@ -1586,25 +1541,12 @@ public class MainView extends FrameView {
 
     @Action
     public void installCertificates() {
-        final int[] selected = jList1.getSelectedIndices();
-        final List<Integer> signerIds = new ArrayList<Integer>();
-        final List<String> signerNames = new ArrayList<String>();
-
-        for (int row : selected) {
-            final String workerName = signers.get(row).getName();
-            final Integer workerId = signers.get(row).getWorkerId();
-
-            // TODO: check that the worker is a signer
-
-            signerIds.add((Integer) workerId);
-            signerNames.add((String) workerName);
-        }
-
-        if (selected.length > 0) {
-            getApplication().show(new InstallCertificatesView(
-                    (SingleFrameApplication) this.getApplication(), this,
-                    signerIds.toArray(new Integer[0]),
-                    signerNames.toArray(new String[0])));
+        if (selectedWorkers.size() > 0) {
+            InstallCertificatesDialog dlg = new InstallCertificatesDialog(getFrame(),
+                    true, this, selectedWorkers);
+            if (dlg.showDialog() == InstallCertificatesDialog.OK) {
+                getContext().getTaskService().execute(refreshWorkers());
+            }
         }
     }
 
@@ -1703,7 +1645,6 @@ public class MainView extends FrameView {
     private javax.swing.JMenuItem installCertificatesMenu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JList jList1;
@@ -1717,9 +1658,6 @@ public class MainView extends FrameView {
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JLabel listItemLabel1;
-    private javax.swing.JLabel listItemLabel2;
-    private javax.swing.JPanel listItemPanel;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JProgressBar progressBar;

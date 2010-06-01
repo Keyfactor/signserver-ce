@@ -12,14 +12,13 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import org.jdesktop.application.Action;
-import org.jdesktop.application.SingleFrameApplication;
-import org.jdesktop.application.FrameView;
-import org.jdesktop.application.Task;
+import java.awt.Frame;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 import javax.ejb.EJBException;
 import javax.swing.DefaultCellEditor;
@@ -37,17 +36,22 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.PKCS10CertReqInfo;
 
 /**
- * Frame for generating certificate requests.
+ * Dialog for generating certificate requests.
  * @author markus
  * @version $Id$
  */
-public class GenerateRequestsView extends FrameView {
+public class GenerateRequestsDialog extends javax.swing.JDialog {
 
     private static final Logger LOG
-            = Logger.getLogger(GenerateRequestsView.class);
+            = Logger.getLogger(GenerateRequestsDialog.class);
 
-    private Vector<Integer> signerIds;
-    private Vector<String> signerNames;
+    public static final int CANCEL = 0;
+    public static final int OK = 1;
+
+    private int resultCode = CANCEL;
+
+//    private Vector<Integer> signerIds;
+//    private Vector<String> signerNames;
     private Vector<Vector<String>> data;
     private static Vector<String> columnNames = new Vector(Arrays.asList(
             new String[] {
@@ -69,22 +73,21 @@ public class GenerateRequestsView extends FrameView {
         "SHA1WithDSA"
     });
 
-    public GenerateRequestsView(SingleFrameApplication app, Integer[] signerIds,
-            String[] signerNames) {
-        super(app);
+    private List<Worker> workers;
 
-        this.signerIds = new Vector<Integer>(Arrays.asList(signerIds));
-        this.signerNames = new Vector<String>(Arrays.asList(signerNames));
+    /** Creates new form GenerateRequestsDialog */
+    public GenerateRequestsDialog(final Frame parent, final boolean modal,
+            final List<Worker> workers) {
+        super(parent, modal);
+        this.workers = new ArrayList<Worker>(workers);
         sigAlgComboBox.setEditable(true);
         initComponents();
-        getFrame().setTitle("Generate CSRs for " + signerIds.length
-                + " signers");
+        setTitle("Generate CSRs for " + workers.size() + " signers");
+
         data = new Vector<Vector<String>>();
-        for (int row = 0; row < signerIds.length; row++) {
+        for (Worker worker : workers) {
             Vector<String> cols = new Vector<String>();
-            cols.add(SignServerAdminGUIApplication.getWorkerSession()
-                    .getCurrentWorkerConfig(signerIds[row]).getProperty("NAME")
-                    + " (" + signerIds[row] + ")");
+            cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
             cols.add("");
             cols.add("");
             data.add(cols);
@@ -94,6 +97,12 @@ public class GenerateRequestsView extends FrameView {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column > 0;
+            }
+
+            @Override
+            public void setValueAt(Object aValue, int row, int column) {
+                data.get(row).set(column, (String) aValue);
+                super.setValueAt(aValue, row, column);
             }
 
         });
@@ -135,15 +144,16 @@ public class GenerateRequestsView extends FrameView {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainPanel = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jButtonGenerate = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
-        mainPanel.setName("mainPanel"); // NOI18N
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setLocationByPlatform(true);
+        setName("Form"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(GenerateRequestsView.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(GenerateRequestsDialog.class);
         jButton2.setText(resourceMap.getString("jButton2.text")); // NOI18N
         jButton2.setName("jButton2"); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -152,10 +162,14 @@ public class GenerateRequestsView extends FrameView {
             }
         });
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(GenerateRequestsView.class, this);
-        jButtonGenerate.setAction(actionMap.get("generateRequests")); // NOI18N
         jButtonGenerate.setText(resourceMap.getString("jButtonGenerate.text")); // NOI18N
+        jButtonGenerate.setEnabled(false);
         jButtonGenerate.setName("jButtonGenerate"); // NOI18N
+        jButtonGenerate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonGenerateActionPerformed(evt);
+            }
+        });
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
@@ -188,45 +202,54 @@ public class GenerateRequestsView extends FrameView {
         jTable1.setName("jTable1"); // NOI18N
         jScrollPane1.setViewportView(jTable1);
 
-        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
-        mainPanel.setLayout(mainPanelLayout);
-        mainPanelLayout.setHorizontalGroup(
-            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 817, Short.MAX_VALUE)
-                    .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 855, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonGenerate)))
                 .addContainerGap())
         );
-        mainPanelLayout.setVerticalGroup(
-            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonGenerate)
                     .addComponent(jButton2))
                 .addContainerGap())
         );
 
-        setComponent(mainPanel);
+        pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public Vector<Vector<String>> getData() {
+        return data;
+    }
+
+    public int getResultCode() {
+        return resultCode;
+    }
+
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        getFrame().setVisible(false);
+        dispose();
 }//GEN-LAST:event_jButton2ActionPerformed
 
-    @Action(block = Task.BlockingScope.WINDOW)
-    public void generateRequests() {
+    private void jButtonGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerateActionPerformed
+        resultCode = OK;
         final String hostname = null;
 
         for (int row = 0; row < data.size(); row++) {
-            final int workerid = signerIds.get(row);
+            final Worker worker = workers.get(row);
+            final int workerid = worker.getWorkerId();
             final String sigAlg =  (String) jTable1.getValueAt(row, 1);
             final String dn = (String) jTable1.getValueAt(row, 2);
             final String filename = (String) jTable1.getValueAt(row, 3);
@@ -247,7 +270,7 @@ public class GenerateRequestsView extends FrameView {
                 if (reqData == null) {
                     LOG.error(error
                             + ": Unable to generate certificate request.");
-                    JOptionPane.showMessageDialog(getFrame(), error + ":\n"
+                    JOptionPane.showMessageDialog(this, error + ":\n"
                             + "Unable to generate certificate request.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
@@ -257,9 +280,8 @@ public class GenerateRequestsView extends FrameView {
                     fos.write(reqData.getBase64CertReq());
                     fos.write("\n-----END CERTIFICATE REQUEST-----\n"
                             .getBytes());
-                    
-                    signerIds.remove(row);
-                    signerNames.remove(row);
+
+                    workers.remove(worker);
                     data.remove(row);
                     row--;
                     jTable1.revalidate();
@@ -267,23 +289,23 @@ public class GenerateRequestsView extends FrameView {
             } catch (EJBException ejbException) {
                 final Exception ex = ejbException.getCausedByException();
                 LOG.error(error, ex);
-                JOptionPane.showMessageDialog(getFrame(), error + ":\n"
+                JOptionPane.showMessageDialog(this, error + ":\n"
                         + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             } catch (CryptoTokenOfflineException ex) {
                 LOG.error("Error", ex);
-                JOptionPane.showMessageDialog(getFrame(), error + ":\n"
+                JOptionPane.showMessageDialog(this, error + ":\n"
                         + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             } catch (InvalidWorkerIdException ex) {
                 LOG.error("Error", ex);
-                JOptionPane.showMessageDialog(getFrame(), error + ":\n"
+                JOptionPane.showMessageDialog(this, error + ":\n"
                         + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             } catch (FileNotFoundException ex) {
                 LOG.error("Error", ex);
-                JOptionPane.showMessageDialog(getFrame(), error + ":\n"
+                JOptionPane.showMessageDialog(this, error + ":\n"
                         + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             } catch (IOException ex) {
                 LOG.error("Error", ex);
-                JOptionPane.showMessageDialog(getFrame(), error + ":\n"
+                JOptionPane.showMessageDialog(this, error + ":\n"
                         + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
                 System.out.println("Ex: " + ex);
@@ -299,10 +321,15 @@ public class GenerateRequestsView extends FrameView {
         }
 
         if (jTable1.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(getFrame(),
+            JOptionPane.showMessageDialog(this,
                     "Generated requests for all choosen signers.");
-            getFrame().dispose();
+            dispose();
         }
+    }//GEN-LAST:event_jButtonGenerateActionPerformed
+
+    public int showRequestsDialog() {
+        setVisible(true);
+        return resultCode;
     }
 
 
@@ -311,7 +338,6 @@ public class GenerateRequestsView extends FrameView {
     private javax.swing.JButton jButtonGenerate;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JPanel mainPanel;
     // End of variables declaration//GEN-END:variables
 
 }

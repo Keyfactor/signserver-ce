@@ -233,6 +233,11 @@ OS version                          = ${os.version}
 	      <include name="org/signserver/server/**/**"/>
 	    </jar>    	
     </target>
+
+    <target name="admingui" depends="signserver"
+        description="Build the administration GUI">
+        <ant antfile="build.xml" dir="SignServer-AdminGUI" target="default" inheritall="false"/>
+    </target>
  
 	   <!-- =================================================================== -->
 	    <!-- Build preparation for package distribution                         -->

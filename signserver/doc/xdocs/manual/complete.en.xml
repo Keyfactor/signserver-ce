@@ -718,6 +718,17 @@ List currently authorized STMP users.
                     </subsubsection>
                 </subsection>
 
+                <subsection name="Administration GUI">
+                    <p>
+As a complement to the command line interface there is also a graphical user
+interface for managing some of the most basic administrative tasks.
+                    </p>
+                    <p>
+The SignServer AdminGUI can be build by running "ant jar" in the
+SignServer-AdminGUI folder.
+                    </p>
+                </subsection>
+
                 <subsection name="Working with Workers">
                     <p>
 In SignServer operations are performed by workers. There can be many workers 

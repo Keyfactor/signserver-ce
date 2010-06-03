@@ -741,8 +741,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
                 ret = (List) certs;
             } else if (certs != null) {
                 ret = new LinkedList<Certificate>(certs);
-            } else {
-                return Collections.emptyList();
             }
         }
         return ret;

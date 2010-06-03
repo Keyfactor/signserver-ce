@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -929,7 +930,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /**
      * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificateChain(int)
      */
-    public List<Certificate> getSignerCertificateChain(final int signerId) throws CryptoTokenOfflineException {
+    public List<Certificate> getSignerCertificateChain(final int signerId)
+            throws CryptoTokenOfflineException {
         List<Certificate> ret = null;
         final IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
                 workerConfigService, globalConfigurationSession,
@@ -939,8 +941,10 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     .getSigningCertificateChain();
             if (certs instanceof List) {
                 ret = (List) certs;
-            } else {
+            } else if( certs != null) {
                 ret = new LinkedList<Certificate>(certs);
+            } else {
+                ret = Collections.emptyList();
             }
         }
         return ret;

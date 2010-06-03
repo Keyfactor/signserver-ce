@@ -943,8 +943,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 ret = (List) certs;
             } else if( certs != null) {
                 ret = new LinkedList<Certificate>(certs);
-            } else {
-                ret = Collections.emptyList();
             }
         }
         return ret;

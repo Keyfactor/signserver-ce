@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -738,8 +739,10 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
                     .getSigningCertificateChain();
             if (certs instanceof List) {
                 ret = (List) certs;
-            } else {
+            } else if (certs != null) {
                 ret = new LinkedList<Certificate>(certs);
+            } else {
+                return Collections.emptyList();
             }
         }
         return ret;

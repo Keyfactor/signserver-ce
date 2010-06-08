@@ -112,7 +112,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
             }
 
             // Keyspec for DSA is prefixed with "dsa"
-            if (keyAlgorithm.equalsIgnoreCase("DSA")
+            if (keyAlgorithm != null && keyAlgorithm.equalsIgnoreCase("DSA")
                     && !keySpec.contains("dsa")) {
                 keySpec = "dsa" + keySpec;
             }

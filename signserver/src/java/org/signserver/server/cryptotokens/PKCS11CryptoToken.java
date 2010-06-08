@@ -37,14 +37,15 @@ import org.signserver.server.KeyTestResult;
 
 /**
  * Class used to connect to a PKCS11 HSM.
- * 
+ *
  * Properties:
  *   sharedLibrary
  *   slot
  *   defaultKey
  *   pin
- * 
- * 
+ *   attributesFile
+ *
+ *
  * @see org.signserver.server.cryptotokens.ICryptoToken
  * @author Tomas Gustavsson, Philip Vendil
  * @version $Id$
@@ -54,6 +55,8 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
     IKeyGenerator {
 
 	private static final Logger log = Logger.getLogger(PKCS11CryptoToken.class);
+
+        private Properties properties;
 	
 	public PKCS11CryptoToken() throws InstantiationException{
 		catoken = new PKCS11CAToken(); 
@@ -63,16 +66,16 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
 	 * Method initializing the PKCS11 device 
 	 * 
 	 */
-	public void init(int workerId, Properties props) {
+	public void init(final int workerId, final Properties props) {
 		log.debug(">init");
 		String signaturealgoritm = props.getProperty(WorkerConfig.SIGNERPROPERTY_SIGNATUREALGORITHM);
-		props = fixUpProperties(props);
+		this.properties = fixUpProperties(props);
 		try { 
-			((PKCS11CAToken)catoken).init(props, null, signaturealgoritm, workerId);	
+			((PKCS11CAToken)catoken).init(properties, null, signaturealgoritm, workerId);
 		} catch(Exception e) {
 			log.error("Error initializing PKCS11CryptoToken : " + e.getMessage(),e);
 		}
-		String authCode = props.getProperty("pin");
+		String authCode = properties.getProperty("pin");
 		if (authCode != null) {
 			try { 
 				this.activate(authCode);
@@ -102,7 +105,11 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
         }
         try {
 
-            final String provider = "/home/markus/pkcs11.cfg";
+            final Provider provider = Security.getProvider(
+                getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+            if (log.isDebugEnabled()) {
+                log.debug("provider: " + provider);
+            }
 
             // Keyspec for DSA is prefixed with "dsa"
             if (keyAlgorithm.equalsIgnoreCase("DSA")
@@ -110,12 +117,39 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
                 keySpec = "dsa" + keySpec;
             }
 
-            final KeyStore.PasswordProtection pwp
-                    = new KeyStore.PasswordProtection(authCode);
+            KeyStore.ProtectionParameter pp;
+            if (authCode == null) {
+                log.debug("authCode == null");
+                final String pin = properties.getProperty("pin");
+                if (pin == null) {
+                    log.debug("pin == null");
+                    pp = new KeyStore.ProtectionParameter() {};
+                } else {
+                    log.debug("pin specified");
+                    pp = new KeyStore.PasswordProtection(pin.toCharArray());
+                }
+            } else {
+                log.debug("authCode specified");
+                pp = new KeyStore.PasswordProtection(authCode);
+            }
+
+            final String sharedLibrary
+                    = properties.getProperty("sharedLibrary");
+            final String slot
+                    = properties.getProperty("slot");
+            final String attributesFile
+                    = properties.getProperty("attributesFile");
+
+            if (log.isDebugEnabled()) {
+                log.debug("sharedLibrary: " + sharedLibrary + ", slot: "
+                        + slot + ", attributesFile: " + attributesFile);
+            }
 
             final KeyStoreContainer store = KeyStoreContainerFactory
                     .getInstance(KeyStoreContainer.KEYSTORE_TYPE_PKCS11,
-                    provider, null, null, null, pwp);
+                    sharedLibrary, null,
+                    slot,
+                    attributesFile, pp);
             store.setPassPhraseLoadSave(authCode);
             store.generate(keySpec, alias);
         } catch (Exception ex) {
@@ -125,7 +159,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
     }
 
     /**
-     * @see ICryptoToken#testKey(java.lang.String, char[]) 
+     * @see ICryptoToken#testKey(java.lang.String, char[])
      */
     public Collection<KeyTestResult> testKey(String alias, char[] authCode)
             throws CryptoTokenOfflineException, KeyStoreException {
@@ -137,7 +171,14 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
         KeyStore.ProtectionParameter pp;
         if (authCode == null) {
             log.debug("authCode == null");
-            pp = new KeyStore.ProtectionParameter() {};
+            final String pin = properties.getProperty("pin");
+            if (pin == null) {
+                log.debug("pin == null");
+                pp = new KeyStore.ProtectionParameter() {};
+            } else {
+                log.debug("pin specified");
+                pp = new KeyStore.PasswordProtection(pin.toCharArray());
+            }
         } else {
             log.debug("authCode specified");
             pp = new KeyStore.PasswordProtection(authCode);

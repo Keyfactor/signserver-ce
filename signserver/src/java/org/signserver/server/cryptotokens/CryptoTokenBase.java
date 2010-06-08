@@ -89,6 +89,10 @@ public abstract class CryptoTokenBase implements ICryptoToken{
 		if (prop != null) {
 			props.setProperty("slotListIndex", prop);
 		}
+                prop = props.getProperty("ATTRIBUTESFILE");
+		if (prop != null) {
+			props.setProperty("attributesFile", prop);
+		}
 		return props;
 	}
 	/**

@@ -1922,6 +1922,21 @@ implementation. In addition to that property one must also make sure that the
 other properties needed by the particular crypto token are available.
                 </p>
 
+                <subsection name="General properties">
+                    <p>
+<b>SIGNERTOKEN.CLASSPATH</b>: Fully qualified class name of the crypto token
+implementation to use. See below for available crypto tokens.
+                    </p>
+                    <p>
+<b>KEYALG</b>: Key algorithm to use when generating new keys (Only for
+    cryptotokens supporting key generation).
+                    </p>
+                    <p>
+<b>KEYSPEC</b>: Key specification to use when generating new keys (Only for
+    cryptotokens supporting key generation).
+                    </p>
+                </subsection>
+
                 <subsection name="P12CryptoToken">
                     <subsubsection name="Overview">
                         <p>
@@ -2034,11 +2049,41 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.PKCS11C
                         <p>
 <b>SLOT</b> =   Slot to use (Required)
                         </p>
+                        <p>
+<b>ATTRIBUTESFILE</b> = Path to file with PKCS#11 attributes used for key generation.
+                        </p>
+                        <p>
+Sample p11attributes.cfg working with SafeNet Luna:
+                        </p>
+                        <pre>
+attributes(generate,*,*) = {
+  CKA_TOKEN = true
+}
+attributes(generate,CKO_PUBLIC_KEY,*) = {
+  CKA_ENCRYPT = true
+  CKA_VERIFY = true
+  CKA_WRAP = true
+}
+attributes(generate, CKO_PRIVATE_KEY,*) = {
+  CKA_EXTRACTABLE = false
+  CKA_DECRYPT = true
+  CKA_SIGN = true
+  CKA_UNWRAP = true
+}
+                        </pre>
                     </subsubsection>
                     <subsubsection name="Example usage">
                         <p>
 Edit qs_pdfsigner_configuration.properties and choose the sign token setting for the PKCS11 sign token. Run the following command to set up a PDF signer using the PKCS11 properties configured:
 bin/signserver.sh setproperties qs_pdfsigner_configuration.properties
+                        </p>
+                        <p>
+Generate a keypair for the signer:
+bin/signserver.sh generatekey 8 -alias defaultKey -keyalg RSA -keyspec 2048
+                        </p>
+                        <p>
+Test the keypair:
+bin/signserver.sh testkey 8
                         </p>
                         <p>
 You also need a certificate for the signer. Generate a certificate request with the command:

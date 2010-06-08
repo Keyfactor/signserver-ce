@@ -22,6 +22,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -53,6 +54,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.KeyTestResult;
 import org.signserver.server.PropertyFileStore;
 
 
@@ -282,6 +284,12 @@ public class SoftCryptoToken implements ICryptoToken {
     	}
     	
     	return workerSession;
+    }
+
+    public Collection<KeyTestResult> testKey(final String alias,
+            final char[] authCode) throws CryptoTokenOfflineException,
+                KeyStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

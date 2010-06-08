@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.security.KeyStoreException;
+import java.util.Collection;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ProcessRequest;
@@ -21,6 +23,8 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
+import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.IKeyGenerator;
 
 /**
  * IProcessable is an interface that all processable workers should implement
@@ -87,4 +91,19 @@ public interface IProcessable extends IWorker {
      * @return true if removal was successful.
      */
     boolean destroyKey(int purpose);
+
+    /**
+     * @see IKeyGenerator#generateKey(java.lang.String, java.lang.String,
+     *  java.lang.String, char[])
+     */
+    void generateKey(String keyAlgorithm, String keySpec, String alias,
+            char[] authCode) throws CryptoTokenOfflineException,
+                IllegalArgumentException;
+
+    /**
+     * @see ICryptoToken#testKey(java.lang.String, char[])
+     */
+    public Collection<KeyTestResult> testKey(String alias,
+            char[] authCode)
+            throws CryptoTokenOfflineException, KeyStoreException;
 }

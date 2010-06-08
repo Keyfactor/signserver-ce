@@ -115,6 +115,12 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         if (args[0].equalsIgnoreCase("module")) {
             return getModuleCommand(args);
         }
+        if (args[0].equalsIgnoreCase("generatekey")) {
+            return new GenerateKeyCommand(args);
+        }
+        if (args[0].equalsIgnoreCase("testkey")) {
+            return new TestKeyCommand(args);
+        }
         return null;
         
         

@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -53,6 +54,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.mailsigner.cli.IMailSignerRMI;
+import org.signserver.server.KeyTestResult;
 
 /**
  * A class that maintains the type of sign server build
@@ -169,6 +171,22 @@ public class CommonAdminInterface  {
 		
 		return retval;
 	}
+
+        public String generateKey(final int signerId,
+                final String keyAlgorithm, final String keySpec,
+                final String alias, final char[] authCode)
+                throws CryptoTokenOfflineException,
+                    InvalidWorkerIdException, RemoteException {
+            return getWorkerSession().generateSignerKey(signerId, keyAlgorithm,
+                    keySpec, alias, authCode);
+        }
+
+        public Collection<KeyTestResult> testKey(final int signerId,
+                final String alias, final char[] authCode)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException,
+                KeyStoreException, RemoteException {
+            return getWorkerSession().testKey(signerId, alias, authCode);
+        }
 
 	/**
 	 * @see org.signserver.ejb.WorkerSessionBean#genCertificateRequest(int, ISignerCertReqInfo)

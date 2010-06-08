@@ -13,6 +13,7 @@
 
 package org.signserver.server;
 
+import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -29,6 +30,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.IKeyGenerator;
 
 
 public abstract class BaseProcessable extends BaseWorker implements IProcessable {
@@ -189,5 +191,37 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 	public boolean destroyKey(int purpose) {
 		return getCryptoToken().destroyKey(purpose);
 	}
+
+    /**
+     * @see IKeyGenerator#generateKey(java.lang.String, java.lang.String,
+     * java.lang.String, char[])
+     */
+    public void generateKey(final String keyAlgorithm, final String keySpec,
+            final String alias, final char[] authCode)
+            throws CryptoTokenOfflineException, IllegalArgumentException {
+        ICryptoToken token = getCryptoToken();
+        if (token == null) {
+            throw new CryptoTokenOfflineException("Crypto token offline");
+        } else if (token instanceof IKeyGenerator) {
+            ((IKeyGenerator) token).generateKey(keyAlgorithm, keySpec, alias,
+                    authCode);
+        } else {
+            throw new IllegalArgumentException(
+                    "Key generation not supported by crypto token");
+        }
+    }
+
+    /**
+     * @see IProcessable#testKey(java.lang.String, char[])
+     */
+    public Collection<KeyTestResult> testKey(String alias, char[] authCode)
+            throws CryptoTokenOfflineException, KeyStoreException {
+
+        ICryptoToken token = getCryptoToken();
+        if (token == null) {
+            throw new CryptoTokenOfflineException("Crypto token offline");
+        }
+        return token.testKey(alias, authCode);
+    }
 	
 }

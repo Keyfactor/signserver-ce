@@ -1,6 +1,7 @@
 package org.signserver.ejb.interfaces;
 
 import java.math.BigInteger;
+import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -24,6 +25,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.server.KeyTestResult;
 
 /**
  * Interface for the worker session bean.
@@ -219,6 +221,34 @@ public interface IWorkerSession {
      */
     boolean destroyKey(int signerId, int purpose)
             throws InvalidWorkerIdException;
+
+    /**
+     * Generate a new keypair.
+     * @param signerId Id of signer
+     * @param keyAlgorithm Key algorithm
+     * @param keySpec Key specification
+     * @param alias Name of the new key
+     * @param authCode Authorization code
+     * @throws CryptoTokenOfflineException
+     * @throws IllegalArgumentException
+     */
+    String generateSignerKey(int signerId, String keyAlgorithm,
+            String keySpec, String alias, char[] authCode)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException;
+
+    /**
+     * Tests the key identified by alias or all keys if "all" specified.
+     *
+     * @param signerId Id of signer
+     * @param alias Name of key to test or "all" to test all available
+     * @param authCode Authorization code
+     * @return Collection with test results for each key
+     * @throws CryptoTokenOfflineException
+     * @throws KeyStoreException
+     */
+    Collection<KeyTestResult> testKey(final int signerId, final String alias,
+            char[] authCode) throws CryptoTokenOfflineException,
+            InvalidWorkerIdException, KeyStoreException;
 
     /**
      * Method used to upload a certificate to a signers active configuration.

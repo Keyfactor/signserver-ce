@@ -13,6 +13,7 @@
 
 package org.signserver.server.cryptotokens;
  
+import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
@@ -24,6 +25,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.server.KeyTestResult;
 
 
 /** Interface maintaining devices performing cryptographic operations and handling the private key.
@@ -42,6 +44,8 @@ public interface ICryptoToken {
 	
 	public static final int PROVIDERUSAGE_SIGN    = 1;
 	public static final int PROVIDERUSAGE_DECRYPT = 2;
+
+        String ALL_KEYS = "all";
 	
    /** 
     * Method called after creation of instance.
@@ -132,4 +136,18 @@ public interface ICryptoToken {
 	 * @return true if removal was successful.
 	 */
 	public boolean destroyKey(int purpose);
+
+
+    /**
+     * Tests the key identified by alias or all key if "all" specified.
+     *
+     * @param alias Name of key to test or "all" to test all available
+     * @param authCode Authorization code
+     * @return Collection with test results for each key
+     * @throws CryptoTokenOfflineException
+     * @throws KeyStoreException
+     */
+    public Collection<KeyTestResult> testKey(String alias,
+            char[] authCode)
+            throws CryptoTokenOfflineException, KeyStoreException;
 }

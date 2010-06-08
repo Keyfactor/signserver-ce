@@ -15,13 +15,13 @@ package org.signserver.ejb;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -74,6 +74,7 @@ import org.signserver.server.IProcessable;
 import org.signserver.server.ISystemLogger;
 import org.signserver.server.IWorker;
 import org.signserver.server.IWorkerLogger;
+import org.signserver.server.KeyTestResult;
 import org.signserver.server.NotGrantedException;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.SystemLoggerException;
@@ -81,6 +82,7 @@ import org.signserver.server.SystemLoggerFactory;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.WorkerLoggerException;
 import org.signserver.server.KeyUsageCounter;
+import org.signserver.server.cryptotokens.IKeyGenerator;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
 
@@ -812,6 +814,115 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         IProcessable signer = (IProcessable) worker;
 
         return signer.deactivateSigner();
+    }
+
+    /**
+     * @see IWorkerSession#generateSignerKey(int, java.lang.String,
+     *  java.lang.String, java.lang.String, char[])
+     */
+    public String generateSignerKey(final int signerId, String keyAlgorithm,
+            String keySpec, String alias, final char[] authCode)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException,
+                IllegalArgumentException {
+
+        IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
+                workerConfigService, globalConfigurationSession,
+                new SignServerContext(em));
+        if (worker == null) {
+            throw new InvalidWorkerIdException("Given SignerId " + signerId
+                    + " doesn't exist");
+        }
+
+        if (!(worker instanceof IProcessable)) {
+            throw new InvalidWorkerIdException(
+                    "Worker exists but isn't a signer.");
+        }
+        final IProcessable signer = (IProcessable) worker;
+
+        final WorkerConfig config = worker.getStatus().getActiveSignerConfig();
+
+        if (keyAlgorithm == null) {
+            keyAlgorithm = config.getProperty("KEYALG");
+        }
+        if (keySpec == null) {
+            keySpec = config.getProperty("KEYSPEC");
+        }
+        if (alias == null) {
+            final String currentAlias = config.getProperty("DEFAULTKEY");
+            if (currentAlias == null) {
+                throw new IllegalArgumentException("No key alias specified");
+            } else {
+                alias = nextAliasInSequence(currentAlias);
+            }
+        }
+
+        signer.generateKey(keyAlgorithm, keySpec, alias,
+                authCode);
+        return alias;
+    }
+
+    static String nextAliasInSequence(final String currentAlias) {
+
+        String prefix = currentAlias;
+        String nextSequence = "2";
+
+        final String[] entry = currentAlias.split("[0-9]+$");
+        if (entry.length == 1) {
+            prefix = entry[0];
+            final String currentSequence
+                    = currentAlias.substring(prefix.length());
+            final int sequenceChars = currentSequence.length();
+            if (sequenceChars > 0) {
+                final long nextSequenceNumber = Long.parseLong(currentSequence) + 1;
+                final String nextSequenceNumberString
+                        = String.valueOf(nextSequenceNumber);
+                if (sequenceChars > nextSequenceNumberString.length()) {
+                    nextSequence = currentSequence.substring(0,
+                            sequenceChars - nextSequenceNumberString.length())
+                            + nextSequenceNumberString;
+                } else {
+                    nextSequence = nextSequenceNumberString;
+                }
+            }
+        }
+
+        return prefix + nextSequence;
+    }
+
+    /**
+     * @see IWorkerSession#testKey(int, java.lang.String, char[])
+     */
+    public Collection<KeyTestResult> testKey(final int signerId, String alias,
+            char[] authCode)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException,
+            KeyStoreException {
+
+        IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
+                workerConfigService, globalConfigurationSession,
+                new SignServerContext(em));
+        if (worker == null) {
+            throw new InvalidWorkerIdException("Given SignerId " + signerId
+                    + " doesn't exist");
+        }
+
+        if (!(worker instanceof IProcessable)) {
+            throw new InvalidWorkerIdException(
+                    "Worker exists but isn't a signer.");
+        }
+        final IProcessable signer = (IProcessable) worker;
+        
+//        if (worker.getStatus().isOK() != null) {
+//            throw new CryptoTokenOfflineException(
+//                    "Testing key can not be performed on offline cryptotoken");
+//        }
+
+        final WorkerConfig config = worker.getStatus().getActiveSignerConfig();
+
+        if (alias == null) {
+            alias = config.getProperty("DEFAULTKEY");
+        }
+
+        return signer.testKey(alias, authCode);
     }
 
     /* (non-Javadoc)

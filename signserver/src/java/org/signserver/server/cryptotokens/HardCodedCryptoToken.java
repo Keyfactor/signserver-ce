@@ -15,6 +15,7 @@ package org.signserver.server.cryptotokens;
  
 import java.io.ByteArrayInputStream;
 import java.security.KeyFactory;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -37,6 +38,7 @@ import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.SignerStatus;
+import org.signserver.server.KeyTestResult;
 
 
 /**
@@ -245,5 +247,11 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	public boolean destroyKey(int purpose) {
 		return true;
 	}
+
+    public Collection<KeyTestResult> testKey(final String alias,
+            final char[] authCode)
+            throws CryptoTokenOfflineException, KeyStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

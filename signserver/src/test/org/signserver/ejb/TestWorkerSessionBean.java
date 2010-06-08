@@ -216,6 +216,25 @@ public class TestWorkerSessionBean extends TestCase {
 	
 		assertFalse(exists);
 	}
+
+    /**
+     * Test for nextAliasInSequence.
+     * @throws Exception in case of exception
+     */
+    public void test09nextAliasInSequence() throws Exception {
+
+        assertEquals("KeyAlias2",
+                WorkerSessionBean.nextAliasInSequence("KeyAlias1"));
+        assertEquals("MyKey00002",
+                WorkerSessionBean.nextAliasInSequence("MyKey00001"));
+        assertEquals("MyKey2",
+                WorkerSessionBean.nextAliasInSequence("MyKey"));
+        assertEquals("MyKey00001",
+                WorkerSessionBean.nextAliasInSequence("MyKey00000"));
+        assertEquals("MyKeys1_0038",
+                WorkerSessionBean.nextAliasInSequence("MyKeys1_0037"));
+        
+    }
 	
 	public void test99TearDownDatabase() throws Exception{
 		 TestUtils.assertSuccessfulExecution(new String[] {"removeworker",

@@ -13,12 +13,26 @@
 
 package org.signserver.server.cryptotokens;
  
+import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.PrivateKey;
+import java.security.Provider;
+import java.security.Security;
+import java.security.Signature;
+import java.security.cert.Certificate;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.Properties;
-
 
 import org.apache.log4j.Logger;
 import org.ejbca.core.model.ca.catoken.PKCS11CAToken;
+import org.ejbca.util.keystore.KeyStoreContainer;
+import org.ejbca.util.keystore.KeyStoreContainerFactory;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.KeyTestResult;
 
 
 /**
@@ -36,7 +50,8 @@ import org.signserver.common.WorkerConfig;
  * @version $Id$
  */
 
-public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken{
+public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
+    IKeyGenerator {
 
 	private static final Logger log = Logger.getLogger(PKCS11CryptoToken.class);
 	
@@ -67,5 +82,132 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken{
 		}
 		log.debug("<init");
 	}
+
+    /**
+     * @see IKeyGenerator#generateKey(java.lang.String, java.lang.String, java.lang.String, char[])
+     */
+    public void generateKey(final String keyAlgorithm, String keySpec,
+            String alias, char[] authCode) throws CryptoTokenOfflineException,
+            IllegalArgumentException {
+
+        if (keySpec == null) {
+            throw new IllegalArgumentException("Missing keyspec parameter");
+        }
+        if (alias == null) {
+            throw new IllegalArgumentException("Missing alias parameter");
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("keyAlgorithm: " + keyAlgorithm + ", keySpec: " + keySpec
+                    + ", alias: " + alias);
+        }
+        try {
+
+            final String provider = "/home/markus/pkcs11.cfg";
+
+            // Keyspec for DSA is prefixed with "dsa"
+            if (keyAlgorithm.equalsIgnoreCase("DSA")
+                    && !keySpec.contains("dsa")) {
+                keySpec = "dsa" + keySpec;
+            }
+
+            final KeyStore.PasswordProtection pwp
+                    = new KeyStore.PasswordProtection(authCode);
+
+            final KeyStoreContainer store = KeyStoreContainerFactory
+                    .getInstance(KeyStoreContainer.KEYSTORE_TYPE_PKCS11,
+                    provider, null, null, null, pwp);
+            store.setPassPhraseLoadSave(authCode);
+            store.generate(keySpec, alias);
+        } catch (Exception ex) {
+            log.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        }
+    }
+
+    /**
+     * @see ICryptoToken#testKey(java.lang.String, char[]) 
+     */
+    public Collection<KeyTestResult> testKey(String alias, char[] authCode)
+            throws CryptoTokenOfflineException, KeyStoreException {
+        final Collection<KeyTestResult> result
+                = new LinkedList<KeyTestResult>();
+
+        final byte signInput[] = "Lillan gick on the roaden ut.".getBytes();
+
+        KeyStore.ProtectionParameter pp;
+        if (authCode == null) {
+            log.debug("authCode == null");
+            pp = new KeyStore.ProtectionParameter() {};
+        } else {
+            log.debug("authCode specified");
+            pp = new KeyStore.PasswordProtection(authCode);
+        }
+
+        final Provider provider = Security.getProvider(
+                getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+        if (log.isDebugEnabled()) {
+            log.debug("provider: " + provider);
+        }
+        final KeyStore.Builder builder = KeyStore.Builder.newInstance("PKCS11",
+                provider, pp);
+        final KeyStore keyStore;
+
+        keyStore = builder.getKeyStore();
+
+        try {
+            final Enumeration<String> e = keyStore.aliases();
+            while( e.hasMoreElements() ) {
+                final String keyAlias = e.nextElement();
+                if (alias.equalsIgnoreCase(ICryptoToken.ALL_KEYS)
+                        || alias.equals(keyAlias)) {
+                    if (keyStore.isKeyEntry(keyAlias)) {
+                        String status;
+                        String publicKeyHash = null;
+                        boolean success = false;
+                        try {
+                            final PrivateKey privateKey = (PrivateKey) keyStore.getKey(keyAlias, authCode);
+                            final Certificate cert = keyStore.getCertificate(keyAlias);
+                            if (cert != null) {
+                                final KeyPair keyPair = new KeyPair(cert.getPublicKey(), privateKey);
+                                publicKeyHash
+                                        = createKeyHash(keyPair.getPublic());
+                                final String sigAlg = suggestSigAlg(keyPair.getPublic());
+                                if (sigAlg == null) {
+                                    status = "Unknown key algorithm: "
+                                        + keyPair.getPublic().getAlgorithm();
+                                } else {
+                                    Signature signature = Signature.getInstance(sigAlg, keyStore.getProvider());
+                                    signature.initSign(keyPair.getPrivate());
+                                    signature.update(signInput);
+                                    byte[] signBA = signature.sign();
+
+                                    Signature verifySignature = Signature.getInstance(sigAlg);
+                                    verifySignature.initVerify(keyPair.getPublic());
+                                    verifySignature.update(signInput);
+                                    success = verifySignature.verify(signBA);
+                                    status = success ? "" : "Test signature inconsistent";
+                                }
+                            } else {
+                                status = "Not testing keys with alias "
+                                        + keyAlias + ". No certificate exists.";
+                            }
+                        } catch (ClassCastException ce) {
+                            status = "Not testing keys with alias "
+                                    + keyAlias + ". Not a private key.";
+                        } catch (Exception ex) {
+                            log.error("Error testing key: " + keyAlias, ex);
+                            status = ex.getMessage();
+                        }
+                        result.add(new KeyTestResult(keyAlias, success, status,
+                                publicKeyHash));
+                    }
+                }
+            }
+        } catch (KeyStoreException ex) {
+            throw new CryptoTokenOfflineException(ex);
+        }
+
+        return result;
+    }
 
 }

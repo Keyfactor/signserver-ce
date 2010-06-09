@@ -43,6 +43,7 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -331,6 +332,9 @@ public class MainView extends FrameView {
         jLabel5 = new javax.swing.JLabel();
         editIssuerDNTextfield = new javax.swing.JTextField();
         editUpdateAllCheckbox = new javax.swing.JCheckBox();
+        passwordPanel = new javax.swing.JPanel();
+        passwordPanelLabel = new javax.swing.JLabel();
+        passwordPanelField = new javax.swing.JPasswordField();
 
         mainPanel.setName("mainPanel"); // NOI18N
 
@@ -905,6 +909,35 @@ public class MainView extends FrameView {
                 .addContainerGap(28, Short.MAX_VALUE))
         );
 
+        passwordPanel.setName("passwordPanel"); // NOI18N
+
+        passwordPanelLabel.setText(resourceMap.getString("passwordPanelLabel.text")); // NOI18N
+        passwordPanelLabel.setName("passwordPanelLabel"); // NOI18N
+
+        passwordPanelField.setText(resourceMap.getString("passwordPanelField.text")); // NOI18N
+        passwordPanelField.setName("passwordPanelField"); // NOI18N
+
+        javax.swing.GroupLayout passwordPanelLayout = new javax.swing.GroupLayout(passwordPanel);
+        passwordPanel.setLayout(passwordPanelLayout);
+        passwordPanelLayout.setHorizontalGroup(
+            passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, passwordPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(passwordPanelField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                    .addComponent(passwordPanelLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        passwordPanelLayout.setVerticalGroup(
+            passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(passwordPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(passwordPanelLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(passwordPanelField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         setComponent(mainPanel);
         setMenuBar(menuBar);
         setStatusBar(statusPanel);
@@ -1439,39 +1472,54 @@ public class MainView extends FrameView {
     public void activateWorkers() {
         final int[] selected = jList1.getSelectedIndices();
 
-        for (int row : selected) {
-            final String workerName = allWorkers.get(row).getName();
-            final int workerId = allWorkers.get(row).getWorkerId();
-            try {
-                SignServerAdminGUIApplication.getWorkerSession()
-                        .activateSigner(workerId, "");
-            } catch (CryptoTokenAuthenticationFailureException ex) {
-                final String error =
-                        "Authentication failure activating worker "
-                        + workerId;
-                JOptionPane.showMessageDialog(getFrame(),
-                        error + ":\n" + ex.getMessage(),
-                        "Activate workers", JOptionPane.ERROR_MESSAGE);
-                LOG.error(error, ex);
-            } catch (CryptoTokenOfflineException ex) {
-                final String error =
-                        "Crypto token offline failure activating worker "
-                        + workerId;
-                JOptionPane.showMessageDialog(getFrame(),
-                        error + ":\n" + ex.getMessage(),
-                        "Activate workers", JOptionPane.ERROR_MESSAGE);
-                LOG.error(error, ex);
-            } catch (InvalidWorkerIdException ex) {
-                final String error =
-                        "Invalid worker activating worker "
-                        + workerId;
-                JOptionPane.showMessageDialog(getFrame(),
-                        error + ":\n" + ex.getMessage(),
-                        "Activate workers", JOptionPane.ERROR_MESSAGE);
-                LOG.error(error, ex);
+        passwordPanelLabel.setText(
+                "Enter authentication code for all workers or leave empty:");
+        passwordPanelField.setText("");
+        passwordPanelField.grabFocus();
+        
+       int res = JOptionPane.showConfirmDialog(getFrame(), passwordPanel,
+               "Activate worker(s)", JOptionPane.OK_CANCEL_OPTION);
+
+       if (res == JOptionPane.OK_OPTION) {
+           final char[] authCode = passwordPanelField.getPassword();
+            for (int row : selected) {
+                final String workerName = allWorkers.get(row).getName();
+                final int workerId = allWorkers.get(row).getWorkerId();
+                try {
+                    SignServerAdminGUIApplication.getWorkerSession()
+                            .activateSigner(workerId,
+                                new String(authCode));
+                } catch (CryptoTokenAuthenticationFailureException ex) {
+                    final String error =
+                            "Authentication failure activating worker "
+                            + workerId;
+                    JOptionPane.showMessageDialog(getFrame(),
+                            error + ":\n" + ex.getMessage(),
+                            "Activate workers", JOptionPane.ERROR_MESSAGE);
+                    LOG.error(error, ex);
+                } catch (CryptoTokenOfflineException ex) {
+                    final String error =
+                            "Crypto token offline failure activating worker "
+                            + workerId;
+                    JOptionPane.showMessageDialog(getFrame(),
+                            error + ":\n" + ex.getMessage(),
+                            "Activate workers", JOptionPane.ERROR_MESSAGE);
+                    LOG.error(error, ex);
+                } catch (InvalidWorkerIdException ex) {
+                    final String error =
+                            "Invalid worker activating worker "
+                            + workerId;
+                    JOptionPane.showMessageDialog(getFrame(),
+                            error + ":\n" + ex.getMessage(),
+                            "Activate workers", JOptionPane.ERROR_MESSAGE);
+                    LOG.error(error, ex);
+                }
             }
-        }
-        getContext().getTaskService().execute(refreshWorkers());
+            for (int i = 0; i < authCode.length; i++) {
+                authCode[i] = 0;
+            }
+            getContext().getTaskService().execute(refreshWorkers());
+       }
     }
 
     @Action
@@ -1606,6 +1654,9 @@ public class MainView extends FrameView {
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JPanel passwordPanel;
+    private javax.swing.JPasswordField passwordPanelField;
+    private javax.swing.JLabel passwordPanelLabel;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JTable propertiesTable;
     private javax.swing.JButton refreshButton;

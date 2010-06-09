@@ -13,6 +13,7 @@
 package org.signserver.admin.gui;
 
 import java.util.Collection;
+import java.util.Properties;
 import org.signserver.common.AuthorizedClient;
 
 /**
@@ -27,18 +28,21 @@ public class Worker {
     private String statusSummary;
     private Object[][] statusProperties;
     private Object[][] configurationProperties;
+    private Properties configuration;
     private boolean active;
     private Collection<AuthorizedClient> authClients;
 
     public Worker(int workerId, String name, String statusSummary,
             final Object[][] statusProperties,
             final Object[][] configurationProperties,
+            final Properties configuration,
             final boolean active,
             final Collection<AuthorizedClient> authClients) {
         this.workerId = workerId;
         this.name = name;
         this.statusSummary = statusSummary;
         this.statusProperties = statusProperties;
+        this.configuration = configuration;
         this.configurationProperties = configurationProperties;
         this.active = active;
         this.authClients = authClients;
@@ -62,6 +66,10 @@ public class Worker {
 
     public Object[][] getConfigurationProperties() {
         return configurationProperties;
+    }
+
+    public Properties getConfiguration() {
+        return configuration;
     }
 
     public boolean isActive() {

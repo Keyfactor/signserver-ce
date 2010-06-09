@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 import javax.ejb.EJBException;
@@ -43,7 +44,6 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -298,6 +298,7 @@ public class MainView extends FrameView {
         editMenu = new javax.swing.JMenu();
         activateMenu = new javax.swing.JMenuItem();
         deactivateMenu = new javax.swing.JMenuItem();
+        renewKeyMenu = new javax.swing.JMenuItem();
         generateRequestMenu = new javax.swing.JMenuItem();
         installCertificatesMenu = new javax.swing.JMenuItem();
         viewMenu = new javax.swing.JMenu();
@@ -314,6 +315,7 @@ public class MainView extends FrameView {
         activateButton = new javax.swing.JButton();
         deactivateButton = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
+        renewKeyButton = new javax.swing.JButton();
         generateRequestsButton = new javax.swing.JButton();
         installCertificatesButton = new javax.swing.JButton();
         statusPanel = new javax.swing.JPanel();
@@ -665,6 +667,11 @@ public class MainView extends FrameView {
         deactivateMenu.setName("deactivateMenu"); // NOI18N
         editMenu.add(deactivateMenu);
 
+        renewKeyMenu.setAction(actionMap.get("generateRequests")); // NOI18N
+        renewKeyMenu.setText(resourceMap.getString("renewKeyMenu.text")); // NOI18N
+        renewKeyMenu.setName("renewKeyMenu"); // NOI18N
+        editMenu.add(renewKeyMenu);
+
         generateRequestMenu.setAction(actionMap.get("generateRequests")); // NOI18N
         generateRequestMenu.setText(resourceMap.getString("generateRequestMenu.text")); // NOI18N
         generateRequestMenu.setName("generateRequestMenu"); // NOI18N
@@ -765,6 +772,14 @@ public class MainView extends FrameView {
 
         jSeparator2.setName("jSeparator2"); // NOI18N
         jToolBar1.add(jSeparator2);
+
+        renewKeyButton.setAction(actionMap.get("renewKeys")); // NOI18N
+        renewKeyButton.setText(resourceMap.getString("renewKeyButton.text")); // NOI18N
+        renewKeyButton.setFocusable(false);
+        renewKeyButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        renewKeyButton.setName("renewKeyButton"); // NOI18N
+        renewKeyButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(renewKeyButton);
 
         generateRequestsButton.setAction(actionMap.get("generateRequests")); // NOI18N
         generateRequestsButton.setText(resourceMap.getString("generateRequestsButton.text")); // NOI18N
@@ -1200,6 +1215,8 @@ public class MainView extends FrameView {
         activateMenu.setEnabled(active);
         deactivateButton.setEnabled(active);
         deactivateMenu.setEnabled(active);
+        renewKeyButton.setEnabled(active);
+        renewKeyMenu.setEnabled(active);
         generateRequestsButton.setEnabled(active);
         generateRequestMenu.setEnabled(active);
         installCertificatesButton.setEnabled(active);
@@ -1329,8 +1346,9 @@ public class MainView extends FrameView {
                 System.out.println("name: " + name);
 
                 // Configuration
+                final Properties properties = config.getProperties();
                 Set<Entry<Object, Object>> entries
-                        = config.getProperties().entrySet();
+                        = properties.entrySet();
                 Object[][] configProperties = new Object[entries.size()][];
                 int j = 0;
                 for (Entry<Object, Object> entry : entries) {
@@ -1418,7 +1436,7 @@ public class MainView extends FrameView {
                         .getAuthorizedClients(workerId);
 
                 newSigners.add(new Worker(workerId, name, statusSummary,
-                        statusProperties, configProperties, active,
+                        statusProperties, configProperties, properties, active,
                         authClients));
             }
 
@@ -1538,6 +1556,17 @@ public class MainView extends FrameView {
             }
         }
         getContext().getTaskService().execute(refreshWorkers());
+    }
+
+    @Action
+    public void renewKeys() {
+        if (selectedWorkers.size() > 0) {
+            RenewKeysDialog dlg = new RenewKeysDialog(getFrame(),
+                    true, selectedWorkers);
+            if (dlg.showRequestsDialog() == RenewKeysDialog.OK) {
+                getContext().getTaskService().execute(refreshWorkers());
+            }
+        }
     }
 
     @Action
@@ -1662,6 +1691,8 @@ public class MainView extends FrameView {
     private javax.swing.JButton refreshButton;
     private javax.swing.JMenuItem refreshMenu;
     private javax.swing.JButton removeButton;
+    private javax.swing.JButton renewKeyButton;
+    private javax.swing.JMenuItem renewKeyMenu;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;

@@ -523,6 +523,15 @@
                 <Property name="name" type="java.lang.String" value="deactivateMenu" noResource="true"/>
               </Properties>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="renewKeyMenu">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="org.signserver.admin.gui.MainView" id="generateRequests" methodName="generateRequests"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="renewKeyMenu.text"/>
+                <Property name="name" type="java.lang.String" value="renewKeyMenu" noResource="true"/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="generateRequestMenu">
               <Properties>
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
@@ -675,6 +684,18 @@
         <Component class="javax.swing.JToolBar$Separator" name="jSeparator2">
           <Properties>
             <Property name="name" type="java.lang.String" value="jSeparator2" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="renewKeyButton">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+              <action class="org.signserver.admin.gui.MainView" id="renewKeys" methodName="renewKeys"/>
+            </Property>
+            <Property name="text" type="java.lang.String" resourceKey="renewKeyButton.text"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="name" type="java.lang.String" value="renewKeyButton" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="generateRequestsButton">

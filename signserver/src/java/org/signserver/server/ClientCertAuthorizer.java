@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server;
 
 import java.math.BigInteger;
@@ -32,65 +31,76 @@ import org.signserver.common.WorkerConfig;
 
 /**
  * Client certificate authorizer.
- * 
- * 
+ *
+ *
  * @author Philip Vendil 24 nov 2007
  *
  * @version $Id$
  */
-
 public class ClientCertAuthorizer implements IAuthorizer {
-	
-	private transient Logger log = Logger.getLogger(this.getClass());
-	
-	private int workerId; 
-	private ProcessableConfig config = null;
 
-	/**
-	 * @see org.signserver.server.IAuthorizer#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
-	 */
-	public void init(int workerId, WorkerConfig config, EntityManager em)
-			throws SignServerException {
-		this.config = new ProcessableConfig(config);
-		this.workerId = workerId;
-	}
+    private transient Logger log = Logger.getLogger(this.getClass());
+    
+    private int workerId;
+    private ProcessableConfig config = null;
 
-	/**
-	 * Performing SignServer 2.x client certificate authentication
-	 * 
-	 * @see org.signserver.server.IAuthorizer#isAuthorized(ProcessRequest, RequestContext)
-	 */
-	public void isAuthorized(ProcessRequest request,RequestContext requestContext)
-			throws SignServerException, IllegalRequestException {
-		X509Certificate clientCert = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
-    	if(clientCert == null){
-    		throw new IllegalRequestException("Error, client authentication is required.");   
-    	}else{
-    		if(!authorizedToRequestSignature(clientCert, config.getAuthorizedClients())){        	                    			
-    			throw new IllegalRequestException("Error, client '" + clientCert.getSubjectDN().toString() + "' requesting signature from signer with id : " + 
-    					workerId + " isn't an authorized client. ");   
-    		}
-    	}
-	}
+    /**
+     * @see org.signserver.server.IAuthorizer#init(int,
+     * org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
+     */
+    public void init(final int workerId, final WorkerConfig config,
+            final EntityManager em)  throws SignServerException {
+        this.config = new ProcessableConfig(config);
+        this.workerId = workerId;
+    }
 
-	
-	private boolean authorizedToRequestSignature(X509Certificate clientCert, Collection<AuthorizedClient> authorizedClients) {
+    /**
+     * Performing SignServer 2.x client certificate authentication.
+     *
+     * @see org.signserver.server.IAuthorizer#isAuthorized(ProcessRequest,
+     * RequestContext)
+     */
+    public void isAuthorized(final ProcessRequest request,
+            final RequestContext requestContext)
+            throws SignServerException, IllegalRequestException {
+        final X509Certificate clientCert = (X509Certificate)
+                requestContext.get(RequestContext.CLIENT_CERTIFICATE);
+        if (clientCert == null) {
+            throw new IllegalRequestException(
+                    "Error, client authentication is required.");
+        } else {
+            if (!authorizedToRequestSignature(clientCert,
+                    config.getAuthorizedClients())) {
+                throw new IllegalRequestException("Worker " + workerId + ": "
+                        + "Client is not authorized: "
+                        + "\"" + clientCert.getSubjectDN().toString() + "\", "
+                        + "\"" + clientCert.getSerialNumber().toString(16)
+                        + ", " + clientCert.getIssuerDN().toString() + "\"");
+            }
+        }
+    }
 
-        boolean isAuthorized = false;        
+    private boolean authorizedToRequestSignature(
+            final X509Certificate clientCert,
+            final Collection<AuthorizedClient> authorizedClients) {
+
+        boolean isAuthorized = false;
         final Iterator<AuthorizedClient> iter = authorizedClients.iterator();
-        String clientDN = CertTools.stringToBCDNString(clientCert.getIssuerDN().toString()); 
-        
-        while( iter.hasNext() && !isAuthorized ){
-            AuthorizedClient next = (AuthorizedClient) iter.next();
+        final String clientDN = CertTools.stringToBCDNString(
+                clientCert.getIssuerDN().toString());
+
+        while (iter.hasNext() && !isAuthorized) {
+            final AuthorizedClient next = (AuthorizedClient) iter.next();
             try {
-                // If both authorized clients Issuer DN And Cert Serial match, 
+                // If both authorized clients Issuer DN And Cert Serial match,
                 // the client is authorized.
-                isAuthorized = clientDN.equals(next.getIssuerDN()) &&
-                               clientCert.getSerialNumber().equals(new BigInteger(next.getCertSN(),16));
-            }catch( IllegalArgumentException e) {
+                isAuthorized = clientDN.equals(next.getIssuerDN())
+                        && clientCert.getSerialNumber()
+                        .equals(new BigInteger(next.getCertSN(), 16));
+            } catch (IllegalArgumentException e) {
                 log.warn(e.getMessage() + " for athorized client");
             }
         }
-		return isAuthorized;
-	}
+        return isAuthorized;
+    }
 }

@@ -1621,7 +1621,7 @@ public class MainView extends FrameView {
     public void installCertificates() {
         if (selectedWorkers.size() > 0) {
             InstallCertificatesDialog dlg = new InstallCertificatesDialog(
-                    getFrame(), true, this, selectedWorkers);
+                    getFrame(), true, selectedWorkers);
             if (dlg.showDialog() == InstallCertificatesDialog.OK) {
                 getContext().getTaskService().execute(refreshWorkers());
             }

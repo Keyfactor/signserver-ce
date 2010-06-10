@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -56,17 +57,14 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
 
     private int resultCode = CANCEL;
 
-    private MainView mainView;
-
     private List<Worker> signers;
     private Vector<Vector<String>> data;
 
     /** Creates new form InstallCertificatesDialog */
     public InstallCertificatesDialog(java.awt.Frame parent, boolean modal,
-            MainView mainView, List<Worker> signers) {
+            List<Worker> signers) {
         super(parent, modal);
-        this.mainView = mainView;
-        this.signers = signers;
+        this.signers = new ArrayList<Worker>(signers);
         initComponents();
         setTitle("Install certificates for " + signers.size() + " signers");
         data = new Vector<Vector<String>>();
@@ -240,29 +238,37 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                             "Install certificates", JOptionPane.ERROR_MESSAGE);
                 }
                 if (signerCerts.size() != 1) {
-                    // TODO: Warning more than one certificate
+                    final String warning = "Warning: More than one certificate "
+                            + "found in signer certificate file for signer "
+                            + workerid;
+                    LOG.warn(warning);
+                    JOptionPane.showMessageDialog(this, warning,
+                            "Install certificates",
+                            JOptionPane.WARNING_MESSAGE);
                 }
                 final X509Certificate signerCert
                         = (X509Certificate) signerCerts.iterator().next();
 
-                Collection<Certificate> signerChain;
+                List<Certificate> signerChain;
 
                 try {
-                    signerChain = CertTools.getCertsFromPEM(
+                    signerChain = (List) CertTools.getCertsFromPEM(
                             signerChainFile.getAbsolutePath());
-                    if(signerChain.size() == 0){
-                        JOptionPane.showMessageDialog(this,
+                    if (signerChain.size() == 0) {
+                        final String error =
                             "Problem with certificate chain file for signer "
-                            + workerid + ":\n" + "No certificates in file",
+                            + workerid + ":\n" + "No certificates in file";
+                        LOG.error(error);
+                        JOptionPane.showMessageDialog(this,
+                            error,
                             "Install certificates", JOptionPane.ERROR_MESSAGE);
                     }
 
-
-                    Iterator<Certificate> iter = signerCerts.iterator();
-                    while(iter.hasNext()){
-                      X509Certificate cert = (X509Certificate) iter.next();
-                        WorkerStatus.printCert(cert, System.out);
-                        System.out.println("\n");
+                    if (signerChain.contains(signerCert)) {
+                        LOG.debug("Chain contains signercert");
+                    } else {
+                        LOG.debug("Adding signercert to chain");
+                        signerChain.add(0, signerCert);
                     }
 
                     SignServerAdminGUIApplication.getWorkerSession()
@@ -309,6 +315,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         if (jTable1.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this,
                     "All certificates installed. Please verify the installed ceritifcates before activating the signers.");
+            resultCode = OK;
             dispose();
         }
     }//GEN-LAST:event_jButtonInstallActionPerformed

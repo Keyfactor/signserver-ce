@@ -341,6 +341,10 @@ public class TestKeysDialog extends JDialog {
                     } catch (EJBException ex) {
                         sb.append(ex.getMessage());
                         sb.append("\n");
+                    } catch (RuntimeException ex) {
+                        sb.append("Not supported by server: "
+                                + ex.getMessage());
+                        sb.append("\n");
                     }
                     sb.append("\n");
                 }

@@ -1411,11 +1411,11 @@ public class MainView extends FrameView {
 
                 try {
                     notBefore = SignServerAdminGUIApplication
-                            .getWorkerSession()
-                            .getSigningValidityNotBefore(workerId);
+                        .getWorkerSession()
+                        .getSigningValidityNotBefore(workerId);
                     notAfter = SignServerAdminGUIApplication
-                            .getWorkerSession()
-                            .getSigningValidityNotAfter(workerId);
+                        .getWorkerSession()
+                        .getSigningValidityNotAfter(workerId); 
                     certificate = SignServerAdminGUIApplication
                             .getWorkerSession().getSignerCertificate(workerId);
                     try {
@@ -1444,6 +1444,8 @@ public class MainView extends FrameView {
 
                 } catch (CryptoTokenOfflineException ex) {
                     LOG.debug("offline: " + workerId);
+                } catch (RuntimeException ex) {
+                    LOG.warn("Methods not supported by server", ex);
                 }
 
                 // Authorizations

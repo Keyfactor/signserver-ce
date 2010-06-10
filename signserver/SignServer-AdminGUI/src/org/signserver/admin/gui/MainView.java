@@ -111,7 +111,7 @@ public class MainView extends FrameView {
 
                     if (selectedWorkers.size() > 0) {
 
-                        System.out.println("Previously selected: "
+                        LOG.debug("Previously selected: "
                                 + selectedWorkerBeforeRefresh);
 
                         int comboBoxSelection = 0;
@@ -1075,7 +1075,7 @@ public class MainView extends FrameView {
                 workers = Collections.singletonList(selectedWorker);
             }
 
-            System.out.println("Selected workers: " + workers);
+            LOG.debug("Selected workers: " + workers);
 
             for (Worker worker : workers) {
                 AuthorizedClient client = new AuthorizedClient(
@@ -1116,7 +1116,7 @@ public class MainView extends FrameView {
                     workers = Collections.singletonList(selectedWorker);
                 }
 
-                System.out.println("Selected workers: " + workers);
+                LOG.debug("Selected workers: " + workers);
 
                 final AuthorizedClient oldAuthorizedClient =
                     new AuthorizedClient(serialNumberBefore, issuerDNBefore);
@@ -1169,7 +1169,7 @@ public class MainView extends FrameView {
                     workers = Collections.singletonList(selectedWorker);
                 }
 
-                System.out.println("Selected workers: " + workers);
+                LOG.debug("Selected workers: " + workers);
 
                 final AuthorizedClient oldAuthorizedClient =
                     new AuthorizedClient(serialNumberBefore, issuerDNBefore);
@@ -1359,8 +1359,7 @@ public class MainView extends FrameView {
                 workerInfo.add(workerId);
                 workerInfo.add(name);
 
-                System.out.println("workerId: " + workerId);
-                System.out.println("name: " + name);
+                LOG.debug("workerId: " + workerId + ", name: " + name);
 
                 // Configuration
                 final Properties properties = config.getProperties();
@@ -1444,7 +1443,7 @@ public class MainView extends FrameView {
                     };
 
                 } catch (CryptoTokenOfflineException ex) {
-                    System.out.println("offline: " + workerId);
+                    LOG.debug("offline: " + workerId);
                 }
 
                 // Authorizations
@@ -1466,13 +1465,13 @@ public class MainView extends FrameView {
 
             // Save selection
             ArrayList<Integer> indices = new ArrayList<Integer>();
-            System.out.println("Selected signers: " + selectedWorkers);
+            LOG.debug("Selected signers: " + selectedWorkers);
             for (Worker w : selectedWorkers) {
                 int index = newWorkers.indexOf(w);
                 if (index != -1) {
                     indices.add(index);
                 } else {
-                    System.out.println(w + " is not in " + selectedWorkers);
+                    LOG.debug(w + " is not in " + selectedWorkers);
                 }
             }
             int[] ints = new int[indices.size()];

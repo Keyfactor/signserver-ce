@@ -13,8 +13,10 @@
 package org.signserver.admin.gui;
 
 import java.awt.Frame;
+import java.security.KeyStoreException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 import javax.ejb.EJBException;
@@ -28,45 +30,45 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.server.KeyTestResult;
 
 /**
- * Dialog for renewing keys.
+ * Dialog for testing keys.
  * @author markus
  * @version $Id$
  */
-public class RenewKeysDialog extends JDialog {
+public class TestKeysDialog extends JDialog {
 
     /** Logger for this class. */
     private static final Logger LOG
-            = Logger.getLogger(RenewKeysDialog.class);
+            = Logger.getLogger(TestKeysDialog.class);
 
     public static final int CANCEL = 0;
     public static final int OK = 1;
 
     private static final Vector<String> COLUMN_NAMES = new Vector(Arrays.asList(
             new String[] {
-        "Signer", "Old key alias", "Key algorithm", "Key specification",
-        "New key alias"
+        "Signer", "Key alias"
     }));
 
     private int resultCode = CANCEL;
 
     private Vector<Vector<String>> data;
     
-    private JComboBox keyAlgComboBox = new JComboBox(new String[] {
-        "RSA",
-        "DSA",
-        "ECDSA"
+    private JComboBox aliasComboBox = new JComboBox(new String[] {
+        "all"
     });
 
     private List<Worker> workers;
 
     /** Creates new form GenerateRequestsDialog */
-    public RenewKeysDialog(final Frame parent, final boolean modal,
+    public TestKeysDialog(final Frame parent, final boolean modal,
             final List<Worker> workers) {
         super(parent, modal);
         this.workers = new ArrayList<Worker>(workers);
-        keyAlgComboBox.setEditable(true);
+        aliasComboBox.setEditable(true);
         initComponents();
         setTitle("Renew keys for " + workers.size() + " signers");
 
@@ -77,20 +79,13 @@ public class RenewKeysDialog extends JDialog {
             final String oldAlias
                     = worker.getConfiguration().getProperty("DEFAULTKEY");
             cols.add(oldAlias);
-            cols.add(worker.getConfiguration().getProperty("KEYALG"));
-            cols.add(worker.getConfiguration().getProperty("KEYSPEC"));
-            if (oldAlias == null || oldAlias.isEmpty()) {
-                cols.add("");
-            } else {
-                cols.add(nextAliasInSequence(oldAlias));
-            }
             data.add(cols);
         }
         jTable1.setModel(new DefaultTableModel(data, COLUMN_NAMES) {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column > 1;
+                return column > 0;
             }
 
             @Override
@@ -104,16 +99,7 @@ public class RenewKeysDialog extends JDialog {
 
             @Override
             public void tableChanged(final TableModelEvent e) {
-                boolean enable = true;
-                for (int row = 0; row < jTable1.getRowCount(); row++) {
-                    if ("".equals(jTable1.getValueAt(row, 2))
-                            || "".equals(jTable1.getValueAt(row, 3))
-                            || "".equals(jTable1.getValueAt(row, 4))) {
-                        enable = false;
-                        break;
-                    }
-                }
-                jButtonGenerate.setEnabled(enable);
+                tableChangedPerformed(e);
             }
         });
 
@@ -123,16 +109,13 @@ public class RenewKeysDialog extends JDialog {
         final DefaultCellEditor textFieldEditor
                 = new DefaultCellEditor(new JTextField());
         final DefaultCellEditor comboBoxFieldEditor
-                = new DefaultCellEditor(keyAlgComboBox);
+                = new DefaultCellEditor(aliasComboBox);
         comboBoxFieldEditor.setClickCountToStart(1);
         textFieldEditor.setClickCountToStart(1);
 
-        jTable1.getColumnModel().getColumn(2)
+        jTable1.getColumnModel().getColumn(1)
                 .setCellEditor(comboBoxFieldEditor);
-        jTable1.getColumnModel().getColumn(3)
-                .setCellEditor(textFieldEditor);
-        jTable1.getColumnModel().getColumn(4)
-                .setCellEditor(textFieldEditor);
+        tableChangedPerformed(null);
     }
 
     /** This method is called from within the constructor to
@@ -154,7 +137,7 @@ public class RenewKeysDialog extends JDialog {
 
         passwordPanel.setName("passwordPanel"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(RenewKeysDialog.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(TestKeysDialog.class);
         passwordPanelLabel.setText(resourceMap.getString("passwordPanelLabel.text")); // NOI18N
         passwordPanelLabel.setName("passwordPanelLabel"); // NOI18N
 
@@ -265,6 +248,17 @@ public class RenewKeysDialog extends JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void tableChangedPerformed(final TableModelEvent e) {
+        boolean enable = true;
+        for (int row = 0; row < jTable1.getRowCount(); row++) {
+            if ("".equals(jTable1.getValueAt(row, 1))) {
+                enable = false;
+                break;
+            }
+        }
+        jButtonGenerate.setEnabled(enable);
+    }
+
     public Vector<Vector<String>> getData() {
         return data;
     }
@@ -272,43 +266,6 @@ public class RenewKeysDialog extends JDialog {
     public int getResultCode() {
         return resultCode;
     }
-
-    static String nextAliasInSequence(final String currentAlias) {
-        String prefix = currentAlias;
-        String nextSequence = "2";
-
-        final String[] entry = currentAlias.split("[0-9]+$");
-        if (entry.length == 1) {
-            prefix = entry[0];
-            final String currentSequence
-                    = currentAlias.substring(prefix.length());
-            final int sequenceChars = currentSequence.length();
-            if (sequenceChars > 0) {
-                final long nextSequenceNumber = Long.parseLong(currentSequence) + 1;
-                final String nextSequenceNumberString
-                        = String.valueOf(nextSequenceNumber);
-                if (sequenceChars > nextSequenceNumberString.length()) {
-                    nextSequence = currentSequence.substring(0,
-                            sequenceChars - nextSequenceNumberString.length())
-                            + nextSequenceNumberString;
-                } else {
-                    nextSequence = nextSequenceNumberString;
-                }
-            }
-        }
-
-        return prefix + nextSequence;
-    }
-
-//    public void checkThatWorkerIsProcessable(int signerid, String hostname) {
-//    	Collection<Integer> signerIds
-//                = SignServerAdminGUIApplication.getWorkerSession().getWorkers(
-//                GlobalConfiguration.WORKERTYPE_PROCESSABLE);
-//    	if(!signerIds.contains(new Integer(signerid))){
-//    		throw new IllegalAdminCommandException("Error: given workerId doesn't seem to point to any processable worker in the system.");
-//    	}
-//
-//    }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         dispose();
@@ -330,84 +287,62 @@ public class RenewKeysDialog extends JDialog {
 
            char[] authCode = passwordPanelField.getPassword();
 
+           final StringBuilder sb = new StringBuilder();
            try {
                for (int row = 0; row < data.size(); row++) {
                     final Worker worker = workers.get(row);
                     final int signerId = worker.getWorkerId();
-                    final String keyAlg =  (String) jTable1.getValueAt(row, 2);
-                    final String keySpec = (String) jTable1.getValueAt(row, 3);
-                    final String alias = (String) jTable1.getValueAt(row, 4);
+                    final String alias = (String) jTable1.getValueAt(row, 1);
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key generation: worker=" + signerId
-                                + ", keyAlg=" + keyAlg + ", keySpec=" + keySpec
+                        LOG.debug("Testing keys: worker=" + signerId
                                 + ", alias: " + alias);
                     }
 
-                    String newAlias = null;
+                    sb.append("Testing keys for signer " + signerId
+                            + " with alias " + alias + ":");
+                    sb.append("\n");
+
                     try {
-                        // Generate key
-                        newAlias = SignServerAdminGUIApplication
-                            .getWorkerSession().generateSignerKey(signerId, keyAlg,
-                                    keySpec, alias, authCode);
+                        // Test the key
+                        final Collection<KeyTestResult> result =
+                                SignServerAdminGUIApplication
+                                .getWorkerSession()
+                                .testKey(signerId, alias, authCode);
 
-                        if (newAlias == null) {
-                            LOG.debug("Could not generate key for signer "
-                                    + signerId);
-                            JOptionPane.showMessageDialog(this,
-                                    "Error generating key for signer "
-                                    + signerId + ":\n"
-                                    + "Could not generate key",
-                                    "Key renewal error",
-                                    JOptionPane.ERROR_MESSAGE);
-                        }
-                    } catch (EJBException eJBException) {
-                        if (eJBException.getCausedByException()
-                                instanceof IllegalArgumentException) {
-                            JOptionPane.showMessageDialog(this, 
-                                    "Error generating key for signer "
-                                    + signerId + ":\n" + eJBException
-                                    .getCausedByException().getMessage(),
-                                    "Key renewal error",
-                                    JOptionPane.ERROR_MESSAGE);
+                        if (result.isEmpty()) {
+                            sb.append("  ");
+                            sb.append("(No key found, token offline?)");
+                            sb.append("\n");
                         } else {
-                            JOptionPane.showMessageDialog(this,
-                                    "Error generating key for signer "
-                                    + signerId + ":\n" + eJBException
-                                    .getMessage(),
-                                    "Key renewal error",
-                                    JOptionPane.ERROR_MESSAGE);
+                            for (KeyTestResult key : result) {
+                                sb.append("  ");
+                                sb.append(key.getAlias());
+                                sb.append(", ");
+                                sb.append(key.isSuccess()
+                                        ? "SUCCESS" : "FAILURE");
+                                sb.append(", ");
+                                sb.append(key.getPublicKeyHash());
+                                sb.append(", ");
+                                sb.append(key.getStatus());
+                                sb.append("\n");
+                            }
                         }
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(this,
-                                    "Error generating key for signer "
-                                    + signerId + ":\n" + e.getMessage(),
-                                    "Key renewal error",
-                                    JOptionPane.ERROR_MESSAGE);
+
+                    } catch (CryptoTokenOfflineException ex) {
+                        sb.append(ex.getMessage());
+                        sb.append("\n");
+                    } catch (InvalidWorkerIdException ex) {
+                        sb.append(ex.getMessage());
+                        sb.append("\n");
+                    } catch (KeyStoreException ex) {
+                        sb.append(ex.getMessage());
+                        sb.append("\n");
+                    } catch (EJBException ex) {
+                        sb.append(ex.getMessage());
+                        sb.append("\n");
                     }
-
-                    if (newAlias != null) {
-
-                        LOG.debug("Created key " + newAlias + " for signer "
-                                + signerId);
-
-                        // Update key label
-                        SignServerAdminGUIApplication.getWorkerSession()
-                                .setWorkerProperty(signerId, "DEFAULTKEY",
-                                newAlias);
-
-                        // Reload configuration
-                        SignServerAdminGUIApplication.getWorkerSession()
-                                .reloadConfiguration(signerId);
-
-                        LOG.debug("Configured new key " + newAlias
-                                + " for signer " + signerId);
-
-                        workers.remove(worker);
-                        data.remove(row);
-                        row--;
-                        jTable1.revalidate();
-                    }
+                    sb.append("\n");
                 }
            } finally {
                 for (int i = 0; i < authCode.length; i++) {
@@ -415,11 +350,9 @@ public class RenewKeysDialog extends JDialog {
                 }
            }
 
-            if (jTable1.getRowCount() == 0) {
-                JOptionPane.showMessageDialog(this,
-                        "Renewed keys for all choosen signers.");
-                dispose();
-            }
+           JOptionPane.showMessageDialog(this,
+                        sb.toString());
+           dispose();
        }
     }//GEN-LAST:event_jButtonGenerateActionPerformed
 

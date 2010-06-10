@@ -21,7 +21,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jSplitPane1" pref="823" max="32767" attributes="0"/>
+                  <Component id="jSplitPane1" pref="827" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -98,7 +98,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jList2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="workerTabbedPane" pref="766" max="32767" attributes="0"/>
+                          <Component id="workerTabbedPane" pref="772" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -243,7 +243,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jScrollPane6" alignment="0" pref="699" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane6" alignment="0" pref="707" max="32767" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="addButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -383,12 +383,12 @@
                                   <Component id="authEditButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="authRemoveButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="606" max="32767" attributes="0"/>
+                                  <EmptySpace pref="620" max="32767" attributes="0"/>
                               </Group>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane7" pref="699" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane7" pref="707" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -499,7 +499,7 @@
         <Menu class="javax.swing.JMenu" name="editMenu">
           <Properties>
             <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView" id="installCertificates" methodName="installCertificates"/>
+              <action class="org.signserver.admin.gui.MainView" id="testKeys" methodName="testKeys"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="editMenu.text"/>
             <Property name="name" type="java.lang.String" value="editMenu" noResource="true"/>
@@ -530,6 +530,15 @@
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="renewKeyMenu.text"/>
                 <Property name="name" type="java.lang.String" value="renewKeyMenu" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="testKeyMenu">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="org.signserver.admin.gui.MainView" id="generateRequests" methodName="generateRequests"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="testKeyMenu.text"/>
+                <Property name="name" type="java.lang.String" value="testKeyMenu" noResource="true"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="generateRequestMenu">
@@ -698,6 +707,18 @@
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
         </Component>
+        <Component class="javax.swing.JButton" name="testKeyButton">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+              <action class="org.signserver.admin.gui.MainView" id="testKeys" methodName="testKeys"/>
+            </Property>
+            <Property name="text" type="java.lang.String" resourceKey="testKeyButton.text"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="name" type="java.lang.String" value="testKeyButton" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+        </Component>
         <Component class="javax.swing.JButton" name="generateRequestsButton">
           <Properties>
             <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
@@ -733,7 +754,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="921" max="32767" attributes="0"/>
+                  <EmptySpace pref="919" max="32767" attributes="0"/>
                   <Component id="progressBar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="statusAnimationLabel" min="-2" pref="37" max="-2" attributes="0"/>

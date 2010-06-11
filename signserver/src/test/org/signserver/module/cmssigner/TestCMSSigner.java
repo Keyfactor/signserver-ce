@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.module.cmssigner;
 
 import java.io.File;
@@ -19,11 +18,9 @@ import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.util.Collection;
 
-
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.signserver.cli.CommonAdminInterface;
@@ -137,7 +134,6 @@ public class TestCMSSigner extends TestCase {
 
         // Check that the signed data contains the document (i.e. not detached)
         final CMSSignedData signedData = new CMSSignedData(data);
-        final ContentInfo ci = signedData.getContentInfo();
         final byte[] content = (byte[]) signedData.getSignedContent()
                 .getContent();
         assertEquals("Signed document", testDocument, new String(content));

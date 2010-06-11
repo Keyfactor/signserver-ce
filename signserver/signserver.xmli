@@ -12,6 +12,7 @@
 	   <import file="./module-builds/ooxmlsigner.xml"/>
 	   <import file="./module-builds/odfsigner.xml"/>
 	   <import file="./module-builds/xmlvalidator.xml"/>
+           <import file="./module-builds/cmssigner.xml"/>
 	
 	   <property name="java.trustpassword" value="changeit" />
 	   <property name="httpsserver.password" value="serverpwd" />
@@ -544,7 +545,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, xmlsignermar,odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, xmlsignermar,odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

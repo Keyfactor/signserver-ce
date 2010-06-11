@@ -24,6 +24,7 @@ SignServer has ready to use:
 <ul>
 <li>TimeStamp Authority (RFC 3161 compliant)</li>
 <li>Signers for different documents: PDF, XML, ODF, OOXML, MRTD (ePassport)</li>
+<li>General purpose signers: CMS</li>
 <li>Validators for documents: XML</li>
 <li>Certificate Validation Service Framework for validating certificates using CRLs or OCSP</li>
 <li>Group Key Service Framework</li>

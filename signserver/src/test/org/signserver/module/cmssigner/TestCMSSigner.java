@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.module.cmssigner;
 
 import java.io.File;
@@ -23,11 +22,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.signserver.cli.CommonAdminInterface;
@@ -73,7 +70,8 @@ public class TestCMSSigner extends TestCase {
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
+        assertNotNull("Please set SIGNSERVER_HOME environment variable",
+                signserverhome);
         CommonAdminInterface.BUILDMODE = "SIGNSERVER";
     }
 
@@ -141,7 +139,6 @@ public class TestCMSSigner extends TestCase {
 
         // Check that the signed data contains the document (i.e. not detached)
         final CMSSignedData signedData = new CMSSignedData(data);
-        final ContentInfo ci = signedData.getContentInfo();
         final byte[] content = (byte[]) signedData.getSignedContent()
                 .getContent();
         assertEquals("Signed document", testDocument, new String(content));
@@ -187,7 +184,7 @@ public class TestCMSSigner extends TestCase {
     }
 
     /**
-     * Get the initial naming context
+     * Get the initial naming context.
      */
     private Context getInitialContext() throws NamingException {
         final Hashtable<String, String> props =

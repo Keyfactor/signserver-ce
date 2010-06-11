@@ -161,20 +161,4 @@ public class CMSSigner extends BaseSigner {
             throw new SignServerException("Error constructing CMS", ex);
         }
     }
-
-
-    private static String getSignatureMethod(final PrivateKey key)
-            throws NoSuchAlgorithmException {
-        String result;
-        
-        if("DSA".equals(key.getAlgorithm())) {
-            result = SignatureMethod.DSA_SHA1;
-        } else if("RSA".equals(key.getAlgorithm())) {
-            result = SignatureMethod.RSA_SHA1;
-        } else {
-            throw new NoSuchAlgorithmException("XMLSigner does not support algorithm: " + key.getAlgorithm());
-        }
-        
-        return result;
-    }
 }

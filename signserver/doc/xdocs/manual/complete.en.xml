@@ -1173,7 +1173,9 @@ A worker component is configured by entering its class path (and optionally its 
 There exists multiple signers. One is the time stamp signer generating RFC 3161 compliant timestamps using the Bouncycastle library.
 An MRTD signer creating "Machine Reader Travel Document" signatures using the RSA algorithm from pre-padded data and
 another is the MRTD SOD Signer which creates the complete Security Object (SOd) by signing the datagroups for the passport.
-There are also signers for automatically signing of PDF, XML, ODF and OOXML signing requests.
+There are also signers for automatically signing of specific document-types 
+such as PDF, XML, ODF and OOXML and there is a general purpose signer that
+can sign any document-type and produces the output in Cryptographic Message Syntax (CMS).
                 </p>
 
                 <subsection name="General Properties">
@@ -1596,6 +1598,21 @@ OOXML Signer, which stands for Office Open XML Signer is a plug-in to SignServer
                         </p>
                         <p>
 NOTE : In later versions of OOXML Signer it is planned to add support for visible signatures and custom signature image.
+                        </p>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="CMS Signer">
+                    <p>
+The CMS signer has the fully qualified class name: org.signserver.module.cmssigner.CMSSigner
+                    </p>
+                    <subsubsection name="Overview">
+                        <p>
+The CMS signer can sign arbitrary data and produces a CMS (RFC 3852) SignedData
+structure in binary format.
+                        </p>
+                        <p>
+Currently the signed content is always embedded as well as the signer certificate.
                         </p>
                     </subsubsection>
                 </subsection>

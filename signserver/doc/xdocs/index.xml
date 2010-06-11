@@ -24,6 +24,7 @@ SignServer is based on loadable modules that perform various operations. SignSer
 <ul>
 <li>TimeStamp Authority (RFC 3161 compliant)</li>
 <li>Signers for different documents: PDF, XML, ODF, OOXML, MRTD (ePassport document signer)</li>
+<li>General purpose signers: CMS</li>
 <li>Validators for documents: XML</li>
 <li>Simple Mail Signer</li>
 </ul>

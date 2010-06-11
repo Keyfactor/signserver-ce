@@ -572,6 +572,9 @@
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="org.signserver.admin.gui.MainView" id="refreshWorkers" methodName="refreshWorkers"/>
                 </Property>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="F5"/>
+                </Property>
                 <Property name="text" type="java.lang.String" resourceKey="refreshMenu.text"/>
                 <Property name="name" type="java.lang.String" value="refreshMenu" noResource="true"/>
               </Properties>
@@ -669,7 +672,7 @@
         <Component class="javax.swing.JButton" name="activateButton">
           <Properties>
             <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView2" id="activateWorkers" methodName="activateWorkers"/>
+              <action class="org.signserver.admin.gui.MainView" id="activateWorkers" methodName="activateWorkers"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="activateButton.text"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -681,7 +684,7 @@
         <Component class="javax.swing.JButton" name="deactivateButton">
           <Properties>
             <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView2" id="deactivateWorkers" methodName="deactivateWorkers"/>
+              <action class="org.signserver.admin.gui.MainView" id="deactivateWorkers" methodName="deactivateWorkers"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="deactivateButton.text"/>
             <Property name="focusable" type="boolean" value="false"/>

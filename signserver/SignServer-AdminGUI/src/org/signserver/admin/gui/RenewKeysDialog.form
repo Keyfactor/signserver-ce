@@ -112,6 +112,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="jButtonGenerate">
       <Properties>
+        <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+          <action class="org.signserver.admin.gui.RenewKeysDialog" id="renewKeys" methodName="renewKeys"/>
+        </Property>
         <Property name="text" type="java.lang.String" resourceKey="jButtonGenerate.text"/>
         <Property name="enabled" type="boolean" value="false"/>
         <Property name="name" type="java.lang.String" value="jButtonGenerate" noResource="true"/>

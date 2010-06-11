@@ -28,6 +28,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
+import org.jdesktop.application.Action;
+import org.jdesktop.application.Application;
+import org.jdesktop.application.Task;
 
 /**
  * Dialog for renewing keys.
@@ -194,6 +197,8 @@ public class RenewKeysDialog extends JDialog {
             }
         });
 
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(RenewKeysDialog.class, this);
+        jButtonGenerate.setAction(actionMap.get("renewKeys")); // NOI18N
         jButtonGenerate.setText(resourceMap.getString("jButtonGenerate.text")); // NOI18N
         jButtonGenerate.setEnabled(false);
         jButtonGenerate.setName("jButtonGenerate"); // NOI18N
@@ -315,118 +320,163 @@ public class RenewKeysDialog extends JDialog {
 }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButtonGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerateActionPerformed
-        resultCode = OK;
-        final String hostname = null;
-
-        passwordPanelLabel.setText(
-                "Enter authentication code for all workers or leave empty:");
-        passwordPanelField.setText("");
-        passwordPanelField.grabFocus();
-
-        int res = JOptionPane.showConfirmDialog(this, passwordPanel,
-               "Generate keys", JOptionPane.OK_CANCEL_OPTION);
-
-       if (res == JOptionPane.OK_OPTION) {
-
-           char[] authCode = passwordPanelField.getPassword();
-
-           try {
-               for (int row = 0; row < data.size(); row++) {
-                    final Worker worker = workers.get(row);
-                    final int signerId = worker.getWorkerId();
-                    final String keyAlg =  (String) jTable1.getValueAt(row, 2);
-                    final String keySpec = (String) jTable1.getValueAt(row, 3);
-                    final String alias = (String) jTable1.getValueAt(row, 4);
-
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key generation: worker=" + signerId
-                                + ", keyAlg=" + keyAlg + ", keySpec=" + keySpec
-                                + ", alias: " + alias);
-                    }
-
-                    String newAlias = null;
-                    try {
-                        // Generate key
-                        newAlias = SignServerAdminGUIApplication
-                            .getWorkerSession().generateSignerKey(signerId, keyAlg,
-                                    keySpec, alias, authCode);
-
-                        if (newAlias == null) {
-                            LOG.debug("Could not generate key for signer "
-                                    + signerId);
-                            JOptionPane.showMessageDialog(this,
-                                    "Error generating key for signer "
-                                    + signerId + ":\n"
-                                    + "Could not generate key",
-                                    "Key renewal error",
-                                    JOptionPane.ERROR_MESSAGE);
-                        }
-                    } catch (EJBException eJBException) {
-                        if (eJBException.getCausedByException()
-                                instanceof IllegalArgumentException) {
-                            JOptionPane.showMessageDialog(this, 
-                                    "Error generating key for signer "
-                                    + signerId + ":\n" + eJBException
-                                    .getCausedByException().getMessage(),
-                                    "Key renewal error",
-                                    JOptionPane.ERROR_MESSAGE);
-                        } else {
-                            JOptionPane.showMessageDialog(this,
-                                    "Error generating key for signer "
-                                    + signerId + ":\n" + eJBException
-                                    .getMessage(),
-                                    "Key renewal error",
-                                    JOptionPane.ERROR_MESSAGE);
-                        }
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(this,
-                                    "Error generating key for signer "
-                                    + signerId + ":\n" + e.getMessage(),
-                                    "Key renewal error",
-                                    JOptionPane.ERROR_MESSAGE);
-                    }
-
-                    if (newAlias != null) {
-
-                        LOG.debug("Created key " + newAlias + " for signer "
-                                + signerId);
-
-                        // Update key label
-                        SignServerAdminGUIApplication.getWorkerSession()
-                                .setWorkerProperty(signerId, "DEFAULTKEY",
-                                newAlias);
-
-                        // Reload configuration
-                        SignServerAdminGUIApplication.getWorkerSession()
-                                .reloadConfiguration(signerId);
-
-                        LOG.debug("Configured new key " + newAlias
-                                + " for signer " + signerId);
-
-                        workers.remove(worker);
-                        data.remove(row);
-                        row--;
-                        jTable1.revalidate();
-                    }
-                }
-           } finally {
-                for (int i = 0; i < authCode.length; i++) {
-                    authCode[i] = 0;
-                }
-           }
-
-            if (jTable1.getRowCount() == 0) {
-                JOptionPane.showMessageDialog(this,
-                        "Renewed keys for all choosen signers.");
-                dispose();
-            }
-       }
+        
     }//GEN-LAST:event_jButtonGenerateActionPerformed
 
     public int showRequestsDialog() {
         setVisible(true);
         return resultCode;
     }
+
+    @Action(block = Task.BlockingScope.WINDOW)
+    public Task renewKeys() {
+        return new RenewKeysTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class));
+    }
+
+    private class RenewKeysTask extends Task<String, Void> {
+
+        private char[] authCode;
+
+        RenewKeysTask(final Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to RenewKeysTask fields, here.
+            super(app);
+            resultCode = OK;
+            final String hostname = null;
+
+            passwordPanelLabel.setText(
+                    "Enter authentication code for all workers or leave empty:");
+            passwordPanelField.setText("");
+            passwordPanelField.grabFocus();
+
+            int res = JOptionPane.showConfirmDialog(RenewKeysDialog.this,
+                    passwordPanel, "Generate keys",
+                    JOptionPane.OK_CANCEL_OPTION);
+
+           if (res == JOptionPane.OK_OPTION) {
+               authCode = passwordPanelField.getPassword();
+           }
+        }
+        @Override protected String doInBackground() {
+            // Your Task's code here.  This method runs
+            // on a background thread, so don't reference
+            // the Swing GUI from here.
+            String errors = null;
+            if (authCode != null) {
+                final StringBuilder sb = new StringBuilder();
+                try {
+                   int progress = 0;
+                   setProgress(progress++, 0, data.size());
+                   for (int row = 0; row < data.size(); row++) {
+                        final Worker worker = workers.get(row);
+                        final int signerId = worker.getWorkerId();
+                        final String keyAlg =  (String) data.get(row).get(2);
+                        final String keySpec = (String) data.get(row).get(3);
+                        final String alias = (String) data.get(row).get(4);
+
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Key generation: worker=" + signerId
+                                    + ", keyAlg=" + keyAlg + ", keySpec="
+                                    + keySpec + ", alias: " + alias);
+                        }
+
+                        String newAlias = null;
+                        try {
+                            // Generate key
+                            newAlias = SignServerAdminGUIApplication
+                                .getWorkerSession().generateSignerKey(signerId,
+                                keyAlg, keySpec, alias, authCode);
+
+                            if (newAlias == null) {
+                                final String error
+                                        =  "Error generating key for signer "
+                                        + signerId + ":\n"
+                                        + "Could not generate key";
+                                LOG.error(error);
+                                sb.append(error);
+                                sb.append("\n");
+                            }
+                        } catch (EJBException eJBException) {
+                            if (eJBException.getCausedByException()
+                                    instanceof IllegalArgumentException) {
+                                final String error =
+                                        "Error generating key for signer "
+                                        + signerId + ":\n" + eJBException
+                                        .getCausedByException().getMessage();
+                                LOG.error(error, eJBException);
+                                sb.append(error);
+                                sb.append("\n");
+                            } else {
+                                final String error =
+                                        "Error generating key for signer "
+                                        + signerId + ":\n" + eJBException
+                                        .getMessage();
+                                LOG.error(error, eJBException);
+                                sb.append(error);
+                                sb.append("\n");
+                            }
+                        } catch (Exception e) {
+                            final String error =
+                                        "Error generating key for signer "
+                                        + signerId + ":\n" + e
+                                        .getMessage();
+                                LOG.error(error, e);
+                                sb.append(error);
+                                sb.append("\n");
+                        }
+
+                        if (newAlias != null) {
+
+                            LOG.debug("Created key " + newAlias + " for signer "
+                                    + signerId);
+
+                            // Update key label
+                            SignServerAdminGUIApplication.getWorkerSession()
+                                    .setWorkerProperty(signerId, "DEFAULTKEY",
+                                    newAlias);
+
+                            // Reload configuration
+                            SignServerAdminGUIApplication.getWorkerSession()
+                                    .reloadConfiguration(signerId);
+
+                            LOG.debug("Configured new key " + newAlias
+                                    + " for signer " + signerId);
+
+                            workers.remove(worker);
+                            data.remove(row);
+                            row--;
+                        }
+                        setProgress(progress++, 0, data.size());
+                    }
+                   errors = sb.toString();
+               } finally {
+                    for (int i = 0; i < authCode.length; i++) {
+                        authCode[i] = 0;
+                    }
+               }
+            }
+            return errors;  // return your result
+        }
+        @Override protected void succeeded(final String result) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+            if (result != null) {
+                jTable1.revalidate();
+                if (result.length() > 0) {
+                    JOptionPane.showMessageDialog(RenewKeysDialog.this,
+                                            result, "Key renewal error",
+                                            JOptionPane.ERROR_MESSAGE);
+                }
+                if (data.size() == 0) {
+                    JOptionPane.showMessageDialog(RenewKeysDialog.this,
+                            "Renewed keys for all choosen signers.");
+                    dispose();
+                }
+            }
+        }
+    }
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

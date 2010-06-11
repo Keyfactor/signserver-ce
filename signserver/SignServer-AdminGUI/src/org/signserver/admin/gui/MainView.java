@@ -48,6 +48,7 @@ import javax.swing.Timer;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
+import org.jdesktop.application.Application;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.TaskMonitor;
 import org.signserver.common.AuthorizedClient;
@@ -695,6 +696,7 @@ public class MainView extends FrameView {
         viewMenu.setName("viewMenu"); // NOI18N
 
         refreshMenu.setAction(actionMap.get("refreshWorkers")); // NOI18N
+        refreshMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
         refreshMenu.setText(resourceMap.getString("refreshMenu.text")); // NOI18N
         refreshMenu.setName("refreshMenu"); // NOI18N
         viewMenu.add(refreshMenu);
@@ -1315,7 +1317,7 @@ public class MainView extends FrameView {
 
     }
 
-    @Action(block = Task.BlockingScope.WINDOW)
+        @Action(block = Task.BlockingScope.WINDOW)
     public Task refreshWorkers() {
         return new RefreshWorkersTask(getApplication());
     }
@@ -1334,12 +1336,16 @@ public class MainView extends FrameView {
             // on a background thread, so don't reference
             // the Swing GUI from here.
 
+            setProgress(0);
+
             List<Worker> newSigners = new ArrayList<Worker>();
 
              List<Integer> workerIds = SignServerAdminGUIApplication
                 .getGlobalConfigurationSession()
                 .getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+            int workers = 0;
             for (Integer workerId : workerIds) {
+                setProgress(workers, 0, workerIds.size());
 
                 final Vector<Object> workerInfo = new Vector<Object>();
                 final WorkerConfig config = SignServerAdminGUIApplication
@@ -1456,6 +1462,7 @@ public class MainView extends FrameView {
                 newSigners.add(new Worker(workerId, name, statusSummary,
                         statusProperties, configProperties, properties, active,
                         authClients));
+                workers++;
             }
 
             return newSigners;  // return your result
@@ -1504,76 +1511,167 @@ public class MainView extends FrameView {
         }
     }
 
-    @Action()
-    public void activateWorkers() {
-        final int[] selected = jList1.getSelectedIndices();
+    @Action(block = Task.BlockingScope.WINDOW)
+    public Task activateWorkers() {
+        return new ActivateWorkersTask(getApplication());
+    }
 
-        passwordPanelLabel.setText(
-                "Enter authentication code for all workers or leave empty:");
-        passwordPanelField.setText("");
-        passwordPanelField.grabFocus();
-        
-       int res = JOptionPane.showConfirmDialog(getFrame(), passwordPanel,
-               "Activate worker(s)", JOptionPane.OK_CANCEL_OPTION);
+    private class ActivateWorkersTask extends Task<String, Void> {
 
-       if (res == JOptionPane.OK_OPTION) {
-           final char[] authCode = passwordPanelField.getPassword();
+        private char[] authCode;
+        private int[] selected;
+
+        ActivateWorkersTask(org.jdesktop.application.Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to ActivateWorkersTask fields, here.
+            super(app);
+            selected = jList1.getSelectedIndices();
+
+            passwordPanelLabel.setText(
+                    "Enter authentication code for all workers or leave empty:");
+            passwordPanelField.setText("");
+            passwordPanelField.grabFocus();
+
+            int res = JOptionPane.showConfirmDialog(getFrame(), passwordPanel,
+                    "Activate worker(s)", JOptionPane.OK_CANCEL_OPTION);
+
+
+            if (res == JOptionPane.OK_OPTION) {
+                authCode = passwordPanelField.getPassword();
+            } else {
+                authCode = null;
+            }
+        }
+        @Override protected String doInBackground() {
+            // Your Task's code here.  This method runs
+            // on a background thread, so don't reference
+            // the Swing GUI from here.
+            String errors = null;
+            if (authCode != null) {
+                StringBuilder sb = new StringBuilder();
+                int workers = 0;
+                for (int row : selected) {
+                    setProgress(workers, 0, selected.length);
+                    final int workerId = allWorkers.get(row).getWorkerId();
+                    try {
+                        SignServerAdminGUIApplication.getWorkerSession()
+                                .activateSigner(workerId, new String(authCode));
+                    } catch (CryptoTokenAuthenticationFailureException ex) {
+                        final String error =
+                                "Authentication failure activating worker "
+                                + workerId;
+                        sb.append(error);
+                        sb.append("\n");
+                        LOG.error(error, ex);
+                    } catch (CryptoTokenOfflineException ex) {
+                        final String error =
+                            "Crypto token offline failure activating worker "
+                            + workerId;
+                        sb.append(error);
+                        sb.append("\n");
+                        LOG.error(error, ex);
+                    } catch (InvalidWorkerIdException ex) {
+                        final String error =
+                                "Invalid worker activating worker "
+                                + workerId;
+                        sb.append(error);
+                        sb.append("\n");
+                        LOG.error(error, ex);
+                    } catch (EJBException ex) {
+                        final String error =
+                                "Error activating worker "
+                                + workerId;
+                        sb.append(error + ": " + ex.getMessage());
+                        sb.append("\n");
+                        LOG.error(error, ex);
+                    }
+                    workers++;
+                }
+                errors = sb.toString();
+            }
+            return errors;  // return your result
+        }
+        @Override protected void succeeded(final String result) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+            if (result != null) {
+                if (result.length() > 0) {
+                    JOptionPane.showMessageDialog(getFrame(), result,
+                            "Activate workers", JOptionPane.ERROR_MESSAGE);
+                }
+                getContext().getTaskService().execute(refreshWorkers());
+            }
+            if (authCode != null) {
+                for (int i = 0; i < authCode.length; i++) {
+                    authCode[i] = 0;
+                }
+            }
+        }
+    }
+
+    @Action(block = Task.BlockingScope.WINDOW)
+    public Task deactivateWorkers() {
+        return new DeactivateWorkersTask(getApplication());
+    }
+
+    private class DeactivateWorkersTask extends org.jdesktop.application.Task<String, Void> {
+
+        private int[] selected;
+
+        DeactivateWorkersTask(final Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to DeactivateWorkersTask fields, here.
+            super(app);
+            selected = jList1.getSelectedIndices();
+        }
+        @Override protected String doInBackground() {
+            // Your Task's code here.  This method runs
+            // on a background thread, so don't reference
+            // the Swing GUI from here.
+            final StringBuilder sb = new StringBuilder();
+            int workers = 0;
+            setProgress(workers++, 0, selected.length);
             for (int row : selected) {
-                final String workerName = allWorkers.get(row).getName();
                 final int workerId = allWorkers.get(row).getWorkerId();
                 try {
                     SignServerAdminGUIApplication.getWorkerSession()
-                            .activateSigner(workerId,
-                                new String(authCode));
-                } catch (CryptoTokenAuthenticationFailureException ex) {
-                    final String error =
-                            "Authentication failure activating worker "
-                            + workerId;
-                    JOptionPane.showMessageDialog(getFrame(),
-                            error + ":\n" + ex.getMessage(),
-                            "Activate workers", JOptionPane.ERROR_MESSAGE);
-                    LOG.error(error, ex);
+                            .deactivateSigner(workerId);
                 } catch (CryptoTokenOfflineException ex) {
-                    final String error =
-                            "Crypto token offline failure activating worker "
+                    final String error = "Error deactivating worker "
                             + workerId;
-                    JOptionPane.showMessageDialog(getFrame(),
-                            error + ":\n" + ex.getMessage(),
-                            "Activate workers", JOptionPane.ERROR_MESSAGE);
                     LOG.error(error, ex);
+                    sb.append(error + ": " + ex.getMessage());
+                    sb.append("\n");
                 } catch (InvalidWorkerIdException ex) {
-                    final String error =
-                            "Invalid worker activating worker "
+                    final String error = "Error deactivating worker "
                             + workerId;
-                    JOptionPane.showMessageDialog(getFrame(),
-                            error + ":\n" + ex.getMessage(),
-                            "Activate workers", JOptionPane.ERROR_MESSAGE);
                     LOG.error(error, ex);
+                    LOG.error(error, ex);
+                    sb.append(error + ": " + ex.getMessage());
+                    sb.append("\n");
+                } catch (EJBException ex) {
+                    final String error = "Error deactivating worker "
+                            + workerId;
+                    LOG.error(error, ex);
+                    sb.append(error + ": " + ex.getMessage());
+                    sb.append(error);
+                    sb.append("\n");
                 }
+                setProgress(workers++, 0, selected.length);
             }
-            for (int i = 0; i < authCode.length; i++) {
-                authCode[i] = 0;
+            return sb.toString();  // return your result
+        }
+        @Override protected void succeeded(final String result) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+            if (result.length() > 0) {
+                JOptionPane.showMessageDialog(getFrame(), result,
+                            "Deactivate workers", JOptionPane.ERROR_MESSAGE);
             }
             getContext().getTaskService().execute(refreshWorkers());
-       }
-    }
-
-    @Action
-    public void deactivateWorkers() {
-        final int[] selected = jList1.getSelectedIndices();
-
-        for (int row : selected) {
-            final int workerId = allWorkers.get(row).getWorkerId();
-            try {
-                SignServerAdminGUIApplication.getWorkerSession()
-                        .deactivateSigner(workerId);
-            } catch (CryptoTokenOfflineException ex) {
-                LOG.error("Error deactivating worker " + workerId, ex);
-            } catch (InvalidWorkerIdException ex) {
-                LOG.error("Error deactivating worker " + workerId, ex);
-            }
         }
-        getContext().getTaskService().execute(refreshWorkers());
     }
 
     @Action

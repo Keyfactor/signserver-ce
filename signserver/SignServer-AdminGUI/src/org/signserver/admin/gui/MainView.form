@@ -151,9 +151,8 @@
                         </Component>
                       </SubComponents>
                     </Container>
-                    <Container class="javax.swing.JScrollPane" name="statusPropertiesTab">
+                    <Container class="javax.swing.JPanel" name="statusPropertiesTab">
                       <Properties>
-                        <Property name="verticalScrollBarPolicy" type="int" value="22"/>
                         <Property name="name" type="java.lang.String" value="statusPropertiesTab" noResource="true"/>
                       </Properties>
                       <Constraints>
@@ -164,49 +163,102 @@
                         </Constraint>
                       </Constraints>
 
-                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace pref="706" max="32767" attributes="0"/>
+                                  <Component id="statusPropertiesDetailsButton" min="-2" pref="84" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <Component id="statusPropertiesScrollPane" pref="678" max="32767" attributes="0"/>
+                                      <EmptySpace min="-2" pref="112" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="statusPropertiesDetailsButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="682" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="statusPropertiesScrollPane" pref="699" max="32767" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
                       <SubComponents>
-                        <Component class="javax.swing.JTable" name="propertiesTable">
+                        <Container class="javax.swing.JScrollPane" name="statusPropertiesScrollPane">
                           <Properties>
-                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="3" rowCount="8">
-                                <Column editable="true" title="Property" type="java.lang.Object">
-                                  <Data value="ID"/>
-                                  <Data value="Name"/>
-                                  <Data value="Token status"/>
-                                  <Data value="Signatures:"/>
-                                  <Data value="Signature limit:"/>
-                                  <Data value="Validity not before:"/>
-                                  <Data value="Validity not after:"/>
-                                  <Data value="Certificate chain:"/>
-                                </Column>
-                                <Column editable="true" title="Value" type="java.lang.Object">
-                                  <Data value="71"/>
-                                  <Data value="Sod1"/>
-                                  <Data value="ACTIVE"/>
-                                  <Data value="0"/>
-                                  <Data value="100000"/>
-                                  <Data value="2010-05-20"/>
-                                  <Data value="2020-05-20"/>
-                                  <Data value="CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE"/>
-                                </Column>
-                                <Column editable="true" title="" type="java.lang.String">
-                                  <Data value="null"/>
-                                  <Data value="null"/>
-                                  <Data value="null"/>
-                                  <Data value="null"/>
-                                  <Data value="null"/>
-                                  <Data value="null"/>
-                                  <Data value="null"/>
-                                  <Data value="..."/>
-                                </Column>
-                              </Table>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="propertiesTable" noResource="true"/>
-                            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                            </Property>
+                            <Property name="verticalScrollBarPolicy" type="int" value="22"/>
+                            <Property name="name" type="java.lang.String" value="statusPropertiesScrollPane" noResource="true"/>
                           </Properties>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                          <SubComponents>
+                            <Component class="javax.swing.JTable" name="propertiesTable">
+                              <Properties>
+                                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                  <Table columnCount="3" rowCount="8">
+                                    <Column editable="true" title="Property" type="java.lang.Object">
+                                      <Data value="ID"/>
+                                      <Data value="Name"/>
+                                      <Data value="Token status"/>
+                                      <Data value="Signatures:"/>
+                                      <Data value="Signature limit:"/>
+                                      <Data value="Validity not before:"/>
+                                      <Data value="Validity not after:"/>
+                                      <Data value="Certificate chain:"/>
+                                    </Column>
+                                    <Column editable="true" title="Value" type="java.lang.Object">
+                                      <Data value="71"/>
+                                      <Data value="Sod1"/>
+                                      <Data value="ACTIVE"/>
+                                      <Data value="0"/>
+                                      <Data value="100000"/>
+                                      <Data value="2010-05-20"/>
+                                      <Data value="2020-05-20"/>
+                                      <Data value="CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE"/>
+                                    </Column>
+                                    <Column editable="true" title="" type="java.lang.String">
+                                      <Data value="null"/>
+                                      <Data value="null"/>
+                                      <Data value="null"/>
+                                      <Data value="null"/>
+                                      <Data value="null"/>
+                                      <Data value="null"/>
+                                      <Data value="null"/>
+                                      <Data value="..."/>
+                                    </Column>
+                                  </Table>
+                                </Property>
+                                <Property name="name" type="java.lang.String" value="propertiesTable" noResource="true"/>
+                                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                                </Property>
+                              </Properties>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                        <Component class="javax.swing.JButton" name="statusPropertiesDetailsButton">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" resourceKey="statusPropertiesDetailsButton.text"/>
+                            <Property name="enabled" type="boolean" value="false"/>
+                            <Property name="name" type="java.lang.String" value="statusPropertiesDetailsButton" noResource="true"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="statusPropertiesDetailsButtonActionPerformed"/>
+                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>

@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
+    <Property name="defaultCloseOperation" type="int" value="2"/>
+    <Property name="title" type="java.lang.String" resourceKey="Form.title"/>
+    <Property name="locationByPlatform" type="boolean" value="true"/>
     <Property name="name" type="java.lang.String" value="Form" noResource="true"/>
   </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+  </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="2"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="true"/>
@@ -19,18 +25,23 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jTabbedPane1" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="jTabbedPane1" alignment="0" max="32767" attributes="0"/>
+                  <Component id="closeButton" alignment="1" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jTabbedPane1" pref="663" max="32767" attributes="0"/>
+              <Component id="jTabbedPane1" pref="602" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="closeButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -59,7 +70,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jScrollPane1" alignment="0" pref="539" max="32767" attributes="0"/>
@@ -70,7 +81,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel12" min="-2" pref="158" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel13" pref="375" max="32767" attributes="0"/>
+                              <Component id="serialNumberLabel" pref="375" max="32767" attributes="0"/>
                           </Group>
                           <Component id="jLabel3" alignment="0" pref="539" max="32767" attributes="0"/>
                           <Component id="jScrollPane3" alignment="0" pref="539" max="32767" attributes="0"/>
@@ -78,17 +89,17 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel6" min="-2" pref="158" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel7" pref="375" max="32767" attributes="0"/>
+                              <Component id="notBeforeLabel" pref="375" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="jLabel10" min="-2" pref="158" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel11" pref="375" max="32767" attributes="0"/>
+                              <Component id="notAfterLabel" pref="375" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel8" min="-2" pref="158" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel9" max="32767" attributes="0"/>
+                              <Component id="fingerprintLabel" max="32767" attributes="0"/>
                           </Group>
                           <Component id="jLabel5" alignment="0" pref="539" max="32767" attributes="0"/>
                       </Group>
@@ -112,7 +123,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="serialNumberLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
@@ -123,21 +134,21 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="notBeforeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="notAfterLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="fingerprintLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="105" max="32767" attributes="0"/>
+                      <EmptySpace pref="48" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -157,7 +168,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JList" name="jList1">
+                <Component class="javax.swing.JList" name="usagesList">
                   <Properties>
                     <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
                       <StringArray count="5">
@@ -168,7 +179,7 @@
                         <StringItem index="4" value="Item 5"/>
                       </StringArray>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="jList1" noResource="true"/>
+                    <Property name="name" type="java.lang.String" value="usagesList" noResource="true"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -195,14 +206,14 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTextArea" name="jTextArea1">
+                <Component class="javax.swing.JTextArea" name="subjectTextArea">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
                     <Property name="editable" type="boolean" value="false"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="4"/>
-                    <Property name="text" type="java.lang.String" resourceKey="jTextArea1.text"/>
-                    <Property name="name" type="java.lang.String" value="jTextArea1" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="subjectTextArea.text"/>
+                    <Property name="name" type="java.lang.String" value="subjectTextArea" noResource="true"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -217,14 +228,14 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTextArea" name="jTextArea2">
+                <Component class="javax.swing.JTextArea" name="issuerTextArea">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
                     <Property name="editable" type="boolean" value="false"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="4"/>
-                    <Property name="text" type="java.lang.String" resourceKey="jTextArea2.text"/>
-                    <Property name="name" type="java.lang.String" value="jTextArea2" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="issuerTextArea.text"/>
+                    <Property name="name" type="java.lang.String" value="issuerTextArea" noResource="true"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -256,10 +267,10 @@
                 <Property name="name" type="java.lang.String" value="jLabel6" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel7">
+            <Component class="javax.swing.JLabel" name="notBeforeLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jLabel7.text"/>
-                <Property name="name" type="java.lang.String" value="jLabel7" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="notBeforeLabel.text"/>
+                <Property name="name" type="java.lang.String" value="notBeforeLabel" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel8">
@@ -268,10 +279,10 @@
                 <Property name="name" type="java.lang.String" value="jLabel8" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel9">
+            <Component class="javax.swing.JLabel" name="fingerprintLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jLabel9.text"/>
-                <Property name="name" type="java.lang.String" value="jLabel9" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="fingerprintLabel.text"/>
+                <Property name="name" type="java.lang.String" value="fingerprintLabel" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel10">
@@ -280,10 +291,10 @@
                 <Property name="name" type="java.lang.String" value="jLabel10" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel11">
+            <Component class="javax.swing.JLabel" name="notAfterLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jLabel11.text"/>
-                <Property name="name" type="java.lang.String" value="jLabel11" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="notAfterLabel.text"/>
+                <Property name="name" type="java.lang.String" value="notAfterLabel" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel12">
@@ -292,10 +303,10 @@
                 <Property name="name" type="java.lang.String" value="jLabel12" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel13">
+            <Component class="javax.swing.JLabel" name="serialNumberLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jLabel13.text"/>
-                <Property name="name" type="java.lang.String" value="jLabel13" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="serialNumberLabel.text"/>
+                <Property name="name" type="java.lang.String" value="serialNumberLabel" noResource="true"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -315,16 +326,15 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jScrollPane6" alignment="0" pref="539" max="32767" attributes="0"/>
                           <Component id="jScrollPane5" alignment="0" pref="539" max="32767" attributes="0"/>
                           <Component id="jLabel14" alignment="0" pref="539" max="32767" attributes="0"/>
                           <Component id="jScrollPane4" alignment="0" pref="539" max="32767" attributes="0"/>
                           <Component id="jLabel15" alignment="1" pref="539" max="32767" attributes="0"/>
                           <Component id="jLabel16" alignment="1" pref="539" max="32767" attributes="0"/>
-                          <Component id="jButton1" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -340,14 +350,12 @@
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="jScrollPane5" pref="206" max="32767" attributes="0"/>
+                      <Component id="jScrollPane5" pref="145" max="32767" attributes="0"/>
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="jScrollPane6" min="-2" pref="144" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jScrollPane6" min="-2" pref="191" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -367,7 +375,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JList" name="jList2">
+                <Component class="javax.swing.JList" name="chainList">
                   <Properties>
                     <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
                       <StringArray count="2">
@@ -375,7 +383,7 @@
                         <StringItem index="1" value="CSCA Country"/>
                       </StringArray>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="jList2" noResource="true"/>
+                    <Property name="name" type="java.lang.String" value="chainList" noResource="true"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -394,7 +402,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JList" name="jList3">
+                <Component class="javax.swing.JList" name="fieldsList">
                   <Properties>
                     <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
                       <StringArray count="5">
@@ -405,7 +413,7 @@
                         <StringItem index="4" value="Item 5"/>
                       </StringArray>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="jList3" noResource="true"/>
+                    <Property name="name" type="java.lang.String" value="fieldsList" noResource="true"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -424,25 +432,28 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JEditorPane" name="jEditorPane1">
+                <Component class="javax.swing.JEditorPane" name="fieldValueEditorPane">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
-                    <Property name="font" type="java.awt.Font" resourceKey="jEditorPane1.font"/>
-                    <Property name="text" type="java.lang.String" resourceKey="jEditorPane1.text"/>
-                    <Property name="name" type="java.lang.String" value="jEditorPane1" noResource="true"/>
+                    <Property name="font" type="java.awt.Font" resourceKey="fieldValueEditorPane.font"/>
+                    <Property name="text" type="java.lang.String" resourceKey="fieldValueEditorPane.text"/>
+                    <Property name="name" type="java.lang.String" value="fieldValueEditorPane" noResource="true"/>
                   </Properties>
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="jButton1">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jButton1.text"/>
-                <Property name="name" type="java.lang.String" value="jButton1" noResource="true"/>
-              </Properties>
-            </Component>
           </SubComponents>
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="closeButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="closeButton.text"/>
+        <Property name="name" type="java.lang.String" value="closeButton" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="closeButtonActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>

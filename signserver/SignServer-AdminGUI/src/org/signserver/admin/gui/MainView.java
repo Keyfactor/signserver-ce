@@ -26,6 +26,7 @@ import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,7 +69,7 @@ import org.signserver.common.WorkerStatus;
 public class MainView extends FrameView {
 
     /** Logger for this class. */
-    private Logger LOG = Logger.getLogger(MainView.class);
+    private static final Logger LOG = Logger.getLogger(MainView.class);
 
     private DefaultTableModel workersModel;
 
@@ -156,6 +157,28 @@ public class MainView extends FrameView {
             public void actionPerformed(final ActionEvent e) {
                 if (jList2.getSelectedItem() instanceof Worker) {
                     displayWorker((Worker) jList2.getSelectedItem());
+                }
+            }
+        });
+
+        propertiesTable.getSelectionModel().addListSelectionListener(
+                new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(final ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+
+                    final int row = propertiesTable.getSelectedRow();
+                    final boolean enable;
+
+                    if (row == -1) {
+                        enable = false;
+                    } else {
+                        final Object o = propertiesTable.getValueAt(row, 1);
+                        enable = o instanceof X509Certificate
+                                || o instanceof Collection; // TODO: Too weak
+                    }
+                    statusPropertiesDetailsButton.setEnabled(enable);
                 }
             }
         });
@@ -279,8 +302,10 @@ public class MainView extends FrameView {
         workerTabbedPane = new javax.swing.JTabbedPane();
         statusSummaryTab = new javax.swing.JScrollPane();
         statusSummaryTextPane = new javax.swing.JTextPane();
-        statusPropertiesTab = new javax.swing.JScrollPane();
+        statusPropertiesTab = new javax.swing.JPanel();
+        statusPropertiesScrollPane = new javax.swing.JScrollPane();
         propertiesTable = new javax.swing.JTable();
+        statusPropertiesDetailsButton = new javax.swing.JButton();
         configurationTab = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
         configurationTable = new javax.swing.JTable();
@@ -378,8 +403,10 @@ public class MainView extends FrameView {
 
         workerTabbedPane.addTab(resourceMap.getString("statusSummaryTab.TabConstraints.tabTitle"), statusSummaryTab); // NOI18N
 
-        statusPropertiesTab.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         statusPropertiesTab.setName("statusPropertiesTab"); // NOI18N
+
+        statusPropertiesScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        statusPropertiesScrollPane.setName("statusPropertiesScrollPane"); // NOI18N
 
         propertiesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -405,7 +432,43 @@ public class MainView extends FrameView {
             }
         });
         propertiesTable.setName("propertiesTable"); // NOI18N
-        statusPropertiesTab.setViewportView(propertiesTable);
+        statusPropertiesScrollPane.setViewportView(propertiesTable);
+
+        statusPropertiesDetailsButton.setText(resourceMap.getString("statusPropertiesDetailsButton.text")); // NOI18N
+        statusPropertiesDetailsButton.setEnabled(false);
+        statusPropertiesDetailsButton.setName("statusPropertiesDetailsButton"); // NOI18N
+        statusPropertiesDetailsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                statusPropertiesDetailsButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout statusPropertiesTabLayout = new javax.swing.GroupLayout(statusPropertiesTab);
+        statusPropertiesTab.setLayout(statusPropertiesTabLayout);
+        statusPropertiesTabLayout.setHorizontalGroup(
+            statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPropertiesTabLayout.createSequentialGroup()
+                .addContainerGap(706, Short.MAX_VALUE)
+                .addComponent(statusPropertiesDetailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(statusPropertiesTabLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 678, Short.MAX_VALUE)
+                    .addGap(112, 112, 112)))
+        );
+        statusPropertiesTabLayout.setVerticalGroup(
+            statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(statusPropertiesTabLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(statusPropertiesDetailsButton)
+                .addContainerGap(682, Short.MAX_VALUE))
+            .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(statusPropertiesTabLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
 
         workerTabbedPane.addTab(resourceMap.getString("statusPropertiesTab.TabConstraints.tabTitle"), statusPropertiesTab); // NOI18N
 
@@ -488,7 +551,7 @@ public class MainView extends FrameView {
             .addGroup(configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
                     .addGroup(configurationTabLayout.createSequentialGroup()
                         .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -594,11 +657,11 @@ public class MainView extends FrameView {
                 .addComponent(authEditButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(authRemoveButton)
-                .addContainerGap(620, Short.MAX_VALUE))
+                .addContainerGap(606, Short.MAX_VALUE))
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -621,7 +684,7 @@ public class MainView extends FrameView {
                 .addContainerGap()
                 .addComponent(jList2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 772, Short.MAX_VALUE))
+                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 766, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -639,7 +702,7 @@ public class MainView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 827, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -696,7 +759,6 @@ public class MainView extends FrameView {
         viewMenu.setName("viewMenu"); // NOI18N
 
         refreshMenu.setAction(actionMap.get("refreshWorkers")); // NOI18N
-        refreshMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
         refreshMenu.setText(resourceMap.getString("refreshMenu.text")); // NOI18N
         refreshMenu.setName("refreshMenu"); // NOI18N
         viewMenu.add(refreshMenu);
@@ -828,7 +890,7 @@ public class MainView extends FrameView {
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
-                .addContainerGap(919, Short.MAX_VALUE)
+                .addContainerGap(921, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1207,6 +1269,25 @@ public class MainView extends FrameView {
     private void authorizationsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_authorizationsMenuActionPerformed
         workerTabbedPane.setSelectedComponent(authorizationTab);
     }//GEN-LAST:event_authorizationsMenuActionPerformed
+
+    private void statusPropertiesDetailsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statusPropertiesDetailsButtonActionPerformed
+        final int row = propertiesTable.getSelectedRow();
+        if (row != -1) {
+            final Object o = propertiesTable.getValueAt(row, 1);
+            List<X509Certificate> certificates = null;
+            if (o instanceof X509Certificate) {
+                certificates = Collections.singletonList((X509Certificate) o);
+            } else if (o instanceof Collection) {
+                certificates = new ArrayList<X509Certificate>(
+                        (Collection) o);
+            }
+            if (certificates != null) {
+                final ViewCertificateFrame frame =
+                        new ViewCertificateFrame(certificates);
+                frame.setVisible(true);
+            }
+        }
+    }//GEN-LAST:event_statusPropertiesDetailsButtonActionPerformed
 
     private void displayWorker(final Worker worker) {
         LOG.debug("Display worker: " + worker);
@@ -1821,8 +1902,10 @@ public class MainView extends FrameView {
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
+    private javax.swing.JButton statusPropertiesDetailsButton;
     private javax.swing.JMenuItem statusPropertiesMenu;
-    private javax.swing.JScrollPane statusPropertiesTab;
+    private javax.swing.JScrollPane statusPropertiesScrollPane;
+    private javax.swing.JPanel statusPropertiesTab;
     private javax.swing.JMenuItem statusSummaryMenu;
     private javax.swing.JScrollPane statusSummaryTab;
     private javax.swing.JTextPane statusSummaryTextPane;

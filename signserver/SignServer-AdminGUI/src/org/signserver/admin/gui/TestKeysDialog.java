@@ -30,6 +30,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
+import org.jdesktop.application.Action;
+import org.jdesktop.application.Task;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.server.KeyTestResult;
@@ -177,6 +179,8 @@ public class TestKeysDialog extends JDialog {
             }
         });
 
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(TestKeysDialog.class, this);
+        jButtonGenerate.setAction(actionMap.get("keyTesting")); // NOI18N
         jButtonGenerate.setText(resourceMap.getString("jButtonGenerate.text")); // NOI18N
         jButtonGenerate.setEnabled(false);
         jButtonGenerate.setName("jButtonGenerate"); // NOI18N
@@ -272,97 +276,133 @@ public class TestKeysDialog extends JDialog {
 }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButtonGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerateActionPerformed
-        resultCode = OK;
-        final String hostname = null;
-
-        passwordPanelLabel.setText(
-                "Enter authentication code for all workers or leave empty:");
-        passwordPanelField.setText("");
-        passwordPanelField.grabFocus();
-
-        int res = JOptionPane.showConfirmDialog(this, passwordPanel,
-               "Generate keys", JOptionPane.OK_CANCEL_OPTION);
-
-       if (res == JOptionPane.OK_OPTION) {
-
-           char[] authCode = passwordPanelField.getPassword();
-
-           final StringBuilder sb = new StringBuilder();
-           try {
-               for (int row = 0; row < data.size(); row++) {
-                    final Worker worker = workers.get(row);
-                    final int signerId = worker.getWorkerId();
-                    final String alias = (String) jTable1.getValueAt(row, 1);
-
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Testing keys: worker=" + signerId
-                                + ", alias: " + alias);
-                    }
-
-                    sb.append("Testing keys for signer " + signerId
-                            + " with alias " + alias + ":");
-                    sb.append("\n");
-
-                    try {
-                        // Test the key
-                        final Collection<KeyTestResult> result =
-                                SignServerAdminGUIApplication
-                                .getWorkerSession()
-                                .testKey(signerId, alias, authCode);
-
-                        if (result.isEmpty()) {
-                            sb.append("  ");
-                            sb.append("(No key found, token offline?)");
-                            sb.append("\n");
-                        } else {
-                            for (KeyTestResult key : result) {
-                                sb.append("  ");
-                                sb.append(key.getAlias());
-                                sb.append(", ");
-                                sb.append(key.isSuccess()
-                                        ? "SUCCESS" : "FAILURE");
-                                sb.append(", ");
-                                sb.append(key.getPublicKeyHash());
-                                sb.append(", ");
-                                sb.append(key.getStatus());
-                                sb.append("\n");
-                            }
-                        }
-
-                    } catch (CryptoTokenOfflineException ex) {
-                        sb.append(ex.getMessage());
-                        sb.append("\n");
-                    } catch (InvalidWorkerIdException ex) {
-                        sb.append(ex.getMessage());
-                        sb.append("\n");
-                    } catch (KeyStoreException ex) {
-                        sb.append(ex.getMessage());
-                        sb.append("\n");
-                    } catch (EJBException ex) {
-                        sb.append(ex.getMessage());
-                        sb.append("\n");
-                    } catch (RuntimeException ex) {
-                        sb.append("Not supported by server: "
-                                + ex.getMessage());
-                        sb.append("\n");
-                    }
-                    sb.append("\n");
-                }
-           } finally {
-                for (int i = 0; i < authCode.length; i++) {
-                    authCode[i] = 0;
-                }
-           }
-
-           JOptionPane.showMessageDialog(this,
-                        sb.toString());
-           dispose();
-       }
+        
     }//GEN-LAST:event_jButtonGenerateActionPerformed
 
     public int showRequestsDialog() {
         setVisible(true);
         return resultCode;
+    }
+
+    @Action(block = Task.BlockingScope.WINDOW)
+    public Task keyTesting() {
+        return new KeyTestingTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class));
+    }
+
+    private class KeyTestingTask extends Task<String, Void> {
+
+        private char[] authCode;
+
+        KeyTestingTask(org.jdesktop.application.Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to KeyTestingTask fields, here.
+            super(app);
+            resultCode = OK;
+
+            passwordPanelLabel.setText(
+                "Enter authentication code for all workers or leave empty:");
+            passwordPanelField.setText("");
+            passwordPanelField.grabFocus();
+
+            int res = JOptionPane.showConfirmDialog(TestKeysDialog.this,
+                    passwordPanel, "Generate keys",
+                    JOptionPane.OK_CANCEL_OPTION);
+
+           if (res == JOptionPane.OK_OPTION) {
+               authCode = passwordPanelField.getPassword();
+           }
+        }
+        @Override protected String doInBackground() {
+            // Your Task's code here.  This method runs
+            // on a background thread, so don't reference
+            // the Swing GUI from here.
+            int numWorkers = data.size();
+            int progress = 0;
+            setProgress(progress++, 0, numWorkers);
+            String results = null;
+            if (authCode != null) {
+                final StringBuilder sb = new StringBuilder();
+                try {
+                   for (int row = 0; row < data.size(); row++) {
+                        final Worker worker = workers.get(row);
+                        final int signerId = worker.getWorkerId();
+                        final String alias = data.get(row).get(1);
+
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Testing keys: worker=" + signerId
+                                    + ", alias: " + alias);
+                        }
+
+                        sb.append("Testing keys for signer " + signerId
+                                + " with alias " + alias + ":");
+                        sb.append("\n");
+
+                        try {
+                            // Test the key
+                            final Collection<KeyTestResult> result =
+                                    SignServerAdminGUIApplication
+                                    .getWorkerSession()
+                                    .testKey(signerId, alias, authCode);
+
+                            if (result.isEmpty()) {
+                                sb.append("  ");
+                                sb.append("(No key found, token offline?)");
+                                sb.append("\n");
+                            } else {
+                                for (KeyTestResult key : result) {
+                                    sb.append("  ");
+                                    sb.append(key.getAlias());
+                                    sb.append(", ");
+                                    sb.append(key.isSuccess()
+                                            ? "SUCCESS" : "FAILURE");
+                                    sb.append(", ");
+                                    sb.append(key.getPublicKeyHash());
+                                    sb.append(", ");
+                                    sb.append(key.getStatus());
+                                    sb.append("\n");
+                                }
+                            }
+
+                        } catch (CryptoTokenOfflineException ex) {
+                            sb.append(ex.getMessage());
+                            sb.append("\n");
+                        } catch (InvalidWorkerIdException ex) {
+                            sb.append(ex.getMessage());
+                            sb.append("\n");
+                        } catch (KeyStoreException ex) {
+                            sb.append(ex.getMessage());
+                            sb.append("\n");
+                        } catch (EJBException ex) {
+                            sb.append(ex.getMessage());
+                            sb.append("\n");
+                        } catch (RuntimeException ex) {
+                            sb.append("Not supported by server: "
+                                    + ex.getMessage());
+                            sb.append("\n");
+                        }
+                        sb.append("\n");
+                        setProgress(progress++, 0, numWorkers);
+                    }
+                } finally {
+                    for (int i = 0; i < authCode.length; i++) {
+                        authCode[i] = 0;
+                    }
+                }
+                results = sb.toString();
+            }
+            return results;  // return your result
+        }
+        @Override protected void succeeded(final String results) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+            if (results != null) {
+                JOptionPane.showMessageDialog(TestKeysDialog.this,
+                            results);
+                dispose();
+            }
+        }
+        
     }
 
 

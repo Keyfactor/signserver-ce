@@ -362,12 +362,13 @@ public class RenewKeysDialog extends JDialog {
             // Your Task's code here.  This method runs
             // on a background thread, so don't reference
             // the Swing GUI from here.
+            final int numWorkers = data.size();
             String errors = null;
             if (authCode != null) {
                 final StringBuilder sb = new StringBuilder();
                 try {
                    int progress = 0;
-                   setProgress(progress++, 0, data.size());
+                   setProgress(progress++, 0, numWorkers);
                    for (int row = 0; row < data.size(); row++) {
                         final Worker worker = workers.get(row);
                         final int signerId = worker.getWorkerId();
@@ -447,7 +448,7 @@ public class RenewKeysDialog extends JDialog {
                             data.remove(row);
                             row--;
                         }
-                        setProgress(progress++, 0, data.size());
+                        setProgress(progress++, 0, numWorkers);
                     }
                    errors = sb.toString();
                } finally {
@@ -462,8 +463,8 @@ public class RenewKeysDialog extends JDialog {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
             if (result != null) {
-                jTable1.revalidate();
                 if (result.length() > 0) {
+                    jTable1.revalidate();
                     JOptionPane.showMessageDialog(RenewKeysDialog.this,
                                             result, "Key renewal error",
                                             JOptionPane.ERROR_MESSAGE);

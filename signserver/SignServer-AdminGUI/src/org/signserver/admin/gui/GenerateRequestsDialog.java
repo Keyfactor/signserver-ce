@@ -89,8 +89,9 @@ public class GenerateRequestsDialog extends JDialog {
         for (Worker worker : workers) {
             Vector<String> cols = new Vector<String>();
             cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
-            cols.add("");
-            cols.add("");
+            cols.add(worker.getConfiguration().getProperty("SIGNATUREALGORITHM",
+                    ""));
+            cols.add(worker.getConfiguration().getProperty("REQUESTDN", ""));
             data.add(cols);
         }
         jTable1.setModel(new DefaultTableModel(data, COLUMN_NAMES) {

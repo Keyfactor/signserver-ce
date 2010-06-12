@@ -200,13 +200,7 @@ public class RenewKeysDialog extends JDialog {
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(RenewKeysDialog.class, this);
         jButtonGenerate.setAction(actionMap.get("renewKeys")); // NOI18N
         jButtonGenerate.setText(resourceMap.getString("jButtonGenerate.text")); // NOI18N
-        jButtonGenerate.setEnabled(false);
         jButtonGenerate.setName("jButtonGenerate"); // NOI18N
-        jButtonGenerate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonGenerateActionPerformed(evt);
-            }
-        });
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
@@ -318,10 +312,6 @@ public class RenewKeysDialog extends JDialog {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         dispose();
 }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButtonGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerateActionPerformed
-        
-    }//GEN-LAST:event_jButtonGenerateActionPerformed
 
     public int showRequestsDialog() {
         setVisible(true);

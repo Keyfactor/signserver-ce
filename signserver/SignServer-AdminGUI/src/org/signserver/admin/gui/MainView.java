@@ -1050,7 +1050,7 @@ public class MainView extends FrameView {
                 int workerId = selectedWorker.getWorkerId();
                 SignServerAdminGUIApplication.getWorkerSession()
                         .removeWorkerProperty(workerId,
-                        editPropertyTextField.getText());
+                        (String) configurationTable.getValueAt(row, 0));
                 SignServerAdminGUIApplication.getWorkerSession()
                         .reloadConfiguration(workerId);
 

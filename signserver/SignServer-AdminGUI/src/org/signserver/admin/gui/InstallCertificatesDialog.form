@@ -65,6 +65,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="jButtonInstall">
       <Properties>
+        <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+          <action class="org.signserver.admin.gui.InstallCertificatesDialog" id="installCertificates" methodName="installCertificates"/>
+        </Property>
         <Property name="text" type="java.lang.String" resourceKey="jButtonInstall.text"/>
         <Property name="enabled" type="boolean" value="false"/>
         <Property name="name" type="java.lang.String" value="jButtonInstall" noResource="true"/>

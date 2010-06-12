@@ -116,12 +116,8 @@
           <action class="org.signserver.admin.gui.RenewKeysDialog" id="renewKeys" methodName="renewKeys"/>
         </Property>
         <Property name="text" type="java.lang.String" resourceKey="jButtonGenerate.text"/>
-        <Property name="enabled" type="boolean" value="false"/>
         <Property name="name" type="java.lang.String" value="jButtonGenerate" noResource="true"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonGenerateActionPerformed"/>
-      </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <Properties>

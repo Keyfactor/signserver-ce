@@ -31,6 +31,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
+import org.jdesktop.application.Action;
+import org.jdesktop.application.Application;
+import org.jdesktop.application.Task;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
@@ -167,6 +170,8 @@ public class GenerateRequestsDialog extends JDialog {
             }
         });
 
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(GenerateRequestsDialog.class, this);
+        jButtonGenerate.setAction(actionMap.get("generateRequests")); // NOI18N
         jButtonGenerate.setText(resourceMap.getString("jButtonGenerate.text")); // NOI18N
         jButtonGenerate.setEnabled(false);
         jButtonGenerate.setName("jButtonGenerate"); // NOI18N
@@ -249,92 +254,138 @@ public class GenerateRequestsDialog extends JDialog {
 }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButtonGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerateActionPerformed
-        resultCode = OK;
-        final String hostname = null;
-
-        for (int row = 0; row < data.size(); row++) {
-            final Worker worker = workers.get(row);
-            final int workerid = worker.getWorkerId();
-            final String sigAlg =  (String) jTable1.getValueAt(row, 1);
-            final String dn = (String) jTable1.getValueAt(row, 2);
-            final String filename = (String) jTable1.getValueAt(row, 3);
-            final String error = "Error generating request for signer "
-                    + workerid;
-
-            LOG.debug("worker=" + workerid + ", dn=" + dn
-                    + ", sigAlg=" + sigAlg + ", filename=" + filename);
-
-            FileOutputStream fos = null;
-            try {
-                final PKCS10CertReqInfo certReqInfo
-                        = new PKCS10CertReqInfo(sigAlg, dn, null);
-                final Base64SignerCertReqData reqData =
-                        (Base64SignerCertReqData) SignServerAdminGUIApplication
-                        .getWorkerSession()
-                        .getCertificateRequest(workerid, certReqInfo);
-                if (reqData == null) {
-                    LOG.error(error
-                            + ": Unable to generate certificate request.");
-                    JOptionPane.showMessageDialog(this, error + ":\n"
-                            + "Unable to generate certificate request.",
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    fos = new FileOutputStream(filename);
-                    fos.write("-----BEGIN CERTIFICATE REQUEST-----\n"
-                            .getBytes());
-                    fos.write(reqData.getBase64CertReq());
-                    fos.write("\n-----END CERTIFICATE REQUEST-----\n"
-                            .getBytes());
-
-                    workers.remove(worker);
-                    data.remove(row);
-                    row--;
-                    jTable1.revalidate();
-                }
-            } catch (EJBException ejbException) {
-                final Exception ex = ejbException.getCausedByException();
-                LOG.error(error, ex);
-                JOptionPane.showMessageDialog(this, error + ":\n"
-                        + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (CryptoTokenOfflineException ex) {
-                LOG.error("Error", ex);
-                JOptionPane.showMessageDialog(this, error + ":\n"
-                        + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (InvalidWorkerIdException ex) {
-                LOG.error("Error", ex);
-                JOptionPane.showMessageDialog(this, error + ":\n"
-                        + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (FileNotFoundException ex) {
-                LOG.error("Error", ex);
-                JOptionPane.showMessageDialog(this, error + ":\n"
-                        + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (IOException ex) {
-                LOG.error("Error", ex);
-                JOptionPane.showMessageDialog(this, error + ":\n"
-                        + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (Exception ex) {
-                System.out.println("Ex: " + ex);
-            } finally {
-                if (fos != null) {
-                    try {
-                        fos.close();
-                    } catch (IOException ex2) {
-                        LOG.error("Error closing file: " + filename, ex2);
-                    }
-                }
-            }
-        }
-
-        if (jTable1.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this,
-                    "Generated requests for all choosen signers.");
-            dispose();
-        }
+        
     }//GEN-LAST:event_jButtonGenerateActionPerformed
 
     public int showRequestsDialog() {
         setVisible(true);
         return resultCode;
+    }
+
+    @Action
+    public Task generateRequests() {
+        return new GenerateRequestsTask(Application.getInstance(
+                SignServerAdminGUIApplication.class));
+    }
+
+    private class GenerateRequestsTask extends Task<String, Void> {
+        GenerateRequestsTask(final Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to GenerateRequestsTask fields, here.
+            super(app);
+        }
+        @Override protected String doInBackground() {
+            // Your Task's code here.  This method runs
+            // on a background thread, so don't reference
+            // the Swing GUI from here.
+            resultCode = OK;
+
+            final StringBuilder sb = new StringBuilder();
+            for (int row = 0; row < data.size(); row++) {
+                final Worker worker = workers.get(row);
+                final int workerid = worker.getWorkerId();
+                final String sigAlg =  (String) data.get(row).get(1);
+                final String dn = (String) data.get(row).get(2);
+                final String filename = (String) data.get(row).get(3);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("worker=" + workerid + ", dn=" + dn
+                            + ", sigAlg=" + sigAlg + ", filename=" + filename);
+                }
+
+                FileOutputStream fos = null;
+                try {
+                    final PKCS10CertReqInfo certReqInfo
+                            = new PKCS10CertReqInfo(sigAlg, dn, null);
+                    final Base64SignerCertReqData reqData =
+                        (Base64SignerCertReqData) SignServerAdminGUIApplication
+                            .getWorkerSession()
+                            .getCertificateRequest(workerid, certReqInfo);
+                    if (reqData == null) {
+                        final String error =
+                            "Unable to generate certificate request for signer "
+                            + workerid;
+                        LOG.error(error);
+                        sb.append(error);
+                        sb.append("\n");
+                    } else {
+                        fos = new FileOutputStream(filename);
+                        fos.write("-----BEGIN CERTIFICATE REQUEST-----\n"
+                                .getBytes());
+                        fos.write(reqData.getBase64CertReq());
+                        fos.write("\n-----END CERTIFICATE REQUEST-----\n"
+                                .getBytes());
+
+                        workers.remove(worker);
+                        data.remove(row);
+                        row--;
+                        jTable1.revalidate();
+                    }
+                } catch (EJBException ejbException) {
+                    final Exception ex = ejbException.getCausedByException();
+                    final String error = "Error generating request for signer "
+                        + workerid;
+                    LOG.error(error, ex);
+                    sb.append(error);
+                    sb.append(":\n" + ex.getMessage());
+                    sb.append("\n");
+                } catch (CryptoTokenOfflineException ex) {
+                    final String error = "Error generating request for signer "
+                        + workerid + ":\n" + ex.getMessage();
+                    LOG.error(error, ex);
+                    sb.append(error);
+                    sb.append("\n");
+                } catch (InvalidWorkerIdException ex) {
+                    final String error = "Error generating request for signer "
+                        + workerid + ":\n" + ex.getMessage();
+                    LOG.error(error, ex);
+                    sb.append(error);
+                    sb.append("\n");
+                } catch (FileNotFoundException ex) {
+                    final String error = "Error generating request for signer "
+                        + workerid + ":\n" + ex.getMessage();
+                    LOG.error(error, ex);
+                    sb.append(error);
+                    sb.append("\n");
+                } catch (IOException ex) {
+                    final String error = "Error generating request for signer "
+                        + workerid + ":\n" + ex.getMessage();
+                    LOG.error(error, ex);
+                    sb.append(error);
+                    sb.append("\n");
+                } catch (Exception ex) {
+                    final String error = "Error generating request for signer "
+                        + workerid + ":\n" + ex.getMessage();
+                    LOG.error(error, ex);
+                    sb.append(error);
+                    sb.append("\n");
+                } finally {
+                    if (fos != null) {
+                        try {
+                            fos.close();
+                        } catch (IOException ex2) {
+                            LOG.error("Error closing file: " + filename, ex2);
+                        }
+                    }
+                }
+            }
+
+            return sb.toString();  // return your result
+        }
+        @Override protected void succeeded(final String result) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+            if (result.length() > 0) {
+                JOptionPane.showMessageDialog(GenerateRequestsDialog.this,
+                        result, "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            if (data.size() == 0) {
+                JOptionPane.showMessageDialog(GenerateRequestsDialog.this,
+                        "Generated requests for all choosen signers.");
+                dispose();
+            }
+        }
     }
 
 

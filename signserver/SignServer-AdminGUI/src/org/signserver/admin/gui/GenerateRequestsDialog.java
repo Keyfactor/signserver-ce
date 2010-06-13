@@ -12,7 +12,9 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import java.awt.Component;
 import java.awt.Frame;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,10 +23,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 import javax.ejb.EJBException;
+import javax.swing.AbstractListModel;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
@@ -36,8 +42,11 @@ import org.jdesktop.application.Application;
 import org.jdesktop.application.Task;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericSignRequest;
+import org.signserver.common.GenericSignResponse;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.RequestContext;
 
 /**
  * Dialog for generating certificate requests.
@@ -79,11 +88,14 @@ public class GenerateRequestsDialog extends JDialog {
 
     private List<Worker> workers;
 
-    /** Creates new form GenerateRequestsDialog */
+    private List<Worker> signers;
+
+    /** Creates new form GenerateRequestsDialog. */
     public GenerateRequestsDialog(final Frame parent, final boolean modal,
-            final List<Worker> workers) {
+            final List<Worker> workers, final List<Worker> signers) {
         super(parent, modal);
         this.workers = new ArrayList<Worker>(workers);
+        this.signers = signers;
         sigAlgComboBox.setEditable(true);
         initComponents();
         setTitle("Generate CSRs for " + workers.size() + " signers");
@@ -141,6 +153,44 @@ public class GenerateRequestsDialog extends JDialog {
         jTable1.getColumn("Signature algorithm").setCellEditor(
                 comboBoxFieldEditor);
         jTable1.getColumn("DN").setCellEditor(textFieldEditor);
+
+
+        signersComboBox.setRenderer(new DefaultListCellRenderer() {
+
+            @Override
+            public Component getListCellRendererComponent(final JList list,
+                    Object value, final int index, final boolean isSelected,
+                    final boolean cellHasFocus) {
+                if (value instanceof Worker) {
+                    final Worker worker = (Worker) value;
+                    value = worker.getName()
+                            + " (" + worker.getWorkerId() + ")";
+                }
+                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            }
+
+        });
+        signersComboBox.setModel(new SignersComboBoxModel(signers));
+
+        // Find and select first matching REQUESTSIGNER
+        Worker selectedSigner = null;
+        loop1: for (Worker worker : workers) {
+            final String requestSigner = (String) worker.getConfiguration()
+                    .get("REQUESTSIGNER");
+            for (Worker signer : signers) {
+                if (signer.getName().equals(requestSigner)) {
+                    selectedSigner = signer;
+                    break loop1;
+                }
+            }
+        }
+        if (selectedSigner == null) {
+            standardFormatRadioButton.setSelected(true);
+        } else {
+            signersComboBox.setSelectedItem(selectedSigner);
+            signedFormatRadioButton.setSelected(true);
+        }
+        radioButtonsStateChanged(null);
     }
 
     /** This method is called from within the constructor to
@@ -152,10 +202,15 @@ public class GenerateRequestsDialog extends JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jButton2 = new javax.swing.JButton();
         jButtonGenerate = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        standardFormatRadioButton = new javax.swing.JRadioButton();
+        signedFormatRadioButton = new javax.swing.JRadioButton();
+        signersComboBox = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
@@ -173,7 +228,6 @@ public class GenerateRequestsDialog extends JDialog {
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(GenerateRequestsDialog.class, this);
         jButtonGenerate.setAction(actionMap.get("generateRequests")); // NOI18N
         jButtonGenerate.setText(resourceMap.getString("jButtonGenerate.text")); // NOI18N
-        jButtonGenerate.setEnabled(false);
         jButtonGenerate.setName("jButtonGenerate"); // NOI18N
         jButtonGenerate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -212,6 +266,55 @@ public class GenerateRequestsDialog extends JDialog {
         jTable1.setName("jTable1"); // NOI18N
         jScrollPane1.setViewportView(jTable1);
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceMap.getString("jPanel1.border.title"))); // NOI18N
+        jPanel1.setName("jPanel1"); // NOI18N
+
+        buttonGroup1.add(standardFormatRadioButton);
+        standardFormatRadioButton.setSelected(true);
+        standardFormatRadioButton.setText(resourceMap.getString("standardFormatRadioButton.text")); // NOI18N
+        standardFormatRadioButton.setName("standardFormatRadioButton"); // NOI18N
+        standardFormatRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                radioButtonsStateChanged(evt);
+            }
+        });
+
+        buttonGroup1.add(signedFormatRadioButton);
+        signedFormatRadioButton.setText(resourceMap.getString("signedFormatRadioButton.text")); // NOI18N
+        signedFormatRadioButton.setName("signedFormatRadioButton"); // NOI18N
+        signedFormatRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                radioButtonsStateChanged(evt);
+            }
+        });
+
+        signersComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        signersComboBox.setName("signersComboBox"); // NOI18N
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(standardFormatRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(signedFormatRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(signersComboBox, 0, 194, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(standardFormatRadioButton)
+                    .addComponent(signedFormatRadioButton)
+                    .addComponent(signersComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -220,6 +323,7 @@ public class GenerateRequestsDialog extends JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 855, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -230,7 +334,9 @@ public class GenerateRequestsDialog extends JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonGenerate)
@@ -257,6 +363,10 @@ public class GenerateRequestsDialog extends JDialog {
         
     }//GEN-LAST:event_jButtonGenerateActionPerformed
 
+    private void radioButtonsStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_radioButtonsStateChanged
+        signersComboBox.setEnabled(signedFormatRadioButton.isSelected());
+    }//GEN-LAST:event_radioButtonsStateChanged
+
     public int showRequestsDialog() {
         setVisible(true);
         return resultCode;
@@ -269,11 +379,22 @@ public class GenerateRequestsDialog extends JDialog {
     }
 
     private class GenerateRequestsTask extends Task<String, Void> {
+        
+        private Worker signer;
+
         GenerateRequestsTask(final Application app) {
             // Runs on the EDT.  Copy GUI state that
             // doInBackground() depends on from parameters
             // to GenerateRequestsTask fields, here.
             super(app);
+            if (signedFormatRadioButton.isSelected()) {
+                final Object o = signersComboBox.getSelectedItem();
+                if (o instanceof Worker) {
+                    signer = (Worker) o;
+                } else {
+                    cancel(false);
+                }
+            }
         }
         @Override protected String doInBackground() {
             // Your Task's code here.  This method runs
@@ -310,12 +431,30 @@ public class GenerateRequestsDialog extends JDialog {
                         sb.append(error);
                         sb.append("\n");
                     } else {
+
+                        final ByteArrayOutputStream bout
+                                = new ByteArrayOutputStream();
+                        bout.write("-----BEGIN CERTIFICATE REQUEST-----\n"
+                                .getBytes());
+                        bout.write(reqData.getBase64CertReq());
+                        bout.write("\n-----END CERTIFICATE REQUEST-----\n"
+                                .getBytes());
+
+                        byte[] fileContent;
+                        if (signer == null) {
+                            fileContent = bout.toByteArray();
+                        } else {
+                            final GenericSignResponse response =
+                                    (GenericSignResponse)
+                                    SignServerAdminGUIApplication
+                            .getWorkerSession().process(signer.getWorkerId(),
+                                    new GenericSignRequest(1,
+                                    bout.toByteArray()), new RequestContext());
+                            fileContent = response.getProcessedData();
+                        }
+
                         fos = new FileOutputStream(filename);
-                        fos.write("-----BEGIN CERTIFICATE REQUEST-----\n"
-                                .getBytes());
-                        fos.write(reqData.getBase64CertReq());
-                        fos.write("\n-----END CERTIFICATE REQUEST-----\n"
-                                .getBytes());
+                        fos.write(fileContent);
 
                         workers.remove(worker);
                         data.remove(row);
@@ -390,10 +529,51 @@ public class GenerateRequestsDialog extends JDialog {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButtonGenerate;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JRadioButton signedFormatRadioButton;
+    private javax.swing.JComboBox signersComboBox;
+    private javax.swing.JRadioButton standardFormatRadioButton;
     // End of variables declaration//GEN-END:variables
+
+    private static class SignersComboBoxModel extends AbstractListModel 
+            implements ComboBoxModel {
+
+        private List<Worker> items;
+        private Object selectedItem;
+
+        public SignersComboBoxModel(List<Worker> items) {
+            this.items = items;
+        }
+
+        @Override
+        public int getSize() {
+            return items.size();
+        }
+
+        @Override
+        public Object getElementAt(int index) {
+            return items.get(index);
+        }
+
+        @Override
+        public void setSelectedItem(Object anItem) {
+            if ((selectedItem != null && !selectedItem.equals(anItem)) ||
+                selectedItem == null && anItem != null) {
+                selectedItem = anItem;
+                fireContentsChanged(this, -1, -1);
+            }
+        }
+
+        @Override
+        public Object getSelectedItem() {
+            return selectedItem;
+        }
+        
+    }
 
 }

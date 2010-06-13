@@ -1780,7 +1780,7 @@ public class MainView extends FrameView {
 
         if (selectedWorkers.size() > 0) {
             GenerateRequestsDialog dlg = new GenerateRequestsDialog(getFrame(),
-                    true, selectedWorkers);
+                    true, selectedWorkers, allWorkers);
             if (dlg.showRequestsDialog() == GenerateRequestsDialog.OK) {
                 getContext().getTaskService().execute(refreshWorkers());
             }

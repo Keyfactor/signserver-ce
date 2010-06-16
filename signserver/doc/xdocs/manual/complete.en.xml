@@ -2055,7 +2055,7 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.PKCS11C
                     </subsubsection>
                     <subsubsection name="Available Properties">
                         <p>
-<b>DEFAULTKEY</b> =   Hash value of the signing key on the card. (Required)
+<b>DEFAULTKEY</b> =   The key alias. (Required)
                         </p>
                         <p>
 <b>PIN</b> =   Authentication code for activation. (Required)

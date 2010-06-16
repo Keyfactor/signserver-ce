@@ -2064,7 +2064,7 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.PKCS11C
 <b>SHAREDLIBRARY</b> =   Full path to the library containing the PKCS11 interface. (Required)
                         </p>
                         <p>
-<b>SLOT</b> =   Slot to use (Required)
+<b>SLOT</b> or <b>SLOTLISTINDEX</b> =   Slot number or the index of the slot to use. (Required and only one of them can be used.)
                         </p>
                         <p>
 <b>ATTRIBUTESFILE</b> = Path to file with PKCS#11 attributes used for key generation.

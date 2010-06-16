@@ -448,6 +448,8 @@ OS version                          = ${os.version}
         	<fileset dir="${docs.src}" includes="**/*.css,**/*.png,**/*.jpg,**/*.gif"/>        	
         	<fileset dir="${docs.src}" includes="docs/**/*"/>
         </copy>
+    	<echo message=""/>
+    	<echo message="Local documentation is now available in file://${docs.dest}/index.html"/>
     </target>
     
     <target name="site:test:publish" depends="doc" description="Publish the website to the sandbox subdirectory.">

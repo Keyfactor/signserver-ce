@@ -1309,7 +1309,7 @@ Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, R
 <b>ACCURACYSECONDS</b> = Accuracy in seconds. Only decimal number format, only one of the accuracy properties should be set (OPTIONAL)
                         </p>
                         <p>
-<b>ORDERING</b> = The ordering (OPTIONAL), default false.
+<b>ORDERING</b> = The ordering (OPTIONAL), default false. Only false is supported.
                         </p>
                         <p>
 <b>TSA</b> = General name of the Time Stamp Authority. (OPTIONAL)

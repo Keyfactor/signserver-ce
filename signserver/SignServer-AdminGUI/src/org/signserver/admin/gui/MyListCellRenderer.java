@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicHTML;
@@ -98,7 +99,7 @@ public class MyListCellRenderer extends javax.swing.JPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(listItemLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                         .addComponent(listItemLabel2))
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -119,15 +120,27 @@ public class MyListCellRenderer extends javax.swing.JPanel
         Color bg = null;
         Color fg = null;
 
+        
         if (isSelected) {
-            setBackground(bg == null ? list.getSelectionBackground() : bg);
-            setForeground(fg == null ? list.getSelectionForeground() : fg);
-        }
-        else {
-            setBackground(list.getBackground());
-            setForeground(list.getForeground());
+            if (bg == null) {
+                bg = list.getSelectionBackground();
+            }
+            if (fg == null) {
+                fg = list.getSelectionForeground();
+            }
+        } else {
+            if (bg == null) {
+                bg = list.getBackground();
+            }
+            if (fg == null) {
+                fg = list.getForeground();
+            }
         }
 
+        setBackground(bg);
+        setForeground(fg);
+        listItemLabel1.setForeground(fg);
+        listItemLabel2.setForeground(fg);
 //        if (value instanceof Icon) {
 //            setIcon((Icon)value);
 //            setText("");

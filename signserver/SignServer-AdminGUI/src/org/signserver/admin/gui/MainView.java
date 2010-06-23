@@ -1441,6 +1441,10 @@ public class MainView extends FrameView {
                     workerInfo.add(status.isOK() == null ? "OK" : status.isOK());
                 } catch (InvalidWorkerIdException ex) {
                     workerInfo.add("Invalid");
+                } catch (Exception ex) {
+                    workerInfo.add("Error");
+                    LOG.error("Error getting status for worker " + workerId,
+                            ex);
                 }
 
                 workerInfo.add(workerId);
@@ -1479,6 +1483,11 @@ public class MainView extends FrameView {
                 } catch (InvalidWorkerIdException ex) {
                     statusSummary = "No such worker";
                     tokenStatus = "Unknown";
+                } catch (Exception ex) {
+                    statusSummary = "Error getting status";
+                    tokenStatus = "Unknown";
+                    LOG.error("Error getting status for worker " + workerId,
+                            ex);
                 }
 
                 Date notBefore = null;

@@ -36,6 +36,9 @@ public interface IAuthorizer {
     /** Log entry for username (if supported) for the authorized user. */
     String LOG_USERNAME = "AUTHORIZED_USERNAME";
 
+    /** Log entry for authorized remote address. */
+    String LOG_REMOTEADDRESS = "AUTHORIZED_ADDRESS";
+
 	/**
 	 * Method called by the worker upon first call to the authenticator after instantiation.
 	 * 

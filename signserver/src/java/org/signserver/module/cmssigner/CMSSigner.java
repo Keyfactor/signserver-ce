@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.xml.crypto.dsig.SignatureMethod;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.cms.CMSException;
@@ -125,8 +124,9 @@ public class CMSSigner extends BaseSigner {
                     CMSSignedDataGenerator.DIGEST_SHA1);
             generator.addCertificatesAndCRLs(CertStore.getInstance("Collection",
                     new CollectionCertStoreParameters(certs), "BC"));
-            CMSProcessable content = new CMSProcessableByteArray(data);
-            CMSSignedData signedData = generator.generate(content, true, "BC");
+            final CMSProcessable content = new CMSProcessableByteArray(data);
+            final CMSSignedData signedData = generator.generate(content, true,
+                    getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
 
             final byte[] signedbytes = signedData.getEncoded();
 

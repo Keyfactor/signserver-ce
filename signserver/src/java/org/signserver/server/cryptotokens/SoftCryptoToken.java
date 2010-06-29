@@ -222,7 +222,7 @@ public class SoftCryptoToken implements ICryptoToken {
      * before the request is generated. The new keys aren't activated until reload is issued.
      * 
      */
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {				
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info, final boolean defaultKey) throws CryptoTokenOfflineException {
 		Base64SignerCertReqData retval = null;
 		
 		try {

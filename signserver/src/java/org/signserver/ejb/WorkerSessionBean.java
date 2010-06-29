@@ -798,7 +798,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 	/* (non-Javadoc)
 	 * @see org.signserver.ejb.interfaces.IWorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
 	 */
-	public ICertReqData getCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws		
+	public ICertReqData getCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo) throws
+                CryptoTokenOfflineException, InvalidWorkerIdException {
+		return getCertificateRequest(signerId, certReqInfo, true);
+	}
+
+        /* (non-Javadoc)
+	 * @see org.signserver.ejb.interfaces.IWorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo, boolean)
+	 */
+	public ICertReqData getCertificateRequest(final int signerId,
+                final ISignerCertReqInfo certReqInfo,
+                final boolean defaultKey) throws
 		CryptoTokenOfflineException, InvalidWorkerIdException {
 		if (log.isTraceEnabled()) {
 			log.trace(">getCertificateRequest: signerId="+signerId);
@@ -807,7 +817,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 			if(worker == null){
 				throw new InvalidWorkerIdException("Given SignerId " + signerId + " doesn't exist");
 			}
-			
+
 	        if(!(worker instanceof IProcessable)){
 	        	throw new InvalidWorkerIdException("Worker exists but isn't a signer.");
 	        }
@@ -815,8 +825,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
 			if (log.isDebugEnabled()) {
 				log.debug("Found processable worker of type: "+processable.getClass().getName());
 			}
-			
-			ICertReqData ret = processable.genCertificateRequest(certReqInfo);
+
+			ICertReqData ret = processable.genCertificateRequest(certReqInfo, defaultKey);
 			if (log.isTraceEnabled()) {
 				log.trace("<getCertificateRequest: signerId="+signerId);
 			}

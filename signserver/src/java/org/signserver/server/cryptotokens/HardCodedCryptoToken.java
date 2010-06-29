@@ -237,7 +237,7 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	/**
 	 * Method not supported
 	 */
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info, final boolean defaultKey) throws CryptoTokenOfflineException {
 		return null;
 	}
 

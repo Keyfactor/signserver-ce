@@ -288,7 +288,7 @@ public class KeystoreCryptoToken implements ICryptoToken {
     /**
      * Method not supported
      */
-    public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
+    public ICertReqData genCertificateRequest(final ISignerCertReqInfo info, final boolean defaultKey) throws CryptoTokenOfflineException {
         LOG.error("genCertificateRequest was called, but is not supported for this sign token.");
         return null;
     }

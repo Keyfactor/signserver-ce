@@ -171,6 +171,19 @@ public interface IWorkerSession {
             InvalidWorkerIdException;
 
     /**
+     * Method used to let a signer generate a certificate request
+     * using the signers own genCertificateRequest method.
+     *
+     * @param signerId id of the signer
+     * @param certReqInfo information used by the signer to create the request
+     * @param defaultKey true if the default key should be used otherwise for
+     * instance use next key.
+     */
+    ICertReqData getCertificateRequest(int signerId,
+            ISignerCertReqInfo certReqInfo, boolean defaultKey)
+                throws CryptoTokenOfflineException, InvalidWorkerIdException;
+
+    /**
      * Method returning the current signing certificate for the signer.
      * @param signerId Id of signer
      * @return Current signing certificate if the worker is a signer and it has

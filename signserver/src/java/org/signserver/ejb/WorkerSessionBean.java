@@ -996,6 +996,16 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     public ICertReqData getCertificateRequest(int signerId,
             ISignerCertReqInfo certReqInfo) throws
             CryptoTokenOfflineException, InvalidWorkerIdException {
+        return getCertificateRequest(signerId, certReqInfo, true);
+    }
+
+    /* (non-Javadoc)
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
+     */
+    public ICertReqData getCertificateRequest(int signerId,
+            ISignerCertReqInfo certReqInfo, 
+            final boolean defaultKey) throws
+            CryptoTokenOfflineException, InvalidWorkerIdException {
         if (LOG.isTraceEnabled()) {
             LOG.trace(">getCertificateRequest: signerId=" + signerId);
         }
@@ -1017,7 +1027,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     getClass().getName());
         }
 
-        ICertReqData ret = processable.genCertificateRequest(certReqInfo);
+        ICertReqData ret = processable.genCertificateRequest(certReqInfo,
+                defaultKey);
         if (LOG.isTraceEnabled()) {
             LOG.trace("<getCertificateRequest: signerId=" + signerId);
         }

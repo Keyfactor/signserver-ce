@@ -42,6 +42,12 @@ public interface ICryptoToken {
 	public static final int PURPOSE_SIGN = 1;
 	public static final int PURPOSE_DECRYPT = 2;
 	
+        /** 
+         * Indicating the next key. Property: "nextCertSignKey".
+         * @see org.ejbca.core.model.SecConst#CAKEYPURPOSE_CERTSIGN_NEXT
+         */
+        int PURPOSE_NEXTKEY = 7;
+	
 	public static final int PROVIDERUSAGE_SIGN    = 1;
 	public static final int PROVIDERUSAGE_DECRYPT = 2;
 
@@ -128,7 +134,7 @@ public interface ICryptoToken {
 	/**
 	 * Method used to tell the crypto token to create a certificate request using its crypto token.
 	 */
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException;
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean defaultKey) throws CryptoTokenOfflineException;
 	
 	/**
 	 * Method used to remove a key in the signer that shouldn't be used any more

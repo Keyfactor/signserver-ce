@@ -47,7 +47,7 @@ import org.signserver.common.PKCS10CertReqInfo;
       * @throws ErrorAdminCommandException Error running command
       */
      protected void execute(String hostname, String[] resources) throws IllegalAdminCommandException, ErrorAdminCommandException {
-         if (args.length != 5){
+         if (args.length != 5 && args.length != 6) {
              throw new IllegalAdminCommandException( resources[HELP]);
          }
          try{
@@ -56,6 +56,16 @@ import org.signserver.common.PKCS10CertReqInfo;
         	 final String dn= args[2];
         	 final String sigAlg =  args[3];
         	 final String filename = args[4];
+                 final boolean defaultKey;
+                 if (args.length > 5) {
+                     if ("-nextkey".equals(args[5])) {
+                         defaultKey = false;
+                     } else {
+                        throw new IllegalAdminCommandException( resources[HELP]);
+                     }
+                 } else {
+                     defaultKey = true;
+                 }
         	 
         	 int id = 0;
 
@@ -70,7 +80,7 @@ import org.signserver.common.PKCS10CertReqInfo;
         	 }
 
         	 PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg,dn,null);
-        	 Base64SignerCertReqData reqData = (Base64SignerCertReqData) getCommonAdminInterface(hostname).genCertificateRequest(id, certReqInfo);
+        	 Base64SignerCertReqData reqData = (Base64SignerCertReqData) getCommonAdminInterface(hostname).genCertificateRequest(id, certReqInfo, defaultKey);
         	 if (reqData == null) {
         		 throw new Exception("Base64SignerCertReqData returned was null. Unable to generate certificate request.");
         	 }
@@ -90,8 +100,9 @@ import org.signserver.common.PKCS10CertReqInfo;
      }
      
      public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
-     	String[] resources =  {"Usage: signserver generatecertreq <-host hostname (optional)> <workerid> <dn> <signature algorithm>  <cert-req-filename>\n" +
-                               "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem\n\n",
+     	String[] resources =  {"Usage: signserver generatecertreq <-host hostname (optional)> <workerid> <dn> <signature algorithm>  <cert-req-filename> [-nextkey]\n" +
+                               "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem\n"
+                               + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem -nextkey\n\n",
                                "Error: No worker with the given name could be found",
                                "PKCS10 Request successfully written to file "};
          execute(hostname,resources);   

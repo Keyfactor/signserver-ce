@@ -193,14 +193,17 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#genCertificateRequest(int, ISignerCertReqInfo)
 	 */
 	public ICertReqData genCertificateRequest(int signerId,
-			ISignerCertReqInfo certReqInfo) throws CryptoTokenOfflineException,
+			ISignerCertReqInfo certReqInfo, 
+                        final boolean defaultKey)
+                            throws CryptoTokenOfflineException,
 			InvalidWorkerIdException, RemoteException {
 		ICertReqData retval = null;
 		if(isMailSignerMode()){
 			retval = getIMailSignerRMI().genCertificateRequest(signerId, certReqInfo);
 		}
 		if(isSignServerMode()){
-			retval = getWorkerSession().getCertificateRequest(signerId, certReqInfo);		
+			retval = getWorkerSession().getCertificateRequest(
+                                signerId, certReqInfo, defaultKey);	
 		}
 		return retval;
 	}

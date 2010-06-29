@@ -25,6 +25,7 @@ import java.security.cert.Certificate;
 import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -92,6 +93,10 @@ public abstract class CryptoTokenBase implements ICryptoToken{
                 prop = props.getProperty("ATTRIBUTESFILE");
 		if (prop != null) {
 			props.setProperty("attributesFile", prop);
+		}
+                prop = props.getProperty("NEXTCERTSIGNKEY");
+		if (prop != null) {
+			props.setProperty("nextCertSignKey", prop);
 		}
 		return props;
 	}
@@ -182,13 +187,18 @@ public abstract class CryptoTokenBase implements ICryptoToken{
 	}
 
 	
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info, final boolean defaultKey) throws CryptoTokenOfflineException {
 		Base64SignerCertReqData retval = null;
 		if(info instanceof PKCS10CertReqInfo){
 			PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info; 
 			PKCS10CertificationRequest pkcs10;
+                        final int purpose = defaultKey
+                                ? PURPOSE_SIGN : PURPOSE_NEXTKEY;
+                        if (log.isDebugEnabled()) {
+                            log.debug("Purpose: " + purpose);
+                        }
 			try {
-				pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(),CertTools.stringToBcX509Name(reqInfo.getSubjectDN()),getPublicKey(PURPOSE_SIGN),reqInfo.getAttributes(),getPrivateKey(PURPOSE_SIGN),getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+				pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(),CertTools.stringToBcX509Name(reqInfo.getSubjectDN()),getPublicKey(purpose),reqInfo.getAttributes(),getPrivateKey(purpose),getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
 				retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
 			} catch (InvalidKeyException e) {
 				log.error(e);

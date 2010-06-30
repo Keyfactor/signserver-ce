@@ -49,11 +49,16 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
     public static final int CANCEL = 0;
     public static final int OK = 1;
 
-    private static Vector<String> columnNames = new Vector<String>();
+    private static final String NEXT_KEY = "Next key";
+    private static final String DEFAULT_KEY = "Default key";
+
+    @SuppressWarnings("UseOfObsoleteCollectionType")
+    private static final Vector<String> COLUMN_NAMES = new Vector<String>();
     static {
-        columnNames.add("Signer");
-        columnNames.add("Signer certificate");
-        columnNames.add("Certificate chain");
+        COLUMN_NAMES.add("Signer");
+        COLUMN_NAMES.add("Key");
+        COLUMN_NAMES.add("Signer certificate");
+        COLUMN_NAMES.add("Certificate chain");
     };
 
     private int resultCode = CANCEL;
@@ -73,11 +78,16 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             Worker signer = signers.get(row);
             Vector<String> cols = new Vector<String>();
             cols.add(signer.getName() + " (" + signer.getWorkerId() + ")");
+            if (signer.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
+                cols.add(NEXT_KEY);
+            } else {
+                cols.add(DEFAULT_KEY);
+            }
             cols.add("");
             cols.add("");
             data.add(cols);
         }
-        jTable1.setModel(new DefaultTableModel(data, columnNames) {
+        jTable1.setModel(new DefaultTableModel(data, COLUMN_NAMES) {
 
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -91,8 +101,8 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             public void tableChanged(final TableModelEvent e) {
                 boolean enable = true;
                 for (int row = 0; row < jTable1.getRowCount(); row++) {
-                    if ("".equals(jTable1.getValueAt(row, 1))
-                            || "".equals(jTable1.getValueAt(row, 2))) {
+                    if ("".equals(jTable1.getValueAt(row, 2))
+                            || "".equals(jTable1.getValueAt(row, 3))) {
                         enable = false;
                         break;
                     }
@@ -243,13 +253,16 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             for (int row = 0; row < data.size(); row++) {
                 final Worker signer = signers.get(row);
                 final int workerid = signer.getWorkerId();
+                final String key = (String) data.get(row).get(1);
+                final File signerCertFile = new File(data.get(row).get(2));
+                final File signerChainFile = new File(data.get(row).get(3));
 
-                final File signerCertFile = new File(data.get(row).get(1));
-                final File signerChainFile = new File(data.get(row).get(2));
+                final boolean defaultKey= DEFAULT_KEY.equals(key);
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("signer=" + workerid + "cert=\"" + signerCertFile
-                        + "\", signerChainFile=\"" + signerChainFile + "\"");
+                        + "\", signerChainFile=\"" + signerChainFile + "\""
+                        + ", defaultKey=" + defaultKey);
                 }
 
                 try {
@@ -305,6 +318,21 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                         SignServerAdminGUIApplication.getWorkerSession()
                                 .uploadSignerCertificate(workerid, signerCert,
                                 scope);
+                        // Set DEFAULTKEY to NEXTCERTSIGNKEY
+                        if (defaultKey) {
+                            LOG.debug("Uploaded was for DEFAULTKEY");
+                        } else if (!defaultKey) {
+                            LOG.debug("Uploaded was for NEXTCERTSIGNKEY");
+                            final String nextCertSignKey
+                                    = signer.getConfiguration()
+                                        .getProperty("NEXTCERTSIGNKEY");
+                           SignServerAdminGUIApplication.getWorkerSession()
+                                   .setWorkerProperty(workerid, "DEFAULTKEY",
+                                   nextCertSignKey);
+                           SignServerAdminGUIApplication.getWorkerSession()
+                                   .removeWorkerProperty(workerid,
+                                   "NEXTCERTSIGNKEY");
+                        }
                         SignServerAdminGUIApplication.getWorkerSession()
                                 .reloadConfiguration(workerid);
 

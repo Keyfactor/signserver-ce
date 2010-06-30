@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import java.awt.Component;
 import java.awt.Frame;
 import java.security.KeyStoreException;
 import java.util.ArrayList;
@@ -21,10 +22,12 @@ import java.util.List;
 import java.util.Vector;
 import javax.ejb.EJBException;
 import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -111,7 +114,27 @@ public class TestKeysDialog extends JDialog {
         final DefaultCellEditor textFieldEditor
                 = new DefaultCellEditor(new JTextField());
         final DefaultCellEditor comboBoxFieldEditor
-                = new DefaultCellEditor(aliasComboBox);
+                = new DefaultCellEditor(aliasComboBox) {
+
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+
+                Worker worker = workers.get(row);
+                Vector<String> keys = new Vector<String>();
+                if (worker.getConfiguration().getProperty("NEXTCERTSIGNKEY")
+                        != null) {
+                    keys.add("Next key");
+                }
+                if (worker.getConfiguration().getProperty("DEFAULTKEY")
+                        != null) {
+                    keys.add("Default key");
+                }
+                aliasComboBox.setModel(new DefaultComboBoxModel(keys));
+                
+                return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+            }
+
+        };
         comboBoxFieldEditor.setClickCountToStart(1);
         textFieldEditor.setClickCountToStart(1);
 

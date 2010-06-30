@@ -424,8 +424,8 @@ public class RenewKeysDialog extends JDialog {
 
                             // Update key label
                             SignServerAdminGUIApplication.getWorkerSession()
-                                    .setWorkerProperty(signerId, "DEFAULTKEY",
-                                    newAlias);
+                                    .setWorkerProperty(signerId, 
+                                    "NEXTCERTSIGNKEY", newAlias);
 
                             // Reload configuration
                             SignServerAdminGUIApplication.getWorkerSession()

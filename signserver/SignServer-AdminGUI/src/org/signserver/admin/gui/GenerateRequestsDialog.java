@@ -65,10 +65,13 @@ public class GenerateRequestsDialog extends JDialog {
     private static final Vector<String> COLUMN_NAMES = new Vector(Arrays.asList(
             new String[] {
         "Signer",
+        "Key",
         "Signature algorithm",
         "DN",
         "Filename"
     }));
+    private static final String NEXT_KEY = "Next key";
+    private static final String DEFAULT_KEY = "Default key";
 
     private int resultCode = CANCEL;
 
@@ -86,10 +89,13 @@ public class GenerateRequestsDialog extends JDialog {
         "SHA1WithDSA"
     });
 
+    private JComboBox aliasComboBox = new JComboBox(new String[] {
+         NEXT_KEY, DEFAULT_KEY});
+
     private List<Worker> workers;
 
     private List<Worker> signers;
-
+   
     /** Creates new form GenerateRequestsDialog. */
     public GenerateRequestsDialog(final Frame parent, final boolean modal,
             final List<Worker> workers, final List<Worker> signers) {
@@ -104,6 +110,11 @@ public class GenerateRequestsDialog extends JDialog {
         for (Worker worker : workers) {
             Vector<String> cols = new Vector<String>();
             cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
+            if (worker.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
+                cols.add(NEXT_KEY);
+            } else {
+                cols.add(DEFAULT_KEY);
+            }
             cols.add(worker.getConfiguration().getProperty("SIGNATUREALGORITHM",
                     ""));
             cols.add(worker.getConfiguration().getProperty("REQUESTDN", ""));
@@ -129,9 +140,9 @@ public class GenerateRequestsDialog extends JDialog {
             public void tableChanged(final TableModelEvent e) {
                 boolean enable = true;
                 for (int row = 0; row < jTable1.getRowCount(); row++) {
-                    if ("".equals(jTable1.getValueAt(row, 1))
-                            || "".equals(jTable1.getValueAt(row, 2))
-                            || "".equals(jTable1.getValueAt(row, 3))) {
+                    if ("".equals(jTable1.getValueAt(row, 2))
+                            || "".equals(jTable1.getValueAt(row, 3))
+                            || "".equals(jTable1.getValueAt(row, 4))) {
                         enable = false;
                         break;
                     }
@@ -154,7 +165,11 @@ public class GenerateRequestsDialog extends JDialog {
                 comboBoxFieldEditor);
         jTable1.getColumn("DN").setCellEditor(textFieldEditor);
 
-
+        final DefaultCellEditor aliasComboBoxFieldEditor
+                = new DefaultCellEditor(aliasComboBox);
+        aliasComboBoxFieldEditor.setClickCountToStart(1);
+        jTable1.getColumn("Key").setCellEditor(aliasComboBoxFieldEditor);
+        
         signersComboBox.setRenderer(new DefaultListCellRenderer() {
 
             @Override
@@ -406,13 +421,18 @@ public class GenerateRequestsDialog extends JDialog {
             for (int row = 0; row < data.size(); row++) {
                 final Worker worker = workers.get(row);
                 final int workerid = worker.getWorkerId();
-                final String sigAlg =  (String) data.get(row).get(1);
-                final String dn = (String) data.get(row).get(2);
-                final String filename = (String) data.get(row).get(3);
+                final String key = (String) data.get(row).get(1);
+                final String sigAlg =  (String) data.get(row).get(2);
+                final String dn = (String) data.get(row).get(3);
+                final String filename = (String) data.get(row).get(4);
+
+                final boolean defaultKey= DEFAULT_KEY.equals(key);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("worker=" + workerid + ", dn=" + dn
-                            + ", sigAlg=" + sigAlg + ", filename=" + filename);
+                    LOG.debug("worker=" + workerid + ", key=" + key
+                            + ", dn=" + dn + ", sigAlg=" + sigAlg
+                            + ", filename=" + filename
+                            + ", defaultKey=" + defaultKey);
                 }
 
                 FileOutputStream fos = null;
@@ -422,7 +442,8 @@ public class GenerateRequestsDialog extends JDialog {
                     final Base64SignerCertReqData reqData =
                         (Base64SignerCertReqData) SignServerAdminGUIApplication
                             .getWorkerSession()
-                            .getCertificateRequest(workerid, certReqInfo);
+                            .getCertificateRequest(workerid, certReqInfo,
+                                defaultKey);
                     if (reqData == null) {
                         final String error =
                             "Unable to generate certificate request for signer "

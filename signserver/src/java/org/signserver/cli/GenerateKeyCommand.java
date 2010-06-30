@@ -45,7 +45,7 @@ public class GenerateKeyCommand extends BaseCommand {
         + "Leaving out keyspec will use the value in property KEYSPEC.\n"
         + "Leaving out authcode will prompt for it.\n"
         + "Example 1: signserver generatekey 71\n"
-        + "Example 2: signserver generatekey 71 -keyalg RSA -keyspec 2048"
+        + "Example 2: signserver generatekey 71 -keyalg RSA -keyspec 2048\n"
         + "Example 3: signserver generatekey 71 -keyalg RSA -keyspec 2048 -alias signKey2";
     
     static {

@@ -278,82 +278,83 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                         LOG.error(error);
                         errors.append(error);
                         errors.append("\n");
-                    }
-                    if (signerCerts.size() != 1) {
-                        final String warning =
-                                "Warning: More than one certificate "
-                                + "found in signer certificate file for signer "
-                                + workerid;
-                        LOG.warn(warning);
-                        warnings.append(warning);
-                        warnings.append("\n");
-                    }
-                    final X509Certificate signerCert
-                            = (X509Certificate) signerCerts.iterator().next();
+                    } else {
+                        if (signerCerts.size() != 1) {
+                            final String warning =
+                                    "Warning: More than one certificate "
+                                    + "found in signer certificate file for signer "
+                                    + workerid;
+                            LOG.warn(warning);
+                            warnings.append(warning);
+                            warnings.append("\n");
+                        }
+                        final X509Certificate signerCert
+                                = (X509Certificate) signerCerts.iterator().next();
 
-                    List<Certificate> signerChain;
+                        List<Certificate> signerChain;
 
-                    try {
-                        signerChain = (List) CertTools.getCertsFromPEM(
-                                signerChainFile.getAbsolutePath());
-                        if (signerChain.size() == 0) {
+                        try {
+                            signerChain = (List) CertTools.getCertsFromPEM(
+                                    signerChainFile.getAbsolutePath());
+                            if (signerChain.size() == 0) {
+                                final String error =
+                                    "Problem with certificate chain file for signer "
+                                    + workerid + ":\n" + "No certificates in file";
+                                LOG.error(error);
+                                errors.append(error);
+                                errors.append("\n");
+                            }
+
+                            if (signerChain.contains(signerCert)) {
+                                LOG.debug("Chain contains signercert");
+                            } else {
+                                LOG.debug("Adding signercert to chain");
+                                signerChain.add(0, signerCert);
+                            }
+
+                            SignServerAdminGUIApplication.getWorkerSession()
+                                    .uploadSignerCertificateChain(workerid,
+                                        signerChain, scope);
+                            SignServerAdminGUIApplication.getWorkerSession()
+                                    .uploadSignerCertificate(workerid, signerCert,
+                                    scope);
+                            // Set DEFAULTKEY to NEXTCERTSIGNKEY
+                            if (defaultKey) {
+                                LOG.debug("Uploaded was for DEFAULTKEY");
+                            } else if (!defaultKey) {
+                                LOG.debug("Uploaded was for NEXTCERTSIGNKEY");
+                                final String nextCertSignKey
+                                        = signer.getConfiguration()
+                                            .getProperty("NEXTCERTSIGNKEY");
+                               SignServerAdminGUIApplication.getWorkerSession()
+                                       .setWorkerProperty(workerid, "DEFAULTKEY",
+                                       nextCertSignKey);
+                               SignServerAdminGUIApplication.getWorkerSession()
+                                       .removeWorkerProperty(workerid,
+                                       "NEXTCERTSIGNKEY");
+                            }
+                            SignServerAdminGUIApplication.getWorkerSession()
+                                    .reloadConfiguration(workerid);
+
+                            signers.remove(signer);
+                            data.remove(row);
+                            row--;
+                            jTable1.revalidate();
+                        } catch (IOException ex) {
                             final String error =
                                 "Problem with certificate chain file for signer "
-                                + workerid + ":\n" + "No certificates in file";
-                            LOG.error(error);
-                            errors.append(error);
+                                + workerid;
+                            LOG.error(error, ex);
+                            errors.append(error + ":\n" + ex.getMessage());
+                            errors.append("\n");
+                        } catch (CertificateException ex) {
+                            final String error =
+                                "Problem with certificate chain file for signer "
+                                + workerid;
+                            LOG.error(error, ex);
+                            errors.append(error + ":\n" + ex.getMessage());
                             errors.append("\n");
                         }
-
-                        if (signerChain.contains(signerCert)) {
-                            LOG.debug("Chain contains signercert");
-                        } else {
-                            LOG.debug("Adding signercert to chain");
-                            signerChain.add(0, signerCert);
-                        }
-
-                        SignServerAdminGUIApplication.getWorkerSession()
-                                .uploadSignerCertificateChain(workerid,
-                                    signerChain, scope);
-                        SignServerAdminGUIApplication.getWorkerSession()
-                                .uploadSignerCertificate(workerid, signerCert,
-                                scope);
-                        // Set DEFAULTKEY to NEXTCERTSIGNKEY
-                        if (defaultKey) {
-                            LOG.debug("Uploaded was for DEFAULTKEY");
-                        } else if (!defaultKey) {
-                            LOG.debug("Uploaded was for NEXTCERTSIGNKEY");
-                            final String nextCertSignKey
-                                    = signer.getConfiguration()
-                                        .getProperty("NEXTCERTSIGNKEY");
-                           SignServerAdminGUIApplication.getWorkerSession()
-                                   .setWorkerProperty(workerid, "DEFAULTKEY",
-                                   nextCertSignKey);
-                           SignServerAdminGUIApplication.getWorkerSession()
-                                   .removeWorkerProperty(workerid,
-                                   "NEXTCERTSIGNKEY");
-                        }
-                        SignServerAdminGUIApplication.getWorkerSession()
-                                .reloadConfiguration(workerid);
-
-                        signers.remove(signer);
-                        data.remove(row);
-                        row--;
-                        jTable1.revalidate();
-                    } catch (IOException ex) {
-                        final String error =
-                            "Problem with certificate chain file for signer "
-                            + workerid;
-                        LOG.error(error, ex);
-                        errors.append(error + ":\n" + ex.getMessage());
-                        errors.append("\n");
-                    } catch (CertificateException ex) {
-                        final String error =
-                            "Problem with certificate chain file for signer "
-                            + workerid;
-                        LOG.error(error, ex);
-                        errors.append(error + ":\n" + ex.getMessage());
-                        errors.append("\n");
                     }
 
                 } catch (IOException ex) {

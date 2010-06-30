@@ -127,41 +127,43 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
 
         usages = new ArrayList<String>();
         boolean[] keyUsages = certificate.getKeyUsage();
-        // digitalSignature        (0),
-        if (keyUsages[0]) {
-            usages.add("digitalSignature");
-        }
-        // nonRepudiation          (1),
-        if (keyUsages[1]) {
-            usages.add("nonRepudiation");
-        }
-        // keyEncipherment         (2),
-        if (keyUsages[2]) {
-            usages.add("keyEncipherment");
-        }
-        // dataEncipherment        (3),
-        if (keyUsages[3]) {
-            usages.add("dataEncipherment");
-        }
-        // keyAgreement            (4),
-        if (keyUsages[4]) {
-            usages.add("keyAgreement");
-        }
-        // keyCertSign             (5),
-        if (keyUsages[5]) {
-            usages.add("keyCertSign");
-        }
-        // cRLSign                 (6),
-        if (keyUsages[6]) {
-            usages.add("cRLSign");
-        }
-        // encipherOnly            (7),
-        if (keyUsages[7]) {
-            usages.add("encipherOnly");
-        }
-        // decipherOnly
-        if (keyUsages[8]) {
-            usages.add("decipherOnly");
+        if (keyUsages != null) {
+            // digitalSignature        (0),
+            if (keyUsages[0]) {
+                usages.add("digitalSignature");
+            }
+            // nonRepudiation          (1),
+            if (keyUsages[1]) {
+                usages.add("nonRepudiation");
+            }
+            // keyEncipherment         (2),
+            if (keyUsages[2]) {
+                usages.add("keyEncipherment");
+            }
+            // dataEncipherment        (3),
+            if (keyUsages[3]) {
+                usages.add("dataEncipherment");
+            }
+            // keyAgreement            (4),
+            if (keyUsages[4]) {
+                usages.add("keyAgreement");
+            }
+            // keyCertSign             (5),
+            if (keyUsages[5]) {
+                usages.add("keyCertSign");
+            }
+            // cRLSign                 (6),
+            if (keyUsages[6]) {
+                usages.add("cRLSign");
+            }
+            // encipherOnly            (7),
+            if (keyUsages[7]) {
+                usages.add("encipherOnly");
+            }
+            // decipherOnly
+            if (keyUsages[8]) {
+                usages.add("decipherOnly");
+            }
         }
 
         try {
@@ -533,15 +535,19 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
             fields.add(new Field("Subject's Public Key",
                     new String(Hex.encode(certificate.getPublicKey()
                     .getEncoded()))));
-            for (String extensionOid
-                    : certificate.getCriticalExtensionOIDs()) {
-                fields.add(new Field("Critical extension: " + extensionOid,
-                        "<Not supported yet>"));
+            if (certificate.getCriticalExtensionOIDs() != null) {
+                for (String extensionOid
+                        : certificate.getCriticalExtensionOIDs()) {
+                    fields.add(new Field("Critical extension: " + extensionOid,
+                            "<Not supported yet>"));
+                }
             }
-            for (String extensionOid
-                    : certificate.getNonCriticalExtensionOIDs()) {
-                fields.add(new Field("Non critical extension: " + extensionOid,
-                        "<Not supported yet>"));
+            if (certificate.getNonCriticalExtensionOIDs() != null) {
+                for (String extensionOid
+                        : certificate.getNonCriticalExtensionOIDs()) {
+                    fields.add(new Field("Non critical extension: " + extensionOid,
+                            "<Not supported yet>"));
+                }
             }
             fields.add(new Field("Certificate Signature Algorithm",
                     String.valueOf(certificate.getSigAlgName())));

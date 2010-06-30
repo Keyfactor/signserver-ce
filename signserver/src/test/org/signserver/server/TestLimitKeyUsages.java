@@ -110,9 +110,13 @@ public class TestLimitKeyUsages extends TestCase {
     public void test01Limit() throws Exception {
 
         // Do a number of signings LIMIT
-        for (int i = 0; i < LIMIT; i++) {
-            LOG.debug("Signing " + i);
-            doSign();
+        try {
+            for (int i = 0; i < LIMIT; i++) {
+                LOG.debug("Signing " + i);
+                doSign();
+            }
+        } catch (CryptoTokenOfflineException ex) {
+            fail(ex.getMessage());
         }
 
         try {
@@ -120,6 +124,29 @@ public class TestLimitKeyUsages extends TestCase {
             fail("Should have failed now");
 
         } catch (CryptoTokenOfflineException ok) {}
+    }
+
+    public void test02NoIncreaseWhenOffline() throws Exception {
+
+        // ASSUMPTION: Key usages is now 10
+
+        // Increase key usage limit so we should be able to do two more signings
+        workSession.setWorkerProperty(WORKERID_1, "KEYUSAGELIMIT",
+                String.valueOf(LIMIT + 2));
+        workSession.reloadConfiguration(WORKERID_1);
+
+        // Do one signing just to see that it works
+        doSign();
+
+        // Make the signer offline and do one signing that should not increase
+        //counter, which means that after activating it again we should be able
+        //to do one more signing
+        workSession.deactivateSigner(WORKERID_1);
+        doSignOffline();
+
+        // Should be able to do one signing now
+        workSession.activateSigner(WORKERID_1, "foo123");
+        doSign();
     }
 
     /** Do a dummy sign. */
@@ -136,6 +163,24 @@ public class TestLimitKeyUsages extends TestCase {
         assertNotNull(cert);
     }
 
+    /** Do a dummy sign and expect failure. */
+    private static void doSignOffline() throws Exception {
+
+        try {
+            final RequestContext context = new RequestContext();
+            final GenericSignRequest request = new GenericSignRequest(1,
+                    "<root/>".getBytes());
+            GenericSignResponse res;
+            // Send request to dispatcher
+            res = (GenericSignResponse) workSession.process(WORKERID_1,
+                request, context);
+        } catch (CryptoTokenOfflineException ok) {
+            // OK
+        } catch (Exception ex) {
+            LOG.error("Signer offline but other exception", ex);
+            fail("Signer offline but other exception: " + ex.getMessage());
+        }
+    }
 
     public void test99TearDownDatabase() throws Exception {
 

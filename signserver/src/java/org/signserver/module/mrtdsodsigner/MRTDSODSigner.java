@@ -124,6 +124,11 @@ public class MRTDSODSigner extends BaseSigner {
         X509Certificate cert = (X509Certificate) getSigningCertificate();
         PrivateKey privKey = token.getPrivateKey(ICryptoToken.PURPOSE_SIGN);
         String provider = token.getProvider(ICryptoToken.PURPOSE_SIGN);
+
+        if (cert == null) {
+            throw new CryptoTokenOfflineException("No signing certificate");
+        }
+
         if (log.isDebugEnabled()) {
         	log.debug("Using signer certificate with subjectDN '"+CertTools.getSubjectDN(cert)+"', issuerDN '"+CertTools.getIssuerDN(cert)+", serNo "+CertTools.getSerialNumberAsString(cert));
         }

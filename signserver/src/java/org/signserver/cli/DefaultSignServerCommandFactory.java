@@ -211,7 +211,7 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
 	    	}else{
 	    		usageString +="| listauthorizedusers | addauthorizeduser | removeauthorizeduser ";
 	    	}
-	    	usageString +="| uploadsignercertificate | uploadsignercertificatechain | activatecryptotoken | deactivatecryptotoken | generatecertreq ";
+	    	usageString +="| uploadsignercertificate | uploadsignercertificatechain | activatecryptotoken | deactivatecryptotoken | generatecertreq | generatekey | testkey ";
 	    	if(CommonAdminInterface.isSignServerMode()){	
 	    		usageString +="| archive | groupkeyservice ";
 	    	}

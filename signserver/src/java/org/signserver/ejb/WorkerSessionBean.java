@@ -144,8 +144,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
         // Check if the signer has a signer certificate and if that certificate have ok validity and private key usage periods. 
         checkSignerValidity(workerId, awc);
 
-        // Check key usage limit
-        incrementAndCheckSignerKeyUsageCounter(processable, workerId, awc, em);
+        // Check key usage limit (preliminary check only)
+        checkSignerKeyUsageCounter(processable, workerId, awc, em, false);
     	
         Event event = StatisticsManager.startEvent(workerId, awc, em);
         requestContext.put(RequestContext.STATISTICS_EVENT, event);
@@ -217,6 +217,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
                         logLine.append("; ");
                     }
                 }
+
+                // Check key usage limit
+                checkSignerKeyUsageCounter(processable, workerId, awc, em, true);
 
                 // Write to log
                 log.info(logLine.toString());
@@ -459,8 +462,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
      * @param em
      * @throws CryptoTokenOfflineException
      */
-    private void incrementAndCheckSignerKeyUsageCounter(final IProcessable worker,
-            final int workerId, final WorkerConfig awc, EntityManager em)
+    private void checkSignerKeyUsageCounter(final IProcessable worker,
+            final int workerId, final WorkerConfig awc, EntityManager em,
+            final boolean increment)
         throws CryptoTokenOfflineException {
 
         // If the signer have a certificate, check that the usage of the key
@@ -489,22 +493,39 @@ public class WorkerSessionBean implements IWorkerSession.ILocal, IWorkerSession.
                         + "Key hash: " + keyHash);
             }
 
-            final Query updateQuery;
-            if (keyUsageLimit < 0) {
-                updateQuery = em.createQuery("UPDATE KeyUsageCounter w SET w.counter = w.counter + 1 WHERE w.keyHash = :keyhash");
+            if (increment) {
+                final Query updateQuery;
+                if (keyUsageLimit < 0) {
+                    updateQuery = em.createQuery("UPDATE KeyUsageCounter w SET w.counter = w.counter + 1 WHERE w.keyHash = :keyhash");
+                } else {
+                    updateQuery = em.createQuery("UPDATE KeyUsageCounter w SET w.counter = w.counter + 1 WHERE w.keyHash = :keyhash AND w.counter < :limit");
+                    updateQuery.setParameter("limit", keyUsageLimit);
+                }
+                updateQuery.setParameter("keyhash", keyHash);
+
+                if (updateQuery.executeUpdate() < 1) {
+                    final String message
+                            = "Key usage limit exceeded or not initialized for worker "
+                            + workerId;
+                    log.debug(message);
+                    throw new CryptoTokenOfflineException(message);
+                }
             } else {
-                updateQuery = em.createQuery("UPDATE KeyUsageCounter w SET w.counter = w.counter + 1 WHERE w.keyHash = :keyhash AND w.counter < :limit");
-                updateQuery.setParameter("limit", keyUsageLimit);
-            }
-            updateQuery.setParameter("keyhash", keyHash);
+                // Just check the value without updating
+                if (keyUsageLimit > -1) {
+                    final Query selectQuery;
+                    selectQuery = em.createQuery("SELECT COUNT(w) FROM KeyUsageCounter w WHERE w.keyHash = :keyhash AND w.counter < :limit");
+                    selectQuery.setParameter("limit", keyUsageLimit);
+                    selectQuery.setParameter("keyhash", keyHash);
 
-
-            if (updateQuery.executeUpdate() < 1) {
-                final String message
-                        = "Key usage limit exceeded or not initialized for worker "
-                        + workerId;
-                log.debug(message);
-                throw new CryptoTokenOfflineException(message);
+                    if (selectQuery.getResultList().size() < 1) {
+                        final String message
+                            = "Key usage limit exceeded or not initialized for worker "
+                            + workerId;
+                        log.debug(message);
+                        throw new CryptoTokenOfflineException(message);
+                    }
+                }
             }
         } else {
             if (log.isDebugEnabled()) {

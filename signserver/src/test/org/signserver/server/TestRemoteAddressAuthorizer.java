@@ -16,22 +16,17 @@ import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Hashtable;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.swing.JOptionPane;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.AuthorizationRequiredException;
-import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
@@ -48,14 +43,9 @@ public class TestRemoteAddressAuthorizer extends TestCase {
     private static final Logger LOG = Logger.getLogger(
             TestRemoteAddressAuthorizer.class);
 
-    private static IGlobalConfigurationSession.IRemote confSession;
     private static IWorkerSession.IRemote workSession;
     private static File signServerHome;
     private static int moduleVersion;
-
-    private static final String TEST_CONFIG_FILE
-            = "test_configuration.properties";
-    private static String localAddress2 = "127.0.1.1";
 
     /** 
      * WORKERID used in this test case as defined in 
@@ -67,17 +57,12 @@ public class TestRemoteAddressAuthorizer extends TestCase {
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         final Context context = getInitialContext();
-        confSession = (IGlobalConfigurationSession.IRemote) context.lookup(
-                IGlobalConfigurationSession.IRemote.JNDI_NAME);
         workSession = (IWorkerSession.IRemote) context.lookup(
                 IWorkerSession.IRemote.JNDI_NAME);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
         CommonAdminInterface.BUILDMODE = "SIGNSERVER";
-
-//        CompileTimeSettings settings = CompileTimeSettings.getInstance();
-//        settings.get
     }
 
     @Override
@@ -148,16 +133,17 @@ public class TestRemoteAddressAuthorizer extends TestCase {
 
     /**
      * Tests that access is denied if the request comes from another address
-     * then localhost.
-     *
-     * Note: This test requires a second interface.
+     * then the allowed.
      *
      * @throws Exception in case of exception
      */
     public void test03RequestFromOther() throws Exception {
 
-        int responseCode = process(new URL(
-                "http://" + localAddress2 + ":8080/signserver/process?workerId="
+        workSession.setWorkerProperty(WORKERID, "ALLOW_FROM", "113.113.113.113");
+        workSession.reloadConfiguration(WORKERID);
+
+        int responseCode = process(
+                    new URL("http://localhost:8080/signserver/process?workerId="
                 + WORKERID + "&data=%3Croot/%3E"));
 
         assertTrue("HTTP response code: " + responseCode, responseCode == 401
@@ -165,18 +151,18 @@ public class TestRemoteAddressAuthorizer extends TestCase {
     }
 
     /**
-     * Tests that the request from the other interface now is allowed as it is
+     * Tests that the request now is allowed as it is
      * added to the list.
      * @throws Exception in case of exception
      */
     public void test04RequestFromOtherAllowed() throws Exception {
 
         workSession.setWorkerProperty(WORKERID, "ALLOW_FROM",
-                "127.0.0.1, 127.0.1.1");
+                "113.113.113.113, 127.0.0.1");
         workSession.reloadConfiguration(WORKERID);
 
         int responseCode = process(new URL(
-                "http://" + localAddress2 + ":8080/signserver/process?workerId="
+                "http://localhost:8080/signserver/process?workerId="
                 + WORKERID + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 200, responseCode);
 
@@ -267,5 +253,4 @@ public class TestRemoteAddressAuthorizer extends TestCase {
         Context ctx = new InitialContext(props);
         return ctx;
     }
-;
 }

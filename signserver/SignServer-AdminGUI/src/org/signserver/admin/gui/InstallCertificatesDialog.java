@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -65,6 +67,9 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
 
     private List<Worker> signers;
     private Vector<Vector<String>> data;
+
+    private JComboBox aliasComboBox = new JComboBox(new String[] {
+         NEXT_KEY, DEFAULT_KEY});
 
     /** Creates new form InstallCertificatesDialog. */
     public InstallCertificatesDialog(java.awt.Frame parent, boolean modal,
@@ -116,6 +121,10 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         editor.setClickCountToStart(1);
         jTable1.getColumn("Signer certificate").setCellEditor(editor);
         jTable1.getColumn("Certificate chain").setCellEditor(editor);
+        final DefaultCellEditor aliasComboBoxFieldEditor
+                = new DefaultCellEditor(aliasComboBox);
+        aliasComboBoxFieldEditor.setClickCountToStart(1);
+        jTable1.getColumn("Key").setCellEditor(aliasComboBoxFieldEditor);
     }
 
     /** This method is called from within the constructor to

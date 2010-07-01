@@ -123,14 +123,15 @@ public class TestKeysDialog extends JDialog {
                 Vector<String> keys = new Vector<String>();
                 if (worker.getConfiguration().getProperty("NEXTCERTSIGNKEY")
                         != null) {
-                    keys.add("Next key");
+                    keys.add(worker.getConfiguration().getProperty("NEXTCERTSIGNKEY"));
                 }
                 if (worker.getConfiguration().getProperty("DEFAULTKEY")
                         != null) {
-                    keys.add("Default key");
+                    keys.add(worker.getConfiguration().getProperty("DEFAULTKEY"));
                 }
+                keys.add("all");
                 aliasComboBox.setModel(new DefaultComboBoxModel(keys));
-                
+
                 return super.getTableCellEditorComponent(table, value, isSelected, row, column);
             }
 
@@ -387,6 +388,7 @@ public class TestKeysDialog extends JDialog {
                             sb.append(ex.getMessage());
                             sb.append("\n");
                         } catch (EJBException ex) {
+                            LOG.error(ex.getMessage(), ex);
                             sb.append(ex.getMessage());
                             sb.append("\n");
                         } catch (RuntimeException ex) {

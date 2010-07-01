@@ -1957,8 +1957,7 @@ implementation to use. See below for available crypto tokens.
                 <subsection name="P12CryptoToken">
                     <subsubsection name="Overview">
                         <p>
-A CryptoToken using a PKCS#12 (.p12/.pfx) key-store in the local file-system. It can only
-contain one signing key.
+A CryptoToken using a PKCS#12 (.p12/.pfx) key-store in the local file-system. 
                         </p>
                         <p>
 In a clustered environment the key store must placed at the same location at all nodes.
@@ -1981,13 +1980,16 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.JKSCryp
                         <p>
 <b>KEYSTOREPASSWORD</b>: The password that locks the key-store. Used for automatic activation.
                         </p>
+                        <p>
+<b>DEFAULTKEY</b>: The key to use. If not specified the first found key is used. (optional)
+                        </p>
                     </subsubsection>
                 </subsection>
 
                 <subsection name="JKSCryptoToken">
                     <subsubsection name="Overview">
                         <p>
-A CryptoToken using a Java Key Store (.jks) in the file-system. Can only contain one signing key.
+A CryptoToken using a Java Key Store (.jks) in the file-system.
                         </p>
                         <p>
 In a clustered environment must the key store be at the same location at all nodes.
@@ -2009,6 +2011,9 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.P12Cryp
                         </p>
                         <p>
 <b>KEYSTOREPASSWORD</b>: The password that locks the key-store. Used for automatic activation.
+                        </p>
+                        <p>
+<b>DEFAULTKEY</b>: The key to use. If not specified the first found key is used. (optional)
                         </p>
                     </subsubsection>
                 </subsection>

@@ -81,9 +81,15 @@ public class TestKeysDialog extends JDialog {
         for (Worker worker : workers) {
             Vector<String> cols = new Vector<String>();
             cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
-            final String oldAlias
-                    = worker.getConfiguration().getProperty("DEFAULTKEY");
-            cols.add(oldAlias);
+            String alias
+                    = worker.getConfiguration().getProperty("NEXTCERTSIGNKEY");
+            if (alias == null) {
+                alias = worker.getConfiguration().getProperty("DEFAULTKEY");
+            }
+            if (alias == null) {
+                alias = "all";
+            }
+            cols.add(alias);
             data.add(cols);
         }
         jTable1.setModel(new DefaultTableModel(data, COLUMN_NAMES) {

@@ -16,6 +16,7 @@ package org.signserver.server;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.ejb.EJBException;
@@ -55,6 +56,22 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 			log.trace(">activateSigner");
 		}	    
 		getCryptoToken().activate(authenticationCode);
+
+                // Check if certificate matches key
+                Certificate certificate = getSigningCertificate();
+                if (certificate == null) {
+                    log.info("Activate: Signer " + workerId + ": No certificate");
+                } else {
+                    if (Arrays.equals(certificate.getPublicKey().getEncoded(),
+                            getCryptoToken().getPublicKey(
+                            ICryptoToken.PURPOSE_SIGN).getEncoded())) {
+                        log.info("Activate: Signer " + workerId
+                                + ": Certificate matches key");
+                    } else {
+                        log.info("Activate: Signer " + workerId
+                                + ": Certificat does not match key");
+                    }
+                }
 		if (log.isTraceEnabled()) {
 			log.trace("<activateSigner");
 		}	    

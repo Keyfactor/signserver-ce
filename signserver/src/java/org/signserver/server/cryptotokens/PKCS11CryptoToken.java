@@ -12,7 +12,8 @@
  *************************************************************************/
 
 package org.signserver.server.cryptotokens;
- 
+
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -20,20 +21,32 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Security;
 import java.security.Signature;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.security.SignatureException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Properties;
-
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import org.bouncycastle.jce.PKCS10CertificationRequest;
 
 import org.apache.log4j.Logger;
 import org.ejbca.core.model.ca.catoken.PKCS11CAToken;
 import org.ejbca.util.keystore.KeyStoreContainer;
 import org.ejbca.util.keystore.KeyStoreContainerFactory;
+import org.ejbca.util.Base64;
+import org.signserver.common.Base64SignerCertReqData;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignerCertReqInfo;
+import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.WorkerConfig;
+import org.ejbca.util.CertTools;
 import org.signserver.server.KeyTestResult;
+import org.signserver.server.KeyUsageCounter;
 
 
 /**
@@ -58,6 +71,9 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
 	private static final Logger log = Logger.getLogger(PKCS11CryptoToken.class);
 	
         private Properties properties;
+
+        private char[] authenticationCode;
+
 
 	public PKCS11CryptoToken() throws InstantiationException{
 		catoken = new PKCS11CAToken(); 
@@ -86,6 +102,15 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
 		}
 		log.debug("<init");
 	}
+
+    @Override
+    public void activate(String authenticationcode) 
+            throws CryptoTokenAuthenticationFailureException,
+                CryptoTokenOfflineException {
+        this.authenticationCode = authenticationcode == null ? null
+                : authenticationcode.toCharArray();
+        super.activate(authenticationcode);
+    }
 
         /**
      * @see IKeyGenerator#generateKey(java.lang.String, java.lang.String, java.lang.String, char[])
@@ -159,16 +184,8 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
         }
     }
 
-    /**
-     * @see ICryptoToken#testKey(java.lang.String, char[])
-     */
-    public Collection<KeyTestResult> testKey(String alias, char[] authCode)
-            throws CryptoTokenOfflineException, KeyStoreException {
-        final Collection<KeyTestResult> result
-                = new LinkedList<KeyTestResult>();
-
-        final byte signInput[] = "Lillan gick on the roaden ut.".getBytes();
-
+    private KeyStore getKeyStore(final char[] authCode) 
+            throws KeyStoreException {
         KeyStore.ProtectionParameter pp;
         if (authCode == null) {
             log.debug("authCode == null");
@@ -192,9 +209,21 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
         }
         final KeyStore.Builder builder = KeyStore.Builder.newInstance("PKCS11",
                 provider, pp);
-        final KeyStore keyStore;
 
-        keyStore = builder.getKeyStore();
+        return builder.getKeyStore();
+    }
+
+    /**
+     * @see ICryptoToken#testKey(java.lang.String, char[])
+     */
+    public Collection<KeyTestResult> testKey(String alias, char[] authCode)
+            throws CryptoTokenOfflineException, KeyStoreException {
+        final Collection<KeyTestResult> result
+                = new LinkedList<KeyTestResult>();
+
+        final byte signInput[] = "Lillan gick on the roaden ut.".getBytes();
+
+        final KeyStore keyStore = getKeyStore(authCode);
 
         try {
             final Enumeration<String> e = keyStore.aliases();
@@ -251,4 +280,68 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
 
         return result;
     }
+
+    @Override
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
+            boolean defaultKey) throws CryptoTokenOfflineException {
+        log.debug(">genCertificateRequest PKCS11CryptoToken");
+        Base64SignerCertReqData retval = null;
+        if (info instanceof PKCS10CertReqInfo) {
+            PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
+            PKCS10CertificationRequest pkcs10;
+
+            final String alias;
+            if (defaultKey) {
+                alias = properties.getProperty("defaultKey");
+            } else {
+                alias = properties.getProperty("nextCertSignKey");
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("defaultKey: " + defaultKey);
+                log.debug("alias: " + alias);
+                log.debug("signatureAlgorithm: "
+                        + reqInfo.getSignatureAlgorithm());
+                log.debug("subjectDN: " + reqInfo.getSubjectDN());
+            }
+
+            try {
+                final KeyStore keyStore = getKeyStore(authenticationCode);
+
+                final PrivateKey privateKey = (PrivateKey) keyStore.getKey(
+                        alias, authenticationCode);
+                final Certificate cert = keyStore.getCertificate(alias);
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Public key SHA1: " + CryptoTokenBase.createKeyHash(
+                            cert.getPublicKey()));
+                    log.debug("Public key SHA256: "
+                        + KeyUsageCounter.createKeyHash(cert.getPublicKey()));
+                }
+
+                pkcs10 = new PKCS10CertificationRequest(
+                        reqInfo.getSignatureAlgorithm(),
+                        CertTools.stringToBcX509Name(reqInfo.getSubjectDN()),
+                        cert.getPublicKey(), reqInfo.getAttributes(),
+                        privateKey,
+                        getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+                retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
+            } catch (UnrecoverableKeyException e) {
+                log.error("Certificate request error: " + e.getMessage(), e);
+            } catch (KeyStoreException e) {
+                log.error("Certificate request error: " + e.getMessage(), e);
+            } catch (InvalidKeyException e) {
+                log.error("Certificate request error: " + e.getMessage(), e);
+            } catch (NoSuchAlgorithmException e) {
+                log.error("Certificate request error: " + e.getMessage(), e);
+            } catch (NoSuchProviderException e) {
+                log.error("Certificate request error: " + e.getMessage(), e);
+            } catch (SignatureException e) {
+                log.error("Certificate request error: " + e.getMessage(), e);
+            }
+
+        }
+        log.debug("<genCertificateRequest PKCS11CryptoToken");
+        return retval;
+    }
+
 }

@@ -328,12 +328,16 @@ public class MainView extends FrameView {
         testKeyMenu = new javax.swing.JMenuItem();
         generateRequestMenu = new javax.swing.JMenuItem();
         installCertificatesMenu = new javax.swing.JMenuItem();
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
+        globalConfigurationMenu = new javax.swing.JMenuItem();
         viewMenu = new javax.swing.JMenu();
         refreshMenu = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
         statusSummaryMenu = new javax.swing.JMenuItem();
         statusPropertiesMenu = new javax.swing.JMenuItem();
         configurationMenu = new javax.swing.JMenuItem();
         authorizationsMenu = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
         jToolBar1 = new javax.swing.JToolBar();
@@ -457,11 +461,11 @@ public class MainView extends FrameView {
             .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusPropertiesDetailsButton)
-                .addContainerGap(692, Short.MAX_VALUE))
+                .addContainerGap(682, Short.MAX_VALUE))
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -546,7 +550,7 @@ public class MainView extends FrameView {
             .addGroup(configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
                     .addGroup(configurationTabLayout.createSequentialGroup()
                         .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -652,11 +656,11 @@ public class MainView extends FrameView {
                 .addComponent(authEditButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(authRemoveButton)
-                .addContainerGap(620, Short.MAX_VALUE))
+                .addContainerGap(606, Short.MAX_VALUE))
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -679,7 +683,7 @@ public class MainView extends FrameView {
                 .addContainerGap()
                 .addComponent(jList2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 772, Short.MAX_VALUE))
+                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 766, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -697,7 +701,7 @@ public class MainView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 827, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -715,6 +719,7 @@ public class MainView extends FrameView {
         menuBar.add(fileMenu);
 
         editMenu.setAction(actionMap.get("testKeys")); // NOI18N
+        editMenu.setMnemonic('E');
         editMenu.setText(resourceMap.getString("editMenu.text")); // NOI18N
         editMenu.setName("editMenu"); // NOI18N
 
@@ -748,8 +753,21 @@ public class MainView extends FrameView {
         installCertificatesMenu.setName("installCertificatesMenu"); // NOI18N
         editMenu.add(installCertificatesMenu);
 
+        jSeparator5.setName("jSeparator5"); // NOI18N
+        editMenu.add(jSeparator5);
+
+        globalConfigurationMenu.setText(resourceMap.getString("globalConfigurationMenu.text")); // NOI18N
+        globalConfigurationMenu.setName("globalConfigurationMenu"); // NOI18N
+        globalConfigurationMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                globalConfigurationMenuActionPerformed(evt);
+            }
+        });
+        editMenu.add(globalConfigurationMenu);
+
         menuBar.add(editMenu);
 
+        viewMenu.setMnemonic('V');
         viewMenu.setText(resourceMap.getString("viewMenu.text")); // NOI18N
         viewMenu.setName("viewMenu"); // NOI18N
 
@@ -757,6 +775,9 @@ public class MainView extends FrameView {
         refreshMenu.setText(resourceMap.getString("refreshMenu.text")); // NOI18N
         refreshMenu.setName("refreshMenu"); // NOI18N
         viewMenu.add(refreshMenu);
+
+        jSeparator4.setName("jSeparator4"); // NOI18N
+        viewMenu.add(jSeparator4);
 
         statusSummaryMenu.setText(resourceMap.getString("statusSummaryMenu.text")); // NOI18N
         statusSummaryMenu.setName("statusSummaryMenu"); // NOI18N
@@ -793,6 +814,9 @@ public class MainView extends FrameView {
             }
         });
         viewMenu.add(authorizationsMenu);
+
+        jSeparator3.setName("jSeparator3"); // NOI18N
+        viewMenu.add(jSeparator3);
 
         menuBar.add(viewMenu);
 
@@ -885,7 +909,7 @@ public class MainView extends FrameView {
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
-                .addContainerGap(919, Short.MAX_VALUE)
+                .addContainerGap(921, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1283,6 +1307,11 @@ public class MainView extends FrameView {
             }
         }
     }//GEN-LAST:event_statusPropertiesDetailsButtonActionPerformed
+
+    private void globalConfigurationMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_globalConfigurationMenuActionPerformed
+        GlobalConfigurationFrame frame = new GlobalConfigurationFrame();
+        frame.setVisible(true);
+    }//GEN-LAST:event_globalConfigurationMenuActionPerformed
 
     private void displayWorker(final Worker worker) {
         LOG.debug("Display worker: " + worker);
@@ -1874,6 +1903,7 @@ public class MainView extends FrameView {
     private javax.swing.JCheckBox editUpdateAllCheckbox;
     private javax.swing.JMenuItem generateRequestMenu;
     private javax.swing.JButton generateRequestsButton;
+    private javax.swing.JMenuItem globalConfigurationMenu;
     private javax.swing.JButton installCertificatesButton;
     private javax.swing.JMenuItem installCertificatesMenu;
     private javax.swing.JLabel jLabel1;
@@ -1889,6 +1919,9 @@ public class MainView extends FrameView {
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
+    private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel mainPanel;

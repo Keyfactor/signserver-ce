@@ -251,6 +251,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	            <classpath refid="server.compile.classpath" />
 	            <src path="${src.java}" />
                     <src path="${signservercommon.src.java}" />
+                    <src path="${signserverejb.src.java}" />
 	        	<exclude name="org/signserver/common/MailSigner*"/>
 	        	<exclude name="org/signserver/mailsigner/**"/>
 	        	<exclude name="org/signserver/appserver/**"/>

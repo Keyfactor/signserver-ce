@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="SignServer-Common/test"/>
+	<classpathentry kind="src" path="SignServer-Common/src"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/client"/>
 	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/server"/>

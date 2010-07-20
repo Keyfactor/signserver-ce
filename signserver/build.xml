@@ -46,9 +46,12 @@
     <property name="src.java" value="${src}/java" />
     <property name="signservercommon.src.java" value="./SignServer-Common/src" />
     <property name="signserverejb.src.java" value="./SignServer-ejb/src/java" />
+    <property name="signserverwar.src.java" value="./SignServer-war/src/java" />
     <property name="src.appserver" value="${preprocessed}/appserver/jboss" />
 	<property name="src.external" location="${tmp}/external"/>
     <property name="resources.dir"  location="./src/resources"/>	
+    <property name="signserverwar.web.pub" value="./SignServer-war/web/pub" />
+    <property name="signserverwar.web.healthcheck" value="./SignServer-war/web/healthcheck" />
     
     <property name="server.java.target" value="1.6" />
     <property name="client.java.target" value="1.6" />
@@ -148,7 +151,11 @@ OS version                          = ${os.version}
         <copy todir="${preprocessed}">
             <fileset dir="src">
                 <include name="**/*.xml"/>
-            </fileset>	   
+            </fileset>
+            <fileset dir="./SignServer-war">
+                <include name="*web/**/*.xml"/>
+                <include name="*web/**/*.xml"/>
+            </fileset>
 
 			<filterchain>
 			<tokenfilter>			    

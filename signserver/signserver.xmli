@@ -44,11 +44,11 @@
 	   <property name="genServerCertBin" value="genservercert.sh"/>
        <property name="setDBTypeJar" value="setdbtype.jar"/>
 
-           <property name="web.src" value="${src}/web/pub" />
-           <property name="webwebxml" value="${preprocessed}/web/pub/WEB-INF/web.xml"/>
+           <property name="web.src" value="./SignServer-war/web/pub" />
+           <property name="webwebxml" value="${web.src}/WEB-INF/web.xml"/>
 	   <property name="webwar" value="${server.dist.dir}/web.war" />
 		
-	   <property name="healthcheck.src" value="${src}/web/healthcheck" />
+	   <property name="healthcheck.src" value="./SignServer-war/web/healthcheck" />
            <property name="healthcheckwebxml" value="${preprocessed}/web/healthcheck/WEB-INF/web.xml"/>
 	   <property name="healthcheckwar" value="${server.dist.dir}/healthcheck.war" />
 
@@ -252,6 +252,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	            <src path="${src.java}" />
                     <src path="${signservercommon.src.java}" />
                     <src path="${signserverejb.src.java}" />
+                    <src path="${signserverwar.src.java}" />
 	        	<exclude name="org/signserver/common/MailSigner*"/>
 	        	<exclude name="org/signserver/mailsigner/**"/>
 	        	<exclude name="org/signserver/appserver/**"/>

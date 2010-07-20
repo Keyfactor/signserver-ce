@@ -8,9 +8,9 @@
 <body>
   <section name="Latest News">
     <note>
-        <strong>SignServer 3.1.3 is now out!</strong>
+        <strong>SignServer 3.1.4 is now out!</strong>
         <br/><br/>
-        Read <a href="http://www.primekey.se/digitalAssets/2/2498_Product_Release_SignServer3.1.3.pdf">release notes</a>. | Visit the <a href="download.html">download</a> section to get SignServer.
+        <!-- Read <a href="http://www.primekey.se/digitalAssets/2/2498_Product_Release_SignServer3.1.3.pdf">release notes</a>. | -->Visit the <a href="download.html">download</a> section to get SignServer.
     </note>
    </section>
 

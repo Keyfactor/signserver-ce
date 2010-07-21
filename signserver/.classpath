@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="SignServer-AdminCLI/test"/>
+	<classpathentry kind="src" path="SignServer-AdminCLI/src"/>
 	<classpathentry kind="src" path="SignServer-war/src/java"/>
 	<classpathentry kind="src" path="SignServer-war/test"/>
 	<classpathentry kind="src" path="SignServer-ejb/src/java"/>

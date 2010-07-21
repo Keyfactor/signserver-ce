@@ -2131,6 +2131,9 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.P12Cryp
                         <p>
 <b>DEFAULTKEY</b>: The key to use. If not specified the first found key is used. (optional)
                         </p>
+                        <p>
+<b>NEXTCERTSIGNKEY</b>: The next key to use. See PKCS11CryptoToken. (optional)
+                        </p>
                     </subsubsection>
                 </subsection>
 
@@ -2157,6 +2160,9 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.PrimeCa
                         <p>
 <b>DEFAULTKEY</b> =   Hash value of the signing key on the card. See PrimeCardHSM documentation for more information.(Required)
                         </p>
+                                                <p>
+<b>NEXTCERTSIGNKEY</b>: The next key to use. See PKCS11CryptoToken. (optional)
+                        </p>
                         <p>
 <b>AUTHCODE</b> = Authentication code for automatic activation (Optional).
                         </p>
@@ -2177,6 +2183,13 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.PKCS11C
                     <subsubsection name="Available Properties">
                         <p>
 <b>DEFAULTKEY</b> =   The key alias. (Required)
+                        </p>
+                        <p>
+<b>NEXTCERTSIGNKEY</b> = The next key to use. This property can be used to hold
+the name of the next key to use. Certificate signing requests (CSR) can be made
+for this key can while to the current key (DEFAULTKEY) is still in production.
+After uploading the new certificate the value of NEXTCERTSIGNKEY can be moved to
+DEFAULTKEY. (optional)
                         </p>
                         <p>
 <b>PIN</b> =   Authentication code for activation. (Required)

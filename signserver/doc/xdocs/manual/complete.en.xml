@@ -1231,6 +1231,21 @@ The Authorizer can be configured to either accept all usernames or only accept
 those usernames listed in one of its properties.
                         </p>
                     </subsubsection>
+                    <subsubsection name="Remote address authentication">
+                        <p>
+<b>AUTHTYPE</b> = org.signserver.server.RemoteAddressAuthorizer
+                        </p>
+                        <p>
+<b>ALLOW_FROM</b> = Comma separated list of IP addresses to allow requests from.
+By default all other addresses are denied access.
+                        </p>
+                        <p>
+If a worker is invoked directly using an EJB call and no REMOTE_IP is specified
+in the RequestContext the IP-address is set to the String "null". In that case,
+to allow requests using EJB calls, null can be added to the list of allowed
+addresses.
+                        </p>
+                    </subsubsection>
                     <subsubsection name="Custom">
                         <p>
 This authorization functionality doesn't work for all use cases. Then it's possible to create a customized authorizer and specify it's class path as value in the AUTHTYPE property. The Processable will then automatically instantiate and use it. How to develop such a plug-in is explained in the developers section.

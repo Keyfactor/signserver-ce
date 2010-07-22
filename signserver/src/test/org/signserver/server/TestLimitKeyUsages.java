@@ -58,9 +58,9 @@ public class TestLimitKeyUsages extends TestCase {
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         confSession = ServiceLocator.getInstance().lookupRemote(
-                IGlobalConfigurationSession.IRemote);
+                IGlobalConfigurationSession.IRemote.class);
         workSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote);
+                IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         CommonAdminInterface.BUILDMODE = "SIGNSERVER";

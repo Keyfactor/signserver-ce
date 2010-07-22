@@ -16,13 +16,10 @@ package org.signserver.ejb;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 
 import javax.crypto.Cipher;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
 
@@ -35,6 +32,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ProcessableConfig;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -57,9 +55,10 @@ public class TestWorkerSessionBean extends TestCase {
     protected void setUp() throws Exception {
     	super.setUp();
 		SignServerUtil.installBCProvider();
-		Context context = getInitialContext();
-		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
-		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+		gCSession = ServiceLocator.getInstance().lookupRemote(
+                    IGlobalConfigurationSession.IRemote.class);
+		sSSession = ServiceLocator.getInstance().lookupRemote(
+                    IWorkerSession.IRemote.class);
 		TestUtils.redirectToTempOut();
 		TestUtils.redirectToTempErr();
 		TestingSecurityManager.install();
@@ -245,25 +244,6 @@ public class TestWorkerSessionBean extends TestCase {
 		  
 		  sSSession.reloadConfiguration(3);
 	}
-	 
-
- 
-  
-  /**
-   * Get the initial naming context
-   */
-  protected Context getInitialContext() throws Exception {
-  	Hashtable<String, String> props = new Hashtable<String, String>();
-  	props.put(
-  		Context.INITIAL_CONTEXT_FACTORY,
-  		"org.jnp.interfaces.NamingContextFactory");
-  	props.put(
-  		Context.URL_PKG_PREFIXES,
-  		"org.jboss.naming:org.jnp.interfaces");
-  	props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-  	Context ctx = new InitialContext(props);
-  	return ctx;
-  }
   
 	private boolean arrayEquals(byte[] signreq2, byte[] signres2) {
 		boolean retval = true;

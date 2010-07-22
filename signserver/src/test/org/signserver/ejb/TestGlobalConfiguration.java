@@ -13,15 +13,11 @@
 
 package org.signserver.ejb;
 
-import java.util.Hashtable;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import junit.framework.TestCase;
 
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ServiceLocator;
 
 public class TestGlobalConfiguration extends TestCase {
 
@@ -32,29 +28,12 @@ public class TestGlobalConfiguration extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 			    
-		Context context = getInitialContext();
-		globalConfigSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
+		globalConfigSession = ServiceLocator.getInstance().lookupRemote(
+                    IGlobalConfigurationSession.IRemote.class);
 
 		signserverhome = System.getenv("SIGNSERVER_HOME");
 		assertNotNull(signserverhome);
 	}
-	
-    /**
-     * Get the initial naming context
-     */
-    protected Context getInitialContext() throws Exception {
-    	Hashtable<String, String> props = new Hashtable<String, String>();
-    	props.put(
-    		Context.INITIAL_CONTEXT_FACTORY,
-    		"org.jnp.interfaces.NamingContextFactory");
-    	props.put(
-    		Context.URL_PKG_PREFIXES,
-    		"org.jboss.naming:org.jnp.interfaces");
-    	props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-    	Context ctx = new InitialContext(props);
-    	return ctx;
-    }
-
 
 	/*
 	 * Test method for 'org.signserver.common.GlobalConfigurationFileParser.getBaseProperty(String)'

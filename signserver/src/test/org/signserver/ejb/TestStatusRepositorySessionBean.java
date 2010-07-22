@@ -17,6 +17,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
 
 /**
@@ -58,9 +59,8 @@ public class TestStatusRepositorySessionBean extends TestCase {
     
     @Override
     protected void setUp() throws Exception {
-        final Context context = getInitialContext();
-        repository = (IStatusRepositorySession.IRemote)
-                context.lookup(IStatusRepositorySession.IRemote.JNDI_NAME);
+        repository = ServiceLocator.getInstance().lookupRemote(
+                    IStatusRepositorySession.IRemote.class);
     }
 
     @Override
@@ -123,20 +123,4 @@ public class TestStatusRepositorySessionBean extends TestCase {
         assertNull("getProperty expired", value2);
     }
 
-
-    /**
-     * Get the initial naming context.
-     * @throws Exception in case of exception
-     */
-    protected Context getInitialContext() throws Exception {
-        final Hashtable<String, String> props = new Hashtable<String, String>();
-        props.put(
-                Context.INITIAL_CONTEXT_FACTORY,
-                "org.jnp.interfaces.NamingContextFactory");
-        props.put(
-                Context.URL_PKG_PREFIXES,
-                "org.jboss.naming:org.jnp.interfaces");
-        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-        return new InitialContext(props);
-    }
 }

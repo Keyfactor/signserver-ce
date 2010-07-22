@@ -24,6 +24,7 @@ import javax.naming.InitialContext;
 import junit.framework.TestCase;
 
 import org.signserver.cli.module.AddModuleCommand;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.clusterclassloader.FindInterfacesClassLoader;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IClusterClassLoaderManagerSession;
@@ -41,33 +42,13 @@ public class TestClusterClassLoaderManagerSessionBean extends TestCase {
     @Override
 	protected void setUp() throws Exception {
 		super.setUp();
-			    
-		Context context = getInitialContext();
-		cclMan = (IClusterClassLoaderManagerSession.IRemote) context.lookup(IClusterClassLoaderManagerSession.IRemote.JNDI_NAME);
+		cclMan = ServiceLocator.getInstance().lookupRemote(
+                        IClusterClassLoaderManagerSession.IRemote.class);
 
 		signserverhome = System.getenv("SIGNSERVER_HOME");
 		assertNotNull(signserverhome);
 	}
-	
-    /**
-     * Get the initial naming context
-     */
-    protected Context getInitialContext() throws Exception {
-    	Hashtable<String, String> props = new Hashtable<String, String>();
-    	props.put(
-    		Context.INITIAL_CONTEXT_FACTORY,
-    		"org.jnp.interfaces.NamingContextFactory");
-    	props.put(
-    		Context.URL_PKG_PREFIXES,
-    		"org.jboss.naming:org.jnp.interfaces");
-    	props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-    	Context ctx = new InitialContext(props);
-    	return ctx;
-    }
 
-
-
-	
 	public void testMARFile() throws Exception{
 		addMAR(signserverhome + "/src/test/testmodule-withoutdescr.mar");
 		

@@ -26,7 +26,7 @@ import org.signserver.server.SystemLoggerFactory;
 /**
  * Session bean offering an interface towards the status repository.
  *
- * @author Markus Kilås
+ * @author Markus Kilï¿½s
  * @version $Id$
  */
 @Stateless
@@ -58,7 +58,7 @@ public class StatusRepositorySessionBean implements
      * @param key Key to get the value for
      * @return The value if existing and not expired, otherwise null
      */
-    public final String getProperty(final String key) {
+    public String getProperty(final String key) {
         final StatusRepositoryData data = repository.get(key);
         final String property;
 
@@ -84,7 +84,7 @@ public class StatusRepositorySessionBean implements
      * @param key The key to set the value for
      * @param value The value to set
      */
-    public final void setProperty(final String key, final String value) {
+    public void setProperty(final String key, final String value) {
         setProperty(key, value, 0L);
     }
 
@@ -96,7 +96,7 @@ public class StatusRepositorySessionBean implements
      * @param key The key to set the value for
      * @param value The value to set
      */
-    public final void setProperty(final String key, final String value,
+    public void setProperty(final String key, final String value,
             final long expiration) {
         repository.put(key, new StatusRepositoryData(value, expiration));
         auditLog("setProperty", key, value, expiration);
@@ -107,7 +107,7 @@ public class StatusRepositorySessionBean implements
      *
      * @param key The property to remove.
      */
-    public final void removeProperty(final String key) {
+    public void removeProperty(final String key) {
         repository.remove(key);
         auditLog("removeProperty", key, null, null);
     }
@@ -115,7 +115,7 @@ public class StatusRepositorySessionBean implements
     /**
      * @return An unmodifiable map of all properties
      */
-    public final Map<String, StatusRepositoryData> getProperties() {
+    public Map<String, StatusRepositoryData> getProperties() {
         return repository.getProperties();
     }
 

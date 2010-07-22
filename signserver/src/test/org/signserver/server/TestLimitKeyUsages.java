@@ -42,7 +42,6 @@ public class TestLimitKeyUsages extends TestCase {
     private static final Logger LOG = Logger.getLogger(
             TestLimitKeyUsages.class);
 
-    private static IGlobalConfigurationSession.IRemote confSession;
     private static IWorkerSession.IRemote workSession;
     private static File signServerHome;
     private static int moduleVersion;
@@ -170,9 +169,8 @@ public class TestLimitKeyUsages extends TestCase {
             final RequestContext context = new RequestContext();
             final GenericSignRequest request = new GenericSignRequest(1,
                     "<root/>".getBytes());
-            GenericSignResponse res;
             // Send request to dispatcher
-            res = (GenericSignResponse) workSession.process(WORKERID_1,
+            workSession.process(WORKERID_1,
                 request, context);
         } catch (CryptoTokenOfflineException ok) {
             // OK

@@ -122,12 +122,9 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         final GenericSignRequest request =
                 new GenericSignRequest(1, "<root/>".getBytes());
 
-        GenericSignResponse res;
-
         // Without username password
         try {
-             res = (GenericSignResponse) workSession.process(WORKERID,
-                    request, context);
+             workSession.process(WORKERID, request, context);
              fail("No AuthorizationRequiredException thrown");
         } catch (AuthorizationRequiredException ok) {
             // OK
@@ -140,8 +137,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         
         context.put(RequestContext.CLIENT_CREDENTIAL, new DummyCredential());
         try {
-             res = (GenericSignResponse) workSession.process(WORKERID,
-                    request, context);
+             workSession.process(WORKERID, request, context);
              fail("No AuthorizationRequiredException thrown");
         } catch (AuthorizationRequiredException ok) {
             // OK
@@ -154,8 +150,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         context.put(RequestContext.CLIENT_CREDENTIAL,
                 new UsernamePasswordClientCredential("user1", "FOO1234"));
         try {
-             res = (GenericSignResponse) workSession.process(WORKERID,
-                    request, context);
+             workSession.process(WORKERID, request, context);
              fail("No AuthorizationRequiredException thrown");
         } catch (AuthorizationRequiredException ok) {
             // OK
@@ -163,7 +158,6 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
             LOG.error("Wrong type of exception", ex);
             fail("Exception: " + ex.getMessage());
         }
-
     }
 
     /**
@@ -182,8 +176,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         context.put(RequestContext.CLIENT_CREDENTIAL,
                 new UsernamePasswordClientCredential("user1", "foo123"));
         try {
-             res = (GenericSignResponse) workSession.process(WORKERID,
-                    request, context);
+             workSession.process(WORKERID, request, context);
         } catch (AuthorizationRequiredException ex) {
             fail("Username password not accepted!");
         } catch (Exception ex) {
@@ -208,8 +201,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         context.put(RequestContext.CLIENT_CREDENTIAL,
                 new UsernamePasswordClientCredential("user2", "foo123"));
         try {
-             res = (GenericSignResponse) workSession.process(WORKERID,
-                    request, context);
+             workSession.process(WORKERID, request, context);
         } catch (AuthorizationRequiredException ex) {
             fail("Username password not accepted!");
         } catch (Exception ex) {
@@ -228,14 +220,11 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         final GenericSignRequest request =
                 new GenericSignRequest(1, "<root/>".getBytes());
 
-        GenericSignResponse res;
-
         // With correct username password
         context.put(RequestContext.CLIENT_CREDENTIAL,
                 new UsernamePasswordClientCredential("user3", "foo123"));
         try {
-             res = (GenericSignResponse) workSession.process(WORKERID,
-                    request, context);
+             workSession.process(WORKERID, request, context);
         } catch (AuthorizationRequiredException ex) {
             fail("Username password not accepted!");
         } catch (Exception ex) {
@@ -286,5 +275,4 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         Context ctx = new InitialContext(props);
         return ctx;
     }
-;
 }

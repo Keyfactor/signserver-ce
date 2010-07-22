@@ -115,6 +115,7 @@ public class TestXMLValidator extends TestCase {
 	public void test01GetStatus() {
 		try {
 			ValidatorStatus stat = (ValidatorStatus) sSSession.getStatus(WORKERID);
+                        assertNotNull(stat);
 //			assertEquals(SignerStatus.STATUS_ACTIVE, stat.getTokenStatus());
 		} catch(InvalidWorkerIdException ex) {
 			log.error("Worker not found", ex);

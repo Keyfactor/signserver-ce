@@ -405,8 +405,9 @@ public class UserDataBean {
 	}
 
 	private String hash(String password) {
-        if (password == null)
+        if (password == null) {
             return null;
+        }
 
         String ret = null;
         try {

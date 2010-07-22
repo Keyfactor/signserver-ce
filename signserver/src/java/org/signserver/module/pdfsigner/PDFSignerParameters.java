@@ -301,8 +301,9 @@ public class PDFSignerParameters {
 				bout.write(buff, 0, count);
 			}
 		} finally {
-			if (fis != null)
+			if (fis != null) {
 				fis.close();
+                        }
 		}
 
 		return bout.toByteArray();

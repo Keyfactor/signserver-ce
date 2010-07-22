@@ -345,10 +345,11 @@ public class PDFSigner extends BaseSigner {
 			String url;
 			try {
 				url = PdfPKCS7.getOCSPURL((X509Certificate) certChain[0]);
-				if (url != null && url.length() > 0)
+				if (url != null && url.length() > 0) {
 					ocsp = new OcspClientBouncyCastle(
 							(X509Certificate) certChain[0],
 							(X509Certificate) certChain[1], url).getEncoded();
+                                }
 			} catch (CertificateParsingException e) {
 				throw new SignServerException(
 						"Error getting OCSP URL from certificate", e);
@@ -365,8 +366,9 @@ public class PDFSigner extends BaseSigner {
 
 		byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
 
-		if (contentEstimated + 2 < encodedSig.length)
+		if (contentEstimated + 2 < encodedSig.length) {
 			throw new SignServerException("Not enough space");
+                }
 
 		byte[] paddedSig = new byte[contentEstimated];
 		System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
@@ -434,19 +436,20 @@ public class PDFSigner extends BaseSigner {
 	private int getPageNumberForSignature(PdfReader pReader,
 			PDFSignerParameters pParams) {
 		int totalNumOfPages = pReader.getNumberOfPages();
-		if (pParams.getVisible_sig_page().trim().equals("First"))
+		if (pParams.getVisible_sig_page().trim().equals("First")) {
 			return 1;
-		else if (pParams.getVisible_sig_page().trim().equals("Last"))
+                }  else if (pParams.getVisible_sig_page().trim().equals("Last")) {
 			return totalNumOfPages;
-		else {
+                }  else {
 			try {
 				int pNum = Integer.parseInt(pParams.getVisible_sig_page());
-				if (pNum < 1)
+				if (pNum < 1) {
 					return 1;
-				else if (pNum > totalNumOfPages)
+                                } else if (pNum > totalNumOfPages) {
 					return totalNumOfPages;
-				else
+                                } else {
 					return pNum;
+                                }
 			} catch (NumberFormatException ex) {
 				// not a numeric argument draw on first line
 				return 1;

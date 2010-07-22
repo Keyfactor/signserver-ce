@@ -245,10 +245,11 @@ public class WSCLI {
 	            @SuppressWarnings("synthetic-access")
 	            public void addCommunicationError(ICommunicationFault error) {
 	                final String s = "Error communication with host : " + error.getHostName() + ", " + error.getDescription();
-	                if ( error.getThrowed()!=null )
+	                if (error.getThrowed() != null) {
 	                	log.error(s, error.getThrowed());
-	                else
+                        } else {
 	                    log.error(s);
+                        }
 	            }
 
 			

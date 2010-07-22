@@ -64,8 +64,9 @@ public class GenericCommunicationFault implements ICommunicationFault {
 		if ( _throwable instanceof ServerException || _throwable instanceof ServerError ) {
 			description = "Internal problem in server " + hostname + ". See throwed object.";
             Throwable tmp = _throwable;
-			while ( tmp instanceof RemoteException )
+			while (tmp instanceof RemoteException) {
 				tmp = tmp.getCause();
+                        }
             this.throwable = tmp;
             return;
 		}

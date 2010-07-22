@@ -50,7 +50,8 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 
 public class SignServerHealthCheck implements IHealthCheck {
 	
-	private static Logger log = Logger.getLogger(SignServerHealthCheck.class);
+    private static final Logger LOG = Logger.getLogger(
+            SignServerHealthCheck.class);
 
 	
 	private IGlobalConfigurationSession.ILocal globalConfigurationSession;
@@ -60,7 +61,7 @@ public class SignServerHealthCheck implements IHealthCheck {
     		  Context context = new InitialContext();
     		  globalConfigurationSession =  (org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal) context.lookup(IGlobalConfigurationSession.ILocal.JNDI_NAME);
     		}catch(NamingException e){
-    			log.error(e);
+    			LOG.error(e);
     		}
     	}
     	
@@ -75,7 +76,7 @@ public class SignServerHealthCheck implements IHealthCheck {
     		  Context context = new InitialContext();
     		  signserversession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
     		}catch(NamingException e){
-    			log.error(e);
+    			LOG.error(e);
     		}
     	}
     	
@@ -93,7 +94,7 @@ public class SignServerHealthCheck implements IHealthCheck {
 
 	
 	public String checkHealth(HttpServletRequest request) {
-		log.debug("Starting HealthCheck health check requested by : " + request.getRemoteAddr());
+		LOG.debug("Starting HealthCheck health check requested by : " + request.getRemoteAddr());
 		String errormessage = "";
 		
 		errormessage += checkDB(checkDBString);
@@ -130,7 +131,7 @@ public class SignServerHealthCheck implements IHealthCheck {
 		  statement.close();
 		}catch(Exception e){
 			retval = "\nError creating connection to SignServer Database.";
-			log.error("Error creating connection to SignServer Database.",e);
+			LOG.error("Error creating connection to SignServer Database.",e);
 		} finally {
 			JDBCUtil.close(con);			
 		}
@@ -148,11 +149,11 @@ public class SignServerHealthCheck implements IHealthCheck {
 				String currentMessage = workerStatus.isOK();
 				if(currentMessage != null){
 					retval += "\n " +currentMessage;
-					log.error(currentMessage);
+					LOG.error(currentMessage);
 				}
 
 			} catch (InvalidWorkerIdException e) {
-				log.error(e.getMessage(),e);
+				LOG.error(e.getMessage(),e);
 				e.printStackTrace();
 			}
 		}				

@@ -35,12 +35,10 @@ import org.apache.log4j.Logger;
 import org.ejbca.util.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
-import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
 
@@ -72,7 +70,6 @@ public class SODProcessServlet extends HttpServlet {
     /** Specifies if the fields are encoded in any way */
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     /** Default, values will be base64 decoded before use */
-    private static final String ENCODING_BASE64 = "base64";
     /** if encoding = binary values will not be base64 decoded before use */
     private static final String ENCODING_BINARY = "binary";
 
@@ -183,7 +180,7 @@ public class SODProcessServlet extends HttpServlet {
                 }
             }
 
-            if(dataGroups.size() == 0) {
+            if (dataGroups.isEmpty()) {
                 throw new ServletException("Missing dataGroup fields in request");
             }
 

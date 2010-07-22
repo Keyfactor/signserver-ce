@@ -74,7 +74,8 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
     private static final String METHOD_GET = "GET";
 
-    private static Logger log = Logger.getLogger(GenericProcessServlet.class);
+    private static final Logger LOG = Logger.getLogger(
+            GenericProcessServlet.class);
 
     private static final String WORKERID_PROPERTY_NAME = "workerId";
     private static final String WORKERNAME_PROPERTY_NAME = "workerName";
@@ -99,7 +100,7 @@ public class GenericProcessServlet extends HttpServlet {
                 Context context = new InitialContext();
                 workersession = (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
             } catch (NamingException e) {
-                log.error(e);
+                LOG.error(e);
             }
         }
 
@@ -120,7 +121,7 @@ public class GenericProcessServlet extends HttpServlet {
      */
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        log.debug(">doPost()");
+        LOG.debug(">doPost()");
 
         int workerId = 1;
         byte[] data = null;
@@ -142,14 +143,14 @@ public class GenericProcessServlet extends HttpServlet {
 
                     if (item.isFormField()) {
                         if (WORKERNAME_PROPERTY_NAME.equals(item.getFieldName())) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Found a signerName in the request: "
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Found a signerName in the request: "
                                         + item.getString());
                             }
                             workerId = getWorkerSession().getWorkerId(item.getString());
                         } else if (WORKERID_PROPERTY_NAME.equals(item.getFieldName())) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Found a signerId in the request: "
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Found a signerId in the request: "
                                         + item.getString());
                             }
                             try {
@@ -178,22 +179,22 @@ public class GenericProcessServlet extends HttpServlet {
 
             String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
             if(name != null){
-                if(log.isDebugEnabled()) {
-                    log.debug("Found a signerName in the request: "+name);
+                if(LOG.isDebugEnabled()) {
+                    LOG.debug("Found a signerName in the request: "+name);
                 }
                 workerId = getWorkerSession().getWorkerId(name);
             }
             String id = req.getParameter(WORKERID_PROPERTY_NAME);
             if(id != null){
-                if(log.isDebugEnabled()) {
-                    log.debug("Found a signerId in the request: "+id);
+                if(LOG.isDebugEnabled()) {
+                    LOG.debug("Found a signerId in the request: "+id);
                 }
                 workerId = Integer.parseInt(id);
             }
 
             if(METHOD_GET.equalsIgnoreCase(req.getMethod()) ||
                     (req.getContentType() != null && req.getContentType().contains(FORM_URL_ENCODED))) {
-                log.debug("Request is FORM_URL_ENCODED");
+                LOG.debug("Request is FORM_URL_ENCODED");
 
                 if(req.getParameter(DATA_PROPERTY_NAME) == null) {
                     throw new ServletException("Missing field 'data' in request");
@@ -203,7 +204,7 @@ public class GenericProcessServlet extends HttpServlet {
                 String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
                 if(encoding != null && !"".equals(encoding)) {
                     if(ENCODING_BASE64.equalsIgnoreCase(encoding)) {
-                        log.info("Decoding base64 data");
+                        LOG.info("Decoding base64 data");
                         data = org.ejbca.util.Base64.decode(data);
                     } else {
                         throw new ServletException("Unknown encoding for the 'data' field: " + encoding);
@@ -212,8 +213,8 @@ public class GenericProcessServlet extends HttpServlet {
             } else {
                 // Pass-through the content to be handled by worker if
                 // unknown content-type
-                if(log.isDebugEnabled()) {
-                    log.debug("Request Content-type: " + req.getContentType());
+                if(LOG.isDebugEnabled()) {
+                    LOG.debug("Request Content-type: " + req.getContentType());
                 }
 
                 // Get an input stream and read the bytes from the stream
@@ -230,20 +231,20 @@ public class GenericProcessServlet extends HttpServlet {
             }
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Received a request with length: "
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Received a request with length: "
                     + req.getContentLength());
         }
 
         // Limit the maximum size of input
         if (data.length > MAX_UPLOAD_SIZE) {
-            log.error("Content length exceeds 100MB, not processed: " + req.getContentLength());
+            LOG.error("Content length exceeds 100MB, not processed: " + req.getContentLength());
             throw new ServletException("Error. Maximum content lenght is 100MB.");
         }
 
         processRequest(req, res, workerId, data, fileName);
 
-        log.debug("<doPost()");
+        LOG.debug("<doPost()");
     } //doPost
 
     /**
@@ -257,16 +258,16 @@ public class GenericProcessServlet extends HttpServlet {
      * @throws
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws java.io.IOException, ServletException {
-        log.debug(">doGet()");
+        LOG.debug(">doGet()");
         doPost(req, res);
-        log.debug("<doGet()");
+        LOG.debug("<doGet()");
     } // doGet
 
     private void processRequest(HttpServletRequest req, HttpServletResponse res, int workerId, byte[] data, String fileName) throws java.io.IOException, ServletException {
-        log.debug("Using signerId: " + workerId);
+        LOG.debug("Using signerId: " + workerId);
 
         final String remoteAddr = req.getRemoteAddr();
-        log.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
+        LOG.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
 
         // Client certificate
         Certificate clientCertificate = null;
@@ -282,7 +283,7 @@ public class GenericProcessServlet extends HttpServlet {
 
         if (clientCertificate instanceof X509Certificate) {
             final X509Certificate cert = (X509Certificate) clientCertificate;
-            log.debug("Authentication: certificate");
+            LOG.debug("Authentication: certificate");
             credential = new CertificateClientCredential(
                     cert.getSerialNumber().toString(16),
                     cert.getIssuerDN().getName());
@@ -291,7 +292,7 @@ public class GenericProcessServlet extends HttpServlet {
             final String authorization =
                         req.getHeader(HTTP_AUTH_BASIC_AUTHORIZATION);
             if (authorization != null) {
-                log.debug("Authentication: password");
+                LOG.debug("Authentication: password");
 
                 final String decoded[] = new String(Base64.decode(
                         authorization.split("\\s")[1])).split(":", 2);
@@ -299,7 +300,7 @@ public class GenericProcessServlet extends HttpServlet {
                 credential = new UsernamePasswordClientCredential(
                     decoded[0], decoded[1]);
             } else {
-                log.debug("Authentication: none");
+                LOG.debug("Authentication: none");
                 credential = null;
             }
         }
@@ -324,8 +325,8 @@ public class GenericProcessServlet extends HttpServlet {
         }
         context.put(RequestContext.FILENAME, fileName);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Received bytes of length: " + data.length);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Received bytes of length: " + data.length);
         }
 
         final int requestId = random.nextInt();
@@ -335,7 +336,7 @@ public class GenericProcessServlet extends HttpServlet {
             response = (GenericServletResponse) getWorkerSession().process(workerId,
                     new GenericServletRequest(requestId, data, req), context);
         } catch(AuthorizationRequiredException e) {
-            log.debug("Sending back HTTP 401");
+            LOG.debug("Sending back HTTP 401");
 
             final String httpAuthBasicRealm = "SignServer Worker " + workerId;
 

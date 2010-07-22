@@ -56,11 +56,12 @@ import org.signserver.server.CertificateClientCredential;
 
 public class GenericWSServlet extends HttpServlet implements ServletContextAttributeListener, ServletContextListener{
 
-
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 	
-	private Random rand = new Random(); 
-	private static Logger log = Logger.getLogger(GenericWSServlet.class);
+    private static final Logger LOG = Logger.getLogger(
+                GenericWSServlet.class);
+
+    private Random rand = new Random();
 	
     public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);        
@@ -178,7 +179,7 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
     		  Context context = new InitialContext();
     		  workersession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
     		}catch(NamingException e){
-    			log.error(e);
+    			LOG.error(e);
     		}
     	}
     	
@@ -201,7 +202,7 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
 		try {
 			forwardRequest(GenericWSRequest.REQUESTTYPE_CONTEXT_DESTROYED, null, null, event.getServletContext());
 		} catch (ServletException e) {
-			log.error(e);
+			LOG.error(e);
 		}		
 	}
 
@@ -209,7 +210,7 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
 		try {
 			forwardRequest(GenericWSRequest.REQUESTTYPE_CONTEXT_INIT, null, null, event.getServletContext());
 		} catch (ServletException e) {
-			log.error(e);
+			LOG.error(e);
 		}
 	}
 	

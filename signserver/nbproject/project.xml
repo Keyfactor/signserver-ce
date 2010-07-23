@@ -159,6 +159,18 @@
                     <location>SignServer-Module-TSA/test</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>SignServer-Module-OOXMLSigner/src/java</label>
+                    <type>java</type>
+                    <location>SignServer-Module-OOXMLSigner/src/java</location>
+                    <encoding>ISO-8859-1</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>SignServer-Module-OOXMLSigner/test</label>
+                    <type>java</type>
+                    <location>SignServer-Module-OOXMLSigner/test</location>
+                    <encoding>ISO-8859-1</encoding>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -567,6 +579,14 @@
                         <label>SignServer-Module-TSA/test</label>
                         <location>SignServer-Module-TSA/test</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>SignServer-Module-OOXMLSigner/src/java</label>
+                        <location>SignServer-Module-OOXMLSigner/src/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>SignServer-Module-OOXMLSigner/test</label>
+                        <location>SignServer-Module-OOXMLSigner/test</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -761,6 +781,15 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>SignServer-Module-TSA/test</package-root>
+                <unit-tests/>
+                <source-level>1.6</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>SignServer-Module-OOXMLSigner/src/java</package-root>
+                <source-level>1.6</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>SignServer-Module-OOXMLSigner/test</package-root>
                 <unit-tests/>
                 <source-level>1.6</source-level>
             </compilation-unit>

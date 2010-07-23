@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="SignServer-Module-OOXMLSigner/test"/>
+	<classpathentry kind="src" path="SignServer-Module-OOXMLSigner/src/java"/>
+	<classpathentry kind="src" path="SignServer-Module-TSA/test"/>
+	<classpathentry kind="src" path="SignServer-Module-TSA/src/java"/>
+	<classpathentry kind="src" path="SignServer-Module-MRTDSigner/src/java"/>
+	<classpathentry kind="src" path="SignServer-Module-MRTDSigner/test"/>
+	<classpathentry kind="src" path="SignServer-Module-MRTDSODSigner/src/java"/>
+	<classpathentry kind="src" path="SignServer-Module-MRTDSODSigner/test"/>
+	<classpathentry kind="src" path="SignServer-Module-PDFSigner/src/java"/>
+	<classpathentry kind="src" path="SignServer-Module-PDFSigner/test"/>
+	<classpathentry kind="src" path="SignServer-Module-XMLValidator/test"/>
+	<classpathentry kind="src" path="SignServer-Module-XMLValidator/src/java"/>
+	<classpathentry kind="src" path="SignServer-Module-XMLSigner/test"/>
+	<classpathentry kind="src" path="SignServer-Module-XMLSigner/src/java"/>
+	<classpathentry kind="src" path="SignServer-Module-CMSSigner/test"/>
+	<classpathentry kind="src" path="SignServer-Module-CMSSigner/src/java"/>
 	<classpathentry kind="src" path="SignServer-AdminCLI/test"/>
 	<classpathentry kind="src" path="SignServer-AdminCLI/src"/>
 	<classpathentry kind="src" path="SignServer-war/src/java"/>

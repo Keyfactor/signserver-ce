@@ -17,7 +17,7 @@
  
     <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
        <classpath refid="pdfsigner.build.classpath" />
-       <src path="${src.java}" /> 
+       <src path="SignServer-Module-PDFSigner/src/java" />
        <include name="org/signserver/module/pdfsigner/*.java"/>       
     </javac>
 
@@ -31,7 +31,7 @@
             <fileset dir="dist-server">
                 <include name="pdfsigner-module.jar"/>
             </fileset>
-            <fileset dir="src/module-configs/pdfsigner">
+            <fileset dir="SignServer-Module-PDFSigner/src/conf">
                 <include name="*.properties"/>
             </fileset>
         </part>

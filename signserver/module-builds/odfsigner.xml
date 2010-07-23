@@ -17,7 +17,7 @@
  
     <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
        <classpath refid="odfsigner.build.classpath" />
-    	<src path="${src.java}" /> 
+    	<src path="SignServer-Module-ODFSigner/src/java" />
        <include name="org/signserver/module/odfsigner/*.java"/>       
     </javac>
 
@@ -31,7 +31,7 @@
             <fileset dir="dist-server">
                 <include name="odfsigner-module.jar"/>
             </fileset>
-            <fileset dir="src/module-configs/odfsigner">
+            <fileset dir="SignServer-Module-ODFSigner/src/conf">
                 <include name="*.properties"/>
             </fileset>
         </part>

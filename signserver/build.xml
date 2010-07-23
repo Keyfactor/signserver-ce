@@ -1,11 +1,8 @@
 
 <project name="signserver" default="build" basedir=".">
 
-	<property name="app.name" value="signserver" />
-    <property name="app.name.cap" value="SignServer" />
-    <property name="app.version.number" value="3.2-svn" />
-	<property name="app.version" value="${app.name.cap} ${app.version.number}" />
-	<property name="mar.versions" value="3200" />
+    <!-- Import property file containing version numbers and other constants -->
+    <property file="src/compile.properties"/>
 
     <property environment="env" />
 

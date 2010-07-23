@@ -16,7 +16,7 @@
  
     <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
        <classpath refid="xmlsigner.build.classpath" />
-       <src path="${src.java}" /> 
+       <src path="SignServer-Module-XMLSigner/src/java" />
        <include name="org/signserver/module/xmlsigner/*.java"/>       
     </javac>
 
@@ -30,7 +30,7 @@
             <fileset dir="dist-server">
                 <include name="xmlsigner-module.jar"/>
             </fileset>
-            <fileset dir="src/module-configs/xmlsigner">
+            <fileset dir="SignServer-Module-XMLSigner/src/conf">
                 <include name="*.properties"/>
             </fileset>
         </part>

@@ -15,7 +15,7 @@
 
 		<javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
 			<classpath refid="ooxmlsigner.build.classpath" />
-			<src path="${src.java}" />
+			<src path="SignServer-Module-OOXMLSigner/src/java" />
 			<include name="org/signserver/module/ooxmlsigner/*.java" />
 		</javac>
 
@@ -30,7 +30,7 @@
 				<fileset dir="dist-server">
 					<include name="ooxmlsigner-module.jar" />
 				</fileset>
-				<fileset dir="src/module-configs/ooxmlsigner">
+				<fileset dir="SignServer-Module-OOXMLSigner/src/conf">
 					<include name="*.properties" />
 				</fileset>
 			</part>

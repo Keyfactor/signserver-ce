@@ -16,7 +16,7 @@
  
     <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
        <classpath refid="cmssigner.build.classpath" />
-       <src path="${src.java}" /> 
+       <src path="SignServer-Module-CMSSigner/src/java" />
        <include name="org/signserver/module/cmssigner/*.java"/>
     </javac>
 
@@ -30,7 +30,7 @@
             <fileset dir="dist-server">
                 <include name="cmssigner-module.jar"/>
             </fileset>
-            <fileset dir="src/module-configs/cmssigner">
+            <fileset dir="SignServer-Module-CMSSigner/src/conf">
                 <include name="*.properties"/>
             </fileset>
         </part>

@@ -364,8 +364,15 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	   <path id="jaxws.classpath">
 	    	<fileset dir="lib/jaxws">
 	    	  <include name="**/*.jar"/>
-	    	</fileset> 
+	    	</fileset>
 	    	<pathelement location="${java.home}/../lib/tools.jar"/>
+
+                <!-- WS Tools in JBoss -->
+                <pathelement location="${appserver.home}/client/jaxws-tools.jar"/>
+
+                <!-- WS Tools in GlassFish -->
+                <pathelement location="${appserver.home}/client/webservices-tools.jar"/>
+
 	    	<pathelement location="${build}"/>
 	    	<path refid="signserver.compile.classpath" />
 	    </path>

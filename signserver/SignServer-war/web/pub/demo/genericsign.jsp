@@ -52,10 +52,11 @@
                 process the request needs to be specified.
             </p>
 
-            <!--<p>
+            <p>
                 The name of all workers/signers available if all demo signers
-                are configured are: 
-            </p>-->
+                are configured are: PDFSigner, ODFSigner, OOXMLSigner,
+                XMLSigner and CMSSigner.
+            </p>
 
             <a name="submit-by-input"/>
             <fieldset id="submit-by-input">

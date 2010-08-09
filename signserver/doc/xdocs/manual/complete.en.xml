@@ -1096,7 +1096,7 @@ try {
                                 </li>
                                 <li>
                                     HTTP POST with multipart/form-data or x-www-form-urlencoded:<br/>
-                                    For example see /signserver/xmlsign.html (multipart/form-data) and /signserver/genericsign.html (x-www-form-urlencoded).<br/>
+                                    For example see /signserver/demo/xmlsign.jsp (multipart/form-data) and /signserver/demo/genericsign.jsp (x-www-form-urlencoded).<br/>
                                     <br/>
                                 </li>
                                 <li>
@@ -1146,7 +1146,7 @@ try {
                         <subsubsection name="Samples">
                             <ul>
                                 <li>
-                                    See /signserver/mrtdsodsign.html.<br/>
+                                    See /signserver/demo/mrtdsodsign.jsp.<br/>
                                     <br/>
                                 </li>
                             </ul>

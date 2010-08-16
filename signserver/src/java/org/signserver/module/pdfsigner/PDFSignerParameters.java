@@ -64,6 +64,8 @@ public class PDFSignerParameters {
 	private boolean embed_crl = PDFSigner.EMBED_CRL_DEFAULT;
 	private boolean embed_ocsp_response = PDFSigner.EMBED_OCSP_RESPONSE_DEFAULT;
 
+        private boolean refuseDoubleIndirectObjects;
+
 	// helper variables
 	private boolean use_custom_image = false;
 	private boolean use_timestamp = false;
@@ -130,6 +132,15 @@ public class PDFSignerParameters {
 		}
 		log.debug("Using embed ocsp inside cms package : "
 				+ isEmbed_ocsp_response());
+
+                // should we refuse PDF documents that contains multiple
+                // indirect objects with the same name
+                if (config.getProperties().getProperty(
+                        PDFSigner.REFUSE_DOUBLE_INDIRECT_OBJECTS) != null) {
+                    refuseDoubleIndirectObjects = Boolean.parseBoolean(config
+                            .getProperties().getProperty(
+                                PDFSigner.REFUSE_DOUBLE_INDIRECT_OBJECTS));
+                }
 
 		// if signature is chosen to be visible proceed with setting visibility
 		// properties
@@ -409,6 +420,14 @@ public class PDFSignerParameters {
 	public boolean isEmbed_ocsp_response() {
 		return embed_ocsp_response;
 	}
+
+    /**
+     * @return if we should refuse PDF documents that contains multiple
+     * indirect objects with the same name
+     */
+    public boolean isRefuseDoubleIndirectObjects() {
+        return refuseDoubleIndirectObjects;
+    }
 
     public int getCertification_level() {
         return certification_level;

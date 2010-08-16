@@ -1664,6 +1664,11 @@ Default is not set (no timestamping).
                         <p>
         Default value is "${WORKERID}-${REQUESTID}-${DATE:HHmmssSSS}.pdf".
                         </p>
+                        <p>
+        <b>REFUSE_DOUBLE_INDIRECT_OBJECTS</b>=
+        True if PDF documents containing multiple indirect objects with the
+        same name should be refused.
+                        </p>
                     </subsubsection>
                 </subsection>
 

@@ -15,8 +15,11 @@ package org.signserver.module.pdfsigner;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
@@ -71,6 +74,9 @@ public class TestPDFSigner extends TestCase {
         private static Random random = new Random(WORKERID);
 
         private static final String CERTIFICATION_LEVEL = "CERTIFICATION_LEVEL";
+
+        private static final String TESTPDF_OK = "ok.pdf";
+        private static final String TESTPDF_2CATALOGS = "2catalogs.pdf";
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -311,6 +317,34 @@ public class TestPDFSigner extends TestCase {
 
             exptectedFile.delete();
         }
+
+        public void test11RefuseDublicateObjects() throws Exception {
+            final byte[] pdfOk = getTestFile(TESTPDF_OK);
+            final byte[] pdf2Catalogs = getTestFile(TESTPDF_2CATALOGS);
+
+            sSSession.setWorkerProperty(WORKERID,
+                    "REFUSE_DOUBLE_INDIRECT_OBJECTS", "FALSE");
+            sSSession.reloadConfiguration(WORKERID);
+
+            // Just test that we can sign a normal PDF
+            signNoCheck(WORKERID, pdfOk);
+
+            // Test that we can sign a strange PDF when the check is disabled
+            signDocument(WORKERID, pdf2Catalogs);
+
+            // Enable the check
+            sSSession.setWorkerProperty(WORKERID,
+                    "REFUSE_DOUBLE_INDIRECT_OBJECTS", "TRUE");
+            sSSession.reloadConfiguration(WORKERID);
+
+            // Test that we can't sign the strange PDF when the check is on
+            try {
+                signDocument(WORKERID, pdf2Catalogs);
+                fail("Accepted the faulty PDF!");
+            } catch (SignServerException ok) {
+                // OK
+            }
+        }
 	
 	public void test99TearDownDatabase() throws Exception{
 		TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
@@ -322,6 +356,17 @@ public class TestPDFSigner extends TestCase {
 	    	    
 	}
 	
+
+    private static GenericSignResponse signNoCheck(final int workerId,
+            final byte[] data) throws IllegalRequestException,
+                CryptoTokenOfflineException, SignServerException {
+        final int requestId = random.nextInt();
+        final GenericSignRequest request = new GenericSignRequest(requestId,
+                data);
+        final GenericSignResponse response = (GenericSignResponse)
+                sSSession.process(workerId, request, new RequestContext());
+        return response;
+    }
 
 
     private static GenericSignResponse signDocument(final int workerId,
@@ -341,6 +386,24 @@ public class TestPDFSigner extends TestCase {
         assertNotNull(signercert);
 
         return response;
+    }
+
+    private byte[] getTestFile(String name) throws IOException {
+        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+
+        final File file = new File(signserverhome,
+                "src" + File.separator + "test" + File.separator + name);
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            int c;
+            while ((c = in.read()) != -1) {
+                bout.write(c);
+            }
+        } finally {
+            in.close();
+        }
+        return bout.toByteArray();
     }
   
   /**
@@ -3551,5 +3614,5 @@ private static String testpdf4 =
         +"LG9NcoIM7VZ0sp25qy0rHRBf2yd1cI/9HdfiAqB55Rzl/69kQFEtnptH20KlfB/C"
         +"pkiw176SaU2k9ilXxXgRGNyHUcoTsmKdTysyvTGlwfpSqwWIyA=="
         +"\n-----END CERTIFICATE-----";
-  
+
 }

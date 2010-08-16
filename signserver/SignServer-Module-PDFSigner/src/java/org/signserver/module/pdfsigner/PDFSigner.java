@@ -58,6 +58,7 @@ import org.signserver.validationservice.server.ValidationUtils;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.OcspClientBouncyCastle;
+import com.lowagie.text.pdf.PRTokeniser;
 import com.lowagie.text.pdf.PdfDate;
 import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfName;
@@ -75,7 +76,9 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
@@ -83,18 +86,22 @@ import org.signserver.server.UsernamePasswordClientCredential;
 
 /**
  * A Signer signing PDF files using the IText PDF library.
- * 
+ *
  * Implements a ISigner and have the following properties: REASON = The reason
  * shown in the PDF signature LOCATION = The location shown in the PDF signature
  * RECTANGLE = The location of the visible signature field (llx, lly, urx, ury)
- * 
+ *
  * TSA_URL = The URL of the timestamp authority TSA_USERNAME = Account
  * (username) of the TSA TSA_PASSWORD = Password for TSA
- * 
+ *
  * CERTIFICATION_LEVEL = The level of certification for the document.
  * NOT_CERTIFIED, FORM_FILLING_AND_ANNOTATIONS, FORM_FILLING or NOT_CERTIFIED
  * (default: NOT_CERTIFIED).
- * 
+ *
+ * REFUSE_DOUBLE_INDIRECT_OBJECTS = True if documents with multiple indirect
+ * objects with the same object number and generation number pair should be
+ * refused.
+ *
  * @author Tomas Gustavsson
  * @version $Id$
  */
@@ -137,6 +144,9 @@ public class PDFSigner extends BaseSigner {
 	public static final boolean EMBED_CRL_DEFAULT = false;
 	public static final String EMBED_OCSP_RESPONSE = "EMBED_OCSP_RESPONSE";
 	public static final boolean EMBED_OCSP_RESPONSE_DEFAULT = false;
+
+        public static final String REFUSE_DOUBLE_INDIRECT_OBJECTS
+                = "REFUSE_DOUBLE_INDIRECT_OBJECTS";
 
         // archivetodisk properties
         public static final String PROPERTY_ARCHIVETODISK = "ARCHIVETODISK";
@@ -213,6 +223,12 @@ public class PDFSigner extends BaseSigner {
 			event.addCustomStatistics("PDFBYTES", pdfbytes.length);
 		}
 		try {
+
+                    if (params.isRefuseDoubleIndirectObjects()) {
+                        checkForDuplicateObjects(pdfbytes);
+                    }
+
+
 			byte[] signedbytes = addSignatureToPDFDocument(params, pdfbytes);
 			if (signRequest instanceof GenericServletRequest) {
 				signResponse = new GenericServletResponse(sReq.getRequestID(),
@@ -584,5 +600,30 @@ public class PDFSigner extends BaseSigner {
             log.debug("Result: " + result);
         }
         return result;
+    }
+
+    private void checkForDuplicateObjects(byte[] pdfbytes) throws IOException,
+            SignServerException {
+        log.debug("<checkForDuplicateObjects");
+        final PRTokeniser tokens = new PRTokeniser(pdfbytes);
+        final Set<String> idents = new HashSet<String>();
+        final byte[] line = new byte[16];
+
+        while (tokens.readLineSegment(line)) {
+            final int[] obj = PRTokeniser.checkObjectStart(line);
+            if (obj != null) {
+                final String ident = obj[0] + " " + obj[1];
+                
+                if (idents.add(ident)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Object: " + ident);
+                    }
+                } else {
+                    log.debug("Duplicate object: " + ident);
+                    throw new SignServerException("Incorrect document");
+                }
+            }
+        }
+        log.debug(">checkForDuplicateObjects");
     }
 }

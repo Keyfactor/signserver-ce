@@ -1,3 +1,5 @@
+package org.signserver.server;
+
 /*************************************************************************
  *                                                                       *
  *  SignServer: The OpenSource Automated Signing Server                  *
@@ -10,15 +12,16 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+
 
 import java.io.Serializable;
 
 /**
- * Class holding the results from testing a key.
- * 
+ * This class is for newer clients to be able to call old SignServer 3.1.x.
+ *
+ * @deprecated Use org.signserver.common.KeyTestResult instead
  * @author markus
- * @version $Id$
+ * @version $Id: KeyTestResult.java 1125 2010-07-20 14:33:50Z netmackan $
  */
 public class KeyTestResult implements Serializable {
 

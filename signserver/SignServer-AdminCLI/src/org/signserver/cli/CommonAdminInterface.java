@@ -54,7 +54,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.mailsigner.cli.IMailSignerRMI;
-import org.signserver.server.KeyTestResult;
+import org.signserver.common.KeyTestResult;
 
 /**
  * A class that maintains the type of sign server build

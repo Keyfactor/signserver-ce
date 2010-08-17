@@ -44,7 +44,7 @@ import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.SignerStatus;
-import org.signserver.server.KeyTestResult;
+import org.signserver.common.KeyTestResult;
 
 
 /**

@@ -60,7 +60,7 @@ import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignerStatus;
-import org.signserver.server.KeyTestResult;
+import org.signserver.common.KeyTestResult;
 
 /**
  * Class that uses a PKCS12 or JKS file on the file system for signing.

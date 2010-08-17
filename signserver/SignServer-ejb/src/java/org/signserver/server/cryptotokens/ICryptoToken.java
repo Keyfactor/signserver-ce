@@ -25,7 +25,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.server.KeyTestResult;
+import org.signserver.common.KeyTestResult;
 
 
 /** Interface maintaining devices performing cryptographic operations and handling the private key.

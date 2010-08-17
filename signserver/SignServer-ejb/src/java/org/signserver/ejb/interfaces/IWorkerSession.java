@@ -25,7 +25,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
-import org.signserver.server.KeyTestResult;
+import org.signserver.common.KeyTestResult;
 
 /**
  * Interface for the worker session bean.

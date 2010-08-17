@@ -35,7 +35,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.common.ServiceLocator;
-import org.signserver.server.KeyTestResult;
+import org.signserver.common.KeyTestResult;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 

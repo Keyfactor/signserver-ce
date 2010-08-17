@@ -19,7 +19,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.log4j.Logger;
 import org.ejbca.ui.cli.util.ConsolePasswordReader;
-import org.signserver.server.KeyTestResult;
+import org.signserver.common.KeyTestResult;
 
 /**
  * Command used to test one or more keys associated with a Crypto Token.

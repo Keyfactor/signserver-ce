@@ -54,7 +54,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.KeyTestResult;
+import org.signserver.common.KeyTestResult;
 import org.signserver.server.PropertyFileStore;
 
 

@@ -45,7 +45,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.WorkerConfig;
 import org.ejbca.util.CertTools;
-import org.signserver.server.KeyTestResult;
+import org.signserver.common.KeyTestResult;
 import org.signserver.server.KeyUsageCounter;
 
 

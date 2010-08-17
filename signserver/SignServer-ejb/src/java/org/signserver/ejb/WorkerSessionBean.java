@@ -74,7 +74,7 @@ import org.signserver.server.IProcessable;
 import org.signserver.server.ISystemLogger;
 import org.signserver.server.IWorker;
 import org.signserver.server.IWorkerLogger;
-import org.signserver.server.KeyTestResult;
+import org.signserver.common.KeyTestResult;
 import org.signserver.server.NotGrantedException;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.SystemLoggerException;

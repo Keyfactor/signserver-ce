@@ -1013,7 +1013,16 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
         <mkdir dir="${validationClientBuild}"/>
         <javac srcdir="${src.java}" destdir="${validationClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
            <include name="org/signserver/client/validationservice/*.java"/>            
-           <classpath refid="signserver.compile.classpath"/> 
+           <classpath refid="signserver.compile.classpath"/>
+           <!-- TODO: Markus: The validation.jar file currently contains classes from
+           the commons package.
+           In the future it would be better it depends on the
+           SignServer-Common.jar instead of doing a separe build of those 
+           classes. -->
+           <sourcepath>
+               <dirset  dir="${src.java}" />
+               <dirset dir="${signservercommon.src.java}" />
+           </sourcepath>
         </javac>
         <mkdir dir="${validationClientDir}/lib"/>
         <copy todir="${validationClientDir}/lib" >
@@ -1071,7 +1080,17 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
         <javac srcdir="${src.java}" destdir="${signingAndValidationBuild}" debug="on" target="${client.java.target}" source="${client.java.target}" encoding="iso8859-1">
            <include name="org/signserver/client/api/*.java"/>
            <include name="org/signserver/common/AuthorizationRequiredException.java"/>
-           <classpath refid="signserver.compile.classpath"/> 
+           <classpath refid="signserver.compile.classpath"/>
+           <!-- TODO: Markus: The signingAndValidation.jar file currently
+           contains classes from the commons and ejb packages.
+           In the future it would be better it depends on the
+           SignServer-Common.jar instead of doing a separe build of those
+           classes. -->
+           <sourcepath>
+            <dirset dir="${src.java}" />
+            <dirset dir="${signservercommon.src.java}" />
+            <dirset dir="${signserverejb.src.java}" />
+           </sourcepath>
         </javac>
         
         <mkdir dir="${signingAndValidationDir}/lib"/>

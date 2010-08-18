@@ -135,6 +135,8 @@ OS version                          = ${os.version}
     	<delete dir="${client.dist.dir}" />
         <delete file="velocity.log" />
         <delete dir="${test.dir}" />
+        <delete dir="${validationClientBuild}" />
+        <delete dir="${signingAndValidationBuild}" />
     </target>
 	
 

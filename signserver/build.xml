@@ -137,6 +137,8 @@ OS version                          = ${os.version}
         <delete dir="${test.dir}" />
         <delete dir="${validationClientBuild}" />
         <delete dir="${signingAndValidationBuild}" />
+        <delete dir="${wsraadminClientBuild}" />
+        <delete dir="${timeStampClientBuild}" />
     </target>
 	
 

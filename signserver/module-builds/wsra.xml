@@ -84,7 +84,17 @@
     <mkdir dir="${wsraadminClientBuild}"/>
     <javac srcdir="${src.java}" destdir="${wsraadminClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
            <include name="org/signserver/client/wsraadmin/*.java"/>            
-           <classpath refid="signserver.compile.classpath"/> 
+           <classpath refid="signserver.compile.classpath"/>
+           <!-- TODO: Markus: The wsra admin client.jar file currently contains classes from
+           the commons package and EJB.
+           In the future it would be better it depends on the
+           SignServer-Common.jar instead of doing a separe build of those
+           classes. -->
+           <sourcepath>
+               <dirset dir="${src.java}" />
+               <dirset dir="${signservercommon.src.java}" />
+               <dirset dir="${signserverejb.src.java}" />
+           </sourcepath>
     </javac>
     <mkdir dir="${wsraadminClientDir}/lib"/>
     <copy todir="${wsraadminClientDir}/lib" >

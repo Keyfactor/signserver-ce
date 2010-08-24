@@ -301,7 +301,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	          	  <exclude name="org/signserver/module/**" />
 	          	  -->
 	          	  <exclude  name="org/signserver/protocol/validationservice/ws/**" />
-                  <exclude name="org/signserver/server/genericws/**" />
+<!--                  <exclude name="org/signserver/server/genericws/**" />-->
 	              <exclude  name="org/signserver/protocol/ws/**" />
 		          <exclude name="org/signserver/mailsigner/**" />
 	        	</fileset>

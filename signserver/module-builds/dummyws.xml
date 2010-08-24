@@ -60,6 +60,9 @@
      </copy> 
      <copy file="${test.src.dir}/dummyws-sun-jaxws.xml" tofile="${tmp}/dummyws/gen-classes/server/sun-jaxws.xml"/>
         
+     <!-- With includemodulesinbuild the jaxws.xml needs to be placed on the server, not just in the module -->
+     <copy file="${test.src.dir}/dummyws-sun-jaxws.xml" tofile="${build}/dummyws-sun-jaxws.xml"/>
+        
      <wsimport destdir="${tmp}/dummyws/gen-classes/client"
         wsdl="${tmp}/dummyws/gen-classes/server/DummyWSService.wsdl" >
      </wsimport>

@@ -3246,23 +3246,76 @@ The following substitution variables can be used in notification subject and mes
                     <subsubsection name="Overview">
                         <p>
 The SignerStatusReportTimedService is a timed service that outputs status for a
-set of signers to a file. The information includes each signers current status
+set of signers to a file. The information includes each signers crypto token status
 ACTIVE/OFFLINE and if available also the numbers of signings that has been
 performed with the key currently associated with the signer. If the signer has
 a configured limit of number of signers, this value is also included.
                         </p>
                         <p>
-Sample content of a produced output file:
+<b>Format:</b>
                         </p>
                         <pre>
-workerName=Sod1, status=OFFLINE, signings=10000, signLimit=10000,
-workerName=Sod2, status=ACTIVE, signings=33524, signLimit=100000,
-workerName=Sod3, status=OFFLINE, signings=10000, signLimit=10000,
-workerName=Sod4, status=OFFLINE, signings=10000, signLimit=10000,
-workerName=Sod5, status=OFFLINE, signings=10000, signLimit=10000,
-workerName=Sod6, status=ACTIVE, validityNotBefore=2010-04-04 01:37:21 CEST, validityNotAfter=2018-04-04 01:37:21 CEST, signings=4676,
-workerName=Sod7, status=OFFLINE,
+workerName=WORKERNAME1, status=STATUS1, KEY3=VALUE3, KEY4=VALUE4, ...
+workerName=WORKERNAME2, status=STATUS2, KEY3=VALUE3, KEY4=VALUE4, ...
+workerName=WORKERNAME3, status=STATUS3, KEY3=VALUE3, KEY4=VALUE4, ...
+...
                         </pre>
+                        <p>
+<b>Rules:</b>
+<ul>
+    <li>Each line contains a set of properties for one worker.</li>
+    <li>Lines are separated by some system dependent newline character (CR,
+LF or CRLF).</li>
+    <li>Properties are of form KEY=VALUE and are separated by a comma and a
+space (", ").</li>
+    <li>The properties "workerName" and "status" are the only that must be
+present.</li>
+    <li>The property "workerName" is always the first property.</li>
+</ul>
+                        </p>
+                        <p>
+<b>Properties:</b>
+<ul>
+    <li><b>workerName</b>: is name of the worker. Example: "sod71" or "sod72"</li>
+    <li><b>status</b>: is status of the worker's crypto token and key. Either
+"ACTIVE" or "OFFLINE".</li>
+    <li><b>validityNotBefore</b>: is first date the signer are allowed to sign.
+Format is java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").</li>
+    <li><b>validityNotAfter</b>: is last date the signer are allowed to sign.</li>
+    <li><b>signings</b>: is number of signings that has been performed with the key
+used by this signer.</li>
+    <li><b>signLimit</b>: is the maximum number of signatures this worker is allowed
+to perfom or -1 if there are no limit.</li>
+</ul>
+                        </p>
+                        <p>
+<b>Examples:</b>
+                        </p>
+                        <pre>
+workerName=Sod71, status=ACTIVE, validityNotBefore=2010-07-05 17:32:36 CEST, validityNotAfter=2010-09-08 17:32:36 EEST, signings=132, signLimit=100000,
+workerName=Sod72, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=100000, signLimit=100000,
+workerName=Sod73, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=0, signLimit=100000,
+workerName=Sod74, status=OFFLINE,
+                        </pre>
+                        <p>
+<b>Examples explained:</b>
+                        </p>
+                        <p>
+Sod71 has done 132 signings and is ACTIVE and validityNotAfter indicates
+that it can continue to sign until 8th September if not the sign limit
+is reached before
+                        </p>
+                        <p>
+Sod72 has performed all of its 100000 signings and can not sign until it
+gets a new key and certificate.
+                        </p>
+                        <p>
+Sod73 has not reached its limit and is still in validity time but is
+OFFLINE for some other reason.
+                        </p>
+                        <p>
+Sod74 is OFFLINE and has no certificate configured.
+                        </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">
 <p><b>WORKERS</b> = Comma separated list of worker names (signers) that should

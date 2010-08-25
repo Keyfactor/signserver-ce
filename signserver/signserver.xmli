@@ -282,7 +282,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	   <!-- =================================================================== -->
 	    <!-- Build signserver ejb part                                           -->
 	    <!-- =================================================================== -->
-	    <target name="signserver-ejb-jar-including-modules" if="includemodulesinbuild">
+	    <target name="signserver-ejb-jar-including-modules" if="includemodulesinbuild" depends="dummywsmar">
 	        <echo message="Including modules in main build"/>
 	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
 	        	<metainf dir="${preprocessed}/appserver/${appserver.type}">

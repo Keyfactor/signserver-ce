@@ -97,8 +97,8 @@ public class TestSignerStatusReportTimedService extends TestCase {
         assertNotNull("Please set SIGNSERVER_HOME environment variable",
                 signserverhome);
         CommonAdminInterface.BUILDMODE = "SIGNSERVER";
-        outputFile = new File(signserverhome + File.separator
-                + "~test-outputfile.dat");
+        outputFile = new File(signserverhome + File.separator + "tmp"
+                + File.separator + "~test-outputfile.dat");
         if (outputFile.exists()) {
             if (!outputFile.delete()) {
                 fail("Could not remove: " + outputFile.getAbsolutePath());

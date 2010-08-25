@@ -7,7 +7,6 @@
        <import file="./module-builds/mrtdsodsigner.xml"/>
 	   <import file="./module-builds/tsa.xml"/>
 	   <import file="./module-builds/dummyws.xml"/>
-           <import file="./module-builds/signerstatusreportws.xml"/>
 	   <import file="./module-builds/wsra.xml"/>
 	   <import file="./module-builds/xmlsigner.xml"/>
 	   <import file="./module-builds/ooxmlsigner.xml"/>

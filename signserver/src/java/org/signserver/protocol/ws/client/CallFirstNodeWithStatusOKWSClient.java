@@ -20,7 +20,7 @@ import org.signserver.protocol.ws.gen.SignServerWS;
 import org.signserver.protocol.ws.gen.SignServerWSService;
 import org.signserver.protocol.ws.gen.WorkerStatusWS;
 
-import com.sun.xml.ws.developer.JAXWSProperties;
+//import com.sun.xml.ws.developer.JAXWSProperties;
 
 
 /**
@@ -112,7 +112,8 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	    				( ( BindingProvider ) retval ).getRequestContext().put(
 	    						"com.sun.xml.ws.request.timeout", timeOut  );
 	    				( ( BindingProvider ) retval ).getRequestContext().put(
-	    						JAXWSProperties.SSL_SOCKET_FACTORY, sSLSocketFactory  );
+//	    						JAXWSProperties.SSL_SOCKET_FACTORY, sSLSocketFactory  );
+                                                "com.sun.xml.ws.transport.https.client.SSLSocketFactory", sSLSocketFactory);
 	    			} 
 	    			serviceMap.put(host, retval);
 	    		} catch (MalformedURLException e) {

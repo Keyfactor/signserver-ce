@@ -288,6 +288,12 @@ public  class WorkerFactory {
 					synchronized(workerClassLoaderMap){
 						if(id != 0){
 
+                                                    // Call destroy on old worker
+                                                    IWorker oldWorker = workerStore.get(id);
+                                                    if (oldWorker instanceof BaseProcessable) {
+                                                        ((BaseProcessable) oldWorker).destroy();
+                                                    }
+
 							workerStore.put(id,null);
 							authenticatorStore.put(id, null);
 							workerClassLoaderMap.put(id, null);

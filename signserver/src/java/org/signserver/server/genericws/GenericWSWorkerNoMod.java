@@ -27,20 +27,21 @@ import org.signserver.server.WorkerContext;
 
 /**
  * Class managing a custom JAX-WS web service. It'made so it is possible
- * to develop your own Jax-ws web service and just deploy it as a MAR
- * module to a signserver.
+ * to develop your own JX-WS web service and have it as a worker. 
+ * 
+ * This class is different from GenericWSWorker in that it works with and
+ * requires includedmodulesinbuild=true.
  *
- * @author Philip Vendil 8 okt 2008
- * @version $$
+ * @version $Id$
  */
-public class GenericWSWorker extends BaseProcessable {
+public class GenericWSWorkerNoMod extends BaseProcessable {
 
     private transient Logger log = Logger.getLogger(this.getClass());
 
     private GenericWSWorkerImpl delegate;
 
-    public GenericWSWorker() {
-        this.delegate = new GenericWSWorkerImpl(true);
+    public GenericWSWorkerNoMod() {
+        this.delegate = new GenericWSWorkerImpl(false);
     }
 
     /**

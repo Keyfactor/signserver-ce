@@ -81,4 +81,8 @@ public abstract class BaseWorker implements IWorker {
         }
         return null;
     }
+
+    public void destroy() {
+        LOG.debug("Destroy called");
+    }
 }

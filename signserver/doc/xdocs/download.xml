@@ -29,8 +29,9 @@
         contains a sample installation of SignServer and also EJBCA.
     </p>
     <p>
-        Requires atleast 1024 MB of memory to run. Technical details can be found
-        <a href="http://wiki.ejbca.org/ejbcalivecd">here</a>.
+        Requires atleast 1512 MB of memory to run. Please see
+        <a href="http://wiki.ejbca.org/livecd">wiki.ejbca.org/livecd</a>
+        for all information.
     </p>
   </section>
 </body>

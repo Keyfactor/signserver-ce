@@ -57,9 +57,9 @@ import org.signserver.server.CertificateClientCredential;
 public class GenericWSServlet extends HttpServlet implements ServletContextAttributeListener, ServletContextListener{
 
     private static final long serialVersionUID = 1L;
-	
-    private static final Logger LOG = Logger.getLogger(
-                GenericWSServlet.class);
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(GenericWSServlet.class);
 
     private Random rand = new Random();
 	
@@ -99,7 +99,8 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
      * @throws ServletException 
      */
     private void forwardRequest(int requestType, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) throws ServletException{
-    	
+        LOG.debug(">forwardRequest");
+
         if(GenericWSRequest.REQUESTTYPE_CONTEXT_INIT != requestType &&
                 GenericWSRequest.REQUESTTYPE_CONTEXT_DESTROYED != requestType) {
 
@@ -122,11 +123,11 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
 
             if (clientCertificate instanceof X509Certificate) {
                 final X509Certificate cert = (X509Certificate) clientCertificate;
-                CertificateClientCredential credential
+                final CertificateClientCredential credential
                         = new CertificateClientCredential(
                         cert.getSerialNumber().toString(16),
                         cert.getIssuerDN().getName());
-                requestContext.put(RequestContext.CLIENT_CREDENTIAL, rand);
+                requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
             }
 
             int requestId = rand.nextInt();
@@ -142,6 +143,7 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
                     throw new ServletException(e);
             }
         }
+        LOG.debug("<forwardRequest");
     }
     
     /**

@@ -33,14 +33,32 @@ import java.text.DateFormat;
 
 public abstract class WorkerStatus implements Serializable{
 
+    private static final long serialVersionUID = 1L;
+
 	protected static final String[] signTokenStatuses = {"", "Active", "Offline"};
-	
-	private static final long serialVersionUID = 1L;
 
 	protected String hostname = null;
 	protected WorkerConfig activeconfig= null;	
     protected int workerId;
-	
+
+    public WorkerStatus() {
+        try {
+            hostname= InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            hostname= "unknown";
+        }
+    }
+
+    public void setActiveconfig(WorkerConfig activeconfig) {
+        this.activeconfig = activeconfig;
+    }
+
+    public void setWorkerId(int workerId) {
+        this.workerId = workerId;
+    }
+
+
+
 	/** 
 	 * Main constuctor
 	 */

@@ -40,6 +40,12 @@ public class KeyTestResult implements Serializable {
     private String publicKeyHash;
 
     /**
+     * No-arg constructor used by JAXB.
+     */
+    public KeyTestResult() {
+    }
+
+    /**
      * Creates a new instance of KeyTestResult.
      * @param alias The name the key
      * @param success If the signature was found consistent
@@ -79,6 +85,22 @@ public class KeyTestResult implements Serializable {
      */
     public String getPublicKeyHash() {
         return publicKeyHash;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public void setPublicKeyHash(String publicKeyHash) {
+        this.publicKeyHash = publicKeyHash;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
 }

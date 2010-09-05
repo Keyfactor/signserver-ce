@@ -58,6 +58,18 @@ public class SigningAndValidationWS implements ISigningAndValidation {
             this(host, port, null, null);
 	}
 
+   /**
+    * Creates an instance of SigningAndValidationWS using an WebService host and port.
+    *
+    * @param host The remote host to connect to.
+    * @param port The remote port to connect to.
+    * @param useHTTPS True if SSL/TLS is to be used (HTTPS).
+    */
+    public SigningAndValidationWS(final String host, final int port,
+            final boolean useHTTPS) {
+        this(host, port, useHTTPS, null, null);
+    }
+
     /**
      * Creates an instance of SigningAndValidationWS using an WebService host and port.
      *
@@ -68,7 +80,23 @@ public class SigningAndValidationWS implements ISigningAndValidation {
      */
     public SigningAndValidationWS(final String host, final int port,
             final String username, final String password) {
-        final String url = "http://" + host + ":" + port
+        this(host, port, false, null, null);
+    }
+
+    /**
+     * Creates an instance of SigningAndValidationWS using an WebService host and port.
+     *
+     * @param host The remote host to connect to.
+     * @param port The remote port to connect to.
+     * @param useHTTPS True if SSL/TLS is to be used (HTTPS).
+     * @param username Username for authentication.
+     * @param password Password for authentication.
+     */
+    public SigningAndValidationWS(final String host, final int port,
+            final boolean useHTTPS,
+            final String username, final String password) {
+        final String url = (useHTTPS ? "https://" : "http://")
+                + host + ":" + port
                 + "/signserver/signserverws/signserverws?wsdl";
         final SignServerWSService service;
         try {

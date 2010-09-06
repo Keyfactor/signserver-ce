@@ -31,8 +31,9 @@
        <property name="validationClientBuild" value="${bin}/validationClient"/>
        <property name="validationClientDir" value="${client.dist.dir}/validationclient"/>
        <property name="validationClientJar" value="${validationClientDir}/validate.jar"/>
-       <property name="adminws.dist.dir" value="./SignServer-AdminWS/dist"/>
-       <property name="adminws.build.dir" value="./SignServer-AdminWS/build"/>
+       <property name="adminws.dir" value="./SignServer-AdminWS"/>
+       <property name="adminws.dist.dir" value="${adminws.dir}/dist"/>
+       <property name="adminws.build.dir" value="${adminws.dir}/build"/>
 	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
 	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
 	   <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
@@ -599,8 +600,8 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	                <include name="*-ejb.jar" />
 	                <include name="*.war" />
 	            </fileset>
-                    <fileset dir="${adminws.dist.dir}">
-	                <include name="*.war" />
+                    <fileset dir="${adminws.dir}">
+	                <include name="dist/*.war" />
 	            </fileset>
 
 			</ear>
@@ -610,7 +611,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
     <!-- Build Admin Web Service                                             -->
     <!-- =================================================================== -->
     <target name="adminws" description="Build Admin WS" depends="init" if="adminws.conditionenabled">
-        <ant antfile="build.xml" dir="./SignServer-AdminWS/"/>
+        <ant antfile="build.xml" dir="./SignServer-AdminWS/" target="dist"/>
         <replace file="${eardd.src}/META-INF/application.xml" token="!--@adminws.war@-->" value="module>&lt;web>&lt;web-uri>SignServer-AdminWS.war&lt;/web-uri>&lt;context-root>/signserver/adminws&lt;/context-root>&lt;/web>&lt;/module>"/>
     </target>
     

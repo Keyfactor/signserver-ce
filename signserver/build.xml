@@ -25,6 +25,7 @@
 	  <condition property="appserver.home" value="${env.APPSRV_HOME}" else="${jboss.home}">
 	      <contains string="${jboss.home}" substring="JBOSS_HOME"/>
 	  </condition>
+          <property name="j2ee.server.home" value="${appserver.home}"/>
 	
 	<property name="ant.home" value="${env.ANT_HOME}"/>
 	

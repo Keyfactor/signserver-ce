@@ -1,5 +1,5 @@
 
-<project name="signserver" default="build" basedir=".">
+<project name="signserver" default="default" basedir=".">
 
     <!-- Import property file containing version numbers and other constants -->
     <property file="src/compile.properties"/>
@@ -78,6 +78,9 @@
     <!-- =================================================================== -->
     <!-- Build ALL                                                           -->
     <!-- =================================================================== -->
+
+        <target name="default" depends="build" description="Default target"/>
+
 	<target name="build" depends="signserver, mailsigner, signserver-cli">
 		<antcall target="showtime"/>
 	</target>
@@ -139,6 +142,8 @@ OS version                          = ${os.version}
         <delete dir="${signingAndValidationBuild}" />
         <delete dir="${wsraadminClientBuild}" />
         <delete dir="${timeStampClientBuild}" />
+        <delete dir="${adminws.dist.dir}" />
+        <delete dir="${adminws.build.dir}" />
     </target>
 	
 

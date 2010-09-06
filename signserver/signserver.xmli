@@ -13,6 +13,7 @@
 	   <import file="./module-builds/odfsigner.xml"/>
 	   <import file="./module-builds/xmlvalidator.xml"/>
            <import file="./module-builds/cmssigner.xml"/>
+           <import file="./SignServer-AdminWS/build.xml"/>
 	
 	   <property name="java.trustpassword" value="changeit" />
 	   <property name="httpsserver.password" value="serverpwd" />
@@ -30,6 +31,8 @@
        <property name="validationClientBuild" value="${bin}/validationClient"/>
        <property name="validationClientDir" value="${client.dist.dir}/validationclient"/>
        <property name="validationClientJar" value="${validationClientDir}/validate.jar"/>
+       <property name="adminws.dist.dir" value="./SignServer-AdminWS/dist"/>
+       <property name="adminws.build.dir" value="./SignServer-AdminWS/build"/>
 	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
 	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
 	   <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
@@ -61,6 +64,7 @@
 	   <property name="genericws.enabled" value="true" />
 	   <property name="validationws.enabled" value="false" />
            <property name="validationwswebxml" value="${preprocessed}/validationws/web.xml"/>
+           <property name="adminws.enabled" value="true"/>
 	   <property name="timestampclient.enabled" value="true" />
 	   <property name="validationclient.enabled" value="true" />
 	   <property name="pdfperformancetest.enabled" value="false" />
@@ -187,6 +191,7 @@ database.password                   = ${database.password}
 signserverws.enabled                = ${signserverws.enabled}
 genericws.enabled                   = ${genericws.enabled}
 validationws.enabled                = ${validationws.enabled}
+adminws.enabled                     = ${adminws.enabled}
 timestampclient.enabled             = ${timestampclient.enabled}
 validationclient.enabled            = ${validationclient.enabled}
 pdfperformancetest.enabled          = ${pdfperformancetest.enabled}
@@ -208,6 +213,12 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    <condition property="validationws.conditionenabled">
 	        <istrue value="${validationws.enabled}"/>
 	    </condition>
+            <condition property="adminws.conditionenabled">
+	        <istrue value="${adminws.enabled}"/>
+	    </condition>
+            <condition property="adminws.enabledconditionenabled">
+                <istrue value="${adminws.enabled}"/>
+            </condition>
 	    <condition property="includejaxws">
               <or>
                 <istrue value="${signserverws.enabled}"/>
@@ -565,7 +576,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, xmlsignermar,odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, adminws, signserverws.client, pdfsignermar, xmlsignermar,odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />
@@ -587,10 +598,22 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	            <fileset dir="${server.dist.dir}">
 	                <include name="*-ejb.jar" />
 	                <include name="*.war" />
-	            </fileset> 
+	            </fileset>
+                    <fileset dir="${adminws.dist.dir}">
+	                <include name="*.war" />
+	            </fileset>
+
 			</ear>
 	    </target>
-		
+
+    <!-- =================================================================== -->
+    <!-- Build Admin Web Service                                             -->
+    <!-- =================================================================== -->
+    <target name="adminws" description="Build Admin WS" depends="init" if="adminws.conditionenabled">
+        <ant antfile="build.xml" dir="./SignServer-AdminWS/"/>
+        <replace file="${eardd.src}/META-INF/application.xml" token="!--@adminws.war@-->" value="module>&lt;web>&lt;web-uri>SignServer-AdminWS.war&lt;/web-uri>&lt;context-root>/signserver/adminws&lt;/context-root>&lt;/web>&lt;/module>"/>
+    </target>
+    
     <!-- ======================================================================= -->
     <!-- Deploy Sign Server ear to JBoss                                               -->
     <!-- ======================================================================= -->

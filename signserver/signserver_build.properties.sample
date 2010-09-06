@@ -257,6 +257,10 @@ genericws.enabled=true
 # Default false
 validationws.enabled=false
 
+# Set to true to enable Admin WebService deployment.
+# Default true
+adminws.enabled=true
+
 # -------------- Client Configurations ----------------
 #
 # Set to true to enable build of the TimeStampClient

@@ -26,5 +26,7 @@
     <!--@signserverws.war@-->
     
     <!--@validationws.war@-->
+
+    <!--@adminws.war@-->
 </application>
 

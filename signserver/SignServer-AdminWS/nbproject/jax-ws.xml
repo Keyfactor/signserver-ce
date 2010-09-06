@@ -25,10 +25,6 @@
           <wsimport-option-value>file:/home/markus/VersionControlled/signserver/trunk-1190/signserver/SignServer-AdminWS/build/generated-sources/jax-ws/resources/AdminWebServiceService.wsdl</wsimport-option-value>
         </wsimport-option>
         <wsimport-option>
-          <wsimport-option-name>xnocompile</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
           <wsimport-option-name>xendorsed</wsimport-option-name>
           <wsimport-option-value>true</wsimport-option-value>
         </wsimport-option>

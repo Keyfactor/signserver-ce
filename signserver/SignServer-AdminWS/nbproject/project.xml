@@ -29,6 +29,15 @@
                 <library dirs="200">
                     <file>${file.reference.bctsp-jdk.jar}</file>
                 </library>
+                <library dirs="200">
+                    <file>${file.reference.servlet-2.3.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jboss-ejb3x.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jboss-j2ee.jar}</file>
+                </library>
             </web-module-libraries>
             <web-module-additional-libraries/>
             <source-roots>

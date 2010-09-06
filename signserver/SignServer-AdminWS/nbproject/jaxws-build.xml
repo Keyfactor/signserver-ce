@@ -40,10 +40,7 @@
     </target>
     <target name="wsimport-client-AdminWebServiceService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/AdminWebServiceService"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" destdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/AdminWebServiceService/wsdl/AdminWebServiceService.wsdl" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="file:/home/markus/VersionControlled/signserver/trunk-1190/signserver/SignServer-AdminWS/build/generated-sources/jax-ws/resources/AdminWebServiceService.wsdl" xnocompile="true" xendorsed="true" package="org.signserver.adminws.client" target="2.1">
-            <depends file="${basedir}/${conf-dir}xml-resources/web-service-references/AdminWebServiceService/wsdl/AdminWebServiceService.wsdl"/>
-            <produces dir="${build.generated.dir}/jax-wsCache/AdminWebServiceService"/>
-        </wsimport>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" destdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/AdminWebServiceService/wsdl/AdminWebServiceService.wsdl" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="file:/home/markus/VersionControlled/signserver/trunk-1190/signserver/SignServer-AdminWS/build/generated-sources/jax-ws/resources/AdminWebServiceService.wsdl" xendorsed="true" package="org.signserver.adminws.client" target="2.1"/>
         <copy todir="${build.generated.sources.dir}/jax-ws">
             <fileset dir="${build.generated.dir}/jax-wsCache/AdminWebServiceService">
                 <include name="**/*.java"/>

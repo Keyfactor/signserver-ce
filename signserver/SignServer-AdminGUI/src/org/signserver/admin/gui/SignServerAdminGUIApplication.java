@@ -13,13 +13,24 @@
 package org.signserver.admin.gui;
 
 import java.awt.SplashScreen;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Hashtable;
+import java.util.logging.Level;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
+import org.ejbca.util.CertTools;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
+import org.signserver.adminws.AdminWebService;
+import org.signserver.adminws.AdminWebServiceService;
+import org.signserver.adminws.WsGlobalConfiguration;
+import org.signserver.client.api.ISigningAndValidation;
+import org.signserver.client.api.SigningAndValidationEJB;
+import org.signserver.client.api.SigningAndValidationWS;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -37,6 +48,15 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
 
     private static IGlobalConfigurationSession.IRemote gCSession;
     private static IWorkerSession.IRemote sSSession;
+
+    private static AdminWebService adminWS;
+    private static ISigningAndValidation clientWS;
+
+    private enum Protocol {
+        EJB,
+        WS
+    }
+    private static Protocol protocol;
 
     /**
      * At startup create and show the main frame of the application.
@@ -72,41 +92,64 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
             LOG.debug("No splash screen available.");
         }
 
+        if (args.length > 0 && "-ws".equalsIgnoreCase(args[0])) {
+            protocol = Protocol.WS;
+        } else {
+            protocol = Protocol.EJB;
+        }
 
         try {
-            Context context = getInitialContext();
-            gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(
-                    IGlobalConfigurationSession.IRemote.JNDI_NAME);
-            sSSession = (IWorkerSession.IRemote) context.lookup(
-                    IWorkerSession.IRemote.JNDI_NAME);
-
             launch(SignServerAdminGUIApplication.class, args);
         } catch (Exception ex) {
-            LOG.error("Startup error", ex);
-            JOptionPane.showMessageDialog(null,
+            displayException(ex);
+        }
+    }
+
+    /**
+     * @return The administration interface either EJB remote or web services.
+     */
+    public static AdminWebService getAdminWS() {
+        if (adminWS == null) {
+            if (Protocol.WS == protocol) {
+                
+                CertTools.installBCProvider();
+
+                final ConnectDialog dlg = new ConnectDialog(null, true);
+                dlg.setVisible(true);
+                adminWS = dlg.getWS();
+                
+            } else {
+                adminWS = new AdminLayerEJBImpl();
+            }
+        }
+        return adminWS;
+    }
+
+    /**
+     * @return The client interface either EJB remote or web services.
+     */
+    public static ISigningAndValidation getClientWS() {
+        if (clientWS == null) {
+            if (Protocol.WS == protocol) {
+                clientWS = new SigningAndValidationWS("localhost", 8443, true);
+            } else {
+                try {
+                    clientWS = new SigningAndValidationEJB();
+                } catch (NamingException ex) {
+                    displayException(ex);
+                }
+            }
+        }
+        return clientWS;
+    }
+
+    private static void displayException(final Exception ex) {
+        LOG.error("Startup error", ex);
+        JOptionPane.showMessageDialog(null,
                     "Startup failed. Are the application server running?\n"
                     + ex.getMessage(),
                     "SignServer Administration GUI startup",
                     JOptionPane.ERROR_MESSAGE);
-        }
     }
 
-    public static IWorkerSession.IRemote getWorkerSession() {
-        return sSSession;
-    }
-
-    public static IGlobalConfigurationSession.IRemote getGlobalConfigurationSession() {
-        return gCSession;
-    }
-
-    private static Context getInitialContext() throws Exception {
-        Hashtable<String, String> props = new Hashtable<String, String>();
-        props.put(Context.INITIAL_CONTEXT_FACTORY,
-                        "org.jnp.interfaces.NamingContextFactory");
-        props.put(Context.URL_PKG_PREFIXES,
-                        "org.jboss.naming:org.jnp.interfaces");
-        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-        Context ctx = new InitialContext(props);
-        return ctx;
-    }
 }

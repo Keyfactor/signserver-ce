@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.Task;
+import org.signserver.adminws.AdminNotAuthorizedException_Exception;
 
 /**
  * Dialog for renewing keys.
@@ -376,8 +377,8 @@ public class RenewKeysDialog extends JDialog {
                         try {
                             // Generate key
                             newAlias = SignServerAdminGUIApplication
-                                .getWorkerSession().generateSignerKey(signerId,
-                                keyAlg, keySpec, alias, authCode);
+                                .getAdminWS().generateSignerKey(signerId,
+                                keyAlg, keySpec, alias, new String(authCode));
 
                             if (newAlias == null) {
                                 final String error
@@ -418,25 +419,34 @@ public class RenewKeysDialog extends JDialog {
                         }
 
                         if (newAlias != null) {
+                            try {
+                                LOG.debug("Created key " + newAlias + " for signer "
+                                        + signerId);
 
-                            LOG.debug("Created key " + newAlias + " for signer "
-                                    + signerId);
+                                // Update key label
+                                SignServerAdminGUIApplication.getAdminWS()
+                                        .setWorkerProperty(signerId,
+                                        "NEXTCERTSIGNKEY", newAlias);
 
-                            // Update key label
-                            SignServerAdminGUIApplication.getWorkerSession()
-                                    .setWorkerProperty(signerId, 
-                                    "NEXTCERTSIGNKEY", newAlias);
+                                // Reload configuration
+                                SignServerAdminGUIApplication.getAdminWS()
+                                        .reloadConfiguration(signerId);
 
-                            // Reload configuration
-                            SignServerAdminGUIApplication.getWorkerSession()
-                                    .reloadConfiguration(signerId);
+                                LOG.debug("Configured new key " + newAlias
+                                        + " for signer " + signerId);
 
-                            LOG.debug("Configured new key " + newAlias
-                                    + " for signer " + signerId);
-
-                            workers.remove(worker);
-                            data.remove(row);
-                            row--;
+                                workers.remove(worker);
+                                data.remove(row);
+                                row--;
+                            } catch (AdminNotAuthorizedException_Exception e) {
+                                final String error =
+                                        "Error generating key for signer "
+                                        + signerId + ":\n" + e
+                                        .getMessage();
+                                LOG.error(error, e);
+                                sb.append(error);
+                                sb.append("\n");
+                            }
                         }
                         setProgress(progress++, 0, numWorkers);
                     }

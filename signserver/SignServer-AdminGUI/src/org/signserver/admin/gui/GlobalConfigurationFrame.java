@@ -17,11 +17,14 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Task;
+import org.signserver.adminws.AdminNotAuthorizedException_Exception;
+import org.signserver.adminws.WsGlobalConfiguration;
 import  org.signserver.common.GlobalConfiguration;
 
 /**
@@ -239,103 +242,116 @@ public class GlobalConfigurationFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        try {
+            editPropertyTextField.setText("");
+            editPropertyTextField.setEditable(true);
+            editPropertyValueTextArea.setText("");
 
-        editPropertyTextField.setText("");
-        editPropertyTextField.setEditable(true);
-        editPropertyValueTextArea.setText("");
+            final int res = JOptionPane.showConfirmDialog(this, editPanel,
+                    "Add property", JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE);
+            if (res == JOptionPane.OK_OPTION) {
 
-        final int res = JOptionPane.showConfirmDialog(this, editPanel,
-                "Add property", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE);
-        if (res == JOptionPane.OK_OPTION) {
+                final String key = editPropertyValueTextArea.getText();
 
-            final String key = editPropertyValueTextArea.getText();
-            
-            SignServerAdminGUIApplication.getGlobalConfigurationSession()
-                    .setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                    editPropertyTextField.getText(),
-                    key);
-            refreshButton.doClick();
+                SignServerAdminGUIApplication.getAdminWS()
+                        .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                        editPropertyTextField.getText(),
+                        key);
+                refreshButton.doClick();
+            }
+        } catch (AdminNotAuthorizedException_Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                    "Authorization denied", JOptionPane.ERROR_MESSAGE);
         }
 }//GEN-LAST:event_addButtonActionPerformed
 
     private void editButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        try {
+            final int row = configurationTable.getSelectedRow();
 
-        final int row = configurationTable.getSelectedRow();
+            if (row != -1) {
 
-        if (row != -1) {
+                final String oldPropertyName =
+                        (String) configurationTable.getValueAt(row, 0);
 
-            final String oldPropertyName =
-                    (String) configurationTable.getValueAt(row, 0);
+                editPropertyTextField.setText(oldPropertyName);
+                editPropertyTextField.setEditable(true);
+                editPropertyValueTextArea.setText(
+                        (String) configurationTable.getValueAt(row, 1));
 
-            editPropertyTextField.setText(oldPropertyName);
-            editPropertyTextField.setEditable(true);
-            editPropertyValueTextArea.setText(
-                    (String) configurationTable.getValueAt(row, 1));
+                final int res = JOptionPane.showConfirmDialog(this, editPanel,
+                        "Edit property", JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE);
+                if (res == JOptionPane.OK_OPTION) {
 
-            final int res = JOptionPane.showConfirmDialog(this, editPanel,
-                    "Edit property", JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE);
-            if (res == JOptionPane.OK_OPTION) {
-                
-                final String newPropertyName = editPropertyTextField.getText();
+                    final String newPropertyName = editPropertyTextField.getText();
 
-                // Remove scope part
-                String key;
-                if (newPropertyName.contains(".")) {
-                    key = newPropertyName.substring(
-                            newPropertyName.indexOf(".") + 1);
-                } else {
-                    key = newPropertyName;
-                }
-
-                if (!oldPropertyName.equals(newPropertyName)) {
                     // Remove scope part
-                    String oldKey;
+                    String key;
                     if (newPropertyName.contains(".")) {
-                        oldKey = oldPropertyName.substring(
-                                oldPropertyName.indexOf(".") + 1);
+                        key = newPropertyName.substring(
+                                newPropertyName.indexOf(".") + 1);
                     } else {
-                        oldKey = oldPropertyName;
+                        key = newPropertyName;
                     }
-                     SignServerAdminGUIApplication.getGlobalConfigurationSession()
-                    .removeProperty(GlobalConfiguration.SCOPE_GLOBAL, oldKey);
-                }
 
-                SignServerAdminGUIApplication.getGlobalConfigurationSession()
-                    .setProperty(GlobalConfiguration.SCOPE_GLOBAL, key,
-                    editPropertyValueTextArea.getText());
-                refreshButton.doClick();
+                    if (!oldPropertyName.equals(newPropertyName)) {
+                        // Remove scope part
+                        String oldKey;
+                        if (newPropertyName.contains(".")) {
+                            oldKey = oldPropertyName.substring(
+                                    oldPropertyName.indexOf(".") + 1);
+                        } else {
+                            oldKey = oldPropertyName;
+                        }
+                         SignServerAdminGUIApplication.getAdminWS()
+                        .removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, oldKey);
+                    }
+
+                    SignServerAdminGUIApplication.getAdminWS()
+                        .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, key,
+                        editPropertyValueTextArea.getText());
+                    refreshButton.doClick();
+                }
             }
+        } catch (AdminNotAuthorizedException_Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                    "Authorization denied", JOptionPane.ERROR_MESSAGE);
         }
 }//GEN-LAST:event_editButtonActionPerformed
 
     private void removeButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-        final int row = configurationTable.getSelectedRow();
+        try {
+            final int row = configurationTable.getSelectedRow();
 
-        if (row != -1) {
-            final int res = JOptionPane.showConfirmDialog(this,
-                    "Are you sure you want to remove the property?",
-                    "Remove property", JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE);
-            if (res == JOptionPane.YES_OPTION) {
-                final String propertyName
-                       = (String) configurationTable.getValueAt(row, 0);
-                
-                // Remove scope part
-                String key;
-                if (propertyName.contains(".")) {
-                    key = propertyName.substring(
-                            propertyName.indexOf(".") + 1);
-                } else {
-                    key = propertyName;
+            if (row != -1) {
+                final int res = JOptionPane.showConfirmDialog(this,
+                        "Are you sure you want to remove the property?",
+                        "Remove property", JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (res == JOptionPane.YES_OPTION) {
+                    final String propertyName
+                           = (String) configurationTable.getValueAt(row, 0);
+
+                    // Remove scope part
+                    String key;
+                    if (propertyName.contains(".")) {
+                        key = propertyName.substring(
+                                propertyName.indexOf(".") + 1);
+                    } else {
+                        key = propertyName;
+                    }
+
+                    SignServerAdminGUIApplication.getAdminWS()
+                        .removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                        key);
                 }
-
-                SignServerAdminGUIApplication.getGlobalConfigurationSession()
-                    .removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                    key);
+                refreshButton.doClick();
             }
-            refreshButton.doClick();
+        } catch (AdminNotAuthorizedException_Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                    "Authorization denied", JOptionPane.ERROR_MESSAGE);
         }
 }//GEN-LAST:event_removeButtonActionPerformed
 
@@ -359,36 +375,46 @@ public class GlobalConfigurationFrame extends javax.swing.JFrame {
         return new ReloadGlobalConfigurationTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class));
     }
 
-    private class ReloadGlobalConfigurationTask extends Task<GlobalConfiguration, Void> {
+    private class ReloadGlobalConfigurationTask extends Task<WsGlobalConfiguration, Void> {
         ReloadGlobalConfigurationTask(org.jdesktop.application.Application app) {
             // Runs on the EDT.  Copy GUI state that
             // doInBackground() depends on from parameters
             // to ReloadGlobalConfigurationTask fields, here.
             super(app);
         }
-        @Override protected GlobalConfiguration doInBackground() {
+        @Override protected WsGlobalConfiguration doInBackground() {
             // Your Task's code here.  This method runs
             // on a background thread, so don't reference
             // the Swing GUI from here.
-
+            WsGlobalConfiguration result = null;
+            try {
+                result = SignServerAdminGUIApplication.getAdminWS()
+                        .getGlobalConfiguration();
+            } catch (final AdminNotAuthorizedException_Exception ex) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        JOptionPane.showMessageDialog(
+                                GlobalConfigurationFrame.this, ex.getMessage(),
+                        "Authorization denied", JOptionPane.ERROR_MESSAGE);
+                    }
+                });
+            }
             // return your result
-            return SignServerAdminGUIApplication.getGlobalConfigurationSession()
-                    .getGlobalConfiguration();
+            return result;
         }
-        @Override protected void succeeded(GlobalConfiguration result) {
+        @Override protected void succeeded(WsGlobalConfiguration result) {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
 
             properties = new Vector<Vector<String>>();
 
             if (result != null) {
-                final Enumeration<String> keys = result.getKeyEnumeration();
-                while (keys.hasMoreElements()) {
-                    final String key = keys.nextElement();
-                    final String value = result.getProperty(key);
+                for (WsGlobalConfiguration.Config.Entry oldEntry
+                        : result.getConfig().getEntry()) {
                     final Vector<String> entry = new Vector<String>();
-                    entry.add(key);
-                    entry.add(value);
+                    entry.add((String) oldEntry.getKey());
+                    entry.add((String) oldEntry.getValue());
                     properties.add(entry);
                 }
             }

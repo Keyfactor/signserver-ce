@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-1190/signserver/SignServer-AdminWS/build/generated-sources/jax-ws/resources/AdminWebServiceService.wsdl" uri="wsdl/AdminWebServiceService.wsdl"/>
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-1190/signserver/SignServer-AdminWS/build/generated-sources/jax-ws/resources/AdminWebServiceService_schema1.xsd" uri="wsdl/AdminWebServiceService_schema1.xsd"/>
+</catalog>

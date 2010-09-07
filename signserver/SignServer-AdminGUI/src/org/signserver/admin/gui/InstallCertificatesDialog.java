@@ -15,12 +15,15 @@ package org.signserver.admin.gui;
 import java.io.File;
 import java.io.IOException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -34,6 +37,8 @@ import org.ejbca.util.CertTools;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.Task;
+import org.signserver.adminws.AdminNotAuthorizedException_Exception;
+import org.signserver.adminws.IllegalRequestException_Exception;
 import org.signserver.common.GlobalConfiguration;
 
 /**
@@ -321,12 +326,12 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                                 signerChain.add(0, signerCert);
                             }
 
-                            SignServerAdminGUIApplication.getWorkerSession()
+                            SignServerAdminGUIApplication.getAdminWS()
                                     .uploadSignerCertificateChain(workerid,
-                                        signerChain, scope);
-                            SignServerAdminGUIApplication.getWorkerSession()
-                                    .uploadSignerCertificate(workerid, signerCert,
-                                    scope);
+                                        asByteArrayList(signerChain), scope);
+                            SignServerAdminGUIApplication.getAdminWS()
+                                    .uploadSignerCertificate(workerid, 
+                                    asByteArray(signerCert), scope);
                             // Set DEFAULTKEY to NEXTCERTSIGNKEY
                             if (defaultKey) {
                                 LOG.debug("Uploaded was for DEFAULTKEY");
@@ -335,20 +340,27 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                                 final String nextCertSignKey
                                         = signer.getConfiguration()
                                             .getProperty("NEXTCERTSIGNKEY");
-                               SignServerAdminGUIApplication.getWorkerSession()
+                               SignServerAdminGUIApplication.getAdminWS()
                                        .setWorkerProperty(workerid, "DEFAULTKEY",
                                        nextCertSignKey);
-                               SignServerAdminGUIApplication.getWorkerSession()
+                               SignServerAdminGUIApplication.getAdminWS()
                                        .removeWorkerProperty(workerid,
                                        "NEXTCERTSIGNKEY");
                             }
-                            SignServerAdminGUIApplication.getWorkerSession()
+                            SignServerAdminGUIApplication.getAdminWS()
                                     .reloadConfiguration(workerid);
 
                             signers.remove(signer);
                             data.remove(row);
                             row--;
                             jTable1.revalidate();
+                        } catch (AdminNotAuthorizedException_Exception ex) {
+                            final String error =
+                                "Authorization denied for worker "
+                                + workerid;
+                            LOG.error(error, ex);
+                            errors.append(error + ":\n" + ex.getMessage());
+                            errors.append("\n");
                         } catch (IOException ex) {
                             final String error =
                                 "Problem with certificate chain file for signer "
@@ -380,6 +392,13 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                     LOG.error(error, ex);
                     errors.append(error + ":\n" + ex.getMessage());
                     errors.append("\n");
+                } catch (IllegalRequestException_Exception ex) {
+                    final String error =
+                            "Problem with certificates for signer "
+                            + workerid;
+                    LOG.error(error, ex);
+                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append("\n");
                 }
             }
             return new Result(errors.toString(), warnings.toString());
@@ -404,6 +423,21 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                 resultCode = OK;
                 dispose();
             }
+        }
+
+        private List<byte[]> asByteArrayList(
+                final List<Certificate> signerChain)
+                throws CertificateEncodingException {
+            final List<byte[]> result = new LinkedList<byte[]>();
+            for (final Certificate cert : signerChain) {
+                result.add(cert.getEncoded());
+            }
+            return result;
+        }
+
+        private byte[] asByteArray(final X509Certificate signerCert)
+                throws CertificateEncodingException {
+            return signerCert.getEncoded();
         }
     }
 

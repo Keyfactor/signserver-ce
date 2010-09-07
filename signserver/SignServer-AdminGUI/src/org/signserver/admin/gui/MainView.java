@@ -13,6 +13,7 @@
 package org.signserver.admin.gui;
 
 import java.awt.Component;
+import java.util.logging.Level;
 import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import org.jdesktop.application.Action;
@@ -23,15 +24,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -45,14 +52,23 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
+import org.ejbca.core.model.authorization.AuthorizationDeniedException;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.TaskMonitor;
-import org.signserver.common.AuthorizedClient;
+import org.signserver.adminws.AdminNotAuthorizedException_Exception;
+import org.signserver.adminws.AuthorizedClient;
+import org.signserver.adminws.CryptoTokenAuthenticationFailureException_Exception;
+import org.signserver.adminws.CryptoTokenOfflineException_Exception;
+import org.signserver.adminws.InvalidWorkerIdException_Exception;
+import org.signserver.adminws.WsWorkerConfig;
+import org.signserver.adminws.WsWorkerStatus;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
@@ -1069,15 +1085,18 @@ public class MainView extends FrameView {
         if (res == JOptionPane.OK_OPTION) {
             int workerId = selectedWorker.getWorkerId();
 
+            try {
+                SignServerAdminGUIApplication.getAdminWS()
+                        .setWorkerProperty(workerId,
+                        editPropertyTextField.getText(),
+                        editPropertyValueTextArea.getText());
+                SignServerAdminGUIApplication.getAdminWS()
+                        .reloadConfiguration(workerId);
 
-            SignServerAdminGUIApplication.getWorkerSession()
-                    .setWorkerProperty(workerId,
-                    editPropertyTextField.getText(),
-                    editPropertyValueTextArea.getText());
-            SignServerAdminGUIApplication.getWorkerSession()
-                    .reloadConfiguration(workerId);
-
-            refreshButton.doClick();
+                refreshButton.doClick();
+            } catch (AdminNotAuthorizedException_Exception ex) {
+                postAdminNotAuthorized(ex);
+            }
         }
 }//GEN-LAST:event_addButtonActionPerformed
 
@@ -1099,44 +1118,52 @@ public class MainView extends FrameView {
                     "Edit property", JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE);
             if (res == JOptionPane.OK_OPTION) {
-                final int workerId = selectedWorker.getWorkerId();
-                final String newPropertyName = editPropertyTextField.getText();
+                try {
+                    final int workerId = selectedWorker.getWorkerId();
+                    final String newPropertyName = editPropertyTextField.getText();
 
-                if (!oldPropertyName.equals(newPropertyName)) {
-                    SignServerAdminGUIApplication.getWorkerSession()
-                            .removeWorkerProperty(workerId, oldPropertyName);
+                    if (!oldPropertyName.equals(newPropertyName)) {
+                        SignServerAdminGUIApplication.getAdminWS()
+                                .removeWorkerProperty(workerId, oldPropertyName);
+                    }
+
+                    SignServerAdminGUIApplication.getAdminWS()
+                            .setWorkerProperty(workerId,
+                            newPropertyName,
+                            editPropertyValueTextArea.getText());
+                    SignServerAdminGUIApplication.getAdminWS()
+                            .reloadConfiguration(workerId);
+
+                    refreshButton.doClick();
+                } catch (final AdminNotAuthorizedException_Exception ex) {
+                    postAdminNotAuthorized(ex);
                 }
-                
-                SignServerAdminGUIApplication.getWorkerSession()
-                        .setWorkerProperty(workerId,
-                        newPropertyName,
-                        editPropertyValueTextArea.getText());
-                SignServerAdminGUIApplication.getWorkerSession()
-                        .reloadConfiguration(workerId);
-
-                refreshButton.doClick();
             }
         }
 }//GEN-LAST:event_editButtonActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-        final int row = configurationTable.getSelectedRow();
+        try {
+            final int row = configurationTable.getSelectedRow();
 
-        if (row != -1) {
-            final int res = JOptionPane.showConfirmDialog(getFrame(),
-                    "Are you sure you want to remove the property?",
-                    "Remove property", JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE);
-            if (res == JOptionPane.YES_OPTION) {
-                int workerId = selectedWorker.getWorkerId();
-                SignServerAdminGUIApplication.getWorkerSession()
-                        .removeWorkerProperty(workerId,
-                        (String) configurationTable.getValueAt(row, 0));
-                SignServerAdminGUIApplication.getWorkerSession()
-                        .reloadConfiguration(workerId);
+            if (row != -1) {
+                final int res = JOptionPane.showConfirmDialog(getFrame(),
+                        "Are you sure you want to remove the property?",
+                        "Remove property", JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (res == JOptionPane.YES_OPTION) {
+                    int workerId = selectedWorker.getWorkerId();
+                    SignServerAdminGUIApplication.getAdminWS()
+                            .removeWorkerProperty(workerId,
+                            (String) configurationTable.getValueAt(row, 0));
+                    SignServerAdminGUIApplication.getAdminWS()
+                            .reloadConfiguration(workerId);
 
-                refreshButton.doClick();
+                    refreshButton.doClick();
+                }
             }
+        } catch (AdminNotAuthorizedException_Exception ex) {
+            postAdminNotAuthorized(ex);
         }
 }//GEN-LAST:event_removeButtonActionPerformed
 
@@ -1161,13 +1188,17 @@ public class MainView extends FrameView {
             LOG.debug("Selected workers: " + workers);
 
             for (Worker worker : workers) {
-                AuthorizedClient client = new AuthorizedClient(
-                        editSerialNumberTextfield.getText(),
-                        editIssuerDNTextfield.getText());
-                SignServerAdminGUIApplication.getWorkerSession()
-                        .addAuthorizedClient(worker.getWorkerId(), client);
-                SignServerAdminGUIApplication.getWorkerSession()
-                        .reloadConfiguration(worker.getWorkerId());
+                try {
+                    org.signserver.adminws.AuthorizedClient client = new org.signserver.adminws.AuthorizedClient();
+                    client.setCertSN(editSerialNumberTextfield.getText());
+                    client.setIssuerDN(editIssuerDNTextfield.getText());
+                    SignServerAdminGUIApplication.getAdminWS()
+                            .addAuthorizedClient(worker.getWorkerId(), client);
+                    SignServerAdminGUIApplication.getAdminWS()
+                            .reloadConfiguration(worker.getWorkerId());
+                } catch (AdminNotAuthorizedException_Exception ex) {
+                    postAdminNotAuthorized(ex);
+                }
             }
             refreshButton.doClick();
         }
@@ -1202,22 +1233,29 @@ public class MainView extends FrameView {
                 LOG.debug("Selected workers: " + workers);
 
                 final AuthorizedClient oldAuthorizedClient =
-                    new AuthorizedClient(serialNumberBefore, issuerDNBefore);
+                    new AuthorizedClient();
+                oldAuthorizedClient.setCertSN(serialNumberBefore);
+                oldAuthorizedClient.setIssuerDN(issuerDNBefore);
 
-                final AuthorizedClient client = new AuthorizedClient(
-                            editSerialNumberTextfield.getText(),
-                            editIssuerDNTextfield.getText());
+                final AuthorizedClient client = new AuthorizedClient();
+                client.setCertSN(editSerialNumberTextfield.getText());
+                client.setIssuerDN(editIssuerDNTextfield.getText());
 
                 for (Worker worker : workers) {
-                    boolean removed =
-                            SignServerAdminGUIApplication.getWorkerSession()
-                            .removeAuthorizedClient(worker.getWorkerId(),
-                            oldAuthorizedClient);
-                    if (removed) {
-                        SignServerAdminGUIApplication.getWorkerSession()
-                            .addAuthorizedClient(worker.getWorkerId(), client);
-                        SignServerAdminGUIApplication.getWorkerSession()
-                            .reloadConfiguration(worker.getWorkerId());
+                    try {
+                        boolean removed =
+                                SignServerAdminGUIApplication.getAdminWS()
+                                .removeAuthorizedClient(worker.getWorkerId(),
+                                oldAuthorizedClient);
+                        if (removed) {
+                            SignServerAdminGUIApplication.getAdminWS()
+                                .addAuthorizedClient(worker.getWorkerId(),
+                                    client);
+                            SignServerAdminGUIApplication.getAdminWS()
+                                .reloadConfiguration(worker.getWorkerId());
+                        }
+                    } catch (AdminNotAuthorizedException_Exception ex) {
+                        postAdminNotAuthorized(ex);
                     }
                 }
                 refreshButton.doClick();
@@ -1255,18 +1293,24 @@ public class MainView extends FrameView {
                 LOG.debug("Selected workers: " + workers);
 
                 final AuthorizedClient oldAuthorizedClient =
-                    new AuthorizedClient(serialNumberBefore, issuerDNBefore);
+                    new AuthorizedClient();
+                oldAuthorizedClient.setCertSN(serialNumberBefore);
+                oldAuthorizedClient.setIssuerDN(issuerDNBefore);
 
-                final AuthorizedClient client = new AuthorizedClient(
-                            editSerialNumberTextfield.getText(),
-                            editIssuerDNTextfield.getText());
+                final AuthorizedClient client = new AuthorizedClient();
+                client.setCertSN(editSerialNumberTextfield.getText());
+                client.setIssuerDN(editIssuerDNTextfield.getText());
 
                 for (Worker worker : workers) {
-                    SignServerAdminGUIApplication.getWorkerSession()
+                    try {
+                        SignServerAdminGUIApplication.getAdminWS()
                             .removeAuthorizedClient(worker.getWorkerId(),
                             oldAuthorizedClient);
-                    SignServerAdminGUIApplication.getWorkerSession()
+                        SignServerAdminGUIApplication.getAdminWS()
                             .reloadConfiguration(worker.getWorkerId());
+                    } catch (AdminNotAuthorizedException_Exception ex) {
+                        postAdminNotAuthorized(ex);
+                    }
                 }
                 refreshButton.doClick();
             }
@@ -1445,138 +1489,92 @@ public class MainView extends FrameView {
 
             List<Worker> newSigners = new ArrayList<Worker>();
 
-             List<Integer> workerIds = SignServerAdminGUIApplication
-                .getGlobalConfigurationSession()
-                .getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
-            int workers = 0;
-            for (Integer workerId : workerIds) {
-                setProgress(workers, 0, workerIds.size());
-
-                final Vector<Object> workerInfo = new Vector<Object>();
-                final WorkerConfig config = SignServerAdminGUIApplication
-                        .getWorkerSession().getCurrentWorkerConfig(workerId);
-                final String name = config.getProperty("NAME");
-
-                try {
-                    final WorkerStatus status = SignServerAdminGUIApplication
-                    .getWorkerSession()
-                    .getStatus(workerId);
-
-                    workerInfo.add(status.isOK() == null ? "OK" : status.isOK());
-                } catch (InvalidWorkerIdException ex) {
-                    workerInfo.add("Invalid");
-                } catch (Exception ex) {
-                    workerInfo.add("Error");
-                    LOG.error("Error getting status for worker " + workerId,
-                            ex);
-                }
-
-                workerInfo.add(workerId);
-                workerInfo.add(name);
-
-                LOG.debug("workerId: " + workerId + ", name: " + name);
-
-                // Configuration
-                final Properties properties = config.getProperties();
-                Set<Entry<Object, Object>> entries
-                        = properties.entrySet();
-                Object[][] configProperties = new Object[entries.size()][];
-                int j = 0;
-                for (Entry<Object, Object> entry : entries) {
-                    configProperties[j] = new String[2];
-                    configProperties[j][0] = (String) entry.getKey();
-                    configProperties[j][1] = (String) entry.getValue();
-                    j++;
-                }
-
-                // Status
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                String statusSummary;
-
-                String tokenStatus;
-                WorkerStatus status = null;
-                boolean active = false;
-                try {
-                    status = SignServerAdminGUIApplication.getWorkerSession()
-                            .getStatus(workerId);
-                    status.displayStatus(workerId,
-                            new PrintStream(out), true);
-                    statusSummary = out.toString();
-                    tokenStatus = status.isOK() == null ? "ACTIVE" : "OFFLINE";
-                    active = status.isOK() == null;
-                } catch (InvalidWorkerIdException ex) {
-                    statusSummary = "No such worker";
-                    tokenStatus = "Unknown";
-                } catch (Exception ex) {
-                    statusSummary = "Error getting status";
-                    tokenStatus = "Unknown";
-                    LOG.error("Error getting status for worker " + workerId,
-                            ex);
-                }
-
-                Date notBefore = null;
-                Date notAfter = null;
-                Certificate certificate = null;
-                Collection<Certificate> certificateChain = null;
-
-                Object[][] statusProperties = new Object[][] {
-                    {"ID", workerId},
-                    {"Name", name},
-                    {"Token status", tokenStatus},
-                    {},
-                    {},
-                    {},
-                    {},
-                };
-
-                try {
-                    notBefore = SignServerAdminGUIApplication
-                        .getWorkerSession()
-                        .getSigningValidityNotBefore(workerId);
-                    notAfter = SignServerAdminGUIApplication
-                        .getWorkerSession()
-                        .getSigningValidityNotAfter(workerId); 
-                    certificate = SignServerAdminGUIApplication
-                            .getWorkerSession().getSignerCertificate(workerId);
+            try {
+                List<Integer> workerIds = SignServerAdminGUIApplication
+                        .getAdminWS()
+                        .getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+                int workers = 0;
+                for (Integer workerId : workerIds) {
+                    setProgress(workers, 0, workerIds.size());
+                    final Vector<Object> workerInfo = new Vector<Object>();
+                    final WsWorkerConfig config = SignServerAdminGUIApplication.getAdminWS().getCurrentWorkerConfig(workerId);
+                    final Properties properties = asProperties(config);
+                    final String name = properties.getProperty("NAME");
                     try {
-                        certificateChain = SignServerAdminGUIApplication
-                            .getWorkerSession()
-                            .getSignerCertificateChain(workerId);
-                    } catch (EJBException ex) {
-                        // Handle problem caused by bug in server
-                        LOG.error("Error getting signer certificate chain",
-                                ex);
-                        certificateChain = Collections.emptyList();
+                        final WsWorkerStatus status = SignServerAdminGUIApplication.getAdminWS().getStatus(workerId);
+                        workerInfo.add(status.getOk() == null ? "OK" : status.getOk());
+                    } catch (InvalidWorkerIdException_Exception ex) {
+                        workerInfo.add("Invalid");
+                    } catch (Exception ex) {
+                        workerInfo.add("Error");
+                        LOG.error("Error getting status for worker " + workerId, ex);
                     }
-
-                    statusProperties[3] = new Object[] {
-                        "Validity not before:", notBefore
-                    };
-                    statusProperties[4] = new Object[] {
-                        "Validity not after:", notAfter
-                    };
-                    statusProperties[5] = new Object[] {
-                        "Signer certificate", certificate
-                    };
-                    statusProperties[6] = new Object[] {
-                        "Certificate chain:", certificateChain
-                    };
-
-                } catch (CryptoTokenOfflineException ex) {
-                    LOG.debug("offline: " + workerId);
-                } catch (RuntimeException ex) {
-                    LOG.warn("Methods not supported by server", ex);
+                    workerInfo.add(workerId);
+                    workerInfo.add(name);
+                    LOG.debug("workerId: " + workerId + ", name: " + name);
+                    // Configuration
+                    Set<Entry<Object, Object>> entries = properties.entrySet();
+                    Object[][] configProperties = new Object[entries.size()][];
+                    int j = 0;
+                    for (Entry<Object, Object> entry : entries) {
+                        configProperties[j] = new String[2];
+                        configProperties[j][0] = (String) entry.getKey();
+                        configProperties[j][1] = (String) entry.getValue();
+                        j++;
+                    }
+                    // Status
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    String statusSummary;
+                    String tokenStatus;
+                    WsWorkerStatus status = null;
+                    boolean active = false;
+                    try {
+                        status = SignServerAdminGUIApplication.getAdminWS().getStatus(workerId);
+                        statusSummary = status.getCompleteStatusText();
+                        tokenStatus = status.getOk() == null ? "ACTIVE" : "OFFLINE";
+                        active = status.getOk() == null;
+                    } catch (InvalidWorkerIdException_Exception ex) {
+                        statusSummary = "No such worker";
+                        tokenStatus = "Unknown";
+                    } catch (Exception ex) {
+                        statusSummary = "Error getting status";
+                        tokenStatus = "Unknown";
+                        LOG.error("Error getting status for worker " + workerId, ex);
+                    }
+                    XMLGregorianCalendar notBefore = null;
+                    XMLGregorianCalendar notAfter = null;
+                    Certificate certificate = null;
+                    Collection<? extends Certificate> certificateChain = null;
+                    Object[][] statusProperties = new Object[][]{{"ID", workerId}, {"Name", name}, {"Token status", tokenStatus}, {}, {}, {}, {}};
+                    try {
+                        notBefore = SignServerAdminGUIApplication.getAdminWS().getSigningValidityNotBefore(workerId);
+                        notAfter = SignServerAdminGUIApplication.getAdminWS().getSigningValidityNotAfter(workerId);
+                        certificate = asCertificate(SignServerAdminGUIApplication.getAdminWS().getSignerCertificate(workerId));
+                        try {
+                            certificateChain = asCertificates(SignServerAdminGUIApplication.getAdminWS().getSignerCertificateChain(workerId));
+                        } catch (EJBException ex) {
+                            // Handle problem caused by bug in server
+                            LOG.error("Error getting signer certificate chain", ex);
+                            certificateChain = Collections.emptyList();
+                        }
+                        statusProperties[3] = new Object[]{"Validity not before:", notBefore};
+                        statusProperties[4] = new Object[]{"Validity not after:", notAfter};
+                        statusProperties[5] = new Object[]{"Signer certificate", certificate};
+                        statusProperties[6] = new Object[]{"Certificate chain:", certificateChain};
+                    } catch (CryptoTokenOfflineException_Exception ex) {
+                        LOG.debug("offline: " + workerId);
+                    } catch (RuntimeException ex) {
+                        LOG.warn("Methods not supported by server", ex);
+                    } catch (CertificateException ex) {
+                        LOG.error("Error in certificate", ex);
+                    }
+                    final Collection<AuthorizedClient> authClients = SignServerAdminGUIApplication.getAdminWS().getAuthorizedClients(workerId);
+                    newSigners.add(new Worker(workerId, name, statusSummary, statusProperties, configProperties, properties, active, authClients));
+                    workers++;
                 }
 
-                // Authorizations
-                final Collection<AuthorizedClient> authClients
-                        = SignServerAdminGUIApplication.getWorkerSession()
-                        .getAuthorizedClients(workerId);
-
-                newSigners.add(new Worker(workerId, name, statusSummary,
-                        statusProperties, configProperties, properties, active,
-                        authClients));
-                workers++;
+            } catch (AdminNotAuthorizedException_Exception ex) {
+                postAdminNotAuthorized(ex);
             }
 
             return newSigners;  // return your result
@@ -1669,23 +1667,30 @@ public class MainView extends FrameView {
                     setProgress(workers, 0, selected.length);
                     final int workerId = allWorkers.get(row).getWorkerId();
                     try {
-                        SignServerAdminGUIApplication.getWorkerSession()
+                        SignServerAdminGUIApplication.getAdminWS()
                                 .activateSigner(workerId, new String(authCode));
-                    } catch (CryptoTokenAuthenticationFailureException ex) {
+                    } catch (final AdminNotAuthorizedException_Exception ex) {
+                        final String error =
+                                "Authorization denied activating worker "
+                                + workerId;
+                        sb.append(error);
+                        sb.append("\n");
+                        LOG.error(error, ex);
+                    } catch (CryptoTokenAuthenticationFailureException_Exception ex) {
                         final String error =
                                 "Authentication failure activating worker "
                                 + workerId;
                         sb.append(error);
                         sb.append("\n");
                         LOG.error(error, ex);
-                    } catch (CryptoTokenOfflineException ex) {
+                    } catch (CryptoTokenOfflineException_Exception ex) {
                         final String error =
                             "Crypto token offline failure activating worker "
                             + workerId;
                         sb.append(error);
                         sb.append("\n");
                         LOG.error(error, ex);
-                    } catch (InvalidWorkerIdException ex) {
+                    } catch (InvalidWorkerIdException_Exception ex) {
                         final String error =
                                 "Invalid worker activating worker "
                                 + workerId;
@@ -1750,15 +1755,22 @@ public class MainView extends FrameView {
             for (int row : selected) {
                 final int workerId = allWorkers.get(row).getWorkerId();
                 try {
-                    SignServerAdminGUIApplication.getWorkerSession()
+                    SignServerAdminGUIApplication.getAdminWS()
                             .deactivateSigner(workerId);
-                } catch (CryptoTokenOfflineException ex) {
+                } catch (final AdminNotAuthorizedException_Exception ex) {
+                        final String error =
+                                "Authorization denied deactivating worker "
+                                + workerId;
+                        sb.append(error);
+                        sb.append("\n");
+                        LOG.error(error, ex);
+                } catch (CryptoTokenOfflineException_Exception ex) {
                     final String error = "Error deactivating worker "
                             + workerId;
                     LOG.error(error, ex);
                     sb.append(error + ": " + ex.getMessage());
                     sb.append("\n");
-                } catch (InvalidWorkerIdException ex) {
+                } catch (InvalidWorkerIdException_Exception ex) {
                     final String error = "Error deactivating worker "
                             + workerId;
                     LOG.error(error, ex);
@@ -1875,6 +1887,66 @@ public class MainView extends FrameView {
             return selected;
         }
 
+    }
+
+    private Properties asProperties(WsWorkerConfig config) {
+        final Properties result = new Properties();
+        for(WsWorkerConfig.Properties.Entry entry
+                : config.getProperties().getEntry()) {
+            result.setProperty((String) entry.getKey(),
+                    (String) entry.getValue());
+        }
+        return result;
+    }
+
+    private X509Certificate asCertificate(final byte[] certbytes)
+            throws CertificateException {
+        final X509Certificate result;
+        if (certbytes == null || certbytes.length == 0) {
+            result = null;
+        } else {
+//            try {
+                final CertificateFactory cf
+                        = CertificateFactory.getInstance("X.509");
+                result = (X509Certificate) cf.generateCertificate(
+                        new ByteArrayInputStream(certbytes));
+//            } catch (NoSuchProviderException ex) {
+//                // Log stacktrace and only pass on description to client
+//                LOG.error("Error with provider", ex);
+//                throw new RuntimeException("Internal error");
+//            }
+        }
+        return result;
+    }
+
+    private Collection<X509Certificate> asCertificates(
+            final Collection<byte[]> certs) throws CertificateException {
+        final LinkedList<X509Certificate> results;
+        if (certs == null || certs.size() < 1) {
+            results = null;
+        } else {
+            results = new LinkedList<X509Certificate>();
+            for (byte[] certbytes : certs) {
+                X509Certificate cert = null;
+                if (certbytes != null && certbytes.length > 0) {
+                    cert = asCertificate(certbytes);
+                }
+                results.add(cert);
+            }
+        }
+        return results;
+    }
+
+    private void postAdminNotAuthorized(
+            final AdminNotAuthorizedException_Exception ex) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(
+                        MainView.this.getFrame(), ex.getMessage(),
+                "Authorization denied", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

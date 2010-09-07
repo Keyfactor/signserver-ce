@@ -35,9 +35,13 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Task;
+import org.signserver.adminws.AdminNotAuthorizedException_Exception;
+import org.signserver.adminws.CryptoTokenOfflineException_Exception;
+import org.signserver.adminws.InvalidWorkerIdException_Exception;
+import org.signserver.adminws.KeyStoreException_Exception;
+import org.signserver.adminws.KeyTestResult;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.KeyTestResult;
 
 /**
  * Dialog for testing keys.
@@ -360,57 +364,40 @@ public class TestKeysDialog extends JDialog {
 
                         try {
                             // Test the key
-                            final Collection<? extends Object> result =
+                            final Collection<KeyTestResult> result =
                                     SignServerAdminGUIApplication
-                                    .getWorkerSession()
-                                    .testKey(signerId, alias, authCode);
+                                    .getAdminWS()
+                                    .testKey(signerId, alias, new String(authCode));
 
                             if (result.isEmpty()) {
                                 sb.append("  ");
                                 sb.append("(No key found, token offline?)");
                                 sb.append("\n");
                             } else {
-                                for (Object o : result) {
-                                    // Workaround to support both old
-                                    // server.KeyTestResult and the new
-                                    // KeyTestResult
-                                    if (o instanceof org.signserver.server.KeyTestResult) {
-                                        org.signserver.server.KeyTestResult key
-                                            = (org.signserver.server.KeyTestResult) o;
-                                        sb.append("  ");
-                                        sb.append(key.getAlias());
-                                        sb.append(", ");
-                                        sb.append(key.isSuccess()
-                                                ? "SUCCESS" : "FAILURE");
-                                        sb.append(", ");
-                                        sb.append(key.getPublicKeyHash());
-                                        sb.append(", ");
-                                        sb.append(key.getStatus());
-                                        sb.append("\n");
-                                    } else{
-                                        KeyTestResult key
-                                                = (KeyTestResult) o;
-                                        sb.append("  ");
-                                        sb.append(key.getAlias());
-                                        sb.append(", ");
-                                        sb.append(key.isSuccess()
-                                                ? "SUCCESS" : "FAILURE");
-                                        sb.append(", ");
-                                        sb.append(key.getPublicKeyHash());
-                                        sb.append(", ");
-                                        sb.append(key.getStatus());
-                                        sb.append("\n");
-                                    }
+                                for (KeyTestResult key : result) {
+                                    sb.append("  ");
+                                    sb.append(key.getAlias());
+                                    sb.append(", ");
+                                    sb.append(key.isSuccess()
+                                            ? "SUCCESS" : "FAILURE");
+                                    sb.append(", ");
+                                    sb.append(key.getPublicKeyHash());
+                                    sb.append(", ");
+                                    sb.append(key.getStatus());
+                                    sb.append("\n");
                                 }
                             }
 
-                        } catch (CryptoTokenOfflineException ex) {
+                        } catch (AdminNotAuthorizedException_Exception ex) {
                             sb.append(ex.getMessage());
                             sb.append("\n");
-                        } catch (InvalidWorkerIdException ex) {
+                        } catch (CryptoTokenOfflineException_Exception ex) {
                             sb.append(ex.getMessage());
                             sb.append("\n");
-                        } catch (KeyStoreException ex) {
+                        } catch (InvalidWorkerIdException_Exception ex) {
+                            sb.append(ex.getMessage());
+                            sb.append("\n");
+                        } catch (KeyStoreException_Exception ex) {
                             sb.append(ex.getMessage());
                             sb.append("\n");
                         } catch (EJBException ex) {

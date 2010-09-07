@@ -40,7 +40,9 @@ import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.Task;
-import org.signserver.common.Base64SignerCertReqData;
+import org.signserver.adminws.Base64SignerCertReqData;
+import org.signserver.adminws.InvalidWorkerIdException_Exception;
+import org.signserver.adminws.Pkcs10CertReqInfo;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -437,12 +439,15 @@ public class GenerateRequestsDialog extends JDialog {
 
                 FileOutputStream fos = null;
                 try {
-                    final PKCS10CertReqInfo certReqInfo
-                            = new PKCS10CertReqInfo(sigAlg, dn, null);
+                    final Pkcs10CertReqInfo certReqInfo
+                            = new Pkcs10CertReqInfo();
+                    certReqInfo.setSignatureAlgorithm(sigAlg);
+                    certReqInfo.setSubjectDN(dn);
+                    certReqInfo.setAttributes(null);
                     final Base64SignerCertReqData reqData =
                         (Base64SignerCertReqData) SignServerAdminGUIApplication
-                            .getWorkerSession()
-                            .getCertificateRequest(workerid, certReqInfo,
+                            .getAdminWS()
+                            .getPKCS10CertificateRequestForKey(workerid, certReqInfo,
                                 defaultKey);
                     if (reqData == null) {
                         final String error =
@@ -468,9 +473,9 @@ public class GenerateRequestsDialog extends JDialog {
                             final GenericSignResponse response =
                                     (GenericSignResponse)
                                     SignServerAdminGUIApplication
-                            .getWorkerSession().process(signer.getWorkerId(),
-                                    new GenericSignRequest(1,
-                                    bout.toByteArray()), new RequestContext());
+                            .getClientWS().sign(
+                                    String.valueOf(signer.getWorkerId()),
+                                    bout.toByteArray());
                             fileContent = response.getProcessedData();
                         }
 
@@ -496,7 +501,7 @@ public class GenerateRequestsDialog extends JDialog {
                     LOG.error(error, ex);
                     sb.append(error);
                     sb.append("\n");
-                } catch (InvalidWorkerIdException ex) {
+                } catch (InvalidWorkerIdException_Exception ex) {
                     final String error = "Error generating request for signer "
                         + workerid + ":\n" + ex.getMessage();
                     LOG.error(error, ex);

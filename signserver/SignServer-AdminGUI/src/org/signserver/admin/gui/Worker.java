@@ -14,7 +14,7 @@ package org.signserver.admin.gui;
 
 import java.util.Collection;
 import java.util.Properties;
-import org.signserver.common.AuthorizedClient;
+import org.signserver.adminws.AuthorizedClient;
 
 /**
  * Class representing a worker and its status and configuration.

@@ -798,10 +798,14 @@ public class AdminWebService {
             LOG.debug("admin: " + admin + ", admins: " + admins);
         }
 
-        for (String entry : admins.split(";")) {
-            if (entry.trim().equalsIgnoreCase(admin)) {
-                authorized = true;
-                break;
+        if (admins == null) {
+            LOG.warn("No WSADMINS global property set");
+        } else {
+            for (String entry : admins.split(";")) {
+                if (entry.trim().equalsIgnoreCase(admin)) {
+                    authorized = true;
+                    break;
+                }
             }
         }
         return authorized;

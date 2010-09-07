@@ -274,7 +274,7 @@ time-stamp requests over plain HTTP.
                         <ul>
                             <li>Sun JDK 6 Update 10 or later (http://java.sun.com)</li>
                             <li>JBoss-4.2.3.GA (http://www.jboss.org)</li>
-                            <li>Apache ant version 1.7 (http://ant.apache.org)</li>
+                            <li>Apache ant version 1.7.1 or later (http://ant.apache.org)</li>
                             <li>SignServer-3.1 (http://www.signserver.org)</li>
                             <li>1 web-server key-store in Java key-store format (JKS), (make sure that the server certificate have the right host name in it's CN, optional (used for HTTPS))</li>
                             <li>1 Root certificate of the web-server in DER encoding (optional (used for HTTPS)).</li>
@@ -384,7 +384,7 @@ This section will do a fast and minimal configuration of a Mail Signer that will
                     <subsubsection name="Required Software">
                         <ul>
                             <li>Sun JDK 6 Update 10 or later (http://java.sun.com)</li>
-                            <li>Ant version 1.7 (http://ant.apache.org)</li>
+                            <li>Ant version 1.7.1 or later (http://ant.apache.org)</li>
                             <li>SignServer-3.0 (http://www.signserver.org)</li>
                             <li>1 mail signing key-store in PKCS12 format (The key store should have a RFC822Name that matches the sender address that will be replaces by the Simple Mail Signer plug-in). There exists one keystore in src/test/mailsigner_test1.p12 with a RFC822Name of mailsigner@someorg.org that can be used for testing.</li>
                         </ul>

@@ -600,9 +600,8 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	                <include name="*-ejb.jar" />
 	                <include name="*.war" />
 	            </fileset>
-                    <fileset dir="${adminws.dir}">
-	                <include name="dist/*.war" />
-	            </fileset>
+                    <zipfileset dir="${adminws.dist.dir}" includes="*.war"
+                        erroronmissingdir="false" />
 
 			</ear>
 	    </target>

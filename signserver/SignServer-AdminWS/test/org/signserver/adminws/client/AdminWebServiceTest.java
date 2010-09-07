@@ -17,7 +17,14 @@ import java.net.URL;
 import java.util.Arrays;
 import javax.xml.namespace.QName;
 import junit.framework.TestCase;
+import org.signserver.adminws.client.AdminNotAuthorizedException_Exception;
+import org.signserver.adminws.client.AdminWebService;
 import org.signserver.adminws.client.AdminWebServiceService;
+import org.signserver.adminws.client.AdminWebServiceService;
+import org.signserver.adminws.client.AuthorizedClient;
+import org.signserver.adminws.client.CryptoTokenAuthenticationFailureException_Exception;
+import org.signserver.adminws.client.CryptoTokenOfflineException_Exception;
+import org.signserver.adminws.client.InvalidWorkerIdException_Exception;
 
 /**
  * Tests for the Admin WS interface.
@@ -25,7 +32,7 @@ import org.signserver.adminws.client.AdminWebServiceService;
  * @author markus
  * @version $Id$
  */
-public class TestAdminWebService extends TestCase {
+public class AdminWebServiceTest extends TestCase {
     
     private static final int ANY_WORKERID = 4711;
     private static final String ANY_KEY = "AKEY";
@@ -44,7 +51,7 @@ public class TestAdminWebService extends TestCase {
     private AdminWebService adminWS;
 
 
-    public TestAdminWebService(String testName) {
+    public AdminWebServiceTest(String testName) {
         super(testName);
     }
 

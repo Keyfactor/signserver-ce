@@ -361,14 +361,17 @@ public class AdminLayerEJBImpl implements AdminWebService {
             final Pkcs10CertReqInfo certReqInfo)
             throws CryptoTokenOfflineException_Exception,
             InvalidWorkerIdException_Exception {
+        final Base64SignerCertReqData result;
         try {
-            final ICertReqData data = worker.getCertificateRequest(signerId, 
+            final ICertReqData data = worker.getCertificateRequest(signerId,
                     new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
                     certReqInfo.getSubjectDN(), null));
-            if (!(data instanceof Base64SignerCertReqData)) {
-                throw new RuntimeException("Unsupported cert req data");
+            if (!(data instanceof org.signserver.common.Base64SignerCertReqData)) {
+                throw new RuntimeException("Unsupported cert req data: " + data);
             }
-            return (Base64SignerCertReqData) data;
+            result = new Base64SignerCertReqData();
+            result.setBase64CertReq(((org.signserver.common.Base64SignerCertReqData) data).getBase64CertReq());
+            return result;
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
         } catch (InvalidWorkerIdException ex) {
@@ -392,14 +395,17 @@ public class AdminLayerEJBImpl implements AdminWebService {
             final boolean defaultKey)
                 throws CryptoTokenOfflineException_Exception,
                 InvalidWorkerIdException_Exception {
+        final Base64SignerCertReqData result;
         try {
             final ICertReqData data = worker.getCertificateRequest(signerId, 
                     new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
                     certReqInfo.getSubjectDN(), null), defaultKey);
-            if (!(data instanceof Base64SignerCertReqData)) {
-                throw new RuntimeException("Unsupported cert req data");
+            if (!(data instanceof org.signserver.common.Base64SignerCertReqData)) {
+                throw new RuntimeException("Unsupported cert req data: " + data);
             }
-            return (Base64SignerCertReqData) data;
+            result = new Base64SignerCertReqData();
+            result.setBase64CertReq(((org.signserver.common.Base64SignerCertReqData) data).getBase64CertReq());
+            return result;
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
         } catch (InvalidWorkerIdException ex) {

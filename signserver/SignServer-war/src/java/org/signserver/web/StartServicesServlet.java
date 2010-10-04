@@ -13,6 +13,8 @@
 package org.signserver.web;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.naming.Context;
@@ -29,6 +31,9 @@ import org.signserver.common.CompileTimeSettings;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession.ILocal;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
+import org.signserver.server.log.ISystemLogger;
+import org.signserver.server.log.SystemLoggerException;
+import org.signserver.server.log.SystemLoggerFactory;
 
 /**
  * Servlet used to start services by calling the ServiceTimerSession.load() at
@@ -39,7 +44,10 @@ import org.signserver.ejb.interfaces.IStatusRepositorySession;
 public class StartServicesServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = Logger.getLogger(StartServicesServlet.class);
+    private static final Logger LOG
+            = Logger.getLogger(StartServicesServlet.class);
+    private static final ISystemLogger AUDITLOG= SystemLoggerFactory
+            .getInstance().getLogger(StartServicesServlet.class);
 
     @EJB
     private IServiceTimerSession.ILocal timedServiceSession;
@@ -53,7 +61,7 @@ public class StartServicesServlet extends HttpServlet {
     		  Context context = new InitialContext();
     		  timedServiceSession = (ILocal) context.lookup(IServiceTimerSession.ILocal.JNDI_NAME);
     		}catch(NamingException e){
-    			log.error(e);
+    			LOG.error(e);
     		}
     	}
 
@@ -69,7 +77,7 @@ public class StartServicesServlet extends HttpServlet {
                         context.lookup(
                             IStatusRepositorySession.ILocal.JNDI_NAME);
             } catch (NamingException e) {
-                log.error(e);
+                LOG.error(e);
             }
         }
         return statusRepositorySession;
@@ -80,10 +88,21 @@ public class StartServicesServlet extends HttpServlet {
      * @see javax.servlet.GenericServlet#destroy()
      */
     public void destroy() {
-        log.info("Destroy,  " + CompileTimeSettings.getInstance().getProperty(
-                CompileTimeSettings.SIGNSERVER_VERSION) + " shutdown.");
+        final String version = CompileTimeSettings.getInstance().getProperty(
+                CompileTimeSettings.SIGNSERVER_VERSION);
 
-        log.debug(">destroy calling ServiceSession.unload");
+        LOG.info("Destroy,  " + version + " shutdown.");
+
+        try {
+            final Map<String, String> fields = new HashMap<String, String>();
+            fields.put(ISystemLogger.LOG_EVENT, "SHUTDOWN");
+            fields.put(ISystemLogger.LOG_VERSION, version);
+            AUDITLOG.log(fields);
+        } catch (SystemLoggerException ex) {
+            LOG.error("Audit log error", ex);
+        }
+
+        LOG.debug(">destroy calling ServiceSession.unload");
 
         getTimedServiceSession().unload(0);
 
@@ -93,10 +112,21 @@ public class StartServicesServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        log.info("Init, " + CompileTimeSettings.getInstance().getProperty(
-                CompileTimeSettings.SIGNSERVER_VERSION) + " startup.");
+        final String version = CompileTimeSettings.getInstance().getProperty(
+                CompileTimeSettings.SIGNSERVER_VERSION);
+        
+        LOG.info("Init, " + version + " startup.");
 
-        log.debug(">init calling ServiceSession.load");
+        try {
+            final Map<String, String> fields = new HashMap<String, String>();
+            fields.put(ISystemLogger.LOG_EVENT, "STARTUP");
+            fields.put(ISystemLogger.LOG_VERSION, version);
+            AUDITLOG.log(fields);
+        } catch (SystemLoggerException ex) {
+            LOG.error("Audit log error", ex);
+        }
+
+        LOG.debug(">init calling ServiceSession.load");
         
         // Start the timed services session
         getTimedServiceSession().load(0);
@@ -109,14 +139,14 @@ public class StartServicesServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        log.debug(">doPost()");
+        LOG.debug(">doPost()");
         doGet(req, res);
-        log.debug("<doPost()");
+        LOG.debug("<doPost()");
     } //doPost
 
     public void doGet(HttpServletRequest req,  HttpServletResponse res) throws java.io.IOException, ServletException {
-        log.debug(">doGet()");
+        LOG.debug(">doGet()");
         res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Servlet doesn't support requests is only loaded on startup.");
-        log.debug("<doGet()");
+        LOG.debug("<doGet()");
     } // doGet
 }

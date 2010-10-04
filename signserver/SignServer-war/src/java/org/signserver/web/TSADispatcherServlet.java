@@ -52,11 +52,11 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.RequestContext;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.ISystemLogger;
-import org.signserver.server.IWorkerLogger;
+import org.signserver.server.log.ISystemLogger;
+import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.NotGrantedException;
-import org.signserver.server.SystemLoggerException;
-import org.signserver.server.SystemLoggerFactory;
+import org.signserver.server.log.SystemLoggerException;
+import org.signserver.server.log.SystemLoggerFactory;
 
 /**
  * Servlet for dispatching timestamping requests to the right TimeStampSigner

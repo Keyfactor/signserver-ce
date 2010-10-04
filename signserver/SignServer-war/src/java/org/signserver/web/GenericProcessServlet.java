@@ -51,7 +51,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
-import org.signserver.server.IWorkerLogger;
+import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.UsernamePasswordClientCredential;
 
 

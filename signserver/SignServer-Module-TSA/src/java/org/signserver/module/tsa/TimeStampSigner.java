@@ -56,7 +56,7 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ITimeSource;
-import org.signserver.server.IWorkerLogger;
+import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;

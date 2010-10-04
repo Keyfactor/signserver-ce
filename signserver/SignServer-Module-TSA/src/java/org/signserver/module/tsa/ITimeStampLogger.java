@@ -5,11 +5,11 @@
 
 package org.signserver.module.tsa;
 
-import org.signserver.server.IWorkerLogger;
+import org.signserver.server.log.IWorkerLogger;
 
 /**
  *
- * @author Markus Kilås
+ * @author Markus Kilï¿½s
  * @version $Id$
  */
 public interface ITimeStampLogger extends IWorkerLogger {

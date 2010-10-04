@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.ejbca.util.IPatternLogger;
 import org.ejbca.util.PatternLogger;
-import org.signserver.server.IWorkerLogger;
-import org.signserver.server.WorkerLoggerException;
+import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.WorkerLoggerException;
 
 /**
  * Default audit logger for TimeStampSignerS.

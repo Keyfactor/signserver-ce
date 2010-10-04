@@ -15,13 +15,13 @@ package org.signserver.module.tsa;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
-import org.signserver.server.IWorkerLogger;
-import org.signserver.server.WorkerLoggerException;
+import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.WorkerLoggerException;
 
 /**
  * A custom made time stamp logger.
  *
- * @author Markus Kilås
+ * @author Markus Kilï¿½s
  * @version $Id$
  */
 public class CustomTimeStampLogger1 implements ITimeStampLogger {
@@ -117,5 +117,5 @@ public class CustomTimeStampLogger1 implements ITimeStampLogger {
         str.append("; ");
 
         ACCOUNTLOG.info(str.toString());
-    }    
+    }
 }

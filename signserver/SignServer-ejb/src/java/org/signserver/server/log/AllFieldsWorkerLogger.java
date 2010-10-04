@@ -10,30 +10,39 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.server.log;
 
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 
 /**
- *
- * @author Markus Kilås
+ * An IWorkerLogger that renders the log line by appending all the log fields
+ * and separating them with semicolons.
+ * @author Markus Kilï¿½s
  * @version $Id$
  */
-public class AllFieldsSystemLogger implements ISystemLogger {
+public class AllFieldsWorkerLogger implements IWorkerLogger {
 
+    /** The Log4j Logger we will use. */
     private static final Logger ACCOUNTLOG =
-            Logger.getLogger(ISystemLogger.class);
+            Logger.getLogger(IWorkerLogger.class);
 
-    public void init(Properties props) {
-        
+    public void init(final Properties props) {
+        // No configuration for this logger
     }
 
-    public void log(Map<String, String> entries) throws SystemLoggerException {
+    /**
+     * Render the log line by putting together all the fields and separating
+     * them with semi-colon.
+     * @param fields The fields to include.
+     * @throws WorkerLoggerException
+     */
+    public void log(final Map<String, String> fields)
+            throws WorkerLoggerException {
         final StringBuilder str = new StringBuilder();
-        str.append("AllFieldsSystemLogger; ");
-        for (Map.Entry<String, String> entry : entries.entrySet()) {
+        str.append("AllVariablesLogger; ");
+        for (Map.Entry<String, String> entry : fields.entrySet()) {
             str.append(entry.getKey());
             str.append(": ");
             str.append(entry.getValue());

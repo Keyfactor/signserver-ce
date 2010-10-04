@@ -40,11 +40,11 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.GlobalConfigurationCache;
 import org.signserver.server.GlobalConfigurationFileParser;
 import org.signserver.server.IProcessable;
-import org.signserver.server.ISystemLogger;
+import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.IWorker;
 import org.signserver.server.SignServerContext;
-import org.signserver.server.SystemLoggerException;
-import org.signserver.server.SystemLoggerFactory;
+import org.signserver.server.log.SystemLoggerException;
+import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.timedservices.ITimedService;
 

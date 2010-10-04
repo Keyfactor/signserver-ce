@@ -10,14 +10,18 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.server.log;
 
+import org.signserver.server.log.WorkerLoggerException;
 import java.util.Map;
 import java.util.Properties;
 
 /**
+ * Logger for events (transactions) performed by a worker processing a request.
+ * Audit events not associated with a worker transaction should be logged by a
+ * ISystemLogger instead.
  *
- * @author Markus Kilås
+ * @author Markus Kilï¿½s
  * @version $Id$
  */
 public interface IWorkerLogger {
@@ -49,10 +53,16 @@ public interface IWorkerLogger {
 
     /**
      * Method called after creation of instance.
-     * @param props the signers properties
+     * @param props the signers properties.
      */
     void init(Properties props);
 
-    void log(Map<String,String> entries) throws WorkerLoggerException;
+    /**
+     * Write out the log line. What fields that are placed in the actual log
+     * and in which order etc is up to the implementing IWorkerLogger.
+     * @param fields Fields that potentially could be placed in the log entry.
+     * @throws WorkerLoggerException In case there is a problem writing the log.
+     */
+    void log(Map<String,String> fields) throws WorkerLoggerException;
 
 }

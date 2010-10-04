@@ -10,11 +10,11 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.server.log;
 
 /**
- *
- * @author Markus Kilås
+ * Exception thrown in case there was a problem writing out the log line.
+ * @author Markus Kilï¿½s
  * @version $Id$
  */
 public class WorkerLoggerException extends Exception {

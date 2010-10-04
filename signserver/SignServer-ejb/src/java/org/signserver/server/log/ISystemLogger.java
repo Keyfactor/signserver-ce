@@ -10,25 +10,35 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.server.log;
+
+import java.util.Map;
+import java.util.Properties;
 
 /**
+ * Logger for system events. System events are all events that are not directly
+ * associated with the processing performed by a worker.
  *
- * @author Markus Kilås
+ * @see IWorkerLogger
+ * @author Markus Kilï¿½s
  * @version $Id$
  */
-public class SystemLoggerException extends Exception {
+public interface ISystemLogger {
 
-    public SystemLoggerException(Throwable cause) {
-        super(cause);
-    }
+    // Log constants
+    String LOG_STARTUP_TIME = "STARTUP_TIME";
+    String LOG_REPLY_TIME = "REPLY_TIME";
+    String LOG_CLASS_NAME = "CLASS_NAME";
+    String LOG_WORKER_ID = "WORKER_ID";
+    String LOG_EVENT = "EVENT";
+    String LOG_VERSION = "VERSION";
 
-    public SystemLoggerException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    /**
+     * Method called after creation of instance.
+     * @param props the signers properties
+     */
+    void init(Properties props);
 
-    public SystemLoggerException(String message) {
-        super(message);
-    }
+    void log(Map<String,String> entries) throws SystemLoggerException;
 
 }

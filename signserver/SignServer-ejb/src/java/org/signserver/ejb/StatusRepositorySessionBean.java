@@ -19,9 +19,9 @@ import org.signserver.common.StatusRepositoryData;
 import javax.ejb.Stateless;
 import org.apache.log4j.Logger;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
-import org.signserver.server.ISystemLogger;
-import org.signserver.server.SystemLoggerException;
-import org.signserver.server.SystemLoggerFactory;
+import org.signserver.server.log.ISystemLogger;
+import org.signserver.server.log.SystemLoggerException;
+import org.signserver.server.log.SystemLoggerFactory;
 
 /**
  * Session bean offering an interface towards the status repository.

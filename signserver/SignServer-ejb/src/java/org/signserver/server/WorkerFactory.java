@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server;
 
 import java.util.Collection;
@@ -30,14 +29,15 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.clusterclassloader.ExtendedClusterClassLoader;
-
+import org.signserver.server.log.AllFieldsWorkerLogger;
+import org.signserver.server.log.IWorkerLogger;
 
 /**
  * Class used to manage different signers used in the system, uses the configuration in
  * GlobalConfigurationFileParser as a backup.
  * 
  * @author Philip Vendil
- *
+ * @version $Id$
  */
 public  class WorkerFactory {
 	/** Log4j instance for actual implementation class */

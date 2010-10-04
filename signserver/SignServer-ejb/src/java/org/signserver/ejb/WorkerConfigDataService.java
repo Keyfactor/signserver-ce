@@ -25,10 +25,10 @@ import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
-import org.signserver.server.ISystemLogger;
+import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.IWorkerConfigDataService;
-import org.signserver.server.SystemLoggerException;
-import org.signserver.server.SystemLoggerFactory;
+import org.signserver.server.log.SystemLoggerException;
+import org.signserver.server.log.SystemLoggerFactory;
 
 /**
  * Entity Service class that acts as migration layer for

@@ -3360,6 +3360,78 @@ is an external service updating it.
                 </p>
             </section>
 
+            <section name="Logging">
+                <p>
+SignServer uses Log4j for logging and there are a few different loggers
+available where the first two can be useful for audit logging:
+                </p>
+                <ul>
+                    <li>Worker Log (org.signserver.server.log.IWorkerLogger)</li>
+                    <li>System Log (org.signserver.server.log.ISystemLogger)</li>
+                    <li>Debug Log (any other class name)</li>
+                </ul>
+                <subsection name="Worker Log">
+                    <p>
+The purpose of the Worker Loggers are to log each transaction handled by the
+worker. Each worker can choose to have its own configuration for the logger. By
+default the AllFieldsWorkerLogger is used which used logs all the available
+fields one after each other separated by semi colons.
+                    </p>
+                    <p>
+Which Worker Logger configuration to use is configured by setting the
+<b>WORKERLOGGER</b> property to the full class name of the IWorkerLogger
+implementation in the worker's configuration. Examples:
+                    </p>
+                    <pre>
+WORKERLOGGER=org.signserver.server.log.AllFieldsSystemLogger
+WORKERLOGGER=org.signserver.module.tsa.DefaultTimeStampLogger
+WORKERLOGGER=org.signserver.module.tsa.CustomTimeStampLogger1
+                    </pre>
+                </subsection>
+                <subsection name="System Log">
+                    <p>
+The System Logger is instead for logging all other audit events that are not
+associated with a particular worker. The default System Logger is the
+AllFieldsSystemLogger that logs all the available fields one after each other
+separated by semi colons.
+                    </p>
+                </subsection>
+                <subsection name="Debug Log">
+                    <p>
+The debug log is just the normal log that can be useful for finding out
+configuration problems etc.
+                    </p>
+                </subsection>
+
+                <subsection name="Configure Log4j for Audit logs">
+                    <p>
+For JBoss you can configure JBOSS_HOME/server/default/conf/jboss-log4j.xml to
+put the audit logs in a separate file.
+                    </p>
+                    <source>
+&lt;appender name="SIGNSERVER_AUDIT" class="org.jboss.logging.appender.DailyRollingFileAppender"&gt;
+    &lt;errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/&gt;
+    &lt;param name="File" value="${jboss.server.log.dir}/signserver_audit.log" /&gt;
+    &lt;param name="Append" value="true" /&gt;
+
+    &lt;!-- Rollover at midnight each day --&gt;
+    &lt;param name="DatePattern" value="'.'yyyy-MM-dd" /&gt;
+    &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+        &lt;param name="ConversionPattern" value="%d %-5p [%c] %m%n" /&gt;
+    &lt;/layout&gt;
+&lt;/appender&gt;
+
+&lt;category name="org.signserver.server.log.ISystemLogger"&gt;
+    &lt;appender-ref ref="SIGNSERVER_AUDIT"/&gt;
+&lt;/category&gt;
+&lt;category name="org.signserver.server.log.IWorkerLogger"&gt;
+    &lt;appender-ref ref="SIGNSERVER_AUDIT"/&gt;
+&lt;/category&gt;
+                    </source>
+                </subsection>
+
+            </section>
+
             <section name="Installation Packages">
                 <p>
 From version 3.1 and upwards will there be binary installation packages released alongside the regular source packages. The packages includes all software necessary except for Java, were JDK 1.5+ is required (JRE will do for the MailSigner) before installing.

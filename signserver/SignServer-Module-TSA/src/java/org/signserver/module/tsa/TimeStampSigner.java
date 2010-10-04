@@ -599,10 +599,17 @@ public class TimeStampSigner extends BaseSigner {
             }
             logMap.put(ITimeStampLogger.LOG_TSA_POLICYID, tSAPolicyOID);
 
+            final X509Certificate signingCert
+                    = (X509Certificate) getSigningCertificate();
+            if (signingCert == null) {
+                throw new CryptoTokenOfflineException(
+                        "No certificate for this signer");
+            }
+
             timeStampTokenGen = new TimeStampTokenGenerator(
                     this.getCryptoToken().getPrivateKey(
                         ICryptoToken.PURPOSE_SIGN),
-                    (X509Certificate) getSigningCertificate(),
+                    signingCert,
                     digestOID,
                     tSAPolicyOID);
 

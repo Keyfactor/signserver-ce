@@ -20,6 +20,7 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
+import java.security.cert.Certificate;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
@@ -492,10 +493,17 @@ public class TimeStampSigner extends BaseSigner {
                 tSAPolicyOID = defaultTSAPolicyOID;
             }
 
+            final X509Certificate signingCert
+                    = (X509Certificate) getSigningCertificate();
+            if (signingCert == null) {
+                throw new CryptoTokenOfflineException(
+                        "No certificate for this signer");
+            }
+
             timeStampTokenGen = new TimeStampTokenGenerator(
                     this.getCryptoToken().getPrivateKey(
                         ICryptoToken.PURPOSE_SIGN),
-                    (X509Certificate) getSigningCertificate(),
+                    signingCert,
                     digestOID,
                     tSAPolicyOID);
 

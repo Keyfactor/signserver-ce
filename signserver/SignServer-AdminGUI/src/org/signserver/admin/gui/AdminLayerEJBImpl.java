@@ -604,6 +604,13 @@ public class AdminLayerEJBImpl implements AdminWebService {
                     result.setSuccess(key.isSuccess());
                     result.setPublicKeyHash(key.getPublicKeyHash());
                     result.setStatus(key.getStatus());
+                } else if (o instanceof org.signserver.common.KeyTestResult) {
+                    org.signserver.common.KeyTestResult key
+                        = (org.signserver.common.KeyTestResult) o;
+                    result.setAlias(key.getAlias());
+                    result.setSuccess(key.isSuccess());
+                    result.setPublicKeyHash(key.getPublicKeyHash());
+                    result.setStatus(key.getStatus());
                 } else {
                     KeyTestResult key
                             = (KeyTestResult) o;

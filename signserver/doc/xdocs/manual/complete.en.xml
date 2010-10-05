@@ -3382,11 +3382,19 @@ Which Worker Logger configuration to use is configured by setting the
 <b>WORKERLOGGER</b> property to the full class name of the IWorkerLogger
 implementation in the worker's configuration. Examples:
                     </p>
-                    <pre>
-WORKERLOGGER=org.signserver.server.log.AllFieldsSystemLogger
-WORKERLOGGER=org.signserver.module.tsa.DefaultTimeStampLogger
+                    <source>
+WORKERLOGGER=org.signserver.server.log.AllFieldsWorkerLogger
+                    </source>
+                    <source>
 WORKERLOGGER=org.signserver.module.tsa.CustomTimeStampLogger1
-                    </pre>
+                    </source>
+                    <source>
+WORKERLOGGER=org.signserver.server.log.PatternWorkerLogger
+LOGTIMEZONE=GMT
+LOGDATEFORMAT=yyyy-MM-dd:HH:mm:ss:z
+LOGPATTERN=\$\{(.+?)\}
+LOGORDER=AUDIT; LOG_ID: ${LOG_ID}; CLIENT_IP: ${CLIENT_IP}; REQUEST_FULLURL: ${REQUEST_FULLURL}; RequestTime: ${LOG_TIME}; ResponseTime: ${REPLY_TIME}; EXCEPTION: ${EXCEPTION};
+                    </source>
                 </subsection>
                 <subsection name="System Log">
                     <p>

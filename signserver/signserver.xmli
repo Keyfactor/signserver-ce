@@ -48,11 +48,11 @@
 	   <property name="genServerCertBin" value="genservercert.sh"/>
        <property name="setDBTypeJar" value="setdbtype.jar"/>
 
-           <property name="web.src" value="./SignServer-war/web/pub" />
+           <property name="web.src" value="./modules/SignServer-war/web/pub" />
            <property name="webwebxml" value="${web.src}/WEB-INF/web.xml"/>
 	   <property name="webwar" value="${server.dist.dir}/web.war" />
 		
-	   <property name="healthcheck.src" value="./SignServer-war/web/healthcheck" />
+	   <property name="healthcheck.src" value="./modules/SignServer-war/web/healthcheck" />
            <property name="healthcheckwebxml" value="${preprocessed}/web/healthcheck/WEB-INF/web.xml"/>
 	   <property name="healthcheckwar" value="${server.dist.dir}/healthcheck.war" />
 

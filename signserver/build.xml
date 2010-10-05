@@ -44,13 +44,13 @@
     <property name="src.java" value="${src}/java" />
     <property name="signservercommon.src.java" value="./modules/SignServer-Common/src" />
     <property name="signserverejb.src.java" value="./modules/SignServer-ejb/src/java" />
-    <property name="signserverwar.src.java" value="./SignServer-war/src/java" />
+    <property name="signserverwar.src.java" value="./modules/SignServer-war/src/java" />
     <property name="signserveradmincli.src.java" value="./SignServer-AdminCLI/src" />
     <property name="src.appserver" value="${preprocessed}/appserver/jboss" />
 	<property name="src.external" location="${tmp}/external"/>
     <property name="resources.dir"  location="./src/resources"/>	
-    <property name="signserverwar.web.pub" value="./SignServer-war/web/pub" />
-    <property name="signserverwar.web.healthcheck" value="./SignServer-war/web/healthcheck" />
+    <property name="signserverwar.web.pub" value="./modules/SignServer-war/web/pub" />
+    <property name="signserverwar.web.healthcheck" value="./modules/SignServer-war/web/healthcheck" />
     
     <property name="server.java.target" value="1.6" />
     <property name="client.java.target" value="1.6" />
@@ -160,7 +160,7 @@ OS version                          = ${os.version}
             <fileset dir="src">
                 <include name="**/*.xml"/>
             </fileset>
-            <fileset dir="./SignServer-war">
+            <fileset dir="./modules/SignServer-war">
                 <include name="*web/**/*.xml"/>
                 <include name="*web/**/*.xml"/>
             </fileset>

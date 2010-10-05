@@ -43,7 +43,7 @@
     <property name="src" value="./src" />
     <property name="src.java" value="${src}/java" />
     <property name="signservercommon.src.java" value="./modules/SignServer-Common/src" />
-    <property name="signserverejb.src.java" value="./SignServer-ejb/src/java" />
+    <property name="signserverejb.src.java" value="./modules/SignServer-ejb/src/java" />
     <property name="signserverwar.src.java" value="./SignServer-war/src/java" />
     <property name="signserveradmincli.src.java" value="./SignServer-AdminCLI/src" />
     <property name="src.appserver" value="${preprocessed}/appserver/jboss" />

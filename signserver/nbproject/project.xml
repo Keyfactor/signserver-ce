@@ -30,13 +30,13 @@
                 <source-folder>
                     <label>SignServer-Common/src</label>
                     <type>java</type>
-                    <location>SignServer-Common/src</location>
+                    <location>modules/SignServer-Common/src</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>
                     <label>SignServer-Common/test</label>
                     <type>java</type>
-                    <location>SignServer-Common/test</location>
+                    <location>modules/SignServer-Common/test</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>

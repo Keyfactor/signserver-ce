@@ -182,6 +182,15 @@ exists or setup the property manually. For example like this:
                 <isset property="build.deploy.on.save"/>
             </not>
         </condition>
+        <ant antfile="${project.SignServer-AdminWS}/build.xml" inheritall="false" target="dist-ear">
+            <property location="${build.dir}" name="dist.ear.dir"/>
+            <property name="deploy.on.save" value="${build.deploy.on.save}"/>
+        </ant>
+        <condition property="build.deploy.on.save" value="false">
+            <not>
+                <isset property="build.deploy.on.save"/>
+            </not>
+        </condition>
         <ant antfile="${project.SignServer-ejb}/build.xml" inheritall="false" target="dist-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
@@ -209,6 +218,7 @@ exists or setup the property manually. For example like this:
     <target depends="init,deps-jar,pre-pre-compile,pre-compile" name="-do-compile-deps">
         <copyfiles files="${reference.SignServer-ejb.dist-ear}" todir="${build.dir}//"/>
         <copyfiles files="${reference.SignServer-war.dist-ear}" todir="${build.dir}//"/>
+        <copyfiles files="${reference.SignServer-AdminWS.dist-ear}" todir="${build.dir}//"/>
     </target>
     <target name="post-compile">
         <!-- Empty placeholder for easier customization. -->
@@ -285,6 +295,7 @@ exists or setup the property manually. For example like this:
     </target>
     <target name="-run-deploy-am" unless="no.deps">
         <!-- Task to deploy to the Access Manager runtime. -->
+        <ant antfile="${project.SignServer-AdminWS}/build.xml" inheritall="false" target="-run-deploy-am"/>
         <ant antfile="${project.SignServer-ejb}/build.xml" inheritall="false" target="-run-deploy-am"/>
         <ant antfile="${project.SignServer-war}/build.xml" inheritall="false" target="-run-deploy-am"/>
     </target>
@@ -536,6 +547,15 @@ exists or setup the property manually. For example like this:
     CLEANUP SECTION
     -->
     <target depends="init" name="deps-clean" unless="no.deps">
+        <condition property="build.deploy.on.save" value="false">
+            <not>
+                <isset property="build.deploy.on.save"/>
+            </not>
+        </condition>
+        <ant antfile="${project.SignServer-AdminWS}/build.xml" inheritall="false" target="clean-ear">
+            <property location="${build.dir}" name="dist.ear.dir"/>
+            <property name="deploy.on.save" value="${build.deploy.on.save}"/>
+        </ant>
         <condition property="build.deploy.on.save" value="false">
             <not>
                 <isset property="build.deploy.on.save"/>

@@ -40,7 +40,6 @@ public class AllFieldsSystemLogger implements ISystemLogger {
     public void log(final Map<String, String> fields)
             throws SystemLoggerException {
         final StringBuilder str = new StringBuilder();
-        str.append("AllFieldsSystemLogger; ");
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             str.append(entry.getKey());
             str.append(": ");

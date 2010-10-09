@@ -28,39 +28,39 @@
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>SignServer-Common/src</label>
+                    <label>modules/SignServer-Common/src</label>
                     <type>java</type>
                     <location>modules/SignServer-Common/src</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>SignServer-Common/test</label>
+                    <label>modules/SignServer-Common/test</label>
                     <type>java</type>
                     <location>modules/SignServer-Common/test</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>SignServer-ejb/src/java</label>
+                    <label>modules/SignServer-ejb/src/java</label>
                     <type>java</type>
-                    <location>SignServer-ejb/src/java</location>
+                    <location>modules/SignServer-ejb/src/java</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>SignServer-ejb/test</label>
+                    <label>modules/SignServer-ejb/test</label>
                     <type>java</type>
-                    <location>SignServer-ejb/test</location>
+                    <location>modules/SignServer-ejb/test</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>SignServer-war/src/java</label>
+                    <label>modules/SignServer-war/src/java</label>
                     <type>java</type>
-                    <location>SignServer-war/src/java</location>
+                    <location>modules/SignServer-war/src/java</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>SignServer-war/test</label>
+                    <label>modules/SignServer-war/test</label>
                     <type>java</type>
-                    <location>SignServer-war/test</location>
+                    <location>modules/SignServer-war/test</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>
@@ -492,28 +492,28 @@
                         <location>src/java</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>SignServer-Common/src</label>
-                        <location>SignServer-Common/src</location>
+                        <label>modules/SignServer-Common/src</label>
+                        <location>modules/SignServer-Common/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>SignServer-Common/test</label>
-                        <location>SignServer-Common/test</location>
+                        <label>modules/SignServer-Common/test</label>
+                        <location>modules/SignServer-Common/test</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>SignServer-ejb/src/java</label>
-                        <location>SignServer-ejb/src/java</location>
+                        <label>modules/SignServer-ejb/src/java</label>
+                        <location>modules/SignServer-ejb/src/java</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>SignServer-ejb/test</label>
-                        <location>SignServer-ejb/test</location>
+                        <label>modules/SignServer-ejb/test</label>
+                        <location>modules/SignServer-ejb/test</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>SignServer-war/src/java</label>
-                        <location>SignServer-war/src/java</location>
+                        <label>modules/SignServer-war/src/java</label>
+                        <location>modules/SignServer-war/src/java</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>SignServer-war/test</label>
-                        <location>SignServer-war/test</location>
+                        <label>modules/SignServer-war/test</label>
+                        <location>modules/SignServer-war/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-AdminCLI/src</label>

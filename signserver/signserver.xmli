@@ -1100,7 +1100,10 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
      <!--                                                 -->
       <target name="signingAndValidationAPI" depends="signserver:compile, signserverws.client, signserverws.client" unless="buildMailSigner" if="signingandvalidationapi.conditionenabled" >
         <mkdir dir="${signingAndValidationBuild}"/>
-        <javac srcdir="${src.java}" destdir="${signingAndValidationBuild}" debug="on" target="${client.java.target}" source="${client.java.target}" encoding="iso8859-1">
+        <javac destdir="${signingAndValidationBuild}" debug="on" target="${client.java.target}" source="${client.java.target}" encoding="iso8859-1">
+           <src path="${src.java}"/>
+           <src path="${signservercommon.src.java}"/>
+           <src path="${signserverejb.src.java}"/>
            <include name="org/signserver/client/api/*.java"/>
            <include name="org/signserver/common/AuthorizationRequiredException.java"/>
            <classpath refid="signserver.compile.classpath"/>
@@ -1109,11 +1112,6 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
            In the future it would be better it depends on the
            SignServer-Common.jar instead of doing a separe build of those
            classes. -->
-           <sourcepath>
-            <dirset dir="${src.java}" />
-            <dirset dir="${signservercommon.src.java}" />
-            <dirset dir="${signserverejb.src.java}" />
-           </sourcepath>
         </javac>
         
         <mkdir dir="${signingAndValidationDir}/lib"/>

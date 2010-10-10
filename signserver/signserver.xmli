@@ -610,7 +610,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
     <!-- Build Admin Web Service                                             -->
     <!-- =================================================================== -->
     <target name="adminws" description="Build Admin WS" depends="init" if="adminws.conditionenabled">
-        <ant antfile="build.xml" dir="./SignServer-AdminWS/" target="dist"/>
+        <ant antfile="build.xml" dir="${adminws.dir}" target="dist"/>
         <replace file="${eardd.src}/META-INF/application.xml" token="!--@adminws.war@-->" value="module>&lt;web>&lt;web-uri>SignServer-AdminWS.war&lt;/web-uri>&lt;context-root>/signserver/adminws&lt;/context-root>&lt;/web>&lt;/module>"/>
     </target>
     

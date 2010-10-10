@@ -13,7 +13,7 @@
 	   <import file="./module-builds/odfsigner.xml"/>
 	   <import file="./module-builds/xmlvalidator.xml"/>
            <import file="./module-builds/cmssigner.xml"/>
-           <import file="./SignServer-AdminWS/build.xml"/>
+           <import file="./modules/SignServer-AdminWS/build.xml"/>
 	
 	   <property name="java.trustpassword" value="changeit" />
 	   <property name="httpsserver.password" value="serverpwd" />
@@ -31,7 +31,7 @@
        <property name="validationClientBuild" value="${bin}/validationClient"/>
        <property name="validationClientDir" value="${client.dist.dir}/validationclient"/>
        <property name="validationClientJar" value="${validationClientDir}/validate.jar"/>
-       <property name="adminws.dir" value="./SignServer-AdminWS"/>
+       <property name="adminws.dir" value="./modules/SignServer-AdminWS"/>
        <property name="adminws.dist.dir" value="${adminws.dir}/dist"/>
        <property name="adminws.build.dir" value="${adminws.dir}/build"/>
 	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>

@@ -216,8 +216,8 @@ exists or setup the property manually. For example like this:
         </copy>
     </target>
     <target depends="init,deps-jar,pre-pre-compile,pre-compile" name="-do-compile-deps">
-        <copyfiles files="${reference.SignServer-ejb.dist-ear}" todir="${build.dir}//"/>
         <copyfiles files="${reference.SignServer-war.dist-ear}" todir="${build.dir}//"/>
+        <copyfiles files="${reference.SignServer-ejb.dist-ear}" todir="${build.dir}//"/>
         <copyfiles files="${reference.SignServer-AdminWS.dist-ear}" todir="${build.dir}//"/>
     </target>
     <target name="post-compile">

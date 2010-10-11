@@ -30,7 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.naming.NamingException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -72,22 +71,14 @@ public class AdminLayerEJBImpl implements AdminWebService {
     private IWorkerSession.IRemote worker;
     private IGlobalConfigurationSession.IRemote global;
 
-    public AdminLayerEJBImpl() {
+    public AdminLayerEJBImpl() throws NamingException {
         if (worker == null) {
-            try {
-                worker = ServiceLocator.getInstance().lookupRemote(
-                        IWorkerSession.IRemote.class);
-            } catch (NamingException ex) {
-                LOG.error("Error looking up WorkerSession", ex);
-            }
+            worker = ServiceLocator.getInstance().lookupRemote(
+                    IWorkerSession.IRemote.class);
         }
         if (global == null) {
-            try {
-                global = ServiceLocator.getInstance().lookupRemote(
-                        IGlobalConfigurationSession.IRemote.class);
-            } catch (NamingException ex) {
-                LOG.error("Error looking up GlobalConfigurationSession", ex);
-            }
+            global = ServiceLocator.getInstance().lookupRemote(
+                    IGlobalConfigurationSession.IRemote.class);
         }
     }
 

@@ -13,12 +13,6 @@
 package org.signserver.admin.gui;
 
 import java.awt.SplashScreen;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Hashtable;
-import java.util.logging.Level;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
@@ -26,8 +20,6 @@ import org.ejbca.util.CertTools;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import org.signserver.adminws.AdminWebService;
-import org.signserver.adminws.AdminWebServiceService;
-import org.signserver.adminws.WsGlobalConfiguration;
 import org.signserver.client.api.ISigningAndValidation;
 import org.signserver.client.api.SigningAndValidationEJB;
 import org.signserver.client.api.SigningAndValidationWS;
@@ -119,7 +111,17 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
                 adminWS = dlg.getWS();
                 
             } else {
-                adminWS = new AdminLayerEJBImpl();
+                try {
+                    adminWS = new AdminLayerEJBImpl();
+                } catch (NamingException ex) {
+                    LOG.error("Startup error", ex);
+                    JOptionPane.showMessageDialog(null,
+                        "Startup failed. Are the application server running?\n"
+                        + ex.getMessage(),
+                        "SignServer Administration GUI startup",
+                        JOptionPane.ERROR_MESSAGE);
+                    System.exit(1);
+                }
             }
         }
         return adminWS;

@@ -2,30 +2,6 @@
 <jax-ws xmlns="http://www.netbeans.org/ns/jax-ws/1">
   <services/>
   <clients>
-    <client name="AdminWebServiceService">
-      <wsdl-url>file:/home/markus/VersionControlled/signserver/trunk-1190/signserver/SignServer-AdminWS/build/generated-sources/jax-ws/resources/AdminWebServiceService.wsdl</wsdl-url>
-      <local-wsdl-file>AdminWebServiceService.wsdl</local-wsdl-file>
-      <package-name>org.signserver.adminws</package-name>
-      <catalog-file>catalog.xml</catalog-file>
-      <wsimport-options>
-        <wsimport-option>
-          <wsimport-option-name>extension</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>verbose</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>wsdlLocation</wsimport-option-name>
-          <wsimport-option-value>file:/home/markus/VersionControlled/signserver/trunk-1190/signserver/SignServer-AdminWS/build/generated-sources/jax-ws/resources/AdminWebServiceService.wsdl</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>xendorsed</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-      </wsimport-options>
-    </client>
   </clients>
   <jsr109>false</jsr109>
 </jax-ws>

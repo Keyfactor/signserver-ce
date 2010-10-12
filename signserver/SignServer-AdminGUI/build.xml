@@ -49,6 +49,42 @@
         <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
     </target>
 
+
+    <!--
+        ===================
+        JAX-WS WSIMPORT SECTION
+        ===================
+    -->
+
+    <target depends="init,deps-jar,wsimport-client-generate" name="-pre-compile">
+        <mkdir dir="${build.classes.dir}"/>
+    </target>
+
+    <target name="wsimport-init" depends="init">
+        <mkdir dir="${build.generated.sources.dir}/jax-ws"/>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath path="${jaxws.classpath}"/>
+        </taskdef>
+    </target>
+    <target name="wsimport-client-AdminWebServiceService" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/AdminWebServiceService"/>
+        <property name="wsdl-AdminWebServiceService" location="${src.dir}/META-INF/wsdl/AdminWebServiceService.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" destdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" wsdl="${wsdl-AdminWebServiceService}" catalog="catalog.xml" extension="true" verbose="true" xendorsed="true">
+            <depends file="${wsdl-AdminWebServiceService}"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/AdminWebServiceService"/>
+        </wsimport>
+        <copy todir="${build.generated.sources.dir}/jax-ws">
+            <fileset dir="${build.generated.dir}/jax-wsCache/AdminWebServiceService">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="wsimport-client-clean-AdminWebServiceService" depends="-init-project">
+        <delete dir="${build.generated.dir}/jax-wsCache/AdminWebServiceService"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/org/signserver/adminws"/>
+    </target>
+    <target name="wsimport-client-generate" depends="wsimport-client-AdminWebServiceService"/>
+
     <!--
 
     There exist several targets which are by default empty and which can be 

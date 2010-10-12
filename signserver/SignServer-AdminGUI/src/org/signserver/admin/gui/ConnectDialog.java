@@ -65,7 +65,7 @@ public class ConnectDialog extends javax.swing.JDialog {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ConnectDialog.class);
 
-    private static final String DEFAULT_URL = "https://localhost:8443/ejbca";
+    private static final String DEFAULT_URL = "https://localhost:8443/signserver";
     private static final String WS_PATH = "/adminws/adminws?wsdl";
 
     private ConnectSettings settings;
@@ -159,7 +159,7 @@ public class ConnectDialog extends javax.swing.JDialog {
         setTitle("Connect to EJBCA");
         setLocationByPlatform(true);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("EJBCA"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Web Service"));
 
         jLabel1.setText("URL:");
 
@@ -497,7 +497,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                 HttpsURLConnection.setDefaultSSLSocketFactory(factory);
 
                 AdminWebServiceService service = new AdminWebServiceService(
-                        new URL(urlstr));
+                        new URL(urlstr), new QName("http://adminws.signserver.org/", "AdminWebServiceService"));
                 ws = service.getAdminWebServicePort();
             dispose();
         } catch (Exception ex) {

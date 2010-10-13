@@ -31,7 +31,8 @@ import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.Task;
-import org.signserver.adminws.AdminNotAuthorizedException_Exception;
+import org.signserver.admin.gui.adminws.gen
+        .AdminNotAuthorizedException_Exception;
 
 /**
  * Dialog for renewing keys.

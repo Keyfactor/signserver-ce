@@ -40,15 +40,11 @@ import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.Task;
-import org.signserver.adminws.Base64SignerCertReqData;
-import org.signserver.adminws.InvalidWorkerIdException_Exception;
-import org.signserver.adminws.Pkcs10CertReqInfo;
+import org.signserver.admin.gui.adminws.gen.Base64SignerCertReqData;
+import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
+import org.signserver.admin.gui.adminws.gen.Pkcs10CertReqInfo;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.PKCS10CertReqInfo;
-import org.signserver.common.RequestContext;
 
 /**
  * Dialog for generating certificate requests.

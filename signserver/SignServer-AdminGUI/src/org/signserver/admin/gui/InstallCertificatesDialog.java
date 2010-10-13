@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -37,8 +36,9 @@ import org.ejbca.util.CertTools;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.Task;
-import org.signserver.adminws.AdminNotAuthorizedException_Exception;
-import org.signserver.adminws.IllegalRequestException_Exception;
+import org.signserver.admin.gui.adminws.gen
+        .AdminNotAuthorizedException_Exception;
+import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
 import org.signserver.common.GlobalConfiguration;
 
 /**

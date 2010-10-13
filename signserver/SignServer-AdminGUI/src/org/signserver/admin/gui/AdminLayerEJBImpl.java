@@ -35,20 +35,22 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
-import org.signserver.adminws.AdminWebService;
-import org.signserver.adminws.AuthorizedClient;
-import org.signserver.adminws.Base64SignerCertReqData;
-import org.signserver.adminws.CryptoTokenAuthenticationFailureException_Exception;
-import org.signserver.adminws.CryptoTokenOfflineException_Exception;
-import org.signserver.adminws.IllegalRequestException_Exception;
-import org.signserver.adminws.InvalidWorkerIdException_Exception;
-import org.signserver.adminws.KeyStoreException_Exception;
-import org.signserver.adminws.KeyTestResult;
-import org.signserver.adminws.Pkcs10CertReqInfo;
-import org.signserver.adminws.ResyncException_Exception;
-import org.signserver.adminws.WsGlobalConfiguration;
-import org.signserver.adminws.WsWorkerConfig;
-import org.signserver.adminws.WsWorkerStatus;
+import org.signserver.admin.gui.adminws.gen.AdminWebService;
+import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
+import org.signserver.admin.gui.adminws.gen.Base64SignerCertReqData;
+import org.signserver.admin.gui.adminws.gen
+        .CryptoTokenAuthenticationFailureException_Exception;
+import org.signserver.admin.gui.adminws.gen
+        .CryptoTokenOfflineException_Exception;
+import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
+import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
+import org.signserver.admin.gui.adminws.gen.KeyStoreException_Exception;
+import org.signserver.admin.gui.adminws.gen.KeyTestResult;
+import org.signserver.admin.gui.adminws.gen.Pkcs10CertReqInfo;
+import org.signserver.admin.gui.adminws.gen.ResyncException_Exception;
+import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
+import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
+import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
@@ -174,31 +176,31 @@ public class AdminLayerEJBImpl implements AdminWebService {
     }
 
     private CryptoTokenOfflineException_Exception wrap(CryptoTokenOfflineException ex) {
-        org.signserver.adminws.CryptoTokenOfflineException newEx = new org.signserver.adminws.CryptoTokenOfflineException();
+        org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException newEx = new org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException();
         newEx.setMessage(ex.getMessage());
         return new CryptoTokenOfflineException_Exception(ex.getMessage(), newEx, ex);
     }
 
     private InvalidWorkerIdException_Exception wrap(InvalidWorkerIdException ex) {
-        org.signserver.adminws.InvalidWorkerIdException newEx = new org.signserver.adminws.InvalidWorkerIdException();
+        org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException newEx = new org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException();
         newEx.setMessage(ex.getMessage());
         return new InvalidWorkerIdException_Exception(ex.getMessage(), newEx, ex);
     }
 
     private CryptoTokenAuthenticationFailureException_Exception wrap(CryptoTokenAuthenticationFailureException ex) {
-        org.signserver.adminws.CryptoTokenAuthenticationFailureException newEx = new org.signserver.adminws.CryptoTokenAuthenticationFailureException();
+        org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureException newEx = new org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureException();
         newEx.setMessage(ex.getMessage());
         return new CryptoTokenAuthenticationFailureException_Exception(ex.getMessage(), newEx, ex);
     }
 
     private KeyStoreException_Exception wrap(KeyStoreException ex) {
-        org.signserver.adminws.KeyStoreException newEx = new org.signserver.adminws.KeyStoreException();
+        org.signserver.admin.gui.adminws.gen.KeyStoreException newEx = new org.signserver.admin.gui.adminws.gen.KeyStoreException();
         newEx.setMessage(ex.getMessage());
         return new KeyStoreException_Exception(ex.getMessage(), newEx, ex);
     }
 
     private ResyncException_Exception wrap(ResyncException ex) {
-        org.signserver.adminws.ResyncException newEx = new org.signserver.adminws.ResyncException();
+        org.signserver.admin.gui.adminws.gen.ResyncException newEx = new org.signserver.admin.gui.adminws.gen.ResyncException();
         newEx.setMessage(ex.getMessage());
         return new ResyncException_Exception(ex.getMessage(), newEx, ex);
     }

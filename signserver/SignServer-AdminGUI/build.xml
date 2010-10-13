@@ -69,7 +69,15 @@
     <target name="wsimport-client-AdminWebServiceService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/AdminWebServiceService"/>
         <property name="wsdl-AdminWebServiceService" location="${src.dir}/META-INF/wsdl/AdminWebServiceService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" destdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" wsdl="${wsdl-AdminWebServiceService}" catalog="catalog.xml" extension="true" verbose="true" xendorsed="true">
+        <wsimport 
+        	sourcedestdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" 
+        	destdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" 
+        	wsdl="${wsdl-AdminWebServiceService}" 
+        	catalog="catalog.xml" 
+        	extension="true" 
+        	verbose="true" 
+        	xendorsed="true"
+        	package="org.signserver.admin.gui.adminws.gen">
             <depends file="${wsdl-AdminWebServiceService}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/AdminWebServiceService"/>
         </wsimport>

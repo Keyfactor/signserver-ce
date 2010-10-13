@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
-import org.signserver.adminws.AdminWebService;
+import org.signserver.admin.gui.adminws.gen.AdminWebService;
 import org.signserver.client.api.ISigningAndValidation;
 import org.signserver.client.api.SigningAndValidationEJB;
 import org.signserver.client.api.SigningAndValidationWS;

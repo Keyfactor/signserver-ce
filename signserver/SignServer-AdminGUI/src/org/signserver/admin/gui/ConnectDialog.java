@@ -50,8 +50,8 @@ import javax.swing.JOptionPane;
 import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
-import org.signserver.adminws.AdminWebService;
-import org.signserver.adminws.AdminWebServiceService;
+import org.signserver.admin.gui.adminws.gen.AdminWebService;
+import org.signserver.admin.gui.adminws.gen.AdminWebServiceService;
 import sun.security.pkcs11.SunPKCS11;
 
 /**

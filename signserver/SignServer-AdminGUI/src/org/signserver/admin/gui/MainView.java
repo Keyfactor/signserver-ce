@@ -13,7 +13,6 @@
 package org.signserver.admin.gui;
 
 import java.awt.Component;
-import java.util.logging.Level;
 import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import org.jdesktop.application.Action;
@@ -26,8 +25,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -36,8 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -58,23 +53,20 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
-import org.ejbca.core.model.authorization.AuthorizationDeniedException;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.TaskMonitor;
-import org.signserver.adminws.AdminNotAuthorizedException_Exception;
-import org.signserver.adminws.AuthorizedClient;
-import org.signserver.adminws.CryptoTokenAuthenticationFailureException_Exception;
-import org.signserver.adminws.CryptoTokenOfflineException_Exception;
-import org.signserver.adminws.InvalidWorkerIdException_Exception;
-import org.signserver.adminws.WsWorkerConfig;
-import org.signserver.adminws.WsWorkerStatus;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.admin.gui.adminws.gen
+        .AdminNotAuthorizedException_Exception;
+import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
+import org.signserver.admin.gui.adminws.gen
+        .CryptoTokenAuthenticationFailureException_Exception;
+import org.signserver.admin.gui.adminws.gen
+        .CryptoTokenOfflineException_Exception;
+import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
+import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
+import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
 
 /**
  * The application's main frame.
@@ -1189,7 +1181,7 @@ public class MainView extends FrameView {
 
             for (Worker worker : workers) {
                 try {
-                    org.signserver.adminws.AuthorizedClient client = new org.signserver.adminws.AuthorizedClient();
+                    org.signserver.admin.gui.adminws.gen.AuthorizedClient client = new org.signserver.admin.gui.adminws.gen.AuthorizedClient();
                     client.setCertSN(editSerialNumberTextfield.getText());
                     client.setIssuerDN(editIssuerDNTextfield.getText());
                     SignServerAdminGUIApplication.getAdminWS()

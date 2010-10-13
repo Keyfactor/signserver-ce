@@ -14,7 +14,6 @@ package org.signserver.admin.gui;
 
 import java.awt.Component;
 import java.awt.Frame;
-import java.security.KeyStoreException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,13 +34,13 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Task;
-import org.signserver.adminws.AdminNotAuthorizedException_Exception;
-import org.signserver.adminws.CryptoTokenOfflineException_Exception;
-import org.signserver.adminws.InvalidWorkerIdException_Exception;
-import org.signserver.adminws.KeyStoreException_Exception;
-import org.signserver.adminws.KeyTestResult;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.admin.gui.adminws.gen
+        .AdminNotAuthorizedException_Exception;
+import org.signserver.admin.gui.adminws.gen
+        .CryptoTokenOfflineException_Exception;
+import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
+import org.signserver.admin.gui.adminws.gen.KeyStoreException_Exception;
+import org.signserver.admin.gui.adminws.gen.KeyTestResult;
 
 /**
  * Dialog for testing keys.

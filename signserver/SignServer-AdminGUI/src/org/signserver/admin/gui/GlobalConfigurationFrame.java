@@ -14,7 +14,6 @@ package org.signserver.admin.gui;
 
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -23,8 +22,9 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Task;
-import org.signserver.adminws.AdminNotAuthorizedException_Exception;
-import org.signserver.adminws.WsGlobalConfiguration;
+import org.signserver.admin.gui.adminws.gen
+        .AdminNotAuthorizedException_Exception;
+import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import  org.signserver.common.GlobalConfiguration;
 
 /**

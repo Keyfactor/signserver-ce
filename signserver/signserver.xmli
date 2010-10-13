@@ -34,6 +34,9 @@
        <property name="adminws.dir" value="./modules/SignServer-AdminWS"/>
        <property name="adminws.dist.dir" value="${adminws.dir}/dist"/>
        <property name="adminws.build.dir" value="${adminws.dir}/build"/>
+       <property name="admingui.dir" value="./SignServer-AdminGUI"/>
+       <property name="admingui.dist.dir" value="${admingui.dir}/dist"/>
+       <property name="admingui.build.dir" value="${admingui.dir}/build"/>
 	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
 	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
 	   <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>

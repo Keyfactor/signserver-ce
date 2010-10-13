@@ -143,8 +143,12 @@ OS version                          = ${os.version}
         <delete dir="${signingAndValidationBuild}" />
         <delete dir="${wsraadminClientBuild}" />
         <delete dir="${timeStampClientBuild}" />
-        <delete dir="${adminws.dist.dir}" />
-        <delete dir="${adminws.build.dir}" />
+        <!-- AdminWS -->
+        <ant antfile="build.xml" dir="${adminws.dir}" target="clean"
+            inheritall="false"/>
+        <!-- AdminGUI -->
+        <ant antfile="build.xml" dir="${admingui.dir}" target="clean"
+            inheritall="false"/>
     </target>
 	
 

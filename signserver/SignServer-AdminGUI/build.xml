@@ -11,24 +11,15 @@
     <description>Builds, tests, and runs the project SignServer-AdminGUI.</description>
     <import file="nbproject/build-impl.xml"/>
 
+    <!--
+        ===================
+        Find the application server
+        ===================
+    -->
     <target name="-pre-init" depends="-set-from-file,-set-from-env">
-
-        <!--<echo message="appserver.home = ${appserver.home}"/>-->
-
-        
-
-        <!--<antcall target="-set-from-file" inheritall="true "/>-->
         <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
-        
-        <!--<antcall target="-set-from-env" inheritrefs="true" />-->
-        <!--<echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>-->
-
-        <!--<property name="var.APPSRV_HOME" value="${appserver.home}"/>
-
-        <property name="var.APPSRV_HOME" value=""/>
--->
     </target>
-
+    
     <target name="-set-from-file" unless="var.APPSRV_HOME">
         <!-- Read properties from the main SignServer configuration if available -->
         <property file="${user.home}/signserver_build.properties" />
@@ -47,6 +38,7 @@
     <target name="-post-init">
         <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
         <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
+        <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
     </target>
 
 

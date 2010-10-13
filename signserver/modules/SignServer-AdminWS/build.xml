@@ -69,6 +69,42 @@
 
     -->
 
+    <!--
+        ===================
+        Find the application server
+        ===================
+    -->
+    <target name="-pre-init" depends="-set-from-file,-set-from-env">
+        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
+    </target>
+
+    <target name="-set-from-file" unless="var.APPSRV_HOME">
+        <!-- Read properties from the main SignServer configuration if available -->
+        <property file="${user.home}/signserver_build.properties" />
+        <property file="../signserver_build.properties" />
+        <echo message="appserver.home = ${appserver.home}"/>
+        <available file="${appserver.home}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${appserver.home}" />
+    </target>
+
+    <target name="-set-from-env" unless="var.APPSRV_HOME">
+        <!-- Get property from environment variable -->
+        <property environment="env" />
+        <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>
+        <available file="${env.APPSRV_HOME}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
+    </target>
+
+    <target name="-post-init">
+        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
+        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
+        <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
+    </target>
+
+
+    <!--
+        ===================
+        JAX-WS WSGEN SECTION
+        ===================
+    -->
     <!-- Run wsgen after compilation if it has not already been run. -->
     <target name="-post-compile">
         <available file="${build.generated.sources.dir}/jax-ws/resources/"

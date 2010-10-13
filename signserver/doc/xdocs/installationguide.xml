@@ -234,6 +234,7 @@ This HTML form functions as a sample to show how you can make http requests from
 </p>
 <subsubsection name="Production configuration with HSM">
 <p>To install a production signer using an HSM instead of the demo signer you can edit src/module-configs/mrtdsodsigner/hard-part-config.properties and then run:
+<br/>(note after changing module-configs you have to rebuild signserver, remove any old modules if you added it before, and then add the module again as described below)
 </p>
 <source>
 ant

@@ -236,6 +236,7 @@ This HTML form functions as a sample to show how you can make http requests from
 <p>To install a production signer using an HSM instead of the demo signer you can edit src/module-configs/mrtdsodsigner/hard-part-config.properties and then run:
 <br/>(note after changing module-configs you have to rebuild signserver, remove any old modules if you added it before, and then add the module again as described below)
 </p>
+<p>Before starting with an HSM installation you should read the about the <a href="manual/plugins.html#PKCS11CryptoToken">PKCS11CryptoToken</a> in the plugins section of the <a href="manual.html">Manual</a>.</p>
 <source>
 ant
 bin/signserver.sh module add dist-server/mrtdsodsigner.mar hard

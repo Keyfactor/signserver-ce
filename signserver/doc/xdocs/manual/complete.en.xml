@@ -2177,7 +2177,10 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.PrimeCa
                 <subsection name="PKCS11CryptoToken">
                     <subsubsection name="Overview">
                         <p>
-Using PKCS11 it's possible to use a HSM that has a PKCS11 module, such as Utimaco, nCipher or SafeNet/Eracom.
+Using PKCS11 it's possible to use a HSM that has a PKCS11 module, such as Utimaco, nCipher, SafeNet or AEP KeyPer. SignServer uses the same underlying implementation of
+PKCS11 crypto tokens as EJBCA. To find out more about supported devices and get information how to configure them you can visit the HSM documentation at <a href="http://ejbca.org/adminguide.html#Hardware%20Security%20Modules%20%28HSM%29">EJBCA.org</a>. 
+The only thing that differs are the token labels strings, which you should use from below for SignServer. A very useful tool from EJBCA is the <a href="http://ejbca.org/userguide.html#EJBCA%20client%20toolbox">ClientToolBox</a>. 
+If you can generate anbd test PKCS11 keys using the clientToolBox, you can use them with SignServer.
                         </p>
                     </subsubsection>
                     <subsubsection name="SIGNERTOKEN.CLASSPATH">

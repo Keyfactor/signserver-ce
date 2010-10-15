@@ -19,12 +19,16 @@
 	<classpathentry kind="src" path="SignServer-Module-CMSSigner/src/java"/>
 	<classpathentry kind="src" path="SignServer-AdminCLI/test"/>
 	<classpathentry kind="src" path="SignServer-AdminCLI/src"/>
-	<classpathentry kind="src" path="SignServer-war/src/java"/>
-	<classpathentry kind="src" path="SignServer-war/test"/>
-	<classpathentry kind="src" path="SignServer-ejb/src/java"/>
-	<classpathentry kind="src" path="SignServer-ejb/test"/>
-	<classpathentry kind="src" path="SignServer-Common/test"/>
-	<classpathentry kind="src" path="SignServer-Common/src"/>
+	<classpathentry kind="src" path="modules/SignServer-war/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-war/test"/>
+	<classpathentry kind="src" path="modules/SignServer-ejb/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-ejb/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Common/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Common/src"/>
+	<classpathentry kind="src" path="modules/SignServer-AdminWS/test"/>
+	<classpathentry kind="src" path="modules/SignServer-AdminWS/src/java"/>
+	<classpathentry kind="src" path="SignServer-AdminGUI/test"/>
+	<classpathentry kind="src" path="SignServer-AdminGUI/src"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/client"/>
 	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/server"/>
@@ -67,7 +71,7 @@
 	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/ejbca-util.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/jaxws-tools.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/client/jaxws-tools.jar"/>
 	<classpathentry kind="lib" path="lib/jaxws/jaxws-rt.jar"/>
 	<classpathentry kind="lib" path="lib/quartz/quartz-1.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm-3.1.jar"/>
@@ -97,5 +101,15 @@
 	<classpathentry kind="lib" path="lib/module/pdfsigner/itext/itext.jar"/>
 	<classpathentry kind="lib" path="lib/module/ooxmlsigner/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/module/ooxmlsigner/openxml4j_beta_v538.jar"/>
+	
+	<!-- AdminWS -->
+	<classpathentry kind="lib" path="modules/SignServer-AdminWS/build/generated/jax-wsCache/AdminWebServiceService/"/>
+	
+	<!-- AdminGUI -->
+	<classpathentry kind="lib" path="SignServer-AdminGUI/lib/swing-app-framework/appframework-1.0.3.jar"/>
+	<classpathentry kind="lib" path="SignServer-AdminGUI/lib/swing-app-framework/swing-worker-1.1.jar"/>
+	<classpathentry kind="lib" path="SignServer-AdminGUI/build/generated/jax-wsCache/AdminWebServiceService/"/>
+	
+	<!-- Out folder -->
 	<classpathentry kind="output" path=".eclipse/out"/>
 </classpath>

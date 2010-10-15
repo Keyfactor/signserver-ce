@@ -144,10 +144,10 @@ OS version                          = ${os.version}
         <delete dir="${wsraadminClientBuild}" />
         <delete dir="${timeStampClientBuild}" />
         <!-- AdminWS -->
-        <ant antfile="build.xml" dir="${adminws.dir}" target="clean"
+        <ant antfile="${adminws.dir}/build.xml" target="clean"
             inheritall="false"/>
         <!-- AdminGUI -->
-        <ant antfile="build.xml" dir="${admingui.dir}" target="clean"
+        <ant antfile="${admingui.dir}/build.xml" target="clean"
             inheritall="false"/>
     </target>
 	
@@ -257,7 +257,8 @@ OS version                          = ${os.version}
 
     <target name="admingui" depends="signserver"
         description="Build the administration GUI">
-        <ant antfile="build.xml" dir="SignServer-AdminGUI" target="default" inheritall="false"/>
+        <ant antfile="${admingui.dir}/build.xml" target="default"
+            inheritall="false"/>
     </target>
  
 	   <!-- =================================================================== -->

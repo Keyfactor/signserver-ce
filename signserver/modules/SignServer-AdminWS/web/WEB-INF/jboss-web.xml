@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-web>
-  <context-root>/adminws</context-root>
+  <context-root>/signserver/adminws</context-root>
 </jboss-web>

@@ -233,8 +233,17 @@ OS version                          = ${os.version}
     <target name="signserver-cli" depends="signserver, mailsigner">
     	<mkdir dir="dist-client/lib" />
     	<echo message="Ignore warnings about jar files that can not be copied, they are for other application servers"/>
-    	<!-- JBoss -->
-    	<copy file="${appserver.home}/client/jbossall-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/>
+    	<!-- JBoss:
+            For JBoss 4.2.3.GA only jbossall-client.jar is needed.
+            For JBoss 5.1.0.GA jbossall-client.jar is referencing the needed
+            libraries so all of them needs to be copied.
+            <copy file="${appserver.home}/client/jbossall-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/>
+        -->
+        <copy todir="${client.dist.dir}/lib" failonerror="false">
+          <fileset dir="${appserver.home}/client">
+             <include name="*.jar"/>
+           </fileset>
+       </copy>
     	<!-- Glassfish -->
     	<copy file="${appserver.home}/lib/appserv-rt.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
     	<copy file="${appserver.home}/lib/appserv-deployment-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 

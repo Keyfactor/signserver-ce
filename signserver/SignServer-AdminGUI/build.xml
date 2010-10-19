@@ -18,6 +18,8 @@
     -->
     <target name="-pre-init" depends="-set-from-file,-set-from-env">
         <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
+        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
+        <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
     </target>
     
     <target name="-set-from-file" unless="var.APPSRV_HOME">
@@ -34,13 +36,6 @@
         <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>
         <available file="${env.APPSRV_HOME}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
     </target>
-
-    <target name="-post-init">
-        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
-        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
-        <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
-    </target>
-
 
     <!--
         ===================

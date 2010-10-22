@@ -272,9 +272,11 @@ OS version                          = ${os.version}
 
     <target name="renewal"
         description="Build the module Renewal">
+            <!-- TODO
         <ant antfile="${renewal.dir}/build.xml" target="default"
             inheritall="false"/>
-        <copy file="${renewal.jar}" todir="${server.dist.dir}/lib"/> <!-- TODO: Only if includemodulesinbuild=true -->
+        <copy file="${renewal.jar}" todir="${server.dist.dir}/lib"/>  TODO: Only if includemodulesinbuild=true
+        -->
     </target>
  
 	   <!-- =================================================================== -->

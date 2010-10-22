@@ -88,6 +88,10 @@ public class RequestAndResponseManager {
 	
 	// Validation response types
 	public static final int RESPONSETYPE_GENERICVALIDATION	= 301;
+
+        // Generic Properties type
+        public static final int REQUESTTYPE_GENERICPROPERTIESREQUEST = 401;
+        public static final int RESPONSETTYPE_GENERICPROPERTIESRESPONSE = 401;
 		
 	public static HashMap<Integer, String> availableRequestTypes = new HashMap<Integer, String>();
 	public static HashMap<Integer, String> availableResponseTypes = new HashMap<Integer, String>();
@@ -115,6 +119,12 @@ public class RequestAndResponseManager {
 		availableResponseTypes.put(RESPONSETYPE_GKS_SWITCHENCKEY, SwitchEncKeyResponse.class.getName());
 		availableResponseTypes.put(RESPONSETYPE_VALIDATE, ValidateResponse.class.getName());
 		availableResponseTypes.put(RESPONSETYPE_GENERICVALIDATION, GenericValidationResponse.class.getName());
+
+                // Properties type
+                availableRequestTypes.put(REQUESTTYPE_GENERICPROPERTIESREQUEST,
+                        GenericPropertiesRequest.class.getName());
+                availableResponseTypes.put(RESPONSETTYPE_GENERICPROPERTIESRESPONSE,
+                        GenericPropertiesResponse.class.getName());
 	}
 	
 

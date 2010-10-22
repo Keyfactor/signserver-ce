@@ -15,14 +15,21 @@ package org.signserver.common;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Properties;
 
 import junit.framework.TestCase;
+import org.apache.log4j.Logger;
 
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.validationservice.server.ValidationTestUtils;
 
 public class TestRequestAndResponseManager extends TestCase {
-	
+
+    /** Logger for this class. */
+    private static final Logger LOG
+            = Logger.getLogger(TestRequestAndResponseManager.class);
+    
+
 	public void testParsing() throws Exception{
 		SignServerUtil.installBCProvider();
 		
@@ -50,5 +57,55 @@ public class TestRequestAndResponseManager extends TestCase {
         assertTrue(((GenericSignResponse) r).getRequestID() == 13);
         assertTrue(((GenericSignResponse) r).getSignerCertificate() != null);
 	}
+
+    /**
+     * Tests externalization and parsing of a GenericPropertiesRequest.
+     * @throws Exception In case of error.
+     */
+    public void testGenericPropertiesRequest() throws Exception {
+        
+        // Externalize a request
+        final Properties requestData = new Properties();
+        requestData.setProperty("aKey", "aValue");
+        requestData.setProperty("AnotherKey", "A value with \"quotation\"");
+        final GenericPropertiesRequest request1
+                = new GenericPropertiesRequest(requestData);
+        LOG.debug("Request: " + request1);
+        final byte[] externalized
+                = RequestAndResponseManager.serializeProcessRequest(request1);
+        LOG.debug("Externalized length: " + externalized.length);
+
+        // Parse the request
+        final ProcessRequest request2
+                = RequestAndResponseManager.parseProcessRequest(externalized);
+        
+        // We should now have back an equal request
+        assertTrue(request2 instanceof GenericPropertiesRequest);
+        assertEquals(request1, request2);
+    }
+
+    /**
+     * Tests externalization and parsing of a GenericPropertiesResponse.
+     * @throws Exception In case of error.
+     */
+    public void testGenericPropertiesResponse() throws Exception {
+
+        // Externalize a response
+        final Properties requestData = new Properties();
+        requestData.setProperty("aKey", "aValue");
+        requestData.setProperty("AnotherKey", "A value with \"quotation\"");
+        final GenericPropertiesResponse response1
+                = new GenericPropertiesResponse(requestData);
+        final byte[] externalized
+                = RequestAndResponseManager.serializeProcessResponse(response1);
+
+        // Parse the response
+        final ProcessResponse response2
+                = RequestAndResponseManager.parseProcessResponse(externalized);
+
+        // We should now have back an equal request
+        assertTrue(response2 instanceof GenericPropertiesResponse);
+        assertEquals(response1, response2);
+    }
 
 }

@@ -249,6 +249,14 @@ OS version                          = ${os.version}
 	    </jar>    	
     </target>
 
+    <target name="renewal"
+        description="Build the module Renewal">
+            <!-- TODO
+        <ant antfile="${renewal.dir}/build.xml" target="default"
+            inheritall="false"/>
+        <copy file="${renewal.jar}" todir="${server.dist.dir}/lib"/>
+        -->
+    </target>
 	   <!-- =================================================================== -->
 	    <!-- Build preparation for package distribution                         -->
 	    <!-- =================================================================== -->

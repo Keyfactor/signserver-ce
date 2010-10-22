@@ -30,6 +30,8 @@
        <property name="validationClientBuild" value="${bin}/validationClient"/>
        <property name="validationClientDir" value="${client.dist.dir}/validationclient"/>
        <property name="validationClientJar" value="${validationClientDir}/validate.jar"/>
+       <property name="renewal.dir" value="./modules/SignServer-Module-Renewal"/>
+       <property name="renewal.jar" value="${renewal.dir}/dist/SignServer-Module-Renewal.jar"/>
 	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
 	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
 	   <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
@@ -106,6 +108,7 @@
 	        	<!-- jboss -->
 	            <include name="client/jbossall-client.jar" />
 	            <include name="client/jboss-j2ee.jar" />
+                    <include name="client/jboss-javaee.jar" />
 	            <include name="client/ejb3-persistence.jar" />
 	            <include name="client/jboss-ejb3x.jar" />
 	        	<!-- glassfish -->
@@ -538,7 +541,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, xmlsignermar,odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, signserverws.client, pdfsignermar, xmlsignermar,odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, renewal" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />
@@ -561,6 +564,9 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	                <include name="*-ejb.jar" />
 	                <include name="*.war" />
 	            </fileset>
+                    <!-- Modules can be placed in dist-server/lib to be included in ear -->
+                    <zipfileset dir="${server.dist.dir}/lib" includes="*.jar" prefix="lib"/>
+
 			</ear>
 	    </target>
 

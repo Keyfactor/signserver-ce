@@ -64,15 +64,15 @@
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>SignServer-AdminCLI/src</label>
+                    <label>modules/SignServer-AdminCLI/src</label>
                     <type>java</type>
-                    <location>../../SignServer-AdminCLI/src</location>
+                    <location>../../modules/SignServer-AdminCLI/src</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>SignServer-AdminCLI/test</label>
+                    <label>modules/SignServer-AdminCLI/test</label>
                     <type>java</type>
-                    <location>../../SignServer-AdminCLI/test</location>
+                    <location>../../modules/SignServer-AdminCLI/test</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
                 <source-folder>
@@ -516,12 +516,12 @@
                         <location>../../modules/SignServer-war/test</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>SignServer-AdminCLI/src</label>
-                        <location>../../SignServer-AdminCLI/src</location>
+                        <label>modules/SignServer-AdminCLI/src</label>
+                        <location>../../modules/SignServer-AdminCLI/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>SignServer-AdminCLI/test</label>
-                        <location>../../SignServer-AdminCLI/test</location>
+                        <label>modules/SignServer-AdminCLI/test</label>
+                        <location>../../modules/SignServer-AdminCLI/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-CMSSigner/src</label>

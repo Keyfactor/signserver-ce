@@ -45,7 +45,7 @@
     <property name="signservercommon.src.java" value="./modules/SignServer-Common/src" />
     <property name="signserverejb.src.java" value="./modules/SignServer-ejb/src/java" />
     <property name="signserverwar.src.java" value="./modules/SignServer-war/src/java" />
-    <property name="signserveradmincli.src.java" value="./SignServer-AdminCLI/src" />
+    <property name="signserveradmincli.src.java" value="./modules/SignServer-AdminCLI/src" />
     <property name="src.appserver" value="${preprocessed}/appserver/jboss" />
 	<property name="src.external" location="${tmp}/external"/>
     <property name="resources.dir"  location="./src/resources"/>	

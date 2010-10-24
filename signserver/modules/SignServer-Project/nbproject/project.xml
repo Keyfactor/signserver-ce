@@ -517,75 +517,75 @@
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-AdminCLI/src</label>
-                        <location>SignServer-AdminCLI/src</location>
+                        <location>../../SignServer-AdminCLI/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-AdminCLI/test</label>
-                        <location>SignServer-AdminCLI/test</location>
+                        <location>../../SignServer-AdminCLI/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-CMSSigner/src</label>
-                        <location>SignServer-Module-CMSSigner/src</location>
+                        <location>../../SignServer-Module-CMSSigner/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-CMSSigner/test</label>
-                        <location>SignServer-Module-CMSSigner/test</location>
+                        <location>../../SignServer-Module-CMSSigner/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-XMLSigner/test</label>
-                        <location>SignServer-Module-XMLSigner/test</location>
+                        <location>../../SignServer-Module-XMLSigner/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-XMLSigner/src/java</label>
-                        <location>SignServer-Module-XMLSigner/src/java</location>
+                        <location>../../SignServer-Module-XMLSigner/src/java</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-XMLValidator/src/java</label>
-                        <location>SignServer-Module-XMLValidator/src/java</location>
+                        <location>../../SignServer-Module-XMLValidator/src/java</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-XMLValidator/test</label>
-                        <location>SignServer-Module-XMLValidator/test</location>
+                        <location>../../SignServer-Module-XMLValidator/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-PDFSigner/src/java</label>
-                        <location>SignServer-Module-PDFSigner/src/java</location>
+                        <location>../../SignServer-Module-PDFSigner/src/java</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-PDFSigner/test</label>
-                        <location>SignServer-Module-PDFSigner/test</location>
+                        <location>../../SignServer-Module-PDFSigner/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-MRTDSODSigner/src/java</label>
-                        <location>SignServer-Module-MRTDSODSigner/src/java</location>
+                        <location>../../SignServer-Module-MRTDSODSigner/src/java</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-MRTDSigner/src/java</label>
-                        <location>SignServer-Module-MRTDSigner/src/java</location>
+                        <location>../../SignServer-Module-MRTDSigner/src/java</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-MRTDSODSigner/test</label>
-                        <location>SignServer-Module-MRTDSODSigner/test</location>
+                        <location>../../SignServer-Module-MRTDSODSigner/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-MRTDSigner/test</label>
-                        <location>SignServer-Module-MRTDSigner/test</location>
+                        <location>../../SignServer-Module-MRTDSigner/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-TSA/src/java</label>
-                        <location>SignServer-Module-TSA/src/java</location>
+                        <location>../../SignServer-Module-TSA/src/java</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-TSA/test</label>
-                        <location>SignServer-Module-TSA/test</location>
+                        <location>../../SignServer-Module-TSA/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-OOXMLSigner/src/java</label>
-                        <location>SignServer-Module-OOXMLSigner/src/java</location>
+                        <location>../../SignServer-Module-OOXMLSigner/src/java</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>SignServer-Module-OOXMLSigner/test</label>
-                        <location>SignServer-Module-OOXMLSigner/test</location>
+                        <location>../../SignServer-Module-OOXMLSigner/test</location>
                     </source-folder>
                     <source-file>
                         <location>../../build.xml</location>

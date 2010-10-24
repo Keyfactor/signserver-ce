@@ -10,6 +10,14 @@
 <project name="SignServer-Common" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Common.</description>
     <import file="nbproject/build-impl.xml"/>
+    
+    <!-- Set ANT_HOME from env. -->
+    <target name="-pre-init">
+        <property environment="env" />
+        <available file="${env.ANT_HOME}/lib/ant.jar" 
+            property="var.ANT_HOME" value="${env.ANT_HOME}" />
+        <echo message="var.ANT_HOME = ${var.ANT_HOME}" />
+    </target>
     <!--
 
     There exist several targets which are by default empty and which can be 

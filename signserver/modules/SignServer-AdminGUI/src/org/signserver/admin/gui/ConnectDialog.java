@@ -156,7 +156,7 @@ public class ConnectDialog extends javax.swing.JDialog {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Connect to EJBCA");
+        setTitle("Connect to SignServer");
         setLocationByPlatform(true);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Web Service"));

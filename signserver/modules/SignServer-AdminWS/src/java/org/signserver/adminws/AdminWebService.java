@@ -33,6 +33,7 @@ import java.security.cert.CertificateFactory;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -66,7 +67,7 @@ public class AdminWebService {
     private IGlobalConfigurationSession.IRemote global;
 
     @PostConstruct
-    public void postConstruct() {
+    private void postConstruct() {
         if (worker == null) {
             try {
                 worker = ServiceLocator.getInstance().lookupRemote(
@@ -531,8 +532,29 @@ public class AdminWebService {
             InvalidWorkerIdException, KeyStoreException,
             AdminNotAuthorizedException {
         requireAdminAuthorization("testKey", String.valueOf(signerId), alias);
-        
-        return worker.testKey(signerId, alias, authCode.toCharArray());
+
+        // Workaround for KeyTestResult first placed in wrong package
+        final Collection<KeyTestResult> results;
+	Collection<?> res = worker.testKey(signerId, alias, authCode.toCharArray());
+	if (res.size() < 1) {
+            results = new LinkedList<KeyTestResult>();
+        } else {
+            if (res.iterator().next() instanceof org.signserver.server.KeyTestResult) {
+                results = new LinkedList<KeyTestResult>();
+                for (Object res0 : res) {
+                    final org.signserver.server.KeyTestResult res1
+                            = (org.signserver.server.KeyTestResult) res0;
+                    final KeyTestResult res2 = new KeyTestResult(
+                            res1.getAlias(), res1.isSuccess(),
+                            res1.getStatus(), res1.getPublicKeyHash());
+                    results.add(res2);
+                }
+            } else {
+                results = (Collection<KeyTestResult>) res;
+            }
+        }
+
+        return results;
     }
 
     /**

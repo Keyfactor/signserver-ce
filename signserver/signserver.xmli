@@ -209,6 +209,7 @@ useclusterclassloader               = ${useclusterclassloader}
 clusterclassloader.useclassversions = ${clusterclassloader.useclassversions}
 clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
+includemodulesinbuild               = ${includemodulesinbuild}
 module.renewal.enabled              = ${module.renewal.enabled}
 module.renewal.include              = ${module.renewal.include}
       </echo>
@@ -257,7 +258,10 @@ module.renewal.include              = ${module.renewal.include}
             <condition property="module.renewal.include.condition">
                 <and>
                     <istrue value="${module.renewal.enabled}"/>
-                    <istrue value="${module.renewal.include}"/>
+                    <or>
+                        <istrue value="${module.renewal.include}"/>
+                        <istrue value="${includemodulesinbuild}"/>
+                    </or>
                 </and>
             </condition>
 

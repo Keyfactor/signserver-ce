@@ -15,6 +15,7 @@ package org.signserver.server.cryptotokens;
  
 import java.io.ByteArrayInputStream;
 import java.security.KeyFactory;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -254,4 +255,9 @@ public class HardCodedCryptoToken implements ICryptoToken {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public KeyStore getKeyStore() throws UnsupportedOperationException,
+            CryptoTokenOfflineException, KeyStoreException {
+        throw new UnsupportedOperationException(
+                "Operation not supported by crypto token.");
+    }
 }

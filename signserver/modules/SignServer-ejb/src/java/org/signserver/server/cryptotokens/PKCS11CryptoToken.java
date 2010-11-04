@@ -147,12 +147,15 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
             if (authCode == null) {
                 log.debug("authCode == null");
                 final String pin = properties.getProperty("pin");
-                if (pin == null) {
-                    log.debug("pin == null");
-                    pp = new KeyStore.ProtectionParameter() {};
-                } else {
+                if (pin != null) {
                     log.debug("pin specified");
                     pp = new KeyStore.PasswordProtection(pin.toCharArray());
+                } else if (authenticationCode != null) {
+                    log.debug("Using autentication code");
+                    pp = new KeyStore.PasswordProtection(authenticationCode);
+                } else {
+                    log.debug("pin == null");
+                    pp = new KeyStore.ProtectionParameter() {};
                 }
             } else {
                 log.debug("authCode specified");
@@ -344,4 +347,8 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
         return retval;
     }
 
+    public KeyStore getKeyStore() throws UnsupportedOperationException,
+            CryptoTokenOfflineException, KeyStoreException {
+        return getKeyStore(authenticationCode); // TODO: check loaded etc
+    }
 }

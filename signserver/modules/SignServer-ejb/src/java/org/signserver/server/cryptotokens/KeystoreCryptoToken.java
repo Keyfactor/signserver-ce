@@ -105,6 +105,8 @@ public class KeystoreCryptoToken implements ICryptoToken,
 
     private Map<Integer, KeyEntry> entries;
 
+    private char[] authenticationCode;
+
     /**
      * @see org.signserver.server.cryptotokens.ICryptoToken#init(java.util.Properties)
      */
@@ -149,6 +151,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
             this.ks = getKeystore(keystoretype, keystorepath,
                     authenticationcode.toCharArray());
             this.provider = ks.getProvider().getName();
+            this.authenticationCode = authenticationcode.toCharArray();
 
             entries = new HashMap<Integer, KeyEntry>();
 
@@ -246,6 +249,12 @@ public class KeystoreCryptoToken implements ICryptoToken,
     public boolean deactivate() {
         entries = null;
         ks = null;
+        if (authenticationCode != null) {
+            for (int i = 0; i < authenticationCode.length; i++) {
+                authenticationCode[i] = 0;
+            }
+        }
+        this.authenticationCode = null;
         return true;
     }
 
@@ -420,7 +429,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
         try {
 
             final KeyStore keystore = getKeystore(keystoretype, keystorepath,
-                    authCode);
+                    authCode == null ? authenticationCode : authCode);
 
             final Enumeration<String> e = keystore.aliases();
             while( e.hasMoreElements() ) {
@@ -508,7 +517,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
         try {
 
             final KeyStore keystore = getKeystore(keystoretype, keystorepath, 
-                    authCode);
+                    authenticationCode);
             final Provider prov = keystore.getProvider();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("provider: " + prov);
@@ -530,12 +539,18 @@ public class KeystoreCryptoToken implements ICryptoToken,
 
             keystore.setKeyEntry(alias, keyPair.getPrivate(), authCode, chain);
 
-            keystore.store(new FileOutputStream(new File(keystorepath)), authCode);
+            keystore.store(new FileOutputStream(new File(keystorepath)), 
+                    authenticationCode);
 
         } catch (Exception ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
+    }
+
+    public KeyStore getKeyStore() throws UnsupportedOperationException,
+            CryptoTokenOfflineException, KeyStoreException {
+        return ks; // TODO: Should we load it first
     }
 
     private X509Certificate getSelfCertificate (String myname,

@@ -13,6 +13,7 @@
 
 package org.signserver.server.cryptotokens;
  
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -156,4 +157,14 @@ public interface ICryptoToken {
     public Collection<KeyTestResult> testKey(String alias,
             char[] authCode)
             throws CryptoTokenOfflineException, KeyStoreException;
+
+    /**
+     * @return The underlaying KeyStore (if any).
+     * @throws UnsupportedOperationException If this implementation does not
+     *  support KeyStore.
+     * @throws CryptoTokenOfflineException
+     * @throws KeyStoreException
+     */
+    KeyStore getKeyStore() throws UnsupportedOperationException,
+            CryptoTokenOfflineException, KeyStoreException;
 }

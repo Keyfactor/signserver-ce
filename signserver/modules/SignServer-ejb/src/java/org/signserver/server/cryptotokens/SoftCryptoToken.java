@@ -22,6 +22,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -292,4 +293,9 @@ public class SoftCryptoToken implements ICryptoToken {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public KeyStore getKeyStore() throws UnsupportedOperationException,
+            CryptoTokenOfflineException, KeyStoreException {
+        throw new UnsupportedOperationException(
+                "Operation not supported by crypto token.");
+    }
 }

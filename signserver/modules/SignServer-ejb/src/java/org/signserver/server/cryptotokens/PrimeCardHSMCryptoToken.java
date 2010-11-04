@@ -13,10 +13,13 @@
 
 package org.signserver.server.cryptotokens;
 
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.ejbca.core.model.ca.catoken.ICAToken;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.WorkerConfig;
 
 
@@ -73,4 +76,9 @@ public class PrimeCardHSMCryptoToken extends CryptoTokenBase implements ICryptoT
 		log.debug("<init");
 	}
 
+    public KeyStore getKeyStore() throws UnsupportedOperationException,
+            CryptoTokenOfflineException, KeyStoreException {
+        throw new UnsupportedOperationException(
+                "Operation not supported by crypto token.");
+    }
 }

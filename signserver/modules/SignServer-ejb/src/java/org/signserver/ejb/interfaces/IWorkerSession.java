@@ -226,6 +226,17 @@ public interface IWorkerSession {
             throws CryptoTokenOfflineException;
 
     /**
+     * Returns the value of the KeyUsageCounter for the given workerId. If no
+     * certificate is configured for the worker or the current key does not yet
+     * have a counter in the database -1 is returned.
+     * @param workerId
+     * @return Value of the key usage counter or -1
+     * @throws CryptoTokenOfflineException
+     */
+    long getKeyUsageCounterValue(final int workerId) 
+            throws CryptoTokenOfflineException;
+
+    /**
      * Method used to remove a key from a signer.
      *
      * @param signerId id of the signer

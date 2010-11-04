@@ -613,6 +613,39 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /**
+     * Returns the value of the KeyUsageCounter for the given workerId. If no
+     * certificate is configured for the worker or the current key does not yet
+     * have a counter in the database -1 is returned.
+     * @param workerId
+     * @return Value of the key usage counter or -1
+     * @throws CryptoTokenOfflineException
+     */
+    public long getKeyUsageCounterValue(final int workerId) 
+            throws CryptoTokenOfflineException {
+        long result;
+        try {
+            final Certificate cert = getSignerCertificate(workerId);
+            if (cert == null) {
+                result = -1;
+            } else {
+                final String pk
+                        = KeyUsageCounter.createKeyHash(cert.getPublicKey());
+                final KeyUsageCounter signings
+                        = em.find(KeyUsageCounter.class, pk);
+                if (signings == null) {
+                    result = -1;
+                } else {
+                    result = signings.getCounter();
+                }
+            }
+            return result;
+        } catch (IllegalArgumentException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        }
+    }
+
+    /**
      * @param inv If the max function should be inverrted (min).
      * @param date1 Operand 1
      * @param date2 Operand 2

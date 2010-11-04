@@ -272,12 +272,18 @@ OS version                          = ${os.version}
 
     <target name="renewal"
         description="Build the module Renewal">
-            <!-- TODO
-        <ant antfile="${renewal.dir}/build.xml" target="default"
+        <ant antfile="${renewal.dir}/build.xml" target="jar"
             inheritall="false"/>
-        <copy file="${renewal.jar}" todir="${server.dist.dir}/lib"/>  TODO: Only if includemodulesinbuild=true
-        -->
     </target>
+    <target name="-renewal-jar-included" if="includemodulesinbuild" 
+        depends="renewal">
+        <echo message="Including Renewal module in EAR"/>
+        <copy file="${renewal.jar}" todir="${server.dist.dir}/lib"/>
+    </target>
+    <target name="-renewal-jar-excluded" unless="includemodulesinbuild">
+        <echo message="Not including Renewal module in EAR"/>
+    </target>
+
  
 	   <!-- =================================================================== -->
 	    <!-- Build preparation for package distribution                         -->

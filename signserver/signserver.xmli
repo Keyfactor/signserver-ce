@@ -351,7 +351,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	        </jar>
 	    </target>
 	    
-	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient, signingAndValidationAPI, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules" unless="buildMailSigner">
+	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient, signingAndValidationAPI, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules, -renewal-jar-included, -renewal-jar-excluded" unless="buildMailSigner">
 	    </target>
 	       
 

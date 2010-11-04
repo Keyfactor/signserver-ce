@@ -78,6 +78,9 @@
 	   <property name="useclusterclassloader" value="true" />
 	   <property name="clusterclassloader.useclassversions" value="true" />
 	   <property name="clusterclassloader.requiresignature" value="false" />
+
+           <property name="module.renewal.enabled" value="false"/>
+           <property name="module.renewal.include" value="true"/>
 	
 	   <path id="signserver.compile.classpath">
 	        <path refid="signserver.ext.classpath" />
@@ -206,6 +209,8 @@ useclusterclassloader               = ${useclusterclassloader}
 clusterclassloader.useclassversions = ${clusterclassloader.useclassversions}
 clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
+module.renewal.enabled              = ${module.renewal.enabled}
+module.renewal.include              = ${module.renewal.include}
       </echo>
     </target>
 	
@@ -245,7 +250,16 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 		<condition property="signingandvalidationapi.conditionenabled">
 	        <istrue value="${signingandvalidationapi.enabled}"/>
 	    </condition>
-	    
+
+            <condition property="module.renewal.enabled.condition">
+                <istrue value="${module.renewal.enabled}"/>
+            </condition>
+            <condition property="module.renewal.include.condition">
+                <and>
+                    <istrue value="${module.renewal.enabled}"/>
+                    <istrue value="${module.renewal.include}"/>
+                </and>
+            </condition>
 
 	    <!-- =================================================================== -->
 	    <!-- Clean SignServer related ALL                                                           -->
@@ -583,7 +597,7 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, adminws, signserverws.client, pdfsignermar, xmlsignermar,odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, renewal" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, adminws, signserverws.client, pdfsignermar, xmlsignermar,odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

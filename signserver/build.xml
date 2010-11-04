@@ -270,17 +270,23 @@ OS version                          = ${os.version}
             inheritall="false"/>
     </target>
 
+    <!-- Target that can be called to build the renewal module -->
     <target name="renewal"
         description="Build the module Renewal">
         <ant antfile="${renewal.dir}/build.xml" target="jar"
             inheritall="false"/>
     </target>
-    <target name="-renewal-jar-included" if="includemodulesinbuild" 
+    <!-- Target always called when building. Only builds if configured. -->
+    <target name="-module-renewal-jar" depends="renewal" 
+        if="module.renewal.enabled.condition"/>
+
+    <target name="-renewal-jar-included" if="module.renewal.include.condition"
         depends="renewal">
         <echo message="Including Renewal module in EAR"/>
         <copy file="${renewal.jar}" todir="${server.dist.dir}/lib"/>
     </target>
-    <target name="-renewal-jar-excluded" unless="includemodulesinbuild">
+    <target name="-renewal-jar-excluded" 
+        unless="module.renewal.include.condition">
         <echo message="Not including Renewal module in EAR"/>
     </target>
 

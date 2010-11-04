@@ -261,6 +261,14 @@ validationws.enabled=false
 # Default true
 adminws.enabled=true
 
+# -------------- Modules Configurations ----------------
+#
+# Build module renewal: Default false
+#module.renewal.enabled=false
+
+# Include module renewal in deployment: Default true
+#module.renewal.include=true
+
 # -------------- Client Configurations ----------------
 #
 # Set to true to enable build of the TimeStampClient

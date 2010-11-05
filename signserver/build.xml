@@ -271,23 +271,43 @@ OS version                          = ${os.version}
     </target>
 
     <!-- Target that can be called to build the renewal module -->
-    <target name="renewal"
+    <target name="module-renewal"
         description="Build the module Renewal">
         <ant antfile="${renewal.dir}/build.xml" target="jar"
             inheritall="false"/>
     </target>
     <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-renewal-jar" depends="renewal" 
+    <target name="-module-renewal-jar" depends="module-renewal"
         if="module.renewal.enabled.condition"/>
-
+    <!-- Target for including the module -->
     <target name="-renewal-jar-included" if="module.renewal.include.condition"
-        depends="renewal">
+        depends="module-renewal">
         <echo message="Including Renewal module in EAR"/>
         <copy file="${renewal.jar}" todir="${server.dist.dir}/lib"/>
     </target>
     <target name="-renewal-jar-excluded" 
         unless="module.renewal.include.condition">
         <echo message="Not including Renewal module in EAR"/>
+    </target>
+
+    <!-- Target that can be called to build the XMLSigner module -->
+    <target name="module-xmlsigner"
+        description="Build the module XMLSigner">
+        <ant antfile="${xmlsigner.dir}/build.xml" target="jar"
+            inheritall="false"/>
+    </target>
+    <!-- Target always called when building. Only builds if configured. -->
+    <target name="-module-xmlsigner-jar" depends="module-xmlsigner"
+        if="module.xmlsigner.enabled.condition"/>
+    <!-- Target for including the module -->
+    <target name="-xmlsigner-jar-included" if="module.xmlsigner.include.condition"
+        depends="module-xmlsigner">
+        <echo message="Including XMLSigner module in EAR"/>
+        <copy file="${xmlsigner.jar}" todir="${server.dist.dir}/lib"/>
+    </target>
+    <target name="-xmlsigner-jar-excluded"
+        unless="module.xmlsigner.include.condition">
+        <echo message="Not including XMLSigner module in EAR"/>
     </target>
 
  

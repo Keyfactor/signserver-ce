@@ -8,7 +8,6 @@
 	   <import file="./module-builds/tsa.xml"/>
 	   <import file="./module-builds/dummyws.xml"/>
 	   <import file="./module-builds/wsra.xml"/>
-	   <import file="./module-builds/xmlsigner.xml"/>
 	   <import file="./module-builds/ooxmlsigner.xml"/>
 	   <import file="./module-builds/odfsigner.xml"/>
 	   <import file="./module-builds/xmlvalidator.xml"/>
@@ -39,6 +38,8 @@
        <property name="admingui.build.dir" value="${admingui.dir}/build"/>
        <property name="renewal.dir" value="./modules/SignServer-Module-Renewal"/>
        <property name="renewal.jar" value="${renewal.dir}/dist/SignServer-Module-Renewal.jar"/>
+       <property name="xmlsigner.dir" value="./modules/SignServer-Module-XMLSigner"/>
+       <property name="xmlsigner.jar" value="${xmlsigner.dir}/dist/SignServer-Module-XMLSigner.jar"/>
 	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
 	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
 	   <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
@@ -79,8 +80,11 @@
 	   <property name="clusterclassloader.useclassversions" value="true" />
 	   <property name="clusterclassloader.requiresignature" value="false" />
 
+           <!-- Enable, include modules -->
            <property name="module.renewal.enabled" value="false"/>
            <property name="module.renewal.include" value="true"/>
+           <property name="module.xmlsigner.enabled" value="true"/>
+           <property name="module.xmlsigner.include" value="false"/>
 	
 	   <path id="signserver.compile.classpath">
 	        <path refid="signserver.ext.classpath" />
@@ -212,6 +216,8 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 includemodulesinbuild               = ${includemodulesinbuild}
 module.renewal.enabled              = ${module.renewal.enabled}
 module.renewal.include              = ${module.renewal.include}
+module.xmlsigner.enabled            = ${module.xmlsigner.enabled}
+module.xmlsigner.include            = ${module.xmlsigner.include}
       </echo>
     </target>
 	
@@ -252,6 +258,7 @@ module.renewal.include              = ${module.renewal.include}
 	        <istrue value="${signingandvalidationapi.enabled}"/>
 	    </condition>
 
+            <!-- Enable, include module: Renewal -->
             <condition property="module.renewal.enabled.condition">
                 <istrue value="${module.renewal.enabled}"/>
             </condition>
@@ -260,6 +267,20 @@ module.renewal.include              = ${module.renewal.include}
                     <istrue value="${module.renewal.enabled}"/>
                     <or>
                         <istrue value="${module.renewal.include}"/>
+                        <istrue value="${includemodulesinbuild}"/>
+                    </or>
+                </and>
+            </condition>
+
+            <!-- Enable, include module: XMLSigner -->
+            <condition property="module.xmlsigner.enabled.condition">
+                <istrue value="${module.xmlsigner.enabled}"/>
+            </condition>
+            <condition property="module.xmlsigner.include.condition">
+                <and>
+                    <istrue value="${module.xmlsigner.enabled}"/>
+                    <or>
+                        <istrue value="${module.xmlsigner.include}"/>
                         <istrue value="${includemodulesinbuild}"/>
                     </or>
                 </and>
@@ -291,7 +312,6 @@ module.renewal.include              = ${module.renewal.include}
                     <src path="${signserverwar.src.java}" />
                     <src path="${signserveradmincli.src.java}" />
                     <src path="SignServer-Module-CMSSigner/src/java" />
-                    <src path="SignServer-Module-XMLSigner/src/java" />
                     <src path="SignServer-Module-XMLValidator/src/java" />
                     <src path="SignServer-Module-PDFSigner/src/java" />
                     <src path="SignServer-Module-MRTDSODSigner/src/java" />
@@ -369,7 +389,7 @@ module.renewal.include              = ${module.renewal.include}
 	        </jar>
 	    </target>
 	    
-	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient, signingAndValidationAPI, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules, -renewal-jar-included, -renewal-jar-excluded" unless="buildMailSigner">
+	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, validationClient, signingAndValidationAPI, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules, -renewal-jar-included, -renewal-jar-excluded, -xmlsigner-jar-included, -xmlsigner-jar-excluded" unless="buildMailSigner">
 	    </target>
 	       
 
@@ -601,7 +621,7 @@ module.renewal.include              = ${module.renewal.include}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, adminws, signserverws.client, pdfsignermar, xmlsignermar,odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, adminws, signserverws.client, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

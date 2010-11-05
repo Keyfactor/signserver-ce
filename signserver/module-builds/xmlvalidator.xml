@@ -9,13 +9,13 @@
     </path>
 
     <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" 
-      classpathref="xmlsigner.build.classpath"/>
+      classpathref="xmlvalidator.build.classpath"/>
        
     <taskdef name="part" classname="org.signserver.anttasks.PartAntTask" 
-      classpathref="xmlsigner.build.classpath"/>
+      classpathref="xmlvalidator.build.classpath"/>
  
     <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
-       <classpath refid="xmlsigner.build.classpath" />
+       <classpath refid="xmlvalidator.build.classpath" />
        <src path="SignServer-Module-XMLValidator/src/java" />
        <include name="org/signserver/module/xmlvalidator/*.java"/>       
     </javac>

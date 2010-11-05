@@ -263,11 +263,17 @@ adminws.enabled=true
 
 # -------------- Modules Configurations ----------------
 #
-# Build module renewal: Default false
-#module.renewal.enabled=false
 
-# Include module renewal in deployment: Default true
+# Module Renewal
+# Default: build=false, include=true
+#module.renewal.enabled=false
 #module.renewal.include=true
+
+# Module XMLSigner
+# Default: build=true, include=false
+#module.xmlsigner.enabled=true
+#module.xmlsigner.include=false
+
 
 # -------------- Client Configurations ----------------
 #

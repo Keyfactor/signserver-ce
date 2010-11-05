@@ -99,7 +99,11 @@ public class ExtendedClusterClassLoader extends ClusterClassLoader {
 				try{
 				  Thread.currentThread().setContextClassLoader(this);
 				  SessionFactory sf = ac.buildSessionFactory();
-				  workerEm = new EntityManagerImpl(sf,PersistenceContextType.TRANSACTION,PersistenceUnitTransactionType.RESOURCE_LOCAL,true,emConfig);
+				  workerEm = EntityManagerUtil
+                                          .createEntityManager(sf,
+                                          PersistenceContextType.TRANSACTION,
+                                          PersistenceUnitTransactionType
+                                            .RESOURCE_LOCAL, true, emConfig);
 				}finally{
 					Thread.currentThread().setContextClassLoader(orgContextClassLoader);
 				}
@@ -121,7 +125,7 @@ public class ExtendedClusterClassLoader extends ClusterClassLoader {
 	protected byte[] performInjections(byte[] classData) {		
 		return ClusterClassLoaderUtils.injectTransaction(classData);
 	}
-	
-	
-	
+
+    
+		
 }

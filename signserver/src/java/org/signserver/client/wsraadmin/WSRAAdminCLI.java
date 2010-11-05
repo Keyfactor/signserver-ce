@@ -405,7 +405,7 @@ public class WSRAAdminCLI {
 		ac.setProperties(props);
 		SessionFactory sf = ac.buildSessionFactory();
 		
-		return new EntityManagerImpl(sf,PersistenceContextType.TRANSACTION,PersistenceUnitTransactionType.RESOURCE_LOCAL,true,new Properties());		
+		return EntityManagerUtil.createEntityManager(sf,PersistenceContextType.TRANSACTION,PersistenceUnitTransactionType.RESOURCE_LOCAL,true,new Properties());
 	}
 
 

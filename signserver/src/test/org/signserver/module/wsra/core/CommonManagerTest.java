@@ -11,7 +11,6 @@ import junit.framework.TestCase;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.ejb.EntityManagerImpl;
 import org.signserver.module.wsra.beans.AuthDataBean;
 import org.signserver.module.wsra.beans.CertificateDataBean;
 import org.signserver.module.wsra.beans.DataBankDataBean;
@@ -62,7 +61,7 @@ public class CommonManagerTest extends TestCase {
 		ac.setProperties(props);
 		SessionFactory sf = ac.buildSessionFactory();
 		
-		return new EntityManagerImpl(sf,PersistenceContextType.TRANSACTION,PersistenceUnitTransactionType.RESOURCE_LOCAL,true,new Properties());
+		return EntityManagerUtil.createEntityManager(sf,PersistenceContextType.TRANSACTION,PersistenceUnitTransactionType.RESOURCE_LOCAL,true,new Properties());
 	}
 	
 	protected HashSet<Class<?>> getAvailableTokenProfiles(){

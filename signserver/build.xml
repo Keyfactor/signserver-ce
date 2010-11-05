@@ -275,6 +275,7 @@ OS version                          = ${os.version}
         description="Build the module Renewal">
         <ant antfile="${renewal.dir}/build.xml" target="jar"
             inheritall="false"/>
+        <copy file="${renewal.mar}" todir="${server.dist.dir}"/>
     </target>
     <!-- Target always called when building. Only builds if configured. -->
     <target name="-module-renewal-jar" depends="module-renewal"
@@ -295,6 +296,7 @@ OS version                          = ${os.version}
         description="Build the module XMLSigner">
         <ant antfile="${xmlsigner.dir}/build.xml" target="jar"
             inheritall="false"/>
+        <copy file="${xmlsigner.mar}" todir="${server.dist.dir}"/>
     </target>
     <!-- Target always called when building. Only builds if configured. -->
     <target name="-module-xmlsigner-jar" depends="module-xmlsigner"

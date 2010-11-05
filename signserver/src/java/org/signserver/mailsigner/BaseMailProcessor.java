@@ -222,7 +222,7 @@ public abstract class BaseMailProcessor  implements IMailProcessor {
 	 * @return the request or null if method isn't supported by signertoken.
 	 */
 	public ICertReqData genCertificateRequest(ISignerCertReqInfo info) throws CryptoTokenOfflineException {
-		return getCryptoToken().genCertificateRequest(info);
+		return getCryptoToken().genCertificateRequest(info, true);
 		 
 	}
 	

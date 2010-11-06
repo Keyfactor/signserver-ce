@@ -429,7 +429,7 @@ module.xmlsigner.include            = ${module.xmlsigner.include}
                 <pathelement location="${appserver.home}/client/jaxws-tools.jar"/>
 
                 <!-- WS Tools in GlassFish -->
-                <pathelement location="${appserver.home}/client/webservices-tools.jar"/>
+                <pathelement location="${appserver.home}/lib/webservices-tools.jar"/>
 
 	    	<pathelement location="${build}"/>
 	    	<path refid="signserver.compile.classpath" />

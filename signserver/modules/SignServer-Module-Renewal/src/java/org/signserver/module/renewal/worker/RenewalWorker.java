@@ -74,6 +74,7 @@ import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -492,26 +493,14 @@ public class RenewalWorker extends BaseSigner {
     private IWorkerSession.IRemote getWorkerSession() {
         if (workerSession == null) {
             try {
-                final Context context = getInitialContext();
-                workerSession = (IWorkerSession.IRemote)
-                        context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+                workerSession = ServiceLocator.getInstance().lookupRemote(
+                    IWorkerSession.IRemote.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);
             }
         }
         return workerSession;
-    }
-
-    private Context getInitialContext() throws NamingException {
-        final Hashtable<String, String> props =
-                new Hashtable<String, String>();
-        props.put(Context.INITIAL_CONTEXT_FACTORY,
-                "org.jnp.interfaces.NamingContextFactory");
-        props.put(Context.URL_PKG_PREFIXES,
-                "org.jboss.naming:org.jnp.interfaces");
-        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-        return new InitialContext(props);
     }
 
     private String createRequestPEM(int workerId, final String sigAlg, final String subjectDN, final boolean defaultKey) throws CryptoTokenOfflineException, InvalidWorkerIdException {

@@ -24,8 +24,6 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.jws.WebService;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
@@ -44,6 +42,7 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.RequestContext;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerStatus;
@@ -323,8 +322,8 @@ public class SignServerWS implements ISignServerWS {
     private IWorkerSession.ILocal getWorkerSession(){
     	if(workersession == null){
     		try{
-    		  Context context = new InitialContext();
-    		  workersession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
+    		  workersession = ServiceLocator.getInstance().lookupLocal(
+                          IWorkerSession.ILocal.class);
     		}catch(NamingException e){
     			log.error(e);
     		}
@@ -337,15 +336,14 @@ public class SignServerWS implements ISignServerWS {
 	private IGlobalConfigurationSession.ILocal globalconfigsession;
 	
     private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession(){
-    	if(globalconfigsession == null){
-    		try{
-    		  Context context = new InitialContext();
-    		  globalconfigsession =  (org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal) context.lookup(IGlobalConfigurationSession.ILocal.JNDI_NAME);
-    		}catch(NamingException e){
-    			log.error(e);
-    		}
-    	}
-    	
-    	return globalconfigsession;
+       if (globalconfigsession == null) {
+            try {
+                globalconfigsession = ServiceLocator.getInstance().lookupLocal(
+                        IGlobalConfigurationSession.ILocal.class);
+            } catch (NamingException e) {
+                log.error(e);
+            }
+        }
+        return globalconfigsession;
     }
 }

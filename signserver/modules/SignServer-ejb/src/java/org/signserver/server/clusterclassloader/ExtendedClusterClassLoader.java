@@ -26,7 +26,6 @@ import javax.persistence.spi.PersistenceUnitTransactionType;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.ejb.EntityManagerImpl;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.clusterclassloader.ClusterClassLoaderUtils;
@@ -44,7 +43,8 @@ import org.signserver.common.clusterclassloader.ClusterClassLoaderUtils;
  * @version $Id$
  */
 
-public class ExtendedClusterClassLoader extends ClusterClassLoader {
+public class ExtendedClusterClassLoader extends ClusterClassLoader implements
+        IEntityManagerSupport {
 	
 	private Logger log = Logger.getLogger(this.getClass());
 
@@ -72,7 +72,7 @@ public class ExtendedClusterClassLoader extends ClusterClassLoader {
 				ArrayList<Class<?>> entityBeans = new ArrayList<Class<?>>();
 				Collection<Class<?>> classes = loadedClasses.values();
 				for(Class<?> c : classes){
-					
+
 					if(c.getAnnotation(Entity.class) != null){
 						entityBeans.add(c);
 						log.debug("Found Entity Bean : " + c.getName());
@@ -88,13 +88,13 @@ public class ExtendedClusterClassLoader extends ClusterClassLoader {
 						emConfig.setProperty(property.toLowerCase(), currentConfig.getProperty(property));
 					}
 				}
-				
+
 				AnnotationConfiguration ac = new AnnotationConfiguration();
 				ac.setProperties(emConfig);
 				for(Class<?> c : entityBeans){
 					ac.addAnnotatedClass(c);
 				}
-				
+
 				ClassLoader orgContextClassLoader = Thread.currentThread().getContextClassLoader();
 				try{
 				  Thread.currentThread().setContextClassLoader(this);

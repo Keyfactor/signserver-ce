@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.server.clusterclassloader.ExtendedClusterClassLoader;
+import org.signserver.server.clusterclassloader.IEntityManagerSupport;
 import org.signserver.server.log.AllFieldsWorkerLogger;
 import org.signserver.server.log.IWorkerLogger;
 
@@ -190,8 +191,8 @@ public  class WorkerFactory {
 							  }  
 						  }
 
-						  if(getClassLoader(em, nextId.intValue(),config) instanceof ExtendedClusterClassLoader){
-							  ((IWorker) obj).init(nextId.intValue(), config, workerContext,((ExtendedClusterClassLoader) getClassLoader(em, nextId,config)).getWorkerEntityManger(config));
+						  if(getClassLoader(em, nextId.intValue(),config) instanceof IEntityManagerSupport){
+							  ((IWorker) obj).init(nextId.intValue(), config, workerContext, ((IEntityManagerSupport) getClassLoader(em, nextId,config)).getWorkerEntityManger(config));
 						  }else{
 							  ((IWorker) obj).init(nextId.intValue(),config, workerContext,null);
 						  }
@@ -240,11 +241,12 @@ public  class WorkerFactory {
 							+ config.getProperty(SignServerConstants.MODULEVERSION));
 				}
 
-				if(moduleVersion == null){
-					retval = new ExtendedClusterClassLoader(this.getClass().getClassLoader(),em,moduleName,"server");
-				}else{
-					retval = new ExtendedClusterClassLoader(this.getClass().getClassLoader(),em,moduleName,"server",moduleVersion);
-				}
+                                // Create ExtendedClusterClassLoader by 
+                                // reflection as we don't want to have a 
+                                // dependency on it if it is not going to be 
+                                // used.
+                                retval = createExtendedClusterClassLoader(this.getClass().getClassLoader(), 
+                                        em, moduleName, "server", moduleVersion);
 			}
 			
 			workerClassLoaderMap.put(workerId, retval);
@@ -252,6 +254,41 @@ public  class WorkerFactory {
 		}
 		return retval;
 	}
+
+        private ClassLoader createExtendedClusterClassLoader(
+                final ClassLoader parent, final EntityManager em,
+                final String moduleName, final String part,
+                final Integer version) {
+            try {
+                final Class<? extends ClassLoader> t = (Class<? extends ClassLoader>) Class.forName(
+                        "org.signserver.server.clusterclassloader.ExtendedClusterClassLoader");
+
+                final Class[] ctorTypes;
+                final Object[] args;
+
+                if (version == null) {
+                    ctorTypes = new Class[] {
+                        ClassLoader.class, EntityManager.class, String.class,
+                        String.class
+                    };
+                    args = new Object[] { parent, em, moduleName, part };
+                } else {
+                    ctorTypes = new Class[] {
+                        ClassLoader.class, EntityManager.class, String.class,
+                        String.class, Integer.TYPE
+                    };
+                    args = new Object[] { parent, em, moduleName, part,
+                        version };
+                }
+
+                final Constructor<? extends ClassLoader> ctor
+                        = t.getConstructor(ctorTypes);
+                return ctor.newInstance(args);
+            } catch (Throwable ex) {
+                throw new RuntimeException("Could not construct "
+                        + "ExtendedClusterClassLoader", ex);
+            }
+        }
 
 	/**
 	 * Method used to force reinitialization of all the signers.
@@ -349,8 +386,8 @@ public  class WorkerFactory {
                                                                             }
                                                                     }
 
-                                                                    if(getClassLoader(em, id,config) instanceof ExtendedClusterClassLoader){
-                                                                      ((IWorker) obj).init(id, config, workerContext, ((ExtendedClusterClassLoader) getClassLoader(em, id,config)).getWorkerEntityManger(config));
+                                                                    if(getClassLoader(em, id,config) instanceof IEntityManagerSupport){
+                                                                      ((IWorker) obj).init(id, config, workerContext, ((IEntityManagerSupport) getClassLoader(em, id,config)).getWorkerEntityManger(config));
                                                                     }else{
                                                                       ((IWorker) obj).init(id, config, workerContext,null);
                                                                     }

@@ -261,6 +261,9 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 		<condition property="signingandvalidationapi.conditionenabled">
 	        <istrue value="${signingandvalidationapi.enabled}"/>
 	    </condition>
+            <condition property="clusterclassloader.conditionenabled">
+                <istrue value="${useclusterclassloader}"/>
+            </condition>
 
             <!-- Enable, include module: Renewal -->
             <condition property="module.renewal.enabled.condition">
@@ -690,6 +693,9 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         	<exclude name="org/signserver/mailsigner/**"/>
         	<!-- <exclude name="org/signserver/protocol/validationservice/ws/**"/>
         	<exclude name="org/signserver/protocol/ws/**"/> -->
+            <exclude name="org/signserver/module/wsra/**" unless="wsra.enabled.condition"/>
+            <exclude name="org/signserver/client/wsraadmin/**" unless="module.wsra.enabled.condition"/>
+            <exclude name="org/signserver/common/clusterclassloader/**" unless="clusterclassloader.conditionenabled"/>
         </javac>
         <!-- jndi.properties needs to be in the classpath -->
         <copy file="${src.java}/jndi.properties" todir="${test.dir}" />

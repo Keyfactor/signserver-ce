@@ -1,0 +1,1344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ws.protocol.core.ejbca.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://ws.protocol.core.ejbca.org/" name="EjbcaWSService">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="EjbcaWSService_schema1.xsd" namespace="http://ws.protocol.core.ejbca.org/"/>
+    </xsd:schema>
+  </types>
+  <message name="getCertificate">
+    <part element="tns:getCertificate" name="parameters"/>
+  </message>
+  <message name="getCertificateResponse">
+    <part element="tns:getCertificateResponse" name="parameters"/>
+  </message>
+  <message name="CADoesntExistsException">
+    <part element="tns:CADoesntExistsException" name="fault"/>
+  </message>
+  <message name="AuthorizationDeniedException">
+    <part element="tns:AuthorizationDeniedException" name="fault"/>
+  </message>
+  <message name="EjbcaException">
+    <part element="tns:EjbcaException" name="fault"/>
+  </message>
+  <message name="isAuthorized">
+    <part element="tns:isAuthorized" name="parameters"/>
+  </message>
+  <message name="isAuthorizedResponse">
+    <part element="tns:isAuthorizedResponse" name="parameters"/>
+  </message>
+  <message name="isApproved">
+    <part element="tns:isApproved" name="parameters"/>
+  </message>
+  <message name="isApprovedResponse">
+    <part element="tns:isApprovedResponse" name="parameters"/>
+  </message>
+  <message name="ApprovalException">
+    <part element="tns:ApprovalException" name="fault"/>
+  </message>
+  <message name="ApprovalRequestExpiredException">
+    <part element="tns:ApprovalRequestExpiredException" name="fault"/>
+  </message>
+  <message name="existsHardToken">
+    <part element="tns:existsHardToken" name="parameters"/>
+  </message>
+  <message name="existsHardTokenResponse">
+    <part element="tns:existsHardTokenResponse" name="parameters"/>
+  </message>
+  <message name="getAvailableCAs">
+    <part element="tns:getAvailableCAs" name="parameters"/>
+  </message>
+  <message name="getAvailableCAsResponse">
+    <part element="tns:getAvailableCAsResponse" name="parameters"/>
+  </message>
+  <message name="revokeUser">
+    <part element="tns:revokeUser" name="parameters"/>
+  </message>
+  <message name="revokeUserResponse">
+    <part element="tns:revokeUserResponse" name="parameters"/>
+  </message>
+  <message name="NotFoundException">
+    <part element="tns:NotFoundException" name="fault"/>
+  </message>
+  <message name="AlreadyRevokedException">
+    <part element="tns:AlreadyRevokedException" name="fault"/>
+  </message>
+  <message name="WaitingForApprovalException">
+    <part element="tns:WaitingForApprovalException" name="fault"/>
+  </message>
+  <message name="revokeCert">
+    <part element="tns:revokeCert" name="parameters"/>
+  </message>
+  <message name="revokeCertResponse">
+    <part element="tns:revokeCertResponse" name="parameters"/>
+  </message>
+  <message name="findUser">
+    <part element="tns:findUser" name="parameters"/>
+  </message>
+  <message name="findUserResponse">
+    <part element="tns:findUserResponse" name="parameters"/>
+  </message>
+  <message name="IllegalQueryException">
+    <part element="tns:IllegalQueryException" name="fault"/>
+  </message>
+  <message name="createCRL">
+    <part element="tns:createCRL" name="parameters"/>
+  </message>
+  <message name="createCRLResponse">
+    <part element="tns:createCRLResponse" name="parameters"/>
+  </message>
+  <message name="editUser">
+    <part element="tns:editUser" name="parameters"/>
+  </message>
+  <message name="editUserResponse">
+    <part element="tns:editUserResponse" name="parameters"/>
+  </message>
+  <message name="UserDoesntFullfillEndEntityProfile">
+    <part element="tns:UserDoesntFullfillEndEntityProfile" name="fault"/>
+  </message>
+  <message name="findCerts">
+    <part element="tns:findCerts" name="parameters"/>
+  </message>
+  <message name="findCertsResponse">
+    <part element="tns:findCertsResponse" name="parameters"/>
+  </message>
+  <message name="getLastCertChain">
+    <part element="tns:getLastCertChain" name="parameters"/>
+  </message>
+  <message name="getLastCertChainResponse">
+    <part element="tns:getLastCertChainResponse" name="parameters"/>
+  </message>
+  <message name="crmfRequest">
+    <part element="tns:crmfRequest" name="parameters"/>
+  </message>
+  <message name="crmfRequestResponse">
+    <part element="tns:crmfRequestResponse" name="parameters"/>
+  </message>
+  <message name="spkacRequest">
+    <part element="tns:spkacRequest" name="parameters"/>
+  </message>
+  <message name="spkacRequestResponse">
+    <part element="tns:spkacRequestResponse" name="parameters"/>
+  </message>
+  <message name="cvcRequest">
+    <part element="tns:cvcRequest" name="parameters"/>
+  </message>
+  <message name="cvcRequestResponse">
+    <part element="tns:cvcRequestResponse" name="parameters"/>
+  </message>
+  <message name="SignRequestException">
+    <part element="tns:SignRequestException" name="fault"/>
+  </message>
+  <message name="CertificateExpiredException">
+    <part element="tns:CertificateExpiredException" name="fault"/>
+  </message>
+  <message name="caRenewCertRequest">
+    <part element="tns:caRenewCertRequest" name="parameters"/>
+  </message>
+  <message name="caRenewCertRequestResponse">
+    <part element="tns:caRenewCertRequestResponse" name="parameters"/>
+  </message>
+  <message name="caCertResponse">
+    <part element="tns:caCertResponse" name="parameters"/>
+  </message>
+  <message name="caCertResponseResponse">
+    <part element="tns:caCertResponseResponse" name="parameters"/>
+  </message>
+  <message name="pkcs10Request">
+    <part element="tns:pkcs10Request" name="parameters"/>
+  </message>
+  <message name="pkcs10RequestResponse">
+    <part element="tns:pkcs10RequestResponse" name="parameters"/>
+  </message>
+  <message name="pkcs12Req">
+    <part element="tns:pkcs12Req" name="parameters"/>
+  </message>
+  <message name="pkcs12ReqResponse">
+    <part element="tns:pkcs12ReqResponse" name="parameters"/>
+  </message>
+  <message name="keyRecoverNewest">
+    <part element="tns:keyRecoverNewest" name="parameters"/>
+  </message>
+  <message name="keyRecoverNewestResponse">
+    <part element="tns:keyRecoverNewestResponse" name="parameters"/>
+  </message>
+  <message name="revokeToken">
+    <part element="tns:revokeToken" name="parameters"/>
+  </message>
+  <message name="revokeTokenResponse">
+    <part element="tns:revokeTokenResponse" name="parameters"/>
+  </message>
+  <message name="checkRevokationStatus">
+    <part element="tns:checkRevokationStatus" name="parameters"/>
+  </message>
+  <message name="checkRevokationStatusResponse">
+    <part element="tns:checkRevokationStatusResponse" name="parameters"/>
+  </message>
+  <message name="fetchUserData">
+    <part element="tns:fetchUserData" name="parameters"/>
+  </message>
+  <message name="fetchUserDataResponse">
+    <part element="tns:fetchUserDataResponse" name="parameters"/>
+  </message>
+  <message name="UserDataSourceException">
+    <part element="tns:UserDataSourceException" name="fault"/>
+  </message>
+  <message name="genTokenCertificates">
+    <part element="tns:genTokenCertificates" name="parameters"/>
+  </message>
+  <message name="genTokenCertificatesResponse">
+    <part element="tns:genTokenCertificatesResponse" name="parameters"/>
+  </message>
+  <message name="HardTokenExistsException">
+    <part element="tns:HardTokenExistsException" name="fault"/>
+  </message>
+  <message name="ApprovalRequestExecutionException">
+    <part element="tns:ApprovalRequestExecutionException" name="fault"/>
+  </message>
+  <message name="getHardTokenData">
+    <part element="tns:getHardTokenData" name="parameters"/>
+  </message>
+  <message name="getHardTokenDataResponse">
+    <part element="tns:getHardTokenDataResponse" name="parameters"/>
+  </message>
+  <message name="HardTokenDoesntExistsException">
+    <part element="tns:HardTokenDoesntExistsException" name="fault"/>
+  </message>
+  <message name="getHardTokenDatas">
+    <part element="tns:getHardTokenDatas" name="parameters"/>
+  </message>
+  <message name="getHardTokenDatasResponse">
+    <part element="tns:getHardTokenDatasResponse" name="parameters"/>
+  </message>
+  <message name="republishCertificate">
+    <part element="tns:republishCertificate" name="parameters"/>
+  </message>
+  <message name="republishCertificateResponse">
+    <part element="tns:republishCertificateResponse" name="parameters"/>
+  </message>
+  <message name="PublisherException">
+    <part element="tns:PublisherException" name="fault"/>
+  </message>
+  <message name="customLog">
+    <part element="tns:customLog" name="parameters"/>
+  </message>
+  <message name="customLogResponse">
+    <part element="tns:customLogResponse" name="parameters"/>
+  </message>
+  <message name="deleteUserDataFromSource">
+    <part element="tns:deleteUserDataFromSource" name="parameters"/>
+  </message>
+  <message name="deleteUserDataFromSourceResponse">
+    <part element="tns:deleteUserDataFromSourceResponse" name="parameters"/>
+  </message>
+  <message name="MultipleMatchException">
+    <part element="tns:MultipleMatchException" name="fault"/>
+  </message>
+  <message name="getAuthorizedEndEntityProfiles">
+    <part element="tns:getAuthorizedEndEntityProfiles" name="parameters"/>
+  </message>
+  <message name="getAuthorizedEndEntityProfilesResponse">
+    <part element="tns:getAuthorizedEndEntityProfilesResponse" name="parameters"/>
+  </message>
+  <message name="getAvailableCertificateProfiles">
+    <part element="tns:getAvailableCertificateProfiles" name="parameters"/>
+  </message>
+  <message name="getAvailableCertificateProfilesResponse">
+    <part element="tns:getAvailableCertificateProfilesResponse" name="parameters"/>
+  </message>
+  <message name="getAvailableCAsInProfile">
+    <part element="tns:getAvailableCAsInProfile" name="parameters"/>
+  </message>
+  <message name="getAvailableCAsInProfileResponse">
+    <part element="tns:getAvailableCAsInProfileResponse" name="parameters"/>
+  </message>
+  <message name="getEjbcaVersion">
+    <part element="tns:getEjbcaVersion" name="parameters"/>
+  </message>
+  <message name="getEjbcaVersionResponse">
+    <part element="tns:getEjbcaVersionResponse" name="parameters"/>
+  </message>
+  <message name="getPublisherQueueLength">
+    <part element="tns:getPublisherQueueLength" name="parameters"/>
+  </message>
+  <message name="getPublisherQueueLengthResponse">
+    <part element="tns:getPublisherQueueLengthResponse" name="parameters"/>
+  </message>
+  <message name="certificateRequest">
+    <part element="tns:certificateRequest" name="parameters"/>
+  </message>
+  <message name="certificateRequestResponse">
+    <part element="tns:certificateRequestResponse" name="parameters"/>
+  </message>
+  <message name="softTokenRequest">
+    <part element="tns:softTokenRequest" name="parameters"/>
+  </message>
+  <message name="softTokenRequestResponse">
+    <part element="tns:softTokenRequestResponse" name="parameters"/>
+  </message>
+  <portType name="EjbcaWS">
+    <operation name="getCertificate">
+      <input message="tns:getCertificate"/>
+      <output message="tns:getCertificateResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="isAuthorized">
+      <input message="tns:isAuthorized"/>
+      <output message="tns:isAuthorizedResponse"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="isApproved">
+      <input message="tns:isApproved"/>
+      <output message="tns:isApprovedResponse"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:ApprovalRequestExpiredException" name="ApprovalRequestExpiredException"/>
+    </operation>
+    <operation name="existsHardToken">
+      <input message="tns:existsHardToken"/>
+      <output message="tns:existsHardTokenResponse"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="getAvailableCAs">
+      <input message="tns:getAvailableCAs"/>
+      <output message="tns:getAvailableCAsResponse"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+    </operation>
+    <operation name="revokeUser">
+      <input message="tns:revokeUser"/>
+      <output message="tns:revokeUserResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:AlreadyRevokedException" name="AlreadyRevokedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+    </operation>
+    <operation name="revokeCert">
+      <input message="tns:revokeCert"/>
+      <output message="tns:revokeCertResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+      <fault message="tns:AlreadyRevokedException" name="AlreadyRevokedException"/>
+    </operation>
+    <operation name="findUser">
+      <input message="tns:findUser"/>
+      <output message="tns:findUserResponse"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:IllegalQueryException" name="IllegalQueryException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="createCRL">
+      <input message="tns:createCRL"/>
+      <output message="tns:createCRLResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:ApprovalRequestExpiredException" name="ApprovalRequestExpiredException"/>
+    </operation>
+    <operation name="editUser">
+      <input message="tns:editUser"/>
+      <output message="tns:editUserResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:UserDoesntFullfillEndEntityProfile" name="UserDoesntFullfillEndEntityProfile"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+    </operation>
+    <operation name="findCerts">
+      <input message="tns:findCerts"/>
+      <output message="tns:findCertsResponse"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="getLastCertChain">
+      <input message="tns:getLastCertChain"/>
+      <output message="tns:getLastCertChainResponse"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="crmfRequest">
+      <input message="tns:crmfRequest"/>
+      <output message="tns:crmfRequestResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="spkacRequest">
+      <input message="tns:spkacRequest"/>
+      <output message="tns:spkacRequestResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="cvcRequest">
+      <input message="tns:cvcRequest"/>
+      <output message="tns:cvcRequestResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:UserDoesntFullfillEndEntityProfile" name="UserDoesntFullfillEndEntityProfile"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+      <fault message="tns:SignRequestException" name="SignRequestException"/>
+      <fault message="tns:CertificateExpiredException" name="CertificateExpiredException"/>
+    </operation>
+    <operation name="caRenewCertRequest">
+      <input message="tns:caRenewCertRequest"/>
+      <output message="tns:caRenewCertRequestResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+    </operation>
+    <operation name="caCertResponse">
+      <input message="tns:caCertResponse"/>
+      <output message="tns:caCertResponseResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+    </operation>
+    <operation name="pkcs10Request">
+      <input message="tns:pkcs10Request"/>
+      <output message="tns:pkcs10RequestResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="pkcs12Req">
+      <input message="tns:pkcs12Req"/>
+      <output message="tns:pkcs12ReqResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="keyRecoverNewest">
+      <input message="tns:keyRecoverNewest"/>
+      <output message="tns:keyRecoverNewestResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+    </operation>
+    <operation name="revokeToken">
+      <input message="tns:revokeToken"/>
+      <output message="tns:revokeTokenResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:AlreadyRevokedException" name="AlreadyRevokedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+    </operation>
+    <operation name="checkRevokationStatus">
+      <input message="tns:checkRevokationStatus"/>
+      <output message="tns:checkRevokationStatusResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="fetchUserData">
+      <input message="tns:fetchUserData"/>
+      <output message="tns:fetchUserDataResponse"/>
+      <fault message="tns:UserDataSourceException" name="UserDataSourceException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+    </operation>
+    <operation name="genTokenCertificates">
+      <input message="tns:genTokenCertificates"/>
+      <output message="tns:genTokenCertificatesResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+      <fault message="tns:HardTokenExistsException" name="HardTokenExistsException"/>
+      <fault message="tns:UserDoesntFullfillEndEntityProfile" name="UserDoesntFullfillEndEntityProfile"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+      <fault message="tns:ApprovalRequestExpiredException" name="ApprovalRequestExpiredException"/>
+      <fault message="tns:ApprovalRequestExecutionException" name="ApprovalRequestExecutionException"/>
+    </operation>
+    <operation name="getHardTokenData">
+      <input message="tns:getHardTokenData"/>
+      <output message="tns:getHardTokenDataResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:HardTokenDoesntExistsException" name="HardTokenDoesntExistsException"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:ApprovalRequestExpiredException" name="ApprovalRequestExpiredException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+      <fault message="tns:ApprovalRequestExecutionException" name="ApprovalRequestExecutionException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="getHardTokenDatas">
+      <input message="tns:getHardTokenDatas"/>
+      <output message="tns:getHardTokenDatasResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="republishCertificate">
+      <input message="tns:republishCertificate"/>
+      <output message="tns:republishCertificateResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:PublisherException" name="PublisherException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="customLog">
+      <input message="tns:customLog"/>
+      <output message="tns:customLogResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="deleteUserDataFromSource">
+      <input message="tns:deleteUserDataFromSource"/>
+      <output message="tns:deleteUserDataFromSourceResponse"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:MultipleMatchException" name="MultipleMatchException"/>
+      <fault message="tns:UserDataSourceException" name="UserDataSourceException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="getAuthorizedEndEntityProfiles">
+      <input message="tns:getAuthorizedEndEntityProfiles"/>
+      <output message="tns:getAuthorizedEndEntityProfilesResponse"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="getAvailableCertificateProfiles">
+      <input message="tns:getAvailableCertificateProfiles"/>
+      <output message="tns:getAvailableCertificateProfilesResponse"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="getAvailableCAsInProfile">
+      <input message="tns:getAvailableCAsInProfile"/>
+      <output message="tns:getAvailableCAsInProfileResponse"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="getEjbcaVersion">
+      <input message="tns:getEjbcaVersion"/>
+      <output message="tns:getEjbcaVersionResponse"/>
+    </operation>
+    <operation name="getPublisherQueueLength">
+      <input message="tns:getPublisherQueueLength"/>
+      <output message="tns:getPublisherQueueLengthResponse"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="certificateRequest">
+      <input message="tns:certificateRequest"/>
+      <output message="tns:certificateRequestResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:UserDoesntFullfillEndEntityProfile" name="UserDoesntFullfillEndEntityProfile"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+    <operation name="softTokenRequest">
+      <input message="tns:softTokenRequest"/>
+      <output message="tns:softTokenRequestResponse"/>
+      <fault message="tns:CADoesntExistsException" name="CADoesntExistsException"/>
+      <fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException"/>
+      <fault message="tns:NotFoundException" name="NotFoundException"/>
+      <fault message="tns:UserDoesntFullfillEndEntityProfile" name="UserDoesntFullfillEndEntityProfile"/>
+      <fault message="tns:ApprovalException" name="ApprovalException"/>
+      <fault message="tns:WaitingForApprovalException" name="WaitingForApprovalException"/>
+      <fault message="tns:EjbcaException" name="EjbcaException"/>
+    </operation>
+  </portType>
+  <binding name="EjbcaWSPortBinding" type="tns:EjbcaWS">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="getCertificate">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="isAuthorized">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="isApproved">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="ApprovalRequestExpiredException">
+        <soap:fault name="ApprovalRequestExpiredException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="existsHardToken">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="getAvailableCAs">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="revokeUser">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="AlreadyRevokedException">
+        <soap:fault name="AlreadyRevokedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="revokeCert">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+      <fault name="AlreadyRevokedException">
+        <soap:fault name="AlreadyRevokedException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="findUser">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="IllegalQueryException">
+        <soap:fault name="IllegalQueryException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="createCRL">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="ApprovalRequestExpiredException">
+        <soap:fault name="ApprovalRequestExpiredException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="editUser">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="UserDoesntFullfillEndEntityProfile">
+        <soap:fault name="UserDoesntFullfillEndEntityProfile" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="findCerts">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="getLastCertChain">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="crmfRequest">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="spkacRequest">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="cvcRequest">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="UserDoesntFullfillEndEntityProfile">
+        <soap:fault name="UserDoesntFullfillEndEntityProfile" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+      <fault name="SignRequestException">
+        <soap:fault name="SignRequestException" use="literal"/>
+      </fault>
+      <fault name="CertificateExpiredException">
+        <soap:fault name="CertificateExpiredException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="caRenewCertRequest">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="caCertResponse">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="pkcs10Request">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="pkcs12Req">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="keyRecoverNewest">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="revokeToken">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="AlreadyRevokedException">
+        <soap:fault name="AlreadyRevokedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="checkRevokationStatus">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="fetchUserData">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="UserDataSourceException">
+        <soap:fault name="UserDataSourceException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="genTokenCertificates">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+      <fault name="HardTokenExistsException">
+        <soap:fault name="HardTokenExistsException" use="literal"/>
+      </fault>
+      <fault name="UserDoesntFullfillEndEntityProfile">
+        <soap:fault name="UserDoesntFullfillEndEntityProfile" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+      <fault name="ApprovalRequestExpiredException">
+        <soap:fault name="ApprovalRequestExpiredException" use="literal"/>
+      </fault>
+      <fault name="ApprovalRequestExecutionException">
+        <soap:fault name="ApprovalRequestExecutionException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="getHardTokenData">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="HardTokenDoesntExistsException">
+        <soap:fault name="HardTokenDoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="ApprovalRequestExpiredException">
+        <soap:fault name="ApprovalRequestExpiredException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+      <fault name="ApprovalRequestExecutionException">
+        <soap:fault name="ApprovalRequestExecutionException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="getHardTokenDatas">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="republishCertificate">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="PublisherException">
+        <soap:fault name="PublisherException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="customLog">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="deleteUserDataFromSource">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="MultipleMatchException">
+        <soap:fault name="MultipleMatchException" use="literal"/>
+      </fault>
+      <fault name="UserDataSourceException">
+        <soap:fault name="UserDataSourceException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="getAuthorizedEndEntityProfiles">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="getAvailableCertificateProfiles">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="getAvailableCAsInProfile">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="getEjbcaVersion">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="getPublisherQueueLength">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="certificateRequest">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="UserDoesntFullfillEndEntityProfile">
+        <soap:fault name="UserDoesntFullfillEndEntityProfile" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="softTokenRequest">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="CADoesntExistsException">
+        <soap:fault name="CADoesntExistsException" use="literal"/>
+      </fault>
+      <fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </fault>
+      <fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </fault>
+      <fault name="UserDoesntFullfillEndEntityProfile">
+        <soap:fault name="UserDoesntFullfillEndEntityProfile" use="literal"/>
+      </fault>
+      <fault name="ApprovalException">
+        <soap:fault name="ApprovalException" use="literal"/>
+      </fault>
+      <fault name="WaitingForApprovalException">
+        <soap:fault name="WaitingForApprovalException" use="literal"/>
+      </fault>
+      <fault name="EjbcaException">
+        <soap:fault name="EjbcaException" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="EjbcaWSService">
+    <port name="EjbcaWSPort" binding="tns:EjbcaWSPortBinding">
+      <soap:address location="REPLACE_WITH_ACTUAL_URL"/>
+    </port>
+  </service>
+</definitions>

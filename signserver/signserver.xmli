@@ -87,6 +87,7 @@
            <property name="module.renewal.include" value="true"/>
            <property name="module.xmlsigner.enabled" value="true"/>
            <property name="module.xmlsigner.include" value="false"/>
+           <property name="module.wsra.enabled" value="true"/>
 	
 	   <path id="signserver.compile.classpath">
 	        <path refid="signserver.ext.classpath" />
@@ -220,6 +221,7 @@ module.renewal.enabled              = ${module.renewal.enabled}
 module.renewal.include              = ${module.renewal.include}
 module.xmlsigner.enabled            = ${module.xmlsigner.enabled}
 module.xmlsigner.include            = ${module.xmlsigner.include}
+module.wsra.enabled                 = ${module.wsra.enabled}
       </echo>
     </target>
 	
@@ -285,6 +287,14 @@ module.xmlsigner.include            = ${module.xmlsigner.include}
                         <istrue value="${module.xmlsigner.include}"/>
                         <istrue value="${includemodulesinbuild}"/>
                     </or>
+                </and>
+            </condition>
+
+            <!-- Enable module: WSRA -->
+            <condition property="module.wsra.enabled.condition">
+                <and>
+                    <istrue value="${genericws.enabled}"/>
+                    <istrue value="${module.wsra.enabled}"/>
                 </and>
             </condition>
 
@@ -362,6 +372,7 @@ module.xmlsigner.include            = ${module.xmlsigner.include}
 <!--                  <exclude name="org/signserver/server/genericws/**" />-->
 	              <exclude  name="org/signserver/protocol/ws/**" />
 		          <exclude name="org/signserver/mailsigner/**" />
+                          <exclude name="org/signserver/module/wsra/**" unless="module.wsra.enabled.condition" />
 	        	</fileset>
 	        </jar>
 	    </target>
@@ -631,9 +642,11 @@ module.xmlsigner.include            = ${module.xmlsigner.include}
 	            	 <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
 	                 subdirectories though so we must flatten the structure. zipfileset is a good was of flattening the structure, so 
 	                 all jar files is directly in lib directory in the ear file -->
-	            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,commons-lang-2.4.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar" prefix="lib"/>
+	            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,commons-lang-2.4.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar,commons-logging.jar" prefix="lib"/>
 	            <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
                     <zipfileset dir="lib/ext/ejb" includes="hibernate-entitymanager.jar" prefix="lib"/>
+                    <zipfileset dir="lib/ext/ejb" includes="hibernate-annotations.jar" prefix="lib"/>
+                    <zipfileset dir="lib/ext/ejb" includes="hibernate3.jar" prefix="lib"/>
 	            <zipfileset dir="lib/module/pdfsigner/itext" includes="*.jar"  prefix="lib"/>
 	            <zipfileset dir="lib/module/odfsigner" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/module/ooxmlsigner" includes="*.jar" prefix="lib"/>

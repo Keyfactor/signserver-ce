@@ -6,7 +6,7 @@
 <property name="wsraadminClientJar" value="${wsraadminClientDir}/wsraadmin.jar"/>
 <property name="wsraadminWSClientJar" value="${client.dist.dir}/wsraclient-lib.jar"/>
 <import file="./dummyws.xml"/>       
-<target name="wsramar" depends="dummywsmar"  if="genericws.conditionenabled" unless="buildMailSigner">
+<target name="wsramar" depends="dummywsmar" if="module.wsra.enabled.condition" unless="buildMailSigner">
     <path id="wsramar.build.classpath">
       <path refid="jaxws.classpath" />
       <path location="${build}" />      

@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import org.apache.log4j.Logger;
 
 /**
  * Settings loaded from built-in properties-file signservercompile.properties
@@ -25,6 +26,10 @@ import java.util.Properties;
  * @version $Id$
  */
 public class CompileTimeSettings {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            CompileTimeSettings.class);
 
     public static final String APPNAME
             = "appname";
@@ -87,8 +92,9 @@ public class CompileTimeSettings {
     
     private CompileTimeSettings() {
         // Load built-in compile-time properties
+        InputStream in = null;
         try {
-            final InputStream in = GlobalConfiguration.class
+            in = GlobalConfiguration.class
                     .getResourceAsStream("signservercompile.properties");
             if (in == null) {
                 throw new FileNotFoundException("signservercompile.properties");
@@ -97,6 +103,14 @@ public class CompileTimeSettings {
         } catch (IOException ex) {
             throw new RuntimeException(
                     "Unable to load built-in signservercompile.properties", ex);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    LOG.error("Error closing signservercompile.properties", ex);
+                }
+            }
         }
     }
 

@@ -83,14 +83,20 @@
         <property file="${user.home}/signserver_build.properties" />
         <property file="modules/../signserver_build.properties" />
         <echo message="appserver.home = ${appserver.home}"/>
+        <!-- JBoss -->
         <available file="${appserver.home}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${appserver.home}" />
+        <!-- GlassFish -->
+        <available file="${appserver.home}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${appserver.home}"/>
     </target>
 
     <target name="-set-from-env" unless="var.APPSRV_HOME">
         <!-- Get property from environment variable -->
         <property environment="env" />
         <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>
+        <!-- JBoss -->
         <available file="${env.APPSRV_HOME}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
+        <!-- GlassFish -->
+        <available file="${env.APPSRV_HOME}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}"/>
     </target>
 
     <target name="-post-init">

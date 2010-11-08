@@ -33,17 +33,17 @@ public abstract class BaseWorker implements IWorker {
     
     /** The global configuration session. */
     @EJB
-    private transient IGlobalConfigurationSession.ILocal globalConfig;
+    private transient IGlobalConfigurationSession.IRemote globalConfig;
 
     /**
      * @return The global configuration session.
      */
-    protected final IGlobalConfigurationSession.ILocal
+    protected final IGlobalConfigurationSession.IRemote
             getGlobalConfigurationSession() {
         if (globalConfig == null) {
             try {
-                globalConfig = ServiceLocator.getInstance().lookupLocal(
-                        IGlobalConfigurationSession.ILocal.class);
+                globalConfig = ServiceLocator.getInstance().lookupRemote(
+                        IGlobalConfigurationSession.IRemote.class);
             } catch (NamingException e) {
                 LOG.error(e);
             }

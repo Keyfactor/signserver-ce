@@ -42,7 +42,7 @@ public class StatusRepositorySessionBean implements
             .getInstance().getLogger(StatusRepository.class);
 
     /** The repository instance. */
-    private final transient StatusRepository repository;
+    private final StatusRepository repository;
 
     
     /**

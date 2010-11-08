@@ -105,10 +105,10 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             .getInstance().getLogger(WorkerSessionBean.class);
     
     /** The local home interface of Worker Config entity bean. */
-    private transient WorkerConfigDataService workerConfigService;
+    private WorkerConfigDataService workerConfigService;
     
     /** The local home interface of archive entity bean. */
-    private transient ArchiveDataService archiveDataService;
+    private ArchiveDataService archiveDataService;
 
     @EJB
     private IGlobalConfigurationSession.ILocal globalConfigurationSession;

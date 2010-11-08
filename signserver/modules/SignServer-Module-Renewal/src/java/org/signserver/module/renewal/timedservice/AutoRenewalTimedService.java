@@ -33,6 +33,7 @@ import org.signserver.common.GenericPropertiesResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -214,26 +215,14 @@ public class AutoRenewalTimedService extends BaseTimedService {
     private IWorkerSession.ILocal getWorkerSession() {
         if (workerSession == null) {
             try {
-                final Context context = getInitialContext();
-                workerSession = (IWorkerSession.ILocal)
-                        context.lookup(IWorkerSession.ILocal.JNDI_NAME);
+                workerSession = ServiceLocator.getInstance().lookupLocal(
+                        IWorkerSession.ILocal.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);
             }
         }
         return workerSession;
-    }
-
-    private Context getInitialContext() throws NamingException {
-        final Hashtable<String, String> props =
-                new Hashtable<String, String>();
-        props.put(Context.INITIAL_CONTEXT_FACTORY,
-                "org.jnp.interfaces.NamingContextFactory");
-        props.put(Context.URL_PKG_PREFIXES,
-                "org.jboss.naming:org.jnp.interfaces");
-        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-        return new InitialContext(props);
     }
 
     private boolean isRenewalNeeded(final int signerId, 

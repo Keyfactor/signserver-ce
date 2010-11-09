@@ -17,13 +17,8 @@ import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import javax.crypto.Cipher;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
-import junit.framework.TestCase;
 
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.ejbca.util.Base64;
@@ -38,34 +33,21 @@ import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
 
-public class TestSoftCryptoToken extends TestCase {
-
-	private static IGlobalConfigurationSession.IRemote gCSession = null;
-	private static IWorkerSession.IRemote sSSession = null;
-	private String signserverhome;
-	private int moduleVersion;
+public class TestSoftCryptoToken extends ModulesTestCase {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 		SignServerUtil.installBCProvider();
-		Context context = getInitialContext();
-		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
-		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
 		TestUtils.redirectToTempOut();
 		TestUtils.redirectToTempErr();
 		TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull(signserverhome);
         CommonAdminInterface.BUILDMODE = "SIGNSERVER";
 
 	}
@@ -80,33 +62,24 @@ public class TestSoftCryptoToken extends TestCase {
 	}
 	
 	public void test00SetupDatabase() throws Exception{
-		MARFileParser marFileParser = new MARFileParser(signserverhome +"/dist-server/mrtdsigner.mar");
-		moduleVersion = marFileParser.getVersionFromMARFile();
-		TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
-				signserverhome +"/dist-server/mrtdsigner.mar"});		
-		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
-
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.CLASSPATH", "org.signserver.module.mrtdsigner.MRTDSigner");
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
-		
+		  globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.CLASSPATH", "org.signserver.module.mrtdsigner.MRTDSigner");
+		  globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
 		  
-		  sSSession.setWorkerProperty(88, "AUTHTYPE", "NOAUTH");
+		  workerSession.setWorkerProperty(88, "AUTHTYPE", "NOAUTH");
 		  String signserverhome = System.getenv("SIGNSERVER_HOME");
 		  assertNotNull(signserverhome);
-		  sSSession.setWorkerProperty(88,"KEYALG","RSA");
-		  sSSession.setWorkerProperty(88, "KEYSPEC", "2048");
-		  sSSession.setWorkerProperty(88,SignServerConstants.MODULENAME,"MRTDSIGNER");
-	      sSSession.setWorkerProperty(88,SignServerConstants.MODULEVERSION,moduleVersion+"");
+		  workerSession.setWorkerProperty(88,"KEYALG","RSA");
+		  workerSession.setWorkerProperty(88, "KEYSPEC", "2048");
 		  
-		  sSSession.reloadConfiguration(88);	
+		  workerSession.reloadConfiguration(88);
 	}
 
 	public void test01BasicTests() throws Exception{
-		SignerStatus stat = (SignerStatus) sSSession.getStatus(88);
+		SignerStatus stat = (SignerStatus) workerSession.getStatus(88);
 		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_OFFLINE);
 
 		PKCS10CertReqInfo crInfo = new PKCS10CertReqInfo("SHA1WithRSA","CN=TEST1",null);
-		ICertReqData reqData = sSSession.getCertificateRequest(88, crInfo);
+		ICertReqData reqData = workerSession.getCertificateRequest(88, crInfo);
 		assertNotNull(reqData);
 		assertTrue(reqData instanceof Base64SignerCertReqData);
 		PKCS10CertificationRequest pkcs10 = new PKCS10CertificationRequest(Base64.decode(((Base64SignerCertReqData) reqData).getBase64CertReq()));
@@ -114,10 +87,10 @@ public class TestSoftCryptoToken extends TestCase {
 
 		KeyPair dummyCAKeys = KeyTools.genKeys("2048","RSA");
 		X509Certificate cert = CertTools.genSelfCert(pkcs10.getCertificationRequestInfo().getSubject().toString(), 10, null, dummyCAKeys.getPrivate(), pkcs10.getPublicKey(), "SHA1WithRSA", false);
-		sSSession.uploadSignerCertificate(88, cert, GlobalConfiguration.SCOPE_GLOBAL);		
-		sSSession.reloadConfiguration(88);
+		workerSession.uploadSignerCertificate(88, cert, GlobalConfiguration.SCOPE_GLOBAL);
+		workerSession.reloadConfiguration(88);
 
-		stat = (SignerStatus) sSSession.getStatus(88);
+		stat = (SignerStatus) workerSession.getStatus(88);
 		assertTrue(stat.getActiveSignerConfig().getProperty("KEYDATA")!= null);
 		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
 
@@ -129,7 +102,7 @@ public class TestSoftCryptoToken extends TestCase {
 		signrequests.add(signreq1);
 		signrequests.add(signreq2);
 
-		MRTDSignResponse res =  (MRTDSignResponse) sSSession.process(88, new MRTDSignRequest(reqid,signrequests), new RequestContext()); 		  
+		MRTDSignResponse res =  (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid,signrequests), new RequestContext());
 		assertTrue(res!=null);
 		assertTrue(reqid == res.getRequestID());	      
 		Certificate signercert = res.getSignerCertificate();	      
@@ -154,69 +127,41 @@ public class TestSoftCryptoToken extends TestCase {
 
 		assertTrue(signercert.getPublicKey().equals(pkcs10.getPublicKey()));
 
-		reqData = sSSession.getCertificateRequest(88, crInfo);
+		reqData = workerSession.getCertificateRequest(88, crInfo);
 		assertNotNull(reqData);
 		assertTrue(reqData instanceof Base64SignerCertReqData);
 		PKCS10CertificationRequest pkcs10_2 = new PKCS10CertificationRequest(Base64.decode(((Base64SignerCertReqData) reqData).getBase64CertReq()));
 		assertTrue(pkcs10_2.getPublicKey() != null);
 		assertFalse(pkcs10_2.getPublicKey().equals(pkcs10.getPublicKey()));
 		
-		sSSession.deactivateSigner(88);
-		stat = (SignerStatus) sSSession.getStatus(88);
+		workerSession.deactivateSigner(88);
+		stat = (SignerStatus) workerSession.getStatus(88);
 		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_OFFLINE);
 		try{
-		  res =  (MRTDSignResponse) sSSession.process(88, new MRTDSignRequest(reqid,signrequests), new RequestContext());
+		  res =  (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid,signrequests), new RequestContext());
 		  assertTrue(false);
 		}catch(CryptoTokenOfflineException e){}
 		
-		sSSession.activateSigner(88,"anypwd");
-		stat = (SignerStatus) sSSession.getStatus(88);
+		workerSession.activateSigner(88,"anypwd");
+		stat = (SignerStatus) workerSession.getStatus(88);
 		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
-		res =  (MRTDSignResponse) sSSession.process(88, new MRTDSignRequest(reqid,signrequests), new RequestContext());
+		res =  (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid,signrequests), new RequestContext());
 		
 		
 		
 	}
-
-
-
-
 
 	public void test99TearDownDatabase() throws Exception{
-		 TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
-		 "88"});
-		  
-		  TestUtils.assertSuccessfulExecution(new String[] {"module", "remove","MRTDSIGNER", "" + moduleVersion});
-		  
-		  
-		  sSSession.reloadConfiguration(88);
+            removeWorker(88);
 	}
 
-
-  
-  /**
-   * Get the initial naming context
-   */
-  protected Context getInitialContext() throws Exception {
-  	Hashtable<String, String> props = new Hashtable<String, String>();
-  	props.put(
-  		Context.INITIAL_CONTEXT_FACTORY,
-  		"org.jnp.interfaces.NamingContextFactory");
-  	props.put(
-  		Context.URL_PKG_PREFIXES,
-  		"org.jboss.naming:org.jnp.interfaces");
-  	props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-  	Context ctx = new InitialContext(props);
-  	return ctx;
-  }
-  
 	private boolean arrayEquals(byte[] signreq2, byte[] signres2) {
 		boolean retval = true;
-		
+
 		if(signreq2.length != signres2.length){
 			return false;
 		}
-		
+
 		for(int i=0;i<signreq2.length;i++){
 			if(signreq2[i] != signres2[i]){
 				return false;

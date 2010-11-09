@@ -21,33 +21,20 @@ import java.util.Properties;
 
 import javax.crypto.Cipher;
 
-import junit.framework.TestCase;
-
 import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ProcessableConfig;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignerStatus;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
-public class TestWorkerSessionBean extends TestCase {
-
-    /** Home interface */
-	private static IWorkerSession.IRemote sSSession = null;
-	private static IGlobalConfigurationSession.IRemote gCSession = null;
-	private String signserverhome;
-	private int moduleVersion;
-
+public class TestWorkerSessionBean extends ModulesTestCase {
 
     /**
      * Set up the test case
@@ -55,15 +42,9 @@ public class TestWorkerSessionBean extends TestCase {
     protected void setUp() throws Exception {
     	super.setUp();
 		SignServerUtil.installBCProvider();
-		gCSession = ServiceLocator.getInstance().lookupRemote(
-                    IGlobalConfigurationSession.IRemote.class);
-		sSSession = ServiceLocator.getInstance().lookupRemote(
-                    IWorkerSession.IRemote.class);
 		TestUtils.redirectToTempOut();
 		TestUtils.redirectToTempErr();
 		TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull(signserverhome);
         CommonAdminInterface.BUILDMODE = "SIGNSERVER";
     }
 	/* (non-Javadoc)
@@ -76,21 +57,22 @@ public class TestWorkerSessionBean extends TestCase {
 	}
 	
 	public void test00SetupDatabase() throws Exception{
-		MARFileParser marFileParser = new MARFileParser(signserverhome +"/dist-server/mrtdsigner.mar");
-		moduleVersion = marFileParser.getVersionFromMARFile();
-		TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
-				signserverhome +"/dist-server/mrtdsigner.mar"});		
-		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+//		MARFileParser marFileParser = new MARFileParser(signserverhome +"/dist-server/mrtdsigner.mar");
+//		moduleVersion = marFileParser.getVersionFromMARFile();
+//		TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
+//				signserverhome +"/dist-server/mrtdsigner.mar"});
+//		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.CLASSPATH", "org.signserver.module.mrtdsigner.MRTDSigner");
-		  gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER3.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
-		
-		  
-		  sSSession.setWorkerProperty(3, "AUTHTYPE", "NOAUTH");
-		  sSSession.setWorkerProperty(3, "NAME", "testWorker");
-		  sSSession.setWorkerProperty(3,SignServerConstants.MODULENAME,"MRTDSIGNER");
-	      sSSession.setWorkerProperty(3,SignServerConstants.MODULEVERSION,moduleVersion+"");
-		  sSSession.reloadConfiguration(3);	
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                    "WORKER3.CLASSPATH",
+                    "org.signserver.module.mrtdsigner.MRTDSigner");
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                    "WORKER3.SIGNERTOKEN.CLASSPATH",
+                    "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+
+            workerSession.setWorkerProperty(3, "AUTHTYPE", "NOAUTH");
+            workerSession.setWorkerProperty(3, "NAME", "testWorker");
+            workerSession.reloadConfiguration(3);
 	}
     
 	/*
@@ -107,7 +89,7 @@ public class TestWorkerSessionBean extends TestCase {
        signrequests.add(signreq2);
        
        MRTDSignRequest req = new MRTDSignRequest(reqid, signrequests);
-       MRTDSignResponse res = (MRTDSignResponse) sSSession.process(3, req, new RequestContext());
+       MRTDSignResponse res = (MRTDSignResponse) workerSession.process(3, req, new RequestContext());
        
        assertTrue(reqid == res.getRequestID());
        
@@ -140,8 +122,8 @@ public class TestWorkerSessionBean extends TestCase {
 	public void test02GetStatus() throws Exception{
 	   
 	   
-	   assertTrue(((SignerStatus) sSSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_ACTIVE ||
-			   ((SignerStatus)sSSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_OFFLINE);
+	   assertTrue(((SignerStatus) workerSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_ACTIVE ||
+			   ((SignerStatus)workerSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_OFFLINE);
 	}
 
 	/*
@@ -149,12 +131,12 @@ public class TestWorkerSessionBean extends TestCase {
 	 * Test method for 'org.signserver.ejb.SignSessionBean.reloadConfiguration()'
 	 */
 	public void test03ReloadConfiguration() throws Exception{		   
-		   sSSession.reloadConfiguration(0);
+		   workerSession.reloadConfiguration(0);
 	}
 	
 	
 	public void test04NameMapping() throws Exception{	
-		   int id = sSSession.getWorkerId("testWorker");
+		   int id = workerSession.getWorkerId("testWorker");
 		   assertTrue(""+ id , id == 3);
 	}
 
@@ -164,18 +146,18 @@ public class TestWorkerSessionBean extends TestCase {
 	 * Test method for 'org.signserver.ejb.SignSessionBean.SetProperty(int, String, String)'
 	 */
 	public void test05SetProperty() throws Exception{		
-		sSSession.setWorkerProperty(3,"test", "Hello World");
+		workerSession.setWorkerProperty(3,"test", "Hello World");
 		
-		Properties props = sSSession.getCurrentWorkerConfig(3).getProperties();
+		Properties props = workerSession.getCurrentWorkerConfig(3).getProperties();
 		assertTrue(props.getProperty("TEST").equals("Hello World"));
 	}
 	/*
 	 * Test method for 'org.signserver.ejb.SignSessionBean.RemoveProperty(int, String)'
 	 */
 	public void test06RemoveProperty() throws Exception{		
-		sSSession.removeWorkerProperty(3,"test");
+		workerSession.removeWorkerProperty(3,"test");
 		
-		Properties props = sSSession.getCurrentWorkerConfig(3).getProperties();
+		Properties props = workerSession.getCurrentWorkerConfig(3).getProperties();
 		assertNull(props.getProperty("test"));
 	}
 	/*
@@ -183,9 +165,9 @@ public class TestWorkerSessionBean extends TestCase {
 	 */
 	public void test07AddAuthorizedClient() throws Exception{		
 		AuthorizedClient authClient = new AuthorizedClient("123456","CN=testca");
-		sSSession.addAuthorizedClient(3,authClient);
+		workerSession.addAuthorizedClient(3,authClient);
 		
-		Collection<?> result = new ProcessableConfig(sSSession.getCurrentWorkerConfig(3)).getAuthorizedClients();
+		Collection<?> result = new ProcessableConfig(workerSession.getCurrentWorkerConfig(3)).getAuthorizedClients();
 		boolean exists = false;
 		Iterator<?> iter =result.iterator();
 		while(iter.hasNext()){
@@ -199,11 +181,11 @@ public class TestWorkerSessionBean extends TestCase {
 	 * Test method for 'org.signserver.ejb.SignSessionBean.RemoveAuthorizedClient(int, AuthorizedClient)'
 	 */
 	public void test08RemoveAuthorizedClient() throws Exception{		
-		int initialsize = new ProcessableConfig( sSSession.getCurrentWorkerConfig(3)).getAuthorizedClients().size();
+		int initialsize = new ProcessableConfig( workerSession.getCurrentWorkerConfig(3)).getAuthorizedClients().size();
 		AuthorizedClient authClient = new AuthorizedClient("123456","CN=testca");
-		assertTrue(sSSession.removeAuthorizedClient(3,authClient));
+		assertTrue(workerSession.removeAuthorizedClient(3,authClient));
 		
-		Collection<?> result = new ProcessableConfig( sSSession.getCurrentWorkerConfig(3)).getAuthorizedClients();
+		Collection<?> result = new ProcessableConfig( workerSession.getCurrentWorkerConfig(3)).getAuthorizedClients();
 		assertTrue(result.size() == initialsize-1);
 		
 		boolean exists = false;
@@ -236,13 +218,7 @@ public class TestWorkerSessionBean extends TestCase {
     }
 	
 	public void test99TearDownDatabase() throws Exception{
-		 TestUtils.assertSuccessfulExecution(new String[] {"removeworker",
-		 "3"});
-		  
-		  TestUtils.assertSuccessfulExecution(new String[] {"module", "remove","MRTDSIGNER", "" + moduleVersion});
-		  
-		  
-		  sSSession.reloadConfiguration(3);
+             removeWorker(3);
 	}
   
 	private boolean arrayEquals(byte[] signreq2, byte[] signres2) {

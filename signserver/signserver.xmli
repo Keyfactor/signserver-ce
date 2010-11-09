@@ -697,6 +697,11 @@ module.wsra.enabled                 = ${module.wsra.enabled}
             <exclude name="org/signserver/client/wsraadmin/**" unless="module.wsra.enabled.condition"/>
             <exclude name="org/signserver/common/clusterclassloader/**" unless="clusterclassloader.conditionenabled"/>
         </javac>
+        <!-- Copy properties files -->
+        <copy todir="${test.dir}">
+            <fileset dir="${test.src.dir}" includes="**/*.xml,**/*.properties" />
+        </copy>
+
         <!-- jndi.properties needs to be in the classpath -->
         <copy file="${src.java}/jndi.properties" todir="${test.dir}" />
     </target>

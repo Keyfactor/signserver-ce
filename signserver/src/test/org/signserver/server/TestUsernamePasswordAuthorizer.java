@@ -12,11 +12,6 @@
  *************************************************************************/
 package org.signserver.server;
 
-import java.io.File;
-import java.util.Hashtable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.AuthorizationRequiredException;
@@ -24,9 +19,7 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -37,30 +30,14 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Markus Kilas
  * @version $Id$
  */
-public class TestUsernamePasswordAuthorizer extends TestCase {
+public class TestUsernamePasswordAuthorizer extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(
             TestUsernamePasswordAuthorizer.class);
 
-    private static IGlobalConfigurationSession.IRemote confSession;
-    private static IWorkerSession.IRemote workSession;
-    private static File signServerHome;
-    private static int moduleVersion;
-
-    /** 
-     * WORKERID used in this test case as defined in 
-     * junittest-part-config.properties
-     */
-    private static final int WORKERID = 5676;
-
     @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        final Context context = getInitialContext();
-        confSession = (IGlobalConfigurationSession.IRemote) context.lookup(
-                IGlobalConfigurationSession.IRemote.JNDI_NAME);
-        workSession = (IWorkerSession.IRemote) context.lookup(
-                IWorkerSession.IRemote.JNDI_NAME);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
@@ -72,42 +49,26 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
     }
 
     public void test00SetupDatabase() throws Exception {
-
-        System.out.println("File: " + getSignServerHome()
-                + "/dist-server/xmlsigner.mar");
-
-        final MARFileParser marFileParser = new MARFileParser(getSignServerHome()
-                + "/dist-server/xmlsigner.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-                "module",
-                "add",
-                getSignServerHome() + "/dist-server/xmlsigner.mar",
-                "junittest"
-            });
-        assertTrue("Loading module",
-                TestUtils.grepTempOut("Loading module XMLSIGNER"));
-        assertTrue("Module loaded",
-                TestUtils.grepTempOut("Module loaded successfully."));
+        addDummySigner1();
 
         // Set auth type
-        workSession.setWorkerProperty(WORKERID, "AUTHTYPE",
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE",
                 "org.signserver.server.UsernamePasswordAuthorizer");
 
         // Add a user account: user1, foo123 (plain-text password)
-        workSession.setWorkerProperty(WORKERID, "USER.USER1", "foo123");
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "USER.USER1",
+                "foo123");
         
         // Add a user account: user2, foo123 (SHA1 hashed password) = SHA1(foo123)
-        workSession.setWorkerProperty(WORKERID, "USER.USER2",
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "USER.USER2",
                 "3b303d8b0364d9265c06adc8584258376150c9b5:SHA1");
 
         // Add a user account: user3, foo123 (SHA1 hashed password and salted 
         // with "salt123") = SHA1(foo123salt123)
-        workSession.setWorkerProperty(WORKERID, "USER.USER3",
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "USER.USER3",
                 "26c110963ad873c9b7db331e4c3130c266416d47:SHA1:salt123");
         
-        workSession.reloadConfiguration(WORKERID);
+        workerSession.reloadConfiguration(getSignerIdDummy1());
     }
 
     /**
@@ -124,7 +85,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
 
         // Without username password
         try {
-             workSession.process(WORKERID, request, context);
+             workerSession.process(getSignerIdDummy1(), request, context);
              fail("No AuthorizationRequiredException thrown");
         } catch (AuthorizationRequiredException ok) {
             // OK
@@ -137,7 +98,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         
         context.put(RequestContext.CLIENT_CREDENTIAL, new DummyCredential());
         try {
-             workSession.process(WORKERID, request, context);
+             workerSession.process(getSignerIdDummy1(), request, context);
              fail("No AuthorizationRequiredException thrown");
         } catch (AuthorizationRequiredException ok) {
             // OK
@@ -150,7 +111,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         context.put(RequestContext.CLIENT_CREDENTIAL,
                 new UsernamePasswordClientCredential("user1", "FOO1234"));
         try {
-             workSession.process(WORKERID, request, context);
+             workerSession.process(getSignerIdDummy1(), request, context);
              fail("No AuthorizationRequiredException thrown");
         } catch (AuthorizationRequiredException ok) {
             // OK
@@ -176,7 +137,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         context.put(RequestContext.CLIENT_CREDENTIAL,
                 new UsernamePasswordClientCredential("user1", "foo123"));
         try {
-             workSession.process(WORKERID, request, context);
+             workerSession.process(getSignerIdDummy1(), request, context);
         } catch (AuthorizationRequiredException ex) {
             fail("Username password not accepted!");
         } catch (Exception ex) {
@@ -201,7 +162,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         context.put(RequestContext.CLIENT_CREDENTIAL,
                 new UsernamePasswordClientCredential("user2", "foo123"));
         try {
-             workSession.process(WORKERID, request, context);
+             workerSession.process(getSignerIdDummy1(), request, context);
         } catch (AuthorizationRequiredException ex) {
             fail("Username password not accepted!");
         } catch (Exception ex) {
@@ -224,7 +185,7 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
         context.put(RequestContext.CLIENT_CREDENTIAL,
                 new UsernamePasswordClientCredential("user3", "foo123"));
         try {
-             workSession.process(WORKERID, request, context);
+             workerSession.process(getSignerIdDummy1(), request, context);
         } catch (AuthorizationRequiredException ex) {
             fail("Username password not accepted!");
         } catch (Exception ex) {
@@ -234,45 +195,8 @@ public class TestUsernamePasswordAuthorizer extends TestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID)
-        });
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "module",
-            "remove",
-            "XMLSIGNER",
-            String.valueOf(moduleVersion)
-        });
-        assertTrue("module remove",
-                TestUtils.grepTempOut("Removal of module successful."));
-        workSession.reloadConfiguration(WORKERID);
+        removeWorker(getSignerIdDummy1());
+        workerSession.reloadConfiguration(getSignerIdDummy1());
     }
-
-    private File getSignServerHome() throws Exception {
-        if (signServerHome == null) {
-            final String home = System.getenv("SIGNSERVER_HOME");
-            assertNotNull("SIGNSERVER_HOME", home);
-            signServerHome = new File(home);
-            assertTrue("SIGNSERVER_HOME exists", signServerHome.exists());
-        }
-        return signServerHome;
-    }
-
-    /**
-     * Get the initial naming context
-     */
-    protected Context getInitialContext() throws Exception {
-        Hashtable<String, String> props = new Hashtable<String, String>();
-        props.put(
-                Context.INITIAL_CONTEXT_FACTORY,
-                "org.jnp.interfaces.NamingContextFactory");
-        props.put(
-                Context.URL_PKG_PREFIXES,
-                "org.jboss.naming:org.jnp.interfaces");
-        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-        Context ctx = new InitialContext(props);
-        return ctx;
-    }
+   
 }

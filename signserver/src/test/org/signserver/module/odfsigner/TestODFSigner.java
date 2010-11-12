@@ -16,10 +16,6 @@ package org.signserver.module.odfsigner;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.security.cert.Certificate;
-import java.util.Hashtable;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
 
@@ -30,6 +26,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.TestUtils;
@@ -62,9 +59,7 @@ public class TestODFSigner extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		SignServerUtil.installBCProvider();
-		Context context = getInitialContext();
-		sSSession = (IWorkerSession.IRemote) context
-				.lookup(IWorkerSession.IRemote.JNDI_NAME);
+		sSSession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
 		TestUtils.redirectToTempOut();
 		TestUtils.redirectToTempErr();
 		TestingSecurityManager.install();
@@ -138,20 +133,6 @@ public class TestODFSigner extends TestCase {
 				"odfsigner", "" + moduleVersion });
 		assertTrue(TestUtils.grepTempOut("Removal of module successful."));
 		sSSession.reloadConfiguration(WORKERID);
-	}
-
-	/**
-	 * Get the initial naming context
-	 */
-	private Context getInitialContext() throws Exception {
-		Hashtable<String, String> props = new Hashtable<String, String>();
-		props.put(Context.INITIAL_CONTEXT_FACTORY,
-				"org.jnp.interfaces.NamingContextFactory");
-		props.put(Context.URL_PKG_PREFIXES,
-				"org.jboss.naming:org.jnp.interfaces");
-		props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-		Context ctx = new InitialContext(props);
-		return ctx;
 	}
 
 	/**

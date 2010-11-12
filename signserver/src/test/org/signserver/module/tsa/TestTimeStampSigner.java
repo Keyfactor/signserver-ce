@@ -36,6 +36,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -97,12 +98,11 @@ public class TestTimeStampSigner extends TestCase {
         super.setUp();
         SignServerUtil.installBCProvider();
         
-        final Context context = getInitialContext();
-        sSSession = (IWorkerSession.IRemote) context.lookup(
-                IWorkerSession.IRemote.JNDI_NAME);
+        sSSession = ServiceLocator.getInstance().lookupRemote(
+                IWorkerSession.IRemote.class);
 
-        repository = (IStatusRepositorySession.IRemote) context.lookup(
-                IStatusRepositorySession.IRemote.JNDI_NAME);
+        repository = ServiceLocator.getInstance().lookupRemote(
+                IStatusRepositorySession.IRemote.class);
 
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
@@ -291,19 +291,4 @@ public class TestTimeStampSigner extends TestCase {
         sSSession.reloadConfiguration(WORKER4);
     }
 
-    /**
-     * Get the initial naming context
-     */
-    protected Context getInitialContext() throws Exception {
-        Hashtable<String, String> props = new Hashtable<String, String>();
-        props.put(
-                Context.INITIAL_CONTEXT_FACTORY,
-                "org.jnp.interfaces.NamingContextFactory");
-        props.put(
-                Context.URL_PKG_PREFIXES,
-                "org.jboss.naming:org.jnp.interfaces");
-        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-        Context ctx = new InitialContext(props);
-        return ctx;
-    }
 }

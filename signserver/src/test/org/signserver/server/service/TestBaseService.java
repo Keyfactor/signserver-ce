@@ -18,10 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Hashtable;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
 
@@ -29,6 +25,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.ServiceStatus;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -42,10 +39,8 @@ public class TestBaseService extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		SignServerUtil.installBCProvider();
-		Context context = getInitialContext();
-		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
-		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
-
+		gCSession = ServiceLocator.getInstance().lookupRemote(IGlobalConfigurationSession.IRemote.class);
+		sSSession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
 	}
 	
 	public void test00SetupDatabase() throws Exception{
@@ -153,21 +148,5 @@ public class TestBaseService extends TestCase {
 		    assertTrue("Couldn't delete countfile", file.delete());
 		  }
 	}
-  
-  /**
-   * Get the initial naming context
-   */
-  protected Context getInitialContext() throws Exception {
-  	Hashtable<String, String> props = new Hashtable<String, String>();
-  	props.put(
-  		Context.INITIAL_CONTEXT_FACTORY,
-  		"org.jnp.interfaces.NamingContextFactory");
-  	props.put(
-  		Context.URL_PKG_PREFIXES,
-  		"org.jboss.naming:org.jnp.interfaces");
-  	props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-  	Context ctx = new InitialContext(props);
-  	return ctx;
-  }
 
 }

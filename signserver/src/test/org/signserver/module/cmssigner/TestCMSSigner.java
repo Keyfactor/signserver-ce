@@ -18,7 +18,6 @@ import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.util.Collection;
 
-import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.cms.CMSSignedData;
@@ -28,9 +27,7 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.ServiceLocator;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -40,33 +37,18 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Markus Kilas
  * @version $Id$
  */
-public class TestCMSSigner extends TestCase {
+public class TestCMSSigner extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(TestCMSSigner.class);
-
-    /**
-     * WORKERID used in this test case as defined in
-     * junittest-part-config.properties.
-     */
-    private static final int WORKERID = 5690;
-
-    private static IWorkerSession.IRemote workerSession;
-    private static String signserverhome;
-    private static int moduleVersion;
-	
 	
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        workerSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
         CommonAdminInterface.BUILDMODE = "SIGNSERVER";
     }
 
@@ -77,23 +59,7 @@ public class TestCMSSigner extends TestCase {
     }	
 	
     public void test00SetupDatabase() throws Exception {
-
-        final MARFileParser marFileParser = new MARFileParser(signserverhome
-                + "/dist-server/xmlsigner.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-                "module",
-                "add",
-                signserverhome + "/dist-server/cmssigner.mar",
-                "junittest"
-            });
-        assertTrue("Loading module",
-                TestUtils.grepTempOut("Loading module CMSSIGNER"));
-        assertTrue("Module loaded",
-                TestUtils.grepTempOut("Module loaded successfully."));
-
-        workerSession.reloadConfiguration(WORKERID);
+        addSigner("org.signserver.module.cmssigner.CMSSigner");
     }
 
     /**
@@ -114,7 +80,7 @@ public class TestCMSSigner extends TestCase {
                 new GenericSignRequest(reqid, testDocument.getBytes());
 
         final GenericSignResponse res =
-                (GenericSignResponse) workerSession.process(WORKERID,
+                (GenericSignResponse) workerSession.process(getSignerIdDummy1(),
                     signRequest, new RequestContext());
         final byte[] data = res.getProcessedData();
 
@@ -123,8 +89,8 @@ public class TestCMSSigner extends TestCase {
 
         // Output for manual inspection
         final FileOutputStream fos = new FileOutputStream(
-                new File(signserverhome + File.separator
-                + "tmp" + File.separator + "signedcms_rsa.p7s"));
+                new File(getSignServerHome(),
+                "tmp" + File.separator + "signedcms_rsa.p7s"));
         fos.write((byte[]) data);
         fos.close();
 
@@ -162,19 +128,6 @@ public class TestCMSSigner extends TestCase {
      * @throws Exception in case of error
      */
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID)
-        });
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "module",
-            "remove",
-            "CMSSIGNER",
-            String.valueOf(moduleVersion)
-        });
-        assertTrue("module remove",
-                TestUtils.grepTempOut("Removal of module successful."));
-        workerSession.reloadConfiguration(WORKERID);
+        removeWorker(getSignerIdDummy1());
     }
 }

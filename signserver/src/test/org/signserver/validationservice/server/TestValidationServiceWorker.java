@@ -4,11 +4,7 @@ import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
 
@@ -17,6 +13,7 @@ import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.validationservice.common.ICertificate;
@@ -55,9 +52,10 @@ public class TestValidationServiceWorker extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		SignServerUtil.installBCProvider();
-		Context context = getInitialContext();
-		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
-		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+                gCSession = ServiceLocator.getInstance().lookupRemote(
+                        IGlobalConfigurationSession.IRemote.class);
+		sSSession = ServiceLocator.getInstance().lookupRemote(
+                        IWorkerSession.IRemote.class);
 
 	}
 	
@@ -484,21 +482,4 @@ public class TestValidationServiceWorker extends TestCase {
 		  
 		  sSSession.reloadConfiguration(15);		   
 	}
-	
-	  /**
-	   * Get the initial naming context
-	   */
-	  protected Context getInitialContext() throws Exception {
-	  	Hashtable<String, String> props = new Hashtable<String, String>();
-	  	props.put(
-	  		Context.INITIAL_CONTEXT_FACTORY,
-	  		"org.jnp.interfaces.NamingContextFactory");
-	  	props.put(
-	  		Context.URL_PKG_PREFIXES,
-	  		"org.jboss.naming:org.jnp.interfaces");
-	  	props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-	  	Context ctx = new InitialContext(props);
-	  	return ctx;
-	  }
-
 }

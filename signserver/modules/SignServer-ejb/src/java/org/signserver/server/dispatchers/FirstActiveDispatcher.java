@@ -12,11 +12,8 @@
  *************************************************************************/
 package org.signserver.server.dispatchers;
 
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -27,6 +24,7 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.WorkerContext;
 
@@ -70,9 +68,8 @@ public class FirstActiveDispatcher extends BaseDispatcher {
                     workers.add(worker);
                 }
             }
-            final Context context = getInitialContext();
-            workerSession = (IWorkerSession.IRemote)
-                    context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+            workerSession = ServiceLocator.getInstance().lookupRemote(
+                        IWorkerSession.IRemote.class);
         } catch (NamingException ex) {
             LOG.error("Unable to lookup worker session", ex);
         }
@@ -120,20 +117,6 @@ public class FirstActiveDispatcher extends BaseDispatcher {
         }
 
         return response;
-    }
-
-    /**
-     * Get the initial naming context.
-     */
-    private Context getInitialContext() throws NamingException {
-        final Hashtable<String, String> props =
-                new Hashtable<String, String>();
-        props.put(Context.INITIAL_CONTEXT_FACTORY,
-                "org.jnp.interfaces.NamingContextFactory");
-        props.put(Context.URL_PKG_PREFIXES,
-                "org.jboss.naming:org.jnp.interfaces");
-        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-        return new InitialContext(props);
     }
 
 }

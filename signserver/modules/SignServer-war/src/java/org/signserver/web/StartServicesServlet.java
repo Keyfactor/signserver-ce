@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.ejb.EJB;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -28,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.CompileTimeSettings;
+import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession.ILocal;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
@@ -50,32 +49,29 @@ public class StartServicesServlet extends HttpServlet {
             .getInstance().getLogger(StartServicesServlet.class);
 
     @EJB
-    private IServiceTimerSession.ILocal timedServiceSession;
+    private IServiceTimerSession.IRemote timedServiceSession;
 
     @EJB
-    private IStatusRepositorySession.ILocal statusRepositorySession;
+    private IStatusRepositorySession.IRemote statusRepositorySession;
 
-    private IServiceTimerSession.ILocal getTimedServiceSession(){
-    	if(timedServiceSession == null){
-    		try{
-    		  Context context = new InitialContext();
-    		  timedServiceSession = (ILocal) context.lookup(IServiceTimerSession.ILocal.JNDI_NAME);
-    		}catch(NamingException e){
-    			LOG.error(e);
-    		}
+    private IServiceTimerSession.IRemote getTimedServiceSession(){
+    	if(timedServiceSession == null) {
+            try {
+                timedServiceSession = ServiceLocator.getInstance().lookupRemote(
+                        IServiceTimerSession.IRemote.class);
+            } catch (NamingException e) {
+                LOG.error(e);
+            }
     	}
 
     	return timedServiceSession;
     }
 
-    private IStatusRepositorySession.ILocal getStatusRepositorySession() {
+    private IStatusRepositorySession.IRemote getStatusRepositorySession() {
         if (statusRepositorySession == null) {
             try {
-                Context context = new InitialContext();
-
-                statusRepositorySession = (IStatusRepositorySession.ILocal) 
-                        context.lookup(
-                            IStatusRepositorySession.ILocal.JNDI_NAME);
+                statusRepositorySession = ServiceLocator.getInstance()
+                        .lookupRemote(IStatusRepositorySession.IRemote.class);
             } catch (NamingException e) {
                 LOG.error(e);
             }

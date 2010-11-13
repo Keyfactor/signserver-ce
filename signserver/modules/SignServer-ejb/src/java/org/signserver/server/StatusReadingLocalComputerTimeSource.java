@@ -13,11 +13,9 @@
 package org.signserver.server;
 
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import org.apache.log4j.Logger;
+import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
 
 /**
@@ -48,9 +46,8 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
      */
     public void init(final Properties props) {
         try {
-            statusSession = (IStatusRepositorySession.ILocal)
-                getInitialContext().lookup(
-                    IStatusRepositorySession.ILocal.JNDI_NAME);
+            statusSession = ServiceLocator.getInstance().lookupLocal(
+                        IStatusRepositorySession.ILocal.class);
         } catch (Exception ex) {
             LOG.error("Looking up status repository session", ex);
         }
@@ -68,18 +65,4 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
         return date;
     }
 
-    /**
-     * Get the initial naming context
-     */
-    protected Context getInitialContext() throws Exception {
-        final Hashtable<String, String> props = new Hashtable<String, String>();
-        props.put(
-                Context.INITIAL_CONTEXT_FACTORY,
-                "org.jnp.interfaces.NamingContextFactory");
-        props.put(
-                Context.URL_PKG_PREFIXES,
-                "org.jboss.naming:org.jnp.interfaces");
-        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-        return new InitialContext(props);
-    }
 }

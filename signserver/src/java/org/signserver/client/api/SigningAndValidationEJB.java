@@ -1,9 +1,5 @@
 package org.signserver.client.api;
 
-import java.util.Hashtable;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.signserver.common.CryptoTokenOfflineException;
@@ -16,7 +12,7 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
-import org.signserver.common.SignServerUtil;
+import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
@@ -40,31 +36,8 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
 	 * @throws NamingException If an naming exception is encountered.
 	 */
 	public SigningAndValidationEJB() throws NamingException {
-		this(getInitialContext());
-	}
-	
-	/**
-	 * Creates an instance of SigningAndValidationEJB using the supplied context.
-	 * 
-	 * @param context Context to use for lookups.
-	 * @throws NamingException If an naming exception is encountered.
-	 */
-	public SigningAndValidationEJB(Context context) throws NamingException {
-		signserver = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
-		SignServerUtil.installBCProvider();
-	}
-	
-	/**
-	 * @return Default initial context.
-	 * @throws NamingException If an naming exception is encountered.
-	 */
-	private static Context getInitialContext() throws NamingException {
-		Hashtable<String, String> props = new Hashtable<String, String>();
-		props.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-		props.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
-		props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-		Context ctx = new InitialContext(props);
-		return ctx;
+		signserver = ServiceLocator.getInstance().lookupRemote(
+                        IWorkerSession.IRemote.class);
 	}
 
 	public GenericSignResponse sign(String signerIdOrName, byte[] xmlDocument) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {

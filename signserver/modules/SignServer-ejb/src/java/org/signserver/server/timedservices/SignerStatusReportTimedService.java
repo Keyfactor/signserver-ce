@@ -20,12 +20,9 @@ import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import javax.persistence.EntityManager;
@@ -34,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.CryptoTokenStatus;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
@@ -244,25 +242,13 @@ public class SignerStatusReportTimedService extends BaseTimedService {
     private IWorkerSession.ILocal getWorkerSession() {
         if (workerSession == null) {
             try {
-                final Context context = getInitialContext();
-                workerSession = (IWorkerSession.ILocal)
-                        context.lookup(IWorkerSession.ILocal.JNDI_NAME);
+                workerSession = ServiceLocator.getInstance().lookupLocal(
+                        IWorkerSession.ILocal.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);
             }
         }
         return workerSession;
-    }
-
-    private Context getInitialContext() throws NamingException {
-        final Hashtable<String, String> props =
-                new Hashtable<String, String>();
-        props.put(Context.INITIAL_CONTEXT_FACTORY,
-                "org.jnp.interfaces.NamingContextFactory");
-        props.put(Context.URL_PKG_PREFIXES,
-                "org.jboss.naming:org.jnp.interfaces");
-        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-        return new InitialContext(props);
     }
 }

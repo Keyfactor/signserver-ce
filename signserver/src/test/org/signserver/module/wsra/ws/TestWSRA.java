@@ -10,14 +10,11 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceContext;
@@ -31,6 +28,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.wsra.beans.AuthDataBean;
@@ -256,8 +254,8 @@ public class TestWSRA extends CommonManagerTest {
 						
 		}
 		
-		Context context = getInitialContext();		
-		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+		sSSession = ServiceLocator.getInstance().lookupRemote(
+                        IWorkerSession.IRemote.class);
 		signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
 		TestUtils.redirectToTempOut();
@@ -955,22 +953,6 @@ public class TestWSRA extends CommonManagerTest {
 		
 		return retval;
 	}
-	
-	   /**
-	    * Get the initial naming context
-	    */
-	   protected Context getInitialContext() throws Exception {
-	   	Hashtable<String, String> props = new Hashtable<String, String>();
-	   	props.put(
-	   		Context.INITIAL_CONTEXT_FACTORY,
-	   		"org.jnp.interfaces.NamingContextFactory");
-	   	props.put(
-	   		Context.URL_PKG_PREFIXES,
-	   		"org.jboss.naming:org.jnp.interfaces");
-	   	props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-	   	Context ctx = new InitialContext(props);
-	   	return ctx;
-	   }
 	   
 	   private org.signserver.module.wsra.ws.gen.WSRA getWSRA() throws MalformedURLException {
 		   if(wsraPort == null){

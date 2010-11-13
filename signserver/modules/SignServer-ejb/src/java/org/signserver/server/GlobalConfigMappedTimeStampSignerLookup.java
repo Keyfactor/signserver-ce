@@ -2,14 +2,12 @@ package org.signserver.server;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 import javax.ejb.EJBException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.RequestContext;
+import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 
 /**
@@ -93,21 +91,10 @@ public class GlobalConfigMappedTimeStampSignerLookup implements ITimeStampSigner
 
     private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession() throws Exception {
         if (gCSession == null) {
-            final Context context = getInitialContext();
-            gCSession = (IGlobalConfigurationSession.ILocal) context.lookup(IGlobalConfigurationSession.ILocal.JNDI_NAME);
+            gCSession = ServiceLocator.getInstance().lookupRemote(
+                        IGlobalConfigurationSession.ILocal.class);
         }
         return gCSession;
-    }
-
-    /**
-     * Get the initial naming context
-     */
-    private Context getInitialContext() throws Exception {
-        final Hashtable<String, String> props = new Hashtable<String, String>();
-        props.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-        props.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
-        props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-        return new InitialContext(props);
     }
 
     private Map<String, String> parseMapping(String mapping) {

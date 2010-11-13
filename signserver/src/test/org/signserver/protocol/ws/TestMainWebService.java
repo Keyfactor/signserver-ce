@@ -44,6 +44,7 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -83,9 +84,10 @@ public class TestMainWebService extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		SignServerUtil.installBCProvider();
-		Context context = getInitialContext();
-		gCSession = (IGlobalConfigurationSession.IRemote) context.lookup(IGlobalConfigurationSession.IRemote.JNDI_NAME);
-		sSSession = (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
+                gCSession = ServiceLocator.getInstance().lookupRemote(
+                        IGlobalConfigurationSession.IRemote.class);
+		sSSession = ServiceLocator.getInstance().lookupRemote(
+                        IWorkerSession.IRemote.class);
 		
 		QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
 		SignServerWSService signServerWSService = new SignServerWSService(new URL("http://localhost:8080/signserver/signserverws/signserverws?wsdl"),qname);
@@ -349,22 +351,6 @@ public class TestMainWebService extends TestCase {
 		  
 		  sSSession.reloadConfiguration(16);	
 	}
-	
-    /**
-     * Get the initial naming context
-     */
-    protected Context getInitialContext() throws Exception {
-    	Hashtable<String, String> props = new Hashtable<String, String>();
-    	props.put(
-    		Context.INITIAL_CONTEXT_FACTORY,
-    		"org.jnp.interfaces.NamingContextFactory");
-    	props.put(
-    		Context.URL_PKG_PREFIXES,
-    		"org.jboss.naming:org.jnp.interfaces");
-    	props.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-    	Context ctx = new InitialContext(props);
-    	return ctx;
-    }
 
     /**
      * @param statuses List of worker statuses

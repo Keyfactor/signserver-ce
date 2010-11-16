@@ -19,10 +19,11 @@ import org.signserver.protocol.ws.client.WSClientUtil;
 import org.signserver.protocol.ws.gen.SignServerWS;
 import org.signserver.protocol.ws.gen.SignServerWSService;
 import org.signserver.testutils.ExitException;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
-public class TestClusterClassLoader extends TestCase {
+public class TestClusterClassLoader extends ModulesTestCase {
 
 	private static String signserverhome;
 	private SignServerWS signServerWS;
@@ -36,7 +37,11 @@ public class TestClusterClassLoader extends TestCase {
         assertNotNull(signserverhome);
         CommonAdminInterface.BUILDMODE = "SIGNSERVER";
 		QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
-		SignServerWSService signServerWSService = new SignServerWSService(new URL("http://localhost:8080/signserver/signserverws/signserverws?wsdl"),qname);
+		SignServerWSService signServerWSService =
+                        new SignServerWSService(new URL("http://localhost:"
+                        + getPublicHTTPPort()
+                        + "/signserver/signserverws/signserverws?wsdl"),
+                        qname);
 		signServerWS =  signServerWSService.getSignServerWSPort();
 	}
 

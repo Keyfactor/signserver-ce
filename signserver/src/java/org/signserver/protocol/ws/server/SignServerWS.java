@@ -317,13 +317,13 @@ public class SignServerWS implements ISignServerWS {
     }
 
     @EJB
-	private IWorkerSession.ILocal workersession;
+	private IWorkerSession.IRemote workersession;
 	
-    private IWorkerSession.ILocal getWorkerSession(){
+    private IWorkerSession.IRemote getWorkerSession(){
     	if(workersession == null){
     		try{
-    		  workersession = ServiceLocator.getInstance().lookupLocal(
-                          IWorkerSession.ILocal.class);
+    		  workersession = ServiceLocator.getInstance().lookupRemote(
+                          IWorkerSession.IRemote.class);
     		}catch(NamingException e){
     			log.error(e);
     		}
@@ -333,13 +333,13 @@ public class SignServerWS implements ISignServerWS {
     }
 
     @EJB
-	private IGlobalConfigurationSession.ILocal globalconfigsession;
+	private IGlobalConfigurationSession.IRemote globalconfigsession;
 	
-    private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession(){
+    private IGlobalConfigurationSession.IRemote getGlobalConfigurationSession(){
        if (globalconfigsession == null) {
             try {
-                globalconfigsession = ServiceLocator.getInstance().lookupLocal(
-                        IGlobalConfigurationSession.ILocal.class);
+                globalconfigsession = ServiceLocator.getInstance().lookupRemote(
+                        IGlobalConfigurationSession.IRemote.class);
             } catch (NamingException e) {
                 log.error(e);
             }

@@ -38,6 +38,7 @@ import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.cryptotokens.P12CryptoToken;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.common.ICertificate;
@@ -50,7 +51,7 @@ import org.w3c.dom.Document;
  * @author Markus Kilås
  * @version $Id$
  */
-public class TestSigningAndValidationWithCRL extends TestCase {
+public class TestSigningAndValidationWithCRL extends ModulesTestCase {
 
 	private static Logger log = Logger.getLogger(TestSigningAndValidationWithCRL.class);
 	private static IWorkerSession.IRemote sSSession = null;

@@ -23,7 +23,8 @@ public class TestSigningAndValidationWithCRLUsingWS extends TestSigningAndValida
 
 	@Override
 	protected ISigningAndValidation getSigningAndValidationImpl() {
-		return new SigningAndValidationWS("localhost", 8080);
+		return new SigningAndValidationWS("localhost", 
+                        getPublicHTTPPort());
 	}
 		
 }

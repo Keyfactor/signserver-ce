@@ -24,11 +24,12 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.protocol.validationservice.ws.gen.IllegalRequestException_Exception;
 import org.signserver.protocol.validationservice.ws.gen.ValidationResponse;
 import org.signserver.protocol.validationservice.ws.gen.ValidationWSService;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.common.Validation.Status;
 import org.signserver.validationservice.server.ValidationTestUtils;
 
-public class TestValidationWS extends TestCase {
+public class TestValidationWS extends ModulesTestCase {
 
 	private static IGlobalConfigurationSession.IRemote gCSession = null;
 	private static IWorkerSession.IRemote sSSession = null;
@@ -52,7 +53,11 @@ public class TestValidationWS extends TestCase {
 	public void test00SetupDatabase() throws Exception{
 		
 		QName qname = new QName("gen.ws.validationservice.protocol.signserver.org", "ValidationWSService");
-		ValidationWSService validationWSService = new ValidationWSService(new URL("http://localhost:8080/signserver/validationws/validationws?wsdl"),qname);
+		ValidationWSService validationWSService =
+                        new ValidationWSService(new URL("http://localhost:"
+                        + getPublicHTTPPort()
+                        + "/signserver/validationws/validationws?wsdl"),
+                        qname);
 		validationWS =  validationWSService.getValidationWSPort();
 
 		KeyPair validRootCA1Keys = KeyTools.genKeys("1024", "RSA");

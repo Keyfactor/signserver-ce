@@ -18,11 +18,10 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
@@ -37,6 +36,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.RequestContext;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -226,14 +226,14 @@ public class ValidationWS implements IValidationWS {
 		
 		return request.getRemoteAddr();
 	}
+
+        @EJB
+	private IWorkerSession.IRemote signserversession;
 	
-	private IWorkerSession.ILocal signserversession;
-	
-    private IWorkerSession.ILocal getWorkerSession(){
+    private IWorkerSession.IRemote getWorkerSession(){
     	if(signserversession == null){
     		try{
-    		  Context context = new InitialContext();
-    		  signserversession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
+    		  signserversession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
     		}catch(NamingException e){
     			log.error(e);
     		}
@@ -241,14 +241,14 @@ public class ValidationWS implements IValidationWS {
     	
     	return signserversession;
     }
-    
-	private IGlobalConfigurationSession.ILocal globalconfigsession;
+
+    @EJB
+    private IGlobalConfigurationSession.IRemote globalconfigsession;
 	
-    private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession(){
+    private IGlobalConfigurationSession.IRemote getGlobalConfigurationSession(){
     	if(globalconfigsession == null){
     		try{
-    		  Context context = new InitialContext();
-    		  globalconfigsession =  (org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal) context.lookup(IGlobalConfigurationSession.ILocal.JNDI_NAME);
+                  globalconfigsession = ServiceLocator.getInstance().lookupRemote(IGlobalConfigurationSession.IRemote.class);
     		}catch(NamingException e){
     			log.error(e);
     		}

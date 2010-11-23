@@ -1,7 +1,8 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
    <persistence-unit name="SignServerJPA">
-      <jta-data-source>@datasource.jndi-name-prefix@@datasource.jndi-name@</jta-data-source>
-       <properties>            
+      <jta-data-source>${datasource.jndi-name-prefix}${datasource.jndi-name}</jta-data-source>
+       <properties>
+            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
             <property name="toplink.ddl-generation" value="create-tables"/>
        </properties>
    </persistence-unit>

@@ -356,9 +356,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    <target name="signserver-ejb-jar-including-modules" if="includemodulesinbuild" depends="dummywsmar">
 	        <echo message="Including modules in main build"/>
 	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
-	        	<metainf dir="${preprocessed}/appserver/${appserver.type}">
-	        			<include name="persistence.xml"/>
-	        	</metainf>
 	        	<metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
 	    	            <include name="entity-mappings.xml"/>
 	    	    </metainf>
@@ -409,7 +406,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    </target>
 	       
 
-		
+	
 	    <!-- =================================================================== -->
 	    <!-- Build web part                                                                                                                             -->
 	    <!-- =================================================================== -->

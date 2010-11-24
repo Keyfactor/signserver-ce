@@ -128,20 +128,6 @@ j2ee.web-nohttps=true
 #database.name=sapdb
 #database.name=sybase
 
-# The datasource mapping selected for deployment.
-# The J2EE server needs to be configured with the appropriate datasource mapping. 
-# For JBoss this maps to a setting in standardjbosscmp-jdbc.xml and must match the database chosen above.
-# All supported mappings are defined below, others can easily be added
-# Default: Hypersonic SQL
-#datasource.mapping=mySQL
-#datasource.mapping=PostgreSQL 7.2
-#datasource.mapping=PostgreSQL 8.0
-#datasource.mapping=MS SQLSERVER2000
-#datasource.mapping=Oracle8
-#datasource.mapping=Oracle9i
-#datasource.mapping=SapDB
-#datasource.mapping=Sybase
-
 # Database connection url.
 # This is the URL used to connect to the database, used to configure a new datasource in JBoss.
 # Default: jdbc:hsqldb:${jboss.server.data.dir}${/}hypersonic${/}SignServerLocalDB

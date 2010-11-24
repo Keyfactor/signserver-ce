@@ -166,7 +166,6 @@
 	    <property name="datasource.jndi-name" value="SignServerDS" />
 	    <property name="datasource.jndi-name-prefix" value="java:/" />
 	    <property name="database.name" value="hsqldb" />
-	    <property name="datasource.mapping" value="Hypersonic SQL" />
 	    <property name="database.url" value="jdbc:hsqldb:$${jboss.server.data.dir}$${/}hypersonic$${/}SignServerLocalDB" />
 	    <property name="database.driver" value="org.hsqldb.jdbcDriver" />
 	    <property name="database.username" value="sa" />
@@ -200,7 +199,6 @@ web.contentencoding                 = ${web.contentencoding}
 datasource.jndi-name                = ${datasource.jndi-name}
 datasource.jndi-name-prefix         = ${datasource.jndi-name-prefix}
 database.name                       = ${database.name}
-datasource.mapping                  = ${datasource.mapping}
 database.url                        = ${database.url}
 database.driver                     = ${database.driver}
 database.username                   = ${database.username}

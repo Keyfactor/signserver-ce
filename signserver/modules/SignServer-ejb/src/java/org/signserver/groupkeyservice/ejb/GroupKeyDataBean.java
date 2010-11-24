@@ -50,7 +50,7 @@ import javax.persistence.TemporalType;
 @Table(name="groupkeydata")
 @NamedQueries(
 		{@NamedQuery(name="GroupKeyDataBean.findByDocumentId",query="SELECT a from GroupKeyDataBean a WHERE a.workerId=?1 AND a.documentID=?2 "),
-		 @NamedQuery(name="GroupKeyDataBean.findUnassignedKey",query="SELECT DISTINCT a from GroupKeyDataBean a WHERE a.workerId=?1 AND a.documentID IS NULL"),
+		 @NamedQuery(name="GroupKeyDataBean.findUnassignedKey",query="SELECT a from GroupKeyDataBean a WHERE a.workerId=?1 AND a.documentID IS NULL"),
 		 @NamedQuery(name="GroupKeyDataBean.findByCreationDate",query="SELECT a from GroupKeyDataBean a WHERE a.workerId=?1 AND a.creationDate>=?2 AND a.creationDate<=?3"),
 		 @NamedQuery(name="GroupKeyDataBean.findByFirstUsedDate",query="SELECT a from GroupKeyDataBean a WHERE a.workerId=?1 AND a.firstUsedDate>=?2 AND a.firstUsedDate<=?3"),
 		 @NamedQuery(name="GroupKeyDataBean.findByLastFetchedDate",query="SELECT a from GroupKeyDataBean a WHERE a.workerId=?1 AND a.lastFetchedDate>=?2 AND a.lastFetchedDate<=?3"),

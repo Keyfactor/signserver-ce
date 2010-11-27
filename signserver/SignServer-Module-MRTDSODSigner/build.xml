@@ -17,7 +17,7 @@
     <property name="modulename" value="mrtdsodsigner"/>
 
     <!-- Create MAR -->
-    <target name="-post-jar" depends="mrtdsodsignermar"/>
+    <target name="mar" depends="mrtdsodsignermar"/>
     <target name="mrtdsodsignermar">
 
         <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"

@@ -14,9 +14,11 @@ package org.signserver.common;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 /**
  * Request used for signing data groups hashes and requesting a signed SO(D)
@@ -31,9 +33,14 @@ import java.util.Map;
  */
 public class SODSignRequest extends ProcessRequest implements ISignRequest {
 
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(SODSignRequest.class);
+
     private static final long serialVersionUID = 1L;
     private int requestID; 
     private Map<Integer, byte[]> dataGroupHashes;
+    private String ldsVersion;
+    private String unicodeVersion;
 
     /**
      * Default constructor used during serialization.
@@ -74,6 +81,20 @@ public class SODSignRequest extends ProcessRequest implements ISignRequest {
         return dataGroupHashes;
     }
 
+    /**
+     * @return The requested LDS version or null
+     */
+    public String getLdsVersion() {
+        return ldsVersion;
+    }
+
+    /**
+     * @return The requested unicode version or null
+     */
+    public String getUnicodeVersion() {
+        return unicodeVersion;
+    }
+
     public void parse(DataInput in) throws IOException {
         in.readInt();
         this.requestID = in.readInt();
@@ -86,6 +107,18 @@ public class SODSignRequest extends ProcessRequest implements ISignRequest {
             in.readFully(value);
             dataGroupHashes.put(key, value);
         }
+        try {
+            ldsVersion = in.readUTF();
+            if (ldsVersion.isEmpty()) {
+                ldsVersion = null;
+            }
+            unicodeVersion = in.readUTF();
+            if (unicodeVersion.isEmpty()) {
+                unicodeVersion = null;
+            }
+        } catch (EOFException ignored) {
+            LOG.debug("No LDS version in request");
+        }
     }
 
     public void serialize(DataOutput out) throws IOException {
@@ -97,5 +130,7 @@ public class SODSignRequest extends ProcessRequest implements ISignRequest {
             out.writeInt(entry.getValue().length);
             out.write(entry.getValue());
         }
+        out.writeUTF(ldsVersion == null ? "" : ldsVersion);
+        out.writeUTF(unicodeVersion == null ? "" : unicodeVersion);
     }
 }

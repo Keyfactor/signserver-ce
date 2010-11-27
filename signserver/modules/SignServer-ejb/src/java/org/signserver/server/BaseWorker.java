@@ -38,7 +38,7 @@ public abstract class BaseWorker implements IWorker {
     /**
      * @return The global configuration session.
      */
-    protected final IGlobalConfigurationSession.IRemote
+    protected IGlobalConfigurationSession.IRemote
             getGlobalConfigurationSession() {
         if (globalConfig == null) {
             try {
@@ -50,7 +50,7 @@ public abstract class BaseWorker implements IWorker {
         }
         return globalConfig;
     }
-    
+
     //Private Property constants
     protected int workerId = 0;
     protected WorkerConfig config = null;

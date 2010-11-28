@@ -28,7 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
-import org.jmrtd.SODFile;
+import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;

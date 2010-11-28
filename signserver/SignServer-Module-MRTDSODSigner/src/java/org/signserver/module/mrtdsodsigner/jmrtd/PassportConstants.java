@@ -19,7 +19,7 @@
  *
  * $Id:PassportService.java 352 2008-05-19 06:55:21Z martijno $
  */
-package org.jmrtd;
+package org.signserver.module.mrtdsodsigner.jmrtd;
 
 /** Constants for Passport files, datagroups etc.
  * 

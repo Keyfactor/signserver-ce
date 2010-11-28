@@ -21,9 +21,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import javax.ejb.EJB;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -38,6 +37,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -73,13 +73,19 @@ public class SODProcessServlet extends HttpServlet {
     /** if encoding = binary values will not be base64 decoded before use */
     private static final String ENCODING_BINARY = "binary";
 
+    /** Request to use a specific LDS version in the SOd. **/
+    private static final String LDSVERSION_PROPERTY_NAME = "ldsVersion";
+
+    /** Request to put a specific unicode version in the SOd. **/
+    private static final String UNICODE_PROPERTY_NAME = "unicodeVersion";
+
+    @EJB
     private IWorkerSession.ILocal workersession;
 
     private IWorkerSession.ILocal getWorkerSession() {
         if (workersession == null) {
             try {
-                Context context = new InitialContext();
-                workersession = (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
+                workersession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
             } catch (NamingException e) {
                 log.error(e);
             }
@@ -108,6 +114,8 @@ public class SODProcessServlet extends HttpServlet {
         }
 
         int workerId = 1;
+        String ldsVersion = null;
+        String unicodeVersion = null;
 
         String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
         if(name != null){
@@ -188,6 +196,20 @@ public class SODProcessServlet extends HttpServlet {
                 log.debug("Received number of dataGroups: " + dataGroups.size());
             }
 
+            // LDS versioning
+            ldsVersion = req.getParameter(LDSVERSION_PROPERTY_NAME);
+            unicodeVersion = req.getParameter(UNICODE_PROPERTY_NAME);
+            if (ldsVersion != null && ldsVersion.trim().isEmpty()) {
+                ldsVersion = null;
+            }
+            if (unicodeVersion != null && unicodeVersion.trim().isEmpty()) {
+                unicodeVersion = null;
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Requested versions: LDS=" + ldsVersion
+                        + ", Unicode=" + unicodeVersion);
+            }
+
             // Get the client certificate, if any is passed in an https exchange, to be used for client authentication
             Certificate clientCertificate = null;
             Certificate[] certificates = (X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate");
@@ -198,7 +220,8 @@ public class SODProcessServlet extends HttpServlet {
             Random rand = new Random();
             int requestId = rand.nextInt();
 
-            SODSignRequest signRequest = new SODSignRequest(requestId, dataGroups);
+            final SODSignRequest signRequest = new SODSignRequest(requestId,
+                    dataGroups, ldsVersion, unicodeVersion);
             SODSignResponse response = null;
             try {
                 response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, new RequestContext((X509Certificate) clientCertificate, remoteAddr));

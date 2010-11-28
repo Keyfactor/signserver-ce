@@ -56,8 +56,26 @@ public class SODSignRequest extends ProcessRequest implements ISignRequest {
      * @param dataGroupHashes the dataData hashes to sign
      */
     public SODSignRequest(int requestID, Map<Integer, byte[]> dataGroupHashes) {
+        this(requestID, dataGroupHashes, null, null);
+    }
+
+    /**
+     * Constructs an instance of SODSignRequest using default algorithms and
+     * by specifying both LDS version and Unicode version.
+     *
+     * @param requestID a unique id of the request
+     * @param dataGroupHashes the dataData hashes to sign
+     * @param ldsVersion version of the LDS
+     * @param unicodeVersion version of Unicode
+     */
+    public SODSignRequest(final int requestID,
+            final Map<Integer, byte[]> dataGroupHashes,
+            final String ldsVersion, final String unicodeVersion) {
+        super();
         this.requestID = requestID;
         this.dataGroupHashes = dataGroupHashes;
+        this.ldsVersion = ldsVersion;
+        this.unicodeVersion = unicodeVersion;
     }
 
     /**

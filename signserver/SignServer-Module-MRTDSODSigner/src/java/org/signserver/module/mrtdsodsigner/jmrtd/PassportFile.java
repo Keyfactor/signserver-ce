@@ -20,7 +20,7 @@
  * Id: PassportFile.java 894 2009-03-23 15:50:46Z martijno 
  */
 
-package org.jmrtd;
+package org.signserver.module.mrtdsodsigner.jmrtd;
 
 
 /**

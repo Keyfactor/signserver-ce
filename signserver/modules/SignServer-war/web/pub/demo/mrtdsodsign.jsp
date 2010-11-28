@@ -25,18 +25,30 @@
             }
         </style>
         <script type="text/javascript">
-            function check()
-            {
-                if (document.recievefile.filerecievefile.value == '') {
-                    alert("You must select a file");
-                } else {
-                    return true;
+            function getRadioCheckedValue(radio_name) {
+                var oRadio = document.forms[0].elements[radio_name];
+                for(var i = 0; i < oRadio.length; i++) {
+                    if(oRadio[i].checked) {
+                        return oRadio[i].value;
+                    }
                 }
-                return false;
+                return '';
+            }
+            function ldsVersionChanged() {
+                var ldsVersionValue = getRadioCheckedValue('ldsVersion');
+                if (ldsVersionValue == "0108") {
+                    document.getElementById('unicodeField').disabled = '';
+                    if (document.getElementById('unicodeField').value == '') {
+                        document.getElementById('unicodeField').value = '040000';
+                    }
+                } else {
+                    document.getElementById('unicodeField').disabled = 'disabled';
+                    document.getElementById('unicodeField').value = '';
+                }
             }
         </script>
     </head>
-    <body>
+    <body onload="ldsVersionChanged()">
         <div id="container1">
             <%@include file="../WEB-INF/jspf/header.jspf" %>
             <%@include file="../WEB-INF/jspf/demo_menu.jspf" %>
@@ -73,6 +85,14 @@
                     Encoding of datagroups:<br/>
                     <input type="radio" name="encoding" value="binary"/>None<br/>
                     <input type="radio" name="encoding" value="base64" checked="checked"/>Base64
+                </p>
+
+                <p>
+                    Request LDS version:<br/>
+                    <input type="radio" name="ldsVersion" value="" id="ldsNo" checked="checked" onchange="ldsVersionChanged()"/><label for="ldsNo">Unspecified</label><br/>
+                    <input type="radio" name="ldsVersion" value="0107" id="lds0107" onchange="ldsVersionChanged()"/><label for="lds0107">V1.7</label><br/>
+                    <input type="radio" name="ldsVersion" value="0108" id="lds0108" onchange="ldsVersionChanged()"/><label for="lds0108">V1.8</label><br/>
+                    <label for="unicodeField">Unicode version:</label> <input type="text" size="6" name="unicodeVersion" id="unicodeField" value="040000"/>
                 </p>
 
                 <input type="submit" name="submit" value="Submit" /><br />

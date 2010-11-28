@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
-import org.jmrtd.SODFile;
+import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -78,6 +78,18 @@ public class MRTDSODSigner extends BaseSigner {
 
     /** Default value if the data group values should be hashed by the signer. */
     private static final String DEFAULT_DODATAGROUPHASHING = "false";
+
+    private static final String PROPERTY_LDSVERSION = "LDSVERSION";
+
+    private static final String REQUEST_LDSVERSION = "LDSVERSION";
+
+    private static final String DEFAULT_LDSVERSION = "0107";
+    
+    private static final String PROPERTY_UNICODEVERSION = "UNICODEVERSION";
+
+    private static final String REQUEST_UNICODEVERSION = "UNICODEVERSION";
+
+    private static final String DEFAULT_UNICODEVERSION = "040000";
 
     private static Object syncObj = new Object();
     
@@ -166,7 +178,47 @@ public class MRTDSODSigner extends BaseSigner {
         			}
 				}
         	}
-            sod = new SODFile(digestAlgorithm, digestEncryptionAlgorithm, dghashes, privKey, cert, provider);
+
+                // Version values from configuration
+                String ldsVersion = config.getProperty(PROPERTY_LDSVERSION,
+                        DEFAULT_LDSVERSION);
+                String unicodeVersion
+                        = config.getProperty(PROPERTY_UNICODEVERSION);
+
+                // Version values in request overrides configuration
+                final String ldsVersionRequest
+                        = sodRequest.getLdsVersion();
+                if (ldsVersionRequest != null) {
+                    ldsVersion = ldsVersionRequest;
+                }
+                final String unicodeVersionRequest
+                        = sodRequest.getUnicodeVersion();
+                if (unicodeVersionRequest != null) {
+                    unicodeVersion = unicodeVersionRequest;
+                }
+
+                // Check version
+                if ("0107".equals(ldsVersion)) {
+                    // LDS V1.7 does not supported the version fields
+                    ldsVersion = null;
+                    unicodeVersion = null;
+                } else if ("0108".equals(ldsVersion)) {
+                    // LDS V1.8 requires a unicode version
+                    if (unicodeVersion == null) {
+                        throw new IllegalRequestException(
+                        "Unicode version must be specified in LDS version 1.8");
+                    }
+                } else {
+                    throw new IllegalRequestException(
+                            "Unsupported LDS version: " + ldsVersion);
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("LDS version: " + ldsVersion
+                            + ", unicodeVerison: " + unicodeVersion);
+                }
+            sod = new SODFile(digestAlgorithm, digestEncryptionAlgorithm, 
+                    dghashes, privKey, cert, provider,
+                    ldsVersion, unicodeVersion);
         } catch (NoSuchAlgorithmException ex) {
             throw new SignServerException("Problem constructing SOD", ex);
         } catch (CertificateException ex) {

@@ -1131,6 +1131,8 @@ try {
                                         <li><b>dataGroup1 to dataGroup16</b> - The data group hashes that should be put in the SO(d). At least one required.</li>
                                         <li><b>encoding</b> - Encoding of the data group hash fields. Optional. By specifying "base64" SignServer Base64-decodes
                                         the data property before passing it to the MRTDSODSigner.</li>
+                                        <li><b>ldsVersion</b> - Request a specific LDS version: "0107" for V1.7 or "0108" for V1.8. Optional. If not specified the version from the configuration is used. If version is V1.8 unicodeVersion also needs to be specified.</li>
+                                        <li><b>unicodeVersion</b> - Unicode version to store in the SOd. Optional. Only supported if ldsVersion "0108" specified. Specify "040000" for Unicode version 4.0.0.</li>
                                     </ul>
                                 </td>
                             </tr>

@@ -180,10 +180,15 @@ public class MRTDSODSignerTest extends TestCase {
         final SODFile sod = signHelper(WORKER1, 12, dataGroups1, false,
                 "SHA256", "SHA256withRSA");
 
-        // ASN.1 Dump
+        // ASN.1 Dump SODFile
         ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(sod.getEncoded()));
         DERObject object = in.readObject();
         LOG.info("Object: " + ASN1Dump.dumpAsString(object, true));
+
+        // ANS.1 Dump LDSSecurityObject
+        in = new ASN1InputStream(new ByteArrayInputStream(sod.getSecurityObject()));
+        object = in.readObject();
+        LOG.info("LDSSecurityObject: " + ASN1Dump.dumpAsString(object, true));
 
         assertNull("LDS version", sod.getLdsVersion());
         assertNull("Unicode version", sod.getUnicodeVersion());
@@ -201,6 +206,11 @@ public class MRTDSODSignerTest extends TestCase {
         ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(sod.getEncoded()));
         DERObject object = in.readObject();
         LOG.info("Object: " + ASN1Dump.dumpAsString(object, true));
+
+        // ANS.1 Dump LDSSecurityObject
+        in = new ASN1InputStream(new ByteArrayInputStream(sod.getSecurityObject()));
+        object = in.readObject();
+        LOG.info("LDSSecurityObject: " + ASN1Dump.dumpAsString(object, true));
 
         assertEquals("LDS version", "0108", sod.getLdsVersion());
         assertEquals("Unicode version", "040000", sod.getUnicodeVersion());

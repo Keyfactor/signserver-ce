@@ -185,10 +185,10 @@ public class MRTDSODSignerTest extends TestCase {
         DERObject object = in.readObject();
         LOG.info("Object: " + ASN1Dump.dumpAsString(object, true));
 
-        // ANS.1 Dump LDSSecurityObject
-        in = new ASN1InputStream(new ByteArrayInputStream(sod.getSecurityObject()));
-        object = in.readObject();
-        LOG.info("LDSSecurityObject: " + ASN1Dump.dumpAsString(object, true));
+//        // ANS.1 Dump LDSSecurityObject
+//        in = new ASN1InputStream(new ByteArrayInputStream(sod.getSecurityObject()));
+//        object = in.readObject();
+//        LOG.info("LDSSecurityObject: " + ASN1Dump.dumpAsString(object, true));
 
         assertNull("LDS version", sod.getLdsVersion());
         assertNull("Unicode version", sod.getUnicodeVersion());
@@ -207,10 +207,10 @@ public class MRTDSODSignerTest extends TestCase {
         DERObject object = in.readObject();
         LOG.info("Object: " + ASN1Dump.dumpAsString(object, true));
 
-        // ANS.1 Dump LDSSecurityObject
-        in = new ASN1InputStream(new ByteArrayInputStream(sod.getSecurityObject()));
-        object = in.readObject();
-        LOG.info("LDSSecurityObject: " + ASN1Dump.dumpAsString(object, true));
+//        // ANS.1 Dump LDSSecurityObject
+//        in = new ASN1InputStream(new ByteArrayInputStream(sod.getSecurityObject()));
+//        object = in.readObject();
+//        LOG.info("LDSSecurityObject: " + ASN1Dump.dumpAsString(object, true));
 
         assertEquals("LDS version", "0108", sod.getLdsVersion());
         assertEquals("Unicode version", "040000", sod.getUnicodeVersion());

@@ -3,13 +3,9 @@ package org.signserver.module.mrtdsodsigner.bc.asn1.icao;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.x509.X509CertificateStructure;
 
 /**
  * The LDS and Unicode version information.

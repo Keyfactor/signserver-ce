@@ -81,7 +81,7 @@
     <target name="-set-from-file" unless="var.APPSRV_HOME">
         <!-- Read properties from the main SignServer configuration if available -->
         <property file="${user.home}/signserver_build.properties" />
-        <property file="modules/../signserver_build.properties" />
+        <property file="../../signserver_build.properties" />
         <echo message="appserver.home = ${appserver.home}"/>
         <!-- JBoss -->
         <available file="${appserver.home}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${appserver.home}" />

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sun-ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Application Server 9.1.1 EJB 3.0//EN" "http://www.sun.com/software/appserver/dtds/sun-ejb-jar_3_0-1.dtd">
+<sun-ejb-jar>
+  <enterprise-beans>
+    <unique-id>0</unique-id>
+    <ejb>
+      <ejb-name>ValidationWS</ejb-name>
+      <ejb-ref>
+        <ejb-ref-name>org.signserver.protocol.validationservice.ws.server.ValidationWS/globalconfigsession</ejb-ref-name>
+        <jndi-name>org.signserver.ejb.interfaces.IGlobalConfigurationSession$IRemote</jndi-name>
+      </ejb-ref>
+      <ejb-ref>
+        <ejb-ref-name>org.signserver.protocol.validationservice.ws.server.ValidationWS/signserversession</ejb-ref-name>
+        <jndi-name>org.signserver.ejb.interfaces.IWorkerSession$IRemote</jndi-name>
+      </ejb-ref>
+      <resource-ref>
+        <res-ref-name>org.signserver.protocol.validationservice.ws.server.ValidationWS/wsContext</res-ref-name>
+        <jndi-name>org.signserver.protocol.validationservice.ws.server.ValidationWS/wsContext</jndi-name>
+      </resource-ref>
+      <pass-by-reference>false</pass-by-reference>
+      <is-read-only-bean>false</is-read-only-bean>
+      <refresh-period-in-seconds>-1</refresh-period-in-seconds>
+      <cmt-timeout-in-seconds>0</cmt-timeout-in-seconds>
+      <gen-classes/>
+      <webservice-endpoint>
+        <port-component-name>ValidationWS</port-component-name>
+        <endpoint-address-uri>/signserver/ValidationWSService/ValidationWS</endpoint-address-uri>
+        <service-qname>
+          <namespaceURI>gen.ws.validationservice.protocol.signserver.org</namespaceURI>
+          <localpart>ValidationWSService</localpart>
+        </service-qname>
+        <debugging-enabled>true</debugging-enabled>
+      </webservice-endpoint>
+      <per-request-load-balancing>false</per-request-load-balancing>
+    </ejb>
+  </enterprise-beans>
+</sun-ejb-jar>
+

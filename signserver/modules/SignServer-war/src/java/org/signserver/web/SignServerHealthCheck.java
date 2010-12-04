@@ -13,8 +13,6 @@
 
 package org.signserver.web;
 
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.Iterator;
 
 import javax.naming.Context;
@@ -24,14 +22,13 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.ejbca.core.ejb.JNDINames;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
-import org.ejbca.util.JDBCUtil;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.healthcheck.HealthCheckUtils;
 
 
 
@@ -97,9 +94,9 @@ public class SignServerHealthCheck implements IHealthCheck {
 		LOG.debug("Starting HealthCheck health check requested by : " + request.getRemoteAddr());
 		String errormessage = "";
 		
-		errormessage += checkDB(checkDBString);
+		errormessage += HealthCheckUtils.checkDB(checkDBString);
 		if(errormessage.equals("")){
-		  errormessage += checkMemory(minfreememory);								
+		  errormessage += HealthCheckUtils.checkMemory(minfreememory);
 		  errormessage += checkSigners();	
 		
 		}
@@ -110,32 +107,6 @@ public class SignServerHealthCheck implements IHealthCheck {
 		}
 		
 		return errormessage;
-	}
-	
-	public static String checkMemory(int minfreememory){
-		String retval = "";
-        if(minfreememory >= Runtime.getRuntime().freeMemory()){
-          retval = "\nError Virtual Memory is about to run out, currently free memory :" + Runtime.getRuntime().freeMemory();	
-        }		
-		
-		return retval;
-	}
-	
-	public static String checkDB(String checkDBString){
-		String retval = "";
-		Connection con = null;
-		try{	
-		  con = JDBCUtil.getDBConnection(JNDINames.DATASOURCE);
-		  Statement statement = con.createStatement();
-		  statement.execute(checkDBString);	
-		  statement.close();
-		}catch(Exception e){
-			retval = "\nError creating connection to SignServer Database.";
-			LOG.error("Error creating connection to SignServer Database.",e);
-		} finally {
-			JDBCUtil.close(con);			
-		}
-		return retval;
 	}
  	
 	private String checkSigners(){

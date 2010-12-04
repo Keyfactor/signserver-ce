@@ -30,6 +30,8 @@
        <property name="validationClientBuild" value="${bin}/validationClient"/>
        <property name="validationClientDir" value="${client.dist.dir}/validationclient"/>
        <property name="validationClientJar" value="${validationClientDir}/validate.jar"/>
+       <property name="signserverws.dir" value="./modules/SignServer-ejb-SignServerWS"/>
+       <property name="signserverws-ejb.jar" value="${signserverws.dir}/dist/SignServer-ejb-SignServerWS.jar"/>
        <property name="adminws.dir" value="./modules/SignServer-AdminWS"/>
        <property name="adminws.dist.dir" value="${adminws.dir}/dist"/>
        <property name="adminws.build.dir" value="${adminws.dir}/build"/>
@@ -477,25 +479,11 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 
 			  </wsgen>
 		</target>
-		
-	    <target name="signserverws.war" depends="ws.gen.server, ws.gen.client" if="signserverws.conditionenabled" unless="buildMailSigner">
-	        <copy todir="${tmp}/jaxws/gen-classes/server">
-	    	  <fileset dir="${build}">
-	            <include name="org/signserver/protocol/ws/*.class"/> 
-	    	  	<include name="org/signserver/protocol/ws/server/*.class"/>  
-	          </fileset>
-	        </copy>	
-	    	
-	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@signserverws.war@-->" value="module>&lt;web>&lt;web-uri>signserverws.war&lt;/web-uri>&lt;context-root>/signserver/signserverws&lt;/context-root>&lt;/web>&lt;/module>"/>
-	        <war warfile="${server.dist.dir}/signserverws.war" webxml="${signserverwswebxml}">
-	            <webinf dir="src/jaxws" includes="sun-jaxws.xml"/>
-	            <!-- <zipfileset
-	                    dir="tmp/jaxws/wsdl"
-	                    includes="*.wsdl, *.xsd"
-	                    prefix="WEB-INF/wsdl"/> -->
-	            <classes dir="${tmp}/jaxws/gen-classes/server"/>
-	         <!--<lib dir="lib/jaxws" includes="*.jar" />     --> 
-	        </war>
+
+            <!-- SignServerWS -->
+	    <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled" unless="buildMailSigner">
+                <ant antfile="${signserverws.dir}/build.xml" target="dist" inheritall="false"/>
+	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@signserverws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-SignServerWS.jar&lt;/ejb>&lt;/module>"/>
 	    </target>
 		
 		
@@ -632,7 +620,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws.war, validationws.war, adminws, signserverws.client, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws.war, adminws, signserverws.client, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />
@@ -658,6 +646,9 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	            </fileset>
                     <zipfileset dir="${adminws.dist.dir}" includes="*.war"
                         erroronmissingdir="false" />
+
+                    <!-- Include SignServerWS -->
+                    <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"/>
 
                     <!-- Modules can be placed in dist-server/lib to be included in ear -->
                     <zipfileset dir="${server.dist.dir}/lib" includes="*.jar" prefix="lib"/>

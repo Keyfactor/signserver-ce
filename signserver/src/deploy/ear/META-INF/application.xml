@@ -11,6 +11,10 @@
     <module>
         <ejb>signserver-ejb.jar</ejb>
     </module>
+    <!--@signserverws-ejb.jar@-->
+   <!--<module>
+        <ejb>SignServer-ejb-SignServerWS.jar</ejb>
+    </module>-->
     <module>
         <web>
             <web-uri>web.war</web-uri>

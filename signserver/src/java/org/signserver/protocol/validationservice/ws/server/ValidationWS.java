@@ -40,6 +40,7 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.validationservice.ws.IValidationWS;
 import org.signserver.protocol.validationservice.ws.ValidationResponse;
 import org.signserver.validationservice.common.ICertificate;
@@ -48,7 +49,6 @@ import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.ValidationStatus;
 import org.signserver.validationservice.server.ICertificateManager;
 import org.signserver.validationservice.server.ValidationServiceWorker;
-import org.signserver.web.SignServerHealthCheck;
 
 
 
@@ -149,9 +149,9 @@ public class ValidationWS implements IValidationWS {
 		
 		String errormessage = "";
 		
-		errormessage += SignServerHealthCheck.checkDB(getCheckDBString());
+		errormessage += HealthCheckUtils.checkDB(getCheckDBString());
 		if(errormessage.equals("")){
-		  errormessage += SignServerHealthCheck.checkMemory(getMinimumFreeMemory());										  	
+		  errormessage += HealthCheckUtils.checkMemory(getMinimumFreeMemory());
 		
 		}
 		

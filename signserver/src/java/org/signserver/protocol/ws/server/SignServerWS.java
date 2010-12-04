@@ -48,6 +48,7 @@ import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.ws.Certificate;
 import org.signserver.protocol.ws.ISignServerWS;
 import org.signserver.protocol.ws.ProcessRequestWS;
@@ -85,9 +86,9 @@ public class SignServerWS implements ISignServerWS {
 		
 		String errormessage = "";
 		
-		errormessage += SignServerHealthCheck.checkDB(getCheckDBString());
+		errormessage += HealthCheckUtils.checkDB(getCheckDBString());
 		if(errormessage.equals("")){
-		  errormessage += SignServerHealthCheck.checkMemory(getMinimumFreeMemory());										  	
+		  errormessage += HealthCheckUtils.checkMemory(getMinimumFreeMemory());
 		
 		}
 		

@@ -108,5 +108,5 @@
         <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
         <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
     </target>
-    
+
 </project>

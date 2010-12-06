@@ -35,9 +35,17 @@
         <servlet-name>WS31Dispatcher</servlet-name>
         <servlet-class>org.signserver.web.WS31Dispatcher</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Validation31Dispatcher</servlet-name>
+        <servlet-class>org.signserver.web.Validation31Dispatcher</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>WS31Dispatcher</servlet-name>
         <url-pattern>/signserverws/signserverws</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Validation31Dispatcher</servlet-name>
+        <url-pattern>/validationws/validationws</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GenericProcessServlet</servlet-name>

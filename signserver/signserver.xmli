@@ -32,6 +32,8 @@
        <property name="validationClientJar" value="${validationClientDir}/validate.jar"/>
        <property name="signserverws.dir" value="./modules/SignServer-ejb-SignServerWS"/>
        <property name="signserverws-ejb.jar" value="${signserverws.dir}/dist/SignServer-ejb-SignServerWS.jar"/>
+       <property name="validationws.dir" value="./modules/SignServer-ejb-ValidationWS"/>
+       <property name="validationws-ejb.jar" value="${validationws.dir}/dist/SignServer-ejb-ValidationWS.jar"/>
        <property name="adminws.dir" value="./modules/SignServer-AdminWS"/>
        <property name="adminws.dist.dir" value="${adminws.dir}/dist"/>
        <property name="adminws.build.dir" value="${adminws.dir}/build"/>
@@ -485,7 +487,12 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 <ant antfile="${signserverws.dir}/build.xml" target="dist" inheritall="false"/>
 	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@signserverws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-SignServerWS.jar&lt;/ejb>&lt;/module>"/>
 	    </target>
-		
+
+            <!-- ValidationWS -->
+	    <target name="validationws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled" unless="buildMailSigner">
+                <ant antfile="${validationws.dir}/build.xml" target="dist" inheritall="false"/>
+	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@validationws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-ValidationWS.jar&lt;/ejb>&lt;/module>"/>
+	    </target>
 		
 	    <target name="ws.gen.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
 	        <wsimport 
@@ -594,22 +601,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	        </classpath>
          </wsgen>
 	  </target>
-
-	  <target name="validationws.war" depends="validationws.gen.server, validationws.gen.client" if="validationws.conditionenabled" unless="buildMailSigner">
-	     <copy todir="${tmp}/validationws/gen-classes/server">
-	        <fileset dir="${build}">
-	        	<include name="org/signserver/protocol/validationservice/ws/*.class"/> 
-	        	<include name="org/signserver/protocol/validationservice/ws/server/*.class"/>  
-	        </fileset>
-	    </copy>	
-	        	    	
-	    <replace file="${eardd.src}/META-INF/application.xml" token="!--@validationws.war@-->" value="module>&lt;web>&lt;web-uri>validationws.war&lt;/web-uri>&lt;context-root>/signserver/validationws&lt;/context-root>&lt;/web>&lt;/module>"/>
-	    <war warfile="${server.dist.dir}/validationws.war" webxml="${validationwswebxml}">
-	        <webinf dir="src/validationws" includes="sun-jaxws.xml"/>
-	        	<classes dir="${tmp}/validationws/gen-classes/server"/>
-	        	<!--<lib dir="lib/jaxws" includes="*.jar" />     -->   		
-	    </war>
-	   </target>
 	        			        		
 	   <target name="validationws.gen.client" depends="validationws.init, validationws.gen.server" if="validationws.conditionenabled" unless="buildMailSigner">	    	
 	      <wsimport destdir="${tmp}/validationws/gen-classes/client"
@@ -620,7 +611,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws.war, adminws, signserverws.client, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws, signserverws.client, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />
@@ -637,9 +628,9 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	            <!-- <zipfileset dir="lib/module/tsa/${client.java.target}" includes="bctsp-jdk.jar" prefix="lib"/> -->
 	            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>
-	            <zipfileset dir="lib/jaxws/" includes="*.jar" prefix="lib" >
-                     <include name="*.jar" if="includejaxws" />
-                  </zipfileset>
+	            <!-- <zipfileset dir="lib/jaxws/" includes="*.jar" prefix="lib" >
+                            <include name="*.jar" if="includejaxws" />
+                        </zipfileset> -->
 	            <fileset dir="${server.dist.dir}">
 	                <include name="*-ejb.jar" />
 	                <include name="*.war" />
@@ -649,6 +640,9 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 
                     <!-- Include SignServerWS -->
                     <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"/>
+
+                    <!-- Include ValidationWS -->
+                    <zipfileset dir="${validationws.dir}/dist" includes="*.jar"/>
 
                     <!-- Modules can be placed in dist-server/lib to be included in ear -->
                     <zipfileset dir="${server.dist.dir}/lib" includes="*.jar" prefix="lib"/>

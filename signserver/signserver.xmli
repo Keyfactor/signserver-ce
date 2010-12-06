@@ -666,7 +666,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	<antcall target="showtime" />
     </target>
 	
-    <target name="test:signserver:compile" description="compile JUnit testcases" depends="ws.compile.client" unless="buildMailSigner">
+    <target name="test:signserver:compile" description="compile JUnit testcases" depends="ws.compile.client, -test:signserver:compile:validationws" unless="buildMailSigner">
         <mkdir dir="${test.dir}" />       
         <javac srcdir="${test.src.dir}" destdir="${test.dir}" debug="on" includeantruntime="no" encoding="iso8859-1"  target="${server.java.target}" source="${server.java.target}">
             <classpath refid="signserver.test.compile.classpath" />
@@ -684,6 +684,15 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 
         <!-- jndi.properties needs to be in the classpath -->
         <copy file="${src.java}/jndi.properties" todir="${test.dir}" />
+    </target>
+
+    <target name="-test:signserver:compile:validationws" depends="validationws.gen.server, validationws.gen.client" if="validationws.conditionenabled" unless="buildMailSigner">
+	     <copy todir="${tmp}/validationws/gen-classes/server">
+	        <fileset dir="${build}">
+	        	<include name="org/signserver/protocol/validationservice/ws/*.class"/>
+	        	<include name="org/signserver/protocol/validationservice/ws/server/*.class"/>
+	        </fileset>
+	    </copy>
     </target>
 
     <target name="test:signserver:pre-run">

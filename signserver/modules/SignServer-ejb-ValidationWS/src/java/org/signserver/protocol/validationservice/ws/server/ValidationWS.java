@@ -230,12 +230,12 @@ public class ValidationWS implements IValidationWS {
 	}
 
         @EJB
-	private IWorkerSession.IRemote signserversession;
+	private IWorkerSession.ILocal signserversession;
 	
-    private IWorkerSession.IRemote getWorkerSession(){
+    private IWorkerSession.ILocal getWorkerSession(){
     	if(signserversession == null){
     		try{
-    		  signserversession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
+    		  signserversession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
     		}catch(NamingException e){
     			log.error(e);
     		}
@@ -245,12 +245,12 @@ public class ValidationWS implements IValidationWS {
     }
 
     @EJB
-    private IGlobalConfigurationSession.IRemote globalconfigsession;
+    private IGlobalConfigurationSession.ILocal globalconfigsession;
 	
-    private IGlobalConfigurationSession.IRemote getGlobalConfigurationSession(){
+    private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession(){
     	if(globalconfigsession == null){
     		try{
-                  globalconfigsession = ServiceLocator.getInstance().lookupRemote(IGlobalConfigurationSession.IRemote.class);
+                  globalconfigsession = ServiceLocator.getInstance().lookupLocal(IGlobalConfigurationSession.ILocal.class);
     		}catch(NamingException e){
     			log.error(e);
     		}

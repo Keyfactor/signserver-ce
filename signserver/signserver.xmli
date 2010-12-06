@@ -628,9 +628,9 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	            <!-- <zipfileset dir="lib/module/tsa/${client.java.target}" includes="bctsp-jdk.jar" prefix="lib"/> -->
 	            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>
-	            <!-- <zipfileset dir="lib/jaxws/" includes="*.jar" prefix="lib" >
-                            <include name="*.jar" if="includejaxws" />
-                        </zipfileset> -->
+	            <zipfileset dir="lib/jaxws/" includes="*.jar" prefix="lib" >
+                        <include name="*.jar" if="includejaxws" />
+                    </zipfileset>
 	            <fileset dir="${server.dist.dir}">
 	                <include name="*-ejb.jar" />
 	                <include name="*.war" />

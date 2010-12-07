@@ -16,7 +16,7 @@ package org.signserver.common;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.Externalizable;
+import java.io.Serializable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -30,7 +30,7 @@ import java.io.ObjectOutput;
  * $Id$
  */
 
-public abstract class ProcessResponse implements Externalizable {
+public abstract class ProcessResponse implements Serializable {
 	
 
 	   /**

@@ -16,6 +16,7 @@ package org.signserver.validationservice.common;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import org.signserver.validationservice.server.ICertificateManager;
  * @version $Id$
  */
 
-public class Validation {
+public class Validation implements Serializable {
 
 	private transient Logger log = Logger.getLogger(this.getClass());
 
@@ -200,7 +201,7 @@ public class Validation {
 	}
 
 	public void parse(DataInput in) throws IOException {
-		validationDate = new Date(in.readLong());
+            validationDate = new Date(in.readLong());
 		int size = in.readInt();
 		certificateData = new byte[size];
 		in.readFully(certificateData);

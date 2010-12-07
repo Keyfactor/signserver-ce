@@ -182,8 +182,8 @@ public class GenericValidationResponse extends ProcessResponse {
 	public void serialize(DataOutput out) throws IOException {
 		log.debug(">serlialize");
 		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GENERICVALIDATION);
-		out.writeInt(this.requestID);
-		out.writeBoolean(this.valid);
+                out.writeInt(this.requestID);
+                out.writeBoolean(this.valid);
 
 		if (certificateValidateResponse != null) {
                     ByteArrayOutputStream resOut = new ByteArrayOutputStream();

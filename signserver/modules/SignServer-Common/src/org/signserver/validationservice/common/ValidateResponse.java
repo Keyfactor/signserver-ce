@@ -15,6 +15,7 @@ package org.signserver.validationservice.common;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import org.apache.log4j.Logger;
 
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestAndResponseManager;
@@ -30,8 +31,12 @@ import org.signserver.common.RequestAndResponseManager;
 public class ValidateResponse extends ProcessResponse{
 	private static final long serialVersionUID = 1L;
 
-	private transient Validation validation;
-	private transient String[] validCertificatePurposes;
+        /** Logger for this class. */
+        private static final Logger LOG
+                = Logger.getLogger(ValidateResponse.class);
+
+	private Validation validation;
+	private String[] validCertificatePurposes;
 	
     /**
      * Default constructor used during serialization

@@ -252,11 +252,11 @@ public class GroupKeyDataService {
 				TimeRemoveGroupKeyRequest timeReq = (TimeRemoveGroupKeyRequest) request;			
 				Query q = null;
 				if(timeReq.getType() == TimeRemoveGroupKeyRequest.TYPE_CREATIONDATE){
-					q = em.createQuery ("DELETE GroupKeyDataBean a WHERE a.workerId = :workerId AND a.creationDate >= :beginDate AND a.creationDate <= :endDate");
+					q = em.createQuery ("DELETE FROM GroupKeyDataBean a WHERE a.workerId = :workerId AND a.creationDate >= :beginDate AND a.creationDate <= :endDate");
 				}else if(timeReq.getType() == TimeRemoveGroupKeyRequest.TYPE_FIRSTUSEDDATE){
-					q = em.createQuery ("DELETE GroupKeyDataBean a WHERE a.workerId = :workerId AND a.firstUsedDate >= :beginDate AND a.firstUsedDate <= :endDate");
+					q = em.createQuery ("DELETE FROM GroupKeyDataBean a WHERE a.workerId = :workerId AND a.firstUsedDate >= :beginDate AND a.firstUsedDate <= :endDate");
 				}else if(timeReq.getType() == TimeRemoveGroupKeyRequest.TYPE_LASTFETCHEDDATE){
-					q = em.createQuery ("DELETE GroupKeyDataBean a WHERE a.workerId = :workerId AND a.lastFetchedDate >= :beginDate AND a.lastFetchedDate <= :endDate");
+					q = em.createQuery ("DELETE FROM GroupKeyDataBean a WHERE a.workerId = :workerId AND a.lastFetchedDate >= :beginDate AND a.lastFetchedDate <= :endDate");
 				}else{
 					throw new IllegalRequestException("Unsupported type " + timeReq.getType() + " in TimeRemoveGroupKeyRequest");
 				}
@@ -266,7 +266,7 @@ public class GroupKeyDataService {
 				int deleted = q.executeUpdate ();
 				retval = new RemoveGroupKeyResponse(true,deleted);
 			}catch(RuntimeException e){
-				log.error(e);
+				log.error(e, e);
 				retval = new RemoveGroupKeyResponse(false,0);
 			}
 		}else{

@@ -34,7 +34,7 @@ import org.signserver.groupkeyservice.common.TimeRemoveGroupKeyRequest;
  */
 public class RemoveGroupKeysCommand extends BaseGroupKeyServiceCommand {
 	
-	SimpleDateFormat dateFormat = new SimpleDateFormat();	
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
     /**
      * Creates a new instance of SetPropertyCommand

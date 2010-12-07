@@ -325,12 +325,12 @@ public class TestSignServerCLI extends TestCase {
 				"pregeneratekeys", "" + TESTGSID, "1000"});
 		assertTrue(TestUtils.grepTempOut("1000 Pregenerated successfully"));
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String startDate = dateFormat.format(new Date(0));
 		String endDate = dateFormat.format(new Date(System.currentTimeMillis() + 120000));
 		
 		TestUtils.assertSuccessfulExecution(new String[] {"groupkeyservice",
-				"removegroupkeys", "" + TESTGSID, "created", startDate, endDate});		
+				"removegroupkeys", "" + TESTGSID, "created", startDate, endDate});
 		assertTrue(TestUtils.grepTempOut("1102 Group keys removed"));
 		
 		TestUtils.assertSuccessfulExecution(new String[] {"groupkeyservice",
@@ -423,7 +423,7 @@ public class TestSignServerCLI extends TestCase {
 		
 		TestingSecurityManager.remove();
 	}
-	
 
+	
 
 }

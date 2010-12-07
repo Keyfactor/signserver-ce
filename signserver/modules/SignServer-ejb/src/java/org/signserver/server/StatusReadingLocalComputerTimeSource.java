@@ -14,6 +14,7 @@ package org.signserver.server;
 
 import java.util.Date;
 import java.util.Properties;
+import javax.ejb.EJB;
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
@@ -37,6 +38,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     private static final String INSYNC = "INSYNC";
 
     /** Status repository session. */
+    @EJB
     private transient IStatusRepositorySession.ILocal statusSession;
 
 

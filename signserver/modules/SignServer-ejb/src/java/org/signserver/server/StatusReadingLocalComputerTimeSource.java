@@ -39,7 +39,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
 
     /** Status repository session. */
     @EJB
-    private transient IStatusRepositorySession.ILocal statusSession;
+    private transient IStatusRepositorySession.IRemote statusSession;
 
 
     /**
@@ -48,8 +48,8 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
      */
     public void init(final Properties props) {
         try {
-            statusSession = ServiceLocator.getInstance().lookupLocal(
-                        IStatusRepositorySession.ILocal.class);
+            statusSession = ServiceLocator.getInstance().lookupRemote(
+                        IStatusRepositorySession.IRemote.class);
         } catch (Exception ex) {
             LOG.error("Looking up status repository session", ex);
         }

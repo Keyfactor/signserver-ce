@@ -619,13 +619,15 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	            	 <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
 	                 subdirectories though so we must flatten the structure. zipfileset is a good was of flattening the structure, so 
 	                 all jar files is directly in lib directory in the ear file -->
-	            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,commons-lang-2.4.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar,commons-logging.jar" prefix="lib"/>
+	            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,commons-lang-2.4.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar,commons-logging.jar,commons-collections-3.2.jar" prefix="lib"/>
 	            <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
                     <zipfileset dir="lib/ext/ejb" includes="hibernate-entitymanager.jar" prefix="lib"/>
+                    <zipfileset dir="lib/ext/ejb" includes="hibernate-annotations.jar" prefix="lib"/>
+                    <zipfileset dir="lib/ext/ejb" includes="hibernate3.jar" prefix="lib"/>
 	            <zipfileset dir="lib/module/pdfsigner/itext" includes="*.jar"  prefix="lib"/>
 	            <zipfileset dir="lib/module/odfsigner" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/module/ooxmlsigner" includes="*.jar" prefix="lib"/>
-                    <zipfileset dir="lib/module/wsra" includes="dom4j.jar" prefix="lib"/>
+                    <zipfileset dir="lib/module/wsra" includes="dom4j.jar,antlr.jar,cglib.jar" prefix="lib"/>
 	            <!-- <zipfileset dir="lib/module/tsa/${client.java.target}" includes="bctsp-jdk.jar" prefix="lib"/> -->
 	            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>

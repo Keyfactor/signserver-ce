@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server.cryptotokens;
  
 import java.io.ByteArrayInputStream;
@@ -39,8 +38,6 @@ import java.util.Collection;
 import java.util.Properties;
 import javax.ejb.EJB;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;

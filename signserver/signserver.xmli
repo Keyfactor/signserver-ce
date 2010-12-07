@@ -625,6 +625,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	            <zipfileset dir="lib/module/pdfsigner/itext" includes="*.jar"  prefix="lib"/>
 	            <zipfileset dir="lib/module/odfsigner" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/module/ooxmlsigner" includes="*.jar" prefix="lib"/>
+                    <zipfileset dir="lib/module/wsra" includes="dom4j.jar" prefix="lib"/>
 	            <!-- <zipfileset dir="lib/module/tsa/${client.java.target}" includes="bctsp-jdk.jar" prefix="lib"/> -->
 	            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
 	            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>

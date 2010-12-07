@@ -7,6 +7,7 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import org.signserver.cli.CommonAdminInterface;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.clusterclassloader.MARFileParser;
@@ -45,6 +46,13 @@ public class TestDummyWS extends TestCase {
 				signserverhome +"/dist-server/dummyws.mar", "junittest"});		
 	    assertTrue(TestUtils.grepTempOut("Loading module DUMMYWS"));
 	    assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+
+            sSSession.setWorkerProperty(WORKERID, 
+                    "hibernate.connection.datasource", 
+                    CompileTimeSettings.getInstance().getProperty(
+                        CompileTimeSettings.DATASOURCE_JNDINAMEPREFIX)
+                    + CompileTimeSettings.getInstance().getProperty(
+                    CompileTimeSettings.DATASOURCE_JNDINAME));
 
 	    sSSession.reloadConfiguration(WORKERID);
 	}

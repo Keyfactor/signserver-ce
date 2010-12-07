@@ -37,6 +37,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Collection;
 import java.util.Properties;
+import javax.ejb.EJB;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -56,6 +57,7 @@ import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.ServiceLocator;
 import org.signserver.server.PropertyFileStore;
 
 
@@ -275,13 +277,14 @@ public class SoftCryptoToken implements ICryptoToken {
 		log.error("destroyKey method isn't supported");
 		return false;
 	}
+
+        @EJB
+	private IWorkerSession.IRemote workerSession;
 	
-	private IWorkerSession.ILocal workerSession;
-	
-    protected IWorkerSession.ILocal getWorkerSession() throws NamingException{
-    	if(workerSession == null){    		
-    		  Context context = new InitialContext();
-    		  workerSession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
+    protected IWorkerSession.IRemote getWorkerSession() throws NamingException{
+    	if(workerSession == null){
+            workerSession = ServiceLocator.getInstance().lookupRemote(
+                    IWorkerSession.IRemote.class);
     	}
     	
     	return workerSession;

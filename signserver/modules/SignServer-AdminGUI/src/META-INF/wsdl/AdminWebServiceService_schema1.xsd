@@ -1,632 +1,630 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema version="1.0" targetNamespace="http://adminws.signserver.org/" xmlns:tns="http://adminws.signserver.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<?xml version="1.0" encoding="UTF-8"?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.3.3-hudson-757-SNAPSHOT. --><xs:schema xmlns:tns="http://adminws.signserver.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://adminws.signserver.org/">
 
-  <xs:element name="AdminNotAuthorizedException" type="tns:AdminNotAuthorizedException"/>
+<xs:element name="AdminNotAuthorizedException" type="tns:AdminNotAuthorizedException"></xs:element>
 
-  <xs:element name="CryptoTokenAuthenticationFailureException" type="tns:CryptoTokenAuthenticationFailureException"/>
+<xs:element name="CryptoTokenAuthenticationFailureException" type="tns:CryptoTokenAuthenticationFailureException"></xs:element>
 
-  <xs:element name="CryptoTokenOfflineException" type="tns:CryptoTokenOfflineException"/>
+<xs:element name="CryptoTokenOfflineException" type="tns:CryptoTokenOfflineException"></xs:element>
 
-  <xs:element name="IllegalRequestException" type="tns:IllegalRequestException"/>
+<xs:element name="IllegalRequestException" type="tns:IllegalRequestException"></xs:element>
 
-  <xs:element name="InvalidWorkerIdException" type="tns:InvalidWorkerIdException"/>
+<xs:element name="InvalidWorkerIdException" type="tns:InvalidWorkerIdException"></xs:element>
 
-  <xs:element name="KeyStoreException" type="tns:KeyStoreException"/>
+<xs:element name="KeyStoreException" type="tns:KeyStoreException"></xs:element>
 
-  <xs:element name="ResyncException" type="tns:ResyncException"/>
+<xs:element name="ResyncException" type="tns:ResyncException"></xs:element>
 
-  <xs:element name="activateSigner" type="tns:activateSigner"/>
+<xs:element name="activateSigner" type="tns:activateSigner"></xs:element>
 
-  <xs:element name="activateSignerResponse" type="tns:activateSignerResponse"/>
+<xs:element name="activateSignerResponse" type="tns:activateSignerResponse"></xs:element>
 
-  <xs:element name="addAuthorizedClient" type="tns:addAuthorizedClient"/>
+<xs:element name="addAuthorizedClient" type="tns:addAuthorizedClient"></xs:element>
 
-  <xs:element name="addAuthorizedClientResponse" type="tns:addAuthorizedClientResponse"/>
+<xs:element name="addAuthorizedClientResponse" type="tns:addAuthorizedClientResponse"></xs:element>
 
-  <xs:element name="deactivateSigner" type="tns:deactivateSigner"/>
+<xs:element name="deactivateSigner" type="tns:deactivateSigner"></xs:element>
 
-  <xs:element name="deactivateSignerResponse" type="tns:deactivateSignerResponse"/>
+<xs:element name="deactivateSignerResponse" type="tns:deactivateSignerResponse"></xs:element>
 
-  <xs:element name="destroyKey" type="tns:destroyKey"/>
+<xs:element name="destroyKey" type="tns:destroyKey"></xs:element>
 
-  <xs:element name="destroyKeyResponse" type="tns:destroyKeyResponse"/>
+<xs:element name="destroyKeyResponse" type="tns:destroyKeyResponse"></xs:element>
 
-  <xs:element name="generateSignerKey" type="tns:generateSignerKey"/>
+<xs:element name="generateSignerKey" type="tns:generateSignerKey"></xs:element>
 
-  <xs:element name="generateSignerKeyResponse" type="tns:generateSignerKeyResponse"/>
+<xs:element name="generateSignerKeyResponse" type="tns:generateSignerKeyResponse"></xs:element>
 
-  <xs:element name="getAuthorizedClients" type="tns:getAuthorizedClients"/>
+<xs:element name="getAuthorizedClients" type="tns:getAuthorizedClients"></xs:element>
 
-  <xs:element name="getAuthorizedClientsResponse" type="tns:getAuthorizedClientsResponse"/>
+<xs:element name="getAuthorizedClientsResponse" type="tns:getAuthorizedClientsResponse"></xs:element>
 
-  <xs:element name="getCurrentWorkerConfig" type="tns:getCurrentWorkerConfig"/>
+<xs:element name="getCurrentWorkerConfig" type="tns:getCurrentWorkerConfig"></xs:element>
 
-  <xs:element name="getCurrentWorkerConfigResponse" type="tns:getCurrentWorkerConfigResponse"/>
+<xs:element name="getCurrentWorkerConfigResponse" type="tns:getCurrentWorkerConfigResponse"></xs:element>
 
-  <xs:element name="getGlobalConfiguration" type="tns:getGlobalConfiguration"/>
+<xs:element name="getGlobalConfiguration" type="tns:getGlobalConfiguration"></xs:element>
 
-  <xs:element name="getGlobalConfigurationResponse" type="tns:getGlobalConfigurationResponse"/>
+<xs:element name="getGlobalConfigurationResponse" type="tns:getGlobalConfigurationResponse"></xs:element>
 
-  <xs:element name="getPKCS10CertificateRequest" type="tns:getPKCS10CertificateRequest"/>
+<xs:element name="getPKCS10CertificateRequest" type="tns:getPKCS10CertificateRequest"></xs:element>
 
-  <xs:element name="getPKCS10CertificateRequestForKey" type="tns:getPKCS10CertificateRequestForKey"/>
+<xs:element name="getPKCS10CertificateRequestForKey" type="tns:getPKCS10CertificateRequestForKey"></xs:element>
 
-  <xs:element name="getPKCS10CertificateRequestForKeyResponse" type="tns:getPKCS10CertificateRequestForKeyResponse"/>
+<xs:element name="getPKCS10CertificateRequestForKeyResponse" type="tns:getPKCS10CertificateRequestForKeyResponse"></xs:element>
 
-  <xs:element name="getPKCS10CertificateRequestResponse" type="tns:getPKCS10CertificateRequestResponse"/>
+<xs:element name="getPKCS10CertificateRequestResponse" type="tns:getPKCS10CertificateRequestResponse"></xs:element>
 
-  <xs:element name="getSignerCertificate" type="tns:getSignerCertificate"/>
+<xs:element name="getSignerCertificate" type="tns:getSignerCertificate"></xs:element>
 
-  <xs:element name="getSignerCertificateChain" type="tns:getSignerCertificateChain"/>
+<xs:element name="getSignerCertificateChain" type="tns:getSignerCertificateChain"></xs:element>
 
-  <xs:element name="getSignerCertificateChainResponse" type="tns:getSignerCertificateChainResponse"/>
+<xs:element name="getSignerCertificateChainResponse" type="tns:getSignerCertificateChainResponse"></xs:element>
 
-  <xs:element name="getSignerCertificateResponse" type="tns:getSignerCertificateResponse"/>
+<xs:element name="getSignerCertificateResponse" type="tns:getSignerCertificateResponse"></xs:element>
 
-  <xs:element name="getSigningValidityNotAfter" type="tns:getSigningValidityNotAfter"/>
+<xs:element name="getSigningValidityNotAfter" type="tns:getSigningValidityNotAfter"></xs:element>
 
-  <xs:element name="getSigningValidityNotAfterResponse" type="tns:getSigningValidityNotAfterResponse"/>
+<xs:element name="getSigningValidityNotAfterResponse" type="tns:getSigningValidityNotAfterResponse"></xs:element>
 
-  <xs:element name="getSigningValidityNotBefore" type="tns:getSigningValidityNotBefore"/>
+<xs:element name="getSigningValidityNotBefore" type="tns:getSigningValidityNotBefore"></xs:element>
 
-  <xs:element name="getSigningValidityNotBeforeResponse" type="tns:getSigningValidityNotBeforeResponse"/>
+<xs:element name="getSigningValidityNotBeforeResponse" type="tns:getSigningValidityNotBeforeResponse"></xs:element>
 
-  <xs:element name="getStatus" type="tns:getStatus"/>
+<xs:element name="getStatus" type="tns:getStatus"></xs:element>
 
-  <xs:element name="getStatusResponse" type="tns:getStatusResponse"/>
+<xs:element name="getStatusResponse" type="tns:getStatusResponse"></xs:element>
 
-  <xs:element name="getWorkerId" type="tns:getWorkerId"/>
+<xs:element name="getWorkerId" type="tns:getWorkerId"></xs:element>
 
-  <xs:element name="getWorkerIdResponse" type="tns:getWorkerIdResponse"/>
+<xs:element name="getWorkerIdResponse" type="tns:getWorkerIdResponse"></xs:element>
 
-  <xs:element name="getWorkers" type="tns:getWorkers"/>
+<xs:element name="getWorkers" type="tns:getWorkers"></xs:element>
 
-  <xs:element name="getWorkersResponse" type="tns:getWorkersResponse"/>
+<xs:element name="getWorkersResponse" type="tns:getWorkersResponse"></xs:element>
 
-  <xs:element name="globalReload" type="tns:globalReload"/>
+<xs:element name="globalReload" type="tns:globalReload"></xs:element>
 
-  <xs:element name="globalReloadResponse" type="tns:globalReloadResponse"/>
+<xs:element name="globalReloadResponse" type="tns:globalReloadResponse"></xs:element>
 
-  <xs:element name="globalResync" type="tns:globalResync"/>
+<xs:element name="globalResync" type="tns:globalResync"></xs:element>
 
-  <xs:element name="globalResyncResponse" type="tns:globalResyncResponse"/>
+<xs:element name="globalResyncResponse" type="tns:globalResyncResponse"></xs:element>
 
-  <xs:element name="reloadConfiguration" type="tns:reloadConfiguration"/>
+<xs:element name="reloadConfiguration" type="tns:reloadConfiguration"></xs:element>
 
-  <xs:element name="reloadConfigurationResponse" type="tns:reloadConfigurationResponse"/>
+<xs:element name="reloadConfigurationResponse" type="tns:reloadConfigurationResponse"></xs:element>
 
-  <xs:element name="removeAuthorizedClient" type="tns:removeAuthorizedClient"/>
+<xs:element name="removeAuthorizedClient" type="tns:removeAuthorizedClient"></xs:element>
 
-  <xs:element name="removeAuthorizedClientResponse" type="tns:removeAuthorizedClientResponse"/>
+<xs:element name="removeAuthorizedClientResponse" type="tns:removeAuthorizedClientResponse"></xs:element>
 
-  <xs:element name="removeGlobalProperty" type="tns:removeGlobalProperty"/>
+<xs:element name="removeGlobalProperty" type="tns:removeGlobalProperty"></xs:element>
+
+<xs:element name="removeGlobalPropertyResponse" type="tns:removeGlobalPropertyResponse"></xs:element>
 
-  <xs:element name="removeGlobalPropertyResponse" type="tns:removeGlobalPropertyResponse"/>
-
-  <xs:element name="removeWorkerProperty" type="tns:removeWorkerProperty"/>
-
-  <xs:element name="removeWorkerPropertyResponse" type="tns:removeWorkerPropertyResponse"/>
-
-  <xs:element name="setGlobalProperty" type="tns:setGlobalProperty"/>
-
-  <xs:element name="setGlobalPropertyResponse" type="tns:setGlobalPropertyResponse"/>
-
-  <xs:element name="setWorkerProperty" type="tns:setWorkerProperty"/>
-
-  <xs:element name="setWorkerPropertyResponse" type="tns:setWorkerPropertyResponse"/>
-
-  <xs:element name="testKey" type="tns:testKey"/>
-
-  <xs:element name="testKeyResponse" type="tns:testKeyResponse"/>
-
-  <xs:element name="uploadSignerCertificate" type="tns:uploadSignerCertificate"/>
-
-  <xs:element name="uploadSignerCertificateChain" type="tns:uploadSignerCertificateChain"/>
-
-  <xs:element name="uploadSignerCertificateChainResponse" type="tns:uploadSignerCertificateChainResponse"/>
-
-  <xs:element name="uploadSignerCertificateResponse" type="tns:uploadSignerCertificateResponse"/>
-
-  <xs:complexType name="globalReload">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="globalReloadResponse">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="AdminNotAuthorizedException">
-    <xs:sequence>
-      <xs:element name="message" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="addAuthorizedClient">
-    <xs:sequence>
-      <xs:element name="workerId" type="xs:int"/>
-      <xs:element name="authClient" type="tns:authorizedClient" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="authorizedClient">
-    <xs:sequence>
-      <xs:element name="certSN" type="xs:string" minOccurs="0"/>
-      <xs:element name="issuerDN" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="addAuthorizedClientResponse">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="removeAuthorizedClient">
-    <xs:sequence>
-      <xs:element name="workerId" type="xs:int"/>
-      <xs:element name="authClient" type="tns:authorizedClient" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="removeAuthorizedClientResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:boolean"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="removeWorkerProperty">
-    <xs:sequence>
-      <xs:element name="workerId" type="xs:int"/>
-      <xs:element name="key" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="removeWorkerPropertyResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:boolean"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getSigningValidityNotAfter">
-    <xs:sequence>
-      <xs:element name="workerId" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getSigningValidityNotAfterResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:dateTime" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="CryptoTokenOfflineException">
-    <xs:sequence>
-      <xs:element name="message" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getStatus">
-    <xs:sequence>
-      <xs:element name="workerId" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getStatusResponse">
-    <xs:sequence>
-      <xs:element name="return" type="tns:wsWorkerStatus" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="wsWorkerStatus">
-    <xs:sequence>
-      <xs:element name="activeConfig">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="key" minOccurs="0" type="xs:anyType"/>
-                  <xs:element name="value" minOccurs="0" type="xs:anyType"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="completeStatusText" type="xs:string" minOccurs="0"/>
-      <xs:element name="hostname" type="xs:string" minOccurs="0"/>
-      <xs:element name="ok" type="xs:string" minOccurs="0"/>
-      <xs:element name="statusText" type="xs:string" minOccurs="0"/>
-      <xs:element name="workerId" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="InvalidWorkerIdException">
-    <xs:sequence>
-      <xs:element name="message" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getGlobalConfiguration">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="getGlobalConfigurationResponse">
-    <xs:sequence>
-      <xs:element name="return" type="tns:wsGlobalConfiguration" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="wsGlobalConfiguration">
-    <xs:sequence>
-      <xs:element name="appVersion" type="xs:string" minOccurs="0"/>
-      <xs:element name="clusterClassLoaderEnabled" type="xs:boolean"/>
-      <xs:element name="config">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="key" minOccurs="0" type="xs:anyType"/>
-                  <xs:element name="value" minOccurs="0" type="xs:anyType"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="requireSigning" type="xs:boolean"/>
-      <xs:element name="state" type="xs:string" minOccurs="0"/>
-      <xs:element name="useClassVersions" type="xs:boolean"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getPKCS10CertificateRequest">
-    <xs:sequence>
-      <xs:element name="signerId" type="xs:int"/>
-      <xs:element name="certReqInfo" type="tns:pkcs10CertReqInfo" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="pkcs10CertReqInfo">
-    <xs:sequence>
-      <xs:element name="attributes" type="tns:asn1Set" minOccurs="0"/>
-      <xs:element name="signatureAlgorithm" type="xs:string" minOccurs="0"/>
-      <xs:element name="subjectDN" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="asn1Set" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="tns:asn1Object">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="asn1Object" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="tns:derObject">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="derObject" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="tns:asn1Encodable">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="asn1Encodable" abstract="true">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="getPKCS10CertificateRequestResponse">
-    <xs:sequence>
-      <xs:element name="return" type="tns:base64SignerCertReqData" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="base64SignerCertReqData">
-    <xs:sequence>
-      <xs:element name="base64CertReq" type="xs:base64Binary" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="uploadSignerCertificate">
-    <xs:sequence>
-      <xs:element name="signerId" type="xs:int"/>
-      <xs:element name="signerCert" type="xs:base64Binary" nillable="true" minOccurs="0"/>
-      <xs:element name="scope" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="uploadSignerCertificateResponse">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="IllegalRequestException">
-    <xs:sequence>
-      <xs:element name="message" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getWorkers">
-    <xs:sequence>
-      <xs:element name="workerType" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getWorkersResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:int" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getSignerCertificateChain">
-    <xs:sequence>
-      <xs:element name="signerId" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getSignerCertificateChainResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:base64Binary" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="destroyKey">
-    <xs:sequence>
-      <xs:element name="signerId" type="xs:int"/>
-      <xs:element name="purpose" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="destroyKeyResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:boolean"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="reloadConfiguration">
-    <xs:sequence>
-      <xs:element name="workerId" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="reloadConfigurationResponse">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="deactivateSigner">
-    <xs:sequence>
-      <xs:element name="signerId" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="deactivateSignerResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:boolean"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="setGlobalProperty">
-    <xs:sequence>
-      <xs:element name="scope" type="xs:string" minOccurs="0"/>
-      <xs:element name="key" type="xs:string" minOccurs="0"/>
-      <xs:element name="value" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="setGlobalPropertyResponse">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="getAuthorizedClients">
-    <xs:sequence>
-      <xs:element name="workerId" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getAuthorizedClientsResponse">
-    <xs:sequence>
-      <xs:element name="return" type="tns:authorizedClient" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getPKCS10CertificateRequestForKey">
-    <xs:sequence>
-      <xs:element name="signerId" type="xs:int"/>
-      <xs:element name="certReqInfo" type="tns:pkcs10CertReqInfo" minOccurs="0"/>
-      <xs:element name="defaultKey" type="xs:boolean"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getPKCS10CertificateRequestForKeyResponse">
-    <xs:sequence>
-      <xs:element name="return" type="tns:base64SignerCertReqData" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getSigningValidityNotBefore">
-    <xs:sequence>
-      <xs:element name="workerId" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getSigningValidityNotBeforeResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:dateTime" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="globalResync">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="globalResyncResponse">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="ResyncException">
-    <xs:sequence>
-      <xs:element name="message" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="setWorkerProperty">
-    <xs:sequence>
-      <xs:element name="workerId" type="xs:int"/>
-      <xs:element name="key" type="xs:string" minOccurs="0"/>
-      <xs:element name="value" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="setWorkerPropertyResponse">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="getCurrentWorkerConfig">
-    <xs:sequence>
-      <xs:element name="workerId" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getCurrentWorkerConfigResponse">
-    <xs:sequence>
-      <xs:element name="return" type="tns:wsWorkerConfig" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="wsWorkerConfig">
-    <xs:sequence>
-      <xs:element name="properties">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="key" minOccurs="0" type="xs:anyType"/>
-                  <xs:element name="value" minOccurs="0" type="xs:anyType"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getSignerCertificate">
-    <xs:sequence>
-      <xs:element name="signerId" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getSignerCertificateResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="removeGlobalProperty">
-    <xs:sequence>
-      <xs:element name="scope" type="xs:string" minOccurs="0"/>
-      <xs:element name="key" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="removeGlobalPropertyResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:boolean"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getWorkerId">
-    <xs:sequence>
-      <xs:element name="workerName" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="getWorkerIdResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:int"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="uploadSignerCertificateChain">
-    <xs:sequence>
-      <xs:element name="signerId" type="xs:int"/>
-      <xs:element name="signerCerts" type="xs:base64Binary" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="scope" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="uploadSignerCertificateChainResponse">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="activateSigner">
-    <xs:sequence>
-      <xs:element name="signerId" type="xs:int"/>
-      <xs:element name="authenticationCode" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="activateSignerResponse">
-    <xs:sequence/>
-  </xs:complexType>
-
-  <xs:complexType name="CryptoTokenAuthenticationFailureException">
-    <xs:sequence>
-      <xs:element name="message" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="testKey">
-    <xs:sequence>
-      <xs:element name="signerId" type="xs:int"/>
-      <xs:element name="alias" type="xs:string" minOccurs="0"/>
-      <xs:element name="authCode" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="testKeyResponse">
-    <xs:sequence>
-      <xs:element name="return" type="tns:keyTestResult" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="keyTestResult">
-    <xs:sequence>
-      <xs:element name="alias" type="xs:string" minOccurs="0"/>
-      <xs:element name="publicKeyHash" type="xs:string" minOccurs="0"/>
-      <xs:element name="status" type="xs:string" minOccurs="0"/>
-      <xs:element name="success" type="xs:boolean"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="KeyStoreException">
-    <xs:sequence>
-      <xs:element name="message" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="generateSignerKey">
-    <xs:sequence>
-      <xs:element name="signerId" type="xs:int"/>
-      <xs:element name="keyAlgorithm" type="xs:string" minOccurs="0"/>
-      <xs:element name="keySpec" type="xs:string" minOccurs="0"/>
-      <xs:element name="alias" type="xs:string" minOccurs="0"/>
-      <xs:element name="authCode" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="generateSignerKeyResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
+<xs:element name="removeWorkerProperty" type="tns:removeWorkerProperty"></xs:element>
+
+<xs:element name="removeWorkerPropertyResponse" type="tns:removeWorkerPropertyResponse"></xs:element>
+
+<xs:element name="setGlobalProperty" type="tns:setGlobalProperty"></xs:element>
+
+<xs:element name="setGlobalPropertyResponse" type="tns:setGlobalPropertyResponse"></xs:element>
+
+<xs:element name="setWorkerProperty" type="tns:setWorkerProperty"></xs:element>
+
+<xs:element name="setWorkerPropertyResponse" type="tns:setWorkerPropertyResponse"></xs:element>
+
+<xs:element name="testKey" type="tns:testKey"></xs:element>
+
+<xs:element name="testKeyResponse" type="tns:testKeyResponse"></xs:element>
+
+<xs:element name="uploadSignerCertificate" type="tns:uploadSignerCertificate"></xs:element>
+
+<xs:element name="uploadSignerCertificateChain" type="tns:uploadSignerCertificateChain"></xs:element>
+
+<xs:element name="uploadSignerCertificateChainResponse" type="tns:uploadSignerCertificateChainResponse"></xs:element>
+
+<xs:element name="uploadSignerCertificateResponse" type="tns:uploadSignerCertificateResponse"></xs:element>
+
+<xs:complexType name="generateSignerKey">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+<xs:element name="keyAlgorithm" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="keySpec" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="alias" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="authCode" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="generateSignerKeyResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="CryptoTokenOfflineException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="InvalidWorkerIdException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="AdminNotAuthorizedException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getWorkerId">
+<xs:sequence>
+<xs:element name="workerName" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getWorkerIdResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="uploadSignerCertificateChain">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+<xs:element name="signerCerts" type="xs:base64Binary" minOccurs="0" maxOccurs="unbounded"></xs:element>
+<xs:element name="scope" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="uploadSignerCertificateChainResponse">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="IllegalRequestException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="activateSigner">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+<xs:element name="authenticationCode" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="activateSignerResponse">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="CryptoTokenAuthenticationFailureException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="testKey">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+<xs:element name="alias" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="authCode" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="testKeyResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:keyTestResult" minOccurs="0" maxOccurs="unbounded"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="keyTestResult">
+<xs:sequence>
+<xs:element name="alias" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="publicKeyHash" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="status" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="success" type="xs:boolean"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="KeyStoreException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="globalResync">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="globalResyncResponse">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="ResyncException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getPKCS10CertificateRequestForKey">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+<xs:element name="certReqInfo" type="tns:pkcs10CertReqInfo" minOccurs="0"></xs:element>
+<xs:element name="defaultKey" type="xs:boolean"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="pkcs10CertReqInfo">
+<xs:sequence>
+<xs:element name="attributes" type="tns:asn1Set" minOccurs="0"></xs:element>
+<xs:element name="signatureAlgorithm" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="subjectDN" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="asn1Set" abstract="true">
+<xs:complexContent>
+<xs:extension base="tns:asn1Object">
+<xs:sequence></xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="asn1Object" abstract="true">
+<xs:complexContent>
+<xs:extension base="tns:derObject">
+<xs:sequence></xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="derObject" abstract="true">
+<xs:complexContent>
+<xs:extension base="tns:asn1Encodable">
+<xs:sequence></xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="asn1Encodable" abstract="true">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getPKCS10CertificateRequestForKeyResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:base64SignerCertReqData" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="base64SignerCertReqData">
+<xs:sequence>
+<xs:element name="base64CertReq" type="xs:base64Binary" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSigningValidityNotBefore">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSigningValidityNotBeforeResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:dateTime" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setWorkerProperty">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+<xs:element name="key" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="value" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setWorkerPropertyResponse">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getCurrentWorkerConfig">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getCurrentWorkerConfigResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:wsWorkerConfig" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="wsWorkerConfig">
+<xs:sequence>
+<xs:element name="properties">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="key" minOccurs="0" type="xs:anyType"></xs:element>
+<xs:element name="value" minOccurs="0" type="xs:anyType"></xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSignerCertificate">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSignerCertificateResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeGlobalProperty">
+<xs:sequence>
+<xs:element name="scope" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="key" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeGlobalPropertyResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deactivateSigner">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deactivateSignerResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setGlobalProperty">
+<xs:sequence>
+<xs:element name="scope" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="key" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="value" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setGlobalPropertyResponse">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getAuthorizedClients">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getAuthorizedClientsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:authorizedClient" minOccurs="0" maxOccurs="unbounded"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="authorizedClient">
+<xs:sequence>
+<xs:element name="certSN" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="issuerDN" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="reloadConfiguration">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="reloadConfigurationResponse">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="uploadSignerCertificate">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+<xs:element name="signerCert" type="xs:base64Binary" nillable="true" minOccurs="0"></xs:element>
+<xs:element name="scope" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="uploadSignerCertificateResponse">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getPKCS10CertificateRequest">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+<xs:element name="certReqInfo" type="tns:pkcs10CertReqInfo" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getPKCS10CertificateRequestResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:base64SignerCertReqData" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getWorkers">
+<xs:sequence>
+<xs:element name="workerType" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getWorkersResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:int" minOccurs="0" maxOccurs="unbounded"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getGlobalConfiguration">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getGlobalConfigurationResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:wsGlobalConfiguration" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="wsGlobalConfiguration">
+<xs:sequence>
+<xs:element name="appVersion" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="clusterClassLoaderEnabled" type="xs:boolean"></xs:element>
+<xs:element name="config">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="key" minOccurs="0" type="xs:anyType"></xs:element>
+<xs:element name="value" minOccurs="0" type="xs:anyType"></xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="requireSigning" type="xs:boolean"></xs:element>
+<xs:element name="state" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="useClassVersions" type="xs:boolean"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSignerCertificateChain">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSignerCertificateChainResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:base64Binary" minOccurs="0" maxOccurs="unbounded"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="destroyKey">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+<xs:element name="purpose" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="destroyKeyResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSigningValidityNotAfter">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSigningValidityNotAfterResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:dateTime" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getStatus">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getStatusResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:wsWorkerStatus" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="wsWorkerStatus">
+<xs:sequence>
+<xs:element name="activeConfig">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="key" minOccurs="0" type="xs:anyType"></xs:element>
+<xs:element name="value" minOccurs="0" type="xs:anyType"></xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="completeStatusText" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="hostname" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="ok" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="statusText" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="workerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="globalReload">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="globalReloadResponse">
+<xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeWorkerProperty">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+<xs:element name="key" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeWorkerPropertyResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeAuthorizedClient">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+<xs:element name="authClient" type="tns:authorizedClient" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeAuthorizedClientResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addAuthorizedClient">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+<xs:element name="authClient" type="tns:authorizedClient" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addAuthorizedClientResponse">
+<xs:sequence></xs:sequence>
+</xs:complexType>
 </xs:schema>
-

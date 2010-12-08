@@ -50,8 +50,8 @@ import javax.swing.JOptionPane;
 import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
-import org.signserver.admin.gui.adminws.gen.AdminWebService;
-import org.signserver.admin.gui.adminws.gen.AdminWebServiceService;
+import org.signserver.admin.gui.adminws.gen.AdminWS;
+import org.signserver.admin.gui.adminws.gen.AdminWSService;
 import sun.security.pkcs11.SunPKCS11;
 
 /**
@@ -66,10 +66,10 @@ public class ConnectDialog extends javax.swing.JDialog {
     private static final Logger LOG = Logger.getLogger(ConnectDialog.class);
 
     private static final String DEFAULT_URL = "https://localhost:8443/signserver";
-    private static final String WS_PATH = "/adminws/adminws?wsdl";
+    private static final String WS_PATH = "/AdminWSService/AdminWS?wsdl";
 
     private ConnectSettings settings;
-    private AdminWebService ws;
+    private AdminWS ws;
     private static final File DEFAULT_CONNECT_FILE =
             new File("default_connect.properties");
     private static final File CONNECT_FILE = new File("connect.properties");
@@ -496,9 +496,9 @@ public class ConnectDialog extends javax.swing.JDialog {
 
                 HttpsURLConnection.setDefaultSSLSocketFactory(factory);
 
-                AdminWebServiceService service = new AdminWebServiceService(
-                        new URL(urlstr), new QName("http://adminws.signserver.org/", "AdminWebServiceService"));
-                ws = service.getAdminWebServicePort();
+                AdminWSService service = new AdminWSService(
+                        new URL(urlstr), new QName("http://adminws.signserver.org/", "AdminWSService"));
+                ws = service.getAdminWSPort();
             dispose();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -715,7 +715,7 @@ public class ConnectDialog extends javax.swing.JDialog {
     private javax.swing.JTextField urlTextField;
     // End of variables declaration//GEN-END:variables
 
-    public AdminWebService getWS() {
+    public AdminWS getWS() {
         return ws;
     }
 

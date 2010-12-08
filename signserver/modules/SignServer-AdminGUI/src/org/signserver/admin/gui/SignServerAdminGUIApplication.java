@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
-import org.signserver.admin.gui.adminws.gen.AdminWebService;
+import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.client.api.ISigningAndValidation;
 import org.signserver.client.api.SigningAndValidationEJB;
 import org.signserver.client.api.SigningAndValidationWS;
@@ -41,7 +41,7 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
     private static IGlobalConfigurationSession.IRemote gCSession;
     private static IWorkerSession.IRemote sSSession;
 
-    private static AdminWebService adminWS;
+    private static AdminWS adminWS;
     private static ISigningAndValidation clientWS;
 
     private enum Protocol {
@@ -100,7 +100,7 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
     /**
      * @return The administration interface either EJB remote or web services.
      */
-    public static AdminWebService getAdminWS() {
+    public static AdminWS getAdminWS() {
         if (adminWS == null) {
             if (Protocol.WS == protocol) {
                 

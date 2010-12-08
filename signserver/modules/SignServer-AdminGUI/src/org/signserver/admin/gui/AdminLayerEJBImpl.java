@@ -35,7 +35,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
-import org.signserver.admin.gui.adminws.gen.AdminWebService;
+import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 import org.signserver.admin.gui.adminws.gen.Base64SignerCertReqData;
 import org.signserver.admin.gui.adminws.gen
@@ -67,7 +67,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  *
  * @author markus
  */
-public class AdminLayerEJBImpl implements AdminWebService {
+public class AdminLayerEJBImpl implements AdminWS {
     private static final Logger LOG = Logger.getLogger(AdminLayerEJBImpl.class);
 
     private IWorkerSession.IRemote worker;

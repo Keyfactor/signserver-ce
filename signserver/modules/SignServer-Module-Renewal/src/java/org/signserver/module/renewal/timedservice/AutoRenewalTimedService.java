@@ -15,13 +15,10 @@ package org.signserver.module.renewal.timedservice;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import javax.ejb.EJB;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import javax.persistence.EntityManager;
@@ -90,7 +87,7 @@ public class AutoRenewalTimedService extends BaseTimedService {
 
     /** Workersession. */
     @EJB
-    private IWorkerSession.ILocal workerSession;
+    private IWorkerSession.IRemote workerSession;
 
     /**
      * Initializes the worker.
@@ -212,11 +209,11 @@ public class AutoRenewalTimedService extends BaseTimedService {
         LOG.trace("<work");
     }
 
-    private IWorkerSession.ILocal getWorkerSession() {
+    private IWorkerSession.IRemote getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.ILocal.class);
+                workerSession = ServiceLocator.getInstance().lookupRemote(
+                        IWorkerSession.IRemote.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

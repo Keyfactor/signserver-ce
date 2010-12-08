@@ -12,7 +12,6 @@
 	   <import file="./module-builds/odfsigner.xml"/>
 	   <import file="./module-builds/xmlvalidator.xml"/>
            <import file="./module-builds/cmssigner.xml"/>
-           <import file="./modules/SignServer-AdminWS/build.xml"/>
 	
 	   <property name="java.trustpassword" value="changeit" />
 	   <property name="httpsserver.password" value="serverpwd" />
@@ -34,9 +33,8 @@
        <property name="signserverws-ejb.jar" value="${signserverws.dir}/dist/SignServer-ejb-SignServerWS.jar"/>
        <property name="validationws.dir" value="./modules/SignServer-ejb-ValidationWS"/>
        <property name="validationws-ejb.jar" value="${validationws.dir}/dist/SignServer-ejb-ValidationWS.jar"/>
-       <property name="adminws.dir" value="./modules/SignServer-AdminWS"/>
-       <property name="adminws.dist.dir" value="${adminws.dir}/dist"/>
-       <property name="adminws.build.dir" value="${adminws.dir}/build"/>
+       <property name="adminws.dir" value="./modules/SignServer-ejb-AdminWS"/>
+       <property name="adminws-ejb.jar" value="${adminws.dir}/dist/SignServer-ejb-AdminWS.jar"/>
        <property name="admingui.dir" value="./modules/SignServer-AdminGUI"/>
        <property name="admingui.dist.dir" value="${admingui.dir}/dist"/>
        <property name="admingui.build.dir" value="${admingui.dir}/build"/>
@@ -493,6 +491,12 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 <ant antfile="${validationws.dir}/build.xml" target="dist" inheritall="false"/>
 	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@validationws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-ValidationWS.jar&lt;/ejb>&lt;/module>"/>
 	    </target>
+
+            <!-- AdminWS -->
+	    <target name="adminws-ejb.jar" depends="signserver-ejb.jar" if="adminws.conditionenabled" unless="buildMailSigner">
+                <ant antfile="${adminws.dir}/build.xml" target="dist" inheritall="false"/>
+	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@adminws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-AdminWS.jar&lt;/ejb>&lt;/module>"/>
+	    </target>
 		
 	    <target name="ws.gen.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
 	        <wsimport 
@@ -611,7 +615,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws, signserverws.client, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, signserverws.client, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />
@@ -638,8 +642,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	                <include name="*-ejb.jar" />
 	                <include name="*.war" />
 	            </fileset>
-                    <zipfileset dir="${adminws.dist.dir}" includes="*.war"
-                        erroronmissingdir="false" />
 
                     <!-- Include SignServerWS -->
                     <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"/>
@@ -647,19 +649,14 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                     <!-- Include ValidationWS -->
                     <zipfileset dir="${validationws.dir}/dist" includes="*.jar"/>
 
+                    <!-- Include AdminWS -->
+                    <zipfileset dir="${adminws.dir}/dist" includes="*.jar"/>
+
                     <!-- Modules can be placed in dist-server/lib to be included in ear -->
                     <zipfileset dir="${server.dist.dir}/lib" includes="*.jar" prefix="lib"/>
 
 			</ear>
 	    </target>
-
-    <!-- =================================================================== -->
-    <!-- Build Admin Web Service                                             -->
-    <!-- =================================================================== -->
-    <target name="adminws" description="Build Admin WS" depends="init" if="adminws.conditionenabled">
-        <ant antfile="build.xml" dir="${adminws.dir}" target="dist"/>
-        <replace file="${eardd.src}/META-INF/application.xml" token="!--@adminws.war@-->" value="module>&lt;web>&lt;web-uri>SignServer-AdminWS.war&lt;/web-uri>&lt;context-root>/signserver/adminws&lt;/context-root>&lt;/web>&lt;/module>"/>
-    </target>
     
     <!-- ======================================================================= -->
     <!-- Deploy Sign Server ear to JBoss                                               -->

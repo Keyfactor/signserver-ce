@@ -16,6 +16,8 @@
 
     <!--@validationws-ejb.jar@-->
 
+    <!--@adminws-ejb.jar@-->
+
     <module>
         <web>
             <web-uri>web.war</web-uri>
@@ -29,6 +31,5 @@
         </web>
     </module>
 
-    <!--@adminws.war@-->
 </application>
 

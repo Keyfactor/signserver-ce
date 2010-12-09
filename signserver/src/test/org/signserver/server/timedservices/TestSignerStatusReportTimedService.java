@@ -294,7 +294,7 @@ public class TestSignerStatusReportTimedService extends TestCase {
     private static void waitForServiceRun() {
         // Wait so the service gets a chance to run
         try {
-            Thread.sleep((serviceInterval + serviceInterval / 2) * 1000);
+            Thread.sleep(2 * serviceInterval * 1000);
         } catch (InterruptedException ex) {
             LOG.error("Interrupted", ex);
         }

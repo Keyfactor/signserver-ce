@@ -75,7 +75,7 @@ public class SignerStatusReportTimedService extends BaseTimedService {
 
     /** Workersession. */
     @EJB
-    private IWorkerSession.ILocal workerSession;
+    private IWorkerSession workerSession;
 
     /**
      * Initializes the worker.
@@ -239,11 +239,11 @@ public class SignerStatusReportTimedService extends BaseTimedService {
         return ret;
     }
 
-    private IWorkerSession.ILocal getWorkerSession() {
+    private IWorkerSession getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.ILocal.class);
+                workerSession = ServiceLocator.getInstance().lookupRemote(
+                        IWorkerSession.IRemote.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

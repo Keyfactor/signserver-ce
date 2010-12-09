@@ -125,91 +125,9 @@ public class SignerStatusReportTimedService extends BaseTimedService {
 
         PrintWriter out = null;
         try {
+            final String report = createReport();
             out = new PrintWriter(new FileOutputStream(outputFile));
-
-            for (String worker : workers) {
-                int workerId = workerSession.getWorkerId(worker);
-                if (workerId == 0) {
-                    LOG.warn("No such worker: \"" + worker + "\"");
-                } else {
-                    LOG.debug("Worker: " + worker);
-                    String statusString = STATUS_ACTIVE;
-                    KeyUsageCounter signings = null;
-                    final String pk = getKeyHash(workerId);
-                    if (pk == null) {
-                        statusString = STATUS_OFFLINE;
-                    } else {
-
-                        WorkerStatus status = null;
-                        try {
-                            status = workerSession.getStatus(workerId);
-                        } catch (InvalidWorkerIdException ex) {
-                            LOG.error("Invalid worker id: " + workerId, ex);
-                        }
-                        if (status == null || status.isOK() != null) {
-                            statusString = STATUS_OFFLINE;
-                        }
-                        if (status instanceof CryptoTokenStatus &&
-                                ((CryptoTokenStatus) status).getTokenStatus()
-                                    == CryptoTokenStatus.STATUS_OFFLINE) {
-                            statusString = STATUS_OFFLINE;
-                        }
-
-
-                        try {
-                        signings = em.find(
-                            KeyUsageCounter.class, pk);
-                        } catch (IllegalArgumentException ex) {
-                            LOG.warn(ex, ex);
-                        }
-                    }
-                    
-                    final StringBuilder sb = new StringBuilder();
-                    sb.append("workerName=");
-                    sb.append(worker);
-                    sb.append(SEPARATOR);
-                    sb.append("status=");
-                    sb.append(statusString);
-                    sb.append(SEPARATOR);
-
-                    // Output validities
-                    Date notBefore = null;
-                    Date notAfter = null;
-                    try {
-                        notBefore = workerSession.getSigningValidityNotBefore(
-                                workerId);
-                    } catch (CryptoTokenOfflineException ignored) {}
-                    if (notBefore != null) {
-                        sb.append("validityNotBefore=");
-                        sb.append(dateFormat.format(notBefore));
-                        sb.append(SEPARATOR);
-                    }
-                    try {
-                        notAfter = workerSession.getSigningValidityNotAfter(
-                                workerId);
-                    } catch (CryptoTokenOfflineException ignored) {}
-                    if (notAfter != null) {
-                        sb.append("validityNotAfter=");
-                        sb.append(dateFormat.format(notAfter));
-                        sb.append(SEPARATOR);
-                    }
-
-                    if (signings != null) {
-                        final long keyUsageLimit = Long.valueOf(
-                                workerSession.getCurrentWorkerConfig(workerId)
-                                .getProperty(
-                                    SignServerConstants.KEYUSAGELIMIT, "-1"));
-                        sb.append("signings=");
-                        sb.append(signings.getCounter());
-                        sb.append(SEPARATOR);
-                        sb.append("signLimit=");
-                        sb.append(keyUsageLimit);
-                        sb.append(SEPARATOR);
-                    }
-
-                    out.println(sb.toString());
-                }
-            }
+            out.write(report);
 
             if (out.checkError()) {
                 LOG.error("Error occured trying to write output file");
@@ -225,6 +143,94 @@ public class SignerStatusReportTimedService extends BaseTimedService {
         }
 
         LOG.trace("<work");
+    }
+
+    private String createReport() {
+        final StringBuilder sb = new StringBuilder();
+
+        for (String worker : workers) {
+            int workerId = workerSession.getWorkerId(worker);
+            if (workerId == 0) {
+                LOG.warn("No such worker: \"" + worker + "\"");
+            } else {
+                LOG.debug("Worker: " + worker);
+                String statusString = STATUS_ACTIVE;
+                KeyUsageCounter signings = null;
+                final String pk = getKeyHash(workerId);
+                if (pk == null) {
+                    statusString = STATUS_OFFLINE;
+                } else {
+
+                    WorkerStatus status = null;
+                    try {
+                        status = workerSession.getStatus(workerId);
+                    } catch (InvalidWorkerIdException ex) {
+                        LOG.error("Invalid worker id: " + workerId, ex);
+                    }
+                    if (status == null || status.isOK() != null) {
+                        statusString = STATUS_OFFLINE;
+                    }
+                    if (status instanceof CryptoTokenStatus &&
+                            ((CryptoTokenStatus) status).getTokenStatus()
+                                == CryptoTokenStatus.STATUS_OFFLINE) {
+                        statusString = STATUS_OFFLINE;
+                    }
+
+
+                    try {
+                    signings = em.find(
+                        KeyUsageCounter.class, pk);
+                    } catch (IllegalArgumentException ex) {
+                        LOG.warn(ex, ex);
+                    }
+                }
+
+                sb.append("workerName=");
+                sb.append(worker);
+                sb.append(SEPARATOR);
+                sb.append("status=");
+                sb.append(statusString);
+                sb.append(SEPARATOR);
+
+                // Output validities
+                Date notBefore = null;
+                Date notAfter = null;
+                try {
+                    notBefore = workerSession.getSigningValidityNotBefore(
+                            workerId);
+                } catch (CryptoTokenOfflineException ignored) {}
+                if (notBefore != null) {
+                    sb.append("validityNotBefore=");
+                    sb.append(dateFormat.format(notBefore));
+                    sb.append(SEPARATOR);
+                }
+                try {
+                    notAfter = workerSession.getSigningValidityNotAfter(
+                            workerId);
+                } catch (CryptoTokenOfflineException ignored) {}
+                if (notAfter != null) {
+                    sb.append("validityNotAfter=");
+                    sb.append(dateFormat.format(notAfter));
+                    sb.append(SEPARATOR);
+                }
+
+                if (signings != null) {
+                    final long keyUsageLimit = Long.valueOf(
+                            workerSession.getCurrentWorkerConfig(workerId)
+                            .getProperty(
+                                SignServerConstants.KEYUSAGELIMIT, "-1"));
+                    sb.append("signings=");
+                    sb.append(signings.getCounter());
+                    sb.append(SEPARATOR);
+                    sb.append("signLimit=");
+                    sb.append(keyUsageLimit);
+                    sb.append(SEPARATOR);
+                }
+
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
     }
 
     private String getKeyHash(final int worker) {

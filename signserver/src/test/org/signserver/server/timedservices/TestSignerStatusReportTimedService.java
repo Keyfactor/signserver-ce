@@ -79,7 +79,7 @@ public class TestSignerStatusReportTimedService extends TestCase {
     private static String signserverhome;
     private static int moduleVersion;
     private static File outputFile;
-	
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -88,7 +88,7 @@ public class TestSignerStatusReportTimedService extends TestCase {
                 IWorkerSession.IRemote.class);
         globalSession = ServiceLocator.getInstance().lookupRemote(
                 IGlobalConfigurationSession.IRemote.class);
-        
+
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
@@ -109,7 +109,7 @@ public class TestSignerStatusReportTimedService extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
         TestingSecurityManager.remove();
-    }	
+    }
 
     /**
      * Create test workers.
@@ -147,14 +147,23 @@ public class TestSignerStatusReportTimedService extends TestCase {
                 outputFile.getAbsolutePath());
         workerSession.setWorkerProperty(WORKERID_SERVICE, "INTERVAL",
                 String.valueOf(serviceInterval));
-        workerSession.setWorkerProperty(WORKERID_SERVICE, "ACTIVE", "TRUE");
+        workerSession.setWorkerProperty(WORKERID_SERVICE, "ACTIVE", "FALSE");
 
         workerSession.reloadConfiguration(WORKERID_SERVICE);
     }
 
     public void test01Report() throws Exception {
 
-        waitForServiceRun();
+        if (outputFile.exists()) {
+            outputFile.delete();
+            assertFalse("Removed outputfile", outputFile.exists());
+        }
+
+        // Enable service
+        workerSession.setWorkerProperty(WORKERID_SERVICE, "ACTIVE", "TRUE");
+        workerSession.reloadConfiguration(WORKERID_SERVICE);
+
+        waitForServiceRun(30);
 
         Map<String, Map<String, String>> status;
 
@@ -164,7 +173,7 @@ public class TestSignerStatusReportTimedService extends TestCase {
         assertNotNull("Worker 1 present", status.get(WORKER_SIGNER1));
         assertEquals("Worker 1 active", "ACTIVE", status.get(WORKER_SIGNER1).get("status"));
         assertNotNull("Worker 1 signings", status.get(WORKER_SIGNER1).get("signings"));
-        
+
         assertNotNull("Worker 2 present", status.get(WORKER_SIGNER2));
         assertEquals("Worker 2 active", "ACTIVE", status.get(WORKER_SIGNER2).get("status"));
         assertNotNull("Worker 2 signings", status.get(WORKER_SIGNER2).get("signings"));
@@ -177,13 +186,15 @@ public class TestSignerStatusReportTimedService extends TestCase {
 //        workerSession.setWorkerProperty(WORKERID_SIGNER1, "DISABLED", "TRUE");
 //        workerSession.reloadConfiguration(WORKERID_SIGNER1);
         workerSession.deactivateSigner(WORKERID_SIGNER1);
-        
-        waitForServiceRun();
+
+        outputFile.delete();
+
+        waitForServiceRun(30);
 
         // Now WORKER1 should be OFFLINE and the other as before
         status = parseOutputFile(outputFile);
 
-        
+
 
         assertNotNull("Worker 1 present", status.get(WORKER_SIGNER1));
         assertEquals("Worker 1 OFFLINE", "OFFLINE", status.get(WORKER_SIGNER1).get("status"));
@@ -198,7 +209,7 @@ public class TestSignerStatusReportTimedService extends TestCase {
         assertNotNull("Worker 3 signings", status.get(WORKER_SIGNER3).get("signings"));
     }
 
-    
+
     /**
      * Removes all test workers.
      * @throws Exception
@@ -267,7 +278,7 @@ public class TestSignerStatusReportTimedService extends TestCase {
             String line;
             while ((line = in.readLine()) != null) {
                 Map<String, String> entry = new HashMap<String, String>();
-                
+
                 String[] parts = line.split(", ");
                 for (String part : parts) {
                     String[] keyval = part.split("=");
@@ -291,10 +302,14 @@ public class TestSignerStatusReportTimedService extends TestCase {
         return res;
     }
 
-    private static void waitForServiceRun() {
-        // Wait so the service gets a chance to run
+    private static void waitForServiceRun(final int maxTries) {
         try {
-            Thread.sleep((serviceInterval + serviceInterval / 2) * 1000);
+            for (int i = 0; i < maxTries; i++) {
+                if (outputFile.exists()) {
+                    break;
+                }
+                Thread.sleep(1000);
+            }
         } catch (InterruptedException ex) {
             LOG.error("Interrupted", ex);
         }

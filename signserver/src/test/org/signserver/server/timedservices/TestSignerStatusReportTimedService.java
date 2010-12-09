@@ -72,7 +72,7 @@ public class TestSignerStatusReportTimedService extends TestCase {
     private static final int WORKERID_SIGNER3 = 5676;
     private static final String WORKER_SIGNER3 = "TestXMLSigner";
 
-    private static final long serviceInterval = 5;
+    private static final long serviceInterval = 10;
 
     private static IWorkerSession.IRemote workerSession;
     private static IGlobalConfigurationSession.IRemote globalSession;
@@ -294,7 +294,7 @@ public class TestSignerStatusReportTimedService extends TestCase {
     private static void waitForServiceRun() {
         // Wait so the service gets a chance to run
         try {
-            Thread.sleep(2 * serviceInterval * 1000);
+            Thread.sleep((serviceInterval + serviceInterval / 2) * 1000);
         } catch (InterruptedException ex) {
             LOG.error("Interrupted", ex);
         }

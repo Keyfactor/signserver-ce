@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/WSRAService.wsdl" uri="xml-resources/web-service-references/WSRAService/wsdl/WSRAService.wsdl"/>
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/WSRAService_schema1.xsd" uri="xml-resources/web-service-references/WSRAService/wsdl/WSRAService_schema1.xsd"/>
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/SignServerWSService.wsdl" uri="xml-resources/web-service-references/SignServerWSService/wsdl/SignServerWSService.wsdl"/>
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/SignServerWSService_schema1.xsd" uri="xml-resources/web-service-references/SignServerWSService/wsdl/SignServerWSService_schema1.xsd"/>
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/DummyWSService.wsdl" uri="xml-resources/web-service-references/DummyWSService/wsdl/DummyWSService.wsdl"/>
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/DummyWSService_schema1.xsd" uri="xml-resources/web-service-references/DummyWSService/wsdl/DummyWSService_schema1.xsd"/>
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/ValidationWSService.wsdl" uri="xml-resources/web-service-references/ValidationWSService/wsdl/ValidationWSService.wsdl"/>
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/ValidationWSService_schema1.xsd" uri="xml-resources/web-service-references/ValidationWSService/wsdl/ValidationWSService_schema1.xsd"/>
+</catalog>

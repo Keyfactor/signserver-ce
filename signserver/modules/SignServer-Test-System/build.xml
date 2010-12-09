@@ -10,6 +10,94 @@
 <project name="SignServer-Test-System" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Test-System.</description>
     <import file="nbproject/build-impl.xml"/>
+
+<!--
+        ===================
+        Find the application server
+        ===================
+ -->
+    
+    <target name="-pre-init" depends="-set-from-file,-set-from-env">
+        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
+        <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
+    </target>
+
+    <target name="-set-from-file" unless="var.APPSRV_HOME">
+        <!-- Read properties from the main SignServer configuration if available -->
+        <property file="${user.home}/signserver_build.properties" />
+        <property file="../../signserver_build.properties" />
+        <echo message="appserver.home = ${appserver.home}"/>
+        <!-- JBoss -->
+        <available file="${appserver.home}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${appserver.home}" />
+        <!-- GlassFish -->
+        <available file="${appserver.home}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${appserver.home}"/>
+    </target>
+
+    <target name="-set-from-env" unless="var.APPSRV_HOME">
+        <!-- Get property from environment variable -->
+        <property environment="env" />
+        <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>
+        <!-- JBoss -->
+        <available file="${env.APPSRV_HOME}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
+        <!-- GlassFish -->
+        <available file="${env.APPSRV_HOME}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}"/>
+    </target>
+
+    <target name="-post-init">
+        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
+        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
+    </target>
+
+    <target name="wsimport-init" depends="init">
+        <mkdir dir="${build.generated.sources.dir}/jax-ws"/>
+        <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
+        <echo message="cp: ${jaxws.wsimport.classpath}"/>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath path="${jaxws.wsimport.classpath}"/>
+        </taskdef>
+    </target>
+    
+    <!-- 
+        =========
+        Fix tests
+        =========
+    -->
+
+    <target name="-pre-compile">
+        <copy todir="${src.dir}" overwrite="true">
+            <fileset dir="../../bin" includes="jndi.properties"/>
+        </copy>
+    </target>
+
+    <!-- We override the below target to redefine "excludes" -->
+    <target name="-init-macrodef-junit">
+        <macrodef name="junit" uri="http://www.netbeans.org/ns/j2se-project/3">
+            <attribute default="${includes}" name="includes"/>
+            <attribute default="${excludes}" name="excludes"/>
+            <attribute default="**" name="testincludes"/>
+            <sequential>
+                <junit dir="${work.dir}" errorproperty="tests.failed" failureproperty="tests.failed" fork="true" showoutput="true" tempdir="${build.dir}">
+                    <batchtest todir="${build.test.results.dir}">
+                        <fileset dir="${test.src.dir}" excludes="@{excludes},${excludes},${test.excludes}" includes="@{includes}">
+                            <filename name="@{testincludes}"/>
+                        </fileset>
+                    </batchtest>
+                    <classpath>
+                        <path path="${run.test.classpath}"/>
+                    </classpath>
+                    <syspropertyset>
+                        <propertyref prefix="test-sys-prop."/>
+                        <mapper from="test-sys-prop.*" to="*" type="glob"/>
+                    </syspropertyset>
+                    <formatter type="brief" usefile="false"/>
+                    <formatter type="xml"/>
+                    <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
+                    <jvmarg line="${run.jvmargs}"/>
+                </junit>
+            </sequential>
+        </macrodef>
+    </target>
+
     <!--
 
     There exist several targets which are by default empty and which can be 

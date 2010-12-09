@@ -17,6 +17,7 @@ import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.genericws.gen.DummyWS;
 import org.signserver.server.genericws.gen.DummyWSService;
+import org.signserver.test.system.SignServerBuildProperties;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -52,10 +53,10 @@ public class ExtendedClusterClassLoaderTest extends TestCase {
 
             sSSession.setWorkerProperty(WORKERID, 
                     "hibernate.connection.datasource", 
-                    CompileTimeSettings.getInstance().getProperty(
+                    SignServerBuildProperties.getInstance().getProperty(
                         CompileTimeSettings.DATASOURCE_JNDINAMEPREFIX)
                     + CompileTimeSettings.getInstance().getProperty(
-                    CompileTimeSettings.DATASOURCE_JNDINAME));
+                    SignServerBuildProperties.DATASOURCE_JNDINAME));
 
 	    sSSession.reloadConfiguration(WORKERID);
 	}

@@ -82,7 +82,8 @@
 
         <target name="default" depends="build" description="Default target"/>
 
-	<target name="build" depends="signserver, mailsigner, signserver-cli">
+	<target name="build" depends="signserver, mailsigner, signserver-cli,
+            validationClient, signingAndValidationAPI">
 		<antcall target="showtime"/>
 	</target>
 	

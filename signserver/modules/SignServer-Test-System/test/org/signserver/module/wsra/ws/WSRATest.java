@@ -398,31 +398,33 @@ public class WSRATest extends CommonManagerT {
 				                                                 "SHA1WithRSA","CN=test1",issuerDN,null,keys.getPublic(),
 				                                                 keys.getPrivate(),"BC");
 		
-		try{
+//		try
+                {
 			WSRA wSRA = genWSRA(workerId, workerEntityManager, wc, user2ctx, null);
 			tb();wSRA.generateCertificateFromPKCS10("test1", pkcs10, null);tc();
 			assertTrue(false);
-		}catch(AuthorizationDeniedException e){
-			tr();
 		}
+//                        catch(AuthorizationDeniedException e){
+//			tr();
+//		}
 		
 		WSRA wSRA = genWSRA(workerId, workerEntityManager, wc, raadmin1ctx, null);
-		try{
+//		try{
 			tb();wSRA.generateCertificateFromPKCS10("test1", pkcs10, null);tc();
 			assertTrue(false);
-		}catch(IllegalRequestException e){
-			tr();
-		}
+//		}catch(IllegalRequestException e){
+//			tr();
+//		}
 		
 		pkcs10 = new PKCS10CertRequestData("cProfile1","RFC822Name=test@test.se",
                 "SHA1WithRSA","CN=test1,O=blaj",issuerDN,null,keys.getPublic(),
                 keys.getPrivate(),"BC");
-		try{
+//		try{
 			tb();wSRA.generateCertificateFromPKCS10("test1", pkcs10, null);tc();
 			assertTrue(false);
-		}catch(IllegalRequestException e){
-			tr();
-		}
+//		}catch(IllegalRequestException e){
+//			tr();
+//		}
 		
 		pkcs10 = new PKCS10CertRequestData("cProfile1","RFC822Name=test@test.se",
                 "SHA1WithRSA","CN=test1,O=Test Org",issuerDN,null,keys.getPublic(),
@@ -435,30 +437,30 @@ public class WSRATest extends CommonManagerT {
 		pkcs10 = new PKCS10CertRequestData("cProfile1","RFC822Name=test@test.se",
                 "SHA1WithRSA","CN=test1,O=Test Org","CN=noexistissuer",null,keys.getPublic(),
                 keys.getPrivate(),"BC");
-		try{			
+//		try{
 			tb();wSRA.generateCertificateFromPKCS10("test1",  pkcs10, null);tc();
 			assertTrue(false);
-		}catch(IllegalRequestException e){
-			tr();
-		}
+//		}catch(IllegalRequestException e){
+//			tr();
+//		}
 		
-		try{			
+//		try{
 			tb();wSRA.generateCertificateFromPKCS10("test1", pkcs10, null);tc();
 			assertTrue(false);
-		}catch(IllegalRequestException e){
-			tr();
-		}
+//		}catch(IllegalRequestException e){
+//			tr();
+//		}
 		
 		pkcs10 = new PKCS10CertRequestData("cProfile2","RFC822Name=test@test.se",
                 "SHA1WithRSA","CN=test1,O=Test Org",issuerDN,null,keys.getPublic(),
                 keys.getPrivate(),"BC");
 		
-		try{			
+//		try{
 			tb();wSRA.generateCertificateFromPKCS10("test1", pkcs10, null);tc();
 			assertTrue(false);
-		}catch(IllegalRequestException e){
-			tr();
-		}
+//		}catch(IllegalRequestException e){
+//			tr();
+//		}
 		
 		UserDataBean udb = wSRA.findUserByUsername("test1");
 		assertNotNull(udb);
@@ -480,19 +482,19 @@ public class WSRATest extends CommonManagerT {
 		assertNotNull(udb);
 		assertTrue(udb.getTokens().size()==2);
 		
-		try{			
+//		try{
 			tb();wSRA.generateCertificateFromPKCS10("test2", pkcs10, "12345");tc();
 			assertTrue(false);
-		}catch(IllegalRequestException e){
-			tr();
-		}
+//		}catch(IllegalRequestException e){
+//			tr();
+//		}
 		
 		
-		try{
+//		try{
 			wSRA = genWSRA(workerId, workerEntityManager, wc, user2ctx, null);
 			wSRA.findUsersByAlias(WSRAConstants.MATCHTYPE_EQUALS, "type1", "somealias1");
 			assertTrue(false);
-		}catch(AuthorizationDeniedException e){}
+//		}catch(AuthorizationDeniedException e){}
 		
 		
 		wSRA = genWSRA(workerId, workerEntityManager, wc, raadmin1ctx, null);

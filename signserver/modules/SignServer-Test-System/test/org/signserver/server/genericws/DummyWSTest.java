@@ -51,8 +51,8 @@ public class DummyWSTest extends TestCase {
             sSSession.setWorkerProperty(WORKERID, 
                     "hibernate.connection.datasource", 
                     SignServerBuildProperties.getInstance().getProperty(
-                        CompileTimeSettings.DATASOURCE_JNDINAMEPREFIX)
-                    + CompileTimeSettings.getInstance().getProperty(
+                        SignServerBuildProperties.DATASOURCE_JNDINAMEPREFIX)
+                    + SignServerBuildProperties.getInstance().getProperty(
                     SignServerBuildProperties.DATASOURCE_JNDINAME));
 
 	    sSSession.reloadConfiguration(WORKERID);

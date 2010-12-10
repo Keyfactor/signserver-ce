@@ -44,6 +44,9 @@
        <property name="xmlsigner.dir" value="./modules/SignServer-Module-XMLSigner"/>
        <property name="xmlsigner.jar" value="${xmlsigner.dir}/dist/SignServer-Module-XMLSigner.jar"/>
        <property name="xmlsigner.mar" value="${xmlsigner.dir}/dist/xmlsigner.mar"/>
+       <property name="testsystem.dir" value="./modules/SignServer-Test-System"/>
+       <property name="testsignserverws.dir" value="./modules/SignServer-Test-SignServerWS"/>
+       <property name="testvalidationws.dir" value="./modules/SignServer-Test-ValidationWS"/>
 	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
 	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
 	   <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
@@ -148,7 +151,7 @@
 
 
 	
-      <path id="signserver.test.compile.classpath">
+<!--      <path id="signserver.test.compile.classpath">
         <path refid="server.compile.classpath" />
         <path location="${build}" />
         <path location="${validationClientBuild}" />
@@ -161,7 +164,7 @@
         <fileset dir="${lib}/module/wsra">
 	      <include name="*.jar"/>
 	  </fileset>
-      </path>
+      </path>-->
 
 	   <!-- those are the default values used within JBoss for easy startup -->
 	    <property name="web.contentencoding" value="ISO-8859-1" />
@@ -666,139 +669,94 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	<antcall target="showtime" />
     </target>
 	
-    <target name="test:signserver:compile" description="compile JUnit testcases" depends="ws.compile.client, -test:signserver:compile:validationws" unless="buildMailSigner">
-        <mkdir dir="${test.dir}" />       
+<!--    <target name="test:signserver:compile" description="compile JUnit testcases" depends="ws.compile.client, -test:signserver:compile:validationws" unless="buildMailSigner">-->
+        <target name="test:signserver:compile" description="compile JUnit testcases" unless="buildMailSigner">
+<!--        <mkdir dir="${test.dir}" />
         <javac srcdir="${test.src.dir}" destdir="${test.dir}" debug="on" includeantruntime="no" encoding="iso8859-1"  target="${server.java.target}" source="${server.java.target}">
             <classpath refid="signserver.test.compile.classpath" />
         	<exclude name="org/signserver/mailsigner/**"/>
-        	<!-- <exclude name="org/signserver/protocol/validationservice/ws/**"/>
-        	<exclude name="org/signserver/protocol/ws/**"/> -->
+        	 <exclude name="org/signserver/protocol/validationservice/ws/**"/>
+        	<exclude name="org/signserver/protocol/ws/**"/> 
             <exclude name="org/signserver/module/wsra/**" unless="wsra.enabled.condition"/>
             <exclude name="org/signserver/client/wsraadmin/**" unless="module.wsra.enabled.condition"/>
             <exclude name="org/signserver/common/clusterclassloader/**" unless="clusterclassloader.conditionenabled"/>
         </javac>
-        <!-- Copy properties files -->
+         Copy properties files 
         <copy todir="${test.dir}">
             <fileset dir="${test.src.dir}" includes="**/*.xml,**/*.properties" />
         </copy>
 
-        <!-- jndi.properties needs to be in the classpath -->
-        <copy file="${src.java}/jndi.properties" todir="${test.dir}" />
+         jndi.properties needs to be in the classpath 
+        <copy file="${src.java}/jndi.properties" todir="${test.dir}" />-->
     </target>
 
-    <target name="-test:signserver:compile:validationws" depends="validationws.gen.server, validationws.gen.client" if="validationws.conditionenabled" unless="buildMailSigner">
+<!--    <target name="-test:signserver:compile:validationws" depends="validationws.gen.server, validationws.gen.client" if="validationws.conditionenabled" unless="buildMailSigner">
 	     <copy todir="${tmp}/validationws/gen-classes/server">
 	        <fileset dir="${build}">
 	        	<include name="org/signserver/protocol/validationservice/ws/*.class"/>
 	        	<include name="org/signserver/protocol/validationservice/ws/server/*.class"/>
 	        </fileset>
 	    </copy>
-    </target>
+    </target>-->
 
     <target name="test:signserver:pre-run">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
         <echo> Important, in order for all tests to complete must the web service, generic WS and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
+        <echo> For Test-SignServerWS to complete the following must be run first:
+            bin/signserver.sh setproperties modules/SignServer-Test-SignServerWS/test-configuration.properties
+            bin/signserver.sh reload 7001</echo>
+        <echo> For Test-ValidationWS to complete the following must be run first:
+            bin/signserver.sh setproperties modules/SignServer-Test-ValidationWS/test-configuration.properties
+            bin/signserver.sh reload 7101</echo>
+
         <delete dir="${test.dir}/reports" />
         <mkdir dir="${test.dir}/reports/html" />
     </target>
 	
-    <target name="test:signserver:run" depends="test:signserver:compile, test:signserver:pre-run" description="Run the default JUnit testcases" unless="buildMailSigner">
-        <junit printsummary="yes" haltonfailure="no" showoutput="true">
-            <classpath>
-                <path refid="signserver.test.compile.classpath" />
-                <path location="${test.dir}" />
-            </classpath>
-            <formatter usefile="false" type="brief"/>
-            <formatter type="xml"/>
-            <batchtest fork="yes" todir="${test.dir}/reports">
-                <fileset dir="${test.dir}">
-                    <include name="**/ejb/Test*" />
-                	<include name="**/common/Test*" />
-                	<include name="**/common/clusterclassloader/Test*" />
-                	<include name="**/module/**/Test*" />
-                    <include name="**/server/Test*" />
-                	<include name="**/server/service/Test*" />
-                	<include name="**/server/validcache/Test*" />
-                	<include name="**/server/statistics/Test*" />
-                    <include name="**/server/genericws/Test*" />
-                	<include name="**/server/clusterclassloader/Test*" />
-                	<include name="**/server/statistics/nonpersistent/Test*" />
-                	<include name="**/server/cryptotokens/Test*" />
-                        <include name="**/server/timedservices/Test*" />
-                        <include name="**/server/dispatchers/Test*" />
-                	<include name="**/groupkeyservice/Test*" />
-                	<include name="**/cli/TestSignServer*" />
-                	<include name="**/client/validationservice/Test*" />
-                	<include name="**/client/api/Test*" />
-                	<include name="**/protocol/validationservice/ws/Test*" />
-                	<include name="**/protocol/ws/Test*" />
-                	<include name="**/wsra/Test*" />
-                	<include name="**/wsra/**/Test*" />
-                    <exclude name="**/*Continously*" />
-                    <exclude name="**/TestRunner*" />
-                	<exclude name="**/db/*" />
-                	<exclude name="**/mailsigner/**" />
-                        <exclude name="**/cli/TestMail**" />
-                    
-                    <!-- DSS-236: MainWebService is slow so skip it for now -->
-                    <exclude name="**/TestMainWebService*" />
+    <target name="test:signserver:run" depends="test:signserver:pre-run, build"
+        description="Run the default JUnit testcases" unless="buildMailSigner">
 
-                </fileset>
-            </batchtest>
-        </junit>
+        <!-- SignServer-Test-SignServerWS -->
+        <ant target="test" inheritall="false"
+            antfile="${testsignserverws.dir}/build.xml"/>
 
+        <!-- SignServer-Test-ValidationWS -->
+        <ant target="test" inheritall="false"
+            antfile="${testvalidationws.dir}/build.xml"/>
+
+        <!-- SignServer-Test-System -->
+        <ant target="test" inheritall="false"
+            antfile="${testsystem.dir}/build.xml"/>
+
+        <!-- Create report for all tests -->
         <junitreport todir="${test.dir}/reports">
-            <fileset dir="${test.dir}/reports">
+
+            <!-- SignServer-Test-SignServerWS -->
+            <fileset dir="${testsignserverws.dir}/build/test/results">
                 <include name="TEST-*.xml" />
             </fileset>
-            <report format="frames" todir="${test.dir}/reports/html" />
-        </junitreport> 
-    </target>
 
-    <target name="test:signserver:runall" depends="test:signserver:compile, test:signserver:pre-run" description="Run the all JUnit testcases" unless="buildMailSigner">
-        <junit printsummary="yes" haltonfailure="no" showoutput="true">
-            <classpath>
-                <path refid="signserver.test.compile.classpath" />
-                <path location="${test.dir}" />
-            </classpath>
-            <formatter usefile="false" type="brief"/>
-            <formatter type="xml"/>
-            <batchtest fork="yes" todir="${test.dir}/reports">
-                <fileset dir="${test.dir}">
-                    <include name="**/ejb/Test*" />
-                	<include name="**/common/Test*" />
-                	<include name="**/common/clusterclassloader/Test*" />
-                	<include name="**/module/**/Test*" />
-                    <include name="**/server/Test*" />
-                	<include name="**/server/service/Test*" />
-                	<include name="**/server/validcache/Test*" />
-                	<include name="**/server/statistics/Test*" />
-                  <include name="**/server/genericws/Test*" />
-                	<include name="**/server/clusterclassloader/Test*" />
-                	<include name="**/server/statistics/nonpersistent/Test*" />
-                	<include name="**/groupkeyservice/Test*" />
-                	<include name="**/cli/TestSignServer*" />
-                	<include name="**/client/validationservice/Test*" />
-                	<include name="**/client/api/Test*" />
-                	<include name="**/protocol/validationservice/ws/Test*" />
-                	<include name="**/protocol/ws/Test*" />
-                	<include name="**/wsra/Test*" />
-                	<include name="**/wsra/**/Test*" />
-                    <exclude name="**/*Continously*" />
-                    <exclude name="**/TestRunner*" />
-                	<exclude name="**/db/*" />
-                	<exclude name="**/mailsigner/**" />
-                	<exclude name="**/cli/TestMail**" />
-                </fileset>
-            </batchtest>
-        </junit>
-
-        <junitreport todir="${test.dir}/reports">
-            <fileset dir="${test.dir}/reports">
+            <!-- SignServer-Test-ValidationWS -->
+            <fileset dir="${testvalidationws.dir}/build/test/results">
                 <include name="TEST-*.xml" />
             </fileset>
+
+            <!-- SignServer-Test-System -->
+            <fileset dir="${testsystem.dir}/build/test/results">
+                <include name="TEST-*.xml" />
+            </fileset>
+
             <report format="frames" todir="${test.dir}/reports/html" />
         </junitreport>
+    </target>
+
+    <target name="test:signserver:runall" 
+        depends="test:signserver:pre-run, build"
+        description="Run the most JUnit testcases" unless="buildMailSigner">
+
+        <!-- Currently we run all tests by default. When that is no longer the
+            case copy and modify the test:signserver:run target to here -->
+        <antcall target="test:signserver:run"/>
     </target>
 
     <target name="test:signserver:runone" depends="test:signserver:compile" description="run a single JUnit-test specified -Dtest.runone=classname" unless="buildMailSigner">

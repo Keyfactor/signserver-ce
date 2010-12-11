@@ -21,6 +21,9 @@
             <included-library dirs="200">file.reference.hibernate3.jar</included-library>
             <included-library dirs="200">file.reference.hibernate-annotations.jar</included-library>
             <included-library dirs="200">file.reference.hibernate-entitymanager.jar</included-library>
+            <included-library dirs="200">file.reference.ejb3-persistence.jar</included-library>
+            <included-library dirs="200">file.reference.jboss-ejb3x.jar</included-library>
+            <included-library dirs="200">file.reference.jboss-j2ee.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

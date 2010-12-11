@@ -6,8 +6,8 @@
 	   <import file="./module-builds/mrtdsigner.xml"/>
        <import file="./module-builds/mrtdsodsigner.xml"/>	   
 	   <import file="./module-builds/tsa.xml"/>
-	   <import file="./module-builds/dummyws.xml"/>
-	   <import file="./module-builds/wsra.xml"/>
+<!--	   <import file="./module-builds/dummyws.xml"/>
+	   <import file="./module-builds/wsra.xml"/>-->
 	   <import file="./module-builds/ooxmlsigner.xml"/>
 	   <import file="./module-builds/odfsigner.xml"/>
 	   <import file="./module-builds/xmlvalidator.xml"/>
@@ -41,6 +41,9 @@
        <property name="xmlsigner.dir" value="./modules/SignServer-Module-XMLSigner"/>
        <property name="xmlsigner.jar" value="${xmlsigner.dir}/dist/SignServer-Module-XMLSigner.jar"/>
        <property name="xmlsigner.mar" value="${xmlsigner.dir}/dist/xmlsigner.mar"/>
+
+        <property name="wsra.dir" value="./modules/SignServer-Module-WSRA"/>
+
        <property name="testsystem.dir" value="./modules/SignServer-Test-System"/>
        <property name="testsignserverws.dir" value="./modules/SignServer-Test-SignServerWS"/>
        <property name="testvalidationws.dir" value="./modules/SignServer-Test-ValidationWS"/>
@@ -356,7 +359,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	   <!-- =================================================================== -->
 	    <!-- Build signserver ejb part                                           -->
 	    <!-- =================================================================== -->
-	    <target name="signserver-ejb-jar-including-modules" if="includemodulesinbuild" depends="dummywsmar">
+	    <target name="signserver-ejb-jar-including-modules" if="includemodulesinbuild">
 	        <echo message="Including modules in main build"/>
 	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
 	        	<metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
@@ -375,7 +378,8 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 <!--                  <exclude name="org/signserver/server/genericws/**" />-->
 	              <exclude  name="org/signserver/protocol/ws/**" />
 		          <exclude name="org/signserver/mailsigner/**" />
-                          <exclude name="org/signserver/module/wsra/**" unless="module.wsra.enabled.condition" />
+<!--                          <exclude name="org/signserver/module/wsra/**" unless="module.wsra.enabled.condition" />-->
+                            <exclude name="org/signserver/module/wsra/**" />
 	        	</fileset>
 	        </jar>
 	    </target>
@@ -620,7 +624,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, dummywsmar, wsramar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, -module-wsra-jar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

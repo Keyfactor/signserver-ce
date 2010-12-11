@@ -333,6 +333,28 @@ OS version                          = ${os.version}
         <echo message="Not including XMLSigner module in EAR"/>
     </target>
 
+    <!-- Target that can be called to build the WSRA module -->
+    <target name="module-wsra"
+        description="Build the module WSRA (and DummyWS)">
+        <ant antfile="${wsra.dir}/build.xml" target="jar"
+            inheritall="false"/>
+    </target>
+    <!-- Target always called when building. Only builds if configured. -->
+    <target name="-module-wsra-jar" depends="module-wsra"
+        if="module.wsra.enabled.condition"/>
+    <!-- Target for including the module -->
+    <target name="-wsra-jar-included" if="module.wsra.include.condition"
+        depends="module-wsra">
+        <echo message="Including WSRA and DummyWS modules in EAR"/>
+        <copy file="${wsra.dir}/dist/wsra-module.jar" todir="${server.dist.dir}/lib"/>
+        <copy file="${wsra.dir}/dist/genericws-module-common.jar" todir="${server.dist.dir}/lib"/>
+        <copy file="${wsra.dir}/dist/dummyws-module.jar" todir="${server.dist.dir}/lib"/>
+    </target>
+    <target name="-wsra-jar-excluded"
+        unless="module.wsra.include.condition">
+        <echo message="Not including WSRA module in EAR"/>
+    </target>
+
  
 	   <!-- =================================================================== -->
 	    <!-- Build preparation for package distribution                         -->

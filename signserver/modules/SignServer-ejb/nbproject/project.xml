@@ -24,6 +24,25 @@
             <included-library dirs="200">file.reference.ejb3-persistence.jar</included-library>
             <included-library dirs="200">file.reference.jboss-ejb3x.jar</included-library>
             <included-library dirs="200">file.reference.jboss-j2ee.jar</included-library>
+            <included-library dirs="200">file.reference.servlet-2.3.jar</included-library>
+            <included-library dirs="200">file.reference.activation.jar</included-library>
+            <included-library dirs="200">file.reference.FastInfoset.jar</included-library>
+            <included-library dirs="200">file.reference.http.jar</included-library>
+            <included-library dirs="200">file.reference.jaxb-api.jar</included-library>
+            <included-library dirs="200">file.reference.jaxb-impl.jar</included-library>
+            <included-library dirs="200">file.reference.jaxb-xjc.jar</included-library>
+            <included-library dirs="200">file.reference.jaxws-api.jar</included-library>
+            <included-library dirs="200">file.reference.jaxws-rt.jar</included-library>
+            <included-library dirs="200">file.reference.jsr173_api.jar</included-library>
+            <included-library dirs="200">file.reference.jsr181-api.jar</included-library>
+            <included-library dirs="200">file.reference.jsr250-api.jar</included-library>
+            <included-library dirs="200">file.reference.mimepull.jar</included-library>
+            <included-library dirs="200">file.reference.resolver.jar</included-library>
+            <included-library dirs="200">file.reference.saaj-api.jar</included-library>
+            <included-library dirs="200">file.reference.saaj-impl.jar</included-library>
+            <included-library dirs="200">file.reference.sjsxp.jar</included-library>
+            <included-library dirs="200">file.reference.stax-ex.jar</included-library>
+            <included-library dirs="200">file.reference.streambuffer.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

@@ -492,6 +492,25 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.ejb3-persistence.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.jboss-ejb3x.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.jboss-j2ee.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.servlet-2.3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.activation.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.FastInfoset.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.http.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jaxb-api.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jaxb-impl.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jaxb-xjc.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jaxws-api.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jaxws-rt.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jsr173_api.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jsr181-api.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jsr250-api.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.mimepull.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.resolver.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.saaj-api.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.saaj-impl.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.sjsxp.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.stax-ex.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.streambuffer.jar}" todir="${build.classes.dir}"/>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
         <copyfiles files="${file.reference.cert-cvc.jar}" todir="${dist.ear.dir}/lib"/>
@@ -513,6 +532,25 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.ejb3-persistence.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.jboss-ejb3x.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.jboss-j2ee.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.servlet-2.3.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.activation.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.FastInfoset.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.http.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jaxb-api.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jaxb-impl.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jaxb-xjc.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jaxws-api.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jaxws-rt.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jsr173_api.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jsr181-api.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jsr250-api.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.mimepull.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.resolver.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.saaj-api.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.saaj-impl.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.sjsxp.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.stax-ex.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.streambuffer.jar}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">

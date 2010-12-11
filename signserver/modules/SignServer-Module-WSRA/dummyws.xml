@@ -1,0 +1,92 @@
+<project name="dummyws" default="dummywsmar" basedir="..">
+
+
+<property name="dummywsClientBuild" value="${tmp}/dummyws/gen-classes/client"/>
+       
+<target name="dummywsmar">
+    <path id="dummywsmar.build.classpath">
+      <path location="${jaxws.classpath}" />
+      <path location="${build}" />      
+    </path>
+
+    <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" 
+      classpath="${javac.classpath}"/>
+       
+    <taskdef name="part" classname="org.signserver.anttasks.PartAntTask" 
+      classpath="${javac.classpath}"/>
+ 
+     <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
+       <classpath refid="dummywsmar.build.classpath" />
+       <src path="${src.dir}" />
+       <include name="org/signserver/server/genericws/*.java"/>               
+    </javac>
+ 
+    <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
+       <classpath refid="dummywsmar.build.classpath" />
+       <src path="${test.src.dir}" /> 
+       <include name="org/signserver/server/genericws/DummyWS.java"/>
+       <include name="org/signserver/server/genericws/IDummyWS.java"/>
+       <include name="org/signserver/server/genericws/*DataBean.java"/>        
+    </javac>
+    
+  
+    <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen" >
+       <classpath path="${jaxws.classpath}"/>
+    </taskdef>
+        
+    <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+       <classpath path="${jaxws.classpath}"/>
+    </taskdef>
+                
+    <mkdir dir="tmp/dummyws/gen-classes/server"/>
+    <mkdir dir="tmp/dummyws/gen-classes/client"/>           
+
+    <wsgen  fork="true" sei="org.signserver.server.genericws.DummyWS"
+                 genwsdl="true" destdir="tmp/dummyws/gen-classes/server"              
+                debug="true" xendorsed="true">
+              
+      <classpath path="${java.home}/../lib/tools.jar:${classes.dir}:${j2ee.platform.wsgen.classpath}:${javac.classpath}:${build}"/>
+    </wsgen>
+        
+     <copy todir="tmp/dummyws/gen-classes/server">
+        <fileset dir="${build}">                
+           <include name="org/signserver/server/genericws/DummyWS.class"/>
+           <include name="org/signserver/server/genericws/IDummyWS.class"/>
+           <include name="org/signserver/server/genericws/*DataBean.class"/>  
+        </fileset>
+     </copy> 
+     <copy file="${test.src.dir}/dummyws-sun-jaxws.xml" tofile="${tmp}/dummyws/gen-classes/server/sun-jaxws.xml"/>
+        
+     <!-- With includemodulesinbuild the jaxws.xml needs to be placed on the server, not just in the module -->
+     <copy file="${test.src.dir}/dummyws-sun-jaxws.xml" tofile="${build}/dummyws-sun-jaxws.xml"/>
+        
+     <wsimport destdir="${tmp}/dummyws/gen-classes/client"
+        wsdl="${tmp}/dummyws/gen-classes/server/DummyWSService.wsdl" >
+     </wsimport>
+
+	<jar jarfile="dist/dummyws-module.jar">
+		<fileset dir="tmp/dummyws/gen-classes/server">
+		    <include name="**"/>		    
+		</fileset>
+    </jar>
+    <jar jarfile="dist/genericws-module-common.jar">
+        <fileset dir="${build}">
+            <exclude name="org/signserver/server/genericws/DummyWS.class"/>
+            <exclude name="org/signserver/server/genericws/IDummyWS.class"/>
+            <include name="org/signserver/server/genericws/*.class"/>        
+        </fileset>
+    </jar>
+    <mar version="${mar.versions}" modulename="dummyws" verbose="true" destfile="${basedir}/dist/dummyws.mar">
+        <part>
+            <fileset dir="dist">
+                <include name="dummyws-module.jar"/>
+                <include name="genericws-module-common.jar"/>
+            </fileset>
+            <fileset dir="src/conf/dummyws">
+                <include name="*.properties"/>
+            </fileset>
+        </part>
+    </mar>
+</target>
+
+</project>

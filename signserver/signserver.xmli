@@ -1,28 +1,23 @@
 <?xml version="1.0"?>
 <project name="signserver_specific" basedir=".">
 	   
-	   <import file="./build.xml"/>
-	   <import file="./module-builds/pdfsigner.xml"/>
-	   <import file="./module-builds/mrtdsigner.xml"/>
-       <import file="./module-builds/mrtdsodsigner.xml"/>	   
-	   <import file="./module-builds/tsa.xml"/>
-<!--	   <import file="./module-builds/dummyws.xml"/>
-	   <import file="./module-builds/wsra.xml"/>-->
-	   <import file="./module-builds/ooxmlsigner.xml"/>
-	   <import file="./module-builds/odfsigner.xml"/>
-	   <import file="./module-builds/xmlvalidator.xml"/>
-           <import file="./module-builds/cmssigner.xml"/>
+    <import file="./build.xml"/>
+    <import file="./module-builds/pdfsigner.xml"/>
+    <import file="./module-builds/mrtdsigner.xml"/>
+    <import file="./module-builds/mrtdsodsigner.xml"/>
+    <import file="./module-builds/tsa.xml"/>
+    <import file="./module-builds/ooxmlsigner.xml"/>
+    <import file="./module-builds/odfsigner.xml"/>
+    <import file="./module-builds/xmlvalidator.xml"/>
+    <import file="./module-builds/cmssigner.xml"/>
+
+    <property name="java.trustpassword" value="changeit" />
+    <property name="httpsserver.password" value="serverpwd" />
+
+    <property name="ejbdd.src" value="${preprocessed}/deploy/ejb" />
+    <property name="eardd.src" value="${preprocessed}/deploy/ear" />
+    <property name="caear" value="${server.dist.dir}/${app.name}.ear" />
 	
-	   <property name="java.trustpassword" value="changeit" />
-	   <property name="httpsserver.password" value="serverpwd" />
-
-
-	   <property name="ejbdd.src" value="${preprocessed}/deploy/ejb" />
-
-	   <property name="eardd.src" value="${preprocessed}/deploy/ear" />
-	   <property name="caear" value="${server.dist.dir}/${app.name}.ear" />
-	
-		
        <property name="timeStampClientBuild" value="${bin}/timeStampClient"/>
        <property name="timeStampClientDir" value="${client.dist.dir}/timestampclient"/>
        <property name="timeStampClientJar" value="${timeStampClientDir}/timeStampClient.jar"/>
@@ -102,6 +97,7 @@
 	
 	   <path id="signserver.compile.classpath">
 	        <path refid="signserver.ext.classpath" />
+                <fileset dir="dist-server/lib" includes="*.jar"/>
 	        <fileset dir="lib" includes="*.jar" />
 	   	    <fileset dir="lib/quartz" includes="*.jar" />
 	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
@@ -122,7 +118,7 @@
 	    </path>
 
 	    <path id="server.compile.classpath">
-	        <path refid="signserver.compile.classpath" />	    	
+	        <path refid="signserver.compile.classpath" />
 	    </path>
 		
 		
@@ -154,23 +150,6 @@
 	            <include name="runtimes/com.ibm.*.jar"/>
 	        </fileset>
 	    </path>
-
-
-	
-<!--      <path id="signserver.test.compile.classpath">
-        <path refid="server.compile.classpath" />
-        <path location="${build}" />
-        <path location="${validationClientBuild}" />
-        <path location="${wsraadminClientBuild}" />
-        <path location="${wsraadminWSClientBuild}" />
-        <path location="${dummywsClientBuild}" />
-        <path location="${signingAndValidationBuild}" />
-        <path refid="j2ee.classpath" />
-        <path refid="jaxws.classpath" />
-        <fileset dir="${lib}/module/wsra">
-	      <include name="*.jar"/>
-	  </fileset>
-      </path>-->
 
 	   <!-- those are the default values used within JBoss for easy startup -->
 	    <property name="web.contentencoding" value="ISO-8859-1" />
@@ -327,11 +306,11 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	   <!-- =================================================================== -->
 	    <!-- Compile java sources                                                -->
 	    <!-- =================================================================== -->
-	    <target name="signserver:compile" unless="buildMailSigner" >	    	
+	    <target name="signserver:compile" depends="signserver-common"
+                unless="buildMailSigner" >
 	        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
 	            <classpath refid="server.compile.classpath" />
 	            <src path="${src.java}" />
-                    <src path="${signservercommon.src.java}" />
                     <src path="${signserverejb.src.java}" />
                     <src path="${signserverwar.src.java}" />
                     <src path="modules/SignServer-Module-CMSSigner/src/java" />
@@ -469,13 +448,8 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    <target name="ws.init" depends="init,  ws.common.init" if="signserverws.conditionenabled" unless="buildMailSigner">
 	    	<mkdir dir="${tmp}/jaxws/gen-classes/server"/>
 	    	<mkdir dir="${tmp}/jaxws/gen-classes/client"/>
-	    	
-
 	    </target>
 	
-	
-
-		
 		<target depends="ws.init" name="ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
 	       <wsgen  fork="true" sei="org.signserver.protocol.ws.server.SignServerWS"
 	       	     genwsdl="true" destdir="${tmp}/jaxws/gen-classes/server"
@@ -513,116 +487,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	                wsdl="${tmp}/jaxws/gen-classes/server/SignServerWSService.wsdl" >
 	        </wsimport>
 	    </target>
-	    
-	    <!--
-            <target name="ws.compile.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
-	        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
-	            <classpath refid="server.compile.classpath" />
-	            <src path="${src.java}" /> 	        	
-	        	<include name="org/signserver/protocol/ws/client/**"/>
-	        	<include name="org/signserver/protocol/ws/client/cli/**"/>
-	        </javac>
-	    </target>
 
-	    <target name="ws.build.client" depends="ws.init, ws.compile.client" if="signserverws.conditionenabled" unless="buildMailSigner">
-	    	
-	    	<mkdir dir="${tmp}/signserverwscli.jar"/>
-	    	<mkdir dir="${tmp}/signserverwscli.jar/META-INF"/>
-	    	<mkdir dir="${basedir}/dist-client/signserverwscli/lib"/>
-
-	        <copy todir="${tmp}/signserverwscli.jar">
-	            <fileset dir="${build}">
-	              <include name="org/signserver/protocol/ws/client/*.class"/>
-	              <include name="org/signserver/protocol/ws/client/cli/*.class"/>
-	              <include name="org/signserver/protocol/ws/*.class"/> 
-	              <include name="org/signserver/cli/*.class"/>
-	              <include name="org/signserver/common/*.class"/>
-	              <include name="org/signserver/groupkeyservice/common/*.class"/>
-	              <include name="org/signserver/validationservice/common/*.class"/>
-	            </fileset>	
-	            <fileset dir="${tmp}/jaxws/gen-classes/client">
-	              <include name="**/*.class"/>
-	            </fileset>	
-	            <fileset dir="${src.java}">
-		              <include name="log4j.properties"/>
-		        </fileset>
-		    </copy> 
-	 
-	        <copy todir="dist-client/signserverwscli/lib">
-	            <fileset dir="${lib}">        
-	              <include name="log4j.jar"/>      
-	              <include name="commons-lang-2.4.jar"/>
-	              <include name="ejbca-util.jar"/>
-	              <include name="cert-cvc.jar"/>
-	            </fileset>	
-	            <fileset dir="${lib}/${client.java.target}">        
-	              <include name="bcprov-jdk.jar"/>                  	
-	            </fileset>	    
-		        <fileset dir="${lib}/jaxws">
-					<include name="activation.jar" />
-					<include name="FastInfoset.jar" />
-				    <include name="http.jar" />
-					<include name="jaxb-api.jar" />
-				    <include name="jaxb-impl.jar" />
-				    <include name="jaxb-xjc.jar" />
-					<include name="jaxws-api.jar" />
-				    <include name="jaxws-rt.jar" />
-		        	<include name="jaxws-tools.jar" />
-				    <include name="jsr173_api.jar" />
-				 	<include name="jsr181-api.jar" />
-				    <include name="jsr250-api.jar" />
-		        	<include name="mimepull.jar" />
-					<include name="resolver.jar" />
-				    <include name="saaj-api.jar" />
-					<include name="saaj-impl.jar" />
-					<include name="sjsxp.jar" />
-		        	<include name="stax-ex.jar" />
-					<include name="streambuffer.jar" />
-				</fileset>
-		    </copy>    	
-		    <copy todir="dist-client/signserverwscli/">
-	            <fileset dir="${src}/jaxws/cli">
-	                <include name="*.*" />
-	            </fileset>
-	        </copy> 
-	    	              
-	        <jar destfile="dist-client/signserverwscli/signserverwscli.jar" basedir="${tmp}/signserverwscli.jar">
-	          <manifest>
-	          	<attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/ejbca-util.jar lib/cert-cvc.jar lib/log4j.jar lib/activation.jar lib/FastInfoset.jar lib/http.jar lib/jaxb-api.jar lib/jaxb-impl.jar  lib/jaxb-xjc.jar lib/jaxws-api.jar lib/jaxws-rt.jar lib/jaxws-tools.jar lib/jsr173_api.jar lib/jsr181-api.jar lib/jsr250-api.jar lib/mimepull.jar lib/resolver.jar lib/saaj-api.jar lib/saaj-impl.jar lib/sjsxp.jar lib/stax-ex.jar lib/streambuffer.jar lib/commons-lang-2.4.jar"/>
-	            <attribute name="Main-Class" value="org.signserver.protocol.ws.client.cli.WSCLI"/>
-	          </manifest>
-	        </jar>    	    	
-	    </target>
-
-	    <target name="signserverws.client" depends="ws.build.client" if="signserverws.conditionenabled" />
-            -->
-
-	   <!-- =================================================================== -->
-	   <!-- Build Validation Service Web Service                                -->
-	   <!-- =================================================================== -->	        			
-	  
-	  <target name="validationws.init" depends="init,  ws.common.init" if="validationws.conditionenabled" unless="buildMailSigner">
-	      <mkdir dir="${tmp}/validationws/gen-classes/server"/>
-	      <mkdir dir="${tmp}/validationws/gen-classes/client"/>
-	  </target>
-	        	
-	  <target depends="validationws.init" name="validationws.gen.server" if="validationws.conditionenabled" unless="buildMailSigner">
-	     <wsgen  fork="true" sei="org.signserver.protocol.validationservice.ws.server.ValidationWS"
-	        	       	     genwsdl="true" destdir="${tmp}/validationws/gen-classes/server"
-	        	            debug="true" xendorsed="true">
-	        <classpath>
-	          <path refid="jaxws.classpath" /> 
-	          <pathelement location="src" /> 
-	        </classpath>
-         </wsgen>
-	  </target>
-	        			        		
-	   <target name="validationws.gen.client" depends="validationws.init, validationws.gen.server" if="validationws.conditionenabled" unless="buildMailSigner">	    	
-	      <wsimport destdir="${tmp}/validationws/gen-classes/client"
-	        	    wsdl="${tmp}/validationws/gen-classes/server/ValidationWSService.wsdl">
-	      </wsimport>
-	   </target>
-		
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
@@ -676,36 +541,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <antcall target="j2ee:deploy" />
 	<antcall target="showtime" />
     </target>
-	
-<!--    <target name="test:signserver:compile" description="compile JUnit testcases" depends="ws.compile.client, -test:signserver:compile:validationws" unless="buildMailSigner">-->
-        <target name="test:signserver:compile" description="compile JUnit testcases" unless="buildMailSigner">
-<!--        <mkdir dir="${test.dir}" />
-        <javac srcdir="${test.src.dir}" destdir="${test.dir}" debug="on" includeantruntime="no" encoding="iso8859-1"  target="${server.java.target}" source="${server.java.target}">
-            <classpath refid="signserver.test.compile.classpath" />
-        	<exclude name="org/signserver/mailsigner/**"/>
-        	 <exclude name="org/signserver/protocol/validationservice/ws/**"/>
-        	<exclude name="org/signserver/protocol/ws/**"/> 
-            <exclude name="org/signserver/module/wsra/**" unless="wsra.enabled.condition"/>
-            <exclude name="org/signserver/client/wsraadmin/**" unless="module.wsra.enabled.condition"/>
-            <exclude name="org/signserver/common/clusterclassloader/**" unless="clusterclassloader.conditionenabled"/>
-        </javac>
-         Copy properties files 
-        <copy todir="${test.dir}">
-            <fileset dir="${test.src.dir}" includes="**/*.xml,**/*.properties" />
-        </copy>
-
-         jndi.properties needs to be in the classpath 
-        <copy file="${src.java}/jndi.properties" todir="${test.dir}" />-->
-    </target>
-
-<!--    <target name="-test:signserver:compile:validationws" depends="validationws.gen.server, validationws.gen.client" if="validationws.conditionenabled" unless="buildMailSigner">
-	     <copy todir="${tmp}/validationws/gen-classes/server">
-	        <fileset dir="${build}">
-	        	<include name="org/signserver/protocol/validationservice/ws/*.class"/>
-	        	<include name="org/signserver/protocol/validationservice/ws/server/*.class"/>
-	        </fileset>
-	    </copy>
-    </target>-->
 
     <target name="test:signserver:pre-run">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
@@ -767,7 +602,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <antcall target="test:signserver:run"/>
     </target>
 
-    <target name="test:signserver:runone" depends="test:signserver:compile" description="run a single JUnit-test specified -Dtest.runone=classname" unless="buildMailSigner">
+    <target name="test:signserver:runone" description="run a single JUnit-test specified -Dtest.runone=classname" unless="buildMailSigner">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
         <fail message="'test.runone' not set. Example -Dtest.runone=TestXMLSigner " unless="test.runone" />
         <echo> Important, in order for all tests to complete must the web service, generic WS and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
@@ -1058,7 +893,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    </jar>
 	  </target>
 	
-    <!--                                                   -->
+        <!--                                                   -->
      <!-- Target Used to perform validations using CLI     -->
      <!--                                                   -->
       <target name="validationClient" unless="buildMailSigner" if="validationclient.conditionenabled" >
@@ -1066,7 +901,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
             antfile="${clientvalidationcli.dir}/build.xml"/>
       </target>
 	
-	 <!--                                                 -->
+     <!--                                                 -->
      <!--   Target for building signingAndValidationAPI   -->
      <!--                                                 -->
     <target name="signingAndValidationAPI" depends="signserver-ejb.jar" unless="buildMailSigner" if="signingandvalidationapi.conditionenabled" >
@@ -1090,7 +925,5 @@ module.wsra.enabled                 = ${module.wsra.enabled}
             </part>
     	</mar>
 	</target>
-	
-
 
 </project>	

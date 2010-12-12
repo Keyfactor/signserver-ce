@@ -261,6 +261,12 @@ OS version                          = ${os.version}
                 <include name="*.jar"/>
             </fileset>
         </copy>
+        <mkdir dir="dist-server/lib" />
+        <copy todir="dist-server/lib">
+            <fileset dir="${signservercommon.dir}/dist">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
      </target>
 
      <!-- SignServer-ejb -->
@@ -446,7 +452,7 @@ OS version                          = ${os.version}
         </sequential>
     </macrodef>
 
-    <target name="test:compile"  depends="test:signserver:compile, test:mailsigner:compile"/>
+    <target name="test:compile"  depends="test:mailsigner:compile"/>
  	
     <target name="test:run" description="Run the default JUnit testcases">
         <antcall target="test:signserver:run"/>

@@ -42,52 +42,20 @@ is divided into following sections:
         <property file="nbproject/private/configs/${config}.properties"/>
         <property file="nbproject/private/private.properties"/>
     </target>
-    <target name="-pre-init-libraries">
-        <property location="../../lib/nblibraries.properties" name="libraries.path"/>
-        <dirname file="${libraries.path}" property="libraries.dir.nativedirsep"/>
-        <pathconvert dirsep="/" property="libraries.dir">
-            <path path="${libraries.dir.nativedirsep}"/>
-        </pathconvert>
-        <basename file="${libraries.path}" property="libraries.basename" suffix=".properties"/>
-        <available file="${libraries.dir}/${libraries.basename}-private.properties" property="private.properties.available"/>
-    </target>
-    <target depends="-pre-init-libraries" if="private.properties.available" name="-init-private-libraries">
-        <loadproperties encoding="ISO-8859-1" srcfile="${libraries.dir}/${libraries.basename}-private.properties">
-            <filterchain>
-                <replacestring from="$${base}" to="${libraries.dir}"/>
-                <escapeunicode/>
-            </filterchain>
-        </loadproperties>
-    </target>
-    <target depends="-pre-init,-init-private,-init-private-libraries" name="-init-libraries">
-        <loadproperties encoding="ISO-8859-1" srcfile="${libraries.path}">
-            <filterchain>
-                <replacestring from="$${base}" to="${libraries.dir}"/>
-                <escapeunicode/>
-            </filterchain>
-        </loadproperties>
-    </target>
-    <target depends="-pre-init,-init-private,-init-libraries" name="-init-user">
+    <target depends="-pre-init,-init-private" name="-init-user">
         <property file="${user.properties.file}"/>
         <!-- The two properties below are usually overridden -->
         <!-- by the active platform. Just a fallback. -->
         <property name="default.javac.source" value="1.4"/>
         <property name="default.javac.target" value="1.4"/>
     </target>
-    <target depends="-pre-init,-init-private,-init-libraries,-init-user" name="-init-project">
+    <target depends="-pre-init,-init-private,-init-user" name="-init-project">
         <property file="nbproject/configs/${config}.properties"/>
         <property file="nbproject/project.properties"/>
     </target>
-    <target depends="-pre-init,-init-private,-init-libraries,-init-user,-init-project,-init-macrodef-property" name="-do-init">
+    <target depends="-pre-init,-init-private,-init-user,-init-project,-init-macrodef-property" name="-do-init">
         <available file="${manifest.file}" property="manifest.available"/>
-        <condition property="splashscreen.available">
-            <and>
-                <not>
-                    <equals arg1="${application.splash}" arg2="" trim="true"/>
-                </not>
-                <available file="${application.splash}"/>
-            </and>
-        </condition>
+        <available file="${application.splash}" property="splashscreen.available"/>
         <condition property="main.class.available">
             <and>
                 <isset property="main.class"/>
@@ -213,7 +181,7 @@ is divided into following sections:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="-pre-init,-init-private,-init-libraries,-init-user,-init-project,-do-init" name="-init-check">
+    <target depends="-pre-init,-init-private,-init-user,-init-project,-do-init" name="-init-check">
         <fail unless="src.dir">Must set src.dir</fail>
         <fail unless="test.src.dir">Must set test.src.dir</fail>
         <fail unless="build.dir">Must set build.dir</fail>
@@ -344,8 +312,7 @@ is divided into following sections:
             <attribute default="${excludes}" name="excludes"/>
             <attribute default="**" name="testincludes"/>
             <sequential>
-                <property name="junit.forkmode" value="perTest"/>
-                <junit dir="${work.dir}" errorproperty="tests.failed" failureproperty="tests.failed" fork="true" forkmode="${junit.forkmode}" showoutput="true" tempdir="${build.dir}">
+                <junit dir="${work.dir}" errorproperty="tests.failed" failureproperty="tests.failed" fork="true" showoutput="true" tempdir="${build.dir}">
                     <batchtest todir="${build.test.results.dir}">
                         <fileset dir="${test.src.dir}" excludes="@{excludes},${excludes}" includes="@{includes}">
                             <filename name="@{testincludes}"/>
@@ -365,50 +332,6 @@ is divided into following sections:
                 </junit>
             </sequential>
         </macrodef>
-    </target>
-    <target depends="-profile-pre-init, init, -profile-post-init, -profile-init-macrodef-profile, -profile-init-check" name="profile-init"/>
-    <target name="-profile-pre-init">
-        <!-- Empty placeholder for easier customization. -->
-        <!-- You can override this target in the ../build.xml file. -->
-    </target>
-    <target name="-profile-post-init">
-        <!-- Empty placeholder for easier customization. -->
-        <!-- You can override this target in the ../build.xml file. -->
-    </target>
-    <target name="-profile-init-macrodef-profile">
-        <macrodef name="resolve">
-            <attribute name="name"/>
-            <attribute name="value"/>
-            <sequential>
-                <property name="@{name}" value="${env.@{value}}"/>
-            </sequential>
-        </macrodef>
-        <macrodef name="profile">
-            <attribute default="${main.class}" name="classname"/>
-            <element name="customize" optional="true"/>
-            <sequential>
-                <property environment="env"/>
-                <resolve name="profiler.current.path" value="${profiler.info.pathvar}"/>
-                <java classname="@{classname}" dir="${profiler.info.dir}" fork="true" jvm="${profiler.info.jvm}">
-                    <jvmarg value="${profiler.info.jvmargs.agent}"/>
-                    <jvmarg line="${profiler.info.jvmargs}"/>
-                    <env key="${profiler.info.pathvar}" path="${profiler.info.agentpath}:${profiler.current.path}"/>
-                    <arg line="${application.args}"/>
-                    <classpath>
-                        <path path="${run.classpath}"/>
-                    </classpath>
-                    <syspropertyset>
-                        <propertyref prefix="run-sys-prop."/>
-                        <mapper from="run-sys-prop.*" to="*" type="glob"/>
-                    </syspropertyset>
-                    <customize/>
-                </java>
-            </sequential>
-        </macrodef>
-    </target>
-    <target depends="-profile-pre-init, init, -profile-post-init, -profile-init-macrodef-profile" name="-profile-init-check">
-        <fail unless="profiler.info.jvm">Must set JVM to use for profiling in profiler.info.jvm</fail>
-        <fail unless="profiler.info.jvmargs.agent">Must set profiler agent JVM arguments in profiler.info.jvmargs.agent</fail>
     </target>
     <target depends="-init-debug-args" name="-init-macrodef-nbjpda">
         <macrodef name="nbjpdastart" uri="http://www.netbeans.org/ns/j2se-project/1">
@@ -560,7 +483,7 @@ is divided into following sections:
     <target depends="-init-ap-cmdline-properties,-init-ap-cmdline-supported" name="-init-ap-cmdline">
         <property name="ap.cmd.line.internal" value=""/>
     </target>
-    <target depends="-pre-init,-init-private,-init-libraries,-init-user,-init-project,-do-init,-post-init,-init-check,-init-macrodef-property,-init-macrodef-javac,-init-macrodef-junit,-init-macrodef-nbjpda,-init-macrodef-debug,-init-macrodef-java,-init-presetdef-jar,-init-ap-cmdline" name="init"/>
+    <target depends="-pre-init,-init-private,-init-user,-init-project,-do-init,-post-init,-init-check,-init-macrodef-property,-init-macrodef-javac,-init-macrodef-junit,-init-macrodef-nbjpda,-init-macrodef-debug,-init-macrodef-java,-init-presetdef-jar,-init-ap-cmdline" name="init"/>
     <!--
                 ===================
                 COMPILATION SECTION
@@ -762,72 +685,6 @@ is divided into following sections:
         <j2seproject1:nbjpdareload/>
     </target>
     <target depends="init,-pre-debug-fix,-do-debug-fix" if="netbeans.home" name="debug-fix"/>
-    <!--
-                =================
-                PROFILING SECTION
-                =================
-            -->
-    <target depends="profile-init,compile" description="Profile a project in the IDE." if="netbeans.home" name="profile">
-        <nbprofiledirect>
-            <classpath>
-                <path path="${run.classpath}"/>
-            </classpath>
-        </nbprofiledirect>
-        <profile/>
-    </target>
-    <target depends="profile-init,compile-single" description="Profile a selected class in the IDE." if="netbeans.home" name="profile-single">
-        <fail unless="profile.class">Must select one file in the IDE or set profile.class</fail>
-        <nbprofiledirect>
-            <classpath>
-                <path path="${run.classpath}"/>
-            </classpath>
-        </nbprofiledirect>
-        <profile classname="${profile.class}"/>
-    </target>
-    <!--
-                =========================
-                APPLET PROFILING  SECTION
-                =========================
-            -->
-    <target depends="profile-init,compile-single" if="netbeans.home" name="profile-applet">
-        <nbprofiledirect>
-            <classpath>
-                <path path="${run.classpath}"/>
-            </classpath>
-        </nbprofiledirect>
-        <profile classname="sun.applet.AppletViewer">
-            <customize>
-                <arg value="${applet.url}"/>
-            </customize>
-        </profile>
-    </target>
-    <!--
-                =========================
-                TESTS PROFILING  SECTION
-                =========================
-            -->
-    <target depends="profile-init,compile-test-single" if="netbeans.home" name="profile-test-single">
-        <nbprofiledirect>
-            <classpath>
-                <path path="${run.test.classpath}"/>
-            </classpath>
-        </nbprofiledirect>
-        <junit dir="${profiler.info.dir}" errorproperty="tests.failed" failureproperty="tests.failed" fork="true" jvm="${profiler.info.jvm}" showoutput="true">
-            <env key="${profiler.info.pathvar}" path="${profiler.info.agentpath}:${profiler.current.path}"/>
-            <jvmarg value="${profiler.info.jvmargs.agent}"/>
-            <jvmarg line="${profiler.info.jvmargs}"/>
-            <test name="${profile.class}"/>
-            <classpath>
-                <path path="${run.test.classpath}"/>
-            </classpath>
-            <syspropertyset>
-                <propertyref prefix="test-sys-prop."/>
-                <mapper from="test-sys-prop.*" to="*" type="glob"/>
-            </syspropertyset>
-            <formatter type="brief" usefile="false"/>
-            <formatter type="xml"/>
-        </junit>
-    </target>
     <!--
                 ===============
                 JAVADOC SECTION

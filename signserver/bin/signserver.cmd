@@ -15,15 +15,14 @@ set J2EE_CP=%SIGNSRV_HOME%\dist-client\lib\jbossall-client.jar
 set SIGNSERVER_PKG_CP=%SIGNSRV_HOME%\lib\asm-3.1.jar;%SIGNSRV_HOME%\lib\asm-commons-3.1.jar;%SIGNSRV_HOME%\lib\bcmail-jdk.jar;%SIGNSRV_HOME%\lib\bcprov-jdk.jar;%SIGNSRV_HOME%\lib\commons-lang-2.0.jar;%SIGNSRV_HOME%\lib\ejbca-util.jar;%SIGNSRV_HOME%\lib\cert-cvc.jar;%SIGNSRV_HOME%\lib\james-2.3.1.jar;%SIGNSRV_HOME%\lib\jbossall-client.jar;%SIGNSRV_HOME%\lib\jboss-ejb3x.jar;%SIGNSRV_HOME%\lib\log4j.jar;%SIGNSRV_HOME%\lib\signserver-cli.jar
 
 rem check that we have built the classes
-if not exist %SIGNSRV_HOME%\lib\signserver-cli.jar (
-  if not exist %SIGNSRV_HOME%\dist-client\signserver-cli.jar  (
-    echo You must build SIGNSERVER before using the cli, use 'ant'.
+
+if not exist %SIGNSRV_HOME%\dist-client\SignServer-AdminCLI.jar  (
+    echo You must build SignServer before using the cli, use 'ant'.
     goto end
-  )
 )
 
 
-set CLASSPATH=%J2EE_CP%;%SIGNSERVER_CP%;%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\dist-client\signserver-cli.jar;%SIGNSERVER_PKG_CP%
+set CLASSPATH=%J2EE_CP%;%SIGNSERVER_CP%;%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\dist-client\SignServer-AdminCLI.jar;%SIGNSERVER_PKG_CP%
 rem echo %CLASSPATH%
 
 rem Fixup arguments, we have to do this since windows normally only 

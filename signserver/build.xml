@@ -250,9 +250,24 @@ OS version                          = ${os.version}
            </fileset>	      
        </copy>
      </target>
-	
-    <target name="signserver-cli" depends="signserver, mailsigner">
-    	<mkdir dir="dist-client/lib" />
+
+    <!-- AdminCLI -->
+    <target name="signserver-cli" description="Build SignServer AdminCLI">
+        <ant inheritall="false" target="jar"
+            antfile="${admincli.dir}/build.xml"/>
+
+        <mkdir dir="dist-client/lib" />
+        <copy todir="dist-client">
+            <fileset dir="${admincli.dir}/dist">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="dist-client/lib">
+            <fileset dir="${admincli.dir}/dist/lib">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+    	
     	<echo message="Ignore warnings about jar files that can not be copied, they are for other application servers"/>
     	<!-- JBoss:
             For JBoss 4.2.3.GA only jbossall-client.jar is needed.
@@ -269,20 +284,6 @@ OS version                          = ${os.version}
     	<copy file="${appserver.home}/lib/appserv-rt.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
     	<copy file="${appserver.home}/lib/appserv-deployment-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
     	<copy file="${appserver.home}/lib/appserv-ext.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
-
-	    <jar destfile="${signserver.cli.jar}" basedir="${build}">
-	      <manifest>	        
-	        <attribute name="Main-Class" value="org.signserver.cli.signserver"/>
-	      </manifest>
-	      <include name="org/signserver/cli/**/**"/>
-	      <include name="org/signserver/mailsigner/cli/**/**"/>
-	      <include name="org/signserver/common/**/**"/>
-	      <include name="org/signserver/ejb/interfaces/**/**"/>
-	      <include name="org/signserver/groupkeyservice/common/**/**"/>
-	      <include name="org/signserver/validationservice/common/**/**"/>
-	      <include name="org/signserver/mailsigner/**"/>
-	      <include name="org/signserver/server/**/**"/>
-	    </jar>    	
     </target>
 
     <target name="admingui" depends="signserver"

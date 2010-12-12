@@ -20,6 +20,7 @@ fi
 
 
 class_name=org.signserver.cli.signserver
+ADMINCLI_JAR=SignServer-AdminCLI.jar
 
 # discard $1 from the command line args
 #shift
@@ -61,17 +62,15 @@ else
 fi 
 
 # Check that classes exist
-if [ ! -f ${SIGNSRV_HOME}/dist-client/signserver-cli.jar ]
-then    
-    if [ ! -f ${SIGNSRV_HOME}/lib/signserver-cli.jar ]
-    then
-        echo "You must build SIGNSERVER before using the cli, use 'ant'."
+echo ${SIGNSRV_HOME}/dist-client/${ADMINCLI_JAR}
+if [ ! -f ${SIGNSRV_HOME}/dist-client/${ADMINCLI_JAR} ]
+then
+	echo "You must build SignServer before using the cli, use 'ant'."
         exit 1
-    fi
 fi
 
 # library classpath
-CP="$SIGNSRV_HOME/dist-client/signserver-cli.jar"
+CP="$SIGNSRV_HOME/dist-client/${ADMINCLI_JAR}"
 for i in "${SIGNSRV_HOME}"/dist-client/lib/*.jar
 do
 	CP="$i":"$CP"

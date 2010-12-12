@@ -42,6 +42,8 @@
        <property name="xmlsigner.jar" value="${xmlsigner.dir}/dist/SignServer-Module-XMLSigner.jar"/>
        <property name="xmlsigner.mar" value="${xmlsigner.dir}/dist/xmlsigner.mar"/>
 
+        <property name="admincli.dir" location="./modules/SignServer-AdminCLI"/>
+
         <property name="wsra.dir" value="./modules/SignServer-Module-WSRA"/>
 
        <property name="testsystem.dir" value="./modules/SignServer-Test-System"/>
@@ -331,7 +333,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                     <src path="${signservercommon.src.java}" />
                     <src path="${signserverejb.src.java}" />
                     <src path="${signserverwar.src.java}" />
-                    <src path="${signserveradmincli.src.java}" />
                     <src path="modules/SignServer-Module-CMSSigner/src/java" />
                     <src path="SignServer-Module-XMLValidator/src/java" />
                     <src path="SignServer-Module-PDFSigner/src/java" />

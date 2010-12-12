@@ -458,10 +458,14 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.SignServer-Common}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
+        <ant antfile="${project.SignServer-ejb}/build.xml" inheritall="false" target="dist"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-deps-ear-jar" unless="no.deps">
         <ant antfile="${project.SignServer-Common}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.SignServer-ejb}/build.xml" inheritall="false" target="dist-ear">
+            <property location="${build.dir}" name="dist.ear.dir"/>
         </ant>
     </target>
     <target depends="init, -deps-module-jar, -deps-ear-jar" name="deps-jar"/>
@@ -767,6 +771,7 @@ exists or setup the property manually. For example like this:
             -->
     <target depends="init" if="no.dist.ear.dir" name="deps-clean" unless="no.deps">
         <ant antfile="${project.SignServer-Common}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.SignServer-ejb}/build.xml" inheritall="false" target="clean"/>
     </target>
     <target depends="init" name="-do-clean">
         <delete dir="${build.dir}"/>

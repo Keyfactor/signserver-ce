@@ -1,4 +1,4 @@
-
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="signserver" default="default" basedir=".">
 
     <!-- Import property file containing version numbers and other constants -->

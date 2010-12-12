@@ -43,7 +43,8 @@
        <property name="xmlsigner.mar" value="${xmlsigner.dir}/dist/xmlsigner.mar"/>
 
         <property name="admincli.dir" location="./modules/SignServer-AdminCLI"/>
-
+        <property name="signservercommon.dir" location="./modules/SignServer-Common"/>
+        <property name="signserverejb.dir" location="./modules/SignServer-ejb"/>
         <property name="wsra.dir" value="./modules/SignServer-Module-WSRA"/>
 
        <property name="testsystem.dir" value="./modules/SignServer-Test-System"/>

@@ -251,19 +251,39 @@ OS version                          = ${os.version}
        </copy>
      </target>
 
+     <!-- SignServer-Common -->
+     <target name="signserver-common">
+        <ant inheritall="false" target="jar"
+            antfile="${signservercommon.dir}/build.xml"/>
+        <mkdir dir="dist-client/lib" />
+        <copy todir="dist-client/lib">
+            <fileset dir="${signservercommon.dir}/dist">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+     </target>
+
+     <!-- SignServer-ejb -->
+     <target name="signserver-ejb">
+        <ant inheritall="false" target="dist"
+            antfile="${signserverejb.dir}/build.xml"/>
+        <mkdir dir="dist-client/lib" />
+        <copy todir="dist-client/lib">
+            <fileset dir="${signserverejb.dir}/dist">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+     </target>
+
     <!-- AdminCLI -->
-    <target name="signserver-cli" description="Build SignServer AdminCLI">
+    <target name="signserver-cli" depends="signserver-common, signserver-ejb"
+        description="Build SignServer AdminCLI">
         <ant inheritall="false" target="jar"
             antfile="${admincli.dir}/build.xml"/>
 
         <mkdir dir="dist-client/lib" />
         <copy todir="dist-client">
             <fileset dir="${admincli.dir}/dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
-        <copy todir="dist-client/lib">
-            <fileset dir="${admincli.dir}/dist/lib">
                 <include name="*.jar"/>
             </fileset>
         </copy>

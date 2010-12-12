@@ -42,43 +42,18 @@ is divided into following sections:
         <property file="nbproject/private/configs/${config}.properties"/>
         <property file="nbproject/private/private.properties"/>
     </target>
-    <target name="-pre-init-libraries">
-        <property location="../lib/nblibraries.properties" name="libraries.path"/>
-        <dirname file="${libraries.path}" property="libraries.dir.nativedirsep"/>
-        <pathconvert dirsep="/" property="libraries.dir">
-            <path path="${libraries.dir.nativedirsep}"/>
-        </pathconvert>
-        <basename file="${libraries.path}" property="libraries.basename" suffix=".properties"/>
-        <available file="${libraries.dir}/${libraries.basename}-private.properties" property="private.properties.available"/>
-    </target>
-    <target depends="-pre-init-libraries" if="private.properties.available" name="-init-private-libraries">
-        <loadproperties encoding="ISO-8859-1" srcfile="${libraries.dir}/${libraries.basename}-private.properties">
-            <filterchain>
-                <replacestring from="$${base}" to="${libraries.dir}"/>
-                <escapeunicode/>
-            </filterchain>
-        </loadproperties>
-    </target>
-    <target depends="-pre-init,-init-private,-init-private-libraries" name="-init-libraries">
-        <loadproperties encoding="ISO-8859-1" srcfile="${libraries.path}">
-            <filterchain>
-                <replacestring from="$${base}" to="${libraries.dir}"/>
-                <escapeunicode/>
-            </filterchain>
-        </loadproperties>
-    </target>
-    <target depends="-pre-init,-init-private,-init-libraries" name="-init-user">
+    <target depends="-pre-init,-init-private" name="-init-user">
         <property file="${user.properties.file}"/>
         <!-- The two properties below are usually overridden -->
         <!-- by the active platform. Just a fallback. -->
         <property name="default.javac.source" value="1.4"/>
         <property name="default.javac.target" value="1.4"/>
     </target>
-    <target depends="-pre-init,-init-private,-init-libraries,-init-user" name="-init-project">
+    <target depends="-pre-init,-init-private,-init-user" name="-init-project">
         <property file="nbproject/configs/${config}.properties"/>
         <property file="nbproject/project.properties"/>
     </target>
-    <target depends="-pre-init,-init-private,-init-libraries,-init-user,-init-project,-init-macrodef-property" name="-do-init">
+    <target depends="-pre-init,-init-private,-init-user,-init-project,-init-macrodef-property" name="-do-init">
         <available file="${manifest.file}" property="manifest.available"/>
         <available file="${application.splash}" property="splashscreen.available"/>
         <condition property="main.class.available">
@@ -206,7 +181,7 @@ is divided into following sections:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="-pre-init,-init-private,-init-libraries,-init-user,-init-project,-do-init" name="-init-check">
+    <target depends="-pre-init,-init-private,-init-user,-init-project,-do-init" name="-init-check">
         <fail unless="src.dir">Must set src.dir</fail>
         <fail unless="test.src.dir">Must set test.src.dir</fail>
         <fail unless="build.dir">Must set build.dir</fail>
@@ -316,15 +291,18 @@ is divided into following sections:
             <attribute default="${build.classes.dir}" name="destdir"/>
             <sequential>
                 <fail unless="javac.includes">Must set javac.includes</fail>
-                <pathconvert pathsep="," property="javac.includes.binary">
+                <pathconvert pathsep="${line.separator}" property="javac.includes.binary">
                     <path>
                         <filelist dir="@{destdir}" files="${javac.includes}"/>
                     </path>
                     <globmapper from="*.java" to="*.class"/>
                 </pathconvert>
+                <tempfile deleteonexit="true" property="javac.includesfile.binary"/>
+                <echo file="${javac.includesfile.binary}" message="${javac.includes.binary}"/>
                 <delete>
-                    <files includes="${javac.includes.binary}"/>
+                    <files includesfile="${javac.includesfile.binary}"/>
                 </delete>
+                <delete file="${javac.includesfile.binary}"/>
             </sequential>
         </macrodef>
     </target>
@@ -505,7 +483,7 @@ is divided into following sections:
     <target depends="-init-ap-cmdline-properties,-init-ap-cmdline-supported" name="-init-ap-cmdline">
         <property name="ap.cmd.line.internal" value=""/>
     </target>
-    <target depends="-pre-init,-init-private,-init-libraries,-init-user,-init-project,-do-init,-post-init,-init-check,-init-macrodef-property,-init-macrodef-javac,-init-macrodef-junit,-init-macrodef-nbjpda,-init-macrodef-debug,-init-macrodef-java,-init-presetdef-jar,-init-ap-cmdline" name="init"/>
+    <target depends="-pre-init,-init-private,-init-user,-init-project,-do-init,-post-init,-init-check,-init-macrodef-property,-init-macrodef-javac,-init-macrodef-junit,-init-macrodef-nbjpda,-init-macrodef-debug,-init-macrodef-java,-init-presetdef-jar,-init-ap-cmdline" name="init"/>
     <!--
                 ===================
                 COMPILATION SECTION
@@ -739,6 +717,14 @@ is divided into following sections:
                 <include name="**/*.java"/>
             </fileset>
         </javadoc>
+        <copy todir="${dist.javadoc.dir}">
+            <fileset dir="${src.dir}" excludes="${excludes}" includes="${includes}">
+                <filename name="**/doc-files/**"/>
+            </fileset>
+            <fileset dir="${build.generated.sources.dir}" erroronmissingdir="false">
+                <include name="**/doc-files/**"/>
+            </fileset>
+        </copy>
     </target>
     <target depends="init,-javadoc-build" if="netbeans.home" name="-javadoc-browse" unless="no.javadoc.preview">
         <nbbrowse file="${dist.javadoc.dir}/index.html"/>

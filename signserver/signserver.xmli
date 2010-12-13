@@ -49,6 +49,9 @@
        <property name="clientvalidationcli.dir" value="./modules/SignServer-Client-ValidationCLI"/>
        <property name="clientsignserverws.dir" value="./modules/SignServer-Client-SignServerWS"/>
        <property name="clientsigningandvalidationapi.dir" value="./modules/SignServer-Client-SigningAndValidationAPI"/>
+
+       <property name="module.mrtdsodsigner.dir" location="./modules/SignServer-Module-MRTDSODSigner"/>
+
 	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
 	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
 	   <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
@@ -575,6 +578,10 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <!-- SignServer-Module-Renewal -->
         <ant target="test" inheritall="false"
             antfile="${renewal.dir}/build.xml"/>
+
+        <!-- SignServer-Module-MRTDSODSigner -->
+        <ant target="test" inheritall="false"
+            antfile="${module.mrtdsodsigner.dir}/build.xml"/>
 
         <!-- SignServer-Test-System -->
         <ant target="test" inheritall="false"

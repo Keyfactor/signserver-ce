@@ -11,17 +11,16 @@
     <description>Builds, tests, and runs the project SignServer-AdminGUI.</description>
     <import file="nbproject/build-impl.xml"/>
 
-    <!--
+<!--
         ===================
         Find the application server
         ===================
-    -->
+ -->
     <target name="-pre-init" depends="-set-from-file,-set-from-env">
         <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
-        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
         <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
     </target>
-    
+
     <target name="-set-from-file" unless="var.APPSRV_HOME">
         <!-- Read properties from the main SignServer configuration if available -->
         <property file="${user.home}/signserver_build.properties" />
@@ -37,7 +36,15 @@
         <!-- Get property from environment variable -->
         <property environment="env" />
         <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>
+        <!-- JBoss -->
         <available file="${env.APPSRV_HOME}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
+        <!-- GlassFish -->
+        <available file="${env.APPSRV_HOME}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}"/>
+    </target>
+
+    <target name="-post-init">
+        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
+        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
     </target>
 
     <!--

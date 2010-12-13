@@ -64,7 +64,7 @@
 
     <property name="bin" location="../../bin"/>
     <property name="tmp" location="./tmp"/>
-    <property name="client.dist.dir" location="${bin}"/>
+    <property name="client.dist.dir" location="../../dist-client"/>
     <property name="build" location="./build/classes"/>
     <property name="client.java.target" value="1.6"/>
     <property name="lib" location="../../lib"/>

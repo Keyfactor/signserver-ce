@@ -16,7 +16,7 @@
  
     <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
        <classpath refid="mrtdsigner.build.classpath" />
-       <src path="SignServer-Module-MRTDSigner/src/java" />
+       <src path="modules/SignServer-Module-MRTDSigner/src/java" />
        <include name="org/signserver/module/mrtdsigner/*.java"/>       
     </javac>
 
@@ -30,7 +30,7 @@
             <fileset dir="dist-server">
                 <include name="mrtdsigner-module.jar"/>
             </fileset>
-            <fileset dir="SignServer-Module-MRTDSigner/src/conf">
+            <fileset dir="modules/SignServer-Module-MRTDSigner/src/conf">
                 <include name="*.properties"/>
             </fileset>
         </part>

@@ -252,7 +252,7 @@ OS version                          = ${os.version}
      </target>
 
      <!-- SignServer-Common -->
-     <target name="signserver-common">
+     <target name="signserver-common" depends="preprocess">
         <ant inheritall="false" target="jar"
             antfile="${signservercommon.dir}/build.xml"/>
         <mkdir dir="dist-client/lib" />

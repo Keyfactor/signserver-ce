@@ -45,6 +45,7 @@
        <property name="testsystem.dir" value="./modules/SignServer-Test-System"/>
        <property name="testsignserverws.dir" value="./modules/SignServer-Test-SignServerWS"/>
        <property name="testvalidationws.dir" value="./modules/SignServer-Test-ValidationWS"/>
+       <property name="testadminws.dir" value="./modules/SignServer-Test-AdminWS"/>
        <property name="clientvalidationcli.dir" value="./modules/SignServer-Client-ValidationCLI"/>
        <property name="clientsignserverws.dir" value="./modules/SignServer-Client-SignServerWS"/>
        <property name="clientsigningandvalidationapi.dir" value="./modules/SignServer-Client-SigningAndValidationAPI"/>
@@ -566,6 +567,10 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <!-- SignServer-Test-ValidationWS -->
         <ant target="test" inheritall="false"
             antfile="${testvalidationws.dir}/build.xml"/>
+
+        <!-- SignServer-Test-AdminWS -->
+        <ant target="test" inheritall="false"
+            antfile="${testadminws.dir}/build.xml"/>
 
         <!-- SignServer-Test-System -->
         <ant target="test" inheritall="false"

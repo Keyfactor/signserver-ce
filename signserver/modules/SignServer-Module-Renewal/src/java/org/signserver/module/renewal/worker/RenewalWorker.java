@@ -34,13 +34,10 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import javax.ejb.EJB;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -121,15 +118,18 @@ public class RenewalWorker extends BaseSigner {
 
     // From CertificateHelper:
     /**
-     * Indicates that the requester want a BASE64 encoded certificate in the CertificateResponse object.
+     * Indicates that the requester want a BASE64 encoded certificate in the
+     * CertificateResponse object.
      */
     private static String RESPONSETYPE_CERTIFICATE    = "CERTIFICATE";
     /**
-     * Indicates that the requester want a BASE64 encoded pkcs7 in the CertificateResponse object.
+     * Indicates that the requester want a BASE64 encoded pkcs7 in the
+     * CertificateResponse object.
      */
     private static String RESPONSETYPE_PKCS7          = "PKCS7";
     /**
-     * Indicates that the requester want a BASE64 encoded pkcs7 with the complete chain in the CertificateResponse object.
+     * Indicates that the requester want a BASE64 encoded pkcs7 with the
+     * complete chain in the CertificateResponse object.
      */
     private static String RESPONSETYPE_PKCS7WITHCHAIN = "PKCS7WITHCHAIN";
 
@@ -476,7 +476,7 @@ public class RenewalWorker extends BaseSigner {
                 // Set DEFAULTKEY to NEXTCERTSIGNKEY
                 if (defaultKey) {
                     LOG.debug("Uploaded was for DEFAULTKEY");
-                } else if (!defaultKey) {
+                } else if (!defaultKey && nextCertSignKey != null) {
                     LOG.debug("Uploaded was for NEXTCERTSIGNKEY");
                     
                    getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY",

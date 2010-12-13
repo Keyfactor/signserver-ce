@@ -14,7 +14,7 @@ package org.signserver.module.renewal.common;
 
 /**
  * Properties used by the RenewalWorker.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */

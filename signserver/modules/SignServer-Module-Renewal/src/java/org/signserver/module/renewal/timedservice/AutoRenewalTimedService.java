@@ -45,7 +45,7 @@ import org.signserver.server.timedservices.BaseTimedService;
  * those that needs renewal to be renewed by a RenewalWorker.
  *
  * @author Markus Kilas
- * @version $Id: SignerStatusReportTimedService.java 1218 2010-10-05 20:13:57Z netmackan $
+ * @version $Id$
  */
 public class AutoRenewalTimedService extends BaseTimedService {
 

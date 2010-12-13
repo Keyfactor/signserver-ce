@@ -74,6 +74,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.util.RandomPasswordGenerator;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
 import org.signserver.module.renewal.ejbcaws.gen.CertificateResponse;
@@ -202,6 +203,14 @@ public class RenewalWorker extends BaseSigner {
         return ret;
     }
 
+    /**
+     * Processes the request.
+     * @param requestData
+     * @return
+     * @throws IllegalRequestException
+     * @throws CryptoTokenOfflineException
+     * @throws SignServerException
+     */
     private Properties process(final Properties requestData)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
@@ -246,16 +255,16 @@ public class RenewalWorker extends BaseSigner {
                 requestRenewKey = new Boolean(requestData.getProperty(
                     RenewalWorkerProperties.REQUEST_RENEWKEY));
             }
-                    
+
             final String keyAlg = workerConfig.getProperty(
                     PROPERTY_KEYALG);
             final String keySpec = workerConfig.getProperty(
                     PROPERTY_KEYSPEC);
             String nextCertSignKey
                     = workerConfig.getProperty(NEXTCERTSIGNKEY);
-            
-            // If we should use the default key (instead of nextKey, 
-            // if existing) can be specified in the request (but only if we 
+
+            // If we should use the default key (instead of nextKey,
+            // if existing) can be specified in the request (but only if we
             // don't generate a new key)
             final String forDefaultKeyValue = requestData.getProperty(
                     RenewalWorkerProperties.REQUEST_FORDEFAULTKEY,
@@ -266,38 +275,25 @@ public class RenewalWorker extends BaseSigner {
             }
 
             if (endEntity == null || endEntity.isEmpty()) {
-                LOG.error("Property ENDENTITY not specified for worker: "
+                renewalFailure(responseData,
+                        "Property ENDENTITY not specified for worker: "
                         + workerName);
-                responseData.setProperty(
-                        RenewalWorkerProperties.RESPONSE_RESULT,
-                        RenewalWorkerProperties.RESPONSE_RESULT_FAILURE);
             } else if (subjectDN == null || subjectDN.isEmpty()) {
-                LOG.error("Property REQUESTDN not specified for worker: "
+                renewalFailure(responseData,
+                        "Property REQUESTDN not specified for worker: "
                         + workerName);
-                responseData.setProperty(
-                        RenewalWorkerProperties.RESPONSE_RESULT,
-                        RenewalWorkerProperties.RESPONSE_RESULT_FAILURE);
             } else if (sigAlg == null || sigAlg.isEmpty()) {
-                LOG.error(
+                renewalFailure(responseData,
                         "Property SIGNATUREALGORITHM not specified for worker: "
                         + workerName);
-                responseData.setProperty(
-                        RenewalWorkerProperties.RESPONSE_RESULT,
-                        RenewalWorkerProperties.RESPONSE_RESULT_FAILURE);
             } else if (renewKey && (keyAlg == null || keyAlg.isEmpty())) {
-                LOG.error(
+                renewalFailure(responseData,
                         "Property KEYALG not specified for worker: "
                         + workerName);
-                responseData.setProperty(
-                        RenewalWorkerProperties.RESPONSE_RESULT,
-                        RenewalWorkerProperties.RESPONSE_RESULT_FAILURE);
             } else if (renewKey && (keySpec == null || keySpec.isEmpty())) {
-                LOG.error(
+                renewalFailure(responseData,
                         "Property KEYSPEC not specified for worker: "
                         + workerName);
-                responseData.setProperty(
-                        RenewalWorkerProperties.RESPONSE_RESULT,
-                        RenewalWorkerProperties.RESPONSE_RESULT_FAILURE);
             } else {
                 final boolean defaultKey;
 
@@ -407,7 +403,7 @@ public class RenewalWorker extends BaseSigner {
             throw new IllegalArgumentException(
                     "Missing TRUSTSTOREPASSWORD property");
         }
-        
+
         final String ejbcaWsUrl = config.getProperty("EJBCAWSURL");
         if (ejbcaWsUrl == null) {
             throw new IllegalArgumentException("Missing EJBCAWSURL property");
@@ -433,24 +429,30 @@ public class RenewalWorker extends BaseSigner {
             } else {
                 // Update user with status and new password
                 final UserDataVOWS user1 = result.get(0);
+                final char[] password = RandomPasswordGenerator
+                        .getInstance().generate(20);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Changing to status to NEW from "
                             + user1.getStatus()
                             + " for end entity " + endEntity + ".");
                 }
                 user1.setStatus(STATUS_NEW);
-                user1.setPassword("foo123"); // TODO
+                user1.setPassword(new String(password));
+                LOG.info("Password: " + new String(password));
                 ejbcaws.editUser(user1);
 
                 // Send request to CA
-                CertificateResponse resp = ejbcaws.pkcs10Request(endEntity,
-                        "foo123", pkcs10, null, RESPONSETYPE_PKCS7WITHCHAIN);
+                final CertificateResponse resp = ejbcaws.pkcs10Request(endEntity,
+                        new String(password), pkcs10, null,
+                        RESPONSETYPE_PKCS7WITHCHAIN);
+
+                RandomPasswordGenerator.getInstance().fill(password);
+
                 final String b64Cert = new String(resp.getData());
                 LOG.debug("Got data: " + b64Cert);
 
-                byte[] pkcs7 = Base64.decode(b64Cert);
-
-                CMSSignedData signedData = new CMSSignedData(pkcs7);
+                final CMSSignedData signedData = new CMSSignedData(
+                        Base64.decode(b64Cert));
                 final CertStore certStore
                         = signedData.getCertificatesAndCRLs("Collection", "BC");
                 LOG.info("CertStore: " + certStore);
@@ -469,8 +471,10 @@ public class RenewalWorker extends BaseSigner {
                     // Public key should match
 
                 // Update worker to use the new certificate
-                getWorkerSession().uploadSignerCertificate(workerId, signerCert, GlobalConfiguration.SCOPE_GLOBAL);
-                getWorkerSession().uploadSignerCertificateChain(workerId, certChain, GlobalConfiguration.SCOPE_GLOBAL);
+                getWorkerSession().uploadSignerCertificate(workerId,
+                        signerCert, GlobalConfiguration.SCOPE_GLOBAL);
+                getWorkerSession().uploadSignerCertificateChain(workerId,
+                        certChain, GlobalConfiguration.SCOPE_GLOBAL);
 
                 // If not the default key we need to promote the key
                 // Set DEFAULTKEY to NEXTCERTSIGNKEY
@@ -478,7 +482,7 @@ public class RenewalWorker extends BaseSigner {
                     LOG.debug("Uploaded was for DEFAULTKEY");
                 } else if (!defaultKey && nextCertSignKey != null) {
                     LOG.debug("Uploaded was for NEXTCERTSIGNKEY");
-                    
+
                    getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY",
                            nextCertSignKey);
                    getWorkerSession().removeWorkerProperty(workerId,
@@ -522,7 +526,7 @@ public class RenewalWorker extends BaseSigner {
         EjbcaWS result = null;
 
         final String urlstr = ejbcaUrl + WS_PATH;
-        
+
         final KeyStore keystore = getCryptoToken().getKeyStore();
         final KeyManagerFactory kKeyManagerFactory = KeyManagerFactory.getInstance("SunX509");
         kKeyManagerFactory.init(keystore, null);
@@ -605,6 +609,15 @@ public class RenewalWorker extends BaseSigner {
             buff.append(CertTools.END_CERTIFICATE);
         }
         return buff.toString();
+    }
+
+    private void renewalFailure(final Properties responseData,
+            final String message) {
+        LOG.error(message);
+        responseData.setProperty(RenewalWorkerProperties.RESPONSE_RESULT,
+                RenewalWorkerProperties.RESPONSE_RESULT_FAILURE);
+        responseData.setProperty(RenewalWorkerProperties.RESPONSE_MESSAGE,
+                message);
     }
 
     class AliasKeyManager implements X509KeyManager {

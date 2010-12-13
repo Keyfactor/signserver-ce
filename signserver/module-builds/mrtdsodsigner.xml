@@ -34,7 +34,7 @@
             <fileset dir="dist-server">
                 <include name="mrtdsodsigner-module.jar"/>
             </fileset>
-            <fileset dir="SignServer-Module-MRTDSODSigner/src/conf">
+            <fileset dir="modules/SignServer-Module-MRTDSODSigner/src/conf">
                 <include name="*.properties"/>
             </fileset>
         </part>

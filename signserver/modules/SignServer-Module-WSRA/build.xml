@@ -76,7 +76,7 @@
 
     <property name="wsraadminClientBuild" value="${bin}/wsraadminClient"/>
     <property name="wsraadminWSClientBuild" value="${tmp}/wsra/gen-classes/client"/>
-    <property name="wsraadminClientDir" value="${client.dist.dir}/wsraadminclient"/>
+    <property name="wsraadminClientDir" value="${client.dist.dir}/wsraadminClient"/>
     <property name="wsraadminClientJar" value="${wsraadminClientDir}/wsraadmin.jar"/>
     <property name="wsraadminWSClientJar" value="${client.dist.dir}/wsraclient-lib.jar"/>
     <import file="./dummyws.xml"/>

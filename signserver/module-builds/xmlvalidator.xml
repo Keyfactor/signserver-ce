@@ -16,7 +16,7 @@
  
     <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
        <classpath refid="xmlvalidator.build.classpath" />
-       <src path="SignServer-Module-XMLValidator/src/java" />
+       <src path="modules/SignServer-Module-XMLValidator/src/java" />
        <include name="org/signserver/module/xmlvalidator/*.java"/>       
     </javac>
 
@@ -30,7 +30,7 @@
             <fileset dir="dist-server">
                 <include name="xmlvalidator-module.jar"/>
             </fileset>
-            <fileset dir="SignServer-Module-XMLValidator/src/conf">
+            <fileset dir="modules/SignServer-Module-XMLValidator/src/conf">
                 <include name="*.properties"/>
             </fileset>
         </part>

@@ -7,18 +7,18 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="SignServer-Module-ODFSigner" default="default" basedir=".">
-    <description>Builds, tests, and runs the project SignServer-Module-ODFSigner.</description>
+<project name="SignServer-Module-PDFSigner" default="default" basedir=".">
+    <description>Builds, tests, and runs the project SignServer-Module-PDFSigner.</description>
     <import file="nbproject/build-impl.xml"/>
 
     <!-- Import property file containing version numbers and other constants -->
     <property file="../../src/compile.properties"/>
 
-    <property name="modulename" value="odfsigner"/>
+    <property name="modulename" value="pdfsigner"/>
 
     <!-- Create MAR -->
-    <target name="-post-jar" depends="odfsignermar"/>
-    <target name="odfsignermar">
+    <target name="-post-jar" depends="pdfsignermar"/>
+    <target name="pdfsignermar">
 
         <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
             classpath="${javac.classpath}"/>
@@ -90,7 +90,7 @@
 
     An example of overriding the target for project execution could look like this:
 
-        <target name="run" depends="SignServer-Module-ODFSigner-impl.jar">
+        <target name="run" depends="SignServer-Module-PDFSigner-impl.jar">
             <exec dir="bin" executable="launcher.exe">
                 <arg file="${dist.jar}"/>
             </exec>

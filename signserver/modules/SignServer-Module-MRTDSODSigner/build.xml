@@ -12,12 +12,12 @@
     <import file="nbproject/build-impl.xml"/>
 
     <!-- Import property file containing version numbers and other constants -->
-    <property file="../src/compile.properties"/>
+    <property file="../../src/compile.properties"/>
 
     <property name="modulename" value="mrtdsodsigner"/>
 
     <!-- Create MAR -->
-    <target name="mar" depends="mrtdsodsignermar"/>
+    <target name="-post-jar" depends="mrtdsodsignermar"/>
     <target name="mrtdsodsignermar">
 
         <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"

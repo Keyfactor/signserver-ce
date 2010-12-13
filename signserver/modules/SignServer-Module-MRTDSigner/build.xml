@@ -12,7 +12,7 @@
     <import file="nbproject/build-impl.xml"/>
 
     <!-- Import property file containing version numbers and other constants -->
-    <property file="../src/compile.properties"/>
+    <property file="../../src/compile.properties"/>
 
     <property name="modulename" value="mrtdsigner"/>
 

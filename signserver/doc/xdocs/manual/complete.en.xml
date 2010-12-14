@@ -1974,6 +1974,46 @@ The basic configuration of a group key service is very similar to that of a vali
                 </subsection>
             </section>
 
+            <section name="Other workers">
+                <subsection name="RenewalWorker">
+
+                    <p>
+Fully qualified class name: org.signserver.module.renewal.worker.RenewalWorker
+                    </p>
+
+                    <subsubsection name="Overview">
+                        <p>
+The RenewalWorker can be used to generate new keys and then contact EJBCA using
+web services to get a new certificate. The worker accepts
+GenericPropertiesRequestS and returns GenericPropertiesResponseS.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Worker Properties">
+                        <p><b>EJBCAWSURL</b> = URL to the EJBCA. Example: https://ca-server:8443/ejbca</p>
+                        <p><b>TRUSTSTOREPATH</b> = Path to the keystore containing the CA's SSL server certificate as a trusted entry.</p>
+                        <p><b>TRUSTSTORETYPE</b> = Type of keystore. JKS is supported.</p>
+                        <p><b>TRUSTSTOREPASSWORD</b> = Password protecting the truststore keystore.</p>
+                    </subsubsection>
+                    <subsubsection name="Properties of renewee">
+                        <p><b>RENEWKEY</b> = If a new key should be generated or the current (DEFAULTKEY) should be used. (Optional, default true).</p>
+                        <p><b>KEYALG</b> = Algorithm for the key generation. Examples: RSA, DSA or ECDSA</p>
+                        <p><b>KEYSPEC</b> = Key length (for RSA or DSA) or curve name (for ECDSA). Examples: 2048, 4096, secp256r1</p>
+                        <p><b>DEFAULTKEY</b> = Key alias for the current key.</p>
+                        <p><b>NEXTCERTSIGNKEY</b> = Key alias for the next key.</p>
+                    </subsubsection>
+                    <subsubsection name="Request Properties">
+                        <p><b>WORKER</b> = Name of the worker that should be renewed.</p>
+                        <p><b>RENEWKEY</b> = True if a new key should be generated (default).</p>
+                        <p><b>FORDEFAULTKEY</b> = If the current key should be used instead of the next key or a new key. If this property is true RENEWKEY must not be.</p>
+                    </subsubsection>
+                    <subsubsection name="Response Properties">
+                        <p><b>RESULT</b> = "OK" if the renewal succeded otherwise "FAILURE".</p>
+                        <p><b>MESSAGE</b> = Error message if any.</p>
+                    </subsubsection>
+                </subsection>
+
+            </section>
+
             <section name="Mail Processors">
                 <p>
 This section lists the available plug-ins for the MailSigner. These plug-ins are configured in the exact same way with class path of both plug-in and its crypto token.

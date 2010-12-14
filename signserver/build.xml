@@ -382,6 +382,30 @@ OS version                          = ${os.version}
         <echo message="Not including WSRA module in EAR"/>
     </target>
 
+    <!-- Target that can be called to build the XMLSigner module -->
+    <target name="module-mrtdsodsigner"
+        description="Build the module MRTDSODSigner">
+        <ant antfile="${module.mrtdsodsigner.dir}/build.xml" target="jar"
+            inheritall="false"/>
+        <copy file="${module.mrtdsodsigner.dir}/dist/mrtdsodsigner.mar"
+            todir="${server.dist.dir}"/>
+    </target>
+    <!-- Target always called when building. Only builds if configured. -->
+    <target name="-module-mrtdsodsigner-jar" depends="module-mrtdsodsigner"
+        if="module.mrtdsodsigner.enabled.condition"/>
+    <!-- Target for including the module -->
+    <target name="-mrtdsodsigner-jar-included"
+            if="module.mrtdsodsigner.include.condition"
+            depends="module-mrtdsodsigner">
+        <echo message="Including MRTDSODSigner module in EAR"/>
+        <copy file="${module.mrtdsodsigner.dir}/dist/SignServer-Module-MRTDSODSigner.jar"
+            todir="${server.dist.dir}/lib"/>
+    </target>
+    <target name="-mrtdsodsigner-jar-excluded"
+        unless="module.mrtdsodsigner.include.condition">
+        <echo message="Not including MRTDSODSigner module in EAR"/>
+    </target>
+
  
 	   <!-- =================================================================== -->
 	    <!-- Build preparation for package distribution                         -->

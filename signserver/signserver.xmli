@@ -4,7 +4,6 @@
     <import file="./build.xml"/>
     <import file="./module-builds/pdfsigner.xml"/>
     <import file="./module-builds/mrtdsigner.xml"/>
-    <import file="./module-builds/mrtdsodsigner.xml"/>
     <import file="./module-builds/tsa.xml"/>
     <import file="./module-builds/ooxmlsigner.xml"/>
     <import file="./module-builds/odfsigner.xml"/>
@@ -495,7 +494,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, mrtdsodsignermar, -module-wsra-jar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, -module-mrtdsodsigner-jar, -module-wsra-jar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

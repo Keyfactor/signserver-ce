@@ -35,6 +35,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
+import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 import org.signserver.admin.gui.adminws.gen.Base64SignerCertReqData;
@@ -518,6 +519,17 @@ public class AdminLayerEJBImpl implements AdminWS {
             throw new CryptoTokenOfflineException_Exception(ex.getMessage(),
                     null, ex);
         } catch (CryptoTokenOfflineException ex) {
+            throw wrap(ex);
+        }
+    }
+
+    @Override
+    public long getKeyUsageCounterValue(final int workerId) throws
+            AdminNotAuthorizedException_Exception,
+            CryptoTokenOfflineException_Exception {
+        try {
+            return worker.getKeyUsageCounterValue(workerId);
+        } catch(CryptoTokenOfflineException ex) {
             throw wrap(ex);
         }
     }

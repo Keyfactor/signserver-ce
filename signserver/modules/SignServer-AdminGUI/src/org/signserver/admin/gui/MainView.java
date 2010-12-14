@@ -332,11 +332,14 @@ public class MainView extends FrameView {
         editMenu = new javax.swing.JMenu();
         activateMenu = new javax.swing.JMenuItem();
         deactivateMenu = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
         renewKeyMenu = new javax.swing.JMenuItem();
         testKeyMenu = new javax.swing.JMenuItem();
         generateRequestMenu = new javax.swing.JMenuItem();
         installCertificatesMenu = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
+        renewSignerMenu = new javax.swing.JMenuItem();
+        jSeparator8 = new javax.swing.JPopupMenu.Separator();
         globalConfigurationMenu = new javax.swing.JMenuItem();
         viewMenu = new javax.swing.JMenu();
         refreshMenu = new javax.swing.JMenuItem();
@@ -358,6 +361,8 @@ public class MainView extends FrameView {
         testKeyButton = new javax.swing.JButton();
         generateRequestsButton = new javax.swing.JButton();
         installCertificatesButton = new javax.swing.JButton();
+        jSeparator6 = new javax.swing.JToolBar.Separator();
+        renewSignerButton = new javax.swing.JButton();
         statusPanel = new javax.swing.JPanel();
         statusMessageLabel = new javax.swing.JLabel();
         statusAnimationLabel = new javax.swing.JLabel();
@@ -727,7 +732,6 @@ public class MainView extends FrameView {
         menuBar.add(fileMenu);
 
         editMenu.setAction(actionMap.get("testKeys")); // NOI18N
-        editMenu.setMnemonic('E');
         editMenu.setText(resourceMap.getString("editMenu.text")); // NOI18N
         editMenu.setName("editMenu"); // NOI18N
 
@@ -740,6 +744,9 @@ public class MainView extends FrameView {
         deactivateMenu.setText(resourceMap.getString("deactivateMenu.text")); // NOI18N
         deactivateMenu.setName("deactivateMenu"); // NOI18N
         editMenu.add(deactivateMenu);
+
+        jSeparator7.setName("jSeparator7"); // NOI18N
+        editMenu.add(jSeparator7);
 
         renewKeyMenu.setAction(actionMap.get("generateRequests")); // NOI18N
         renewKeyMenu.setText(resourceMap.getString("renewKeyMenu.text")); // NOI18N
@@ -764,6 +771,14 @@ public class MainView extends FrameView {
         jSeparator5.setName("jSeparator5"); // NOI18N
         editMenu.add(jSeparator5);
 
+        renewSignerMenu.setAction(actionMap.get("renewSigner")); // NOI18N
+        renewSignerMenu.setText(resourceMap.getString("renewSignerMenu.text")); // NOI18N
+        renewSignerMenu.setName("renewSignerMenu"); // NOI18N
+        editMenu.add(renewSignerMenu);
+
+        jSeparator8.setName("jSeparator8"); // NOI18N
+        editMenu.add(jSeparator8);
+
         globalConfigurationMenu.setText(resourceMap.getString("globalConfigurationMenu.text")); // NOI18N
         globalConfigurationMenu.setName("globalConfigurationMenu"); // NOI18N
         globalConfigurationMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -776,7 +791,6 @@ public class MainView extends FrameView {
         menuBar.add(editMenu);
 
         viewMenu.setMnemonic('V');
-        viewMenu.setText(resourceMap.getString("viewMenu.text")); // NOI18N
         viewMenu.setName("viewMenu"); // NOI18N
 
         refreshMenu.setAction(actionMap.get("refreshWorkers")); // NOI18N
@@ -902,6 +916,17 @@ public class MainView extends FrameView {
         installCertificatesButton.setName("installCertificatesButton"); // NOI18N
         installCertificatesButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(installCertificatesButton);
+
+        jSeparator6.setName("jSeparator6"); // NOI18N
+        jToolBar1.add(jSeparator6);
+
+        renewSignerButton.setAction(actionMap.get("renewSigner")); // NOI18N
+        renewSignerButton.setText(resourceMap.getString("renewSignerButton.text")); // NOI18N
+        renewSignerButton.setFocusable(false);
+        renewSignerButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        renewSignerButton.setName("renewSignerButton"); // NOI18N
+        renewSignerButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(renewSignerButton);
 
         statusPanel.setName("statusPanel"); // NOI18N
 
@@ -1381,6 +1406,8 @@ public class MainView extends FrameView {
         generateRequestMenu.setEnabled(active);
         installCertificatesButton.setEnabled(active);
         installCertificatesMenu.setEnabled(active);
+        renewSignerButton.setEnabled(active);
+        renewSignerMenu.setEnabled(active);
 
         if (worker == null) {
             statusSummaryTextPane.setText("");
@@ -1941,6 +1968,17 @@ public class MainView extends FrameView {
         });
     }
 
+    @Action
+    public void renewSigner() {
+        if (selectedWorkers.size() > 0) {
+            RenewSignerDialog dlg = new RenewSignerDialog(
+                    getFrame(), true, allWorkers, selectedWorkers);
+            if (dlg.showDialog() == InstallCertificatesDialog.OK) {
+                getContext().getTaskService().execute(refreshWorkers());
+            }
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton activateButton;
     private javax.swing.JMenuItem activateMenu;
@@ -1986,6 +2024,9 @@ public class MainView extends FrameView {
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
+    private javax.swing.JToolBar.Separator jSeparator6;
+    private javax.swing.JPopupMenu.Separator jSeparator7;
+    private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel mainPanel;
@@ -2000,6 +2041,8 @@ public class MainView extends FrameView {
     private javax.swing.JButton removeButton;
     private javax.swing.JButton renewKeyButton;
     private javax.swing.JMenuItem renewKeyMenu;
+    private javax.swing.JButton renewSignerButton;
+    private javax.swing.JMenuItem renewSignerMenu;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;

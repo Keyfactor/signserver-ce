@@ -46,6 +46,10 @@
 
 <xs:element name="getGlobalConfigurationResponse" type="tns:getGlobalConfigurationResponse"></xs:element>
 
+<xs:element name="getKeyUsageCounterValue" type="tns:getKeyUsageCounterValue"></xs:element>
+
+<xs:element name="getKeyUsageCounterValueResponse" type="tns:getKeyUsageCounterValueResponse"></xs:element>
+
 <xs:element name="getPKCS10CertificateRequest" type="tns:getPKCS10CertificateRequest"></xs:element>
 
 <xs:element name="getPKCS10CertificateRequestForKey" type="tns:getPKCS10CertificateRequestForKey"></xs:element>
@@ -318,18 +322,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="setWorkerProperty">
-<xs:sequence>
-<xs:element name="workerId" type="xs:int"></xs:element>
-<xs:element name="key" type="xs:string" minOccurs="0"></xs:element>
-<xs:element name="value" type="xs:string" minOccurs="0"></xs:element>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="setWorkerPropertyResponse">
-<xs:sequence></xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getCurrentWorkerConfig">
 <xs:sequence>
 <xs:element name="workerId" type="xs:int"></xs:element>
@@ -359,6 +351,18 @@
 </xs:complexType>
 </xs:element>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setWorkerProperty">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+<xs:element name="key" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="value" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setWorkerPropertyResponse">
+<xs:sequence></xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getSignerCertificate">
@@ -439,18 +443,6 @@
 <xs:sequence></xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="uploadSignerCertificate">
-<xs:sequence>
-<xs:element name="signerId" type="xs:int"></xs:element>
-<xs:element name="signerCert" type="xs:base64Binary" nillable="true" minOccurs="0"></xs:element>
-<xs:element name="scope" type="xs:string" minOccurs="0"></xs:element>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="uploadSignerCertificateResponse">
-<xs:sequence></xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getPKCS10CertificateRequest">
 <xs:sequence>
 <xs:element name="signerId" type="xs:int"></xs:element>
@@ -462,6 +454,18 @@
 <xs:sequence>
 <xs:element name="return" type="tns:base64SignerCertReqData" minOccurs="0"></xs:element>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="uploadSignerCertificate">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+<xs:element name="signerCert" type="xs:base64Binary" nillable="true" minOccurs="0"></xs:element>
+<xs:element name="scope" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="uploadSignerCertificateResponse">
+<xs:sequence></xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getWorkers">
@@ -580,6 +584,18 @@
 <xs:element name="ok" type="xs:string" minOccurs="0"></xs:element>
 <xs:element name="statusText" type="xs:string" minOccurs="0"></xs:element>
 <xs:element name="workerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getKeyUsageCounterValue">
+<xs:sequence>
+<xs:element name="workerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getKeyUsageCounterValueResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"></xs:element>
 </xs:sequence>
 </xs:complexType>
 

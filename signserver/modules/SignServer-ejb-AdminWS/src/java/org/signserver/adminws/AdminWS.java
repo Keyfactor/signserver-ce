@@ -474,6 +474,24 @@ public class AdminWS {
     }
 
     /**
+     * Returns the value of the KeyUsageCounter for the given workerId. If no
+     * certificate is configured for the worker or the current key does not yet
+     * have a counter in the database -1 is returned.
+     * @param workerId
+     * @return Value of the key usage counter or -1
+     * @throws CryptoTokenOfflineException
+     */
+    @WebMethod(operationName = "getKeyUsageCounterValue")
+    public long getKeyUsageCounterValue(
+            @WebParam(name = "workerId") final int workerId)
+            throws CryptoTokenOfflineException, AdminNotAuthorizedException {
+        requireAdminAuthorization("getKeyUsageCounterValue",
+                String.valueOf(workerId));
+
+        return worker.getKeyUsageCounterValue(workerId);
+    }
+
+    /**
      * Method used to remove a key from a signer.
      *
      * @param signerId id of the signer

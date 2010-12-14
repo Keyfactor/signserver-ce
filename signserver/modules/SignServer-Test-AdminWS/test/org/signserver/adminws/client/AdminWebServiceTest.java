@@ -158,6 +158,15 @@ public class AdminWebServiceTest extends TestCase {
         }
     }
 
+    public void testGetKeyUsageCounterValue() throws Exception {
+        try {
+            adminWS.getKeyUsageCounterValue(ANY_WORKERID);
+            fail("Access should have been denied!");
+        } catch (AdminNotAuthorizedException_Exception ignored) {
+            // OK
+        }
+    }
+
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}
 

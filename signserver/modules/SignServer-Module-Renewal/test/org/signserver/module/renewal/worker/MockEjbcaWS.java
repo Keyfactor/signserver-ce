@@ -16,24 +16,34 @@ import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.core.protocol.IRequestMessage;
 import org.ejbca.core.protocol.SimpleRequestMessage;
 import org.ejbca.util.RequestMessageUtils;
-import org.signserver.module.renewal.ejbcaws.gen.AlreadyRevokedException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.AlreadyRevokedException_Exception;
 import org.signserver.module.renewal.ejbcaws.gen.ApprovalException_Exception;
-import org.signserver.module.renewal.ejbcaws.gen.ApprovalRequestExecutionException_Exception;
-import org.signserver.module.renewal.ejbcaws.gen.ApprovalRequestExpiredException_Exception;
-import org.signserver.module.renewal.ejbcaws.gen.AuthorizationDeniedException_Exception;
-import org.signserver.module.renewal.ejbcaws.gen.CADoesntExistsException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.ApprovalRequestExecutionException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.ApprovalRequestExpiredException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.AuthorizationDeniedException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.CADoesntExistsException_Exception;
 import org.signserver.module.renewal.ejbcaws.gen.Certificate;
-import org.signserver.module.renewal.ejbcaws.gen.CertificateExpiredException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.CertificateExpiredException_Exception;
 import org.signserver.module.renewal.ejbcaws.gen.CertificateResponse;
 import org.signserver.module.renewal.ejbcaws.gen.EjbcaException;
 import org.signserver.module.renewal.ejbcaws.gen.EjbcaException_Exception;
 import org.signserver.module.renewal.ejbcaws.gen.ErrorCode;
 import org.signserver.module.renewal.ejbcaws.gen.HardTokenDataWS;
-import org.signserver.module.renewal.ejbcaws.gen.HardTokenDoesntExistsException_Exception;
-import org.signserver.module.renewal.ejbcaws.gen.HardTokenExistsException_Exception;
-import org.signserver.module.renewal.ejbcaws.gen.IllegalQueryException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.HardTokenDoesntExistsException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.HardTokenExistsException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.IllegalQueryException_Exception;
 import org.signserver.module.renewal.ejbcaws.gen.KeyStore;
-import org.signserver.module.renewal.ejbcaws.gen.MultipleMatchException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.MultipleMatchException_Exception;
 import org.signserver.module.renewal.ejbcaws.gen.NameAndId;
 import org.signserver.module.renewal.ejbcaws.gen.NotFoundException_Exception;
 import org.signserver.module.renewal.ejbcaws.gen.PublisherException_Exception;
@@ -41,12 +51,15 @@ import org.signserver.module.renewal.ejbcaws.gen.RevokeStatus;
 import org.signserver.module.renewal.ejbcaws.gen.SignRequestException_Exception;
 import org.signserver.module.renewal.ejbcaws.gen.TokenCertificateRequestWS;
 import org.signserver.module.renewal.ejbcaws.gen.TokenCertificateResponseWS;
-import org.signserver.module.renewal.ejbcaws.gen.UserDataSourceException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.UserDataSourceException_Exception;
 import org.signserver.module.renewal.ejbcaws.gen.UserDataSourceVOWS;
 import org.signserver.module.renewal.ejbcaws.gen.UserDataVOWS;
-import org.signserver.module.renewal.ejbcaws.gen.UserDoesntFullfillEndEntityProfile_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.UserDoesntFullfillEndEntityProfile_Exception;
 import org.signserver.module.renewal.ejbcaws.gen.UserMatch;
-import org.signserver.module.renewal.ejbcaws.gen.WaitingForApprovalException_Exception;
+import org.signserver.module.renewal
+        .ejbcaws.gen.WaitingForApprovalException_Exception;
 
 /**
  * Mock implementation of the EJBCA Web Service.
@@ -54,7 +67,9 @@ import org.signserver.module.renewal.ejbcaws.gen.WaitingForApprovalException_Exc
  * @author Markus Kilås
  * @version $Id$
  */
-@WebService(serviceName="EjbcaWSService", portName="EjbcaWSPort", targetNamespace="http://ws.protocol.core.ejbca.org/", endpointInterface="org.signserver.module.renewal.ejbcaws.gen.EjbcaWS")
+@WebService(serviceName="EjbcaWSService", portName="EjbcaWSPort", 
+    targetNamespace="http://ws.protocol.core.ejbca.org/",
+    endpointInterface="org.signserver.module.renewal.ejbcaws.gen.EjbcaWS")
 public class MockEjbcaWS {
 
     /** Logger for this class. */
@@ -84,7 +99,9 @@ public class MockEjbcaWS {
      */
     private static String RESPONSETYPE_PKCS7WITHCHAIN = "PKCS7WITHCHAIN";
     
-    public Certificate getCertificate(String arg0, String arg1) throws AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception {
+    public Certificate getCertificate(String arg0, String arg1) throws 
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -95,93 +112,149 @@ public class MockEjbcaWS {
     }
 
     
-    public int isApproved(int arg0) throws ApprovalException_Exception, ApprovalRequestExpiredException_Exception, EjbcaException_Exception {
+    public int isApproved(int arg0) throws ApprovalException_Exception, 
+            ApprovalRequestExpiredException_Exception,
+            EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public boolean existsHardToken(String arg0) throws EjbcaException_Exception {
+    public boolean existsHardToken(String arg0)
+            throws EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public List<NameAndId> getAvailableCAs() throws AuthorizationDeniedException_Exception, EjbcaException_Exception {
+    public List<NameAndId> getAvailableCAs() 
+            throws AuthorizationDeniedException_Exception,
+            EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public void revokeUser(String arg0, int arg1, boolean arg2) throws AlreadyRevokedException_Exception, ApprovalException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, NotFoundException_Exception, WaitingForApprovalException_Exception {
+    public void revokeUser(String arg0, int arg1, boolean arg2) 
+            throws AlreadyRevokedException_Exception,
+            ApprovalException_Exception, AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            NotFoundException_Exception, WaitingForApprovalException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public void revokeCert(String arg0, String arg1, int arg2) throws AlreadyRevokedException_Exception, ApprovalException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, NotFoundException_Exception, WaitingForApprovalException_Exception {
+    public void revokeCert(String arg0, String arg1, int arg2) 
+            throws AlreadyRevokedException_Exception,
+            ApprovalException_Exception, AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            NotFoundException_Exception, WaitingForApprovalException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public List<UserDataVOWS> findUser(UserMatch arg0) throws AuthorizationDeniedException_Exception, EjbcaException_Exception, IllegalQueryException_Exception {
+    public List<UserDataVOWS> findUser(UserMatch arg0) 
+            throws AuthorizationDeniedException_Exception,
+            EjbcaException_Exception, IllegalQueryException_Exception {
         List<UserDataVOWS> result = findUserResults.get(new UserMatchEq(arg0));
         return result;
     }
 
     
-    public void createCRL(String arg0) throws ApprovalException_Exception, ApprovalRequestExpiredException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception {
+    public void createCRL(String arg0) throws ApprovalException_Exception, 
+            ApprovalRequestExpiredException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void editUser(UserDataVOWS arg0) throws ApprovalException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, UserDoesntFullfillEndEntityProfile_Exception, WaitingForApprovalException_Exception {
+    public void editUser(UserDataVOWS arg0) throws ApprovalException_Exception, 
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            UserDoesntFullfillEndEntityProfile_Exception,
+            WaitingForApprovalException_Exception {
         System.out.println("editUser(" + arg0 + ")");
         editUserCalled = true;
     }
 
     
-    public List<Certificate> findCerts(String arg0, boolean arg1) throws AuthorizationDeniedException_Exception, EjbcaException_Exception {
+    public List<Certificate> findCerts(String arg0, boolean arg1) 
+            throws AuthorizationDeniedException_Exception,
+            EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public List<Certificate> getLastCertChain(String arg0) throws AuthorizationDeniedException_Exception, EjbcaException_Exception {
+    public List<Certificate> getLastCertChain(String arg0) 
+            throws AuthorizationDeniedException_Exception,
+            EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public CertificateResponse crmfRequest(String arg0, String arg1, String arg2, String arg3, String arg4) throws AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, NotFoundException_Exception {
+    public CertificateResponse crmfRequest(String arg0, String arg1, 
+            String arg2, String arg3, String arg4)
+            throws AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            NotFoundException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public CertificateResponse spkacRequest(String arg0, String arg1, String arg2, String arg3, String arg4) throws AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, NotFoundException_Exception {
+    public CertificateResponse spkacRequest(String arg0, String arg1, 
+            String arg2, String arg3, String arg4)
+            throws AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            NotFoundException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public List<Certificate> cvcRequest(String arg0, String arg1, String arg2) throws ApprovalException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, CertificateExpiredException_Exception, EjbcaException_Exception, NotFoundException_Exception, SignRequestException_Exception, UserDoesntFullfillEndEntityProfile_Exception, WaitingForApprovalException_Exception {
+    public List<Certificate> cvcRequest(String arg0, String arg1, String arg2)
+            throws ApprovalException_Exception,
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception,
+            CertificateExpiredException_Exception, EjbcaException_Exception,
+            NotFoundException_Exception, SignRequestException_Exception,
+            UserDoesntFullfillEndEntityProfile_Exception,
+            WaitingForApprovalException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public byte[] caRenewCertRequest(String arg0, List<byte[]> arg1, boolean arg2, boolean arg3, boolean arg4, String arg5) throws ApprovalException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, WaitingForApprovalException_Exception {
+    public byte[] caRenewCertRequest(String arg0, List<byte[]> arg1,
+            boolean arg2, boolean arg3, boolean arg4, String arg5)
+            throws ApprovalException_Exception,
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            WaitingForApprovalException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public void caCertResponse(String arg0, byte[] arg1, List<byte[]> arg2, String arg3) throws ApprovalException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, WaitingForApprovalException_Exception {
+    public void caCertResponse(String arg0, byte[] arg1, List<byte[]> arg2, 
+            String arg3) throws ApprovalException_Exception,
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            WaitingForApprovalException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public CertificateResponse pkcs10Request(String username, String password, String pkcs10, String hardTokenSN, String responseType) throws AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, NotFoundException_Exception {
+    public CertificateResponse pkcs10Request(String username, String password, 
+            String pkcs10, String hardTokenSN, String responseType)
+            throws AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            NotFoundException_Exception {
         System.out.println(">certificateRequest");
         pkcs10RequestCalled = true;
         final CertificateResponse result = new CertificateResponse();
         LOG.debug("PKCS10 from user '"+username+"'.");
 	result.setResponseType(responseType);
-        result.setData(Base64.encode(processCertReq(username, password, pkcs10, 0, hardTokenSN, responseType)));
+        result.setData(Base64.encode(processCertReq(username, password, pkcs10,
+                0, hardTokenSN, responseType)));
         return result;
     }
 
-    private byte[] processCertReq(String username, String password, String req, int reqType,
-			String hardTokenSN, String responseType) throws EjbcaException_Exception, AuthorizationDeniedException_Exception {
+    private byte[] processCertReq(String username, String password, String req, 
+            int reqType, String hardTokenSN, String responseType)
+            throws EjbcaException_Exception,
+            AuthorizationDeniedException_Exception {
         try {
             byte[] retval = null;
             
@@ -191,12 +264,16 @@ public class MockEjbcaWS {
                 ErrorCode code = new ErrorCode();
                 //            code.setInternalErrorCode(todo)
                 ex.setErrorCode(code);
-                throw new EjbcaException_Exception("User not found: " + username, ex);
+                throw new EjbcaException_Exception("User not found: "
+                        + username, ex);
             }
             String caName = userdata.getCaName();
-            IRequestMessage pkcs10req = RequestMessageUtils.genPKCS10RequestMessage(req.getBytes());
+            IRequestMessage pkcs10req
+                    = RequestMessageUtils.genPKCS10RequestMessage(
+                        req.getBytes());
             PublicKey pubKey = pkcs10req.getRequestPublicKey();
-            IRequestMessage imsg = new SimpleRequestMessage(pubKey, username, password);
+            IRequestMessage imsg = new SimpleRequestMessage(pubKey, username,
+                    password);
 
             X509Certificate cert = ca.issueCertificate(userdata.getSubjectDN(),
                     5, "SHA1withRSA", pubKey);
@@ -218,7 +295,9 @@ public class MockEjbcaWS {
     
 
 
-    private UserDataVOWS findUser(final String username) throws AuthorizationDeniedException_Exception, EjbcaException_Exception {
+    private UserDataVOWS findUser(final String username) 
+            throws AuthorizationDeniedException_Exception,
+            EjbcaException_Exception {
         try {
             final UserMatchEq match1 = new UserMatchEq();
             match1.setMatchwith(RenewalWorkerTest.MATCH_WITH_USERNAME);
@@ -236,72 +315,117 @@ public class MockEjbcaWS {
     }
 
     
-    public KeyStore pkcs12Req(String arg0, String arg1, String arg2, String arg3, String arg4) throws AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, NotFoundException_Exception {
+    public KeyStore pkcs12Req(String arg0, String arg1, String arg2, 
+            String arg3, String arg4)
+            throws AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            NotFoundException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public void keyRecoverNewest(String arg0) throws ApprovalException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, NotFoundException_Exception, WaitingForApprovalException_Exception {
+    public void keyRecoverNewest(String arg0) throws ApprovalException_Exception,
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            NotFoundException_Exception, WaitingForApprovalException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public void revokeToken(String arg0, int arg1) throws AlreadyRevokedException_Exception, ApprovalException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, NotFoundException_Exception, WaitingForApprovalException_Exception {
+    public void revokeToken(String arg0, int arg1) throws 
+            AlreadyRevokedException_Exception, ApprovalException_Exception,
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            NotFoundException_Exception, WaitingForApprovalException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public RevokeStatus checkRevokationStatus(String arg0, String arg1) throws AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception {
+    public RevokeStatus checkRevokationStatus(String arg0, String arg1) throws 
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public List<UserDataSourceVOWS> fetchUserData(List<String> arg0, String arg1) throws AuthorizationDeniedException_Exception, EjbcaException_Exception, UserDataSourceException_Exception {
+    public List<UserDataSourceVOWS> fetchUserData(List<String> arg0, 
+            String arg1) throws AuthorizationDeniedException_Exception,
+            EjbcaException_Exception, UserDataSourceException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public List<TokenCertificateResponseWS> genTokenCertificates(UserDataVOWS arg0, List<TokenCertificateRequestWS> arg1, HardTokenDataWS arg2, boolean arg3, boolean arg4) throws ApprovalException_Exception, ApprovalRequestExecutionException_Exception, ApprovalRequestExpiredException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, HardTokenExistsException_Exception, UserDoesntFullfillEndEntityProfile_Exception, WaitingForApprovalException_Exception {
+    public List<TokenCertificateResponseWS> genTokenCertificates(
+            UserDataVOWS arg0, List<TokenCertificateRequestWS> arg1,
+            HardTokenDataWS arg2, boolean arg3, boolean arg4) throws
+            ApprovalException_Exception,
+            ApprovalRequestExecutionException_Exception,
+            ApprovalRequestExpiredException_Exception,
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            HardTokenExistsException_Exception,
+            UserDoesntFullfillEndEntityProfile_Exception,
+            WaitingForApprovalException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public HardTokenDataWS getHardTokenData(String arg0, boolean arg1, boolean arg2) throws ApprovalRequestExecutionException_Exception, ApprovalRequestExpiredException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, HardTokenDoesntExistsException_Exception, NotFoundException_Exception, WaitingForApprovalException_Exception {
+    public HardTokenDataWS getHardTokenData(String arg0, boolean arg1, 
+            boolean arg2) throws ApprovalRequestExecutionException_Exception,
+            ApprovalRequestExpiredException_Exception,
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            HardTokenDoesntExistsException_Exception,
+            NotFoundException_Exception, WaitingForApprovalException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public List<HardTokenDataWS> getHardTokenDatas(String arg0, boolean arg1, boolean arg2) throws AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception {
+    public List<HardTokenDataWS> getHardTokenDatas(String arg0, boolean arg1, 
+            boolean arg2) throws AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public void republishCertificate(String arg0, String arg1) throws AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, PublisherException_Exception {
+    public void republishCertificate(String arg0, String arg1) throws
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            PublisherException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public void customLog(int arg0, String arg1, String arg2, String arg3, Certificate arg4, String arg5) throws AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception {
+    public void customLog(int arg0, String arg1, String arg2, String arg3,
+            Certificate arg4, String arg5) throws
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public boolean deleteUserDataFromSource(List<String> arg0, String arg1, boolean arg2) throws AuthorizationDeniedException_Exception, EjbcaException_Exception, MultipleMatchException_Exception, UserDataSourceException_Exception {
+    public boolean deleteUserDataFromSource(List<String> arg0, String arg1,
+            boolean arg2) throws AuthorizationDeniedException_Exception,
+            EjbcaException_Exception, MultipleMatchException_Exception,
+            UserDataSourceException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public List<NameAndId> getAuthorizedEndEntityProfiles() throws AuthorizationDeniedException_Exception, EjbcaException_Exception {
+    public List<NameAndId> getAuthorizedEndEntityProfiles() throws
+            AuthorizationDeniedException_Exception, EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public List<NameAndId> getAvailableCertificateProfiles(int arg0) throws AuthorizationDeniedException_Exception, EjbcaException_Exception {
+    public List<NameAndId> getAvailableCertificateProfiles(int arg0) throws
+            AuthorizationDeniedException_Exception, EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public List<NameAndId> getAvailableCAsInProfile(int arg0) throws AuthorizationDeniedException_Exception, EjbcaException_Exception {
+    public List<NameAndId> getAvailableCAsInProfile(int arg0) throws
+            AuthorizationDeniedException_Exception, EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -311,17 +435,30 @@ public class MockEjbcaWS {
     }
 
     
-    public int getPublisherQueueLength(String arg0) throws EjbcaException_Exception {
+    public int getPublisherQueueLength(String arg0) throws
+            EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public CertificateResponse certificateRequest(UserDataVOWS arg0, String arg1, int arg2, String arg3, String arg4) throws ApprovalException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, NotFoundException_Exception, UserDoesntFullfillEndEntityProfile_Exception, WaitingForApprovalException_Exception {
+    public CertificateResponse certificateRequest(UserDataVOWS arg0, 
+            String arg1, int arg2, String arg3, String arg4) throws
+            ApprovalException_Exception, AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            NotFoundException_Exception,
+            UserDoesntFullfillEndEntityProfile_Exception,
+            WaitingForApprovalException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public KeyStore softTokenRequest(UserDataVOWS arg0, String arg1, String arg2, String arg3) throws ApprovalException_Exception, AuthorizationDeniedException_Exception, CADoesntExistsException_Exception, EjbcaException_Exception, NotFoundException_Exception, UserDoesntFullfillEndEntityProfile_Exception, WaitingForApprovalException_Exception {
+    public KeyStore softTokenRequest(UserDataVOWS arg0, String arg1, 
+            String arg2, String arg3) throws ApprovalException_Exception,
+            AuthorizationDeniedException_Exception,
+            CADoesntExistsException_Exception, EjbcaException_Exception,
+            NotFoundException_Exception,
+            UserDoesntFullfillEndEntityProfile_Exception,
+            WaitingForApprovalException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -345,7 +482,8 @@ public class MockEjbcaWS {
         return editUserCalled;
     }
 
-    public void setFindUserResults(Map<UserMatchEq, List<UserDataVOWS>> findUserResults) {
+    public void setFindUserResults(Map<UserMatchEq,
+            List<UserDataVOWS>> findUserResults) {
         this.findUserResults = findUserResults;
     }
 

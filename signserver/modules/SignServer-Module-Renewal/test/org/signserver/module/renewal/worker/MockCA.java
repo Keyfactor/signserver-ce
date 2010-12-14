@@ -23,7 +23,6 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import javax.security.auth.x500.X500Principal;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cms.CMSProcessable;
@@ -55,7 +54,8 @@ public class MockCA {
         this.subjectDN = subjectDN;
         try {
             // Generate the RSA Keypair
-            final KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
+            final KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA",
+                    "BC");
             kpg.initialize(2048);
             LOG.debug("generating...");
             keyPair = kpg.generateKeyPair();
@@ -107,13 +107,17 @@ public class MockCA {
                 keyPair.getPrivate());
     }
 
-    public byte[] createPKCS7(final X509Certificate cert, final boolean includeChain) {
+    public byte[] createPKCS7(final X509Certificate cert,
+            final boolean includeChain) {
 
-        final Collection<?> certs = includeChain ? Arrays.asList(cert, caCertificate) : Arrays.asList(cert);
+        final Collection<?> certs = includeChain
+                ? Arrays.asList(cert, caCertificate) : Arrays.asList(cert);
 
         try {
-            CMSProcessable msg = new CMSProcessableByteArray("EJBCA".getBytes());
-            CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certs), "BC");
+            CMSProcessable msg = new CMSProcessableByteArray(
+                    "EJBCA".getBytes());
+            CertStore certStore = CertStore.getInstance("Collection",
+                    new CollectionCertStoreParameters(certs), "BC");
             CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
 
             gen.addSigner(keyPair.getPrivate(), caCertificate,

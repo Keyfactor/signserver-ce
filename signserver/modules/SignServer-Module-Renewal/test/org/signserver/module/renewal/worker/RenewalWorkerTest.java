@@ -30,7 +30,6 @@ import org.signserver.module.renewal.common.RenewalWorkerProperties;
 import org.signserver.module.renewal.ejbcaws.gen.EjbcaWS;
 import org.signserver.module.renewal.ejbcaws.gen.EjbcaWSService;
 import org.signserver.module.renewal.ejbcaws.gen.UserDataVOWS;
-import org.signserver.module.renewal.ejbcaws.gen.UserMatch;
 
 /**
  * Test case for the RenewalWorker.
@@ -40,9 +39,12 @@ import org.signserver.module.renewal.ejbcaws.gen.UserMatch;
  */
 public class RenewalWorkerTest extends AbstractTestCase {
     
-    private static final String EJBCAWSURL_PREFIX = "http://localhost:8111/ejbca";
-    private static final String EJBCAWSURL_SUFFIX = "/ejbcaws/ejbcaws";
-    private static final String EJBCAWSURL_SUFFIX_WSDL = "/ejbcaws/ejbcaws?wsdl";
+    private static final String EJBCAWSURL_PREFIX
+            = "http://localhost:8111/ejbca";
+    private static final String EJBCAWSURL_SUFFIX
+            = "/ejbcaws/ejbcaws";
+    private static final String EJBCAWSURL_SUFFIX_WSDL
+            = "/ejbcaws/ejbcaws?wsdl";
 
     public static final int SIGNERID_6102 = 6102;
     public static final String SIGNER_6102 = "Signer_6102";
@@ -116,7 +118,8 @@ public class RenewalWorkerTest extends AbstractTestCase {
         mockEjbcaWs.setFindUserResults(findResult);
 
         final Properties reqProperties = new Properties();
-        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_WORKER, SIGNER_6102);
+        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_WORKER,
+                SIGNER_6102);
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_RENEWKEY,
                 RenewalWorkerProperties.REQUEST_RENEWKEY_TRUE);
         reqProperties.setProperty("DUMMYUNIQEVALUE",
@@ -146,10 +149,12 @@ public class RenewalWorkerTest extends AbstractTestCase {
         assertTrue(chain.contains(cert));
 
         // Should not be any NEXTCERTSIGNKEY
-        assertNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102).getProperty("NEXTCERTSIGNKEY"));
+        assertNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                .getProperty("NEXTCERTSIGNKEY"));
 
         // Should be an DEFAULTKEY
-        assertNotNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102).getProperty("DEFAULTKEY"));
+        assertNotNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                .getProperty("DEFAULTKEY"));
     }
 
     // TODO: Test Renewal without key generation (ie when NEXTCERTSIGNKEY exists)

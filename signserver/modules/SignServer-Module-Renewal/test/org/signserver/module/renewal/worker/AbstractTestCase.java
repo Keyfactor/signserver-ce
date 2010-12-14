@@ -86,7 +86,9 @@ public abstract class AbstractTestCase extends TestCase {
     }
 
     protected static KeyStore createEmpyKeystore(final String keystorePath,
-            final String keystorePassword) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, NoSuchProviderException {
+            final String keystorePassword) throws KeyStoreException, 
+            IOException, NoSuchAlgorithmException, CertificateException,
+            NoSuchProviderException {
         final KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
         ks.load(null, keystorePassword.toCharArray());
         final OutputStream out = new FileOutputStream(keystorePath);
@@ -139,7 +141,8 @@ public abstract class AbstractTestCase extends TestCase {
             String key = en.nextElement();
             if (key.toUpperCase().startsWith("GLOB.WORKER" + workerid)) {
                 key = key.substring("GLOB.".length());
-                globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, key);
+                globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                        key);
             }
         }
     }

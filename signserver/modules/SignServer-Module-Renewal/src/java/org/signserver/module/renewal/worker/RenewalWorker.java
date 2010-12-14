@@ -110,7 +110,8 @@ public class RenewalWorker extends BaseSigner {
     private static final String TRUSTSTORE_TYPE_PEM = "PEM";
     private static final String TRUSTSTORE_TYPE_KEYSTORE = "JKS";
 
-    private static final String DEFAULT_URL = "https://localhost:8443/signserver";
+    private static final String DEFAULT_URL
+            = "https://localhost:8443/signserver";
     private static final String WS_PATH = "/ejbcaws/ejbcaws?wsdl";
 
     private static final int MATCH_WITH_USERNAME = 0;
@@ -369,9 +370,10 @@ public class RenewalWorker extends BaseSigner {
         }
     }
 
-    private void renewWorker(final String url, final int workerId, final String sigAlg,
-            final String subjectDN, final String endEntity,
-            final boolean defaultKey, final String nextCertSignKey) throws Exception {
+    private void renewWorker(final String url, final int workerId, 
+            final String sigAlg, final String subjectDN, final String endEntity,
+            final boolean defaultKey, final String nextCertSignKey)
+            throws Exception {
 
         final String pkcs10
                 = createRequestPEM(workerId, sigAlg, subjectDN, defaultKey);
@@ -438,13 +440,12 @@ public class RenewalWorker extends BaseSigner {
                 }
                 user1.setStatus(STATUS_NEW);
                 user1.setPassword(new String(password));
-                LOG.info("Password: " + new String(password));
                 ejbcaws.editUser(user1);
 
                 // Send request to CA
-                final CertificateResponse resp = ejbcaws.pkcs10Request(endEntity,
-                        new String(password), pkcs10, null,
-                        RESPONSETYPE_PKCS7WITHCHAIN);
+                final CertificateResponse resp
+                        = ejbcaws.pkcs10Request(endEntity, new String(password),
+                        pkcs10, null, RESPONSETYPE_PKCS7WITHCHAIN);
 
                 RandomPasswordGenerator.getInstance().fill(password);
 
@@ -507,11 +508,18 @@ public class RenewalWorker extends BaseSigner {
         return workerSession;
     }
 
-    private String createRequestPEM(int workerId, final String sigAlg, final String subjectDN, final boolean defaultKey) throws CryptoTokenOfflineException, InvalidWorkerIdException {
-        PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg, subjectDN, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, defaultKey);
+    private String createRequestPEM(int workerId, final String sigAlg, 
+            final String subjectDN, final boolean defaultKey)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg,
+                subjectDN, null);
+        final Base64SignerCertReqData reqData
+                = (Base64SignerCertReqData) getWorkerSession()
+                .getCertificateRequest(workerId, certReqInfo, defaultKey);
         if (reqData == null) {
-            throw new RuntimeException("Base64SignerCertReqData returned was null. Unable to generate certificate request."); // TODO
+            throw new RuntimeException(
+                    "Base64SignerCertReqData returned was null."
+                    + " Unable to generate certificate request.");
         }
 
         final StringBuilder buff = new StringBuilder();
@@ -521,25 +529,33 @@ public class RenewalWorker extends BaseSigner {
         return buff.toString();
     }
 
-    private EjbcaWS getEjbcaWS(final String ejbcaUrl, final String alias, final String truststoreType, final String truststorePath, final String truststorePass) throws CryptoTokenOfflineException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, IOException, CertificateException, NoSuchProviderException, KeyManagementException {
+    private EjbcaWS getEjbcaWS(final String ejbcaUrl, final String alias,
+            final String truststoreType, final String truststorePath,
+            final String truststorePass) throws CryptoTokenOfflineException,
+            NoSuchAlgorithmException, KeyStoreException,
+            UnrecoverableKeyException, IOException, CertificateException,
+            NoSuchProviderException, KeyManagementException {
 
         EjbcaWS result = null;
 
         final String urlstr = ejbcaUrl + WS_PATH;
 
         final KeyStore keystore = getCryptoToken().getKeyStore();
-        final KeyManagerFactory kKeyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+        final KeyManagerFactory kKeyManagerFactory
+                = KeyManagerFactory.getInstance("SunX509");
         kKeyManagerFactory.init(keystore, null);
         final KeyStore keystoreTrusted;
 
         if (TRUSTSTORE_TYPE_PEM.equals(truststoreType)) {
             keystoreTrusted = KeyStore.getInstance("JKS");
             keystoreTrusted.load(null, null);
-            final Collection certs = CertTools.getCertsFromPEM(new FileInputStream(truststorePath));
+            final Collection certs = CertTools.getCertsFromPEM(
+                    new FileInputStream(truststorePath));
             int i = 0;
             for (Object o : certs) {
                 if (o instanceof Certificate) {
-                    keystoreTrusted.setCertificateEntry("cert-" + i, (Certificate) o);
+                    keystoreTrusted.setCertificateEntry("cert-" + i,
+                            (Certificate) o);
                     i++;
                 }
             }
@@ -548,26 +564,32 @@ public class RenewalWorker extends BaseSigner {
             }
         } else {
             keystoreTrusted = KeyStore.getInstance(truststoreType, "BC");
-            keystoreTrusted.load(new FileInputStream(truststorePath), truststorePass.toCharArray());
+            keystoreTrusted.load(new FileInputStream(truststorePath),
+                    truststorePass.toCharArray());
         }
-        final TrustManagerFactory tTrustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+        final TrustManagerFactory tTrustManagerFactory
+                = TrustManagerFactory.getInstance("SunX509");
         tTrustManagerFactory.init(keystoreTrusted);
         KeyManager[] keyManagers = kKeyManagerFactory.getKeyManagers();
         for (int i = 0; i < keyManagers.length; i++) {
             if (keyManagers[i] instanceof X509KeyManager) {
-                keyManagers[i] = new AliasKeyManager((X509KeyManager) keyManagers[i], alias);
+                keyManagers[i] = new AliasKeyManager(
+                        (X509KeyManager) keyManagers[i], alias);
             }
         }
         // Now construct a SSLContext using these (possibly wrapped)
         // KeyManagers, and the TrustManagers. We still use a null
         // SecureRandom, indicating that the defaults should be used.
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(keyManagers, tTrustManagerFactory.getTrustManagers(), new SecureRandom());
+        final SSLContext context = SSLContext.getInstance("TLS");
+        context.init(keyManagers, tTrustManagerFactory.getTrustManagers(),
+                new SecureRandom());
         // Finally, we get a SocketFactory, and pass it to SimpleSSLClient.
         SSLSocketFactory factory = context.getSocketFactory();
-        HttpsURLConnection.setDefaultSSLSocketFactory(factory); // TODO: This could be a problem!!
+        HttpsURLConnection.setDefaultSSLSocketFactory(factory); // TODO: This could if multiple renewal workers are used
         LOG.info("Getting WS");
-        EjbcaWSService service = new EjbcaWSService(new URL(urlstr), new QName("http://ws.protocol.core.ejbca.org/", "EjbcaWSService"));
+        EjbcaWSService service = new EjbcaWSService(new URL(urlstr), 
+                new QName("http://ws.protocol.core.ejbca.org/",
+                "EjbcaWSService"));
         result = service.getEjbcaWSPort();
 
         return result;
@@ -634,7 +656,8 @@ public class RenewalWorker extends BaseSigner {
             return base.getClientAliases(string, prncpls);
         }
 
-        public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
+        public String chooseClientAlias(String[] keyType, Principal[] issuers,
+                Socket socket) {
             // For each keyType, call getClientAliases on the base KeyManager
             // to find valid aliases. If our requested alias is found, select it
             // for return.
@@ -662,7 +685,8 @@ public class RenewalWorker extends BaseSigner {
             return base.getClientAliases(string, prncpls);
         }
 
-        public String chooseServerAlias(String string, Principal[] prncpls, Socket socket) {
+        public String chooseServerAlias(String string, Principal[] prncpls,
+                Socket socket) {
             return base.chooseServerAlias(string, prncpls, socket);
         }
 

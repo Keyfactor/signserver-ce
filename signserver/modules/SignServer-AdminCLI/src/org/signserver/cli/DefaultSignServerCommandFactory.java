@@ -130,6 +130,9 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         if (args[0].equalsIgnoreCase("testkey")) {
             return new TestKeyCommand(args);
         }
+        if (args[0].equalsIgnoreCase("renewsigner")) {
+            return new RenewSignerCommand(args);
+        }
         return null;
         
         

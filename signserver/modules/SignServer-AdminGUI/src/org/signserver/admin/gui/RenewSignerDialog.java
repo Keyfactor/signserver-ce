@@ -12,48 +12,34 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import java.awt.Component;
-import java.io.File;
-import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
-import org.ejbca.util.CertTools;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.Task;
 import org.signserver.admin.gui.adminws.gen
         .AdminNotAuthorizedException_Exception;
-import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
-import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
+import org.signserver.admin.gui.adminws.gen
+        .CryptoTokenOfflineException_Exception;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericPropertiesRequest;
 import org.signserver.common.GenericPropertiesResponse;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
@@ -235,16 +221,9 @@ public class RenewSignerDialog extends javax.swing.JDialog {
             }
         });
 
-//        final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
-//                JFileChooser.OPEN_DIALOG);
-//        editor.setClickCountToStart(1);
-//        jTable1.getColumn("Signer certificate").setCellEditor(editor);
-//        jTable1.getColumn("Certificate chain").setCellEditor(editor);
         final DefaultCellEditor renewalCellEditor
                 = new DefaultCellEditor(signersComboBox);
-//        aliasComboBoxFieldEditor.setClickCountToStart(1);
         jTable1.getColumn("Renewal worker").setCellEditor(renewalCellEditor);
-
 
         refreshButton.doClick();
     }

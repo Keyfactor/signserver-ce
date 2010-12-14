@@ -35,5 +35,7 @@ public interface RenewalWorkerProperties {
 
     String RESPONSE_RESULT_OK = "OK";
     String RESPONSE_RESULT_FAILURE = "FAILURE";
-    public static String RESPONSE_MESSAGE = "MESSAGE";
+    String RESPONSE_MESSAGE = "MESSAGE";
+
+    String WORKERPROPERTY_RENEWWORKER = "RENEWWORKER";
 }

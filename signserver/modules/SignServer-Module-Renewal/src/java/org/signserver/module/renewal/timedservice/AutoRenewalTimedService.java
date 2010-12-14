@@ -72,9 +72,6 @@ public class AutoRenewalTimedService extends BaseTimedService {
     private static final String WORKERPROPERTY_RENEWSIGNINGVALIDITYLEFT
             = "RENEWSIGNINGVALIDITYLEFT";
 
-    private static final String WORKERPROPERTY_RENEWWORKER
-            = "RENEWWORKER";
-
     private static final String STATUS_ACTIVE = "ACTIVE";
     private static final String STATUS_OFFLINE = "OFFLINE";
 
@@ -151,7 +148,7 @@ public class AutoRenewalTimedService extends BaseTimedService {
 
                         // Get renewal worker name
                         final String renewalWorker = workerConfig.getProperty(
-                                WORKERPROPERTY_RENEWWORKER,
+                            RenewalWorkerProperties.WORKERPROPERTY_RENEWWORKER,
                                 defaultRenewalWorker);
 
                         // Check setting for signing validity left

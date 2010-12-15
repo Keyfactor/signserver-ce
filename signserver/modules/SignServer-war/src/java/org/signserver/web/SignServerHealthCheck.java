@@ -50,15 +50,17 @@ public class SignServerHealthCheck implements IHealthCheck {
             SignServerHealthCheck.class);
 
     @EJB
-    private IGlobalConfigurationSession.ILocal globalConfigurationSession;
+    private IGlobalConfigurationSession.IRemote globalConfigurationSession;
 
     @EJB
-    private IWorkerSession.ILocal signserversession;
+    private IWorkerSession.IRemote signserversession;
 
-    private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession(){
-    	if(globalConfigurationSession == null){
+    private IGlobalConfigurationSession.IRemote getGlobalConfigurationSession(){
+    	if (globalConfigurationSession == null) {
             try {
-                globalConfigurationSession = ServiceLocator.getInstance().lookupLocal(IGlobalConfigurationSession.ILocal.class);
+                globalConfigurationSession
+                        = ServiceLocator.getInstance().lookupRemote(
+                            IGlobalConfigurationSession.IRemote.class);
             } catch(NamingException e) {
                 LOG.error(e);
             }
@@ -66,10 +68,10 @@ public class SignServerHealthCheck implements IHealthCheck {
     	return globalConfigurationSession;
     }
 
-    private IWorkerSession.ILocal getWorkerSession(){
-    	if(signserversession == null){
+    private IWorkerSession.IRemote getWorkerSession(){
+    	if (signserversession == null) {
             try {
-                signserversession =  ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
+                signserversession =  ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
             } catch(NamingException e) {
                 LOG.error(e);
             }

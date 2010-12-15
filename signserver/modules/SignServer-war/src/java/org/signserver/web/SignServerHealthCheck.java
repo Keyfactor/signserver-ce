@@ -10,13 +10,11 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.web;
 
 import java.util.Iterator;
+import javax.ejb.EJB;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -50,33 +49,31 @@ public class SignServerHealthCheck implements IHealthCheck {
     private static final Logger LOG = Logger.getLogger(
             SignServerHealthCheck.class);
 
-	
-	private IGlobalConfigurationSession.ILocal globalConfigurationSession;
+    @EJB
+    private IGlobalConfigurationSession.ILocal globalConfigurationSession;
+
+    @EJB
+    private IWorkerSession.ILocal signserversession;
+
     private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession(){
     	if(globalConfigurationSession == null){
-    		try{
-    		  Context context = new InitialContext();
-    		  globalConfigurationSession =  (org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal) context.lookup(IGlobalConfigurationSession.ILocal.JNDI_NAME);
-    		}catch(NamingException e){
-    			LOG.error(e);
-    		}
+            try {
+                globalConfigurationSession = ServiceLocator.getInstance().lookupLocal(IGlobalConfigurationSession.ILocal.class);
+            } catch(NamingException e) {
+                LOG.error(e);
+            }
     	}
-    	
     	return globalConfigurationSession;
     }
 
-	private IWorkerSession.ILocal signserversession;
-	
     private IWorkerSession.ILocal getWorkerSession(){
     	if(signserversession == null){
-    		try{
-    		  Context context = new InitialContext();
-    		  signserversession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
-    		}catch(NamingException e){
-    			LOG.error(e);
-    		}
+            try {
+                signserversession =  ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
+            } catch(NamingException e) {
+                LOG.error(e);
+            }
     	}
-    	
     	return signserversession;
     }
 	

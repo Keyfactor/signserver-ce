@@ -10,36 +10,11 @@
 <project name="SignServer-ejb" default="default" basedir="." xmlns:ejbjarproject="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
     <description>Builds, tests, and runs the project SignServer-ejb.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
 
-    <!--
-        ===================
-        Find the application server
-        ===================
-    -->
-    <target name="-pre-init" depends="-set-from-file,-set-from-env">
-        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
-        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
-        <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
-    </target>
+    <!-- Setup APPSRV_HOME etc -->
+    <target name="-pre-init" depends="-modules-set-appserver-home"/>
 
-    <target name="-set-from-file" unless="var.APPSRV_HOME">
-        <!-- Read properties from the main SignServer configuration if available -->
-        <property file="${user.home}/signserver_build.properties" />
-        <property file="../../signserver_build.properties" />
-        <echo message="appserver.home = ${appserver.home}"/>
-        <!-- JBoss -->
-        <available file="${appserver.home}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${appserver.home}" />
-        <!-- GlassFish -->
-        <available file="${appserver.home}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${appserver.home}"/>
-    </target>
-
-    <target name="-set-from-env" unless="var.APPSRV_HOME">
-        <!-- Get property from environment variable -->
-        <property environment="env" />
-        <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>
-        <available file="${env.APPSRV_HOME}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
-    </target>
-    
     <!--
 
     There exist several targets which are by default empty and which can be 

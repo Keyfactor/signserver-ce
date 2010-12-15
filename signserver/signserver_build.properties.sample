@@ -339,7 +339,7 @@ clusterclassloader.truststorepwd=
 #
 # Setting specifying which remote IPs that may call this healthcheck servlet. Use ';' for between multiple IPs. 
 # Default : 127.0.0.1
-healthcheck.authorizedips=127.0.0.1
+healthcheck.authorizedips=127.0.0.1;::1;0:0:0:0:0:0:0:1
 
 # Parameter to set the number of Mega Bytes of memory that must be free before removing 
 # the node out of the cluster.

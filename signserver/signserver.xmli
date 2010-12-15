@@ -411,7 +411,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	        </jar>
 	    </target>
 	    
-	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules, -renewal-jar-included, -renewal-jar-excluded, -xmlsigner-jar-included, -xmlsigner-jar-excluded" unless="buildMailSigner">
+	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules, -renewal-jar-included, -renewal-jar-excluded, -xmlsigner-jar-included, -xmlsigner-jar-excluded, -mrtdsodsigner-jar-included, -mrtdsodsigner-jar-excluded" unless="buildMailSigner">
 	    </target>
 	       
 

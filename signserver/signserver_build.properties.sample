@@ -260,6 +260,11 @@ adminws.enabled=true
 #module.xmlsigner.enabled=true
 #module.xmlsigner.include=false
 
+# Module MRTDSODSigner
+# Default: build=true, include=false
+#module.mrtdsodsigner.enabled=true
+#module.mrtdsodsigner.include=false
+
 # Module WSRA
 # Default: build=true
 #module.wsra.enabled=true

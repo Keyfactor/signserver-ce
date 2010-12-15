@@ -96,6 +96,8 @@
            <property name="module.renewal.include" value="true"/>
            <property name="module.xmlsigner.enabled" value="true"/>
            <property name="module.xmlsigner.include" value="false"/>
+           <property name="module.mrtdsodsigner.enabled" value="true"/>
+           <property name="module.mrtdsodsigner.include" value="false"/>
            <property name="module.wsra.enabled" value="true"/>
 	
 	   <path id="signserver.compile.classpath">
@@ -212,6 +214,8 @@ module.renewal.enabled              = ${module.renewal.enabled}
 module.renewal.include              = ${module.renewal.include}
 module.xmlsigner.enabled            = ${module.xmlsigner.enabled}
 module.xmlsigner.include            = ${module.xmlsigner.include}
+module.mrtdsodsigner.enabled        = ${module.mrtdsodsigner.enabled}
+module.mrtdsodsigner.include        = ${module.mrtdsodsigner.include}
 module.wsra.enabled                 = ${module.wsra.enabled}
       </echo>
     </target>
@@ -279,6 +283,20 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                     <istrue value="${module.xmlsigner.enabled}"/>
                     <or>
                         <istrue value="${module.xmlsigner.include}"/>
+                        <istrue value="${includemodulesinbuild}"/>
+                    </or>
+                </and>
+            </condition>
+
+            <!-- Enable, include module: MRTDSODSigner -->
+            <condition property="module.mrtdsodsigner.enabled.condition">
+                <istrue value="${module.mrtdsodsigner.enabled}"/>
+            </condition>
+            <condition property="module.mrtdsodsigner.include.condition">
+                <and>
+                    <istrue value="${module.mrtdsodsigner.enabled}"/>
+                    <or>
+                        <istrue value="${module.mrtdsodsigner.include}"/>
                         <istrue value="${includemodulesinbuild}"/>
                     </or>
                 </and>

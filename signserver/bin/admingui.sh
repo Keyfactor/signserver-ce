@@ -34,6 +34,9 @@ if [ ! -n "$APPSRV_HOME" ]; then
     fi
 fi
 
+if [ ! -n "$APPSRV_HOME" ]; then
+    echo "To connect to a local SignServer please set APPSRV_HOME first."
+fi
 
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
   if [ -f /etc/signserver/signservermgmt.env ]; then

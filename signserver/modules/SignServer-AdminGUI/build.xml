@@ -18,6 +18,33 @@
 
     <!--
         ===================
+        RELEASE SECTION
+        ===================
+    -->
+
+    <target name="release:bin-zip"
+        description="Creates binary release in ZIP format">
+
+        <property file="../../src/compile.properties"/>
+
+        <property name="zipname" 
+            value="signserver-admingui-${app.version.number}"/>
+
+        <zip destfile="${zipname}.zip">
+            <zipfileset dir="." prefix="${zipname}"
+                filemode="600" dirmode="700">
+                <include name="default_connect.properties"/>
+            </zipfileset>
+            <zipfileset dir="./dist" prefix="${zipname}"
+                filemode="600" dirmode="700">
+                <include name="**/*.jar"/>
+            </zipfileset>
+        </zip>
+    </target>
+
+
+    <!--
+        ===================
         JAX-WS WSIMPORT SECTION
         ===================
     -->

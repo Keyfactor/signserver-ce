@@ -557,7 +557,11 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                     SignServerAdminGUIApplication.getAdminWS()
                     .getSigningValidityNotAfter(item.getSigner()
                     .getWorkerId());
-            newNotAfter = notAfter.toGregorianCalendar().getTime();
+            if (notAfter == null) {
+                newNotAfter = null;
+            } else {
+                newNotAfter = notAfter.toGregorianCalendar().getTime();
+            }
         } catch (AdminNotAuthorizedException_Exception ex) {
             LOG.error(ex, ex);
             newNotAfter = null;

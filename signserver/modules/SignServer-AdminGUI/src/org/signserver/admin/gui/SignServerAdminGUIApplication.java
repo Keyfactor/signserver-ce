@@ -13,8 +13,15 @@
 package org.signserver.admin.gui;
 
 import java.awt.SplashScreen;
+import java.io.File;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.swing.JOptionPane;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.jdesktop.application.Application;
@@ -38,11 +45,34 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
     private static Logger LOG
             = Logger.getLogger(SignServerAdminGUIApplication.class);
 
-    private static IGlobalConfigurationSession.IRemote gCSession;
-    private static IWorkerSession.IRemote sSSession;
+    private static final String OPTION_WS = "ws";
+    private static final String OPTION_HELP = "help";
+    private static final String OPTION_CONNECTFILE = "connectfile";
+    private static final String OPTION_DEFAULTCONNECTFILE = "defaultconnectfile";
 
     private static AdminWS adminWS;
     private static ISigningAndValidation clientWS;
+
+    private static File connectFile;
+    private static File defaultConnectFile;
+
+    /** The command line options. */
+    private static final Options OPTIONS;
+
+     static {
+        OPTIONS = new Options();
+        OPTIONS.addOption(OPTION_WS, false, "Connect using web services");
+        OPTIONS.addOption(OPTION_HELP, false, "Displays this message");
+        OPTIONS.addOption(OPTION_CONNECTFILE, true,
+                "Configuration file to read WS connection properties from");
+        OPTIONS.addOption(OPTION_DEFAULTCONNECTFILE, true,
+                "Default WS connection configuration file");
+    }
+
+    private static void printUsage() {
+        final HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("admingui <options>", OPTIONS);
+    }
 
     private enum Protocol {
         EJB,
@@ -84,17 +114,57 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
             LOG.debug("No splash screen available.");
         }
 
-        if (args.length > 0 && "-ws".equalsIgnoreCase(args[0])) {
-            protocol = Protocol.WS;
-        } else {
-            protocol = Protocol.EJB;
-        }
-
         try {
-            launch(SignServerAdminGUIApplication.class, args);
-        } catch (Exception ex) {
-            displayException(ex);
+            // Parse the command line
+            final CommandLine line = new GnuParser().parse(OPTIONS, args);
+            if (line.hasOption(OPTION_HELP)) {
+                printUsage();
+            } else {
+                if (line.hasOption(OPTION_WS)) {
+                    protocol = Protocol.WS;
+                } else {
+                    if (isNamingContextAvailable()) {
+                        protocol = Protocol.EJB;
+                    } else {
+                        JOptionPane.showMessageDialog(null,
+                            "Application server libraries not detected."
+                            + "\n\nTo connect to a locally running SignServer instance "
+                            + "\nplease append the appropriate application server "
+                            + "\nJAR-files and if needed a jndi.properties file."
+                            + "\n\nTo connect using web services invoke this command "
+                            + "\nwith the argument \"-ws\".");
+                        protocol = Protocol.WS;
+                    }
+                }
+                if (line.hasOption(OPTION_CONNECTFILE)) {
+                    connectFile = new File(
+                            line.getOptionValue(OPTION_CONNECTFILE));
+                }
+                if (line.hasOption(OPTION_DEFAULTCONNECTFILE)) {
+                    defaultConnectFile = new File(
+                            line.getOptionValue(OPTION_DEFAULTCONNECTFILE));
+                }
+
+                try {
+                    launch(SignServerAdminGUIApplication.class, args);
+                } catch (Exception ex) {
+                    displayException(ex);
+                }
+            }
+        } catch (ParseException ex) {
+            throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
         }
+    }
+
+    private static boolean isNamingContextAvailable() {
+        boolean result;
+        try {
+            final InitialContext ignored = new InitialContext(); //NOPMD
+            result = true;
+        } catch (NamingException ex) {
+            result = false;
+        }
+        return result;
     }
 
     /**
@@ -106,7 +176,8 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
                 
                 CertTools.installBCProvider();
 
-                final ConnectDialog dlg = new ConnectDialog(null, true);
+                final ConnectDialog dlg = new ConnectDialog(null, true,
+                        connectFile, defaultConnectFile);
                 dlg.setVisible(true);
                 adminWS = dlg.getWS();
                 

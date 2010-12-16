@@ -85,15 +85,24 @@ public class ConnectDialog extends javax.swing.JDialog {
     };
 
     /** Creates new form ConnectDialog. */
-    public ConnectDialog(final Frame parent, final boolean modal) {
+    public ConnectDialog(final Frame parent, final boolean modal,
+            File connectFile, File defaultConnectFile) {
         super(parent, modal);
         initComponents();
         truststoreTypeComboBox.setModel(
                 new DefaultComboBoxModel(TRUSTSTORE_TYPES));
-        if (CONNECT_FILE.exists()) {
-            loadSettingsFromFile(CONNECT_FILE);
+
+        if (defaultConnectFile == null) {
+            defaultConnectFile = DEFAULT_CONNECT_FILE;
+        }
+        if (connectFile == null) {
+            connectFile = CONNECT_FILE;
+        }
+
+        if (connectFile.exists()) {
+            loadSettingsFromFile(connectFile);
         } else {
-            loadSettingsFromFile(DEFAULT_CONNECT_FILE);
+            loadSettingsFromFile(defaultConnectFile);
         }
     }
 

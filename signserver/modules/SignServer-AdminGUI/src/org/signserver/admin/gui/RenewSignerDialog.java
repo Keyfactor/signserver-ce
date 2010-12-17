@@ -253,6 +253,9 @@ public class RenewSignerDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        passwordPanel = new javax.swing.JPanel();
+        passwordPanelLabel = new javax.swing.JLabel();
+        passwordPanelField = new javax.swing.JPasswordField();
         jButton2 = new javax.swing.JButton();
         buttonRenew = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -260,11 +263,40 @@ public class RenewSignerDialog extends javax.swing.JDialog {
         jToolBar1 = new javax.swing.JToolBar();
         refreshButton = new javax.swing.JButton();
 
+        passwordPanel.setName("passwordPanel"); // NOI18N
+
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(RenewSignerDialog.class);
+        passwordPanelLabel.setText(resourceMap.getString("passwordPanelLabel.text")); // NOI18N
+        passwordPanelLabel.setName("passwordPanelLabel"); // NOI18N
+
+        passwordPanelField.setText(resourceMap.getString("passwordPanelField.text")); // NOI18N
+        passwordPanelField.setName("passwordPanelField"); // NOI18N
+
+        javax.swing.GroupLayout passwordPanelLayout = new javax.swing.GroupLayout(passwordPanel);
+        passwordPanel.setLayout(passwordPanelLayout);
+        passwordPanelLayout.setHorizontalGroup(
+            passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, passwordPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(passwordPanelField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                    .addComponent(passwordPanelLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        passwordPanelLayout.setVerticalGroup(
+            passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(passwordPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(passwordPanelLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(passwordPanelField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
         setName("Form"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(RenewSignerDialog.class);
         jButton2.setText(resourceMap.getString("jButton2.text")); // NOI18N
         jButton2.setName("jButton2"); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -378,11 +410,26 @@ public class RenewSignerDialog extends javax.swing.JDialog {
     }
 
     private class RenewTask extends Task<Result, Void> {
+
+        private char[] authCode;
+
         RenewTask(Application app) {
             // Runs on the EDT.  Copy GUI state that
             // doInBackground() depends on from parameters
             // to InstallCertificatesTask fields, here.
             super(app);
+            passwordPanelLabel.setText(
+                    "Enter authentication code for all workers or leave empty:");
+            passwordPanelField.setText("");
+            passwordPanelField.grabFocus();
+
+            int res = JOptionPane.showConfirmDialog(RenewSignerDialog.this,
+                    passwordPanel, "Generate keys",
+                    JOptionPane.OK_CANCEL_OPTION);
+
+           if (res == JOptionPane.OK_OPTION) {
+               authCode = passwordPanelField.getPassword();
+           }
         }
         @Override protected Result doInBackground() {
             // Your Task's code here.  This method runs
@@ -406,6 +453,9 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                     requestProperties.setProperty(
                             RenewalWorkerProperties.REQUEST_WORKER, 
                             item.getSigner().getName());
+                    requestProperties.setProperty(
+                            RenewalWorkerProperties.REQUEST_AUTHCODE,
+                            String.valueOf(authCode));
 //                    requestProperties.setProperty(
 //                            RenewalWorkerProperties.REQUEST_RENEWKEY,
 //                            RenewalWorkerProperties.REQUEST_RENEWKEY_TRUE);
@@ -591,6 +641,9 @@ public class RenewSignerDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JPanel passwordPanel;
+    private javax.swing.JPasswordField passwordPanelField;
+    private javax.swing.JLabel passwordPanelLabel;
     private javax.swing.JButton refreshButton;
     // End of variables declaration//GEN-END:variables
 

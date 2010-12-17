@@ -20,6 +20,7 @@ package org.signserver.module.renewal.common;
  */
 public interface RenewalWorkerProperties {
 
+
     /** The worker to renew. **/
     String REQUEST_WORKER = "WORKER";
 
@@ -30,6 +31,7 @@ public interface RenewalWorkerProperties {
     String REQUEST_FORDEFAULTKEY = "FORDEFAULTKEY";
     String REQUEST_FORDEFAULTKEY_TRUE = Boolean.TRUE.toString();
     String REQUEST_FORDEFAULTKEY_FALSE = Boolean.FALSE.toString();
+    String REQUEST_AUTHCODE = "AUTHCODE";
 
     String RESPONSE_RESULT = "RESULT";
 

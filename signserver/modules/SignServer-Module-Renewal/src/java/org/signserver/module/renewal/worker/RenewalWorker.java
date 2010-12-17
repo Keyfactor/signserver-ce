@@ -32,8 +32,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -257,6 +257,9 @@ public class RenewalWorker extends BaseSigner {
                     RenewalWorkerProperties.REQUEST_RENEWKEY));
             }
 
+            final String authCode = requestData.getProperty(
+                    RenewalWorkerProperties.REQUEST_AUTHCODE);
+
             final String keyAlg = workerConfig.getProperty(
                     PROPERTY_KEYALG);
             final String keySpec = workerConfig.getProperty(
@@ -310,7 +313,8 @@ public class RenewalWorker extends BaseSigner {
                     LOG.debug("Will not use default key");
 
                     // Renew the key
-                    nextCertSignKey = renewKey(workerId, keyAlg, keySpec);
+                    nextCertSignKey = renewKey(workerId, keyAlg, keySpec,
+                            authCode == null ? null : authCode.toCharArray());
                 } else {
                     // Request might say that we should use the default key
                     defaultKey = forDefaultKey;
@@ -319,7 +323,7 @@ public class RenewalWorker extends BaseSigner {
 
                 // Renew worker
                 renewWorker(url, workerId, sigAlg, keyAlg, endEntity,
-                        defaultKey, nextCertSignKey);
+                        defaultKey, nextCertSignKey, authCode.toCharArray());
 
                 responseData.setProperty(
                         RenewalWorkerProperties.RESPONSE_RESULT,
@@ -337,14 +341,14 @@ public class RenewalWorker extends BaseSigner {
     }
 
     private String renewKey(final int workerId, final String keyAlg,
-           final String keySpec) throws Exception {
+           final String keySpec, final char[] authcode) throws Exception {
         LOG.debug("<renewKey");
 
         final String newAlias = getWorkerSession().generateSignerKey(workerId,
-                keyAlg, keySpec, null, null);
+                keyAlg, keySpec, null, authcode);
 
         final Collection<KeyTestResult> results = getWorkerSession().testKey(
-                workerId, newAlias, null);
+                workerId, newAlias, authcode);
         if (results.size() != 1) {
             throw new CryptoTokenOfflineException("Key testing failed: "
                     + "No result");
@@ -362,6 +366,9 @@ public class RenewalWorker extends BaseSigner {
             LOG.info("New key generated and NEXTCERTSIGNKEY updated for worker "
                     + workerId);
 
+            getWorkerSession().activateSigner(workerId,
+                    String.valueOf(authcode));
+
             LOG.debug(">renewKey");
             return newAlias;
         } else {
@@ -372,7 +379,7 @@ public class RenewalWorker extends BaseSigner {
 
     private void renewWorker(final String url, final int workerId, 
             final String sigAlg, final String subjectDN, final String endEntity,
-            final boolean defaultKey, final String nextCertSignKey)
+            final boolean defaultKey, final String nextCertSignKey, final char[] authCode)
             throws Exception {
 
         final String pkcs10
@@ -411,7 +418,7 @@ public class RenewalWorker extends BaseSigner {
             throw new IllegalArgumentException("Missing EJBCAWSURL property");
         }
         final EjbcaWS ejbcaws = getEjbcaWS(ejbcaWsUrl,
-                alias, truststoreType, truststorePath, truststorePass);
+                alias, truststoreType, truststorePath, truststorePass, authCode);
 
         if (ejbcaws == null) {
             LOG.debug("Could not get EjbcaWS");
@@ -531,7 +538,7 @@ public class RenewalWorker extends BaseSigner {
 
     private EjbcaWS getEjbcaWS(final String ejbcaUrl, final String alias,
             final String truststoreType, final String truststorePath,
-            final String truststorePass) throws CryptoTokenOfflineException,
+            final String truststorePass, final char[] authcode) throws CryptoTokenOfflineException,
             NoSuchAlgorithmException, KeyStoreException,
             UnrecoverableKeyException, IOException, CertificateException,
             NoSuchProviderException, KeyManagementException {
@@ -541,6 +548,14 @@ public class RenewalWorker extends BaseSigner {
         final String urlstr = ejbcaUrl + WS_PATH;
 
         final KeyStore keystore = getCryptoToken().getKeyStore();
+
+        // TODO: Check that keystore contains key with the specified alias
+        LOG.info("aliases in keystore follows:");
+        Enumeration<String> e = keystore.aliases();
+        while(e.hasMoreElements()) {
+            LOG.info("alias: " + e.nextElement());
+        }
+
         final KeyManagerFactory kKeyManagerFactory
                 = KeyManagerFactory.getInstance("SunX509");
         kKeyManagerFactory.init(keystore, null);
@@ -658,27 +673,7 @@ public class RenewalWorker extends BaseSigner {
 
         public String chooseClientAlias(String[] keyType, Principal[] issuers,
                 Socket socket) {
-            // For each keyType, call getClientAliases on the base KeyManager
-            // to find valid aliases. If our requested alias is found, select it
-            // for return.
-            String selectedAlias = null;
-            for (int i = 0; i < keyType.length; i++) {
-                final String[] clientAliases
-                        = base.getClientAliases(keyType[i], issuers);
-                if(clientAliases != null) {
-                    List<String> aliases = Arrays.asList(clientAliases);
-                    if (!aliases.isEmpty()) {
-                        if (alias == null) {
-                            selectedAlias = aliases.get(0);
-                            LOG.debug("No alias specified, using first one");
-                        } else if (aliases.contains(alias)) {
-                            selectedAlias = alias;
-                            break;
-                        }
-                    }
-                }
-            }
-            return selectedAlias;
+            return alias;
         }
 
         public String[] getServerAliases(String string, Principal[] prncpls) {
@@ -691,11 +686,17 @@ public class RenewalWorker extends BaseSigner {
         }
 
         public X509Certificate[] getCertificateChain(String string) {
-            return base.getCertificateChain(string);
+            try {
+                return getSigningCertificateChain().toArray(new X509Certificate[0]);
+            } catch (CryptoTokenOfflineException ex) {
+                LOG.error("Offline getting chain", ex);
+                return new X509Certificate[0];
+            }
         }
 
         public PrivateKey getPrivateKey(String string) {
-            return base.getPrivateKey(string);
+            final PrivateKey key = base.getPrivateKey(string);
+            return key;
         }
     }
 }

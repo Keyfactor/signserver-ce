@@ -187,8 +187,10 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
         
         Enumeration<String> en = gc.getKeyEnumeration();
         while(en.hasMoreElements()){
-        	String key =  en.nextElement();  
-        	log.debug("getWorkers, processing key : " + key);
+        	String key =  en.nextElement();
+                if (log.isTraceEnabled()) {
+                    log.trace("getWorkers, processing key : " + key);
+                }
         	if(key.startsWith("GLOB.WORKER")){
                 retval = (ArrayList<Integer>) getWorkerHelper(retval,gc,key,workerType,false);
         	}
@@ -203,11 +205,17 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 	private List<Integer> getWorkerHelper(List<Integer> retval, GlobalConfiguration gc, String key, int workerType, boolean signersOnly){
 		
    		String unScopedKey = key.substring("GLOB.".length());
-   		log.debug("unScopedKey : " + unScopedKey);
+                if (log.isTraceEnabled()) {
+                    log.trace("unScopedKey : " + unScopedKey);
+                }
 		String strippedKey = key.substring("GLOB.WORKER".length());
-		log.debug("strippedKey : " + strippedKey);
+                if (log.isTraceEnabled()) {
+                    log.trace("strippedKey : " + strippedKey);
+                }
 		String[] splittedKey = strippedKey.split("\\.");
-		log.debug("splittedKey : " + splittedKey.length + ", " + splittedKey[0]);
+                if (log.isTraceEnabled()) {
+                    log.trace("splittedKey : " + splittedKey.length + ", " + splittedKey[0]);
+                }
 		if(splittedKey.length > 1){
 			if(splittedKey[1].equals("CLASSPATH")){
 				int id = Integer.parseInt(splittedKey[0]);
@@ -217,13 +225,17 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 					IWorker obj = WorkerFactory.getInstance().getWorker(id, new WorkerConfigDataService(em), this, new SignServerContext(em));
 					if(workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE){						
 						if(obj instanceof IProcessable){
+                                                    if (log.isDebugEnabled()) {
 							log.debug("Adding Signer " + id);
+                                                    }
 							retval.add(new Integer(id));        			   
 						}
 					}else{
 						if(workerType == GlobalConfiguration.WORKERTYPE_SERVICES && !signersOnly){
 							if(obj instanceof ITimedService){
+                                                            if (log.isDebugEnabled()) {
 								log.debug("Adding Service " + id);
+                                                            }
 								retval.add(new Integer(id));        			   
 							}
 						}

@@ -50,6 +50,7 @@
        <property name="clientsigningandvalidationapi.dir" value="./modules/SignServer-Client-SigningAndValidationAPI"/>
 
        <property name="module.mrtdsodsigner.dir" location="./modules/SignServer-Module-MRTDSODSigner"/>
+       <property name="module.log4j.dir" location="./modules/SignServer-Module-Log4j"/>
 
 	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
 	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
@@ -99,7 +100,8 @@
            <property name="module.mrtdsodsigner.enabled" value="true"/>
            <property name="module.mrtdsodsigner.include" value="false"/>
            <property name="module.wsra.enabled" value="true"/>
-	
+           <property name="module.log4j.include" value="false"/>
+
 	   <path id="signserver.compile.classpath">
 	        <path refid="signserver.ext.classpath" />
                 <fileset dir="dist-server/lib" includes="*.jar"/>
@@ -210,6 +212,7 @@ clusterclassloader.useclassversions = ${clusterclassloader.useclassversions}
 clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 includemodulesinbuild               = ${includemodulesinbuild}
+module.log4j.include                = ${module.log4j.include}
 module.renewal.enabled              = ${module.renewal.enabled}
 module.renewal.include              = ${module.renewal.include}
 module.xmlsigner.enabled            = ${module.xmlsigner.enabled}
@@ -286,6 +289,17 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                         <istrue value="${includemodulesinbuild}"/>
                     </or>
                 </and>
+            </condition>
+
+            <!-- Include module: Log4j -->
+            <condition property="module.log4j.enabled.condition">
+                <or>
+                    <istrue value="${module.log4j.enabled}"/>
+                    <istrue value="${module.log4j.include}"/>
+                </or>
+            </condition>
+            <condition property="module.log4j.include.condition">
+                <istrue value="${module.log4j.include}"/>
             </condition>
 
             <!-- Enable, include module: MRTDSODSigner -->
@@ -411,7 +425,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	        </jar>
 	    </target>
 	    
-	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules, -renewal-jar-included, -renewal-jar-excluded, -xmlsigner-jar-included, -xmlsigner-jar-excluded, -mrtdsodsigner-jar-included, -mrtdsodsigner-jar-excluded" unless="buildMailSigner">
+	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules, -renewal-jar-included, -renewal-jar-excluded, -xmlsigner-jar-included, -xmlsigner-jar-excluded, -mrtdsodsigner-jar-included, -mrtdsodsigner-jar-excluded, -log4j-jar-included" unless="buildMailSigner">
 	    </target>
 	       
 

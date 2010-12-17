@@ -406,6 +406,24 @@ OS version                          = ${os.version}
         <echo message="Not including MRTDSODSigner module in EAR"/>
     </target>
 
+    <!-- Target that can be called to build the Log4j module -->
+    <target name="module-log4j"
+        description="Build the module Log4j">
+        <ant antfile="${module.log4j.dir}/build.xml" target="jar"
+            inheritall="false"/>
+    </target>
+    <!-- Target always called when building. Only builds if configured. -->
+    <target name="-module-log4j-jar" depends="module-log4j"
+        if="module.log4j.enabled.condition"/>
+    <!-- Target for including the module -->
+    <target name="-log4j-jar-included"
+            if="module.log4j.include.condition"
+            depends="module-log4j">
+        <echo message="Including Log4j configuration in EAR"/>
+        <copy file="${module.log4j.dir}/dist/SignServer-Module-Log4j.jar"
+            todir="${server.dist.dir}/lib"/>
+    </target>
+
  
 	   <!-- =================================================================== -->
 	    <!-- Build preparation for package distribution                         -->

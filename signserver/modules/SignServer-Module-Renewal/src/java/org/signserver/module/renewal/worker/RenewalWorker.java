@@ -331,10 +331,8 @@ public class RenewalWorker extends BaseSigner {
             }
 
         } catch (Exception ex) {
-            LOG.error("Could not renew worker: " + workerName, ex);
-            responseData.setProperty(
-                    RenewalWorkerProperties.RESPONSE_RESULT,
-                    RenewalWorkerProperties.RESPONSE_RESULT_FAILURE);
+            renewalFailure(responseData, "Could not renew worker: "
+                    + workerName + ": " + ex.getMessage(), ex);
         }
 
         return responseData;
@@ -343,6 +341,10 @@ public class RenewalWorker extends BaseSigner {
     private String renewKey(final int workerId, final String keyAlg,
            final String keySpec, final char[] authcode) throws Exception {
         LOG.debug("<renewKey");
+
+        if (authcode == null) {
+            throw new IllegalArgumentException("Missing authcode in request");
+        }
 
         final String newAlias = getWorkerSession().generateSignerKey(workerId,
                 keyAlg, keySpec, null, authcode);
@@ -650,7 +652,12 @@ public class RenewalWorker extends BaseSigner {
 
     private void renewalFailure(final Properties responseData,
             final String message) {
-        LOG.error(message);
+        renewalFailure(responseData, message, null);
+    }
+
+    private void renewalFailure(final Properties responseData,
+            final String message, final Throwable ex) {
+        LOG.error(message, ex);
         responseData.setProperty(RenewalWorkerProperties.RESPONSE_RESULT,
                 RenewalWorkerProperties.RESPONSE_RESULT_FAILURE);
         responseData.setProperty(RenewalWorkerProperties.RESPONSE_MESSAGE,

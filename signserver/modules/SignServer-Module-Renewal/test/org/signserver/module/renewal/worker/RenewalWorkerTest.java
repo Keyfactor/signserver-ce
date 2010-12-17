@@ -120,6 +120,8 @@ public class RenewalWorkerTest extends AbstractTestCase {
         final Properties reqProperties = new Properties();
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_WORKER,
                 SIGNER_6102);
+        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
+                "foo123");
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_RENEWKEY,
                 RenewalWorkerProperties.REQUEST_RENEWKEY_TRUE);
         reqProperties.setProperty("DUMMYUNIQEVALUE",
@@ -131,6 +133,8 @@ public class RenewalWorkerTest extends AbstractTestCase {
                     WORKERID, request, new RequestContext());
 
         // OK result
+        LOG.info("Response message: " + response.getProperties().getProperty(
+                RenewalWorkerProperties.RESPONSE_MESSAGE));
         assertEquals(RenewalWorkerProperties.RESPONSE_RESULT_OK,
                 response.getProperties().getProperty(
                 RenewalWorkerProperties.RESPONSE_RESULT));

@@ -66,7 +66,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
 
     private List<Item> items = new ArrayList<Item>();
 
-
+    private boolean renewButtonClicked;
 
     private int resultCode = CANCEL;
 
@@ -388,6 +388,9 @@ public class RenewSignerDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if (renewButtonClicked) {
+            resultCode = RenewSignerDialog.OK;
+        }
         dispose();
 }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -404,9 +407,28 @@ public class RenewSignerDialog extends javax.swing.JDialog {
         return resultCode;
     }
 
-    @Action(block = Task.BlockingScope.WINDOW)
+        @Action(block = Task.BlockingScope.WINDOW)
     public Task installCertificates() {
         return new RenewTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class));
+    }
+
+    private class InstallCertificatesTask extends org.jdesktop.application.Task<Object, Void> {
+        InstallCertificatesTask(org.jdesktop.application.Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to InstallCertificatesTask fields, here.
+            super(app);
+        }
+        @Override protected Object doInBackground() {
+            // Your Task's code here.  This method runs
+            // on a background thread, so don't reference
+            // the Swing GUI from here.
+            return null;  // return your result
+        }
+        @Override protected void succeeded(Object result) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+        }
     }
 
     private class RenewTask extends Task<Result, Void> {
@@ -430,6 +452,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
            if (res == JOptionPane.OK_OPTION) {
                authCode = passwordPanelField.getPassword();
            }
+           renewButtonClicked = true;
         }
         @Override protected Result doInBackground() {
             // Your Task's code here.  This method runs

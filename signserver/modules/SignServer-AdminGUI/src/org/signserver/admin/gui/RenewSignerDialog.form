@@ -115,7 +115,7 @@
     <Component class="javax.swing.JButton" name="buttonRenew">
       <Properties>
         <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-          <action class="org.signserver.admin.gui.InstallCertificatesDialog" id="installCertificates" methodName="installCertificates"/>
+          <action class="org.signserver.admin.gui.RenewSignerDialog" id="installCertificates" methodName="installCertificates"/>
         </Property>
         <Property name="text" type="java.lang.String" resourceKey="buttonRenew.text"/>
         <Property name="name" type="java.lang.String" value="buttonRenew" noResource="true"/>

@@ -1973,7 +1973,7 @@ public class MainView extends FrameView {
         if (selectedWorkers.size() > 0) {
             RenewSignerDialog dlg = new RenewSignerDialog(
                     getFrame(), true, allWorkers, selectedWorkers);
-            if (dlg.showDialog() == InstallCertificatesDialog.OK) {
+            if (dlg.showDialog() == RenewSignerDialog.OK) {
                 getContext().getTaskService().execute(refreshWorkers());
             }
         }

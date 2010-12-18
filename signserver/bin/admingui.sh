@@ -92,4 +92,4 @@ if $cygwin; then
   CP=`cygpath --path --windows "$CP"`
 fi
 
-exec "$JAVACMD" -cp $CP $class_name "$@" -connectfile modules/SignServer-AdminGUI/connect.properties -defaultconnectfile modules/SignServer-AdminGUI/connect.properties
+exec "$JAVACMD" -cp $CP -splash:modules/SignServer-AdminGUI/src/splash.png $class_name "$@" -connectfile modules/SignServer-AdminGUI/connect.properties -defaultconnectfile modules/SignServer-AdminGUI/connect.properties

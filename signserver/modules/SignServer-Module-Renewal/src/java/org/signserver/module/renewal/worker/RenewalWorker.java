@@ -32,10 +32,12 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.ejb.EJB;
 import javax.naming.NamingException;
@@ -83,6 +85,7 @@ import org.signserver.module.renewal.ejbcaws.gen.EjbcaWSService;
 import org.signserver.module.renewal.ejbcaws.gen.UserDataVOWS;
 import org.signserver.module.renewal.ejbcaws.gen.UserMatch;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -175,7 +178,11 @@ public class RenewalWorker extends BaseSigner {
                 "Recieved request was not of expected type.");
         }
 
-        responseData = process(requestData);
+        // Log values
+        final Map<String, String> logMap =
+                (Map<String, String>) requestContext.get(RequestContext.LOGMAP);
+
+        responseData = process(requestData, logMap);
 
         if (request instanceof GenericSignRequest) {
             final GenericSignRequest signRequest =
@@ -212,7 +219,8 @@ public class RenewalWorker extends BaseSigner {
      * @throws CryptoTokenOfflineException
      * @throws SignServerException
      */
-    private Properties process(final Properties requestData)
+    private Properties process(final Properties requestData,
+                final Map<String, String> logMap)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         final String workerName = requestData.getProperty(
@@ -233,12 +241,12 @@ public class RenewalWorker extends BaseSigner {
         try {
             String url = DEFAULT_URL;
 
-            final int workerId = getWorkerSession().getWorkerId(workerName);
-            LOG.debug("Worker " + workerName + " has ID: " + workerId);
+            final int reneweeId = getWorkerSession().getWorkerId(workerName);
+            LOG.debug("Worker " + workerName + " has ID: " + reneweeId);
 
             // Get the worker config
             final WorkerConfig workerConfig
-                    = getWorkerSession().getCurrentWorkerConfig(workerId);
+                    = getWorkerSession().getCurrentWorkerConfig(reneweeId);
             final String sigAlg = workerConfig.getProperty(
                     PROPERTY_SIGNATUREALGORITHM);
             final String subjectDN = workerConfig.getProperty(
@@ -248,6 +256,13 @@ public class RenewalWorker extends BaseSigner {
             final String workerRenewKey = workerConfig.getProperty(
                         PROPERTY_RENEWKEY, Boolean.FALSE.toString());
             final boolean renewKey = Boolean.parseBoolean(workerRenewKey);
+            final String keyAlg = workerConfig.getProperty(
+                    PROPERTY_KEYALG);
+            final String keySpec = workerConfig.getProperty(
+                    PROPERTY_KEYSPEC);
+            String nextCertSignKey
+                    = workerConfig.getProperty(NEXTCERTSIGNKEY);
+
             Boolean requestRenewKey = null;
 
             // Key renewal overridden in request
@@ -257,25 +272,95 @@ public class RenewalWorker extends BaseSigner {
                     RenewalWorkerProperties.REQUEST_RENEWKEY));
             }
 
-            final String authCode = requestData.getProperty(
-                    RenewalWorkerProperties.REQUEST_AUTHCODE);
-
-            final String keyAlg = workerConfig.getProperty(
-                    PROPERTY_KEYALG);
-            final String keySpec = workerConfig.getProperty(
-                    PROPERTY_KEYSPEC);
-            String nextCertSignKey
-                    = workerConfig.getProperty(NEXTCERTSIGNKEY);
-
             // If we should use the default key (instead of nextKey,
             // if existing) can be specified in the request (but only if we
             // don't generate a new key)
             final String forDefaultKeyValue = requestData.getProperty(
                     RenewalWorkerProperties.REQUEST_FORDEFAULTKEY,
                     Boolean.FALSE.toString());
-            boolean forDefaultKey = false;
+            boolean requestForDefaultKey = false;
             if (forDefaultKeyValue != null && !forDefaultKeyValue.isEmpty()) {
-                forDefaultKey = Boolean.parseBoolean(forDefaultKeyValue);
+                requestForDefaultKey = Boolean.parseBoolean(forDefaultKeyValue);
+            }
+
+            final String authCode = requestData.getProperty(
+                    RenewalWorkerProperties.REQUEST_AUTHCODE);
+
+            if (LOG.isDebugEnabled()) {
+                final StringBuilder buff = new StringBuilder();
+                buff.append("Renewer");
+                buff.append("[");
+                buff.append(workerId);
+                buff.append("]: ");
+                buff.append("Got request for renewal of Worker");
+                buff.append("[");
+                buff.append(reneweeId);
+                buff.append("]: ");
+                buff.append("\n");
+
+                buff.append("Transaction:");
+                buff.append("\n\t");
+                buff.append("LOG_ID: ");
+                buff.append(logMap.get(IWorkerLogger.LOG_ID));
+                buff.append("\n");
+                
+                buff.append("Renewee config:");
+                buff.append("\n\t");
+
+                buff.append(PROPERTY_SIGNATUREALGORITHM);
+                buff.append("=");
+                buff.append(sigAlg);
+                buff.append("\n\t");
+
+                buff.append(PROPERTY_REQUESTDN);
+                buff.append("=");
+                buff.append(subjectDN);
+                buff.append("\n\t");
+
+                buff.append(PROPERTY_KEYALG);
+                buff.append("=");
+                buff.append(keyAlg);
+                buff.append("\n\t");
+
+                buff.append(PROPERTY_KEYSPEC);
+                buff.append("=");
+                buff.append(keySpec);
+                buff.append("\n\t");
+
+                buff.append(PROPERTY_RENEWENDENTITY);
+                buff.append("=");
+                buff.append(endEntity);
+                buff.append("\n\t");
+
+                buff.append(PROPERTY_RENEWKEY);
+                buff.append("=");
+                buff.append(renewKey);
+                buff.append("\n");
+
+                buff.append("Request config:");
+                buff.append("\n\t");
+
+                buff.append(RenewalWorkerProperties.REQUEST_RENEWKEY);
+                buff.append("=");
+                buff.append(requestRenewKey);
+                buff.append("\n\t");
+
+                buff.append(RenewalWorkerProperties.REQUEST_FORDEFAULTKEY);
+                buff.append("=");
+                buff.append(requestForDefaultKey);
+                buff.append("\n\t");
+
+                buff.append(RenewalWorkerProperties.REQUEST_AUTHCODE);
+                buff.append("=");
+                if (authCode == null) {
+                    buff.append("null");
+                } else {
+                    final char[] masked = new char[authCode.length()];
+                    Arrays.fill(masked, '*');
+                    buff.append(new String(masked));
+                }
+
+                LOG.debug(buff.toString());
             }
 
             if (endEntity == null || endEntity.isEmpty()) {
@@ -301,9 +386,6 @@ public class RenewalWorker extends BaseSigner {
             } else {
                 final boolean defaultKey;
 
-                LOG.debug("Worker RENEWKEY: " + renewKey);
-                LOG.debug("Request RENEWKEY: " + requestRenewKey);
-
                 // (Renew key if specified in request)
                 // OR (if specified in worker but not denied in request)
                 if ((requestRenewKey != null && requestRenewKey)
@@ -313,16 +395,16 @@ public class RenewalWorker extends BaseSigner {
                     LOG.debug("Will not use default key");
 
                     // Renew the key
-                    nextCertSignKey = renewKey(workerId, keyAlg, keySpec,
+                    nextCertSignKey = renewKey(reneweeId, keyAlg, keySpec,
                             authCode == null ? null : authCode.toCharArray());
                 } else {
                     // Request might say that we should use the default key
-                    defaultKey = forDefaultKey;
+                    defaultKey = requestForDefaultKey;
                     LOG.debug("Use default key: " + defaultKey);
                 }
 
                 // Renew worker
-                renewWorker(url, workerId, sigAlg, keyAlg, endEntity,
+                renewWorker(url, reneweeId, sigAlg, keyAlg, endEntity,
                         defaultKey, nextCertSignKey, authCode.toCharArray());
 
                 responseData.setProperty(

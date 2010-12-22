@@ -14,6 +14,8 @@
 
 <xs:element name="ResyncException" type="tns:ResyncException"></xs:element>
 
+<xs:element name="SignServerException" type="tns:SignServerException"></xs:element>
+
 <xs:element name="activateSigner" type="tns:activateSigner"></xs:element>
 
 <xs:element name="activateSignerResponse" type="tns:activateSignerResponse"></xs:element>
@@ -94,6 +96,10 @@
 
 <xs:element name="globalResyncResponse" type="tns:globalResyncResponse"></xs:element>
 
+<xs:element name="process" type="tns:process"></xs:element>
+
+<xs:element name="processResponse" type="tns:processResponse"></xs:element>
+
 <xs:element name="reloadConfiguration" type="tns:reloadConfiguration"></xs:element>
 
 <xs:element name="reloadConfigurationResponse" type="tns:reloadConfigurationResponse"></xs:element>
@@ -164,18 +170,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getWorkerId">
-<xs:sequence>
-<xs:element name="workerName" type="xs:string" minOccurs="0"></xs:element>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getWorkerIdResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:int"></xs:element>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="uploadSignerCertificateChain">
 <xs:sequence>
 <xs:element name="signerId" type="xs:int"></xs:element>
@@ -191,6 +185,18 @@
 <xs:complexType name="IllegalRequestException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getWorkerId">
+<xs:sequence>
+<xs:element name="workerName" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getWorkerIdResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:int"></xs:element>
 </xs:sequence>
 </xs:complexType>
 
@@ -365,18 +371,6 @@
 <xs:sequence></xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getSignerCertificate">
-<xs:sequence>
-<xs:element name="signerId" type="xs:int"></xs:element>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getSignerCertificateResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"></xs:element>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="removeGlobalProperty">
 <xs:sequence>
 <xs:element name="scope" type="xs:string" minOccurs="0"></xs:element>
@@ -390,15 +384,15 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="deactivateSigner">
+<xs:complexType name="getSignerCertificate">
 <xs:sequence>
 <xs:element name="signerId" type="xs:int"></xs:element>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="deactivateSignerResponse">
+<xs:complexType name="getSignerCertificateResponse">
 <xs:sequence>
-<xs:element name="return" type="xs:boolean"></xs:element>
+<xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"></xs:element>
 </xs:sequence>
 </xs:complexType>
 
@@ -412,6 +406,18 @@
 
 <xs:complexType name="setGlobalPropertyResponse">
 <xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deactivateSigner">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deactivateSignerResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"></xs:element>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getAuthorizedClients">
@@ -441,6 +447,25 @@
 
 <xs:complexType name="reloadConfigurationResponse">
 <xs:sequence></xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="process">
+<xs:sequence>
+<xs:element name="workerIdOrName" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="processRequest" type="xs:base64Binary" minOccurs="0" maxOccurs="unbounded"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="processResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:base64Binary" minOccurs="0" maxOccurs="unbounded"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="SignServerException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getPKCS10CertificateRequest">

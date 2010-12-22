@@ -15,16 +15,10 @@ package org.signserver.adminws.client;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.xml.namespace.QName;
 import junit.framework.TestCase;
-import org.signserver.adminws.client.AdminNotAuthorizedException_Exception;
-import org.signserver.adminws.client.AdminWS;
-import org.signserver.adminws.client.AdminWSService;
-import org.signserver.adminws.client.AdminWSService;
-import org.signserver.adminws.client.AuthorizedClient;
-import org.signserver.adminws.client.CryptoTokenAuthenticationFailureException_Exception;
-import org.signserver.adminws.client.CryptoTokenOfflineException_Exception;
-import org.signserver.adminws.client.InvalidWorkerIdException_Exception;
 
 /**
  * Tests for the Admin WS interface.
@@ -161,6 +155,16 @@ public class AdminWebServiceTest extends TestCase {
     public void testGetKeyUsageCounterValue() throws Exception {
         try {
             adminWS.getKeyUsageCounterValue(ANY_WORKERID);
+            fail("Access should have been denied!");
+        } catch (AdminNotAuthorizedException_Exception ignored) {
+            // OK
+        }
+    }
+
+    public void testProcess() throws Exception {
+        try {
+            final List<byte[]> requests = Collections.emptyList();
+            adminWS.process(String.valueOf(ANY_WORKERID), requests);
             fail("Access should have been denied!");
         } catch (AdminNotAuthorizedException_Exception ignored) {
             // OK

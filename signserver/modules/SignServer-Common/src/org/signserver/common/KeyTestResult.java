@@ -100,4 +100,25 @@ public class KeyTestResult implements Serializable {
         this.success = success;
     }
 
+    /**
+     * @return String representation containing all fields in this object.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder buff = new StringBuilder();
+        buff.append("KeyTestResult{");
+        buff.append("alias=");
+        buff.append(alias);
+        buff.append(", ");
+        buff.append("success=");
+        buff.append(success);
+        buff.append(", ");
+        buff.append("status=");
+        buff.append(status);
+        buff.append(", ");
+        buff.append("publicKeyHash=");
+        buff.append(publicKeyHash);
+        buff.append("}");
+        return buff.toString();
+    }
 }

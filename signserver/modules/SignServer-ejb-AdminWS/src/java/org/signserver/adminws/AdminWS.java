@@ -14,6 +14,7 @@ package org.signserver.adminws;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
@@ -33,7 +34,6 @@ import java.security.cert.CertificateFactory;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -43,7 +43,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.server.CertificateClientCredential;
+import org.signserver.server.IClientCredential;
+import org.signserver.server.UsernamePasswordClientCredential;
 
 /**
  * Class implementing the Admin WS interface.
@@ -59,8 +63,10 @@ public class AdminWS {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(AdminWS.class);
 
+    private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
+
     @Resource
-    WebServiceContext wsContext;
+    private WebServiceContext wsContext;
 
     @EJB
     private IWorkerSession.IRemote worker;
@@ -765,16 +771,101 @@ public class AdminWS {
         global.reload();
     }
 
+    /**
+     * Method for requesting a collection of requests to be processed by
+     * the specified worker.
+     *
+     * @param workerIdOrName Name or ID of the worker who should process the
+     * request
+     * @param requests Collection of serialized (binary) requests.
+     *
+     * @see RequestAndResponseManager#serializeProcessRequest(org.signserver.common.ProcessRequest)
+     * @see RequestAndResponseManager#parseProcessRequest(byte[])
+     */
+    @WebMethod(operationName = "process")
+    public java.util.Collection<byte[]> process(
+            @WebParam(name = "workerIdOrName") final String workerIdOrName,
+            @WebParam(name = "processRequest") Collection<byte[]> requests)
+            throws InvalidWorkerIdException, IllegalRequestException,
+            CryptoTokenOfflineException, SignServerException,
+            AdminNotAuthorizedException {
+        requireAdminAuthorization("process", workerIdOrName);
+
+        final Collection<byte[]> result = new LinkedList<byte[]>();
+
+        final X509Certificate[] clientCerts = getClientCertificates();
+        final X509Certificate clientCertificate;
+        if (clientCerts != null && clientCerts.length > 0) {
+            clientCertificate = clientCerts[0];
+        } else {
+            clientCertificate = null;
+        }
+        // Requests from authenticated administrators are considered to come 
+        // from the local host and is set to null. This is also the same as 
+        // when requests are over EJB calls.
+        final String ipAddress = null;
+
+        final RequestContext requestContext = new RequestContext(
+                clientCertificate, ipAddress);
+
+        IClientCredential credential;
+        if (clientCertificate instanceof X509Certificate) {
+            final X509Certificate cert = (X509Certificate) clientCertificate;
+            LOG.debug("Authentication: certificate");
+            credential = new CertificateClientCredential(
+                    cert.getSerialNumber().toString(16),
+                    cert.getIssuerDN().getName());
+        } else {
+            final HttpServletRequest servletRequest =
+                (HttpServletRequest) wsContext.getMessageContext()
+                .get(MessageContext.SERVLET_REQUEST);
+            // Check is client supplied basic-credentials
+            final String authorization = servletRequest.getHeader(
+                    HTTP_AUTH_BASIC_AUTHORIZATION);
+            if (authorization != null) {
+                LOG.debug("Authentication: password");
+
+                final String decoded[] = new String(Base64.decode(
+                        authorization.split("\\s")[1])).split(":", 2);
+
+                credential = new UsernamePasswordClientCredential(
+                        decoded[0], decoded[1]);
+            } else {
+                LOG.debug("Authentication: none");
+                credential = null;
+            }
+        }
+        requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
+
+        final int workerId = getWorkerId(workerIdOrName);
+
+        for (byte[] requestBytes : requests) {
+            final ProcessRequest req;
+            try {
+                req = RequestAndResponseManager.parseProcessRequest(
+                        requestBytes);
+            } catch (IOException ex) {
+                LOG.error("Error parsing process request", ex);
+                throw new IllegalRequestException(
+                        "Error parsing process request", ex);
+            }
+            try {
+                result.add(RequestAndResponseManager.serializeProcessResponse(
+                    worker.process(workerId, req, requestContext)));
+            } catch (IOException ex) {
+                LOG.error("Error serializing process response", ex);
+                throw new IllegalRequestException(
+                        "Error serializing process response", ex);
+            }
+        }
+        return result;
+    }
+
     private void requireAdminAuthorization(final String operation,
             final String... args) throws AdminNotAuthorizedException {
         LOG.debug(">requireAdminAuthorization");
 
-        final HttpServletRequest req =
-                (HttpServletRequest) wsContext.getMessageContext()
-                .get(MessageContext.SERVLET_REQUEST);
-        final X509Certificate[] certificates =
-                (X509Certificate[]) req.getAttribute(
-                    "javax.servlet.request.X509Certificate");
+        final X509Certificate[] certificates = getClientCertificates();
         if (certificates == null || certificates.length == 0) {
             throw new AdminNotAuthorizedException(
                     "Administrator not authorized to resource. "
@@ -851,6 +942,16 @@ public class AdminWS {
             }
         }
         return authorized;
+    }
+
+    private X509Certificate[] getClientCertificates() {
+        final HttpServletRequest req =
+                (HttpServletRequest) wsContext.getMessageContext()
+                .get(MessageContext.SERVLET_REQUEST);
+        final X509Certificate[] certificates =
+                (X509Certificate[]) req.getAttribute(
+                    "javax.servlet.request.X509Certificate");
+        return certificates;
     }
 
     // "Insert Code > Add Web Service Operation")

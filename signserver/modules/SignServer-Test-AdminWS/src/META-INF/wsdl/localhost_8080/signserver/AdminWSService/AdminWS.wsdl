@@ -241,7 +241,7 @@
 </ns117:Policy>
 <types>
 <xsd:schema>
-<xsd:import namespace="http://adminws.signserver.org/" schemaLocation="http://localhost:8080/signserver/AdminWSService/AdminWS?xsd=1"></xsd:import>
+<xsd:import namespace="http://adminws.signserver.org/" schemaLocation="AdminWS.xsd_1.xsd"></xsd:import>
 </xsd:schema>
 </types>
 <message name="process">

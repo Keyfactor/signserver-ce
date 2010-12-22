@@ -12,10 +12,12 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +31,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
@@ -37,10 +40,14 @@ import org.signserver.admin.gui.adminws.gen
         .AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen
         .CryptoTokenOfflineException_Exception;
+import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
+import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
+import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericPropertiesRequest;
 import org.signserver.common.GenericPropertiesResponse;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
@@ -485,36 +492,52 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                     final GenericPropertiesRequest request
                             = new GenericPropertiesRequest(requestProperties);
 
-                    final GenericPropertiesResponse response =
-                                    (GenericPropertiesResponse)
+                    final List<byte[]> responses =
                                     SignServerAdminGUIApplication
-                            .getClientWS().process(item.getRenewalWorker(),
-                                    request, new RequestContext());    
+                            .getAdminWS().process(item.getRenewalWorker(),
+                                    Collections.singletonList(RequestAndResponseManager.serializeProcessRequest(request)));
 
-                    final Properties responseProperties = 
-                            response.getProperties();
+                    final Properties responseProperties;
 
-                    if (RenewalWorkerProperties.RESPONSE_RESULT_OK.equals(
-                            responseProperties.getProperty(
-                                RenewalWorkerProperties.RESPONSE_RESULT))) {
+                    if (responses.size() > 0) {
+                        final GenericPropertiesResponse response
+                                = (GenericPropertiesResponse)
+                                RequestAndResponseManager.parseProcessResponse(
+                                    responses.get(0));
+                        responseProperties  = response.getProperties();
 
-                        item.setRenew(false);
-                        success++;
-                        jTable1.revalidate(); // TODO Safe from this thread??
+                        if (RenewalWorkerProperties.RESPONSE_RESULT_OK.equals(
+                                responseProperties.getProperty(
+                                    RenewalWorkerProperties.RESPONSE_RESULT))) {
+
+                            item.setRenew(false);
+                            success++;
+                            jTable1.revalidate(); // TODO Safe from this thread??
+                        } else {
+                            final String error =
+                                "Problem renewing signer "
+                                + item.getSigner().getName();
+                            LOG.error(error + ": " + responseProperties.getProperty(
+                                RenewalWorkerProperties.RESPONSE_MESSAGE));
+                            errors.append(error);
+                            errors.append(":\n");
+                            errors.append(responseProperties.getProperty(
+                                RenewalWorkerProperties.RESPONSE_MESSAGE));
+                            errors.append("\n");
+                            failure++;
+                        }
                     } else {
                         final String error =
                             "Problem renewing signer "
                             + item.getSigner().getName();
-                        LOG.error(error + ": " + responseProperties.getProperty(
-                            RenewalWorkerProperties.RESPONSE_MESSAGE));
+                        LOG.error(error + ": " + "Got empty response");
                         errors.append(error);
                         errors.append(":\n");
-                        errors.append(responseProperties.getProperty(
-                            RenewalWorkerProperties.RESPONSE_MESSAGE));
+                        errors.append("Got empty response");
                         errors.append("\n");
                         failure++;
-                    } 
-                } catch (CryptoTokenOfflineException ex) {
+                    }
+                } catch (CryptoTokenOfflineException_Exception ex) {
                     final String error =
                             "Problem renewing signer "
                             + item.getSigner().getName();
@@ -522,7 +545,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                     errors.append(error + ":\n" + ex.getMessage());
                     errors.append("\n");
                     failure++;
-                } catch (SignServerException ex) {
+                } catch (SignServerException_Exception ex) {
                     final String error =
                             "Problem renewing signer "
                             + item.getSigner().getName();
@@ -530,7 +553,39 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                     errors.append(error + ":\n" + ex.getMessage());
                     errors.append("\n");
                     failure++;
-                } catch (IllegalRequestException ex) {
+                } catch (IllegalRequestException_Exception ex) {
+                    final String error =
+                            "Problem renewing signer "
+                            + item.getSigner().getName();
+                    LOG.error(error, ex);
+                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append("\n");
+                    failure++;
+                } catch (IOException ex) {
+                    final String error =
+                            "Problem renewing signer "
+                            + item.getSigner().getName();
+                    LOG.error(error, ex);
+                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append("\n");
+                    failure++;
+                } catch (AdminNotAuthorizedException_Exception ex) {
+                    final String error =
+                            "Problem renewing signer "
+                            + item.getSigner().getName();
+                    LOG.error(error, ex);
+                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append("\n");
+                    failure++;
+                } catch (InvalidWorkerIdException_Exception ex) {
+                    final String error =
+                            "Problem renewing signer "
+                            + item.getSigner().getName();
+                    LOG.error(error, ex);
+                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append("\n");
+                    failure++;
+                } catch (SOAPFaultException ex) {
                     final String error =
                             "Problem renewing signer "
                             + item.getSigner().getName();

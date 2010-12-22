@@ -14,7 +14,9 @@ package org.signserver.admin.gui;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.net.InetAddress;
 import java.security.KeyStoreException;
 import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
@@ -49,6 +51,7 @@ import org.signserver.admin.gui.adminws.gen.KeyStoreException_Exception;
 import org.signserver.admin.gui.adminws.gen.KeyTestResult;
 import org.signserver.admin.gui.adminws.gen.Pkcs10CertReqInfo;
 import org.signserver.admin.gui.adminws.gen.ResyncException_Exception;
+import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
@@ -56,13 +59,19 @@ import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ICertReqData;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.RequestAndResponseManager;
+import org.signserver.common.RequestContext;
 import org.signserver.common.ResyncException;
 import org.signserver.common.ServiceLocator;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.RemoteAddressAuthorizer;
 
 /**
  *
@@ -204,6 +213,18 @@ public class AdminLayerEJBImpl implements AdminWS {
         org.signserver.admin.gui.adminws.gen.ResyncException newEx = new org.signserver.admin.gui.adminws.gen.ResyncException();
         newEx.setMessage(ex.getMessage());
         return new ResyncException_Exception(ex.getMessage(), newEx, ex);
+    }
+    
+    private SignServerException_Exception wrap(SignServerException ex) {
+        org.signserver.admin.gui.adminws.gen.SignServerException newEx = new org.signserver.admin.gui.adminws.gen.SignServerException();
+        newEx.setMessage(ex.getMessage());
+        return new SignServerException_Exception(ex.getMessage(), newEx, ex);
+    }
+
+    private IllegalRequestException_Exception wrap(IllegalRequestException ex) {
+        org.signserver.admin.gui.adminws.gen.IllegalRequestException newEx = new org.signserver.admin.gui.adminws.gen.IllegalRequestException();
+        newEx.setMessage(ex.getMessage());
+        return new IllegalRequestException_Exception(ex.getMessage(), newEx, ex);
     }
 
     /**
@@ -825,6 +846,51 @@ public class AdminLayerEJBImpl implements AdminWS {
         int i = 0;
         for (Integer inte : _authCode) {
             result[i++] = (char) inte.intValue();
+        }
+        return result;
+    }
+
+    @Override
+    public List<byte[]> process(final String workerIdOrName,
+            final List<byte[]> requests)
+            throws AdminNotAuthorizedException_Exception,
+            CryptoTokenOfflineException_Exception,
+            IllegalRequestException_Exception,
+            InvalidWorkerIdException_Exception, SignServerException_Exception {
+        final List<byte[]> result = new LinkedList<byte[]>();
+
+        final RequestContext requestContext = new RequestContext();
+
+        final int workerId = getWorkerId(workerIdOrName);
+
+        for (byte[] requestBytes : requests) {
+            final ProcessRequest req;
+            try {
+                req = RequestAndResponseManager.parseProcessRequest(
+                        requestBytes);
+            } catch (IOException ex) {
+                LOG.error("Error parsing process request", ex);
+                final IllegalRequestException fault
+                        = new IllegalRequestException(
+                            "Error parsing process request", ex);
+                throw wrap(fault);
+            }
+            try {
+                result.add(RequestAndResponseManager.serializeProcessResponse(
+                    worker.process(workerId, req, requestContext)));
+            } catch (IOException ex) {
+                LOG.error("Error serializing process response", ex);
+                final IllegalRequestException fault
+                        = new IllegalRequestException(
+                            "Error serializing process response", ex);
+                throw wrap(fault);
+            } catch (org.signserver.common.IllegalRequestException ex) {
+                throw wrap(ex);
+            } catch (CryptoTokenOfflineException ex) {
+                throw wrap(ex);
+            } catch (SignServerException ex) {
+                throw wrap(ex);
+            }
         }
         return result;
     }

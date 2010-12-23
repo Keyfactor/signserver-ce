@@ -10,9 +10,13 @@
 <project name="SignServer-Module-CMSSigner" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Module-CMSSigner.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
+
+    <!-- Setup APPSRV_HOME etc -->
+    <target name="-pre-init" depends="-modules-set-appserver-home"/>
 
     <!-- Import property file containing version numbers and other constants -->
-    <property file="../src/compile.properties"/>
+    <property file="../../src/compile.properties"/>
 
     <property name="modulename" value="cmssigner"/>
     

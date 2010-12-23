@@ -324,7 +324,8 @@ OS version                          = ${os.version}
     <!-- =================================================================== -->
 
     <target name="modules" description="Build all enabled modules" depends="
-            -module-pdfsigner-jar, -pdfsigner-jar-included, -pdfsigner-jar-excluded
+             -module-pdfsigner-jar, -pdfsigner-jar-included, -pdfsigner-jar-excluded
+            ,-module-cmssigner-jar, -cmssigner-jar-included, -cmssigner-jar-excluded
         "/>
 
     <target name="admingui" depends="signserver"
@@ -375,7 +376,7 @@ OS version                          = ${os.version}
         <echo message="Not including XMLSigner module in EAR"/>
     </target>
 
-    <!-- Target that can be called to build the XMLSigner module -->
+    <!-- Target that can be called to build the PDFSigner module -->
     <target name="module-pdfsigner"
         description="Build the module PDFSigner">
         <ant antfile="${module.pdfsigner.dir}/build.xml" target="jar"
@@ -396,6 +397,29 @@ OS version                          = ${os.version}
     <target name="-pdfsigner-jar-excluded"
         unless="module.pdfsigner.include.condition">
         <echo message="Not including PDFSigner module in EAR"/>
+    </target>
+
+    <!-- Target that can be called to build the CMSSigner module -->
+    <target name="module-cmssigner"
+        description="Build the module CMSSigner">
+        <ant antfile="${module.cmssigner.dir}/build.xml" target="jar"
+            inheritall="false"/>
+        <copy file="${module.cmssigner.dir}/dist/cmssigner.mar"
+            todir="${server.dist.dir}"/>
+    </target>
+    <!-- Target always called when building. Only builds if configured. -->
+    <target name="-module-cmssigner-jar" depends="module-cmssigner"
+        if="module.cmssigner.enabled.condition"/>
+    <!-- Target for including the module -->
+    <target name="-cmssigner-jar-included" if="module.cmssigner.include.condition"
+        depends="module-cmssigner">
+        <echo message="Including CMSSigner module in EAR"/>
+        <copy file="${module.cmssigner.dir}/dist/SignServer-Module-CMSSigner.jar"
+            todir="${server.dist.dir}/lib"/>
+    </target>
+    <target name="-cmssigner-jar-excluded"
+        unless="module.cmssigner.include.condition">
+        <echo message="Not including CMSSigner module in EAR"/>
     </target>
 
     <!-- Target that can be called to build the WSRA module -->

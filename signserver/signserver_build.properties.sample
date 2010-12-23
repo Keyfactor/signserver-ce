@@ -264,6 +264,11 @@ adminws.enabled=true
 #module.xmlsigner.enabled=true
 #module.xmlsigner.include=false
 
+# Module CMSSigner
+# Default: build=true, include=false
+#module.cmssigner.enabled=true
+#module.cmssigner.include=false
+
 # Module MRTDSODSigner
 # Default: build=true, include=false
 #module.mrtdsodsigner.enabled=true

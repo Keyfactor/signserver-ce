@@ -382,7 +382,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                     <src path="${signserverwar.src.java}" />
                     <src path="modules/SignServer-Module-XMLValidator/src/java" />
                     <src path="modules/SignServer-Module-MRTDSigner/src/java" />
-                    <src path="modules/SignServer-Module-TSA/src/java" />
                     <src path="modules/SignServer-Module-ODFSigner/src/java" />
                     <src path="modules/SignServer-Module-OOXMLSigner/src/java" />
 	        	<exclude name="org/signserver/common/MailSigner*"/>

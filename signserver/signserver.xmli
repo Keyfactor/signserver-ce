@@ -3,7 +3,6 @@
 	   
     <import file="./build.xml"/>
     <import file="./module-builds/mrtdsigner.xml"/>
-    <import file="./module-builds/ooxmlsigner.xml"/>
     <import file="./module-builds/xmlvalidator.xml"/>
 
     <property name="java.trustpassword" value="changeit" />
@@ -310,6 +309,20 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 </and>
             </condition>
 
+            <!-- Enable, include module: OOXMLSigner -->
+            <condition property="module.ooxmlsigner.enabled.condition">
+                <istrue value="${module.ooxmlsigner.enabled}"/>
+            </condition>
+            <condition property="module.ooxmlsigner.include.condition">
+                <and>
+                    <istrue value="${module.ooxmlsigner.enabled}"/>
+                    <or>
+                        <istrue value="${module.ooxmlsigner.include}"/>
+                        <istrue value="${includemodulesinbuild}"/>
+                    </or>
+                </and>
+            </condition>
+
             <!-- Enable, include module: TSA -->
             <condition property="module.tsa.enabled.condition">
                 <istrue value="${module.tsa.enabled}"/>
@@ -397,7 +410,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                     <src path="${signserverwar.src.java}" />
                     <src path="modules/SignServer-Module-XMLValidator/src/java" />
                     <src path="modules/SignServer-Module-MRTDSigner/src/java" />
-                    <src path="modules/SignServer-Module-OOXMLSigner/src/java" />
 	        	<exclude name="org/signserver/common/MailSigner*"/>
 	        	<exclude name="org/signserver/mailsigner/**"/>
 	        	<exclude name="org/signserver/appserver/**"/>
@@ -568,7 +580,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, -module-xmlsigner-jar, ooxmlsignermar, xmlvalidatormar, mrtdsignermar, -module-mrtdsodsigner-jar, -module-wsra-jar, -module-renewal-jar, modules" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, -module-xmlsigner-jar, xmlvalidatormar, mrtdsignermar, -module-mrtdsodsigner-jar, -module-wsra-jar, -module-renewal-jar, modules" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

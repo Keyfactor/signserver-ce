@@ -274,6 +274,11 @@ adminws.enabled=true
 #module.odfsigner.enabled=true
 #module.odfsigner.include=false
 
+# Module OOXMLSigner
+# Default: build=true, include=false
+#module.ooxmlsigner.enabled=true
+#module.ooxmlsigner.include=false
+
 # Module TSA
 # Default: build=true, include=false
 #module.tsa.enabled=true

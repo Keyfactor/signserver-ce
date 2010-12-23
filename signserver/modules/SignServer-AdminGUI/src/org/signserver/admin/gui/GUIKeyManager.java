@@ -29,6 +29,8 @@ public class GUIKeyManager implements X509KeyManager {
 
     private final X509KeyManager base;
 
+    private String lastSelectedAlias;
+
     public GUIKeyManager(final X509KeyManager base) {
         this.base = base;
     }
@@ -38,20 +40,24 @@ public class GUIKeyManager implements X509KeyManager {
     }
 
     public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
-        // For each keyType, call getClientAliases on the base KeyManager
-        // to find valid aliases. If our requested alias is found, select it
-        // for return.
-        String selectedAlias = null;
-        for (int i = 0; i < keyType.length; i++) {
-            String[] validAliases = base.getClientAliases(keyType[i], issuers);
-            if (validAliases != null) {
-                selectedAlias = (String) JOptionPane.showInputDialog(null, "Choose identity:", "Login", JOptionPane.DEFAULT_OPTION, null, validAliases, validAliases[0]);
-                if (selectedAlias != null) {
-                    break;
+
+        if (lastSelectedAlias == null) {
+            // For each keyType, call getClientAliases on the base KeyManager
+            // to find valid aliases. If our requested alias is found, select it
+            // for return.
+            String selectedAlias = null;
+            for (int i = 0; i < keyType.length; i++) {
+                String[] validAliases = base.getClientAliases(keyType[i], issuers);
+                if (validAliases != null) {
+                    selectedAlias = (String) JOptionPane.showInputDialog(SignServerAdminGUIApplication.getApplication().getMainFrame(), "Choose identity:", "Login", JOptionPane.DEFAULT_OPTION, null, validAliases, validAliases[0]);
+                    if (selectedAlias != null) {
+                        break;
+                    }
                 }
             }
+            lastSelectedAlias = selectedAlias;
         }
-        return selectedAlias;
+        return lastSelectedAlias;
     }
 
     public String[] getServerAliases(String string, Principal[] prncpls) {

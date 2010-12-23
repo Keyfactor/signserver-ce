@@ -1485,7 +1485,7 @@ public class MainView extends FrameView {
 
     }
 
-        @Action(block = Task.BlockingScope.WINDOW)
+    @Action(block = Task.BlockingScope.WINDOW)
     public Task refreshWorkers() {
         return new RefreshWorkersTask(getApplication());
     }

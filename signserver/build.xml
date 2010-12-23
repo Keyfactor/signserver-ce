@@ -76,6 +76,12 @@
 		  <equals arg1="${build.mode}" arg2="MAILSIGNER" casesensitive="false" trim="true"/>		
 	</condition>
 
+    <property name="base" location="."/>
+
+    <!-- Properties with paths to all module projects -->
+    <!-- TODO: This should be loaded inside a target! -->
+    <property file="modules/modules-project.properties"/>
+
     <!-- =================================================================== -->
     <!-- Build ALL                                                           -->
     <!-- =================================================================== -->

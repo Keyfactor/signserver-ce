@@ -312,6 +312,15 @@ OS version                          = ${os.version}
     	<copy file="${appserver.home}/lib/appserv-ext.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
     </target>
 
+
+    <!-- =================================================================== -->
+    <!-- Build modules -->
+    <!-- =================================================================== -->
+
+    <target name="modules" description="Build all enabled modules" depends="
+            -module-pdfsigner-jar, -pdfsigner-jar-included, -pdfsigner-jar-excluded
+        "/>
+
     <target name="admingui" depends="signserver"
         description="Build the administration GUI">
         <ant antfile="${admingui.dir}/build.xml" target="jar"
@@ -358,6 +367,29 @@ OS version                          = ${os.version}
     <target name="-xmlsigner-jar-excluded"
         unless="module.xmlsigner.include.condition">
         <echo message="Not including XMLSigner module in EAR"/>
+    </target>
+
+    <!-- Target that can be called to build the XMLSigner module -->
+    <target name="module-pdfsigner"
+        description="Build the module PDFSigner">
+        <ant antfile="${module.pdfsigner.dir}/build.xml" target="jar"
+            inheritall="false"/>
+        <copy file="${module.pdfsigner.dir}/dist/pdfsigner.mar"
+            todir="${server.dist.dir}"/>
+    </target>
+    <!-- Target always called when building. Only builds if configured. -->
+    <target name="-module-pdfsigner-jar" depends="module-pdfsigner"
+        if="module.pdfsigner.enabled.condition"/>
+    <!-- Target for including the module -->
+    <target name="-pdfsigner-jar-included" if="module.pdfsigner.include.condition"
+        depends="module-pdfsigner">
+        <echo message="Including PDFSigner module in EAR"/>
+        <copy file="${module.pdfsigner.dir}/dist/SignServer-Module-PDFSigner.jar"
+            todir="${server.dist.dir}/lib"/>
+    </target>
+    <target name="-pdfsigner-jar-excluded"
+        unless="module.pdfsigner.include.condition">
+        <echo message="Not including PDFSigner module in EAR"/>
     </target>
 
     <!-- Target that can be called to build the WSRA module -->

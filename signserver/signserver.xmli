@@ -2,7 +2,6 @@
 <project name="signserver_specific" basedir=".">
 	   
     <import file="./build.xml"/>
-    <import file="./module-builds/pdfsigner.xml"/>
     <import file="./module-builds/mrtdsigner.xml"/>
     <import file="./module-builds/tsa.xml"/>
     <import file="./module-builds/ooxmlsigner.xml"/>
@@ -49,6 +48,7 @@
        <property name="clientsignserverws.dir" value="./modules/SignServer-Client-SignServerWS"/>
        <property name="clientsigningandvalidationapi.dir" value="./modules/SignServer-Client-SigningAndValidationAPI"/>
 
+       <property name="module.pdfsigner.dir" location="./modules/SignServer-Module-PDFSigner"/>
        <property name="module.mrtdsodsigner.dir" location="./modules/SignServer-Module-MRTDSODSigner"/>
        <property name="module.log4j.dir" location="./modules/SignServer-Module-Log4j"/>
 
@@ -93,6 +93,8 @@
 	   <property name="clusterclassloader.requiresignature" value="false" />
 
            <!-- Enable, include modules -->
+           <property name="module.pdfsigner.enabled" value="true"/>
+           <property name="module.pdfsigner.include" value="false"/>
            <property name="module.renewal.enabled" value="false"/>
            <property name="module.renewal.include" value="true"/>
            <property name="module.xmlsigner.enabled" value="true"/>
@@ -213,6 +215,8 @@ clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 includemodulesinbuild               = ${includemodulesinbuild}
 module.log4j.include                = ${module.log4j.include}
+module.pdfsigner.enabled            = ${module.pdfsigner.enabled}
+module.pdfsigner.include            = ${module.pdfsigner.include}
 module.renewal.enabled              = ${module.renewal.enabled}
 module.renewal.include              = ${module.renewal.include}
 module.xmlsigner.enabled            = ${module.xmlsigner.enabled}
@@ -291,6 +295,20 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 </and>
             </condition>
 
+            <!-- Enable, include module: PDFSigner -->
+            <condition property="module.pdfsigner.enabled.condition">
+                <istrue value="${module.pdfsigner.enabled}"/>
+            </condition>
+            <condition property="module.pdfsigner.include.condition">
+                <and>
+                    <istrue value="${module.pdfsigner.enabled}"/>
+                    <or>
+                        <istrue value="${module.pdfsigner.include}"/>
+                        <istrue value="${includemodulesinbuild}"/>
+                    </or>
+                </and>
+            </condition>
+
             <!-- Include module: Log4j -->
             <condition property="module.log4j.enabled.condition">
                 <or>
@@ -350,8 +368,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                     <src path="${signserverwar.src.java}" />
                     <src path="modules/SignServer-Module-CMSSigner/src/java" />
                     <src path="modules/SignServer-Module-XMLValidator/src/java" />
-                    <src path="modules/SignServer-Module-PDFSigner/src/java" />
-                    <src path="modules/SignServer-Module-MRTDSODSigner/src/java" />
                     <src path="modules/SignServer-Module-MRTDSigner/src/java" />
                     <src path="modules/SignServer-Module-TSA/src/java" />
                     <src path="modules/SignServer-Module-ODFSigner/src/java" />
@@ -526,7 +542,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, pdfsignermar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, -module-mrtdsodsigner-jar, -module-wsra-jar, cmssignermar, -module-renewal-jar" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, -module-xmlsigner-jar, odfsignermar,ooxmlsignermar, xmlvalidatormar, tsamar, mrtdsignermar, -module-mrtdsodsigner-jar, -module-wsra-jar, cmssignermar, -module-renewal-jar, modules" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

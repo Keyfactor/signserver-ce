@@ -326,6 +326,7 @@ OS version                          = ${os.version}
     <target name="modules" description="Build all enabled modules" depends="
              -module-pdfsigner-jar, -pdfsigner-jar-included, -pdfsigner-jar-excluded
             ,-module-cmssigner-jar, -cmssigner-jar-included, -cmssigner-jar-excluded
+            ,-module-tsa-jar, -tsa-jar-included, -tsa-jar-excluded
         "/>
 
     <target name="admingui" depends="signserver"
@@ -397,6 +398,29 @@ OS version                          = ${os.version}
     <target name="-pdfsigner-jar-excluded"
         unless="module.pdfsigner.include.condition">
         <echo message="Not including PDFSigner module in EAR"/>
+    </target>
+
+    <!-- Target that can be called to build the TSA module -->
+    <target name="module-tsa"
+        description="Build the module TSA">
+        <ant antfile="${module.tsa.dir}/build.xml" target="jar"
+            inheritall="false"/>
+        <copy file="${module.tsa.dir}/dist/tsa.mar"
+            todir="${server.dist.dir}"/>
+    </target>
+    <!-- Target always called when building. Only builds if configured. -->
+    <target name="-module-tsa-jar" depends="module-tsa"
+        if="module.tsa.enabled.condition"/>
+    <!-- Target for including the module -->
+    <target name="-tsa-jar-included" if="module.tsa.include.condition"
+        depends="module-tsa">
+        <echo message="Including TSA module in EAR"/>
+        <copy file="${module.tsa.dir}/dist/SignServer-Module-TSA.jar"
+            todir="${server.dist.dir}/lib"/>
+    </target>
+    <target name="-tsa-jar-excluded"
+        unless="module.tsa.include.condition">
+        <echo message="Not including TSA module in EAR"/>
     </target>
 
     <!-- Target that can be called to build the CMSSigner module -->

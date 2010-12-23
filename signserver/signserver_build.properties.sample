@@ -269,6 +269,11 @@ adminws.enabled=true
 #module.cmssigner.enabled=true
 #module.cmssigner.include=false
 
+# Module TSA
+# Default: build=true, include=false
+#module.tsa.enabled=true
+#module.tsa.include=false
+
 # Module MRTDSODSigner
 # Default: build=true, include=false
 #module.mrtdsodsigner.enabled=true

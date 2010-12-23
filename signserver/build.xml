@@ -331,6 +331,11 @@ OS version                          = ${os.version}
             ,-module-ooxmlsigner-jar, -ooxmlsigner-jar-included, -ooxmlsigner-jar-excluded
             ,-module-mrtdsigner-jar, -mrtdsigner-jar-included, -mrtdsigner-jar-excluded
             ,-module-xmlvalidator-jar, -xmlvalidator-jar-included, -xmlvalidator-jar-excluded
+            ,-module-xmlsigner-jar, -xmlsigner-jar-included, -xmlsigner-jar-excluded
+            ,-module-mrtdsodsigner-jar, -mrtdsodsigner-jar-included, -mrtdsodsigner-jar-excluded
+            ,-module-wsra-jar
+            ,-module-renewal-jar, -renewal-jar-included, -renewal-jar-excluded
+            ,-log4j-jar-included
         "/>
 
     <target name="admingui" depends="signserver"

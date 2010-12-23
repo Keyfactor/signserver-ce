@@ -85,7 +85,7 @@ public abstract class AbstractTestCase extends TestCase {
         }
     }
 
-    protected static KeyStore createEmpyKeystore(final String keystorePath,
+    protected static KeyStore createEmptyKeystore(final String keystorePath,
             final String keystorePassword) throws KeyStoreException, 
             IOException, NoSuchAlgorithmException, CertificateException,
             NoSuchProviderException {
@@ -105,7 +105,7 @@ public abstract class AbstractTestCase extends TestCase {
         // Create keystore
         final String keystorePath = newTempFile().getAbsolutePath();
         final String keystorePassword = "foo123";
-        createEmpyKeystore(keystorePath, keystorePassword);
+        createEmptyKeystore(keystorePath, keystorePassword);
 
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".CLASSPATH",

@@ -49,6 +49,8 @@ public class RenewalWorkerTest extends AbstractTestCase {
     public static final int SIGNERID_6102 = 6102;
     public static final String SIGNER_6102 = "Signer_6102";
     public static final String SIGNER_6102_ENDENTITY = "Signer_6102_endentity";
+    public static final String DEFAULT_KEYALG = "RSA";
+    public static final String DEFAULT_KEYSPEC = "2048";
 
     static final int MATCH_WITH_USERNAME = 0;
     static final int MATCH_TYPE_EQUALS = 0;
@@ -94,29 +96,14 @@ public class RenewalWorkerTest extends AbstractTestCase {
      * Tests renewal of key and certificate for a worker.
      * @throws Exception
      */
-    public void test02renewalFirstTime() throws Exception {
-        
+    public void test02renewalFirstTime() throws Exception {        
         // Setup workers
         addWorkers();
 
         // Setup EJBCA end entity
-        final UserDataVOWS user1 = new UserDataVOWS();
-        user1.setUsername(SIGNER_6102_ENDENTITY);
-        user1.setPassword("some-password-123");
-        user1.setSubjectDN("CN=" + SIGNER_6102_ENDENTITY
-                + ",O=SignServer Testing,C=SE");
-        user1.setEndEntityProfileName("EMPTY");
-        user1.setCertificateProfileName("ENDENTITY");
-        user1.setCaName("SomeCA");
-        final UserMatchEq match1 = new UserMatchEq();
-        match1.setMatchwith(MATCH_WITH_USERNAME);
-        match1.setMatchtype(MATCH_TYPE_EQUALS);
-        match1.setMatchvalue(SIGNER_6102_ENDENTITY);
-        final Map<UserMatchEq, List<UserDataVOWS>> findResult
-                = new HashMap<UserMatchEq, List<UserDataVOWS>>();
-        findResult.put(match1, Arrays.asList(user1));
-        mockEjbcaWs.setFindUserResults(findResult);
-
+        mockSetupEjbcaSearchResult();
+        
+        // Test starts here
         final Properties reqProperties = new Properties();
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_WORKER,
                 SIGNER_6102);
@@ -161,7 +148,77 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 .getProperty("DEFAULTKEY"));
     }
 
-    // TODO: Test Renewal without key generation (ie when NEXTCERTSIGNKEY exists)
+    /** 
+     * Test Renewal without key generation (ie when NEXTCERTSIGNKEY exists)
+     */
+    public void test03renewalExistingNextCertSignKey() throws Exception {
+        // Setup workers
+        addWorkers();
+
+        // Setup EJBCA end entity
+        mockSetupEjbcaSearchResult();
+
+        // Generate a new key
+        final String nextCertSignAlias = "test03_keyalias";
+        getWorkerSession().generateSignerKey(SIGNERID_6102, DEFAULT_KEYALG,
+                DEFAULT_KEYSPEC, nextCertSignAlias, "foo123".toCharArray());
+        getWorkerSession().setWorkerProperty(SIGNERID_6102, "NEXTCERTSIGNKEY",
+                nextCertSignAlias);
+        getWorkerSession().reloadConfiguration(SIGNERID_6102);
+        assertEquals("New nextcertsignkey alias", nextCertSignAlias,
+                getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                .getProperty("NEXTCERTSIGNKEY"));
+
+
+        // Test starts here
+        final Properties reqProperties = new Properties();
+        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_WORKER,
+                SIGNER_6102);
+        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
+                "foo123");
+        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_RENEWKEY,
+                RenewalWorkerProperties.REQUEST_RENEWKEY_TRUE);
+        reqProperties.setProperty("DUMMYUNIQEVALUE",
+                String.valueOf(Math.random()));
+        final GenericPropertiesRequest request = new GenericPropertiesRequest(
+                reqProperties);
+        GenericPropertiesResponse response
+                = (GenericPropertiesResponse) getWorkerSession().process(
+                    WORKERID, request, new RequestContext());
+
+        // OK result
+        LOG.info("Response message: " + response.getProperties().getProperty(
+                RenewalWorkerProperties.RESPONSE_MESSAGE));
+        assertEquals(RenewalWorkerProperties.RESPONSE_RESULT_OK,
+                response.getProperties().getProperty(
+                RenewalWorkerProperties.RESPONSE_RESULT));
+
+        // Requested certificate
+        assertTrue("should have requested certificate",
+                mockEjbcaWs.isPkcs10RequestCalled());
+
+        // Should have certificate and chain
+        final X509Certificate cert = (X509Certificate) getWorkerSession()
+                .getSignerCertificate(SIGNERID_6102);
+        assertNotNull(cert);
+        final List<java.security.cert.Certificate> chain
+                = getWorkerSession().getSignerCertificateChain(SIGNERID_6102);
+        assertNotNull(chain);
+        assertTrue(chain.contains(cert));
+
+        // Should not be any NEXTCERTSIGNKEY
+        assertNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                .getProperty("NEXTCERTSIGNKEY"));
+
+        // Should be an DEFAULTKEY
+        assertNotNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                .getProperty("DEFAULTKEY"));
+
+
+        // DEFAULTKEY should now have the right alias
+        getWorkerSession().setWorkerProperty(SIGNERID_6102, "DEFAULTKEY",
+                nextCertSignAlias);
+    }
 
     // TODO: Test renewal without key generation (ie when NEXTCERTSIGNKEY exists) but for DEFAULTKEY requested in request
 
@@ -186,11 +243,11 @@ public class RenewalWorkerTest extends AbstractTestCase {
         // Create keystore TODO: Don't create an empty one
         final String keystorePath = newTempFile().getAbsolutePath();
         final String keystorePassword = "foo123";
-        createEmpyKeystore(keystorePath, keystorePassword);
+        createEmptyKeystore(keystorePath, keystorePassword);
 
         final String truststorePath = newTempFile().getAbsolutePath();
         final String truststorePassword = "foo123";
-        createEmpyKeystore(truststorePath, truststorePassword);
+        createEmptyKeystore(truststorePath, truststorePassword);
 
         getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".CLASSPATH",
@@ -215,6 +272,26 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 EJBCAWSURL_PREFIX);
 
         getWorkerSession().reloadConfiguration(signerId);
+    }
+
+    private void mockSetupEjbcaSearchResult() {
+        // Setup EJBCA end entity
+        final UserDataVOWS user1 = new UserDataVOWS();
+        user1.setUsername(SIGNER_6102_ENDENTITY);
+        user1.setPassword("some-password-123");
+        user1.setSubjectDN("CN=" + SIGNER_6102_ENDENTITY
+                + ",O=SignServer Testing,C=SE");
+        user1.setEndEntityProfileName("EMPTY");
+        user1.setCertificateProfileName("ENDENTITY");
+        user1.setCaName("SomeCA");
+        final UserMatchEq match1 = new UserMatchEq();
+        match1.setMatchwith(MATCH_WITH_USERNAME);
+        match1.setMatchtype(MATCH_TYPE_EQUALS);
+        match1.setMatchvalue(SIGNER_6102_ENDENTITY);
+        final Map<UserMatchEq, List<UserDataVOWS>> findResult
+                = new HashMap<UserMatchEq, List<UserDataVOWS>>();
+        findResult.put(match1, Arrays.asList(user1));
+        mockEjbcaWs.setFindUserResults(findResult);
     }
 
 }

@@ -22,7 +22,7 @@
         ===================
     -->
 
-    <target name="release:bin-zip"
+    <target name="release:bin-zip" depends="clean, jar"
         description="Creates binary release in ZIP format">
 
         <property file="../../src/compile.properties"/>
@@ -30,7 +30,7 @@
         <property name="zipname" 
             value="signserver-admingui-${app.version.number}"/>
 
-        <zip destfile="${zipname}.zip">
+        <zip destfile="dist/${zipname}.zip">
             <zipfileset dir="." prefix="${zipname}"
                 filemode="600" dirmode="700">
                 <include name="default_connect.properties"/>

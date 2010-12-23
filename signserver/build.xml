@@ -327,6 +327,7 @@ OS version                          = ${os.version}
              -module-pdfsigner-jar, -pdfsigner-jar-included, -pdfsigner-jar-excluded
             ,-module-cmssigner-jar, -cmssigner-jar-included, -cmssigner-jar-excluded
             ,-module-tsa-jar, -tsa-jar-included, -tsa-jar-excluded
+            ,-module-odfsigner-jar, -odfsigner-jar-included, -odfsigner-jar-excluded
         "/>
 
     <target name="admingui" depends="signserver"
@@ -398,6 +399,29 @@ OS version                          = ${os.version}
     <target name="-pdfsigner-jar-excluded"
         unless="module.pdfsigner.include.condition">
         <echo message="Not including PDFSigner module in EAR"/>
+    </target>
+
+    <!-- Target that can be called to build the ODFSigner module -->
+    <target name="module-odfsigner"
+        description="Build the module ODFSigner">
+        <ant antfile="${module.odfsigner.dir}/build.xml" target="jar"
+            inheritall="false"/>
+        <copy file="${module.odfsigner.dir}/dist/odfsigner.mar"
+            todir="${server.dist.dir}"/>
+    </target>
+    <!-- Target always called when building. Only builds if configured. -->
+    <target name="-module-odfsigner-jar" depends="module-odfsigner"
+        if="module.odfsigner.enabled.condition"/>
+    <!-- Target for including the module -->
+    <target name="-odfsigner-jar-included" if="module.odfsigner.include.condition"
+        depends="module-odfsigner">
+        <echo message="Including ODFSigner module in EAR"/>
+        <copy file="${module.odfsigner.dir}/dist/SignServer-Module-ODFSigner.jar"
+            todir="${server.dist.dir}/lib"/>
+    </target>
+    <target name="-odfsigner-jar-excluded"
+        unless="module.odfsigner.include.condition">
+        <echo message="Not including ODFSigner module in EAR"/>
     </target>
 
     <!-- Target that can be called to build the TSA module -->

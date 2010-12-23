@@ -269,6 +269,11 @@ adminws.enabled=true
 #module.cmssigner.enabled=true
 #module.cmssigner.include=false
 
+# Module ODFSigner
+# Default: build=true, include=false
+#module.odfsigner.enabled=true
+#module.odfsigner.include=false
+
 # Module TSA
 # Default: build=true, include=false
 #module.tsa.enabled=true

@@ -289,6 +289,11 @@ adminws.enabled=true
 #module.mrtdsodsigner.enabled=true
 #module.mrtdsodsigner.include=false
 
+# Module MRTDSigner
+# Default: build=true, include=false
+#module.mrtdsigner.enabled=true
+#module.mrtdsigner.include=false
+
 # Module WSRA
 # Default: build=true
 #module.wsra.enabled=true

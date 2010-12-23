@@ -329,6 +329,7 @@ OS version                          = ${os.version}
             ,-module-tsa-jar, -tsa-jar-included, -tsa-jar-excluded
             ,-module-odfsigner-jar, -odfsigner-jar-included, -odfsigner-jar-excluded
             ,-module-ooxmlsigner-jar, -ooxmlsigner-jar-included, -ooxmlsigner-jar-excluded
+            ,-module-mrtdsigner-jar, -mrtdsigner-jar-included, -mrtdsigner-jar-excluded
         "/>
 
     <target name="admingui" depends="signserver"
@@ -400,6 +401,29 @@ OS version                          = ${os.version}
     <target name="-pdfsigner-jar-excluded"
         unless="module.pdfsigner.include.condition">
         <echo message="Not including PDFSigner module in EAR"/>
+    </target>
+
+    <!-- Target that can be called to build the MRTDSigner module -->
+    <target name="module-mrtdsigner"
+        description="Build the module MRTDSigner">
+        <ant antfile="${module.mrtdsigner.dir}/build.xml" target="jar"
+            inheritall="false"/>
+        <copy file="${module.mrtdsigner.dir}/dist/mrtdsigner.mar"
+            todir="${server.dist.dir}"/>
+    </target>
+    <!-- Target always called when building. Only builds if configured. -->
+    <target name="-module-mrtdsigner-jar" depends="module-mrtdsigner"
+        if="module.mrtdsigner.enabled.condition"/>
+    <!-- Target for including the module -->
+    <target name="-mrtdsigner-jar-included" if="module.mrtdsigner.include.condition"
+        depends="module-mrtdsigner">
+        <echo message="Including MRTDSigner module in EAR"/>
+        <copy file="${module.mrtdsigner.dir}/dist/SignServer-Module-MRTDSigner.jar"
+            todir="${server.dist.dir}/lib"/>
+    </target>
+    <target name="-mrtdsigner-jar-excluded"
+        unless="module.mrtdsigner.include.condition">
+        <echo message="Not including MRTDSigner module in EAR"/>
     </target>
 
     <!-- Target that can be called to build the OOXMLSigner module -->

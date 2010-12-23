@@ -2,7 +2,6 @@
 <project name="signserver_specific" basedir=".">
 	   
     <import file="./build.xml"/>
-    <import file="./module-builds/mrtdsigner.xml"/>
     <import file="./module-builds/xmlvalidator.xml"/>
 
     <property name="java.trustpassword" value="changeit" />
@@ -209,6 +208,8 @@ module.tsa.enabled                  = ${module.tsa.enabled}
 module.tsa.include                  = ${module.tsa.include}
 module.mrtdsodsigner.enabled        = ${module.mrtdsodsigner.enabled}
 module.mrtdsodsigner.include        = ${module.mrtdsodsigner.include}
+module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
+module.mrtdsigner.include           = ${module.mrtdsigner.include}
 module.wsra.enabled                 = ${module.wsra.enabled}
       </echo>
     </target>
@@ -290,6 +291,20 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                     <istrue value="${module.pdfsigner.enabled}"/>
                     <or>
                         <istrue value="${module.pdfsigner.include}"/>
+                        <istrue value="${includemodulesinbuild}"/>
+                    </or>
+                </and>
+            </condition>
+
+            <!-- Enable, include module: MRTDSigner -->
+            <condition property="module.mrtdsigner.enabled.condition">
+                <istrue value="${module.mrtdsigner.enabled}"/>
+            </condition>
+            <condition property="module.mrtdsigner.include.condition">
+                <and>
+                    <istrue value="${module.mrtdsigner.enabled}"/>
+                    <or>
+                        <istrue value="${module.mrtdsigner.include}"/>
                         <istrue value="${includemodulesinbuild}"/>
                     </or>
                 </and>
@@ -409,7 +424,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                     <src path="${signserverejb.src.java}" />
                     <src path="${signserverwar.src.java}" />
                     <src path="modules/SignServer-Module-XMLValidator/src/java" />
-                    <src path="modules/SignServer-Module-MRTDSigner/src/java" />
 	        	<exclude name="org/signserver/common/MailSigner*"/>
 	        	<exclude name="org/signserver/mailsigner/**"/>
 	        	<exclude name="org/signserver/appserver/**"/>
@@ -580,7 +594,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, -module-xmlsigner-jar, xmlvalidatormar, mrtdsignermar, -module-mrtdsodsigner-jar, -module-wsra-jar, -module-renewal-jar, modules" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, -module-xmlsigner-jar, xmlvalidatormar, -module-mrtdsodsigner-jar, -module-wsra-jar, -module-renewal-jar, modules" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

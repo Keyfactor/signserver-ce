@@ -330,6 +330,7 @@ OS version                          = ${os.version}
             ,-module-odfsigner-jar, -odfsigner-jar-included, -odfsigner-jar-excluded
             ,-module-ooxmlsigner-jar, -ooxmlsigner-jar-included, -ooxmlsigner-jar-excluded
             ,-module-mrtdsigner-jar, -mrtdsigner-jar-included, -mrtdsigner-jar-excluded
+            ,-module-xmlvalidator-jar, -xmlvalidator-jar-included, -xmlvalidator-jar-excluded
         "/>
 
     <target name="admingui" depends="signserver"
@@ -378,6 +379,29 @@ OS version                          = ${os.version}
     <target name="-xmlsigner-jar-excluded"
         unless="module.xmlsigner.include.condition">
         <echo message="Not including XMLSigner module in EAR"/>
+    </target>
+
+    <!-- Target that can be called to build the XMLValidator module -->
+    <target name="module-xmlvalidator"
+        description="Build the module XMLValidator">
+        <ant antfile="${module.xmlvalidator.dir}/build.xml" target="jar"
+            inheritall="false"/>
+        <copy file="${module.xmlvalidator.dir}/dist/xmlvalidator.mar"
+            todir="${server.dist.dir}"/>
+    </target>
+    <!-- Target always called when building. Only builds if configured. -->
+    <target name="-module-xmlvalidator-jar" depends="module-xmlvalidator"
+        if="module.xmlvalidator.enabled.condition"/>
+    <!-- Target for including the module -->
+    <target name="-xmlvalidator-jar-included" if="module.xmlvalidator.include.condition"
+        depends="module-xmlvalidator">
+        <echo message="Including XMLValidator module in EAR"/>
+        <copy file="${module.xmlvalidator.dir}/dist/SignServer-Module-XMLValidator.jar"
+            todir="${server.dist.dir}/lib"/>
+    </target>
+    <target name="-xmlvalidator-jar-excluded"
+        unless="module.xmlvalidator.include.condition">
+        <echo message="Not including XMLValidator module in EAR"/>
     </target>
 
     <!-- Target that can be called to build the PDFSigner module -->

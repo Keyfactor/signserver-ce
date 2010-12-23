@@ -264,6 +264,11 @@ adminws.enabled=true
 #module.xmlsigner.enabled=true
 #module.xmlsigner.include=false
 
+# Module XMLValidator
+# Default: build=true, include=false
+#module.xmlvalidator.enabled=true
+#module.xmlvalidator.include=false
+
 # Module CMSSigner
 # Default: build=true, include=false
 #module.cmssigner.enabled=true

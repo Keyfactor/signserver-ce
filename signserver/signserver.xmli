@@ -2,7 +2,6 @@
 <project name="signserver_specific" basedir=".">
 	   
     <import file="./build.xml"/>
-    <import file="./module-builds/xmlvalidator.xml"/>
 
     <property name="java.trustpassword" value="changeit" />
     <property name="httpsserver.password" value="serverpwd" />
@@ -200,6 +199,8 @@ module.renewal.enabled              = ${module.renewal.enabled}
 module.renewal.include              = ${module.renewal.include}
 module.xmlsigner.enabled            = ${module.xmlsigner.enabled}
 module.xmlsigner.include            = ${module.xmlsigner.include}
+module.xmlvalidator.enabled         = ${module.xmlvalidator.enabled}
+module.xmlvalidator.include         = ${module.xmlvalidator.include}
 module.cmssigner.enabled            = ${module.cmssigner.enabled}
 module.cmssigner.include            = ${module.cmssigner.include}
 module.odfsigner.enabled            = ${module.odfsigner.enabled}
@@ -291,6 +292,20 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                     <istrue value="${module.pdfsigner.enabled}"/>
                     <or>
                         <istrue value="${module.pdfsigner.include}"/>
+                        <istrue value="${includemodulesinbuild}"/>
+                    </or>
+                </and>
+            </condition>
+
+            <!-- Enable, include module: XMLValidator -->
+            <condition property="module.xmlvalidator.enabled.condition">
+                <istrue value="${module.xmlvalidator.enabled}"/>
+            </condition>
+            <condition property="module.xmlvalidator.include.condition">
+                <and>
+                    <istrue value="${module.xmlvalidator.enabled}"/>
+                    <or>
+                        <istrue value="${module.xmlvalidator.include}"/>
                         <istrue value="${includemodulesinbuild}"/>
                     </or>
                 </and>
@@ -423,7 +438,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	            <src path="${src.java}" />
                     <src path="${signserverejb.src.java}" />
                     <src path="${signserverwar.src.java}" />
-                    <src path="modules/SignServer-Module-XMLValidator/src/java" />
 	        	<exclude name="org/signserver/common/MailSigner*"/>
 	        	<exclude name="org/signserver/mailsigner/**"/>
 	        	<exclude name="org/signserver/appserver/**"/>
@@ -594,7 +608,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	    <!-- =================================================================== -->
 	    <!-- Build signserver.ear                                                        -->
 	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, -module-xmlsigner-jar, xmlvalidatormar, -module-mrtdsodsigner-jar, -module-wsra-jar, -module-renewal-jar, modules" unless="buildMailSigner" >
+	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, -module-xmlsigner-jar, -module-mrtdsodsigner-jar, -module-wsra-jar, -module-renewal-jar, modules" unless="buildMailSigner" >
 	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
 	            <fileset dir="${eardd.src}">
 	                <exclude name="META-INF/application.xml" />

@@ -104,7 +104,6 @@ public class RenewalWorker extends BaseSigner {
     public static final String PROPERTY_REQUESTDN = "REQUESTDN";
     public static final String PROPERTY_SIGNATUREALGORITHM
             = "SIGNATUREALGORITHM";
-    public static final String PROPERTY_RENEWKEY = "RENEWKEY";
     public static final String PROPERTY_KEYALG = "KEYALG";
     public static final String PROPERTY_KEYSPEC = "KEYSPEC";
     private static final String NEXTCERTSIGNKEY = "NEXTCERTSIGNKEY";
@@ -256,24 +255,12 @@ public class RenewalWorker extends BaseSigner {
                     PROPERTY_REQUESTDN);
             final String endEntity = workerConfig.getProperty(
                     PROPERTY_RENEWENDENTITY);
-            final String workerRenewKey = workerConfig.getProperty(
-                        PROPERTY_RENEWKEY, Boolean.FALSE.toString());
-            final boolean renewKey = Boolean.parseBoolean(workerRenewKey);
             final String keyAlg = workerConfig.getProperty(
                     PROPERTY_KEYALG);
             final String keySpec = workerConfig.getProperty(
                     PROPERTY_KEYSPEC);
             String nextCertSignKey
                     = workerConfig.getProperty(NEXTCERTSIGNKEY);
-
-            Boolean requestRenewKey = null;
-
-            // Key renewal overridden in request
-            if (requestData.getProperty(
-                    RenewalWorkerProperties.REQUEST_RENEWKEY) != null) {
-                requestRenewKey = new Boolean(requestData.getProperty(
-                    RenewalWorkerProperties.REQUEST_RENEWKEY));
-            }
 
             // If we should use the default key (instead of nextKey,
             // if existing) can be specified in the request (but only if we
@@ -285,6 +272,9 @@ public class RenewalWorker extends BaseSigner {
             if (forDefaultKeyValue != null && !forDefaultKeyValue.isEmpty()) {
                 requestForDefaultKey = Boolean.parseBoolean(forDefaultKeyValue);
             }
+
+            final boolean renewKey = !requestForDefaultKey 
+                    && nextCertSignKey == null;
 
             final String authCode = requestData.getProperty(
                     RenewalWorkerProperties.REQUEST_AUTHCODE);
@@ -333,19 +323,9 @@ public class RenewalWorker extends BaseSigner {
                 buff.append(PROPERTY_RENEWENDENTITY);
                 buff.append("=");
                 buff.append(endEntity);
-                buff.append("\n\t");
-
-                buff.append(PROPERTY_RENEWKEY);
-                buff.append("=");
-                buff.append(renewKey);
                 buff.append("\n");
 
                 buff.append("Request config:");
-                buff.append("\n\t");
-
-                buff.append(RenewalWorkerProperties.REQUEST_RENEWKEY);
-                buff.append("=");
-                buff.append(requestRenewKey);
                 buff.append("\n\t");
 
                 buff.append(RenewalWorkerProperties.REQUEST_FORDEFAULTKEY);
@@ -391,11 +371,10 @@ public class RenewalWorker extends BaseSigner {
 
                 // (Renew key if specified in request)
                 // OR (if specified in worker but not denied in request)
-                if ((requestRenewKey != null && requestRenewKey)
-                        || (renewKey && requestRenewKey == null)) {
+                if (renewKey) {
                     // If we renew the key then we want to use that key
                     defaultKey = false;
-                    LOG.debug("Will not use default key");
+                    LOG.debug("Will renew key");
 
                     // Renew the key
                     nextCertSignKey = renewKey(reneweeId, keyAlg, keySpec,
@@ -534,7 +513,8 @@ public class RenewalWorker extends BaseSigner {
                 LOG.debug("Got users: " + result);
             }
             if (result.isEmpty()) {
-                LOG.error("User not found in EJBCA: " + endEntity);
+                throw new IllegalArgumentException(
+                        "End entity not found in EJBCA: " + endEntity);
             } else {
                 // Update user with status and new password
                 final UserDataVOWS user1 = result.get(0);

@@ -23,6 +23,7 @@ import org.signserver.module.renewal
         .ejbcaws.gen.ApprovalRequestExecutionException_Exception;
 import org.signserver.module.renewal
         .ejbcaws.gen.ApprovalRequestExpiredException_Exception;
+import org.signserver.module.renewal.ejbcaws.gen.AuthorizationDeniedException;
 import org.signserver.module.renewal
         .ejbcaws.gen.AuthorizationDeniedException_Exception;
 import org.signserver.module.renewal
@@ -78,6 +79,7 @@ public class MockEjbcaWS {
     private boolean findUserCalled;
     private boolean editUserCalled;
     private boolean pkcs10RequestCalled;
+    private boolean authenticationFail;
     
     private Map<UserMatchEq,List<UserDataVOWS>> findUserResults
             = Collections.emptyMap();
@@ -108,7 +110,7 @@ public class MockEjbcaWS {
     
     public boolean isAuthorized(String arg0) throws EjbcaException_Exception {
         System.out.println("arg0: " + arg0);
-        return true;
+        return !authenticationFail;
     }
 
     
@@ -137,6 +139,7 @@ public class MockEjbcaWS {
             ApprovalException_Exception, AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception,
             NotFoundException_Exception, WaitingForApprovalException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -146,6 +149,7 @@ public class MockEjbcaWS {
             ApprovalException_Exception, AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception,
             NotFoundException_Exception, WaitingForApprovalException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -153,6 +157,7 @@ public class MockEjbcaWS {
     public List<UserDataVOWS> findUser(UserMatch arg0) 
             throws AuthorizationDeniedException_Exception,
             EjbcaException_Exception, IllegalQueryException_Exception {
+        checkAuth();
         List<UserDataVOWS> result = findUserResults.get(new UserMatchEq(arg0));
         return result;
     }
@@ -169,6 +174,7 @@ public class MockEjbcaWS {
             CADoesntExistsException_Exception, EjbcaException_Exception,
             UserDoesntFullfillEndEntityProfile_Exception,
             WaitingForApprovalException_Exception {
+        checkAuth();
         System.out.println("editUser(" + arg0 + ")");
         editUserCalled = true;
     }
@@ -177,6 +183,7 @@ public class MockEjbcaWS {
     public List<Certificate> findCerts(String arg0, boolean arg1) 
             throws AuthorizationDeniedException_Exception,
             EjbcaException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -184,6 +191,7 @@ public class MockEjbcaWS {
     public List<Certificate> getLastCertChain(String arg0) 
             throws AuthorizationDeniedException_Exception,
             EjbcaException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -193,6 +201,7 @@ public class MockEjbcaWS {
             throws AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception,
             NotFoundException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -202,6 +211,7 @@ public class MockEjbcaWS {
             throws AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception,
             NotFoundException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -214,6 +224,7 @@ public class MockEjbcaWS {
             NotFoundException_Exception, SignRequestException_Exception,
             UserDoesntFullfillEndEntityProfile_Exception,
             WaitingForApprovalException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -224,6 +235,7 @@ public class MockEjbcaWS {
             AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception,
             WaitingForApprovalException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -233,6 +245,7 @@ public class MockEjbcaWS {
             AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception,
             WaitingForApprovalException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -241,6 +254,7 @@ public class MockEjbcaWS {
             throws AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception,
             NotFoundException_Exception {
+        checkAuth();
         System.out.println(">certificateRequest");
         pkcs10RequestCalled = true;
         final CertificateResponse result = new CertificateResponse();
@@ -320,6 +334,7 @@ public class MockEjbcaWS {
             throws AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception,
             NotFoundException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -328,6 +343,7 @@ public class MockEjbcaWS {
             AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception,
             NotFoundException_Exception, WaitingForApprovalException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -337,6 +353,7 @@ public class MockEjbcaWS {
             AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception,
             NotFoundException_Exception, WaitingForApprovalException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -344,6 +361,7 @@ public class MockEjbcaWS {
     public RevokeStatus checkRevokationStatus(String arg0, String arg1) throws 
             AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -351,6 +369,7 @@ public class MockEjbcaWS {
     public List<UserDataSourceVOWS> fetchUserData(List<String> arg0, 
             String arg1) throws AuthorizationDeniedException_Exception,
             EjbcaException_Exception, UserDataSourceException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -366,6 +385,7 @@ public class MockEjbcaWS {
             HardTokenExistsException_Exception,
             UserDoesntFullfillEndEntityProfile_Exception,
             WaitingForApprovalException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -377,6 +397,7 @@ public class MockEjbcaWS {
             CADoesntExistsException_Exception, EjbcaException_Exception,
             HardTokenDoesntExistsException_Exception,
             NotFoundException_Exception, WaitingForApprovalException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -384,6 +405,7 @@ public class MockEjbcaWS {
     public List<HardTokenDataWS> getHardTokenDatas(String arg0, boolean arg1, 
             boolean arg2) throws AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -392,6 +414,7 @@ public class MockEjbcaWS {
             AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception,
             PublisherException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -400,6 +423,7 @@ public class MockEjbcaWS {
             Certificate arg4, String arg5) throws
             AuthorizationDeniedException_Exception,
             CADoesntExistsException_Exception, EjbcaException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -408,24 +432,28 @@ public class MockEjbcaWS {
             boolean arg2) throws AuthorizationDeniedException_Exception,
             EjbcaException_Exception, MultipleMatchException_Exception,
             UserDataSourceException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
     public List<NameAndId> getAuthorizedEndEntityProfiles() throws
             AuthorizationDeniedException_Exception, EjbcaException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
     public List<NameAndId> getAvailableCertificateProfiles(int arg0) throws
             AuthorizationDeniedException_Exception, EjbcaException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
     public List<NameAndId> getAvailableCAsInProfile(int arg0) throws
             AuthorizationDeniedException_Exception, EjbcaException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -448,6 +476,7 @@ public class MockEjbcaWS {
             NotFoundException_Exception,
             UserDoesntFullfillEndEntityProfile_Exception,
             WaitingForApprovalException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -459,6 +488,7 @@ public class MockEjbcaWS {
             NotFoundException_Exception,
             UserDoesntFullfillEndEntityProfile_Exception,
             WaitingForApprovalException_Exception {
+        checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -487,5 +517,17 @@ public class MockEjbcaWS {
         this.findUserResults = findUserResults;
     }
 
+    public void setAuthenticationFail(final boolean authenticationFail) {
+        this.authenticationFail = authenticationFail;
+    }
+
+    private void checkAuth() throws AuthorizationDeniedException_Exception {
+        if (authenticationFail) {
+            AuthorizationDeniedException fault = new AuthorizationDeniedException();
+            fault.setMessage("Administrator not authorized to resource");
+            throw new AuthorizationDeniedException_Exception(
+                    "Administrator not authorized to resource", fault);
+        }
+    }
 
 }

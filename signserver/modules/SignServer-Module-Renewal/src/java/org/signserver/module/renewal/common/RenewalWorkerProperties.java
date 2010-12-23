@@ -25,9 +25,6 @@ public interface RenewalWorkerProperties {
     String REQUEST_WORKER = "WORKER";
 
     /** True if the key should be renewed. **/
-    String REQUEST_RENEWKEY = "RENEWKEY";
-    String REQUEST_RENEWKEY_TRUE = Boolean.TRUE.toString();
-    String REQUEST_RENEWKEY_FALSE = Boolean.FALSE.toString();
     String REQUEST_FORDEFAULTKEY = "FORDEFAULTKEY";
     String REQUEST_FORDEFAULTKEY_TRUE = Boolean.TRUE.toString();
     String REQUEST_FORDEFAULTKEY_FALSE = Boolean.FALSE.toString();

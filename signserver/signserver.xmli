@@ -28,7 +28,6 @@
         <fileset dir="lib/module/ooxmlsigner" includes="*.jar"/>
         <fileset dir="lib/jaxws" includes="*.jar" />
         <fileset dir="lib/asm" includes="*.jar" />
-        <fileset dir="lib/ext/james" includes="james-2.3.1.jar" />
         <fileset dir="lib/ext/ejb" includes="hib*" />
         <fileset dir="${ant.home}/lib" includes="ant.jar" />
         <path refid="j2ee.classpath" />

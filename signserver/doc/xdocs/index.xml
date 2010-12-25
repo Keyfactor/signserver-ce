@@ -26,7 +26,6 @@ SignServer is based on loadable modules that perform various operations. SignSer
 <li>Signers for different documents: PDF, XML, ODF, OOXML, MRTD (ePassport document signer)</li>
 <li>General purpose signers: CMS</li>
 <li>Validators for documents: XML</li>
-<li>Simple Mail Signer</li>
 </ul>
 <p>The modules can be used using http and web service interfaces. SignServer also contains functions for:</p>
 <ul>
@@ -40,7 +39,7 @@ SignServer has been designed for high-availability and can be clustered for maxi
 Different kinds of tokens can be used to perform sign and crypto operations:
 </p>
 <ul>
-<li>Soft token using PKCS12 files.</li>
+<li>Soft token using JKS or PKCS12 files.</li>
 <li>PKCS#11 HSM tokens, such as the Utimaco CryptoServer, SafeNet ProtectServer and Luna, nCipher nShield or AEP KeyPer.</li>
 <li>PrimeCardHSM using smart cards.</li>
 </ul>

@@ -7,10 +7,6 @@
 
 <body>
   <section name="Overview">
-  <p>
-  In version 3 SignServer have two different builds, one is the classical SignServer and the other is a Mail Processing Server called the MailSigner. 
-  </p>
-  <subsection name="SignServer">
 <p> 
 SignServer is a framework designed to perform different kind of digital signatures for different applications. 
 </p>
@@ -40,16 +36,6 @@ Administration is done through a command-line interface, where properties and ac
 <p>
 One instance of SignServer can have multiple signers for different purposes.
 </p>
-</subsection>
-<subsection name="MailSigner">
-<p>
-The MailSigner is a different build of SignServer, targeted to perform automated cryptographic operations on e-mails. The MailSigner is an add-on to the James SMTP project and the James SMTP binaries is shipped along with the SignServer package for simplified set-up.
-</p>
-<p>
-The MailSigner's main component is the MailProcessor which is the base for all MailSigner plug-ins. There exists one ready to use MailSigner called the SimpleMailSigner. It generates a signed SMIME message for all e-mails sent through the server.
-</p>
-
-</subsection>
   </section>
 
 </body>

@@ -24,15 +24,13 @@ different application managed from one location in the company.
 The SignServer have been designed for high-availability and can be clustered for maximum
 reliability.
                 </p>
+                <p>
 The SignServer comes with a RFC 3161 compliant Time-Stamp signer serving requests through
 http or client-authenticated https. A MRTD (Machine Readable Travel Document, i.e. electronic
 passport) signer. A PDF signer that adds a signature automatically to a uploaded PDF document,
 ODF signer that adds a signature automatically to uploaded ODF document, OOXML Signer that
 adds signature automatically to a uploaded OOXML document, and a validation service used to
 lookup the validation of a given certificate.
-                <p>
-From version 3.0 there also exists a mail signer framework that can be used to perform
-cryptographic operation on emails.
                 </p>
                 <p>
                     <a href="../docs/SignServer_Manual_3_0_odt_m6a7f442a.jpg"><img src="../docs/SignServer_Manual_3_0_odt_m6a7f442a.jpg" align="middle" border="0" width="493" height="252" ALT="architecture"/></a><br/>
@@ -176,7 +174,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>Extended Crypto Token</td><td>An enhanced Crypto Token with support for symmetric key operations.</td>
                     </tr><tr><td>PKCS11CryptoToken</td><td>A Crypto Token able to communicate with Hardware Security Modules through the standard PKCS11 interface.</td>
                     </tr><tr><td>TimedService (former Service)</td><td>A TimedService is a task that is run on a timely basis, performing maintenance tasks like changing active key or generate a report.</td>
-                    </tr><tr><td>Worker</td><td>A common name for Processable (Signer or other type of service), Mail Processor and TimedService</td>
+                    </tr><tr><td>Worker</td><td>A common name for Processable (Signer or other type of service) and TimedService</td>
                     </tr><tr><td>Processable</td><td>A type of worker that is used to process requests, i.e. not a TimedService.</td>
                     </tr><tr><td>Worker Configuration</td><td>Each Worker can be configured with properties specific for that worker. There are two sets of worker configuration one "Active" that is used by the signer and one "current" which is the one configured by the administrator. The current configuration isn't used in production until the administrator issued the reload command. This makes it possible for the administrator to configure multiple properties and double-check them before they are actually used.</td>
                     </tr><tr><td>Global Configuration Store</td><td>Is a dynamic store used to define available Workers and their Crypto Tokens. But other data that needs to be read globally could be set there as well. The global configuration properties are activated immediately. There are two different scopes for the store data, Global Scope and Node Scope.</td>
@@ -184,7 +182,6 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>Node Scope</td><td>Data that is node specific and can only be read within the same node.</td>
                     </tr><tr><td>Worker Id</td><td>Unique identifier of a worker, an integer larger than 0</td>
                     </tr><tr><td>Worker Name</td><td>A name used as a human readable synonym for a Worker Id</td>
-                    </tr><tr><td>Mail Processor</td><td>A plug-in used for the mail signer to perform automated cryptographic operations on e-mails sent through the mail server. This could for instance be the Simple Mail Signer for attaching a SMIME signature to all mails.</td>
                     </tr><tr><td>Validation Service </td><td>A Processable that checks if a certificate is valid or not. Have a Default Validation Service implementation that should work in most cases.<br/>A Validation Service should have one or more Validators configured.</td>
                     </tr><tr><td>Group Key Service</td><td>A Processable that can be used to manage, generate and distribute group keys to a set of clients. The service support four types of calls, fetch group key (used by clients), pre-generate group keys, switch encryption key (key used to safely store the group keys in database) and remove group keys.  There exists a Default Group Key Service that should satisfy most use cases.</td>
                     </tr><tr><td>Certificate Validator (former Validator)</td><td>A Certificate Validator is responsible for checking the status of one or more issuer's certificates. This could be as an OCSP client or a CRL checker or just looking up the status in a database.</td>
@@ -200,7 +197,6 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>ODF (Open Document Format) Document</td><td>XML-based file format for representing electronic documents such as spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/OpenDocument">more...</a></td>
                     </tr><tr><td>OOXML (Office Open XML) Document</td><td>XML-based file format  for representing spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/Office_Open_XML">more...</a></td>
                     </tr><tr><td>OOXML Signer</td><td>A Signer that attaches an electronic signature to an OOXML document.</td>
-                    </tr><tr><td>Simple Mail Signer</td><td>A Mail Processor that envelopes authorized mails with a SMIME signature.</td>
                     </tr><tr><td>Cluster Class Loader</td><td>A Java Class Loader specific for the SignServer project. The class loader simplifies the distribution of new code to a cluster by uploading and fetching it from database. It also enables the use of multiple versions of the same worker code in the same cluster.</td>
                     </tr><tr><td>Module Archive or MAR file</td><td>A 'Module Archive' is a specific packaging format used by the cluster class loader to upload code to a cluster. A MAR files is structured in a specific way with a descriptor containing module and version information.  The MAR file also contains one or more parts depending on were in the system the code will be deployed.<br/>A Module Archive have the postfix .mar and can be generated with a specific ANT-task.</td>
                     </tr>
@@ -208,10 +204,6 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
             </section>
 
             <section name="Overall Architecture">
-                <p>
-Since the 3.0 version the SignServer project have two different builds, one is the classical SignServer and the other is a Mail Processing Server called the MailSigner.
-                </p>
-                <subsection name="SignServer">
                     <p>
 The SignServer is a framework designed to perform different kind of cryptographic operations for different applications.
                     </p>
@@ -233,26 +225,11 @@ The applications i administrated through a command-line interface, where the pro
                     <p>
 One SignServer can have multiple services for different purposes.
                     </p>
-                </subsection>
 
-                <subsection name="MailSigner">
-                    <p>
-The MailSigner is a different build of the SignServer, targeted to perform automated cryptographic operations on e-mails. The MailSigner is an add-on to the James SMTP project and the James SMTP binaries is shipped along with the SignServer package for simplified set-up.
-                    </p>
-                    <p>
-The MailSigner's main component is the MailProcessor which is the base for all MailSigner plug-ins. There exists one ready to use MailSigner called the SimpleMailSigner. It generates a signed SMIME message of all mails sent to through the server.
-                    </p>
-                    <p>
-One instance can have more than one MailProcessor configured. Then will the plug-ins be called by worker id in ascending order.
-                    </p>
-                    <p>
-The MailSigner have similar CLI interface and is administrated much in the same way as the SignServer. The SMTP server have support for SMTP Authentication. For more information about the James SMTP server see <a href="http://james.apache.org">http://james.apache.org</a>.
-                    </p>
                     <p>
                         <a href="../docs/SignServer_Manual_3_0_odt_18c42972.png"><img src="../docs/SignServer_Manual_3_0_odt_18c42972.png" align="middle" border="0" width="493" height="252" alt="SignServer components"/></a><br/>
                         Illustration 1: Components in the SignServer project
                     </p>
-                </subsection>
             </section>
 
         </chapter>
@@ -375,82 +352,8 @@ Also check JBOSS_HOME/server/default/log/server.log that successful messages app
                         </ol>
                     </subsubsection>
                 </subsection>
-
-                <!-- -->
-                <subsection name="Quick start of a Simple Mail Signer">
-                    <p>
-This section will do a fast and minimal configuration of a Mail Signer that will sign all authorized mails sent through it with a PKCS12 cryptographic token.
-                    </p>
-                    <subsubsection name="Required Software">
-                        <ul>
-                            <li>Sun JDK 6 Update 10 or later (http://java.sun.com)</li>
-                            <li>Ant version 1.7.1 or later (http://ant.apache.org)</li>
-                            <li>SignServer-3.0 (http://www.signserver.org)</li>
-                            <li>1 mail signing key-store in PKCS12 format (The key store should have a RFC822Name that matches the sender address that will be replaces by the Simple Mail Signer plug-in). There exists one keystore in src/test/mailsigner_test1.p12 with a RFC822Name of mailsigner@someorg.org that can be used for testing.</li>
-                        </ul>
-                    </subsubsection>
-                    <subsubsection name="Installation Steps">
-                        <ol>
-                            <li>
-First make sure that Ant and Java is installed properly.
-                            </li>
-                            <li>
-Set the JAVA_HOME and SIGNSERVER_HOME environment variables.
-                            </li>
-                            <li>
-Set the SIGNSERVER_NODEID environment variable, it should be a server unique string
-identifying the node in a cluster. (optional for one node installations).
-                            </li>
-                            <li>
-Unzip the SignServer package and go to it's home directory.
-                            </li>
-                            <li>
-Then copy the signserver_build.properties.sample file to signserver_buld.properties and edit
-the file. First uncomment row "build.mode=MAILSIGNER" to instruct that this installation is a MailSigner and not a SignServer. Then go to the end of the file and fill in the required properties: mailsigner.primarydns, mailsigner.secondarydns and mailsigner.postmaster.
-                            </li>
-                            <li>
-Then build the mail signer with the command 'ant' in the SIGNSERVER_HOME directory.
-                            </li>
-                            <li>
-Edit the sample-configs/qs_simplemailsigner_configuration.properties file and set the sender and from addresses as well as the path and password to the cryptographic token that should be used.
-                            </li>
-                            <li>
-Start the mail signer application with the command: ant run
-                            </li>
-                            <li>
-Open up another console, go to SIGNSERVER_HOME and use the signserver CLI to upload the configuration file. (if it's not executive use chmod +x bin/signserver.sh)
-                            </li>
-                            <li>
-                                <pre>
-bin/signserver.sh setproperties sample-configs/ qs_simplemailsigner_configuration.properties
-                                </pre>
-                                <p>
-Then run
-                                </p>
-                                <pre>
-bin/signserver.sh getconfig 1
-                                </pre>
-                                <p>
-Finally run
-                                </p>
-                                <pre>
-bin/signserver.sh reload 1
-To activate the configuration.
-                                </pre>
-                            </li>
-                            <li>
-Finally add an authorized SMTP user with the command:
-                                <pre>
-bin/signserver.sh addauthorizeduser &#60;username&gt; &#60;password&gt;
-                                </pre>
-                            </li>
-                            <li>
-Now is the simple mail signer ready to be used for signing outgoing emails. Configure you e-mail client to connect to the MailSigner server using the username and password you just provided and send a mail to a colleague to verify it is signed properly.
-                            </li>
-                        </ol>
-                    </subsubsection>
-                </subsection>
             </section>
+
             <section name="Building and deploying">
                 <p>
 The building of the SignServer framework is configured by copying the file signserver_build.properties.sample to signserver_build.properties. In this file it's possible to set which database that is going to be used, how the web container should be configured and how many nodes that is in the cluster. After it's configured issue the command 'ant' followed by 'ant deploy' to send it to the application server. Currently is JBoss the only supported application server and it requires the environment variable JBOSS_HOME to be set prior to the deploy command.
@@ -461,19 +364,10 @@ How to set-up a highly available SignServer cluster is described in a separate d
 The document describes how to set it up in a Cent OS 4.4 environment with two service nodes and
 one management node, but should be rather easy to adjust to other platforms.
                 </p>
-                <p>
-Building the MailSigner is very similar to the SignServer. Just set the property 'build.mode' to 'MAILSIGNER' in the top of the build configuration file and set the required settings (such as DNS servers) in the bottom of the file. Then build the MailSigner with the command 'ant'.
-                </p>
-                <p>
-To start up the MailSigner application issue the command 'ant run'. If you want to debug the application in a IDE such as Eclipse issue the command  'ant debug'. This can be very helpful when developing MailProcessors. In Eclipse create a 'Remote Java Application' debug configuration and have it to connect to port 8000, then set a break point in your code and it will stop there the next time the MailSigner enters that state.
-                </p>
-                <p>
-Since the MailSigner is built upon the JAMES SMTP server it is possible to configure the SMTP server more than is available in the build configuration file. This is done in the file extapps/james/apps/james/SAR-INF/config.xml, see the JAMES documentation for more information about what is possible and how to do it.
-                </p>
             </section>
             <section name="Configuration/Administration">
                 <p>
-                    The SignServer and the MailSigner is administrated using a common CLI interface located in bin/signserver.sh/cmd. Most of the commands work in the same way for both build.
+                    The SignServer is administrated using a common CLI interface located in bin/signserver.sh/cmd.
                 </p>
                 <p>
 Every worker is identified by a id and optionally a name that can be used in all the CLI commands.
@@ -495,9 +389,6 @@ Its possible to customize the CLI with your own code. How to do this is describe
                 </p>
                 <subsection name="Command Line Interface">
                     <subsubsection name="General Commands">
-                        <p>
-These commands applies for all types of workers and works in the same way for both the SignServer and MailSigner.
-                        </p>
                         <p>
 <b>Get Status Command:</b>
 Returns the status of the given worker, it says if its crypto token is active or not and the loaded 'active' configuration. It is possible to get a brief summary or a complete listing for one worker or all configured workers. If all workers are displayed will also all the global configuration parameters be displayed.
@@ -701,21 +592,6 @@ Command used to remove a specified version of a module.
 Command to list all uploaded modules, it is also possible to see all JAR files that is included in the  modules.
                         </p>
                     </subsubsection>
-
-                    <subsubsection name="MailSigner Specific Commands">
-                        <p>
-<b>Add Authorized User Command:</b>
-Command to add a SMTP authorized user to a MailSigner, it applies for all configured MailProcessors.
-                        </p>
-                        <p>
-<b>Remove Authorized User Command:</b>
-Removes an authorized SMTP user.
-                        </p>
-                        <p>
-<b>List Authorized Users Command:</b>
-List currently authorized STMP users.
-                        </p>
-                    </subsubsection>
                 </subsection>
 
                 <subsection name="Administration GUI">
@@ -903,11 +779,6 @@ More information about the MySQL Cluster can be found at
 <a href="http://www.mysql.com/products/database/cluster/">http://www.mysql.com/products/database/cluster/</a>.
                     </p>
                </subsection>
-               <subsection name="MailSigner">
-                    <p>
-The MailSigner have no built in support for high-availability instead are the standard SMTP approach used where multiple server can be set up with different priority in the DNS MX records.
-                    </p>
-                </subsection>
             </section>
 
             
@@ -1254,14 +1125,9 @@ This authorization functionality doesn't work for all use cases. Then it's possi
                         </p>
                     </subsubsection>
                 </subsection>
-                <subsection name="MailSigner">
-                    <p>
-The MailSigner support SMTP Authentication which is configured in the build properties. It's then possible to authorize users by adding them manually through the CLI interface. SMTP authorization is global for all MailProcessors.
-                    </p>
-                </subsection>
             </section>
 
-            <section name="Archiving Responses (SignServer only)">
+            <section name="Archiving Responses">
                 <p>
 If there is a need to save all generated responses, then set the property "ARCHIVE" to "TRUE" and all generated responses for that signer will be saved to database.
                 </p>
@@ -1270,7 +1136,7 @@ The archived responses can later be extracted from data base using the CLI inter
                 </p>
             </section>
 
-            <section name="Checking validity of signer certificates (SignServer only)">
+            <section name="Checking validity of signer certificates">
                 <p>
 By default the SignServer checks if the signer certificate of a signer is valid before letting the signer process a request. If the signers certificate is not valid an error message is returned.
 There are two properties that can be set to disable this check:
@@ -2071,83 +1937,6 @@ GenericPropertiesRequestS and returns GenericPropertiesResponseS.
                 </subsection>
             </section>
 
-            <section name="Mail Processors">
-                <p>
-This section lists the available plug-ins for the MailSigner. These plug-ins are configured in the exact same way with class path of both plug-in and its crypto token.
-                </p>
-                <subsection name="SimpleMailSigner">
-                    <p>
-Important, From 3.1 must the SimpleMailSigner module be uploaded to the MailSigner before it can be used. This is done with the command:
- 'bin/signserver.sh module add dist-server/simplemailsigner.mar'
-                    </p>
-                    <subsubsection name="Overview">
-                        <p>
-The SimpleMailSigner is a plug-in that generates a signed SMIME message from any authorized mail sent through the MailSigner server. It can be used prove the origin of the message to the receivers .
-                        </p>
-                        <p>
-There exists a demo configuration in the 'sample-configs' directory.
-                        </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
-                        <p>
-<b>EXPLAINATIONTEXT</b>  =  Text attached to the e-mail describing the signature for the recipient. (Optional)
-                        </p>
-                        <p>
-<b>USEREBUILDFROM</b> =  Setting indicating if the from field of the SMIME should be altered. (Optional, default is true)
-                        </p>
-                        <p>
-<b>SIGNATUREALG</b>  = Setting configuring the signature algorithm that should be used in the SMIME message. (Optional, default is DIGEST_SHA1)
-                        </p>
-                        <p>
-<b>POSTMASTERSIGNS</b> =  Indicates if postmaster mail should be signed. (Optional, default is false)
-                        </p>
-                        <p>
-<b>FROMADDRESS</b> = The from email address used if rebuild from is set. (Required if USEREBUILDFROM is true)
-                        </p>
-                        <p>
-<b>FROMNAME</b> = Readable name used in from address field. (Optional)
-                        </p>
-                        <p>
-<b>CHANGEREPLYTO</b> = Indicates if the reply-to field should be altered to the original sender. (Optional, default is false)
-                        </p>
-                        <p>
-<b>REPLYTOADDRESS</b> = The reply to email address if the reply always should be changed to
-a default address. (Required if CHANGEREPLYTO is true)
-                        </p>
-                        <p>
-<b>REPLYTONAME</b> = Readable name used in reply-to address field. (Optional)
-                        </p>
-                        <p>
-<b>SIGNERADDRESS</b> = The email address that should be in the sender field. (Required)
-                        </p>
-                        <p>
-<b>SIGNERNAME</b> = Readable name used in sender address field. (Optional)
-                        </p>
-                        <p>
-<b>REQUIRESMTPAUTH</b> = Setting defining if SMTP AUTH should be required to
-sign the mail. (Default is true).
-                        </p>
-                        <p>
-<b>SENDERNAME</b> = Indicates if the name of the sender (from Sender field or
-From field of the original message) should be used together with the configured
-mail address (SIGNERADDRESS/FROMADDRESS).
-                        </p>
-                        <p>
-Example:  Having SENDERNAME=TRUE, SIGNERADDRESS=mailsigner@mailsigner and sending a mail with:
-        <pre>
-         From: FromName &lt;fromname@primekey.se&gt;
-         </pre>
-         Will result in the MailSigner sending an e-mail with:
-         <pre>
-         From: FromName &lt;mailsigner@mailsigner&gt;
-         Sender: FromName &lt;mailsigner@mailsigner&gt;
-         Reply-To: FromName &lt;fromname@primekey.se&gt;
-         </pre>
-                        </p>
-                    </subsubsection>
-                </subsection>
-            </section>
-
             <section name="Available CryptoTokens">
                 <p>
                     There exists four types of crypto tokens (Formerly known as sign tokens), two for storing the keys in software, one general for communicating with cryptographic hardware through the PKCS11 interface and one for SmartCards. See the developer section for information about developing support for other HSMs.
@@ -2613,22 +2402,6 @@ RemoveGroupKeyResponse removeGroupKeys(IRemoveGroupKeyRequest removeGroupKeyRequ
 public WorkerStatus getStatus();
                         </pre>
                     </subsubsection>
-
-                    <subsubsection name="IMailProcessor Interface">
-                        <p>
-Implementing a MailProcessor for the MailSigner is almost exactly the same as for the other components but here it's the 'service' method that needs to be implemented. There also exists a utility class called SMIMEHelper that contains methods for securing emails.
-                        </p>
-                        <pre>
-/**
- * Main method used when processing mails
- * @param mail the mail sent through the SMTP server
- * @throws MessagingException if error occurred during processing of mail.
- * @throws CryptoTokenOfflineException if the signing token not available at the time of the process.
- */
-void service(Mail mail) throws MessagingException, CryptoTokenOfflineException;
-                        </pre>
-                   </subsubsection>
-
                 </subsection>
 
                 <subsection name="Implementing Crypto Tokens">
@@ -3211,7 +2984,7 @@ Password to unlock the trust store. Only required if signature verification is u
 
                 <subsection name="Automatic Junit Tests">
                     <p>
-Automatic Junit tests lies in the directory 'src/tests'. There are two different test suites, one for the SignServer build and the other for the MailSigner. The same command applies for both.
+Automatic JUnit tests are in the different projects and system tests in SignServer-Test-System.
                     </p>
                     <p>
 Important: For the SignServer test suite to run successful through all the tests must both the Main WebService and validation service WebService API be enabled in the build configuration.
@@ -3282,7 +3055,7 @@ A Timed Service framework supports a couple basic properties that is used to cal
 <b>ACTIVE</b> =  "TRUE" if the service should be run, otherwise it is disabled.
                 </p>
                 <p>
-<b>SINGLETON</b> =  "TRUE" if the service only should be run on one of the nodes in the cluster at the time. If it's not set or set to FALSE is the service run simultaneously on all nodes in the cluster. If the node running a singleton service fails will another node sense this and start up the service. (Not used for the MailSigner)
+<b>SINGLETON</b> =  "TRUE" if the service only should be run on one of the nodes in the cluster at the time. If it's not set or set to FALSE is the service run simultaneously on all nodes in the cluster. If the node running a singleton service fails will another node sense this and start up the service.
                 </p>
                 <p>
 <b>INTERVAL</b> =  Property that should define the interval i seconds the service should run.
@@ -3290,59 +3063,6 @@ A Timed Service framework supports a couple basic properties that is used to cal
                 <p>
 <b>CRON</b> = Property that should define a CRON expression of how often the service should run.  It should conform to Unix CRON standard. (One of INTERVAL or CRON is required)
                 </p>
-
-                <subsection name="CertificateExpireTimedService (MailSigner only)">
-                    <subsubsection name="Overview">
-                        <p>
-The CertificateExpireTimedService  is a timed service specific for the MailSigner. It checks all available mail processors if they have a certificate about to expire. In that case a notification about this is sent to the administrators. By default is this done 30 days before expiration. If the Mail Processor isn't updated a reminder message is sent.
-                        </p>
-                        <p>
-The CertificateExpireTimedService have the class path: org.signserver.mailsigner.module.common. CertificateExpireTimedService and is compiled into a the dist-server/mailsigner-module-common.jar that can be included in MAR files that needs the service.
-                        </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
-                        <p>
-<b>EXPIRETIMEDAYS</b> =   Number of remaining days of the certificate before a notification is sent.(Optional, default 30 days).
-                        </p>
-                        <p>
-<b>REMINDERTIMEDAYS</b> = Number of remaining days of the certificate before a reminder notification is sent.(Optional, default 10 days).
-                        </p>
-                        <p>
-<b>ADMINEMAIL</b> = The email address of were the notifications is sent. (Optional, default is the configured postmaster address.)
-                        </p>
-                        <p>
-<b>FROMEMAIL</b> =   The from email used in the notifications is sent.  (Optional, default is certexpire@&lt;postmaster-domain&gt;)
-                        </p>
-                        <p>
-<b>MESSAGESUBJECT</b>  =   The subject used in the first notification message.  (Optional, default is "WARNING: Mail Processor with id : ${WORKERID} is about to expire.")
-                        </p>
-                        <p>
-<b>REMINDERSUBJECT</b>  =   The subject used in the reminder notification message.  (Optional, default is "REMINDER: Mail Processor with id : ${WORKERID} is about to expire.")
-                        </p>
-                        <p>
-<b>EXPIREMESSAGE</b>  =   The message body in the notifications is sent.  (Optional, default is "A mail processor at host ${HOSTNAME} have a certificate about to expire.${NL}${NL}The Mail Processor have id ${WORKERID} and a certificate with DN '${cert.CERTSUBJECTDN}' and will expire the ${cert.EXPIREDATE}. ${NL}")
-                        </p>
-                        <p>
-<b>REMINDERMESSAGE</b> =   The message body in the remainder notifications is sent.  (Optional, default is "This is a reminder that a mail processor at host ${HOSTNAME} have a certificate about to expire.${NL}${NL}The Mail Processor have id ${WORKERID} and a certificate with DN '${cert.CERTSUBJECTDN}' and will expire the ${cert.EXPIREDATE}. ${NL}")
-                        </p>
-                    </subsubsection>
-                    <subsubsection name="Available Substitution Variables">
-                        <p>
-The following substitution variables can be used in notification subject and message bodys.
-                        </p>
-                        <p>
-                            <b>${NL}</b>  = New line<br/>
-                            <b>${DATE}</b>  = The current date<br/>
-                            <b>${HOSTNAME}</b>  = Name of the host running the application.<br/>
-                            <b>${WORKERID}</b>  = Id of the worker.<br/>
-                            <b>${WORKERNAME}</b>  = Name of the worker.<br/>
-                            <b>${cert.CERTSERIAL}</b>  = The serial number of the certificate about to expire.<br/>
-                            <b>${cert.EXPIREDATE}</b>  = The certificates expiration date.<br/>
-                            <b>${cert.CERTSUBJECTDN}</b>  = The certificate subject DN.<br/>
-                            <b>${cert.CERTISSUERDN}</b>  = The certificate issuer DN.<br/>
-                        </p>
-                    </subsubsection>
-                </subsection>
 
                 <subsection name="SignerStatusReportTimedService">
                     <subsubsection name="Overview">
@@ -3443,11 +3163,6 @@ Is is dynamically configured and activated immediately. I can contain any type o
 Database failure is handled differently. If a node looses connection to the database it put itself in a state called 'unsynchronised' and will continue its operation without storing the data to database by using a cached global configuration. It is possible to later resynchronise one nodes cached global configuration data  with the database with a CLI command called 'resync'. But it is only possible to sync one of the nodes global configuration to the database.
                     </p>
                 </subsection>
-                <subsection name="MailSigner Specific">
-                    <p>
-The MailSigner doesn't store its data in database but in a regular file handled internally. It have therefore no functionality for database fail-over and cannot be resynchronized. There currently aren't any difference in global and node scoped variables.
-                    </p>
-                </subsection>
             </section>
 
             <section name="Status Repository">
@@ -3544,10 +3259,10 @@ put the audit logs in a separate file.
 
             <section name="Installation Packages">
                 <p>
-From version 3.1 and upwards will there be binary installation packages released alongside the regular source packages. The packages includes all software necessary except for Java, were JDK 1.5+ is required (JRE will do for the MailSigner) before installing.
+From version 3.1 and upwards will there be binary installation packages released alongside the regular source packages. The packages includes all software necessary except for Java, were JDK 1.6+ is required.
                 </p>
                 <p>
-At the current moment are the platforms Linux (mainly Debian distribution is tested but it should work for other distributions as well) and Windows XP/2003 supported. The SignServer have two packages, one server part that should be installed in every node in the cluster and one management package containing the CLI. The same goes for the MailSigner which is also separated into two parts, one containing the SMTP server and the other containing the management CLI.
+At the current moment are the platforms Linux (mainly Debian distribution is tested but it should work for other distributions as well) and Windows XP/2003 supported. The SignServer have two packages, one server part that should be installed in every node in the cluster and one management package containing the CLI.
                 </p>
                 <subsection name="Using the Installation Packages">
                     <p>
@@ -3561,10 +3276,8 @@ The configuration file should be in the following locations:
                     </p>
                     <pre>
 Unix SignServer Installation            : /etc/signserver/signserver.conf
-Unix MailSigner Installation            : /etc/mailsigner/mailsigner.conf
 Windows SignServer Installation         : %SYSTEMROOT%\signserver.conf
                                          (i.e C:\WINDOWS\signserver.conf)
-Windows MailSigner Installation	        : %SYSTEMROOT%\mailsigner.conf
                     </pre>
                     <p>
 After installation will all the settings be saved to the configuration file by the installation program to simplify re-installation.
@@ -3693,86 +3406,6 @@ The signserver.conf supports the following settings:
                             <tr><td>hostname.allnodes</td><td>Hostname of all hosts in cluster, separated by ';'. </td><td>node1.someorg.org;node2.someorg.org</td><td>Unix:<br/>/etc/signserver/signserver.conf<br/>Windows: %Installdir%\signserver.conf</td></tr>
                         </table>
                     </subsubsection>
-
-                    <subsubsection name="MailSigner Server">
-                        <p>
-The MailSigner package works much in the same way as the SignServer package with the difference that James SMTP server is included instead of Jboss.
-                        </p>
-                        <p>
-The steps performed during the installation process are:
-                        </p>
-                        <p>
-	Unix:
-                        </p>
-                        <ul>
-                            <li>By default is everything is unpacked in /opt/mailsigner-&lt;version&gt; .</li>
-                            <li>If a /etc/mailsigner/mailsigner.conf file exists it's read and used during installation.</li>
-                            <li>The user and group 'mailsigner' is created</li>
-                            <li>James init.d script is configured to run at runlevel 3,4,5</li>
-                            <li>Directory /etc/mailsigner/ is created to contain all configuration files</li>
-                            <li>James configuration file /etc/mailsigner/mailsigner_conf.xml is populated.</li>
-                            <li>Log configuration file /etc/mailsigner/log-conf.xml is populated and configured to log to the directory /var/log/mailsigner</li>
-                            <li>Finally is James started and ready to be used.</li>
-                        </ul>
-                        <p>
-	Windows:
-                        </p>
-                        <ul>
-                            <li>By default is everything is unpacked in C:\Program\MailSigner\MailSigner-&lt;version&gt; .</li>
-                            <li>If a c:\WINDOWS\mailsigner.conf file exists it's read and used during installation.</li>
-                            <li>James is configured to be run as a service that is started automatically.</li>
-                            <li>James configuration file &lt;INSTALLDIR&gt;\mailsigner_conf.xml is populated.</li>
-                            <li>Log configuration file &lt;INSTALLDIR&gt;\log-conf.xml is populated and configured to log to the default directory &lt;INSTALLDIR&gt;\james\logs</li>
-                            <li>Finally is James started and ready to be used.</li>
-                         </ul>
-                         <p>
-The supported properties in the configuration file /etc/mailsigner/mailsigner.conf (or %SYSTEMROOT%\mailsigner.conf for windows) are:
-                        </p>
-                        <table>
-                            <tr><th>Property Name</th><th>Description</th><th>Example value</th><th>Where to manually reconfigure </th></tr>
-                            <tr><td>mailsigner.smtpport</td><td>Port that the mailserver should listen on.</td><td>25</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner-config.xml</td></tr>
-                            <tr><td>mailsigner.primarydns</td><td>The IP address of the primary DNS server.</td><td>10.0.0.1</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner-config.xml</td></tr>
-                            <tr><td>mailsigner.secondarydns</td><td>The IP address of the secondary DNS server.</td><td>10.0.0.2</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
-                            <tr><td>mailsigner.postmaster</td><td>The email address of the main administrator.</td><td>mailadmin@someorg.org</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
-                            <tr><td>mailsigner.smtpauth</td><td>Indicates if SMTP AUTH should be used. Svalues are : 'true' which means required but announced only to not authorized addresses, 'false' and 'announce' which acts  like true, but always announce AUTH capability to clients.</td><td>true, false, announce</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
-                            <tr><td>mailsigner.gatewayhost</td><td>If emails should be forwarded to another SMTP server in the organisation should this and the 'mailsigner.gatewayport' setting be used. Enter the hostname of the other SMTP server.</td><td>smtp1.someorg.org</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
-                            <tr><td>mailsigner.gatewayport</td><td>The port of the SMTP server to forward messages to.</td><td>25</td><td>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
-                            <tr><td>mailsigner.tlskeystorepath</td><td> This setting indicates that the mailsigner should use SMTPS and point to a TLS JKS keystore.</td><td>/etc/mailsigner/tlskeystore.jks</td><td>Unix:<br/>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
-                            <tr><td>mailsigner.tlskeystorepwd</td><td>The password to unlock the TLS keystore</td><td>foo123</td><td>/etc/mailsigner/mailsigner_config.xml<br/>Windows: %Installdir%\mailsigner_config.xml</td></tr>
-                            <tr><td>syslog.hostname</td><td>Host name of the Syslog server. This setting also indicates that syslog should be used.</td><td>loghost.someorg.org</td><td>Unix:<br/>/etc/mailsigner/log-conf.xml<br/>Windows: %Installdir%\log-conf.xml</td></tr>
-                        </table>
-                    </subsubsection>
-
-                    <subsubsection name="MailSigner Management">
-                        <p>
-This package installs the CLI interface on the management station (which can be the same as the SMTP server). The following steps are performed during installation:
-                        </p>
-                        <p>
-	Unix:
-                        </p>
-                        <ul>
-                            <li>By default is everything is unpacked in /opt/mailsigner-&lt;version&gt; .</li>
-                            <li>If a /etc/mailsigner/mailsigner.conf file exists it's read and used during installation.</li>
-                            <li>The user and group 'mailsigner' is created</li>
-                            <li>A link from /opt/mailsigner-&lt;version&gt;/bin/mailsigner.sh is done to /usr/local/bin.</li>
-                        </ul>
-                        <p>
-
-	Windows:
-                        </p>
-                        <ul>
-                            <li>Everything is unpacked in C:\Program\MailSigner\MailSigner-&lt;version&gt; by default.</li>
-                            <li>If a c:\WINDOWS\mailsigner.conf file exists it's read and used during installation.</li>
-                        </ul>
-                        <p>
-The mailsigner.conf supports the following settings but it is important that 'hostname.masternode' and 'hostname.allnodes' must point to the same host:
-                        </p>
-                        <table>
-                            <tr><th>Property Name</th><th>Description</th><th>Example value</th><th>Where to manually reconfigure </th></tr>
-                            <tr><td>hostname.masternode</td><td>The hostname of the mailsigner to manage.</td><td>mailsigner.someorg.org</td><td>Unix:<br/>/etc/mailsigner/mailsigner.conf<br/>Windows: %Installdir%\mailsigner.conf</td></tr>
-                            <tr><td>hostname.allnodes</td><td>The hostname of the mailsigner to manage and should have the same value as master node. MailSigner doesn't support clustering</td><td>mailsigner.someorg.org</td><td>Unix:<br/>/etc/mailsigner/mailsigner .conf<br/>Windows: %Installdir%\mailsigner .conf</td></tr>
-                        </table>
-                    </subsubsection>
                 </subsection>
 
                 <subsection name="Generating Installation Packages">
@@ -3780,7 +3413,7 @@ The mailsigner.conf supports the following settings but it is important that 'ho
 Before generating a installation package must Bitrock InstallBuilder be installed on a Linux workstation. Then set the build mode in signserver_build.properties and go to src/install/bitrock. If a SignServer package should be generated must the environment variable JBOSS_PREP point the a prepared JBoss installation that will be included in the package.
                     </p>
                     <p>
-Then execute the script './buildsignserverpkgs.sh &lt;version&gt;' to start the generation process. The packages will be generated in BitRocks default output directory. For MailSigner use the script 'buildmailsignerpkgs.sh'.
+Then execute the script './buildsignserverpkgs.sh &lt;version&gt;' to start the generation process. The packages will be generated in BitRocks default output directory.
                     </p>
                 </subsection>
             </section>
@@ -3789,7 +3422,6 @@ Then execute the script './buildsignserverpkgs.sh &lt;version&gt;' to start the 
                 <ul>
                     <li>Java  (<a href="http://java.sun.com">http://java.sun.com</a>)</li>
                     <li>JBoss  (<a href="http://www.jboss.org">http://www.jboss.org</a>)</li>
-                    <li>Apache James mail server  (<a href="http://james.apache.org">http://james.apache.org</a>)</li>
                     <li>Apache Ant (<a href="http://ant.apache.org">http://ant.apache.org</a>)</li>
                     <li>Bouncycastle (<a href="http://www.bouncycastle.org">http://www.bouncycastle.org</a>)</li>
                     <li>RFC3161, Time-Stamp Protocol (TSP) (<a href="http://www.ietf.org">http://www.ietf.org</a>)</li>

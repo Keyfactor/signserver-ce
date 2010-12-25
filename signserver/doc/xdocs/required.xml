@@ -15,7 +15,7 @@
     Build tool used to build SignServer. Version 1.7.1 and up should work.
     </p>
 </subsection>
-<subsection name="JBoss, (Not MailSigner builds)">
+<subsection name="JBoss">
     <p>
     <a href="http://www.jboss.org/">JBoss web site</a>
     </p>    

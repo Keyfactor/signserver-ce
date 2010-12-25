@@ -140,7 +140,9 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- =================================================================== -->
     <target name="signserver:compile" depends="signserver-common"
                 unless="buildMailSigner" >
-        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
+        <javac destdir="${build}" debug="on" includeantruntime="no" 
+            encoding="iso8859-1"
+            target="${server.java.target}" source="${server.java.target}">
             <classpath refid="server.compile.classpath" />
             <src path="${src.java}" />
             <src path="${signserverejb.src.java}" />
@@ -174,18 +176,8 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	        	
             <fileset dir="." includes="signserver_server.properties"/>
             <fileset dir="${build}">
-                <exclude name="org/signserver/cli/**" />
                 <exclude name="org/signserver/client/**" />
-                <exclude name="org/signserver/common/MailSigner*"/>
-   	        	  <!--
-	          	  <exclude name="org/signserver/module/**" />
-	          	  -->
-                <exclude  name="org/signserver/protocol/validationservice/ws/**" />
-<!--                  <exclude name="org/signserver/server/genericws/**" />-->
-                <exclude  name="org/signserver/protocol/ws/**" />
                 <exclude name="org/signserver/mailsigner/**" />
-<!--                          <exclude name="org/signserver/module/wsra/**" unless="module.wsra.enabled.condition" />-->
-                <exclude name="org/signserver/module/wsra/**" />
             </fileset>
         </jar>
     </target>
@@ -201,26 +193,22 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	        	
             <fileset dir="." includes="signserver_server.properties"/>
             <fileset dir="${build}">
-                <exclude name="org/signserver/cli/**" />
                 <exclude name="org/signserver/client/**" />
-                <exclude name="org/signserver/common/MailSigner*"/>
-                <exclude name="net/sourceforge/scuba/**" />
-                <exclude name="org/jmrtd/**" />
-                <exclude name="org/signserver/module/**" />
-                <exclude  name="org/signserver/protocol/validationservice/ws/**" />
-                <exclude name="org/signserver/server/genericws/**" />
-                <exclude  name="org/signserver/protocol/ws/**" />
                 <exclude name="org/signserver/mailsigner/**" />
             </fileset>
         </jar>
     </target>
 	    
-    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules" unless="buildMailSigner">
+    <target name="signserver-ejb.jar" depends="timeStampTestClient, 
+        PDFPerformanceTestTool,
+        signserver:compile,
+        signserver-ejb-jar-including-modules,
+        signserver-ejb-jar-excluding-modules" unless="buildMailSigner">
     </target>
 	       
 	
     <!-- =================================================================== -->
-    <!-- Build web part                                                                                                                             -->
+    <!-- Build web part                                                      -->
     <!-- =================================================================== -->
     <target name="web.war" depends="signserver:compile" unless="buildMailSigner">
         <war destfile="${webwar}" webxml="${webwebxml}">
@@ -230,62 +218,14 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 
 
     <!-- =================================================================== -->
-    <!-- Build health check part                                                                                                                             -->
+    <!-- Build health check part                                             -->
     <!-- =================================================================== -->
     <target name="healthcheck.war" depends="signserver:compile" unless="buildMailSigner">
         <war destfile="${healthcheckwar}" webxml="${healthcheckwebxml}">
             <fileset dir="${healthcheck.src}" excludes="WEB-INF/web.xml" />
         </war>
     </target>
-	            	
-	        		
-    <!-- =================================================================== -->
-    <!-- Build WebService interface part                                                                                                                             -->
-    <!-- =================================================================== -->
-    <path id="jaxws.classpath">
-        <fileset dir="lib/jaxws">
-            <include name="**/*.jar"/>
-        </fileset>
-        <pathelement location="${java.home}/../lib/tools.jar"/>
 
-                <!-- WS Tools in JBoss -->
-        <pathelement location="${appserver.home}/client/jaxws-tools.jar"/>
-
-                <!-- WS Tools in GlassFish -->
-        <pathelement location="${appserver.home}/lib/webservices-tools.jar"/>
-
-        <pathelement location="${build}"/>
-        <path refid="signserver.compile.classpath" />
-    </path>
-		
-		
-    <target name="ws.common.init" unless="buildMailSigner">
-        <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen" >
-            <classpath refid="jaxws.classpath"/>
-        </taskdef>
-		
-        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
-            <classpath refid="jaxws.classpath"/>
-        </taskdef>
-    </target>
-		
-    <target name="ws.init" depends="init,  ws.common.init" if="signserverws.conditionenabled" unless="buildMailSigner">
-        <mkdir dir="${tmp}/jaxws/gen-classes/server"/>
-        <mkdir dir="${tmp}/jaxws/gen-classes/client"/>
-    </target>
-	
-    <target depends="ws.init" name="ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
-        <wsgen  fork="true" sei="org.signserver.protocol.ws.server.SignServerWS"
-	       	     genwsdl="true" destdir="${tmp}/jaxws/gen-classes/server"
-	            debug="true" xendorsed="true">
-	       	  
-            <classpath>
-                <path refid="jaxws.classpath" />
-                <pathelement location="src" />
-            </classpath>
-
-        </wsgen>
-    </target>
 
     <!-- SignServerWS -->
     <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled" unless="buildMailSigner">
@@ -304,25 +244,19 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <ant antfile="${adminws.dir}/build.xml" target="dist" inheritall="false"/>
         <replace file="${eardd.src}/META-INF/application.xml" token="!--@adminws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-AdminWS.jar&lt;/ejb>&lt;/module>"/>
     </target>
-		
-    <target name="ws.gen.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
-        <wsimport destdir="${tmp}/jaxws/gen-classes/client"
-                wsdl="${tmp}/jaxws/gen-classes/server/SignServerWSService.wsdl">
-        </wsimport>
-    </target>
 
 
     <!-- =================================================================== -->
-    <!-- Build signserver.ear                                                        -->
+    <!-- Build signserver.ear                                                -->
     <!-- =================================================================== -->
     <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, modules" unless="buildMailSigner" >
         <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">
             <fileset dir="${eardd.src}">
                 <exclude name="META-INF/application.xml" />
             </fileset>
-	            	 <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
-	                 subdirectories though so we must flatten the structure. zipfileset is a good was of flattening the structure, so 
-	                 all jar files is directly in lib directory in the ear file -->
+             <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
+             subdirectories though so we must flatten the structure. zipfileset is a good was of flattening the structure, so
+             all jar files is directly in lib directory in the ear file -->
             <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,commons-lang-2.4.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar,commons-logging.jar,commons-collections-3.2.jar" prefix="lib"/>
             <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
             <zipfileset dir="lib/ext/ejb" includes="hibernate-entitymanager.jar" prefix="lib"/>
@@ -332,7 +266,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
             <zipfileset dir="lib/module/odfsigner" includes="*.jar" prefix="lib"/>
             <zipfileset dir="lib/module/ooxmlsigner" includes="*.jar" prefix="lib"/>
             <zipfileset dir="lib/module/wsra" includes="dom4j.jar,antlr.jar,cglib.jar" prefix="lib"/>
-	            <!-- <zipfileset dir="lib/module/tsa/${client.java.target}" includes="bctsp-jdk.jar" prefix="lib"/> -->
             <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
             <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>
             <zipfileset dir="lib/jaxws/" includes="*.jar" prefix="lib" >
@@ -343,18 +276,17 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 <include name="*.war" />
             </fileset>
 
-                    <!-- Include SignServerWS -->
+            <!-- Include SignServerWS -->
             <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"/>
 
-                    <!-- Include ValidationWS -->
+            <!-- Include ValidationWS -->
             <zipfileset dir="${validationws.dir}/dist" includes="*.jar"/>
 
-                    <!-- Include AdminWS -->
+            <!-- Include AdminWS -->
             <zipfileset dir="${adminws.dir}/dist" includes="*.jar"/>
 
-                    <!-- Modules can be placed in dist-server/lib to be included in ear -->
+            <!-- Modules can be placed in dist-server/lib to be included in ear -->
             <zipfileset dir="${server.dist.dir}/lib" includes="*.jar" prefix="lib"/>
-
         </ear>
     </target>
     

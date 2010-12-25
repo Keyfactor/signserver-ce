@@ -52,11 +52,11 @@ import org.signserver.test.mock.WorkerSessionMock;
  * @author Markus Kilås
  * @version $Id$
  */
-public class MRTDSODSignerTest extends TestCase {
+public class MRTDSODSignerUnitTest extends TestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
-            MRTDSODSignerTest.class.getName());
+            MRTDSODSignerUnitTest.class.getName());
 
     private static final String AUTHTYPE = "AUTHTYPE";
     private static final String CRYPTOTOKEN_CLASSNAME
@@ -81,7 +81,7 @@ public class MRTDSODSignerTest extends TestCase {
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
     
-    public MRTDSODSignerTest() {
+    public MRTDSODSignerUnitTest() {
         SignServerUtil.installBCProvider();
     }
 

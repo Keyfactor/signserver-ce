@@ -1,8 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.test.mock;
 
 import java.math.BigInteger;
@@ -30,15 +37,13 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.module.mrtdsodsigner.MRTDSODSigner;
 import org.signserver.server.IProcessable;
-import org.signserver.server.IWorkerConfigDataService;
 
 /**
  *
- * @author markus
+ * @author Markus Kilås
+ * $version $Id$
  */
 public class WorkerSessionMock implements IWorkerSession.ILocal,
         IWorkerSession.IRemote {

@@ -1,4 +1,16 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ======================================================================= -->
+<!--                                                                         -->
+<!--  SignServer: The OpenSource Automated Signing Server                    -->
+<!--                                                                         -->
+<!--  This software is free software; you can redistribute it and/or         -->
+<!--  modify it under the terms of the GNU Lesser General Public             -->
+<!--  License as published by the Free Software Foundation; either           -->
+<!--  version 2.1 of the License, or any later version.                      -->
+<!--                                                                         -->
+<!--  See terms of license at gnu.org.                                       -->
+<!--                                                                         -->
+<!-- ======================================================================= -->
 <project name="signserver_specific" basedir=".">
 	   
     <import file="./build.xml"/>
@@ -10,163 +22,137 @@
     <property name="eardd.src" value="${preprocessed}/deploy/ear" />
     <property name="caear" value="${server.dist.dir}/${app.name}.ear" />
 	
-       <property name="timeStampClientBuild" value="${bin}/timeStampClient"/>
-       <property name="timeStampClientDir" value="${client.dist.dir}/timestampclient"/>
-       <property name="timeStampClientJar" value="${timeStampClientDir}/timeStampClient.jar"/>
-       <property name="signserverws.dir" value="./modules/SignServer-ejb-SignServerWS"/>
-       <property name="signserverws-ejb.jar" value="${signserverws.dir}/dist/SignServer-ejb-SignServerWS.jar"/>
-       <property name="validationws.dir" value="./modules/SignServer-ejb-ValidationWS"/>
-       <property name="validationws-ejb.jar" value="${validationws.dir}/dist/SignServer-ejb-ValidationWS.jar"/>
-       <property name="adminws.dir" value="./modules/SignServer-ejb-AdminWS"/>
-       <property name="adminws-ejb.jar" value="${adminws.dir}/dist/SignServer-ejb-AdminWS.jar"/>
-       <property name="admingui.dir" value="./modules/SignServer-AdminGUI"/>
-       <property name="admingui.dist.dir" value="${admingui.dir}/dist"/>
-       <property name="admingui.build.dir" value="${admingui.dir}/build"/>
-       <property name="renewal.dir" value="./modules/SignServer-Module-Renewal"/>
-       <property name="renewal.jar" value="${renewal.dir}/dist/SignServer-Module-Renewal.jar"/>
-       <property name="renewal.mar" value="${renewal.dir}/dist/renewal.mar"/>
-       <property name="xmlsigner.dir" value="./modules/SignServer-Module-XMLSigner"/>
-       <property name="xmlsigner.jar" value="${xmlsigner.dir}/dist/SignServer-Module-XMLSigner.jar"/>
-       <property name="xmlsigner.mar" value="${xmlsigner.dir}/dist/xmlsigner.mar"/>
+    <property name="timeStampClientBuild" value="${bin}/timeStampClient"/>
+    <property name="timeStampClientDir" value="${client.dist.dir}/timestampclient"/>
+    <property name="timeStampClientJar" value="${timeStampClientDir}/timeStampClient.jar"/>
+    <property name="signserverws.dir" value="./modules/SignServer-ejb-SignServerWS"/>
+    <property name="signserverws-ejb.jar" value="${signserverws.dir}/dist/SignServer-ejb-SignServerWS.jar"/>
+    <property name="validationws.dir" value="./modules/SignServer-ejb-ValidationWS"/>
+    <property name="validationws-ejb.jar" value="${validationws.dir}/dist/SignServer-ejb-ValidationWS.jar"/>
+    <property name="adminws.dir" value="./modules/SignServer-ejb-AdminWS"/>
+    <property name="adminws-ejb.jar" value="${adminws.dir}/dist/SignServer-ejb-AdminWS.jar"/>
+    <property name="admingui.dir" value="./modules/SignServer-AdminGUI"/>
+    <property name="admingui.dist.dir" value="${admingui.dir}/dist"/>
+    <property name="admingui.build.dir" value="${admingui.dir}/build"/>
+    <property name="renewal.dir" value="./modules/SignServer-Module-Renewal"/>
+    <property name="renewal.jar" value="${renewal.dir}/dist/SignServer-Module-Renewal.jar"/>
+    <property name="renewal.mar" value="${renewal.dir}/dist/renewal.mar"/>
+    <property name="xmlsigner.dir" value="./modules/SignServer-Module-XMLSigner"/>
+    <property name="xmlsigner.jar" value="${xmlsigner.dir}/dist/SignServer-Module-XMLSigner.jar"/>
+    <property name="xmlsigner.mar" value="${xmlsigner.dir}/dist/xmlsigner.mar"/>
 
-        <property name="admincli.dir" location="./modules/SignServer-AdminCLI"/>
-        <property name="signservercommon.dir" location="./modules/SignServer-Common"/>
-        <property name="signserverejb.dir" location="./modules/SignServer-ejb"/>
-        <property name="wsra.dir" value="./modules/SignServer-Module-WSRA"/>
+    <property name="admincli.dir" location="./modules/SignServer-AdminCLI"/>
+    <property name="signservercommon.dir" location="./modules/SignServer-Common"/>
+    <property name="signserverejb.dir" location="./modules/SignServer-ejb"/>
+    <property name="wsra.dir" value="./modules/SignServer-Module-WSRA"/>
 
-       <property name="testsystem.dir" value="./modules/SignServer-Test-System"/>
-       <property name="testsignserverws.dir" value="./modules/SignServer-Test-SignServerWS"/>
-       <property name="testvalidationws.dir" value="./modules/SignServer-Test-ValidationWS"/>
-       <property name="testadminws.dir" value="./modules/SignServer-Test-AdminWS"/>
-       <property name="clientvalidationcli.dir" value="./modules/SignServer-Client-ValidationCLI"/>
-       <property name="clientsignserverws.dir" value="./modules/SignServer-Client-SignServerWS"/>
-       <property name="clientsigningandvalidationapi.dir" value="./modules/SignServer-Client-SigningAndValidationAPI"/>
+    <property name="testsystem.dir" value="./modules/SignServer-Test-System"/>
+    <property name="testsignserverws.dir" value="./modules/SignServer-Test-SignServerWS"/>
+    <property name="testvalidationws.dir" value="./modules/SignServer-Test-ValidationWS"/>
+    <property name="testadminws.dir" value="./modules/SignServer-Test-AdminWS"/>
+    <property name="clientvalidationcli.dir" value="./modules/SignServer-Client-ValidationCLI"/>
+    <property name="clientsignserverws.dir" value="./modules/SignServer-Client-SignServerWS"/>
+    <property name="clientsigningandvalidationapi.dir" value="./modules/SignServer-Client-SigningAndValidationAPI"/>
 
-	   <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
-	   <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
-	   <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
-	   <property name="signingAndValidationBuild" value="${bin}/signingandvalidationapi"/>
-       <property name="signingAndValidationDir" value="${client.dist.dir}/signingandvalidationapi"/>
-       <property name="signingAndValidationJar" value="${signingAndValidationDir}/signingandvalidationapi.jar"/>
+    <property name="server.primeCard.dist" value="${primeCard.home}/dist-${server.java.target}-${ejbca.target}"/>
+    <property name="server.primeCard.catoken" value="${primeCard.home}/caTokenClasses-${server.java.target}-${ejbca.target}"/>
+    <property name="client.primeCard.dist" value="${primeCard.home}/dist-${client.java.target}-${ejbca.target}"/>
+    <property name="signingAndValidationBuild" value="${bin}/signingandvalidationapi"/>
+    <property name="signingAndValidationDir" value="${client.dist.dir}/signingandvalidationapi"/>
+    <property name="signingAndValidationJar" value="${signingAndValidationDir}/signingandvalidationapi.jar"/>
 
-	   <property name="performanceTestToolBuild" value="${bin}/performanceTestTool"/>
-	   <property name="performanceTestToolJar" value="${client.dist.dir}/performanceTestTool.jar"/>
+    <property name="performanceTestToolBuild" value="${bin}/performanceTestTool"/>
+    <property name="performanceTestToolJar" value="${client.dist.dir}/performanceTestTool.jar"/>
 	
-	   <property name="genServerCertJar" value="genservercert.jar"/>
-	   <property name="genServerCertBin" value="genservercert.sh"/>
-       <property name="setDBTypeJar" value="setdbtype.jar"/>
+    <property name="genServerCertJar" value="genservercert.jar"/>
+    <property name="genServerCertBin" value="genservercert.sh"/>
+    <property name="setDBTypeJar" value="setdbtype.jar"/>
 
-           <property name="web.src" value="./modules/SignServer-war/web/pub" />
-           <property name="webwebxml" value="${web.src}/WEB-INF/web.xml"/>
-	   <property name="webwar" value="${server.dist.dir}/web.war" />
+    <property name="web.src" value="./modules/SignServer-war/web/pub" />
+    <property name="webwebxml" value="${web.src}/WEB-INF/web.xml"/>
+    <property name="webwar" value="${server.dist.dir}/web.war" />
 		
-	   <property name="healthcheck.src" value="./modules/SignServer-war/web/healthcheck" />
-           <property name="healthcheckwebxml" value="${preprocessed}/web/healthcheck/WEB-INF/web.xml"/>
-	   <property name="healthcheckwar" value="${server.dist.dir}/healthcheck.war" />
+    <property name="healthcheck.src" value="./modules/SignServer-war/web/healthcheck" />
+    <property name="healthcheckwebxml" value="${preprocessed}/web/healthcheck/WEB-INF/web.xml"/>
+    <property name="healthcheckwar" value="${server.dist.dir}/healthcheck.war" />
 
-	   <property name="healthcheck.authorizedips" value="127.0.0.1" />
-	   <property name="healthcheck.minimumfreememory" value="1" />
-	   <property name="healthcheck.checkdbstring" value="Select count(*) from signerconfigdata" />
+    <property name="healthcheck.authorizedips" value="127.0.0.1" />
+    <property name="healthcheck.minimumfreememory" value="1" />
+    <property name="healthcheck.checkdbstring" value="Select count(*) from signerconfigdata" />
 	
-	   <property name="signserverws.enabled" value="true" />
-           <property name="signserverwswebxml" value="${preprocessed}/jaxws/web.xml"/>
-	   <property name="genericws.enabled" value="true" />
-	   <property name="validationws.enabled" value="false" />
-           <property name="validationwswebxml" value="${preprocessed}/validationws/web.xml"/>
-           <property name="adminws.enabled" value="true"/>
-	   <property name="timestampclient.enabled" value="true" />
-	   <property name="validationclient.enabled" value="true" />
-	   <property name="pdfperformancetest.enabled" value="false" />
-	   <property name="signingandvalidationapi.enabled" value="true" />
-	   <property name="useclusterclassloader" value="true" />
-	   <property name="clusterclassloader.useclassversions" value="true" />
-	   <property name="clusterclassloader.requiresignature" value="false" />
+    <property name="signserverws.enabled" value="true" />
+    <property name="signserverwswebxml" value="${preprocessed}/jaxws/web.xml"/>
+    <property name="genericws.enabled" value="true" />
+    <property name="validationws.enabled" value="false" />
+    <property name="validationwswebxml" value="${preprocessed}/validationws/web.xml"/>
+    <property name="adminws.enabled" value="true"/>
+    <property name="timestampclient.enabled" value="true" />
+    <property name="validationclient.enabled" value="true" />
+    <property name="pdfperformancetest.enabled" value="false" />
+    <property name="signingandvalidationapi.enabled" value="true" />
+    <property name="useclusterclassloader" value="true" />
+    <property name="clusterclassloader.useclassversions" value="true" />
+    <property name="clusterclassloader.requiresignature" value="false" />
 
-	   <path id="signserver.compile.classpath">
-	        <path refid="signserver.ext.classpath" />
-                <fileset dir="dist-server/lib" includes="*.jar"/>
-	        <fileset dir="lib" includes="*.jar" />
-	   	    <fileset dir="lib/quartz" includes="*.jar" />
-	    	<fileset dir="lib/${server.java.target}" includes="*.jar" />
+    <path id="signserver.compile.classpath">
+        <path refid="signserver.ext.classpath" />
+        <fileset dir="dist-server/lib" includes="*.jar"/>
+        <fileset dir="lib" includes="*.jar" />
+        <fileset dir="lib/quartz" includes="*.jar" />
+        <fileset dir="lib/${server.java.target}" includes="*.jar" />
 	    
-            <fileset dir="lib/module/tsa/${client.java.target}" includes="*.jar" />   
-	        <fileset dir="lib/module/pdfsigner/itext" includes="*.jar"/>
-	        <fileset dir="lib/module/odfsigner" includes="*.jar"/>
-	        <fileset dir="lib/module/ooxmlsigner" includes="*.jar"/>
-	   	    <fileset dir="lib/jaxws" includes="*.jar" />	 
-	     	<fileset dir="lib/asm" includes="*.jar" />
-    	    <fileset dir="lib/ext/james" includes="james-2.3.1.jar" />
-	   	    <fileset dir="lib/ext/ejb" includes="hib*" /> 
-	   	    <fileset dir="${ant.home}/lib" includes="ant.jar" />
-	        <path refid="j2ee.classpath" />
+        <fileset dir="lib/module/tsa/${client.java.target}" includes="*.jar" />
+        <fileset dir="lib/module/pdfsigner/itext" includes="*.jar"/>
+        <fileset dir="lib/module/odfsigner" includes="*.jar"/>
+        <fileset dir="lib/module/ooxmlsigner" includes="*.jar"/>
+        <fileset dir="lib/jaxws" includes="*.jar" />
+        <fileset dir="lib/asm" includes="*.jar" />
+        <fileset dir="lib/ext/james" includes="james-2.3.1.jar" />
+        <fileset dir="lib/ext/ejb" includes="hib*" />
+        <fileset dir="${ant.home}/lib" includes="ant.jar" />
+        <path refid="j2ee.classpath" />
 	        
-            <path location="tmp/jaxws/gen-classes/client" />
-            <path location="tmp/validationws/gen-classes/client" />
-	    </path>
+        <path location="tmp/jaxws/gen-classes/client" />
+        <path location="tmp/validationws/gen-classes/client" />
+    </path>
 
-	    <path id="server.compile.classpath">
-	        <path refid="signserver.compile.classpath" />
-	    </path>
+    <path id="server.compile.classpath">
+        <path refid="signserver.compile.classpath" />
+    </path>
 		
-		
-	    <path id="client.compile.classpath">
-	        <fileset dir="${client.primeCard.dist}" includes="*.jar" />  	
-	        <path refid="signserver.compile.classpath" />
-	    </path>
+    <path id="client.compile.classpath">
+        <fileset dir="${client.primeCard.dist}" includes="*.jar" />
+        <path refid="signserver.compile.classpath" />
+    </path>
 	
-        <path id="signserver.ext.classpath">
-          <fileset dir="lib/ext" includes="*.jar" />
-        </path>
+    <path id="signserver.ext.classpath">
+        <fileset dir="lib/ext" includes="*.jar" />
+    </path>
         
-	    <path id="j2ee.classpath">
-	        <fileset dir="${appserver.home}">
+    <path id="j2ee.classpath">
+        <fileset dir="${appserver.home}">
 	        	<!-- jboss -->
-	            <include name="client/jbossall-client.jar" />
-	            <include name="client/jboss-j2ee.jar" />
-                    <include name="client/jboss-javaee.jar" />
-	            <include name="client/ejb3-persistence.jar" />
-	            <include name="client/jboss-ejb3x.jar" />
+            <include name="client/jbossall-client.jar" />
+            <include name="client/jboss-j2ee.jar" />
+            <include name="client/jboss-javaee.jar" />
+            <include name="client/ejb3-persistence.jar" />
+            <include name="client/jboss-ejb3x.jar" />
 	        	<!-- glassfish -->
-	            <include name="lib/javaee.jar"/>
-	            <include name="lib/appserv-rt.jar"/>
+            <include name="lib/javaee.jar"/>
+            <include name="lib/appserv-rt.jar"/>
 	        	<!-- weblogic -->
-	            <include name="server/lib/weblogic.jar"/>
+            <include name="server/lib/weblogic.jar"/>
 	        	<!-- oracle -->
-	            <include name="j2ee/home/oc4jclient.jar"/>
+            <include name="j2ee/home/oc4jclient.jar"/>
 	        	<!-- websphere -->
-	            <include name="runtimes/com.ibm.*.jar"/>
-	        </fileset>
-	    </path>
+            <include name="runtimes/com.ibm.*.jar"/>
+        </fileset>
+    </path>
 
-	   <!-- those are the default values used within JBoss for easy startup -->
-	    <property name="web.contentencoding" value="ISO-8859-1" />
-	    <property name="datasource.jndi-name" value="SignServerDS" />
-	    <property name="datasource.jndi-name-prefix" value="java:/" />
-	    <property name="database.name" value="hsqldb" />
-	    <property name="database.url" value="jdbc:hsqldb:$${jboss.server.data.dir}$${/}hypersonic$${/}SignServerLocalDB" />
-	    <property name="database.driver" value="org.hsqldb.jdbcDriver" />
-	    <property name="database.username" value="sa" />
-	    <property name="database.password" value="" />
-	    <property name="httpserver.pubhttp" value="8080" />
-	    <property name="httpserver.pubhttps" value="8442" />
-	    <property name="httpserver.privhttps" value="8443" />
-        <property name="httpsserver.bindaddress.pubhttp" value="0.0.0.0" />
-        <property name="httpsserver.bindaddress.pubhttps" value="0.0.0.0" />
-        <property name="httpsserver.bindaddress.privhttps" value="0.0.0.0" />
-	    <property name="httpsserver.password" value="serverpwd" />
-	    <property name="httpsserver.keystore" value="p12/tomcat.jks" />
-	    <property name="truststore.keystore" value="p12/truststore.jks" />
-	    <property name="web.contentencoding" value="ISO-8859-1" />
-	    <property name="deploy.ssh.user" value="jboss" />
-	    <property name="deploy.ssh.keyfilepath" value="/home/jboss/.ssh/id_rsa" />
-	    <property name="deploy.ssh.knownhostsfile" value="/home/jboss/.ssh/known_hosts" />
-	    <property name="deploy.ssh.appsrvhome" value="/home/jboss/jboss" />
-	    <property name="deploy.tomcat.version" value="tomcat55" />
-	    
-	    
-	
+
+    <!-- Init -->
     <target name="signserver.init"  unless="buildMailSigner">
-    	<antcall target="j2ee:check"/>
+        <antcall target="j2ee:check"/>
         <echo>
 ---------- CONFIGURATION PROPERTIES ----------
 build.mode                          = ${build.mode}
@@ -212,451 +198,449 @@ module.mrtdsodsigner.include        = ${module.mrtdsodsigner.include}
 module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
 module.mrtdsigner.include           = ${module.mrtdsigner.include}
 module.wsra.enabled                 = ${module.wsra.enabled}
-      </echo>
+        </echo>
     </target>
 	
+
+    <!-- Conditionals -->
+    <condition property="signserverws.conditionenabled">
+        <istrue value="${signserverws.enabled}"/>
+    </condition>
+    <condition property="genericws.conditionenabled">
+        <istrue value="${genericws.enabled}"/>
+    </condition>
+    <condition property="validationws.conditionenabled">
+        <istrue value="${validationws.enabled}"/>
+    </condition>
+    <condition property="adminws.conditionenabled">
+        <istrue value="${adminws.enabled}"/>
+    </condition>
+    <condition property="adminws.enabledconditionenabled">
+        <istrue value="${adminws.enabled}"/>
+    </condition>
+    <condition property="includejaxws">
+        <or>
+            <istrue value="${signserverws.enabled}"/>
+            <istrue value="${genericws.enabled}"/>
+            <istrue value="${validationws.enabled}"/>
+        </or>
+    </condition>
+    <condition property="timestampclient.conditionenabled">
+        <istrue value="${timestampclient.enabled}"/>
+    </condition>
+    <condition property="validationclient.conditionenabled">
+        <istrue value="${validationclient.enabled}"/>
+    </condition>
+    <condition property="pdfperformancetest.conditionenabled">
+        <istrue value="${pdfperformancetest.enabled}"/>
+    </condition>
+    <condition property="signingandvalidationapi.conditionenabled">
+        <istrue value="${signingandvalidationapi.enabled}"/>
+    </condition>
+    <condition property="clusterclassloader.conditionenabled">
+        <istrue value="${useclusterclassloader}"/>
+    </condition>
+
+    <!-- Enable, include module: Renewal -->
+    <condition property="module.renewal.enabled.condition">
+        <istrue value="${module.renewal.enabled}"/>
+    </condition>
+    <condition property="module.renewal.include.condition">
+        <and>
+            <istrue value="${module.renewal.enabled}"/>
+            <or>
+                <istrue value="${module.renewal.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: XMLSigner -->
+    <condition property="module.xmlsigner.enabled.condition">
+        <istrue value="${module.xmlsigner.enabled}"/>
+    </condition>
+    <condition property="module.xmlsigner.include.condition">
+        <and>
+            <istrue value="${module.xmlsigner.enabled}"/>
+            <or>
+                <istrue value="${module.xmlsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: PDFSigner -->
+    <condition property="module.pdfsigner.enabled.condition">
+        <istrue value="${module.pdfsigner.enabled}"/>
+    </condition>
+    <condition property="module.pdfsigner.include.condition">
+        <and>
+            <istrue value="${module.pdfsigner.enabled}"/>
+            <or>
+                <istrue value="${module.pdfsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: XMLValidator -->
+    <condition property="module.xmlvalidator.enabled.condition">
+        <istrue value="${module.xmlvalidator.enabled}"/>
+    </condition>
+    <condition property="module.xmlvalidator.include.condition">
+        <and>
+            <istrue value="${module.xmlvalidator.enabled}"/>
+            <or>
+                <istrue value="${module.xmlvalidator.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: MRTDSigner -->
+    <condition property="module.mrtdsigner.enabled.condition">
+        <istrue value="${module.mrtdsigner.enabled}"/>
+    </condition>
+    <condition property="module.mrtdsigner.include.condition">
+        <and>
+            <istrue value="${module.mrtdsigner.enabled}"/>
+            <or>
+                <istrue value="${module.mrtdsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: ODFSigner -->
+    <condition property="module.odfsigner.enabled.condition">
+        <istrue value="${module.odfsigner.enabled}"/>
+    </condition>
+    <condition property="module.odfsigner.include.condition">
+        <and>
+            <istrue value="${module.odfsigner.enabled}"/>
+            <or>
+                <istrue value="${module.odfsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: OOXMLSigner -->
+    <condition property="module.ooxmlsigner.enabled.condition">
+        <istrue value="${module.ooxmlsigner.enabled}"/>
+    </condition>
+    <condition property="module.ooxmlsigner.include.condition">
+        <and>
+            <istrue value="${module.ooxmlsigner.enabled}"/>
+            <or>
+                <istrue value="${module.ooxmlsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: TSA -->
+    <condition property="module.tsa.enabled.condition">
+        <istrue value="${module.tsa.enabled}"/>
+    </condition>
+    <condition property="module.tsa.include.condition">
+        <and>
+            <istrue value="${module.tsa.enabled}"/>
+            <or>
+                <istrue value="${module.tsa.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: CMSSigner -->
+    <condition property="module.cmssigner.enabled.condition">
+        <istrue value="${module.cmssigner.enabled}"/>
+    </condition>
+    <condition property="module.cmssigner.include.condition">
+        <and>
+            <istrue value="${module.cmssigner.enabled}"/>
+            <or>
+                <istrue value="${module.cmssigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Include module: Log4j -->
+    <condition property="module.log4j.enabled.condition">
+        <or>
+            <istrue value="${module.log4j.enabled}"/>
+            <istrue value="${module.log4j.include}"/>
+        </or>
+    </condition>
+    <condition property="module.log4j.include.condition">
+        <istrue value="${module.log4j.include}"/>
+    </condition>
+
+    <!-- Enable, include module: MRTDSODSigner -->
+    <condition property="module.mrtdsodsigner.enabled.condition">
+        <istrue value="${module.mrtdsodsigner.enabled}"/>
+    </condition>
+    <condition property="module.mrtdsodsigner.include.condition">
+        <and>
+            <istrue value="${module.mrtdsodsigner.enabled}"/>
+            <or>
+                <istrue value="${module.mrtdsodsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable module: WSRA -->
+    <condition property="module.wsra.enabled.condition">
+        <and>
+            <istrue value="${genericws.enabled}"/>
+            <istrue value="${module.wsra.enabled}"/>
+        </and>
+    </condition>
+
+    <!-- =================================================================== -->
+    <!-- Clean SignServer related ALL                                        -->
+    <!-- =================================================================== -->
+    <target name="signserver:clean" unless="buildMailSigner">
+    </target>
 	
-	
-		<condition property="signserverws.conditionenabled">
-			<istrue value="${signserverws.enabled}"/>
-		</condition>
-		<condition property="genericws.conditionenabled">
-			<istrue value="${genericws.enabled}"/>
-		</condition>
-	    <condition property="validationws.conditionenabled">
-	        <istrue value="${validationws.enabled}"/>
-	    </condition>
-            <condition property="adminws.conditionenabled">
-	        <istrue value="${adminws.enabled}"/>
-	    </condition>
-            <condition property="adminws.enabledconditionenabled">
-                <istrue value="${adminws.enabled}"/>
-            </condition>
-	    <condition property="includejaxws">
-              <or>
-                <istrue value="${signserverws.enabled}"/>
-                <istrue value="${genericws.enabled}"/>
-	          <istrue value="${validationws.enabled}"/>
-              </or>
-	    </condition>
-	    <condition property="timestampclient.conditionenabled">
-	        <istrue value="${timestampclient.enabled}"/>
-	    </condition>
-	    <condition property="validationclient.conditionenabled">
-	        <istrue value="${validationclient.enabled}"/>
-	    </condition>
-	    <condition property="pdfperformancetest.conditionenabled">
-	        <istrue value="${pdfperformancetest.enabled}"/>
-	    </condition>
-		<condition property="signingandvalidationapi.conditionenabled">
-	        <istrue value="${signingandvalidationapi.enabled}"/>
-	    </condition>
-            <condition property="clusterclassloader.conditionenabled">
-                <istrue value="${useclusterclassloader}"/>
-            </condition>
+    <!-- =================================================================== -->
+    <!-- Build SignServer                                                    -->
+    <!-- =================================================================== -->
+    <target name="signserver" depends="signserver.ear"  unless="buildMailSigner">
+    </target>
 
-            <!-- Enable, include module: Renewal -->
-            <condition property="module.renewal.enabled.condition">
-                <istrue value="${module.renewal.enabled}"/>
-            </condition>
-            <condition property="module.renewal.include.condition">
-                <and>
-                    <istrue value="${module.renewal.enabled}"/>
-                    <or>
-                        <istrue value="${module.renewal.include}"/>
-                        <istrue value="${includemodulesinbuild}"/>
-                    </or>
-                </and>
-            </condition>
-
-            <!-- Enable, include module: XMLSigner -->
-            <condition property="module.xmlsigner.enabled.condition">
-                <istrue value="${module.xmlsigner.enabled}"/>
-            </condition>
-            <condition property="module.xmlsigner.include.condition">
-                <and>
-                    <istrue value="${module.xmlsigner.enabled}"/>
-                    <or>
-                        <istrue value="${module.xmlsigner.include}"/>
-                        <istrue value="${includemodulesinbuild}"/>
-                    </or>
-                </and>
-            </condition>
-
-            <!-- Enable, include module: PDFSigner -->
-            <condition property="module.pdfsigner.enabled.condition">
-                <istrue value="${module.pdfsigner.enabled}"/>
-            </condition>
-            <condition property="module.pdfsigner.include.condition">
-                <and>
-                    <istrue value="${module.pdfsigner.enabled}"/>
-                    <or>
-                        <istrue value="${module.pdfsigner.include}"/>
-                        <istrue value="${includemodulesinbuild}"/>
-                    </or>
-                </and>
-            </condition>
-
-            <!-- Enable, include module: XMLValidator -->
-            <condition property="module.xmlvalidator.enabled.condition">
-                <istrue value="${module.xmlvalidator.enabled}"/>
-            </condition>
-            <condition property="module.xmlvalidator.include.condition">
-                <and>
-                    <istrue value="${module.xmlvalidator.enabled}"/>
-                    <or>
-                        <istrue value="${module.xmlvalidator.include}"/>
-                        <istrue value="${includemodulesinbuild}"/>
-                    </or>
-                </and>
-            </condition>
-
-            <!-- Enable, include module: MRTDSigner -->
-            <condition property="module.mrtdsigner.enabled.condition">
-                <istrue value="${module.mrtdsigner.enabled}"/>
-            </condition>
-            <condition property="module.mrtdsigner.include.condition">
-                <and>
-                    <istrue value="${module.mrtdsigner.enabled}"/>
-                    <or>
-                        <istrue value="${module.mrtdsigner.include}"/>
-                        <istrue value="${includemodulesinbuild}"/>
-                    </or>
-                </and>
-            </condition>
-
-            <!-- Enable, include module: ODFSigner -->
-            <condition property="module.odfsigner.enabled.condition">
-                <istrue value="${module.odfsigner.enabled}"/>
-            </condition>
-            <condition property="module.odfsigner.include.condition">
-                <and>
-                    <istrue value="${module.odfsigner.enabled}"/>
-                    <or>
-                        <istrue value="${module.odfsigner.include}"/>
-                        <istrue value="${includemodulesinbuild}"/>
-                    </or>
-                </and>
-            </condition>
-
-            <!-- Enable, include module: OOXMLSigner -->
-            <condition property="module.ooxmlsigner.enabled.condition">
-                <istrue value="${module.ooxmlsigner.enabled}"/>
-            </condition>
-            <condition property="module.ooxmlsigner.include.condition">
-                <and>
-                    <istrue value="${module.ooxmlsigner.enabled}"/>
-                    <or>
-                        <istrue value="${module.ooxmlsigner.include}"/>
-                        <istrue value="${includemodulesinbuild}"/>
-                    </or>
-                </and>
-            </condition>
-
-            <!-- Enable, include module: TSA -->
-            <condition property="module.tsa.enabled.condition">
-                <istrue value="${module.tsa.enabled}"/>
-            </condition>
-            <condition property="module.tsa.include.condition">
-                <and>
-                    <istrue value="${module.tsa.enabled}"/>
-                    <or>
-                        <istrue value="${module.tsa.include}"/>
-                        <istrue value="${includemodulesinbuild}"/>
-                    </or>
-                </and>
-            </condition>
-
-            <!-- Enable, include module: CMSSigner -->
-            <condition property="module.cmssigner.enabled.condition">
-                <istrue value="${module.cmssigner.enabled}"/>
-            </condition>
-            <condition property="module.cmssigner.include.condition">
-                <and>
-                    <istrue value="${module.cmssigner.enabled}"/>
-                    <or>
-                        <istrue value="${module.cmssigner.include}"/>
-                        <istrue value="${includemodulesinbuild}"/>
-                    </or>
-                </and>
-            </condition>
-
-            <!-- Include module: Log4j -->
-            <condition property="module.log4j.enabled.condition">
-                <or>
-                    <istrue value="${module.log4j.enabled}"/>
-                    <istrue value="${module.log4j.include}"/>
-                </or>
-            </condition>
-            <condition property="module.log4j.include.condition">
-                <istrue value="${module.log4j.include}"/>
-            </condition>
-
-            <!-- Enable, include module: MRTDSODSigner -->
-            <condition property="module.mrtdsodsigner.enabled.condition">
-                <istrue value="${module.mrtdsodsigner.enabled}"/>
-            </condition>
-            <condition property="module.mrtdsodsigner.include.condition">
-                <and>
-                    <istrue value="${module.mrtdsodsigner.enabled}"/>
-                    <or>
-                        <istrue value="${module.mrtdsodsigner.include}"/>
-                        <istrue value="${includemodulesinbuild}"/>
-                    </or>
-                </and>
-            </condition>
-
-            <!-- Enable module: WSRA -->
-            <condition property="module.wsra.enabled.condition">
-                <and>
-                    <istrue value="${genericws.enabled}"/>
-                    <istrue value="${module.wsra.enabled}"/>
-                </and>
-            </condition>
-
-	    <!-- =================================================================== -->
-	    <!-- Clean SignServer related ALL                                                           -->
-	    <!-- =================================================================== -->
-	    <target name="signserver:clean" unless="buildMailSigner">
-	    </target>
-	
-        <!-- =================================================================== -->
-        <!-- Build SignServer                                                        -->
-        <!-- =================================================================== -->	
-        <target name="signserver" depends="signserver.ear"  unless="buildMailSigner">
-	    </target>
-	
-	
-	
-	   <!-- =================================================================== -->
-	    <!-- Compile java sources                                                -->
-	    <!-- =================================================================== -->
-	    <target name="signserver:compile" depends="signserver-common"
+    <!-- =================================================================== -->
+    <!-- Compile java sources                                                -->
+    <!-- =================================================================== -->
+    <target name="signserver:compile" depends="signserver-common"
                 unless="buildMailSigner" >
-	        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
-	            <classpath refid="server.compile.classpath" />
-	            <src path="${src.java}" />
-                    <src path="${signserverejb.src.java}" />
-                    <src path="${signserverwar.src.java}" />
-	        	<exclude name="org/signserver/common/MailSigner*"/>
-	        	<exclude name="org/signserver/mailsigner/**"/>
-	        	<exclude name="org/signserver/appserver/**"/>
-	        	<exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>	        	
-	        	<exclude name="org/signserver/protocol/ws/client/**"/>
-	        	<exclude name="org/signserver/client/validationservice/**"/>
-	        	<exclude name="org/signserver/client/PerformanceTest*"/>
-	        	<exclude name="org/signserver/client/api/**"/>
-	        </javac>
-	        <copy todir="${build}">
-                    <fileset dir="${src.java}">
-                        <include name="**/*.properties"/>
-                    </fileset>
-                </copy>
-	    </target>
-	
-	   <!-- =================================================================== -->
-	    <!-- Build signserver ejb part                                           -->
-	    <!-- =================================================================== -->
-	    <target name="signserver-ejb-jar-including-modules" if="includemodulesinbuild">
-	        <echo message="Including modules in main build"/>
-	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
-	        	<metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
-	    	            <include name="entity-mappings.xml"/>
-	    	    </metainf>
+        <javac destdir="${build}" debug="on" includeantruntime="no" encoding="iso8859-1" target="${server.java.target}" source="${server.java.target}">
+            <classpath refid="server.compile.classpath" />
+            <src path="${src.java}" />
+            <src path="${signserverejb.src.java}" />
+            <src path="${signserverwar.src.java}" />
+            <exclude name="org/signserver/common/MailSigner*"/>
+            <exclude name="org/signserver/mailsigner/**"/>
+            <exclude name="org/signserver/appserver/**"/>
+            <exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>
+            <exclude name="org/signserver/protocol/ws/client/**"/>
+            <exclude name="org/signserver/client/validationservice/**"/>
+            <exclude name="org/signserver/client/PerformanceTest*"/>
+            <exclude name="org/signserver/client/api/**"/>
+        </javac>
+        <copy todir="${build}">
+            <fileset dir="${src.java}">
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Build signserver ejb part                                           -->
+    <!-- =================================================================== -->
+    <target name="signserver-ejb-jar-including-modules" if="includemodulesinbuild">
+        <echo message="Including modules in main build"/>
+        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
+            <metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
+                <include name="entity-mappings.xml"/>
+            </metainf>
 	        	
-	        	<fileset dir="." includes="signserver_server.properties"/>
-	            <fileset dir="${build}">
-	          	  <exclude name="org/signserver/cli/**" />
-	          	  <exclude name="org/signserver/client/**" />
-   	        	  <exclude name="org/signserver/common/MailSigner*"/>
+            <fileset dir="." includes="signserver_server.properties"/>
+            <fileset dir="${build}">
+                <exclude name="org/signserver/cli/**" />
+                <exclude name="org/signserver/client/**" />
+                <exclude name="org/signserver/common/MailSigner*"/>
    	        	  <!--
 	          	  <exclude name="org/signserver/module/**" />
 	          	  -->
-	          	  <exclude  name="org/signserver/protocol/validationservice/ws/**" />
+                <exclude  name="org/signserver/protocol/validationservice/ws/**" />
 <!--                  <exclude name="org/signserver/server/genericws/**" />-->
-	              <exclude  name="org/signserver/protocol/ws/**" />
-		          <exclude name="org/signserver/mailsigner/**" />
+                <exclude  name="org/signserver/protocol/ws/**" />
+                <exclude name="org/signserver/mailsigner/**" />
 <!--                          <exclude name="org/signserver/module/wsra/**" unless="module.wsra.enabled.condition" />-->
-                            <exclude name="org/signserver/module/wsra/**" />
-	        	</fileset>
-	        </jar>
-	    </target>
-	    <target name="signserver-ejb-jar-excluding-modules" unless="includemodulesinbuild">
-	        <echo message="Not including modules in main build"/>
-	        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
-	        	<metainf dir="${preprocessed}/appserver/${appserver.type}">
-	        			<include name="persistence.xml"/>
-	        	</metainf>
-	        	<metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
-	    	            <include name="entity-mappings.xml"/>
-	    	    </metainf>
+                <exclude name="org/signserver/module/wsra/**" />
+            </fileset>
+        </jar>
+    </target>
+    <target name="signserver-ejb-jar-excluding-modules" unless="includemodulesinbuild">
+        <echo message="Not including modules in main build"/>
+        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
+            <metainf dir="${preprocessed}/appserver/${appserver.type}">
+                <include name="persistence.xml"/>
+            </metainf>
+            <metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
+                <include name="entity-mappings.xml"/>
+            </metainf>
 	        	
-	        	<fileset dir="." includes="signserver_server.properties"/>
-	            <fileset dir="${build}">
-	          	  <exclude name="org/signserver/cli/**" />
-	          	  <exclude name="org/signserver/client/**" />
-   	        	  <exclude name="org/signserver/common/MailSigner*"/>
-	          	  <exclude name="net/sourceforge/scuba/**" />
-	          	  <exclude name="org/jmrtd/**" />
-	          	  <exclude name="org/signserver/module/**" />
-	          	  <exclude  name="org/signserver/protocol/validationservice/ws/**" />
-                  <exclude name="org/signserver/server/genericws/**" />
-	              <exclude  name="org/signserver/protocol/ws/**" />
-		          <exclude name="org/signserver/mailsigner/**" />
-	        	</fileset>
-	        </jar>
-	    </target>
+            <fileset dir="." includes="signserver_server.properties"/>
+            <fileset dir="${build}">
+                <exclude name="org/signserver/cli/**" />
+                <exclude name="org/signserver/client/**" />
+                <exclude name="org/signserver/common/MailSigner*"/>
+                <exclude name="net/sourceforge/scuba/**" />
+                <exclude name="org/jmrtd/**" />
+                <exclude name="org/signserver/module/**" />
+                <exclude  name="org/signserver/protocol/validationservice/ws/**" />
+                <exclude name="org/signserver/server/genericws/**" />
+                <exclude  name="org/signserver/protocol/ws/**" />
+                <exclude name="org/signserver/mailsigner/**" />
+            </fileset>
+        </jar>
+    </target>
 	    
-	    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules" unless="buildMailSigner">
-	    </target>
+    <target name="signserver-ejb.jar" depends="timeStampTestClient, PDFPerformanceTestTool, signserver:compile, signserver-ejb-jar-including-modules, signserver-ejb-jar-excluding-modules" unless="buildMailSigner">
+    </target>
 	       
-
 	
-	    <!-- =================================================================== -->
-	    <!-- Build web part                                                                                                                             -->
-	    <!-- =================================================================== -->
-	    <target name="web.war" depends="signserver:compile" unless="buildMailSigner">
-	        <war destfile="${webwar}" webxml="${webwebxml}">
-	            <fileset dir="${web.src}" excludes="WEB-INF/web.xml" />
-	        </war>
-	    </target>
-		
-	    <!-- =================================================================== -->
-	    <!-- Build health check part                                                                                                                             -->
-	    <!-- =================================================================== -->
-	    <target name="healthcheck.war" depends="signserver:compile" unless="buildMailSigner">
-	        <war destfile="${healthcheckwar}" webxml="${healthcheckwebxml}">
-	            <fileset dir="${healthcheck.src}" excludes="WEB-INF/web.xml" />
+    <!-- =================================================================== -->
+    <!-- Build web part                                                                                                                             -->
+    <!-- =================================================================== -->
+    <target name="web.war" depends="signserver:compile" unless="buildMailSigner">
+        <war destfile="${webwar}" webxml="${webwebxml}">
+            <fileset dir="${web.src}" excludes="WEB-INF/web.xml" />
+        </war>
+    </target>
 
-	        </war>
-	    </target>
+
+    <!-- =================================================================== -->
+    <!-- Build health check part                                                                                                                             -->
+    <!-- =================================================================== -->
+    <target name="healthcheck.war" depends="signserver:compile" unless="buildMailSigner">
+        <war destfile="${healthcheckwar}" webxml="${healthcheckwebxml}">
+            <fileset dir="${healthcheck.src}" excludes="WEB-INF/web.xml" />
+        </war>
+    </target>
 	            	
 	        		
-	   <!-- =================================================================== -->
-	   <!-- Build WebService interface part                                                                                                                             -->
-       <!-- =================================================================== -->
-	   <path id="jaxws.classpath">
-	    	<fileset dir="lib/jaxws">
-	    	  <include name="**/*.jar"/>
-	    	</fileset>
-	    	<pathelement location="${java.home}/../lib/tools.jar"/>
+    <!-- =================================================================== -->
+    <!-- Build WebService interface part                                                                                                                             -->
+    <!-- =================================================================== -->
+    <path id="jaxws.classpath">
+        <fileset dir="lib/jaxws">
+            <include name="**/*.jar"/>
+        </fileset>
+        <pathelement location="${java.home}/../lib/tools.jar"/>
 
                 <!-- WS Tools in JBoss -->
-                <pathelement location="${appserver.home}/client/jaxws-tools.jar"/>
+        <pathelement location="${appserver.home}/client/jaxws-tools.jar"/>
 
                 <!-- WS Tools in GlassFish -->
-                <pathelement location="${appserver.home}/lib/webservices-tools.jar"/>
+        <pathelement location="${appserver.home}/lib/webservices-tools.jar"/>
 
-	    	<pathelement location="${build}"/>
-	    	<path refid="signserver.compile.classpath" />
-	    </path>
+        <pathelement location="${build}"/>
+        <path refid="signserver.compile.classpath" />
+    </path>
 		
 		
-	    <target name="ws.common.init" unless="buildMailSigner">
-		    <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen" >
-		        <classpath refid="jaxws.classpath"/>		    	
-		    </taskdef>
+    <target name="ws.common.init" unless="buildMailSigner">
+        <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen" >
+            <classpath refid="jaxws.classpath"/>
+        </taskdef>
 		
-	        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
-	            <classpath refid="jaxws.classpath"/>
-	        </taskdef>
-	    </target>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath refid="jaxws.classpath"/>
+        </taskdef>
+    </target>
 		
-	    <target name="ws.init" depends="init,  ws.common.init" if="signserverws.conditionenabled" unless="buildMailSigner">
-	    	<mkdir dir="${tmp}/jaxws/gen-classes/server"/>
-	    	<mkdir dir="${tmp}/jaxws/gen-classes/client"/>
-	    </target>
+    <target name="ws.init" depends="init,  ws.common.init" if="signserverws.conditionenabled" unless="buildMailSigner">
+        <mkdir dir="${tmp}/jaxws/gen-classes/server"/>
+        <mkdir dir="${tmp}/jaxws/gen-classes/client"/>
+    </target>
 	
-		<target depends="ws.init" name="ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
-	       <wsgen  fork="true" sei="org.signserver.protocol.ws.server.SignServerWS"
+    <target depends="ws.init" name="ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
+        <wsgen  fork="true" sei="org.signserver.protocol.ws.server.SignServerWS"
 	       	     genwsdl="true" destdir="${tmp}/jaxws/gen-classes/server"
 	            debug="true" xendorsed="true">
 	       	  
-			 <classpath>
-			  <path refid="jaxws.classpath" /> 
-			  <pathelement location="src" /> 
-			 </classpath>
+            <classpath>
+                <path refid="jaxws.classpath" />
+                <pathelement location="src" />
+            </classpath>
 
-			  </wsgen>
-		</target>
+        </wsgen>
+    </target>
 
-            <!-- SignServerWS -->
-	    <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled" unless="buildMailSigner">
-                <ant antfile="${signserverws.dir}/build.xml" target="dist" inheritall="false"/>
-	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@signserverws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-SignServerWS.jar&lt;/ejb>&lt;/module>"/>
-	    </target>
+    <!-- SignServerWS -->
+    <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled" unless="buildMailSigner">
+        <ant antfile="${signserverws.dir}/build.xml" target="dist" inheritall="false"/>
+        <replace file="${eardd.src}/META-INF/application.xml" token="!--@signserverws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-SignServerWS.jar&lt;/ejb>&lt;/module>"/>
+    </target>
 
-            <!-- ValidationWS -->
-	    <target name="validationws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled" unless="buildMailSigner">
-                <ant antfile="${validationws.dir}/build.xml" target="dist" inheritall="false"/>
-	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@validationws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-ValidationWS.jar&lt;/ejb>&lt;/module>"/>
-	    </target>
+    <!-- ValidationWS -->
+    <target name="validationws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled" unless="buildMailSigner">
+        <ant antfile="${validationws.dir}/build.xml" target="dist" inheritall="false"/>
+        <replace file="${eardd.src}/META-INF/application.xml" token="!--@validationws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-ValidationWS.jar&lt;/ejb>&lt;/module>"/>
+    </target>
 
-            <!-- AdminWS -->
-	    <target name="adminws-ejb.jar" depends="signserver-ejb.jar" if="adminws.conditionenabled" unless="buildMailSigner">
-                <ant antfile="${adminws.dir}/build.xml" target="dist" inheritall="false"/>
-	    	<replace file="${eardd.src}/META-INF/application.xml" token="!--@adminws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-AdminWS.jar&lt;/ejb>&lt;/module>"/>
-	    </target>
+    <!-- AdminWS -->
+    <target name="adminws-ejb.jar" depends="signserver-ejb.jar" if="adminws.conditionenabled" unless="buildMailSigner">
+        <ant antfile="${adminws.dir}/build.xml" target="dist" inheritall="false"/>
+        <replace file="${eardd.src}/META-INF/application.xml" token="!--@adminws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-AdminWS.jar&lt;/ejb>&lt;/module>"/>
+    </target>
 		
-	    <target name="ws.gen.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
-	        <wsimport 
-	                destdir="${tmp}/jaxws/gen-classes/client"
-	                wsdl="${tmp}/jaxws/gen-classes/server/SignServerWSService.wsdl" >
-	        </wsimport>
-	    </target>
+    <target name="ws.gen.client" depends="ws.init, ws.gen.server" if="signserverws.conditionenabled" unless="buildMailSigner">
+        <wsimport destdir="${tmp}/jaxws/gen-classes/client"
+                wsdl="${tmp}/jaxws/gen-classes/server/SignServerWSService.wsdl">
+        </wsimport>
+    </target>
 
-	    <!-- =================================================================== -->
-	    <!-- Build signserver.ear                                                        -->
-	    <!-- =================================================================== -->
-	    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, modules" unless="buildMailSigner" >
-	        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">         		
-	            <fileset dir="${eardd.src}">
-	                <exclude name="META-INF/application.xml" />
-	            </fileset>
+
+    <!-- =================================================================== -->
+    <!-- Build signserver.ear                                                        -->
+    <!-- =================================================================== -->
+    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, modules" unless="buildMailSigner" >
+        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">
+            <fileset dir="${eardd.src}">
+                <exclude name="META-INF/application.xml" />
+            </fileset>
 	            	 <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
 	                 subdirectories though so we must flatten the structure. zipfileset is a good was of flattening the structure, so 
 	                 all jar files is directly in lib directory in the ear file -->
-	            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,commons-lang-2.4.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar,commons-logging.jar,commons-collections-3.2.jar" prefix="lib"/>
-	            <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
-                    <zipfileset dir="lib/ext/ejb" includes="hibernate-entitymanager.jar" prefix="lib"/>
-                    <zipfileset dir="lib/ext/ejb" includes="hibernate-annotations.jar" prefix="lib"/>
-                    <zipfileset dir="lib/ext/ejb" includes="hibernate3.jar" prefix="lib"/>
-	            <zipfileset dir="lib/module/pdfsigner/itext" includes="*.jar"  prefix="lib"/>
-	            <zipfileset dir="lib/module/odfsigner" includes="*.jar" prefix="lib"/>
-	            <zipfileset dir="lib/module/ooxmlsigner" includes="*.jar" prefix="lib"/>
-                    <zipfileset dir="lib/module/wsra" includes="dom4j.jar,antlr.jar,cglib.jar" prefix="lib"/>
+            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,commons-lang-2.4.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar,commons-logging.jar,commons-collections-3.2.jar" prefix="lib"/>
+            <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
+            <zipfileset dir="lib/ext/ejb" includes="hibernate-entitymanager.jar" prefix="lib"/>
+            <zipfileset dir="lib/ext/ejb" includes="hibernate-annotations.jar" prefix="lib"/>
+            <zipfileset dir="lib/ext/ejb" includes="hibernate3.jar" prefix="lib"/>
+            <zipfileset dir="lib/module/pdfsigner/itext" includes="*.jar"  prefix="lib"/>
+            <zipfileset dir="lib/module/odfsigner" includes="*.jar" prefix="lib"/>
+            <zipfileset dir="lib/module/ooxmlsigner" includes="*.jar" prefix="lib"/>
+            <zipfileset dir="lib/module/wsra" includes="dom4j.jar,antlr.jar,cglib.jar" prefix="lib"/>
 	            <!-- <zipfileset dir="lib/module/tsa/${client.java.target}" includes="bctsp-jdk.jar" prefix="lib"/> -->
-	            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
-	            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>
-	            <zipfileset dir="lib/jaxws/" includes="*.jar" prefix="lib" >
-                        <include name="*.jar" if="includejaxws" />
-                    </zipfileset>
-	            <fileset dir="${server.dist.dir}">
-	                <include name="*-ejb.jar" />
-	                <include name="*.war" />
-	            </fileset>
+            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
+            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>
+            <zipfileset dir="lib/jaxws/" includes="*.jar" prefix="lib" >
+                <include name="*.jar" if="includejaxws" />
+            </zipfileset>
+            <fileset dir="${server.dist.dir}">
+                <include name="*-ejb.jar" />
+                <include name="*.war" />
+            </fileset>
 
                     <!-- Include SignServerWS -->
-                    <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"/>
+            <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"/>
 
                     <!-- Include ValidationWS -->
-                    <zipfileset dir="${validationws.dir}/dist" includes="*.jar"/>
+            <zipfileset dir="${validationws.dir}/dist" includes="*.jar"/>
 
                     <!-- Include AdminWS -->
-                    <zipfileset dir="${adminws.dir}/dist" includes="*.jar"/>
+            <zipfileset dir="${adminws.dir}/dist" includes="*.jar"/>
 
                     <!-- Modules can be placed in dist-server/lib to be included in ear -->
-                    <zipfileset dir="${server.dist.dir}/lib" includes="*.jar" prefix="lib"/>
+            <zipfileset dir="${server.dist.dir}/lib" includes="*.jar" prefix="lib"/>
 
-			</ear>
-	    </target>
+        </ear>
+    </target>
     
     <!-- ======================================================================= -->
     <!-- Deploy Sign Server ear to JBoss                                               -->
     <!-- ======================================================================= -->
     <target name="deploy" depends="signserver.ear, signserver-cli" unless="buildMailSigner" description="Deploys SignServer">
         <antcall target="j2ee:deploy" />
-	<antcall target="showtime" />
+        <antcall target="showtime" />
     </target>
 
     <target name="test:signserver:pre-run">
@@ -664,10 +648,12 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <echo> Important, in order for all tests to complete must the web service, generic WS and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
         <echo> For Test-SignServerWS to complete the following must be run first:
             bin/signserver.sh setproperties modules/SignServer-Test-SignServerWS/test-configuration.properties
-            bin/signserver.sh reload 7001</echo>
+            bin/signserver.sh reload 7001
+        </echo>
         <echo> For Test-ValidationWS to complete the following must be run first:
             bin/signserver.sh setproperties modules/SignServer-Test-ValidationWS/test-configuration.properties
-            bin/signserver.sh reload 7101</echo>
+            bin/signserver.sh reload 7101
+        </echo>
 
         <delete dir="${test.dir}/reports" />
         <mkdir dir="${test.dir}/reports/html" />
@@ -722,7 +708,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         </junitreport>
     </target>
 
-    <target name="test:signserver:runall" 
+    <target name="test:signserver:runall"
         depends="test:signserver:pre-run, build"
         description="Run the most JUnit testcases" unless="buildMailSigner">
 
@@ -749,9 +735,9 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                     <include name="**/${test.runone}.class" />
                     <exclude name="**/*Continously*" />
                     <exclude name="**/TestRunner*" />
-                	<exclude name="**/db/*" />
-                	<exclude name="**/mailsigner/**" />
-                	<exclude name="**/cli/TestMail**" />
+                    <exclude name="**/db/*" />
+                    <exclude name="**/mailsigner/**" />
+                    <exclude name="**/cli/TestMail**" />
                 </fileset>
             </batchtest>
         </junit>
@@ -761,19 +747,19 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 <include name="TEST-*.xml" />
             </fileset>
             <report format="frames" todir="${test.dir}/reports/html" />
-        </junitreport> 
+        </junitreport>
     </target>
 
     <target name="test:signserver:pdfperformance" description="run performance test locally" unless="buildMailSigner">
         <available file="${performanceTestToolJar}" property="perfTestExists"/>
         <antcall target="test:signserver:initpdfperformance" />
         <antcall target="j2ee:assert-run" />
-      	<property name="performancetest.host" value="http://localhost:8080/signserver/" />
-       	<property name="performancetest.runtime" value="3000" />
-       	<property name="performancetest.threads" value="10" />
-       	<property name="performancetest.intervalsize" value="1" />
-       	<property name="performancetest.statisticsdir" value="${tmp}/statistics/" />
-    	<mkdir dir="${performancetest.statisticsdir}"/>
+        <property name="performancetest.host" value="http://localhost:8080/signserver/" />
+        <property name="performancetest.runtime" value="3000" />
+        <property name="performancetest.threads" value="10" />
+        <property name="performancetest.intervalsize" value="1" />
+        <property name="performancetest.statisticsdir" value="${tmp}/statistics/" />
+        <mkdir dir="${performancetest.statisticsdir}"/>
         <echo>Starting performance tests..</echo>
         <echo>Assuming: </echo>
         <echo> - collected data to be found in ${performancetest.statisticsdir} (set by worker property STATISTICS.CSVFILE.OUTPUTDIR).</echo>
@@ -786,7 +772,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
             <arg line="test ${performancetest.runtime} ${performancetest.threads} ${performancetest.host}" />
         </java>
         <java jar="${performanceTestToolJar}" fork="true">
-        	<arg line="postprocess ${performancetest.statisticsdir} ${performancetest.intervalsize}" />
+            <arg line="postprocess ${performancetest.statisticsdir} ${performancetest.intervalsize}" />
         </java>
     </target>
 
@@ -794,241 +780,241 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <antcall target="build" />
     </target>
 
-   <target name="genservercert.jar" depends="signserver" unless="buildMailSigner">
-    		<jar destfile="${tmp}/${genServerCertJar}" basedir="${build}">
-  	          <manifest>
-  	          	<attribute name="Class-Path" value="bcprov-jdk.jar"/>
-  	            <attribute name="Main-Class" value="org.signserver.cli.genservercert.GenServerCertificate"/>
-  	          </manifest>
-              <include name="org/signserver/cli/genservercert/*.class"/>    	          
-    		</jar>
+    <target name="genservercert.jar" depends="signserver" unless="buildMailSigner">
+        <jar destfile="${tmp}/${genServerCertJar}" basedir="${build}">
+            <manifest>
+                <attribute name="Class-Path" value="bcprov-jdk.jar"/>
+                <attribute name="Main-Class" value="org.signserver.cli.genservercert.GenServerCertificate"/>
+            </manifest>
+            <include name="org/signserver/cli/genservercert/*.class"/>
+        </jar>
    	
     </target>
     <target name="setdbtype.jar" depends="signserver" unless="buildMailSigner">
-    		<jar destfile="${tmp}/${setDBTypeJar}" basedir="${build}">
-  	          <manifest>
-  	          	<attribute name="Class-Path" value=""/>
-  	            <attribute name="Main-Class" value="org.signserver.cli.setdbtype.SetDBType"/>
-  	          </manifest>
-              <include name="org/signserver/cli/setdbtype/*.class"/>    	          
-    		</jar>
+        <jar destfile="${tmp}/${setDBTypeJar}" basedir="${build}">
+            <manifest>
+                <attribute name="Class-Path" value=""/>
+                <attribute name="Main-Class" value="org.signserver.cli.setdbtype.SetDBType"/>
+            </manifest>
+            <include name="org/signserver/cli/setdbtype/*.class"/>
+        </jar>
    	
     </target>
 
- 	<target name="signserver-pkgdist" depends="signserver-pkgdist-server, signserver-pkgdist-mgmt,genservercert.jar, setdbtype.jar" unless="buildMailSigner">
-	</target>
+    <target name="signserver-pkgdist" depends="signserver-pkgdist-server, signserver-pkgdist-mgmt,genservercert.jar, setdbtype.jar" unless="buildMailSigner">
+    </target>
     		
-	<target name="signserver-pkgdist-server" depends="genservercert.jar, setdbtype.jar" unless="buildMailSigner">
-	  <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
-	  	<isset property="${env.DESTDIR}"/>
-	  </condition>
+    <target name="signserver-pkgdist-server" depends="genservercert.jar, setdbtype.jar" unless="buildMailSigner">
+        <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
+            <isset property="${env.DESTDIR}"/>
+        </condition>
 		
-	   <mkdir dir="${pkgdist.destdir}"/>
+        <mkdir dir="${pkgdist.destdir}"/>
 
-	   <property name="pkgdist.deploydir" value="${pkgdist.destdir}/usr/share/signserver-server/deploy"/>
-	   <mkdir dir="${pkgdist.deploydir}"/>
-	   <copy todir="${pkgdist.deploydir}" >
-		  <fileset dir="dist-server">
-		  	<include name="signserver.ear"/>
-		  </fileset>
-		  <fileset dir="src/appserver/jboss">
-		  	<include name="signserver-ds.xml"/>
-		  	<include name="signserver-mysql-cluster-ds.xml"/>
-		  </fileset>
-	   </copy>
+        <property name="pkgdist.deploydir" value="${pkgdist.destdir}/usr/share/signserver-server/deploy"/>
+        <mkdir dir="${pkgdist.deploydir}"/>
+        <copy todir="${pkgdist.deploydir}" >
+            <fileset dir="dist-server">
+                <include name="signserver.ear"/>
+            </fileset>
+            <fileset dir="src/appserver/jboss">
+                <include name="signserver-ds.xml"/>
+                <include name="signserver-mysql-cluster-ds.xml"/>
+            </fileset>
+        </copy>
 
-	   <property name="pkgdist.webconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/webconf"/>
-	   <mkdir dir="${pkgdist.webconfdir}"/>	
-	   <copy todir="${pkgdist.webconfdir}" >
-	       <fileset dir="src/install/common">
-			 <include name="tomcat-server*.xml"/>			 
-			</fileset>
-		</copy>	
-	   <property name="pkgdist.dbconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/dbconf"/>
-         <mkdir dir="${pkgdist.dbconfdir}"/> 
-         <copy todir="${pkgdist.dbconfdir}" >
-             <fileset dir="src/deploy/ejb/persistence-mappings">
-               <include name="**/**"/>            
-              </fileset>
-         </copy> 
-	   <property name="pkgdist.logconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/logconf"/>
-	   <mkdir dir="${pkgdist.logconfdir}"/> 
-	   <copy todir="${pkgdist.logconfdir}" >
-	      <fileset dir="src/install/common">
-	         <include name="jboss-log4j*.xml"/>            
-	      </fileset>
-	    </copy>
-	    <property name="pkgdist.gencertdir" value="${pkgdist.destdir}/usr/share/signserver-server/lib"/>
-	    <mkdir dir="${pkgdist.gencertdir}"/>
-	    <copy todir="${pkgdist.gencertdir}" >
-		   <fileset dir="${tmp}">
-		     <include name="${genServerCertJar}"/>			 
-		   </fileset>
-	    </copy>	
-		<copy todir="${pkgdist.gencertdir}" >
-		   <fileset dir="${lib}/1.5">
-		     <include name="bcprov-jdk.jar"/>			 
-		   </fileset>
-	    </copy>	
-	    <property name="pkgdist.setdbtypedir" value="${pkgdist.destdir}/usr/share/signserver-server/lib"/>
-		<mkdir dir="${pkgdist.setdbtypedir}"/>
-		<copy todir="${pkgdist.setdbtypedir}" >
-		   <fileset dir="${tmp}">
-		     <include name="${setDBTypeJar}"/>			 
-		   </fileset>
-	    </copy>	
-	    <property name="pkgdist.initscriptdir" value="${pkgdist.destdir}/usr/share/signserver-server/bin"/>
-	    <mkdir dir="${pkgdist.initscriptdir}"/>
-	    <copy todir="${pkgdist.initscriptdir}" >
-	      <fileset dir="src/install/common">
-	        <include name="signserver*.sh"/>           
-	      </fileset>
-	      <fileset dir="bin">
-		     <include name="genservercert.sh"/>
-		   </fileset>
-	    </copy>		
+        <property name="pkgdist.webconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/webconf"/>
+        <mkdir dir="${pkgdist.webconfdir}"/>
+        <copy todir="${pkgdist.webconfdir}" >
+            <fileset dir="src/install/common">
+                <include name="tomcat-server*.xml"/>
+            </fileset>
+        </copy>
+        <property name="pkgdist.dbconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/dbconf"/>
+        <mkdir dir="${pkgdist.dbconfdir}"/>
+        <copy todir="${pkgdist.dbconfdir}" >
+            <fileset dir="src/deploy/ejb/persistence-mappings">
+                <include name="**/**"/>
+            </fileset>
+        </copy>
+        <property name="pkgdist.logconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/logconf"/>
+        <mkdir dir="${pkgdist.logconfdir}"/>
+        <copy todir="${pkgdist.logconfdir}" >
+            <fileset dir="src/install/common">
+                <include name="jboss-log4j*.xml"/>
+            </fileset>
+        </copy>
+        <property name="pkgdist.gencertdir" value="${pkgdist.destdir}/usr/share/signserver-server/lib"/>
+        <mkdir dir="${pkgdist.gencertdir}"/>
+        <copy todir="${pkgdist.gencertdir}" >
+            <fileset dir="${tmp}">
+                <include name="${genServerCertJar}"/>
+            </fileset>
+        </copy>
+        <copy todir="${pkgdist.gencertdir}" >
+            <fileset dir="${lib}/1.5">
+                <include name="bcprov-jdk.jar"/>
+            </fileset>
+        </copy>
+        <property name="pkgdist.setdbtypedir" value="${pkgdist.destdir}/usr/share/signserver-server/lib"/>
+        <mkdir dir="${pkgdist.setdbtypedir}"/>
+        <copy todir="${pkgdist.setdbtypedir}" >
+            <fileset dir="${tmp}">
+                <include name="${setDBTypeJar}"/>
+            </fileset>
+        </copy>
+        <property name="pkgdist.initscriptdir" value="${pkgdist.destdir}/usr/share/signserver-server/bin"/>
+        <mkdir dir="${pkgdist.initscriptdir}"/>
+        <copy todir="${pkgdist.initscriptdir}" >
+            <fileset dir="src/install/common">
+                <include name="signserver*.sh"/>
+            </fileset>
+            <fileset dir="bin">
+                <include name="genservercert.sh"/>
+            </fileset>
+        </copy>
 
-	 </target>
+    </target>
 	 	
-	 <target name="signserver-pkgdist-mgmt" depends="genservercert.jar, setdbtype.jar" unless="buildMailSigner">
-	    <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
-    	  <isset property="${env.DESTDIR}"/>
-    	</condition>
+    <target name="signserver-pkgdist-mgmt" depends="genservercert.jar, setdbtype.jar" unless="buildMailSigner">
+        <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
+            <isset property="${env.DESTDIR}"/>
+        </condition>
 	
-	    <mkdir dir="${pkgdist.destdir}"/>
+        <mkdir dir="${pkgdist.destdir}"/>
 	 		
-		<property name="pkgdist.bindir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/bin" />
-		<mkdir dir="${pkgdist.bindir}"/>
+        <property name="pkgdist.bindir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/bin" />
+        <mkdir dir="${pkgdist.bindir}"/>
 		
-		<property name="pkgdist.clilibdir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/lib" />
-     	<mkdir dir="${pkgdist.clilibdir}"/>
+        <property name="pkgdist.clilibdir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/lib" />
+        <mkdir dir="${pkgdist.clilibdir}"/>
      		
-		<copy todir="${pkgdist.bindir}">
-		   <fileset dir="bin">
-		     <include name="signserver.sh"/>
-		   	 <include name="signserver.cmd"/>
-		   	 <include name="log4j.properties"/>
-		   </fileset>
-	    </copy>		
-		<copy todir="${pkgdist.clilibdir}">
-		   <fileset dir="${client.dist.dir}">
-		     <include name="signserver-cli.jar"/>		   	 
-		   </fileset>
-		   <fileset dir="${client.dist.dir}/lib">
-			 <include name="jbossall-client.jar"/>		   	 
-		   </fileset>
-		   <fileset dir="${lib}">
-		     <include name="log4j.jar"/>
-			 <include name="cert-cvc.jar"/>
-			 <include name="ejbca-util.jar"/>
-			 <include name="commons-lang-2.4.jar"/>
-		  </fileset>
-	      <fileset dir="${lib}/1.5">
-			 <include name="bcprov-jdk.jar"/>
-			 <include name="bcmail-jdk.jar"/>
-		  </fileset>
-		  <fileset dir="${lib}/asm">
-		     <include name="asm-3.1.jar"/>
-		     <include name="asm-commons-3.1.jar"/>
-		  </fileset>
-		  <fileset dir="${lib}/ext/ejb">
-		     <include name="jboss-ejb3x.jar"/>
-		  </fileset>	
-	      <fileset dir="${lib}/ext/james">
-			 <include name="james-2.3.1.jar"/>
-		  </fileset>
-	    </copy>	
+        <copy todir="${pkgdist.bindir}">
+            <fileset dir="bin">
+                <include name="signserver.sh"/>
+                <include name="signserver.cmd"/>
+                <include name="log4j.properties"/>
+            </fileset>
+        </copy>
+        <copy todir="${pkgdist.clilibdir}">
+            <fileset dir="${client.dist.dir}">
+                <include name="signserver-cli.jar"/>
+            </fileset>
+            <fileset dir="${client.dist.dir}/lib">
+                <include name="jbossall-client.jar"/>
+            </fileset>
+            <fileset dir="${lib}">
+                <include name="log4j.jar"/>
+                <include name="cert-cvc.jar"/>
+                <include name="ejbca-util.jar"/>
+                <include name="commons-lang-2.4.jar"/>
+            </fileset>
+            <fileset dir="${lib}/1.5">
+                <include name="bcprov-jdk.jar"/>
+                <include name="bcmail-jdk.jar"/>
+            </fileset>
+            <fileset dir="${lib}/asm">
+                <include name="asm-3.1.jar"/>
+                <include name="asm-commons-3.1.jar"/>
+            </fileset>
+            <fileset dir="${lib}/ext/ejb">
+                <include name="jboss-ejb3x.jar"/>
+            </fileset>
+            <fileset dir="${lib}/ext/james">
+                <include name="james-2.3.1.jar"/>
+            </fileset>
+        </copy>
 
-		<property name="pkgdist.sampleconfigdir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/sample-configs" />
-		<mkdir dir="${pkgdist.sampleconfigdir}"/>
-	    <copy todir="${pkgdist.sampleconfigdir}">
-	       <fileset dir="sample-configs">
-	         <include name="*.*"/>
-	       </fileset>
-	    </copy> 
+        <property name="pkgdist.sampleconfigdir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/sample-configs" />
+        <mkdir dir="${pkgdist.sampleconfigdir}"/>
+        <copy todir="${pkgdist.sampleconfigdir}">
+            <fileset dir="sample-configs">
+                <include name="*.*"/>
+            </fileset>
+        </copy>
 
-	    <property name="pkgdist.moduledir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/modules" />
+        <property name="pkgdist.moduledir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/modules" />
         <mkdir dir="${pkgdist.moduledir}"/>
         <copy todir="${pkgdist.moduledir}">
-           <fileset dir="dist-server">
-             <include name="*.mar"/>
-           </fileset>
+            <fileset dir="dist-server">
+                <include name="*.mar"/>
+            </fileset>
         </copy>
     </target>
 	
 	 <!--                                                   -->
 	 <!-- Target used to build the Performace-test          -->
 	 <!--                                                   -->
-	  <target name="PDFPerformanceTestTool" depends="signserver:compile" unless="buildMailSigner" if="pdfperformancetest.conditionenabled">
-	    <mkdir dir="${performanceTestToolBuild}"/>
-	    <javac srcdir="${src.java}" destdir="${performanceTestToolBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
-		   <include name="org/signserver/client/PerformanceTest*"/>
+    <target name="PDFPerformanceTestTool" depends="signserver:compile" unless="buildMailSigner" if="pdfperformancetest.conditionenabled">
+        <mkdir dir="${performanceTestToolBuild}"/>
+        <javac srcdir="${src.java}" destdir="${performanceTestToolBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
+            <include name="org/signserver/client/PerformanceTest*"/>
             <classpath path="${lib}/reports/jcommon-1.0.12.jar"/>
             <classpath path="${lib}/reports/jfreechart-1.0.9.jar"/>
-		   <classpath refid="signserver.compile.classpath"/> 
-	    </javac>
+            <classpath refid="signserver.compile.classpath"/>
+        </javac>
 	    
-	    <unzip src="${lib}/module/pdfsigner/itext/itext.jar" dest="${performanceTestToolBuild}/" />
-	    <unzip src="${lib}/reports/jcommon-1.0.12.jar" dest="${performanceTestToolBuild}/" />
-	    <unzip src="${lib}/reports/jfreechart-1.0.9.jar" dest="${performanceTestToolBuild}/" />
+        <unzip src="${lib}/module/pdfsigner/itext/itext.jar" dest="${performanceTestToolBuild}/" />
+        <unzip src="${lib}/reports/jcommon-1.0.12.jar" dest="${performanceTestToolBuild}/" />
+        <unzip src="${lib}/reports/jfreechart-1.0.9.jar" dest="${performanceTestToolBuild}/" />
 
-	    <jar destfile="${performanceTestToolJar}" basedir="${performanceTestToolBuild}">
-	      <manifest>
+        <jar destfile="${performanceTestToolJar}" basedir="${performanceTestToolBuild}">
+            <manifest>
 	        <!--<attribute name="Class-Path" value="itext.jar"/>-->
-	        <attribute name="Main-Class" value="org.signserver.client.PerformanceTestTool"/>
-	      </manifest>
-	    </jar>
-	  </target>
+                <attribute name="Main-Class" value="org.signserver.client.PerformanceTestTool"/>
+            </manifest>
+        </jar>
+    </target>
 
 	
 	 <!--                                                   -->
 	 <!-- Target Used to test the TimeStamp communication     -->
 	 <!--                                                   -->
-	  <target name="timeStampTestClient" depends="signserver:compile" unless="buildMailSigner" if="timestampclient.conditionenabled" >
-	    <mkdir dir="${timeStampClientBuild}"/>
-	    <javac srcdir="${src.java}" destdir="${timeStampClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
-		   <include name="org/signserver/client/TimeStampClient.java"/>
-		   <classpath refid="signserver.compile.classpath"/> 
-	    </javac>
+    <target name="timeStampTestClient" depends="signserver:compile" unless="buildMailSigner" if="timestampclient.conditionenabled" >
+        <mkdir dir="${timeStampClientBuild}"/>
+        <javac srcdir="${src.java}" destdir="${timeStampClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
+            <include name="org/signserver/client/TimeStampClient.java"/>
+            <classpath refid="signserver.compile.classpath"/>
+        </javac>
 
-          <mkdir dir="${timeStampClientDir}/lib"/>
-	    <copy todir="${timeStampClientDir}/lib" >
-              <fileset dir="${lib}">
+        <mkdir dir="${timeStampClientDir}/lib"/>
+        <copy todir="${timeStampClientDir}/lib" >
+            <fileset dir="${lib}">
                 <include name="log4j.jar"/>
-              </fileset>
-	      <fileset dir="${lib}/${client.java.target}">
-	        <include name="bcprov-jdk.jar"/>	        
-	      	<include name="bcmail-jdk.jar"/>
+            </fileset>
+            <fileset dir="${lib}/${client.java.target}">
+                <include name="bcprov-jdk.jar"/>
+                <include name="bcmail-jdk.jar"/>
                 <include name="bctsp-jdk.jar"/>
-	      </fileset>
+            </fileset>
 	      <!--<fileset dir="${lib}/module/tsa/${client.java.target}">
 	        <include name="bctsp-jdk.jar"/>
 	      </fileset>-->
             <fileset dir="${lib}/ext">
-              <include name="commons-cli-1.0.jar"/>
+                <include name="commons-cli-1.0.jar"/>
             </fileset>
-          </copy>
+        </copy>
           
-	    <jar destfile="${timeStampClientJar}" basedir="${timeStampClientBuild}">
-	      <manifest>
-	        <attribute name="Class-Path" value="lib/bctsp-jdk.jar lib/bcprov-jdk.jar lib/bcmail-jdk.jar lib/commons-cli-1.0.jar lib/log4j.jar"/>
-	        <attribute name="Main-Class" value="org.signserver.client.TimeStampClient"/>
-	      </manifest>
+        <jar destfile="${timeStampClientJar}" basedir="${timeStampClientBuild}">
+            <manifest>
+                <attribute name="Class-Path" value="lib/bctsp-jdk.jar lib/bcprov-jdk.jar lib/bcmail-jdk.jar lib/commons-cli-1.0.jar lib/log4j.jar"/>
+                <attribute name="Main-Class" value="org.signserver.client.TimeStampClient"/>
+            </manifest>
 
               <!-- Place log4j.properties in root of jar. Workaround until DSS-125 -->
-              <fileset dir="${src.java}/org/signserver/client">
-                  <include name="log4j.properties" />
-              </fileset>
-	    </jar>
-	  </target>
+            <fileset dir="${src.java}/org/signserver/client">
+                <include name="log4j.properties" />
+            </fileset>
+        </jar>
+    </target>
 	
-        <!--                                                   -->
+     <!--                                                   -->
      <!-- Target Used to perform validations using CLI     -->
      <!--                                                   -->
-      <target name="validationClient" unless="buildMailSigner" if="validationclient.conditionenabled" >
+    <target name="validationClient" unless="buildMailSigner" if="validationclient.conditionenabled" >
         <ant target="test" inheritall="false"
             antfile="${clientvalidationcli.dir}/build.xml"/>
-      </target>
+    </target>
 	
      <!--                                                 -->
      <!--   Target for building signingAndValidationAPI   -->
@@ -1039,20 +1025,20 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     </target>
 
     <target name="martest">
-    <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" classpathref="signserver.test.compile.classpath"/>
-    	   <taskdef name="part" classname="org.signserver.anttasks.PartAntTask" classpathref="signserver.test.compile.classpath"/>
-    	<mar version="3" verbose="true" destfile="${tmp}/test.mar">
-    		<part name="test">
-    	         <fileset dir="${lib}/ext">
-    	           <include name="commons-cli-1.0.jar"/>
-    	         </fileset>
-    		</part>
-            <part name="test2">
-                   <fileset dir="${lib}">
-                     <include name="*.jar"/>
-                   </fileset>
+        <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" classpathref="signserver.test.compile.classpath"/>
+        <taskdef name="part" classname="org.signserver.anttasks.PartAntTask" classpathref="signserver.test.compile.classpath"/>
+        <mar version="3" verbose="true" destfile="${tmp}/test.mar">
+            <part name="test">
+                <fileset dir="${lib}/ext">
+                    <include name="commons-cli-1.0.jar"/>
+                </fileset>
             </part>
-    	</mar>
-	</target>
+            <part name="test2">
+                <fileset dir="${lib}">
+                    <include name="*.jar"/>
+                </fileset>
+            </part>
+        </mar>
+    </target>
 
 </project>	

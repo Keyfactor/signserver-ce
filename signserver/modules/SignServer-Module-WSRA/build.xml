@@ -230,6 +230,10 @@
            </jar>
     </target>
 
+    <target name="-post-clean">
+        <delete dir="${tmp}" failonerror="false"/>
+    </target>
+
     <!--
 
     There exist several targets which are by default empty and which can be 

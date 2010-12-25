@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="signserver" default="default" basedir=".">
 
+    <!-- Load properties before including files -->
+    <property environment="env" />
+    <property name="base" location="."/>
+
     <!-- Import property file containing version numbers and other constants -->
     <property file="src/compile.properties"/>
-
-    <property environment="env" />
+    <property file="src/signserver-project.properties"/>
+    
 
     <!-- Give user a chance to override without editing this file
        (and without typing -D each time it compiles it).
@@ -12,75 +16,40 @@
        net it checks the properties file here. -->
     <property file="${user.home}/${app.name}_build.properties" />
     <property file="${app.name}_build.properties" />
+ 	
+    <!--
+    A little special something to handle backward compatibility with people
+    using JBOSS_HOME. They can switch to APPSRV_HOME now, and both will work.
+    -->
+    <condition property="jboss.home" value="${env.JBOSS_HOME}" >
+      <equals arg1="${appserver.home}" arg2="${appserver.home}"/>
+    </condition>
+    <condition property="appserver.home" value="${env.APPSRV_HOME}" else="${jboss.home}">
+      <contains string="${jboss.home}" substring="JBOSS_HOME"/>
+    </condition>
+    <property name="j2ee.server.home" value="${appserver.home}"/>
 
- 	<!-- default value, will not set value if it is set in ${app.name}_build.properties -->
-    <property name="appserver.type" value="jboss"/>
+    <!-- Lastly import the default properties -->
+    <property file="src/default_build.properties"/>
 
-    <!-- A little special something to handle backward compatibility with 
-	       people using JBOSS_HOME. They can switch to APPSRV_HOME now, and both will work. 
-	  -->        
-	  <condition property="jboss.home" value="${env.JBOSS_HOME}" >
-	      <equals arg1="${appserver.home}" arg2="${appserver.home}"/>
-	  </condition>
-	  <condition property="appserver.home" value="${env.APPSRV_HOME}" else="${jboss.home}">
-	      <contains string="${jboss.home}" substring="JBOSS_HOME"/>
-	  </condition>
-          <property name="j2ee.server.home" value="${appserver.home}"/>
+    <!-- Import for the right appserver -->
+    <import file="bin/${appserver.type}.xml" />  
 	
-	<property name="ant.home" value="${env.ANT_HOME}"/>
-	
-	<import file="bin/${appserver.type}.xml" />
-
-    <property name="signserver.configfile" value="/etc/signserver/signserver.conf" />
-	
-    <!-- set global properties for this build -->
-	<property name="tmp" location="tmp" /><!-- -->
-    <property name="bin" location="./bin" />
-    <property name="build" value="${bin}/classes" />
-    <property name="lib" location="lib" />
-	<property name="preprocessed" value="${tmp}/preprocessed"/>
-
-    <property name="src" value="./src" />
-    <property name="src.java" value="${src}/java" />
-    <property name="signservercommon.src.java" value="./modules/SignServer-Common/src" />
-    <property name="signserverejb.src.java" value="./modules/SignServer-ejb/src/java" />
-    <property name="signserverwar.src.java" value="./modules/SignServer-war/src/java" />
-    <property name="signserveradmincli.src.java" value="./modules/SignServer-AdminCLI/src" />
-    <property name="src.appserver" value="${preprocessed}/appserver/jboss" />
-	<property name="src.external" location="${tmp}/external"/>
-    <property name="resources.dir"  location="./src/resources"/>	
-    <property name="signserverwar.web.pub" value="./modules/SignServer-war/web/pub" />
-    <property name="signserverwar.web.healthcheck" value="./modules/SignServer-war/web/healthcheck" />
-    
-    <property name="server.java.target" value="1.6" />
-    <property name="client.java.target" value="1.6" />
-<!-- the ejbca.target could have any valid value. no SignServer code dependent of ejbca is used -->
-    <property name="ejbca.target" value="3.9"/>
-
-    <property name="test.dir" value="${bin}/junit" />
-    <property name="test.src.dir" location="${src}/test" />
-    <property name="server.dist.dir" value="dist-server" />
-    <property name="client.dist.dir" value="dist-client" />
-	<property name="pkg.dist.dir" location="dist-pkg" />
-    <property name="apidoc" value="./doc/api" />  
-	
-	<property name="custom.commandfactory" value="org.signserver.cli.DefaultSignServerCommandFactory"/>
-
-	<import file="./signserver.xmli" />
-	<import file="./mailsigner.xmli" />
-	<import file="${custom.build.xml}" optional="true"/>
+    <import file="./signserver.xmli" />
+    <import file="./mailsigner.xmli" />
+    <import file="${custom.build.xml}" optional="true"/>
         
-	<property name="signserver.cli.jar" value="dist-client/signserver-cli.jar" />
-	<property name="build.mode" value="SIGNSERVER" />
-	<condition property="buildMailSigner">		
-		  <equals arg1="${build.mode}" arg2="MAILSIGNER" casesensitive="false" trim="true"/>		
-	</condition>
+	
+    <property name="build.mode" value="SIGNSERVER" />
+    <condition property="buildMailSigner">
+          <equals arg1="${build.mode}" arg2="MAILSIGNER" casesensitive="false" trim="true"/>
+    </condition>
 
-    <property name="base" location="."/>
-
+    
     <!-- Properties with paths to all module projects -->
-    <!-- TODO: This should be loaded inside a target! -->
     <property file="modules/modules-project.properties"/>
+
+    <import file="modules/modules.xml"/>
 
     <!-- =================================================================== -->
     <!-- Build ALL                                                           -->
@@ -150,12 +119,11 @@ OS version                          = ${os.version}
         <delete dir="${signingAndValidationBuild}" />
         <delete dir="${wsraadminClientBuild}" />
         <delete dir="${timeStampClientBuild}" />
-        <!-- AdminWS -->
-        <ant antfile="${adminws.dir}/build.xml" target="clean"
-            inheritall="false"/>
-        <!-- AdminGUI -->
-        <ant antfile="${admingui.dir}/build.xml" target="clean"
-            inheritall="false"/>
+
+        <!-- Clean all modules -->
+         <subant target="clean">
+            <fileset dir="modules" includes="SignServer-*/build.xml"/>
+         </subant>
     </target>
 	
 
@@ -318,298 +286,12 @@ OS version                          = ${os.version}
     	<copy file="${appserver.home}/lib/appserv-ext.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
     </target>
 
-
-    <!-- =================================================================== -->
-    <!-- Build modules -->
-    <!-- =================================================================== -->
-
-    <target name="modules" description="Build all enabled modules" depends="
-             -module-pdfsigner-jar, -pdfsigner-jar-included, -pdfsigner-jar-excluded
-            ,-module-cmssigner-jar, -cmssigner-jar-included, -cmssigner-jar-excluded
-            ,-module-tsa-jar, -tsa-jar-included, -tsa-jar-excluded
-            ,-module-odfsigner-jar, -odfsigner-jar-included, -odfsigner-jar-excluded
-            ,-module-ooxmlsigner-jar, -ooxmlsigner-jar-included, -ooxmlsigner-jar-excluded
-            ,-module-mrtdsigner-jar, -mrtdsigner-jar-included, -mrtdsigner-jar-excluded
-            ,-module-xmlvalidator-jar, -xmlvalidator-jar-included, -xmlvalidator-jar-excluded
-            ,-module-xmlsigner-jar, -xmlsigner-jar-included, -xmlsigner-jar-excluded
-            ,-module-mrtdsodsigner-jar, -mrtdsodsigner-jar-included, -mrtdsodsigner-jar-excluded
-            ,-module-wsra-jar
-            ,-module-renewal-jar, -renewal-jar-included, -renewal-jar-excluded
-            ,-log4j-jar-included
-        "/>
-
     <target name="admingui" depends="signserver"
         description="Build the administration GUI">
         <ant antfile="${admingui.dir}/build.xml" target="jar"
             inheritall="false"/>
     </target>
-
-    <!-- Target that can be called to build the renewal module -->
-    <target name="module-renewal"
-        description="Build the module Renewal">
-        <ant antfile="${renewal.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${renewal.mar}" todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-renewal-jar" depends="module-renewal"
-        if="module.renewal.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-renewal-jar-included" if="module.renewal.include.condition"
-        depends="module-renewal">
-        <echo message="Including Renewal module in EAR"/>
-        <copy file="${renewal.jar}" todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-renewal-jar-excluded" 
-        unless="module.renewal.include.condition">
-        <echo message="Not including Renewal module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the XMLSigner module -->
-    <target name="module-xmlsigner"
-        description="Build the module XMLSigner">
-        <ant antfile="${xmlsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${xmlsigner.mar}" todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-xmlsigner-jar" depends="module-xmlsigner"
-        if="module.xmlsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-xmlsigner-jar-included" if="module.xmlsigner.include.condition"
-        depends="module-xmlsigner">
-        <echo message="Including XMLSigner module in EAR"/>
-        <copy file="${xmlsigner.jar}" todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-xmlsigner-jar-excluded"
-        unless="module.xmlsigner.include.condition">
-        <echo message="Not including XMLSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the XMLValidator module -->
-    <target name="module-xmlvalidator"
-        description="Build the module XMLValidator">
-        <ant antfile="${module.xmlvalidator.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.xmlvalidator.dir}/dist/xmlvalidator.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-xmlvalidator-jar" depends="module-xmlvalidator"
-        if="module.xmlvalidator.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-xmlvalidator-jar-included" if="module.xmlvalidator.include.condition"
-        depends="module-xmlvalidator">
-        <echo message="Including XMLValidator module in EAR"/>
-        <copy file="${module.xmlvalidator.dir}/dist/SignServer-Module-XMLValidator.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-xmlvalidator-jar-excluded"
-        unless="module.xmlvalidator.include.condition">
-        <echo message="Not including XMLValidator module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the PDFSigner module -->
-    <target name="module-pdfsigner"
-        description="Build the module PDFSigner">
-        <ant antfile="${module.pdfsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.pdfsigner.dir}/dist/pdfsigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-pdfsigner-jar" depends="module-pdfsigner"
-        if="module.pdfsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-pdfsigner-jar-included" if="module.pdfsigner.include.condition"
-        depends="module-pdfsigner">
-        <echo message="Including PDFSigner module in EAR"/>
-        <copy file="${module.pdfsigner.dir}/dist/SignServer-Module-PDFSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-pdfsigner-jar-excluded"
-        unless="module.pdfsigner.include.condition">
-        <echo message="Not including PDFSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the MRTDSigner module -->
-    <target name="module-mrtdsigner"
-        description="Build the module MRTDSigner">
-        <ant antfile="${module.mrtdsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.mrtdsigner.dir}/dist/mrtdsigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-mrtdsigner-jar" depends="module-mrtdsigner"
-        if="module.mrtdsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-mrtdsigner-jar-included" if="module.mrtdsigner.include.condition"
-        depends="module-mrtdsigner">
-        <echo message="Including MRTDSigner module in EAR"/>
-        <copy file="${module.mrtdsigner.dir}/dist/SignServer-Module-MRTDSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-mrtdsigner-jar-excluded"
-        unless="module.mrtdsigner.include.condition">
-        <echo message="Not including MRTDSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the OOXMLSigner module -->
-    <target name="module-ooxmlsigner"
-        description="Build the module OOXMLSigner">
-        <ant antfile="${module.ooxmlsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.ooxmlsigner.dir}/dist/ooxmlsigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-ooxmlsigner-jar" depends="module-ooxmlsigner"
-        if="module.ooxmlsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-ooxmlsigner-jar-included" if="module.ooxmlsigner.include.condition"
-        depends="module-ooxmlsigner">
-        <echo message="Including OOXMLSigner module in EAR"/>
-        <copy file="${module.ooxmlsigner.dir}/dist/SignServer-Module-OOXMLSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-ooxmlsigner-jar-excluded"
-        unless="module.ooxmlsigner.include.condition">
-        <echo message="Not including OOXMLSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the ODFSigner module -->
-    <target name="module-odfsigner"
-        description="Build the module ODFSigner">
-        <ant antfile="${module.odfsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.odfsigner.dir}/dist/odfsigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-odfsigner-jar" depends="module-odfsigner"
-        if="module.odfsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-odfsigner-jar-included" if="module.odfsigner.include.condition"
-        depends="module-odfsigner">
-        <echo message="Including ODFSigner module in EAR"/>
-        <copy file="${module.odfsigner.dir}/dist/SignServer-Module-ODFSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-odfsigner-jar-excluded"
-        unless="module.odfsigner.include.condition">
-        <echo message="Not including ODFSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the TSA module -->
-    <target name="module-tsa"
-        description="Build the module TSA">
-        <ant antfile="${module.tsa.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.tsa.dir}/dist/tsa.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-tsa-jar" depends="module-tsa"
-        if="module.tsa.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-tsa-jar-included" if="module.tsa.include.condition"
-        depends="module-tsa">
-        <echo message="Including TSA module in EAR"/>
-        <copy file="${module.tsa.dir}/dist/SignServer-Module-TSA.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-tsa-jar-excluded"
-        unless="module.tsa.include.condition">
-        <echo message="Not including TSA module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the CMSSigner module -->
-    <target name="module-cmssigner"
-        description="Build the module CMSSigner">
-        <ant antfile="${module.cmssigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.cmssigner.dir}/dist/cmssigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-cmssigner-jar" depends="module-cmssigner"
-        if="module.cmssigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-cmssigner-jar-included" if="module.cmssigner.include.condition"
-        depends="module-cmssigner">
-        <echo message="Including CMSSigner module in EAR"/>
-        <copy file="${module.cmssigner.dir}/dist/SignServer-Module-CMSSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-cmssigner-jar-excluded"
-        unless="module.cmssigner.include.condition">
-        <echo message="Not including CMSSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the WSRA module -->
-    <target name="module-wsra"
-        description="Build the module WSRA (and DummyWS)">
-        <ant antfile="${wsra.dir}/build.xml" target="jar"
-            inheritall="false"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-wsra-jar" depends="module-wsra"
-        if="module.wsra.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-wsra-jar-included" if="module.wsra.include.condition"
-        depends="module-wsra">
-        <echo message="Including WSRA and DummyWS modules in EAR"/>
-        <copy file="${wsra.dir}/dist/wsra-module.jar" todir="${server.dist.dir}/lib"/>
-        <copy file="${wsra.dir}/dist/genericws-module-common.jar" todir="${server.dist.dir}/lib"/>
-        <copy file="${wsra.dir}/dist/dummyws-module.jar" todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-wsra-jar-excluded"
-        unless="module.wsra.include.condition">
-        <echo message="Not including WSRA module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the XMLSigner module -->
-    <target name="module-mrtdsodsigner"
-        description="Build the module MRTDSODSigner">
-        <ant antfile="${module.mrtdsodsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.mrtdsodsigner.dir}/dist/mrtdsodsigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-mrtdsodsigner-jar" depends="module-mrtdsodsigner"
-        if="module.mrtdsodsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-mrtdsodsigner-jar-included"
-            if="module.mrtdsodsigner.include.condition"
-            depends="module-mrtdsodsigner">
-        <echo message="Including MRTDSODSigner module in EAR"/>
-        <copy file="${module.mrtdsodsigner.dir}/dist/SignServer-Module-MRTDSODSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-mrtdsodsigner-jar-excluded"
-        unless="module.mrtdsodsigner.include.condition">
-        <echo message="Not including MRTDSODSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the Log4j module -->
-    <target name="module-log4j"
-        description="Build the module Log4j">
-        <ant antfile="${module.log4j.dir}/build.xml" target="jar"
-            inheritall="false"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-log4j-jar" depends="module-log4j"
-        if="module.log4j.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-log4j-jar-included"
-            if="module.log4j.include.condition"
-            depends="module-log4j">
-        <echo message="Including Log4j configuration in EAR"/>
-        <copy file="${module.log4j.dir}/dist/SignServer-Module-Log4j.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
+    
 
  
 	   <!-- =================================================================== -->
@@ -639,47 +321,6 @@ OS version                          = ${os.version}
                 </fileset>
         </javadoc>
     </target>
-		
-    <macrodef name="keytool">
-       <attribute name="arg"/>
-         <sequential>
-         <exec executable="keytool">
-            <arg line="@{arg}"/>
-         </exec>
-         </sequential>
-    </macrodef>
-
-    <!--
-        this macro is a specialized copy for deployment descriptors (dd).
-        In the wonderful world of J2EE nothing it is always painful
-        Basically it is copying the appropriate DD for each J2EE server
-        and selected database:
-        @database.name
-    -->
-    <macrodef name="ejb-merge-copy">
-        <attribute name="database" />
-        <attribute name="overwrite" default="false" />
-        <sequential>
-            <!-- Remove old possible files -->
-        	<delete dir="${ejbdd.src}/merge/se"/>
-            <!-- jboss configuration -->
-            <copy todir="${ejbdd.src}/merge" overwrite="@{overwrite}" failonerror="false">
-                <fileset dir="${ejbdd.src}/merge/${database.name}" includes="**/*.xml" />
-            </copy>
-        </sequential>
-    </macrodef>
-
-	<!--
-        this macro is a specialized copy for deployment descriptors (dd).
-        In the wonderful world of J2EE nothing it is always painful
-    -->
-    <macrodef name="ejb-dd-copy">
-        <attribute name="todir" />
-        <attribute name="dir" />
-        <attribute name="overwrite" default="false" />
-        <sequential>
-        </sequential>
-    </macrodef>
 
     <target name="test:compile"  depends="test:mailsigner:compile"/>
  	

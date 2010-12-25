@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
 
-package org.signserver.server.genericws;
+package org.signserver.server.genericws.test;
 
 import java.security.cert.X509Certificate;
 
@@ -23,6 +23,7 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
+import org.signserver.server.genericws.BaseWS;
 
 /**
  * 

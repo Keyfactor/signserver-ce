@@ -1,4 +1,4 @@
-package org.signserver.server.genericws;
+package org.signserver.server.genericws.test;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

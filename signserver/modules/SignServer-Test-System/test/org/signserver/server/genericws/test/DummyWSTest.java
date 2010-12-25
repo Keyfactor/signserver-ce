@@ -1,4 +1,4 @@
-package org.signserver.server.genericws;
+package org.signserver.server.genericws.test;
 
 import java.net.URL;
 

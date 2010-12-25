@@ -1,38 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/java"/>
-	<classpathentry kind="src" path="SignServer-Module-OOXMLSigner/test"/>
-	<classpathentry kind="src" path="SignServer-Module-OOXMLSigner/src/java"/>
-	<classpathentry kind="src" path="SignServer-Module-TSA/test"/>
-	<classpathentry kind="src" path="SignServer-Module-TSA/src/java"/>
-	<classpathentry kind="src" path="SignServer-Module-MRTDSigner/src/java"/>
-	<classpathentry kind="src" path="SignServer-Module-MRTDSigner/test"/>
-	<classpathentry kind="src" path="SignServer-Module-MRTDSODSigner/src/java"/>
-	<classpathentry kind="src" path="SignServer-Module-MRTDSODSigner/test"/>
-	<classpathentry kind="src" path="SignServer-Module-PDFSigner/src/java"/>
-	<classpathentry kind="src" path="SignServer-Module-PDFSigner/test"/>
-	<classpathentry kind="src" path="SignServer-Module-XMLValidator/test"/>
-	<classpathentry kind="src" path="SignServer-Module-XMLValidator/src/java"/>
-	<classpathentry kind="src" path="SignServer-Module-XMLSigner/test"/>
-	<classpathentry kind="src" path="SignServer-Module-XMLSigner/src/java"/>
-	<classpathentry kind="src" path="SignServer-Module-CMSSigner/test"/>
-	<classpathentry kind="src" path="SignServer-Module-CMSSigner/src/java"/>
-	<classpathentry kind="src" path="SignServer-AdminCLI/test"/>
-	<classpathentry kind="src" path="SignServer-AdminCLI/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Client-SigningAndValidationAPI/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Client-SigningAndValidationAPI/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Client-SignServerWS/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Client-SignServerWS/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Client-ValidationCLI/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Client-ValidationCLI/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Client-WSCLI/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Client-WSCLI/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-OOXMLSigner/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-OOXMLSigner/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-TSA/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-TSA/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-MRTDSigner/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-MRTDSigner/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-MRTDSODSigner/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-MRTDSODSigner/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-PDFSigner/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-PDFSigner/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-XMLValidator/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-XMLValidator/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-XMLSigner/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-XMLSigner/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-CMSSigner/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-CMSSigner/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-Renewal/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-Renewal/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-WSRA/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-WSRA/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-AdminCLI/test"/>
+	<classpathentry kind="src" path="modules/SignServer-AdminCLI/src"/>
 	<classpathentry kind="src" path="modules/SignServer-war/src/java"/>
 	<classpathentry kind="src" path="modules/SignServer-war/test"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb/src/java"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb/test"/>
 	<classpathentry kind="src" path="modules/SignServer-Common/test"/>
 	<classpathentry kind="src" path="modules/SignServer-Common/src"/>
-	<classpathentry kind="src" path="modules/SignServer-AdminWS/test"/>
-	<classpathentry kind="src" path="modules/SignServer-AdminWS/src/java"/>
-	<classpathentry kind="src" path="SignServer-AdminGUI/test"/>
-	<classpathentry kind="src" path="SignServer-AdminGUI/src"/>
+	<classpathentry kind="src" path="modules/SignServer-ejb-AdminWS/test"/>
+	<classpathentry kind="src" path="modules/SignServer-ejb-AdminWS/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-ejb-SignServerWS/test"/>
+	<classpathentry kind="src" path="modules/SignServer-ejb-SignServerWS/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-ejb-ValidationWS/test"/>
+	<classpathentry kind="src" path="modules/SignServer-ejb-ValidationWS/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-AdminGUI/test"/>
+	<classpathentry kind="src" path="modules/SignServer-AdminGUI/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Test-AdminWS/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Test-AdminWS/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Test-SignServerWS/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Test-SignServerWS/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Test-System/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Test-System/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Test-ValidationWS/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Test-ValidationWS/test"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/client"/>
-	<classpathentry kind="lib" path="tmp/jaxws/gen-classes/server"/>
-	<classpathentry kind="lib" path="tmp/validationws/gen-classes/client"/>
 	<classpathentry kind="lib" path="lib/ext/ejb/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ejb/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ejb/hibernate-annotations.jar"/>
@@ -95,20 +116,31 @@
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/antlr.jar"/>
 	<classpathentry kind="var" path="ANT_HOME/lib/ant.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry kind="lib" path="tmp/dummyws/gen-classes/client"/>
-	<classpathentry kind="lib" path="tmp/wsra/gen-classes/client"/>
 	<classpathentry kind="lib" path="lib/module/odfsigner/odfdom.jar"/>
 	<classpathentry kind="lib" path="lib/module/pdfsigner/itext/itext.jar"/>
 	<classpathentry kind="lib" path="lib/module/ooxmlsigner/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/module/ooxmlsigner/openxml4j_beta_v538.jar"/>
 	
-	<!-- AdminWS -->
-	<classpathentry kind="lib" path="modules/SignServer-AdminWS/build/generated/jax-wsCache/AdminWebServiceService/"/>
-	
 	<!-- AdminGUI -->
-	<classpathentry kind="lib" path="SignServer-AdminGUI/lib/swing-app-framework/appframework-1.0.3.jar"/>
-	<classpathentry kind="lib" path="SignServer-AdminGUI/lib/swing-app-framework/swing-worker-1.1.jar"/>
-	<classpathentry kind="lib" path="SignServer-AdminGUI/build/generated/jax-wsCache/AdminWebServiceService/"/>
+	<classpathentry kind="lib" path="modules/SignServer-AdminGUI/lib/swing-app-framework/appframework-1.0.3.jar"/>
+	<classpathentry kind="lib" path="modules/SignServer-AdminGUI/lib/swing-app-framework/swing-worker-1.1.jar"/>
+	<classpathentry kind="lib" path="modules/SignServer-AdminGUI/build/generated/jax-wsCache/AdminWebServiceService/"/>
+	
+	<!-- Module Renewal -->
+	<classpathentry kind="lib" path="modules/SignServer-Module-Renewal/build/generated/jax-wsCache/EjbcaWSService/"/>
+	
+	<!-- Client-WS -->
+	<classpathentry kind="lib" path="modules/SignServer-Client-SignServerWS/build/generated/jax-wsCache/SignServerWSService/"/>/
+	
+	<!-- WSRA -->
+	<classpathentry kind="lib" path="modules/SignServer-Module-WSRA/tmp/wsra/gen-classes/client/"/>
+	<classpathentry kind="lib" path="modules/SignServer-Module-WSRA/tmp/dummyws/gen-classes/client/"/>
+	
+	<!-- Tests -->
+	<classpathentry kind="lib" path="modules/SignServer-Test-SignServerWS/build/generated/jax-wsCache/SignServerWSService/"/>
+	<classpathentry kind="lib" path="modules/SignServer-Test-ValidationWS/build/generated/jax-wsCache/ValidationWSService/"/>
+	<classpathentry kind="lib" path="modules/SignServer-Test-AdminWS/build/generated/jax-wsCache/AdminWS/"/>
+	<classpathentry kind="lib" path="modules/SignServer-Test-System/build/generated/jax-wsCache/ValidationWSService/"/>
 	
 	<!-- Out folder -->
 	<classpathentry kind="output" path=".eclipse/out"/>

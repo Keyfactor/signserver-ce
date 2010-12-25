@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
 
-package org.signserver.server.genericws;
+package org.signserver.server.genericws.test;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;

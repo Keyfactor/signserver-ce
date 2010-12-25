@@ -7,6 +7,209 @@
 
     <!--
         ===================
+        Module conditionals
+        ===================
+    -->
+    <condition property="signserverws.conditionenabled">
+        <istrue value="${signserverws.enabled}"/>
+    </condition>
+    <condition property="genericws.conditionenabled">
+        <istrue value="${genericws.enabled}"/>
+    </condition>
+    <condition property="validationws.conditionenabled">
+        <istrue value="${validationws.enabled}"/>
+    </condition>
+    <condition property="adminws.conditionenabled">
+        <istrue value="${adminws.enabled}"/>
+    </condition>
+    <condition property="adminws.enabledconditionenabled">
+        <istrue value="${adminws.enabled}"/>
+    </condition>
+    <condition property="includejaxws">
+        <or>
+            <istrue value="${signserverws.enabled}"/>
+            <istrue value="${genericws.enabled}"/>
+            <istrue value="${validationws.enabled}"/>
+        </or>
+    </condition>
+    <condition property="timestampclient.conditionenabled">
+        <istrue value="${timestampclient.enabled}"/>
+    </condition>
+    <condition property="validationclient.conditionenabled">
+        <istrue value="${validationclient.enabled}"/>
+    </condition>
+    <condition property="pdfperformancetest.conditionenabled">
+        <istrue value="${pdfperformancetest.enabled}"/>
+    </condition>
+    <condition property="signingandvalidationapi.conditionenabled">
+        <istrue value="${signingandvalidationapi.enabled}"/>
+    </condition>
+    <condition property="clusterclassloader.conditionenabled">
+        <istrue value="${useclusterclassloader}"/>
+    </condition>
+
+    <!-- Enable, include module: Renewal -->
+    <condition property="module.renewal.enabled.condition">
+        <istrue value="${module.renewal.enabled}"/>
+    </condition>
+    <condition property="module.renewal.include.condition">
+        <and>
+            <istrue value="${module.renewal.enabled}"/>
+            <or>
+                <istrue value="${module.renewal.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: XMLSigner -->
+    <condition property="module.xmlsigner.enabled.condition">
+        <istrue value="${module.xmlsigner.enabled}"/>
+    </condition>
+    <condition property="module.xmlsigner.include.condition">
+        <and>
+            <istrue value="${module.xmlsigner.enabled}"/>
+            <or>
+                <istrue value="${module.xmlsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: PDFSigner -->
+    <condition property="module.pdfsigner.enabled.condition">
+        <istrue value="${module.pdfsigner.enabled}"/>
+    </condition>
+    <condition property="module.pdfsigner.include.condition">
+        <and>
+            <istrue value="${module.pdfsigner.enabled}"/>
+            <or>
+                <istrue value="${module.pdfsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: XMLValidator -->
+    <condition property="module.xmlvalidator.enabled.condition">
+        <istrue value="${module.xmlvalidator.enabled}"/>
+    </condition>
+    <condition property="module.xmlvalidator.include.condition">
+        <and>
+            <istrue value="${module.xmlvalidator.enabled}"/>
+            <or>
+                <istrue value="${module.xmlvalidator.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: MRTDSigner -->
+    <condition property="module.mrtdsigner.enabled.condition">
+        <istrue value="${module.mrtdsigner.enabled}"/>
+    </condition>
+    <condition property="module.mrtdsigner.include.condition">
+        <and>
+            <istrue value="${module.mrtdsigner.enabled}"/>
+            <or>
+                <istrue value="${module.mrtdsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: ODFSigner -->
+    <condition property="module.odfsigner.enabled.condition">
+        <istrue value="${module.odfsigner.enabled}"/>
+    </condition>
+    <condition property="module.odfsigner.include.condition">
+        <and>
+            <istrue value="${module.odfsigner.enabled}"/>
+            <or>
+                <istrue value="${module.odfsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: OOXMLSigner -->
+    <condition property="module.ooxmlsigner.enabled.condition">
+        <istrue value="${module.ooxmlsigner.enabled}"/>
+    </condition>
+    <condition property="module.ooxmlsigner.include.condition">
+        <and>
+            <istrue value="${module.ooxmlsigner.enabled}"/>
+            <or>
+                <istrue value="${module.ooxmlsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: TSA -->
+    <condition property="module.tsa.enabled.condition">
+        <istrue value="${module.tsa.enabled}"/>
+    </condition>
+    <condition property="module.tsa.include.condition">
+        <and>
+            <istrue value="${module.tsa.enabled}"/>
+            <or>
+                <istrue value="${module.tsa.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable, include module: CMSSigner -->
+    <condition property="module.cmssigner.enabled.condition">
+        <istrue value="${module.cmssigner.enabled}"/>
+    </condition>
+    <condition property="module.cmssigner.include.condition">
+        <and>
+            <istrue value="${module.cmssigner.enabled}"/>
+            <or>
+                <istrue value="${module.cmssigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Include module: Log4j -->
+    <condition property="module.log4j.enabled.condition">
+        <or>
+            <istrue value="${module.log4j.enabled}"/>
+            <istrue value="${module.log4j.include}"/>
+        </or>
+    </condition>
+    <condition property="module.log4j.include.condition">
+        <istrue value="${module.log4j.include}"/>
+    </condition>
+
+    <!-- Enable, include module: MRTDSODSigner -->
+    <condition property="module.mrtdsodsigner.enabled.condition">
+        <istrue value="${module.mrtdsodsigner.enabled}"/>
+    </condition>
+    <condition property="module.mrtdsodsigner.include.condition">
+        <and>
+            <istrue value="${module.mrtdsodsigner.enabled}"/>
+            <or>
+                <istrue value="${module.mrtdsodsigner.include}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </and>
+    </condition>
+
+    <!-- Enable module: WSRA -->
+    <condition property="module.wsra.enabled.condition">
+        <and>
+            <istrue value="${genericws.enabled}"/>
+            <istrue value="${module.wsra.enabled}"/>
+        </and>
+    </condition>
+
+
+    <!--
+        ===================
         Find the application server
         ===================
     -->

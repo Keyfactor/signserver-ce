@@ -10,6 +10,10 @@
 <project name="SignServer-war" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-war.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
+
+    <!-- Setup APPSRV_HOME etc -->
+    <target name="-pre-init" depends="-modules-set-appserver-home"/>
     <!--
 
     There exist several targets which are by default empty and which can be 

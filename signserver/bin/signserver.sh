@@ -36,12 +36,6 @@ ADMINCLI_JAR=SignServer-AdminCLI.jar
 
 
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
-  if [ -f /etc/signserver/signservermgmt.env ]; then
-     . /etc/signserver/signservermgmt.env
-  fi
-  if [ -f /etc/mailsigner/mailsignermgmt.env ]; then
-     . /etc/mailsigner/mailsignermgmt.env
-  fi
   if [ -f /usr/share/signserver/bin/signserver.sh ]; then
      SIGNSRV_HOME=/usr/share/signserver
   fi
@@ -92,10 +86,6 @@ do
     CP="$i":"$CP"
 done
 for i in "${SIGNSRV_HOME}"/lib/ext/ejb/*.jar
-do
-	CP="$i":"$CP"
-done
-for i in "${SIGNSRV_HOME}"/lib/ext/james/*.jar
 do
 	CP="$i":"$CP"
 done

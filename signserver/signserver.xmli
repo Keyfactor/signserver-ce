@@ -72,7 +72,7 @@
 
 
     <!-- Init -->
-    <target name="signserver.init"  unless="buildMailSigner">
+    <target name="signserver.init">
         <antcall target="j2ee:check"/>
         <echo>
 ---------- CONFIGURATION PROPERTIES ----------
@@ -124,22 +124,15 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 
 
     <!-- =================================================================== -->
-    <!-- Clean SignServer related ALL                                        -->
-    <!-- =================================================================== -->
-    <target name="signserver:clean" unless="buildMailSigner">
-    </target>
-	
-    <!-- =================================================================== -->
     <!-- Build SignServer                                                    -->
     <!-- =================================================================== -->
-    <target name="signserver" depends="signserver.ear"  unless="buildMailSigner">
+    <target name="signserver" depends="signserver.ear">
     </target>
 
     <!-- =================================================================== -->
     <!-- Compile java sources                                                -->
     <!-- =================================================================== -->
-    <target name="signserver:compile" depends="signserver-common"
-                unless="buildMailSigner" >
+    <target name="signserver:compile" depends="signserver-common">
         <javac destdir="${build}" debug="on" includeantruntime="no" 
             encoding="iso8859-1"
             target="${server.java.target}" source="${server.java.target}">
@@ -147,8 +140,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
             <src path="${src.java}" />
             <src path="${signserverejb.src.java}" />
             <src path="${signserverwar.src.java}" />
-            <exclude name="org/signserver/common/MailSigner*"/>
-            <exclude name="org/signserver/mailsigner/**"/>
             <exclude name="org/signserver/appserver/**"/>
             <exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>
             <exclude name="org/signserver/protocol/ws/client/**"/>
@@ -177,7 +168,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
             <fileset dir="." includes="signserver_server.properties"/>
             <fileset dir="${build}">
                 <exclude name="org/signserver/client/**" />
-                <exclude name="org/signserver/mailsigner/**" />
             </fileset>
         </jar>
     </target>
@@ -194,7 +184,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
             <fileset dir="." includes="signserver_server.properties"/>
             <fileset dir="${build}">
                 <exclude name="org/signserver/client/**" />
-                <exclude name="org/signserver/mailsigner/**" />
             </fileset>
         </jar>
     </target>
@@ -203,14 +192,14 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         PDFPerformanceTestTool,
         signserver:compile,
         signserver-ejb-jar-including-modules,
-        signserver-ejb-jar-excluding-modules" unless="buildMailSigner">
+        signserver-ejb-jar-excluding-modules">
     </target>
 	       
 	
     <!-- =================================================================== -->
     <!-- Build web part                                                      -->
     <!-- =================================================================== -->
-    <target name="web.war" depends="signserver:compile" unless="buildMailSigner">
+    <target name="web.war" depends="signserver:compile">
         <war destfile="${webwar}" webxml="${webwebxml}">
             <fileset dir="${web.src}" excludes="WEB-INF/web.xml" />
         </war>
@@ -220,7 +209,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- =================================================================== -->
     <!-- Build health check part                                             -->
     <!-- =================================================================== -->
-    <target name="healthcheck.war" depends="signserver:compile" unless="buildMailSigner">
+    <target name="healthcheck.war" depends="signserver:compile">
         <war destfile="${healthcheckwar}" webxml="${healthcheckwebxml}">
             <fileset dir="${healthcheck.src}" excludes="WEB-INF/web.xml" />
         </war>
@@ -228,19 +217,19 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 
 
     <!-- SignServerWS -->
-    <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled" unless="buildMailSigner">
+    <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
         <ant antfile="${signserverws.dir}/build.xml" target="dist" inheritall="false"/>
         <replace file="${eardd.src}/META-INF/application.xml" token="!--@signserverws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-SignServerWS.jar&lt;/ejb>&lt;/module>"/>
     </target>
 
     <!-- ValidationWS -->
-    <target name="validationws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled" unless="buildMailSigner">
+    <target name="validationws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
         <ant antfile="${validationws.dir}/build.xml" target="dist" inheritall="false"/>
         <replace file="${eardd.src}/META-INF/application.xml" token="!--@validationws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-ValidationWS.jar&lt;/ejb>&lt;/module>"/>
     </target>
 
     <!-- AdminWS -->
-    <target name="adminws-ejb.jar" depends="signserver-ejb.jar" if="adminws.conditionenabled" unless="buildMailSigner">
+    <target name="adminws-ejb.jar" depends="signserver-ejb.jar" if="adminws.conditionenabled">
         <ant antfile="${adminws.dir}/build.xml" target="dist" inheritall="false"/>
         <replace file="${eardd.src}/META-INF/application.xml" token="!--@adminws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-AdminWS.jar&lt;/ejb>&lt;/module>"/>
     </target>
@@ -249,7 +238,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- =================================================================== -->
     <!-- Build signserver.ear                                                -->
     <!-- =================================================================== -->
-    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, modules" unless="buildMailSigner" >
+    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, modules">
         <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">
             <fileset dir="${eardd.src}">
                 <exclude name="META-INF/application.xml" />
@@ -293,7 +282,8 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- ======================================================================= -->
     <!-- Deploy Sign Server ear to JBoss                                               -->
     <!-- ======================================================================= -->
-    <target name="deploy" depends="signserver.ear, signserver-cli" unless="buildMailSigner" description="Deploys SignServer">
+    <target name="deploy" depends="signserver.ear, signserver-cli"
+        description="Deploys SignServer">
         <antcall target="j2ee:deploy" />
         <antcall target="showtime" />
     </target>
@@ -315,7 +305,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     </target>
 	
     <target name="test:signserver:run" depends="test:signserver:pre-run, build"
-        description="Run the default JUnit testcases" unless="buildMailSigner">
+        description="Run the default JUnit testcases">
 
         <!-- SignServer-Test-SignServerWS -->
         <ant target="test" inheritall="false"
@@ -365,14 +355,14 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 
     <target name="test:signserver:runall"
         depends="test:signserver:pre-run, build"
-        description="Run the most JUnit testcases" unless="buildMailSigner">
+        description="Run the most JUnit testcases">
 
         <!-- Currently we run all tests by default. When that is no longer the
             case copy and modify the test:signserver:run target to here -->
         <antcall target="test:signserver:run"/>
     </target>
 
-    <target name="test:signserver:runone" description="run a single JUnit-test specified -Dtest.runone=classname" unless="buildMailSigner">
+    <target name="test:signserver:runone" description="run a single JUnit-test specified -Dtest.runone=classname">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
         <fail message="'test.runone' not set. Example -Dtest.runone=TestXMLSigner " unless="test.runone" />
         <echo> Important, in order for all tests to complete must the web service, generic WS and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
@@ -391,7 +381,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                     <exclude name="**/*Continously*" />
                     <exclude name="**/TestRunner*" />
                     <exclude name="**/db/*" />
-                    <exclude name="**/mailsigner/**" />
                     <exclude name="**/cli/TestMail**" />
                 </fileset>
             </batchtest>
@@ -405,7 +394,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         </junitreport>
     </target>
 
-    <target name="test:signserver:pdfperformance" description="run performance test locally" unless="buildMailSigner">
+    <target name="test:signserver:pdfperformance" description="run performance test locally">
         <available file="${performanceTestToolJar}" property="perfTestExists"/>
         <antcall target="test:signserver:initpdfperformance" />
         <antcall target="j2ee:assert-run" />
@@ -435,7 +424,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <antcall target="build" />
     </target>
 
-    <target name="genservercert.jar" depends="signserver" unless="buildMailSigner">
+    <target name="genservercert.jar" depends="signserver">
         <jar destfile="${tmp}/${genServerCertJar}" basedir="${build}">
             <manifest>
                 <attribute name="Class-Path" value="bcprov-jdk.jar"/>
@@ -445,7 +434,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         </jar>
    	
     </target>
-    <target name="setdbtype.jar" depends="signserver" unless="buildMailSigner">
+    <target name="setdbtype.jar" depends="signserver">
         <jar destfile="${tmp}/${setDBTypeJar}" basedir="${build}">
             <manifest>
                 <attribute name="Class-Path" value=""/>
@@ -456,10 +445,10 @@ module.wsra.enabled                 = ${module.wsra.enabled}
    	
     </target>
 
-    <target name="signserver-pkgdist" depends="signserver-pkgdist-server, signserver-pkgdist-mgmt,genservercert.jar, setdbtype.jar" unless="buildMailSigner">
+    <target name="signserver-pkgdist" depends="signserver-pkgdist-server, signserver-pkgdist-mgmt,genservercert.jar, setdbtype.jar">
     </target>
     		
-    <target name="signserver-pkgdist-server" depends="genservercert.jar, setdbtype.jar" unless="buildMailSigner">
+    <target name="signserver-pkgdist-server" depends="genservercert.jar, setdbtype.jar">
         <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
             <isset property="${env.DESTDIR}"/>
         </condition>
@@ -531,7 +520,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 
     </target>
 	 	
-    <target name="signserver-pkgdist-mgmt" depends="genservercert.jar, setdbtype.jar" unless="buildMailSigner">
+    <target name="signserver-pkgdist-mgmt" depends="genservercert.jar, setdbtype.jar">
         <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
             <isset property="${env.DESTDIR}"/>
         </condition>
@@ -600,7 +589,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	 <!--                                                   -->
 	 <!-- Target used to build the Performace-test          -->
 	 <!--                                                   -->
-    <target name="PDFPerformanceTestTool" depends="signserver:compile" unless="buildMailSigner" if="pdfperformancetest.conditionenabled">
+    <target name="PDFPerformanceTestTool" depends="signserver:compile" if="pdfperformancetest.conditionenabled">
         <mkdir dir="${performanceTestToolBuild}"/>
         <javac srcdir="${src.java}" destdir="${performanceTestToolBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
             <include name="org/signserver/client/PerformanceTest*"/>
@@ -625,7 +614,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 	 <!--                                                   -->
 	 <!-- Target Used to test the TimeStamp communication     -->
 	 <!--                                                   -->
-    <target name="timeStampTestClient" depends="signserver:compile" unless="buildMailSigner" if="timestampclient.conditionenabled" >
+    <target name="timeStampTestClient" depends="signserver:compile" if="timestampclient.conditionenabled" >
         <mkdir dir="${timeStampClientBuild}"/>
         <javac srcdir="${src.java}" destdir="${timeStampClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
             <include name="org/signserver/client/TimeStampClient.java"/>
@@ -666,7 +655,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
      <!--                                                   -->
      <!-- Target Used to perform validations using CLI     -->
      <!--                                                   -->
-    <target name="validationClient" unless="buildMailSigner" if="validationclient.conditionenabled" >
+    <target name="validationClient" if="validationclient.conditionenabled" >
         <ant target="test" inheritall="false"
             antfile="${clientvalidationcli.dir}/build.xml"/>
     </target>
@@ -674,7 +663,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
      <!--                                                 -->
      <!--   Target for building signingAndValidationAPI   -->
      <!--                                                 -->
-    <target name="signingAndValidationAPI" depends="signserver-ejb.jar" unless="buildMailSigner" if="signingandvalidationapi.conditionenabled" >
+    <target name="signingAndValidationAPI" depends="signserver-ejb.jar" if="signingandvalidationapi.conditionenabled" >
         <ant target="test" inheritall="false"
             antfile="${clientsigningandvalidationapi.dir}/build.xml"/>
     </target>

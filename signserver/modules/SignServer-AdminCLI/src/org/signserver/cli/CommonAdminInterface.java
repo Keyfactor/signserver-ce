@@ -14,9 +14,6 @@
 package org.signserver.cli;
 
 import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
@@ -38,8 +35,6 @@ import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.MailSignerConfig;
-import org.signserver.common.MailSignerUser;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -53,7 +48,6 @@ import org.signserver.ejb.interfaces.IClusterClassLoaderManagerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.mailsigner.cli.IMailSignerRMI;
 import org.signserver.common.KeyTestResult;
 
 /**
@@ -128,13 +122,7 @@ public class CommonAdminInterface  {
 			throws CryptoTokenAuthenticationFailureException,
 			CryptoTokenOfflineException, InvalidWorkerIdException,
 			RemoteException {
-		if(isMailSignerMode()){
-			getIMailSignerRMI().activateCryptoToken(signerId, authenticationCode);
-		}
-		if(isSignServerMode()){
-			getWorkerSession().activateSigner(signerId, authenticationCode);
-		}
-		
+            getWorkerSession().activateSigner(signerId, authenticationCode);
 	}
 
 	/**
@@ -144,15 +132,7 @@ public class CommonAdminInterface  {
 	public boolean deactivateSigner(int signerId)
 			throws CryptoTokenOfflineException, InvalidWorkerIdException,
 			RemoteException {
-		boolean retval = false;
-		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().deactivateCryptoToken(signerId);
-		}
-		if(isSignServerMode()){
-			retval = getWorkerSession().deactivateSigner(signerId);			
-		}
-		
-		return retval;
+            return getWorkerSession().deactivateSigner(signerId);
 	}
 
 	/**
@@ -161,15 +141,7 @@ public class CommonAdminInterface  {
 	 */
 	public boolean destroyKey(int signerId, int purpose)
 			throws InvalidWorkerIdException, RemoteException {
-		boolean retval = false;
-		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().destroyKey(signerId, purpose);
-		}
-		if(isSignServerMode()){
-			retval = getWorkerSession().destroyKey(signerId, purpose);		
-		}
-		
-		return retval;
+            return getWorkerSession().destroyKey(signerId, purpose);		
 	}
 
         public String generateKey(final int signerId,
@@ -197,15 +169,8 @@ public class CommonAdminInterface  {
                         final boolean defaultKey)
                             throws CryptoTokenOfflineException,
 			InvalidWorkerIdException, RemoteException {
-		ICertReqData retval = null;
-		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().genCertificateRequest(signerId, certReqInfo);
-		}
-		if(isSignServerMode()){
-			retval = getWorkerSession().getCertificateRequest(
-                                signerId, certReqInfo, defaultKey);	
-		}
-		return retval;
+            return getWorkerSession().getCertificateRequest(
+                                signerId, certReqInfo, defaultKey);
 	}
 
 	/**
@@ -214,14 +179,7 @@ public class CommonAdminInterface  {
 	 */	
 	public WorkerConfig getCurrentWorkerConfig(int signerId)
 			throws RemoteException {
-		WorkerConfig retval = null;
-		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().getCurrentWorkerConfig(signerId);
-		}
-		if(isSignServerMode()){
-			retval = getWorkerSession().getCurrentWorkerConfig(signerId);		
-		}
-		return retval;
+            return getWorkerSession().getCurrentWorkerConfig(signerId);
 	}
 
 	/**
@@ -230,13 +188,7 @@ public class CommonAdminInterface  {
 	 */	
 	public GlobalConfiguration getGlobalConfiguration() throws RemoteException {
 		GlobalConfiguration retval = null;
-		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().getGlobalConfiguration();
-		}
-		if(isSignServerMode()){
-			retval = getGlobalConfigurationSession().getGlobalConfiguration();			
-		}
-		return retval;
+            return getGlobalConfigurationSession().getGlobalConfiguration();
 	}
 
 	/**
@@ -244,15 +196,7 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getWorkerId(String)
 	 */	
 	public int getWorkerId(String signerName) throws RemoteException {
-		int retval = 0;
-		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().getWorkerId(signerName);
-		}
-		if(isSignServerMode()){
-			retval = getWorkerSession().getWorkerId(signerName);
-		}		
-		
-		return retval;
+            return getWorkerSession().getWorkerId(signerName);
 	}
 
 	/**
@@ -261,14 +205,7 @@ public class CommonAdminInterface  {
 	 */	
 	public WorkerStatus getStatus(int workerId)
 			throws InvalidWorkerIdException, RemoteException {
-		WorkerStatus retval = null;
-		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().getStatus(workerId);
-		}
-		if(isSignServerMode()){
-			retval = getWorkerSession().getStatus(workerId);
-		}
-		return retval;
+            return getWorkerSession().getStatus(workerId);
 	}
 
 	/**
@@ -276,12 +213,7 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#reloadConfiguration(int)
 	 */	
 	public void reloadConfiguration(int workerId) throws RemoteException {
-		if(isMailSignerMode()){
-			getIMailSignerRMI().reloadConfiguration(workerId);
-		}
-		if(isSignServerMode()){
-			getWorkerSession().reloadConfiguration(workerId);
-		}
+            getWorkerSession().reloadConfiguration(workerId);
 	}
 
 	/**
@@ -290,14 +222,7 @@ public class CommonAdminInterface  {
 	 */
 	public boolean removeGlobalProperty(String scope, String key)
 			throws RemoteException {
-		boolean retval = false;
-		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().removeGlobalProperty(scope, key);
-		}
-		if(isSignServerMode()){
-			retval = getGlobalConfigurationSession().removeProperty(scope, key);
-		}
-		return retval;
+            return getGlobalConfigurationSession().removeProperty(scope, key);
 	}
 
 	/**
@@ -306,14 +231,7 @@ public class CommonAdminInterface  {
 	 */	
 	public boolean removeWorkerProperty(int workerId, String key)
 			throws RemoteException {
-		boolean retval = false;
-		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().removeWorkerProperty(workerId, key);
-		}
-		if(isSignServerMode()){
-			retval = getWorkerSession().removeWorkerProperty(workerId, key);
-		}
-		return retval;
+            return getWorkerSession().removeWorkerProperty(workerId, key);
 	}
 
 	/**
@@ -322,58 +240,27 @@ public class CommonAdminInterface  {
 	 */
 	public void setGlobalProperty(String scope, String key, String value)
 			throws RemoteException {
-		if(isMailSignerMode()){
-			getIMailSignerRMI().setGlobalProperty(scope,key,value);
-		}
-		if(isSignServerMode()){
-			getGlobalConfigurationSession().setProperty(scope, key, value);	
-		}		
+            getGlobalConfigurationSession().setProperty(scope, key, value);
 	}
 
         public void setStatusProperty(final String key, final String value)
                 throws RemoteException {
-            if (isMailSignerMode()) {
-                throw new UnsupportedOperationException("Not yet implemented");
-            }
-            if (isSignServerMode()) {
-                getStatusRepositorySession().setProperty(key, value);
-            }
+            getStatusRepositorySession().setProperty(key, value);
         }
 
         public void setStatusProperty(final String key, final String value,
                 final long expiration) throws RemoteException {
-            if (isMailSignerMode()) {
-                throw new UnsupportedOperationException("Not yet implemented");
-            }
-            if (isSignServerMode()) {
-                getStatusRepositorySession().setProperty(key, value,
-                        expiration);
-            }
+            getStatusRepositorySession().setProperty(key, value,
+                    expiration);
         }
 
         public String getStatusProperty(final String key)
                 throws RemoteException {
-            String value = null;
-            if (isMailSignerMode()) {
-                throw new UnsupportedOperationException("Not yet implemented");
-            }
-            if (isSignServerMode()) {
-                value = getStatusRepositorySession().getProperty(key);
-            }
-            return value;
+            return getStatusRepositorySession().getProperty(key);
         }
 	
 	public List<Integer> getWorkers(int workerType) throws RemoteException {
-		if(isMailSignerMode()){
-			if(workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE){
-				workerType = GlobalConfiguration.WORKERTYPE_MAILSIGNERS;
-			}
-			return getIMailSignerRMI().getWorkers(workerType);
-		}
-		if(isSignServerMode()){
-			return getGlobalConfigurationSession().getWorkers(workerType);
-		}	
-		return null;
+            return getGlobalConfigurationSession().getWorkers(workerType);
 	}
 
 	/**
@@ -382,12 +269,7 @@ public class CommonAdminInterface  {
 	 */	
 	public void setWorkerProperty(int workerId, String key, String value)
 			throws RemoteException {
-		if(isMailSignerMode()){
-			getIMailSignerRMI().setWorkerProperty(workerId,key,value);
-		}
-		if(isSignServerMode()){
-			getWorkerSession().setWorkerProperty(workerId, key, value);
-		}
+            getWorkerSession().setWorkerProperty(workerId, key, value);
 	}
 
 	/**
@@ -396,28 +278,17 @@ public class CommonAdminInterface  {
 	 */		
 	public void uploadSignerCertificate(int signerId, X509Certificate signerCert, String scope)
 			throws RemoteException {
-		if(isMailSignerMode()){
-			getIMailSignerRMI().uploadSignerCertificate(signerId,signerCert);
-		}
-		if(isSignServerMode()){
-			getWorkerSession().uploadSignerCertificate(signerId, signerCert, scope);
-		}
-		
+            getWorkerSession().uploadSignerCertificate(signerId, signerCert, scope);
 	}
 
 	/**
 	 * @see org.signserver.ejb.WorkerSessionBean#uploadSignerCertificateChain(int, Collection)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#uploadSignerCertificateChain(int, Collection)	 
 	 */	
-	public void uploadSignerCertificateChain(int signerId,
-			Collection<Certificate> signerCerts, String scope) throws RemoteException 
-			{
-		if(isMailSignerMode()){
-			getIMailSignerRMI().uploadSignerCertificateChain(signerId,signerCerts);
-		}
-		if(isSignServerMode()){
-			getWorkerSession().uploadSignerCertificateChain(signerId, signerCerts, scope);
-		}
+	public void uploadSignerCertificateChain(int signerId, 
+                Collection<Certificate> signerCerts, String scope)
+                throws RemoteException {
+            getWorkerSession().uploadSignerCertificateChain(signerId, signerCerts, scope);
 	}
 	
 	/**
@@ -425,32 +296,18 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#genFreeWorkerId()
 	 */	
 	public int genFreeWorkerId() throws RemoteException{
-		int retval = 1;
-		if(isMailSignerMode()){
-			retval = getIMailSignerRMI().genFreeWorkerId();
-		}
-		if(isSignServerMode()){
-			retval = getWorkerSession().genFreeWorkerId();
-		}
-		
-		return retval;
+            return getWorkerSession().genFreeWorkerId();
 	}
 	
 	public void resync() throws RemoteException, ResyncException {
-		if(isSignServerMode()){
-			getGlobalConfigurationSession().resync();
-		}
-
+            getGlobalConfigurationSession().resync();
 	}
-	
+
 	/**
 	 * @see org.signserver.ejb.WorkerSessionBean#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
 	 */	
 	public ProcessResponse processRequest(int workerId, ProcessRequest request) throws RemoteException, IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-		if(isSignServerMode()){
-			return getWorkerSession().process(workerId, request, new RequestContext(true));
-		}
-        return null;
+            return getWorkerSession().process(workerId, request, new RequestContext(true));
 	}
 	
 	/**
@@ -460,11 +317,7 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.ejb.WorkerSessionBean#getAuthorizedClients(int)
 	 */
 	public Collection<AuthorizedClient> getAuthorizedClients(int signerId) throws RemoteException{
-		if(isSignServerMode()){
-		   return getWorkerSession().getAuthorizedClients(signerId);
-		}
-		
-		return null;
+            return getWorkerSession().getAuthorizedClients(signerId);
 	}
 	
 	/**
@@ -476,9 +329,7 @@ public class CommonAdminInterface  {
 	 * 
 	 */
 	public void addAuthorizedClient(int signerId, AuthorizedClient authClient) throws RemoteException{
-		if(isSignServerMode()){
-		  getWorkerSession().addAuthorizedClient(signerId, authClient);
-		}
+            getWorkerSession().addAuthorizedClient(signerId, authClient);
 	}
 
 	/**
@@ -490,159 +341,48 @@ public class CommonAdminInterface  {
 	 * 
 	 */
 	public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient) throws RemoteException{
-		if(isSignServerMode()){
-		  return getWorkerSession().removeAuthorizedClient(signerId, authClient);
-		}
-		return false;
-	}
-	
-	/**
-	 * Method only supported by Mail Signer Builds
-	 *  
-	 * Method adding an authorized user to the mail signer
-	 * 
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#addAuthorizedUser(String, String)
-	 * 
-	 */
-	public void addAuthorizedUser(String username, String password) throws RemoteException{
-		if(isMailSignerMode()){
-		  getIMailSignerRMI().addAuthorizedUser(username, password);
-		}
+            return getWorkerSession().removeAuthorizedClient(signerId, authClient);
 	}
 
-	/**
-	 * Method only supported by Mail Signer Builds
-	 * Removes an authorized client from a signer
-	 * 
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#removeAuthorizedUser(String)
-	 * @throws RemoteException 
-	 * 
-	 */
-	public boolean removeAuthorizedUser(String username) throws RemoteException{
-		if(isMailSignerMode()){
-			  return getIMailSignerRMI().removeAuthorizedUser(username);
-		}
-		return false;
-	}
-	
-	/**
-	 *  Method only supported by Mail Signer Builds
-	 * @throws RemoteException 
-	 * 
-	 * @see {@link org.signserver.mailsigner.cli.IMailSignerRMI#getAuthorizedUsers()}
-	 */
-	public List<MailSignerUser> getAuthorizedUsers() throws RemoteException{
-		if(isMailSignerMode()){
-			return getIMailSignerRMI().getAuthorizedUsers();
-		}
-		
-		return null;
-	}
-	
 	public ArchiveDataVO findArchiveDataFromArchiveId(int signerid,
 			String archiveid) throws RemoteException {
-		if(isSignServerMode()){
-			return getWorkerSession().findArchiveDataFromArchiveId(signerid, archiveid);
-		}
-		return null;
+            return getWorkerSession().findArchiveDataFromArchiveId(signerid, archiveid);
 	}
 
 
 	public List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(int signerid,
 			BigInteger sn, String issuerdn) throws RemoteException {
-		if(isSignServerMode()){
-			return getWorkerSession().findArchiveDatasFromRequestCertificate(signerid, sn, issuerdn);
-		}
-		return null;
+            return getWorkerSession().findArchiveDatasFromRequestCertificate(signerid, sn, issuerdn);
 	}
 
-
 	public List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerid, String requestIP) throws RemoteException {
-		if(isSignServerMode()){
-			return getWorkerSession().findArchiveDatasFromRequestIP(signerid, requestIP);
-		}
-		return null;
+            return getWorkerSession().findArchiveDatasFromRequestIP(signerid, requestIP);
 	}
 	
 	public void addResource(String moduleName, String part, int version, String jarName, String resourceName, String implInterfaces, String description, String comment, byte[] resourceData) throws RemoteException {
-		if(isMailSignerMode()){
-			getIMailSignerRMI().addResource(moduleName, part, version, jarName, resourceName, implInterfaces, description, comment, resourceData);
-		}
-		if(isSignServerMode()){
-			getClusterClassLoaderManagerSession().addResource(moduleName, part, version, jarName, resourceName, implInterfaces, description, comment, resourceData);
-		}		
+            getClusterClassLoaderManagerSession().addResource(moduleName, part, version, jarName, resourceName, implInterfaces, description, comment, resourceData);
 	}
 
 	public void removeModulePart(String moduleName, String part, int version) throws RemoteException {
-		if(isMailSignerMode()){
-			getIMailSignerRMI().removeModulePart(moduleName, part, version);
-		}
-		if(isSignServerMode()){
-			getClusterClassLoaderManagerSession().removeModulePart(moduleName, part, version);
-		}
+            getClusterClassLoaderManagerSession().removeModulePart(moduleName, part, version);
 	}
 	
 	public String[] listAllModules() throws RemoteException {
-		if(isMailSignerMode()){
-			return getIMailSignerRMI().listAllModules();
-		}
-		if(isSignServerMode()){
-			return getClusterClassLoaderManagerSession().listAllModules();
-		}
-		return null;
+            return getClusterClassLoaderManagerSession().listAllModules();
 	}
 	
 	public Integer[] listAllModuleVersions(String moduleName) throws RemoteException {
-		if(isMailSignerMode()){
-			return getIMailSignerRMI().listAllModuleVersions(moduleName);
-		}
-		if(isSignServerMode()){
-			return getClusterClassLoaderManagerSession().listAllModuleVersions(moduleName);
-		}
-		return null;
+            return getClusterClassLoaderManagerSession().listAllModuleVersions(moduleName);
 	}
 	
 	public String[] listAllModuleParts(String moduleName, int version) throws RemoteException {
-		if(isMailSignerMode()){
-			return getIMailSignerRMI().listAllModuleParts(moduleName, version);
-		}
-		if(isSignServerMode()){
-			return getClusterClassLoaderManagerSession().listAllModuleParts(moduleName, version);
-		}
-		return null;
+            return getClusterClassLoaderManagerSession().listAllModuleParts(moduleName, version);
 	}
 	
 	public String[] getJarNames(String moduleName, String part, int version) throws RemoteException {
-		if(isMailSignerMode()){
-			return getIMailSignerRMI().getJarNames(moduleName, part, version);
-		}
-		if(isSignServerMode()){
-			return getClusterClassLoaderManagerSession().getJarNames(moduleName, part, version);
-		}
-		return null;
+            return getClusterClassLoaderManagerSession().getJarNames(moduleName, part, version);
 	}
-	
 
-	
-	private IMailSignerRMI getIMailSignerRMI() throws RemoteException{
-		if(iMailSignerRMI == null){
-			String lookupName = "//"+ hostname +":" + MailSignerConfig.getRMIRegistryPort() + "/" +
-			MailSignerConfig.RMI_OBJECT_NAME;
-
-			try {
-				iMailSignerRMI = (IMailSignerRMI) Naming.lookup(lookupName);
-			} catch (MalformedURLException e) {
-				LOG.error("Error binding Mail Signer RMI Interface.",e);
-			} catch (NotBoundException e) {
-				LOG.error("Error binding Mail Signer RMI Interface.",e);
-			}
-		}
-		
-		return iMailSignerRMI;
-	}
-	
-	private IMailSignerRMI iMailSignerRMI = null;
-	
     /**
      * Gets GlobalConfigurationSession Remote.
      * @return SignServerSession
@@ -682,7 +422,6 @@ public class CommonAdminInterface  {
         return statusRepository;
     }
 
-	
     /**
      * Gets SignServerSession Remote.
      * @return SignServerSession

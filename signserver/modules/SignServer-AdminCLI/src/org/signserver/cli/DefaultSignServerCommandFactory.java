@@ -82,15 +82,6 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         if (args[0].equalsIgnoreCase("removeauthorizedclient")  && CommonAdminInterface.isSignServerMode()) {
             return new RemoveAuthorizedClientCommand(args);
         }
-        if (args[0].equalsIgnoreCase("listauthorizedusers") && CommonAdminInterface.isMailSignerMode()) {
-            return new ListAuthorizedUsersCommand(args);
-        }
-        if (args[0].equalsIgnoreCase("addauthorizeduser") && CommonAdminInterface.isMailSignerMode()) {
-            return new AddAuthorizedUserCommand(args);
-        }
-        if (args[0].equalsIgnoreCase("removeauthorizeduser")  && CommonAdminInterface.isMailSignerMode()) {
-            return new RemoveAuthorizedUserCommand(args);
-        }
         if (args[0].equalsIgnoreCase("uploadsignercertificate")) {
             return new UploadSignerCertificateCommand(args);
         }

@@ -1,6 +1,0 @@
-      <!-- Mailing list repositories  -->
-      <!-- Add a user repository for each list -->
-      <!-- TODO: add more examples             -->
-      <repository name="list-test" class="org.apache.james.userrepository.UsersFileRepository">
-         <destination URL="file://var/lists/list-test/"/>
-      </repository>

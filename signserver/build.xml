@@ -48,13 +48,7 @@
     <import file="bin/${appserver.type}.xml" />  
 	
     <import file="./signserver.xmli" />
-    <import file="./mailsigner.xmli" />
     <import file="${custom.build.xml}" optional="true"/>
-        	
-    <property name="build.mode" value="SIGNSERVER" />
-    <condition property="buildMailSigner">
-          <equals arg1="${build.mode}" arg2="MAILSIGNER" casesensitive="false" trim="true"/>
-    </condition>
 
     <!-- Properties with paths to all module projects -->
     <property file="modules/modules-project.properties"/>
@@ -66,7 +60,7 @@
     <!-- =================================================================== -->
     <target name="default" depends="build" description="Default target"/>
 
-    <target name="build" depends="signserver, mailsigner, signserver-cli,
+    <target name="build" depends="signserver, signserver-cli,
         validationClient, signingAndValidationAPI">
             <antcall target="showtime"/>
     </target>
@@ -88,7 +82,6 @@ OS architecture                     = ${os.arch}
 OS version                          = ${os.version}
         </echo>
     	<antcall target="signserver.init"/>
-    	<antcall target="mailsigner.init"/>
 
         <!-- Create the time stamp -->
         <tstamp/>
@@ -103,7 +96,7 @@ OS version                          = ${os.version}
     <!-- Main Clean                                                          -->
     <!-- =================================================================== -->
 
-    <target name="clean" depends="signserver:clean, mailsigner:clean">
+    <target name="clean">
         <!-- Delete the ${build} and ${server.dist.dir} directory trees -->
         <delete dir="${build}" />
         <delete dir="${server.dist.dir}" />
@@ -160,9 +153,6 @@ OS version                          = ${os.version}
         <propertyfile file="${build}/org/signserver/common/signservercompile.properties" comment="SignServer compile-time properties. Generated file do not edit manually!">
             <entry key="appname" value="${app.name}"/>
             <entry key="appname_capital" value="${app.name.cap}"/>
-            <entry key="rmiregistryport" value="${rmi.registry.port}"/>
-            <entry key="rmiserverport" value="${rmi.server.port}"/>
-            <entry key="mailsignerport" value="${mailsigner.smtpport}"/>
             <entry key="buildmode" value="${build.mode}"/>
             <entry key="datasource.jndi-name-prefix" value="${datasource.jndi-name-prefix}"/>
             <entry key="datasource.jndi-name" value="${datasource.jndi-name}"/>
@@ -323,7 +313,7 @@ OS version                          = ${os.version}
     <!-- Build preparation for package distribution                         -->
     <!-- =================================================================== -->
 
-    <target name="pkgdist" depends="signserver, mailsigner, signserver-cli, signserver-pkgdist, mailsigner-pkgdist"/>
+    <target name="pkgdist" depends="signserver, signserver-cli, signserver-pkgdist"/>
 
     		
     <!-- =================================================================== -->
@@ -348,24 +338,25 @@ OS version                          = ${os.version}
         </javadoc>
     </target>
 
-    <target name="test:compile"  depends="test:mailsigner:compile"/>
+
+    <!-- =================================================================== -->
+    <!-- Test part                                                           -->
+    <!-- =================================================================== -->
+
+    <target name="test:compile"/>
 
     <!-- Run tests -->
-    <target name="test:run" description="Run the default JUnit testcases">
-        <antcall target="test:signserver:run"/>
-    	<antcall target="test:mailsigner:run"/>
-    </target>
+    <target name="test:run" depends="test:signserver:run" 
+        description="Run the default JUnit testcases"/>
 
     <!-- Run all tests -->
-    <target name="test:runall" description="Run all JUnit testcases">
-        <antcall target="test:signserver:runall"/>
-    	<antcall target="test:mailsigner:runall"/>
-    </target>
+    <target name="test:runall" depends="test:signserver:runall"
+        description="Run all JUnit testcases"/>
 
     <target name="test:runperf" description="Test performace of signing modules">
         <antcall target="test:signserver:performance"/>
     </target>
-
+        
 
     <!-- =================================================================== -->
     <!-- Documentation part                                                  -->
@@ -634,7 +625,6 @@ OS version                          = ${os.version}
                 <exclude name="p12/**" />
                 <exclude name="**/dist/**" />
                 <exclude name="**/build/**" />
-                <exclude name="extapps/**" />
                 <exclude name="SignServer-AdminGUI/lib/**" />
                 <exclude name="dist-client/**" />
                 <exclude name="dist-server/**" />
@@ -674,7 +664,6 @@ OS version                          = ${os.version}
             <exclude name="signserver/p12/**" />
             <exclude name="**/dist/**" />
             <exclude name="**/build/**" />
-            <exclude name="signserver/extapps/**" />
             <exclude name="signserver/SignServer-AdminGUI/lib/**" />
             <exclude name="signserver/dist-client/**" />
             <exclude name="signserver/dist-server/**" />

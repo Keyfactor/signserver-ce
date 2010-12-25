@@ -44,7 +44,7 @@ import org.signserver.admin.gui.adminws.gen.KeyTestResult;
 
 /**
  * Dialog for testing keys.
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class TestKeysDialog extends JDialog {

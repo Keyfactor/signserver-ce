@@ -18,7 +18,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Class holding the global configuration.
  * @see GlobalConfiguration
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class WSGlobalConfiguration {

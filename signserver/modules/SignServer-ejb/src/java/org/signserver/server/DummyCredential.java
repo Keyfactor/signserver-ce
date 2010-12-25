@@ -17,7 +17,7 @@ import java.io.Serializable;
 /**
  * Dummy custom credential.
  * 
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 class DummyCredential implements IClientCredential, Serializable {

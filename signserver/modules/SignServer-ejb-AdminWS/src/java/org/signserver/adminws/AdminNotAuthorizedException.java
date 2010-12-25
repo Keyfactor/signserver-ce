@@ -16,7 +16,7 @@ package org.signserver.adminws;
  * Exception indicating that the user is not authorized to perform the
  * operation.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class AdminNotAuthorizedException extends Exception {

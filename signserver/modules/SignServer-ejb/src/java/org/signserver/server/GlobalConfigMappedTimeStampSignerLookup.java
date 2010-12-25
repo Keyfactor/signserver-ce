@@ -28,7 +28,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
  * for an entry that should map from a particular oid add the oid after the user:
  * user1,password,1.2.1:TimeStampSigner_policy1;
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class GlobalConfigMappedTimeStampSignerLookup implements ITimeStampSignerLookup {

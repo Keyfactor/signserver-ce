@@ -19,7 +19,7 @@ import java.util.Iterator;
 /**
  * Status for Dispatcher.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class DispatcherStatus extends WorkerStatus {

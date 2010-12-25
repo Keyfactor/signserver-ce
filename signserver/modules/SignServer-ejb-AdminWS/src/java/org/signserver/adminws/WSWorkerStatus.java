@@ -20,7 +20,7 @@ import org.signserver.common.WorkerStatus;
  * Class holding a worker's status.
  *
  * @see WorkerStatus
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class WSWorkerStatus implements Serializable {

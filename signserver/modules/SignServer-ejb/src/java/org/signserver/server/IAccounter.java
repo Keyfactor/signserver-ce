@@ -19,7 +19,7 @@ import org.signserver.common.RequestContext;
 
 /**
  *
- * @author Markus Kilås
+ * @author Markus KilÃ¥s
  * @version $Id$
  */
 public interface IAccounter {

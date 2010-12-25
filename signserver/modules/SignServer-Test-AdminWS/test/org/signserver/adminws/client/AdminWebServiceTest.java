@@ -22,8 +22,8 @@ import junit.framework.TestCase;
 
 /**
  * Tests for the Admin WS interface.
- * 
- * @author markus
+ *
+ * @author Markus Kilås
  * @version $Id$
  */
 public class AdminWebServiceTest extends TestCase {

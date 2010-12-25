@@ -71,7 +71,7 @@ import org.signserver.server.log.SystemLoggerFactory;
  * TSADISPATCHER_AUTHREQUIRED = True if the Servlet should request
  * authorization in case it gets a request without client certificate.
  * 
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class TSADispatcherServlet extends HttpServlet {

@@ -24,7 +24,7 @@ import java.util.Properties;
  *
  * Could be used by any worker.
  *
- * @author markus
+ * @author Markus Kilås
  * $Id$
  */
 public class GenericPropertiesRequest extends ProcessRequest {

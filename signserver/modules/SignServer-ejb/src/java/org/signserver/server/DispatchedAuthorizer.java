@@ -28,7 +28,7 @@ import org.signserver.common.WorkerConfig;
  * should not be possible to call the workers directly using for instance the
  * GenericProcessServlet.
  * 
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  * @see RequestContext#DISPATCHER_AUTHORIZED_CLIENT
  */

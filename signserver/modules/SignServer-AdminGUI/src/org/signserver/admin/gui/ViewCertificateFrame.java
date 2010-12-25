@@ -15,7 +15,6 @@ package org.signserver.admin.gui;
 import java.awt.Component;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -32,7 +31,7 @@ import org.bouncycastle.util.encoders.Hex;
 /**
  * Frame showing certificate details.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class ViewCertificateFrame extends javax.swing.JFrame {

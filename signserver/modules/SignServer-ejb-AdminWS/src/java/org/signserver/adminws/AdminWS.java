@@ -53,7 +53,7 @@ import org.signserver.server.UsernamePasswordClientCredential;
  * Class implementing the Admin WS interface.
  *
  * This class contains web service implementations for almost all EJB methods.
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 @WebService()

@@ -25,7 +25,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
  * Returns the timestampsigner read by the global configuration property
  * DEFAULTTIMESTAMPSIGNER.
  *
- * @author markus
+ * @author Markus Kilås
  * $Id$
  */
 public class DefaultTimeStampSignerLookup implements ITimeStampSignerLookup {

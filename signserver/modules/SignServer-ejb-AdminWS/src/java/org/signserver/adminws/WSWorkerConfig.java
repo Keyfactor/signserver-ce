@@ -17,7 +17,7 @@ import java.util.Properties;
 
 /**
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class WSWorkerConfig implements Serializable {

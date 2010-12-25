@@ -39,6 +39,7 @@ import org.signserver.common.WorkerConfig;
  * In that case, to allow requests using EJB calls, null can be added to the
  * list of allowed addresses.
  *
+ * @author Markus Kilås
  * @version $Id$
  */
 public class RemoteAddressAuthorizer implements IAuthorizer {

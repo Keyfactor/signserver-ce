@@ -19,7 +19,7 @@ import org.signserver.common.CryptoTokenOfflineException;
  * Interface that should be implmented by CryptoTokenS supporting key
  * generation.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public interface IKeyGenerator {

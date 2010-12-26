@@ -1184,6 +1184,17 @@ perform all operations.
                     <p>
 The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/AdminWSService/AdminWS?wsdl
                     </p>
+                    <p>
+Authorizing administrators can be done using the Admin CLI command "wsadmins".
+                    </p>
+                    <source>
+Usage: signserver wsadmins -add -certserialno &lt;certificate serial number&gt; -issuerdn &lt;issuer DN&gt;
+Usage: signserver wsadmins -remove -certserialno &lt;certificate serial number&gt; -issuerdn &lt;issuer DN&gt;
+Usage: signserver wsadmins -list
+Example 1: signserver wsadmins -add -certserialno 0123ABCDEF -issuerdn "CN=Neo Morpheus, C=SE"
+Example 2: signserver wsadmins -remove -certserialno 0123ABCDEF -issuerdn "CN=Neo Morpheus, C=SE"
+Example 3: signserver wsadmins -list
+                    </source>
 
                 </section>
         </chapter>

@@ -56,7 +56,6 @@ else
 fi 
 
 # Check that classes exist
-echo ${SIGNSRV_HOME}/dist-client/${ADMINCLI_JAR}
 if [ ! -f ${SIGNSRV_HOME}/dist-client/${ADMINCLI_JAR} ]
 then
 	echo "You must build SignServer before using the cli, use 'ant'."

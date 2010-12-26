@@ -13,7 +13,7 @@
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
-                <foreign-project>SignServer-Client-SigningAndValidationAPI</foreign-project>
+                <foreign-project>SignServer-Client-SigningAndValidationAPI-1</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>

@@ -171,6 +171,197 @@
                     <location>../../SignServer-Module-OOXMLSigner/test</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>SignServer</label>
+                    <location>.</location>
+                    <encoding>ISO-8859-1</encoding>
+                </source-folder>
+                <build-folder>
+                    <location>../../bin/classes</location>
+                </build-folder>
+                <build-folder>
+                    <location>../../bin/classes</location>
+                </build-folder>
+                <build-folder>
+                    <location>../../bin/classes</location>
+                </build-folder>
+                <build-file>
+                    <location>../../dist-server/dummyws-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/dummyws.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/genericws-module-common.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/healthcheck.war</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/mrtdsigner-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/mrtdsigner.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/pdfsigner-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/pdfsigner.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/signserver-ejb.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/signserver.ear</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/signserverws.war</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/tsa-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/tsa.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/validationws.war</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/web.war</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/wsra-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/wsra.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/xmlsigner-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/xmlsigner.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/xmlvalidator-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/xmlvalidator.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/signserver-cli.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/wsraclient-lib.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/signingandvalidationapi/signingandvalidationapi.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/signserverwscli/signserverwscli.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/timestampclient/timeStampClient.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/validationclient/validate.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/wsraadminclient/wsraadmin.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../tmp/bin/classes</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/dummyws-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/dummyws.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/genericws-module-common.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/healthcheck.war</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/mrtdsigner-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/mrtdsigner.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/pdfsigner-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/pdfsigner.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/signserver-ejb.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/signserver.ear</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/signserverws.war</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/tsa-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/tsa.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/validationws.war</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/web.war</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/wsra-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/wsra.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/xmlsigner-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/xmlsigner.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/xmlvalidator-module.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-server/xmlvalidator.mar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/signserver-cli.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/wsraclient-lib.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/signingandvalidationapi/signingandvalidationapi.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/signserverwscli/signserverwscli.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/timestampclient/timeStampClient.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/validationclient/validate.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/wsraadminclient/wsraadmin.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../tmp/bin/classes</location>
+                </build-file>
+                <build-file>
+                    <location>../../dist-client/signserver-cli.jar</location>
+                </build-file>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -459,19 +650,19 @@
             </export>
             <export>
                 <type>folder</type>
-                <location>tmp/bin/classes</location>
+                <location>../../tmp/bin/classes</location>
                 <script>nbproject/nbjdk.xml</script>
                 <build-target>build</build-target>
             </export>
             <export>
                 <type>folder</type>
-                <location>bin/classes</location>
+                <location>../../bin/classes</location>
                 <script>nbproject/nbjdk.xml</script>
                 <build-target>build</build-target>
             </export>
             <export>
                 <type>folder</type>
-                <location>bin/classes</location>
+                <location>../../bin/classes</location>
                 <script>nbproject/nbjdk.xml</script>
                 <build-target>build</build-target>
             </export>
@@ -484,12 +675,12 @@
             <view>
                 <items>
                     <source-folder style="packages">
-                        <label>src/test</label>
-                        <location>../../src/test</location>
+                        <label>../../src/test</label>
+                        <location>src/test</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>src/java</label>
-                        <location>../../src/java</location>
+                        <label>../../src/java</label>
+                        <location>src/java</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>modules/SignServer-Common/src</label>
@@ -607,7 +798,7 @@
             <compilation-unit>
                 <package-root>src/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/james/james-2.3.1.jar:../../lib/ext/james/mail-1.4.jar:../../lib/ext/james/mailet-2.3.jar:../../lib/ext/james/mailet-api-2.3.jar:../../lib/ext/james/smtp.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:tmp/bin/classes:tmp/wsra/gen-classes/client:tmp/wsra/gen-classes/server:tmp/validationws/gen-classes/client:tmp/validationws/gen-classes/server:tmp/dummyws/gen-classes/client:tmp/dummyws/gen-classes/server:../../lib/commons-io-1.4.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/1.6/bctsp-jdk.jar:dist-client/signingandvalidationapi/signingandvalidationapi.jar:bin/signingandvalidationapi:bin/classes:bin/validationClient:src/java:tmp/jaxws/gen-classes/client:bin/classes</classpath>
+                <classpath mode="compile">../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:tmp/bin/classes:tmp/wsra/gen-classes/client:tmp/wsra/gen-classes/server:tmp/validationws/gen-classes/client:tmp/validationws/gen-classes/server:tmp/dummyws/gen-classes/client:tmp/dummyws/gen-classes/server:../../lib/commons-io-1.4.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/1.6/bctsp-jdk.jar:dist-client/signingandvalidationapi/signingandvalidationapi.jar:bin/signingandvalidationapi:bin/classes:bin/validationClient:src/java:tmp/jaxws/gen-classes/client:bin/classes</classpath>
                 <built-to>../../dist-server/dummyws-module.jar</built-to>
                 <built-to>../../dist-server/dummyws.mar</built-to>
                 <built-to>../../dist-server/genericws-module-common.jar</built-to>
@@ -642,7 +833,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>src/java</package-root>
-                <classpath mode="compile">../../lib/module/ooxmlsigner/jaxen-1.1.jar:../../lib/module/ooxmlsigner/openxml4j_beta_v538.jar:../../lib/module/ooxmlsigner/xercesImpl.jar:../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/james/james-2.3.1.jar:../../lib/ext/james/mail-1.4.jar:../../lib/ext/james/mailet-2.3.jar:../../lib/ext/james/mailet-api-2.3.jar:../../lib/ext/james/smtp.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:../../lib/commons-fileupload-1.2.1.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/commons-lang-2.4.jar:../../lib/1.6/bctsp-jdk.jar:tmp/jaxws/gen-classes/client</classpath>
+                <classpath mode="compile">../../lib/module/ooxmlsigner/jaxen-1.1.jar:../../lib/module/ooxmlsigner/openxml4j_beta_v538.jar:../../lib/module/ooxmlsigner/xercesImpl.jar:../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:../../lib/commons-fileupload-1.2.1.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/commons-lang-2.4.jar:../../lib/1.6/bctsp-jdk.jar:tmp/jaxws/gen-classes/client</classpath>
                 <built-to>../../dist-server/dummyws-module.jar</built-to>
                 <built-to>../../dist-server/dummyws.mar</built-to>
                 <built-to>../../dist-server/genericws-module-common.jar</built-to>
@@ -676,36 +867,36 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>modules/SignServer-Common/src</package-root>
-                <classpath mode="compile">../../lib/module/ooxmlsigner/jaxen-1.1.jar:../../lib/module/ooxmlsigner/openxml4j_beta_v538.jar:../../lib/module/ooxmlsigner/xercesImpl.jar:../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/james/james-2.3.1.jar:../../lib/ext/james/mail-1.4.jar:../../lib/ext/james/mailet-2.3.jar:../../lib/ext/james/mailet-api-2.3.jar:../../lib/ext/james/smtp.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:../../lib/commons-fileupload-1.2.1.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/commons-lang-2.4.jar:../../lib/1.6/bctsp-jdk.jar:tmp/jaxws/gen-classes/client</classpath>
+                <classpath mode="compile">../../lib/module/ooxmlsigner/jaxen-1.1.jar:../../lib/module/ooxmlsigner/openxml4j_beta_v538.jar:../../lib/module/ooxmlsigner/xercesImpl.jar:../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:../../lib/commons-fileupload-1.2.1.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/commons-lang-2.4.jar:../../lib/1.6/bctsp-jdk.jar:tmp/jaxws/gen-classes/client</classpath>
                 <built-to>../../bin/classes</built-to>
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>modules/SignServer-Common/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/james/james-2.3.1.jar:../../lib/ext/james/mail-1.4.jar:../../lib/ext/james/mailet-2.3.jar:../../lib/ext/james/mailet-api-2.3.jar:../../lib/ext/james/smtp.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:tmp/bin/classes:tmp/wsra/gen-classes/client:tmp/wsra/gen-classes/server:tmp/validationws/gen-classes/client:tmp/validationws/gen-classes/server:tmp/dummyws/gen-classes/client:tmp/dummyws/gen-classes/server:../../lib/commons-io-1.4.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/1.6/bctsp-jdk.jar:dist-client/signingandvalidationapi/signingandvalidationapi.jar:bin/signingandvalidationapi:bin/classes:bin/validationClient:src/java:tmp/jaxws/gen-classes/client:bin/classes</classpath>
+                <classpath mode="compile">../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:tmp/bin/classes:tmp/wsra/gen-classes/client:tmp/wsra/gen-classes/server:tmp/validationws/gen-classes/client:tmp/validationws/gen-classes/server:tmp/dummyws/gen-classes/client:tmp/dummyws/gen-classes/server:../../lib/commons-io-1.4.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/1.6/bctsp-jdk.jar:dist-client/signingandvalidationapi/signingandvalidationapi.jar:bin/signingandvalidationapi:bin/classes:bin/validationClient:src/java:tmp/jaxws/gen-classes/client:bin/classes</classpath>
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>modules/SignServer-ejb/src/java</package-root>
-                <classpath mode="compile">../../lib/module/ooxmlsigner/jaxen-1.1.jar:../../lib/module/ooxmlsigner/openxml4j_beta_v538.jar:../../lib/module/ooxmlsigner/xercesImpl.jar:../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/james/james-2.3.1.jar:../../lib/ext/james/mail-1.4.jar:../../lib/ext/james/mailet-2.3.jar:../../lib/ext/james/mailet-api-2.3.jar:../../lib/ext/james/smtp.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:../../lib/commons-fileupload-1.2.1.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/commons-lang-2.4.jar:../../lib/1.6/bctsp-jdk.jar:tmp/jaxws/gen-classes/client</classpath>
+                <classpath mode="compile">../../lib/module/ooxmlsigner/jaxen-1.1.jar:../../lib/module/ooxmlsigner/openxml4j_beta_v538.jar:../../lib/module/ooxmlsigner/xercesImpl.jar:../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:../../lib/commons-fileupload-1.2.1.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/commons-lang-2.4.jar:../../lib/1.6/bctsp-jdk.jar:tmp/jaxws/gen-classes/client</classpath>
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>modules/SignServer-ejb/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/james/james-2.3.1.jar:../../lib/ext/james/mail-1.4.jar:../../lib/ext/james/mailet-2.3.jar:../../lib/ext/james/mailet-api-2.3.jar:../../lib/ext/james/smtp.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:tmp/bin/classes:tmp/wsra/gen-classes/client:tmp/wsra/gen-classes/server:tmp/validationws/gen-classes/client:tmp/validationws/gen-classes/server:tmp/dummyws/gen-classes/client:tmp/dummyws/gen-classes/server:../../lib/commons-io-1.4.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/1.6/bctsp-jdk.jar:dist-client/signingandvalidationapi/signingandvalidationapi.jar:bin/signingandvalidationapi:bin/classes:bin/validationClient:src/java:tmp/jaxws/gen-classes/client:bin/classes</classpath>
+                <classpath mode="compile">../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:tmp/bin/classes:tmp/wsra/gen-classes/client:tmp/wsra/gen-classes/server:tmp/validationws/gen-classes/client:tmp/validationws/gen-classes/server:tmp/dummyws/gen-classes/client:tmp/dummyws/gen-classes/server:../../lib/commons-io-1.4.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/1.6/bctsp-jdk.jar:dist-client/signingandvalidationapi/signingandvalidationapi.jar:bin/signingandvalidationapi:bin/classes:bin/validationClient:src/java:tmp/jaxws/gen-classes/client:bin/classes</classpath>
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>modules/SignServer-war/src/java</package-root>
-                <classpath mode="compile">../../lib/module/ooxmlsigner/jaxen-1.1.jar:../../lib/module/ooxmlsigner/openxml4j_beta_v538.jar:../../lib/module/ooxmlsigner/xercesImpl.jar:../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/james/james-2.3.1.jar:../../lib/ext/james/mail-1.4.jar:../../lib/ext/james/mailet-2.3.jar:../../lib/ext/james/mailet-api-2.3.jar:../../lib/ext/james/smtp.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:../../lib/commons-fileupload-1.2.1.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/commons-lang-2.4.jar:../../lib/1.6/bctsp-jdk.jar:tmp/jaxws/gen-classes/client</classpath>
+                <classpath mode="compile">../../lib/module/ooxmlsigner/jaxen-1.1.jar:../../lib/module/ooxmlsigner/openxml4j_beta_v538.jar:../../lib/module/ooxmlsigner/xercesImpl.jar:../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:../../lib/commons-fileupload-1.2.1.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/commons-lang-2.4.jar:../../lib/1.6/bctsp-jdk.jar:tmp/jaxws/gen-classes/client</classpath>
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>modules/SignServer-war/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/james/james-2.3.1.jar:../../lib/ext/james/mail-1.4.jar:../../lib/ext/james/mailet-2.3.jar:../../lib/ext/james/mailet-api-2.3.jar:../../lib/ext/james/smtp.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:tmp/bin/classes:tmp/wsra/gen-classes/client:tmp/wsra/gen-classes/server:tmp/validationws/gen-classes/client:tmp/validationws/gen-classes/server:tmp/dummyws/gen-classes/client:tmp/dummyws/gen-classes/server:../../lib/commons-io-1.4.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/1.6/bctsp-jdk.jar:dist-client/signingandvalidationapi/signingandvalidationapi.jar:bin/signingandvalidationapi:bin/classes:bin/validationClient:src/java:tmp/jaxws/gen-classes/client:bin/classes</classpath>
+                <classpath mode="compile">../../lib/1.6/bcmail-jdk.jar:../../lib/1.6/bcprov-jdk.jar:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/ext/velocity/activation.jar:../../lib/ext/velocity/jdom-b9.jar:../../lib/ext/velocity/nekohtml.jar:../../lib/ext/velocity/velocity-dep-1.4.jar:../../lib/ext/velocity/xml-apis.jar:../../lib/ext/commons-cli-1.0.jar:../../lib/ext/jdom-b9.jar:../../lib/ext/jsch-0.1.32.jar:../../lib/ext/junit-3.8.1.jar:../../lib/ext/servlet-2.3.jar:../../lib/ext/xerces_2_3_0.jar:../../lib/ext/xml-apis.jar:../../lib/jaxws/activation.jar:../../lib/jaxws/FastInfoset.jar:../../lib/jaxws/http.jar:../../lib/jaxws/jaxb-api.jar:../../lib/jaxws/jaxb-impl.jar:../../lib/jaxws/jaxb-xjc.jar:../../lib/jaxws/jaxws-api.jar:../../lib/jaxws/jaxws-rt.jar:../../lib/jaxws/jaxws-tools.jar:../../lib/jaxws/jsr173_api.jar:../../lib/jaxws/jsr181-api.jar:../../lib/jaxws/jsr250-api.jar:../../lib/jaxws/mimepull.jar:../../lib/jaxws/resolver.jar:../../lib/jaxws/saaj-api.jar:../../lib/jaxws/saaj-impl.jar:../../lib/jaxws/sjsxp.jar:../../lib/jaxws/stax-ex.jar:../../lib/jaxws/streambuffer.jar:../../lib/module/pdfsigner/itext/itext.jar:../../lib/module/wsra/antlr.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/dom4j.jar:../../lib/module/wsra/hsqldb.jar:../../lib/quartz/quartz-1.6.0.jar:../../lib/reports/jcommon-1.0.12.jar:../../lib/reports/jfreechart-1.0.9.jar:../../lib/cert-cvc.jar:../../lib/commons-collections-3.2.jar:../../lib/commons-lang-2.0.jar:../../lib/commons-logging.jar:../../lib/ejbca-util.jar:../../lib/log4j.jar:../../lib/ext/ejb/ejb3-persistence.jar:../../lib/ext/ejb/hibernate-annotations.jar:../../lib/ext/ejb/hibernate-entitymanager.jar:../../lib/ext/ejb/hibernate3.jar:../../lib/ext/ejb/jboss-ejb3x.jar:../../lib/ext/ejb/jboss-j2ee.jar:/usr/share/java/ant.jar:tmp/bin/classes:tmp/wsra/gen-classes/client:tmp/wsra/gen-classes/server:tmp/validationws/gen-classes/client:tmp/validationws/gen-classes/server:tmp/dummyws/gen-classes/client:tmp/dummyws/gen-classes/server:../../lib/commons-io-1.4.jar:../../lib/module/odfsigner/odfdom.jar:../../lib/1.6/bctsp-jdk.jar:dist-client/signingandvalidationapi/signingandvalidationapi.jar:bin/signingandvalidationapi:bin/classes:bin/validationClient:src/java:tmp/jaxws/gen-classes/client:bin/classes</classpath>
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>

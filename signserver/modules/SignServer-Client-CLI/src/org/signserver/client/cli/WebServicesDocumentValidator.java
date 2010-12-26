@@ -12,21 +12,14 @@
  *************************************************************************/
 package org.signserver.client.cli;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.signserver.client.api.ISignServerWorker;
-import org.signserver.client.api.SigningAndValidationEJB;
 import org.signserver.client.api.SigningAndValidationWS;
-import org.signserver.client.api.SigningAndValidationWSBalanced;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationRequest;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.IllegalRequestException;
@@ -95,14 +88,6 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
                         signResponse.getRequestID(),
                         signResponse.getProcessedData().length,
                         signResponse.getSignerCertificate()));
-
-//                LOG.debug("Got sign response with id "
-//                        + signResponse.getRequestID() + ", archive id "
-//                        + signResponse.getArchiveId()
-//                        + ", signed data of length "
-//                        + signResponse.getProcessedData().length + " bytes "
-//                        + "signed by signer with certificate:\n"
-//                        + signResponse.getSignerCertificate().toString() + ".");
             }
 
             out.write(new String("Valid: "

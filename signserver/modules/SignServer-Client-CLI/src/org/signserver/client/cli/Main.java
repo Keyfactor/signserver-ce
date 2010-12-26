@@ -73,7 +73,7 @@ public class Main {
         final StringBuilder sb = new StringBuilder();
         sb.append("usage:");
         sb.append(" ");
-        sb.append("signserverclient");
+        sb.append("client");
         sb.append(" ");
         sb.append("<");
         for (final Iterator<String> it = commands.iterator(); it.hasNext();) {

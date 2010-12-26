@@ -84,6 +84,12 @@ public class DocumentSignerCLI {
 
     public static final String PASSWORD = "password";
 
+    /** Default host */
+    private static final String DEFAULT_HOST = "localhost";
+
+    /** Default port */
+    private static final String DEFAULT_PORT = "8080";
+
     /** The command line options. */
     private static final Options OPTIONS;
 
@@ -188,12 +194,8 @@ public class DocumentSignerCLI {
         if (line.hasOption(WORKERID)) {
             workerId = Integer.parseInt(line.getOptionValue(WORKERID, null));
         }
-        if (line.hasOption(HOST)) {
-            host = line.getOptionValue(HOST, null);
-        }
-        if (line.hasOption(PORT)) {
-            port = Integer.parseInt(line.getOptionValue(PORT, null));
-        }
+        host = line.getOptionValue(HOST, DEFAULT_HOST);
+        port = Integer.parseInt(line.getOptionValue(PORT, DEFAULT_PORT));
         if (line.hasOption(SERVLET)) {
             servlet = line.getOptionValue(SERVLET, null);
         }

@@ -1026,7 +1026,7 @@ try {
                     </subsection>
 		</section>
 
-                <section name="Client Command Line Interface (CLI)">
+                <section name="Client Command Line Interface (CLI)" shortname="clientcli">
                     <p>
 Requests can be sent to the workers using the Client CLI. After building
 SignServer the script bin/client.sh can be run.
@@ -1170,6 +1170,20 @@ usage: signdatagroups &lt;options&gt;
  -workername    Name of worker which should perform the operation.
                         </source>
                     </subsection>
+
+                </section>
+
+                <section name="Administration Web Service" shortname="adminws">
+                    <p>
+The SignServer AdminWS can be used for remote administration of SignServer
+over client authenticated HTTPS. Access is granted based on a list of
+certificate serial number and issuer distinguished name pairs. Currently there
+is only one access level and all administrators granted access will be able to
+perform all operations.
+                    </p>
+                    <p>
+The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/AdminWSService/AdminWS?wsdl
+                    </p>
 
                 </section>
         </chapter>

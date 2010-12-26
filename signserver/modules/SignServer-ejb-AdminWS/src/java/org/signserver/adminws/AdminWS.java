@@ -94,27 +94,6 @@ public class AdminWS {
         }
     }
 
-//    /**
-//     * The Worker Beans main method. Takes  requests processes them
-//     * and returns a response.
-//     *
-//     * @param workerId id of worker who should process the request
-//     * @param request the request
-//     * @param context context of the request
-//     * @throws CryptoTokenOfflineException if the signers token isn't activated.
-//     * @throws IllegalRequestException if illegal request is sent to the method
-//     * @throws SignServerException if some other error occurred server side
-//     * during process.
-//     */
-//    @WebMethod(operationName = "processData")
-//    public ProcessResponse processData(@WebParam(name = "workerId") int workerId,
-//            @WebParam(name = "request") ProcessRequest request,
-//            @WebParam(name = "context") RequestContext context)
-//            throws IllegalRequestException, CryptoTokenOfflineException,
-//            SignServerException {
-//        return worker.process(workerId, request, context);
-//    }
-
     /**
      * Returns the Id of a worker given a name
      *

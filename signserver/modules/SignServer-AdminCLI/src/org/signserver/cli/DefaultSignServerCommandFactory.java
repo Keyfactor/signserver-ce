@@ -124,6 +124,9 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         if (args[0].equalsIgnoreCase("renewsigner")) {
             return new RenewSignerCommand(args);
         }
+        if (args[0].equalsIgnoreCase("wsadmins")) {
+            return new WSAdminsCommand(args);
+        }
         return null;
         
         
@@ -218,6 +221,7 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
 	    		out.println("Available groupkeyservice commands : signserver groupkeyservice < switchenckey | removegroupkeys | pregeneratekeys > \n");	    		
 	    	}
 	    	out.println("Available module commands : signserver module < add | remove | list > \n");
+                out.println("Available wsadmins commands : signserver wsadmins < -add | -remove | -list > \n");
 	    	out.println("Each basic command give more help");
 
 	    }

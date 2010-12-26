@@ -104,19 +104,22 @@ OS version                          = ${os.version}
         <delete dir="${apidoc}" />
         <delete dir="${tmp}"/>	
     	<delete dir="${client.dist.dir}" />
-        <delete file="velocity.log" />
         <delete dir="${test.dir}" />
         <delete dir="${validationClientBuild}" />
         <delete dir="${signingAndValidationBuild}" />
         <delete dir="${wsraadminClientBuild}" />
         <delete dir="${timeStampClientBuild}" />
 
+        <!-- XDocs -->
+        <delete file="velocity.log" />
+        <delete dir="docs.dest"/>
+
         <!-- Clean all modules -->
-         <subant target="clean">
+        <subant target="clean">
             <fileset dir="modules" includes="SignServer-*/build.xml"/>
          </subant>
     </target>
-	 
+
     <!--
       Preprocesses SignServer by replacing tags with correct version and
       application texts.

@@ -322,7 +322,7 @@ public class SODSignerCLI {
         } catch (IllegalArgumentException ex) {
             LOG.error(ex);
             final HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("signdocument <options>", OPTIONS);
+            formatter.printHelp("signdatagroups <options>", OPTIONS);
         }
     }
 

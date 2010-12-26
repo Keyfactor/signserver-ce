@@ -795,11 +795,10 @@ More information about the MySQL Cluster can be found at
                 TODO: Introduction
             </p>-->
             <section name="JavaDoc">
-			<p>
-				The JavaDoc for SignServer is available at SIGNSERVER_HOME/tmp/doc/index.html
-				after running "ant javadoc".
-			</p>
-
+                    <p>
+                            The JavaDoc for SignServer is available at SIGNSERVER_HOME/doc/api/index.html
+                            after running "ant javadoc".
+                    </p>
 		</section>
 
 		<section name="Web Services">
@@ -1026,6 +1025,153 @@ try {
                         </subsubsection>
                     </subsection>
 		</section>
+
+                <section name="Client Command Line Interface (CLI)">
+                    <p>
+Requests can be sent to the workers using the Client CLI. After building
+SignServer the script bin/client.sh can be run.
+                    </p>
+                    <source>
+$ bin/client.sh
+INFO  usage: client &lt;signdocument | validatedocument | timestamp | validatecertificate | signdatagroups&gt;
+                    </source>
+
+                    <subsection name="signdocument">
+                        <source>
+$ bin/client.sh signdocument
+usage: signdocument &lt;options&gt;
+ -data          Data to send to the worker.
+ -encoding      Encoding of the data option. None or base64. Default:
+                none.
+ -host          Server name or IP address. Default: localhost
+ -infile        File to read data to send to the worker from.
+ -outfile       File to write the result to. If not specified the result
+                is written to stdout.
+ -password      Password for authentication.
+ -port          Server port. Default: 8080
+ -protocol      Method of interacting with SignServer. HTTP or
+                WEBSERVICES. Default: WEBSERVICES.
+ -servlet       Servlet to call. Default /signserver/process
+ -username      Username for authentication.
+ -workerid      ID of worker which should perform the operation.
+ -workername    Name of worker which should perform the operation.
+                        </source>
+                    </subsection>
+
+                    <subsection name="validatedocument">
+                        <source>
+$ bin/client.sh validatedocument
+usage: validatedocument &lt;options&gt;
+ -data          Data to send to the worker.
+ -encoding      Encoding of the data option. None or base64. Default:
+                none.
+ -host          Server name or IP address. Default: localhost
+ -infile        File to read data to send to the worker from.
+ -password      Password for authentication.
+ -port          Server port. Default: 8080
+ -protocol      Method of interacting with SignServer. HTTP or
+                WEBSERVICES. Default: WEBSERVICES.
+ -username      Username for authentication.
+ -workerid      ID of worker which should perform the operation.
+ -workername    Name of worker which should perform the operation.
+                        </source>
+                    </subsection>
+
+                    <subsection name="timestamp">
+                        <source>
+$ bin/client.sh timestamp
+usage: java -jar timeStampClient.jar &lt;options> &lt;url&gt;
+ -instr &lt;string&gt;      String to be time stamped, if neither instr or
+                      infile is given, the client works in test-mode generating it's own
+                      message.
+ -base64              Give this option if the stored request/reply should
+                      be base64 encoded, default is not.
+ -help                Print this message.
+ -infile &lt;file&gt;       File containing message to time stamp.
+ -inrep &lt;file&gt;        Input file containing an earlier stored base64
+                      encoded response, to verify.You must specify the verify flag also.
+ -inreq &lt;file&gt;        Input file containing an earlier stored request to
+                      use instead of creating a new. You must specify the request flag also.
+ -outrep &lt;file&gt;       Output file to store the recevied TSA reply, if not
+                      given the reply is not stored.
+ -outreq &lt;file&gt;       Output file to store the sent TSA request, if not
+                      given the request is not stored.
+ -signerfile &lt;file&gt;   Input file containing the PEM encoded certificate of
+                      the TSA signer.Used to verify a stored response.
+ -sleep &lt;num&gt;         Sleep a number of milliseconds after each request.
+                      Default 1000 ms.
+ -url &lt;url&gt;           Url of TSA, e.g.
+                      http://127.0.0.1:8080/signserver/process?workerId=1.
+ -verify              Give this option if verification of a stored reply
+                      should be done, work together with inrep and cafile. If given, no request
+                      to the TSA will happen.
+                        </source>
+                    </subsection>
+
+                    <subsection name="validatecertificate">
+                        <source>
+$ bin/client.sh validatecertificate
+usage: Usage: java -jar validate.jar &lt;options&gt;
+
+ -cert &lt;cert-file&gt;              Path to certificate file (DER or PEM)
+                                (Required).
+ -certpurposes &lt;certpurposes&gt;   A ',' separated string containing
+                                requested certificate purposes.
+ -der                           Certificate is in DER format.
+ -help                          Display this info
+ -hosts &lt;hosts&gt;                 A ',' separated string containing the
+                                hostnames of the validation service nodes. Ex
+                                'host1.someorg.org,host2.someorg.org' (Required).
+ -pem                           Certificate is in PEM format (Default).
+ -port &lt;port&gt;                   Remote port of service (Default is 8080 or
+                                8442 for SSL).
+ -service &lt;service-name&gt;        The name or id of the validation service
+                                to process request. (Required)
+ -silent                        Don't produce any output, only return
+                                value.
+ -truststore &lt;jks-file&gt;         Path to JKS truststore containing trusted
+                                CA for SSL Server certificates.
+ -truststorepwd &lt;password&gt;      Password to unlock the truststore.
+
+
+
+The following values is returned by the program that can be used when scripting.
+  -2   : Error happened during execution
+  -1   : Bad arguments
+   0   : Certificate is valid
+   1   : Certificate is revoked
+   2   : Certificate is not yet valid
+   3   : Certificate have expired
+   4   : Certificate doesn't verify
+   5   : CA Certificate have been revoked
+   6   : CA Certificate is not yet valid
+   7   : CA Certificate have expired.
+   8   : Certificate have no valid certificate purpose.
+                        </source>
+                    </subsection>
+
+                    <subsection name="signdatagroups">
+                        <source>
+$ bin/client.sh signdatagroups
+usage: signdatagroups &lt;options&gt;
+ -data          Data to send to the worker.
+ -encoding      Encoding of the data option. None or base64. Default:
+                none.
+ -host          Server name or IP address. Default: localhost
+ -outfile       File to write the result to. If not specified the result
+                is written to stdout.
+ -password      Password for authentication.
+ -port          Server port. Default: 8080
+ -protocol      Method of interacting with SignServer. HTTP or
+                WEBSERVICES. Default: WEBSERVICES.
+ -servlet       Servlet to call. Default /signserver/process
+ -username      Username for authentication.
+ -workerid      ID of worker which should perform the operation.
+ -workername    Name of worker which should perform the operation.
+                        </source>
+                    </subsection>
+
+                </section>
         </chapter>
 
         <chapter name="Common configuration" shortname="commonconf">

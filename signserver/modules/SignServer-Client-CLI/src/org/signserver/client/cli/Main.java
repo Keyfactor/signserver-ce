@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
+import org.signserver.client.validationservice.ValidationCLI;
 
 /**
  *
@@ -59,6 +60,13 @@ public class Main {
         } else if ("timestamp".equals(args[0])) {
             try {
                 org.signserver.client.TimeStampClient.main(
+                        Arrays.copyOfRange(args, 1, args.length));
+            } catch (Exception ex) {
+                LOG.error(ex, ex);
+            }
+        } else if ("validatecertificate".equals(args[0])) {
+            try {
+                ValidationCLI.main(
                         Arrays.copyOfRange(args, 1, args.length));
             } catch (Exception ex) {
                 LOG.error(ex, ex);

@@ -112,7 +112,7 @@ OS version                          = ${os.version}
 
         <!-- XDocs -->
         <delete file="velocity.log" />
-        <delete dir="docs.dest"/>
+        <delete dir="${docs.dest}"/>
 
         <!-- Clean all modules -->
         <subant target="clean">

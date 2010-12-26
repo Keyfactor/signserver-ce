@@ -323,12 +323,14 @@ OS version                          = ${os.version}
     <!-- Build Javadoc part                                                  -->
     <!-- =================================================================== -->
 
-    <target name="javadoc" depends="build">
+    <target name="javadoc" depends="build"
+        description="Build JavaDoc for SignServer">
         <mkdir dir="${apidoc}" />
         <javadoc packagenames="org.signserver.*" maxmemory="256m" sourcepath="${src.java}" destdir="${apidoc}"
         	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/ext/james:${lib}/asm:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/module/wsra:${lib}/reports:${lib}/quartz:${lib}/jaxws:${lib}/module/odfsigner/odfdom.jar"
         	classpath="${server.compile.classpath}:${tmp}/jaxws/gen-classes/client:${lib}/module/odfsigner/odfdom.jar:${lib}/module/ooxmlsigner/openxml4j_beta_v538.jar"
-        	author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2010 PrimeKey Solutions AB.">
+        	author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2011 PrimeKey Solutions AB."
+                encoding="utf-8">
                 <fileset dir="${src.java}">
                     <include name="**/*.java"/>
                 </fileset>
@@ -338,7 +340,16 @@ OS version                          = ${os.version}
                 <fileset dir="${signserverejb.src.java}">
                     <include name="**/*.java"/>
                 </fileset>
+                <fileset dir="${module.pdfsigner.src.dir}" includes="**/*.java"/>
+                <fileset dir="${module.mrtdsodsigner.src.dir}" includes="**/*.java"/>
+                <fileset dir="${module.mrtdsigner.src.dir}" includes="**/*.java"/>
+                <fileset dir="${module.cmssigner.src.dir}" includes="**/*.java"/>
+                <fileset dir="${module.tsa.src.dir}" includes="**/*.java"/>
+                <fileset dir="${module.odfsigner.src.dir}" includes="**/*.java"/>
+                <fileset dir="${module.ooxmlsigner.src.dir}" includes="**/*.java"/>
+                <fileset dir="${module.xmlvalidator.src.dir}" includes="**/*.java"/>
         </javadoc>
+        <echo message="Local documentation is now available in file://${apidoc}/index.html"/>
     </target>
 
 

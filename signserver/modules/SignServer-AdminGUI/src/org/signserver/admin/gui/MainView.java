@@ -341,6 +341,7 @@ public class MainView extends FrameView {
         renewSignerMenu = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
         globalConfigurationMenu = new javax.swing.JMenuItem();
+        administratorsMenu = new javax.swing.JMenuItem();
         viewMenu = new javax.swing.JMenu();
         refreshMenu = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
@@ -732,15 +733,18 @@ public class MainView extends FrameView {
         menuBar.add(fileMenu);
 
         editMenu.setAction(actionMap.get("testKeys")); // NOI18N
+        editMenu.setMnemonic('E');
         editMenu.setText(resourceMap.getString("editMenu.text")); // NOI18N
         editMenu.setName("editMenu"); // NOI18N
 
         activateMenu.setAction(actionMap.get("activateWorkers")); // NOI18N
+        activateMenu.setMnemonic('A');
         activateMenu.setText(resourceMap.getString("activateMenu.text")); // NOI18N
         activateMenu.setName("activateMenu"); // NOI18N
         editMenu.add(activateMenu);
 
         deactivateMenu.setAction(actionMap.get("deactivateWorkers")); // NOI18N
+        deactivateMenu.setMnemonic('D');
         deactivateMenu.setText(resourceMap.getString("deactivateMenu.text")); // NOI18N
         deactivateMenu.setName("deactivateMenu"); // NOI18N
         editMenu.add(deactivateMenu);
@@ -749,21 +753,25 @@ public class MainView extends FrameView {
         editMenu.add(jSeparator7);
 
         renewKeyMenu.setAction(actionMap.get("generateRequests")); // NOI18N
+        renewKeyMenu.setMnemonic('R');
         renewKeyMenu.setText(resourceMap.getString("renewKeyMenu.text")); // NOI18N
         renewKeyMenu.setName("renewKeyMenu"); // NOI18N
         editMenu.add(renewKeyMenu);
 
         testKeyMenu.setAction(actionMap.get("generateRequests")); // NOI18N
+        testKeyMenu.setMnemonic('T');
         testKeyMenu.setText(resourceMap.getString("testKeyMenu.text")); // NOI18N
         testKeyMenu.setName("testKeyMenu"); // NOI18N
         editMenu.add(testKeyMenu);
 
         generateRequestMenu.setAction(actionMap.get("generateRequests")); // NOI18N
+        generateRequestMenu.setMnemonic('C');
         generateRequestMenu.setText(resourceMap.getString("generateRequestMenu.text")); // NOI18N
         generateRequestMenu.setName("generateRequestMenu"); // NOI18N
         editMenu.add(generateRequestMenu);
 
         installCertificatesMenu.setAction(actionMap.get("installCertificates")); // NOI18N
+        installCertificatesMenu.setMnemonic('I');
         installCertificatesMenu.setText(resourceMap.getString("installCertificatesMenu.text")); // NOI18N
         installCertificatesMenu.setName("installCertificatesMenu"); // NOI18N
         editMenu.add(installCertificatesMenu);
@@ -772,6 +780,7 @@ public class MainView extends FrameView {
         editMenu.add(jSeparator5);
 
         renewSignerMenu.setAction(actionMap.get("renewSigner")); // NOI18N
+        renewSignerMenu.setMnemonic('s');
         renewSignerMenu.setText(resourceMap.getString("renewSignerMenu.text")); // NOI18N
         renewSignerMenu.setName("renewSignerMenu"); // NOI18N
         editMenu.add(renewSignerMenu);
@@ -779,6 +788,7 @@ public class MainView extends FrameView {
         jSeparator8.setName("jSeparator8"); // NOI18N
         editMenu.add(jSeparator8);
 
+        globalConfigurationMenu.setMnemonic('G');
         globalConfigurationMenu.setText(resourceMap.getString("globalConfigurationMenu.text")); // NOI18N
         globalConfigurationMenu.setName("globalConfigurationMenu"); // NOI18N
         globalConfigurationMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -788,12 +798,25 @@ public class MainView extends FrameView {
         });
         editMenu.add(globalConfigurationMenu);
 
+        administratorsMenu.setMnemonic('m');
+        administratorsMenu.setText(resourceMap.getString("administratorsMenu.text")); // NOI18N
+        administratorsMenu.setName("administratorsMenu"); // NOI18N
+        administratorsMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                administratorsMenuActionPerformed(evt);
+            }
+        });
+        editMenu.add(administratorsMenu);
+
         menuBar.add(editMenu);
 
         viewMenu.setMnemonic('V');
+        viewMenu.setText(resourceMap.getString("viewMenu.text")); // NOI18N
         viewMenu.setName("viewMenu"); // NOI18N
 
         refreshMenu.setAction(actionMap.get("refreshWorkers")); // NOI18N
+        refreshMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        refreshMenu.setMnemonic('R');
         refreshMenu.setText(resourceMap.getString("refreshMenu.text")); // NOI18N
         refreshMenu.setName("refreshMenu"); // NOI18N
         viewMenu.add(refreshMenu);
@@ -1373,6 +1396,11 @@ public class MainView extends FrameView {
         GlobalConfigurationFrame frame = new GlobalConfigurationFrame();
         frame.setVisible(true);
     }//GEN-LAST:event_globalConfigurationMenuActionPerformed
+
+    private void administratorsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_administratorsMenuActionPerformed
+        final AdministratorsFrame frame = new AdministratorsFrame();
+        frame.setVisible(true);
+    }//GEN-LAST:event_administratorsMenuActionPerformed
 
     private void displayWorker(final Worker worker) {
         LOG.debug("Display worker: " + worker);
@@ -1983,6 +2011,7 @@ public class MainView extends FrameView {
     private javax.swing.JButton activateButton;
     private javax.swing.JMenuItem activateMenu;
     private javax.swing.JButton addButton;
+    private javax.swing.JMenuItem administratorsMenu;
     private javax.swing.JButton authAddButton;
     private javax.swing.JButton authEditButton;
     private javax.swing.JPanel authEditPanel;

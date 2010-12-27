@@ -600,9 +600,258 @@ As a complement to the command line interface there is also a graphical user
 interface for managing some of the most basic administrative tasks.
                     </p>
                     <p>
-The SignServer AdminGUI can be build by running "ant jar" in the
-SignServer-AdminGUI folder.
+The SignServer AdminGUI can be build by running "ant admingui" and then started 
+using the script bin/admingui.sh. By default it tries to connect to a locally
+running SignServer instance using EJB calls. If that fails or if the command
+line option "-ws" is specified a connection dialog for connecting using web
+services is displayed instead.
                     </p>
+                    <subsubsection name="Connect to SignServer dialog">
+                        <p>
+Specify URL to SignServer server as well as keystore and truststore for setting
+up the HTTPS connection and then click the button <b>Connect</b>. By clicking
+the button <b>Load defaults</b> the settings from the file
+default_connect.properties is loaded. If the connection is successful the
+current settings are stored to connect.properties and displayed the next time
+the dialog is openned.
+                        </p>
+                        <p>
+<b>Web Service URL</b>: Base URL to the SignServer server. Default: https://localhost:8443/signserver
+                        </p>
+                        <p>
+<b>Truststore Type</b>: Type of the truststore. Should match the choosen
+truststore file (if any). Options are: "Use keystore", JKS, PKCS12 or PEM. If
+"Use keystore" is choosen the trusted certificates are instead taken from the
+keystore and no truststore is used.
+                        </p>
+                        <p>
+<b>Truststore file path</b>: Path to the truststore file (if any).
+                        </p>
+                        <p>
+<b>Truststore password</b>: Password of the truststore file (if any).
+                        </p>
+                        <p>
+<b>Keystore Type</b>: Type of the keystore. Should match the choosen keystore file
+path. Options are: JKS, PKCS12 or PKCS11. If PKCS11 is choosen the keystore file
+path should be the patch to the PKCS#11 shared library file.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Main window">
+                        <p>
+The SignServer Administration GUI main window consists of a menu bar, a toolbar,
+the working area and at the bottom a status bar. The working area constists of a
+left and right part where the left is a list of all configured workers and the
+right shows details for the selected workers (if any).
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Main window: Menu bar">
+                        <p>
+<b> File -&gt; Exit</b>: Exits the SignServer Administration GUI
+                        </p>
+                        <p>
+<b> Edit -&gt; Activate</b>: Activates the selected worker(s).
+                        </p>
+                        <p>
+<b> Edit -&gt; deactivate</b>: Deactivates the selected worker(s).
+                        </p>
+                        <p>
+<b> Edit -&gt; Renew key...</b>: Opens the Renew key dialog for the selected worker(s).
+                        </p>
+                        <p>
+<b> Edit -&gt; Test key...</b>: Opens the Test key dialog for the selected worker(s).
+                        </p>
+                        <p>
+<b> Edit -&gt; Generate CSR...</b>: Opens the Generate CSR dialog for the selected worker(s).
+                        </p>
+                        <p>
+<b> Edit -&gt; Install certificates...</b>: Opens the Install certificates dialog for the selected worker(s).
+                        </p>
+                        <p>
+<b> Edit -&gt; Renew signer...</b>: Opens the Renew signer dialog for the selected worker(s).
+                        </p>
+                        <p>
+<b> Edit -&gt; Global configuration...</b>: Opens the Global configuration window.
+                        </p>
+                        <p>
+<b> Edit -&gt; Administrators...</b>: Opens the Administrators window.
+                        </p>
+                        <p>
+<b> View -&gt; Refresh</b>: Refreshes the information about all workers.
+                        </p>
+                        <p>
+<b> View -&gt; Status Summary...</b>: Switches to the Status Summary tab for the selected worker.
+                        </p>
+                        <p>
+<b> View -&gt; Status Properties...</b>: Switches to the Status Properties tab for the selected worker.
+                        </p>
+                        <p>
+<b> View -&gt; Configuration...</b>: Switches to the Configuration tab for the selected worker.
+                        </p>
+                        <p>
+<b> View -&gt; Authorization...</b>: Switches to the Authorization tab for the selected worker.
+                        </p>
+                        <p>
+<b> Help -&gt; About...</b>: Opens the about box doc.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Main window: Tool bar">
+                        <p>
+<b>Refresh</b>: Refreshes the information about all workers.
+                        </p>
+                        <p>
+<b>Activate</b>: Activates the selected worker(s).
+                        </p>
+                        <p>
+<b>Deactivate</b>: Deactivates the selected worker(s).
+                        </p>
+                        <p>
+<b>Renew key...</b>: Opens the Renew key dialog for the selected worker(s).
+                        </p>
+                        <p>
+<b>Test key...</b>: Opens the Test key dialog for the selected worker(s).
+                        </p>
+                        <p>
+<b>Generate CSR...</b>: Opens the Generate CSR dialog for the selected worker(s).
+                        </p>
+                        <p>
+<b>Install certificates...</b>: Opens the Install certificates dialog for the selected worker(s).
+                        </p>
+                        <p>
+<b>Renew signer...</b>: Opens the Renew signer dialog for the selected worker(s).
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Main window: Status Summary Tab">
+                        <p>
+Displays the status summary for the selected worker in the same format as the
+CLI command "signserver getstatus complete".
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Main window: Status Properties Tab">
+                        <p>
+Displays the status in properties format with the option of viewing details
+for some properties such as for the certificates.
+                        </p>
+                        <p>
+<b>Details...</b>: Selecting an property and clicking this button opens a dialog box
+with more information for the property (if supported). Currently for certificates
+this openns the Certificate details dialog.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Main window: Configuration Tab">
+                        <p>
+Lists all the selected worker's configuration properties and gives the ability
+to add, remove or edit properties.
+                        </p>
+                        <p>
+<b>Add...</b>: Adds a new property to the selected worker.
+                        </p>
+                        <p>
+<b>Edit</b>: Edit the selected property.
+                        </p>
+                        <p>
+<b>Remove</b>: Removes the selected property.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Main window: Authorization Tab">
+                        <p>
+Lists all the authorized client certificates for the selected worker. Notice 
+that this only applies if the worker has the AUTHTYPE set to CLIENTCERT 
+otherwise information about authorized clients might be taken from other sources.
+                        </p>
+                        <p>
+<b>Add...</b>: Adds a new authorized client. If the option 
+"Apply changes to all selected workers" is checked the client is added to all 
+the currently selected workers.
+                        </p>
+                        <p>
+<b>Edit...</b>: Edits the selected authorized client. If the option 
+"Apply changes to all selected workers" is checked the client is modified in all 
+the currently selected workers.
+                        </p>
+                        <p>
+<b>Remove</b>: Removes the selected client. If the option
+"Apply changes to all selected workers" is checked the client is modified in all
+the currently selected workers.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Renew key dialog">
+                        <p>
+Generates new keys for all the listed workers. For this to work all workers should
+have the same password. Key algorithm, Key specification and New key alias must
+be specified if it is not taken from the worker's configuration.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Test key dialog">
+                        <p>
+Test keys for all the listed workers. It is optional to either test the current
+key or the next key (if any) or all the keys in the keystore. For this to work
+all workers should have the same password. The results shows for each key the
+key alias, SUCCESS and the public key hash if the test signing succeded.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Generate CSR dialog">
+                        <p>
+Generates certificate signing requests (CSR:s) in PKCS#10 format for all listed 
+signers and either for the current key (Default key) or the next key. 
+Signature algorithm, subject distingueshed name (DN) and Filename must be 
+specified if not already taken from the worker's configuration. The format of 
+the request could either be a Standard CSR file or a CSR wrapped in PKCS#7/CMS 
+signed object created by a RequestSigner. The with the last option is that at 
+the CA the signature of the request can be verified.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Install certificates">
+                        <p>
+Installs signer certificate and certificate chains for the listed workers and
+if next key is choosen that key becomes the new default key.
+                        </p>
+                        <p>
+<b>Signer certificate</b>: Browse for the signer certificate file in PEM format.
+                        </p>
+                        <p>
+<b>Certificate chain</b>: Browse for the signer certificate chain file in PEM
+format. The signer certificate is added to the chain if it is not already
+included so normally this could just be the CA certificate.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Renew signer dialog">
+                        <p>
+Requests a Renewal worker to renew all the choosen and selected workers. The 
+Renewal worker will generate a new key if there isn't already a next key available 
+and then contact EJBCA using its web service interface to request a new certificate.
+After recieving the new certificate it is installed and the next key becomes 
+the current default key. Notice how the "Not valid after" date and possibly also
+the Signings column changes and the Renewal checkbox gets unchecked after a
+successfull renewal.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Global configuration dialog">
+                        <p>
+Lists all the global configuration properties and gives the ability to add,
+remove or edit properties.
+                        </p>
+                    </subsubsection>
+
+                    <subsubsection name="Administrators dialog">
+                        <p>
+Lists all the authorized WS administrators and gives the ability to add,
+remove or edit authorized administrators.
+                        </p>
+                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="Working with Workers">

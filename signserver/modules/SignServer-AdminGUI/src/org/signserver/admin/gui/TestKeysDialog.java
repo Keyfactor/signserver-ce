@@ -78,7 +78,7 @@ public class TestKeysDialog extends JDialog {
         this.workers = new ArrayList<Worker>(workers);
         aliasComboBox.setEditable(true);
         initComponents();
-        setTitle("Renew keys for " + workers.size() + " signers");
+        setTitle("Test keys for " + workers.size() + " signers");
 
         data = new Vector<Vector<String>>();
         for (Worker worker : workers) {

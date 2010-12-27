@@ -17,7 +17,7 @@ import org.jdesktop.application.Action;
 /**
  * The application's about box.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class SignServerAdminGUIApplicationAboutBox extends javax.swing.JDialog {

@@ -43,20 +43,16 @@ import org.signserver.admin.gui.adminws.gen
 import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
 import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
 import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
-import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericPropertiesRequest;
 import org.signserver.common.GenericPropertiesResponse;
-import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestAndResponseManager;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
 
 /**
  * Dialog for installing certificates to signers.
  *
- * @author markus
- * @version $Id: InstallCertificatesDialog.java 1234 2010-10-13 13:51:55Z netmackan $
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class RenewSignerDialog extends javax.swing.JDialog {
 

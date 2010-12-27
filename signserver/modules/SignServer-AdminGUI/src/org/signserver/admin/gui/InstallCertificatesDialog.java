@@ -44,7 +44,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * Dialog for installing certificates to signers.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class InstallCertificatesDialog extends javax.swing.JDialog {

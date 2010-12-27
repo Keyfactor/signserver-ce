@@ -71,7 +71,7 @@ import org.signserver.common.GlobalConfiguration;
 /**
  * The application's main frame.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class MainView extends FrameView {

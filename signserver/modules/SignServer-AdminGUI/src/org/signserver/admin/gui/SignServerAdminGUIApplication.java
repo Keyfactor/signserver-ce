@@ -30,13 +30,11 @@ import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.client.api.ISigningAndValidation;
 import org.signserver.client.api.SigningAndValidationEJB;
 import org.signserver.client.api.SigningAndValidationWS;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * The main class of the application.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class SignServerAdminGUIApplication extends SingleFrameApplication {

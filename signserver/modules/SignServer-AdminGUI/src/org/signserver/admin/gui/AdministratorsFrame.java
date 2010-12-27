@@ -13,11 +13,9 @@
 package org.signserver.admin.gui;
 
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;

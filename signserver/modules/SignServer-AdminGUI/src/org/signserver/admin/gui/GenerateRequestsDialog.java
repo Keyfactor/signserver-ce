@@ -48,7 +48,7 @@ import org.signserver.common.GenericSignResponse;
 
 /**
  * Dialog for generating certificate requests.
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class GenerateRequestsDialog extends JDialog {

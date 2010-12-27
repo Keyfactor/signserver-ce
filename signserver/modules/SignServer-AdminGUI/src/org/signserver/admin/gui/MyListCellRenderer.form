@@ -46,7 +46,7 @@
                       <EmptySpace pref="17" max="32767" attributes="0"/>
                       <Component id="listItemLabel2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jLabel3" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jLabel3" alignment="0" pref="49" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>

@@ -16,7 +16,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.InetAddress;
 import java.security.KeyStoreException;
 import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
@@ -37,7 +36,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
-import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
+import org.signserver.admin.gui.adminws.gen
+        .AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 import org.signserver.admin.gui.adminws.gen.Base64SignerCertReqData;
@@ -71,11 +71,12 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.RemoteAddressAuthorizer;
 
 /**
+ * Implementation of the AdminWS interface but using EJB calls.
  *
- * @author markus
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class AdminLayerEJBImpl implements AdminWS {
     private static final Logger LOG = Logger.getLogger(AdminLayerEJBImpl.class);

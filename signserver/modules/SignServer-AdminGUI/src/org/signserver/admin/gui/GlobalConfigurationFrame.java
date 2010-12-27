@@ -29,8 +29,8 @@ import  org.signserver.common.GlobalConfiguration;
 
 /**
  * Frame for viewing and editing global configuration properties.
- * 
- * @author markus
+ *
+ * @author Markus Kilås
  * @version $Id$
  */
 public class GlobalConfigurationFrame extends javax.swing.JFrame {

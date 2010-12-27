@@ -18,7 +18,7 @@ import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 
 /**
  * Class representing a worker and its status and configuration.
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class Worker {

@@ -14,8 +14,8 @@ package org.signserver.admin.gui;
 
 /**
  * Holds the connection settings.
- * 
- * @author markus
+ *
+ * @author Markus Kilås
  * @version $Id: ConnectSettings.java 9266 2010-06-21 13:54:55Z netmackan $
  */
 public class ConnectSettings {

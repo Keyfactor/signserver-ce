@@ -16,14 +16,13 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicHTML;
 
 /**
  * Renderer for the main list of workers.
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class MyListCellRenderer extends javax.swing.JPanel 

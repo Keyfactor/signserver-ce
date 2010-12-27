@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 /**
  * Key manager that prompts user for choosing which certificate to use.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $id$
  */
 public class GUIKeyManager implements X509KeyManager {

@@ -28,7 +28,7 @@ import javax.swing.JTextField;
 /**
  * Cell editor with text field and button for browsing to a filename to save as.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 class BrowseCellEditor extends DefaultCellEditor implements ActionListener {

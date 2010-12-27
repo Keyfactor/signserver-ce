@@ -36,7 +36,7 @@ import org.signserver.admin.gui.adminws.gen
 
 /**
  * Dialog for renewing keys.
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class RenewKeysDialog extends JDialog {

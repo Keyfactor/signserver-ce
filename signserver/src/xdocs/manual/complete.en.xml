@@ -234,6 +234,219 @@ One SignServer can have multiple services for different purposes.
 
         </chapter>
 
+        <chapter name="Installation Guide" shortname="installguide">
+
+            <section name="Installation">
+                <subsection name="1. Check prerequisites">
+                    <p>
+Make sure all required softwares are installed:
+                    </p>
+                    <ul>
+                        <li>Java: Sun/Oracle JDK 6 Update 10 or later or OpenJDK*</li>
+                        <li>Application server: JBoss 4.2.3.GA** or GlassFish Server Open Source Edition 2.1.1</li>
+                        <li>Database: HypersonicSQL (bundled with JBoss), MySQL 5.1 or Oracle Database 10/11g</li>
+                        <li>Build tool: Apache Ant 1.7.1 or later</li>
+                    </ul>
+                    <p>
+* The ODFSigner has issues with OpenJDK. Please see <a href="https://jira.primekey.se/browse/DSS-168">DSS-168</a> for a workaround.<br/>
+** JBoss 4.2.3.GA is available in two different versions (standard and JDK6) which differens in web services stacks. The file jboss-jaxws.jar might have to be removed from JBOSS_HOME/lib/endorsed.
+                    </p>
+                </subsection>
+
+                <subsection name="2. Unpack SignServer">
+                    <p>
+Download and unzip the
+<a href="http://sourceforge.net/projects/signserver/files/signserver/">latest
+SignServer release</a> archive from SourceForge or for the absolutly latest
+unstable version checkout from the Subversion (SVN)
+<a href="http://sourceforge.net/projects/signserver/develop">repository</a>.
+                    </p>
+                </subsection>
+
+                <subsection name="3. Set environment variables">
+                    <subsubsection name="APPSRV_HOME">
+                        <p>
+Set APPSRV_HOME to point to your application server installation.
+                        </p>
+                        <source>
+export APPSRV_HOME=/opt/jboss-4.2.3.GA
+                        </source>
+                    </subsubsection>
+                    <subsubsection name="ANT_HOME">
+                        <p>
+Set ANT_HOME to point to your Apache Ant installation.
+                        </p>
+                        <source>
+export ANT_HOME=/usr/share/ant
+                        </source>
+                    </subsubsection>
+                    <subsubsection name="ANT_OPTS">
+                        <p>
+Set ANT_OPTS to give Ant more memory for building SignServer.
+                        </p>
+                        <source>
+export ANT_OPTS="-Xmx512m -XX:MaxPermSize=128m"
+                        </source>
+                    </subsubsection>
+                    <subsubsection name="SIGNSERVER_HOME">
+                        <p>
+Set SIGNSERVER_HOME to point to your SignServer installation.
+                        </p>
+                        <source>
+export SIGNSERVER_HOME=/opt/signserver
+                        </source>
+                    </subsubsection>
+                    <subsubsection name="SIGNSERVER_NODEID">
+                        <p>
+Set SIGNSERVER_NODEID to an unique ID for the server.
+                        </p>
+                        <source>
+export SIGNSERVER_NODEID=node1
+                        </source>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="4. Setup database">
+                    <p>
+Create a database and user for SignServer.
+                    </p>
+                    <p>
+For GlassFish configure a connection pool and JNDI resource.
+                    </p>
+                </subsection>
+
+                <subsection name="4. Configure web server keystores">
+                    <p>
+For GlassFish enable client authentication for http-listener-2 and optionally
+update the keystores with the right certificates.
+                    </p>
+                </subsection>
+
+                <subsection name="5. Configure build">
+                    <p>
+Copy signserver_build.properties.sample to signserver_build.properties and open
+it for editing in your favorite text editor.
+                    </p>
+                    <source>
+cp signserver_build.properties.sample signserver_build.properties
+                    </source>
+                    <subsubsection name="Application server configuration">
+                        <p>
+Set appserver.type to the application server (jboss or glassfish).
+                        </p>
+                        <source>
+appserver.type=jboss
+                        </source>
+                    </subsubsection>
+
+                    <subsubsection name="Web GUI configuration">
+                        <p>
+Uncomment j2ee.web-nohttps=true if SignServer should be used to configure the
+keystore in JBoss.
+                        </p>
+                        <source>
+j2ee.web-nohttps=true
+                        </source>
+                        <p>
+For GlassFish change httpserver.privhttps to a port configured with HTTPS and
+client authentication.
+                        </p>
+                        <source>
+httpserver.privhttps=8181
+                        </source>
+                    </subsubsection>
+
+                    <subsubsection name="Database configuration">
+                        <p>
+For GlassFish make sure the datasource.jndi-name and datasource.jndi-name-prefix
+matches the resource configured in the admin console.
+                        </p>
+                        <source>
+datasource.jndi-name=SignServerDS
+datasource.jndi-name-prefix=jdbc/
+                        </source>
+                        <p>
+Select database management system
+                        </p>
+                        <source>
+database.name=mysql
+                        </source>
+
+                        <p>
+For JBoss set the database connection URL, database driver and username and
+password.
+                        </p>
+                        <source>
+database.url=jdbc:mysql://127.0.0.1:3306/signserver
+database.driver=com.mysql.jdbc.Driver
+database.username=signserver
+database.password=signserver
+                        </source>
+                    </subsubsection>
+
+                    <subsubsection name="Web Service Configuration">
+                        <p>
+Enable or disable the web services.
+                        </p>
+                        <source>
+signserverws.enabled=true
+genericws.enabled=true
+validationws.enabled=true
+adminws.enabled=true
+                        </source>
+                    </subsubsection>
+
+                    <subsubsection name="Modules Configuration">
+                        <p>
+Enable all modules that should be built and choose if they should be built into
+SignServer.
+                        </p>
+                        <source>
+module.xmlsigner.enabled=true
+module.xmlsigner.include=true
+                        </source>
+                        <p>
+For GlassFish to enable debug logging include the Log4j module.
+                        </p>
+                        <source>
+module.log4j.include=true
+                        </source>
+                    </subsubsection>
+
+                </subsection>
+
+                <subsection name="6. Build and deploy SignServer">
+                    <p>
+Run "ant deploy" to build SignServer and deploy it to the selected application
+server.
+                    </p>
+                    <source>
+ant deploy
+                    </source>
+                </subsection>
+            </section>
+
+    <!--
+                TODO: Continue with configuring of signers and visiting demo web
+            <section -->
+
+            <section name="Historic Installation Guides">
+                <subsection name="Clustered SignServer 3.0 CentOS 4.4 Installation Guide">
+                    <p>
+Installation guide describing step-by-step how to setup a SignServer cluster on CentOS 4.4. Even if the document
+is specific for this OS is should be quite easy to adopt it to other environments as well. It 
+can be downloaded here either as <a href="docs/SignServer_3_0_Installation_Guide.pdf">PDF</a> or viewed as 
+<a href="docs/SignServer_3_0_Installation_Guide.html">HTML</a> 
+                    </p>
+                </subsection>
+                <subsection name="Clustered SignServer 2.0 CentOS 4.4 Installation Guide">
+                    <p>
+Version 2.0 of the same documentation.<a href="docs/SignServer_2_0_Installation_Guide.pdf">PDF</a> <a href="docs/SignServer_2_0_Installation_Guide.html">HTML</a> 
+                    </p>
+                </subsection>
+            </section>
+        </chapter>
+
         <chapter name="Usage Guide" shortname="usageguide">
             <section name="Introduction">
                 <p>   

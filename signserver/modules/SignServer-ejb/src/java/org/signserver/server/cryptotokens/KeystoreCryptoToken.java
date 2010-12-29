@@ -398,7 +398,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
 
                 // Handle ECDSA key with explicit parameters
                 if (explicitEccParameters
-                        && publicKey.getAlgorithm().contains("ECDSA")) {
+                        && publicKey.getAlgorithm().contains("EC")) {
                      publicKey = ECKeyUtil.publicToExplicitParameters(publicKey,
                              "BC");
                 }

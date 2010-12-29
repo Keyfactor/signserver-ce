@@ -42,14 +42,6 @@
 #client.java.target=1.6
 
 
-# ------------ PrimeCardHSM ----------------------------------------------------
-
-#PrimeCardHSM Specific Properties
-#Uncomment to when using PrimeCardHSM, default false.
-#primeCard.use=true
-#primeCard.home=${env.PRIMECARD_HOME}
-
-
 # ------------ Web GUI configuration -------------------------------------------
 
 # Comment this out with a # if the web server should be configured for HTTPS.
@@ -152,75 +144,9 @@ j2ee.web-nohttps=true
 #database.password=signserver
 
 
-# ------------- Cluster Deployment Configuration -------------------------------
-# Configuration used to centrally deploy the application server in a
-# clustered environment. Currently are up to 6 nodes supported to 
-# were the application is deployed.
-# 
-# Each node should run SSH with a trusting the key defined in deploy.ssh.keyfilepath
-# Each node should have a mirrored JBoss installation at the same place as
-# the current node.
-# 
-# To add a node, uncomment the deploy.hostname.nodeX property and set it's property
-# If no node is defined will JBOSS_HOME at localhost be used as deploy dir.
-
-#deploy.hostname.node1=
-#deploy.hostname.node2=
-#deploy.hostname.node3=
-#deploy.hostname.node4=
-#deploy.hostname.node5=
-#deploy.hostname.node6=
-
-# User to use for the SSH session
-# Default: jboss
-#deploy.ssh.user=jboss
-
-# Path to the id_rsa (or equivalent) file for SSH authentication
-# Default: /home/jboss/.ssh/id_rsa
-#deploy.ssh.keyfilepath=
-
-# Path to the known hosts file
-# Default: /home/jboss/.ssh/known_hosts
-#deploy.ssh.knownhostsfile=
-
-# Path to the location where the JBoss instance is located at the JBoss services.
-# Default: /home/jboss/jboss
-#deploy.ssh.appsrvhome=
-
-# Tomcat version. If SignServer should use a HTTPS interface it will
-# deploy a keystore to all nodes in the cluster. Depending on the version
-# of tomcat is the files placed a little different.
-# Available options are: tomcat41, tomcat50, tomcat55
-# Default: tomcat55
-#deploy.tomcat.version=
-
-
-# ------------- Custom Code Configuration --------------------------------------
-# It is possible to have a custom code tree outside the sign server
-# for custom modifications.
-#
-# The external code will be copied into the temporary code tree
-# used for pre-processing
-#
-# Location of external java source directory
-#custom.src.java = <custom-code>/src/java
-#
-# Location of external web source directory
-#custom.src.web= <custom-code>/src/web
-#
-# Location of optional custom build xml that will be imported.
-#custom.build.xml= <custom-code>/build.xml
-#
-# Setting defining a custom ISignServerCommandFactory used for customizing 
-# the CLI interface.
-#
-# Default : org.signserver.cli.DefaultSignServerCommandFactory
-#custom.commandfactory=org.signserver.cli.DefaultSignServerCommandFactory
-
-
 # -------------- JAX-WS Web Service Configuration ------------------------------
 #
-# JAX-WS Web Service requires JAX-WS 2.1 to build. This is included in JDK 1.6.0_04 and later.
+# JAX-WS Web Service requires JAX-WS 2.1 to build.
 #
 # Set to false to disable Main WebService deployment. 
 # If set to false you must also disable the validationclient and signingandvalidationapi modules below.
@@ -322,7 +248,7 @@ pdfperformancetest.enabled=false
 signingandvalidationapi.enabled=true
 
 
-# -------------- Cluster Class Loader Configurations ---------------------------
+# -------------- Cluster Class Loader Configuration ---------------------------
 #
 
 # Set to true to include all the module classes in the main signserver.ear.
@@ -365,6 +291,14 @@ clusterclassloader.pathtotruststore=
 clusterclassloader.truststorepwd=
 
 
+# ------------ PrimeCardHSM ----------------------------------------------------
+
+#PrimeCardHSM Specific Properties
+#Uncomment to when using PrimeCardHSM, default false.
+#primeCard.use=true
+#primeCard.home=${env.PRIMECARD_HOME}
+
+
 # -------------- Status And Health Check Configuration -------------------------
 #
 # Parameters configuring how health check and status should be
@@ -384,3 +318,68 @@ healthcheck.minimumfreememory=1
 # a minimal check that the database is working. May differ between databases.
 # Default : Select count(*) from signerconfigdata
 healthcheck.checkdbstring=Select count(*) from signerconfigdata
+
+# ------------- Cluster Deployment Configuration -------------------------------
+# Configuration used to centrally deploy the application server in a
+# clustered environment. Currently are up to 6 nodes supported to
+# were the application is deployed.
+#
+# Each node should run SSH with a trusting the key defined in deploy.ssh.keyfilepath
+# Each node should have a mirrored JBoss installation at the same place as
+# the current node.
+#
+# To add a node, uncomment the deploy.hostname.nodeX property and set it's property
+# If no node is defined will JBOSS_HOME at localhost be used as deploy dir.
+
+#deploy.hostname.node1=
+#deploy.hostname.node2=
+#deploy.hostname.node3=
+#deploy.hostname.node4=
+#deploy.hostname.node5=
+#deploy.hostname.node6=
+
+# User to use for the SSH session
+# Default: jboss
+#deploy.ssh.user=jboss
+
+# Path to the id_rsa (or equivalent) file for SSH authentication
+# Default: /home/jboss/.ssh/id_rsa
+#deploy.ssh.keyfilepath=
+
+# Path to the known hosts file
+# Default: /home/jboss/.ssh/known_hosts
+#deploy.ssh.knownhostsfile=
+
+# Path to the location where the JBoss instance is located at the JBoss services.
+# Default: /home/jboss/jboss
+#deploy.ssh.appsrvhome=
+
+# Tomcat version. If SignServer should use a HTTPS interface it will
+# deploy a keystore to all nodes in the cluster. Depending on the version
+# of tomcat is the files placed a little different.
+# Available options are: tomcat41, tomcat50, tomcat55
+# Default: tomcat55
+#deploy.tomcat.version=
+
+
+# ------------- Custom Code Configuration --------------------------------------
+# It is possible to have a custom code tree outside the sign server
+# for custom modifications.
+#
+# The external code will be copied into the temporary code tree
+# used for pre-processing
+#
+# Location of external java source directory
+#custom.src.java = <custom-code>/src/java
+#
+# Location of external web source directory
+#custom.src.web= <custom-code>/src/web
+#
+# Location of optional custom build xml that will be imported.
+#custom.build.xml= <custom-code>/build.xml
+#
+# Setting defining a custom ISignServerCommandFactory used for customizing
+# the CLI interface.
+#
+# Default : org.signserver.cli.DefaultSignServerCommandFactory
+#custom.commandfactory=org.signserver.cli.DefaultSignServerCommandFactory

@@ -236,7 +236,7 @@ One SignServer can have multiple services for different purposes.
 
         <chapter name="Installation Guide" shortname="installguide">
 
-            <section name="Installation">
+            <section name="Server installation">
                 <subsection name="1. Check prerequisites">
                     <p>
 Make sure all required softwares are installed:
@@ -308,16 +308,25 @@ export SIGNSERVER_NODEID=node1
 
                 <subsection name="4. Setup database">
                     <p>
-Create a database and user for SignServer.
+Create a database and user for SignServer. The application server will try to
+create tables during startup of SignServer but if the database user does not
+have table create permissions the tables must be created manually. See
+doc/howtos/create-tables-signserver32-*.sql.
                     </p>
                     <p>
-For GlassFish configure a connection pool and JNDI resource.
+For GlassFish also configure a connection pool and JNDI resource.
                     </p>
                 </subsection>
 
                 <subsection name="4. Configure web server keystores">
                     <p>
-For GlassFish enable client authentication for http-listener-2 and optionally
+For JBoss if you are going to protect the HTTP communication with SSL, you need
+a JKS SSL server keystore. Rename the web server keystore to tomcat.jks at put
+it in a 'p12' subdirectory. Also place the web server root certificate in DER
+encoding in the same directory, call it rootcert.cer.
+                    </p>
+                    <p>
+For GlassFish enable client authentication for http-listener-2 and manually
 update the keystores with the right certificates.
                     </p>
                 </subsection>
@@ -404,6 +413,7 @@ SignServer.
                         <source>
 module.xmlsigner.enabled=true
 module.xmlsigner.include=true
+...
                         </source>
                         <p>
 For GlassFish to enable debug logging include the Log4j module.
@@ -413,22 +423,319 @@ module.log4j.include=true
                         </source>
                     </subsubsection>
 
+                    <subsubsection name="Cluster Class Loader Configuration">
+                        <p>
+The cluster class loader can be used in development for having the code of the
+signers loaded on all nodes. If it is not used the modules must be built into
+signserver.ear either by specifying that for each module (as in previous
+section) or by specifying includemodulesinbuild=true to include all modules.
+                        </p>
+                        <source>
+includemodulesinbuild=true
+                        </source>
+                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="6. Build and deploy SignServer">
                     <p>
 Run "ant deploy" to build SignServer and deploy it to the selected application
-server.
+server. If the configuration changed since the last build run the clean target
+first.
                     </p>
                     <source>
-ant deploy
+ant clean deploy
+                    </source>
+                    <p>
+Start the application server and verify that SignServer was deployed and
+database tables were created. 
+                    </p>
+                    <p>
+After startup the SignServer CLI is available.
+                    </p>
+                    <source>
+bin/signserver.sh getstatus brief all
+Assuming JBoss JNDI provider...
+===========================================
+Executing Command on host : localhost
+===========================================
+
+
+Current version of server is : SignServer 3.2-svn
                     </source>
                 </subsection>
             </section>
 
-    <!--
-                TODO: Continue with configuring of signers and visiting demo web
-            <section -->
+            <section name="Signer setup">
+                <p>
+After server installation the different signers can be setup using the
+SignServer CLI.
+                </p>
+                <subsection name="Loading signers">
+                    <p>
+Signers (and other workers) can be loaded in two different ways. Either using
+"module add" or by setting properties using "setproperty" or "setproperties"
+etc.
+                    </p>
+                    <subsubsection name="module add">
+                        <p>
+The "module add" command loads both the code and the configuration from a MAR
+file and thus requires the clustered class loader to be enabled.
+                        </p>
+                        <source>
+bin/signserver.sh modules add dist-server/MODULE.mar CONFIGURATION
+                        </source>
+                    </subsubsection>
+                    <subsubsection name="setproperties">
+                        <p>
+The "setproperties" command loads all the properties from a property file that
+can define one or many signers. The code for the signers needs to be deployed
+to the application server together with SignServer either by setting
+includemodulesinbuild=true to include all modules or by setting individual
+module.MODULENAME.include=true properties in signserver_build.properties.
+                        </p>
+                        <source>
+bin/signserver.sh setproperties doc/sample-configs/CONFIGURATION.PROPERTIES
+                        </source>
+                    </subsubsection>
+                    <p>
+After adding or changing a property for a worker (either with "module add" or by
+any of the "setpropery" or "setproperties" commands) the configuration needs be
+applied by issuing the reload command with the ID of the worker.
+                    </p>
+                    <source>
+bin/signserver.sh reload 4711
+                    </source>
+                </subsection>
+
+                <subsection name="Quick start demo Timestamp signer">
+                    <p>
+This is a quick start guide to quickly get you setup with a demo Time Stamp service (TSA according to RFC3161). It will let you quickly get a feeling how the structure of the SignServer works, so you can move on to more advanced features described in the manual.
+                    </p>
+
+                    <ol>
+                        <li>
+Deploy the Timestamp demo module and notice the worker ID (in this example 1):
+<br/># bin/signserver.sh module add dist-server/tsa.mar demo</li>
+<li>Verify the configuration with:
+<br/># bin/signserver.sh getconfig 1
+                        </li>
+                        <li>
+Finally activate the configuration with:
+<br/># bin/signserver.sh reload 1
+                        </li>
+                        <li>
+You can check the configuration with:
+<br/># bin/signserver.sh getstatus complete all
+                        </li>
+                        <li>
+Run the test-client to see that everything is up.
+<br/># cd dist-client/timestampclient
+<br/># java -jar timeStampClient.jar http://localhost:8080/signserver/process?workerName=TSA
+<br/>The message "TimeStampRequest Validated" should appear once a second. Also check JBOSS_HOME/server/default/log/server.log that successful messages appear.
+                        </li>
+                    </ol>
+                </subsection>
+
+                <subsection name="Quick start demo PDF signer">
+<p>
+To install the PDF signer you can issue the following commands (either instead of the TSA or in addition to the TSA).
+</p>
+<ol>
+<li>Deploy the PDF signer demo module and notice the worker ID (in this example: 2):
+<br/># bin/signserver.sh module add dist-server/pdfsigner.mar demo</li>
+<li>Verify the configuration with:
+<br/># bin/signserver.sh getconfig 2
+</li>
+<li>Finally activate the configuration with:
+<br/># bin/signserver.sh reload 2
+</li>
+</ol>
+<p>
+You can now, with your web browser, access the url <a href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> to get PDF documents signed.
+</p>
+</subsection>
+
+<subsection name="Quick start demo OOXML signer">
+<p>
+To install the OOXML signer you can issue the following commands
+</p>
+<ol>
+<li>Deploy the OOXML signer demo module and notice the worker ID (in this example: 3):
+<br/># bin/signserver.sh module add dist-server/ooxmlsigner.mar demo</li>
+<li>Verify the configuration with:
+<br/># bin/signserver.sh getconfig 3
+</li>
+<li>Finally activate the configuration with:
+<br/># bin/signserver.sh reload 3
+</li>
+</ol>
+<p>
+You can now, with your web browser, access the url <a href="http://localhost:8080/signserver/demo/ooxmlsign.jsp">http://localhost:8080/signserver/demo/ooxmlsign.jsp</a> to get any Open Office XML documents signed (ex: MS Office 2007 word document, excel document, power point presentation...).
+</p>
+</subsection>
+
+<subsection name="Quick start demo ODF signer">
+<p>
+To install the ODF signer you can issue the following commands
+</p>
+<ol>
+<li>Deploy the ODF signer demo module and notice the worker ID (in this example: 4):
+<br/># bin/signserver.sh module add dist-server/odfsigner.mar demo</li>
+<li>Verify the configuration with:
+<br/># bin/signserver.sh getconfig 4
+</li>
+<li>Finally activate the configuration with:
+<br/># bin/signserver.sh reload 4
+</li>
+</ol>
+<p>
+You can now, with your web browser, access the url <a href="http://localhost:8080/signserver/demo/odfsign.jsp">http://localhost:8080/signserver/demo/odfsigner.jsp</a> to get any Open Document Format documents signed (ex: word or spreadsheet document produced with Open Office 3.1).
+</p>
+</subsection>
+
+
+<subsection name="Quick start demo XML signer">
+<p>
+To install the XML signer you can issue the following commands (either instead of the TSA or in addition to the TSA):
+</p>
+<ol>
+<li>Deploy the XML signer module and notice the worker ID (in this example: 1):<br/>
+<code># bin/signserver.sh module add dist-server/xmlsigner.mar demo</code>
+<br/>
+</li>
+<li>Verify the configuration with:<br/>
+<code># bin/signserver.sh getconfig 1</code>
+<br/>
+</li>
+<li>Activate the configuration with:<br/>
+<code># bin/signserver.sh reload 1</code>
+<br/>
+</li>
+<li>The status of the Signer can now be viewed with:<br/>
+<code># bin/signserver.sh getstatus complete DemoXMLSigner</code>
+<br/>
+</li>
+</ol>
+<p>
+You can now, with your web browser, access the url <a href="http://localhost:8080/signserver/demo/xmlsign.jsp">http://localhost:8080/signserver/demo/xmlsign.jsp</a> to get XML documents signed.
+</p>
+</subsection>
+
+<subsection name="Quick start demo XML validator">
+<p>
+An XML validator validates the signature of an XML document. It uses a
+certificate validation service worker for validating the certificate so
+that worker has to be configured first.
+</p>
+<p>
+To install a certificate validation service worker issue the following commands:
+</p>
+<ol>
+<li>Load the configuration and notice the worker ID (in this example: 2):<br/>
+<code># bin/signserver.sh setproperties sample-configs/qs_validator_dummy_configuration.properties</code>
+</li>
+<li>Verify the configuration with:<br/>
+<code># bin/signserver.sh getconfig 2</code>
+<br/>
+</li>
+<li>Activate the configuration with:<br/>
+<code># bin/signserver.sh reload 2</code>
+<br/>
+</li>
+<li>The status of the Worker can now be viewed with:<br/>
+<code># bin/signserver.sh getstatus complete CertValidationWorker</code>
+<br/>
+</li>
+</ol>
+<p>
+Then to install the XML validator you can issue the following commands:
+</p>
+<ol>
+<li>Deploy the XML signer module and notice the worker ID (in this example: 3):<br/>
+<code># bin/signserver.sh module add dist-server/xmlvalidator.mar demo</code>
+<br/>
+</li>
+<li>Verify the configuration with (notice that VALIDATIONSERVICEWORKER is set to "CertValidationWorker"):<br/>
+<code># bin/signserver.sh getconfig 3</code>
+<br/>
+</li>
+<li>Activate the configuration with:<br/>
+<code># bin/signserver.sh reload 3</code>
+<br/>
+</li>
+<li>The status of the Validator can now be viewed with:<br/>
+<code># bin/signserver.sh getstatus complete DemoXMLValidator</code>
+<br/>
+</li>
+</ol>
+<p>
+Now <a href="integration.html">the SignServer APIs</a> can be used to request XML documents to be validated by the DemoXMLValidator worker.
+</p>
+</subsection>
+
+<subsection name="Quick start demo MRTD SOD signer">
+<p>
+The MRTD SOD signer takes as input data group hashes and creates a signed SO(d). This means that the signserver will function
+as a Document Signer for ePassports.</p>
+<p>
+To install the MRTD SOD signer you can issue the following commands:
+</p>
+<ol>
+<li>Deploy the MRTD SOD signer module and notice the worker ID (in this example: 4):<br/>
+<code># bin/signserver.sh module add dist-server/mrtdsodsigner.mar demo</code>
+<br/>
+</li>
+<li>Verify the configuration with:<br/>
+<code># bin/signserver.sh getconfig 4</code>
+<br/>
+</li>
+<li>Activate the configuration with:<br/>
+<code># bin/signserver.sh reload 4</code>
+<br/>
+</li>
+<li>The status of the signer can now be viewed with:<br/>
+<code># bin/signserver.sh getstatus complete mrtdsodsigner</code>
+<br/>
+</li>
+</ol>
+<p>
+Now <a href="integration.html">the SignServer APIs</a> can be used to send MRTD SOD sign requests the MRTDSODSigner.
+<br/>
+Also you can use the HTML page http://&lt;signserverhost>:8080/signserver/mrtdsodsign.html to enter requests and get the SOD back.
+This HTML form functions as a sample to show how you can make http requests from the personalisation system to the Document Signer.
+</p>
+<subsubsection name="Production configuration with HSM">
+<p>To install a production signer using an HSM instead of the demo signer you can edit src/module-configs/mrtdsodsigner/hard-part-config.properties and then run:
+<br/>(note after changing module-configs you have to rebuild signserver, remove any old modules if you added it before, and then add the module again as described below)
+</p>
+<p>Before starting with an HSM installation you should read the about the <a href="plugins.html#PKCS11CryptoToken">PKCS11CryptoToken</a> in the plugins section of the manual.</p>
+<source>
+ant
+bin/signserver.sh module add dist-server/mrtdsodsigner.mar hard
+bin/signserver.sh getconfig 4
+bin/signserver.sh reload 4
+bin/signserver.sh generatecertreq 4 "C=SE,CN=MRTD SOD Signer" SHA256WithRSA mrtdsodsigner.req
+</source>
+<p>
+Where 4 is the signerId that you got when running the 'module add' command.<br/>
+This will create a certificate request that you can get signed by your CA. When you have received the response you can import them with.
+If you have the returned signer certificate as cert.pem and the CA certificate cacert.pem.
+</p>
+<source>
+cat cert.pem cacert.pem> certchain.pem
+bin/signserver.sh uploadsignercertificate 4 glob cert.pem
+bin/signserver.sh uploadsignercertificatechain 4 glob certchain.pem
+bin/signserver.sh reload 4
+</source>
+<p>Hint: you can use EJBCA to create keys on a PKCS#11 HSM using clientToolBox.
+<br/>
+ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so 2048 DSSignKey 5
+</p>
+</subsubsection>
+</subsection>
+
+            </section>
 
             <section name="Historic Installation Guides">
                 <subsection name="Clustered SignServer 3.0 CentOS 4.4 Installation Guide">
@@ -451,120 +758,6 @@ Version 2.0 of the same documentation.<a href="docs/SignServer_2_0_Installation_
             <section name="Introduction">
                 <p>   
                 </p>
-            </section>
-            <section name="Quick Start Guides">
-                <!-- TODO: Add from installationguide.html -->
-                
-                <subsection name="Quick start of a Simple Time-stamp Server">
-                    <p>
-This section will show how to set up a quick and simple standalone time-stamp server, accepting
-time-stamp requests over plain HTTP.
-                    </p>
-                    <subsubsection name="Required Software">
-                        <ul>
-                            <li>Sun JDK 6 Update 10 or later (http://java.sun.com)</li>
-                            <li>JBoss-4.2.3.GA (http://www.jboss.org)</li>
-                            <li>Apache ant version 1.7.1 or later (http://ant.apache.org)</li>
-                            <li>SignServer-3.1 (http://www.signserver.org)</li>
-                            <li>1 web-server key-store in Java key-store format (JKS), (make sure that the server certificate have the right host name in it's CN, optional (used for HTTPS))</li>
-                            <li>1 Root certificate of the web-server in DER encoding (optional (used for HTTPS)).</li>
-                            <li>1 Time-stamp key-store in PKCS12 format</li>
-                        </ul>
-                    </subsubsection>
-                    <subsubsection name="Installation Steps">
-                        <ol>
-                            <li>
-                                <p>
-First make sure that ant, Java and JBoss is installed properly.
-                                </p>
-                            </li>
-                            <li>
-                                <p>
-Set the JAVA_HOME, JBOSS_HOME and SIGNSERVER_HOME environment variables.
-                                </p>
-                            </li>
-                            <li>
-                                <p>
-Set the SIGNSERVER_NODEID environment variable, it should be a server unique string
-identifying the node in a cluster. (optional for one node installations).
-                                </p>
-                            </li>
-                            <li>
-                                <p>
-Unzip the SignServer package and go to it's home directory.
-                                </p>
-                            </li>
-                            <li>
-                                <p>
-If you are going to protect the HTTP communication with SSL, you2 need a JKS SSL server
-key store. Rename the web server key store to tomcat.jks at put it in a 'p12' subdirectory.
-Also place the web server root certificate in DER encoding in the same directory, call it
-rootcert.cer
-                                </p>
-                            </li>
-                            <li>
-                                <p>
-Then copy the signserver_build.properties.sample file to signserver_buld.properties and edit
-the file. At least configure the httpsserver.password property. If you are not using https
-uncomment the row "j2ee.web-nohttps=true".
-                                </p>
-                            </li>
-                            <li>
-                                <p>
-Do 'ant deploy' and then start JBoss (JBOSS_HOME\bin\run.sh) in another console.
-                                </p>
-                            </li>
-                            <li>
-                                <p>
-Edit the signserver_cli.properties and set all properties starting with 'hostname.'
-                                </p>
-                            </li>
-                            <li>
-                                <p>
-Use the signserver cli to upload the Time-Stamp Authority module to the SignServer . (if it's not executive use chmod +x bin/signserver.sh)
-                                </p>
-                                <pre>
-bin/signserver.sh module add dist-server/tsa.mar demo
-                                </pre>
-                                <p>
-This command uploads the Time-Stamp related code to the cluster and creates a demo configuration with a preconfigured soft key store and certificate.
-                                </p>
-                                <p>
-(In the path section, use '\\' for '\' in windows environment.)
-                                </p>
-                                <p>
-Then run
-                                </p>
-                                <pre>
-bin/signserver.sh getconfig 1
-                                </pre>
-                                <p>
-And double check the configuration. (Important, the properties are case sensitive).
-                                </p>
-                                <p>
-Finally run
-                                </p>
-                                <pre>
-bin/signserver.sh reload 1
-                                </pre>
-                                <p>
-To activate the configuration.
-                                </p>
-                            </li>
-                            <li>
-                                <p>Run the test-client to see that everything is up.</p>
-                                <pre>
-cd dist-client
-java -jar timeStampClient.jar "http://localhost:8080/signserver/process?workerId=1"
-                                </pre>
-                                <p>The message "TimeStampRequest Validated" should appear once a second.</p>
-                                <p>
-Also check JBOSS_HOME/server/default/log/server.log that successful messages appear.
-                                </p>
-                            </li>
-                        </ol>
-                    </subsubsection>
-                </subsection>
             </section>
 
             <section name="Building and deploying">

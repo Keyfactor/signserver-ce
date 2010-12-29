@@ -161,15 +161,16 @@ public class CommonAdminInterface  {
 
 	/**
 	 * @see org.signserver.ejb.WorkerSessionBean#genCertificateRequest(int, ISignerCertReqInfo)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#genCertificateRequest(int, ISignerCertReqInfo)
 	 */
 	public ICertReqData genCertificateRequest(int signerId,
-			ISignerCertReqInfo certReqInfo, 
+			ISignerCertReqInfo certReqInfo,
+                        final boolean explicitEccParameter,
                         final boolean defaultKey)
                             throws CryptoTokenOfflineException,
 			InvalidWorkerIdException, RemoteException {
             return getWorkerSession().getCertificateRequest(
-                                signerId, certReqInfo, defaultKey);
+                                signerId, certReqInfo, explicitEccParameter,
+                                defaultKey);
 	}
 
 	/**

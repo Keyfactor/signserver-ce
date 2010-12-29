@@ -47,7 +47,7 @@ import org.signserver.common.PKCS10CertReqInfo;
       * @throws ErrorAdminCommandException Error running command
       */
      protected void execute(String hostname, String[] resources) throws IllegalAdminCommandException, ErrorAdminCommandException {
-         if (args.length != 5 && args.length != 6) {
+         if (args.length < 5 || args.length > 7) {
              throw new IllegalAdminCommandException( resources[HELP]);
          }
          try{
@@ -56,15 +56,26 @@ import org.signserver.common.PKCS10CertReqInfo;
         	 final String dn= args[2];
         	 final String sigAlg =  args[3];
         	 final String filename = args[4];
-                 final boolean defaultKey;
+                 boolean defaultKey = false;
+                 boolean explicitecc = false;
+
                  if (args.length > 5) {
                      if ("-nextkey".equals(args[5])) {
                          defaultKey = false;
+                     } else if("-explicitecc".equals(args[5])) {
+                         explicitecc = true;
                      } else {
-                        throw new IllegalAdminCommandException( resources[HELP]);
+                        throw new IllegalAdminCommandException(resources[HELP]);
                      }
-                 } else {
-                     defaultKey = true;
+                     if (args.length > 6) {
+                         if ("-nextkey".equals(args[6])) {
+                             defaultKey = false;
+                         } else if("-explicitecc".equals(args[6])) {
+                             explicitecc = true;
+                         } else {
+                            throw new IllegalAdminCommandException(resources[HELP]);
+                         }
+                     }
                  }
         	 
         	 int id = 0;
@@ -80,7 +91,9 @@ import org.signserver.common.PKCS10CertReqInfo;
         	 }
 
         	 PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg,dn,null);
-        	 Base64SignerCertReqData reqData = (Base64SignerCertReqData) getCommonAdminInterface(hostname).genCertificateRequest(id, certReqInfo, defaultKey);
+        	 Base64SignerCertReqData reqData
+                         = (Base64SignerCertReqData) getCommonAdminInterface(hostname)
+                         .genCertificateRequest(id, certReqInfo, explicitecc, defaultKey);
         	 if (reqData == null) {
         		 throw new Exception("Base64SignerCertReqData returned was null. Unable to generate certificate request.");
         	 }
@@ -100,9 +113,11 @@ import org.signserver.common.PKCS10CertReqInfo;
      }
      
      public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
-     	String[] resources =  {"Usage: signserver generatecertreq <-host hostname (optional)> <workerid> <dn> <signature algorithm>  <cert-req-filename> [-nextkey]\n" +
+     	String[] resources =  {"Usage: signserver generatecertreq <-host hostname (optional)> <workerid> <dn> <signature algorithm>  <cert-req-filename> [-explicitecc] [-nextkey]\n" +
                                "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem\n"
-                               + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem -nextkey\n\n",
+                               + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem -nextkey\n"
+                               + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem -explicitecc\n"
+                               + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem -explicitecc -nextkey\n\n",
                                "Error: No worker with the given name could be found",
                                "PKCS10 Request successfully written to file "};
          execute(hostname,resources);   

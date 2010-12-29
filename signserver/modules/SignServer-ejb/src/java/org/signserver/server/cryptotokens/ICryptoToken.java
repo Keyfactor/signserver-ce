@@ -135,7 +135,9 @@ public interface ICryptoToken {
 	/**
 	 * Method used to tell the crypto token to create a certificate request using its crypto token.
 	 */
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean defaultKey) throws CryptoTokenOfflineException;
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info, 
+                boolean explicitEccParameters, boolean defaultKey)
+                throws CryptoTokenOfflineException;
 	
 	/**
 	 * Method used to remove a key in the signer that shouldn't be used any more

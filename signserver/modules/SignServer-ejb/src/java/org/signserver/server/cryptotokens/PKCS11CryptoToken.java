@@ -30,9 +30,11 @@ import java.util.LinkedList;
 import java.util.Properties;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.ECKeyUtil;
 import org.ejbca.core.model.ca.catoken.PKCS11CAToken;
 import org.ejbca.util.keystore.KeyStoreContainer;
 import org.ejbca.util.keystore.KeyStoreContainerFactory;
@@ -219,6 +221,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
     /**
      * @see ICryptoToken#testKey(java.lang.String, char[])
      */
+    @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode)
             throws CryptoTokenOfflineException, KeyStoreException {
         final Collection<KeyTestResult> result
@@ -286,7 +289,8 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
 
     @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
-            boolean defaultKey) throws CryptoTokenOfflineException {
+            final boolean explicitEccParameters, boolean defaultKey)
+            throws CryptoTokenOfflineException {
         log.debug(">genCertificateRequest PKCS11CryptoToken");
         Base64SignerCertReqData retval = null;
         if (info instanceof PKCS10CertReqInfo) {
@@ -305,6 +309,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
                 log.debug("signatureAlgorithm: "
                         + reqInfo.getSignatureAlgorithm());
                 log.debug("subjectDN: " + reqInfo.getSubjectDN());
+                log.debug("explicitEccParameters: " + explicitEccParameters);
             }
 
             try {
@@ -313,6 +318,15 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
                 final PrivateKey privateKey = (PrivateKey) keyStore.getKey(
                         alias, authenticationCode);
                 final Certificate cert = keyStore.getCertificate(alias);
+
+                PublicKey publicKey = cert.getPublicKey();
+
+                // Handle ECDSA key with explicit parameters
+                if (explicitEccParameters
+                        && publicKey.getAlgorithm().contains("ECDSA")) {
+                     publicKey = ECKeyUtil.publicToExplicitParameters(publicKey,
+                             "BC");
+                }
 
                 if (log.isDebugEnabled()) {
                     log.debug("Public key SHA1: " + CryptoTokenBase.createKeyHash(

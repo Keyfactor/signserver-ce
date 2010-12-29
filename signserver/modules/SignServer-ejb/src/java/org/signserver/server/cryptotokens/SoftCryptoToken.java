@@ -41,6 +41,7 @@ import javax.ejb.EJB;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
@@ -222,7 +223,10 @@ public class SoftCryptoToken implements ICryptoToken {
      * before the request is generated. The new keys aren't activated until reload is issued.
      * 
      */
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info, final boolean defaultKey) throws CryptoTokenOfflineException {
+        @Override
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info, 
+                final boolean explicitEccParameters, final boolean defaultKey)
+                throws CryptoTokenOfflineException {
 		Base64SignerCertReqData retval = null;
 		
 		try {
@@ -246,8 +250,16 @@ public class SoftCryptoToken implements ICryptoToken {
 			if(info instanceof PKCS10CertReqInfo){
 				PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info; 
 				PKCS10CertificationRequest pkcs10;
+                                PublicKey publicKey = newKeys.getPublic();
 
-				pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(),CertTools.stringToBcX509Name(reqInfo.getSubjectDN()),newKeys.getPublic(),reqInfo.getAttributes(),newKeys.getPrivate(),getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+                            // Handle ECDSA key with explicit parameters
+                            if (explicitEccParameters
+                                    && publicKey.getAlgorithm().contains("ECDSA")) {
+                                 publicKey = ECKeyUtil.publicToExplicitParameters(publicKey,
+                                         "BC");
+                            }
+                            // Generate request
+                            pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(),CertTools.stringToBcX509Name(reqInfo.getSubjectDN()), publicKey, reqInfo.getAttributes(),newKeys.getPrivate(),getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
 				retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
 			}
 		} catch (NoSuchAlgorithmException e1) {

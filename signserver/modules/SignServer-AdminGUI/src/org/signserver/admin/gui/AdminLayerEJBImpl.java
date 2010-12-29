@@ -370,18 +370,22 @@ public class AdminLayerEJBImpl implements AdminWS {
      *
      * @param signerId id of the signer
      * @param certReqInfo information used by the signer to create the request
+     * @param explicitEccParameters false should be default and will use
+     * NamedCurve encoding of ECC public keys (IETF recommendation), use true
+     * to include all parameters explicitly (ICAO ePassport requirement).
      */
     @Override
     public Base64SignerCertReqData getPKCS10CertificateRequest(
             final int signerId,
-            final Pkcs10CertReqInfo certReqInfo)
+            final Pkcs10CertReqInfo certReqInfo,
+            final boolean explicitEccParameters)
             throws CryptoTokenOfflineException_Exception,
             InvalidWorkerIdException_Exception {
         final Base64SignerCertReqData result;
         try {
             final ICertReqData data = worker.getCertificateRequest(signerId,
                     new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
-                    certReqInfo.getSubjectDN(), null));
+                    certReqInfo.getSubjectDN(), null), explicitEccParameters);
             if (!(data instanceof org.signserver.common.Base64SignerCertReqData)) {
                 throw new RuntimeException("Unsupported cert req data: " + data);
             }
@@ -408,6 +412,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     public Base64SignerCertReqData getPKCS10CertificateRequestForKey(
             final int signerId,
             final Pkcs10CertReqInfo certReqInfo,
+            final boolean explicitEccParameters,
             final boolean defaultKey)
                 throws CryptoTokenOfflineException_Exception,
                 InvalidWorkerIdException_Exception {
@@ -415,7 +420,8 @@ public class AdminLayerEJBImpl implements AdminWS {
         try {
             final ICertReqData data = worker.getCertificateRequest(signerId, 
                     new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
-                    certReqInfo.getSubjectDN(), null), defaultKey);
+                    certReqInfo.getSubjectDN(), null), explicitEccParameters,
+                    defaultKey);
             if (!(data instanceof org.signserver.common.Base64SignerCertReqData)) {
                 throw new RuntimeException("Unsupported cert req data: " + data);
             }

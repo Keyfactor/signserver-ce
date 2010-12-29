@@ -25,11 +25,11 @@ import java.security.cert.Certificate;
 import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Collection;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.core.model.ca.catoken.CATokenAuthenticationFailedException;
@@ -186,8 +186,10 @@ public abstract class CryptoTokenBase implements ICryptoToken{
 		return null;
 	}
 
-	
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info, final boolean defaultKey) throws CryptoTokenOfflineException {
+	@Override
+	public ICertReqData genCertificateRequest(ISignerCertReqInfo info, 
+                final boolean explicitEccParameters, final boolean defaultKey)
+                throws CryptoTokenOfflineException {
 		Base64SignerCertReqData retval = null;
 		if(info instanceof PKCS10CertReqInfo){
 			PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info; 
@@ -196,9 +198,21 @@ public abstract class CryptoTokenBase implements ICryptoToken{
                                 ? PURPOSE_SIGN : PURPOSE_NEXTKEY;
                         if (log.isDebugEnabled()) {
                             log.debug("Purpose: " + purpose);
+                            log.debug("explicitEccParameters: "
+                                    + explicitEccParameters);
                         }
+
 			try {
-				pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(),CertTools.stringToBcX509Name(reqInfo.getSubjectDN()),getPublicKey(purpose),reqInfo.getAttributes(),getPrivateKey(purpose),getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+                            PublicKey publicKey = getPublicKey(purpose);
+
+                            // Handle ECDSA key with explicit parameters
+                            if (explicitEccParameters
+                                    && publicKey.getAlgorithm().contains("ECDSA")) {
+                                 publicKey = ECKeyUtil.publicToExplicitParameters(publicKey,
+                                         "BC");
+                            }
+                            // Generate request
+                            pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(),CertTools.stringToBcX509Name(reqInfo.getSubjectDN()), publicKey, reqInfo.getAttributes(),getPrivateKey(purpose),getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
 				retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
 			} catch (InvalidKeyException e) {
 				log.error(e);

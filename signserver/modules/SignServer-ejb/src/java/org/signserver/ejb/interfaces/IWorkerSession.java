@@ -165,10 +165,13 @@ public interface IWorkerSession {
      *
      * @param signerId id of the signer
      * @param certReqInfo information used by the signer to create the request
+     * @param explicitEccParameters false should be default and will use
+     * NamedCurve encoding of ECC public keys (IETF recommendation), use true
+     * to include all parameters explicitly (ICAO ePassport requirement).
      */
     ICertReqData getCertificateRequest(int signerId,
-            ISignerCertReqInfo certReqInfo) throws CryptoTokenOfflineException,
-            InvalidWorkerIdException;
+            ISignerCertReqInfo certReqInfo, boolean explicitEccParameters)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException;
 
     /**
      * Method used to let a signer generate a certificate request
@@ -176,12 +179,16 @@ public interface IWorkerSession {
      *
      * @param signerId id of the signer
      * @param certReqInfo information used by the signer to create the request
+     * @param explicitEccParameters false should be default and will use
+     * NamedCurve encoding of ECC public keys (IETF recommendation), use true
+     * to include all parameters explicitly (ICAO ePassport requirement).
      * @param defaultKey true if the default key should be used otherwise for
      * instance use next key.
      */
     ICertReqData getCertificateRequest(int signerId,
-            ISignerCertReqInfo certReqInfo, boolean defaultKey)
-                throws CryptoTokenOfflineException, InvalidWorkerIdException;
+            ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, 
+            boolean defaultKey) throws CryptoTokenOfflineException,
+            InvalidWorkerIdException;
 
     /**
      * Method returning the current signing certificate for the signer.

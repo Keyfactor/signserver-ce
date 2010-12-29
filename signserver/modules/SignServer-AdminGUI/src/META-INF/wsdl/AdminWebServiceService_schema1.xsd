@@ -170,18 +170,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getWorkerId">
-<xs:sequence>
-<xs:element name="workerName" type="xs:string" minOccurs="0"></xs:element>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getWorkerIdResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:int"></xs:element>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="uploadSignerCertificateChain">
 <xs:sequence>
 <xs:element name="signerId" type="xs:int"></xs:element>
@@ -197,6 +185,18 @@
 <xs:complexType name="IllegalRequestException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getWorkerId">
+<xs:sequence>
+<xs:element name="workerName" type="xs:string" minOccurs="0"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getWorkerIdResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:int"></xs:element>
 </xs:sequence>
 </xs:complexType>
 
@@ -264,6 +264,7 @@
 <xs:sequence>
 <xs:element name="signerId" type="xs:int"></xs:element>
 <xs:element name="certReqInfo" type="tns:pkcs10CertReqInfo" minOccurs="0"></xs:element>
+<xs:element name="explicitEccParameters" type="xs:boolean"></xs:element>
 <xs:element name="defaultKey" type="xs:boolean"></xs:element>
 </xs:sequence>
 </xs:complexType>
@@ -328,18 +329,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="setWorkerProperty">
-<xs:sequence>
-<xs:element name="workerId" type="xs:int"></xs:element>
-<xs:element name="key" type="xs:string" minOccurs="0"></xs:element>
-<xs:element name="value" type="xs:string" minOccurs="0"></xs:element>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="setWorkerPropertyResponse">
-<xs:sequence></xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getCurrentWorkerConfig">
 <xs:sequence>
 <xs:element name="workerId" type="xs:int"></xs:element>
@@ -371,16 +360,16 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getSignerCertificate">
+<xs:complexType name="setWorkerProperty">
 <xs:sequence>
-<xs:element name="signerId" type="xs:int"></xs:element>
+<xs:element name="workerId" type="xs:int"></xs:element>
+<xs:element name="key" type="xs:string" minOccurs="0"></xs:element>
+<xs:element name="value" type="xs:string" minOccurs="0"></xs:element>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getSignerCertificateResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"></xs:element>
-</xs:sequence>
+<xs:complexType name="setWorkerPropertyResponse">
+<xs:sequence></xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="removeGlobalProperty">
@@ -393,6 +382,18 @@
 <xs:complexType name="removeGlobalPropertyResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSignerCertificate">
+<xs:sequence>
+<xs:element name="signerId" type="xs:int"></xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSignerCertificateResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"></xs:element>
 </xs:sequence>
 </xs:complexType>
 
@@ -472,6 +473,7 @@
 <xs:sequence>
 <xs:element name="signerId" type="xs:int"></xs:element>
 <xs:element name="certReqInfo" type="tns:pkcs10CertReqInfo" minOccurs="0"></xs:element>
+<xs:element name="explicitEccParameters" type="xs:boolean"></xs:element>
 </xs:sequence>
 </xs:complexType>
 

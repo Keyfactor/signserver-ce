@@ -187,8 +187,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 	 * Method sending the request info to the signtoken
 	 * @return the request or null if method isn't supported by signertoken.
 	 */
+        @Override
 	public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
-                final boolean defaultKey) throws CryptoTokenOfflineException {
+                final boolean explicitEccParameters, final boolean defaultKey)
+                throws CryptoTokenOfflineException {
 		if (log.isTraceEnabled()) {
 			log.trace(">genCertificateRequest");
 		}
@@ -197,7 +199,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 			log.debug("Found a crypto token of type: "+token.getClass().getName());
 			log.debug("Token status is: "+token.getCryptoTokenStatus());
 		}
-		ICertReqData data = token.genCertificateRequest(info, defaultKey);
+		ICertReqData data = token.genCertificateRequest(info, 
+                        explicitEccParameters, defaultKey);
 		if (log.isTraceEnabled()) {
 			log.trace("<genCertificateRequest");
 		}

@@ -74,7 +74,7 @@ public class GenerateRequestsDialog extends JDialog {
     private int resultCode = CANCEL;
 
     private Vector<Vector<String>> data;
-    
+
     private JComboBox sigAlgComboBox = new JComboBox(new String[] {
         "SHA1WithRSA",
         "SHA256WithRSA",
@@ -93,7 +93,7 @@ public class GenerateRequestsDialog extends JDialog {
     private List<Worker> workers;
 
     private List<Worker> signers;
-   
+
     /** Creates new form GenerateRequestsDialog. */
     public GenerateRequestsDialog(final Frame parent, final boolean modal,
             final List<Worker> workers, final List<Worker> signers) {
@@ -167,7 +167,7 @@ public class GenerateRequestsDialog extends JDialog {
                 = new DefaultCellEditor(aliasComboBox);
         aliasComboBoxFieldEditor.setClickCountToStart(1);
         jTable1.getColumn("Key").setCellEditor(aliasComboBoxFieldEditor);
-        
+
         signersComboBox.setRenderer(new DefaultListCellRenderer() {
 
             @Override
@@ -373,7 +373,7 @@ public class GenerateRequestsDialog extends JDialog {
 }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButtonGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerateActionPerformed
-        
+
     }//GEN-LAST:event_jButtonGenerateActionPerformed
 
     private void radioButtonsStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_radioButtonsStateChanged
@@ -392,7 +392,7 @@ public class GenerateRequestsDialog extends JDialog {
     }
 
     private class GenerateRequestsTask extends Task<String, Void> {
-        
+
         private Worker signer;
 
         GenerateRequestsTask(final Application app) {
@@ -435,6 +435,7 @@ public class GenerateRequestsDialog extends JDialog {
 
                 FileOutputStream fos = null;
                 try {
+                    final boolean explicitEccParameters = false;
                     final Pkcs10CertReqInfo certReqInfo
                             = new Pkcs10CertReqInfo();
                     certReqInfo.setSignatureAlgorithm(sigAlg);
@@ -443,8 +444,8 @@ public class GenerateRequestsDialog extends JDialog {
                     final Base64SignerCertReqData reqData =
                         (Base64SignerCertReqData) SignServerAdminGUIApplication
                             .getAdminWS()
-                            .getPKCS10CertificateRequestForKey(workerid, certReqInfo,
-                                defaultKey);
+                            .getPKCS10CertificateRequestForKey(workerid,
+                            certReqInfo, explicitEccParameters, defaultKey);
                     if (reqData == null) {
                         final String error =
                             "Unable to generate certificate request for signer "
@@ -562,7 +563,7 @@ public class GenerateRequestsDialog extends JDialog {
     private javax.swing.JRadioButton standardFormatRadioButton;
     // End of variables declaration//GEN-END:variables
 
-    private static class SignersComboBoxModel extends AbstractListModel 
+    private static class SignersComboBoxModel extends AbstractListModel
             implements ComboBoxModel {
 
         private List<Worker> items;
@@ -595,7 +596,7 @@ public class GenerateRequestsDialog extends JDialog {
         public Object getSelectedItem() {
             return selectedItem;
         }
-        
+
     }
 
 }

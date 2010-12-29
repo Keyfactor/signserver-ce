@@ -79,7 +79,7 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
 		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_OFFLINE);
 
 		PKCS10CertReqInfo crInfo = new PKCS10CertReqInfo("SHA1WithRSA","CN=TEST1",null);
-		ICertReqData reqData = workerSession.getCertificateRequest(88, crInfo);
+		ICertReqData reqData = workerSession.getCertificateRequest(88, crInfo, false);
 		assertNotNull(reqData);
 		assertTrue(reqData instanceof Base64SignerCertReqData);
 		PKCS10CertificationRequest pkcs10 = new PKCS10CertificationRequest(Base64.decode(((Base64SignerCertReqData) reqData).getBase64CertReq()));
@@ -127,7 +127,7 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
 
 		assertTrue(signercert.getPublicKey().equals(pkcs10.getPublicKey()));
 
-		reqData = workerSession.getCertificateRequest(88, crInfo);
+		reqData = workerSession.getCertificateRequest(88, crInfo, false);
 		assertNotNull(reqData);
 		assertTrue(reqData instanceof Base64SignerCertReqData);
 		PKCS10CertificationRequest pkcs10_2 = new PKCS10CertificationRequest(Base64.decode(((Base64SignerCertReqData) reqData).getBase64CertReq()));

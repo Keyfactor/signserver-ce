@@ -320,18 +320,23 @@ public class AdminWS {
      *
      * @param signerId id of the signer
      * @param certReqInfo information used by the signer to create the request
+     * @param explicitEccParameters false should be default and will use
+     * NamedCurve encoding of ECC public keys (IETF recommendation), use true
+     * to include all parameters explicitly (ICAO ePassport requirement).
      */
     @WebMethod(operationName = "getPKCS10CertificateRequest")
     public Base64SignerCertReqData getPKCS10CertificateRequest(
             @WebParam(name = "signerId") final int signerId,
-            @WebParam(name = "certReqInfo") final PKCS10CertReqInfo certReqInfo)
+            @WebParam(name = "certReqInfo") final PKCS10CertReqInfo certReqInfo,
+            @WebParam(name = "explicitEccParameters")
+                final boolean explicitEccParameters)
             throws CryptoTokenOfflineException,
             InvalidWorkerIdException, AdminNotAuthorizedException {
         requireAdminAuthorization("getPKCS10CertificateRequest",
                 String.valueOf(signerId));
         
         final ICertReqData data = worker.getCertificateRequest(signerId,
-                certReqInfo);
+                certReqInfo, explicitEccParameters);
         if (!(data instanceof Base64SignerCertReqData)) {
             throw new RuntimeException("Unsupported cert req data");
         }
@@ -344,6 +349,9 @@ public class AdminWS {
      *
      * @param signerId id of the signer
      * @param certReqInfo information used by the signer to create the request
+     * @param explicitEccParameters false should be default and will use
+     * NamedCurve encoding of ECC public keys (IETF recommendation), use true
+     * to include all parameters explicitly (ICAO ePassport requirement).
      * @param defaultKey true if the default key should be used otherwise for
      * instance use next key.
      */
@@ -351,6 +359,8 @@ public class AdminWS {
     public Base64SignerCertReqData getPKCS10CertificateRequestForKey(
             @WebParam(name = "signerId") final int signerId,
             @WebParam(name = "certReqInfo") final PKCS10CertReqInfo certReqInfo,
+            @WebParam(name = "explicitEccParameters")
+                final boolean explicitEccParameters,
             @WebParam(name = "defaultKey") final boolean defaultKey)
                 throws CryptoTokenOfflineException, InvalidWorkerIdException,
                 AdminNotAuthorizedException {
@@ -358,7 +368,7 @@ public class AdminWS {
                 String.valueOf(signerId));
         
         final ICertReqData data = worker.getCertificateRequest(signerId,
-                certReqInfo, defaultKey);
+                certReqInfo, explicitEccParameters, defaultKey);
         if (!(data instanceof Base64SignerCertReqData)) {
             throw new RuntimeException("Unsupported cert req data");
         }

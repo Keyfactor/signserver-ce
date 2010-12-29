@@ -140,14 +140,16 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     public ICertReqData getCertificateRequest(int signerId, 
-            ISignerCertReqInfo certReqInfo) throws CryptoTokenOfflineException,
+            ISignerCertReqInfo certReqInfo, final boolean explicitEccParameters)
+            throws CryptoTokenOfflineException,
             InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public ICertReqData getCertificateRequest(int signerId, 
-            ISignerCertReqInfo certReqInfo, boolean defaultKey) throws
-            CryptoTokenOfflineException, InvalidWorkerIdException {
+            ISignerCertReqInfo certReqInfo, final boolean explicitEccParameters, 
+            boolean defaultKey) throws CryptoTokenOfflineException,
+            InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

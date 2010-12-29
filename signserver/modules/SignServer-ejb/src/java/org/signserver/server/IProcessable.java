@@ -76,7 +76,8 @@ public interface IProcessable extends IWorker {
      * Optional method, if not supported throw a CryptoTokenOfflineException
      */
     ICertReqData genCertificateRequest(ISignerCertReqInfo info,
-            boolean defaultKey) throws CryptoTokenOfflineException;
+            boolean explicitEccParameters, boolean defaultKey)
+            throws CryptoTokenOfflineException;
 
     /**
      * Method specifying which type of authentication that should be performed before signature is performed

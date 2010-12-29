@@ -63,7 +63,7 @@
 </ns29:All>
 </ns29:ExactlyOne>
 </ns29:Policy>
-<ns33:Policy xmlns:ns33="http://www.w3.org/ns/ws-policy" wsu:Id="AdminWSPortBinding_generateSignerKey_WSAT_Policy">
+<ns33:Policy xmlns:ns33="http://www.w3.org/ns/ws-policy" wsu:Id="AdminWSPortBinding_uploadSignerCertificateChain_WSAT_Policy">
 <ns33:ExactlyOne>
 <ns33:All>
 <ns34:ATAlwaysCapability xmlns:ns34="http://schemas.xmlsoap.org/ws/2004/10/wsat"></ns34:ATAlwaysCapability>
@@ -71,7 +71,7 @@
 </ns33:All>
 </ns33:ExactlyOne>
 </ns33:Policy>
-<ns37:Policy xmlns:ns37="http://www.w3.org/ns/ws-policy" wsu:Id="AdminWSPortBinding_uploadSignerCertificateChain_WSAT_Policy">
+<ns37:Policy xmlns:ns37="http://www.w3.org/ns/ws-policy" wsu:Id="AdminWSPortBinding_generateSignerKey_WSAT_Policy">
 <ns37:ExactlyOne>
 <ns37:All>
 <ns38:ATAlwaysCapability xmlns:ns38="http://schemas.xmlsoap.org/ws/2004/10/wsat"></ns38:ATAlwaysCapability>
@@ -280,6 +280,36 @@
 <message name="KeyStoreException">
 <part name="fault" element="tns:KeyStoreException"></part>
 </message>
+<message name="getGlobalConfiguration">
+<part name="parameters" element="tns:getGlobalConfiguration"></part>
+</message>
+<message name="getGlobalConfigurationResponse">
+<part name="parameters" element="tns:getGlobalConfigurationResponse"></part>
+</message>
+<message name="getWorkers">
+<part name="parameters" element="tns:getWorkers"></part>
+</message>
+<message name="getWorkersResponse">
+<part name="parameters" element="tns:getWorkersResponse"></part>
+</message>
+<message name="removeGlobalProperty">
+<part name="parameters" element="tns:removeGlobalProperty"></part>
+</message>
+<message name="removeGlobalPropertyResponse">
+<part name="parameters" element="tns:removeGlobalPropertyResponse"></part>
+</message>
+<message name="reloadConfiguration">
+<part name="parameters" element="tns:reloadConfiguration"></part>
+</message>
+<message name="reloadConfigurationResponse">
+<part name="parameters" element="tns:reloadConfigurationResponse"></part>
+</message>
+<message name="setGlobalProperty">
+<part name="parameters" element="tns:setGlobalProperty"></part>
+</message>
+<message name="setGlobalPropertyResponse">
+<part name="parameters" element="tns:setGlobalPropertyResponse"></part>
+</message>
 <message name="getSigningValidityNotAfter">
 <part name="parameters" element="tns:getSigningValidityNotAfter"></part>
 </message>
@@ -303,12 +333,6 @@
 </message>
 <message name="getWorkerIdResponse">
 <part name="parameters" element="tns:getWorkerIdResponse"></part>
-</message>
-<message name="reloadConfiguration">
-<part name="parameters" element="tns:reloadConfiguration"></part>
-</message>
-<message name="reloadConfigurationResponse">
-<part name="parameters" element="tns:reloadConfigurationResponse"></part>
 </message>
 <message name="activateSigner">
 <part name="parameters" element="tns:activateSigner"></part>
@@ -397,30 +421,6 @@
 <message name="uploadSignerCertificateChainResponse">
 <part name="parameters" element="tns:uploadSignerCertificateChainResponse"></part>
 </message>
-<message name="getWorkers">
-<part name="parameters" element="tns:getWorkers"></part>
-</message>
-<message name="getWorkersResponse">
-<part name="parameters" element="tns:getWorkersResponse"></part>
-</message>
-<message name="getGlobalConfiguration">
-<part name="parameters" element="tns:getGlobalConfiguration"></part>
-</message>
-<message name="getGlobalConfigurationResponse">
-<part name="parameters" element="tns:getGlobalConfigurationResponse"></part>
-</message>
-<message name="removeGlobalProperty">
-<part name="parameters" element="tns:removeGlobalProperty"></part>
-</message>
-<message name="removeGlobalPropertyResponse">
-<part name="parameters" element="tns:removeGlobalPropertyResponse"></part>
-</message>
-<message name="setGlobalProperty">
-<part name="parameters" element="tns:setGlobalProperty"></part>
-</message>
-<message name="setGlobalPropertyResponse">
-<part name="parameters" element="tns:setGlobalPropertyResponse"></part>
-</message>
 <message name="getPKCS10CertificateRequest">
 <part name="parameters" element="tns:getPKCS10CertificateRequest"></part>
 </message>
@@ -472,6 +472,31 @@
 <fault message="tns:KeyStoreException" name="KeyStoreException"></fault>
 <fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
 </operation>
+<operation name="getGlobalConfiguration">
+<input message="tns:getGlobalConfiguration"></input>
+<output message="tns:getGlobalConfigurationResponse"></output>
+<fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
+</operation>
+<operation name="getWorkers">
+<input message="tns:getWorkers"></input>
+<output message="tns:getWorkersResponse"></output>
+<fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
+</operation>
+<operation name="removeGlobalProperty">
+<input message="tns:removeGlobalProperty"></input>
+<output message="tns:removeGlobalPropertyResponse"></output>
+<fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
+</operation>
+<operation name="reloadConfiguration">
+<input message="tns:reloadConfiguration"></input>
+<output message="tns:reloadConfigurationResponse"></output>
+<fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
+</operation>
+<operation name="setGlobalProperty">
+<input message="tns:setGlobalProperty"></input>
+<output message="tns:setGlobalPropertyResponse"></output>
+<fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
+</operation>
 <operation name="getSigningValidityNotAfter">
 <input message="tns:getSigningValidityNotAfter"></input>
 <output message="tns:getSigningValidityNotAfterResponse"></output>
@@ -493,11 +518,6 @@
 <operation name="getWorkerId">
 <input message="tns:getWorkerId"></input>
 <output message="tns:getWorkerIdResponse"></output>
-<fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
-</operation>
-<operation name="reloadConfiguration">
-<input message="tns:reloadConfiguration"></input>
-<output message="tns:reloadConfigurationResponse"></output>
 <fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
 </operation>
 <operation name="activateSigner">
@@ -580,26 +600,6 @@
 <input message="tns:uploadSignerCertificateChain"></input>
 <output message="tns:uploadSignerCertificateChainResponse"></output>
 <fault message="tns:IllegalRequestException" name="IllegalRequestException"></fault>
-<fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
-</operation>
-<operation name="getWorkers">
-<input message="tns:getWorkers"></input>
-<output message="tns:getWorkersResponse"></output>
-<fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
-</operation>
-<operation name="getGlobalConfiguration">
-<input message="tns:getGlobalConfiguration"></input>
-<output message="tns:getGlobalConfigurationResponse"></output>
-<fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
-</operation>
-<operation name="removeGlobalProperty">
-<input message="tns:removeGlobalProperty"></input>
-<output message="tns:removeGlobalPropertyResponse"></output>
-<fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
-</operation>
-<operation name="setGlobalProperty">
-<input message="tns:setGlobalProperty"></input>
-<output message="tns:setGlobalPropertyResponse"></output>
 <fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"></fault>
 </operation>
 <operation name="getPKCS10CertificateRequest">
@@ -693,8 +693,73 @@
 <soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
 </fault>
 </operation>
+<operation name="getGlobalConfiguration">
+<ns124:PolicyReference xmlns:ns124="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getGlobalConfiguration_WSAT_Policy"></ns124:PolicyReference>
+<soap:operation soapAction=""></soap:operation>
+<input>
+<soap:body use="literal"></soap:body>
+</input>
+<output>
+<soap:body use="literal"></soap:body>
+</output>
+<fault name="AdminNotAuthorizedException">
+<soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
+</fault>
+</operation>
+<operation name="getWorkers">
+<ns125:PolicyReference xmlns:ns125="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getWorkers_WSAT_Policy"></ns125:PolicyReference>
+<soap:operation soapAction=""></soap:operation>
+<input>
+<soap:body use="literal"></soap:body>
+</input>
+<output>
+<soap:body use="literal"></soap:body>
+</output>
+<fault name="AdminNotAuthorizedException">
+<soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
+</fault>
+</operation>
+<operation name="removeGlobalProperty">
+<ns126:PolicyReference xmlns:ns126="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_removeGlobalProperty_WSAT_Policy"></ns126:PolicyReference>
+<soap:operation soapAction=""></soap:operation>
+<input>
+<soap:body use="literal"></soap:body>
+</input>
+<output>
+<soap:body use="literal"></soap:body>
+</output>
+<fault name="AdminNotAuthorizedException">
+<soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
+</fault>
+</operation>
+<operation name="reloadConfiguration">
+<ns127:PolicyReference xmlns:ns127="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_reloadConfiguration_WSAT_Policy"></ns127:PolicyReference>
+<soap:operation soapAction=""></soap:operation>
+<input>
+<soap:body use="literal"></soap:body>
+</input>
+<output>
+<soap:body use="literal"></soap:body>
+</output>
+<fault name="AdminNotAuthorizedException">
+<soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
+</fault>
+</operation>
+<operation name="setGlobalProperty">
+<ns128:PolicyReference xmlns:ns128="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_setGlobalProperty_WSAT_Policy"></ns128:PolicyReference>
+<soap:operation soapAction=""></soap:operation>
+<input>
+<soap:body use="literal"></soap:body>
+</input>
+<output>
+<soap:body use="literal"></soap:body>
+</output>
+<fault name="AdminNotAuthorizedException">
+<soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
+</fault>
+</operation>
 <operation name="getSigningValidityNotAfter">
-<ns124:PolicyReference xmlns:ns124="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getSigningValidityNotAfter_WSAT_Policy"></ns124:PolicyReference>
+<ns129:PolicyReference xmlns:ns129="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getSigningValidityNotAfter_WSAT_Policy"></ns129:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -710,7 +775,7 @@
 </fault>
 </operation>
 <operation name="getSigningValidityNotBefore">
-<ns125:PolicyReference xmlns:ns125="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getSigningValidityNotBefore_WSAT_Policy"></ns125:PolicyReference>
+<ns130:PolicyReference xmlns:ns130="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getSigningValidityNotBefore_WSAT_Policy"></ns130:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -726,7 +791,7 @@
 </fault>
 </operation>
 <operation name="getKeyUsageCounterValue">
-<ns126:PolicyReference xmlns:ns126="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getKeyUsageCounterValue_WSAT_Policy"></ns126:PolicyReference>
+<ns131:PolicyReference xmlns:ns131="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getKeyUsageCounterValue_WSAT_Policy"></ns131:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -742,20 +807,7 @@
 </fault>
 </operation>
 <operation name="getWorkerId">
-<ns127:PolicyReference xmlns:ns127="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getWorkerId_WSAT_Policy"></ns127:PolicyReference>
-<soap:operation soapAction=""></soap:operation>
-<input>
-<soap:body use="literal"></soap:body>
-</input>
-<output>
-<soap:body use="literal"></soap:body>
-</output>
-<fault name="AdminNotAuthorizedException">
-<soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
-</fault>
-</operation>
-<operation name="reloadConfiguration">
-<ns128:PolicyReference xmlns:ns128="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_reloadConfiguration_WSAT_Policy"></ns128:PolicyReference>
+<ns132:PolicyReference xmlns:ns132="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getWorkerId_WSAT_Policy"></ns132:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -768,7 +820,7 @@
 </fault>
 </operation>
 <operation name="activateSigner">
-<ns129:PolicyReference xmlns:ns129="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_activateSigner_WSAT_Policy"></ns129:PolicyReference>
+<ns133:PolicyReference xmlns:ns133="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_activateSigner_WSAT_Policy"></ns133:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -790,7 +842,7 @@
 </fault>
 </operation>
 <operation name="deactivateSigner">
-<ns130:PolicyReference xmlns:ns130="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_deactivateSigner_WSAT_Policy"></ns130:PolicyReference>
+<ns134:PolicyReference xmlns:ns134="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_deactivateSigner_WSAT_Policy"></ns134:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -809,7 +861,7 @@
 </fault>
 </operation>
 <operation name="generateSignerKey">
-<ns131:PolicyReference xmlns:ns131="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_generateSignerKey_WSAT_Policy"></ns131:PolicyReference>
+<ns135:PolicyReference xmlns:ns135="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_generateSignerKey_WSAT_Policy"></ns135:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -828,7 +880,7 @@
 </fault>
 </operation>
 <operation name="getCurrentWorkerConfig">
-<ns132:PolicyReference xmlns:ns132="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getCurrentWorkerConfig_WSAT_Policy"></ns132:PolicyReference>
+<ns136:PolicyReference xmlns:ns136="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getCurrentWorkerConfig_WSAT_Policy"></ns136:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -841,7 +893,7 @@
 </fault>
 </operation>
 <operation name="setWorkerProperty">
-<ns133:PolicyReference xmlns:ns133="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_setWorkerProperty_WSAT_Policy"></ns133:PolicyReference>
+<ns137:PolicyReference xmlns:ns137="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_setWorkerProperty_WSAT_Policy"></ns137:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -854,7 +906,7 @@
 </fault>
 </operation>
 <operation name="removeWorkerProperty">
-<ns134:PolicyReference xmlns:ns134="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_removeWorkerProperty_WSAT_Policy"></ns134:PolicyReference>
+<ns138:PolicyReference xmlns:ns138="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_removeWorkerProperty_WSAT_Policy"></ns138:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -867,7 +919,7 @@
 </fault>
 </operation>
 <operation name="getAuthorizedClients">
-<ns135:PolicyReference xmlns:ns135="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getAuthorizedClients_WSAT_Policy"></ns135:PolicyReference>
+<ns139:PolicyReference xmlns:ns139="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getAuthorizedClients_WSAT_Policy"></ns139:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -880,7 +932,7 @@
 </fault>
 </operation>
 <operation name="addAuthorizedClient">
-<ns136:PolicyReference xmlns:ns136="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_addAuthorizedClient_WSAT_Policy"></ns136:PolicyReference>
+<ns140:PolicyReference xmlns:ns140="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_addAuthorizedClient_WSAT_Policy"></ns140:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -893,7 +945,7 @@
 </fault>
 </operation>
 <operation name="removeAuthorizedClient">
-<ns137:PolicyReference xmlns:ns137="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_removeAuthorizedClient_WSAT_Policy"></ns137:PolicyReference>
+<ns141:PolicyReference xmlns:ns141="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_removeAuthorizedClient_WSAT_Policy"></ns141:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -906,7 +958,7 @@
 </fault>
 </operation>
 <operation name="getSignerCertificate">
-<ns138:PolicyReference xmlns:ns138="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getSignerCertificate_WSAT_Policy"></ns138:PolicyReference>
+<ns142:PolicyReference xmlns:ns142="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getSignerCertificate_WSAT_Policy"></ns142:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -922,7 +974,7 @@
 </fault>
 </operation>
 <operation name="getSignerCertificateChain">
-<ns139:PolicyReference xmlns:ns139="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getSignerCertificateChain_WSAT_Policy"></ns139:PolicyReference>
+<ns143:PolicyReference xmlns:ns143="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getSignerCertificateChain_WSAT_Policy"></ns143:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -938,7 +990,7 @@
 </fault>
 </operation>
 <operation name="destroyKey">
-<ns140:PolicyReference xmlns:ns140="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_destroyKey_WSAT_Policy"></ns140:PolicyReference>
+<ns144:PolicyReference xmlns:ns144="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_destroyKey_WSAT_Policy"></ns144:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -954,7 +1006,7 @@
 </fault>
 </operation>
 <operation name="uploadSignerCertificate">
-<ns141:PolicyReference xmlns:ns141="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_uploadSignerCertificate_WSAT_Policy"></ns141:PolicyReference>
+<ns145:PolicyReference xmlns:ns145="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_uploadSignerCertificate_WSAT_Policy"></ns145:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -970,7 +1022,7 @@
 </fault>
 </operation>
 <operation name="uploadSignerCertificateChain">
-<ns142:PolicyReference xmlns:ns142="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_uploadSignerCertificateChain_WSAT_Policy"></ns142:PolicyReference>
+<ns146:PolicyReference xmlns:ns146="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_uploadSignerCertificateChain_WSAT_Policy"></ns146:PolicyReference>
 <soap:operation soapAction=""></soap:operation>
 <input>
 <soap:body use="literal"></soap:body>
@@ -981,58 +1033,6 @@
 <fault name="IllegalRequestException">
 <soap:fault name="IllegalRequestException" use="literal"></soap:fault>
 </fault>
-<fault name="AdminNotAuthorizedException">
-<soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
-</fault>
-</operation>
-<operation name="getWorkers">
-<ns143:PolicyReference xmlns:ns143="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getWorkers_WSAT_Policy"></ns143:PolicyReference>
-<soap:operation soapAction=""></soap:operation>
-<input>
-<soap:body use="literal"></soap:body>
-</input>
-<output>
-<soap:body use="literal"></soap:body>
-</output>
-<fault name="AdminNotAuthorizedException">
-<soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
-</fault>
-</operation>
-<operation name="getGlobalConfiguration">
-<ns144:PolicyReference xmlns:ns144="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_getGlobalConfiguration_WSAT_Policy"></ns144:PolicyReference>
-<soap:operation soapAction=""></soap:operation>
-<input>
-<soap:body use="literal"></soap:body>
-</input>
-<output>
-<soap:body use="literal"></soap:body>
-</output>
-<fault name="AdminNotAuthorizedException">
-<soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
-</fault>
-</operation>
-<operation name="removeGlobalProperty">
-<ns145:PolicyReference xmlns:ns145="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_removeGlobalProperty_WSAT_Policy"></ns145:PolicyReference>
-<soap:operation soapAction=""></soap:operation>
-<input>
-<soap:body use="literal"></soap:body>
-</input>
-<output>
-<soap:body use="literal"></soap:body>
-</output>
-<fault name="AdminNotAuthorizedException">
-<soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
-</fault>
-</operation>
-<operation name="setGlobalProperty">
-<ns146:PolicyReference xmlns:ns146="http://www.w3.org/ns/ws-policy" URI="#AdminWSPortBinding_setGlobalProperty_WSAT_Policy"></ns146:PolicyReference>
-<soap:operation soapAction=""></soap:operation>
-<input>
-<soap:body use="literal"></soap:body>
-</input>
-<output>
-<soap:body use="literal"></soap:body>
-</output>
 <fault name="AdminNotAuthorizedException">
 <soap:fault name="AdminNotAuthorizedException" use="literal"></soap:fault>
 </fault>

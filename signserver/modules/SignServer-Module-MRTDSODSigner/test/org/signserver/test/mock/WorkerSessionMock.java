@@ -194,12 +194,12 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     public void uploadSignerCertificate(int signerId,
-            X509Certificate signerCert, String scope) {
+            byte[] signerCert, String scope) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void uploadSignerCertificateChain(int signerId,
-            Collection<Certificate> signerCerts, String scope) {
+            Collection<byte[]> signerCerts, String scope) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

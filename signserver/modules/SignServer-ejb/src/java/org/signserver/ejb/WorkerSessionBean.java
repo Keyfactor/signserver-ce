@@ -1052,7 +1052,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             final ISignerCertReqInfo certReqInfo,
             final boolean explicitEccParameters) throws
             CryptoTokenOfflineException, InvalidWorkerIdException {
-        return getCertificateRequest(signerId, certReqInfo, true);
+        return getCertificateRequest(signerId, certReqInfo, 
+                explicitEccParameters, true);
     }
 
     /* (non-Javadoc)

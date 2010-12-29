@@ -224,6 +224,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
     @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode)
             throws CryptoTokenOfflineException, KeyStoreException {
+        log.debug(">testKey");
         final Collection<KeyTestResult> result
                 = new LinkedList<KeyTestResult>();
 
@@ -284,6 +285,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
             throw new CryptoTokenOfflineException(ex);
         }
 
+        log.debug("<testKey");
         return result;
     }
 
@@ -338,7 +340,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
                 pkcs10 = new PKCS10CertificationRequest(
                         reqInfo.getSignatureAlgorithm(),
                         CertTools.stringToBcX509Name(reqInfo.getSubjectDN()),
-                        cert.getPublicKey(), reqInfo.getAttributes(),
+                        publicKey, reqInfo.getAttributes(),
                         privateKey,
                         getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
                 retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));

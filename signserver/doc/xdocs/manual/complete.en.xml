@@ -236,6 +236,9 @@ One SignServer can have multiple services for different purposes.
                 </subsection>
 
                 <subsection name="MailSigner">
+                    <note>
+The MailSigner build will be removed in future versions of SignServer.
+                    </note>
                     <p>
 The MailSigner is a different build of the SignServer, targeted to perform automated cryptographic operations on e-mails. The MailSigner is an add-on to the James SMTP project and the James SMTP binaries is shipped along with the SignServer package for simplified set-up.
                     </p>
@@ -266,6 +269,9 @@ The MailSigner have similar CLI interface and is administrated much in the same 
                 <!-- TODO: Add from installationguide.html -->
                 
                 <subsection name="Quick start of a Simple Time-stamp Server">
+                    <note>
+The MailSigner build will be removed in future versions of SignServer.
+                    </note>
                     <p>
 This section will show how to set up a quick and simple standalone time-stamp server, accepting
 time-stamp requests over plain HTTP.

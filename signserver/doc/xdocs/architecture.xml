@@ -42,6 +42,9 @@ One instance of SignServer can have multiple signers for different purposes.
 </p>
 </subsection>
 <subsection name="MailSigner">
+    <note>
+The MailSigner build will be removed in future versions of SignServer.
+    </note>
 <p>
 The MailSigner is a different build of SignServer, targeted to perform automated cryptographic operations on e-mails. The MailSigner is an add-on to the James SMTP project and the James SMTP binaries is shipped along with the SignServer package for simplified set-up.
 </p>

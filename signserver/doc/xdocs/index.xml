@@ -8,9 +8,11 @@
 <body>
   <section name="Latest News">
     <note>
-        <strong>SignServer 3.1.4 is now out!</strong>
+        <strong>SignServer 3.1.5 is now out!</strong>
         <br/><br/>
-        Read <a href="http://www.primekey.se/digitalAssets/2/2530_Product_Release_SignServer3.1.4.pdf">release notes</a>. | Visit the <a href="download.html">download</a> section to get SignServer. There is also a live CD!
+        Read <a href="http://www.primekey.se/digitalAssets/2/2530_Product_Release_SignServer3.1.4.pdf">release notes</a>.
+        <!-- TODO: | Visit the <a href="download.html">download</a> section to get SignServer. -->
+        <!-- TODO: There is also a live CD! -->
     </note>
    </section>
 
@@ -28,7 +30,7 @@ SignServer has ready to use:
 <li>Validators for documents: XML</li>
 <li>Certificate Validation Service Framework for validating certificates using CRLs or OCSP</li>
 <li>Group Key Service Framework</li>
-<li>Simple Mail Signer</li>
+<li>Simple Mail Signer (deprecated)</li>
 </ul> 
 <p>
 SignServer has been designed for high-availability and can be clustered for maximum reliability.

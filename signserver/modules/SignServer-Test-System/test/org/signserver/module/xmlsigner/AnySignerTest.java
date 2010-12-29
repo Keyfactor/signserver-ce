@@ -166,6 +166,56 @@ public class AnySignerTest extends TestCase {
         assertEquals("key in request", pubKey, actualPubKey);
     }
 
+    /**
+     * Test key generation of a ECDSA curve.
+     * @throws Exception in case of error
+     */
+    public void test02GenerateKeyECDSA() throws Exception {
+
+        final char[] authCode = "foo123".toCharArray();
+        final String newKeyAlias = "newkey0002";
+
+        final String actualNewAlias = workerSession.generateSignerKey(WORKERID, 
+                "ECDSA", "secp256r1", newKeyAlias, authCode);
+
+        assertEquals("alias", newKeyAlias, actualNewAlias);
+
+        final Collection<KeyTestResult> results = workerSession.testKey(WORKERID,
+                newKeyAlias, authCode);
+        final KeyTestResult result = results.iterator().next();
+        assertEquals("alias in result", newKeyAlias, result.getAlias());
+        assertTrue("test result", result.isSuccess());
+
+        final KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        keyStore.load(new FileInputStream(keystoreFile), authCode);
+        final PublicKey pubKey = keyStore.getCertificate(newKeyAlias)
+                .getPublicKey();
+        final byte[] pubKeyBytes = pubKey.getEncoded();
+        final String expectedKeyHash = createKeyHash(pubKeyBytes);
+        final String actualKeyHash = result.getPublicKeyHash();
+
+        assertEquals("keyAlg", "EC", pubKey.getAlgorithm());
+
+        assertEquals("key hash", expectedKeyHash, actualKeyHash);
+
+        // Set new key as NEXTCERTSIGNKEY
+        workerSession.setWorkerProperty(WORKERID, "NEXTCERTSIGNKEY", newKeyAlias);
+        workerSession.reloadConfiguration(WORKERID);
+
+        // Generate CSR
+        final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(
+                "SHA1WithECDSA", "CN=test02GenerateKey", null);
+        Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
+                .getCertificateRequest(WORKERID, certReqInfo, false, false);
+        byte[] reqBytes = data.getBase64CertReq();
+        final PKCS10CertificationRequest req
+                = new PKCS10CertificationRequest(Base64.decode(reqBytes));
+
+        final PublicKey actualPubKey = req.getPublicKey();
+
+        assertEquals("key in request", pubKey, actualPubKey);
+    }
+
     public void test99TearDownDatabase() throws Exception {
         TestUtils.assertSuccessfulExecution(new String[] {
             "removeworker",

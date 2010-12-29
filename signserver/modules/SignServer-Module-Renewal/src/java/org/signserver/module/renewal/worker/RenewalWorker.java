@@ -106,6 +106,7 @@ public class RenewalWorker extends BaseSigner {
             = "SIGNATUREALGORITHM";
     public static final String PROPERTY_KEYALG = "KEYALG";
     public static final String PROPERTY_KEYSPEC = "KEYSPEC";
+    public static final String PROPERTY_EXPLICITECC = "EXPLICITECC";
     private static final String NEXTCERTSIGNKEY = "NEXTCERTSIGNKEY";
 
     WorkerConfig config;
@@ -259,6 +260,8 @@ public class RenewalWorker extends BaseSigner {
                     PROPERTY_KEYALG);
             final String keySpec = workerConfig.getProperty(
                     PROPERTY_KEYSPEC);
+            final String explicitEccParameters = workerConfig.getProperty(
+                    PROPERTY_EXPLICITECC, String.valueOf(false));
             String nextCertSignKey
                     = workerConfig.getProperty(NEXTCERTSIGNKEY);
 
@@ -318,6 +321,11 @@ public class RenewalWorker extends BaseSigner {
                 buff.append(PROPERTY_KEYSPEC);
                 buff.append("=");
                 buff.append(keySpec);
+                buff.append("\n\t");
+
+                buff.append(PROPERTY_EXPLICITECC);
+                buff.append("=");
+                buff.append(explicitEccParameters);
                 buff.append("\n\t");
 
                 buff.append(PROPERTY_RENEWENDENTITY);
@@ -388,6 +396,7 @@ public class RenewalWorker extends BaseSigner {
 
                 // Renew worker
                 renewWorker(reneweeId, sigAlg, keyAlg, endEntity,
+                        Boolean.valueOf(explicitEccParameters),
                         defaultKey, nextCertSignKey, authCode.toCharArray(),
                         logMap);
 
@@ -457,12 +466,14 @@ public class RenewalWorker extends BaseSigner {
 
     private void renewWorker(final int workerId, 
             final String sigAlg, final String subjectDN, final String endEntity,
+            final boolean explicitEccParameters,
             final boolean defaultKey, final String nextCertSignKey, 
             final char[] authCode, final Map<String, String> logMap)
             throws Exception {
 
         final String pkcs10
-                = createRequestPEM(workerId, sigAlg, subjectDN, defaultKey);
+                = createRequestPEM(workerId, sigAlg, subjectDN, 
+                explicitEccParameters, defaultKey);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("PKCS10: " + pkcs10);
@@ -612,13 +623,14 @@ public class RenewalWorker extends BaseSigner {
     }
 
     private String createRequestPEM(int workerId, final String sigAlg, 
-            final String subjectDN, final boolean defaultKey)
+            final String subjectDN, final boolean explicitEccParameters,
+            final boolean defaultKey)
             throws CryptoTokenOfflineException, InvalidWorkerIdException {
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg,
                 subjectDN, null);
         final Base64SignerCertReqData reqData
                 = (Base64SignerCertReqData) getWorkerSession()
-                .getCertificateRequest(workerId, certReqInfo, defaultKey);
+                .getCertificateRequest(workerId, certReqInfo, explicitEccParameters, defaultKey);
         if (reqData == null) {
             throw new RuntimeException(
                     "Base64SignerCertReqData returned was null."

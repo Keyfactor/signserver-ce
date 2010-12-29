@@ -2737,6 +2737,7 @@ GenericPropertiesRequestS and returns GenericPropertiesResponseS.
                     <subsubsection name="Properties of renewee">
                         <p><b>KEYALG</b> = Algorithm for the key generation. Examples: RSA, DSA or ECDSA</p>
                         <p><b>KEYSPEC</b> = Key length (for RSA or DSA) or curve name (for ECDSA). Examples: 2048, 4096, secp256r1</p>
+                        <p><b>EXPLICITECC</b> = True if explicit domain parameters should be used instead of NamedCurves. Default: false</p>
                         <p><b>DEFAULTKEY</b> = Key alias for the current key.</p>
                         <p><b>NEXTCERTSIGNKEY</b> = Key alias for the next key.</p>
                     </subsubsection>

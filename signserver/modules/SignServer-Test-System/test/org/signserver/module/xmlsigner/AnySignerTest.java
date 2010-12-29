@@ -156,7 +156,7 @@ public class AnySignerTest extends TestCase {
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA",
                 "CN=test01GenerateKey", null);
         Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
-                .getCertificateRequest(WORKERID, certReqInfo, false);
+                .getCertificateRequest(WORKERID, certReqInfo, false, false);
         byte[] reqBytes = data.getBase64CertReq();
         final PKCS10CertificationRequest req
                 = new PKCS10CertificationRequest(Base64.decode(reqBytes));

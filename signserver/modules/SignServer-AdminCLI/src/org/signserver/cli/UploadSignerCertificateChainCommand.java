@@ -16,6 +16,7 @@ package org.signserver.cli;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -78,20 +79,20 @@ public class UploadSignerCertificateChainCommand extends BaseCommand {
             Collection<Certificate> certs = CertTools.getCertsFromPEM(filename);
             if(certs.size() == 0){
             	throw new IllegalAdminCommandException(resources[BADPEM]);
-            }
-            
-                    	
-        	        	        
+            }	
+        	        
         	this.getOutputStream().println(resources[TRYING]);
-        	
+
+                ArrayList<byte[]> bcerts = new ArrayList<byte[]>();
         	Iterator<Certificate> iter = certs.iterator();
         	while(iter.hasNext()){
         	  X509Certificate cert = (X509Certificate) iter.next();
+                  bcerts.add(cert.getEncoded());
               WorkerStatus.printCert(cert,getOutputStream());
               this.getOutputStream().println("\n");
         	}
         	
-        	getCommonAdminInterface(hostname).uploadSignerCertificateChain(signerid, certs, scope);
+        	getCommonAdminInterface(hostname).uploadSignerCertificateChain(signerid, bcerts, scope);
 
         	
         } catch (IllegalAdminCommandException e) {

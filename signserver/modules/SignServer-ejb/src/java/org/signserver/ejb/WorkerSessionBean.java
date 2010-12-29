@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -1149,11 +1150,12 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#uploadSignerCertificate(int, java.security.cert.X509Certificate, java.lang.String)
      */
-    public void uploadSignerCertificate(int signerId, X509Certificate signerCert,
-            String scope) {
+    public void uploadSignerCertificate(int signerId, byte[] signerCert,
+            String scope) throws CertificateException {
         WorkerConfig config = getWorkerConfig(signerId);
 
-        (new ProcessableConfig(config)).setSignerCertificate(signerCert, scope);
+        final Certificate cert  = CertTools.getCertfromByteArray(signerCert);
+        ( new ProcessableConfig(config)).setSignerCertificate((X509Certificate)cert,scope);
         workerConfigService.setWorkerConfig(signerId, config);
     }
 
@@ -1161,11 +1163,20 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      * @see org.signserver.ejb.interfaces.IWorkerSession#uploadSignerCertificateChain(int, java.util.Collection, java.lang.String)
      */
     public void uploadSignerCertificateChain(int signerId,
-            Collection<Certificate> signerCerts, String scope) {
+            Collection<byte[]> signerCerts, String scope) 
+            throws CertificateException {
 
         WorkerConfig config = getWorkerConfig(signerId);
-        (new ProcessableConfig(config)).setSignerCertificateChain(signerCerts,
-                scope);
+    	ArrayList<Certificate> certs = new ArrayList<Certificate>();
+    	Iterator<byte[]> iter = signerCerts.iterator();
+    	while(iter.hasNext()){
+            X509Certificate cert;
+            cert = (X509Certificate) CertTools.getCertfromByteArray(iter.next());
+            certs.add(cert);
+    	}
+    	// Collections.reverse(certs); // TODO: Why?
+
+        (new ProcessableConfig( config)).setSignerCertificateChain(certs, scope);
         workerConfigService.setWorkerConfig(signerId, config);
     }
 

@@ -223,13 +223,13 @@ public class SetPropertiesHelper {
 			commonAdminInterface.addAuthorizedClient(workerId, ac);
 		}else{
 			if(propertykey.startsWith(SIGNERCERTIFICATE.substring(1))){
-               commonAdminInterface.uploadSignerCertificate(workerId,(X509Certificate)CertTools.getCertfromByteArray(Base64.decode(propertyvalue.getBytes())),GlobalConfiguration.SCOPE_GLOBAL);
+                            commonAdminInterface.uploadSignerCertificate(workerId,Base64.decode(propertyvalue.getBytes()),GlobalConfiguration.SCOPE_GLOBAL);
 			}else{
 				if(propertykey.startsWith(SIGNERCERTCHAIN.substring(1))){
 					String certs[] = propertyvalue.split(";");
-					ArrayList<Certificate> chain = new ArrayList<Certificate>();
+					ArrayList<byte[]> chain = new ArrayList<byte[]>();
 					for(String base64cert : certs){
-						X509Certificate cert = (X509Certificate)CertTools.getCertfromByteArray(Base64.decode(base64cert.getBytes()));
+						byte[] cert = Base64.decode(base64cert.getBytes());
 						chain.add(cert);
 					}
 					commonAdminInterface.uploadSignerCertificateChain(workerId, chain, GlobalConfiguration.SCOPE_GLOBAL);

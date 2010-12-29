@@ -76,12 +76,11 @@ public class UploadSignerCertificateCommand extends BaseCommand {
             	throw new IllegalAdminCommandException("Invalid PEM file, couldn't find any certificate");
             }
             X509Certificate cert = (X509Certificate) certs.iterator().next();
-                    	
         	        	        
         	this.getOutputStream().println("Uploading the following signer certificate  : \n");
             WorkerStatus.printCert(cert,getOutputStream());        			                       
         	
-            getCommonAdminInterface(hostname).uploadSignerCertificate(signerid, cert, scope);
+            getCommonAdminInterface(hostname).uploadSignerCertificate(signerid, cert.getEncoded(), scope);
 
         	
         } catch (IllegalAdminCommandException e) {

@@ -573,9 +573,11 @@ public class RenewalWorker extends BaseSigner {
 
                 // Update worker to use the new certificate
                 getWorkerSession().uploadSignerCertificate(workerId,
-                        signerCert, GlobalConfiguration.SCOPE_GLOBAL);
+                        signerCert.getEncoded(),
+                        GlobalConfiguration.SCOPE_GLOBAL);
                 getWorkerSession().uploadSignerCertificateChain(workerId,
-                        certChain, GlobalConfiguration.SCOPE_GLOBAL);
+                        getCertificateChainBytes(certChain),
+                        GlobalConfiguration.SCOPE_GLOBAL);
 
                 // If not the default key we need to promote the key
                 // Set DEFAULTKEY to NEXTCERTSIGNKEY
@@ -727,6 +729,16 @@ public class RenewalWorker extends BaseSigner {
         final LinkedList<Certificate> result = new LinkedList<Certificate>();
         for (Certificate cert : certs) {
             result.add(cert);
+        }
+        return result;
+    }
+
+    private static List<byte[]> getCertificateChainBytes(
+            final Collection<? extends Certificate> certs)
+            throws CertificateEncodingException {
+        final LinkedList<byte[]> result = new LinkedList<byte[]>();
+        for (Certificate cert : certs) {
+            result.add(cert.getEncoded());
         }
         return result;
     }

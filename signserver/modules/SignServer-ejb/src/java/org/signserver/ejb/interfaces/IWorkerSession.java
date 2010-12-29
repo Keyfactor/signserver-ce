@@ -3,7 +3,7 @@ package org.signserver.ejb.interfaces;
 import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
+import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -281,8 +281,8 @@ public interface IWorkerSession {
      * @param signerCert the certificate used to sign signature requests
      * @param scope one of GlobalConfiguration.SCOPE_ constants
      */
-    void uploadSignerCertificate(int signerId, X509Certificate signerCert,
-            String scope);
+    void uploadSignerCertificate(int signerId, byte[] signerCert,
+            String scope) throws CertificateException;
 
     /**
      * Method used to upload a complete certificate chain to a configuration
@@ -292,7 +292,8 @@ public interface IWorkerSession {
      * @param scope one of GlobalConfiguration.SCOPE_ constants
      */
     void uploadSignerCertificateChain(int signerId,
-            Collection<Certificate> signerCerts, String scope);
+            Collection<byte[]> signerCerts, String scope)
+             throws CertificateException;
 
     /**
      * Methods that generates a free worker id that can be used for new signers.

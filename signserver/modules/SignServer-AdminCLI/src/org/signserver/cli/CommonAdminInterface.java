@@ -16,8 +16,7 @@ package org.signserver.cli;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.security.KeyStoreException;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
+import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -276,8 +275,8 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.ejb.WorkerSessionBean#uploadSignerCertificate(int, X509Certificate)
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#uploadSignerCertificate(int, X509Certificate)	 
 	 */		
-	public void uploadSignerCertificate(int signerId, X509Certificate signerCert, String scope)
-			throws RemoteException {
+	public void uploadSignerCertificate(int signerId, byte[] signerCert, String scope)
+			throws RemoteException, CertificateException {
             getWorkerSession().uploadSignerCertificate(signerId, signerCert, scope);
 	}
 
@@ -286,8 +285,8 @@ public class CommonAdminInterface  {
 	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#uploadSignerCertificateChain(int, Collection)	 
 	 */	
 	public void uploadSignerCertificateChain(int signerId, 
-                Collection<Certificate> signerCerts, String scope)
-                throws RemoteException {
+                Collection<byte[]> signerCerts, String scope)
+                throws RemoteException, CertificateException {
             getWorkerSession().uploadSignerCertificateChain(signerId, signerCerts, scope);
 	}
 	

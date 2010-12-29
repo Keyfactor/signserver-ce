@@ -87,7 +87,7 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
 
 		KeyPair dummyCAKeys = KeyTools.genKeys("2048","RSA");
 		X509Certificate cert = CertTools.genSelfCert(pkcs10.getCertificationRequestInfo().getSubject().toString(), 10, null, dummyCAKeys.getPrivate(), pkcs10.getPublicKey(), "SHA1WithRSA", false);
-		workerSession.uploadSignerCertificate(88, cert, GlobalConfiguration.SCOPE_GLOBAL);
+		workerSession.uploadSignerCertificate(88, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
 		workerSession.reloadConfiguration(88);
 
 		stat = (SignerStatus) workerSession.getStatus(88);

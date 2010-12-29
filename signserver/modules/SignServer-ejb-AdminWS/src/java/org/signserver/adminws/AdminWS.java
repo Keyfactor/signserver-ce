@@ -579,8 +579,7 @@ public class AdminWS {
                 String.valueOf(signerId));
         
         try {
-            final X509Certificate cert = getX509Certificate(signerCert);
-            worker.uploadSignerCertificate(signerId, cert, scope);
+            worker.uploadSignerCertificate(signerId, signerCert, scope);
         } catch (CertificateException ex) {
             // Log stacktrace and only pass on description to client
             LOG.error("Unable to parse certificate", ex);
@@ -625,18 +624,7 @@ public class AdminWS {
                 String.valueOf(signerId));
         
         try {
-            final List<Certificate> certs = new LinkedList<Certificate>();
-
-            for (byte[] signerCert : signerCerts) {
-                final Certificate cert;
-                if (signerCert == null || signerCert.length == 0) {
-                    cert = null;
-                } else {
-                    cert = getX509Certificate(signerCert);
-                }
-                certs.add(cert);
-            }
-            worker.uploadSignerCertificateChain(signerId, certs, scope);
+            worker.uploadSignerCertificateChain(signerId, signerCerts, scope);
         } catch (CertificateException ex) {
             // Log stacktrace and only pass on description to client
             LOG.error("Unable to parse certificate", ex);

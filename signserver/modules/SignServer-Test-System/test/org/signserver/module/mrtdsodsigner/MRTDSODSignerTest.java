@@ -202,7 +202,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
         X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(HardCodedCryptoToken.certbytes));			
 
-        workerSession.uploadSignerCertificate(WORKER1, cert, GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificate(WORKER1, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
         workerSession.setWorkerProperty(WORKER1, SignServerConstants.MINREMAININGCERTVALIDITY, "6300");
         workerSession.reloadConfiguration(WORKER1);
     	// Signing operation should not work now

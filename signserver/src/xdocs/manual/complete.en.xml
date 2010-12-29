@@ -39,7 +39,55 @@ lookup the validation of a given certificate.
             </section>
 
             <section name="Changes from previous versions">
-                <subsection name="Changes between Version 3.0 and Version 3.1">
+                <subsection name="Changes between version 3.1 and 3.2">
+                    <ul>
+<!-- New major features -->
+                        <li>
+A new administration web service (WS) for remote administration of SignServer.
+                        </li>
+
+                        <li>
+A new administration GUI desktop application for managing workers. Supports
+key generation and both local and remote administration.
+                        </li>
+
+                        <li>
+A new client command line interface (CLI) for requesting signing and validation.
+                        </li>
+
+<!-- New support -->
+                        <li>
+Support for GlassFish Server 2.1.1.
+                        </li>
+
+                        <li>
+Support for Oracle Database.
+                        </li>
+
+<!-- New workers -->
+                        <li>
+Worker renewing signers by generating new keys and sending certificate requests
+to EJBCA.
+                        </li>
+
+<!-- Improvements -->
+                        <li>
+Better audit and transaction logging.
+                        </li>
+                        <li>
+New build scripts and project structure with the goal of decouple the different
+SignServer modules and sub-projects and simplify future development.
+                        </li>
+
+
+<!-- Other -->
+                        <li>
+The bundled SMTP server and MailSigner build of SignServer has been removed.
+                        </li>
+
+                    </ul>
+                </subsection>
+                <subsection name="Changes between version 3.0 and 3.1">
                     <ul>
                         <li>
 A new Cluster Class Loader, simplifying the management of customized workers in a
@@ -85,7 +133,7 @@ For minor changes see the change log at http://jira.primekey.se
                         </li>
                 </ul>
                 </subsection>
-                <subsection name="Changes between Version 2 and Version 3">
+                <subsection name="Changes between version 2 and 3">
                     <ul>
                         <li>
 Complete refactorisation of J2EE from EJB2 to EJB3 to simplify further development.
@@ -139,7 +187,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                         </li>
                     </ul>
                 </subsection>
-                <subsection name="Changes between Version 1 and Version 2">
+                <subsection name="Changes between version 1 and 2">
                     <ul>
                         <li>
   signserver_server.property file have been removed and replaced with a global configuration

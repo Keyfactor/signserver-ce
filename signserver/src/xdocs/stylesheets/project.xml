@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="SignServer" href="http://signserver.sourceforge.net/">
 
     <title>SignServer</title>
@@ -18,9 +18,8 @@
 
             <menu name="Documentation">
                 <item name="Manual"	 href="/manual.html"/>
-                <item name="Installation Guide"	 href="/installationguide.html"/>
+                <item name="Installation Guide"	 href="/manual/installguide.html"/>
                 <item name="Wiki" href="http://sourceforge.net/apps/mediawiki/signserver/"/>
-                <item name="FAQ"		  href="/faq.html"/>
                 <item name="Howto"		  href="/howto.html"/>
                 <item name="Changelog"    href="http://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel"/>
             </menu>

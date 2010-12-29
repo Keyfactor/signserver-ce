@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <document>
   <properties>
     <title>Contact &amp; Support</title>
@@ -14,8 +14,6 @@ If you need commercial support or professional services, read more about <a href
 <section name="Documentation">
     <p>
     First you should look at the documentation resources on this site.
-    </p><p>
-    Second you should see if there is something interesting in the <a href="faq.html">FAQ</a>.
     </p>
 </section>
 

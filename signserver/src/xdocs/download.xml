@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <document>
 
   <properties>
@@ -8,12 +8,13 @@
 <body>
   <section name="Latest Release">
     <note>
-    If you have problems with any of the download links below, try to download through the SourceForge <a href="http://sourceforge.net/projects/signserver/files/">download page</a>.
+    If you have problems with any of the download links below, try to download 
+    through the SourceForge
+    <a href="http://sourceforge.net/projects/signserver/files/">download page</a>.
     <br/><br/>
-    SignServer 3.1.1 is now available for <a
-    href="https://sourceforge.net/projects/signserver/files/signserver/3.1/signserver_lgpl_v21_version_3_1_1.zip/download">download</a>.
+    SignServer 3.2.0 is now available for <a href="https://sourceforge.net/projects/signserver/files/signserver/3.2/signserver-3.2.0.zip/download">download</a>.
     <br/>
-    SHA1 checksum: 9757ea3efed47e56b83232dd42f6f7fa6e6e0884
+    SHA1 checksum: TODO_REPLACE_WITH_CHECKSUM_AFTER_RELEASE
     </note>
   </section>
   <section name="Main source packages">

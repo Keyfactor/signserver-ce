@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <document>
   <properties>
     <title>Manual</title>
@@ -17,6 +17,7 @@
             </p>
             <ul>
                <li>Introduction [<a href="manual/introduction.html">HTML</a><!-- | <a href="manual/introduction.pdf">PDF</a>-->]</li>
+               <li>Installation Guide [<a href="manual/installguide.html">HTML</a><!-- | <a href="manual/installguide.pdf">PDF</a>-->]</li>
                <li>Usage Guide [<a href="manual/usageguide.html">HTML</a><!-- | <a href="manual/usageguide.pdf">PDF</a>-->]</li>
                <li>Integration [<a href="manual/integration.html">HTML</a><!-- | <a href="manual/integration.pdf">PDF</a>-->]</li>
                <li>Plugins [<a href="manual/plugins.html">HTML</a><!-- | <a href="manual/plugins.pdf">PDF</a>-->]</li>

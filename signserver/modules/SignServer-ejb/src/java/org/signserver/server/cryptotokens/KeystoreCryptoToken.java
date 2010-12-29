@@ -49,7 +49,9 @@ import javax.security.auth.x500.X500Principal;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECKeyUtil;
+import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
@@ -537,11 +539,17 @@ public class KeystoreCryptoToken implements ICryptoToken,
                 LOG.debug("provider: " + prov);
             }
 
-            // Generate the RSA Keypair
-            final KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", prov);
-            kpg.initialize(Integer.valueOf(keySpec));
+            // Generate the key pair
+            final KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                        keyAlgorithm, prov);
             
-            final String sigAlgName = "SHA1WithRSA";
+            if ("ECDSA".equals(keyAlgorithm)) {
+                kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
+            } else {
+                kpg.initialize(Integer.valueOf(keySpec));
+            }
+            
+            final String sigAlgName = "SHA1With" + keyAlgorithm;
 
             LOG.debug("generating...");
             final KeyPair keyPair = kpg.generateKeyPair();

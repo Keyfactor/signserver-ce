@@ -180,7 +180,7 @@ public class WSAdminsCommand extends BaseCommand {
 
     private static List<Entry> parseAdmins(final String admins) {
         final List<Entry> entries = new LinkedList<Entry>();
-        if (admins.contains(";")) {
+        if (admins != null && admins.contains(";")) {
             for (String entry : admins.split(";")) {
                 final String[] parts = entry.split(",", 2);
                 entries.add(new Entry(parts[0], parts[1]));

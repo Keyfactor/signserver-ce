@@ -552,50 +552,35 @@ OS version                          = ${os.version}
     	<delete file="htdocs.tgz"/>
     </target>
 
-    <!-- A small script that converts the version x.y.z to x_y_z to be used in the file -->
-    <scriptdef name="convertdot" language="javascript">
-        <![CDATA[
-      ver = project.getProperty("app.version.number");
-              relstring = ver.replace('.','_');
-          //self.log(ver);
-          //self.log(relstring);
-              project.setProperty("signserver.zipversion", relstring);
-      str = project.getProperty("signserver.zipversion");
-        ]]>
-    </scriptdef>
-
 
     <!-- =================================================================== -->
     <!-- Release part                                                        -->
     <!-- =================================================================== -->
 
     <!-- Deprecated: New target called release:zip -->
-    <target name="ziprelease">
-        <antcall target="release:zip" />
-    </target>
+    <target name="ziprelease" depends="release:zip"/>
 
     <target name="release:zip" description="Make a zip file for SignServer release" >
-            <convertdot/> <!-- convert dots to underscores in version string -->
-            <!-- <input message="Version tag for zipfile (ex 3_1_0):" addproperty="signserver.zipversion" /> -->
-            <antcall target="-release:zip-lgpl21"/>
+        <property name="signserver.zipversion" value="${app.version.number}"/>
+        <!-- <input message="Version tag for zipfile (ex 3_1_0):" addproperty="signserver.zipversion" /> -->
+        <antcall target="-release:zip-lgpl21"/>
     </target>
 
     <target name="release:source-zip" description="Make a source zip files for SignServer release" >
-            <convertdot/> <!-- convert dots to underscores in version string -->
-            <!-- <input message="Version tag for zipfile (ex 3_1_0):" addproperty="signserver.zipversion" /> -->
-            <antcall target="-release:source-zip-lgpl21"/>
+        <property name="signserver.zipversion" value="${app.version.number}"/>
+        <!-- <input message="Version tag for zipfile (ex 3_1_0):" addproperty="signserver.zipversion" /> -->
+        <antcall target="-release:source-zip-lgpl21"/>
     </target>
 
     <target name="release:source-tarball" description="Make a source tarball for SignServer release">
-        <convertdot/>
+        <property name="signserver.zipversion" value="${app.version.number}"/>
         <antcall target="-release:source-tarball-lgpl21"/>
     </target>
 
-    <target name="-release:zip-lgpl21" >
-        <antcall  target="clean"/>
+    <target name="-release:zip-lgpl21" depends="clean">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <zip destfile="../signserver_lgpl_v21_version_${signserver.zipversion}.zip">
-            <zipfileset dir="." prefix="signserver_lgpl_v21_version_${signserver.zipversion}" filemode="600" dirmode="700">
+        <zip destfile="../signserver-${signserver.zipversion}.zip">
+            <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="600" dirmode="700">
                 <include name="**/**" />
                 <exclude name="doc/lgpl-**" />
                 <exclude name="**/CVS/**" />
@@ -616,21 +601,20 @@ OS version                          = ${os.version}
                 <exclude name="**/*.sh" />
                 <exclude name="**/nbproject/private/**" />
             </zipfileset>
-            <zipfileset dir="." prefix="signserver_lgpl_v21_version_${signserver.zipversion}" filemode="700" dirmode="700">
+            <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="700" dirmode="700">
                 <include name="**/*.sh" />
             </zipfileset>
         </zip>
         <delete file="LICENSE"/>
-        <checksum file="../signserver_lgpl_v21_version_${signserver.zipversion}.zip" algorithm="SHA1" forceOverwrite="yes"/>
-        <checksum file="../signserver_lgpl_v21_version_${signserver.zipversion}.zip" algorithm="SHA1" property="signserverSHA1"/>
+        <checksum file="../signserver-${signserver.zipversion}.zip" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="../signserver-${signserver.zipversion}.zip" algorithm="SHA1" property="signserverSHA1"/>
         <echo message="SHA1 checksum: ${signserverSHA1}" />
     </target>
 
-    <target name="-release:source-zip-lgpl21">
-        <antcall  target="clean"/>
+    <target name="-release:source-zip-lgpl21" depends="clean">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <zip destfile="../signserver_lgpl_v21_version_${signserver.zipversion}-src.zip">
-            <zipfileset dir="." prefix="signserver_lgpl_v21_version_${signserver.zipversion}-src" filemode="600" dirmode="700">
+        <zip destfile="../signserver-${signserver.zipversion}-src.zip">
+            <zipfileset dir="." prefix="signserver-${signserver.zipversion}-src" filemode="600" dirmode="700">
                 <include name="**/**" />
                 <exclude name="doc/lgpl-**" />
                 <exclude name="**/CVS/**" />
@@ -654,20 +638,19 @@ OS version                          = ${os.version}
                 <exclude name="**/nbproject/private/**" />
                 <exclude name="**/lib/**" />
             </zipfileset>
-            <zipfileset dir="." prefix="signserver_lgpl_v21_version_${signserver.zipversion}-src" filemode="700" dirmode="700">
+            <zipfileset dir="." prefix="signserver-${signserver.zipversion}-src" filemode="700" dirmode="700">
                 <include name="**/*.sh" />
             </zipfileset>
         </zip>
         <delete file="LICENSE"/>
-        <checksum file="../signserver_lgpl_v21_version_${signserver.zipversion}-src.zip" algorithm="SHA1" forceOverwrite="yes"/>
-        <checksum file="../signserver_lgpl_v21_version_${signserver.zipversion}-src.zip" algorithm="SHA1" property="signserverSHA1"/>
+        <checksum file="../signserver-${signserver.zipversion}-src.zip" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="../signserver-${signserver.zipversion}-src.zip" algorithm="SHA1" property="signserverSHA1"/>
         <echo message="SHA1 checksum: ${signserverSHA1}" />
     </target>
 
-    <target name="-release:source-tarball-lgpl21" >
-        <antcall  target="clean"/>
+    <target name="-release:source-tarball-lgpl21" depends="clean">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <property name="tarball.tar" value="../signserver_lgpl_v21_version_${signserver.zipversion}-src.tar" />
+        <property name="tarball.tar" value="../signserver-${signserver.zipversion}-src.tar" />
         <property name="tarball.tar.gz" value="${tarball.tar}.gz" />
         <tar tarfile="${tarball.tar}" basedir=".." longfile="gnu">
             <include name="signserver/**" />

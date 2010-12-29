@@ -32,6 +32,11 @@
             <istrue value="${validationws.enabled}"/>
         </or>
     </condition>
+    <condition property="clusterclassloader.conditionenabled">
+        <istrue value="${useclusterclassloader}"/>
+    </condition>
+
+    <!-- Enable clients -->
     <condition property="timestampclient.conditionenabled">
         <istrue value="${timestampclient.enabled}"/>
     </condition>
@@ -44,8 +49,8 @@
     <condition property="signingandvalidationapi.conditionenabled">
         <istrue value="${signingandvalidationapi.enabled}"/>
     </condition>
-    <condition property="clusterclassloader.conditionenabled">
-        <istrue value="${useclusterclassloader}"/>
+    <condition property="admingui.conditionenabled">
+        <istrue value="${admingui.enabled}"/>
     </condition>
 
     <!-- Enable, include module: Renewal -->

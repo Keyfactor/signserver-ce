@@ -247,6 +247,10 @@ pdfperformancetest.enabled=false
 # Default: true
 signingandvalidationapi.enabled=true
 
+# Set to enable build of the AdminGUI
+# Default: true
+admingui.enabled=true
+
 
 # -------------- Cluster Class Loader Configuration ---------------------------
 #

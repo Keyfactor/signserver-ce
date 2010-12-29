@@ -142,12 +142,11 @@ public class ModulesTestCase extends TestCase {
         workerSession.setWorkerProperty(signerId, "KEYDATA", keyData);
 //        workerSession.setWorkerProperty(signerId, "SIGNERCERTCHAIN", "MIICtjCCAZ6gAwIBAgIIEqzqEmAJ91AwDQYJKoZIhvcNAQEFBQAwNzERMA8GA1UEAwwIQWRtaW5DQTExFTATBgNVBAoMDEVKQkNBIFNhbXBsZTELMAkGA1UEBhMCU0UwHhcNMDkwNTEzMTI1NDIzWhcNMTEwNTEzMTI1NDIzWjAhMRIwEAYDVQQDDAlwZGZzaWduZXIxCzAJBgNVBAYTAlNFMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCvnWqZ/Nlv+ZrUhT8txG7vD2YdrI0vFUomEtqfBuSLrsmPXNhianzXA9XdPELaelz/Ga/czGQ94E873XScfPR22wFDjb3XYQN33Mm8lL4LAzrMKX9XHi0+Osdpw9hkHG9KYKNVkOl62i35YwiaDHV4vvEgOcJFKksPHd6l+9jK9QIDAQABo2AwXjAdBgNVHQ4EFgQUwFC0AY4l7vHyeGSr+RJAigXrVFcwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBTMgpc8np+teLhm2bUcyCC5X1wJwDAOBgNVHQ8BAf8EBAMCBeAwDQYJKoZIhvcNAQEFBQADggEBAHFVyainF3Ris5K3qiVfULih5Cm7xsmHFRJf2qPZNsUcVscgvrJFcX/zuyLC4wjIuqqOVKcP3Wp2ufyC/4bV3bhjo2KEGRPvfeh9JAAGhj1E6DOUxZXtYRQcB2VLvRpdSSruVGvpsJpzunWvVgpZI3M7lhJldEfVxq9+81B3yOPMF6w6eIUx14jv1+FUvXvPK1n6Jvo7lo5MJ3J++dvVxI7u9ifeXfk3vFtgy4zLT9tONBEzfNR1CZPDsQx5GCtBjv1bwyI72wfA9HYiYYzeGVlmZSRy5tsd/u3FTO0UNvuXqCsYAA9Wai+NcxfwFCyoqi3Zlz4XYXN3ZWlhlmYS6PA=;MIIDUzCCAjugAwIBAgIIKvuaicGKsjUwDQYJKoZIhvcNAQEFBQAwNzERMA8GA1UEAwwIQWRtaW5DQTExFTATBgNVBAoMDEVKQkNBIFNhbXBsZTELMAkGA1UEBhMCU0UwHhcNMDgxMTI0MTIwMDUwWhcNMTgxMTIyMTIwMDUwWjA3MREwDwYDVQQDDAhBZG1pbkNBMTEVMBMGA1UECgwMRUpCQ0EgU2FtcGxlMQswCQYDVQQGEwJTRTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIG+Lo4CGuFXfsJF0Py5k9zAWaPUtqBpBBZ+O7V8Mj0JoJgPxzkneohDp2B66+/sbw3/MTDJhmhBNG0kGViT1gzEAMiZ7KS1UqT1FTMNhkb+ODhEgvhzqWZnFoKf4t6lV4/lzZRMKT7OFY7gVBRQKR5LqX8YDDGZwMgQ/Xb0NsCDGPFenfmstWsJMaFghd4LC6iMfGtxvLblnqGJDDrU3is+0c/f70sBSVf4IBCaXQ3XFPouAh+dZqgFy1NYymBPh4eXr6OuG8tjO7NrRU1xIkC3QVDNyKp756rNxwh1uFxP3AWr2RQDFj14ree0CkKTnIeK4QwQdZunN4V1Zc5b0ScCAwEAAaNjMGEwHQYDVR0OBBYEFMyClzyen614uGbZtRzIILlfXAnAMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUzIKXPJ6frXi4Ztm1HMgguV9cCcAwDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBBQUAA4IBAQApUHb6jiI6BGGUDj4/vxQVHq4pvcp2XnZpCgkk55a3+L3yQfnkog5CQ/XbMhLofmw1NR+snBURiMzUDmjH40ey96X/S5M+qYTE/6eQ/CDURBBeXvAR7JfdTMeuzh4nHNKn1EeN0axfOQCkPLl4swhogeh0PqL9LTlp5nhfVkasKeit41wuuOIJkOW4AA+ZG+O6LOHWhsI6YH80m4XkHeF8nQNkcTy+bE1fKpSBICZW5RxRT8uwjIxoAKN+w0J4Zlow9G9cZVcxDtB/H14OE2ZQXmDYd9UyFcFJzcicJ3qforXTWGHYo63gV+8OT8s5x7DuvosToPtn89JR1nb8E/sx");
 
-        workerSession.uploadSignerCertificate(signerId, (X509Certificate)CertTools.getCertfromByteArray(Base64.decode(certChain.getBytes())),GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificate(signerId, Base64.decode(certChain.getBytes()),GlobalConfiguration.SCOPE_GLOBAL);
         String certs[] = certChain.split(";");
-        ArrayList<Certificate> chain = new ArrayList<Certificate>();
+        ArrayList<byte[]> chain = new ArrayList<byte[]>();
         for(String base64cert : certs){
-            X509Certificate cert = (X509Certificate)CertTools.getCertfromByteArray(Base64.decode(base64cert.getBytes()));
-            chain.add(cert);
+            chain.add(Base64.decode(base64cert.getBytes()));
         }
         workerSession.uploadSignerCertificateChain(signerId, chain, GlobalConfiguration.SCOPE_GLOBAL);
 

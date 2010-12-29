@@ -25,7 +25,9 @@ import java.util.Collection;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.jce.provider.asymmetric.ec.ECUtil;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.Base64;
 import org.signserver.cli.CommonAdminInterface;
@@ -214,6 +216,63 @@ public class AnySignerTest extends TestCase {
         final PublicKey actualPubKey = req.getPublicKey();
 
         assertEquals("key in request", pubKey, actualPubKey);
+    }
+
+
+    public void test03GenerateRequestNamedCurve() throws Exception {
+
+        final boolean explicitEcc = false;
+
+        // Generate CSR
+        final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(
+                "SHA1WithECDSA", "CN=test02GenerateKey", null);
+        Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
+                .getCertificateRequest(WORKERID, certReqInfo, explicitEcc,
+                false);
+        byte[] reqBytes = data.getBase64CertReq();
+        final PKCS10CertificationRequest req
+                = new PKCS10CertificationRequest(Base64.decode(reqBytes));
+
+        final PublicKey actualPubKey = req.getPublicKey();
+        final PublicKey afterConvert = ECKeyUtil.publicToExplicitParameters(
+                actualPubKey, "BC");
+
+        // The following assertion assumes that publicToExplicitParameters
+        // returns a new/different PublicKey instance if it was not already
+        // converted and if it already was explicit the same instance was
+        // returned
+
+        // Not the same object
+        assertNotSame("Not converted to explicit",
+                actualPubKey.hashCode(), afterConvert.hashCode());
+    }
+
+    public void test04GenerateRequestExplicitParams() throws Exception {
+
+        final boolean explicitEcc = true;
+
+        // Generate CSR
+        final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(
+                "SHA1WithECDSA", "CN=test02GenerateKey", null);
+        Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
+                .getCertificateRequest(WORKERID, certReqInfo, explicitEcc,
+                false);
+        byte[] reqBytes = data.getBase64CertReq();
+        final PKCS10CertificationRequest req
+                = new PKCS10CertificationRequest(Base64.decode(reqBytes));
+
+        final PublicKey actualPubKey = req.getPublicKey();
+        final PublicKey afterConvert = ECKeyUtil.publicToExplicitParameters(
+                actualPubKey, "BC");
+
+        // The following assertion assumes that publicToExplicitParameters
+        // returns a new/different PublicKey instance if it was not already
+        // converted and if it already was explicit the same instance was
+        // returned
+
+        // The same object
+        assertTrue("Not converted to explicit",
+                actualPubKey.hashCode() == afterConvert.hashCode());
     }
 
     public void test99TearDownDatabase() throws Exception {

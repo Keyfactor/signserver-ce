@@ -362,8 +362,32 @@ have table create permissions the tables must be created manually. See
 doc/howtos/create-tables-signserver32-*.sql.
                     </p>
                     <p>
-For GlassFish also configure a connection pool and JNDI resource.
+Copy the driver for your database to the application server lib folder.
                     </p>
+                    <p>
+For GlassFish also configure a connection pool and JNDI resource:
+                    </p>
+                    <ol>
+                        <li>Go to the Admin Console: http://localhost:4848</li>
+                        <li>Click on Resources -&gt; JDBC -&gt; Connection Pools</li>
+                        <li>Add a new Pool. For instance: Name: MySQLPool</li>
+                        <li>
+                            Fill in:<br/>
+                            databaseName: signserver<br/>
+                            password: signserver<br/>
+                            portNumber 3306<br/>
+                            serverName: localhost<br/>
+                            user: signserver
+                        </li>
+                        <li>Click Ping to test</li>
+                        <li>Click on Resources -&gt; JDBC -&gt; JDBC Resources</li>
+                        <li>
+                             Add new:<br/>
+                             JNDI Name: jdbc/SignServerDS<br/>
+                             Pool Name: MySQLPool
+                         </li>
+                        <ul></ul>
+                    </ol>
                 </subsection>
 
                 <subsection name="4. Configure web server keystores">
@@ -402,7 +426,7 @@ Uncomment j2ee.web-nohttps=true if SignServer should be used to configure the
 keystore in JBoss.
                         </p>
                         <source>
-j2ee.web-nohttps=true
+#j2ee.web-nohttps=true
                         </source>
                         <p>
 For GlassFish change httpserver.privhttps to a port configured with HTTPS and

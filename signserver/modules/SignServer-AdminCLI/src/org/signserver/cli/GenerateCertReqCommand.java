@@ -56,7 +56,7 @@ import org.signserver.common.PKCS10CertReqInfo;
         	 final String dn= args[2];
         	 final String sigAlg =  args[3];
         	 final String filename = args[4];
-                 boolean defaultKey = false;
+                 boolean defaultKey = true;
                  boolean explicitecc = false;
 
                  if (args.length > 5) {

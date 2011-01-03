@@ -738,13 +738,11 @@ public class MainView extends FrameView {
         editMenu.setName("editMenu"); // NOI18N
 
         activateMenu.setAction(actionMap.get("activateWorkers")); // NOI18N
-        activateMenu.setMnemonic('A');
         activateMenu.setText(resourceMap.getString("activateMenu.text")); // NOI18N
         activateMenu.setName("activateMenu"); // NOI18N
         editMenu.add(activateMenu);
 
         deactivateMenu.setAction(actionMap.get("deactivateWorkers")); // NOI18N
-        deactivateMenu.setMnemonic('D');
         deactivateMenu.setText(resourceMap.getString("deactivateMenu.text")); // NOI18N
         deactivateMenu.setName("deactivateMenu"); // NOI18N
         editMenu.add(deactivateMenu);
@@ -752,26 +750,22 @@ public class MainView extends FrameView {
         jSeparator7.setName("jSeparator7"); // NOI18N
         editMenu.add(jSeparator7);
 
-        renewKeyMenu.setAction(actionMap.get("generateRequests")); // NOI18N
-        renewKeyMenu.setMnemonic('R');
+        renewKeyMenu.setAction(actionMap.get("renewKeys")); // NOI18N
         renewKeyMenu.setText(resourceMap.getString("renewKeyMenu.text")); // NOI18N
         renewKeyMenu.setName("renewKeyMenu"); // NOI18N
         editMenu.add(renewKeyMenu);
 
-        testKeyMenu.setAction(actionMap.get("generateRequests")); // NOI18N
-        testKeyMenu.setMnemonic('T');
+        testKeyMenu.setAction(actionMap.get("testKeys")); // NOI18N
         testKeyMenu.setText(resourceMap.getString("testKeyMenu.text")); // NOI18N
         testKeyMenu.setName("testKeyMenu"); // NOI18N
         editMenu.add(testKeyMenu);
 
         generateRequestMenu.setAction(actionMap.get("generateRequests")); // NOI18N
-        generateRequestMenu.setMnemonic('C');
         generateRequestMenu.setText(resourceMap.getString("generateRequestMenu.text")); // NOI18N
         generateRequestMenu.setName("generateRequestMenu"); // NOI18N
         editMenu.add(generateRequestMenu);
 
         installCertificatesMenu.setAction(actionMap.get("installCertificates")); // NOI18N
-        installCertificatesMenu.setMnemonic('I');
         installCertificatesMenu.setText(resourceMap.getString("installCertificatesMenu.text")); // NOI18N
         installCertificatesMenu.setName("installCertificatesMenu"); // NOI18N
         editMenu.add(installCertificatesMenu);
@@ -780,7 +774,6 @@ public class MainView extends FrameView {
         editMenu.add(jSeparator5);
 
         renewSignerMenu.setAction(actionMap.get("renewSigner")); // NOI18N
-        renewSignerMenu.setMnemonic('s');
         renewSignerMenu.setText(resourceMap.getString("renewSignerMenu.text")); // NOI18N
         renewSignerMenu.setName("renewSignerMenu"); // NOI18N
         editMenu.add(renewSignerMenu);
@@ -815,8 +808,6 @@ public class MainView extends FrameView {
         viewMenu.setName("viewMenu"); // NOI18N
 
         refreshMenu.setAction(actionMap.get("refreshWorkers")); // NOI18N
-        refreshMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
-        refreshMenu.setMnemonic('R');
         refreshMenu.setText(resourceMap.getString("refreshMenu.text")); // NOI18N
         refreshMenu.setName("refreshMenu"); // NOI18N
         viewMenu.add(refreshMenu);
@@ -965,7 +956,7 @@ public class MainView extends FrameView {
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
-                .addContainerGap(921, Short.MAX_VALUE)
+                .addContainerGap(919, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))

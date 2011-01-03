@@ -554,7 +554,6 @@
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="org.signserver.admin.gui.MainView" id="activateWorkers" methodName="activateWorkers"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="65"/>
                 <Property name="text" type="java.lang.String" resourceKey="activateMenu.text"/>
                 <Property name="name" type="java.lang.String" value="activateMenu" noResource="true"/>
               </Properties>
@@ -564,7 +563,6 @@
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="org.signserver.admin.gui.MainView" id="deactivateWorkers" methodName="deactivateWorkers"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="68"/>
                 <Property name="text" type="java.lang.String" resourceKey="deactivateMenu.text"/>
                 <Property name="name" type="java.lang.String" value="deactivateMenu" noResource="true"/>
               </Properties>
@@ -577,9 +575,8 @@
             <MenuItem class="javax.swing.JMenuItem" name="renewKeyMenu">
               <Properties>
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                  <action class="org.signserver.admin.gui.MainView" id="generateRequests" methodName="generateRequests"/>
+                  <action class="org.signserver.admin.gui.MainView" id="renewKeys" methodName="renewKeys"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="82"/>
                 <Property name="text" type="java.lang.String" resourceKey="renewKeyMenu.text"/>
                 <Property name="name" type="java.lang.String" value="renewKeyMenu" noResource="true"/>
               </Properties>
@@ -587,9 +584,8 @@
             <MenuItem class="javax.swing.JMenuItem" name="testKeyMenu">
               <Properties>
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                  <action class="org.signserver.admin.gui.MainView" id="generateRequests" methodName="generateRequests"/>
+                  <action class="org.signserver.admin.gui.MainView" id="testKeys" methodName="testKeys"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="84"/>
                 <Property name="text" type="java.lang.String" resourceKey="testKeyMenu.text"/>
                 <Property name="name" type="java.lang.String" value="testKeyMenu" noResource="true"/>
               </Properties>
@@ -599,7 +595,6 @@
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="org.signserver.admin.gui.MainView" id="generateRequests" methodName="generateRequests"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="67"/>
                 <Property name="text" type="java.lang.String" resourceKey="generateRequestMenu.text"/>
                 <Property name="name" type="java.lang.String" value="generateRequestMenu" noResource="true"/>
               </Properties>
@@ -609,7 +604,6 @@
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="org.signserver.admin.gui.MainView" id="installCertificates" methodName="installCertificates"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="73"/>
                 <Property name="text" type="java.lang.String" resourceKey="installCertificatesMenu.text"/>
                 <Property name="name" type="java.lang.String" value="installCertificatesMenu" noResource="true"/>
               </Properties>
@@ -624,7 +618,6 @@
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="org.signserver.admin.gui.MainView" id="renewSigner" methodName="renewSigner"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="115"/>
                 <Property name="text" type="java.lang.String" resourceKey="renewSignerMenu.text"/>
                 <Property name="name" type="java.lang.String" value="renewSignerMenu" noResource="true"/>
               </Properties>
@@ -668,10 +661,6 @@
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="org.signserver.admin.gui.MainView" id="refreshWorkers" methodName="refreshWorkers"/>
                 </Property>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+R"/>
-                </Property>
-                <Property name="mnemonic" type="int" value="82"/>
                 <Property name="text" type="java.lang.String" resourceKey="refreshMenu.text"/>
                 <Property name="name" type="java.lang.String" value="refreshMenu" noResource="true"/>
               </Properties>
@@ -881,7 +870,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="921" max="32767" attributes="0"/>
+                  <EmptySpace pref="919" max="32767" attributes="0"/>
                   <Component id="progressBar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="statusAnimationLabel" min="-2" pref="37" max="-2" attributes="0"/>

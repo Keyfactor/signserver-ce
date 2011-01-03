@@ -329,7 +329,7 @@ public class TestKeysDialog extends JDialog {
             passwordPanelField.grabFocus();
 
             int res = JOptionPane.showConfirmDialog(TestKeysDialog.this,
-                    passwordPanel, "Generate keys",
+                    passwordPanel, "Test keys",
                     JOptionPane.OK_CANCEL_OPTION);
 
            if (res == JOptionPane.OK_OPTION) {

@@ -111,7 +111,7 @@ public class RenewalWorker extends BaseSigner {
 
     WorkerConfig config;
     private static final String TRUSTSTORE_TYPE_PEM = "PEM";
-    private static final String TRUSTSTORE_TYPE_KEYSTORE = "JKS";
+    private static final String TRUSTSTORE_TYPE_JKS = "JKS";
 
     private static final String WS_PATH = "/ejbcaws/ejbcaws?wsdl";
 
@@ -685,6 +685,10 @@ public class RenewalWorker extends BaseSigner {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Loaded " + i + " certs to truststore");
             }
+        } else if (TRUSTSTORE_TYPE_JKS.equals(truststoreType)) {
+            keystoreTrusted = KeyStore.getInstance(truststoreType);
+            keystoreTrusted.load(new FileInputStream(truststorePath),
+                    truststorePass.toCharArray());
         } else {
             keystoreTrusted = KeyStore.getInstance(truststoreType, "BC");
             keystoreTrusted.load(new FileInputStream(truststorePath),

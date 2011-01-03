@@ -102,8 +102,12 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
         // Setup EJBCA end entity
         mockSetupEjbcaSearchResult();
-        
+     
         // Test starts here
+        doRenewalFirstTime();
+    }
+
+    private void doRenewalFirstTime() throws Exception {
         final Properties reqProperties = new Properties();
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_WORKER,
                 SIGNER_6102);
@@ -396,6 +400,23 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 .getProperty("DEFAULTKEY"));
     }
 
+    /**
+     * Tests renewal of key and certificate for a worker.
+     * @throws Exception
+     */
+    public void test07truststoreTypeJKS() throws Exception {
+        final String truststoreType = "JKS";
+
+        // Setup workers
+        addRenewalWorker(6101, "RenewalWorker_6101", truststoreType);
+        addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
+
+        // Setup EJBCA end entity
+        mockSetupEjbcaSearchResult();
+
+        doRenewalFirstTime();
+    }
+
     private void addWorkers() throws Exception {
         addRenewalWorker(6101, "RenewalWorker_6101");
         addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
@@ -407,16 +428,20 @@ public class RenewalWorkerTest extends AbstractTestCase {
     }
 
     protected void addRenewalWorker(final int signerId, final String signerName)
-            throws Exception {
+        throws Exception {
+        addRenewalWorker(signerId, signerName, "PKCS12");
+    }
+    protected void addRenewalWorker(final int signerId, final String signerName, 
+            final String truststoreType) throws Exception {
 
         // Create keystore TODO: Don't create an empty one
         final String keystorePath = newTempFile().getAbsolutePath();
         final String keystorePassword = "foo123";
-        createEmptyKeystore(keystorePath, keystorePassword);
+        createEmptyKeystore("PKCS12", keystorePath, keystorePassword);
 
         final String truststorePath = newTempFile().getAbsolutePath();
         final String truststorePassword = "foo123";
-        createEmptyKeystore(truststorePath, truststorePassword);
+        createEmptyKeystore(truststoreType, truststorePath, truststorePassword);
 
         getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".CLASSPATH",
@@ -436,7 +461,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         getWorkerSession().setWorkerProperty(signerId, "TRUSTSTOREPASSWORD",
                 truststorePassword);
         getWorkerSession().setWorkerProperty(signerId, "TRUSTSTORETYPE",
-                "PKCS12");
+                truststoreType);
         getWorkerSession().setWorkerProperty(signerId, "EJBCAWSURL",
                 EJBCAWSURL_PREFIX);
 

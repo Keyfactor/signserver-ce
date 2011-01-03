@@ -85,11 +85,17 @@ public abstract class AbstractTestCase extends TestCase {
         }
     }
 
-    protected static KeyStore createEmptyKeystore(final String keystorePath,
-            final String keystorePassword) throws KeyStoreException, 
+    protected static KeyStore createEmptyKeystore(final String keystoreType, 
+            final String keystorePath, final String keystorePassword)
+                throws KeyStoreException,
             IOException, NoSuchAlgorithmException, CertificateException,
             NoSuchProviderException {
-        final KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
+        final KeyStore ks;
+        if ("JKS".equals(keystoreType)) {
+            ks = KeyStore.getInstance(keystoreType);
+        } else {
+            ks = KeyStore.getInstance(keystoreType, "BC");
+        }
         ks.load(null, keystorePassword.toCharArray());
         final OutputStream out = new FileOutputStream(keystorePath);
         ks.store(out, keystorePassword.toCharArray());
@@ -105,7 +111,7 @@ public abstract class AbstractTestCase extends TestCase {
         // Create keystore
         final String keystorePath = newTempFile().getAbsolutePath();
         final String keystorePassword = "foo123";
-        createEmptyKeystore(keystorePath, keystorePassword);
+        createEmptyKeystore("PKCS12", keystorePath, keystorePassword);
 
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".CLASSPATH",

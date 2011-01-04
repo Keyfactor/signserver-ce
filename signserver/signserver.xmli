@@ -303,6 +303,34 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <delete dir="${test.dir}/reports" />
         <mkdir dir="${test.dir}/reports/html" />
     </target>
+
+    <!-- Target that can be called to explicit compile all tests for instance
+        to get rid of build errors in your IDE if you are using Eclipse -->
+    <target name="test:signserver:compile" description="Compile all tests">
+        <!-- SignServer-Test-SignServerWS -->
+        <ant target="compile-test" inheritall="false"
+            antfile="${testsignserverws.dir}/build.xml"/>
+
+        <!-- SignServer-Test-ValidationWS -->
+        <ant target="compile-test" inheritall="false"
+            antfile="${testvalidationws.dir}/build.xml"/>
+
+        <!-- SignServer-Test-AdminWS -->
+        <ant target="compile-test" inheritall="false"
+            antfile="${testadminws.dir}/build.xml"/>
+
+        <!-- SignServer-Module-Renewal -->
+        <ant target="compile-test" inheritall="false"
+            antfile="${renewal.dir}/build.xml"/>
+
+        <!-- SignServer-Module-MRTDSODSigner -->
+        <ant target="compile-test" inheritall="false"
+            antfile="${module.mrtdsodsigner.dir}/build.xml"/>
+
+        <!-- SignServer-Test-System -->
+        <ant target="compile-test" inheritall="false"
+            antfile="${testsystem.dir}/build.xml"/>
+    </target>
 	
     <target name="test:signserver:run" depends="test:signserver:pre-run, build"
         description="Run the default JUnit testcases">

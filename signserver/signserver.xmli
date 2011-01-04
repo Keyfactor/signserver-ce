@@ -174,9 +174,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <target name="signserver-ejb-jar-excluding-modules" unless="includemodulesinbuild">
         <echo message="Not including modules in main build"/>
         <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
-            <metainf dir="${preprocessed}/appserver/${appserver.type}">
-                <include name="persistence.xml"/>
-            </metainf>
             <metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
                 <include name="entity-mappings.xml"/>
             </metainf>
@@ -188,7 +185,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         </jar>
     </target>
 	    
-    <target name="signserver-ejb.jar" depends="timeStampTestClient, 
+    <target name="signserver-ejb.jar" depends="preprocess, timeStampTestClient,
         PDFPerformanceTestTool,
         signserver:compile,
         signserver-ejb-jar-including-modules,

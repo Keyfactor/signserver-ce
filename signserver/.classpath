@@ -100,13 +100,8 @@
 	<classpathentry kind="lib" path="lib/1.6/bcmail-jdk.jar"/>
 	<classpathentry kind="lib" path="lib/1.6/bcprov-jdk.jar"/>
 	<classpathentry kind="lib" path="lib/ext/servlet-2.3.jar"/>
-	<classpathentry kind="lib" path="lib/ext/james/james-2.3.1.jar"/>
-	<classpathentry kind="lib" path="lib/ext/james/mail-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/ext/james/mailet-2.3.jar"/>
-	<classpathentry kind="lib" path="lib/ext/james/mailet-api-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/ext/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/ext/commons-cli-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/ext/james/smtp.jar"/>
 	<classpathentry kind="lib" path="lib/reports/jcommon-1.0.12.jar"/>
 	<classpathentry kind="lib" path="lib/reports/jfreechart-1.0.9.jar"/>
 	<classpathentry kind="lib" path="lib/1.6/bctsp-jdk.jar"/>

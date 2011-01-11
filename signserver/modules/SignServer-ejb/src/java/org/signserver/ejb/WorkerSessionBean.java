@@ -388,6 +388,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         + " Processed request successfully");
             }
 
+            // Old log entries (SignServer 3.1) added for backward compatibility
+            // Log: REQUESTID
+            if (res instanceof ISignResponse) {
+                logMap.put("REQUESTID",
+                        String.valueOf(((ISignResponse) res).getRequestID()));
+            }
+
             // Log
             logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(true));
             workerLogger.log(logMap);

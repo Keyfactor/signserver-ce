@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -36,6 +37,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidParameterSpecException;
+import java.security.spec.PSSParameterSpec;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -49,9 +52,11 @@ import net.sourceforge.scuba.tlv.BERTLVObject;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -94,13 +99,14 @@ public class SODFile extends PassportFile
 	private static final DERObjectIdentifier SIGNED_DATA_OID = new DERObjectIdentifier("1.2.840.113549.1.7.2");
 	private static final DERObjectIdentifier RFC_3369_CONTENT_TYPE_OID = new DERObjectIdentifier("1.2.840.113549.1.9.3");
 	private static final DERObjectIdentifier RFC_3369_MESSAGE_DIGEST_OID = new DERObjectIdentifier("1.2.840.113549.1.9.4");
-	private static final DERObjectIdentifier RSA_SA_PSS_OID = new DERObjectIdentifier("1.2.840.113549.1.1.10");
 
 	private static final DERObjectIdentifier PKCS1_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.1");
 	private static final DERObjectIdentifier PKCS1_MD2_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.2");
 	private static final DERObjectIdentifier PKCS1_MD4_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.3");
 	private static final DERObjectIdentifier PKCS1_MD5_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.4");
 	private static final DERObjectIdentifier PKCS1_SHA1_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.5");
+        private static final DERObjectIdentifier PKCS1_MGF1_OID = new DERObjectIdentifier("1.2.840.113549.1.1.8");
+        private static final DERObjectIdentifier PKCS1_RSA_PSS_OID = new DERObjectIdentifier("1.2.840.113549.1.1.10");
 	private static final DERObjectIdentifier PKCS1_SHA256_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.11");
 	private static final DERObjectIdentifier PKCS1_SHA384_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.12");
 	private static final DERObjectIdentifier PKCS1_SHA512_WITH_RSA_OID = new DERObjectIdentifier("1.2.840.113549.1.1.13");
@@ -127,7 +133,9 @@ public class SODFile extends PassportFile
 	 * 
 	 * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
 	 * @throws CertificateException if the document signing certificate cannot be used
+         * @deprecated Usage of this constructor is unclear. Also currently it will not work with RSASSA-PSS signatures.
 	 */
+        @Deprecated
 	public SODFile(String digestAlgorithm, String digestEncryptionAlgorithm,
 			Map<Integer, byte[]> dataGroupHashes,
 			byte[] encryptedDigest,
@@ -303,7 +311,21 @@ public class SODFile extends PassportFile
 	 */
 	public String getDigestEncryptionAlgorithm() {
 		try {
-			return lookupMnemonicByOID(getSignerInfo(signedData).getDigestEncryptionAlgorithm().getObjectId());      
+                    final DERObjectIdentifier algorithm = getSignerInfo(signedData).getDigestEncryptionAlgorithm().getObjectId();
+                    String result = lookupMnemonicByOID(algorithm);
+                    if (PKCS1_RSA_PSS_OID.toString().equals(algorithm.toString())) {
+                        try {
+                            final DEREncodable parameters = getSignerInfo(signedData).getDigestEncryptionAlgorithm().getParameters();
+                            if (parameters != null) {
+                                AlgorithmParameters params = AlgorithmParameters.getInstance("PSS");
+                                params.init(parameters.getDERObject().getEncoded());
+                                final PSSParameterSpec spec = params.getParameterSpec(PSSParameterSpec.class);
+                                result = lookupMnemonicByOID(new DERObjectIdentifier(spec.getDigestAlgorithm())) + "withRSAand" + lookupMnemonicByOID(new DERObjectIdentifier(spec.getMGFAlgorithm()));
+                            }
+                        } catch (InvalidParameterSpecException ignored) {}
+                        catch (IOException ignored) {}
+                    }
+                    return result;
 		} catch (NoSuchAlgorithmException nsae) {
 			nsae.printStackTrace();
 			throw new IllegalStateException(nsae.toString());
@@ -423,13 +445,6 @@ public class SODFile extends PassportFile
 			return Arrays.equals(digestBytes, signature);
 		}
 
-		// For the RSA_SA_PSS 1. the default hash is SHA1, 2. The hash id is not encoded in OID
-		// So it has to be specified "manually"
-		if (encAlgId.equals(RSA_SA_PSS_OID)) {
-			encAlgJavaString = lookupMnemonicByOID(getSignerInfo(signedData).getDigestAlgorithm().getObjectId())
-			+ "withRSA/PSS";
-		}
-
 		if (encAlgId.equals(PKCS1_RSA_OID)) {
 			encAlgJavaString = lookupMnemonicByOID(getSignerInfo(signedData).getDigestAlgorithm().getObjectId())
 			+ "withRSA";
@@ -442,6 +457,18 @@ public class SODFile extends PassportFile
 			/* FIXME: Warn client that they should perhaps add BC as provider? */
 			sig = Signature.getInstance(encAlgJavaString, PROVIDER);
 		}
+                if (encAlgId.equals(PKCS1_RSA_PSS_OID)) {
+                    try {
+                        final DEREncodable parameters = getSignerInfo(signedData).getDigestEncryptionAlgorithm().getParameters();
+                        if (parameters != null) {
+                            AlgorithmParameters params = AlgorithmParameters.getInstance("PSS");
+                            params.init(parameters.getDERObject().getEncoded());
+                            sig.setParameter(params.getParameterSpec(PSSParameterSpec.class));
+                        }
+                    } catch (IOException ex) {
+                        throw new GeneralSecurityException("Unable to parse algorithm parameters", ex);
+                    }
+                }
 		sig.initVerify(docSigningCert);
 		sig.update(eContent);
 		return sig.verify(signature);
@@ -641,7 +668,7 @@ public class SODFile extends PassportFile
 		byte[] content = ((DEROctetString)contentInfo.getContent()).getOctets();
 		ASN1Set certificates =  createSingletonSet(createCertificate(docSigningCertificate));
 		ASN1Set crls = null;
-		ASN1Set signerInfos = createSingletonSet(createSignerInfo(digestAlgorithm, digestEncryptionAlgorithm, content, encryptedDigest, docSigningCertificate).toASN1Object());
+		ASN1Set signerInfos = createSingletonSet(createSignerInfo(digestAlgorithm, digestEncryptionAlgorithm, null, content, encryptedDigest, docSigningCertificate).toASN1Object());
 		return new SignedData(digestAlgorithmsSet, contentInfo, certificates, crls, signerInfos);
 	}
 
@@ -667,6 +694,7 @@ public class SODFile extends PassportFile
         byte[] content = ((DEROctetString) contentInfo.getContent())
                 .getOctets();
 
+        final DEREncodable digestEncryptionAlgorithmParams;
         byte[] encryptedDigest = null;
         try {
             byte[] dataToBeSigned = createAuthenticatedAttributes(
@@ -680,6 +708,12 @@ public class SODFile extends PassportFile
             s.initSign(privateKey);
             s.update(dataToBeSigned);
             encryptedDigest = s.sign();
+            if (PKCS1_RSA_PSS_OID.toString().equals(
+                lookupOIDByMnemonic(digestEncryptionAlgorithm).toString())) {
+                digestEncryptionAlgorithmParams = ASN1Object.fromByteArray(s.getParameters().getEncoded());
+            } else {
+                digestEncryptionAlgorithmParams = null;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -687,7 +721,7 @@ public class SODFile extends PassportFile
         ASN1Set certificates = createSingletonSet(createCertificate(docSigningCertificate));
         ASN1Set crls = null;
         ASN1Set signerInfos = createSingletonSet(createSignerInfo(
-                digestAlgorithm, digestEncryptionAlgorithm, content,
+                digestAlgorithm, digestEncryptionAlgorithm, digestEncryptionAlgorithmParams, content,
                 encryptedDigest, docSigningCertificate).toASN1Object());
         return new SignedData(digestAlgorithmsSet, contentInfo, certificates,
                 crls, signerInfos);
@@ -750,6 +784,7 @@ public class SODFile extends PassportFile
 	private static SignerInfo createSignerInfo(
 			String digestAlgorithm,
 			String digestEncryptionAlgorithm,
+                        DEREncodable digestEncryptionAlgorithmParams,
 			byte[] content,
 			byte[] encryptedDigest,
 			X509Certificate docSigningCertificate)
@@ -761,7 +796,12 @@ public class SODFile extends PassportFile
 		SignerIdentifier sid = new SignerIdentifier(new IssuerAndSerialNumber(docSignerName, serial));
 
 		AlgorithmIdentifier digestAlgorithmObject = new AlgorithmIdentifier(lookupOIDByMnemonic(digestAlgorithm)); 
-		AlgorithmIdentifier digestEncryptionAlgorithmObject = new AlgorithmIdentifier(lookupOIDByMnemonic(digestEncryptionAlgorithm));
+		final AlgorithmIdentifier digestEncryptionAlgorithmObject;
+                if (digestEncryptionAlgorithmParams == null) {
+                    digestEncryptionAlgorithmObject = new AlgorithmIdentifier(lookupOIDByMnemonic(digestEncryptionAlgorithm));
+                } else {
+                    digestEncryptionAlgorithmObject = new AlgorithmIdentifier(lookupOIDByMnemonic(digestEncryptionAlgorithm), digestEncryptionAlgorithmParams);
+                }
 
 		ASN1Set authenticatedAttributes = createAuthenticatedAttributes(digestAlgorithm, content); // struct containing the hash of content
 		ASN1OctetString encryptedDigestObject = new DEROctetString(encryptedDigest); // this is the signature
@@ -807,6 +847,7 @@ public class SODFile extends PassportFile
 		if (oid.equals(X9_SHA1_WITH_ECDSA_OID)) { return "SHA1withECDSA"; }
 		if (oid.equals(X9_SHA224_WITH_ECDSA_OID)) { return "SHA224withECDSA"; }
 		if (oid.equals(X9_SHA256_WITH_ECDSA_OID)) { return "SHA256withECDSA"; }		
+                if (oid.equals(PKCS1_MGF1_OID)) { return "MGF1"; }
 		if (oid.equals(PKCS1_RSA_OID)) { return "RSA"; }
 		if (oid.equals(PKCS1_MD2_WITH_RSA_OID)) { return "MD2withRSA"; }
 		if (oid.equals(PKCS1_MD4_WITH_RSA_OID)) { return "MD4withRSA"; }
@@ -817,7 +858,7 @@ public class SODFile extends PassportFile
 		if (oid.equals(PKCS1_SHA512_WITH_RSA_OID)) { return "SHA512withRSA"; }
 		if (oid.equals(PKCS1_SHA224_WITH_RSA_OID)) { return "SHA224withRSA"; }
 		if (oid.equals(IEEE_P1363_SHA1_OID)) { return "SHA1"; }
-		if (oid.equals(RSA_SA_PSS_OID)) { return "SAwithRSA/PSS"; }
+		if (oid.equals(PKCS1_RSA_PSS_OID)) { return "RSASSA-PSS"; }
 		throw new NoSuchAlgorithmException("Unknown OID " + oid);
 	}
 
@@ -845,7 +886,12 @@ public class SODFile extends PassportFile
 		if (name.equalsIgnoreCase("SHA1withECDSA")) { return X9_SHA1_WITH_ECDSA_OID; }
 		if (name.equalsIgnoreCase("SHA224withECDSA")) { return X9_SHA224_WITH_ECDSA_OID; }
 		if (name.equalsIgnoreCase("SHA256withECDSA")) { return X9_SHA256_WITH_ECDSA_OID; }
-		if (name.equalsIgnoreCase("SAwithRSA/PSS")) { return RSA_SA_PSS_OID; }
+		if (name.equalsIgnoreCase("MGF1")) { return  PKCS1_MGF1_OID; }
+                if (name.equalsIgnoreCase("SHA1withRSAandMGF1")) { return  PKCS1_RSA_PSS_OID; }
+                if (name.equalsIgnoreCase("SHA224withRSAandMGF1")) { return PKCS1_RSA_PSS_OID; }
+		if (name.equalsIgnoreCase("SHA256withRSAandMGF1")) { return PKCS1_RSA_PSS_OID; }
+		if (name.equalsIgnoreCase("SHA384withRSAandMGF1")) { return PKCS1_RSA_PSS_OID; }
+		if (name.equalsIgnoreCase("SHA512withRSAandMGF1")) { return PKCS1_RSA_PSS_OID; }
 		throw new NoSuchAlgorithmException("Unknown name " + name);
 	}
 }

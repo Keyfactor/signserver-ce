@@ -78,6 +78,21 @@ public class MRTDSODSignerUnitTest extends TestCase {
     /** Worker7910: ldsVersion=1.8, unicodeVersion=4.0.0. */
     private static final int WORKER5 = 7910;
 
+    /** Worker7911: SHA1withRSAandMGF1 */
+    private static final int WORKER11 = 7911;
+
+    /** Worker7912: SHA256withRSAandMGF1 */
+    private static final int WORKER12 = 7912;
+
+    /** Worker7913: SHA384withRSAandMGF1 */
+    private static final int WORKER13 = 7913;
+
+    /** Worker7914: SHA512withRSAandMGF1 */
+    private static final int WORKER14 = 7914;
+
+    /** Worker7915: SHA1, SHA256withRSAandMGF1 */
+    private static final int WORKER15 = 7915;
+
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
     
@@ -256,6 +271,64 @@ public class MRTDSODSignerUnitTest extends TestCase {
         }
     }
 
+    /**
+     * Requests signing of some data group hashes and verifies the result.
+     * @throws Exception
+     */
+    public void test06SignData_SHA1withRSAandMGF1() throws Exception {
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA1"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA1"));
+        signHelper(WORKER11, 12, dataGroups1, false, "SHA1",
+                "SHA1withRSAandMGF1");
+    }
+    
+    /**
+     * Requests signing of some data group hashes and verifies the result.
+     * @throws Exception
+     */
+    public void test06SignData_SHA256withRSAandMGF1() throws Exception {
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
+        signHelper(WORKER12, 12, dataGroups1, false, "SHA256",
+                "SHA256withRSAandMGF1");
+
+        // DG1, DG2 and default values, other hash than in algorithm
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA1"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA1"));
+        signHelper(WORKER15, 12, dataGroups1, false, "SHA1",
+                "SHA256withRSAandMGF1");
+    }
+
+    /**
+     * Requests signing of some data group hashes and verifies the result.
+     * @throws Exception
+     */
+    public void test06SignData_SHA384withRSAandMGF1() throws Exception {
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA384"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA384"));
+        signHelper(WORKER13, 12, dataGroups1, false, "SHA384",
+                "SHA384withRSAandMGF1");
+    }
+
+    /**
+     * Requests signing of some data group hashes and verifies the result.
+     * @throws Exception
+     */
+    public void test06SignData_SHA512withRSAandMGF1() throws Exception {
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA512"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA512"));
+        signHelper(WORKER14, 12, dataGroups1, false, "SHA512",
+                "SHA512withRSAandMGF1");
+    }
+
 
     private SODFile signHelper(int workerId, int requestId, Map<Integer, byte[]> dataGroups, boolean signerDoesHashing, String digestAlg, String sigAlg) throws Exception {
 
@@ -393,6 +466,101 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("LDSVERSION", "0108");
             config.setProperty("UNICODEVERSION", "040000");
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new MRTDSODSigner() {
+                @Override
+                protected IGlobalConfigurationSession.IRemote
+                        getGlobalConfigurationSession() {
+                    return globalConfig;
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
+
+        // WORKER11
+        {
+            final int workerId = WORKER11;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestMRTDSODSigner11");
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty("DIGESTALGORITHM", "SHA1");
+            config.setProperty("SIGNATUREALGORITHM", "SHA1withRSAandMGF1");
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new MRTDSODSigner() {
+                @Override
+                protected IGlobalConfigurationSession.IRemote
+                        getGlobalConfigurationSession() {
+                    return globalConfig;
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
+
+        // WORKER12
+        {
+            final int workerId = WORKER12;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestMRTDSODSigner12");
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty("DIGESTALGORITHM", "SHA256");
+            config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new MRTDSODSigner() {
+                @Override
+                protected IGlobalConfigurationSession.IRemote
+                        getGlobalConfigurationSession() {
+                    return globalConfig;
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
+
+        // WORKER13
+        {
+            final int workerId = WORKER13;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestMRTDSODSigner13");
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty("DIGESTALGORITHM", "SHA384");
+            config.setProperty("SIGNATUREALGORITHM", "SHA384withRSAandMGF1");
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new MRTDSODSigner() {
+                @Override
+                protected IGlobalConfigurationSession.IRemote
+                        getGlobalConfigurationSession() {
+                    return globalConfig;
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
+
+        // WORKER14
+        {
+            final int workerId = WORKER14;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestMRTDSODSigner14");
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty("DIGESTALGORITHM", "SHA512");
+            config.setProperty("SIGNATUREALGORITHM", "SHA512withRSAandMGF1");
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new MRTDSODSigner() {
+                @Override
+                protected IGlobalConfigurationSession.IRemote
+                        getGlobalConfigurationSession() {
+                    return globalConfig;
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
+
+        // WORKER15
+        {
+            final int workerId = WORKER15;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestMRTDSODSigner15");
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty("DIGESTALGORITHM", "SHA1");
+            config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override

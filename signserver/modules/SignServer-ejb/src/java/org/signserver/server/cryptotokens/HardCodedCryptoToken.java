@@ -153,7 +153,12 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	
 	public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
 
-            final String defaultKey = props.getProperty("defaultKey", KEY_ALIAS_1);
+            final String defaultKey;
+            if (props == null) {
+                defaultKey = KEY_ALIAS_1;
+            } else {
+                defaultKey = props.getProperty("defaultKey", KEY_ALIAS_1);
+            }
             final byte[] certbytes;
             final byte[] passTestKey;
 

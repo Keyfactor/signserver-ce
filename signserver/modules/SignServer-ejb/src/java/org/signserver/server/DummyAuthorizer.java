@@ -60,8 +60,8 @@ public class DummyAuthorizer implements IAuthorizer {
 		if(clientIP != null && !clientIP.equals("1.2.3.4")){
 			throw new IllegalRequestException("Not authorized");
 		}
-		if(clientCert != null && (CertTools.stringToBCDNString(clientCert.getSubjectDN().toString()).equals("CN=timestamptest,O=PrimeKey Solution AB"))
-                    || clientCert.getSerialNumber().toString(16).equalsIgnoreCase("58ece0453711fe20")) {
+		if(clientCert != null && (CertTools.stringToBCDNString(clientCert.getSubjectDN().toString()).equals("CN=timestamptest,O=PrimeKey Solution AB")
+                    || clientCert.getSerialNumber().toString(16).equalsIgnoreCase("58ece0453711fe20"))) {
 			throw new IllegalRequestException("Not authorized");
 		}
 		if(request instanceof GenericSignRequest && ((GenericSignRequest) request).getRequestID() != 1){

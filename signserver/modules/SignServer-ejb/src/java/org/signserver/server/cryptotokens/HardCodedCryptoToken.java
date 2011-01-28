@@ -57,8 +57,8 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	 */
 	
 	
-	/*
-	private static byte[] passTestKey = Base64.decode((
+	
+	public static byte[] passTestKey = Base64.decode((
 	"MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDmZqPJNogVtiRZ" +
 	"9loOFJ7UPMsrqWXZZ8R+nTPB72+kQ+4qOpgUHfto7QpSbs9/9wGrUsxc/mpadt/g" +
 	"RTztl6FWGQ4TknOkoDFP+MilP08u5ZbOJrbN3E7vy0dEszzO9aHLBHXV1w2pWTlV" +
@@ -84,9 +84,9 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	"RS5kVQ1iNszwWOACEzbhnwEyMwRJMSWytjo2zZIdAoGACPzW59zxy2lyVWbJIjXa" +
 	"Frf7tI8+FffkudTPxU/zNbJJqHlprTlqv7aeHn8gYO+++8HkJVksvBRMR3DVjF7h" +
 	"Bstg/zzNoMZgzxjL+afGxe4KNcfTmoXFm/rG2WCEio+H4AF3g9QyQUxpvaLXG7VW" +
-	"VI42L5Hy2MkUE1Mw7GfDoy4=").getBytes());*/
+	"VI42L5Hy2MkUE1Mw7GfDoy4=").getBytes());
 
-	private static byte[] passTestKey = Base64.decode((
+	/*private static byte[] passTestKey = Base64.decode((
 	"MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAIUQj9LZl/yZQHm9" +
 	"QSrg+o/Ir+F2UQrEamEL5Q307kS+AsrB+9mLYZhFY3vqIo21aZmxKdtPa/d1ML0u" +
 	"E2Ykz0L1QGJ1MO5Wux+EOKwoj0+JsI/nkfCMbgDmYK79h11REc7quin3U2K0wm5t" +
@@ -100,9 +100,9 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	"YAGrTGorc4yQdg/w24OeaXzraZRkwwJBAIBC/+qh0JR1g76j0yAplKqofESNOeNE" +
 	"rC36H36+dDITsBdjoTNTgZJMlZe9V1A3twmILjRxliDeYZ1mKp52ZxkCQD0gyo9r" +
 	"gbE9jGM7yKu169PZXNpWN0YP3UPM+ctqNkKe2l2hK0rCopoymxJGthba9iKhzHCZ" +
-	"FHqzLUsiKmWnrwY=" ).getBytes());
+	"FHqzLUsiKmWnrwY=" ).getBytes());*/
 	
-	/*private static byte[] certbytes = Base64.decode((
+	public static byte[] certbytes = Base64.decode((
 	"MIID7zCCAqigAwIBAgIIWOzgRTcR/iAwPAYJKoZIhvcNAQEKMC+gDzANBglghkgB" +
 	"ZQMEAgEFAKEcMBoGCSqGSIb3DQEBCDANBglghkgBZQMEAgEFADA/MRMwEQYDVQQD" +
 	"EwpTZXRlY1Rlc3QyMRswGQYDVQQKExJSaWtzcG9saXNzdHlyZWxzZW4xCzAJBgNV" +
@@ -124,9 +124,9 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	"FCOcN8VJEeIvgDyWoMUDG7K1YvjmkEU6CPVYrL2PAdY0bPZvTIymC1HuyPmMnf83" +
 	"QKHW0KKtb4uhkruTkX87yZm7fZZXfso6HeUKQ0+fbcqmQdXFEcJJEKSHTCcu5BVj" +
 	"JebCC2FiSP88KPGGW5D351LJ+UL8En3oA5eHxZCy/LeGejPw0N02XjVFfBZEKnf6" +
-	"5a94").getBytes());*/
+	"5a94").getBytes());
 
-	public static byte[] certbytes = Base64.decode((
+	/*public static byte[] certbytes = Base64.decode((
 	"MIIC5DCCAcygAwIBAgIIfZgsZqV8NDAwDQYJKoZIhvcNAQEFBQAwNzERMA8GA1UE" +
 	"AxMIQWRtaW5DQTExFTATBgNVBAoTDEVKQkNBIFNhbXBsZTELMAkGA1UEBhMCU0Uw" +
 	"HhcNMDYwNjAzMTUzMzM5WhcNMjYwNTI5MTU0MzM5WjA3MRYwFAYDVQQDEw10aW1l" +
@@ -142,7 +142,7 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	"mUZ7CadXnZjkDRgN8XsP5doDOpV2ZunLfrPCx61mJ3GxG6gvuMutOd7U2BN2vbMr" +
 	"VMNxWOftXR/XyJAJxY0YOgplV8hOkW+Ky0MyAe2ktFnOOuMIMKhLgrN338ZeAXRs" +
 	"2lhcc/p79imDL5QkPavZWrcnNZpT506DDyzn1cf68HpJNF1ICY57hWmx79gbIFhe" +
-	"mJxVZp+eyws3H9Yb9o2pLs7EOS7n+X26" ).getBytes());
+	"mJxVZp+eyws3H9Yb9o2pLs7EOS7n+X26" ).getBytes());*/
 	
 	private X509Certificate cert = null;
 	

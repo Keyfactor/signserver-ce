@@ -16,6 +16,11 @@
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
 
 
+    <!-- Overrides the target with an empty implementation as a workaround
+        to prevent the inclusion of JAR-files. This can be removed when
+        figured out why the files gets included in the first place. -->
+    <target name="library-inclusion-in-archive"/>
+
     <!--
 
     There exist several targets which are by default empty and which can be 

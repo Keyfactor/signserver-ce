@@ -57,6 +57,7 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -72,6 +73,7 @@ import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.icao.DataGroupHash;
 import org.signserver.module.mrtdsodsigner.bc.asn1.icao.LDSSecurityObject;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Name;
@@ -116,9 +118,43 @@ public class SODFile extends PassportFile
 	private static final DERObjectIdentifier X9_SHA256_WITH_ECDSA_OID = new DERObjectIdentifier("1.2.840.10045.4.3.2");
 	private static final DERObjectIdentifier IEEE_P1363_SHA1_OID = new DERObjectIdentifier("1.3.14.3.2.26");
 
+        private static final HashMap<String, DEREncodable> algorithmParameters = new HashMap<String, DEREncodable>();
+
 	private static final Provider PROVIDER = new org.bouncycastle.jce.provider.BouncyCastleProvider();
 
 	private static final Logger LOGGER = Logger.getLogger("org.jmrtd");
+        
+        static {
+            algorithmParameters.put("SHA1withRSAandMGF1", new RSASSAPSSparams(
+                    new AlgorithmIdentifier(X509ObjectIdentifiers.id_SHA1), 
+                    new AlgorithmIdentifier(PKCS1_MGF1_OID, 
+                    new AlgorithmIdentifier(X509ObjectIdentifiers.id_SHA1)),
+                    new DERInteger(20), new DERInteger(1)).toASN1Object());
+            
+            algorithmParameters.put("SHA224withRSAandMGF1", new RSASSAPSSparams(
+                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224), 
+                    new AlgorithmIdentifier(PKCS1_MGF1_OID, 
+                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224)),
+                    new DERInteger(28), new DERInteger(1)).toASN1Object());
+            
+            algorithmParameters.put("SHA256withRSAandMGF1", new RSASSAPSSparams(
+                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256), 
+                    new AlgorithmIdentifier(PKCS1_MGF1_OID, 
+                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256)),
+                    new DERInteger(32), new DERInteger(1)).toASN1Object());
+            
+            algorithmParameters.put("SHA384withRSAandMGF1", new RSASSAPSSparams(
+                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384), 
+                    new AlgorithmIdentifier(PKCS1_MGF1_OID, 
+                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384)),
+                    new DERInteger(48), new DERInteger(1)).toASN1Object());
+            
+            algorithmParameters.put("SHA512withRSAandMGF1", new RSASSAPSSparams(
+                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512), 
+                    new AlgorithmIdentifier(PKCS1_MGF1_OID, 
+                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512)),
+                    new DERInteger(64), new DERInteger(1)).toASN1Object());
+        }
 
 	private SignedData signedData;
 
@@ -694,7 +730,7 @@ public class SODFile extends PassportFile
         byte[] content = ((DEROctetString) contentInfo.getContent())
                 .getOctets();
 
-        final DEREncodable digestEncryptionAlgorithmParams;
+        DEREncodable digestEncryptionAlgorithmParams;
         byte[] encryptedDigest = null;
         try {
             byte[] dataToBeSigned = createAuthenticatedAttributes(
@@ -710,7 +746,16 @@ public class SODFile extends PassportFile
             encryptedDigest = s.sign();
             if (PKCS1_RSA_PSS_OID.toString().equals(
                 lookupOIDByMnemonic(digestEncryptionAlgorithm).toString())) {
-                digestEncryptionAlgorithmParams = ASN1Object.fromByteArray(s.getParameters().getEncoded());
+                try {
+                    digestEncryptionAlgorithmParams = ASN1Object.fromByteArray(
+                            s.getParameters().getEncoded());
+                } catch (UnsupportedOperationException ex) {
+                    // Some providers does not support getting the parameters
+                    // (i.e. SunPKCS11 provider). Instead we assume they
+                    // use the default parameters.
+                    digestEncryptionAlgorithmParams =
+                            algorithmParameters.get(digestEncryptionAlgorithm);
+                }
             } else {
                 digestEncryptionAlgorithmParams = null;
             }

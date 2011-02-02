@@ -30,7 +30,6 @@ import org.bouncycastle.asn1.util.ASN1Dump;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
@@ -39,7 +38,6 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.IProcessable;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.test.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.mock.WorkerSessionMock;
@@ -93,6 +91,9 @@ public class MRTDSODSignerUnitTest extends TestCase {
 
     /** Worker7915: SHA1, SHA256withRSAandMGF1 */
     private static final int WORKER15 = 7915;
+
+    /** Worker7916: The other DN order. */
+    private static final int WORKER16 = 7916;
 
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
@@ -330,6 +331,57 @@ public class MRTDSODSignerUnitTest extends TestCase {
                 "SHA512withRSAandMGF1");
     }
 
+    /**
+     * Tests that the order of the issuer DN in the SignerInfo is the same as in
+     * the certificate. Tests with a certificate in "LDAP DN order"
+     * (the default in EJBCA).
+     * @throws Exception in case of error.
+     */
+    public void test07DNOrder() throws Exception {
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA1"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA1"));
+        SODFile sod = signHelper(WORKER11, 12, dataGroups1, false, "SHA1",
+                "SHA1withRSAandMGF1");
+
+//        System.out.println("SOD Issuer: "
+//                + sod.getIssuerX500Principal().getName());
+//        System.out.println("CER Issuer: " + sod.getDocSigningCertificate()
+//                .getIssuerX500Principal().getName());
+//        System.out.println("Object: " + ASN1Dump.dumpAsString(
+//                new ASN1InputStream(new ByteArrayInputStream(
+//                sod.getEncoded())).readObject(), true));
+
+        assertEquals("DN should match", sod.getIssuerX500Principal().getName(),
+            sod.getDocSigningCertificate().getIssuerX500Principal().getName());
+    }
+
+    /**
+     * Tests that the order of the issuer DN in the SignerInfo is the same as in
+     * the certificate. Tests with a certificate not in "LDAP DN order".
+     * @throws Exception in case of error.
+     */
+    public void test07DNOrderReversed() throws Exception {
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA1"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA1"));
+        SODFile sod = signHelper(WORKER16, 12, dataGroups1, false, "SHA1",
+                "SHA1withRSAandMGF1");
+
+//        System.out.println("SOD Issuer: "
+//                + sod.getIssuerX500Principal().getName());
+//        System.out.println("CER Issuer: " + sod.getDocSigningCertificate()
+//                .getIssuerX500Principal().getName());
+//        System.out.println("Object reversed: " + ASN1Dump.dumpAsString(
+//                new ASN1InputStream(new ByteArrayInputStream(
+//                sod.getEncoded())).readObject(), true));
+
+        assertEquals("DN should match", sod.getIssuerX500Principal().getName(),
+            sod.getDocSigningCertificate().getIssuerX500Principal().getName());
+    }
+    
 
     private SODFile signHelper(int workerId, int requestId, Map<Integer, byte[]> dataGroups, boolean signerDoesHashing, String digestAlg, String sigAlg) throws Exception {
 
@@ -563,6 +615,26 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new MRTDSODSigner() {
+                @Override
+                protected IGlobalConfigurationSession.IRemote
+                        getGlobalConfigurationSession() {
+                    return globalConfig;
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
+
+        // WORKER16 - The other DN order
+        {
+            final int workerId = WORKER16;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestMRTDSODSigner16");
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty("DIGESTALGORITHM", "SHA1");
+            config.setProperty("SIGNATUREALGORITHM", "SHA1withRSAandMGF1");
+            config.setProperty("defaultKey", HardCodedCryptoToken.KEY_ALIAS_3);
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override

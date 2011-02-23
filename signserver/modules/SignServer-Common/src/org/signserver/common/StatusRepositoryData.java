@@ -16,7 +16,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author Markus Kilås
+ * @author Markus Kilas
  * @version $Id$
  */
 public class StatusRepositoryData implements Serializable {

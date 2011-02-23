@@ -307,7 +307,7 @@ public class SODFile extends PassportFile
 		/* TODO: where is that DERTaggedObject specified? */
 		ASN1Encodable[] fileContents = { SIGNED_DATA_OID, new DERTaggedObject(0, signedData) };
 		ASN1Sequence fileContentsObject = new DERSequence(fileContents);
-		BERTLVObject sodFile = new BERTLVObject(EF_SOD_TAG, fileContentsObject.getDEREncoded());
+		BERTLVObject sodFile = new BERTLVObject(EF_SOD_TAG, fileContentsObject.getDEREncoded(), false);
 		return sodFile.getEncoded();
 	}
 

@@ -13,6 +13,8 @@
 package org.signserver.module.mrtdsodsigner;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -59,7 +61,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
 
     private static final String AUTHTYPE = "AUTHTYPE";
     private static final String CRYPTOTOKEN_CLASSNAME
-            = "org.signserver.server.cryptotokens.HardCodedCryptoToken";
+            = "org.signserver.server.cryptotokens.P12CryptoToken";
     private static final String NAME = "NAME";
 
     /** Worker7897: Default algorithms, default hashing setting. */
@@ -95,8 +97,18 @@ public class MRTDSODSignerUnitTest extends TestCase {
     /** Worker7916: The other DN order. */
     private static final int WORKER16 = 7916;
 
+    private static final String KEYSTOREPATH = "KEYSTOREPATH";
+    private static final String KEYSTOREPASSWORD = "KEYSTOREPASSWORD";
+
+    private File keystore1;
+    private String keystore1Password;
+
+    private File keystore2;
+    private String keystore2Password;
+
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
+
     
     public MRTDSODSignerUnitTest() {
         SignServerUtil.installBCProvider();
@@ -105,6 +117,23 @@ public class MRTDSODSignerUnitTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
+        // Normal keystore
+        keystore1 = new File("test/demods1.p12");
+        if (!keystore1.exists()) {
+            throw new FileNotFoundException("No such keystore: "
+                    + keystore1.getAbsolutePath());
+        }
+        keystore1Password = "foo123";
+
+        // Keystore with certificate not using LDAP DN ordering
+        keystore2 = new File("test/reversedendentity2.p12");
+        if (!keystore2.exists()) {
+            throw new FileNotFoundException("No such keystore: "
+                    + keystore2.getAbsolutePath());
+        }
+        keystore2Password = "foo123";
+
         setupWorkers();
     }
 
@@ -442,6 +471,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
             final int workerId = WORKER1;
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestMRTDSODSigner1");
+            config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
             config.setProperty(AUTHTYPE, "NOAUTH");
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
@@ -459,6 +490,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
             final int workerId = WORKER2;
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestMRTDSODSigner2");
+            config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA512");
             config.setProperty("SIGNATUREALGORITHM", "SHA512withRSA");
@@ -478,6 +511,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
             final int workerId = WORKER3;
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestMRTDSODSigner1");
+            config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DODATAGROUPHASHING", "true");
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
@@ -496,6 +531,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
             final int workerId = WORKER4;
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestMRTDSODSigner1");
+            config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA512");
             config.setProperty("SIGNATUREALGORITHM", "SHA512withRSA");
@@ -516,6 +553,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
             final int workerId = WORKER5;
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestMRTDSODSigner5");
+            config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("LDSVERSION", "0108");
             config.setProperty("UNICODEVERSION", "040000");
@@ -535,6 +574,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
             final int workerId = WORKER11;
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestMRTDSODSigner11");
+            config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA1withRSAandMGF1");
@@ -554,6 +595,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
             final int workerId = WORKER12;
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestMRTDSODSigner12");
+            config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA256");
             config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
@@ -574,6 +617,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestMRTDSODSigner13");
             config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
             config.setProperty("DIGESTALGORITHM", "SHA384");
             config.setProperty("SIGNATUREALGORITHM", "SHA384withRSAandMGF1");
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
@@ -592,6 +637,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
             final int workerId = WORKER14;
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestMRTDSODSigner14");
+            config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA512");
             config.setProperty("SIGNATUREALGORITHM", "SHA512withRSAandMGF1");
@@ -612,6 +659,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
             final int workerId = WORKER15;
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestMRTDSODSigner15");
+            config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
@@ -631,10 +680,11 @@ public class MRTDSODSignerUnitTest extends TestCase {
             final int workerId = WORKER16;
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestMRTDSODSigner16");
+            config.setProperty(KEYSTOREPATH, keystore2.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore2Password);
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA1withRSAandMGF1");
-            config.setProperty("defaultKey", HardCodedCryptoToken.KEY_ALIAS_3);
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override

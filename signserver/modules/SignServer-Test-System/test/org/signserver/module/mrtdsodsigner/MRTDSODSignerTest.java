@@ -93,6 +93,13 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             getSignServerHome().getAbsolutePath()
             + "/modules/SignServer-Module-MRTDSODSigner/src/conf/junittest-part-config.properties"});
 
+        // WORKER1 uses a P12 keystore
+        workerSession.setWorkerProperty(WORKER1, "KEYSTOREPATH",
+                getSignServerHome().getAbsolutePath()
+                + File.separator + "src" + File.separator + "test"
+                + File.separator + "demods1.p12");
+        workerSession.setWorkerProperty(WORKER1, "KEYSTOREPASSWORD", "foo123");
+
         // WORKER1B uses a P12 keystore
         workerSession.setWorkerProperty(WORKER1B, "KEYSTOREPATH", 
                 getSignServerHome().getAbsolutePath()
@@ -100,10 +107,27 @@ public class MRTDSODSignerTest extends ModulesTestCase {
                 + File.separator + "pdfsigner.p12");
         workerSession.setWorkerProperty(WORKER1B, "KEYSTOREPASSWORD", "foo123");
 
-//                signserverhome
-//                + File.separator + "src" + File.separator + "test"
-//                + File.separator + "pdfsigner.p12");
-        workerSession.setWorkerProperty(WORKER1B, "KEYSTOREPASSWORD", "foo123");
+        // WORKER2 uses a P12 keystore
+        workerSession.setWorkerProperty(WORKER2, "KEYSTOREPATH",
+                getSignServerHome().getAbsolutePath()
+                + File.separator + "src" + File.separator + "test"
+                + File.separator + "demods1.p12");
+        workerSession.setWorkerProperty(WORKER2, "KEYSTOREPASSWORD", "foo123");
+
+        // WORKER3 uses a P12 keystore
+        workerSession.setWorkerProperty(WORKER3, "KEYSTOREPATH",
+                getSignServerHome().getAbsolutePath()
+                + File.separator + "src" + File.separator + "test"
+                + File.separator + "demods1.p12");
+        workerSession.setWorkerProperty(WORKER3, "KEYSTOREPASSWORD", "foo123");
+
+        // WORKER4 uses a P12 keystore
+        workerSession.setWorkerProperty(WORKER4, "KEYSTOREPATH",
+                getSignServerHome().getAbsolutePath()
+                + File.separator + "src" + File.separator + "test"
+                + File.separator + "demods1.p12");
+        workerSession.setWorkerProperty(WORKER4, "KEYSTOREPASSWORD", "foo123");
+
 
         workerSession.reloadConfiguration(WORKER1);
         workerSession.reloadConfiguration(WORKER2);

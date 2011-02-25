@@ -14,17 +14,25 @@ package org.signserver.module.mrtdsodsigner;
 
 
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import javax.security.auth.x500.X500Principal;
+import net.sourceforge.scuba.util.Hex;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x509.X509Name;
 import org.ejbca.util.CertTools;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.common.ArchiveData;
@@ -216,13 +224,21 @@ public class MRTDSODSigner extends BaseSigner {
                     log.debug("LDS version: " + ldsVersion
                             + ", unicodeVerison: " + unicodeVersion);
                 }
-            sod = new SODFile(digestAlgorithm, digestEncryptionAlgorithm, 
+
+            final SODFile constructedSod
+                    = new SODFile(digestAlgorithm, digestEncryptionAlgorithm,
                     dghashes, privKey, cert, provider,
                     ldsVersion, unicodeVersion);
+
+            // Reconstruct the sod
+            sod = new SODFile(new ByteArrayInputStream(constructedSod.getEncoded()));
+
         } catch (NoSuchAlgorithmException ex) {
             throw new SignServerException("Problem constructing SOD", ex);
         } catch (CertificateException ex) {
             throw new SignServerException("Problem constructing SOD", ex);
+        } catch (IOException ex) {
+            throw new SignServerException("Problem reconstructing SOD", ex);
         }
 
         // Verify the Signature before returning
@@ -237,21 +253,65 @@ public class MRTDSODSigner extends BaseSigner {
 				log.error("SOD: "+sod);
 				throw new SignServerException("Failed to verify the SOD we signed ourselves.");
 			} else {
-	        	if (log.isDebugEnabled()) {
-	        		log.debug("SOD verified correctly, returning SOD.");
-	        	}
-		        // Return response
-		        byte[] signedbytes = sod.getEncoded();
-		        String fp = CertTools.getFingerprintAsString(signedbytes);
-		        ret = new SODSignResponse(sReq.getRequestID(), signedbytes, cert, fp, new ArchiveData(signedbytes));
+                            // Get chain and signer certificate
+                            final Collection<Certificate> chain = getSigningCertificateChain();
+                            final X509Certificate sodCert
+                                    = sod.getDocSigningCertificate();
+                            try {
+                                // Find the issuer certificate and use it for verification
+                                final X509Certificate issuerCert = (chain == null ? null : findIssuerCert(chain, sodCert));
+                                if (issuerCert == null) {
+                                    log.error("Failed to verify certificate chain");
+                                    log.error("Cert: " + cert);
+                                    log.error("SOD Cert: " + sodCert);
+                                    log.error("Chain: " + chain);
+                                    throw new GeneralSecurityException("Issuer of cert not in chain");
+                                }
+                                sodCert.verify(issuerCert.getPublicKey());
+
+                                if (log.isDebugEnabled()) {
+                                        log.debug("SOD verified correctly, returning SOD.");
+                                }
+                                // Return response
+                                byte[] signedbytes = sod.getEncoded();
+                                String fp = CertTools.getFingerprintAsString(signedbytes);
+                                ret = new SODSignResponse(sReq.getRequestID(), signedbytes, cert, fp, new ArchiveData(signedbytes));
+                            } catch (GeneralSecurityException ex) {
+                                log.error("Error verifying certificate in the SOD we signed ourselves. ", ex);
+                                throw new SignServerException("SOD verification failure", ex);
+                            }
 			}
 		} catch (GeneralSecurityException e) {
 			log.error("Error verifying the SOD we signed ourselves. ", e);
-		}
+                        throw new SignServerException("SOD verification failure", e);
+		} catch (IOException e) {
+                    log.error("Error verifying the SOD we signed ourselves. ", e);
+                    throw new SignServerException("SOD verification failure", e);
+                }
 
         if (log.isTraceEnabled()) {
             log.trace("<processData");
         }
         return ret;
+    }
+
+    private X509Certificate findIssuerCert(Collection<Certificate> chain, X509Certificate sodCert) {
+        X509Certificate result = null;
+        final X509Name issuer = new X509Name(sodCert.getIssuerX500Principal().getName());
+        log.debug("Looking for " + issuer);
+        for (Certificate cert : chain) {
+            if (cert instanceof X509Certificate) {
+                final X509Certificate x509 = (X509Certificate) cert;
+                final X509Name subject = new X509Name(x509.getSubjectX500Principal().getName());
+                if (issuer.equals(subject)) {
+                    result = (X509Certificate) cert;
+                    log.debug("Found issuer");
+                    break;
+                } else {
+                    log.debug(issuer + "!=" + subject);
+                }
+            }
+        }
+        return result;
     }
 }

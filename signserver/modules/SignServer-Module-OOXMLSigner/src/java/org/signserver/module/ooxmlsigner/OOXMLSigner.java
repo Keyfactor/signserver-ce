@@ -62,7 +62,7 @@ import org.signserver.server.signers.BaseSigner;
  * @see <a href="http://sourceforge.net/projects/openxml4j/">
  * http://sourceforge.net/projects/openxml4j/</a>
  *
- * @author Aziz Göktepe
+ * @author Aziz GÃ¶ktepe
  * @version $Id$
  */
 public class OOXMLSigner extends BaseSigner {

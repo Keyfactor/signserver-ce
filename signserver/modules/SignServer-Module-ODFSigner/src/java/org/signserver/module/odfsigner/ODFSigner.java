@@ -49,7 +49,7 @@ import org.signserver.server.signers.BaseSigner;
  * Adds invisible signature to odt,ods,odp,odg.. files (created with Open Office
  * 3.1 and respecting ODF standard)
  * 
- * @author Aziz Göktepe
+ * @author Aziz GÃ¶ktepe
  * @version $Id$
  * 
  */

@@ -20,7 +20,7 @@ import org.signserver.common.StatusRepositoryData;
 /**
  * Interface towards the status repository session bean.
  * 
- * @author Markus Kilås
+ * @author Markus KilÃ¥s
  * @version $Id$
  */
 public interface IStatusRepositorySession {

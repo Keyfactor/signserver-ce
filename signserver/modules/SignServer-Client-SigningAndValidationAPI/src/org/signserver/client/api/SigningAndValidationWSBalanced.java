@@ -28,7 +28,7 @@ import org.signserver.protocol.ws.client.SignServerWSClientFactory;
  * Implements ISigningAndValidation using SignServer WS Client interface that
  * has support for load balancing etc.
  *
- * @author Markus Kilås
+ * @author Markus KilÃ¥s
  * @version
  * $Id: SigningAndValidationWSBalanced.java -1   $
  */

@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 /**
  * Singleton holding non-persistant status information.
  *
- * @author Markus Kilås
+ * @author Markus KilÃ¥s
  * @version $Id$
  */
 final class StatusRepository {

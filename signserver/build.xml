@@ -333,7 +333,8 @@ OS version                          = ${os.version}
         	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/ext/james:${lib}/asm:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/module/wsra:${lib}/reports:${lib}/quartz:${lib}/jaxws:${lib}/module/odfsigner/odfdom.jar"
         	classpath="${server.compile.classpath}:${tmp}/jaxws/gen-classes/client:${lib}/module/odfsigner/odfdom.jar:${lib}/module/ooxmlsigner/openxml4j_beta_v538.jar"
         	author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2011 PrimeKey Solutions AB."
-                encoding="utf-8">
+                encoding="utf-8"
+                charset="utf-8">
                 <fileset dir="${src.java}">
                     <include name="**/*.java"/>
                 </fileset>

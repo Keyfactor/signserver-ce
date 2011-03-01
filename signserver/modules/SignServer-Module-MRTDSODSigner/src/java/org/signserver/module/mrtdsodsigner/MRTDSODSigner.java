@@ -22,13 +22,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import javax.security.auth.x500.X500Principal;
-import net.sourceforge.scuba.util.Hex;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -258,16 +256,22 @@ public class MRTDSODSigner extends BaseSigner {
                             final X509Certificate sodCert
                                     = sod.getDocSigningCertificate();
                             try {
+                                // We need a Bouncy Castle certificate
+                                final CertificateFactory factory
+                                        = CertificateFactory.getInstance("X.509", "BC");
+                                final X509Certificate signerCert = (X509Certificate)factory.generateCertificate(
+                                        new ByteArrayInputStream(sodCert.getEncoded()));
+
                                 // Find the issuer certificate and use it for verification
-                                final X509Certificate issuerCert = (chain == null ? null : findIssuerCert(chain, sodCert));
+                                final X509Certificate issuerCert = (chain == null ? null : findIssuerCert(chain, signerCert));
                                 if (issuerCert == null) {
                                     log.error("Failed to verify certificate chain");
                                     log.error("Cert: " + cert);
-                                    log.error("SOD Cert: " + sodCert);
+                                    log.error("SOD Cert: " + signerCert);
                                     log.error("Chain: " + chain);
                                     throw new GeneralSecurityException("Issuer of cert not in chain");
                                 }
-                                sodCert.verify(issuerCert.getPublicKey());
+                                signerCert.verify(issuerCert.getPublicKey());
 
                                 if (log.isDebugEnabled()) {
                                         log.debug("SOD verified correctly, returning SOD.");

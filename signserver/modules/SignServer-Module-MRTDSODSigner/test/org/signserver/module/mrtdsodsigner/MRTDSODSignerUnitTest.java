@@ -97,6 +97,9 @@ public class MRTDSODSignerUnitTest extends TestCase {
     /** Worker7916: The other DN order. */
     private static final int WORKER16 = 7916;
 
+    /** Worker7917: Certificate chain with SHA256withRSAandMGF1. */
+    private static final int WORKER17 = 7917;
+
     private static final String KEYSTOREPATH = "KEYSTOREPATH";
     private static final String KEYSTOREPASSWORD = "KEYSTOREPASSWORD";
 
@@ -105,6 +108,9 @@ public class MRTDSODSignerUnitTest extends TestCase {
 
     private File keystore2;
     private String keystore2Password;
+
+    private File keystore3;
+    private String keystore3Password;
 
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
@@ -133,6 +139,14 @@ public class MRTDSODSignerUnitTest extends TestCase {
                     + keystore2.getAbsolutePath());
         }
         keystore2Password = "foo123";
+
+        // Normal keystore
+        keystore3 = new File("test/demods41.p12");
+        if (!keystore3.exists()) {
+            throw new FileNotFoundException("No such keystore: "
+                    + keystore3.getAbsolutePath());
+        }
+        keystore3Password = "foo123";
 
         setupWorkers();
     }
@@ -331,6 +345,20 @@ public class MRTDSODSignerUnitTest extends TestCase {
         dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA1"));
         dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA1"));
         signHelper(WORKER15, 12, dataGroups1, false, "SHA1",
+                "SHA256withRSAandMGF1");
+    }
+
+    /**
+     * Requests signing of some data group hashes and verifies the result. Uses
+     * certificate chain with SHA256withRSAandMGF1.
+     * @throws Exception
+     */
+    public void test06SignData_SHA256withRSAandMGF1_certs() throws Exception {
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
+        signHelper(WORKER17, 12, dataGroups1, false, "SHA256",
                 "SHA256withRSAandMGF1");
     }
 
@@ -685,6 +713,27 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA1withRSAandMGF1");
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new MRTDSODSigner() {
+                @Override
+                protected IGlobalConfigurationSession.IRemote
+                        getGlobalConfigurationSession() {
+                    return globalConfig;
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
+
+        // WORKER17 - CA and signer using SHA256withRSAandMGF1
+        {
+            final int workerId = WORKER17;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestMRTDSODSigner17");
+            config.setProperty(KEYSTOREPATH, keystore3.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore3Password);
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty("DIGESTALGORITHM", "SHA256");
+            config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override

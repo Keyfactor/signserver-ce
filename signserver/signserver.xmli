@@ -245,9 +245,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
              all jar files is directly in lib directory in the ear file -->
             <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,commons-lang-2.4.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar,commons-logging.jar,commons-collections-3.2.jar" prefix="lib"/>
             <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
-            <zipfileset dir="lib/ext/ejb" includes="hibernate-entitymanager.jar" prefix="lib"/>
-            <zipfileset dir="lib/ext/ejb" includes="hibernate-annotations.jar" prefix="lib"/>
-            <zipfileset dir="lib/ext/ejb" includes="hibernate3.jar" prefix="lib"/>
             <zipfileset dir="lib/module/pdfsigner/itext" includes="*.jar"  prefix="lib"/>
             <zipfileset dir="lib/module/odfsigner" includes="*.jar" prefix="lib"/>
             <zipfileset dir="lib/module/ooxmlsigner" includes="*.jar" prefix="lib"/>

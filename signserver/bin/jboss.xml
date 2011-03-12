@@ -20,6 +20,7 @@
     -->
     <zipfileset id="appserver.extralibs" prefix="lib" dir="lib/ext/ejb">
             <!-- Currently no extra jars are needed for JBoss. -->
+            <exclude name="*"/>
     </zipfileset>
 
 	<!--

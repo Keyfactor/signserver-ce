@@ -11,7 +11,17 @@
 	<property name="keystore.file" value="conf/keystore/keystore.jks"/>
 	<property name="truststore.file" value="conf/keystore/truststore.jks"/>
 	<property name="remote.keystore.path" value="conf"/>
-	
+
+    <!--
+        Define all extra jar files that needs to be included in the lib
+        folder of signserver.ear when building for this application server.
+        The zipfileset should have the id "appserver.extralibs" and the
+        prefix "lib".
+    -->
+    <zipfileset id="appserver.extralibs" prefix="lib" dir="lib/ext/ejb">
+            <!-- Currently no extra jars are needed for JBoss. -->
+    </zipfileset>
+
 	<!--
 	 Do not configure the servlet container, deploys blindly ears
 	 This is ideally passed by the caller and is just here as a reminder

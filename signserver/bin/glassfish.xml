@@ -9,7 +9,23 @@
 	<property name="keystore.file" value="config/keystore/keystore.jks"/>
 	<property name="truststore.file" value="config/keystore/truststore.jks"/>
 	<property name="remote.keystore.path" value="config"/>
-	
+
+    <!--
+        Define all extra jar files that needs to be included in the lib
+        folder of signserver.ear when building for this application server.
+        The zipfileset should have the id "appserver.extralibs" and the
+        prefix "lib".
+     -->
+    <zipfileset id="appserver.extralibs" prefix="lib" dir="lib/ext/ejb">
+        <!--
+            ExtendedClusterClassLoader/WS Worker uses Hibernate and as it is
+            not shipped with GlassFish we need to bundle it.
+         -->
+        <include name="hibernate-entitymanager.jar"/>
+        <include name="hibernate-annotations.jar"/>
+        <include name="hibernate3.jar"/>
+    </zipfileset>
+
 	<!--
 	 Do not configure the servlet container, deploys blindly ears
 	 This is ideally passed by the caller and is just here as a reminder

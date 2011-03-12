@@ -259,6 +259,12 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 <include name="*.war" />
             </fileset>
 
+            <!--
+                Include application server depended extra JAR files.
+                Edit ${appserver}.xml to define this set.
+            -->
+            <zipfileset refid="appserver.extralibs"/>
+
             <!-- Include SignServerWS -->
             <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"/>
 

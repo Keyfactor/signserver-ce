@@ -7,9 +7,10 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="SignServer-Module-OOXMLSigner" default="default" basedir=".">
+<project name="ooxmlsigner" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Module-OOXMLSigner.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
 
     <!-- Import property file containing version numbers and other constants -->
     <property file="../../src/compile.properties"/>

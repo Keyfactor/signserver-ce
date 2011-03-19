@@ -5,6 +5,8 @@
         <fail message="This script is not intented to run on its own"/>
     </target>
 
+    <property name="server.dist.dir" location="../../dist-server"/>
+
     <!--
         ===================
         Module conditionals
@@ -53,164 +55,6 @@
         <istrue value="${admingui.enabled}"/>
     </condition>
 
-    <!-- Enable, include module: Renewal -->
-    <condition property="module.renewal.enabled.condition">
-        <istrue value="${module.renewal.enabled}"/>
-    </condition>
-    <condition property="module.renewal.include.condition">
-        <and>
-            <istrue value="${module.renewal.enabled}"/>
-            <or>
-                <istrue value="${module.renewal.include}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
-        </and>
-    </condition>
-
-    <!-- Enable, include module: XMLSigner -->
-    <condition property="module.xmlsigner.enabled.condition">
-        <istrue value="${module.xmlsigner.enabled}"/>
-    </condition>
-    <condition property="module.xmlsigner.include.condition">
-        <and>
-            <istrue value="${module.xmlsigner.enabled}"/>
-            <or>
-                <istrue value="${module.xmlsigner.include}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
-        </and>
-    </condition>
-
-    <!-- Enable, include module: PDFSigner -->
-    <condition property="module.pdfsigner.enabled.condition">
-        <istrue value="${module.pdfsigner.enabled}"/>
-    </condition>
-    <condition property="module.pdfsigner.include.condition">
-        <and>
-            <istrue value="${module.pdfsigner.enabled}"/>
-            <or>
-                <istrue value="${module.pdfsigner.include}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
-        </and>
-    </condition>
-
-    <!-- Enable, include module: XMLValidator -->
-    <condition property="module.xmlvalidator.enabled.condition">
-        <istrue value="${module.xmlvalidator.enabled}"/>
-    </condition>
-    <condition property="module.xmlvalidator.include.condition">
-        <and>
-            <istrue value="${module.xmlvalidator.enabled}"/>
-            <or>
-                <istrue value="${module.xmlvalidator.include}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
-        </and>
-    </condition>
-
-    <!-- Enable, include module: MRTDSigner -->
-    <condition property="module.mrtdsigner.enabled.condition">
-        <istrue value="${module.mrtdsigner.enabled}"/>
-    </condition>
-    <condition property="module.mrtdsigner.include.condition">
-        <and>
-            <istrue value="${module.mrtdsigner.enabled}"/>
-            <or>
-                <istrue value="${module.mrtdsigner.include}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
-        </and>
-    </condition>
-
-    <!-- Enable, include module: ODFSigner -->
-    <condition property="module.odfsigner.enabled.condition">
-        <istrue value="${module.odfsigner.enabled}"/>
-    </condition>
-    <condition property="module.odfsigner.include.condition">
-        <and>
-            <istrue value="${module.odfsigner.enabled}"/>
-            <or>
-                <istrue value="${module.odfsigner.include}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
-        </and>
-    </condition>
-
-    <!-- Enable, include module: OOXMLSigner -->
-    <condition property="module.ooxmlsigner.enabled.condition">
-        <istrue value="${module.ooxmlsigner.enabled}"/>
-    </condition>
-    <condition property="module.ooxmlsigner.include.condition">
-        <and>
-            <istrue value="${module.ooxmlsigner.enabled}"/>
-            <or>
-                <istrue value="${module.ooxmlsigner.include}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
-        </and>
-    </condition>
-
-    <!-- Enable, include module: TSA -->
-    <condition property="module.tsa.enabled.condition">
-        <istrue value="${module.tsa.enabled}"/>
-    </condition>
-    <condition property="module.tsa.include.condition">
-        <and>
-            <istrue value="${module.tsa.enabled}"/>
-            <or>
-                <istrue value="${module.tsa.include}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
-        </and>
-    </condition>
-
-    <!-- Enable, include module: CMSSigner -->
-    <condition property="module.cmssigner.enabled.condition">
-        <istrue value="${module.cmssigner.enabled}"/>
-    </condition>
-    <condition property="module.cmssigner.include.condition">
-        <and>
-            <istrue value="${module.cmssigner.enabled}"/>
-            <or>
-                <istrue value="${module.cmssigner.include}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
-        </and>
-    </condition>
-
-    <!-- Include module: Log4j -->
-    <condition property="module.log4j.enabled.condition">
-        <or>
-            <istrue value="${module.log4j.enabled}"/>
-            <istrue value="${module.log4j.include}"/>
-        </or>
-    </condition>
-    <condition property="module.log4j.include.condition">
-        <istrue value="${module.log4j.include}"/>
-    </condition>
-
-    <!-- Enable, include module: MRTDSODSigner -->
-    <condition property="module.mrtdsodsigner.enabled.condition">
-        <istrue value="${module.mrtdsodsigner.enabled}"/>
-    </condition>
-    <condition property="module.mrtdsodsigner.include.condition">
-        <and>
-            <istrue value="${module.mrtdsodsigner.enabled}"/>
-            <or>
-                <istrue value="${module.mrtdsodsigner.include}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
-        </and>
-    </condition>
-
-    <!-- Enable module: WSRA -->
-    <condition property="module.wsra.enabled.condition">
-        <and>
-            <istrue value="${genericws.enabled}"/>
-            <istrue value="${module.wsra.enabled}"/>
-        </and>
-    </condition>
 
 
     <!--
@@ -250,288 +94,70 @@
     <!-- Build modules -->
     <!-- =================================================================== -->
 
-    <target name="modules" description="Build all enabled modules" depends="
-             -module-pdfsigner-jar, -pdfsigner-jar-included, -pdfsigner-jar-excluded
-            ,-module-cmssigner-jar, -cmssigner-jar-included, -cmssigner-jar-excluded
-            ,-module-tsa-jar, -tsa-jar-included, -tsa-jar-excluded
-            ,-module-odfsigner-jar, -odfsigner-jar-included, -odfsigner-jar-excluded
-            ,-module-ooxmlsigner-jar, -ooxmlsigner-jar-included, -ooxmlsigner-jar-excluded
-            ,-module-mrtdsigner-jar, -mrtdsigner-jar-included, -mrtdsigner-jar-excluded
-            ,-module-xmlvalidator-jar, -xmlvalidator-jar-included, -xmlvalidator-jar-excluded
-            ,-module-xmlsigner-jar, -xmlsigner-jar-included, -xmlsigner-jar-excluded
-            ,-module-mrtdsodsigner-jar, -mrtdsodsigner-jar-included, -mrtdsodsigner-jar-excluded
-            ,-module-wsra-jar
-            ,-module-renewal-jar, -renewal-jar-included, -renewal-jar-excluded
-            ,-log4j-jar-included
-        "/>
-
-    <!-- Target that can be called to build the renewal module -->
-    <target name="module-renewal"
-        description="Build the module Renewal">
-        <ant antfile="${renewal.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${renewal.mar}" todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-renewal-jar" depends="module-renewal"
-        if="module.renewal.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-renewal-jar-included" if="module.renewal.include.condition"
-        depends="module-renewal">
-        <echo message="Including Renewal module in EAR"/>
-        <copy file="${renewal.jar}" todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-renewal-jar-excluded"
-        unless="module.renewal.include.condition">
-        <echo message="Not including Renewal module in EAR"/>
+    <target name="modules" description="Build all enabled modules">
+        <echo message="Include all modules: ${includemodulesinbuild}"/>
+        <subant target="-do-module" verbose="false">
+            <fileset dir="modules" includes="SignServer-Module-*/build.xml"/>
+        </subant>
     </target>
 
-    <!-- Target that can be called to build the XMLSigner module -->
-    <target name="module-xmlsigner"
-        description="Build the module XMLSigner">
-        <ant antfile="${xmlsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${xmlsigner.mar}" todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-xmlsigner-jar" depends="module-xmlsigner"
-        if="module.xmlsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-xmlsigner-jar-included" if="module.xmlsigner.include.condition"
-        depends="module-xmlsigner">
-        <echo message="Including XMLSigner module in EAR"/>
-        <copy file="${xmlsigner.jar}" todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-xmlsigner-jar-excluded"
-        unless="module.xmlsigner.include.condition">
-        <echo message="Not including XMLSigner module in EAR"/>
+    <target name="-do-module-build" if="moduleEnable.condition">
+        <echo message="Project ${ant.project.name} enabled"/>
+        <antcall target="jar"/>
+        <copy todir="${server.dist.dir}">
+            <fileset dir="./dist" includes="*.mar"/>
+        </copy>
     </target>
 
-    <!-- Target that can be called to build the XMLValidator module -->
-    <target name="module-xmlvalidator"
-        description="Build the module XMLValidator">
-        <ant antfile="${module.xmlvalidator.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.xmlvalidator.dir}/dist/xmlvalidator.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-xmlvalidator-jar" depends="module-xmlvalidator"
-        if="module.xmlvalidator.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-xmlvalidator-jar-included" if="module.xmlvalidator.include.condition"
-        depends="module-xmlvalidator">
-        <echo message="Including XMLValidator module in EAR"/>
-        <copy file="${module.xmlvalidator.dir}/dist/SignServer-Module-XMLValidator.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-xmlvalidator-jar-excluded"
-        unless="module.xmlvalidator.include.condition">
-        <echo message="Not including XMLValidator module in EAR"/>
+    <target name="-do-module-include" depends="-do-module-build"
+        if="moduleInclude.condition">
+        <echo message="Project ${ant.project.name} included"/>
+        <antcall target="-module-include"/>
+        <antcall target="-post-module-include"/>
     </target>
 
-    <!-- Target that can be called to build the PDFSigner module -->
-    <target name="module-pdfsigner"
-        description="Build the module PDFSigner">
-        <ant antfile="${module.pdfsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.pdfsigner.dir}/dist/pdfsigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-pdfsigner-jar" depends="module-pdfsigner"
-        if="module.pdfsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-pdfsigner-jar-included" if="module.pdfsigner.include.condition"
-        depends="module-pdfsigner">
-        <echo message="Including PDFSigner module in EAR"/>
-        <copy file="${module.pdfsigner.dir}/dist/SignServer-Module-PDFSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-pdfsigner-jar-excluded"
-        unless="module.pdfsigner.include.condition">
-        <echo message="Not including PDFSigner module in EAR"/>
-    </target>
+    <!-- Copies the module JAR to the EAR lib folder for inclusion. This target
+        can be overridden the module project to do copy special files -->
+        <target name="-module-include">
+            <fail unless="moduleEnable.condition"
+                message="Module '${ant.project.name}' must have enabled=true to be included."/>
+            <copy todir="${server.dist.dir}/lib">
+                <fileset dir="./dist" includes="*.jar"/>
+            </copy>
+        </target>
+        
+        <!-- Override this target to copy additional files. -->
+        <target name="-post-module-include"/>
 
-    <!-- Target that can be called to build the MRTDSigner module -->
-    <target name="module-mrtdsigner"
-        description="Build the module MRTDSigner">
-        <ant antfile="${module.mrtdsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.mrtdsigner.dir}/dist/mrtdsigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-mrtdsigner-jar" depends="module-mrtdsigner"
-        if="module.mrtdsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-mrtdsigner-jar-included" if="module.mrtdsigner.include.condition"
-        depends="module-mrtdsigner">
-        <echo message="Including MRTDSigner module in EAR"/>
-        <copy file="${module.mrtdsigner.dir}/dist/SignServer-Module-MRTDSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-mrtdsigner-jar-excluded"
-        unless="module.mrtdsigner.include.condition">
-        <echo message="Not including MRTDSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the OOXMLSigner module -->
-    <target name="module-ooxmlsigner"
-        description="Build the module OOXMLSigner">
-        <ant antfile="${module.ooxmlsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.ooxmlsigner.dir}/dist/ooxmlsigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-ooxmlsigner-jar" depends="module-ooxmlsigner"
-        if="module.ooxmlsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-ooxmlsigner-jar-included" if="module.ooxmlsigner.include.condition"
-        depends="module-ooxmlsigner">
-        <echo message="Including OOXMLSigner module in EAR"/>
-        <copy file="${module.ooxmlsigner.dir}/dist/SignServer-Module-OOXMLSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-ooxmlsigner-jar-excluded"
-        unless="module.ooxmlsigner.include.condition">
-        <echo message="Not including OOXMLSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the ODFSigner module -->
-    <target name="module-odfsigner"
-        description="Build the module ODFSigner">
-        <ant antfile="${module.odfsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.odfsigner.dir}/dist/odfsigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-odfsigner-jar" depends="module-odfsigner"
-        if="module.odfsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-odfsigner-jar-included" if="module.odfsigner.include.condition"
-        depends="module-odfsigner">
-        <echo message="Including ODFSigner module in EAR"/>
-        <copy file="${module.odfsigner.dir}/dist/SignServer-Module-ODFSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-odfsigner-jar-excluded"
-        unless="module.odfsigner.include.condition">
-        <echo message="Not including ODFSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the TSA module -->
-    <target name="module-tsa"
-        description="Build the module TSA">
-        <ant antfile="${module.tsa.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.tsa.dir}/dist/tsa.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-tsa-jar" depends="module-tsa"
-        if="module.tsa.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-tsa-jar-included" if="module.tsa.include.condition"
-        depends="module-tsa">
-        <echo message="Including TSA module in EAR"/>
-        <copy file="${module.tsa.dir}/dist/SignServer-Module-TSA.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-tsa-jar-excluded"
-        unless="module.tsa.include.condition">
-        <echo message="Not including TSA module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the CMSSigner module -->
-    <target name="module-cmssigner"
-        description="Build the module CMSSigner">
-        <ant antfile="${module.cmssigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.cmssigner.dir}/dist/cmssigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-cmssigner-jar" depends="module-cmssigner"
-        if="module.cmssigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-cmssigner-jar-included" if="module.cmssigner.include.condition"
-        depends="module-cmssigner">
-        <echo message="Including CMSSigner module in EAR"/>
-        <copy file="${module.cmssigner.dir}/dist/SignServer-Module-CMSSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-cmssigner-jar-excluded"
-        unless="module.cmssigner.include.condition">
-        <echo message="Not including CMSSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the WSRA module -->
-    <target name="module-wsra"
-        description="Build the module WSRA (and DummyWS)">
-        <ant antfile="${wsra.dir}/build.xml" target="jar"
-            inheritall="false">
-                <property name="base" value="${base}"/>
-        </ant>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-wsra-jar" depends="module-wsra"
-        if="module.wsra.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-wsra-jar-included" if="module.wsra.include.condition"
-        depends="module-wsra">
-        <echo message="Including WSRA and DummyWS modules in EAR"/>
-        <copy file="${wsra.dir}/dist/wsra-module.jar" todir="${server.dist.dir}/lib"/>
-        <copy file="${wsra.dir}/dist/genericws-module-common.jar" todir="${server.dist.dir}/lib"/>
-        <copy file="${wsra.dir}/dist/dummyws-module.jar" todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-wsra-jar-excluded"
-        unless="module.wsra.include.condition">
-        <echo message="Not including WSRA module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the XMLSigner module -->
-    <target name="module-mrtdsodsigner"
-        description="Build the module MRTDSODSigner">
-        <ant antfile="${module.mrtdsodsigner.dir}/build.xml" target="jar"
-            inheritall="false"/>
-        <copy file="${module.mrtdsodsigner.dir}/dist/mrtdsodsigner.mar"
-            todir="${server.dist.dir}"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-mrtdsodsigner-jar" depends="module-mrtdsodsigner"
-        if="module.mrtdsodsigner.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-mrtdsodsigner-jar-included"
-            if="module.mrtdsodsigner.include.condition"
-            depends="module-mrtdsodsigner">
-        <echo message="Including MRTDSODSigner module in EAR"/>
-        <copy file="${module.mrtdsodsigner.dir}/dist/SignServer-Module-MRTDSODSigner.jar"
-            todir="${server.dist.dir}/lib"/>
-    </target>
-    <target name="-mrtdsodsigner-jar-excluded"
-        unless="module.mrtdsodsigner.include.condition">
-        <echo message="Not including MRTDSODSigner module in EAR"/>
-    </target>
-
-    <!-- Target that can be called to build the Log4j module -->
-    <target name="module-log4j"
-        description="Build the module Log4j">
-        <ant antfile="${module.log4j.dir}/build.xml" target="jar"
-            inheritall="false"/>
-    </target>
-    <!-- Target always called when building. Only builds if configured. -->
-    <target name="-module-log4j-jar" depends="module-log4j"
-        if="module.log4j.enabled.condition"/>
-    <!-- Target for including the module -->
-    <target name="-log4j-jar-included"
-            if="module.log4j.include.condition"
-            depends="module-log4j">
-        <echo message="Including Log4j configuration in EAR"/>
-        <copy file="${module.log4j.dir}/dist/SignServer-Module-Log4j.jar"
-            todir="${server.dist.dir}/lib"/>
+    <target name="-do-module">
+        <echo message="Module:  ${ant.project.name}"/>
+        <property file="${user.home}/signserver_build.properties"/>
+        <property file="../../signserver_build.properties"/>
+        <script language="javascript" setbeans="true"><![CDATA[
+            projectName = project.getProperty("ant.project.name");
+            enablename = "module." + projectName + ".enabled";
+            includename = "module." + projectName + ".include";
+            project.setProperty("moduleEnableProperty", enablename);
+            project.setProperty("moduleIncludeProperty", includename)
+            project.setProperty("moduleEnable", project.getProperty(enablename));
+            project.setProperty("moduleInclude", project.getProperty(includename));
+            ]]>
+        </script>
+        <echo message="Enable:  ${moduleEnable}"/>
+        <echo message="Include: ${moduleInclude}"/>
+        <condition property="moduleEnable.condition">
+            <or>
+                <istrue value="${moduleEnable}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </condition>
+        <condition property="moduleInclude.condition">
+            <or>
+                <istrue value="${moduleInclude}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </condition>
+        <antcall target="-do-module-include"/>
     </target>
 
 </project>

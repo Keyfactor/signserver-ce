@@ -7,13 +7,23 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="SignServer-Module-WSRA" default="default" basedir=".">
+<project name="wsra" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Module-Renewal.</description>
     <import file="nbproject/build-impl.xml"/>
     <import file="../modules.xml"/>
 
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
+
+    <target name="-pre-compile">
+        <condition property="genericws.enabled.condition">
+            <and>
+                <istrue value="${genericws.enabled}"/>
+            </and>
+        </condition>
+        <fail unless="genericws.enabled.condition" 
+            message="Genericws must be enabled for this module to compile."/>
+    </target>
 
     <!--
         ===================

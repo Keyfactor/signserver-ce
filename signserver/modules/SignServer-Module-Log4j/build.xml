@@ -7,9 +7,10 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="SignServer-Module-Log4j" default="default" basedir=".">
+<project name="log4j" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Module-Log4j.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
     <!--
 
     There exist several targets which are by default empty and which can be 

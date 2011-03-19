@@ -344,14 +344,9 @@ OS version                          = ${os.version}
                 <fileset dir="${signserverejb.src.java}">
                     <include name="**/*.java"/>
                 </fileset>
-                <fileset dir="${module.pdfsigner.src.dir}" includes="**/*.java"/>
-                <fileset dir="${module.mrtdsodsigner.src.dir}" includes="**/*.java"/>
-                <fileset dir="${module.mrtdsigner.src.dir}" includes="**/*.java"/>
-                <fileset dir="${module.cmssigner.src.dir}" includes="**/*.java"/>
-                <fileset dir="${module.tsa.src.dir}" includes="**/*.java"/>
-                <fileset dir="${module.odfsigner.src.dir}" includes="**/*.java"/>
-                <fileset dir="${module.ooxmlsigner.src.dir}" includes="**/*.java"/>
-                <fileset dir="${module.xmlvalidator.src.dir}" includes="**/*.java"/>
+
+                <!-- Include all modules that has a src/java/ folder. -->
+                <fileset dir="modules" includes="*/src/java/**/*.java"/>
         </javadoc>
         <echo message="Local documentation is now available in file://${apidoc}/index.html"/>
     </target>

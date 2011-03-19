@@ -305,7 +305,7 @@ OS version                          = ${os.version}
 
 
     <!-- AdminGUI -->
-    <target name="admingui" depends="signserver"
+    <target name="admingui" depends="preprocess"
         description="Build the administration GUI">
         <ant antfile="${admingui.dir}/build.xml" target="jar"
             inheritall="false"/>

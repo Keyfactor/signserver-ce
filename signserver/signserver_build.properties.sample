@@ -2,6 +2,8 @@
 # $Id$
 #
 # Build configuration of SignServer. Modify at will before building.
+# Note: You might have to run "ant clean" before building for some changes to
+# take effect.
 # 
 
 
@@ -201,6 +203,11 @@ adminws.enabled=true
 # Default: build=true, include=false
 #module.ooxmlsigner.enabled=true
 #module.ooxmlsigner.include=false
+
+# Module PDFSigner
+# Default: build=true, include=false
+#module.pdfsigner.enabled=true
+#module.pdfsigner.include=false
 
 # Module TSA
 # Default: build=true, include=false

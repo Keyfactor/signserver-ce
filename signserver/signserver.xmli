@@ -158,38 +158,20 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- =================================================================== -->
     <!-- Build signserver ejb part                                           -->
     <!-- =================================================================== -->
-    <target name="signserver-ejb-jar-including-modules" if="includemodulesinbuild">
-        <echo message="Including modules in main build"/>
-        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
-            <metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
-                <include name="entity-mappings.xml"/>
-            </metainf>
-	        	
-            <fileset dir="." includes="signserver_server.properties"/>
-            <fileset dir="${build}">
-                <exclude name="org/signserver/client/**" />
-            </fileset>
-        </jar>
-    </target>
-    <target name="signserver-ejb-jar-excluding-modules" unless="includemodulesinbuild">
-        <echo message="Not including modules in main build"/>
-        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
-            <metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
-                <include name="entity-mappings.xml"/>
-            </metainf>
-	        	
-            <fileset dir="." includes="signserver_server.properties"/>
-            <fileset dir="${build}">
-                <exclude name="org/signserver/client/**" />
-            </fileset>
-        </jar>
-    </target>
-	    
+
     <target name="signserver-ejb.jar" depends="preprocess, timeStampTestClient,
         PDFPerformanceTestTool,
-        signserver:compile,
-        signserver-ejb-jar-including-modules,
-        signserver-ejb-jar-excluding-modules">
+        signserver:compile">
+        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
+            <metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
+                <include name="entity-mappings.xml"/>
+            </metainf>
+
+            <fileset dir="." includes="signserver_server.properties"/>
+            <fileset dir="${build}">
+                <exclude name="org/signserver/client/**" />
+            </fileset>
+        </jar>
     </target>
 	       
 	
@@ -266,13 +248,16 @@ module.wsra.enabled                 = ${module.wsra.enabled}
             <zipfileset refid="appserver.extralibs"/>
 
             <!-- Include SignServerWS -->
-            <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"/>
+            <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"
+                erroronmissingdir="false"/>
 
             <!-- Include ValidationWS -->
-            <zipfileset dir="${validationws.dir}/dist" includes="*.jar"/>
+            <zipfileset dir="${validationws.dir}/dist" includes="*.jar"
+                erroronmissingdir="false"/>
 
             <!-- Include AdminWS -->
-            <zipfileset dir="${adminws.dir}/dist" includes="*.jar"/>
+            <zipfileset dir="${adminws.dir}/dist" includes="*.jar"
+                erroronmissingdir="false"/>
 
             <!-- Modules can be placed in dist-server/lib to be included in ear -->
             <zipfileset dir="${server.dist.dir}/lib" includes="*.jar" prefix="lib"/>

@@ -335,48 +335,14 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <target name="test:signserver:run" depends="test:signserver:pre-run, build"
         description="Run the default JUnit testcases">
 
-        <!-- SignServer-Test-SignServerWS -->
-        <ant target="test" inheritall="false"
-            antfile="${testsignserverws.dir}/build.xml"/>
-
-        <!-- SignServer-Test-ValidationWS -->
-        <ant target="test" inheritall="false"
-            antfile="${testvalidationws.dir}/build.xml"/>
-
-        <!-- SignServer-Test-AdminWS -->
-        <ant target="test" inheritall="false"
-            antfile="${testadminws.dir}/build.xml"/>
-
-        <!-- SignServer-Module-Renewal -->
-        <ant target="test" inheritall="false"
-            antfile="${renewal.dir}/build.xml"/>
-
-        <!-- SignServer-Module-MRTDSODSigner -->
-        <ant target="test" inheritall="false"
-            antfile="${module.mrtdsodsigner.dir}/build.xml"/>
-
-        <!-- SignServer-Test-System -->
-        <ant target="test" inheritall="false"
-            antfile="${testsystem.dir}/build.xml"/>
+        <!-- Run all tests defined in modules-project.properties. -->
+        <subant target="test">
+            <fileset dir="." includes="${tests.modules.includes}"/>
+        </subant>
 
         <!-- Create report for all tests -->
         <junitreport todir="${test.dir}/reports">
-
-            <!-- SignServer-Test-SignServerWS -->
-            <fileset dir="${testsignserverws.dir}/build/test/results">
-                <include name="TEST-*.xml" />
-            </fileset>
-
-            <!-- SignServer-Test-ValidationWS -->
-            <fileset dir="${testvalidationws.dir}/build/test/results">
-                <include name="TEST-*.xml" />
-            </fileset>
-
-            <!-- SignServer-Test-System -->
-            <fileset dir="${testsystem.dir}/build/test/results">
-                <include name="TEST-*.xml" />
-            </fileset>
-
+            <fileset dir="." includes="**/test/results/TEST-*.xml"/>
             <report format="frames" todir="${test.dir}/reports/html" />
         </junitreport>
     </target>

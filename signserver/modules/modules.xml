@@ -54,6 +54,9 @@
     <condition property="admingui.conditionenabled">
         <istrue value="${admingui.enabled}"/>
     </condition>
+    <condition property="clientcli.conditionenabled">
+        <istrue value="${clientcli.enabled}"/>
+    </condition>
 
 
 

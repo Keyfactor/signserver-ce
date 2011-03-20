@@ -234,30 +234,33 @@ adminws.enabled=true
 # Set to true to enable build of the TimeStampClient
 #
 # Default: true
-timestampclient.enabled=true
+#timestampclient.enabled=true
 
 # Set to true to enable build of the validation client.
 # For this to build must also signserverws.enabled be set
 # to true.
 #
 # Default: true
-validationclient.enabled=true
+#validationclient.enabled=true
 
 # Set to true to enable the PDF performance test client
 # Default: false
-pdfperformancetest.enabled=false
+#pdfperformancetest.enabled=false
 
 # Set to true to enable build of the SigningAndValidationAPI.
 # For this to build must also signserverws.enabled be set
 # to true.
 #
 # Default: true
-signingandvalidationapi.enabled=true
+#signingandvalidationapi.enabled=true
 
 # Set to enable build of the AdminGUI
 # Default: true
 admingui.enabled=true
 
+# Set to enable build of the ClientCLI
+# Default: true
+#clientcli.enabled=true
 
 # -------------- Cluster Class Loader Configuration ---------------------------
 #

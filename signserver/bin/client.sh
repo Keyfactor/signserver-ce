@@ -83,7 +83,7 @@ fi
 
 #CP="$CP":"$SIGNSRV_HOME/modules/SignServer-Client-CLI/dist/${MAIN_JAR}"
 
-CP="$CP:lib/log4j.jar:lib/ext/commons-cli-1.0.jar:lib/1.6/bcprov-jdk.jar:lib/cert-cvc.jar:lib/commons-lang-2.4.jar:lib/ejbca-util.jar:lib/1.6/bctsp-jdk.jar:lib/1.6/bcmail-jdk.jar:dist-client/timestampclient/timeStampClient.jar:modules/SignServer-Common/dist/SignServer-Common.jar:modules/SignServer-Client-SigningAndValidationAPI/dist/SignServer-Client-SigningAndValidationAPI.jar:modules/SignServer-Client-SignServerWS/dist/SignServer-Client-SignServerWS.jar:modules/SignServer-ejb-SignServerWS/dist/SignServer-ejb-SignServerWS.jar:modules/SignServer-Client-ValidationCLI/dist/SignServer-Client-ValidationCLI.jar:modules/SignServer-Client-CLI/dist/SignServer-Client-CLI.jar"
+CP="$CP:$SIGNSRV_HOME/lib/log4j.jar:$SIGNSRV_HOME/lib/ext/commons-cli-1.0.jar:$SIGNSRV_HOME/lib/1.6/bcprov-jdk.jar:$SIGNSRV_HOME/lib/cert-cvc.jar:$SIGNSRV_HOME/lib/commons-lang-2.4.jar:$SIGNSRV_HOME/lib/ejbca-util.jar:$SIGNSRV_HOME/lib/1.6/bctsp-jdk.jar:$SIGNSRV_HOME/lib/1.6/bcmail-jdk.jar:$SIGNSRV_HOME/dist-client/timestampclient/timeStampClient.jar:$SIGNSRV_HOME/modules/SignServer-Common/dist/SignServer-Common.jar:$SIGNSRV_HOME/modules/SignServer-Client-SigningAndValidationAPI/dist/SignServer-Client-SigningAndValidationAPI.jar:$SIGNSRV_HOME/modules/SignServer-Client-SignServerWS/dist/SignServer-Client-SignServerWS.jar:$SIGNSRV_HOME/modules/SignServer-ejb-SignServerWS/dist/SignServer-ejb-SignServerWS.jar:$SIGNSRV_HOME/modules/SignServer-Client-ValidationCLI/dist/SignServer-Client-ValidationCLI.jar:$SIGNSRV_HOME/modules/SignServer-Client-CLI/dist/SignServer-Client-CLI.jar"
 
 
 export SIGNSRV_HOME

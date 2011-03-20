@@ -61,7 +61,8 @@
     <target name="default" depends="build" description="Default target"/>
 
     <target name="build" depends="signserver, signserver-cli,
-        validationClient, signingAndValidationAPI, -build-admingui">
+        validationClient, signingAndValidationAPI, -build-admingui,
+        -build-clientcli">
             <antcall target="showtime"/>
     </target>
 
@@ -312,6 +313,16 @@ OS version                          = ${os.version}
     </target>
     <target name="-build-admingui" if="admingui.conditionenabled">
         <antcall target="admingui"/>
+    </target>
+
+    <!-- ClientCLI -->
+    <target name="clientcli"
+        description="Build the client CLI">
+        <ant antfile="${clientcli.dir}/build.xml" target="jar"
+            inheritall="false"/>
+    </target>
+    <target name="-build-clientcli" if="clientcli.conditionenabled">
+        <antcall target="clientcli"/>
     </target>
 
 

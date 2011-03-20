@@ -98,6 +98,7 @@ clusterclassloader.useclassversions = ${clusterclassloader.useclassversions}
 clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 admingui.enabled                    = ${admingui.enabled}
+clientcli.enabled                   = ${clientcli.enabled}
 includemodulesinbuild               = ${includemodulesinbuild}
 module.log4j.include                = ${module.log4j.include}
 module.pdfsigner.enabled            = ${module.pdfsigner.enabled}

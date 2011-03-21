@@ -236,6 +236,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
             <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>
             <zipfileset dir="lib/jaxws/" prefix="lib" >
                 <include name="*.jar" if="includejaxws" />
+                <exclude name="saaj*.jar"/>
             </zipfileset>
             <fileset dir="${server.dist.dir}">
                 <include name="*-ejb.jar" />

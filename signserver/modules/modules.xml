@@ -29,9 +29,7 @@
     </condition>
     <condition property="includejaxws">
         <or>
-            <istrue value="${signserverws.enabled}"/>
             <istrue value="${genericws.enabled}"/>
-            <istrue value="${validationws.enabled}"/>
         </or>
     </condition>
     <condition property="clusterclassloader.conditionenabled">

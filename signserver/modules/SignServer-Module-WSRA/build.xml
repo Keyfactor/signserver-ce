@@ -21,7 +21,13 @@
                 <istrue value="${genericws.enabled}"/>
             </and>
         </condition>
-        <fail unless="genericws.enabled.condition" 
+        <condition property="wsracondition">
+            <or>
+                <isset property="genericws.enabled.condition"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+        </condition>
+        <fail unless="wsracondition"
             message="Genericws must be enabled for this module to compile."/>
     </target>
 

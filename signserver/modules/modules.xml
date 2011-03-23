@@ -134,16 +134,10 @@
         <echo message="Module:  ${ant.project.name}"/>
         <property file="${user.home}/signserver_build.properties"/>
         <property file="../../signserver_build.properties"/>
-        <script language="javascript" setbeans="true"><![CDATA[
-            projectName = project.getProperty("ant.project.name");
-            enablename = "module." + projectName + ".enabled";
-            includename = "module." + projectName + ".include";
-            project.setProperty("moduleEnableProperty", enablename);
-            project.setProperty("moduleIncludeProperty", includename)
-            project.setProperty("moduleEnable", project.getProperty(enablename));
-            project.setProperty("moduleInclude", project.getProperty(includename));
-            ]]>
-        </script>
+        <taskdef name="setmoduleprops"
+            classname="org.signserver.anttasks.SetModuleEnablePropertiesTask"
+            classpath="../SignServer-Common/build/classes/"/>
+        <setmoduleprops/>
         <echo message="Enable:  ${moduleEnable}"/>
         <echo message="Include: ${moduleInclude}"/>
         <condition property="moduleEnable.condition">

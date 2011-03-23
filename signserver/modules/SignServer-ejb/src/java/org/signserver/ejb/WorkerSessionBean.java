@@ -83,7 +83,6 @@ import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.WorkerFactory;
 import org.signserver.server.log.WorkerLoggerException;
 import org.signserver.server.KeyUsageCounter;
-import org.signserver.server.cryptotokens.IKeyGenerator;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
 
@@ -190,7 +189,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 worker.getStatus().getActiveSignerConfig(), em);
 
         if (LOG.isDebugEnabled()) {
-            LOG.info("Worker[" + workerId + "]: " + "WorkerLogger: "
+            LOG.debug("Worker[" + workerId + "]: " + "WorkerLogger: "
                     + workerLogger);
         }
 

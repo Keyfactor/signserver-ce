@@ -84,6 +84,9 @@ public class ConnectDialog extends javax.swing.JDialog {
         TRUSTSTORE_TYPE_PEM
     };
 
+    private File connectFile;
+    private File defaultConnectFile;
+
     /** Creates new form ConnectDialog. */
     public ConnectDialog(final Frame parent, final boolean modal,
             File connectFile, File defaultConnectFile) {
@@ -98,6 +101,8 @@ public class ConnectDialog extends javax.swing.JDialog {
         if (connectFile == null) {
             connectFile = CONNECT_FILE;
         }
+        this.connectFile = connectFile;
+        this.defaultConnectFile = defaultConnectFile;
 
         if (connectFile.exists()) {
             loadSettingsFromFile(connectFile);
@@ -386,7 +391,7 @@ public class ConnectDialog extends javax.swing.JDialog {
             properties.put("truststorePassword", new String(settings.getTruststorePassword()));
             properties.put("keystoreType", settings.getKeystoreType());
             properties.put("keystoreFile", settings.getKeystoreFile());
-            properties.store(new FileOutputStream(CONNECT_FILE),
+            properties.store(new FileOutputStream(connectFile),
                     "Connect settings");
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Could not save configuration:\n"
@@ -536,7 +541,7 @@ public class ConnectDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_keystoreBrowseButtonActionPerformed
 
     private void defaultsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultsButtonActionPerformed
-        loadSettingsFromFile(DEFAULT_CONNECT_FILE);
+        loadSettingsFromFile(defaultConnectFile);
     }//GEN-LAST:event_defaultsButtonActionPerformed
 
     private void truststoreTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_truststoreTypeComboBoxActionPerformed

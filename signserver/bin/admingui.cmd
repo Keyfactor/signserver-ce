@@ -42,9 +42,9 @@ set i=%8
 set j=%9
 rem echo %a% %b% %c% %d% %e% %f% %g% %h% %i% %j%
 if "%JAVA_HOME%" == "" (
-  java -cp %CLASSPATH% -splash:modules/SignServer-AdminGUI/src/splash.png %class_name% %a% %b% %c% %d% %e% %f% %g% %h% %i% %j% -connectfile modules/SignServer-AdminGUI/connect.properties -defaultconnectfile modules/SignServer-AdminGUI/default_connect.properties
+  java -cp %CLASSPATH% -splash:%SIGNSRV_HOME%/modules/SignServer-AdminGUI/src/splash.png %class_name% %a% %b% %c% %d% %e% %f% %g% %h% %i% %j% -connectfile %SIGNSRV_HOME%/modules/SignServer-AdminGUI/connect.properties -defaultconnectfile %SIGNSRV_HOME%/modules/SignServer-AdminGUI/default_connect.properties
 ) else (
-  "%JAVA_HOME%\bin\java" -cp %CLASSPATH% -splash:modules/SignServer-AdminGUI/src/splash.png %class_name% %a% %b% %c% %d% %e% %f% %g% %h% %i% %j% -connectfile modules/SignServer-AdminGUI/connect.properties -defaultconnectfile modules/SignServer-AdminGUI/default_connect.properties
+  "%JAVA_HOME%\bin\java" -cp %CLASSPATH% -splash:%SIGNSRV_HOME%/modules/SignServer-AdminGUI/src/splash.png %class_name% %a% %b% %c% %d% %e% %f% %g% %h% %i% %j% -connectfile %SIGNSRV_HOME%/modules/SignServer-AdminGUI/connect.properties -defaultconnectfile %SIGNSRV_HOME%/modules/SignServer-AdminGUI/default_connect.properties
 
 )
 :end

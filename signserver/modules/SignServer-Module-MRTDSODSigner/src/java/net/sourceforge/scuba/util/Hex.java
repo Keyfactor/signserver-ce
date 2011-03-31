@@ -78,7 +78,7 @@ public final class Hex {
                     + ((n < 0x00000010) ? "0" : "")
                     + Integer.toHexString(s);
       if(result.length() > 4) {
-          result = result.substring(result.length()-4, result.length()); 
+          result = result.substring(result.length() - 4, result.length()); 
       }
       return result.toUpperCase();
    }
@@ -120,9 +120,7 @@ public final class Hex {
    }
 
    public static String bytesToHexString(byte[] text, int numRow) {
-       if(text == null) {
-           return "NULL";
-       }
+       if(text == null) { return "NULL"; }
        return bytesToHexString(text,0,text.length, numRow);
     }
    
@@ -164,12 +162,12 @@ public final class Hex {
     */
    public static String bytesToHexString(byte[] text, int offset, int length, int numRow) {
       if(text == null) return "NULL";
-      String result = "";
+      StringBuffer result = new StringBuffer();
       for (int i = 0; i < length; i++) {
-         if(i != 0 && i % numRow == 0) result += "\n";
-         result += byteToHexString(text[offset + i]);
+         if(i != 0 && i % numRow == 0) result.append("\n");
+         result.append(byteToHexString(text[offset + i]));
       }
-      return result;
+      return result.toString();
    }
 
    public static String bytesToHexString(byte[] text, int offset, int length) {
@@ -189,9 +187,7 @@ public final class Hex {
    public static byte hexStringToByte(String text)
    throws NumberFormatException {
       byte[] bytes = hexStringToBytes(text);
-      if (bytes.length != 1) {
-         throw new NumberFormatException();
-      }
+      if (bytes.length != 1) { throw new NumberFormatException(); }
       return bytes[0];
    }
 
@@ -207,9 +203,7 @@ public final class Hex {
    public static short hexStringToShort(String text)
    throws NumberFormatException {
       byte[] bytes = hexStringToBytes(text);
-      if (bytes.length != 2) {
-         throw new NumberFormatException();
-      }
+      if (bytes.length != 2) { throw new NumberFormatException(); }
       return (short)(((bytes[0] & 0x000000FF) << 8)
                     | (bytes[1] & 0x000000FF));
    }
@@ -226,9 +220,7 @@ public final class Hex {
    public static int hexStringToInt(String text)
    throws NumberFormatException {
       byte[] bytes = hexStringToBytes(text);
-      if (bytes.length != 4) {
-         throw new NumberFormatException();
-      }
+      if (bytes.length != 4) { throw new NumberFormatException(); }
       return (int)(((bytes[0] & 0x000000FF) << 24)
                  | ((bytes[1] & 0x000000FF) << 16)
                  | ((bytes[2] & 0x000000FF) << 8)
@@ -250,9 +242,7 @@ public final class Hex {
     */
    public static byte[] hexStringToBytes(String text)
    throws NumberFormatException {
-      if (text==null) {
-         return null;
-      }
+      if (text == null) { return null; }
       StringBuffer hexText = new StringBuffer();
       for (int i=0; i < text.length(); i++) {
          char c = text.charAt(i);
@@ -324,7 +314,7 @@ public final class Hex {
     * @return the padded text.
     */
    private static String pad(String txt, int width, char padChar, boolean left) {
-      String result = new String(txt);
+      String result = txt;
       String padString = Character.toString(padChar);
       for (int i = txt.length(); i < width; i++) {
          if (left) {
@@ -345,13 +335,12 @@ public final class Hex {
     * @return spaced hexadecimal representation of <code>data</code>.
     */
    public static String bytesToSpacedHexString(byte[] data) {
-      String result = "";
+      StringBuffer result = new StringBuffer();
       for (int i = 0; i < data.length; i++) {
-         result += byteToHexString(data[i]);
-         result += (i < data.length - 1) ? " " : "";
+         result.append(byteToHexString(data[i]));
+         result.append((i < data.length - 1) ? " " : "");
       }
-      result = result.toUpperCase();
-      return result;
+      return result.toString().toUpperCase();
    }
 
    /**
@@ -379,12 +368,12 @@ public final class Hex {
    }
 
    public static String bytesToASCIIString(byte[] data) {
-      String result = "";
+      StringBuffer result = new StringBuffer();
       for (int i = 0; i < data.length; i++) {
          char c = (char)data[i];
-         result += Character.toString(PRINTABLE.indexOf(c) >= 0 ? c : '.');
+         result.append(Character.toString(PRINTABLE.indexOf(c) >= 0 ? c : '.'));
       }
-      return result;
+      return result.toString();
    }
 
    /**
@@ -469,24 +458,24 @@ public final class Hex {
    public static String bytesToPrettyString(byte[] data, int columns,
                           boolean useIndex, int indexPadWidth, String altIndex,
                           boolean useASCII) {
-      String result = "";
+      StringBuffer result = new StringBuffer();
       String[] hexStrings = bytesToSpacedHexStrings(data,columns,3 * columns);
       String[] asciiStrings = bytesToASCIIStrings(data,columns,columns);
       for (int j = 0; j < hexStrings.length; j++) {
          if (useIndex) {
             String prefix = Integer.toHexString(j * columns).toUpperCase();
-            result += pad(prefix,indexPadWidth,'0',LEFT) + ": ";
+            result.append(pad(prefix,indexPadWidth,'0',LEFT) + ": ");
          } else {
             String prefix = j == 0 ? altIndex : "";
-            result += pad(prefix,indexPadWidth,' ',LEFT) + " ";
+            result.append(pad(prefix,indexPadWidth,' ',LEFT) + " ");
          }
-         result += hexStrings[j];
+         result.append(hexStrings[j]);
          if (useASCII) {
-            result += " " + asciiStrings[j];
+            result.append(" " + asciiStrings[j]);
          }
-         result += "\n";
+         result.append("\n");
       }
-      return result;
+      return result.toString();
    }
 }
 

@@ -273,6 +273,10 @@ public class BERTLVInputStream extends InputStream
 	public void close() throws IOException {
 		in.close();
 	}
+	
+	public String toString() {
+		return state.toString();
+	}
 
 	private static boolean isPrimitive(int tag) {
 		int i = 3;

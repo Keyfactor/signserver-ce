@@ -583,6 +583,7 @@ public class BERTLVObject
 			return (byte[])value;
 		}
 		throw new IllegalStateException("Cannot decode value of "
-				+ value.getClass() + " (tag = " + Hex.intToHexString(tag) + ")");
+				+ (value == null ? "null" : value.getClass().getCanonicalName())
+				+ " (tag = " + Hex.intToHexString(tag) + ")");
 	}
 }

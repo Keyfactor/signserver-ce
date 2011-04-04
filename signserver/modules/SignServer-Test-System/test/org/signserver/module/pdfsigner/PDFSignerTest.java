@@ -269,6 +269,7 @@ public class PDFSignerTest extends TestCase {
             Calendar cal = Calendar.getInstance(Locale.US);
             cal.set(Calendar.YEAR, 2010);
             cal.set(Calendar.MONTH, 3);
+            cal.set(Calendar.DAY_OF_MONTH, 10);
             Date date = cal.getTime();
             Map<String, String> fields = new HashMap<String, String>();
             fields.put("WORKERID", "4311");

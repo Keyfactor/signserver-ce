@@ -326,12 +326,18 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <subant target="test">
             <fileset dir="." includes="${tests.modules.includes}"/>
         </subant>
+        <antcall target="test:report"/>
+    </target>
 
+    <target name="test:report"
+        description="Create HTML test report from previously run tests">
         <!-- Create report for all tests -->
         <junitreport todir="${test.dir}/reports">
             <fileset dir="." includes="**/test/results/TEST-*.xml"/>
             <report format="frames" todir="${test.dir}/reports/html" />
         </junitreport>
+        <property name="reportfile" location="${test.dir}/reports/html/index.html"/>
+        <echo message="Test report available at: file://${reportfile}"/>
     </target>
 
     <target name="test:signserver:runall"

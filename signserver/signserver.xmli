@@ -645,8 +645,28 @@ module.wsra.enabled                 = ${module.wsra.enabled}
      <!--   Target for building signingAndValidationAPI   -->
      <!--                                                 -->
     <target name="signingAndValidationAPI" depends="signserver-ejb.jar" if="signingandvalidationapi.conditionenabled" >
-        <ant target="test" inheritall="false"
+        <ant target="jar" inheritall="false"
             antfile="${clientsigningandvalidationapi.dir}/build.xml"/>
+        <mkdir dir="${signingAndValidationDir}/lib"/>
+        <copy file="${clientsigningandvalidationapi.dir}/dist/SignServer-Client-SigningAndValidationAPI.jar" tofile="${signingAndValidationDir}/signingandvalidationapi.jar"/>
+        <copy todir="${signingAndValidationDir}/lib">
+            <fileset dir="${signservercommon.dir}/dist" includes="SignServer-Common.jar"/>
+            <fileset dir="${signserverws.dir}/dist" includes="SignServer-ejb-SignServerWS.jar"/>
+            <fileset dir="${clientsignserverws.dir}/dist" includes="SignServer-Client-SignServerWS.jar"/>
+            <fileset dir="${signserverejb.dir}/dist" includes="SignServer-ejb.jar"/>
+            <fileset dir="${lib}">
+                <include name="commons-logging.jar"/>
+                <include name="log4j.jar"/>
+                <include name="cert-cvc.jar"/>
+                <include name="ejbca-util.jar"/>
+                <include name="commons-collections-3.2.jar"/>
+                <include name="commons-io.jar"/>
+                <include name="commons-lang-2.4.jar"/>
+            </fileset>
+            <fileset dir="${lib}/1.6">
+                <include name="bcprov-jdk.jar"/>
+            </fileset>
+        </copy>
     </target>
 
     <target name="martest">

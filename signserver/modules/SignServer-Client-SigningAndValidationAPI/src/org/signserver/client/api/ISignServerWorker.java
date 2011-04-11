@@ -24,7 +24,7 @@ import org.signserver.common.SignServerException;
  * Interface for requesting a worker to process something.
  * 
  * @author Markus Kilås
- * @version $Id: ISignServerWorker.java -1   $
+ * @version $Id$
  */
 public interface ISignServerWorker {
 	

@@ -19,7 +19,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * Implements ISigningAndValidation using EJB remote interface.
  * 
  * @author Markus Kilås
- * @version $Id: SigningAndValidationEJB.java -1   $
+ * @version $Id$
  */
 public class SigningAndValidationEJB implements ISigningAndValidation {
 

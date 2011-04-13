@@ -3175,7 +3175,8 @@ in the ServiceConfig class.
 Other basic properties used to configure all services are:
 ACTIVE when set to "TRUE" means that the service is active and should be run.
 INTERVAL defining the interval in seconds of how often the service should be run.
-CRON used as a complement to INTERVAL to specify on a calendar basis.
+INTERVALMS defining the interval in milliseconds of how often the service should be run.
+CRON used instead of INTERVAL or INTERVALMS to specify on a calendar basis.
                         </p>
                         <p>
 To create a custom timed service class it should implement the org.signserver.server.timedservices.ITimedService interface. There exists a BaseTimedService that can be inherited taking care of most of the basic functionality. If the BaseTimedService is inherited the the only method that needs to be implemented is the 'work()' method.
@@ -3957,10 +3958,16 @@ A Timed Service framework supports a couple basic properties that is used to cal
 <b>SINGLETON</b> =  "TRUE" if the service only should be run on one of the nodes in the cluster at the time. If it's not set or set to FALSE is the service run simultaneously on all nodes in the cluster. If the node running a singleton service fails will another node sense this and start up the service.
                 </p>
                 <p>
-<b>INTERVAL</b> =  Property that should define the interval i seconds the service should run.
+<b>INTERVAL</b> = Property defining the interval in seconds the service should run.
                 </p>
                 <p>
-<b>CRON</b> = Property that should define a CRON expression of how often the service should run.  It should conform to Unix CRON standard. (One of INTERVAL or CRON is required)
+<b>INTERVALMS</b> = Property defining the interval in milliseconds the service
+should run. Notice that the platform and application server might put a lower
+bound on the value. The lower limit for GlassFish is by default 7000 milliseconds
+but can be changed by editing minimum-delivery-interval-in-millis in domain.xml.
+                </p>
+                <p>
+<b>CRON</b> = Property that should define a CRON expression of how often the service should run.  It should conform to Unix CRON standard. (One and only one of INTERVAL, INTERVALMS or CRON is required)
                 </p>
 
                 <subsection name="SignerStatusReportTimedService">

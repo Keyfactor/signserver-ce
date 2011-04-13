@@ -41,17 +41,24 @@ public class ServiceConfig {
 	 */
     public static final String SINGLETON = "SINGLETON";
     
-	/**
-	 * Property that should define the interval i seconds the service should run.
-	 */
+    /**
+     * Property that defines the interval the service should run (in seconds).
+     */
     public static final String INTERVAL = "INTERVAL";
     
-    
-	/**
-	 * Property that should define a CRON expression of how often the service should run.
-	 * It should conform to Unix CRON standard. See developers manual for more details.
-	 */
+    /**
+     * Property that should define a CRON expression of how often the service
+     * should run.
+     * It should conform to Unix CRON standard. See developers manual for more
+     * details.
+     */
     public static final String CRON = "CRON";
+
+    /**
+     * Property that defines the interval the service should run (in
+     * milliseconds).
+     */
+    public static final String INTERVALMS = "INTERVALMS";
     
     /**
      * Internal setting determining the  last time the service was runned

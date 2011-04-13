@@ -23,7 +23,10 @@ import org.signserver.common.ServiceStatus;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.BaseWorker;
 
-
+/**
+ *
+ * @version $Id$
+ */
 public abstract class BaseTimedService extends BaseWorker implements ITimedService {
 	 
 	//Private Property constants
@@ -41,38 +44,42 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     /**
      * @see org.signserver.server.timedservices.ITimedService#getNextInterval()
      */
-
-
     public long getNextInterval() {
     	long retval = DONT_EXECUTE;
-    	String interval = config.getProperties().getProperty(ServiceConfig.INTERVAL);
-    	String cronExpression = config.getProperties().getProperty(ServiceConfig.CRON);
+    	final String interval
+                = config.getProperties().getProperty(ServiceConfig.INTERVAL);
+        final String intervalMs
+                = config.getProperties().getProperty(ServiceConfig.INTERVALMS);
+    	final String cronExpression
+                = config.getProperties().getProperty(ServiceConfig.CRON);
 
-    	if(interval == null && cronExpression == null){
-    		log.warn("Warning neither an interval nor CRON expression is defined for service with id: " + workerId);
-    	}
-
-    	if(interval != null && cronExpression != null){
-    		log.error("Error an interval and a CRON expression cannot both be defined for service with id: " + workerId);
-    	}else{
-    		if(interval != null){
-    			try{
-    				retval = Long.parseLong(interval) * 1000;
-    			}catch(NumberFormatException e){
-    				log.error("Error in Service configuration, Interval must contains numbers only");
-    			}
-    		}
-    		if(cronExpression != null){
-    			try{
-    				CronExpression ce = new CronExpression(cronExpression);
-    				Date nextDate = ce.getNextValidTimeAfter(new Date());						
-    				retval = (long) (nextDate.getTime() - System.currentTimeMillis());
-    			}catch(ParseException e){
-    				log.error("Error in Service configuration, illegal CRON expression : " + cronExpression + " defined for service with id " + workerId);
-    			}
-    		}
-    	}
-
+    	if (interval == null && cronExpression == null && intervalMs == null) {
+            log.warn("Neither an interval (in seconds or milliseconds) nor CRON expression defined for service with id: " + workerId);
+    	} else if ((interval != null && cronExpression != null)
+                || (interval != null && intervalMs != null)
+                || (cronExpression != null && intervalMs != null)) {
+            log.error("More than on of " + ServiceConfig.INTERVAL + ", " + ServiceConfig.INTERVALMS + " and " + ServiceConfig.CRON +" specified for service with id: " + workerId);
+        } else if (interval != null) {
+            try {
+                retval = Long.parseLong(interval) * 1000;
+            } catch(NumberFormatException e) {
+                log.error("Error in Service configuration, Interval must contains numbers only. Service id: " + workerId);
+            }
+        } else if (intervalMs != null) {
+            try {
+                retval = Long.parseLong(intervalMs);
+            } catch(NumberFormatException e) {
+                log.error("Error in Service configuration, Interval must contains numbers only. Service id: " + workerId);
+            }
+        } else if(cronExpression != null){
+            try {
+                CronExpression ce = new CronExpression(cronExpression);
+                Date nextDate = ce.getNextValidTimeAfter(new Date());
+                retval = (long) (nextDate.getTime() - System.currentTimeMillis());
+            } catch(ParseException e) {
+                log.error("Error in Service configuration, illegal CRON expression : " + cronExpression + " defined for service with id " + workerId);
+            }
+        }
     	return retval;
     }
 

@@ -29,7 +29,10 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
-
+/**
+ *
+ * @version $Id$
+ */
 public class BaseServiceTest extends TestCase {
 
 	private static IGlobalConfigurationSession.IRemote gCSession = null;
@@ -37,6 +40,7 @@ public class BaseServiceTest extends TestCase {
 	private static String tmpFile;
 
         private static final int INTERVAL = 7;
+        private static final int INTERVALMS = 7000;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -134,10 +138,28 @@ public class BaseServiceTest extends TestCase {
                         && readCount <= oldReadCount + 1);
 	}
 
+        public void test06intervalMs() throws Exception{
+                sSSession.removeWorkerProperty(17, ServiceConfig.SINGLETON);
+		sSSession.removeWorkerProperty(17, ServiceConfig.INTERVAL);
+                sSSession.removeWorkerProperty(17, ServiceConfig.CRON);
+                sSSession.setWorkerProperty(17, ServiceConfig.INTERVALMS,
+                        String.valueOf(INTERVALMS));
+		sSSession.reloadConfiguration(17);
+
+                final int oldReadCount = readCount();
+
+                Thread.sleep(3 * INTERVALMS + 1000);
+                final int readCount = readCount();
+		assertTrue("readCount: " + readCount,
+                        readCount >= oldReadCount + 3
+                        && readCount <= oldReadCount + 4);
+	}
+
 	public void test99TearDownDatabase() throws Exception{
 		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH");
 		  
 		  sSSession.removeWorkerProperty(17, "INTERVAL");
+                  sSSession.removeWorkerProperty(17, "INTERVALMS");
 		  sSSession.removeWorkerProperty(17, "CRON");
 		  sSSession.removeWorkerProperty(17, ServiceConfig.SINGLETON);
 		  String signserverhome = System.getenv("SIGNSERVER_HOME");

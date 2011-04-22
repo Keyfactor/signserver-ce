@@ -2433,7 +2433,9 @@ Default is not set (no timestamping).
                         <p>
         <b>REFUSE_DOUBLE_INDIRECT_OBJECTS</b>=
         True if PDF documents containing multiple indirect objects with the
-        same name should be refused.
+        same name should be refused. Used to mitigate a collision signature 
+        vulnerability described in <a href="http://pdfsig-collision.florz.de/">http://pdfsig-collision.florz.de/</a>.
+        
                         </p>
                     </subsubsection>
                 </subsection>

@@ -100,7 +100,8 @@ import org.signserver.server.UsernamePasswordClientCredential;
  *
  * REFUSE_DOUBLE_INDIRECT_OBJECTS = True if documents with multiple indirect
  * objects with the same object number and generation number pair should be
- * refused.
+ * refused. Used to mitigate a collision signature vulnerability described in 
+ * http://pdfsig-collision.florz.de/
  *
  * @author Tomas Gustavsson
  * @version $Id$
@@ -145,6 +146,7 @@ public class PDFSigner extends BaseSigner {
 	public static final String EMBED_OCSP_RESPONSE = "EMBED_OCSP_RESPONSE";
 	public static final boolean EMBED_OCSP_RESPONSE_DEFAULT = false;
 
+        /** Used to mitigate a collision signature vulnerability described in http://pdfsig-collision.florz.de/ */
         public static final String REFUSE_DOUBLE_INDIRECT_OBJECTS
                 = "REFUSE_DOUBLE_INDIRECT_OBJECTS";
 
@@ -169,7 +171,9 @@ public class PDFSigner extends BaseSigner {
                 // Check properties for archive to disk
                 if (StringUtils.equalsIgnoreCase("TRUE",
                         config.getProperty(PROPERTY_ARCHIVETODISK))) {
-                    log.debug("Archiving to disk");
+                	if (log.isDebugEnabled()) {
+                		log.debug("Archiving to disk");
+                	}
 
                     final String path = config.getProperty(PROPERTY_ARCHIVETODISK_PATH_BASE);
                     if (path == null) {
@@ -474,7 +478,9 @@ public class PDFSigner extends BaseSigner {
 	}
 
     private void archiveToDisk(ISignRequest sReq, byte[] signedbytes, RequestContext requestContext) throws SignServerException {
-        log.debug("Archiving to disk");
+    	if (log.isDebugEnabled()) {
+    		log.debug("Archiving to disk");
+    	}
 
         // Fill in fields that can be used to construct path and filename
         final Map<String, String> fields = new HashMap<String, String>();
@@ -604,7 +610,9 @@ public class PDFSigner extends BaseSigner {
 
     private void checkForDuplicateObjects(byte[] pdfbytes) throws IOException,
             SignServerException {
-        log.debug("<checkForDuplicateObjects");
+    	if (log.isDebugEnabled()) {
+    		log.debug(">checkForDuplicateObjects");
+    	}
         final PRTokeniser tokens = new PRTokeniser(pdfbytes);
         final Set<String> idents = new HashSet<String>();
         final byte[] line = new byte[16];
@@ -619,11 +627,15 @@ public class PDFSigner extends BaseSigner {
                         log.debug("Object: " + ident);
                     }
                 } else {
-                    log.debug("Duplicate object: " + ident);
+                	if (log.isDebugEnabled()) {
+                		log.debug("Duplicate object: " + ident);
+                	}
                     throw new SignServerException("Incorrect document");
                 }
             }
         }
-        log.debug(">checkForDuplicateObjects");
+    	if (log.isDebugEnabled()) {
+    		log.debug("<checkForDuplicateObjects");
+    	}
     }
 }

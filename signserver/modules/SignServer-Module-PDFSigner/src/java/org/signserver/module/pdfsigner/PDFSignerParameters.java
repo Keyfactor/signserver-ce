@@ -65,7 +65,8 @@ public class PDFSignerParameters {
 	private boolean embed_crl = PDFSigner.EMBED_CRL_DEFAULT;
 	private boolean embed_ocsp_response = PDFSigner.EMBED_OCSP_RESPONSE_DEFAULT;
 
-        private boolean refuseDoubleIndirectObjects;
+    /** Used to mitigate a collision signature vulnerability described in http://pdfsig-collision.florz.de/ */
+    private boolean refuseDoubleIndirectObjects;
 
 	// helper variables
 	private boolean use_custom_image = false;

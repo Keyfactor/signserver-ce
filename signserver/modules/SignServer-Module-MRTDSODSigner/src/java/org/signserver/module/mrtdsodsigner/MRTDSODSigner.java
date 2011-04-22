@@ -323,7 +323,7 @@ public class MRTDSODSigner extends BaseSigner {
                 throw new GeneralSecurityException("Signature not consistent");
             }
 
-            // Find the issuer certificate from the configurated chain
+            // Find the issuer certificate from the configured chain
             final X509Certificate issuerCert = (chain == null ? null : findIssuerCert(chain, signerCert));
             if (issuerCert == null) {
                 log.error("Failed to verify certificate chain");

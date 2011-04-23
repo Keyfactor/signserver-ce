@@ -270,6 +270,9 @@ admingui.enabled=true
 # in order for signers to be configured.
 # If the cluster classloader is used, this option should not be set.
 #
+# If module.X.include=true the module X is built in.
+# If includemodulesinbuild=true _all_ modules are built in.
+#
 # Default: empty (=false)
 #includemodulesinbuild=
 

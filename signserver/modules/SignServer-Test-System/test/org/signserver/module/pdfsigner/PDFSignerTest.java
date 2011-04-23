@@ -341,6 +341,9 @@ public class PDFSignerTest extends TestCase {
             } catch (SignServerException ok) {
                 // OK
             }
+            
+            // Test that we can still sign a normal PDF when the check is enables
+            signDocument(WORKERID, pdfOk);
         }
 	
 	public void test99TearDownDatabase() throws Exception{

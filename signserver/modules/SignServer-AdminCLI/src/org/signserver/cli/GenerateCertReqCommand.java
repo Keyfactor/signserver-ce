@@ -116,8 +116,8 @@ import org.signserver.common.PKCS10CertReqInfo;
      	String[] resources =  {"Usage: signserver generatecertreq <-host hostname (optional)> <workerid> <dn> <signature algorithm>  <cert-req-filename> [-explicitecc] [-nextkey]\n" +
                                "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem\n"
                                + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem -nextkey\n"
-                               + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem -explicitecc\n"
-                               + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem -explicitecc -nextkey\n\n",
+                               + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithECDSA\" /home/user/certtreq.pem -explicitecc\n"
+                               + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithECDSA\" /home/user/certtreq.pem -explicitecc -nextkey\n\n",
                                "Error: No worker with the given name could be found",
                                "PKCS10 Request successfully written to file "};
          execute(hostname,resources);   

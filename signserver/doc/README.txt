@@ -6,7 +6,7 @@ It recommended that you first read at the SignServer web site
 at www.signserver.org. It contains the most recent information about
 the framework. It is also possible to build the web site locally using ant
 and the task 'ant doc'. The generated documentation will be placed in the directory
-'tmp/htdocs'.
+'doc/htdocs'.
 
 Licenses
 -----------------------------------------------------------------------------------

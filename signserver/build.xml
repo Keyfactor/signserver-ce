@@ -662,25 +662,25 @@ OS version                          = ${os.version}
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
         <property name="tarball.tar" value="../signserver-${signserver.zipversion}-src.tar" />
         <property name="tarball.tar.gz" value="${tarball.tar}.gz" />
-        <tar tarfile="${tarball.tar}" basedir=".." longfile="gnu">
-            <include name="signserver/**" />
-            <exclude name="signserver/doc/lgpl-**" />
+        <tar tarfile="${tarball.tar}" basedir="." longfile="gnu">
+            <include name="**/**" />
+            <exclude name="doc/lgpl-**" />
             <exclude name="**/CVS/**" />
-            <exclude name="signserver/signserver_build.properties" />
-            <exclude name="signserver/tmp/**" />
-            <exclude name="signserver/p12/**" />
+            <exclude name="signserver_build.properties" />
+            <exclude name="tmp/**" />
+            <exclude name="p12/**" />
             <exclude name="**/dist/**" />
             <exclude name="**/build/**" />
-            <exclude name="signserver/SignServer-AdminGUI/lib/**" />
-            <exclude name="signserver/dist-client/**" />
-            <exclude name="signserver/dist-server/**" />
-            <exclude name="signserver/out/**" />
-            <exclude name="signserver/eclipseBuild/**" />
+            <exclude name="SignServer-AdminGUI/lib/**" />
+            <exclude name="dist-client/**" />
+            <exclude name="dist-server/**" />
+            <exclude name="out/**" />
+            <exclude name="eclipseBuild/**" />
             <exclude name="**/*.class" />
-            <exclude name="signserver/.classpath" />
-            <exclude name="signserver/.project" />
-            <exclude name="signserver/.eclipse/**" />
-            <exclude name="signserver/.settings/**" />
+            <exclude name=".classpath" />
+            <exclude name=".project" />
+            <exclude name=".eclipse/**" />
+            <exclude name=".settings/**" />
             <exclude name="**/.cvsignore" />
             <exclude name="**/*.sh" />
             <exclude name="**/nbproject/private/**" />

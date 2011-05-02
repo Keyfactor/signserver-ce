@@ -88,18 +88,23 @@ public class ValidationWSServiceTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
+        LOG.info("Initilizing test using WS URL: " + getWsEndPointUrl());
         final QName qname
                 = new QName("gen.ws.validationservice.protocol.signserver.org",
                 "ValidationWSService");
         final ValidationWSService wsService = new ValidationWSService(
-               new URL(ENDPOINT), qname);
+               new URL(getWsEndPointUrl()), qname);
         ws =  wsService.getValidationWSPort();
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
+    }
+
+    /** Overridden by org.signserver.test.validationws.v32.ValidationWSServiceTest */
+    protected String getWsEndPointUrl() {
+    	return ENDPOINT;
     }
 
     // TODO add test methods here. The name must begin with 'test'. For example:

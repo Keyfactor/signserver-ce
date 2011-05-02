@@ -57,9 +57,6 @@ public class SignServerWSServiceTest extends TestCase {
     private static final String ENDPOINT =
             "http://localhost:8080/signserver/signserverws/signserverws?wsdl";
 
-//    private static final String ENDPOINT =
-//            "http://localhost:8080/signserver/signserverws/SignServerWSService?wsdl";
-
     /** Worker ID as defined in test-configuration.properties. **/
     private static final String WORKERID = "7001";
 
@@ -75,17 +72,22 @@ public class SignServerWSServiceTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
+        LOG.info("Initilizing test using WS URL: " + getWsEndPointUrl());
         QName qname = new QName("gen.ws.protocol.signserver.org",
                 "SignServerWSService");
         SignServerWSService signServerWSService = new SignServerWSService(
-               new URL(ENDPOINT), qname);
+               new URL(getWsEndPointUrl()), qname);
         ws =  signServerWSService.getSignServerWSPort();
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
+    }
+    
+    /** Overridden by org.signserver.test.signserverws.v32.SignServerWSServiceTest */
+    protected String getWsEndPointUrl() {
+    	return ENDPOINT;
     }
 
     // TODO add test methods here. The name must begin with 'test'. For example:

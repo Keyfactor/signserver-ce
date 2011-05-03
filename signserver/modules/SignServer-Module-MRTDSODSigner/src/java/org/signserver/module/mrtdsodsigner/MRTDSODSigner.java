@@ -47,7 +47,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
 /**
- * A Signer signing creating a signed SOD file to be stored in ePassports.
+ * A Signer signing creating a signed Security Object Data (SOD) file to be stored in ePassports.
  *
  * Properties:
  * <ul>

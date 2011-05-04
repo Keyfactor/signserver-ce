@@ -130,9 +130,13 @@ public class SODSignRequest extends ProcessRequest implements ISignRequest {
             if (ldsVersion.isEmpty()) {
                 ldsVersion = null;
             }
-            unicodeVersion = in.readUTF();
-            if (unicodeVersion.isEmpty()) {
-                unicodeVersion = null;
+            try {
+            	unicodeVersion = in.readUTF();
+            	if (unicodeVersion.isEmpty()) {
+            		unicodeVersion = null;
+            	}
+            } catch (EOFException ignored) {
+                LOG.debug("No unicode version in request");
             }
         } catch (EOFException ignored) {
             LOG.debug("No LDS version in request");

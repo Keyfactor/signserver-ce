@@ -52,7 +52,6 @@ import net.sourceforge.scuba.tlv.BERTLVObject;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
@@ -83,7 +82,7 @@ import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.signserver.module.mrtdsodsigner.bc.asn1.icao.LDSVersionInfo;
 
 /**
- * File structure for the EF_SOD file.
+ * File structure for the EF_SOD (Security Object Data) file.
  * This file contains the security object.
  * 
  * @author Wojciech Mostowski (woj@cs.ru.nl)
@@ -175,7 +174,7 @@ public class SODFile extends PassportFile
 	 * @param digestAlgorithm a digest algorithm, such as "SHA1" or "SHA256"
 	 * @param digestEncryptionAlgorithm a digest encryption algorithm, such as "SHA256withRSA"
 	 * @param dataGroupHashes maps datagroupnumbers (1 to 16) to hashes of the data groups
-	 * @param encryptedDigest ???
+	 * @param encryptedDigest the signature (the encrypted digest) over the hashes.
 	 * @param docSigningCertificate the document signing certificate
 	 * 
 	 * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
@@ -229,6 +228,8 @@ public class SODFile extends PassportFile
      * @param privateKey private key to sign the data
      * @param docSigningCertificate the document signing certificate
      * @param provider specific signature provider that should be used to create the signature
+     * @param ldsVersion version of the Logical Data Structure (LDS) in the format "aabb". (Example: 1.8 becomes "0108".) Before LDS version 1.8 this should be null.
+     * @param unicodeVersion version of the Unicode Standard in the format "aabbcc". (Example: 4.0.0 becomes "040000".) Before LDS version 1.8 this should be null.
      *
      * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
      * @throws CertificateException if the document signing certificate cannot be used

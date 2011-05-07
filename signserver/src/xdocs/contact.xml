@@ -5,16 +5,37 @@
   </properties>
 
   <body>
-<section name="Support">
+<section name="Commercial Support">
 <p>
-If you need commercial support or professional services, read more about <a href="http://www.primekey.se/Services/Support/">PrimeKey's support services</a>.
+<i>Ready-made commercial SignServer support</i><br/>
+<a href="http://www.primekey.se/Services/Support">Support programs</a> and other qualified 
+professional services are provided by <a href="http://www.primekey.se">PrimeKey Solutions AB</a>.
 </p>
+</section>
+
+<section name="Contributors">
+<p>
+The best way to contact the project admins are using email.
+</p>
+<ul>
+<li>Send an email to the signserver-devlop <a href="#Mailing%20Lists">mailing list</a>.</li>
+<li>Send an email directly to a project <a href="http://sourceforge.net/projects/signserver/">administrator</a>.</li>
+<li>Send an email directly to <i>ejbca-support at primekey dot se</i>.</li>
+</ul>
 </section>
 
 <section name="Documentation">
     <p>
-    First you should look at the documentation resources on this site.
+First of all, have a look at the SignServer documentation resources gathered below 
+"Documentation" in the main menu.
     </p>
+</section>
+
+<section name="Training">
+<p>
+<i>Established SignServer Training</i><br/>
+<a href="http://www.primekey.se/Services/Training">Training Courses</a> for advanced users can be requested from PrimeKey and their partners.
+</p>
 </section>
 
 <section name="Mailing Lists">
@@ -27,8 +48,8 @@ If you need commercial support or professional services, read more about <a href
  list about new releases and patches.
 </p>
 <p>
-<a href="http://lists.sourceforge.net/mailman/listinfo/signserver-develop">signserver-develop</a> is used for development
-discussions of a more technical nature. 
+<a href="http://lists.sourceforge.net/mailman/listinfo/signserver-develop">signserver-develop</a> is used for
+discussions of a more technical nature. Almost anything regarding SignServer can be posted on this list. 
 </p>
 </section>
 
@@ -46,12 +67,6 @@ discussions of a more technical nature.
     <p>
     Connect you IRC-chat program to <a href="irc://#signserver@irc.freenode.net">#signserver channel at irc.freenode.net</a>.
     </p>
-</section>
-
-<section name="Project Administrators">
-<p> 
-You can always reach the project administrators by contacting <a href="http://www.primekey.se/Services/Support/Get+Support/">PrimeKey</a>.
-</p>
 </section>
 
   </body>

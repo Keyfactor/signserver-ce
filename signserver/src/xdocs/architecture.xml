@@ -22,7 +22,7 @@ There are three kind of processable services.
 <li>Group key service framework used to manage and to distribute group keys for different applications, these keys can be both symmetric and asymmetric.</li>
 </ul>
 <p> 
-In addition to processable services there also exists another concept called Timed Service (called just 'service' version 2.0) which are plug-ins run at defined intervals performing maintenance or reporting routines.
+In addition to processable services there also exists another concept called Timed Service which are plug-ins run at defined intervals performing maintenance or reporting routines.
 </p>
 <p>
 Out-of-the-box are there several signers ready to be used. They can easily be configured after installation of SignServer. 

@@ -6,46 +6,38 @@
   </properties>
 
 <body>
-  <section name="Hard Token Management Framework Features">
-  <p>
-    The Core Hard Token Management Framework is a set of API used to simplify
-    the development of Token Management applications. It contains:
-    </p>
+  <section name="Features">
+    <p>Built on the JEE specification.</p>
 <ul>
-<li>a WAR application containing the basic applet</li>
-<li>A client installation package for Windows installing the necessary DLLs</li>
-<li>API for simple calls to the tokens, such as 'getCertificates', 'changePIN' etc</li>
-<li>WS API to access EJBCA for generating certificate, fetching PUK data and so on</li>
-<li>API for storing information locally on the computer such as administrator settings</li>
-<li>API for logging</li>
-<li>A lot of related util tools.</li>
-<p> See Development Manual for more details about the API </p>
-</ul>    
-
-  </section>
-    <section name="'ToLiMa' Application Suite Features">
-    <p>
-      ToLiMa is a ready made application suite using the Hard Token Management Framework and
-      is designed to be flexible enough to fit into several organizations needs. <br/><br/>
-      To see ToLiMa in action see the flash demo or the screen shots.<br/><br/>
-      ToLiMa currently have the following features:
-    </p>
-<ul>
-<li>Support of Setec 4.3.1 and 4.4.1 cards (TODO check)</li>
-<li>Issuing cards with 1 or more certificates</li>
-<li>Support for 2 PIN, basic and signature</li>
-<li>Contains a 'Card Analyser' that analyses the card for the card administrator to give a suggestion of what is wrong with the card</li>
-<li>Possibilty to issue ordinary, temporary and project cards with different validities</li>
-<li>When a ordinary or project card is generated is all previous cards revoked</li>
-<li>When a temporary card is issued is the ordinary card set on hold until the ordinary card is reactivated</li>
-<li>Userdata is fetched from existing user data source.</li>
-<li>Possibility to unlock cards without exposing the PUK. The PUK is stored encrypted in EJBCA database.</li>
-<li>Easy to renew an expiring card</li>
-<li>Cards not used anymore can be revoked and ereased.</li>
-<li>It is also possible for a card administrator to do some management remotely (without having the card) such as revoking and activating a ordinary card.</li>
-<li>For 24/7 working environments where a card administrator might not be available it is possible for a
-colleague to issue a 'card unlock' or 'issue temporary' card request that is sent to a central support unit for approval</li>
-<li>TaLiMa also have error reporting functionality where unexpected error can be sent to the technical administrators for analysis</li>
+<li>Flexible, component based architecture.</li>
+<li>Using standard, high performance RDBMS for storage.</li>
+<li>Multiple Signers and Validators, serve all your digital signature needs within one instance of SignServer.</li>
+<li>Get your document signer certificate, such as PDF signing certificates, signed by public recognized CAs.</li>
+<li>Supports RSA key algorithm up to 8192 bits.</li>
+<li>Supports ECDSA key algorithm with named curves.</li>
+<li>Support multiple hash algorithms for signatures, MD5, SHA-1, SHA-2.</li>
+<li>Compliant with NSA SUITE B algorithms and certificates.</li>
+<li>Built in RFC3161 compliant Time Stamp Authority (TSA) module.</li>
+<li>Built in modules for signing PDF, XML, ODF, OOXML, CMS and MRTD.</li>
+<li>Generic CMS (PKCS#7) signer signs any document or file.</li>
+<li>Electronic ePassport document signing (MRTD) compliant with ICAO requirements.</li>
+<li>Simple plug-in API for creating new document signers.</li>
+<li>Validators for signed documents, built in support for XML validation, or make your own validator plug-in</li> 
+<li>Simple installation and configuration.</li>
+<li>Administration GUI desktop application for management.</li>
+<li>Command line administration for easy scripting scripts.</li>
+<li>Java API, HTTP, Web service (WS) and command line (CLI) interfaces.</li>
+<li>Support for HSMs. Built in support for nCipher, PrimeCardHSM, SafeNet ProtectServer, SafeNet Luna, Utimaco CryptoServer, AEP Keyper, ARX CoSign and other HSMs with a good PKCS#11 library.</li>
+<li>Support for software based keys for lower security requirements or development.</li>
+<li>Configurable access control using http basic authentication, https client certificates, IP address restrictions etc.</li>
+<li>Optional archival of signed documents.</li>
+<li>Automatic signer certificate renewal when used together with <a href="http://ejbca.org/">EJBCA</a>.</li>
+<li>Audit and transaction logging.</li>
+<li>Possible to integrate into large java applications for optimal integration into business process.</li>
+<li>Deploys easily in a clustered, high availability environment.</li>
+<li>Health check service to support efficient clustering and monitoring.</li>
+<li>Supports multiple application servers: JBoss and Glassfish</li>
+<li>Supports multiple databases: Hypersoniq, MySQL, PostgreSQL, Oracle, etc.</li>
 </ul>    
 
   </section>

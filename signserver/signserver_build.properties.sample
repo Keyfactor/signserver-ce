@@ -1,0 +1,380 @@
+#
+# $Id$
+#
+# File containing the build properties of the sign server
+# 
+#
+
+# Which application server is used?
+# Possible values: jboss, glassfish
+# Default jboss
+#appserver.type=jboss
+
+# Application server used during development
+# Default: $APPSRV_HOME or $JBOSS_HOME
+#appserver.home=${basedir}/../../jboss-4.2.2
+#appserver.home=${env.APPSRV_HOME}
+
+# which compiler to use
+# default: javac
+#build.compiler=jikes
+
+# which java version to use. Only 1.6 is currently supported. 
+# default: 1.6
+#server.java.target=1.6
+#client.java.target=1.6
+
+# SignServer Mode
+# Setting defining in which mode the SignServer should be built
+# Uncomment the following setting to build a stand-alone MailSigner
+# instead of a SignServer cluster, or set it to MAILSIGNER.
+#build.mode=MAILSIGNER
+
+##########################################################################
+#  SignServer Specific Settings                                          #
+#  Don't change this if you are setting up a Mail Signer                 #
+#  Mail Signer settings is further down.                                 #
+##########################################################################
+
+# JBoss Configuration to deploy to available options are:
+#   all
+#   default 
+#   minimal
+# Default : default
+#jboss.config=default
+
+# Jboss Deploy directory, available options are:
+# deploy 
+# farm
+# Default : deploy
+#jboss.deploy=deploy
+
+
+#PrimeCardHSM Specific Properties
+#Uncomment to when using PrimeCardHSM, default false.
+#primeCard.use=true
+#primeCard.home=${env.PRIMECARD_HOME}
+
+# ------------ Web GUI configuration ---------------------
+
+# Comment this out with a # if the web server should be configured for HTTPS.
+j2ee.web-nohttps=true
+
+# When upgrading, the important options are:
+# - httpsserver.password
+
+# Password for java trust keystore (p12/truststore.jks), default is changeit.
+#java.trustpassword=changeit
+
+# Path to the root certificate to be imported into the java truststore.
+#java.trustcert=p12/rootcert.cer
+
+# The password used to protect the web servers SSL keystore.
+#httpsserver.password=serverpwd
+
+# The path to the web servers SSL keystore.
+# Default: p12/tomcat.jks
+#httpsserver.keystore=p12/tomcat.jks
+
+
+# The public port JBoss will listen to http on
+# Default 8080
+#httpserver.pubhttp=8080
+
+# The public port JBoss will listen to https on, no client cert required
+# Default 8442
+#httpserver.pubhttps=8442
+
+# The private port JBoss will listen to https on, client cert required
+# Default 8443
+#httpserver.privhttps=8443
+
+# The interfaces JBoss will bind to. E.g. 127.0.0.1 will only allow connections from localhost.
+# Default 0.0.0.0
+#httpsserver.bindaddress.pubhttp=0.0.0.0
+#httpsserver.bindaddress.pubhttps=0.0.0.0
+#httpsserver.bindaddress.privhttps=0.0.0.0
+
+# Default content encoding used to display JSP pages, for example ISO-8859-1, UTF-8 or GBK.
+# Default: ISO-8859-1
+#web.contentencoding=ISO-8859-1
+
+# ------------- Database configuration ------------------------
+
+# jndi name of the datasource to use in deployment descriptors of ejbs.
+# default: SignServerDS
+#datasource.jndi-name=SignServerDS
+
+# Prefix for the jndi name of the datasource to use in deployment descriptors of ejbs. 
+# JBoss requires 'java:/' as prefix, while weblogic does not want anything ('')
+# default: java:/
+#datasource.jndi-name-prefix=java:/
+#datasource.jndi-name-prefix=
+
+# The database name selected for deployment, used to copy XDoclet merge files.
+# All supported databases are defined below, others can easily be added
+# Default: hsqldb
+#database.name=mysql
+#database.name=postgres
+#database.name=mssql2000
+#database.name=oracle
+#database.name=sapdb
+#database.name=sybase
+
+# The datasource mapping selected for deployment.
+# The J2EE server needs to be configured with the appropriate datasource mapping. 
+# For JBoss this maps to a setting in standardjbosscmp-jdbc.xml and must match the database chosen above.
+# All supported mappings are defined below, others can easily be added
+# Default: Hypersonic SQL
+#datasource.mapping=mySQL
+#datasource.mapping=PostgreSQL 7.2
+#datasource.mapping=PostgreSQL 8.0
+#datasource.mapping=MS SQLSERVER2000
+#datasource.mapping=Oracle8
+#datasource.mapping=Oracle9i
+#datasource.mapping=SapDB
+#datasource.mapping=Sybase
+
+# Database connection url.
+# This is the URL used to connect to the database, used to configure a new datasource in JBoss.
+# Default: jdbc:hsqldb:${jboss.server.data.dir}${/}hypersonic${/}SignServerLocalDB
+# Mysql standard
+#database.url=jdbc:mysql://127.0.0.1:3306/signserver
+#Mysql Clusters should use something like
+#database.url=jdbc:mysql://host1,host2/signserver
+#database.url=jdbc:mysql://192.168.1.15,192.168.1.18/signserver
+#database.url=jdbc:postgresql://127.0.0.1/signserver
+#database.url=jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=signserver
+#database.url=jdbc:oracle:thin:@127.0.0.1:1521:signserver
+#database.url=jdbc:datadirect:oracle://127.0.0.1:1521;SID=signserver
+
+#Uncomment the follwing setting if you are using mysql cluster. Leave it commented othervise
+#database.use.mysqlcluster=true
+
+# JDBC driver classname.
+# The J2EE server needs to be configured with the appropriate JDBC driver for the selected database
+# Default: org.hsqldb.jdbcDriver
+#database.driver=com.mysql.jdbc.Driver
+#database.driver=org.postgresql.Driver
+#database.driver=com.microsoft.jdbc.sqlserver.SQLServerDriver
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.driver=com.ddtek.jdbc.oracle.OracleDriver
+
+# Database username.
+# Default: sa (works with hsqldb)
+#database.username=signserver
+
+# Database password.
+# Default: (blank works with hsqldb)
+#database.password=signserver
+
+# ------------- Cluster Deployment Configuration ------------------------
+# Configuration used to centraly deploy the application server in a 
+# clustered environment. Currently are up to 6 nodes supported to 
+# were the application is deployed.
+# 
+# Each node should run ssh with a trusting the key defined in deploy.ssh.keyfilepath
+# Each node should have a mirrored Jboss installation at the same place as
+# the current node.
+# 
+# To add a node, uncomment the deploy.hostname.nodeX property and set it's property
+# If no node is defined will JBOSS_HOME at localhost be used as deploy dir.
+
+#deploy.hostname.node1=
+#deploy.hostname.node2=
+#deploy.hostname.node3=
+#deploy.hostname.node4=
+#deploy.hostname.node5=
+#deploy.hostname.node6=
+
+# User to use for the ssh session
+# Default: jboss
+#deploy.ssh.user=jboss
+
+# Path to the id_rsa (or ekvivalient) file for ssh authentication
+# Default: /home/jboss/.ssh/id_rsa
+#deploy.ssh.keyfilepath=
+
+# Path to the known hosts file
+# Default: /home/jboss/.ssh/known_hosts
+#deploy.ssh.knownhostsfile=
+
+# Path to the location where the jboss instance is located at the jboss services.
+# Default: /home/jboss/jboss
+#deploy.ssh.appsrvhome=
+
+# Tomcat version. If the sign server should use a https interface it will
+# deploy a keystore to all nodes in the cluster. Depending on the version
+# of tomcat is the files placed a little different.
+# Available options are: tomcat41, tomcat50, tomcat55
+# Default: tomcat55
+#deploy.tomcat.version=
+
+# ------------- Custom Code Configuration ------------------------
+# It is possible to have a custom code tree outside the sign server
+# for custom modifications.
+#
+# The external code will be copied into the temporary code tree
+# used for pre-processing
+#
+# Location of external java source directory
+#custom.src.java = <custom-code>/src/java
+#
+# Location of external web source directory
+#custom.src.web= <custom-code>/src/web
+#
+# Location of optional custom build xml that will be imported.
+#custom.build.xml= <custom-code>/build.xml
+#
+# Setting defining a custom ISignServerCommandFactory used for customizing 
+# the CLI interface.
+#
+# Default : org.signserver.cli.DefaultSignServerCommandFactory
+#custom.commandfactory=org.signserver.cli.DefaultSignServerCommandFactory
+
+
+
+# -------------- JAX-WS Web Service Configuration ----------------
+#
+# JAX-WS Web Service requires JAX-WS 2.1 to build. This is included in JDK 1.6.0_04 and later.
+#
+# Set to false to disable Main WebService deployment.
+# If set to false you must also disable the validationclient and signingandvalidationapi modules below.
+signserverws.enabled=true
+
+# Set to true to enable the Generic WS API
+# Default true
+genericws.enabled=true
+
+# Set to true to enable Validation WebService deployment
+# Default false
+validationws.enabled=false
+
+# -------------- Client Configurations ----------------
+#
+# Set to true to enable build of the TimeStampClient
+#
+# Default: true
+timestampclient.enabled=true
+
+# Set to true to enable build of the validation client.
+# For this to build must also signserverws.enabled be set
+# to true.
+#
+# Default: true
+validationclient.enabled=true
+
+# Set to true to enable the PDF performance test client
+# Default: false
+pdfperformancetest.enabled=false
+
+# Set to true to enable build of the SigningAndValidationAPI.
+# For this to build must also signserverws.enabled be set
+# to true.
+#
+# Default: true
+signingandvalidationapi.enabled     = true
+
+# -------------- Cluster Class Loader Configurations ----------------
+#
+
+# Set to true to include all the module classes in the main signserver.ear.
+# If you do not enable the cluster class loader this option must be used 
+# in order for signers to be configured.
+# If the cluster classloader is used, this option should not be set.
+#
+# Default: empty (=false)
+#includemodulesinbuild=
+
+# Set to true to enable the use of the cluster class loader
+#
+# Warning: the cluster class loader is still experimental and should
+# be used for development purposes only.
+#
+# Default: true
+useclusterclassloader=true
+
+# Set to false if class versions should be disabled (good for
+# development purposes when remote debugging is required).
+#
+# Default: true
+clusterclassloader.useclassversions=true
+
+# Set to true if signing of resource data should be required.
+#
+# Default: false
+clusterclassloader.requiresignature=false
+
+# Setting indicating the path to the truststore file
+# that contains all CA certificates that is trusted
+# for signing of resource data.
+#
+# Only used if clusterclassloader.requiresignedresources is set to true.
+clusterclassloader.pathtotruststore=
+
+# Password locking the truststore specified above.
+#
+# Only used if clusterclassloader.requiresignedresources is set to true.
+clusterclassloader.truststorepwd=
+
+# -------------- Status And Health Check Configuration -----------
+#
+# Parameters configuring how health check and status should be
+# configured.
+# Sample url: http://localhost:8080/signserver/healthcheck/signserverhealth
+#
+# Setting specifying which remote IPs that may call this healthcheck servlet. Use ';' for between multiple IPs. 
+# Default : 127.0.0.1
+healthcheck.authorizedips=127.0.0.1
+
+# Parameter to set the number of Mega Bytes of memory that must be free before removing 
+# the node out of the cluster.
+# Default : 1
+healthcheck.minimumfreememory=1
+
+# Parameter indicating the string that should be used to do 
+# a minimal check that the database is working. May differ between databases.
+# Default : Select count(*) from signerconfigdata
+healthcheck.checkdbstring=Select count(*) from signerconfigdata
+
+##########################################################################
+#  Mail Signer Specific Settings                                         #
+#  Don't change this if you are setting up a SignServer                  #                                                                      
+##########################################################################
+
+# The Primary DNS server that the MailSigner should use.
+# Required Setting.
+mailsigner.primarydns=
+
+# The Secondary DNS server that the MailSigner should use.
+# Required Setting.
+mailsigner.secondarydns=
+
+# Port that SMTP server should listen on
+# default=25
+#mailsigner.smtpport=25
+
+# Mail address to the postmaster administrator  
+# Required Setting.
+mailsigner.postmaster=
+
+# Require SMTP Auth for sending emails.
+#
+# Supported values:
+#    true: required but announced only to not authorizedAddresses
+#    false: don't use AUTH
+#    announce: like true, but always announce AUTH capability to clients
+#
+# This setting should be specified in lower case and make sure there aren't
+# any tailing space.
+#
+# Default: true
+mailsigner.smtpauth=true
+
+# Ports used by CLI interface to connect to the mail signer over RMI
+# Only change these if the ports isn't available on you server.
+#
+# default 1099 and 2099
+#rmi.registry.port= 1099
+#rmi.server.port= 2099
+

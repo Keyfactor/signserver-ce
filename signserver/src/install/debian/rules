@@ -1,0 +1,112 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+export APPSRV_HOME=/usr/share/jboss4
+export JBOSS_HOME=/misc/pkg/signserver/jboss-4.2.2.GA
+export JAVA_HOME=/usr/lib/jvm/java-6-sun/
+export PATH=$(JAVA_HOME)/bin:/usr/local/bin:/usr/bin:/bin
+
+
+
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+# Add here commands to configure the package.
+	cp signserver_build.properties.sample signserver_build.properties
+	perl -pi -e 's/^#database.name=mysql/database.name=mysql/gio' signserver_build.properties
+	perl -pi -e 's/^#database.mapping=mySQL/database.mapping=mySQL/gio' signserver_build.properties
+	perl -pi -e 's#^\#database.url=jdbc:mysql://127.0.0.1:3306/signserver#database.url=jdbc:mysql://127.0.0.1:3306/signserver#gio' signserver_build.properties
+	perl -pi -e 's/^#database.driver=com.mysql.jdbc.Driver/#atabase.driver=com.mysql.jdbc.Driver/gio' signserver_build.properties
+	perl -pi -e 's/^#database.username=signserver/database.username=signserver/gio' signserver_build.properties
+	perl -pi -e 's/^#database.password=foo123/database.password=foo123/gio' signserver_build.properties
+	perl -pi -e 's/^#java.trustpassword=changeit/java.trustpassword=changeit/gio' signserver_build.properties
+	perl -pi -e 's/^#java.trustcert=p12\/rootcert.cer/java.trustcert=p12\/rootcert.cer/gio' signserver_build.properties
+	perl -pi -e 's/^#httpsserver.password=serverpwd/httpsserver.password=serverpwd/gio' signserver_build.properties
+	perl -pi -e 's/^#httpsserver.keystore=p12\/tomcat.jks/httpsserver.keystore=p12\/tomcat.jks/gio' signserver_build.properties
+	perl -pi -e 's#<property name="pkg.dist.dir" location=".*" />#<property name="pkg.dist.dir" location="debian/signserver/" />#' build.xml
+	
+
+	touch configure-stamp
+
+
+build: build-stamp
+
+build-stamp: configure-stamp 
+	dh_testdir
+
+# Add here commands to compile the package.
+#$(MAKE)
+	ant 
+#docbook-to-man debian/signserver.sgml > signserver.1
+
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+
+# Add here commands to clean up after the build process.
+	ant clean
+	perl -pi -e 's#<property name="pkg.dist.dir" location=".*" />#<property name="pkg.dist.dir" location="dist-pkg" />#' build.xml
+	dh_clean 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+
+# Add here commands to install the package into debian/signserver.
+#$(MAKE)  install	
+
+	
+	ant signserver-pkgdist-server
+	
+	ant signserver-pkgdist-mgmt
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs 
+	dh_installdocs
+	dh_installexamples
+	dh_install --list-missing --sourcedir=debian/signserver
+#	dh_installmenu
+#	dh_installdebconf	
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+#	dh_python
+#	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_perl
+#	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

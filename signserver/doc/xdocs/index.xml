@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>Home</title>
+  </properties>
+
+<body>
+  <section name="Latest News">
+    <note>
+        <strong>SignServer 3.1.5 is now out!</strong>
+        <br/><br/>
+        Read <a href="http://www.primekey.se/digitalAssets/2/2530_Product_Release_SignServer3.1.4.pdf">release notes</a>.
+        <!-- TODO: | Visit the <a href="download.html">download</a> section to get SignServer. -->
+        <!-- TODO: There is also a live CD! -->
+    </note>
+   </section>
+
+<section name="What is SignServer?">
+<p>
+SignServer is an application framework performing cryptographic operations  for other applications. It's intended to be used in environments where keys are supposed to be protected in hardware but there isn't possible to connect such hardware to existing enterprise applications or where the operations are considered extra sensitive so the hardware have to protected more carefully. Another usage is to provide a simplified method to provide signatures in different application managed from one location in the company.
+</p>
+<p> 
+SignServer has ready to use:
+</p>
+<ul>
+<li>TimeStamp Authority (RFC 3161 compliant)</li>
+<li>Signers for different documents: PDF, XML, ODF, OOXML, MRTD (ePassport)</li>
+<li>General purpose signers: CMS</li>
+<li>Validators for documents: XML</li>
+<li>Certificate Validation Service Framework for validating certificates using CRLs or OCSP</li>
+<li>Group Key Service Framework</li>
+<li>Simple Mail Signer (deprecated)</li>
+</ul> 
+<p>
+SignServer has been designed for high-availability and can be clustered for maximum reliability.
+</p>
+<p>
+Different kinds of sign tokens exist:
+</p>
+<ul>
+<li>Soft token using PKCS12 files.</li>
+<li>PKCS#11 HSM tokens, such as the Utimaco CryptoServer, SafeNet ProtectServer, nCipher nShield or AEP KeyPer.</li>
+<li>PrimeCardHSM using smart cards.</li>
+</ul>
+</section>
+<section name="What's new in SignServer 3.1?">
+<p>
+Some of the new features in version 3.1 are:
+</p>
+<ul>
+<li>A new module system where the bytecode for a worker can
+be package as a separate module that can be loaded and unloaded at runtime</li>
+<li>XMLSigner/Validator</li>
+<li>ODFSigner</li>
+<li>OOXMLSigner</li>
+<li>CRLValidator</li>
+<li>OCSPValidator</li>
+<li>MRTDSODSigner</li>
+</ul>
+<p>
+More information can be found in the <a href="manual.html">manual</a> or in the
+<a href="http://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel">changelog</a>.
+</p>
+</section>
+<section name="Open Source">
+<p>
+This software is OSI Certified Open Source Software.
+OSI Certified is a certification mark of the Open Source Initiative.
+</p>
+<p>
+The source code of SignServer is hosted on <a href="http://www.sf.net/">SourceForge.net</a> and all downloads include the complete source code.
+</p>
+</section>
+
+
+
+
+</body>
+</document>
+

@@ -1,0 +1,672 @@
+
+<project name="signserver" default="build" basedir=".">
+
+	<property name="app.name" value="signserver" />
+    <property name="app.name.cap" value="SignServer" />
+    <property name="app.version.number" value="3.1.5-svn" />
+	<property name="app.version" value="${app.name.cap} ${app.version.number}" />
+	<property name="mar.versions" value="3140" />
+
+    <property environment="env" />
+
+    <!-- Give user a chance to override without editing this file
+       (and without typing -D each time it compiles it).
+       First it checks your home directory for signserver_build.properties
+       net it checks the properties file here. -->
+    <property file="${user.home}/${app.name}_build.properties" />
+    <property file="${app.name}_build.properties" />
+
+ 	<!-- default value, will not set value if it is set in ${app.name}_build.properties -->
+    <property name="appserver.type" value="jboss"/>
+
+    <!-- A little special something to handle backward compatibility with 
+	       people using JBOSS_HOME. They can switch to APPSRV_HOME now, and both will work. 
+	  -->        
+	  <condition property="jboss.home" value="${env.JBOSS_HOME}" >
+	      <equals arg1="${appserver.home}" arg2="${appserver.home}"/>
+	  </condition>
+	  <condition property="appserver.home" value="${env.APPSRV_HOME}" else="${jboss.home}">
+	      <contains string="${jboss.home}" substring="JBOSS_HOME"/>
+	  </condition>
+	
+	<property name="ant.home" value="${env.ANT_HOME}"/>
+	
+	<import file="bin/${appserver.type}.xml" />
+
+    <property name="signserver.configfile" value="/etc/signserver/signserver.conf" />
+	
+    <!-- set global properties for this build -->
+	<property name="tmp" location="tmp" /><!-- -->
+    <property name="bin" location="./bin" />
+    <property name="build" value="${bin}/classes" />
+    <property name="lib" location="lib" />
+	<property name="preprocessed" value="${tmp}/preprocessed"/>
+
+    <property name="src" value="${preprocessed}" />
+    <property name="src.java" value="${src}/java" />
+    <property name="src.appserver" value="${src}/appserver/jboss" />
+	<property name="src.external" location="${tmp}/external"/>
+    <property name="resources.dir"  location="./src/resources"/>	
+    
+    <property name="server.java.target" value="1.6" />
+    <property name="client.java.target" value="1.6" />
+<!-- the ejbca.target could have any valid value. no SignServer code dependent of ejbca is used -->
+    <property name="ejbca.target" value="3.9"/>
+
+    <property name="test.dir" value="${bin}/junit" />
+    <property name="test.src.dir" location="${src}/test" />
+    <property name="server.dist.dir" value="dist-server" />
+    <property name="client.dist.dir" value="dist-client" />
+	<property name="pkg.dist.dir" location="dist-pkg" />
+    <property name="apidoc" value="./doc/api" />  
+	
+	<property name="custom.commandfactory" value="org.signserver.cli.DefaultSignServerCommandFactory"/>
+
+	<import file="./signserver.xmli" />
+	<import file="./mailsigner.xmli" />
+	<import file="${custom.build.xml}" optional="true"/>
+	
+	<property name="signserver.cli.jar" value="dist-client/signserver-cli.jar" />
+	<property name="build.mode" value="SIGNSERVER" />
+	<condition property="buildMailSigner">		
+		  <equals arg1="${build.mode}" arg2="MAILSIGNER" casesensitive="false" trim="true"/>		
+	</condition>
+
+    <!-- =================================================================== -->
+    <!-- Build ALL                                                           -->
+    <!-- =================================================================== -->
+	<target name="build" depends="signserver, mailsigner, signserver-cli">
+		<antcall target="showtime"/>
+	</target>
+	
+
+
+    <!-- =================================================================== -->
+    <!-- Create the time stamp and build directory -->
+    <!-- =================================================================== -->
+    <target name="init" depends="j2ee:check">
+        <echo>
+------------- SYSTEM PROPERTIES --------------
+ANT version                         = ${ant.version}
+JRE version                         = ${java.version}
+JRE vendor                          = ${java.vendor}
+Java home                           = ${java.home}
+Java extensions dir                 = ${java.ext.dirs}
+OS name                             = ${os.name}
+OS architecture                     = ${os.arch}
+OS version                          = ${os.version}
+        </echo>
+    	<antcall target="signserver.init"/>
+    	<antcall target="mailsigner.init"/>
+
+        <!-- Create the time stamp -->
+        <tstamp/>
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build}"/>
+        <mkdir dir="${server.dist.dir}/lib"/>
+        <mkdir dir="${client.dist.dir}/lib"/>
+    </target>
+	
+	<target name="ant:configure">
+        <fail message="Please set the environment variable 'ANT_HOME' before running this task." unless="ant.home"/>
+        <available file="${ant.home}/lib" property="ant.home.valid"/>
+        <fail message="'ant.home' (${ant.home}) does not seem to be a valid ant home directory" unless="ant.home.valid"/>
+		<copy todir="${ant.home}/lib">
+		   <fileset dir="lib/ext">
+			 <include name="junit-3.8.1.jar"/>
+			 <include name="jsch-0.1.32.jar"/>
+		   </fileset>
+		</copy>
+	</target>
+
+    <!-- =================================================================== -->
+    <!-- Main Clean                                                            -->
+    <!-- =================================================================== -->
+    <target name="clean" depends="signserver:clean, mailsigner:clean">
+        <!-- Delete the ${build} and ${server.dist.dir} directory trees -->
+        <delete dir="${build}" />
+        <delete dir="${server.dist.dir}" />
+    	<delete dir="${pkg.dist.dir}" />
+        <delete dir="${apidoc}" />
+        <delete dir="${tmp}"/>	
+    	<delete dir="${client.dist.dir}" />
+        <delete file="velocity.log" />
+        <delete dir="${test.dir}" />
+    </target>
+	
+
+ 
+ 
+	<!--
+	  Preprocesses Sign Server by replacing tags with correct version and application texts.
+	-->
+	<target name="preprocess" depends="preprocess-extjava, preprocess-extweb" >
+        <copy todir="${preprocessed}">
+            <fileset dir="src">
+              <include name="**"/>
+              <exclude name="**/*.java"/>
+              <exclude name="**/*.html"/>
+              <exclude name="**/*.htm"/>            	
+              <exclude name="**/*.xml"/>
+              <exclude name="**/*.jsp"/>
+              <exclude name="**/*.jspf"/>
+              <exclude name="**/*.properties"/>
+            </fileset>	      
+	    </copy>
+        <copy todir="${preprocessed}">
+            <fileset dir="src">
+                <include name="**/*.java"/>
+                <include name="**/*.html"/>
+                <include name="**/*.htm"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.jsp"/>
+                <include name="**/*.jspf"/>
+                <include name="**/*.properties"/>
+            </fileset>	   
+
+			<filterchain>
+			<tokenfilter>			    
+		        <replacestring from="@signserver@" to="${app.name}"/>
+		    	<replacestring from="@SIGNSERVER@" to="${app.name.cap}"/>
+				<replacestring from="@RMIREGISTRYPORT@" to="${rmi.registry.port}"/>
+				<replacestring from="@RMISERVERPORT@" to="${rmi.server.port}"/>
+				<replacestring from="@MAILSIGNERPORT@" to="${mailsigner.smtpport}"/>
+				<replacestring from="@BUILDMODE@" to="${build.mode}"/>
+				<replacestring from="@datasource.jndi-name-prefix@" to="${datasource.jndi-name-prefix}"/>
+				<replacestring from="@datasource.jndi-name@" to="${datasource.jndi-name}"/>
+				<replacestring from="@healthcheck.authorizedips@" to="${healthcheck.authorizedips}"/>
+				<replacestring from="@healthcheck.minimumfreememory@" to="${healthcheck.minimumfreememory}"/>
+				<replacestring from="@healthcheck.checkdbstring@" to="${healthcheck.checkdbstring}"/>
+				<replacestring from="@signserver.useclusterclassloader@" to="${useclusterclassloader}"/>
+				<replacestring from="@signserver.useclassversions@" to="${clusterclassloader.useclassversions}"/>
+				<replacestring from="@signserver.requiresignature@" to="${clusterclassloader.requiresignature}"/>
+				<replacestring from="@signserver.pathtotruststore@" to="${clusterclassloader.pathtotruststore}"/>
+				<replacestring from="@signserver.truststorepwd@" to="${clusterclassloader.truststorepwd}"/>
+				<replacestring from="@SignServerCommandFactory@" to="${custom.commandfactory}"/>
+				<replacestring from="@signserver.configfile@" to="${signserver.configfile}"/>
+				<replacestring from="@BUILDMODE@" to="${build.mode}"/>
+                                <replacestring from="@signserver.version@" to="${app.version}"/>
+			</tokenfilter>
+			</filterchain>
+	    </copy>
+		<replace file="${preprocessed}/java/org/signserver/common/GlobalConfiguration.java" token="@signserver.version@" value="${app.version}"/>	
+		<!-- Make a copy of the signserver_cli.properties in bin dir -->
+		<copy file="signserver_cli.properties" todir="bin" />
+		<!-- Copy the correct jndi.properties for your appserver -->
+		<copy file="bin/jndi.properties.${appserver.type}" tofile="bin/jndi.properties" overwrite="false" failonerror="false"/>
+		<copy file="bin/jndi.properties.${appserver.type}" tofile="${src.java}/jndi.properties" overwrite="false" failonerror="false"/>
+	</target>
+	
+	<target name="preprocess-extjava"  if="custom.src.java">
+	    <mkdir dir="${preprocessed}/java"/>
+        <copy todir="${preprocessed}/java">
+            <fileset dir="${custom.src.java}">
+              <include name="**"/>
+            </fileset>	      
+	    </copy>
+	</target>
+	
+    <target name="preprocess-extweb"  if="custom.src.web">
+       <mkdir dir="${preprocessed}/web/pub"/>       	
+       <copy todir="${preprocessed}/web/pub">
+          <fileset dir="${custom.src.web}">
+             <include name="**"/>
+           </fileset>	      
+       </copy>
+     </target>
+	
+    <target name="signserver-cli" depends="signserver, mailsigner">
+    	<mkdir dir="dist-client/lib" />
+    	<echo message="Ignore warnings about jar files that can not be copied, they are for other application servers"/>
+    	<!-- JBoss:
+            For JBoss 4.2.3.GA only jbossall-client.jar is needed.
+            For JBoss 5.1.0.GA jbossall-client.jar is referencing the needed
+            libraries so all of them needs to be copied.
+    	<copy file="${appserver.home}/client/jbossall-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/>
+        -->
+        <copy todir="${client.dist.dir}/lib" failonerror="false">
+          <fileset dir="${appserver.home}/client">
+             <include name="*.jar"/>
+           </fileset>
+       </copy>
+    	<!-- Glassfish -->
+    	<copy file="${appserver.home}/lib/appserv-rt.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
+    	<copy file="${appserver.home}/lib/appserv-deployment-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
+    	<copy file="${appserver.home}/lib/appserv-ext.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
+
+	    <jar destfile="${signserver.cli.jar}" basedir="${build}">
+	      <manifest>	        
+	        <attribute name="Main-Class" value="org.signserver.cli.signserver"/>
+	      </manifest>
+	      <include name="org/signserver/cli/**/**"/>
+	      <include name="org/signserver/mailsigner/cli/**/**"/>
+	      <include name="org/signserver/common/**/**"/>
+	      <include name="org/signserver/ejb/interfaces/**/**"/>
+	      <include name="org/signserver/groupkeyservice/common/**/**"/>
+	      <include name="org/signserver/validationservice/common/**/**"/>
+	      <include name="org/signserver/mailsigner/**"/>
+	      <include name="org/signserver/server/**/**"/>
+	    </jar>    	
+    </target>
+
+    <target name="renewal"
+        description="Build the module Renewal">
+            <!-- TODO
+        <ant antfile="${renewal.dir}/build.xml" target="default"
+            inheritall="false"/>
+        <copy file="${renewal.jar}" todir="${server.dist.dir}/lib"/>
+        -->
+    </target>
+	   <!-- =================================================================== -->
+	    <!-- Build preparation for package distribution                         -->
+	    <!-- =================================================================== -->
+    	    <target name="pkgdist" depends="signserver, mailsigner, signserver-cli, signserver-pkgdist, mailsigner-pkgdist">
+
+    	    </target>
+    		
+    <!-- =================================================================== -->
+    <!-- Build Javadoc part                                                  -->
+    <!-- =================================================================== -->
+    <target name="javadoc" depends="build">
+        <mkdir dir="${apidoc}" />
+        <javadoc packagenames="org.signserver.*" maxmemory="256m" sourcepath="${src.java}" destdir="${apidoc}" 
+        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/ext/james:${lib}/asm:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/module/wsra:${lib}/reports:${lib}/quartz:${lib}/jaxws:${lib}/module/odfsigner/odfdom.jar"
+        	classpath="${server.compile.classpath}:${tmp}/jaxws/gen-classes/client:${lib}/module/odfsigner/odfdom.jar:${lib}/module/ooxmlsigner/openxml4j_beta_v538.jar"
+        	author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2010 PrimeKey Solutions AB.">
+        </javadoc>
+    </target>
+		
+    <macrodef name="keytool">
+       <attribute name="arg"/>
+         <sequential>
+         <exec executable="keytool">
+            <arg line="@{arg}"/>
+         </exec>
+         </sequential>
+    </macrodef>
+
+    <!--
+        this macro is a specialized copy for deployment descriptors (dd).
+        In the wonderful world of J2EE nothing it is always painful
+        Basically it is copying the appropriate DD for each J2EE server
+        and selected database:
+        @database.name
+    -->
+    <macrodef name="ejb-merge-copy">
+        <attribute name="database" />
+        <attribute name="overwrite" default="false" />
+        <sequential>
+            <!-- Remove old possible files -->
+        	<delete dir="${ejbdd.src}/merge/se"/>
+            <!-- jboss configuration -->
+            <copy todir="${ejbdd.src}/merge" overwrite="@{overwrite}" failonerror="false">
+                <fileset dir="${ejbdd.src}/merge/${database.name}" includes="**/*.xml" />
+            </copy>
+        </sequential>
+    </macrodef>
+
+	<!--
+        this macro is a specialized copy for deployment descriptors (dd).
+        In the wonderful world of J2EE nothing it is always painful
+    -->
+    <macrodef name="ejb-dd-copy">
+        <attribute name="todir" />
+        <attribute name="dir" />
+        <attribute name="overwrite" default="false" />
+        <sequential>
+        </sequential>
+    </macrodef>
+
+    <target name="test:compile"  depends="test:signserver:compile, test:mailsigner:compile"/>
+ 	
+    <target name="test:run" description="Run all JUnit testcases">
+        <antcall target="test:signserver:run"/>
+    	<antcall target="test:mailsigner:run"/>
+    </target>
+
+    <target name="test:runperf" description="Test performace of signing modules">
+        <antcall target="test:signserver:performance"/>
+    </target>
+		
+	<property name="velocity.dir" location="lib/ext/velocity"/>
+    <!-- Initialization properties -->
+    <property name="project.name" value="signserver"/>
+    <property name="docs.src"     location="doc/xdocs"/>
+    <property name="docs.dest"    location="tmp/htdocs"/>
+    <property name="docs.singlepages"    location="tmp/singledocs"/>
+    <property name="project.file" value="stylesheets/project.xml" />
+    <property name="templ.path"   location="${docs.src}/stylesheets" />
+    <property name="velocity.props"   location="${docs.src}/velocity.properties" />
+    <property name="include.xml"  value="**/*.xml" />
+    <property name="docs.fullmanual" location="${docs.src}/manual/complete.en.xml"/>
+
+    <target name="prepare">
+        <path id="anakia.classpath">
+            <fileset dir="${velocity.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+        <available classname="org.apache.velocity.anakia.AnakiaTask"
+                   property="AnakiaTask.present">
+            <classpath refid="anakia.classpath"/>
+        </available>
+        <path id="xmltask.classpath">
+            <fileset dir="lib/ext/">
+                <include name="xmltask.jar"/>
+            </fileset>
+        </path>
+        <available classname="com.oopsconsultancy.xmltask.ant.XmlTask"
+                   property="XmlTask.present">
+            <classpath refid="xmltask.classpath"/>
+        </available>
+    </target>
+
+    <target depends="prepare" name="prepare-error" unless="AnakiaTask.present">
+        <echo>
+            AnakiaTask is not present! Please check to make sure that
+            velocity.jar is in your classpath.
+        </echo>
+        <mkdir dir="${docs.dest}"/>
+    </target>
+
+    <target name="doc:splitmanual" depends="prepare-error">
+
+        <mkdir dir="${docs.singlepages}/manual"/>
+        <copy todir="${docs.singlepages}/stylesheets">
+            <fileset dir="${templ.path}"/>
+        </copy>
+
+        <!-- Split full.xml into xml-files for each chapter -->
+        <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
+            <classpath refid="xmltask.classpath"/>
+        </taskdef>
+
+        <!-- call subtargets using the full manual as the driver -->
+        <xmltask source="${docs.fullmanual}">
+          <call path="/document/body/chapter" target="doc:splitmanual:singlepage" buffer="chapter_buffer" inheritAll="true">
+            <param name="1" path="@name"/>
+            <param name="2" path="@shortname"/>
+            <param name="3" value="${os.name}"/>
+            <param name="4" path="node()"/>
+          </call>
+        </xmltask>
+    </target>
+
+    <target name="doc:splitmanual:singlepage">
+        <xmltask dest="${docs.singlepages}/manual/${2}.xml">
+          <insert path="/">
+            <![CDATA[
+              <document>
+                <properties>
+                    <title/>
+                    <singlepage value="true"/>
+                </properties>
+                <body/>
+              </document>
+            ]]>
+          </insert>
+          <insert path="/document/properties/title">${1}</insert>
+          <insert path="/document/body" buffer="chapter_buffer" position="under"/>
+        </xmltask>
+    </target>
+
+    <target name="doc" if="AnakiaTask.present" depends="prepare-error, doc:splitmanual" description="Build SignServer web site and docs">
+        <taskdef name="anakia" classname="org.apache.velocity.anakia.AnakiaTask">
+            <classpath refid="anakia.classpath"/>
+        </taskdef>
+
+        <!-- Use FOP for creating PDF-files -->
+        <!--<property name="fop.home" value="lib/ext/fop/"/>
+        <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop">
+	  <classpath>
+	    <fileset dir="${fop.home}/lib">
+	      <include name="*.jar"/>
+	    </fileset>
+	    <fileset dir="${fop.home}/build">
+	      <include name="fop.jar"/>
+	      <include name="fop-hyph.jar" />
+	    </fileset>
+	  </classpath>
+	</taskdef>-->
+
+        <!--<echo message="docs.src: ${docs.src}"/>
+        <echo message="docs.dest: ${docs.dest}"/>
+        <echo message="project.file: ${project.file}"/>
+        <echo message="include.xml: ${include.xml}"/>
+        <echo message="templ.path: ${templ.path}"/>
+        <echo message="velocity.props: ${velocity.props}"/>-->
+
+        <anakia basedir="${docs.src}" destdir="${docs.dest}"
+             extension=".html" style="./site.vsl"
+             projectFile="${project.file}"
+             excludes="**/stylesheets/**"
+             includes="${include.xml}"
+             lastModifiedCheck="true"
+             templatePath="${templ.path}"
+             velocityPropertiesFile="${velocity.props}">
+        </anakia>
+
+        <!-- Also for manual singlepages -->
+        <anakia basedir="${docs.singlepages}" destdir="${docs.dest}"
+             extension=".html" style="./site.vsl"
+             projectFile="${project.file}"
+             excludes="**/stylesheets/**"
+             includes="${include.xml}"
+             lastModifiedCheck="true"
+             templatePath="${templ.path}"
+             velocityPropertiesFile="${velocity.props}">
+        </anakia>
+        
+        <copy todir="${docs.dest}">
+        	<fileset dir="${docs.src}" includes="**/*.css,**/*.png,**/*.jpg,**/*.gif"/>        	
+        	<fileset dir="${docs.src}" includes="docs/**/*"/>
+        </copy>
+    	<echo message=""/>
+    	<echo message="Local documentation is now available in file://${docs.dest}/index.html"/>
+    </target>
+    
+    <target name="site:test:publish" depends="doc" description="Publish the website to the sandbox subdirectory.">
+    	<property name="publish.dir" value="/home/groups/s/si/signserver/htdocs/sandbox"/>
+        <property name="publish.host" value="shell.sourceforge.net"/>
+
+        <echo message="Publish to ${publish.host}:${publish.dir}"/>
+        <input message="Please enter username: " addproperty="username"/>
+        <input message="Please enter password: " addproperty="password"/>
+    	<tar destfile="htdocs.tgz" compression="gzip">
+    		<tarfileset dir="${docs.dest}" mode="664" dirmode="775" username="${username}" group="ejbca"/>
+    	</tar>
+    	<scp trust="true" file="htdocs.tgz" todir="${username}:${password}@${publish.host}:"/>
+    	<sshexec trust="true" host="${publish.host}"
+				username="${username}" password="${password}"
+				command="mkdir ${publish.dir} ; tar -xzpf htdocs.tgz -C ${publish.dir};"/>
+		<!-- I'm setting the permissions this way as there seems to be a problem with dirmode -->
+		<echo message="Setting directory permissions"/>
+    	<sshexec trust="true" host="${publish.host}"
+				username="${username}" password="${password}"
+				command="find ${publish.dir} -type d -exec chmod 775 {} \;"/> 
+		<echo message="Setting file permissions"/>
+    	<sshexec trust="true" host="${publish.host}"
+				username="${username}" password="${password}"
+				command="find ${publish.dir} -type f -exec chmod 664 {} \;"/>
+    	<delete file="htdocs.tgz"/>
+    </target>
+    <target name="site:publish" depends="doc" description="Publish the website to the sandbox subdirectory.">
+        <property name="publish.dir" value="/home/groups/s/si/signserver/htdocs"/>
+        <property name="publish.host" value="shell.sourceforge.net"/>
+
+        <echo message="Publish to ${publish.host}:${publish.dir}"/>
+        <input message="Please enter username: " addproperty="username"/>
+        <input message="Please enter password: " addproperty="password"/>
+    	<tar destfile="htdocs.tgz" compression="gzip">
+    		<tarfileset dir="${docs.dest}" mode="664" dirmode="775" username="${username}" group="ejbca"/>
+    	</tar>
+    	<scp trust="true" file="htdocs.tgz" todir="${username}:${password}@${publish.host}:"/>
+    	<sshexec trust="true" host="${publish.host}"
+				username="${username}" password="${password}"
+				command="mkdir ${publish.dir} ; tar -xzpf htdocs.tgz -C ${publish.dir};"/>
+		<!-- I'm setting the permissions this way as there seems to be a problem with dirmode -->
+		<echo message="Setting directory permissions"/>
+    	<sshexec trust="true" host="${publish.host}"
+				username="${username}" password="${password}"
+				command="find ${publish.dir} -type d -exec chmod 775 {} \;"/> 
+		<echo message="Setting file permissions"/>
+    	<sshexec trust="true" host="${publish.host}"
+				username="${username}" password="${password}"
+				command="find ${publish.dir} -type f -exec chmod 664 {} \;"/>
+    	<delete file="htdocs.tgz"/>
+    </target>
+	
+	<!-- A small script that converts the version x.y.z to x_y_z to be used in the file -->
+	<scriptdef name="convertdot" language="javascript">
+	    <![CDATA[
+          ver = project.getProperty("app.version.number");
+		  relstring = ver.replace('.','_');
+	      //self.log(ver);
+	      //self.log(relstring);
+		  project.setProperty("signserver.zipversion", relstring);
+          str = project.getProperty("signserver.zipversion");
+	    ]]>
+	</scriptdef>
+
+        <!-- Deprecated: New target called release:zip -->
+        <target name="ziprelease">
+            <antcall target="release:zip" />
+        </target>
+
+    	<target name="release:zip" description="Make a zip file for SignServer release" >
+    		<convertdot/> <!-- convert dots to underscores in version string -->
+    		<!-- <input message="Version tag for zipfile (ex 3_1_0):" addproperty="signserver.zipversion" /> -->
+    		<antcall target="-release:zip-lgpl21"/>
+    	</target>
+
+    	<target name="release:source-zip" description="Make a source zip files for SignServer release" >
+    		<convertdot/> <!-- convert dots to underscores in version string -->
+    		<!-- <input message="Version tag for zipfile (ex 3_1_0):" addproperty="signserver.zipversion" /> -->
+    		<antcall target="-release:source-zip-lgpl21"/>
+    	</target>
+    		
+        <target name="release:source-tarball" description="Make a source tarball for SignServer release">
+            <convertdot/>
+            <antcall target="-release:source-tarball-lgpl21"/>
+    	</target>
+    		
+	<target name="-release:zip-lgpl21" >
+		<antcall  target="clean"/>  
+		<copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+		<zip destfile="../signserver_lgpl_v21_version_${signserver.zipversion}.zip">
+		    <zipfileset dir="." prefix="signserver_lgpl_v21_version_${signserver.zipversion}" filemode="600" dirmode="700"> 
+		    	<include name="**/**" />
+		    	<exclude name="doc/lgpl-**" />
+		    	<exclude name="**/CVS/**" />
+			<exclude name="signserver_build.properties" />
+		    	<exclude name="tmp/**" />
+		    	<exclude name="p12/**" />
+		    	<exclude name="dist/**" />
+		    	<exclude name="dist-client/**" />
+		    	<exclude name="dist-server/**" />
+		    	<exclude name="out/**" />
+		    	<exclude name="eclipseBuild/**" />
+		    	<exclude name="**/*.class" />
+		    	<exclude name=".classpath" />
+		    	<exclude name=".project" />
+		    	<exclude name=".eclipse/**" />
+                        <exclude name=".settings/**" />
+		    	<exclude name="**/.cvsignore" />
+		    	<exclude name="**/*.sh" />
+                        <exclude name="**/nbproject/private/**" />
+		    </zipfileset>
+		    <zipfileset dir="." prefix="signserver_lgpl_v21_version_${signserver.zipversion}" filemode="700" dirmode="700"> 
+		    	<include name="**/*.sh" />
+		    </zipfileset>
+		</zip>
+		<delete file="LICENSE"/>
+        <checksum file="../signserver_lgpl_v21_version_${signserver.zipversion}.zip" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="../signserver_lgpl_v21_version_${signserver.zipversion}.zip" algorithm="SHA1" property="signserverSHA1"/>
+        <echo message="SHA1 checksum: ${signserverSHA1}" />
+	</target>
+
+    <target name="-release:source-zip-lgpl21" >
+        <antcall  target="clean"/>
+        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+        <zip destfile="../signserver_lgpl_v21_version_${signserver.zipversion}-src.zip">
+            <zipfileset dir="." prefix="signserver_lgpl_v21_version_${signserver.zipversion}-src" filemode="600" dirmode="700">
+                <include name="**/**" />
+                <exclude name="doc/lgpl-**" />
+                <exclude name="**/CVS/**" />
+                <exclude name="signserver_build.properties" />
+                <exclude name="tmp/**" />
+                <exclude name="p12/**" />
+                <exclude name="**/dist/**" />
+                <exclude name="**/build/**" />
+                <exclude name="extapps/**" />
+                <exclude name="SignServer-AdminGUI/lib/**" />
+                <exclude name="dist-client/**" />
+                <exclude name="dist-server/**" />
+                <exclude name="out/**" />
+                <exclude name="eclipseBuild/**" />
+                <exclude name="**/*.class" />
+                <exclude name=".classpath" />
+                <exclude name=".project" />
+                <exclude name=".eclipse/**" />
+                <exclude name=".settings/**" />
+                <exclude name="**/.cvsignore" />
+                <exclude name="**/*.sh" />
+                <exclude name="**/nbproject/private/**" />
+                <exclude name="**/lib/**" />
+            </zipfileset>
+            <zipfileset dir="." prefix="signserver_lgpl_v21_version_${signserver.zipversion}-src" filemode="700" dirmode="700">
+                <include name="**/*.sh" />
+            </zipfileset>
+        </zip>
+        <delete file="LICENSE"/>
+        <checksum file="../signserver_lgpl_v21_version_${signserver.zipversion}-src.zip" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="../signserver_lgpl_v21_version_${signserver.zipversion}-src.zip" algorithm="SHA1" property="signserverSHA1"/>
+        <echo message="SHA1 checksum: ${signserverSHA1}" />
+    </target>
+
+    <target name="-release:source-tarball-lgpl21" >
+        <antcall  target="clean"/>
+        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+        <property name="tarball.tar" value="../signserver_lgpl_v21_version_${signserver.zipversion}-src.tar" />
+        <property name="tarball.tar.gz" value="${tarball.tar}.gz" />
+        <tar tarfile="${tarball.tar}" basedir="." longfile="gnu">
+            <include name="**/**" />
+            <exclude name="doc/lgpl-**" />
+            <exclude name="**/CVS/**" />
+            <exclude name="signserver_build.properties" />
+            <exclude name="tmp/**" />
+            <exclude name="p12/**" />
+            <exclude name="**/dist/**" />
+            <exclude name="**/build/**" />
+            <exclude name="extapps/**" />
+            <exclude name="SignServer-AdminGUI/lib/**" />
+            <exclude name="dist-client/**" />
+            <exclude name="dist-server/**" />
+            <exclude name="out/**" />
+            <exclude name="eclipseBuild/**" />
+            <exclude name="**/*.class" />
+            <exclude name=".classpath" />
+            <exclude name=".project" />
+            <exclude name=".eclipse/**" />
+            <exclude name=".settings/**" />
+            <exclude name="**/.cvsignore" />
+            <exclude name="**/*.sh" />
+            <exclude name="**/nbproject/private/**" />
+            <exclude name="**/lib/**" />
+        </tar>
+        <gzip destfile="${tarball.tar.gz}" src="${tarball.tar}"/>
+        <delete file="${tarball.tar}"/>
+        <delete file="LICENSE"/>
+        <checksum file="${tarball.tar.gz}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${tarball.tar.gz}" algorithm="SHA1" property="signserverSHA1"/>
+        <echo message="SHA1 checksum: ${signserverSHA1}" />
+    </target>
+
+	<target name="showtime">
+		<tstamp>
+			<format property="completiontime" pattern="yyyy-MM-dd HH:mm:ss Z"/>
+		</tstamp>
+		<echo message="Task completed ${completiontime}."/>
+	</target>	
+
+</project>

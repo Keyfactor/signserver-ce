@@ -172,7 +172,18 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 						}
 					}catch (ServiceExecutionFailedException e) {
 						log.error("Service" + timerInfo.intValue() + " execution failed. ",e);						
-					}
+					} catch (RuntimeException e) {
+                                            /*
+                                             * DSS-377:
+                                             * If the service worker fails with a RuntimeException we need to
+                                             * swallow this here. If we allow it to propagate outside the
+                                             * ejbTimeout method it is up to the application server config how it
+                                             * should be retried, but we have already scheduled a new try
+                                             * previously in this method. We still want to log this as an ERROR
+                                             * since it is some kind of catastrophic failure..
+                                             */
+                                             log.error("Service worker execution failed.", e);
+                                        }
 				} else {
 					log.error("Service with id " + timerInfo.intValue() + " not found.");																
 				} 

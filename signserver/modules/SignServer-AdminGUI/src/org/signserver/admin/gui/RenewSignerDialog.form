@@ -120,9 +120,6 @@
         <Property name="text" type="java.lang.String" resourceKey="buttonRenew.text"/>
         <Property name="name" type="java.lang.String" value="buttonRenew" noResource="true"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonRenewActionPerformed"/>
-      </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <Properties>

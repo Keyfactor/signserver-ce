@@ -335,7 +335,6 @@ public class RenewKeysDialog extends JDialog {
             // to RenewKeysTask fields, here.
             super(app);
             resultCode = OK;
-            final String hostname = null;
 
             passwordPanelLabel.setText(
                     "Enter authentication code for all workers or leave empty:");

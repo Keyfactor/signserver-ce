@@ -13,13 +13,9 @@
 package org.signserver.admin.gui;
 
 import java.io.IOException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -73,21 +69,15 @@ public class RenewSignerDialog extends javax.swing.JDialog {
 
     private int resultCode = CANCEL;
 
-    private List<Worker> workers;
-
-    private List<Worker> signers;
     private Vector<Vector<String>> data;
 
     private JComboBox signersComboBox = new JComboBox();
-
 
 
     /** Creates new form InstallCertificatesDialog. */
     public RenewSignerDialog(java.awt.Frame parent, boolean modal,
             final List<Worker> workers, final List<Worker> signers) {
         super(parent, modal);
-        this.workers = new ArrayList<Worker>(workers);
-        this.signers = new ArrayList<Worker>(signers);
 
         // All signers that should be renewed
         for (Worker signer : signers) {
@@ -103,7 +93,6 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                     signer.getConfiguration().getProperty(
                     RenewalWorkerProperties.WORKERPROPERTY_RENEWWORKER)));
         }
-
 
         initComponents();
         setTitle("Renew " + signers.size() + " signers");
@@ -186,17 +175,13 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                 }
                 fireTableCellUpdated(rowIndex, columnIndex);
             }
-
-
         });
-        
 
         final Vector<String> workerNames = new Vector<String>();
         for (Worker worker : workers) {
             workerNames.add(worker.getName());
         }
         signersComboBox.setModel(new DefaultComboBoxModel(workerNames));
-
 
         data = new Vector<Vector<String>>();
         for (int row = 0; row < signers.size(); row++) {
@@ -312,11 +297,6 @@ public class RenewSignerDialog extends javax.swing.JDialog {
         buttonRenew.setAction(actionMap.get("installCertificates")); // NOI18N
         buttonRenew.setText(resourceMap.getString("buttonRenew.text")); // NOI18N
         buttonRenew.setName("buttonRenew"); // NOI18N
-        buttonRenew.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonRenewActionPerformed(evt);
-            }
-        });
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
@@ -397,10 +377,6 @@ public class RenewSignerDialog extends javax.swing.JDialog {
         dispose();
 }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void buttonRenewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRenewActionPerformed
-        
-    }//GEN-LAST:event_buttonRenewActionPerformed
-
     public int getResultCode() {
         return resultCode;
     }
@@ -410,28 +386,9 @@ public class RenewSignerDialog extends javax.swing.JDialog {
         return resultCode;
     }
 
-        @Action(block = Task.BlockingScope.WINDOW)
+    @Action(block = Task.BlockingScope.WINDOW)
     public Task installCertificates() {
         return new RenewTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class));
-    }
-
-    private class InstallCertificatesTask extends org.jdesktop.application.Task<Object, Void> {
-        InstallCertificatesTask(org.jdesktop.application.Application app) {
-            // Runs on the EDT.  Copy GUI state that
-            // doInBackground() depends on from parameters
-            // to InstallCertificatesTask fields, here.
-            super(app);
-        }
-        @Override protected Object doInBackground() {
-            // Your Task's code here.  This method runs
-            // on a background thread, so don't reference
-            // the Swing GUI from here.
-            return null;  // return your result
-        }
-        @Override protected void succeeded(Object result) {
-            // Runs on the EDT.  Update the GUI based on
-            // the result computed by doInBackground().
-        }
     }
 
     private class RenewTask extends Task<Result, Void> {
@@ -625,21 +582,6 @@ public class RenewSignerDialog extends javax.swing.JDialog {
 
             JOptionPane.showMessageDialog(RenewSignerDialog.this,
                     buff.toString(), "Renew signers", messageType);
-        }
-
-        private List<byte[]> asByteArrayList(
-                final List<Certificate> signerChain)
-                throws CertificateEncodingException {
-            final List<byte[]> result = new LinkedList<byte[]>();
-            for (final Certificate cert : signerChain) {
-                result.add(cert.getEncoded());
-            }
-            return result;
-        }
-
-        private byte[] asByteArray(final X509Certificate signerCert)
-                throws CertificateEncodingException {
-            return signerCert.getEncoded();
         }
     }
 

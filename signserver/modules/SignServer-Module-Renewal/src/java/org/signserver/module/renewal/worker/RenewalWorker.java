@@ -124,12 +124,12 @@ public class RenewalWorker extends BaseSigner {
      * Indicates that the requester want a BASE64 encoded certificate in the
      * CertificateResponse object.
      */
-    private static String RESPONSETYPE_CERTIFICATE    = "CERTIFICATE";
+    //private static String RESPONSETYPE_CERTIFICATE    = "CERTIFICATE";
     /**
      * Indicates that the requester want a BASE64 encoded pkcs7 in the
      * CertificateResponse object.
      */
-    private static String RESPONSETYPE_PKCS7          = "PKCS7";
+    //private static String RESPONSETYPE_PKCS7          = "PKCS7";
     /**
      * Indicates that the requester want a BASE64 encoded pkcs7 with the
      * complete chain in the CertificateResponse object.
@@ -148,6 +148,7 @@ public class RenewalWorker extends BaseSigner {
         getWorkerSession();
     }
 
+    @Override
     public ProcessResponse processData(final ProcessRequest request,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
@@ -719,17 +720,6 @@ public class RenewalWorker extends BaseSigner {
         return result;
     }
 
-    private String getPEMCerts(Collection<? extends Certificate> certs)
-            throws CertificateEncodingException {
-        final StringBuilder buff = new StringBuilder();
-        for (Certificate cert : certs) {
-            buff.append(CertTools.BEGIN_CERTIFICATE);
-            buff.append(new String(Base64.encode(cert.getEncoded())));
-            buff.append(CertTools.END_CERTIFICATE);
-        }
-        return buff.toString();
-    }
-
     private void renewalFailure(final Properties responseData,
             final String message) {
         renewalFailure(responseData, message, null);
@@ -754,24 +744,29 @@ public class RenewalWorker extends BaseSigner {
             this.alias = alias;
         }
 
+        @Override
         public String[] getClientAliases(String string, Principal[] prncpls) {
             return base.getClientAliases(string, prncpls);
         }
 
+        @Override
         public String chooseClientAlias(String[] keyType, Principal[] issuers,
                 Socket socket) {
             return alias;
         }
 
+        @Override
         public String[] getServerAliases(String string, Principal[] prncpls) {
             return base.getClientAliases(string, prncpls);
         }
 
+        @Override
         public String chooseServerAlias(String string, Principal[] prncpls,
                 Socket socket) {
             return base.chooseServerAlias(string, prncpls, socket);
         }
 
+        @Override
         public X509Certificate[] getCertificateChain(String string) {
             try {
                 return getSigningCertificateChain().toArray(new X509Certificate[0]);
@@ -781,6 +776,7 @@ public class RenewalWorker extends BaseSigner {
             }
         }
 
+        @Override
         public PrivateKey getPrivateKey(String string) {
             final PrivateKey key = base.getPrivateKey(string);
             return key;

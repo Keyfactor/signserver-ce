@@ -1,8 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.module.renewal.worker;
 
 import java.security.PublicKey;
@@ -14,7 +21,6 @@ import javax.jws.WebService;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.core.protocol.IRequestMessage;
-import org.ejbca.core.protocol.SimpleRequestMessage;
 import org.ejbca.util.RequestMessageUtils;
 import org.signserver.module.renewal
         .ejbcaws.gen.AlreadyRevokedException_Exception;
@@ -91,11 +97,11 @@ public class MockEjbcaWS {
     /**
      * Indicates that the requester want a BASE64 encoded certificate in the CertificateResponse object.
      */
-    private static String RESPONSETYPE_CERTIFICATE    = "CERTIFICATE";
+    //private static String RESPONSETYPE_CERTIFICATE    = "CERTIFICATE";
     /**
      * Indicates that the requester want a BASE64 encoded pkcs7 in the CertificateResponse object.
      */
-    private static String RESPONSETYPE_PKCS7          = "PKCS7";
+    //private static String RESPONSETYPE_PKCS7          = "PKCS7";
     /**
      * Indicates that the requester want a BASE64 encoded pkcs7 with the complete chain in the CertificateResponse object.
      */
@@ -281,13 +287,13 @@ public class MockEjbcaWS {
                 throw new EjbcaException_Exception("User not found: "
                         + username, ex);
             }
-            String caName = userdata.getCaName();
+            //String caName = userdata.getCaName();
             IRequestMessage pkcs10req
                     = RequestMessageUtils.genPKCS10RequestMessage(
                         req.getBytes());
             PublicKey pubKey = pkcs10req.getRequestPublicKey();
-            IRequestMessage imsg = new SimpleRequestMessage(pubKey, username,
-                    password);
+            //IRequestMessage imsg = new SimpleRequestMessage(pubKey, username,
+            //        password);
 
             X509Certificate cert = ca.issueCertificate(userdata.getSubjectDN(),
                     5, "SHA1withRSA", pubKey);
@@ -305,9 +311,7 @@ public class MockEjbcaWS {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-    }
-    
-
+    }    
 
     private UserDataVOWS findUser(final String username) 
             throws AuthorizationDeniedException_Exception,
@@ -327,7 +331,6 @@ public class MockEjbcaWS {
             throw new RuntimeException(ex);
         }
     }
-
     
     public KeyStore pkcs12Req(String arg0, String arg1, String arg2, 
             String arg3, String arg4)
@@ -337,7 +340,6 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public void keyRecoverNewest(String arg0) throws ApprovalException_Exception,
             AuthorizationDeniedException_Exception,
@@ -346,7 +348,6 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public void revokeToken(String arg0, int arg1) throws 
             AlreadyRevokedException_Exception, ApprovalException_Exception,
@@ -356,7 +357,6 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public RevokeStatus checkRevokationStatus(String arg0, String arg1) throws 
             AuthorizationDeniedException_Exception,
@@ -364,7 +364,6 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public List<UserDataSourceVOWS> fetchUserData(List<String> arg0, 
             String arg1) throws AuthorizationDeniedException_Exception,
@@ -372,7 +371,6 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public List<TokenCertificateResponseWS> genTokenCertificates(
             UserDataVOWS arg0, List<TokenCertificateRequestWS> arg1,
@@ -388,7 +386,6 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public HardTokenDataWS getHardTokenData(String arg0, boolean arg1, 
             boolean arg2) throws ApprovalRequestExecutionException_Exception,
@@ -400,7 +397,6 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public List<HardTokenDataWS> getHardTokenDatas(String arg0, boolean arg1, 
             boolean arg2) throws AuthorizationDeniedException_Exception,
@@ -408,7 +404,6 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public void republishCertificate(String arg0, String arg1) throws
             AuthorizationDeniedException_Exception,
@@ -417,7 +412,6 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public void customLog(int arg0, String arg1, String arg2, String arg3,
             Certificate arg4, String arg5) throws
@@ -426,7 +420,6 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public boolean deleteUserDataFromSource(List<String> arg0, String arg1,
             boolean arg2) throws AuthorizationDeniedException_Exception,
@@ -435,39 +428,33 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public List<NameAndId> getAuthorizedEndEntityProfiles() throws
             AuthorizationDeniedException_Exception, EjbcaException_Exception {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public List<NameAndId> getAvailableCertificateProfiles(int arg0) throws
             AuthorizationDeniedException_Exception, EjbcaException_Exception {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public List<NameAndId> getAvailableCAsInProfile(int arg0) throws
             AuthorizationDeniedException_Exception, EjbcaException_Exception {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public String getEjbcaVersion() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public int getPublisherQueueLength(String arg0) throws
             EjbcaException_Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public CertificateResponse certificateRequest(UserDataVOWS arg0, 
             String arg1, int arg2, String arg3, String arg4) throws
@@ -479,7 +466,6 @@ public class MockEjbcaWS {
         checkAuth();
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
     public KeyStore softTokenRequest(UserDataVOWS arg0, String arg1, 
             String arg2, String arg3) throws ApprovalException_Exception,

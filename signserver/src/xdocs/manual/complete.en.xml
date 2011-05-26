@@ -3976,10 +3976,10 @@ but can be changed by editing minimum-delivery-interval-in-millis in domain.xml.
                     <subsubsection name="Overview">
                         <p>
 The SignerStatusReportTimedService is a timed service that outputs status for a
-set of signers to a file. The information includes each signers crypto token status
-ACTIVE/OFFLINE and if available also the numbers of signings that has been
-performed with the key currently associated with the signer. If the signer has
-a configured limit of number of signers, this value is also included.
+set of workers to a file. The information includes each workers crypto token status
+ACTIVE/OFFLINE and if available also the numbers of signatures that has been
+performed with the key currently associated with the worker. If the worker has
+a configured limit of number of signatures, this value is also included.
                         </p>
                         <p>
 <b>Format:</b>
@@ -3994,11 +3994,11 @@ workerName=WORKERNAME3, status=STATUS3, KEY3=VALUE3, KEY4=VALUE4, ...
 <b>Rules:</b>
 <ul>
     <li>Each line contains a set of properties for one worker.</li>
-    <li>Lines are separated by some system dependent newline character (CR,
+    <li>Lines are separated by a system dependent newline character (CR,
 LF or CRLF).</li>
     <li>Properties are of form KEY=VALUE and are separated by a comma and a
 space (", ").</li>
-    <li>The properties "workerName" and "status" are the only that must be
+    <li>The properties "workerName" and "status" are the only ones that must be
 present.</li>
     <li>The property "workerName" is always the first property.</li>
 </ul>
@@ -4006,16 +4006,16 @@ present.</li>
                         <p>
 <b>Properties:</b>
 <ul>
-    <li><b>workerName</b>: is name of the worker. Example: "sod71" or "sod72"</li>
-    <li><b>status</b>: is status of the worker's crypto token and key. Either
+    <li><b>workerName</b>: name of the worker. Example: "sod71" or "sod72"</li>
+    <li><b>status</b>: status of the worker's crypto token and key. Either
 "ACTIVE" or "OFFLINE".</li>
-    <li><b>validityNotBefore</b>: is first date the signer are allowed to sign.
+    <li><b>validityNotBefore</b>: the first date the signer is allowed to sign.
 Format is java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").</li>
-    <li><b>validityNotAfter</b>: is last date the signer are allowed to sign.</li>
-    <li><b>signings</b>: is number of signings that has been performed with the key
-used by this signer.</li>
-    <li><b>signLimit</b>: is the maximum number of signatures this worker is allowed
-to perfom or -1 if there are no limit.</li>
+    <li><b>validityNotAfter</b>: the last date the signer is allowed to sign.</li>
+    <li><b>signings</b>: the number of signatures that has been performed with the key
+used by this worker.</li>
+    <li><b>signLimit</b>: the maximum number of signatures this worker is allowed
+to perfom or -1 if there is no limit.</li>
 </ul>
                         </p>
                         <p>
@@ -4056,6 +4056,38 @@ access to this file when the service is executed.
 
                         </p>
                     </subsubsection>
+                    
+                </subsection>
+                <subsection name="Installing a service">
+                    <p>To install a service you use the same commands as for installing a worker:</p>
+                    <source>
+bin/signserver.sh setproperties configuration.properties
+                    </source>
+                    <p>Example:</p>
+                    <source>
+> bin/signserver.sh setproperties doc/sample-configs/qs_signerstatusreport_configuration.properties
+
+Using Glassfish JNDI provider...
+===========================================
+  Executing Command on host : localhost
+===========================================
+Configuring properties as defined in the file : doc/sample-configs/qs_signerstatusreport_configuration.properties
+Setting the property ACTIVE to TRUE for worker 2
+Setting the property INTERVAL to 10 for worker 2
+Setting the global property WORKER2.CLASSPATH to org.signserver.server.timedservices.SignerStatusReportTimedService with scope GLOB.
+Setting the property WORKERS to PDFSigner1 for worker 2
+Setting the property NAME to SignerStatusReporter for worker 2
+Setting the property OUTPUTFILE to /tmp/statusreport for worker 2
+
+> bin/signserver.sh reload 2
+
+Using Glassfish JNDI provider...
+===========================================
+Executing Command on host : localhost
+===========================================
+SignServer reloaded successfully
+Current configuration is now activated.
+                    </source>
                 </subsection>
             </section>
 

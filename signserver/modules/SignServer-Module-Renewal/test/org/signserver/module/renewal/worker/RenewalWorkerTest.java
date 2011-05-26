@@ -113,8 +113,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 SIGNER_6102);
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
                 "foo123");
-        reqProperties.setProperty("DUMMYUNIQEVALUE",
-                String.valueOf(Math.random()));
         final GenericPropertiesRequest request = new GenericPropertiesRequest(
                 reqProperties);
         GenericPropertiesResponse response
@@ -152,6 +150,10 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
     /** 
      * Test Renewal without key generation (ie when NEXTCERTSIGNKEY exists)
+     *
+     * Config: NEXTCERTSIGNKEY
+     * Request: -
+     * Result: Only DEFAULTKEY (containing value from NEXTCERTSIGNKEY)
      */
     public void test03renewalExistingNextCertSignKey() throws Exception {
         // Setup workers
@@ -178,8 +180,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 SIGNER_6102);
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
                 "foo123");
-        reqProperties.setProperty("DUMMYUNIQEVALUE",
-                String.valueOf(Math.random()));
         final GenericPropertiesRequest request = new GenericPropertiesRequest(
                 reqProperties);
         GenericPropertiesResponse response
@@ -216,15 +216,19 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
 
         // DEFAULTKEY should now have the right alias
-        getWorkerSession().setWorkerProperty(SIGNERID_6102, "DEFAULTKEY",
-                nextCertSignAlias);
+        assertEquals(nextCertSignAlias,  getWorkerSession()
+                .getCurrentWorkerConfig(SIGNERID_6102).getProperty("DEFAULTKEY"));
     }
 
     /**
      * Test renewal without key generation (ie when NEXTCERTSIGNKEY exists) but
      * for DEFAULTKEY requested in request.
+     *
+     * Config: NEXTCERTSIGNKEY, DEFAULTKEY
+     * Request: FORDEFAULTKEY
+     * Result: NEXTCERTSIGNKEY, DEFAULTKEY
      */
-    public void test04renewalExistingKeyForDefaultKey() throws Exception {
+    public void test04renewalExistingNextCertSignKeyForDefaultKey() throws Exception {
         // Setup workers
         addWorkers();
 
@@ -232,11 +236,14 @@ public class RenewalWorkerTest extends AbstractTestCase {
         mockSetupEjbcaSearchResult();
 
         // Generate a new key
+        final String nextCertSignAlias = "test4_keyalias2";
         final String defaultKeyAlias = "test04_keyalias";
         getWorkerSession().generateSignerKey(SIGNERID_6102, DEFAULT_KEYALG,
                 DEFAULT_KEYSPEC, defaultKeyAlias, "foo123".toCharArray());
         getWorkerSession().setWorkerProperty(SIGNERID_6102, "DEFAULTKEY",
                 defaultKeyAlias);
+        getWorkerSession().setWorkerProperty(SIGNERID_6102, "NEXTCERTSIGNKEY",
+                nextCertSignAlias);
         getWorkerSession().reloadConfiguration(SIGNERID_6102);
         assertEquals("New defaultkey alias", defaultKeyAlias,
                 getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
@@ -251,8 +258,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 SIGNER_6102);
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
                 "foo123");
-        reqProperties.setProperty("DUMMYUNIQEVALUE",
-                String.valueOf(Math.random()));
         final GenericPropertiesRequest request = new GenericPropertiesRequest(
                 reqProperties);
         GenericPropertiesResponse response
@@ -279,8 +284,9 @@ public class RenewalWorkerTest extends AbstractTestCase {
         assertNotNull(chain);
         assertTrue(chain.contains(cert));
 
-        // Should not be any NEXTCERTSIGNKEY
-        assertNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        // Should still be a NEXTCERTSIGNKEY
+        assertEquals(nextCertSignAlias,
+                getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
                 .getProperty("NEXTCERTSIGNKEY"));
 
         // Should be an DEFAULTKEY
@@ -288,14 +294,79 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 .getProperty("DEFAULTKEY"));
 
         // DEFAULTKEY should not have changed
+        assertEquals(defaultKeyAlias,  getWorkerSession()
+                .getCurrentWorkerConfig(SIGNERID_6102).getProperty("DEFAULTKEY"));
+    }
+
+    /**
+     * Test renewal without key generation (for DEFAULTKEY requested in request).
+     *
+     * Config: DEFAULTKEY
+     * Request: FORDEFAULTKEY
+     * Result: DEFAULTKEY
+     */
+    public void test05renewalExistingKeyForDefaultKey() throws Exception {
+        // Setup workers
+        addWorkers();
+
+        // Setup EJBCA end entity
+        mockSetupEjbcaSearchResult();
+
+        // Generate a new key
+        final String defaultKeyAlias = "test05_keyalias";
+        getWorkerSession().generateSignerKey(SIGNERID_6102, DEFAULT_KEYALG,
+                DEFAULT_KEYSPEC, defaultKeyAlias, "foo123".toCharArray());
         getWorkerSession().setWorkerProperty(SIGNERID_6102, "DEFAULTKEY",
                 defaultKeyAlias);
+        getWorkerSession().reloadConfiguration(SIGNERID_6102);
+        assertEquals("New defaultkey alias", defaultKeyAlias,
+                getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                .getProperty("DEFAULTKEY"));
+
+
+        // Test starts here
+        final Properties reqProperties = new Properties();
+        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_FORDEFAULTKEY,
+                RenewalWorkerProperties.REQUEST_FORDEFAULTKEY_TRUE);
+        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_WORKER,
+                SIGNER_6102);
+        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
+                "foo123");
+        final GenericPropertiesRequest request = new GenericPropertiesRequest(
+                reqProperties);
+        GenericPropertiesResponse response
+                = (GenericPropertiesResponse) getWorkerSession().process(
+                    WORKERID, request, new RequestContext());
+
+        // OK result
+        LOG.info("Response message: " + response.getProperties().getProperty(
+                RenewalWorkerProperties.RESPONSE_MESSAGE));
+        assertEquals(RenewalWorkerProperties.RESPONSE_RESULT_OK,
+                response.getProperties().getProperty(
+                RenewalWorkerProperties.RESPONSE_RESULT));
+
+        // Requested certificate
+        assertTrue("should have requested certificate",
+                mockEjbcaWs.isPkcs10RequestCalled());
+
+        // Should have certificate and chain
+        final X509Certificate cert = (X509Certificate) getWorkerSession()
+                .getSignerCertificate(SIGNERID_6102);
+        assertNotNull(cert);
+        final List<java.security.cert.Certificate> chain
+                = getWorkerSession().getSignerCertificateChain(SIGNERID_6102);
+        assertNotNull(chain);
+        assertTrue(chain.contains(cert));
+
+        // DEFAULTKEY should not have changed
+        assertEquals(defaultKeyAlias,  getWorkerSession()
+                .getCurrentWorkerConfig(SIGNERID_6102).getProperty("DEFAULTKEY"));
     }
 
     /**
      * Test failure: No EJBCA end entity.
      */
-    public void test05failureNoEJBCAEndEntity() throws Exception {
+    public void test06failureNoEJBCAEndEntity() throws Exception {
         // Setup workers
         addWorkers();
 
@@ -321,8 +392,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 SIGNER_6102);
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
                 "foo123");
-        reqProperties.setProperty("DUMMYUNIQEVALUE",
-                String.valueOf(Math.random()));
         final GenericPropertiesRequest request = new GenericPropertiesRequest(
                 reqProperties);
         GenericPropertiesResponse response
@@ -350,7 +419,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
     /**
      * Test failure: Authentication denied
      */
-    public void test06failureEJBCAAuthDenied() throws Exception {
+    public void test07failureEJBCAAuthDenied() throws Exception {
         // Setup workers
         addWorkers();
 
@@ -374,8 +443,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 SIGNER_6102);
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
                 "foo123");
-        reqProperties.setProperty("DUMMYUNIQEVALUE",
-                String.valueOf(Math.random()));
         final GenericPropertiesRequest request = new GenericPropertiesRequest(
                 reqProperties);
         GenericPropertiesResponse response
@@ -404,7 +471,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
      * Tests renewal of key and certificate for a worker.
      * @throws Exception
      */
-    public void test07truststoreTypeJKS() throws Exception {
+    public void test08truststoreTypeJKS() throws Exception {
         final String truststoreType = "JKS";
 
         // Setup workers

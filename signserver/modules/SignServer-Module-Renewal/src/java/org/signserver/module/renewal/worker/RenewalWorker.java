@@ -271,10 +271,8 @@ public class RenewalWorker extends BaseSigner {
             final String forDefaultKeyValue = requestData.getProperty(
                     RenewalWorkerProperties.REQUEST_FORDEFAULTKEY,
                     Boolean.FALSE.toString());
-            boolean requestForDefaultKey = false;
-            if (forDefaultKeyValue != null && !forDefaultKeyValue.isEmpty()) {
-                requestForDefaultKey = Boolean.parseBoolean(forDefaultKeyValue);
-            }
+            final boolean requestForDefaultKey =
+                    Boolean.TRUE.toString().equalsIgnoreCase(forDefaultKeyValue);
 
             final boolean renewKey = !requestForDefaultKey 
                     && nextCertSignKey == null;
@@ -284,65 +282,27 @@ public class RenewalWorker extends BaseSigner {
 
             if (LOG.isDebugEnabled()) {
                 final StringBuilder buff = new StringBuilder();
-                buff.append("Renewer");
-                buff.append("[");
-                buff.append(workerId);
-                buff.append("]: ");
-                buff.append("Got request for renewal of Worker");
-                buff.append("[");
-                buff.append(reneweeId);
-                buff.append("]: ");
-                buff.append("\n");
+                buff.append("Renewer[").append(workerId)
+                    .append("]: Got request for renewal of Worker[").append(reneweeId)
+                    .append("]: \n");
 
-                buff.append("Transaction:");
-                buff.append("\n\t");
-                buff.append("LOG_ID: ");
-                buff.append(logMap.get(IWorkerLogger.LOG_ID));
-                buff.append("\n");
+                buff.append("Transaction:\n\t")
+                    .append("LOG_ID: ").append(logMap.get(IWorkerLogger.LOG_ID)).append("\n");
                 
-                buff.append("Renewee config:");
-                buff.append("\n\t");
+                buff.append("Renewee config:\n\t")
+                    .append(PROPERTY_SIGNATUREALGORITHM).append("=").append(sigAlg).append("\n\t")
+                    .append(PROPERTY_REQUESTDN).append("=").append(subjectDN).append("\n\t")
+                    .append(PROPERTY_KEYALG).append("=").append(keyAlg).append("\n\t")
+                    .append(PROPERTY_KEYSPEC).append("=").append(keySpec).append("\n\t")
+                    .append(PROPERTY_EXPLICITECC).append("=").append(explicitEccParameters).append("\n\t")
+                    .append(PROPERTY_RENEWENDENTITY).append("=").append(endEntity).append("\n");
 
-                buff.append(PROPERTY_SIGNATUREALGORITHM);
-                buff.append("=");
-                buff.append(sigAlg);
-                buff.append("\n\t");
+                buff.append("Request config:\n\t");
+                buff.append(RenewalWorkerProperties.REQUEST_FORDEFAULTKEY)
+                    .append("=").append(requestForDefaultKey).append("\n\t");
 
-                buff.append(PROPERTY_REQUESTDN);
-                buff.append("=");
-                buff.append(subjectDN);
-                buff.append("\n\t");
-
-                buff.append(PROPERTY_KEYALG);
-                buff.append("=");
-                buff.append(keyAlg);
-                buff.append("\n\t");
-
-                buff.append(PROPERTY_KEYSPEC);
-                buff.append("=");
-                buff.append(keySpec);
-                buff.append("\n\t");
-
-                buff.append(PROPERTY_EXPLICITECC);
-                buff.append("=");
-                buff.append(explicitEccParameters);
-                buff.append("\n\t");
-
-                buff.append(PROPERTY_RENEWENDENTITY);
-                buff.append("=");
-                buff.append(endEntity);
-                buff.append("\n");
-
-                buff.append("Request config:");
-                buff.append("\n\t");
-
-                buff.append(RenewalWorkerProperties.REQUEST_FORDEFAULTKEY);
-                buff.append("=");
-                buff.append(requestForDefaultKey);
-                buff.append("\n\t");
-
-                buff.append(RenewalWorkerProperties.REQUEST_AUTHCODE);
-                buff.append("=");
+                buff.append(RenewalWorkerProperties.REQUEST_AUTHCODE)
+                    .append("=");
                 if (authCode == null) {
                     buff.append("null");
                 } else {

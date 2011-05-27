@@ -235,4 +235,19 @@ public final class CryptoTokenUtils {
 		fis.close();
 		return myKS;
 	}
+
+        /**
+         * Command line tool for generating the data for a SoftCryptoToken.
+         * @param args
+         * @throws Exception
+         */
+        public static void main(String[] args) throws Exception {
+            if (args.length == 4 && "createsoft".equals(args[0])) {
+                System.out.println("WORKERGEN1.SIGNERCERTCHAIN=" + CreateSignerCertificateChainForSoftCryptoToken(args[1], args[3], args[2]));
+                System.out.println("WORKERGEN1.KEYDATA=" + CreateKeyDataForSoftCryptoToken(args[1], args[3], args[3], args[2]));
+            } else {
+                System.err.println("Usage: CryptoTokenUtils createsoft <PKCS#12 keystore> <key alias> <keystore password>");
+            }
         }
+
+}

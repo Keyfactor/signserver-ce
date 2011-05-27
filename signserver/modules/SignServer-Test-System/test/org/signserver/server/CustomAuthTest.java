@@ -16,11 +16,7 @@ package org.signserver.server;
 import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.Hashtable;
 import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
 
@@ -93,7 +89,7 @@ public class CustomAuthTest extends TestCase {
 		sSSession.setWorkerProperty(9, "TESTAUTHPROP", "DATA");
 		String signserverhome = System.getenv("SIGNSERVER_HOME");
 		assertNotNull(signserverhome);
-		sSSession.setWorkerProperty(9,"KEYSTOREPATH",signserverhome +"/src/test/timestamp1.p12");
+		sSSession.setWorkerProperty(9,"KEYSTOREPATH",signserverhome +"/src/test/dss10/dss10_tssigner1.p12");
 		sSSession.setWorkerProperty(9, "KEYSTOREPASSWORD", "foo123");
 		sSSession.setWorkerProperty(9,TimeStampSigner.DEFAULTTSAPOLICYOID,"1.0.1.2.33");
 		sSSession.setWorkerProperty(9,TimeStampSigner.TSA,"CN=TimeStampTest1");
@@ -121,9 +117,12 @@ public class CustomAuthTest extends TestCase {
 		
 		HardCodedCryptoToken token = new HardCodedCryptoToken();
 		token.init(1,new Properties());
+
+                // This test apparently borrows the signer certificate to test with
+                // as if it were a client authentication certificate. Well I guess it work...
 		X509Certificate cert = (X509Certificate) token.getCertificate(ICryptoToken.PROVIDERUSAGE_SIGN);
-		//System.out.println(CertTools.stringToBCDNString(cert.getSubjectDN().toString()));
-		
+                //System.out.println(CertTools.stringToBCDNString(cert.getSubjectDN().toString()));
+                
 		try{
 			genTimeStampRequest(1, cert, null);
 			assertTrue(false);

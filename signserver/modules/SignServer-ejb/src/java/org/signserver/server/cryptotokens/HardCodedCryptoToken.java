@@ -56,6 +56,9 @@ public class HardCodedCryptoToken implements ICryptoToken {
     /** CN=End Entity 1, O=Reversed Org, C=SE. **/
     public static final String KEY_ALIAS_3 = "key00003";
 
+    /** CN=TS Signer 2, OU=Testing, O=SignServer, C=SE. */
+    public static final String KEY_ALIAS_4 = "key00004";
+
 	public HardCodedCryptoToken(){}
 	
 	/**
@@ -228,6 +231,54 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	+ "yWVD5djfil3Gsi68t+2VeG81num9a0XdZgMkZPy3avBQCab9LmyII6BA0GNAuFJn"
 	+ "WsUhUi4VgDaPyyhMVrzLoGgsTX2Dox/81/NfxTARuPYmOq7Dw7nqUS8="));
 
+        /**
+         * friendlyName: TS Signer 2
+         */
+        private static byte[] passTestKey4 = Base64.decode(
+	  "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAKppkcJmNOXipMx/"
+	+ "egnq30J9wOyzzTtGSpc6SiK+R5+eWAuw7gnYOt5Eg3mg58yz10d1d0sKjrqAS1GX"
+	+ "Hmw7+oooESnd2zYtVaoCMbFtgxa7QM1TQWgZVHPiHyTAzSJv1TjpjDl5YbAq+2dX"
+	+ "CKuv8r6F0WUN/I7zHS+40rjfAzXLAgMBAAECgYA9akyYtgMMcpEYDj0qQ9ZwfSfB"
+	+ "Zs9pNFz/gYdkXBUuBoAOvpYbQC1/G0wS0pWXpZzJaSE0Dzr/Jet/HSpesYMKHovv"
+	+ "GSmX8od8DROtbpIVeinzU2VyXmPSWD3DBWk55lgyugxQtRb6bN6YS5UL6Cvsdn0/"
+	+ "BGLbNdhPQy07644p+QJBAOETM9DVMPuzYdlCQLDM3cCU9s79vCtRZymOZ2aKfSds"
+	+ "Q2ejU+48V3tv8ne1kFrktVi47chU126CtnzAnMtXHx0CQQDB06lSi+YsDuEyW2vQ"
+	+ "TXn/gCya3ZWJ50BQCRcQGVuHqezz+eIzaOYOlBqjVBwGCA6MNWZbWEX5g+JuG5ev"
+	+ "HAwHAkBlNnxjmas4VNdYmrl6h/XkZ1iBhoq6tBV/E4GeFALp2n6JOWJBzLLOWG4h"
+	+ "tO0gYp7GMgsDvltOX8tuWDNqIVhlAkAJA7cUR71kvyxqEyZogbHy2Bs6+KNDzqWH"
+	+ "E2UnMoa3QIfssOp8SZypgOncPsUu4qEKlFE2Xlyixid5x36+fidxAkEAihf3GWpu"
+	+ "lm39peyCjcEMbUkeY6oM4LfOiVSZYOdjK7S5ZHJ9vrjo8ackrRQu2D4iDH9OilQW"
+	+ "WmAr3Xhw+XTipQ==");
+        
+        /**
+         * friendlyName: TS Signer 2
+	 * subject=/CN=TS Signer 2/OU=Testing/O=SignServer/C=SE"
+	 * issuer=/CN=DSS Root CA 10/OU=Testing/O=SignServer/C=SE"
+         */
+        private static byte[] certbytes4 = Base64.decode(
+          "MIIEDTCCAfWgAwIBAgIIN6S03x9uQpcwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE"
+	+ "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp"
+	+ "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzEyNDcyN1oXDTIxMDUyNDEy"
+	+ "NDcyN1owSjEUMBIGA1UEAwwLVFMgU2lnbmVyIDIxEDAOBgNVBAsMB1Rlc3Rpbmcx"
+	+ "EzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIGfMA0GCSqGSIb3DQEB"
+	+ "AQUAA4GNADCBiQKBgQCqaZHCZjTl4qTMf3oJ6t9CfcDss807RkqXOkoivkefnlgL"
+	+ "sO4J2DreRIN5oOfMs9dHdXdLCo66gEtRlx5sO/qKKBEp3ds2LVWqAjGxbYMWu0DN"
+	+ "U0FoGVRz4h8kwM0ib9U46Yw5eWGwKvtnVwirr/K+hdFlDfyO8x0vuNK43wM1ywID"
+	+ "AQABo3gwdjAdBgNVHQ4EFgQU+AvmdLWyZGsLR37C3Zj/2opFKdUwDAYDVR0TAQH/"
+	+ "BAIwADAfBgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8E"
+	+ "BAMCB4AwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggIB"
+	+ "ABuIAdtox6rXypGZ+Nqc0GWMCyHUY7NmSrJ1hVzBilFo7WPVtzmzCJTVD/OFoBQT"
+	+ "oVoBV/6XYXG0yz+kNNyh8uwHq4qLVv/YUeXJLA/r5yF06k62JXp/2uBxphgDFox5"
+	+ "4crgMIyn5ytrk8YG17eqEMMu6JHrHq/fQYsInetTN/RPY7qjcUCIKqA/N02Zz+6D"
+	+ "ToeQsJ8ENoYt0ksN7tKs/KAI4IzG8cnjpa795sCgoBcnRbM81w90N2RwavNP9ynJ"
+	+ "SIHcyypZGAcJO5Vd7j763vskzfpSGO2ku8iTA1FsosyZrDLWUASsHGoPfapfAU3/"
+	+ "fTAjeMkiq3z0cqi61FD1wR0h6/A3E6Bu/kxQsukEiLZt0PiicXQlwOjuFPGwl76T"
+	+ "+wimy0QfjY1tS1FMH+yyQ+Lo1kTeJVpOrJPwGYQhZRAuouwZzxbh+hTmY3LFL+GV"
+	+ "EMT6ArNchNNgNX3CtoMIuOKPN1xWoa7iAYbqTA/7/fRdZiUvu80cJjLZvmjcmxxt"
+	+ "MsbpxADmYtIO3VS1+VjdR5Cuc61VeDByNuGoahuMmD4r1+gHCmmEScM+JPmJxJbV"
+	+ "uklHo0zDf8kcA7CIxK7qQkT1kLTfIL9B0lrwA3DCV/qOhNHaLzkJVSVS3ajNVGO9"
+	+ "H5OhnjyWBdTF7KL3KZJ1j9mJxn5pyDu1c1YMdgwr8RGN");
+
 	
 	private X509Certificate cert = null;
 	
@@ -239,12 +290,15 @@ public class HardCodedCryptoToken implements ICryptoToken {
             if (props == null) {
                 defaultKey = KEY_ALIAS_1;
             } else {
-                defaultKey = props.getProperty("defaultKey", KEY_ALIAS_1);
+                defaultKey = props.getProperty("DEFAULTKEY", KEY_ALIAS_1);
             }
             final byte[] certbytes;
             final byte[] passTestKey;
 
-            if (KEY_ALIAS_3.equals(defaultKey)) {
+            if (KEY_ALIAS_4.equals(defaultKey)) {
+                certbytes = certbytes4;
+                passTestKey = passTestKey4;
+            } else if (KEY_ALIAS_3.equals(defaultKey)) {
                 certbytes = certbytes3;
                 passTestKey = passTestKey3;
             } else if (KEY_ALIAS_2.equals(defaultKey)) {

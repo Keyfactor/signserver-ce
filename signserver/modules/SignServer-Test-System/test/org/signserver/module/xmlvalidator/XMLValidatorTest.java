@@ -47,7 +47,7 @@ import org.w3c.dom.Document;
 
 
 public class XMLValidatorTest extends TestCase {
-
+    
 	private static Logger log = Logger.getLogger(XMLValidatorTest.class);
 	
 	/**
@@ -57,6 +57,8 @@ public class XMLValidatorTest extends TestCase {
 	private static final int WORKERID = 5677;
 	
 	private static final String VALIDATION_WORKER = "TestValidationWorker";
+        private static final String SIGNER2_ISSUERDN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
+        private static final String SIGNER2_SUBJECTDN = "CN=Signer 2,OU=Testing,O=SignServer,C=SE";
 	
 	private IWorkerSession.IRemote sSSession;
 	private IGlobalConfigurationSession.IRemote gCSession;
@@ -142,9 +144,9 @@ public class XMLValidatorTest extends TestCase {
 			
 			// Check certificate and path
 			ICertificate signercert = res.getCertificateValidation().getCertificate();
-			assertEquals("Signer certificate", "CN=xmlsigner2,O=SignServer Test,C=SE", signercert.getSubject());
+			assertEquals("Signer certificate", SIGNER2_SUBJECTDN, signercert.getSubject());
 			List<ICertificate> caChain = res.getCertificateValidation().getCAChain(); 
-			assertEquals("ca certificate 0", "CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE", caChain.get(0).getSubject());
+			assertEquals("ca certificate 0", SIGNER2_ISSUERDN, caChain.get(0).getSubject());
 			assertEquals("caChain length", 1, caChain.size());
 			log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
 			assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
@@ -300,9 +302,9 @@ public class XMLValidatorTest extends TestCase {
 			
 			// Check certificate and path
 			ICertificate signercert = res.getCertificateValidation().getCertificate();
-			assertEquals("Signer certificate", "CN=xmlsigner2,O=SignServer Test,C=SE", signercert.getSubject());
+			assertEquals("Signer certificate", SIGNER2_SUBJECTDN, signercert.getSubject());
 			List<ICertificate> caChain = res.getCertificateValidation().getCAChain(); 
-			assertEquals("ca certificate 0", "CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE", caChain.get(0).getSubject());
+			assertEquals("ca certificate 0", SIGNER2_ISSUERDN, caChain.get(0).getSubject());
 			assertEquals("caChain length", 1, caChain.size());
 			log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
 			assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
@@ -329,9 +331,9 @@ public class XMLValidatorTest extends TestCase {
 
                     // Check certificate and path
                     ICertificate signercert = res.getCertificateValidation().getCertificate();
-                    assertEquals("Signer certificate", "CN=xmlsigner2,O=SignServer Test,C=SE", signercert.getSubject());
+                    assertEquals("Signer certificate", SIGNER2_SUBJECTDN, signercert.getSubject());
                     List<ICertificate> caChain = res.getCertificateValidation().getCAChain();
-                    assertEquals("ca certificate 0", "CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE", caChain.get(0).getSubject());
+                    assertEquals("ca certificate 0", SIGNER2_ISSUERDN, caChain.get(0).getSubject());
                     assertEquals("caChain length", 1, caChain.size());
                     log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
                     assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
@@ -366,9 +368,9 @@ public class XMLValidatorTest extends TestCase {
 
                     // Check certificate and path
                     ICertificate signercert = res.getCertificateValidation().getCertificate();
-                    assertEquals("Signer certificate", "CN=xmlsigner2,O=SignServer Test,C=SE", signercert.getSubject());
+                    assertEquals("Signer certificate", SIGNER2_SUBJECTDN, signercert.getSubject());
                     List<ICertificate> caChain = res.getCertificateValidation().getCAChain();
-                    assertEquals("ca certificate 0", "CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE", caChain.get(0).getSubject());
+                    assertEquals("ca certificate 0", SIGNER2_ISSUERDN, caChain.get(0).getSubject());
                     assertEquals("caChain length", 1, caChain.size());
                     log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
                     assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
@@ -384,7 +386,7 @@ public class XMLValidatorTest extends TestCase {
 
 	public void test11SigOkCertRevoced() throws Exception {
 		
-		sSSession.setWorkerProperty(17, "VAL1.REVOKED", "CN=xmlsigner2,O=SignServer Test,C=SE");
+		sSSession.setWorkerProperty(17, "VAL1.REVOKED", SIGNER2_SUBJECTDN);
 		sSSession.reloadConfiguration(17);
 		
 		// OK signature, revoced cert

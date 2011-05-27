@@ -104,7 +104,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER1B, "KEYSTOREPATH", 
                 getSignServerHome().getAbsolutePath()
                 + File.separator + "src" + File.separator + "test"
-                + File.separator + "pdfsigner.p12");
+                + File.separator + "dss10/dss10_signer1.p12");
         workerSession.setWorkerProperty(WORKER1B, "KEYSTOREPASSWORD", "foo123");
 
         // WORKER2 uses a P12 keystore

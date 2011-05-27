@@ -196,6 +196,12 @@ public class DummyValidator extends BaseValidator {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
             }
+            // All other certificates issued by DSSRootCA10 is OK
+            else if (cert.getIssuer().equals(
+                    "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            }
         }
 
         LOG.trace("<validate");

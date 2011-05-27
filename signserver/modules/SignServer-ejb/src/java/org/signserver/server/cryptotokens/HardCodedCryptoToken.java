@@ -92,21 +92,36 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	"Bstg/zzNoMZgzxjL+afGxe4KNcfTmoXFm/rG2WCEio+H4AF3g9QyQUxpvaLXG7VW" +
 	"VI42L5Hy2MkUE1Mw7GfDoy4=").getBytes());
 
+        /**
+         * friendlyName: Signer 4
+         */
 	private static byte[] passTestKey1 = Base64.decode((
-	"MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAIUQj9LZl/yZQHm9" +
-	"QSrg+o/Ir+F2UQrEamEL5Q307kS+AsrB+9mLYZhFY3vqIo21aZmxKdtPa/d1ML0u" +
-	"E2Ykz0L1QGJ1MO5Wux+EOKwoj0+JsI/nkfCMbgDmYK79h11REc7quin3U2K0wm5t" +
-	"XAaDus8X7ZRwp4wm7gP+tllUS4SrAgMBAAECgYAvSZVy/vTuRaAOI12XWWBx3IX0" +
-	"f9GJHAgZ+NorvZE3SLdBSvKvesLyFCaokKo65e9jOPyA/ZaG2FS7xjYKpKYqwt96" +
-	"1l5Vyd3dloaTFEDjjp/ZJgbmEwDKICXudqCH7PyCaCB+SofXUYmD7Ss7OxtqZtjY" +
-	"MoXQ1IYwhPPFDJyjoQJBAPWXbC1Fzpx7LFisISbcmNlDt1qQg7GgOxq8IokRkqUm" +
-	"1e/faRCXq8ZJmQfR9UnsESEWsCOWZ8gO2SKCvSiH8tMCQQCKtEPMDKtX/I3MjkMW" +
-	"wkIX0ivTjPn9tFM6av0X2ppQELQINe/vZLRuplLfOnAgKuGNi712e+yHPpvugsX1" +
-	"Lo/JAkEAk/Mx1yA7tOc7MvwXSKsSZai2t5dhzsshcBywjXSJrHZ14XjseXN1pxHF" +
-	"YAGrTGorc4yQdg/w24OeaXzraZRkwwJBAIBC/+qh0JR1g76j0yAplKqofESNOeNE" +
-	"rC36H36+dDITsBdjoTNTgZJMlZe9V1A3twmILjRxliDeYZ1mKp52ZxkCQD0gyo9r" +
-	"gbE9jGM7yKu169PZXNpWN0YP3UPM+ctqNkKe2l2hK0rCopoymxJGthba9iKhzHCZ" +
-	"FHqzLUsiKmWnrwY=" ).getBytes());
+	"MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCcIaVgAE9NbcnH"
+	+ "rTtx2Qc8MkQZekoJeQjb3OPwHEIi8LfeTIZkHozsQgJT7u+3bTS7VOZKPHZq5N9k"
+	+ "jqwDZwOwRKUyEon7yePa6PV/mD0xhFv4girUgiEMCtbAgKzCdmRYv/k1yCCDZs1y"
+	+ "J0JuUPLlJRD7Ex5e0lBYJTxmfdr7JJlnVmJhnXSBS7klVqWy45vxilxP+moE8XRy"
+	+ "ATLqYh7cA2iXPEso1QFgCxDNCcK+DH4aqBvNgejx+SmlIZQVVh0UjQwL0IFPvZ47"
+	+ "HFCiC4gJZe6zwF0jB5tkMZB2W4q9M2yKDiEzf0bpa8+qgSL0jzpWFj2ZLJj5Y55T"
+	+ "ljdmwLwJAgMBAAECggEAeAPhBHeYffNbvPKrlCr4xcv5zv/Ss49nQOJ+EE8Yg5U4"
+	+ "MVfvojxdpSpkcbJkcEIw26M6Vmw9tpNyKPEGxqLEEhXiSig4CuU5EkgqlkcnGs4c"
+	+ "iF0+oRXaY1BdnaILqnupTRNcdHv+iiNW313QUc5Ft+CTOfyLRuYxvl/5Guu5jXx0"
+	+ "KgIj+ulLnETHz/ogXr2dhV3du+Rfz9HG1q8PWP86YxPcRzMNVkrrG/URBJGw3uax"
+	+ "zgTDNOakb3z74iYRvmez4nbsAO+7jDwBGx29kUCEOg/Jp+8x7ih05vz8/5cH9Ovu"
+	+ "6U4F4/rGKgTyP7fBPLYXAwVAycgklyFaSGgU/p/LJQKBgQDOy0DDE7DaIjs2PZ3l"
+	+ "7AwfKw3laFu9QZr3FraZqpySdaIbbxQ9rCAfbOu3rzAsQ/8FmNQrVHKVGeDp0f+J"
+	+ "AfkGYfn76Vwgpn1smu0+kr7dH+PPf/6b8n2Ye5fNsX9yAvOJBzQtEQKNeAcBzDV3"
+	+ "V/DlVecS0hRLrOzYnYQUYjWowwKBgQDBSE+0u8yLi5Ku8G6XIQbGtsQ+JMHLvr2z"
+	+ "Tnc7HFGkuCSjt8x6XuGAukCfg9iN0dSsmyRXMh2A8s/k9/ho2cKuIs886kSL2wnN"
+	+ "h/sH1y1Lw8wKn22nSVX0S+cB77vYby74/stC8lCF7lOPhyekNeKv6qRCnuywZS0t"
+	+ "YPiat+MbQwKBgQCSiSTTF1jyud8LiI4jJylPzMqEDXc0nRCaltW9/lAE2KaOmh/V"
+	+ "s+rvWdeOye1w8J398VYnfifT0Aq4pb5V77fu9e6Wu740xMWL+By1gncNalOb7i8V"
+	+ "grfNHYdskqKkv8KjDx/B75PHe447j+EzOHXTjRO5GnSXS2pp9PRrHUy40QKBgQCj"
+	+ "e893VrW/frH2aIWSLSw3HlZFHgARnueD56WwCNcB1YOgOxGom+JvaJrKkdG0uzwB"
+	+ "N0R4wHn2HOs9h4TE4xPpCKZzps+N4BqdjxwE2LuGbzmB7rHoIn6ioSTnHWisu/Zm"
+	+ "Q9WXbbAwaJKjPzWHjtCL7ZM8ioI2/Y1F6dS9wTZGUwKBgB6dJg1Qa1b6+k2mrvBh"
+	+ "Iq7eFk5mlqRhmh7yf5yWvkUj1YxSAjZE81hGQM7tMpydhGUqfn3Y3eLgg+gVWVrs"
+	+ "hDH4pVgDu6HjP8/8aamBovAwkjoyl4FsngiI6mnwfVS1jo50B61/R43dxvnm6RGh"
+	+ "LAImQIaJCYWP38dGiEkObuwU" ).getBytes());
 	
 	public static byte[] certbytes2 = Base64.decode((
 	"MIID7zCCAqigAwIBAgIIWOzgRTcR/iAwPAYJKoZIhvcNAQEKMC+gDzANBglghkgB" +
@@ -132,6 +147,10 @@ public class HardCodedCryptoToken implements ICryptoToken {
 	"JebCC2FiSP88KPGGW5D351LJ+UL8En3oA5eHxZCy/LeGejPw0N02XjVFfBZEKnf6" +
 	"5a94").getBytes());
 
+        /**
+         * subject=/CN=Signer 4/OU=Testing/O=SignServer/C=SE
+         * issuer=/CN=DSS Root CA 10/OU=Testing/O=SignServer/C=SE
+         */
 	public static byte[] certbytes1 = Base64.decode((
 	"MIIC5DCCAcygAwIBAgIIfZgsZqV8NDAwDQYJKoZIhvcNAQEFBQAwNzERMA8GA1UE" +
 	"AxMIQWRtaW5DQTExFTATBgNVBAoTDEVKQkNBIFNhbXBsZTELMAkGA1UEBhMCU0Uw" +

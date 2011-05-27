@@ -22,29 +22,38 @@ package org.signserver.module.xmlvalidator;
 class XMLValidatorTestData {
 
     /**
-       * SerialNumber: 9072735712286141837
-         IssuerDN: CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE
-       Start Date: Mon May 18 16:46:59 CEST 2009
-       Final Date: Wed May 18 16:46:59 CEST 2011
-        SubjectDN: CN=xmlsigner2,O=SignServer Test,C=SE
-       */
+      *   SerialNumber: 05:3f:69:92:d0:81:24:8a
+      *   IssuerDN: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
+      *   Not Before: May 27 09:50:37 2011 GMT
+      *   Not After : May 27 09:50:37 2021 GMT
+      *   SubjectDN: CN=Signer 2, OU=Testing, O=SignServer, C=SE
+      */
     static final String CERT_XMLSIGNER =
-            "MIIDejCCAmKgAwIBAgIIfejVD5fQ7Y0wDQYJKoZIhvcNAQEFBQAwPTEXMBUGA1UEAwwOQWRtaW5U"
-            +"cnVuazJDQTExFTATBgNVBAoMDEVKQkNBIFRydW5rMzELMAkGA1UEBhMCU0UwHhcNMDkwNTE4MTQ0"
-            +"NjU5WhcNMTEwNTE4MTQ0NjU5WjA8MRMwEQYDVQQDDAp4bWxzaWduZXIyMRgwFgYDVQQKDA9TaWdu"
-            +"U2VydmVyIFRlc3QxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA"
-            +"242WCkRvThZJR9YWr1R7Hpkjxzrvnzc5TeytbAmcA6ZMZYoroXEXQv2wW2yYoJl6UcSJCg7Z4Vr/"
-            +"Xdn5O7Nd/YXkAbjP1OflYFI/yE90uAAfz6eKtgfiu7xEmGRogQjBA7xsEWrmyB1GUJCovEXYupss"
-            +"jMKcnNQKO+FCKY7imTb0EWoc82f1Z1y7LG7PdpZqRZkCaEeVBrdJoBYLTVAJq89p/stsqiL8rdaE"
-            +"1Eq9DkY2JqjPcK+9dCJ+tVUbd0MReFC/NYkDBepCYWqs3AXSYmI7nb6pkfvxRitQ5mcecZg8Jcq/"
-            +"Gq0ZQ8mFJgnSVa3+vxMNa/E3EV4V3n1Ng1kk/QIDAQABo38wfTAdBgNVHQ4EFgQUkts3bypVw2DK"
-            +"XyVgEqiMN6ULPBwwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBRQyb5w7zsEEfalmYd7zvUzxENQ"
-            +"ZDAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3"
-            +"DQEBBQUAA4IBAQCc8LCp/lBBVeiuKDhwTqEnyKH8GQmDq1dRfuxAeUXfCVfzhnPTPTvpa3qDnNeE"
-            +"F9ftmaUK/c2ieSEeHHsIoNzZrFtQ1v2kDP6uRq1P5GVnSs/4UPazZDZDwDWIq8XNDeVpW4Ua0pqJ"
-            +"GmOdUSQPJUZvAJRlLkZ/9R/kygbG3n5GSVecDk1tNlOqGHLuclNSkLZwyIleJkysf9YQOKESoRSM"
-            +"X8NdNtXWjosoLA0NaNhQocuxThgLnI4k2T85wVfd69SqqbeakssW7ARIE9F1PIZa7LDQAVic7XIE"
-            +"fiKVZ4CQ01/QX+xn0pEhDjIHqfld5ghxDRJWxR9C2B4O2YDnfEOG";
+          "MIIElTCCAn2gAwIBAgIIBT9pktCBJIowDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE"
+	+ "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp"
+	+ "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzA5NTAzN1oXDTIxMDUyNzA5"
+	+ "NTAzN1owRzERMA8GA1UEAwwIU2lnbmVyIDIxEDAOBgNVBAsMB1Rlc3RpbmcxEzAR"
+	+ "BgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEF"
+	+ "AAOCAQ8AMIIBCgKCAQEAokJJPVkPrn3a55rO6A3Bnbe0nfJR9IDSI8AmFhYEBLoK"
+	+ "fiavx0oMdbdDe+Dkwv78xBkgbj//2lhMCVmss90RzY+d0d0rg2SP8y/DsyxwriqC"
+	+ "fuM7lnlgvSHCYwoX8+uDM7zI53ykKVhqI3ttyFPa8RsjfFOIWqf39++sJUheW4j9"
+	+ "x9rutf6qgtjxOYPQwDygT9cIVpM7ZehhqVYlcQZRsprMg55s2SN/a78krAW51mso"
+	+ "IDgd9+zbsIvzuGqCspO3AN8b2m8tlHTlA/E4+3OZkSqgpx8FSKIfbKUa866pRzpt"
+	+ "vcbL/wpFxYkyxqcB6o7CFnWbr3gUPpz8KjuY7ypMmwIDAQABo38wfTAdBgNVHQ4E"
+	+ "FgQUSkR/B71idJmR8deZziBAqSzWzhMwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAW"
+	+ "gBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYw"
+	+ "FAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQA+pQuI1QmZ"
+	+ "LdheCVmc+k1h53uIv9pBnBKSbKn0/CVznmlPOpJIwwuzcLfCesa6gkG6BabHJwMr"
+	+ "U/SpZuWurHxdEKe6fS/ngYnIjFI5R0Kgl1czqq/tXDjGEpv2x0tZECqLFrkC7a+g"
+	+ "jXJPE8TDj8nvi40pcKFvv2tbRiyYrIPIxefrXmkT91F3zUKbQL0iW7Aot/0Klj+i"
+	+ "4uivqFu359OymJ2C5wJOyZqPPsxUvTdA2EZNX4BseFvJREmvx1CAgZkANZD4Qzn1"
+	+ "b/0WrXfYsbWA4cBeTRR7vjGajBc/oGo2wki0dJksImU8b2dLEf3n3M9dfxiFEAnl"
+	+ "3YKDmT21wamO/hRdWklT+7Ivz6SFnW6HneT42IMNkC4k3d0i0Y2/q7XN5rvMFbH1"
+	+ "n6O4NUqHIkzbCtVljV6+XESmMseyJGKlY6RD7jnhEJq6dGPGSr5h6SAohYljs5Y1"
+	+ "e/Dyg243sP75ZO7HfOYPd2Sp+p5R5szWOuZp5UtLFBhuwlI41LnpuL+4t25LjNHo"
+	+ "GhzZCl1rxqcSBGVKLG2sN0XVXfqrt/EykOAV0WW+S72tRPI73eq0AeRJRRfzcZie"
+	+ "qui694eP10Ehh/iiOpQ28yfhsWDvMIxu8o8oK+hpgQvCwecP7rupdqM9OQYnePb5"
+	+ "3dd8Tt4hw4WhvSWC/9aNfFXc3jwbHVy5Rw==";
 
     /**
      * Certificate for xmlsigner4.
@@ -78,29 +87,43 @@ class XMLValidatorTestData {
         +"tmtQmg==";
 	  
 	/**
-	   * SerialNumber: 8811693520800705369
-	         IssuerDN: CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE
-	       Start Date: Mon May 11 09:57:53 CEST 2009
-	       Final Date: Thu May 09 09:57:53 CEST 2019
-	        SubjectDN: CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE
-	   */
-	static final String CERT_ISSUER = 
-	  	"MIIDXzCCAkegAwIBAgIIeklskiDv61kwDQYJKoZIhvcNAQEFBQAwPTEXMBUGA1UEAwwOQWRtaW5U"
-		+"cnVuazJDQTExFTATBgNVBAoMDEVKQkNBIFRydW5rMzELMAkGA1UEBhMCU0UwHhcNMDkwNTExMDc1"
-		+"NzUzWhcNMTkwNTA5MDc1NzUzWjA9MRcwFQYDVQQDDA5BZG1pblRydW5rMkNBMTEVMBMGA1UECgwM"
-		+"RUpCQ0EgVHJ1bmszMQswCQYDVQQGEwJTRTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB"
-		+"AKRvUvHK2CuLmntie0DRvc9OSHyRe4UbPfwKsRq3QqH+rn5gsYIFlsRVYstY16qh0tFnsQiFRld4"
-		+"V6TqZn/2xKmDnF7mpfEiM2nfczNi3yabdmqm64692hglRly9jqbOveHenRk8F5Wj7Db5stN5V3O3"
-		+"RfIl+cIUWrQAq2WJkYJXp2RN+sK9Sz7RwD0YMru9SobtarttF4JuFJrPLkf/Ds8AMMtlxkEnDIHl"
-		+"BAhFQtOURmoEOKzieMeW/7jZSLYIy9sZTQoZjs0Ks+YlZvHY39YWUisc88Saa9hhThjIHhhU/e8S"
-		+"Tk6xReyMTYJwMAB9WpvCPWoLQtAbhF2SD/Y3Rt8CAwEAAaNjMGEwHQYDVR0OBBYEFFDJvnDvOwQR"
-		+"9qWZh3vO9TPEQ1BkMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUUMm+cO87BBH2pZmHe871"
-		+"M8RDUGQwDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBBQUAA4IBAQAFsegj+buOHqFkt2vkC3Gq"
-		+"b2JAeDfDScwI5zH336lFCSLsyEYGBaFS3xd+WnvTIaacGQplN1iG5ATGsKzNtwrOfzaDRkDIictw"
-		+"OJBG5S4kZU0mF5dGpE9/VAp6DNiqMxnXRL8Yh2+EMMuVOSEKp0MogQprEIxIsQj5FhbBASldpQgO"
-		+"140lqoeXrmm/nMMf/EM5Tqf2BiX/CgTwqiuY7Lf3Ov7QfepLI1AWgFabHkysU2YTvjDupNi5/+gB"
-		+"5jIA5vhavMpylDbucUdM9vAetXmqe1P3sOKipGKHvkWFNJNyOmDjN9wnr+i9PFxU0IehSRdim60x"
-		+"Cw3AxYWCo94Dz/6F";
+	  * SerialNumber: 32:4d:41:38:af:02:c1:3c
+	  * IssuerDN: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
+	  * Not Before: May 27 08:14:27 2011 GMT
+          * Not After : May 27 08:14:27 2036 GMT
+	  *  SubjectDN: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
+	  */
+	static final String CERT_ISSUER =
+         "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"
+	+ "dMwk/ZXzsDjMZEtENaBXzAefYA==";
 
         /**
          * Certificate for DemoRootCA2.
@@ -152,12 +175,12 @@ class XMLValidatorTestData {
 		+"Otn8gzx/E/MSaPzexW66Dd9dEHTJIjUpVdHd5Mp4BL/BdNYT2GtU+R1clObcDXUGFjMI9HaT2ARg"
 		+"pN5nwZxfMj6Zz+9Y9fAZdWzjUa4rBwbNzZlvZ/uXQaIb4U0DPmSJZC0YwXmUqU5u7W7Zow==";
 	
-	static final String SIGNATURE_BY_XMLSIGNER2 = 
-		 "1oJFP0W8m5k0OJe6A9skm9GPXoRhpGx+Tz5XJxuEW8paNQjKNZ0/UPi1Tyv01e+kve/legte8uQW"
-		+"+X4m2oQOnt+s8qTHu9FgfJieLgjXT9nT9ruv96TwsFF6zsQF7TodYo1Ru3H/OJlu/tKPTnGDzE9H"
-		+"arILFJNyTPFBA7Ulzxj8KRBHPkzIzzxD0AaodBWDut7nMGqlu1NC1afcT1eNNxfDB02wIvy4E6VI"
-		+"/HfLN3uhTtOq50iPKT9x5M1znIIpnVlJlsTSmnGC7rMUaWDtpttF+LHBWQOnAFhSGS22mHQpbXXc"
-		+"ZoDA2iab5GkpvzzNIpjuUszZ8Ea968kK59IxQA==";
+    static final String SIGNATURE_BY_XMLSIGNER2 =
+        "TLroNwxZtAflrBvdMrKscqn0Rho2YzWGt0ydBRWo85she7faAhz+cfniLDgWNAWly27zc15KMdMa"
+        + "FsELxgPg4J544Mx5RutkhGEn6dj6zMv+OoSjraDSP3PJ8tislpJw95SbmcrCKxSUqhQUdgO/ifNp"
+        + "M9wcQZGUMNhNxvBdrhoezcOkKmCdxO8PI+dJgmuxcF3WS+dN3rgH4DKE7+6UwcPUNX1y5Atg0qjr"
+        + "4fm2NUMFPcr/PWwaUv+5lOapnqSO1mN6P3lI7huk4bKrnKX39JnPmmTbnC8ihMqH+6Zdt6YNfgMH"
+        + "wWqnHSqXmZvbJyJLnIIQskw8Oi+tnEMBgwW11g==";
 
     static final String SIGNATURE_BY_XMLSIGNER4 =
             "gy+9iGYV0FjNscOyKGEy0rtsBWVjjSzonuk36nhzBGVKxWHSgLVtow==";

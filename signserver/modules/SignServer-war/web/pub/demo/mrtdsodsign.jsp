@@ -25,6 +25,7 @@
             }
         </style>
         <script type="text/javascript">
+            //<![CDATA[
             function getRadioCheckedValue(radio_name) {
                 var oRadio = document.forms[0].elements[radio_name];
                 for(var i = 0; i < oRadio.length; i++) {
@@ -46,7 +47,8 @@
                     document.getElementById('unicodeField').value = '';
                 }
             }
-        </script>
+        //]]>
+    </script>
     </head>
     <body onload="ldsVersionChanged()">
         <div id="container1">
@@ -60,7 +62,9 @@
             <p>Note 2: When submitting this form using a web browser it is not possible to enter binary data directly into the input fields. Then first base64 encode the data and choose the Base64 encoding option and the signer will decode the data before signing it.</p>
 
             <form id="requestform" action="../sod" method="post">
-                <input type="hidden" name="workerName" value="MRTDSODSigner"/>
+                <fieldset>
+                    <input type="hidden" name="workerName" value="MRTDSODSigner"/>
+                </fieldset>
                 <p>
                     DG1: <input type="text" size="80" name="dataGroup1" value="Yy=="/><br/>
                     DG2: <input type="text" size="80" name="dataGroup2" value="Yy=="/><br/>
@@ -94,8 +98,9 @@
                     <input type="radio" name="ldsVersion" value="0108" id="lds0108" onchange="ldsVersionChanged()"/><label for="lds0108">V1.8</label><br/>
                     <label for="unicodeField">Unicode version:</label> <input type="text" size="6" name="unicodeVersion" id="unicodeField" value="040000"/>
                 </p>
-
-                <input type="submit" name="submit" value="Submit" /><br />
+                <p>
+                    <input type="submit" name="submit" value="Submit" /><br />
+                </p>
             </form>
 
             <h2>Display signing certificate</h2>

@@ -49,12 +49,14 @@
             <p>
                 <b>NOTE:</b> You might need to save the output to a file and change file extension accordingly.
             </p>
-            <form id="recievefile" action="../process" method="post" enctype="multipart/form-data" >
-                <input type="hidden" name="workerName" value="OOXMLSigner"/>
+            <form id="recievefile" action="../process" method="post" enctype="multipart/form-data">
+                <fieldset>
+                    <input type="hidden" name="workerName" value="OOXMLSigner"/>
+                </fieldset>
                 <table width="100%" border="0" cellspacing="3" cellpadding="3">
                     <tr id="Row2">
-                        <td width="49%" valign="top" align="right">Select document to upload and sign</td>
-                        <td width="51%" valign="top">
+                        <td style="width: 50%" valign="top" align="right">Select document to upload and sign</td>
+                        <td style="width: 50%" valign="top">
                             <input type="file" name="filerecievefile"/>
                             <input type="submit" name="buttonrecievefile" onclick="return check()" value="Submit"/><br/><br/>
                         </td>

@@ -49,11 +49,13 @@
                 This is a central organization signature.
             </p>
             <form id="recievefile" action="../process" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="workerName" value="PDFSigner"/>
+                <fieldset>
+                    <input type="hidden" name="workerName" value="PDFSigner"/>
+                </fieldset>
                 <table width="100%" border="0" cellspacing="3" cellpadding="3">
                     <tr id="Row2">
-                        <td width="49%" valign="top" align="right">Select PDF file to upload and sign</td>
-                        <td width="51%" valign="top">
+                        <td style="width: 50%" valign="top" align="right">Select PDF file to upload and sign</td>
+                        <td style="width: 50%" valign="top">
                             <input type="file" name="filerecievefile"/>
                                 <input type="submit" name="buttonrecievefile" onclick="return check()" value="Submit"/><br/><br/>
                         </td>

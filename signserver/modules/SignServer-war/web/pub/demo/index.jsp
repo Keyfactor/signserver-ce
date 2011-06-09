@@ -4,7 +4,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" href="../publicweb.css" type="text/css"/>
         <title>SignServer</title>
-        <base href="/signserver/" />
     </head>
     <body>
         <div id="container1">

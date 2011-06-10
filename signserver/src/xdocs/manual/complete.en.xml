@@ -3060,11 +3060,20 @@ After the certificate chain has been uploaded to the server, the configuration m
                 <subsection name="SoftCryptoToken">
                     <subsubsection name="Overview">
                         <p>
-The SoftCryptoToken is a simple token managing it's own soft keys instead through a pkcs12. It can be used for test and demonstration purposes. The keys are stored in the worker's properties and is generated when genCertificateRequest is called. One key is used for all purposes and a new key is generated for every certificate request.
+The SoftCryptoToken is a simple token managing it's own soft keys instead of using a PKCS12 file. It can be used for test and demonstration purposes. The keys are stored in the worker's properties and is generated when genCertificateRequest is called. One key is used for all purposes and a new key is generated for every certificate request.
                         </p>
                         <p>
 The method destroyKey is not supported.
                         </p>
+                        <p>
+There is also a tool available for constructing the properties from a PKCS12 file
+in CryptoTokenUtils.java. To run the tool outside the IDE first build SignServer
+by running "ant". After that the tool can be executed with something similar
+to:
+                        </p>
+                        <pre>
+java -cp dist-server/signserver-ejb.jar:lib/1.6/bcprov-jdk.jar:dist-server/lib/SignServer-Common.jar:lib/ejbca-util.jar org.signserver.server.cryptotokens.CryptoTokenUtils createsoft src/test/dss10/dss10_signer1.p12 "signer 1" foo123
+                        </pre>
                     </subsubsection>
                     <subsubsection name="SIGNERTOKEN.CLASSPATH">
                         <p>

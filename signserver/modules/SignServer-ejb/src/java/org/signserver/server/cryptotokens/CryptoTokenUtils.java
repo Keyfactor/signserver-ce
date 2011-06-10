@@ -238,6 +238,8 @@ public final class CryptoTokenUtils {
 
         /**
          * Command line tool for generating the data for a SoftCryptoToken.
+         * See the SoftCryptoToken section of the manual for how to execute
+         * this tool.
          * @param args
          * @throws Exception
          */

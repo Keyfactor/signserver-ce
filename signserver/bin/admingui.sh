@@ -67,7 +67,7 @@ fi
 # Check that classes exist
 if [ ! -f ${SIGNSRV_HOME}/modules/SignServer-AdminGUI/dist/${MAIN_JAR} ]
 then
-	echo "You must build SignServer before using the cli, use 'ant'."
+	echo "SignServer AdminGUI not available. Build it by running 'ant admingui'."
         exit 1
 fi
 

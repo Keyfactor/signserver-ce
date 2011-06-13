@@ -19,7 +19,7 @@ set class_name=org.signserver.admin.gui.SignServerAdminGUIApplication
 rem check that we have built the classes
 
 if not exist %SIGNSRV_HOME%\dist-client\SignServer-AdminCLI.jar  (
-    echo You must build SignServer before using the cli, use 'ant'.
+    echo SignServer AdminGUI not available. Build it by running 'ant admingui'.
     goto end
 )
 

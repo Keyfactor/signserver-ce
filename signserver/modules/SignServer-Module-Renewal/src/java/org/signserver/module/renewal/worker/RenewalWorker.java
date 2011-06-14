@@ -731,7 +731,7 @@ public class RenewalWorker extends BaseSigner {
         responseData.setProperty(RenewalWorkerProperties.RESPONSE_RESULT,
                 RenewalWorkerProperties.RESPONSE_RESULT_FAILURE);
         responseData.setProperty(RenewalWorkerProperties.RESPONSE_MESSAGE,
-                message);
+                message == null ? "" : message);
     }
 
     class AliasKeyManager implements X509KeyManager {

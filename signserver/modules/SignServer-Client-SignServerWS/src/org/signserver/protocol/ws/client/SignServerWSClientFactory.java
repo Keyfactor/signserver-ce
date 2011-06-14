@@ -80,7 +80,7 @@ public class SignServerWSClientFactory {
      * @param timeOut in milliseconds
      */
     public ISignServerWSClient generateSignServerWSClient(String clientType,String[] hosts, boolean useHTTPS,IFaultCallback faultCallback,int port, int timeOut){
-    	return generateSignServerWSClient(clientType, hosts, useHTTPS, faultCallback, DEFAULT_PORT, timeOut,DEFAULT_WSDL_URL);
+    	return generateSignServerWSClient(clientType, hosts, useHTTPS, faultCallback, port, timeOut,DEFAULT_WSDL_URL);
     }
     
     /**

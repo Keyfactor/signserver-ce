@@ -14,6 +14,7 @@ package org.signserver.testutils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateException;
@@ -212,5 +213,26 @@ public class ModulesTestCase extends TestCase {
 
     protected int getPrivateHTTPSPort() {
         return Integer.parseInt(config.getProperty("httpserver.privhttps"));
+    }
+
+    /** Setup keystores for SSL. **/
+    protected void setupSSLKeystores() {
+        Properties buildConfig = new Properties();
+        try {
+            buildConfig.load(new FileInputStream(new File(new File(
+                    System.getenv("SIGNSERVER_HOME")),
+                    "signserver_build.properties")));
+        } catch (FileNotFoundException ignored) {
+            LOG.debug("No signserver_build.properties");
+        } catch (IOException ex) {
+            LOG.error("Not using signserver_build.properties: " + ex.getMessage());
+        }
+        System.setProperty("javax.net.ssl.trustStore", 
+                new File(new File(System.getenv("SIGNSERVER_HOME")),
+                    "p12/truststore.jks").getAbsolutePath());
+        System.setProperty("javax.net.ssl.trustStorePassword",
+                buildConfig.getProperty("java.trustpassword", "changeit"));
+        //System.setProperty("javax.net.ssl.keyStore", "../../p12/testadmin.jks");
+        //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
     }
 }

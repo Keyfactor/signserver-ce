@@ -12,7 +12,12 @@
  *************************************************************************/
 package org.signserver.test.validationws.v31;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
+import java.util.Properties;
 import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
@@ -35,7 +40,7 @@ public class ValidationWSServiceTest extends TestCase {
 
     /** Endpoint URL. */
     private static final String ENDPOINT =
-            "http://localhost:8080/signserver/validationws/validationws?wsdl";
+            "https://localhost:8442/signserver/validationws/validationws?wsdl";
 
     /** Worker ID as defined in test-configuration.properties. **/
     private static final String WORKERID = "7001";
@@ -83,6 +88,24 @@ public class ValidationWSServiceTest extends TestCase {
 
     public ValidationWSServiceTest(String testName) {
         super(testName);
+        setupKeystores();
+    }
+
+    /** Setup keystores for SSL. **/
+    private void setupKeystores() {
+        Properties config = new Properties();
+        try {
+            config.load(new FileInputStream(new File("../../signserver_build.properties")));
+        } catch (FileNotFoundException ignored) {
+            LOG.debug("No signserver_build.properties");
+        } catch (IOException ex) {
+            LOG.error("Not using signserver_build.properties: " + ex.getMessage());
+        }
+        System.setProperty("javax.net.ssl.trustStore", "../../p12/truststore.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword",
+                config.getProperty("java.trustpassword", "changeit"));
+        //System.setProperty("javax.net.ssl.keyStore", "../../p12/testadmin.jks");
+        //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
     }
 
     @Override

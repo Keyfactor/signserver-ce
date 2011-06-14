@@ -12,13 +12,19 @@
  *************************************************************************/
 package org.signserver.adminws.client;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import javax.xml.namespace.QName;
 import junit.framework.TestCase;
+import org.apache.log4j.Logger;
 
 /**
  * Tests for the Admin WS interface.
@@ -28,6 +34,9 @@ import junit.framework.TestCase;
  */
 public class AdminWebServiceTest extends TestCase {
     
+    /** Logger for this class. **/
+    private static final Logger LOG = Logger.getLogger(AdminWebServiceTest.class);
+
     private static final int ANY_WORKERID = 4711;
     private static final String ANY_KEY = "AKEY";
     private static final String ANY_VALUE = "aValue";
@@ -47,13 +56,31 @@ public class AdminWebServiceTest extends TestCase {
 
     public AdminWebServiceTest(String testName) {
         super(testName);
+        setupKeystores();
+    }
+
+    /** Setup keystores for SSL. **/
+    private void setupKeystores() {
+        Properties config = new Properties();
+        try {
+            config.load(new FileInputStream(new File("../../signserver_build.properties")));
+        } catch (FileNotFoundException ignored) {
+            LOG.debug("No signserver_build.properties");
+        } catch (IOException ex) {
+            LOG.error("Not using signserver_build.properties: " + ex.getMessage());
+        }
+        System.setProperty("javax.net.ssl.trustStore", "../../p12/truststore.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword",
+                config.getProperty("java.trustpassword", "changeit"));
+        //System.setProperty("javax.net.ssl.keyStore", "../../p12/testadmin.jks");
+        //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         final AdminWSService service = new AdminWSService(
-                new URL("http://localhost:8080/signserver/AdminWSService/AdminWS?wsdl"),
+                new URL("https://localhost:8442/signserver/AdminWSService/AdminWS?wsdl"),
                 new QName("http://adminws.signserver.org/",
                     "AdminWSService"));
         adminWS = service.getAdminWSPort();

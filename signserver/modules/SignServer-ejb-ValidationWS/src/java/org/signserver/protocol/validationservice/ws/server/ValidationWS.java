@@ -61,7 +61,8 @@ import org.signserver.validationservice.server.ValidationServiceWorker;
  * @version $Id: ValidationWS.java 1333 2010-12-04 11:49:26Z netmackan $
  */
 @Stateless
-@WebService(targetNamespace="gen.ws.validationservice.protocol.signserver.org")
+@WebService(wsdlLocation="META-INF/wsdl/ValidationWSService.wsdl",
+    targetNamespace="gen.ws.validationservice.protocol.signserver.org")
 public class ValidationWS implements IValidationWS {
 	
 	@Resource

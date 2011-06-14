@@ -72,7 +72,8 @@ import org.signserver.server.UsernamePasswordClientCredential;
  * $Id: SignServerWS.java 1306 2010-11-23 21:06:39Z netmackan $
  */
 @Stateless
-@WebService(targetNamespace="gen.ws.protocol.signserver.org")
+@WebService(wsdlLocation="META-INF/wsdl/SignServerWSService.wsdl",
+    targetNamespace="gen.ws.protocol.signserver.org")
 public class SignServerWS implements ISignServerWS {
 	
 	@Resource

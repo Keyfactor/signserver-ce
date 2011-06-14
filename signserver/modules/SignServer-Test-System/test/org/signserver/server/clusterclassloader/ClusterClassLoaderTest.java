@@ -27,7 +27,12 @@ public class ClusterClassLoaderTest extends ModulesTestCase {
 
 	private static String signserverhome;
 	private SignServerWS signServerWS;
+
+    public ClusterClassLoaderTest() {
+        setupSSLKeystores();
+    }
 	
+    @Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		TestUtils.redirectToTempOut();
@@ -38,8 +43,8 @@ public class ClusterClassLoaderTest extends ModulesTestCase {
         CommonAdminInterface.BUILDMODE = "SIGNSERVER";
 		QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
 		SignServerWSService signServerWSService =
-                        new SignServerWSService(new URL("http://localhost:"
-                        + getPublicHTTPPort()
+                        new SignServerWSService(new URL("https://localhost:"
+                        + getPublicHTTPSPort()
                         + "/signserver/signserverws/signserverws?wsdl"),
                         qname);
 		signServerWS =  signServerWSService.getSignServerWSPort();

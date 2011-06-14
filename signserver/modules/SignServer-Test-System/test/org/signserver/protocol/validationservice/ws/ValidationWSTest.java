@@ -38,7 +38,12 @@ public class ValidationWSTest extends ModulesTestCase {
 	private static String validCert1;
 	private static String revokedCert1;
 	private static String identificationCert1;
-	
+
+    public ValidationWSTest() {
+        setupSSLKeystores();
+    }
+
+    @Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -54,8 +59,8 @@ public class ValidationWSTest extends ModulesTestCase {
 		
 		QName qname = new QName("gen.ws.validationservice.protocol.signserver.org", "ValidationWSService");
 		ValidationWSService validationWSService =
-                        new ValidationWSService(new URL("http://localhost:"
-                        + getPublicHTTPPort()
+                        new ValidationWSService(new URL("https://localhost:"
+                        + getPublicHTTPSPort()
                         + "/signserver/validationws/validationws?wsdl"),
                         qname);
 		validationWS =  validationWSService.getValidationWSPort();

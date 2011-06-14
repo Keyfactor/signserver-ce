@@ -78,8 +78,20 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
 	 * @param port The remote port to connect to.
 	 */
 	public SigningAndValidationWSBalanced(String host, int port) {
+            this(host, port, false);
+	}
+
+        /**
+	 * Creates an instance of SigningAndValidationWSBalanced using host and port
+	 * and default parameters.
+	 *
+	 * @param host The remote host to connect to.
+	 * @param port The remote port to connect to.
+         * @param useHTTPS indicates of HTTPS should be used.
+	 */
+	public SigningAndValidationWSBalanced(String host, int port, boolean useHTTPS) {
 		this();
-		this.signserver = new SignServerWSClientFactory().generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK, new String[]{host}, false, new LogErrorCallback(), port, SignServerWSClientFactory.DEFAULT_TIMEOUT, SignServerWSClientFactory.DEFAULT_WSDL_URL);
+		this.signserver = new SignServerWSClientFactory().generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK, new String[]{host}, useHTTPS, new LogErrorCallback(), port, SignServerWSClientFactory.DEFAULT_TIMEOUT, SignServerWSClientFactory.DEFAULT_WSDL_URL);
 	}
 	
 	/**

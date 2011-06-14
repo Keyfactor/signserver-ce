@@ -76,7 +76,11 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         private static File crlWithCertRevoked;
         private static File crlToUse;
 
-	
+    public SigningAndValidationWithCRLTest() {
+        setupSSLKeystores();
+    }
+
+    @Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		

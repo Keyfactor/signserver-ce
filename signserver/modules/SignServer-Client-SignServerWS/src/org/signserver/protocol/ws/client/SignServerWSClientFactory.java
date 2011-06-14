@@ -95,7 +95,7 @@ public class SignServerWSClientFactory {
      * @param customAppURI the path to the sign server URI where the WS is deployed.
      */
     public ISignServerWSClient generateSignServerWSClient(String clientType,String[] hosts,  boolean useHTTPS, IFaultCallback faultCallback, int port, int timeOut, String customAppURI){
-    	return generateSignServerWSClient(clientType, hosts, useHTTPS, faultCallback, DEFAULT_PORT, timeOut,DEFAULT_WSDL_URL,null);
+    	return generateSignServerWSClient(clientType, hosts, useHTTPS, faultCallback, port, timeOut,DEFAULT_WSDL_URL,null);
     }
     
     /**

@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.client.api;
 
 /**
@@ -21,10 +20,10 @@ package org.signserver.client.api;
  */
 public class SigningAndValidationWithCRLUsingWSTest extends SigningAndValidationWithCRLTest {
 
-	@Override
-	protected ISigningAndValidation getSigningAndValidationImpl() {
-		return new SigningAndValidationWS("localhost", 
-                        getPublicHTTPPort());
-	}
-		
+    @Override
+    protected ISigningAndValidation getSigningAndValidationImpl() {
+            return new SigningAndValidationWS("localhost",
+                    getPublicHTTPSPort(), true);
+    }
+
 }

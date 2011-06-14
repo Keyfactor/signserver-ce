@@ -56,7 +56,7 @@ import org.signserver.server.UsernamePasswordClientCredential;
  * @author Markus Kilås
  * @version $Id$
  */
-@WebService()
+@WebService(wsdlLocation="META-INF/wsdl/AdminWSService.wsdl")
 @Stateless
 public class AdminWS {
 

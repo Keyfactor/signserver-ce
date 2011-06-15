@@ -403,7 +403,26 @@ update the keystores with the right certificates.
                     </p>
                 </subsection>
 
-                <subsection name="5. Configure build">
+                <subsection name="5. Configure application server">
+                    <subsubsection name="Fix web service problem in JBoss">
+                        <p>
+Edit jboss-beans.xml to force the endpoint URL to be generated based on the WSDL
+request by commenting out the line:
+                        </p>
+<pre>
+    &lt;property name="webServiceHost"&gt;${jboss.bind.address}&lt;/property&gt;
+</pre>
+                        <p>
+For JBoss 4.2.3.GA the file is available under: server/default/deploy/jbossws.sar/jbossws.beans/META-INF/
+                        </p>
+                        <p>
+For JBoss 5.1.0.GA the file is available under: server/default/deployers/jbossws.deployer/META-INF/
+                        </p>
+                    </subsubsection>
+                </subsection>
+
+
+                <subsection name="6. Configure build">
                     <p>
 Copy signserver_build.properties.sample to signserver_build.properties and open
 it for editing in your favorite text editor.
@@ -509,7 +528,7 @@ includemodulesinbuild=true
 
                 </subsection>
 
-                <subsection name="6. Build and deploy SignServer">
+                <subsection name="7. Build and deploy SignServer">
                     <p>
 Run "ant deploy" to build SignServer and deploy it to the selected application
 server. If the configuration changed since the last build run the clean target

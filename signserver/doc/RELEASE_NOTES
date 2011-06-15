@@ -1,0 +1,13 @@
+SignServer 3.2.0
+----------------
+.
+
+* Noteworthy changes:
+- 
+
+
+
+* Known issues:
+- Web services no longer work on JBoss 4 if HTTPS is not used as JBoss 4 rewrites the end point URL in the WSDL file to always start with "https://" (since DSS-327).
+
+

@@ -35,7 +35,7 @@ class CustomJKSTrustStoreManager implements X509TrustManager{
 
 	KeyStore trustStore = null;
 	CustomJKSTrustStoreManager(String trustStorePath, String trustStorePwd) throws Exception{
-		KeyStore trustStore = KeyStore.getInstance("JKS");
+		trustStore = KeyStore.getInstance("JKS");
 		trustStore.load(new FileInputStream(trustStorePath), trustStorePwd.toCharArray());
 
 	}

@@ -1,9 +1,22 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.protocol.ws.client;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import javax.net.ssl.HttpsURLConnection;
 
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
@@ -84,7 +97,7 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	        this.faultCallback = faultCallback;
 	        
 	        this.sSLSocketFactory = sSLSocketFactory;
-	        
+	        HttpsURLConnection.setDefaultSSLSocketFactory(sSLSocketFactory);
 	        
 	        for (int i = 0; i < hosts.length; i++) {
 	        	try{
@@ -111,9 +124,6 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	    						"com.sun.xml.ws.connect.timeout", timeOut  );
 	    				( ( BindingProvider ) retval ).getRequestContext().put(
 	    						"com.sun.xml.ws.request.timeout", timeOut  );
-	    				( ( BindingProvider ) retval ).getRequestContext().put(
-//	    						JAXWSProperties.SSL_SOCKET_FACTORY, sSLSocketFactory  );
-                                                "com.sun.xml.ws.transport.https.client.SSLSocketFactory", sSLSocketFactory);
 	    			} 
 	    			serviceMap.put(host, retval);
 	    		} catch (MalformedURLException e) {

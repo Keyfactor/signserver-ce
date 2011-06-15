@@ -1,5 +1,18 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.client.validationservice;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
@@ -20,36 +33,42 @@ import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.server.ValidationTestUtils;
 
+/**
+ * Tests for the ValidationCLI.
+ *
+ * @version $Id$
+ */
 public class ValidationCLITest extends TestCase {
 
 	private static String signserverhome;
 
 	private static IGlobalConfigurationSession.IRemote gCSession = null;
 	private static IWorkerSession.IRemote sSSession = null;
-	
+
 	private static String validCert1;
 	private static String revokedCert1;
 
 	private static String validcert1derpath;
 	private static String validcert1path;
 	private static String revokedcertpath;
-	
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		SignServerUtil.installBCProvider();
-                gCSession = ServiceLocator.getInstance().lookupRemote(
-                        IGlobalConfigurationSession.IRemote.class);
-                sSSession = ServiceLocator.getInstance().lookupRemote(
-                        IWorkerSession.IRemote.class);
-		
-		TestUtils.redirectToTempOut();
-		TestUtils.redirectToTempErr();
-		TestingSecurityManager.install();
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        SignServerUtil.installBCProvider();
+        gCSession = ServiceLocator.getInstance().lookupRemote(
+                IGlobalConfigurationSession.IRemote.class);
+        sSSession = ServiceLocator.getInstance().lookupRemote(
+                IWorkerSession.IRemote.class);
+
+        TestUtils.redirectToTempOut();
+        TestUtils.redirectToTempErr();
+        TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull(signserverhome);
-	}
-	
+        assertNotNull("SIGNSERVER_HOME env variable", signserverhome);
+    }
+
 	public void test00SetupDatabase() throws Exception{
 
 		KeyPair validRootCA1Keys = KeyTools.genKeys("1024", "RSA");
@@ -60,7 +79,7 @@ public class ValidationCLITest extends TestCase {
 
 		KeyPair validCert1Keys = KeyTools.genKeys("1024", "RSA");
 		validCert1 = new String(Base64.encode(ValidationTestUtils.genCert("CN=ValidCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.digitalSignature + X509KeyUsage.keyEncipherment).getEncoded()));
-		revokedCert1 = new String(Base64.encode(ValidationTestUtils.genCert("CN=revokedCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false).getEncoded()));				
+		revokedCert1 = new String(Base64.encode(ValidationTestUtils.genCert("CN=revokedCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false).getEncoded()));
 		ArrayList<X509Certificate> validChain1 = new ArrayList<X509Certificate>();
 		// Add in the wrong order
 		validChain1.add(validRootCA1);
@@ -78,12 +97,12 @@ public class ValidationCLITest extends TestCase {
 		String signserverhome = System.getenv("SIGNSERVER_HOME");
 		assertNotNull(signserverhome);
 
-		sSSession.reloadConfiguration(16);		
-		
+		sSSession.reloadConfiguration(16);
+
 		validcert1derpath = signserverhome + "/tmp/validcert1.cer";
 		validcert1path = signserverhome + "/tmp/validcert1.pem";
 		revokedcertpath = signserverhome + "/tmp/revokedcert1.pem";
-		
+
 		FileOutputStream fos = new FileOutputStream(validcert1derpath);
 		fos.write(Base64.decode(validCert1.getBytes()));
 		fos.close();
@@ -97,10 +116,10 @@ public class ValidationCLITest extends TestCase {
 		fos.write(revokedCert1.getBytes());
 		fos.write("\n-----END CERTIFICATE-----\n".getBytes());
 		fos.close();
-		
+
 		TestingSecurityManager.remove();
 	}
-	
+
 	public void testHelp() throws Exception{
 		int result = TestUtils.assertFailedExecution(new ValidationCLI(),new String[] {});
 		assertTrue(result == ValidationCLI.RETURN_BADARGUMENT);
@@ -108,33 +127,35 @@ public class ValidationCLITest extends TestCase {
 		result = TestUtils.assertFailedExecution(new ValidationCLI(),new String[] {"-help"});
 		assertTrue(TestUtils.grepTempOut("Usage: "));
 		assertTrue(result == ValidationCLI.RETURN_BADARGUMENT);
-		
+
 		TestingSecurityManager.remove();
 	}
-	
-	public void testValidationCLI() {
-			TestUtils.assertSuccessfulExecution(new ValidationCLI(),new String[] {"-hosts", "localhost", "-service", "16", "-cert", validcert1path});
-			int result = TestUtils.assertFailedExecution(new ValidationCLI(),new String[] {"-hosts", "localhost", "-cert", validcert1path});
-			assertTrue(result == ValidationCLI.RETURN_BADARGUMENT);
-			result = TestUtils.assertFailedExecution(new ValidationCLI(),new String[] {"-service", "16", "-cert", validcert1path});
-			assertTrue(result == ValidationCLI.RETURN_BADARGUMENT);
-			result = TestUtils.assertFailedExecution(new ValidationCLI(),new String[] {"-hosts", "localhost", "-service", "16","-der","-pem", "-cert", validcert1path});
-			assertTrue(result == ValidationCLI.RETURN_BADARGUMENT);
-			TestUtils.assertSuccessfulExecution(new ValidationCLI(),new String[] {"-hosts", "localhost", "-service", "16", "-pem", "-cert", validcert1path});
-			TestUtils.assertSuccessfulExecution(new ValidationCLI(),new String[] {"-hosts", "localhost", "-service", "16", "-der", "-port","8080", "-cert", validcert1derpath});
-			result = TestUtils.assertFailedExecution(new ValidationCLI(),new String[] {"-hosts", "localhost", "-service", "16", "-der", "-port","8080", "-cert", revokedcertpath});
-			assertTrue(result == ValidationCLI.RETURN_REVOKED);
-			TestUtils.assertSuccessfulExecution(new ValidationCLI(),new String[] {"-hosts", "localhost", "-service", "16", "-der", "-port","8080", "-certpurposes","IDENTIFICATION", "-cert", validcert1derpath});
-			TestUtils.assertSuccessfulExecution(new ValidationCLI(),new String[] {"-hosts", "localhost", "-service", "16", "-der", "-port","8080", "-certpurposes","IDENTIFICATION,ELECTROINIC_SIGNATURE", "-cert", validcert1derpath});
-			result = TestUtils.assertFailedExecution(new ValidationCLI(),new String[] {"-hosts", "localhost", "-service", "16", "-der", "-port","8080", "-certpurposes","ELECTROINIC_SIGNATURE","-cert", revokedcertpath});
-			assertTrue(result == ValidationCLI.RETURN_BADCERTPURPOSE);			
 
-			TestingSecurityManager.remove();
-	}
-	
+    public void testValidationCLI() {
+        final String jksFile = new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath();
+
+        TestUtils.assertSuccessfulExecution(new ValidationCLI(), new String[]{"-hosts", "localhost", "-service", "16", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        int result = TestUtils.assertFailedExecution(new ValidationCLI(), new String[]{"-hosts", "localhost", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        assertEquals(ValidationCLI.RETURN_BADARGUMENT, result);
+        result = TestUtils.assertFailedExecution(new ValidationCLI(), new String[]{"-service", "16", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        assertEquals(ValidationCLI.RETURN_BADARGUMENT, result);
+        result = TestUtils.assertFailedExecution(new ValidationCLI(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-pem", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        assertEquals(ValidationCLI.RETURN_BADARGUMENT, result);
+        TestUtils.assertSuccessfulExecution(new ValidationCLI(), new String[]{"-hosts", "localhost", "-service", "16", "-pem", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        TestUtils.assertSuccessfulExecution(new ValidationCLI(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        result = TestUtils.assertFailedExecution(new ValidationCLI(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        assertEquals(ValidationCLI.RETURN_REVOKED, result);
+        TestUtils.assertSuccessfulExecution(new ValidationCLI(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "IDENTIFICATION", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        TestUtils.assertSuccessfulExecution(new ValidationCLI(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "IDENTIFICATION,ELECTROINIC_SIGNATURE", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        result = TestUtils.assertFailedExecution(new ValidationCLI(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "ELECTROINIC_SIGNATURE", "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        assertEquals(ValidationCLI.RETURN_BADCERTPURPOSE, result);
+
+        TestingSecurityManager.remove();
+    }
+
 
 	public void test99RemoveDatabase() throws Exception{
-		  
+
 		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH");
 		  gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH");
 
@@ -143,10 +164,10 @@ public class ValidationCLITest extends TestCase {
 		  sSSession.removeWorkerProperty(16, "VAL1.TESTPROP");
 		  sSSession.removeWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN");
 
-		  
+
 		  sSSession.reloadConfiguration(16);
-		  
+
 		  TestingSecurityManager.remove();
 	}
-	
+
 }

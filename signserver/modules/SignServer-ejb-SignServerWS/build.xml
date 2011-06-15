@@ -15,7 +15,19 @@
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
 
-
+    <!-- Target for regenerating the WSDL. -->
+    <target name="regenerate-wsdl" depends="wsgen-SignServerWS" description="Regenerates the WSDL from the source.">
+        <copy todir="${src.dir}/META-INF/wsdl/" failonerror="true">
+            <fileset dir="${build.dir}/generated-sources/jax-ws/resources/">
+                <include name="*.wsdl"/>
+                <include name="*.xsd"/>
+            </fileset>
+        </copy>
+        <echo>
+Remember to update the soap:address location in the WSDL to start with
+"https://" for WS to work on JBoss 4.
+        </echo>
+    </target>
 
     <!--
         ===================

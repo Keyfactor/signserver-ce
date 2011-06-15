@@ -97,7 +97,9 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
 	        this.faultCallback = faultCallback;
 	        
 	        this.sSLSocketFactory = sSLSocketFactory;
-	        HttpsURLConnection.setDefaultSSLSocketFactory(sSLSocketFactory);
+                if (sSLSocketFactory != null) {
+                    HttpsURLConnection.setDefaultSSLSocketFactory(sSLSocketFactory);
+                }
 	        
 	        for (int i = 0; i < hosts.length; i++) {
 	        	try{

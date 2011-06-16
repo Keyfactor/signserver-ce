@@ -2035,6 +2035,16 @@ in the RequestContext the IP-address is set to the String "null". In that case,
 to allow requests using EJB calls, null can be added to the list of allowed
 addresses.
                         </p>
+                        <p>
+<b>Note:</b> When adding "null" to ALLOW_FROM not only locally running clients
+like the ClientCLI and AdminGUI is allowed access but also from workers that
+invoke the other worker directly using an EJB call. This is for instance the
+case for the XMLValidator which delegates the validation of the certificate to
+a CertValidator. If the CertValidator had a RemoteAddressAuthorizer allowing
+access from "null" then the XMLValidator would be able to use it. To restrict
+users from using the CertValidator (indirectly through the XMLValidator) an
+Autorizer could be configured for the XMLValidator.
+                        </p>
                     </subsubsection>
                     <subsubsection name="Custom">
                         <p>

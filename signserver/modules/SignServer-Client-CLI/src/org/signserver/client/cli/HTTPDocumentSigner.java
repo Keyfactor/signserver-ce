@@ -19,7 +19,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -52,9 +51,6 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private String username;
 
     private String password;
-
-    
-    private Random random = new Random();
 
     public HTTPDocumentSigner(final URL processServlet,
             final String workerName, final String username,

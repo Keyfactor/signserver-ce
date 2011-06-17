@@ -840,13 +840,13 @@ ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /opt/ETcpsdk/lib/linux-x86_64/li
                     <p>
 Installation guide describing step-by-step how to setup a SignServer cluster on CentOS 4.4. Even if the document
 is specific for this OS is should be quite easy to adopt it to other environments as well. It 
-can be downloaded here either as <a href="docs/SignServer_3_0_Installation_Guide.pdf">PDF</a> or viewed as 
-<a href="docs/SignServer_3_0_Installation_Guide.html">HTML</a> 
+can be downloaded here either as <a href="../docs/SignServer_3_0_Installation_Guide.pdf">PDF</a> or viewed as
+<a href="../docs/SignServer_3_0_Installation_Guide.html">HTML</a>
                     </p>
                 </subsection>
                 <subsection name="Clustered SignServer 2.0 CentOS 4.4 Installation Guide">
                     <p>
-Version 2.0 of the same documentation.<a href="docs/SignServer_2_0_Installation_Guide.pdf">PDF</a> <a href="docs/SignServer_2_0_Installation_Guide.html">HTML</a> 
+Version 2.0 of the same documentation.<a href="../docs/SignServer_2_0_Installation_Guide.pdf">PDF</a> <a href="../docs/SignServer_2_0_Installation_Guide.html">HTML</a>
                     </p>
                 </subsection>
             </section>

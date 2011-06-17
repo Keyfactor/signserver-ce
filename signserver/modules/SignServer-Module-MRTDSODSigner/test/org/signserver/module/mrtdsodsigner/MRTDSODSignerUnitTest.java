@@ -24,14 +24,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import junit.framework.TestCase;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.util.ASN1Dump;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
-import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
@@ -40,6 +41,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.test.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.mock.WorkerSessionMock;
@@ -410,8 +412,17 @@ public class MRTDSODSignerUnitTest extends TestCase {
 //                new ASN1InputStream(new ByteArrayInputStream(
 //                sod.getEncoded())).readObject(), true));
 
+        // The real asn.1 order in the cert is CN=DemoCSCA1, C=SE
+        assertEquals("C=SE,CN=DemoCSCA1", sod.getIssuerX500Principal().getName());
+        assertEquals("C=SE,CN=DemoCSCA1", sod.getDocSigningCertificate().getIssuerX500Principal().getName());
+        assertEquals("C=SE, CN=DemoCSCA1", sod.getDocSigningCertificate().getIssuerDN().getName());
+
+        // Make sure it matches in all ways
         assertEquals("DN should match", sod.getIssuerX500Principal().getName(),
             sod.getDocSigningCertificate().getIssuerX500Principal().getName());
+        assertTrue("DN should match", sod.getIssuerX500Principal().equals(sod.getDocSigningCertificate().getIssuerX500Principal()));
+        // The DER encoding should be the same
+        Arrays.equals(sod.getIssuerX500Principal().getEncoded(), sod.getDocSigningCertificate().getEncoded());
     }
 
     /**
@@ -435,8 +446,17 @@ public class MRTDSODSignerUnitTest extends TestCase {
 //                new ASN1InputStream(new ByteArrayInputStream(
 //                sod.getEncoded())).readObject(), true));
 
+        // The real asn.1 order in the cert is C=SE,O=Reversed Org,CN=ReversedCA2
+        assertEquals("CN=ReversedCA2,O=Reversed Org,C=SE", sod.getIssuerX500Principal().getName());
+        assertEquals("CN=ReversedCA2,O=Reversed Org,C=SE", sod.getDocSigningCertificate().getIssuerX500Principal().getName());
+        assertEquals("CN=ReversedCA2, O=Reversed Org, C=SE", sod.getDocSigningCertificate().getIssuerDN().getName());
+        
+        // Make sure it matches in all ways
         assertEquals("DN should match", sod.getIssuerX500Principal().getName(),
             sod.getDocSigningCertificate().getIssuerX500Principal().getName());
+        assertTrue("DN should match", sod.getIssuerX500Principal().equals(sod.getDocSigningCertificate().getIssuerX500Principal()));
+        // The DER encoding should be the same
+        Arrays.equals(sod.getIssuerX500Principal().getEncoded(), sod.getDocSigningCertificate().getEncoded());
     }
     
 

@@ -848,6 +848,9 @@ public class SODFile extends PassportFile
 	throws NoSuchAlgorithmException {
 		/* Get the issuer name (CN, O, OU, C) from the cert and put it in a SignerIdentifier struct. */
 		X500Principal docSignerPrincipal = ((X509Certificate)docSigningCertificate).getIssuerX500Principal();
+                // As X509Certificate.getIssuerX500Principal().getName() always prints the name in reverses order
+                // we need to call the X509Name constructor with the first parameter reverse=true to have it back in
+                // the right order.
                 X509Name docSignerName = new X509Name(true, docSignerPrincipal.getName()); // RFC 2253 format
 		BigInteger serial = ((X509Certificate)docSigningCertificate).getSerialNumber();
 		SignerIdentifier sid = new SignerIdentifier(new IssuerAndSerialNumber(docSignerName, serial));

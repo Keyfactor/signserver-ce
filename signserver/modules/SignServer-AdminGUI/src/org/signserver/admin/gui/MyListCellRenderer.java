@@ -68,9 +68,7 @@ public class MyListCellRenderer extends javax.swing.JPanel
         jLabel3.setIcon(resourceMap.getIcon("worker.icon")); // NOI18N
         jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
         jLabel3.setBorder(null);
-        jLabel3.setMinimumSize(new java.awt.Dimension(46, 46));
         jLabel3.setName("jLabel3"); // NOI18N
-        jLabel3.setPreferredSize(new java.awt.Dimension(46, 46));
 
         listItemLabel1.setFont(resourceMap.getFont("listItemLabel1.font")); // NOI18N
         listItemLabel1.setText(resourceMap.getString("listItemLabel1.text")); // NOI18N
@@ -85,7 +83,7 @@ public class MyListCellRenderer extends javax.swing.JPanel
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(listItemLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

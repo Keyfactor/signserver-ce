@@ -46,9 +46,11 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -117,7 +119,7 @@ public class MainView extends FrameView {
                         }
                     }
 
-                    jList2.setModel(new MyComboBoxModel(selectedWorkers));
+                    workerComboBox.setModel(new MyComboBoxModel(selectedWorkers));
 
                     if (selectedWorkers.size() > 0) {
 
@@ -134,7 +136,7 @@ public class MainView extends FrameView {
                                 comboBoxSelection = 0;
                             }
                         }
-                        jList2.setSelectedIndex(comboBoxSelection);
+                        workerComboBox.setSelectedIndex(comboBoxSelection);
                     } else {
                         displayWorker(null);
                     }
@@ -142,29 +144,44 @@ public class MainView extends FrameView {
             }
         });
 
-        jList2.setRenderer(new DefaultListCellRenderer() {
+        workerComboBox.setRenderer(new DefaultListCellRenderer() {
+
+            private Icon workerIcon;
+            
+            {
+                ResourceMap resourceMap = getResourceMap();
+                workerIcon = resourceMap.getIcon("worker.smallIcon");
+            }
 
             @Override
             public Component getListCellRendererComponent(final JList list,
                     Object value, final int index,
                     final boolean isSelected, final boolean cellHasFocus) {
+
+                JLabel component = (JLabel) super.getListCellRendererComponent(list, value, index,
+                        isSelected, cellHasFocus);
+
+                component.setBorder(new EmptyBorder(5, 5, 5, 5));
+
                 if (value instanceof Worker) {
                     final Worker signer  = (Worker) value;
-                    value = signer.getName()
-                            + " (" + signer.getWorkerId() + ")";
+                    component.setText(signer.getName()
+                            + " (" + signer.getWorkerId() + ")");
+                    component.setIcon(workerIcon);
+                } else {
+                    component.setIcon(null);
                 }
-                return super.getListCellRendererComponent(list, value, index,
-                        isSelected, cellHasFocus);
+                return component;
             }
 
         });
 
-        jList2.addActionListener(new ActionListener() {
+        workerComboBox.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                if (jList2.getSelectedItem() instanceof Worker) {
-                    displayWorker((Worker) jList2.getSelectedItem());
+                if (workerComboBox.getSelectedItem() instanceof Worker) {
+                    displayWorker((Worker) workerComboBox.getSelectedItem());
                 }
             }
         });
@@ -306,7 +323,7 @@ public class MainView extends FrameView {
         jScrollPane2 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
         jPanel1 = new javax.swing.JPanel();
-        jList2 = new javax.swing.JComboBox();
+        workerComboBox = new javax.swing.JComboBox();
         workerTabbedPane = new javax.swing.JTabbedPane();
         statusSummaryTab = new javax.swing.JScrollPane();
         statusSummaryTextPane = new javax.swing.JTextPane();
@@ -399,8 +416,8 @@ public class MainView extends FrameView {
 
         jPanel1.setName("jPanel1"); // NOI18N
 
-        jList2.setMinimumSize(new java.awt.Dimension(39, 60));
-        jList2.setName("jList2"); // NOI18N
+        workerComboBox.setMinimumSize(new java.awt.Dimension(39, 60));
+        workerComboBox.setName("workerComboBox"); // NOI18N
 
         workerTabbedPane.setName("workerTabbedPane"); // NOI18N
 
@@ -461,13 +478,13 @@ public class MainView extends FrameView {
         statusPropertiesTabLayout.setHorizontalGroup(
             statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPropertiesTabLayout.createSequentialGroup()
-                .addContainerGap(706, Short.MAX_VALUE)
+                .addContainerGap(710, Short.MAX_VALUE)
                 .addComponent(statusPropertiesDetailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 678, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
                     .addGap(112, 112, 112)))
         );
         statusPropertiesTabLayout.setVerticalGroup(
@@ -475,11 +492,11 @@ public class MainView extends FrameView {
             .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusPropertiesDetailsButton)
-                .addContainerGap(682, Short.MAX_VALUE))
+                .addContainerGap(684, Short.MAX_VALUE))
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 702, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -548,7 +565,7 @@ public class MainView extends FrameView {
             configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 668, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(addButton)
@@ -564,7 +581,7 @@ public class MainView extends FrameView {
             .addGroup(configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 702, Short.MAX_VALUE)
                     .addGroup(configurationTabLayout.createSequentialGroup()
                         .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -646,7 +663,7 @@ public class MainView extends FrameView {
         authorizationTabLayout.setHorizontalGroup(
             authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(authorizationTabLayout.createSequentialGroup()
-                .addContainerGap(691, Short.MAX_VALUE)
+                .addContainerGap(695, Short.MAX_VALUE)
                 .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(authAddButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(authEditButton, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -655,7 +672,7 @@ public class MainView extends FrameView {
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addGap(6, 6, 6)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
                     .addGap(124, 124, 124)))
         );
 
@@ -674,7 +691,7 @@ public class MainView extends FrameView {
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 702, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -688,16 +705,16 @@ public class MainView extends FrameView {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 814, Short.MAX_VALUE)
-                    .addComponent(jList2, javax.swing.GroupLayout.Alignment.LEADING, 0, 814, Short.MAX_VALUE))
+                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 814, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jList2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(workerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 766, Short.MAX_VALUE))
+                .addComponent(workerTabbedPane))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -715,7 +732,7 @@ public class MainView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -733,7 +750,6 @@ public class MainView extends FrameView {
         menuBar.add(fileMenu);
 
         editMenu.setAction(actionMap.get("testKeys")); // NOI18N
-        editMenu.setMnemonic('E');
         editMenu.setText(resourceMap.getString("editMenu.text")); // NOI18N
         editMenu.setName("editMenu"); // NOI18N
 
@@ -1399,7 +1415,7 @@ public class MainView extends FrameView {
         
         final boolean active = worker != null;
 
-        jList2.setEnabled(worker != null);
+        workerComboBox.setEnabled(worker != null);
         workerTabbedPane.setEnabled(worker != null);
         statusSummaryTextPane.setEnabled(worker != null);
         propertiesTable.setEnabled(worker != null);
@@ -1516,7 +1532,7 @@ public class MainView extends FrameView {
             // to RefreshWorkersTask fields, here.
             super(app);
 
-            selectedWorkerBeforeRefresh = (Worker) jList2.getSelectedItem();
+            selectedWorkerBeforeRefresh = (Worker) workerComboBox.getSelectedItem();
         }
         @Override protected Object doInBackground() {
             // Your Task's code here.  This method runs
@@ -1639,7 +1655,7 @@ public class MainView extends FrameView {
             }
 
             jList1.revalidate();
-            jList2.revalidate();
+            workerComboBox.revalidate();
             jList1.setModel(new AbstractListModel() {
 
                 @Override
@@ -1999,84 +2015,84 @@ public class MainView extends FrameView {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton activateButton;
-    private javax.swing.JMenuItem activateMenu;
-    private javax.swing.JButton addButton;
-    private javax.swing.JMenuItem administratorsMenu;
-    private javax.swing.JButton authAddButton;
-    private javax.swing.JButton authEditButton;
-    private javax.swing.JPanel authEditPanel;
-    private javax.swing.JButton authRemoveButton;
-    private javax.swing.JTable authTable;
-    private javax.swing.JPanel authorizationTab;
-    private javax.swing.JMenuItem authorizationsMenu;
-    private javax.swing.JMenuItem configurationMenu;
-    private javax.swing.JPanel configurationTab;
-    private javax.swing.JTable configurationTable;
-    private javax.swing.JButton deactivateButton;
-    private javax.swing.JMenuItem deactivateMenu;
-    private javax.swing.JButton editButton;
-    private javax.swing.JTextField editIssuerDNTextfield;
-    private javax.swing.JMenu editMenu;
-    private javax.swing.JPanel editPanel;
-    private javax.swing.JTextField editPropertyTextField;
-    private javax.swing.JTextArea editPropertyValueTextArea;
-    private javax.swing.JTextField editSerialNumberTextfield;
-    private javax.swing.JCheckBox editUpdateAllCheckbox;
-    private javax.swing.JMenuItem generateRequestMenu;
-    private javax.swing.JButton generateRequestsButton;
-    private javax.swing.JMenuItem globalConfigurationMenu;
-    private javax.swing.JButton installCertificatesButton;
-    private javax.swing.JMenuItem installCertificatesMenu;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JList jList1;
-    private javax.swing.JComboBox jList2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane7;
-    private javax.swing.JToolBar.Separator jSeparator1;
-    private javax.swing.JToolBar.Separator jSeparator2;
-    private javax.swing.JPopupMenu.Separator jSeparator3;
-    private javax.swing.JPopupMenu.Separator jSeparator4;
-    private javax.swing.JPopupMenu.Separator jSeparator5;
-    private javax.swing.JToolBar.Separator jSeparator6;
-    private javax.swing.JPopupMenu.Separator jSeparator7;
-    private javax.swing.JPopupMenu.Separator jSeparator8;
-    private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JPanel mainPanel;
-    private javax.swing.JMenuBar menuBar;
-    private javax.swing.JPanel passwordPanel;
-    private javax.swing.JPasswordField passwordPanelField;
-    private javax.swing.JLabel passwordPanelLabel;
+    javax.swing.JButton activateButton;
+    javax.swing.JMenuItem activateMenu;
+    javax.swing.JButton addButton;
+    javax.swing.JMenuItem administratorsMenu;
+    javax.swing.JButton authAddButton;
+    javax.swing.JButton authEditButton;
+    javax.swing.JPanel authEditPanel;
+    javax.swing.JButton authRemoveButton;
+    javax.swing.JTable authTable;
+    javax.swing.JPanel authorizationTab;
+    javax.swing.JMenuItem authorizationsMenu;
+    javax.swing.JMenuItem configurationMenu;
+    javax.swing.JPanel configurationTab;
+    javax.swing.JTable configurationTable;
+    javax.swing.JButton deactivateButton;
+    javax.swing.JMenuItem deactivateMenu;
+    javax.swing.JButton editButton;
+    javax.swing.JTextField editIssuerDNTextfield;
+    javax.swing.JMenu editMenu;
+    javax.swing.JPanel editPanel;
+    javax.swing.JTextField editPropertyTextField;
+    javax.swing.JTextArea editPropertyValueTextArea;
+    javax.swing.JTextField editSerialNumberTextfield;
+    javax.swing.JCheckBox editUpdateAllCheckbox;
+    javax.swing.JMenuItem generateRequestMenu;
+    javax.swing.JButton generateRequestsButton;
+    javax.swing.JMenuItem globalConfigurationMenu;
+    javax.swing.JButton installCertificatesButton;
+    javax.swing.JMenuItem installCertificatesMenu;
+    javax.swing.JLabel jLabel1;
+    javax.swing.JLabel jLabel2;
+    javax.swing.JLabel jLabel4;
+    javax.swing.JLabel jLabel5;
+    javax.swing.JList jList1;
+    javax.swing.JPanel jPanel1;
+    javax.swing.JScrollPane jScrollPane1;
+    javax.swing.JScrollPane jScrollPane2;
+    javax.swing.JScrollPane jScrollPane6;
+    javax.swing.JScrollPane jScrollPane7;
+    javax.swing.JToolBar.Separator jSeparator1;
+    javax.swing.JToolBar.Separator jSeparator2;
+    javax.swing.JPopupMenu.Separator jSeparator3;
+    javax.swing.JPopupMenu.Separator jSeparator4;
+    javax.swing.JPopupMenu.Separator jSeparator5;
+    javax.swing.JToolBar.Separator jSeparator6;
+    javax.swing.JPopupMenu.Separator jSeparator7;
+    javax.swing.JPopupMenu.Separator jSeparator8;
+    javax.swing.JSplitPane jSplitPane1;
+    javax.swing.JToolBar jToolBar1;
+    javax.swing.JPanel mainPanel;
+    javax.swing.JMenuBar menuBar;
+    javax.swing.JPanel passwordPanel;
+    javax.swing.JPasswordField passwordPanelField;
+    javax.swing.JLabel passwordPanelLabel;
     private javax.swing.JProgressBar progressBar;
-    private javax.swing.JTable propertiesTable;
-    private javax.swing.JButton refreshButton;
-    private javax.swing.JMenuItem refreshMenu;
-    private javax.swing.JButton removeButton;
-    private javax.swing.JButton renewKeyButton;
-    private javax.swing.JMenuItem renewKeyMenu;
-    private javax.swing.JButton renewSignerButton;
-    private javax.swing.JMenuItem renewSignerMenu;
+    javax.swing.JTable propertiesTable;
+    javax.swing.JButton refreshButton;
+    javax.swing.JMenuItem refreshMenu;
+    javax.swing.JButton removeButton;
+    javax.swing.JButton renewKeyButton;
+    javax.swing.JMenuItem renewKeyMenu;
+    javax.swing.JButton renewSignerButton;
+    javax.swing.JMenuItem renewSignerMenu;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
-    private javax.swing.JPanel statusPanel;
-    private javax.swing.JButton statusPropertiesDetailsButton;
-    private javax.swing.JMenuItem statusPropertiesMenu;
-    private javax.swing.JScrollPane statusPropertiesScrollPane;
-    private javax.swing.JPanel statusPropertiesTab;
-    private javax.swing.JMenuItem statusSummaryMenu;
-    private javax.swing.JScrollPane statusSummaryTab;
-    private javax.swing.JTextPane statusSummaryTextPane;
-    private javax.swing.JButton testKeyButton;
-    private javax.swing.JMenuItem testKeyMenu;
-    private javax.swing.JMenu viewMenu;
-    private javax.swing.JTabbedPane workerTabbedPane;
+    javax.swing.JPanel statusPanel;
+    javax.swing.JButton statusPropertiesDetailsButton;
+    javax.swing.JMenuItem statusPropertiesMenu;
+    javax.swing.JScrollPane statusPropertiesScrollPane;
+    javax.swing.JPanel statusPropertiesTab;
+    javax.swing.JMenuItem statusSummaryMenu;
+    javax.swing.JScrollPane statusSummaryTab;
+    javax.swing.JTextPane statusSummaryTextPane;
+    javax.swing.JButton testKeyButton;
+    javax.swing.JMenuItem testKeyMenu;
+    javax.swing.JMenu viewMenu;
+    javax.swing.JComboBox workerComboBox;
+    javax.swing.JTabbedPane workerTabbedPane;
     // End of variables declaration//GEN-END:variables
 
     private final Timer messageTimer;

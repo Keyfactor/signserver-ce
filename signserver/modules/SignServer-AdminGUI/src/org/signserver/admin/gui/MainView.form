@@ -21,7 +21,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jSplitPane1" pref="823" max="32767" attributes="0"/>
+                  <Component id="jSplitPane1" pref="822" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -77,7 +77,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="workerTabbedPane" alignment="0" pref="814" max="32767" attributes="0"/>
-                              <Component id="jList2" alignment="0" pref="814" max="32767" attributes="0"/>
+                              <Component id="workerComboBox" alignment="0" pref="814" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -87,15 +87,15 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jList2" min="-2" max="-2" attributes="0"/>
+                          <Component id="workerComboBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="workerTabbedPane" pref="766" max="32767" attributes="0"/>
+                          <Component id="workerTabbedPane" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JComboBox" name="jList2">
+                <Component class="javax.swing.JComboBox" name="workerComboBox">
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                       <StringArray count="0"/>
@@ -103,7 +103,7 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[39, 60]"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="jList2" noResource="true"/>
+                    <Property name="name" type="java.lang.String" value="workerComboBox" noResource="true"/>
                   </Properties>
                 </Component>
                 <Container class="javax.swing.JTabbedPane" name="workerTabbedPane">
@@ -158,14 +158,14 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace pref="706" max="32767" attributes="0"/>
+                                  <EmptySpace pref="710" max="32767" attributes="0"/>
                                   <Component id="statusPropertiesDetailsButton" min="-2" pref="84" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                                      <Component id="statusPropertiesScrollPane" pref="678" max="32767" attributes="0"/>
+                                      <Component id="statusPropertiesScrollPane" pref="682" max="32767" attributes="0"/>
                                       <EmptySpace min="-2" pref="112" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -176,12 +176,12 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="statusPropertiesDetailsButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="682" max="32767" attributes="0"/>
+                                  <EmptySpace pref="684" max="32767" attributes="0"/>
                               </Group>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="statusPropertiesScrollPane" pref="699" max="32767" attributes="0"/>
+                                      <Component id="statusPropertiesScrollPane" pref="702" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -270,7 +270,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jScrollPane6" pref="668" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane6" pref="672" max="32767" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
                                       <Component id="addButton" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -286,7 +286,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jScrollPane6" alignment="0" pref="699" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane6" alignment="0" pref="702" max="32767" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="addButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -400,7 +400,7 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
-                                  <EmptySpace pref="691" max="32767" attributes="0"/>
+                                  <EmptySpace pref="695" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="authAddButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
                                       <Component id="authEditButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -411,7 +411,7 @@
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                                      <Component id="jScrollPane7" pref="672" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane7" pref="676" max="32767" attributes="0"/>
                                       <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -431,7 +431,7 @@
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane7" pref="699" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane7" pref="702" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -544,7 +544,6 @@
             <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
               <action class="org.signserver.admin.gui.MainView" id="testKeys" methodName="testKeys"/>
             </Property>
-            <Property name="mnemonic" type="int" value="69"/>
             <Property name="text" type="java.lang.String" resourceKey="editMenu.text"/>
             <Property name="name" type="java.lang.String" value="editMenu" noResource="true"/>
           </Properties>
@@ -1144,7 +1143,7 @@
     <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
-    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="0"/>
     <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,3,-95,0,0,4,94"/>
   </AuxValues>
 </Form>

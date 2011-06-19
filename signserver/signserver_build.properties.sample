@@ -9,7 +9,7 @@
 
 # ------------ Application server configuration --------------------------------
 
-# Application server type. Normally this is auto-detected from 'appserver.home' and should not be configured.
+# Application server type
 # Possible values: jboss, glassfish
 # Default jboss
 #appserver.type=jboss
@@ -374,7 +374,6 @@ healthcheck.checkdbstring=Select count(*) from signerconfigdata
 # Tomcat version. If SignServer should use a HTTPS interface it will
 # deploy a keystore to all nodes in the cluster. Depending on the version
 # of tomcat is the files placed a little different.
-# Normally this is auto-detected from 'appserver.home' and should not be configured. 
 # Available options are: tomcat41, tomcat50, tomcat55
 # Default: tomcat55
 #deploy.tomcat.version=

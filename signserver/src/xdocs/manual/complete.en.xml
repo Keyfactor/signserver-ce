@@ -438,6 +438,15 @@ it for editing in your favorite text editor.
 cp signserver_build.properties.sample signserver_build.properties
                     </source>
 
+                    <subsubsection name="Application server configuration">
+                        <p>
+Set appserver.type to the application server (jboss or glassfish).
+                        </p>
+                        <source>
+appserver.type=jboss
+                        </source>
+                    </subsubsection>
+
                     <subsubsection name="Web GUI configuration">
                         <p>
 Uncomment j2ee.web-nohttps=true if SignServer should be used to configure the

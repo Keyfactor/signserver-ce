@@ -65,8 +65,9 @@ public class MyListCellRenderer extends javax.swing.JPanel
         setName("Form"); // NOI18N
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(MyListCellRenderer.class);
+        jLabel3.setIcon(resourceMap.getIcon("worker.icon")); // NOI18N
         jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
-        jLabel3.setBorder(new javax.swing.border.LineBorder(resourceMap.getColor("jLabel3.border.lineColor"), 1, true)); // NOI18N
+        jLabel3.setBorder(null);
         jLabel3.setMinimumSize(new java.awt.Dimension(46, 46));
         jLabel3.setName("jLabel3"); // NOI18N
         jLabel3.setPreferredSize(new java.awt.Dimension(46, 46));
@@ -98,7 +99,7 @@ public class MyListCellRenderer extends javax.swing.JPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(listItemLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                         .addComponent(listItemLabel2))
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())

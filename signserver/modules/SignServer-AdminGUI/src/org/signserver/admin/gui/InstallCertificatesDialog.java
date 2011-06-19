@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.jdesktop.application.Action;
@@ -124,8 +125,12 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
                 JFileChooser.OPEN_DIALOG);
         editor.setClickCountToStart(1);
-        jTable1.getColumn("Signer certificate").setCellEditor(editor);
-        jTable1.getColumn("Certificate chain").setCellEditor(editor);
+        final TableColumn columnSignerCert = jTable1.getColumn("Signer certificate");
+        final TableColumn columnCertChain = jTable1.getColumn("Certificate chain");
+        columnSignerCert.setCellEditor(editor);
+        columnCertChain.setCellEditor(editor);
+        columnSignerCert.setCellRenderer(new BrowseCellRenderer());
+        columnCertChain.setCellRenderer(new BrowseCellRenderer());
         final DefaultCellEditor aliasComboBoxFieldEditor
                 = new DefaultCellEditor(aliasComboBox);
         aliasComboBoxFieldEditor.setClickCountToStart(1);

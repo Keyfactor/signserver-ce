@@ -158,6 +158,7 @@ public class GenerateRequestsDialog extends JDialog {
         comboBoxFieldEditor.setClickCountToStart(1);
         jTable1.getColumn("Filename").setCellEditor(editor);
         textFieldEditor.setClickCountToStart(1);
+        jTable1.getColumn("Filename").setCellRenderer(new BrowseCellRenderer());
         jTable1.getColumn("Signature algorithm").setCellEditor(
                 comboBoxFieldEditor);
         jTable1.getColumn("DN").setCellEditor(textFieldEditor);

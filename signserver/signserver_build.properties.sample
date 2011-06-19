@@ -9,14 +9,14 @@
 
 # ------------ Application server configuration --------------------------------
 
-# Application server type
+# Application server type. Normally this is auto-detected from 'appserver.home' and should not be configured.
 # Possible values: jboss, glassfish
 # Default jboss
 #appserver.type=jboss
 
 # Application server home folder
 # Default: $APPSRV_HOME or $JBOSS_HOME
-#appserver.home=${basedir}/../../jboss-4.2.2
+#appserver.home=${basedir}/../../jboss-4.2.3
 #appserver.home=/usr/local/SUNWappserver/
 #appserver.home=${env.APPSRV_HOME}
 
@@ -374,6 +374,7 @@ healthcheck.checkdbstring=Select count(*) from signerconfigdata
 # Tomcat version. If SignServer should use a HTTPS interface it will
 # deploy a keystore to all nodes in the cluster. Depending on the version
 # of tomcat is the files placed a little different.
+# Normally this is auto-detected from 'appserver.home' and should not be configured. 
 # Available options are: tomcat41, tomcat50, tomcat55
 # Default: tomcat55
 #deploy.tomcat.version=

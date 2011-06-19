@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import java.awt.Component;
-import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
@@ -42,15 +40,12 @@ import java.util.Vector;
 import javax.ejb.EJBException;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -144,37 +139,8 @@ public class MainView extends FrameView {
             }
         });
 
-        workerComboBox.setRenderer(new DefaultListCellRenderer() {
-
-            private Icon workerIcon;
-            
-            {
-                ResourceMap resourceMap = getResourceMap();
-                workerIcon = resourceMap.getIcon("worker.smallIcon");
-            }
-
-            @Override
-            public Component getListCellRendererComponent(final JList list,
-                    Object value, final int index,
-                    final boolean isSelected, final boolean cellHasFocus) {
-
-                JLabel component = (JLabel) super.getListCellRendererComponent(list, value, index,
-                        isSelected, cellHasFocus);
-
-                component.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-                if (value instanceof Worker) {
-                    final Worker signer  = (Worker) value;
-                    component.setText(signer.getName()
-                            + " (" + signer.getWorkerId() + ")");
-                    component.setIcon(workerIcon);
-                } else {
-                    component.setIcon(null);
-                }
-                return component;
-            }
-
-        });
+        workerComboBox.setRenderer(new SmallWorkerListCellRenderer(
+                getResourceMap().getIcon("worker.smallIcon")));
 
         workerComboBox.addActionListener(new ActionListener() {
 
@@ -1879,7 +1845,7 @@ public class MainView extends FrameView {
 
         if (selectedWorkers.size() > 0) {
             GenerateRequestsDialog dlg = new GenerateRequestsDialog(getFrame(),
-                    true, selectedWorkers, allWorkers);
+                    true, selectedWorkers, allWorkers, getResourceMap());
             if (dlg.showRequestsDialog() == GenerateRequestsDialog.OK) {
                 getContext().getTaskService().execute(refreshWorkers());
             }

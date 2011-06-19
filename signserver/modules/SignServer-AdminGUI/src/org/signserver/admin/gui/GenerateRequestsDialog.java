@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import java.awt.Component;
 import java.awt.Frame;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -26,11 +25,9 @@ import javax.ejb.EJBException;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
@@ -39,6 +36,7 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
+import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.Task;
 import org.signserver.admin.gui.adminws.gen.Base64SignerCertReqData;
 import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
@@ -96,7 +94,8 @@ public class GenerateRequestsDialog extends JDialog {
 
     /** Creates new form GenerateRequestsDialog. */
     public GenerateRequestsDialog(final Frame parent, final boolean modal,
-            final List<Worker> workers, final List<Worker> signers) {
+            final List<Worker> workers, final List<Worker> signers,
+            final ResourceMap resourceMap) {
         super(parent, modal);
         this.workers = new ArrayList<Worker>(workers);
         this.signers = signers;
@@ -168,21 +167,8 @@ public class GenerateRequestsDialog extends JDialog {
         aliasComboBoxFieldEditor.setClickCountToStart(1);
         jTable1.getColumn("Key").setCellEditor(aliasComboBoxFieldEditor);
 
-        signersComboBox.setRenderer(new DefaultListCellRenderer() {
-
-            @Override
-            public Component getListCellRendererComponent(final JList list,
-                    Object value, final int index, final boolean isSelected,
-                    final boolean cellHasFocus) {
-                if (value instanceof Worker) {
-                    final Worker worker = (Worker) value;
-                    value = worker.getName()
-                            + " (" + worker.getWorkerId() + ")";
-                }
-                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            }
-
-        });
+        signersComboBox.setRenderer(new SmallWorkerListCellRenderer(
+                resourceMap.getIcon("worker.smallIcon")));
         signersComboBox.setModel(new SignersComboBoxModel(signers));
 
         // Find and select first matching REQUESTSIGNER

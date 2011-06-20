@@ -1897,8 +1897,10 @@ usage: java -jar timeStampClient.jar &lt;options> &lt;url&gt;
                     </subsection>
 
                     <subsection name="validatecertificate">
+                        <p>
+Request a certificate to be validated by the specified service.
+                        </p>
                         <source>
-$ bin/client.sh validatecertificate
 usage: Usage: java -jar validate.jar &lt;options&gt;
 
  -cert &lt;cert-file&gt;              Path to certificate file (DER or PEM)
@@ -1921,8 +1923,6 @@ usage: Usage: java -jar validate.jar &lt;options&gt;
                                 CA for SSL Server certificates.
  -truststorepwd &lt;password&gt;      Password to unlock the truststore.
 
-
-
 The following values is returned by the program that can be used when scripting.
   -2   : Error happened during execution
   -1   : Bad arguments
@@ -1935,6 +1935,12 @@ The following values is returned by the program that can be used when scripting.
    6   : CA Certificate is not yet valid
    7   : CA Certificate have expired.
    8   : Certificate have no valid certificate purpose.
+
+Sample usages:
+a) validatecertificate -service CertValidationWorker -hosts localhost -cert
+    certificate.pem
+b) validatecertificate -service 5806 -hosts localhost -cert certificate.pem
+    -truststore p12/truststore.jks -truststorepwd changeit
                         </source>
                     </subsection>
 

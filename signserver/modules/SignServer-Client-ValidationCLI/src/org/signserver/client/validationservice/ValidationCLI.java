@@ -15,7 +15,6 @@ package org.signserver.client.validationservice;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,6 +59,12 @@ public class ValidationCLI {
 	
 	private static final int DEFAULT_PORT = 8080;
 	private static final int DEFAULT_SSLPORT = 8442;
+
+        /** System-specific new line characters. **/
+        private static final String NL = System.getProperty("line.separator");
+
+        /** The name of this command. */
+        private static final String COMMAND = "validatecertificate";
 	
 	public static final String OPTION_HELP = "help";
 	public static final String OPTION_SERVICE = "service";
@@ -408,27 +413,33 @@ public class ValidationCLI {
 	
     }
 
-	private static void printUsage(Options options){
-		HelpFormatter formatter = new HelpFormatter();
-		
-		formatter.printHelp( "Usage: java -jar validate.jar <options>\n", options );
-		formatter.printOptions(new PrintWriter(System.out), 80, options, 2, 0);
-		System.out.println("\n\n");
-		System.out.println("The following values is returned by the program that can be used when scripting.");
-		System.out.println("  -2   : Error happened during execution");
-		System.out.println("  -1   : Bad arguments");
-		System.out.println("   0   : Certificate is valid");
-		System.out.println("   1   : Certificate is revoked");
-		System.out.println("   2   : Certificate is not yet valid");
-		System.out.println("   3   : Certificate have expired");
-		System.out.println("   4   : Certificate doesn't verify");
-		System.out.println("   5   : CA Certificate have been revoked");
-		System.out.println("   6   : CA Certificate is not yet valid");
-		System.out.println("   7   : CA Certificate have expired.");
-		System.out.println("   8   : Certificate have no valid certificate purpose.");
-		System.out.println("\n");
-		System.exit(RETURN_BADARGUMENT);
-	
-	}
+    private static void printUsage(Options options) {
+        final StringBuilder footer = new StringBuilder();
+        footer.append(NL)
+            .append("The following values is returned by the program that can be used when scripting.").append(NL)
+            .append("  -2   : Error happened during execution").append(NL)
+            .append("  -1   : Bad arguments").append(NL)
+            .append("   0   : Certificate is valid").append(NL)
+            .append("   1   : Certificate is revoked").append(NL)
+            .append("   2   : Certificate is not yet valid").append(NL)
+            .append("   3   : Certificate have expired").append(NL)
+            .append("   4   : Certificate doesn't verify").append(NL)
+            .append("   5   : CA Certificate have been revoked").append(NL)
+            .append("   6   : CA Certificate is not yet valid").append(NL)
+            .append("   7   : CA Certificate have expired.").append(NL)
+            .append("   8   : Certificate have no valid certificate purpose.").append(NL)
+            .append(NL)
+            .append("Sample usages:").append(NL)
+            .append("a) ").append(COMMAND).append(" -service CertValidationWorker -hosts localhost -cert").append(NL)
+            .append("    certificate.pem").append(NL)
+            .append("b) ").append(COMMAND).append(" -service 5806 -hosts localhost -cert certificate.pem").append(NL)
+            .append("    -truststore p12/truststore.jks -truststorepwd changeit").append(NL);
+
+        final HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("Usage: java -jar validate.jar <options>\n", options);
+        System.out.println(footer.toString());
+
+        System.exit(RETURN_BADARGUMENT);
+    }
 
 }

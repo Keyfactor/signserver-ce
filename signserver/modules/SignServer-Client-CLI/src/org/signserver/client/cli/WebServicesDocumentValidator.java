@@ -27,10 +27,9 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 
-
 /**
- *
- * @author Markus Kilas
+ * DocumentValidator using web services.
+ * @author Markus Kilås
  * @version $Id$
  */
 public class WebServicesDocumentValidator extends AbstractDocumentValidator {
@@ -48,10 +47,10 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
     private Random random = new Random();
 
     public WebServicesDocumentValidator(final String host, final int port,
-            final String workerName, final String username,
-            final String password) {
-        this.signServer = new SigningAndValidationWS(host, port, username,
-                password);
+            final boolean useHTTPS, final String workerName,
+            final String username, final String password) {
+        this.signServer = new SigningAndValidationWS(host, port, useHTTPS,
+                username, password);
         this.workerName = workerName;
     }
 

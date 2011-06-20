@@ -20,28 +20,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509KeyManager;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
@@ -103,33 +90,6 @@ public class DocumentSignerCLI {
     /** Option PASSWORD. */
     public static final String PASSWORD = "password";
 
-    /** Option TRUSTSTORE. */
-    public static final String TRUSTSTORE = "truststore";
-
-    /** Option TRUSTSTOREPWD. */
-    public static final String TRUSTSTOREPWD = "truststorepwd";
-
-    /** Option KEYSTORE. */
-    public static final String KEYSTORE = "keystore";
-
-    /** Option KEYSTOREPWD. */
-    public static final String KEYSTOREPWD = "keystorepwd";
-
-    /** Option KEYALIAS. */
-    public static final String KEYALIAS = "keyalias";
-
-    /** Default host */
-    private static final String DEFAULT_HOST = "localhost";
-
-    /** Default HTTP port. */
-    private static final int DEFAULT_HTTP_PORT = 8080;
-
-    /** Default public HTTPS port. */
-    private static final int DEFAULT_PUBLIC_HTTPS_PORT = 8442;
-
-    /** Default private HTTPS port. */
-    private static final int DEFAULT_PRIVATE_HTTPS_PORT = 8443;
-
     /** The command line options. */
     private static final Options OPTIONS;
 
@@ -164,18 +124,11 @@ public class DocumentSignerCLI {
                 TEXTS.getString("SERVLET_DESCRIPTION"));
         OPTIONS.addOption(PROTOCOL, true,
                 TEXTS.getString("PROTOCOL_DESCRIPTION"));
-        OPTIONS.addOption(TRUSTSTORE, true,
-                TEXTS.getString("TRUSTSTORE_DESCRIPTION"));
-        OPTIONS.addOption(TRUSTSTOREPWD, true,
-                TEXTS.getString("TRUSTSTOREPWD_DESCRIPTION"));
-        OPTIONS.addOption(KEYSTORE, true,
-                TEXTS.getString("KEYSTORE_DESCRIPTION"));
-        OPTIONS.addOption(KEYSTOREPWD, true,
-                TEXTS.getString("KEYSTOREPWD_DESCRIPTION"));
-        OPTIONS.addOption(KEYALIAS, true,
-                TEXTS.getString("KEYALIAS_DESCRIPTION"));
         OPTIONS.addOption(USERNAME, true, "Username for authentication.");
         OPTIONS.addOption(PASSWORD, true, "Password for authentication.");
+        for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
+            OPTIONS.addOption(option);
+        }
     }
 
     /** ID of worker who should perform the operation. */
@@ -207,12 +160,7 @@ public class DocumentSignerCLI {
     private transient String username;
     private transient String password;
 
-    private transient File truststoreFile;
-    private transient String truststorePassword;
-
-    private transient File keystoreFile;
-    private transient String keystorePassword;
-    private transient String keyAlias;
+    private transient KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     /**
      * Creates an instance of DocumentSignerCLI.
@@ -245,7 +193,7 @@ public class DocumentSignerCLI {
         if (line.hasOption(WORKERID)) {
             workerId = Integer.parseInt(line.getOptionValue(WORKERID, null));
         }
-        host = line.getOptionValue(HOST, DEFAULT_HOST);
+        host = line.getOptionValue(HOST, KeyStoreOptions.DEFAULT_HOST);
         if (line.hasOption(PORT)) {
             port = Integer.parseInt(line.getOptionValue(PORT));
         }
@@ -271,21 +219,8 @@ public class DocumentSignerCLI {
         if (line.hasOption(PASSWORD)) {
             password = line.getOptionValue(PASSWORD, null);
         }
-        if (line.hasOption(TRUSTSTORE)) {
-            truststoreFile = new File(line.getOptionValue(TRUSTSTORE, null));
-        }
-        if (line.hasOption(TRUSTSTOREPWD)) {
-            truststorePassword = line.getOptionValue(TRUSTSTOREPWD, null);
-        }
-        if (line.hasOption(KEYSTORE)) {
-            keystoreFile = new File(line.getOptionValue(KEYSTORE, null));
-        }
-        if (line.hasOption(KEYSTOREPWD)) {
-            keystorePassword = line.getOptionValue(KEYSTOREPWD, null);
-        }
-        if (line.hasOption(KEYALIAS)) {
-            keyAlias = line.getOptionValue(KEYALIAS, null);
-        }
+        
+        keyStoreOptions.parseCommandLine(line);
     }
 
     /**
@@ -297,11 +232,8 @@ public class DocumentSignerCLI {
                     "Missing -workername or -workerid");
         } else if (data == null && inFile == null) {
             throw new IllegalArgumentException("Missing -data or -infile");
-        } else if (truststoreFile != null && truststorePassword == null) {
-            throw new IllegalArgumentException("Missing -truststorepwd");
-        } else if (keystoreFile != null && keystorePassword == null) {
-            throw new IllegalArgumentException("Missing -keystorepwd");
         }
+        keyStoreOptions.validateOptions();
     }
 
     /**
@@ -321,76 +253,15 @@ public class DocumentSignerCLI {
             workerIdOrName = String.valueOf(workerId);
         }
 
-        // If we should use HTTPS
-        KeyStore truststore = null;
-        if (truststoreFile != null) {
-            try {
-                truststore = loadKeyStore(truststoreFile, truststorePassword);
-            } catch (KeyStoreException ex) {
-                throw new RuntimeException("Could not load truststore", ex);
-            } catch (FileNotFoundException ex) {
-                throw new RuntimeException("Could not load truststore", ex);
-            } catch (IOException ex) {
-                throw new RuntimeException("Could not load truststore", ex);
-            } catch (NoSuchAlgorithmException ex) {
-                throw new RuntimeException("Could not load truststore", ex);
-            } catch (CertificateException ex) {
-                throw new RuntimeException("Could not load truststore", ex);
-            }
-        }
+        keyStoreOptions.setupHTTPS();
 
-        // If we should use client authenticated HTTPS
-        KeyStore keystore = null;
-        if (keystoreFile != null) {
-            try {
-                keystore = loadKeyStore(keystoreFile, keystorePassword);
-            } catch (KeyStoreException ex) {
-                throw new RuntimeException("Could not load keystore", ex);
-            } catch (FileNotFoundException ex) {
-                throw new RuntimeException("Could not load keystore", ex);
-            } catch (IOException ex) {
-                throw new RuntimeException("Could not load keystore", ex);
-            } catch (NoSuchAlgorithmException ex) {
-                throw new RuntimeException("Could not load keystore", ex);
-            } catch (CertificateException ex) {
-                throw new RuntimeException("Could not load keystore", ex);
-            }
-        }
-
-        final boolean useHTTPS;
-
-        if (truststore == null && keystore == null) {
-            useHTTPS = false;
-            if (port == null) {
-                port = DEFAULT_HTTP_PORT;
-            }
-        } else if (keystore == null) {
-            useHTTPS = true;
-            if (port == null) {
-                port = DEFAULT_PUBLIC_HTTPS_PORT;
-            }
-        } else {
-            if (truststore == null) {
-                truststore = keystore;
-            }
-            useHTTPS = true;
-            if (port == null) {
-                port = DEFAULT_PRIVATE_HTTPS_PORT;
-            }
-        }
-
-        if (useHTTPS) {
-            try {
-                setDefaultSocketFactory(truststore, keystore, keyAlias,
-                        keystorePassword.toCharArray());
-            } catch (NoSuchAlgorithmException ex) {
-                throw new RuntimeException("Could not setup HTTPS", ex);
-            } catch (KeyStoreException ex) {
-                throw new RuntimeException("Could not setup HTTPS", ex);
-            } catch (KeyManagementException ex) {
-                throw new RuntimeException("Could not setup HTTPS", ex);
-            } catch (UnrecoverableKeyException ex) {
-                throw new RuntimeException("Could not setup HTTPS", ex);
+        if (port == null) {
+            if (keyStoreOptions.isUsePrivateHTTPS()) {
+                port = KeyStoreOptions.DEFAULT_PRIVATE_HTTPS_PORT;
+            } else if (keyStoreOptions.isUseHTTPS()) {
+                port = KeyStoreOptions.DEFAULT_PUBLIC_HTTPS_PORT;
+            } else {
+                port = KeyStoreOptions.DEFAULT_HTTP_PORT;
             }
         }
 
@@ -400,55 +271,16 @@ public class DocumentSignerCLI {
                 host,
                 port,
                 workerIdOrName,
-                useHTTPS,
+                keyStoreOptions.isUseHTTPS(),
                 username,
                 password);
         } else {
             LOG.debug("Using HTTP as procotol");
             signer = new HTTPDocumentSigner(
-                new URL(useHTTPS ? "https" : "http", host, port, servlet),
-                workerIdOrName, username, password);
+                new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host,
+                port, servlet), workerIdOrName, username, password);
         }
         return signer;
-    }
-
-    private KeyStore loadKeyStore(final File truststoreFile,
-            final String truststorePassword) throws KeyStoreException, FileNotFoundException, IOException, NoSuchAlgorithmException, CertificateException {
-        KeyStore keystore = KeyStore.getInstance("JKS");
-        keystore.load(new FileInputStream(truststoreFile), truststorePassword.toCharArray());
-        return keystore;
-    }
-
-    private static void setDefaultSocketFactory(final KeyStore truststore,
-            final KeyStore keystore, String keyAlias, char[] keystorePassword) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnrecoverableKeyException {
-
-        final TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-        tmf.init(truststore);
-
-        final KeyManager[] keyManagers;
-        if (keystore == null) {
-            keyManagers = null;
-        } else {
-            if (keyAlias == null) {
-                keyAlias = keystore.aliases().nextElement();
-            }
-            final KeyManagerFactory kKeyManagerFactory
-                    = KeyManagerFactory.getInstance("SunX509");
-            kKeyManagerFactory.init(keystore, keystorePassword);
-            keyManagers = kKeyManagerFactory.getKeyManagers();
-            for (int i = 0; i < keyManagers.length; i++) {
-                if (keyManagers[i] instanceof X509KeyManager) {
-                    keyManagers[i] = new AliasKeyManager(
-                            (X509KeyManager) keyManagers[i], keyAlias);
-                }
-            }
-        }
-
-        final SSLContext context = SSLContext.getInstance("TLS");
-        context.init(keyManagers, tmf.getTrustManagers(), new SecureRandom());
-
-        SSLSocketFactory factory = context.getSocketFactory();
-        HttpsURLConnection.setDefaultSSLSocketFactory(factory);
     }
 
     /**

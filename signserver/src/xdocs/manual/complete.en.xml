@@ -1831,21 +1831,37 @@ d) signdocument -workerid 2 -data "&lt;root/&gt;" -keystore superadmin.jks
                     </subsection>
 
                     <subsection name="validatedocument">
+                        <p>
+Request a document to be validated.
+                        </p>
                         <source>
-$ bin/client.sh validatedocument
-usage: validatedocument &lt;options&gt;
- -data          Data to send to the worker.
- -encoding      Encoding of the data option. None or base64. Default:
-                none.
- -host          Server name or IP address. Default: localhost
- -infile        File to read data to send to the worker from.
- -password      Password for authentication.
- -port          Server port. Default: 8080
- -protocol      Method of interacting with SignServer. HTTP or
-                WEBSERVICES. Default: WEBSERVICES.
- -username      Username for authentication.
- -workerid      ID of worker which should perform the operation.
- -workername    Name of worker which should perform the operation.
+usage: validatedocument &lt;-workername WORKERNAME | -workerid WORKERID&gt;
+                        [options]
+Request a document to be validated by SignServer
+ -data             Data to send to the worker.
+ -host             Server name or IP address. Default: localhost
+ -infile           File to read data to send to the worker from.
+ -keyalias         Alias of the key in the keystore to use for
+                   authentication.
+ -keystore         Keystore with private key and certificate for client
+                   certificate authentication.
+ -keystorepwd      Password for reading the keystore.
+ -password         Password for authentication.
+ -port             Server port. Default: 8080 (for HTTP), 8442 for HTTPS
+                   and 8443 for HTTPS with client authentication.
+ -truststore       Keystore with trusted certificates to use with HTTPS.
+ -truststorepwd    Password for the keystore with trusted certificates.
+ -username         Username for authentication.
+ -workerid         ID of worker which should perform the operation.
+ -workername       Name of worker which should perform the operation.
+
+Sample usages:
+a) validatedocument -workername XMLValidator -data "&lt;root&gt;&lt;Signature...
+b) validatedocument -workername XMLValidator -infile /tmp/signed.xml
+c) validatedocument -workerid 2 -infile /tmp/signed.xml -truststore
+truststore.jks -truststorepwd changeit
+d) validatedocument -workerid 2 -infile /tmp/signed.xml -keystore
+superadmin.jks -truststorepwd foo123
                         </source>
                     </subsection>
 

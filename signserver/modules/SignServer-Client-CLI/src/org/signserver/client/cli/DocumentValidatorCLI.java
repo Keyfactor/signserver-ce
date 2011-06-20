@@ -17,13 +17,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
@@ -48,6 +48,12 @@ public class DocumentValidatorCLI {
     private static final ResourceBundle TEXTS = ResourceBundle.getBundle(
             "org/signserver/client/cli/ResourceBundle");
 
+    /** System-specific new line characters. **/
+    private static final String NL = System.getProperty("line.separator");
+
+    /** The name of this command. */
+    private static final String COMMAND = "validatedocument";
+
     /** Option WORKERID. */
     public static final String WORKERID = "workerid";
 
@@ -57,17 +63,11 @@ public class DocumentValidatorCLI {
     /** Option DATA. */
     public static final String DATA = "data";
 
-    /** Option ENCODING. */
-    public static final String ENCODING = "encoding";
-
     /** Option HOST. */
     public static final String HOST = "host";
 
     /** Option INFILE. */
     public static final String INFILE = "infile";
-
-//    /** Option OUTFILE. */
-//    public static final String OUTFILE = "outfile";
 
     /** Option PORT. */
     public static final String PORT = "port";
@@ -88,9 +88,6 @@ public class DocumentValidatorCLI {
     public static enum Protocol {
         /** The Web Services interface. */
         WEBSERVICES,
-
-//        /** The HTTP interface. */
-//        HTTP
     }
 
     static {
@@ -103,18 +100,15 @@ public class DocumentValidatorCLI {
                 TEXTS.getString("DATA_DESCRIPTION"));
         OPTIONS.addOption(INFILE, true,
                 TEXTS.getString("INFILE_DESCRIPTION"));
-//        OPTIONS.addOption(OUTFILE, true,
-//                TEXTS.getString("OUTFILE_DESCRIPTION"));
-        OPTIONS.addOption(ENCODING, true,
-                TEXTS.getString("ENCODING_DESCRIPTION"));
         OPTIONS.addOption(HOST, true,
                 TEXTS.getString("HOST_DESCRIPTION"));
         OPTIONS.addOption(PORT, true,
                 TEXTS.getString("PORT_DESCRIPTION"));
-        OPTIONS.addOption(PROTOCOL, true,
-                TEXTS.getString("PROTOCOL_DESCRIPTION"));
         OPTIONS.addOption(USERNAME, true, "Username for authentication.");
         OPTIONS.addOption(PASSWORD, true, "Password for authentication.");
+        for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
+            OPTIONS.addOption(option);
+        }
     }
 
     /** ID of worker who should perform the operation. */
@@ -126,29 +120,19 @@ public class DocumentValidatorCLI {
     /** Data to sign. */
     private transient String data;
 
-//    /**
-//     * Encoding of the data, if the data should be decoded before validation.
-//     */
-//    private transient String encoding;
-
     /** Hostname or IP address of the SignServer host. */
-    private transient String host;
+    private transient String host = KeyStoreOptions.DEFAULT_HOST;
 
     /** TCP port number of the SignServer host. */
-    private transient int port;
+    private transient Integer port;
 
     /** File to read the data from. */
     private transient File inFile;
 
-    /** File to read the signed data to. */
-    private transient File outFile;
-
-    /** Protocol to use for contacting SignServer. */
-    private transient Protocol protocol;
-
     private transient String username;
-
     private transient String password;
+
+    private transient KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     /**
      * Creates an instance of DocumentSignerCLI.
@@ -181,11 +165,9 @@ public class DocumentValidatorCLI {
         if (line.hasOption(WORKERID)) {
             workerId = Integer.parseInt(line.getOptionValue(WORKERID, null));
         }
-        if (line.hasOption(HOST)) {
-            host = line.getOptionValue(HOST, null);
-        }
+        host = line.getOptionValue(HOST, KeyStoreOptions.DEFAULT_HOST);
         if (line.hasOption(PORT)) {
-            port = Integer.parseInt(line.getOptionValue(PORT, null));
+            port = Integer.parseInt(line.getOptionValue(PORT));
         }
         if (line.hasOption(DATA)) {
             data = line.getOptionValue(DATA, null);
@@ -193,35 +175,26 @@ public class DocumentValidatorCLI {
         if (line.hasOption(INFILE)) {
             inFile = new File(line.getOptionValue(INFILE, null));
         }
-//        if (line.hasOption(OUTFILE)) {
-//            outFile = new File(line.getOptionValue(OUTFILE, null));
-//        }
         if (line.hasOption(USERNAME)) {
             username = line.getOptionValue(USERNAME, null);
         }
         if (line.hasOption(PASSWORD)) {
             password = line.getOptionValue(PASSWORD, null);
         }
-        if (line.hasOption(PROTOCOL)) {
-            protocol = Protocol.valueOf(line.getOptionValue(
-                    PROTOCOL, null));
-        }
+        keyStoreOptions.parseCommandLine(line);
     }
 
     /**
      * Checks that all mandadory options are given.
      */
     private void validateOptions() {
-        if (host == null) {
-            throw new IllegalArgumentException("Missing -host");
-        } else if (port == 0) {
-            throw new IllegalArgumentException("Missing -port");
-        } else if (workerName == null && workerId == 0) {
+        if (workerName == null && workerId == 0) {
             throw new IllegalArgumentException(
                     "Missing -workername or -workerid");
         } else if (data == null && inFile == null) {
             throw new IllegalArgumentException("Missing -data or -infile");
         }
+        keyStoreOptions.validateOptions();
     }
 
     /**
@@ -241,15 +214,26 @@ public class DocumentValidatorCLI {
             workerIdOrName = String.valueOf(workerId);
         }
 
-        {
-            LOG.debug("Using WebServices as procotol");
-            validator = new WebServicesDocumentValidator(
-                host,
-                port,
-                workerIdOrName,
-                username,
-                password);
+        keyStoreOptions.setupHTTPS();
+
+        if (port == null) {
+            if (keyStoreOptions.isUsePrivateHTTPS()) {
+                port = KeyStoreOptions.DEFAULT_PRIVATE_HTTPS_PORT;
+            } else if (keyStoreOptions.isUseHTTPS()) {
+                port = KeyStoreOptions.DEFAULT_PUBLIC_HTTPS_PORT;
+            } else {
+                port = KeyStoreOptions.DEFAULT_HTTP_PORT;
+            }
         }
+
+        LOG.debug("Using WebServices as procotol");
+        validator = new WebServicesDocumentValidator(
+            host,
+            port,
+            keyStoreOptions.isUseHTTPS(),
+            workerIdOrName,
+            username,
+            password);
         return validator;
     }
 
@@ -307,9 +291,18 @@ public class DocumentValidatorCLI {
             final DocumentValidatorCLI cli = new DocumentValidatorCLI(args);
             cli.run();
         } catch (IllegalArgumentException ex) {
-            LOG.error(ex);
+                        LOG.error(ex);
+            final StringBuilder buff = new StringBuilder();
+            buff.append(NL)
+                .append("Sample usages:").append(NL)
+                .append("a) ").append(COMMAND).append(" -workername XMLValidator -data \"<root><Signature...").append(NL)
+                .append("b) ").append(COMMAND).append(" -workername XMLValidator -infile /tmp/signed.xml").append(NL)
+                .append("c) ").append(COMMAND).append(" -workerid 2 -infile /tmp/signed.xml -truststore truststore.jks -truststorepwd changeit").append(NL)
+                .append("d) ").append(COMMAND).append(" -workerid 2 -infile /tmp/signed.xml -keystore superadmin.jks -truststorepwd foo123").append(NL);
+            final String footer = buff.toString();
             final HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("validatedocument <options>", OPTIONS);
+            formatter.printHelp("validatedocument <-workername WORKERNAME | -workerid WORKERID> [options]",
+                    "Request a document to be validated by SignServer", OPTIONS, footer);
         }
     }
 }

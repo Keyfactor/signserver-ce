@@ -19,7 +19,7 @@ package org.signserver.module.xmlvalidator;
  * @author Markus Kilås
  * $version $Id$
  */
-class XMLValidatorTestData {
+public class XMLValidatorTestData {
 
     /**
       *   SerialNumber: 05:3f:69:92:d0:81:24:8a
@@ -93,7 +93,7 @@ class XMLValidatorTestData {
           * Not After : May 27 08:14:27 2036 GMT
 	  *  SubjectDN: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
 	  */
-	static final String CERT_ISSUER =
+	public static final String CERT_ISSUER =
          "MIIFfzCCA2egAwIBAgIIMk1BOK8CwTwwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE"
 	+ "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp"
 	+ "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzA4MTQyN1oXDTM2MDUyNzA4"
@@ -138,7 +138,7 @@ class XMLValidatorTestData {
          *   Subject: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
          * </pre>
          */
-        static final String CERT_ISSUER4 =
+        public static final String CERT_ISSUER4 =
             "MIIDPTCCAvygAwIBAgIIJgIAcQevf5UwCQYHKoZIzjgEAzBPMRQwEgYDVQQDDAtE"
             +"ZW1vUm9vdENBMjEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIg"
             +"U2FtcGxlMQswCQYDVQQGEwJTRTAeFw0wOTExMDkxNjA5NDhaFw0zNDExMTAxNjA5"
@@ -195,7 +195,7 @@ class XMLValidatorTestData {
 	/**
 	 * Ok sig, ok cert
 	 */
-	static final String TESTXML1 = 
+	public static final String TESTXML1 =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		+"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
 		+"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"

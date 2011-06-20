@@ -14,46 +14,58 @@ package org.signserver.client.cli;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Properties;
 
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.signserver.cli.CommonAdminInterface;
+import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.common.ServiceLocator;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.module.xmlvalidator.XMLValidatorTestData;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
 /**
- * Tests for the signdocument command of Client CLI.
+ * Tests for the validatedocument command of Client CLI.
  *
  * 
  * @author Markus Kilås
  * @version $Id$
  */
-public class DocumentSignerTest extends TestCase {
+public class DocumentValidatorTest extends TestCase {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(DocumentSignerTest.class);
+    private static final Logger LOG = Logger.getLogger(DocumentValidatorTest.class);
 
     /** WORKERID used in this test case as defined in 
      * junittest-part-config.properties for XMLSigner. */
-    private static final int WORKERID = 5676;
+    private static final int WORKERID = 5677;
 
-    private static IWorkerSession.IRemote workerSession;
+    private static final String VALIDATION_WORKER = "TestValidationWorker";
+
     private static String signserverhome;
     private static int moduleVersion;
+
+    private IWorkerSession.IRemote sSSession;
+    private IGlobalConfigurationSession.IRemote gCSession;
 	
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        workerSession = ServiceLocator.getInstance().lookupRemote(
+        gCSession = ServiceLocator.getInstance().lookupRemote(
+                        IGlobalConfigurationSession.IRemote.class);
+        sSSession = ServiceLocator.getInstance().lookupRemote(
                 IWorkerSession.IRemote.class);
         TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
@@ -65,35 +77,48 @@ public class DocumentSignerTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
         TestingSecurityManager.remove();
-    }	
+    }
+
+    private String getTruststorePassword() {
+        Properties config = new Properties();
+        try {
+            config.load(new FileInputStream(new File("../../signserver_build.properties")));
+        } catch (FileNotFoundException ignored) {
+            LOG.debug("No signserver_build.properties");
+        } catch (IOException ex) {
+            LOG.error("Not using signserver_build.properties: " + ex.getMessage());
+        }
+        return config.getProperty("java.trustpassword", "changeit");
+    }
 	
     public void test00SetupDatabase() throws Exception {
 
-        final MARFileParser marFileParser = new MARFileParser(signserverhome
-                + "/dist-server/xmlsigner.mar");
+        MARFileParser marFileParser = new MARFileParser(signserverhome + "/dist-server/xmlvalidator.mar");
         moduleVersion = marFileParser.getVersionFromMARFile();
 
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestUtils.assertSuccessfulExecution(new String[] {
-                "module",
-                "add",
-                signserverhome + "/dist-server/xmlsigner.mar",
-                "junittest"
-            });
-        assertTrue("Loading module",
-                TestUtils.grepTempOut("Loading module XMLSIGNER"));
-        assertTrue("Module loaded",
-                TestUtils.grepTempOut("Module loaded successfully."));
-        TestUtils.flushTempOut();
-        TestUtils.flushTempErr();
+        // VALIDATION SERVICE
+        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
+        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        sSSession.setWorkerProperty(17, "AUTHTYPE", "NOAUTH");
+        sSSession.setWorkerProperty(17, "NAME", VALIDATION_WORKER);
+        sSSession.setWorkerProperty(17, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
+        sSSession.setWorkerProperty(17, "VAL1.ISSUER1.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + XMLValidatorTestData.CERT_ISSUER + "\n-----END CERTIFICATE-----\n");
+        sSSession.setWorkerProperty(17, "VAL1.ISSUER2.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + XMLValidatorTestData.CERT_ISSUER4 + "\n-----END CERTIFICATE-----\n");
+        sSSession.setWorkerProperty(17, "VAL1.TESTPROP", "TEST");
+        sSSession.setWorkerProperty(17, "VAL1.REVOKED", "");
+        sSSession.reloadConfiguration(17);
 
-        workerSession.reloadConfiguration(WORKERID);
+        // XMLVALIDATOR
+        TestUtils.assertSuccessfulExecution(new String[] { "module", "add", signserverhome + "/dist-server/xmlvalidator.mar", "junittest" });
+        assertTrue(TestUtils.grepTempOut("Loading module XMLVALIDATOR"));
+        assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+        sSSession.setWorkerProperty(WORKERID, "VALIDATIONSERVICEWORKER", VALIDATION_WORKER);
+        sSSession.reloadConfiguration(WORKERID);
     }
 
     public void test01missingArguments() throws Exception {
         try {
-            execute("signdocument");
+            execute("validatedocument");
             fail("Should have thrown exception about missing arguments");
         } catch (IllegalArgumentException expected) {}
     }
@@ -105,12 +130,16 @@ public class DocumentSignerTest extends TestCase {
      * </pre>
      * @throws Exception
      */
-    public void test02signDocumentFromParameter() throws Exception {
+    public void test02validateDocumentFromParameter() throws Exception {
         try {
             String res =
-                    new String(execute("signdocument", "-workername", "TestXMLSigner", "-data", "<root/>"));
-            assertTrue("contains signature tag: "
-                    + res, res.contains("<root><Signature"));
+                    new String(execute("validatedocument",
+                    "-workername", "TestXMLValidator",
+                    "-data", XMLValidatorTestData.TESTXML1,
+                    "-truststore", new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath(),
+                    "-truststorepwd", getTruststorePassword()));
+            assertTrue("contains Valid: true: "
+                    + res, res.contains("Valid: true"));
         } catch (IllegalArgumentException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
@@ -126,11 +155,11 @@ public class DocumentSignerTest extends TestCase {
      */
     public void test02signDocumentFromFile() throws Exception {
         try {
-            final File doc = File.createTempFile("test.xml", null);
+            final File doc = File.createTempFile("test2.xml", null);
             FileOutputStream out = null;
             try {
                 out = new FileOutputStream(doc);
-                out.write("<tag/>".getBytes());
+                out.write(XMLValidatorTestData.TESTXML1.getBytes());
                 out.close();
             } finally {
                 if (out != null) {
@@ -139,10 +168,12 @@ public class DocumentSignerTest extends TestCase {
             }
 
             String res =
-                    new String(execute("signdocument", "-workername", 
-                    "TestXMLSigner", "-infile", doc.getAbsolutePath()));
-            assertTrue("contains signature tag: "
-                    + res, res.contains("<tag><Signature"));
+                    new String(execute("validatedocument", "-workername",
+                    "TestXMLValidator", "-infile", doc.getAbsolutePath(),
+                    "-truststore", new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath(),
+                    "-truststorepwd", getTruststorePassword()));
+            assertTrue("contains Valid: true: "
+                    + res, res.contains("Valid: true"));
         } catch (IllegalArgumentException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
@@ -159,12 +190,12 @@ public class DocumentSignerTest extends TestCase {
         TestUtils.assertSuccessfulExecution(new String[] {
             "module",
             "remove",
-            "XMLSIGNER",
+            "XMLVALIDATOR",
             String.valueOf(moduleVersion)
         });
         assertTrue("module remove",
                 TestUtils.grepTempOut("Removal of module successful."));
-        workerSession.reloadConfiguration(WORKERID);
+        sSSession.reloadConfiguration(WORKERID);
     }
 
     private byte[] execute(String... args) throws IllegalArgumentException, IOException {
@@ -172,7 +203,7 @@ public class DocumentSignerTest extends TestCase {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
         try {
-            final DocumentSignerCLI cli = new DocumentSignerCLI(args);
+            final DocumentValidatorCLI cli = new DocumentValidatorCLI(args);
             cli.run();
         } finally {
             output = out.toByteArray();

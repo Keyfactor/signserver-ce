@@ -269,7 +269,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- ======================================================================= -->
     <!-- Deploy Sign Server ear to JBoss                                               -->
     <!-- ======================================================================= -->
-    <target name="deploy" depends="signserver.ear, signserver-cli"
+    <target name="deploy" depends="build, signserver.ear"
         description="Deploys SignServer">
         <antcall target="j2ee:deploy" />
         <antcall target="showtime" />

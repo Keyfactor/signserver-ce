@@ -100,7 +100,7 @@ public class SODSignerTest extends TestCase {
     public void test02signDataFromParameter() throws Exception {
         try {
             String res =
-                    new String(execute("signdatagroups", "-workername", "MRTDSODSigner",
+                    new String(execute("signdatagroups", "-workername", "TestMRTDSODSigner1",
                     "-data", "1=value1&2=value2&3=value3"));
             assertNotNull("non null result", res);
             assertTrue("non empty result: " + res.length(), res.length() > 50);

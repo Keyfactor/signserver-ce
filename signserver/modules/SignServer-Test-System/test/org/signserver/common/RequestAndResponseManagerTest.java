@@ -23,6 +23,10 @@ import org.apache.log4j.Logger;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.validationservice.server.ValidationTestUtils;
 
+/**
+ *
+ * @version $Id$
+ */
 public class RequestAndResponseManagerTest extends TestCase {
 
     /** Logger for this class. */
@@ -91,11 +95,11 @@ public class RequestAndResponseManagerTest extends TestCase {
     public void testGenericPropertiesResponse() throws Exception {
 
         // Externalize a response
-        final Properties requestData = new Properties();
-        requestData.setProperty("aKey", "aValue");
-        requestData.setProperty("AnotherKey", "A value with \"quotation\"");
+        final Properties responseData = new Properties();
+        responseData.setProperty("aKey", "aValue");
+        responseData.setProperty("AnotherKey", "A value with \"quotation\"");
         final GenericPropertiesResponse response1
-                = new GenericPropertiesResponse(requestData);
+                = new GenericPropertiesResponse(responseData);
         final byte[] externalized
                 = RequestAndResponseManager.serializeProcessResponse(response1);
 

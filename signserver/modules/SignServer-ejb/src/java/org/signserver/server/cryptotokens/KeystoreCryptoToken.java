@@ -51,7 +51,6 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
-import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
@@ -252,11 +251,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
     public boolean deactivate() {
         entries = null;
         ks = null;
-        if (authenticationCode != null) {
-            for (int i = 0; i < authenticationCode.length; i++) {
-                authenticationCode[i] = 0;
-            }
-        }
+        Arrays.fill(authenticationCode, '\0');
         this.authenticationCode = null;
         return true;
     }

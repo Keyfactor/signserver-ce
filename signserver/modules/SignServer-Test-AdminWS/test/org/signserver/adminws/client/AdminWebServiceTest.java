@@ -27,7 +27,8 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 
 /**
- * Tests for the Admin WS interface.
+ * Tests for the Admin WS interface. Currently only tests that each operation
+ * requires authentication.
  *
  * @author Markus Kilås
  * @version $Id$

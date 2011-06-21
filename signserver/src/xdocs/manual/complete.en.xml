@@ -1893,6 +1893,10 @@ usage: java -jar timeStampClient.jar &lt;options> &lt;url&gt;
  -verify              Give this option if verification of a stored reply
                       should be done, work together with inrep and cafile. If given, no request
                       to the TSA will happen.
+
+Sample usages:
+a) timestamp -url http://localhost:8080/signserver/tsa?workerName=TimeStampSigner
+
                         </source>
                     </subsection>
 
@@ -1945,23 +1949,34 @@ b) validatecertificate -service 5806 -hosts localhost -cert certificate.pem
                     </subsection>
 
                     <subsection name="signdatagroups">
+                        <p>
+Sign the specified data groups and produce an SOd (MRTD).
+                        </p>
                         <source>
 $ bin/client.sh signdatagroups
 usage: signdatagroups &lt;options&gt;
- -data          Data to send to the worker.
- -encoding      Encoding of the data option. None or base64. Default:
-                none.
- -host          Server name or IP address. Default: localhost
- -outfile       File to write the result to. If not specified the result
-                is written to stdout.
- -password      Password for authentication.
- -port          Server port. Default: 8080
- -protocol      Method of interacting with SignServer. HTTP or
-                WEBSERVICES. Default: WEBSERVICES.
- -servlet       Servlet to call. Default /signserver/process
- -username      Username for authentication.
- -workerid      ID of worker which should perform the operation.
- -workername    Name of worker which should perform the operation.
+ -data             Data to send to the worker.
+ -encoding         Encoding of the data option. None or base64. Default:
+                   none.
+ -host             Server name or IP address. Default: localhost
+ -keyalias         Alias of the key in the keystore to use for
+                   authentication.
+ -keystore         Keystore with private key and certificate for client
+                   certificate authentication.
+ -keystorepwd      Password for reading the keystore.
+ -password         Password for authentication.
+ -port             Server port. Default: 8080 (for HTTP), 8442 for HTTPS
+                   and 8443 for HTTPS with client authentication.
+ -repeat           Run the operation this number of times. Default: 1
+ -servlet          Servlet to call. Default /signserver/sod
+ -truststore       Keystore with trusted certificates to use with HTTPS.
+ -truststorepwd    Password for the keystore with trusted certificates.
+ -username         Username for authentication.
+ -workerid         ID of worker which should perform the operation.
+ -workername       Name of worker which should perform the operation.
+
+Sample usages:
+a) signdatagroups -workername MRTDSODSigner -data "1=value1&amp;2=value2&amp;3=value3"
                         </source>
                     </subsection>
 

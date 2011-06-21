@@ -20,7 +20,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -30,32 +29,28 @@ import org.signserver.common.SignServerException;
 
 
 /**
+ * Signs data groups using the HTTP(s) interface.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id: HTTPDocumentSigner.java 941 2010-04-15 08:20:15Z netmackan $
  */
 public class HTTPSODSigner extends AbstractSODSigner {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(HTTPSODSigner.class);
+
     public static final String CRLF = "\r\n";
 
     private static final String BASICAUTH_AUTHORIZATION = "Authorization";
 
     private static final String BASICAUTH_BASIC = "Basic";
 
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(HTTPSODSigner.class);
-
-    private static final String BOUNDARY = "------------------signserver";
-
     private String workerName;
 
     private URL processServlet;
 
     private String username;
-
     private String password;
-
-
-    private Random random = new Random();
 
     public HTTPSODSigner(final URL processServlet,
             final String workerName, final String username,
@@ -71,8 +66,6 @@ public class HTTPSODSigner extends AbstractSODSigner {
                 CryptoTokenOfflineException, SignServerException,
                 IOException {
 
-//        final int requestId = random.nextInt();
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending sign request "
                     + " containing " + dataGroups.size() + " datagroups"
@@ -87,8 +80,6 @@ public class HTTPSODSigner extends AbstractSODSigner {
 
         // Take stop time
         final long estimatedTime = System.nanoTime() - startTime;
-
-       
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("Got sign response "
@@ -119,21 +110,18 @@ public class HTTPSODSigner extends AbstractSODSigner {
             if (username != null && password != null) {
                 conn.setRequestProperty(BASICAUTH_AUTHORIZATION, 
                         BASICAUTH_BASIC + " "
-                        + new String(Base64.encode(new String(
-                        username + ":" + password).getBytes())));
+                        + new String(Base64.encode(new StringBuilder()
+                        .append(username).append(":").append(password)
+                        .toString().getBytes())));
             }
             
-            
             final StringBuilder sb = new StringBuilder();
-            sb.append("workerName=" + workerName);
-            sb.append("&");
-            sb.append("encoding=" + encoding);
-            sb.append("&");
+            sb.append("workerName=").append(workerName).append("&")
+                .append("encoding=").append(encoding).append("&");
             for (Map.Entry<Integer, byte[]> entry : data.entrySet()) {
-                sb.append("dataGroup" + entry.getKey());
-                sb.append("=");
-                sb.append(URLEncoder.encode(new String(entry.getValue()), "UTF-8"));
-                sb.append("&");
+                sb.append("dataGroup").append(entry.getKey()).append("=")
+                    .append(URLEncoder.encode(new String(entry.getValue()), "UTF-8"))
+                    .append("&");
             }
 
             conn.setRequestProperty("Content-Type",
@@ -188,8 +176,7 @@ public class HTTPSODSigner extends AbstractSODSigner {
 
         public byte[] getData() {
             return data;
-        }
-        
+        }        
     }
 
 }

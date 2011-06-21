@@ -74,10 +74,10 @@ fi
 #CP="${SIGNSRV_HOME}/bin/jndi.properties":"$CP"
 
 if [ -r "$APPSRV_HOME"/lib/appserv-rt.jar ]; then
-    echo Using GlassFish JNDI provider...
+    echo "Using GlassFish JNDI provider..." 1>&2
     CP=$CP:"$APPSRV_HOME"/lib/appserv-rt.jar
 else
-    echo "Assuming JBoss JNDI provider..."
+    echo "Assuming JBoss JNDI provider..." 1>&2
     CP=$CP:"$APPSRV_HOME/client/jbossall-client.jar"
 fi
 

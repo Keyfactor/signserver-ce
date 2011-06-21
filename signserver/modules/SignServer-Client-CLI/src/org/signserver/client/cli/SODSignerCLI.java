@@ -19,11 +19,11 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
@@ -35,7 +35,7 @@ import org.signserver.common.SignServerException;
 /**
  * Command Line Interface (CLI) for signing MRTD SODs.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id: DocumentSignerCLI.java 940 2010-04-15 07:55:35Z netmackan $
  */
 public class SODSignerCLI {
@@ -46,6 +46,12 @@ public class SODSignerCLI {
     /** ResourceBundle with internationalized StringS. */
     private static final ResourceBundle TEXTS = ResourceBundle.getBundle(
             "org/signserver/client/cli/ResourceBundle");
+
+    /** System-specific new line characters. **/
+    private static final String NL = System.getProperty("line.separator");
+
+    /** The name of this command. */
+    private static final String COMMAND = "signdatagroups";
 
     /** Option WORKERID. */
     public static final String WORKERID = "workerid";
@@ -62,12 +68,6 @@ public class SODSignerCLI {
     /** Option HOST. */
     public static final String HOST = "host";
 
-    /** Option INFILE. */
-    public static final String INFILE = "infile";
-
-    /** Option OUTFILE. */
-    public static final String OUTFILE = "outfile";
-
     /** Option PORT. */
     public static final String PORT = "port";
 
@@ -76,15 +76,14 @@ public class SODSignerCLI {
     /** Option PROTOCOL. */
     public static final String PROTOCOL = "protocol";
 
+    /** Option USERNAME. */
     public static final String USERNAME = "username";
 
+    /** Option PASSWORD. */
     public static final String PASSWORD = "password";
 
-    /** Default host */
-    private static final String DEFAULT_HOST = "localhost";
-
-    /** Default port */
-    private static final String DEFAULT_PORT = "8080";
+    /** Option REPEAT. */
+    public static final String REPEAT = "repeat";
 
     /** The command line options. */
     private static final Options OPTIONS;
@@ -93,9 +92,6 @@ public class SODSignerCLI {
      * Protocols that can be used for accessing SignServer.
      */
     public static enum Protocol {
-        /** The Web Services interface. */
-        WEBSERVICES,
-
         /** The HTTP interface. */
         HTTP
     }
@@ -108,10 +104,6 @@ public class SODSignerCLI {
                 TEXTS.getString("WORKERNAME_DESCRIPTION"));
         OPTIONS.addOption(DATA, true,
                 TEXTS.getString("DATA_DESCRIPTION"));
-//        OPTIONS.addOption(INFILE, true,
-//                TEXTS.getString("INFILE_DESCRIPTION"));
-        OPTIONS.addOption(OUTFILE, true,
-                TEXTS.getString("OUTFILE_DESCRIPTION"));
         OPTIONS.addOption(ENCODING, true,
                 TEXTS.getString("ENCODING_DESCRIPTION"));
         OPTIONS.addOption(HOST, true,
@@ -119,11 +111,13 @@ public class SODSignerCLI {
         OPTIONS.addOption(PORT, true,
                 TEXTS.getString("PORT_DESCRIPTION"));
         OPTIONS.addOption(SERVLET, true,
-                TEXTS.getString("SERVLET_DESCRIPTION"));
-        OPTIONS.addOption(PROTOCOL, true,
-                TEXTS.getString("PROTOCOL_DESCRIPTION"));
-        OPTIONS.addOption(USERNAME, true, "Username for authentication.");
-        OPTIONS.addOption(PASSWORD, true, "Password for authentication.");
+                TEXTS.getString("SERVLET_SOD_DESCRIPTION"));
+        OPTIONS.addOption(USERNAME, true, TEXTS.getString("USERNAME_DESCRIPTION"));
+        OPTIONS.addOption(PASSWORD, true, TEXTS.getString("PASSWORD_DESCRIPTION"));
+        OPTIONS.addOption(REPEAT, true, TEXTS.getString("REPEAT_DESCRIPTION"));
+        for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
+            OPTIONS.addOption(option);
+        }
     }
 
     /** ID of worker who should perform the operation. */
@@ -142,15 +136,12 @@ public class SODSignerCLI {
     private transient String host;
 
     /** TCP port number of the SignServer host. */
-    private transient int port;
+    private transient Integer port;
 
-    private transient String servlet = "/signserver/process";
+    private transient String servlet = "/signserver/sod";
 
     /** File to read the data from. */
     private transient File inFile;
-
-    /** File to read the signed data to. */
-    private transient File outFile;
 
     /** Protocol to use for contacting SignServer. */
     private transient Protocol protocol;
@@ -160,6 +151,10 @@ public class SODSignerCLI {
     private transient String password;
 
     private transient Map<Integer,byte[]> dataGroups;
+
+    private transient int repeat = 1;
+
+    private transient KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     /**
      * Creates an instance of DocumentSignerCLI.
@@ -192,8 +187,10 @@ public class SODSignerCLI {
         if (line.hasOption(WORKERID)) {
             workerId = Integer.parseInt(line.getOptionValue(WORKERID, null));
         }
-        host = line.getOptionValue(HOST, DEFAULT_HOST);
-        port = Integer.parseInt(line.getOptionValue(PORT, DEFAULT_PORT));
+        host = line.getOptionValue(HOST, KeyStoreOptions.DEFAULT_HOST);
+        if (line.hasOption(PORT)) {
+            port = Integer.parseInt(line.getOptionValue(PORT));
+        }
         if (line.hasOption(SERVLET)) {
             servlet = line.getOptionValue(SERVLET, null);
         }
@@ -208,12 +205,6 @@ public class SODSignerCLI {
                 dataGroups.put(new Integer(entry[0]), entry[1].getBytes());
             }
         }
-        if (line.hasOption(INFILE)) {
-            inFile = new File(line.getOptionValue(INFILE, null));
-        }
-        if (line.hasOption(OUTFILE)) {
-            outFile = new File(line.getOptionValue(OUTFILE, null));
-        }
         if (line.hasOption(PROTOCOL)) {
             protocol = Protocol.valueOf(line.getOptionValue(
                     PROTOCOL, null));
@@ -227,22 +218,23 @@ public class SODSignerCLI {
         if (line.hasOption(ENCODING)) {
             encoding = line.getOptionValue(ENCODING, null);
         }
+        if (line.hasOption(REPEAT)) {
+            repeat = Integer.parseInt(line.getOptionValue(REPEAT));
+        }
+        keyStoreOptions.parseCommandLine(line);
     }
 
     /**
-     * Checks that all mandadory options are given.
+     * Checks that all mandatory options are given.
      */
     private void validateOptions() {
-        if (host == null) {
-            throw new IllegalArgumentException("Missing -host");
-        } else if (port == 0) {
-            throw new IllegalArgumentException("Missing -port");
-        } else if (workerName == null && workerId == 0) {
+        if (workerName == null && workerId == 0) {
             throw new IllegalArgumentException(
                     "Missing -workername or -workerid");
-        } else if (data == null && inFile == null) {
-            throw new IllegalArgumentException("Missing -data or -infile");
+        } else if (data == null) {
+            throw new IllegalArgumentException("Missing -data");
         }
+        keyStoreOptions.validateOptions();
     }
 
     /**
@@ -262,12 +254,23 @@ public class SODSignerCLI {
             workerIdOrName = String.valueOf(workerId);
         }
 
-        
+        keyStoreOptions.setupHTTPS();
+
+        if (port == null) {
+            if (keyStoreOptions.isUsePrivateHTTPS()) {
+                port = KeyStoreOptions.DEFAULT_PRIVATE_HTTPS_PORT;
+            } else if (keyStoreOptions.isUseHTTPS()) {
+                port = KeyStoreOptions.DEFAULT_PUBLIC_HTTPS_PORT;
+            } else {
+                port = KeyStoreOptions.DEFAULT_HTTP_PORT;
+            }
+        }
+
         LOG.debug("Using HTTP as procotol");
         signer = new HTTPSODSigner(
-            new URL("http", host, port, servlet),
-            workerIdOrName, username, password);
-        
+            new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port,
+            servlet), workerIdOrName, username, password);
+
         return signer;
     }
 
@@ -280,7 +283,7 @@ public class SODSignerCLI {
             Worker workers[] = new Worker[NUM_WORKERS];
             for(int i = 0; i < NUM_WORKERS; i++) {
                 workers[i] = new Worker("Worker " + i, createSigner(),
-                        dataGroups, encoding);
+                        dataGroups, encoding, repeat);
             }
 
             // Start workers
@@ -323,6 +326,12 @@ public class SODSignerCLI {
             LOG.error(ex);
             final HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("signdatagroups <options>", OPTIONS);
+            System.out.println(new StringBuilder()
+                .append(NL)
+                .append("Sample usages:").append(NL)
+                .append("a) ").append(COMMAND).append(" -workername MRTDSODSigner -data \"1=value1&2=value2&3=value3\"").append(NL)
+                .toString());
+            System.exit(-1);
         }
     }
 
@@ -331,21 +340,22 @@ public class SODSignerCLI {
         private SODSigner signer;
         private Map<Integer,byte[]> dataGroups;
         private String encoding;
+        private int repeat;
 
         public Worker(String name, SODSigner signer, Map<Integer,byte[]> dataGroups,
-                String encoding) {
+                String encoding, int repeat) {
             super(name);
             this.signer = signer;
             this.dataGroups = dataGroups;
             this.encoding = encoding;
+            this.repeat = repeat;
         }
 
         @Override
         public void run() {
             try {
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < repeat || repeat == -1; i++) {
                     signer.sign(dataGroups, encoding);
-//                    System.err.println("i=" + i);
                 }
             } catch (IOException ex) {
                 LOG.error(ex);
@@ -356,7 +366,7 @@ public class SODSignerCLI {
             } catch (SignServerException ex) {
                 LOG.error(ex);
             }
-            java.util.logging.Logger.getLogger(SODSignerCLI.class.getName()).log(Level.INFO, "Finished");
+            LOG.info("Finished");
         }
     }
 }

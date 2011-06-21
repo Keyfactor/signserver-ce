@@ -72,6 +72,12 @@ public class TimeStampClient {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(TimeStampClient.class);
 
+    /** System-specific new line characters. **/
+    private static final String NL = System.getProperty("line.separator");
+
+    /** The name of this command. */
+    private static final String COMMAND = "timestamp";
+
     private static final int PARAM_URL = 0;
 
     /** Begin key for certificates in PEM format. */
@@ -262,6 +268,11 @@ public class TimeStampClient {
         final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("java -jar timeStampClient.jar <options> <url>",
                 options);
+        final StringBuilder footer = new StringBuilder();
+        footer.append(NL)
+            .append("Sample usages:").append(NL)
+            .append("a) ").append(COMMAND).append(" -url http://localhost:8080/signserver/tsa?workerName=TimeStampSigner").append(NL);
+        System.out.println(footer.toString());
         System.exit(-1);
     }
 

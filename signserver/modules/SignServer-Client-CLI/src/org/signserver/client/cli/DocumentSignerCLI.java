@@ -124,8 +124,10 @@ public class DocumentSignerCLI {
                 TEXTS.getString("SERVLET_DESCRIPTION"));
         OPTIONS.addOption(PROTOCOL, true,
                 TEXTS.getString("PROTOCOL_DESCRIPTION"));
-        OPTIONS.addOption(USERNAME, true, "Username for authentication.");
-        OPTIONS.addOption(PASSWORD, true, "Password for authentication.");
+        OPTIONS.addOption(USERNAME, true,
+                TEXTS.getString("USERNAME_DESCRIPTION"));
+        OPTIONS.addOption(PASSWORD, true,
+                TEXTS.getString("PASSWORD_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }

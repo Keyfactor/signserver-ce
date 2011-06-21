@@ -251,7 +251,9 @@ public class KeystoreCryptoToken implements ICryptoToken,
     public boolean deactivate() {
         entries = null;
         ks = null;
-        Arrays.fill(authenticationCode, '\0');
+        if (authenticationCode != null) {
+            Arrays.fill(authenticationCode, '\0');
+        }
         this.authenticationCode = null;
         return true;
     }

@@ -41,19 +41,19 @@ public class ServiceStatus extends WorkerStatus{
 
 	}
 
-	/**
-	 * 
-	 * @return returning the date this service was last run
-	 */
-	public String getLastRunDate(){
-		Date lastRun = new ServiceConfig(activeconfig).getLastRunTimestamp();
-		
-		if(lastRun == null){
-			return "Service doesn't seem to have been runned since start or reload of the server.";
-		}
-				
-		return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastRun);		
-	}
+    /**
+     * @return the date this service was last run or an error message
+     * if it has not run since the server started.
+     */
+    public String getLastRunDate() {
+        Date lastRun = new ServiceConfig(activeconfig).getLastRunTimestamp();
+
+        if (lastRun == null) {
+            return "Service does not seem to have run since start or reload of the server.";
+        }
+
+        return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastRun);
+    }
 
 	@Override
 	public void displayStatus(int workerId, PrintStream out, boolean complete) {

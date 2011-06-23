@@ -18,9 +18,6 @@
             <included-library dirs="200">file.reference.bctsp-jdk.jar</included-library>
             <included-library dirs="200">file.reference.quartz-1.6.0.jar</included-library>
             <included-library dirs="200">reference.SignServer-Common.jar</included-library>
-            <included-library dirs="200">file.reference.hibernate3.jar</included-library>
-            <included-library dirs="200">file.reference.hibernate-annotations.jar</included-library>
-            <included-library dirs="200">file.reference.hibernate-entitymanager.jar</included-library>
             <included-library dirs="200">file.reference.ejb3-persistence.jar</included-library>
             <included-library dirs="200">file.reference.jboss-ejb3x.jar</included-library>
             <included-library dirs="200">file.reference.jboss-j2ee.jar</included-library>
@@ -43,6 +40,20 @@
             <included-library dirs="200">file.reference.sjsxp.jar</included-library>
             <included-library dirs="200">file.reference.stax-ex.jar</included-library>
             <included-library dirs="200">file.reference.streambuffer.jar</included-library>
+            <included-library dirs="200">file.reference.antlr-2.7.6.jar</included-library>
+            <included-library dirs="200">file.reference.dom4j-1.6.1.jar</included-library>
+            <included-library dirs="200">file.reference.ejb3-persistence.jar-1</included-library>
+            <included-library dirs="200">file.reference.hibernate-annotations.jar</included-library>
+            <included-library dirs="200">file.reference.hibernate-commons-annotations.jar</included-library>
+            <included-library dirs="200">file.reference.hibernate-core.jar</included-library>
+            <included-library dirs="200">file.reference.hibernate-entitymanager.jar</included-library>
+            <included-library dirs="200">file.reference.hibernate-search-3.1.1.GA.jar</included-library>
+            <included-library dirs="200">file.reference.hibernate-validator-3.1.0.GA.jar</included-library>
+            <included-library dirs="200">file.reference.javassist-3.4.GA.jar</included-library>
+            <included-library dirs="200">file.reference.jta-1.1.jar</included-library>
+            <included-library dirs="200">file.reference.lucene-core-2.4.1.jar</included-library>
+            <included-library dirs="200">file.reference.slf4j-api-1.5.2.jar</included-library>
+            <included-library dirs="200">file.reference.slf4j-log4j12.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

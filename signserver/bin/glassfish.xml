@@ -16,14 +16,12 @@
         The zipfileset should have the id "appserver.extralibs" and the
         prefix "lib".
      -->
-    <zipfileset id="appserver.extralibs" prefix="lib" dir="lib/ext/ejb">
+    <zipfileset id="appserver.extralibs" prefix="lib" dir="lib/hibernate">
         <!--
-            ExtendedClusterClassLoader/WS Worker uses Hibernate and as it is
+            We use Hibernate as JPA provider and as it is
             not shipped with GlassFish we need to bundle it.
          -->
-        <include name="hibernate-entitymanager.jar"/>
-        <include name="hibernate-annotations.jar"/>
-        <include name="hibernate3.jar"/>
+        <include name="*.jar"/>
     </zipfileset>
 
 	<!--

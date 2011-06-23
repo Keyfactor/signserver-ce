@@ -26,6 +26,7 @@ import javax.persistence.spi.PersistenceUnitTransactionType;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.clusterclassloader.ClusterClassLoaderUtils;
@@ -89,10 +90,16 @@ public class ExtendedClusterClassLoader extends ClusterClassLoader implements
 					}
 				}
 
-				AnnotationConfiguration ac = new AnnotationConfiguration();
+                                // Note: Because of incompatible API changes in hibernate between the version
+                                // included in JBoss 4 and the one we compile against the following workaround
+                                // is necessary:
+                                // The variable "ac" should be of type Configuration when invoking setProperties.
+                                // However it can later by casted back to AnnotationConfiguration.
+				Configuration ac = new AnnotationConfiguration();
 				ac.setProperties(emConfig);
+                                AnnotationConfiguration ac2 = (AnnotationConfiguration) ac;
 				for(Class<?> c : entityBeans){
-					ac.addAnnotatedClass(c);
+					ac2.addAnnotatedClass(c);
 				}
 
 				ClassLoader orgContextClassLoader = Thread.currentThread().getContextClassLoader();

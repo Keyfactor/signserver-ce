@@ -171,7 +171,8 @@ adminws.enabled=true
 #
 
 # Include Log4j configuration in EAR (not needed for JBoss)
-# Default: include=false
+# Default: build=false, include=false
+#module.log4j.enabled=false
 #module.log4j.include=false
 
 # Module Renewal

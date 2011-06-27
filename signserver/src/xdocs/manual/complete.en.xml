@@ -518,6 +518,7 @@ module.xmlsigner.include=true
 For GlassFish to enable debug logging include the Log4j module.
                         </p>
                         <source>
+module.log4j.enabled=true
 module.log4j.include=true
                         </source>
                     </subsubsection>

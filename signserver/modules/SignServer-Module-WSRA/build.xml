@@ -167,12 +167,11 @@
               <include name="commons-cli-1.0.jar"/>
            </fileset>
            <fileset dir="${lib}/ext/ejb">
-              <include name="ejb3-persistence.jar"/>
-              <include name="hibernate3.jar"/>
-              <include name="hibernate-annotations.jar"/>
-              <include name="hibernate-entitymanager.jar"/>
               <include name="jboss-ejb3x.jar"/>
               <include name="jboss-j2ee.jar"/>
+           </fileset>
+           <fileset dir="${lib}/hibernate">
+               <include name="*.jar"/>
            </fileset>
           <!-- <fileset dir="${appserver.home}/server/default/lib">
               <include name="hsqldb.jar"/>
@@ -202,7 +201,7 @@
 
            <jar destfile="${wsraadminClientJar}" basedir="${wsraadminClientBuild}">
               <manifest>
-                <attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/bcmail-jdk.jar lib/commons-cli-1.0.jar  lib/ejbca-util.jar lib/log4j.jar  lib/commons-lang-2.4.jar lib/ejb3-persistence.jar lib/hibernate3.jar lib/hibernate-annotations.jar lib/hibernate-entitymanager.jar lib/jboss-ejb3x.jar lib/jboss-j2ee.jar lib/hsqldb.jar lib/dom4j.jar lib/cglib.jar lib/antlr.jar lib/commons-collections-3.2.jar lib/commons-logging.jar"/>
+                <attribute name="Class-Path" value="lib/bcprov-jdk.jar lib/bcmail-jdk.jar lib/commons-cli-1.0.jar  lib/ejbca-util.jar lib/log4j.jar  lib/commons-lang-2.4.jar lib/ejb3-persistence.jar lib/hibernate-core.jar lib/hibernate-commons-annotations.jar lib/hibernate-annotations.jar lib/hibernate-entitymanager.jar lib/jboss-ejb3x.jar lib/jboss-j2ee.jar lib/hsqldb.jar lib/dom4j.jar lib/cglib.jar lib/antlr.jar lib/commons-collections-3.2.jar lib/commons-logging.jar"/>
                 <attribute name="Main-Class" value="org.signserver.client.wsraadmin.WSRAAdminCLI"/>
               </manifest>
            </jar>

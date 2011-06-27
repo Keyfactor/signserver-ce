@@ -18,7 +18,6 @@
             <included-library dirs="200">file.reference.bctsp-jdk.jar</included-library>
             <included-library dirs="200">file.reference.quartz-1.6.0.jar</included-library>
             <included-library dirs="200">reference.SignServer-Common.jar</included-library>
-            <included-library dirs="200">file.reference.ejb3-persistence.jar</included-library>
             <included-library dirs="200">file.reference.jboss-ejb3x.jar</included-library>
             <included-library dirs="200">file.reference.jboss-j2ee.jar</included-library>
             <included-library dirs="200">file.reference.servlet-2.3.jar</included-library>

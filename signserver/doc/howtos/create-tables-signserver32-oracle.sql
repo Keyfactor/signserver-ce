@@ -1,5 +1,6 @@
 --
--- These definitions should work for SignServer 3.2.x, Oracle 10.x and the JDBC driver version 10.1.0.2.
+-- These definitions should work for SignServer 3.2.x, Oracle 10.x and the JDBC driver version 10.2.0.1.0.
+-- Version: $Id$
 --
 
 DROP TABLE "ARCHIVEDATA";
@@ -101,3 +102,5 @@ CREATE TABLE "SIGNERCONFIGDATA" (
 	"SIGNERCONFIGDATA" CLOB, 
 	PRIMARY KEY ("SIGNERID")
 );
+
+CREATE SEQUENCE "HIBERNATE_SEQUENCE"  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1;

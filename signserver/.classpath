@@ -54,10 +54,10 @@
 	<classpathentry kind="src" path="modules/SignServer-Test-ValidationWS/src"/>
 	<classpathentry kind="src" path="modules/SignServer-Test-ValidationWS/test"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="lib" path="lib/ext/ejb/ejb3-persistence.jar"/>
-	<classpathentry kind="lib" path="lib/ext/ejb/hibernate3.jar"/>
-	<classpathentry kind="lib" path="lib/ext/ejb/hibernate-annotations.jar"/>
-	<classpathentry kind="lib" path="lib/ext/ejb/hibernate-entitymanager.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate-core.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate-entitymanager.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ejb/jboss-ejb3x.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ejb/jboss-j2ee.jar"/>
 	<classpathentry kind="lib" path="lib/jaxws/resolver.jar"/>

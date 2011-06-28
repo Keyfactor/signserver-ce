@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -31,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.util.ASN1Dump;
+import org.bouncycastle.jce.ECKeyUtil;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.IllegalRequestException;
@@ -102,6 +104,9 @@ public class MRTDSODSignerUnitTest extends TestCase {
     /** Worker7917: Certificate chain with SHA256withRSAandMGF1. */
     private static final int WORKER17 = 7917;
 
+    /** Worker7918: SHA256WithECDSA explicit ECC parameters in the DS cert. */
+    private static final int WORKER18 = 7918;
+
     private static final String KEYSTOREPATH = "KEYSTOREPATH";
     private static final String KEYSTOREPASSWORD = "KEYSTOREPASSWORD";
 
@@ -114,6 +119,9 @@ public class MRTDSODSignerUnitTest extends TestCase {
     private File keystore3;
     private String keystore3Password;
 
+    private File keystore4;
+    private String keystore4Password;
+    
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
 
@@ -127,7 +135,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         super.setUp();
 
         // Normal keystore
-        keystore1 = new File("test/demods1.p12");
+        keystore1 = new File("modules/SignServer-Module-MRTDSODSigner/test/demods1.p12");
         if (!keystore1.exists()) {
             throw new FileNotFoundException("No such keystore: "
                     + keystore1.getAbsolutePath());
@@ -135,7 +143,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         keystore1Password = "foo123";
 
         // Keystore with certificate not using LDAP DN ordering
-        keystore2 = new File("test/reversedendentity2.p12");
+        keystore2 = new File("modules/SignServer-Module-MRTDSODSigner/test/reversedendentity2.p12");
         if (!keystore2.exists()) {
             throw new FileNotFoundException("No such keystore: "
                     + keystore2.getAbsolutePath());
@@ -143,12 +151,20 @@ public class MRTDSODSignerUnitTest extends TestCase {
         keystore2Password = "foo123";
 
         // Normal keystore
-        keystore3 = new File("test/demods41.p12");
+        keystore3 = new File("modules/SignServer-Module-MRTDSODSigner/test/demods41.p12");
         if (!keystore3.exists()) {
             throw new FileNotFoundException("No such keystore: "
                     + keystore3.getAbsolutePath());
         }
         keystore3Password = "foo123";
+
+        // Keystore with ECC using named parameters
+        keystore4 = new File("modules/SignServer-Module-MRTDSODSigner/test/demodsecc1.p12");
+        if (!keystore4.exists()) {
+            throw new FileNotFoundException("No such keystore: "
+                    + keystore4.getAbsolutePath());
+        }
+        keystore4Password = "foo123";
 
         setupWorkers();
     }
@@ -167,6 +183,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
     	dataGroupHashes.put(Integer.valueOf(1), "12345".getBytes());
     	dataGroupHashes.put(Integer.valueOf(4), "abcdef".getBytes());
 
+    	// RSA
     	KeyPair keys = KeyTools.genKeys("1024", "RSA");
     	X509Certificate cert = CertTools.genSelfCert("CN=mrtdsodtest", 33, null, keys.getPrivate(), keys.getPublic(), "SHA256WithRSA", false);
         SODFile sod = new SODFile("SHA256", "SHA256withRSA", dataGroupHashes, keys.getPrivate(), cert);
@@ -177,6 +194,20 @@ public class MRTDSODSignerUnitTest extends TestCase {
         SODFile sod2 = new SODFile(new ByteArrayInputStream(encoded));
         verify = sod2.checkDocSignature(cert);
         assertTrue(verify);
+        
+        // ECC
+    	KeyPair keysec = KeyTools.genKeys("secp256r1", "ECDSA");
+        PublicKey publicKey = ECKeyUtil.publicToExplicitParameters(keysec.getPublic(), "BC");
+    	X509Certificate certec = CertTools.genSelfCert("CN=mrtdsodtest", 33, null, keysec.getPrivate(), publicKey, "SHA256WithECDSA", false);
+        SODFile sodec = new SODFile("SHA256", "SHA256withECDSA", dataGroupHashes, keysec.getPrivate(), cert);
+        assertNotNull(sodec);
+        boolean verifyec = sodec.checkDocSignature(certec);
+        assertTrue(verifyec);
+        byte[] encodedec = sodec.getEncoded();
+        SODFile sod2ec = new SODFile(new ByteArrayInputStream(encodedec));
+        verifyec = sod2ec.checkDocSignature(certec);
+        assertTrue(verifyec);
+
     }
 
     /**
@@ -204,6 +235,12 @@ public class MRTDSODSignerUnitTest extends TestCase {
         dataGroups3.put(1, digestHelper("Dummy Value 7".getBytes(), "SHA512"));
         dataGroups3.put(2, digestHelper("Dummy Value 8".getBytes(), "SHA512"));
         signHelper(WORKER2, 14, dataGroups3, false, "SHA512", "SHA512withRSA");
+        
+        // DG1, DG2 with the other worker which uses SHA512 and SHA512withRSA
+        Map<Integer, byte[]> dataGroups4 = new LinkedHashMap<Integer, byte[]>();
+        dataGroups4.put(1, digestHelper("Dummy Value 9".getBytes(), "SHA256"));
+        dataGroups4.put(2, digestHelper("Dummy Value 10".getBytes(), "SHA256"));
+        signHelper(WORKER18, 14, dataGroups3, false, "SHA256", "SHA256withECDSA");
     }
 
     /**
@@ -764,5 +801,27 @@ public class MRTDSODSignerUnitTest extends TestCase {
             });
             workerSession.reloadConfiguration(workerId);
         }
+        
+        // WORKER16 ECDSA
+        {
+            final int workerId = WORKER18;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestMRTDSODSigner16");
+            config.setProperty(KEYSTOREPATH, keystore4.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore4Password);
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty("DIGESTALGORITHM", "SHA256");
+            config.setProperty("SIGNATUREALGORITHM", "SHA256withECDSA");
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new MRTDSODSigner() {
+                @Override
+                protected IGlobalConfigurationSession.IRemote
+                        getGlobalConfigurationSession() {
+                    return globalConfig;
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
+        
     }
 }

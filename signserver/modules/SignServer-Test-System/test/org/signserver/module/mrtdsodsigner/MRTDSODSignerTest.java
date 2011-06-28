@@ -69,6 +69,9 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     
     private static final int WORKER1D = 7903;
 
+    /** Worker7904: SHA256WithECDSA, DODATAGROUPHASHING=true */
+    private static final int WORKER5 = 7904;
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -128,11 +131,18 @@ public class MRTDSODSignerTest extends ModulesTestCase {
                 + File.separator + "demods1.p12");
         workerSession.setWorkerProperty(WORKER4, "KEYSTOREPASSWORD", "foo123");
 
+        // WORKER5 uses a P12 keystore and ECC
+        workerSession.setWorkerProperty(WORKER5, "KEYSTOREPATH",
+                getSignServerHome().getAbsolutePath()
+                + File.separator + "src" + File.separator + "test"
+                + File.separator + "demodsecc1.p12");
+        workerSession.setWorkerProperty(WORKER5, "KEYSTOREPASSWORD", "foo123");
 
         workerSession.reloadConfiguration(WORKER1);
         workerSession.reloadConfiguration(WORKER2);
         workerSession.reloadConfiguration(WORKER3);
         workerSession.reloadConfiguration(WORKER4);
+        workerSession.reloadConfiguration(WORKER5);
         workerSession.reloadConfiguration(WORKER1B);
         workerSession.reloadConfiguration(WORKER1C);
         workerSession.reloadConfiguration(WORKER1D);
@@ -184,6 +194,9 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         dataGroups3.put(1, digestHelper("Dummy Value 7".getBytes(), "SHA512"));
         dataGroups3.put(2, digestHelper("Dummy Value 8".getBytes(), "SHA512"));
         signHelper(WORKER2, 14, dataGroups3, false, "SHA512", "SHA512withRSA");
+        
+        // DG1, DG2 with the other worker which uses SHA256 and SHA256withECDSA
+        signHelper(WORKER5, 15, dataGroups2, false, "SHA256", "SHA256withECDSA");
     }
 
     /**
@@ -476,6 +489,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER2});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER3});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER4});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER5});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1B});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1C});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1D});
@@ -483,6 +497,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER2);
         workerSession.reloadConfiguration(WORKER3);
         workerSession.reloadConfiguration(WORKER4);
+        workerSession.reloadConfiguration(WORKER5);
         workerSession.reloadConfiguration(WORKER1B);
         workerSession.reloadConfiguration(WORKER1C);
         workerSession.reloadConfiguration(WORKER1D);

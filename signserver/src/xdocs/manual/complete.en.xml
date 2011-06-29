@@ -615,225 +615,289 @@ This is a quick start guide to quickly get you setup with a demo Time Stamp serv
 
                     <ol>
                         <li>
-Deploy the Timestamp demo module and notice the worker ID (in this example 1):
-<br/># bin/signserver.sh module add dist-server/tsa.mar demo</li>
-<li>Verify the configuration with:
-<br/># bin/signserver.sh getconfig 1
+Make sure the tsa module is built in by setting module.tsa.enabled=true and
+module.tsa.include=true in signserver_build.properties before building and
+deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
+modules built in.
                         </li>
                         <li>
-Finally activate the configuration with:
-<br/># bin/signserver.sh reload 1
+Load the Timestamp demo configuration and notice the generated worker ID (in this
+example 1):<br/>
+<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_timestamp_configuration.properties</code>
                         </li>
                         <li>
-You can check the configuration with:
-<br/># bin/signserver.sh getstatus complete all
+Activate the configuration with:<br/>
+<code>$ bin/signserver.sh reload 1</code>
                         </li>
                         <li>
-Run the test-client to see that everything is up.
-<br/># cd dist-client/timestampclient
-<br/># java -jar timeStampClient.jar http://localhost:8080/signserver/process?workerName=TSA
-<br/>The message "TimeStampRequest Validated" should appear once a second. Also check JBOSS_HOME/server/default/log/server.log that successful messages appear.
+You can check the status and configuration with:<br/>
+<code>$ bin/signserver.sh getstatus complete all</code>
+                        </li>
+                        <li>
+Run the test client to see that everything is up:<br/>
+<code>$ bin/client.sh timestamp http://localhost:8080/signserver/process?workerName=TimeStampSigner</code>
+<br/>The message "TimeStampRequest validated" should appear once a second. Also
+check JBOSS_HOME/server/default/log/server.log or
+GLASSFISH_HOME/domains/domain1/logs/server.log that successful messages appear.
                         </li>
                     </ol>
                 </subsection>
 
                 <subsection name="Quick start demo PDF signer">
-<p>
+                    <p>
 To install the PDF signer you can issue the following commands (either instead of the TSA or in addition to the TSA).
-</p>
-<ol>
-<li>Deploy the PDF signer demo module and notice the worker ID (in this example: 2):
-<br/># bin/signserver.sh module add dist-server/pdfsigner.mar demo</li>
-<li>Verify the configuration with:
-<br/># bin/signserver.sh getconfig 2
-</li>
-<li>Finally activate the configuration with:
-<br/># bin/signserver.sh reload 2
-</li>
+                    </p>
+                    <ol>
+                        <li>
+Make sure the pdfsigner module is built in by setting module.pdfsigner.enabled=true and
+module.pdfsigner.include=true in signserver_build.properties before building and
+deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
+modules built in.
+                        </li>
+                        <li>
+Load the PDF signer demo configuration and notice the generated worker ID (in this
+example 2):<br/>
+<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_pdfsigner_configuration.properties</code>
+                        </li>
+                        <li>
+Activate the configuration with:<br/>
+<code>$ bin/signserver.sh reload 2</code>
+                        </li>
+                        <li>
+You can check the status and configuration with:<br/>
+<code>$ bin/signserver.sh getstatus complete all</code>
+                        </li>
 </ol>
 <p>
-You can now, with your web browser, access the url <a href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> to get PDF documents signed.
+You can now, with your web browser, access the URL <a href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> to get PDF documents signed.
 </p>
 </subsection>
 
-<subsection name="Quick start demo OOXML signer">
+                <subsection name="Quick start demo OOXML signer">
+                    <p>
+To install the OOXML signer you can issue the following commands.
+                    </p>
+                    <ol>
+                        <li>
+Make sure the ooxmlsigner module is built in by setting module.ooxmlsigner.enabled=true and
+module.ooxmlsigner.include=true in signserver_build.properties before building and
+deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
+modules built in.
+                        </li>
+                        <li>
+Load the OOXML signer demo configuration and notice the generated worker ID (in this
+example 3):<br/>
+<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_ooxmlsigner_configuration.properties</code>
+                        </li>
+                        <li>
+Activate the configuration with:<br/>
+<code>$ bin/signserver.sh reload 3</code>
+                        </li>
+                        <li>
+You can check the status and configuration with:<br/>
+<code>$ bin/signserver.sh getstatus complete all</code>
+                        </li>
+                    </ol>
 <p>
-To install the OOXML signer you can issue the following commands
-</p>
-<ol>
-<li>Deploy the OOXML signer demo module and notice the worker ID (in this example: 3):
-<br/># bin/signserver.sh module add dist-server/ooxmlsigner.mar demo</li>
-<li>Verify the configuration with:
-<br/># bin/signserver.sh getconfig 3
-</li>
-<li>Finally activate the configuration with:
-<br/># bin/signserver.sh reload 3
-</li>
-</ol>
-<p>
-You can now, with your web browser, access the url <a href="http://localhost:8080/signserver/demo/ooxmlsign.jsp">http://localhost:8080/signserver/demo/ooxmlsign.jsp</a> to get any Open Office XML documents signed (ex: MS Office 2007 word document, excel document, power point presentation...).
-</p>
-</subsection>
-
-<subsection name="Quick start demo ODF signer">
-<p>
-To install the ODF signer you can issue the following commands
-</p>
-<ol>
-<li>Deploy the ODF signer demo module and notice the worker ID (in this example: 4):
-<br/># bin/signserver.sh module add dist-server/odfsigner.mar demo</li>
-<li>Verify the configuration with:
-<br/># bin/signserver.sh getconfig 4
-</li>
-<li>Finally activate the configuration with:
-<br/># bin/signserver.sh reload 4
-</li>
-</ol>
-<p>
-You can now, with your web browser, access the url <a href="http://localhost:8080/signserver/demo/odfsign.jsp">http://localhost:8080/signserver/demo/odfsigner.jsp</a> to get any Open Document Format documents signed (ex: word or spreadsheet document produced with Open Office 3.1).
+You can now, with your web browser, access the URL <a href="http://localhost:8080/signserver/demo/ooxmlsign.jsp">http://localhost:8080/signserver/demo/ooxmlsign.jsp</a> to get any Office Open XML documents signed (ex: MS Office 2007 Word document, Excel document, Power Point presentation...).
 </p>
 </subsection>
 
+                <subsection name="Quick start demo ODF signer">
+                    <p>
+To install the ODF signer you can issue the following commands.
+                    </p>
+                    <ol>
+                        <li>
+Make sure the odfsigner module is built in by setting module.odfsigner.enabled=true and
+module.odfsigner.include=true in signserver_build.properties before building and
+deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
+modules built in.
+                        </li>
+                        <li>
+Load the ODF signer demo configuration and notice the generated worker ID (in this
+example 4):<br/>
+<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_odfsigner_configuration.properties</code>
+                        </li>
+                        <li>
+Activate the configuration with:<br/>
+<code>$ bin/signserver.sh reload 4</code>
+                        </li>
+                        <li>
+You can check the status and configuration with:<br/>
+<code>$ bin/signserver.sh getstatus complete all</code>
+                        </li>
+                    </ol>
+                    <p>
+You can now, with your web browser, access the URL <a href="http://localhost:8080/signserver/demo/odfsign.jsp">http://localhost:8080/signserver/demo/odfsigner.jsp</a> to get any Open Document Format documents signed (ex: documents produced by OpenOffice.org or LibreOffice).
+                    </p>
+                </subsection>
 
-<subsection name="Quick start demo XML signer">
-<p>
-To install the XML signer you can issue the following commands (either instead of the TSA or in addition to the TSA):
-</p>
-<ol>
-<li>Deploy the XML signer module and notice the worker ID (in this example: 1):<br/>
-<code># bin/signserver.sh module add dist-server/xmlsigner.mar demo</code>
-<br/>
-</li>
-<li>Verify the configuration with:<br/>
-<code># bin/signserver.sh getconfig 1</code>
-<br/>
-</li>
-<li>Activate the configuration with:<br/>
-<code># bin/signserver.sh reload 1</code>
-<br/>
-</li>
-<li>The status of the Signer can now be viewed with:<br/>
-<code># bin/signserver.sh getstatus complete DemoXMLSigner</code>
-<br/>
-</li>
-</ol>
-<p>
-You can now, with your web browser, access the url <a href="http://localhost:8080/signserver/demo/xmlsign.jsp">http://localhost:8080/signserver/demo/xmlsign.jsp</a> to get XML documents signed.
-</p>
-</subsection>
 
-<subsection name="Quick start demo XML validator">
-<p>
+                <subsection name="Quick start demo XML signer">
+                    <p>
+To install the demo XML signer you can issue the following commands.
+                    </p>
+                    <ol>
+                        <li>
+Make sure the xmlsigner module is built in by setting module.xmlsigner.enabled=true and
+module.xmlsigner.include=true in signserver_build.properties before building and
+deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
+modules built in.
+                        </li>
+                        <li>
+Load the XML signer demo configuration and notice the generated worker ID (in this
+example 5):<br/>
+<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_xmlsigner_configuration.properties</code>
+                        </li>
+                        <li>
+Activate the configuration with:<br/>
+<code># bin/signserver.sh reload 5</code>
+<br/>
+                        </li>
+                        <li>
+You can check the status and configuration with:<br/>
+<code>$ bin/signserver.sh getstatus complete all</code>
+                        </li>
+                    </ol>
+                    <p>
+You can now, with your web browser, access the URL <a href="http://localhost:8080/signserver/demo/xmlsign.jsp">http://localhost:8080/signserver/demo/xmlsign.jsp</a> to get XML documents signed.
+                    </p>
+                </subsection>
+
+                <subsection name="Quick start demo XML validator">
+                    <p>
 An XML validator validates the signature of an XML document. It uses a
 certificate validation service worker for validating the certificate so
 that worker has to be configured first.
-</p>
-<p>
+                    </p>
+                    <p>
 To install a certificate validation service worker issue the following commands:
-</p>
-<ol>
-<li>Load the configuration and notice the worker ID (in this example: 2):<br/>
-<code># bin/signserver.sh setproperties sample-configs/qs_validator_dummy_configuration.properties</code>
-</li>
-<li>Verify the configuration with:<br/>
-<code># bin/signserver.sh getconfig 2</code>
+                    </p>
+                    <ol>
+                        <li>
+Load the configuration and notice the worker ID (in this example: 6):<br/>
+<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_validator_dummy_configuration.properties</code>
+                        </li>
+                        <li>
+Activate the configuration with:<br/>
+<code>$ bin/signserver.sh reload 6</code>
 <br/>
-</li>
-<li>Activate the configuration with:<br/>
-<code># bin/signserver.sh reload 2</code>
+                        </li>
+                        <li>
+The status of the Worker can now be viewed with:<br/>
+<code>$ bin/signserver.sh getstatus complete CertValidationWorker</code>
 <br/>
-</li>
-<li>The status of the Worker can now be viewed with:<br/>
-<code># bin/signserver.sh getstatus complete CertValidationWorker</code>
-<br/>
-</li>
-</ol>
-<p>
+                        </li>
+                    </ol>
+                    <p>
 Then to install the XML validator you can issue the following commands:
-</p>
-<ol>
-<li>Deploy the XML signer module and notice the worker ID (in this example: 3):<br/>
-<code># bin/signserver.sh module add dist-server/xmlvalidator.mar demo</code>
+                    </p>
+                    <ol>
+                        <li>
+Make sure the xmlvalidator module is built in by setting module.xmlvalidator.enabled=true and
+module.xmlvalidator.include=true in signserver_build.properties before building and
+deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
+modules built in.
+                        </li>
+                        <li>
+Load the XML validator demo configuration and notice the generated worker ID (in this
+example 7):
+<br/>$ bin/signserver.sh setproperties doc/sample-configs/qs_xmlvalidator_configuration.properties
+                        </li>
+                    <li>
+Verify the configuration with (notice that VALIDATIONSERVICEWORKER is set to "CertValidationWorker"):<br/>
+<code>$ bin/signserver.sh getconfig 7</code>
 <br/>
-</li>
-<li>Verify the configuration with (notice that VALIDATIONSERVICEWORKER is set to "CertValidationWorker"):<br/>
-<code># bin/signserver.sh getconfig 3</code>
+                    </li>
+                    <li>
+Activate the configuration with:<br/>
+<code>$ bin/signserver.sh reload 7</code>
 <br/>
-</li>
-<li>Activate the configuration with:<br/>
-<code># bin/signserver.sh reload 3</code>
+                    </li>
+                    <li>
+The status of the Validator can now be viewed with:<br/>
+<code>$ bin/signserver.sh getstatus complete DemoXMLValidator</code>
 <br/>
-</li>
-<li>The status of the Validator can now be viewed with:<br/>
-<code># bin/signserver.sh getstatus complete DemoXMLValidator</code>
-<br/>
-</li>
-</ol>
-<p>
+                    </li>
+                    </ol>
+                    <p>
 Now <a href="integration.html">the SignServer APIs</a> can be used to request XML documents to be validated by the DemoXMLValidator worker.
-</p>
-</subsection>
+                    </p>
+                </subsection>
 
-<subsection name="Quick start demo MRTD SOD signer">
-<p>
+                <subsection name="Quick start demo MRTD SOD signer">
+                    <p>
 The MRTD SOD signer takes as input data group hashes and creates a signed SO(d). This means that the signserver will function
 as a Document Signer for ePassports.</p>
-<p>
+                    <p>
 To install the MRTD SOD signer you can issue the following commands:
-</p>
-<ol>
-<li>Deploy the MRTD SOD signer module and notice the worker ID (in this example: 4):<br/>
-<code># bin/signserver.sh module add dist-server/mrtdsodsigner.mar demo</code>
-<br/>
-</li>
-<li>Verify the configuration with:<br/>
-<code># bin/signserver.sh getconfig 4</code>
-<br/>
-</li>
-<li>Activate the configuration with:<br/>
-<code># bin/signserver.sh reload 4</code>
-<br/>
-</li>
-<li>The status of the signer can now be viewed with:<br/>
-<code># bin/signserver.sh getstatus complete mrtdsodsigner</code>
-<br/>
-</li>
-</ol>
-<p>
+                    </p>
+                    <ol>
+                        <li>
+Make sure the mrtdsodsigner module is built in by setting module.mrtdsodsigner.enabled=true and
+module.mrtdsodsigner.include=true in signserver_build.properties before building and
+deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
+modules built in.
+                        </li>
+                        <li>
+Load the MRTD SOD signer demo configuration and notice the generated worker ID (in this
+example 8):<br/>
+<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_mrtdsodsigner_configuration.properties</code>
+                        </li>
+                        <li>
+Activate the configuration with:<br/>
+<code>$ bin/signserver.sh reload 8</code><br/>
+                        </li>
+                        <li>
+The status of the signer can now be viewed with:<br/>
+<code>$ bin/signserver.sh getstatus complete mrtdsodsigner</code><br/>
+                        </li>
+                    </ol>
+                    <p>
 Now <a href="integration.html">the SignServer APIs</a> can be used to send MRTD SOD sign requests the MRTDSODSigner.
 <br/>
-Also you can use the HTML page http://&lt;signserverhost>:8080/signserver/mrtdsodsign.html to enter requests and get the SOD back.
-This HTML form functions as a sample to show how you can make http requests from the personalisation system to the Document Signer.
-</p>
-<subsubsection name="Production configuration with HSM">
-<p>To install a production signer using an HSM instead of the demo signer you can edit src/module-configs/mrtdsodsigner/hard-part-config.properties and then run:
-<br/>(note after changing module-configs you have to rebuild signserver, remove any old modules if you added it before, and then add the module again as described below)
-</p>
-<p>Before starting with an HSM installation you should read the about the <a href="plugins.html#PKCS11CryptoToken">PKCS11CryptoToken</a> in the plugins section of the manual.</p>
+Also you can use the HTML page <a href="http://localhost:8080/signserver/demo/mrtdsodsign.jsp">http://localhost:8080/signserver/demo/mrtdsodsign.jsp</a> to enter requests and get the SOd back.
+This HTML form also functions as a sample to show how you can make HTTP requests from the personalisation system to the Document Signer.
+                    </p>
+                    <subsubsection name="Production configuration with HSM">
+                        <p>
+To install a production signer using an HSM instead of the demo signer you can
+edit doc/sample-config/qs_mrtdsodsigner_configuration.properties and change from
+SoftCryptoToken to PKCS11CryptoToken and comment all properties under
+SoftCryptoToken properties and instead fill in all properties under
+PKCS11CryptoToken properties and then run:
+<br/>(note after changing properties in the file it needs to be loaded again
+with setproperties)
+                        </p>
+                        <p>
+Before starting with an HSM installation you should read the about the
+<a href="plugins.html#PKCS11CryptoToken">PKCS11CryptoToken</a> in the plugins
+section of the manual.
+                        </p>
 <source>
-ant
-bin/signserver.sh module add dist-server/mrtdsodsigner.mar hard
-bin/signserver.sh getconfig 4
-bin/signserver.sh reload 4
-bin/signserver.sh generatecertreq 4 "C=SE,CN=MRTD SOD Signer" SHA256WithRSA mrtdsodsigner.req
+bin/signserver.sh setproperties doc/sample-config/qs_mrtdsodsigner_configuration.properties
+bin/signserver.sh getconfig 9
+bin/signserver.sh reload 9
+bin/signserver.sh generatecertreq 9 "C=SE,CN=MRTD SOD Signer" SHA256WithRSA mrtdsodsigner.req
 </source>
-<p>
-Where 4 is the signerId that you got when running the 'module add' command.<br/>
-This will create a certificate request that you can get signed by your CA. When you have received the response you can import them with.
-If you have the returned signer certificate as cert.pem and the CA certificate cacert.pem.
-</p>
+                        <p>
+Where 9 is the signerId that you got when running the 'setproperties' command.<br/>
+This will create a certificate request that you can get signed by your CA. When you have received the response you can import it and the CA certficate.
+If you have the returned signer certificate as cert.pem and the CA certificate as cacert.pem, then:
+                        </p>
 <source>
-cat cert.pem cacert.pem> certchain.pem
-bin/signserver.sh uploadsignercertificate 4 glob cert.pem
-bin/signserver.sh uploadsignercertificatechain 4 glob certchain.pem
-bin/signserver.sh reload 4
+cat cert.pem cacert.pem &gt; certchain.pem
+bin/signserver.sh uploadsignercertificate 9 glob cert.pem
+bin/signserver.sh uploadsignercertificatechain 9 glob certchain.pem
+bin/signserver.sh reload 9
 </source>
-<p>Hint: you can use EJBCA to create keys on a PKCS#11 HSM using clientToolBox.
-<br/>
+                        <p>
+Hint: you can use EJBCA to create keys on a PKCS#11 HSM using clientToolBox.<br/>
 ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so 2048 DSSignKey 5
-</p>
-</subsubsection>
-</subsection>
+                        </p>
+                    </subsubsection>
+            </subsection>
 
             </section>
 

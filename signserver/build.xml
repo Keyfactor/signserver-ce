@@ -512,7 +512,7 @@ OS version                          = ${os.version}
     </target>
     
     <target name="site:test:publish" depends="doc" description="Publish the website to the sandbox subdirectory.">
-    	<property name="publish.dir" value="/home/groups/s/si/signserver/htdocs/sandbox"/>
+    	<property name="publish.dir" value="/home/project-web/signserver/htdocs/sandbox"/>
         <property name="publish.host" value="shell.sourceforge.net"/>
 
         <echo message="Publish to ${publish.host}:${publish.dir}"/>
@@ -537,7 +537,7 @@ OS version                          = ${os.version}
     	<delete file="htdocs.tgz"/>
     </target>
     <target name="site:publish" depends="doc" description="Publish the website to the sandbox subdirectory.">
-        <property name="publish.dir" value="/home/groups/s/si/signserver/htdocs"/>
+        <property name="publish.dir" value="/home/project-web/signserver/htdocs"/>
         <property name="publish.host" value="shell.sourceforge.net"/>
 
         <echo message="Publish to ${publish.host}:${publish.dir}"/>

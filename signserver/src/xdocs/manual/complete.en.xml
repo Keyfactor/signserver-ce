@@ -26,7 +26,7 @@ reliability.
                 </p>
                 <p>
 The SignServer comes with a RFC 3161 compliant Time-Stamp signer serving requests through
-http or client-authenticated https. A MRTD (Machine Readable Travel Document, i.e. electronic
+HTTP or client-authenticated HTTPS. A MRTD (Machine Readable Travel Document, i.e. electronic
 passport) signer. A PDF signer that adds a signature automatically to a uploaded PDF document,
 ODF signer that adds a signature automatically to uploaded ODF document, OOXML Signer that
 adds signature automatically to a uploaded OOXML document, and a validation service used to
@@ -59,6 +59,9 @@ A new client command line interface (CLI) for requesting signing and validation.
                         <li>
 Support for GlassFish Server 2.1.1.
                         </li>
+                        <li>
+Support for JBoss Application Server 5.1.
+                        </li>
 
                         <li>
 Support for Oracle Database.
@@ -78,7 +81,9 @@ Better audit and transaction logging.
 New build scripts and project structure with the goal of decouple the different
 SignServer modules and sub-projects and simplify future development.
                         </li>
-
+                        <li>
+Front page listing all demo web pages.
+                        </li>
 
 <!-- Other -->
                         <li>

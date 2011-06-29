@@ -17,7 +17,8 @@
 <li>Tomas Gustavsson, tomas(at)primekey.se, Core developer, PDF Signer, PKCS11 sign token, Improved the TSA client with more arguments, MRTD SOD signer, etc etc</li>
 <li>Markus Kil&#229;s, markus(at)primekey.se, Core developer, XML Signer/validator, MRTD SOD signer, etc etc.</li>
 <li>Ezizmuhammed Muhamedkuliyev, rayback2(at)gmail.com, OOXML, ODF Signer/validator, PDF signer, CRL/OCSP validators.</li>
-<li>Christophe Sahut, christophe.sahut(at)sgs.com, Install howto for SignServer 3.1 on RHEL systems.</li>
+<li>Christophe Sahut, christophe.sahut(at)sgs.com, Install howto for SignServer 3.1 on RHEL systems. See doc/howtos.</li>
+<li>Bruno Bonfils, French install howto for SignServer 3.2. See <a href="http://wiki.opencsi.com/public/bin/view/SignServer/Installation">wiki.opencsi.com</a>.</li>
 </ul>
 </section>
 </body>

@@ -306,14 +306,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <ant target="compile-test" inheritall="false"
             antfile="${testadminws.dir}/build.xml"/>
 
-        <!-- SignServer-Module-Renewal -->
-        <ant target="compile-test" inheritall="false"
-            antfile="${renewal.dir}/build.xml"/>
-
-        <!-- SignServer-Module-MRTDSODSigner -->
-        <ant target="compile-test" inheritall="false"
-            antfile="${module.mrtdsodsigner.dir}/build.xml"/>
-
         <!-- SignServer-Test-System -->
         <ant target="compile-test" inheritall="false"
             antfile="${testsystem.dir}/build.xml"/>

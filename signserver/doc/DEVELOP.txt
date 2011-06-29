@@ -11,11 +11,13 @@ Eclipse
 To build successfully using Eclipse, there are .classpath and .project files in
 the package and in the source code repository.
 Checkout SignServer either using the Subversion CLI or as a project in Eclipse.
-Simply check out SignServer and PrimeCard (Optional) as projects and you're
-almost set. 
+Simply check out SignServer as projects and you are almost set. 
 Web service stubs for test classes are generated when the tests are built. To 
-get rid of all build errors in Eclipse you need to build the tests using 
-ant test:signserver:compile and then do a Refresh in the IDE.
+get rid of all build errors in Eclipse you need to build classes and tests: 
+ ant clean
+ ant
+ ant test:signserver:compile
+Then do a Refresh in the IDE.
 
 NetBeans IDE
 ------------
@@ -24,5 +26,3 @@ modules/SignServer-Project is a NetBeans IDE FreeForm project that uses the
 ANT-scripts for building and includes the sources from most modules. In addition 
 each module has its own project under the folder modules/ that can be opened 
 with NetBeans IDE.
-
-

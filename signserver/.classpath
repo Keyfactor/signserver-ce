@@ -9,6 +9,8 @@
 	<classpathentry kind="src" path="modules/SignServer-Client-ValidationCLI/test"/>
 	<classpathentry kind="src" path="modules/SignServer-Client-WSCLI/src"/>
 	<classpathentry kind="src" path="modules/SignServer-Client-WSCLI/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Client-CLI/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Client-CLI/test"/>
 	<classpathentry kind="src" path="modules/SignServer-Module-OOXMLSigner/test"/>
 	<classpathentry kind="src" path="modules/SignServer-Module-OOXMLSigner/src/java"/>
 	<classpathentry kind="src" path="modules/SignServer-Module-TSA/test"/>

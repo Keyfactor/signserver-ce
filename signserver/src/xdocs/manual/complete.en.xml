@@ -302,7 +302,7 @@ Make sure all required softwares are installed:
                     </ul>
                     <p>
 * The ODFSigner has issues with OpenJDK. Please see <a href="https://jira.primekey.se/browse/DSS-168">DSS-168</a> for a workaround.<br/>
-** JBoss 4.2.3.GA is available in two different versions (standard and JDK6) which differens in web services stacks. The file jboss-jaxws.jar might have to be removed from JBOSS_HOME/lib/endorsed.
+** JBoss 4.2.3.GA is available in two different versions (standard and JDK6) which differens in web services stacks. The one called JBoss 4.2.3.GA-JDK6 should be used.
                     </p>
                 </subsection>
 

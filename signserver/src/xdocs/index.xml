@@ -59,6 +59,28 @@ Different kinds of tokens can be used to perform sign and crypto operations:
 </ul>
 </section>
 
+<section name="What's new in SignServer 3.2?">
+<p>
+Some of the major new features in version 3.2 are:
+</p>
+<ul>
+<li>Administration Web Service (WS) interface</li>
+<li>Administration GUI desktop application</li>
+<li>Client command line interface (CLI)</li>
+<li>Support for GlassFish Server 2.1.1</li>
+<li>Support for JBoss Application Server 5.1.0</li>
+<li>Support for Oracle Database</li>
+<li>Semi-automatic key generation and certificate renewal from EJBCA</li>
+<li>Improved audit and transaction logging</li>
+<li>Improved project structure dividing the modules in sub-projects</li>
+<li>Front page listing all demo web pages</li>
+</ul>
+<p>
+More information can be found in the <a href="manual.html">manual</a> or in the
+<a href="http://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel">changelog</a>.
+</p>
+</section>
+
 <section name="Open Source Software">
 <p>
 SignServer is OSI Certified Open Source Software.

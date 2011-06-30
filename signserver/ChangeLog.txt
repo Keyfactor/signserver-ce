@@ -1,0 +1,78 @@
+SignServer 3.2.0, 2011-06-30
+----------------------------
+
+** Bug
+    * [DSS-307] - Client certificate authentication might not work with WS Worker
+    * [DSS-344] - Order of issuer DN in SOD reversed comparared to certificate
+    * [DSS-349] - Disabled features should not be built
+    * [DSS-350] - Enable/include properties for PDFSigner in signserver_build.properties.sample
+    * [DSS-374] - Document that RemoteAddressAuthorizer with ALLOW_FROM=null, allow calls from other Workers
+    * [DSS-377] - Times services should swallow runtime exceptions
+    * [DSS-382] - Certificates used in unit tests needs renewal
+    * [DSS-385] - SQL exceptions during second deployment on GlassFish
+    * [DSS-395] - ValidationCLI not working with HTTPS
+    * [DSS-397] - Certificates used in sample configurations needs renewal
+    * [DSS-400] - Spelling error in ServiceStatus
+
+** Improvement
+    * [DSS-125] - Divide the project in sub-projects with separate source folders
+    * [DSS-128] - GlassFish V2 support
+    * [DSS-156] - Remove need for preprocessing Java-files
+    * [DSS-302] - Refactoring: KeyTestResult should be in common package
+    * [DSS-325] - Upgrade MRTDSODSigner to new LDS structure
+    * [DSS-326] - Add unit tests for WS using WSDL from 3.1
+    * [DSS-327] - Change to EJB based Web Services
+    * [DSS-339] - Property and target for building Client CLI from the main build
+    * [DSS-352] - Update latest files from JMRTD/SCUBA
+    * [DSS-353] - Verify certificate chain before returning SOD
+    * [DSS-381] - JBoss 5.1 support
+
+** New Feature
+    * [DSS-148] - Demo frontpage listing all demo web pages
+    * [DSS-151] - Certificate renewal from EJBCA
+    * [DSS-171] - Possible to use EC certificates with explicit parameters
+    * [DSS-172] - ECDSA signatures in MRTD SOD signer
+    * [DSS-189] - Audit and transaction logging
+    * [DSS-202] - Client CLI for requesting signing and validation from SignServer
+    * [DSS-277] - Administration GUI
+    * [DSS-281] - Support for key renewal from Admin GUI
+    * [DSS-282] - Support for viewing and editing global configuration in the Admin GUI
+    * [DSS-285] - Dialog box in Admin GUI to show certificate (path) details
+    * [DSS-290] - Option to sign the CSR in the Admin GUI
+    * [DSS-312] - Administration WS interface
+    * [DSS-324] - Support for Oracle database
+    * [DSS-334] - Package log4j configuration in EAR for GlassFish
+    * [DSS-337] - Support for generating EC keys in KeyStoreCryptoToken
+    * [DSS-343] - Add support for SHA256withRSAandMGF1 in MRTDSODSigner
+    * [DSS-366] - Support for specifying service interval in milliseconds
+
+** Task
+    * [DSS-243] - Merge SODFile with latest jmrtd upstream
+    * [DSS-303] - Fix character encoding of source files with special characters
+    * [DSS-328] - Document setup on GlassFish 2.1.1
+    * [DSS-330] - Remove the MailSigner build
+    * [DSS-332] - Update sample configuration
+    * [DSS-336] - Update release targets
+    * [DSS-392] - Upgrade commons-logging to latest version (1.1.1)
+    * [DSS-394] - Link to French installation guide contributed by asyd
+    * [DSS-401] - Upgrade Hibernate and its dependencies
+
+
+SignServer 3.1.5, 2011-06-29
+----------------------------
+
+** Bug
+    * [DSS-315] - NPE in TimeStampSigner if certificate is missing
+    * [DSS-316] - GenericWSWorker should work with includemodulesinbuild
+    * [DSS-363] - Date dependent error in PDFSigner unit test
+
+** Improvement
+    * [DSS-321] - HTTPS support in SigningAndValidation API
+
+** New Feature
+    * [DSS-232] - ANT target for creating source-only tarball
+
+** Task
+    * [DSS-311] - Harden PDFSigner against PDF signature collisions
+    * [DSS-329] - Deprecate the MailSigner
+

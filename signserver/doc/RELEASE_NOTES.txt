@@ -1,0 +1,38 @@
+SignServer 3.2.0
+----------------
+This is a major release - in total 49 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
+
+Major new features and improvements:
+ - Administration Web Service (WS) interface
+ - Administration GUI desktop application
+ - Client command line interface (CLI)
+ - Support for GlassFish Server 2.1.1
+ - Support for JBoss Application Server 5.1.0
+ - Support for Oracle Database
+ - Semi-automatic key generation and certificate renewal from EJBCA
+ - Improved audit and transaction logging
+ - Improved project structure dividing the modules in sub-projects
+ - Front page listing all demo web pages
+
+Known Issues:
+ - Web services no longer work on JBoss 4 if HTTPS is not used as JBoss 4 rewrites the end point URL in the WSDL file to always start with "https://" (since DSS-327).
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
+
+
+SignServer 3.1.5
+----------------
+This is just a minor maintenance release preparing for the upcoming 3.2 – in total 7 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
+
+New features and improvements:
+ - Support for HTTPS in the SigningAndValidation API
+ - Harden the PDF Signer against PDF signature collisions
+ - Function in the build script for create source-only release archives
+
+Bug fixes:
+ - Problem in a unit test for certain dates
+ - NPE in TimeStampSigner if certificate is missing
+
+Read the full changelog for details 
+(https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
+

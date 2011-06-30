@@ -298,7 +298,7 @@ public class DocumentValidatorCLI {
                 .append("a) ").append(COMMAND).append(" -workername XMLValidator -data \"<root><Signature...").append(NL)
                 .append("b) ").append(COMMAND).append(" -workername XMLValidator -infile /tmp/signed.xml").append(NL)
                 .append("c) ").append(COMMAND).append(" -workerid 2 -infile /tmp/signed.xml -truststore truststore.jks -truststorepwd changeit").append(NL)
-                .append("d) ").append(COMMAND).append(" -workerid 2 -infile /tmp/signed.xml -keystore superadmin.jks -truststorepwd foo123").append(NL);
+                .append("d) ").append(COMMAND).append(" -workerid 2 -infile /tmp/signed.xml -keystore superadmin.jks -keystorepwd foo123").append(NL);
             final String footer = buff.toString();
             final HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("validatedocument <-workername WORKERNAME | -workerid WORKERID> [options]",

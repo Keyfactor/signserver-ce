@@ -361,7 +361,7 @@ public class DocumentSignerCLI {
                 .append("a) ").append(COMMAND).append(" -workername XMLSigner -data \"<root/>\"").append(NL)
                 .append("b) ").append(COMMAND).append(" -workername XMLSigner -infile /tmp/document.xml").append(NL)
                 .append("c) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -truststore truststore.jks -truststorepwd changeit").append(NL)
-                .append("d) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystore superadmin.jks -truststorepwd foo123").append(NL);
+                .append("d) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystore superadmin.jks -keystorepwd foo123").append(NL);
             final String footer = buff.toString();
             final HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("signdocument <-workername WORKERNAME | -workerid WORKERID> [options]", 

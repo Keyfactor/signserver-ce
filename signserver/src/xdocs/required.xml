@@ -10,10 +10,11 @@
     <subsection name="Java Development Kit">
         <p>
         <a href="http://java.oracle.com/">Java web site</a>
+         | <a href="http://openjdk.java.net/">OpenJDK web site</a>
         </p>
         <p>
-            The Java Development Kit (JDK) is required to compile and run. Version
-            1.6 or above is required.
+            The Java Development Kit (JDK) is required to compile and run. JDK 6
+            or above is required.
         </p>
     </subsection>
 
@@ -45,13 +46,20 @@
     </subsection>
 
     <subsection name="Database">
-        <p>
-        <a href="http://www.mysql.com/">MySQL web site</a>
-        </p>
-        <p>
-        MySQL is recommended as SignServer database. MySQL 5.1 is the most tested
-        version.
-        </p>
+        <subsubsection name="MySQL">
+            <p>
+            <a href="http://www.mysql.com/">MySQL web site</a>
+            </p>
+            <p>
+            MySQL is recommended as SignServer database. MySQL 5.1 is the most tested
+            version.
+            </p>
+        </subsubsection>
+        <subsubsection name="Oracle">
+            <p>
+            SignServer has also been tested with Oracle Database.
+            </p>
+        </subsubsection>
     </subsection>
 </section>
 

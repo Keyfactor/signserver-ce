@@ -929,26 +929,19 @@ Version 2.0 of the same documentation.<a href="../docs/SignServer_2_0_Installati
                 </p>
             </section>
 
-            <section name="Building and deploying">
-                <p>
-The building of the SignServer framework is configured by copying the file signserver_build.properties.sample to signserver_build.properties. In this file it's possible to set which database that is going to be used, how the web container should be configured and how many nodes that is in the cluster. After it's configured issue the command 'ant' followed by 'ant deploy' to send it to the application server. Currently is JBoss the only supported application server and it requires the environment variable JBOSS_HOME to be set prior to the deploy command.
-                </p>
-                <p>
-How to set-up a highly available SignServer cluster is described in a separate document called
-<a href="../docs/SignServer_3_0_Installation_Guide.pdf">SignServer_3_0_Installation_Guide.pdf</a> that can be downloaded from <a href="http://www.signserver.org">www.signserver.org</a>
-The document describes how to set it up in a Cent OS 4.4 environment with two service nodes and
-one management node, but should be rather easy to adjust to other platforms.
-                </p>
-            </section>
             <section name="Configuration/Administration">
                 <p>
-                    The SignServer is administrated using a common CLI interface located in bin/signserver.sh/cmd.
+The SignServer administration command line interface (Admin CLI) is started
+using bin/signserver.sh (or bin/signserver.cmd).
                 </p>
                 <p>
-Every worker is identified by a id and optionally a name that can be used in all the CLI commands.
+Every worker is identified by an ID and an optional name that can be used in all
+the CLI commands.
                 </p>
                 <p>
-It is possible to do configuration of a worker while it's in production. All configuration commands are cached until a reload command is issued and the configuration becomes active.
+It is possible to do configuration of a worker while it's in production. All
+configuration commands are cached until a reload command is issued and the
+configuration becomes active.
                 </p>
                 <p>
 There is a special property file for the cli interface called signserver_cli.properties defining which nodes that exists in the cluster. The properties are:
@@ -962,25 +955,25 @@ There is a special property file for the cli interface called signserver_cli.pro
                 <p>
 Its possible to customize the CLI with your own code. How to do this is described in the development section.
                 </p>
-                <subsection name="Command Line Interface">
+                <subsection name="Administration CLI">
                     <subsubsection name="General Commands">
                         <p>
-<b>Get Status Command:</b>
-Returns the status of the given worker, it says if its crypto token is active or not and the loaded 'active' configuration. It is possible to get a brief summary or a complete listing for one worker or all configured workers. If all workers are displayed will also all the global configuration parameters be displayed.
+<b>getstatus:</b>
+Returns the status of the given worker, it says if its crypto token is active or not and the loaded 'active' configuration. It is possible to get a <i>brief</i> summary or a <i>complete</i> listing for one worker or all configured workers. If all workers are displayed will also all the global configuration parameters be displayed.
                         </p>
                         <p>
-<b>Get Configuration Command:</b>
+<b>getconfig:</b>
 Returns the current worker or global configuration depending on options.
                         </p>
                         <p>
-For worker configuration observe that this configuration might not have been activated yet, not until a 'reload' command is issued.
+For worker configuration observe that this configuration might not have been activated yet, not until a <i>reload</i> command is issued.
                         </p>
                         <p>
-<b>Set Property Command:</b>
+<b>setproperty:</b>
 Sets a custom property used by the worker or crypto token, see reference for the given Worker and CryptoToken for available properties.
                         </p>
                         <p>
-                            <b>Set Properties Command</b>
+<b>setproperties:</b>
 Command used to batch a set of properties, both for the global and worker configuration.
 It can be used to configure a Signer in a test environment, dump all the properties and upload it into production.
                         </p>
@@ -1045,33 +1038,33 @@ Will remove the property, either worker or global.
 See the directory 'sample-configs' for examples.
                         </p>
                         <p>
-<b>Remove Property Command:</b>
+<b>removeproperty:</b>
 Removes a configured property
                         </p>
                         <p>
-<b>Dump Properties</b>
+<b>dumpproperties:</b>
 This tool will dump all configured properties for one or all workers in the system into a property file. If the configuration for one worker is dumped it can be used to transfer the configuration from one installation to another. If all configurations is dumped, it can be used as a backup tool.
                         </p>
                         <p>
-<b>Upload Certificate Command:</b>
+<b>uploadsignercertificate:</b>
 Used to upload the certificate when the worker only needs the actual signing certificate and not the entire chain.
                         </p>
                         <p>
-<b>Upload Certificate Chain Command:</b>
+<b>uploadsignercertificatechain:</b>
 Used when uploading a complete certificate chain to the worker. Which command that is supposed to be used is depending on the worker and crypto token used.
                         </p>
                         <p>
-<b>Generate Certificate Request Command</b>
+<b>generatecertreq:</b>
 Used to generate a certificate request for a worker to be signed by a certificate authority. It takes
 distinguished name and signature algorithm as parameters and writes the request in PEM format to
 file.
                         </p>
                         <p>
-<b>Activate Cryptographic Token Command:</b>
-Used to activate hard crypto tokens. Authentication code is usually the PIN used to unlock the keys  on the HSM. Not used if the token is set to auto-activation.
+<b>activatecryptotoken:</b>
+Used to activate crypto tokens. Authentication code is usually the PIN used to unlock the keys on the HSM. Not used if the token is set to auto-activation.
                         </p>
                         <p>
-<b>Deactivate Cryptographic Token Command:</b>
+<b>deactivatecryptotoken:</b>
 Brings a crypto token off-line. Not used if token is set to auto-activation.
                         </p>
                     </subsubsection>
@@ -1082,22 +1075,22 @@ Brings a crypto token off-line. Not used if token is set to auto-activation.
 These commands are used to configure the internal client certificate authorization when it is turned on. It controls which clients that is authorized to request a processable worker.
                         </p>
                         <p>
-<b>Add Authorized Client Command:</b>
+<b>addauthorizedclient:</b>
 Adds a client certificate to a processable workers list of acceptable clients using this worker. Specify
 certificate serial number in hex and the Issuer DN of the client certificate.
                         </p>
                         <p>
-<b>Removes Authorized Certificate Command:</b>
+<b>removeauthorizedclient:</b>
 Removes added client certificate entries.
                         </p>
                         <p>
-<b>List Authorized Clients Commands:</b>
+<b>listauthorizedclients:</b>
 Displays the current list of acceptable clients.
                         </p>
 
                         <p><b>Database Related</b></p>
                         <p>
-<b>Resynchronize Database Command:</b>
+<b>resync:</b>
                         </p>
                         <p>
 The 'resync' command is used after a SignServer had a complete database failure. When this happens  will the Global Configuration become in 'Off-line' mode and it's not possible for the nodes to communicate internally and the Global Configurations will not be in sync any more. After the database is up again can this command be sent to the node that have the most valid Global Configuration and write it to the database. After this will the Global Configuration be in 'On-line' mode again.
@@ -1108,7 +1101,7 @@ The 'resync' command is used after a SignServer had a complete database failure.
 This commands can be used for processable workers that have archiving turned on. They are used to find specific archived responses. It's up to the implementation of the worker if it supports archiving or not.
                         </p>
                         <p>
-<b>Archive Find from Archive Id Command:</b>
+<b>archive findfromarchiveid:</b>
 Command used to extract archived data from database identified by the archive Id.
                         </p>
                         <p>
@@ -1116,14 +1109,14 @@ The Id depends on the worker, in case of the TSA is the TimeStampInfo serial num
 The data is stored with the same file name as the archive id in the specified path.
                         </p>
                         <p>
-<b>Archive Find from Request IP Command:</b>
+<b>archive findfromrequestip:</b>
 Used to extract all archived data requested from a specified IP address.
                         </p>
                         <p>
 All data is stored as separate files with the archive id as file name in the specified path.
                         </p>
                         <p>
-<b>Archive Find from Request Certificate Command:</b>
+<b>archive findfromrequestcert:</b>
 Used to extract all archived data requested from a client by specified it's certificates serial number and  issuer DN.
                         </p>
                         <p>
@@ -1135,15 +1128,15 @@ All data is stored as separate files with the archive id as file name in the spe
 These commands only applies for group key services.
                         </p>
                         <p>
-<b>Pregenerate Group Keys Command:</b>
+<b>groupkeyservice pregeneratekeys:</b>
 Command used to pregenerate a given number of group keys for a given group key service and stores them unassigned encrypted in the database. This commands can be used to let the cluster work on CPU insensitive key generation during low business hours.
                         </p>
                         <p>
-<b>Remove Group Keys Command:</b>
+<b>groupkeyservice removegroupkeys:</b>
 Command used to remove group keys not used any more. A time range of when created, first used and last fetched can be used as criteria.
                         </p>
                         <p>
-<b>Switch Encryption Key Commands:</b>
+<b>groupkeyservice switchenckey:</b>
 Command used manually switch the encryption key used to secure the group keys in database. Usually is the encryption key switched automatically but this command can be used to override this default behaviour.
                         </p>
 
@@ -1152,19 +1145,41 @@ Command used manually switch the encryption key used to secure the group keys in
 There exists three commands for managing module archives in a cluster, they are quite straightforward. Use the command 'signserver.sh/cmd module' command for more details.
                         </p>
                         <p>
-<b>Add Module:</b>
+<b>module add:</b>
 The 'add' command uploads a '.mar' file to the cluster. It is possible to define in which environment the module should be used, for instance 'production' or 'test' but this is all depending on which environments the module supports.
                         </p>
                         <p>
 If signature verification is required by the server it is also possible to specify a path to a JKS key store along with an alias and password to the key used.
                         </p>
                         <p>
-<b>Remove Module:</b>
+<b>module remove:</b>
 Command used to remove a specified version of a module.
                         </p>
                         <p>
-<b>List Modules:</b>
+<b>module list:</b>
 Command to list all uploaded modules, it is also possible to see all JAR files that is included in the  modules.
+                        </p>
+                        <p><b>Administrators Related</b></p>
+                        <p>
+<b>wsadmins -list:</b>
+                        </p>
+                        <p>
+Lists administrator certificates (certificate serial number and issuer DN) for
+administrators authorized to use the Admin Web Service interface to administrate
+SignServer.
+                        </p>
+                        <p>
+<b>wsadmins -add:</b>
+                        </p>
+                        <p>
+Authorizes an administrator to use the Admin Web Service interface by
+certificate serialnumber and issuer DN.
+                        </p>
+                        <p>
+<b>wsadmins -remove:</b>
+                        </p>
+                        <p>
+Removes an administrator from the list of authorized administrators.
                         </p>
                     </subsubsection>
                 </subsection>
@@ -2104,7 +2119,9 @@ Sets the server to not require any authentication.
 <b>AUTHTYPE</b> =  CLIENTCERT
                         </p>
                         <p>
- (default) requires a certificate of all the clients. The certificates must be in the signers access control list and be trusted by the Java distribution, i.e imported in JAVA_HOME/jre/lib/security/cacerts. Authorized clients is configured manually using the CLI interface.
+ (default) requires a certificate of all the clients. The certificates must be 
+ in the application server's truststore. Authorized clients is configured
+ manually using the CLI interface.
                         </p>
                     </subsubsection>
                     <subsubsection name="Username/password-based authentication">
@@ -2234,7 +2251,7 @@ description of each of its properties.
             </p>-->
             <section name="Configuring a plug-in">
                 <p>
-A worker component is configured by entering its class path (and optionally its crypto token class path)  in a memory bank called the global configuration and then issuing the reload command. There exists sample configurations for most of the plug-ins in the 'sample-configs' directory.
+A worker component is configured by entering its class path (and optionally its crypto token class path) in a memory bank called the global configuration and then issuing the reload command. There exists sample configurations for most of the plug-ins in the 'doc/sample-configs' directory.
                 </p>
             </section>
 
@@ -4539,6 +4556,126 @@ Then execute the script './buildsignserverpkgs.sh &lt;version&gt;' to start the 
                 </ul>
             </section>
             
+        </chapter>
+
+        <chapter name="How To" shortname="howto">
+            <section name="Setting up an Apache Web Server as a proxy in front of SignServer">
+                <p>
+This section will show you how to use an Apache Web Server Proxy in front of SignServer.
+                <br/>The resulting server will
+                </p>
+                <ul>
+                <li>Make the TSA available through the nice url http://tsa.company.com/</li>
+                </ul>
+                <p>
+This example was created on Ubuntu 64-bit Server 8.10 using the Apache Web Server 2.2 package,
+but should be easy to adapt to any system able to run Apache.
+                </p>
+                <p>
+Start by installing SignServer as normal. If you intend to have the CA on the same machine as
+the proxy you should modify $SIGNSERVER_HOME/signserver_build.properties to only listen to localhost
+                </p>
+<source>
+httpsserver.bindaddress.pubhttp=127.0.0.1
+httpsserver.bindaddress.pubhttps=127.0.0.1
+httpsserver.bindaddress.privhttps=127.0.0.1
+</source>
+                <p>
+Install the Apache web server and enable required modules:
+                </p>
+<source>
+$sudo su
+#apt-get install apache2
+#cd /etc/apache2/mods-enabled/
+#ln -s ../mods-available/proxy.load proxy.load
+#ln -s ../mods-available/proxy_http.load proxy_http.load
+#ln -s ../mods-available/rewrite.load rewrite.load
+</source>
+                <p>
+A sample configuration how to fix up nice URLs for OCSP so that you can point your TSA clients to http://tsa.company.com/ instead of http://tsa.company.com:8080/signserver/process?workerId=1.
+                <br/>
+This configuration combines mod_proxy with mod_rewrite to be able to set the workerName or workerId, so you can have different TSAs available on different URLs.
+                </p>
+<source>
+&lt;VirtualHost tsa.company.com:80>
+ServerName tsa.company.com
+ServerAlias tsa.company.com
+CustomLog /var/log/apache2/access.log combined
+
+RewriteEngine on
+RewriteLogLevel 5
+RewriteLog "/var/log/apache2/rewrite.log
+RewriteRule ^/$ /?workerName=TSA [PT]
+
+ProxyRequests Off
+&lt;Proxy *>
+  Order deny,allow
+  Allow from all
+&lt;/Proxy>
+ProxyPass / http://127.0.0.1:8080/signserver/process
+ProxyPassReverse / http://127.0.0.1:8080/signserver/process
+&lt;/VirtualHost>
+</source>
+                </section>
+
+
+                <section name="Setting up an Apache Web Server with mod_jk in front of SignServer">
+                    <p>
+Instead of using a mod_proxy you can use mod_jk which uses a JK connector between apache and tomcat.
+You can easily combine it with mod_rewrite to change URLs.
+                    </p>
+                    <p>
+This section will show you how to use an Apache with mod_jk in front of SignServer.
+mod_jk have many features and by using it you can virtually do anything you want with hosts, ports and URLs.
+                    </p><p>
+This example was created on Ubuntu 64-bit Server 8.10 using the Apache Web Server 2.2 package,
+but should be easy to adapt to any system able to run Apache.
+                    </p>
+<source>
+# sudo apt-get install apache2 libapache2-mod-jk
+# vim /etc/libapache2-mod-jk/workers.properties
+-----
+worker.list=jboss
+
+# Define a worker using ajp13
+worker.jboss.port=8009
+worker.jboss.host=127.0.0.1
+worker.jboss.type=ajp13
+-----
+</source>
+<source>
+# cd /etc/apache2/mods-enabled
+# ln -s ../mods-available/rewrite.load rewrite.load
+# vim /etc/apache2/sites-available/tsa.primekey.se
+-----
+&lt;VirtualHost tsa.company.com:80&gt;
+ServerAdmin webmaster@company.com
+ServerName tsa.company.com
+ServerAlias tsa.company.com
+
+JkLogFile /var/log/apache2/mod_jk.log
+JkLogLevel debug
+JkMount /* jboss
+JkMount / jboss
+&lt;/VirtualHost&gt;
+-----
+</source>
+Enable tsa.primekey.se in /etc/apache2/sites-enabled
+
+<source>
+# vim /etc/apache2/mods-available/jk.load
+-----
+LoadModule /usr/lib/apache2/modules/mod_jk.so
+JkWorkersFile /etc/libapache2-mod-jk/workers.properties
+-----
+</source>
+                    <p>
+Finally restart apache and you can run:
+                    </p>
+<source>
+$ bin/client.sh timestamp http://tsa.company.com/signserver/process?workerName=TSA
+</source>
+                </section>
         </chapter>
 
     </body>

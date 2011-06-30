@@ -13,7 +13,7 @@
                 <env-entry>
                     <env-entry-name>DataSource</env-entry-name>
                     <env-entry-type>java.lang.String</env-entry-type>
-                    <env-entry-value>jdbc/SignServerDS</env-entry-value>
+                    <env-entry-value>java:/SignServerDS</env-entry-value>
                 </env-entry>
          </session>
      </enterprise-beans>

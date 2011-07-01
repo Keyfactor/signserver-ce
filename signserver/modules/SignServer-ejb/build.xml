@@ -12,8 +12,8 @@
     <import file="nbproject/build-impl.xml"/>
     <import file="../modules.xml"/>
 
-    <!-- Setup APPSRV_HOME by -init-userdir before -init-project -->
-    <target name="compile" depends="-init-userdir,-modules-set-appserver-home,SignServer-ejb-impl.compile"/>
+    <!-- Setup APPSRV_HOME etc -->
+    <target name="-pre-init" depends="-modules-set-appserver-home"/>
     
     <!--
 

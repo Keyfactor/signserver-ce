@@ -143,8 +143,23 @@ is divided into following sections:
         <property name="excludes" value=""/>
         <path id="endorsed.classpath.path" path="${endorsed.classpath}"/>
         <condition else="" property="endorsed.classpath.cmd.line.arg" value="-Xbootclasspath/p:'${toString:endorsed.classpath.path}'">
-            <length length="0" string="${endorsed.classpath}" when="greater"/>
+            <and>
+                <isset property="endorsed.classpath"/>
+                <length length="0" string="${endorsed.classpath}" when="greater"/>
+            </and>
         </condition>
+        <condition property="is.server.weblogic" value="true">
+            <equals arg1="${j2ee.server.type}" arg2="WebLogic9"/>
+        </condition>
+        <condition else="false" property="jdkBug6558476">
+            <and>
+                <matches pattern="1\.[56]" string="${java.specification.version}"/>
+                <not>
+                    <os family="unix"/>
+                </not>
+            </and>
+        </condition>
+        <property name="javac.fork" value="${jdkBug6558476}"/>
     </target>
     <target depends="init" name="-init-cos" unless="deploy.on.save">
         <condition property="deploy.on.save" value="true">
@@ -213,7 +228,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                 <property location="${build.dir}/empty" name="empty.dir"/>
                 <mkdir dir="${empty.dir}"/>
                 <mkdir dir="@{apgeneratedsrcdir}"/>
-                <javac debug="@{debug}" deprecation="${javac.deprecation}" destdir="@{destdir}" encoding="${source.encoding}" excludes="@{excludes}" includeantruntime="false" includes="@{includes}" source="${javac.source}" srcdir="@{srcdir}" target="${javac.target}">
+                <javac debug="@{debug}" deprecation="${javac.deprecation}" destdir="@{destdir}" encoding="${source.encoding}" excludes="@{excludes}" fork="${javac.fork}" includeantruntime="false" includes="@{includes}" source="${javac.source}" srcdir="@{srcdir}" target="${javac.target}">
                     <src>
                         <dirset dir="@{gensrcdir}" erroronmissingdir="false">
                             <include name="*"/>
@@ -284,15 +299,18 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
             <attribute default="${build.classes.dir}" name="destdir"/>
             <sequential>
                 <fail unless="javac.includes">Must set javac.includes</fail>
-                <pathconvert pathsep="," property="javac.includes.binary">
+                <pathconvert pathsep="${line.separator}" property="javac.includes.binary">
                     <path>
                         <filelist dir="@{destdir}" files="${javac.includes}"/>
                     </path>
                     <globmapper from="*.java" to="*.class"/>
                 </pathconvert>
+                <tempfile deleteonexit="true" property="javac.includesfile.binary"/>
+                <echo file="${javac.includesfile.binary}" message="${javac.includes.binary}"/>
                 <delete>
-                    <files includes="${javac.includes.binary}"/>
+                    <files includesfile="${javac.includesfile.binary}"/>
                 </delete>
+                <delete file="${javac.includesfile.binary}"/>
             </sequential>
         </macrodef>
     </target>
@@ -320,6 +338,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                     <formatter type="brief" usefile="false"/>
                     <formatter type="xml"/>
                     <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
+                    <jvmarg value="-ea"/>
                     <jvmarg line="${runmain.jvmargs}"/>
                 </junit>
             </sequential>
@@ -449,6 +468,19 @@ exists or setup the property manually. For example like this:
     <target depends="-init-ap-cmdline-properties,-init-ap-cmdline-supported" name="-init-ap-cmdline">
         <property name="ap.cmd.line.internal" value=""/>
     </target>
+    <target depends="-profile-pre-init, init, -profile-post-init, -profile-init-check" name="profile-init"/>
+    <target name="-profile-pre-init">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target name="-profile-post-init">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target depends="-profile-pre-init, init, -profile-post-init" name="-profile-init-check">
+        <fail unless="profiler.info.jvm">Must set JVM to use for profiling in profiler.info.jvm</fail>
+        <fail unless="profiler.info.jvmargs.agent">Must set profiler agent JVM arguments in profiler.info.jvmargs.agent</fail>
+    </target>
     <target depends="-pre-init,-init-private,-init-userdir,-init-user,-init-project,-do-init,-post-init,-init-check,-init-macrodef-property,-init-macrodef-javac,-init-macrodef-junit,-init-macrodef-java,-init-macrodef-nbjpda,-init-macrodef-debug,-init-taskdefs,-init-ap-cmdline" name="init"/>
     <!--
                 COMPILATION SECTION
@@ -472,55 +504,106 @@ exists or setup the property manually. For example like this:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="compile" name="library-inclusion-in-archive">
-        <copyfiles files="${file.reference.cert-cvc.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.commons-collections-3.2.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.commons-fileupload-1.2.1.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.commons-io-1.4.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.commons-lang-2.4.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.commons-logging.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.ejbca-util.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.log4j.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.bcmail-jdk.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.bcprov-jdk.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.bctsp-jdk.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.quartz-1.6.0.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${reference.SignServer-Common.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.jboss-ejb3x.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.jboss-j2ee.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.servlet-2.3.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.activation.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.FastInfoset.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.http.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.jaxb-api.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.jaxb-impl.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.jaxb-xjc.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.jaxws-api.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.jaxws-rt.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.jsr173_api.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.jsr181-api.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.jsr250-api.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.mimepull.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.resolver.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.saaj-api.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.saaj-impl.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.sjsxp.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.stax-ex.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.streambuffer.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.antlr-2.7.6.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.dom4j-1.6.1.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.ejb3-persistence.jar-1}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.hibernate-annotations.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.hibernate-commons-annotations.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.hibernate-core.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.hibernate-entitymanager.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.hibernate-search-3.1.1.GA.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.hibernate-validator-3.1.0.GA.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.javassist-3.4.GA.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.jta-1.1.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.lucene-core-2.4.1.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.slf4j-api-1.5.2.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.slf4j-log4j12.jar}" todir="${build.classes.dir}"/>
+    <target depends="compile" if="is.server.weblogic" name="library-inclusion-in-archive">
+        <basename file="${file.reference.cert-cvc.jar}" property="manifest.file.reference.cert-cvc.jar"/>
+        <basename file="${file.reference.commons-collections-3.2.jar}" property="manifest.file.reference.commons-collections-3.2.jar"/>
+        <basename file="${file.reference.commons-fileupload-1.2.1.jar}" property="manifest.file.reference.commons-fileupload-1.2.1.jar"/>
+        <basename file="${file.reference.commons-io-1.4.jar}" property="manifest.file.reference.commons-io-1.4.jar"/>
+        <basename file="${file.reference.commons-lang-2.4.jar}" property="manifest.file.reference.commons-lang-2.4.jar"/>
+        <basename file="${file.reference.commons-logging.jar}" property="manifest.file.reference.commons-logging.jar"/>
+        <basename file="${file.reference.ejbca-util.jar}" property="manifest.file.reference.ejbca-util.jar"/>
+        <basename file="${file.reference.log4j.jar}" property="manifest.file.reference.log4j.jar"/>
+        <basename file="${file.reference.bcmail-jdk.jar}" property="manifest.file.reference.bcmail-jdk.jar"/>
+        <basename file="${file.reference.bcprov-jdk.jar}" property="manifest.file.reference.bcprov-jdk.jar"/>
+        <basename file="${file.reference.bctsp-jdk.jar}" property="manifest.file.reference.bctsp-jdk.jar"/>
+        <basename file="${file.reference.quartz-1.6.0.jar}" property="manifest.file.reference.quartz-1.6.0.jar"/>
+        <basename file="${reference.SignServer-Common.jar}" property="manifest.reference.SignServer-Common.jar"/>
+        <basename file="${file.reference.jboss-ejb3x.jar}" property="manifest.file.reference.jboss-ejb3x.jar"/>
+        <basename file="${file.reference.jboss-j2ee.jar}" property="manifest.file.reference.jboss-j2ee.jar"/>
+        <basename file="${file.reference.servlet-2.3.jar}" property="manifest.file.reference.servlet-2.3.jar"/>
+        <basename file="${file.reference.activation.jar}" property="manifest.file.reference.activation.jar"/>
+        <basename file="${file.reference.FastInfoset.jar}" property="manifest.file.reference.FastInfoset.jar"/>
+        <basename file="${file.reference.http.jar}" property="manifest.file.reference.http.jar"/>
+        <basename file="${file.reference.jaxb-api.jar}" property="manifest.file.reference.jaxb-api.jar"/>
+        <basename file="${file.reference.jaxb-impl.jar}" property="manifest.file.reference.jaxb-impl.jar"/>
+        <basename file="${file.reference.jaxb-xjc.jar}" property="manifest.file.reference.jaxb-xjc.jar"/>
+        <basename file="${file.reference.jaxws-api.jar}" property="manifest.file.reference.jaxws-api.jar"/>
+        <basename file="${file.reference.jaxws-rt.jar}" property="manifest.file.reference.jaxws-rt.jar"/>
+        <basename file="${file.reference.jsr173_api.jar}" property="manifest.file.reference.jsr173_api.jar"/>
+        <basename file="${file.reference.jsr181-api.jar}" property="manifest.file.reference.jsr181-api.jar"/>
+        <basename file="${file.reference.jsr250-api.jar}" property="manifest.file.reference.jsr250-api.jar"/>
+        <basename file="${file.reference.mimepull.jar}" property="manifest.file.reference.mimepull.jar"/>
+        <basename file="${file.reference.resolver.jar}" property="manifest.file.reference.resolver.jar"/>
+        <basename file="${file.reference.saaj-api.jar}" property="manifest.file.reference.saaj-api.jar"/>
+        <basename file="${file.reference.saaj-impl.jar}" property="manifest.file.reference.saaj-impl.jar"/>
+        <basename file="${file.reference.sjsxp.jar}" property="manifest.file.reference.sjsxp.jar"/>
+        <basename file="${file.reference.stax-ex.jar}" property="manifest.file.reference.stax-ex.jar"/>
+        <basename file="${file.reference.streambuffer.jar}" property="manifest.file.reference.streambuffer.jar"/>
+        <basename file="${file.reference.antlr-2.7.6.jar}" property="manifest.file.reference.antlr-2.7.6.jar"/>
+        <basename file="${file.reference.dom4j-1.6.1.jar}" property="manifest.file.reference.dom4j-1.6.1.jar"/>
+        <basename file="${file.reference.ejb3-persistence.jar-1}" property="manifest.file.reference.ejb3-persistence.jar-1"/>
+        <basename file="${file.reference.hibernate-annotations.jar}" property="manifest.file.reference.hibernate-annotations.jar"/>
+        <basename file="${file.reference.hibernate-commons-annotations.jar}" property="manifest.file.reference.hibernate-commons-annotations.jar"/>
+        <basename file="${file.reference.hibernate-core.jar}" property="manifest.file.reference.hibernate-core.jar"/>
+        <basename file="${file.reference.hibernate-entitymanager.jar}" property="manifest.file.reference.hibernate-entitymanager.jar"/>
+        <basename file="${file.reference.hibernate-search-3.1.1.GA.jar}" property="manifest.file.reference.hibernate-search-3.1.1.GA.jar"/>
+        <basename file="${file.reference.hibernate-validator-3.1.0.GA.jar}" property="manifest.file.reference.hibernate-validator-3.1.0.GA.jar"/>
+        <basename file="${file.reference.javassist-3.4.GA.jar}" property="manifest.file.reference.javassist-3.4.GA.jar"/>
+        <basename file="${file.reference.jta-1.1.jar}" property="manifest.file.reference.jta-1.1.jar"/>
+        <basename file="${file.reference.lucene-core-2.4.1.jar}" property="manifest.file.reference.lucene-core-2.4.1.jar"/>
+        <basename file="${file.reference.slf4j-api-1.5.2.jar}" property="manifest.file.reference.slf4j-api-1.5.2.jar"/>
+        <basename file="${file.reference.slf4j-log4j12.jar}" property="manifest.file.reference.slf4j-log4j12.jar"/>
+        <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
+            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 jar-8 jar-9 jar-10 jar-11 jar-12 jar-13 jar-14 jar-15 jar-16 jar-17 jar-18 jar-19 jar-20 jar-21 jar-22 jar-23 jar-24 jar-25 jar-26 jar-27 jar-28 jar-29 jar-30 jar-31 jar-32 jar-33 jar-34 jar-35 jar-36 jar-37 jar-38 jar-39 jar-40 jar-41 jar-42 jar-43 jar-44 jar-45 jar-46 jar-47 jar-48 "/>
+            <attribute name="jar-1-Extension-Name" value="${manifest.file.reference.cert-cvc.jar}"/>
+            <attribute name="jar-2-Extension-Name" value="${manifest.file.reference.commons-collections-3.2.jar}"/>
+            <attribute name="jar-3-Extension-Name" value="${manifest.file.reference.commons-fileupload-1.2.1.jar}"/>
+            <attribute name="jar-4-Extension-Name" value="${manifest.file.reference.commons-io-1.4.jar}"/>
+            <attribute name="jar-5-Extension-Name" value="${manifest.file.reference.commons-lang-2.4.jar}"/>
+            <attribute name="jar-6-Extension-Name" value="${manifest.file.reference.commons-logging.jar}"/>
+            <attribute name="jar-7-Extension-Name" value="${manifest.file.reference.ejbca-util.jar}"/>
+            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.log4j.jar}"/>
+            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.bcmail-jdk.jar}"/>
+            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.bcprov-jdk.jar}"/>
+            <attribute name="jar-11-Extension-Name" value="${manifest.file.reference.bctsp-jdk.jar}"/>
+            <attribute name="jar-12-Extension-Name" value="${manifest.file.reference.quartz-1.6.0.jar}"/>
+            <attribute name="jar-13-Extension-Name" value="${manifest.reference.SignServer-Common.jar}"/>
+            <attribute name="jar-14-Extension-Name" value="${manifest.file.reference.jboss-ejb3x.jar}"/>
+            <attribute name="jar-15-Extension-Name" value="${manifest.file.reference.jboss-j2ee.jar}"/>
+            <attribute name="jar-16-Extension-Name" value="${manifest.file.reference.servlet-2.3.jar}"/>
+            <attribute name="jar-17-Extension-Name" value="${manifest.file.reference.activation.jar}"/>
+            <attribute name="jar-18-Extension-Name" value="${manifest.file.reference.FastInfoset.jar}"/>
+            <attribute name="jar-19-Extension-Name" value="${manifest.file.reference.http.jar}"/>
+            <attribute name="jar-20-Extension-Name" value="${manifest.file.reference.jaxb-api.jar}"/>
+            <attribute name="jar-21-Extension-Name" value="${manifest.file.reference.jaxb-impl.jar}"/>
+            <attribute name="jar-22-Extension-Name" value="${manifest.file.reference.jaxb-xjc.jar}"/>
+            <attribute name="jar-23-Extension-Name" value="${manifest.file.reference.jaxws-api.jar}"/>
+            <attribute name="jar-24-Extension-Name" value="${manifest.file.reference.jaxws-rt.jar}"/>
+            <attribute name="jar-25-Extension-Name" value="${manifest.file.reference.jsr173_api.jar}"/>
+            <attribute name="jar-26-Extension-Name" value="${manifest.file.reference.jsr181-api.jar}"/>
+            <attribute name="jar-27-Extension-Name" value="${manifest.file.reference.jsr250-api.jar}"/>
+            <attribute name="jar-28-Extension-Name" value="${manifest.file.reference.mimepull.jar}"/>
+            <attribute name="jar-29-Extension-Name" value="${manifest.file.reference.resolver.jar}"/>
+            <attribute name="jar-30-Extension-Name" value="${manifest.file.reference.saaj-api.jar}"/>
+            <attribute name="jar-31-Extension-Name" value="${manifest.file.reference.saaj-impl.jar}"/>
+            <attribute name="jar-32-Extension-Name" value="${manifest.file.reference.sjsxp.jar}"/>
+            <attribute name="jar-33-Extension-Name" value="${manifest.file.reference.stax-ex.jar}"/>
+            <attribute name="jar-34-Extension-Name" value="${manifest.file.reference.streambuffer.jar}"/>
+            <attribute name="jar-35-Extension-Name" value="${manifest.file.reference.antlr-2.7.6.jar}"/>
+            <attribute name="jar-36-Extension-Name" value="${manifest.file.reference.dom4j-1.6.1.jar}"/>
+            <attribute name="jar-37-Extension-Name" value="${manifest.file.reference.ejb3-persistence.jar-1}"/>
+            <attribute name="jar-38-Extension-Name" value="${manifest.file.reference.hibernate-annotations.jar}"/>
+            <attribute name="jar-39-Extension-Name" value="${manifest.file.reference.hibernate-commons-annotations.jar}"/>
+            <attribute name="jar-40-Extension-Name" value="${manifest.file.reference.hibernate-core.jar}"/>
+            <attribute name="jar-41-Extension-Name" value="${manifest.file.reference.hibernate-entitymanager.jar}"/>
+            <attribute name="jar-42-Extension-Name" value="${manifest.file.reference.hibernate-search-3.1.1.GA.jar}"/>
+            <attribute name="jar-43-Extension-Name" value="${manifest.file.reference.hibernate-validator-3.1.0.GA.jar}"/>
+            <attribute name="jar-44-Extension-Name" value="${manifest.file.reference.javassist-3.4.GA.jar}"/>
+            <attribute name="jar-45-Extension-Name" value="${manifest.file.reference.jta-1.1.jar}"/>
+            <attribute name="jar-46-Extension-Name" value="${manifest.file.reference.lucene-core-2.4.1.jar}"/>
+            <attribute name="jar-47-Extension-Name" value="${manifest.file.reference.slf4j-api-1.5.2.jar}"/>
+            <attribute name="jar-48-Extension-Name" value="${manifest.file.reference.slf4j-log4j12.jar}"/>
+        </manifest>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
         <copyfiles files="${file.reference.cert-cvc.jar}" todir="${dist.ear.dir}/lib"/>
@@ -744,6 +827,35 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="init,-pre-debug-fix,-do-debug-fix" if="netbeans.home" name="debug-fix"/>
     <!--
+            =================
+            PROFILING SECTION
+            =================
+            -->
+    <target description="Profile a J2EE project in the IDE." name="profile">
+        <condition else="start-profiled-server" property="profiler.startserver.target" value="start-profiled-server-extraargs">
+            <isset property="profiler.info.jvmargs.extra"/>
+        </condition>
+        <antcall target="${profiler.startserver.target}"/>
+        <antcall target="run"/>
+        <antcall target="start-loadgen"/>
+    </target>
+    <target name="start-profiled-server">
+        <nbstartprofiledserver forceRestart="${profiler.j2ee.serverForceRestart}" javaPlatform="${profiler.info.javaPlatform}" startupTimeout="${profiler.j2ee.serverStartupTimeout}">
+            <jvmarg value="${profiler.info.jvmargs.agent}"/>
+            <jvmarg value="${profiler.j2ee.agentID}"/>
+        </nbstartprofiledserver>
+    </target>
+    <target name="start-profiled-server-extraargs">
+        <nbstartprofiledserver forceRestart="${profiler.j2ee.serverForceRestart}" javaPlatform="${profiler.info.javaPlatform}" startupTimeout="${profiler.j2ee.serverStartupTimeout}">
+            <jvmarg value="${profiler.info.jvmargs.extra}"/>
+            <jvmarg value="${profiler.info.jvmargs.agent}"/>
+            <jvmarg value="${profiler.j2ee.agentID}"/>
+        </nbstartprofiledserver>
+    </target>
+    <target if="profiler.loadgen.path" name="start-loadgen">
+        <loadgenstart path="${profiler.loadgen.path}"/>
+    </target>
+    <!--
                 JAVADOC SECTION
             -->
     <target depends="init" if="have.sources" name="javadoc-build">
@@ -858,6 +970,35 @@ exists or setup the property manually. For example like this:
         <ejbjarproject1:nbjpdareload dir="${build.test.classes.dir}"/>
     </target>
     <target depends="init,-pre-debug-fix,-do-debug-fix-test" if="netbeans.home" name="debug-fix-test"/>
+    <!--
+        =========================
+        TESTS PROFILING  SECTION
+        =========================
+        -->
+    <target depends="profile-init,compile-test-single" if="netbeans.home" name="profile-test-single">
+        <nbprofiledirect>
+            <classpath>
+                <path path="${run.test.classpath}"/>
+                <path path="${j2ee.platform.classpath}"/>
+            </classpath>
+        </nbprofiledirect>
+        <junit dir="${profiler.info.dir}" errorproperty="tests.failed" failureproperty="tests.failed" fork="true" jvm="${profiler.info.jvm}" showoutput="true">
+            <env key="${profiler.info.pathvar}" path="${profiler.info.agentpath}:${profiler.current.path}"/>
+            <jvmarg value="${profiler.info.jvmargs.agent}"/>
+            <jvmarg line="${profiler.info.jvmargs}"/>
+            <test name="${profile.class}"/>
+            <classpath>
+                <path path="${run.test.classpath}"/>
+                <path path="${j2ee.platform.classpath}"/>
+            </classpath>
+            <syspropertyset>
+                <propertyref prefix="test-sys-prop."/>
+                <mapper from="test-sys-prop.*" to="*" type="glob"/>
+            </syspropertyset>
+            <formatter type="brief" usefile="false"/>
+            <formatter type="xml"/>
+        </junit>
+    </target>
     <!--
                 CLEANUP SECTION
             -->

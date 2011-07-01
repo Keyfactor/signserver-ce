@@ -198,8 +198,20 @@
         <property name="runmain.jvmargs" value=""/>
         <path id="endorsed.classpath.path" path="${endorsed.classpath}"/>
         <condition else="" property="endorsed.classpath.cmd.line.arg" value="-Xbootclasspath/p:'${toString:endorsed.classpath.path}'">
-            <length length="0" string="${endorsed.classpath}" when="greater"/>
+            <and>
+                <isset property="endorsed.classpath"/>
+                <length length="0" string="${endorsed.classpath}" when="greater"/>
+            </and>
         </condition>
+        <condition else="false" property="jdkBug6558476">
+            <and>
+                <matches pattern="1\.[56]" string="${java.specification.version}"/>
+                <not>
+                    <os family="unix"/>
+                </not>
+            </and>
+        </condition>
+        <property name="javac.fork" value="${jdkBug6558476}"/>
     </target>
     <target depends="init" name="-init-cos" unless="deploy.on.save">
         <condition property="deploy.on.save" value="true">
@@ -270,7 +282,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                 <property location="${build.dir}/empty" name="empty.dir"/>
                 <mkdir dir="${empty.dir}"/>
                 <mkdir dir="@{apgeneratedsrcdir}"/>
-                <javac debug="@{debug}" deprecation="${javac.deprecation}" destdir="@{destdir}" encoding="${source.encoding}" excludes="@{excludes}" includeantruntime="false" includes="@{includes}" source="${javac.source}" srcdir="@{srcdir}" target="${javac.target}">
+                <javac debug="@{debug}" deprecation="${javac.deprecation}" destdir="@{destdir}" encoding="${source.encoding}" excludes="@{excludes}" fork="${javac.fork}" includeantruntime="false" includes="@{includes}" source="${javac.source}" srcdir="@{srcdir}" target="${javac.target}">
                     <src>
                         <dirset dir="@{gensrcdir}" erroronmissingdir="false">
                             <include name="*"/>
@@ -340,15 +352,18 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
             <attribute default="${build.classes.dir}" name="destdir"/>
             <sequential>
                 <fail unless="javac.includes">Must set javac.includes</fail>
-                <pathconvert pathsep="," property="javac.includes.binary">
+                <pathconvert pathsep="${line.separator}" property="javac.includes.binary">
                     <path>
                         <filelist dir="@{destdir}" files="${javac.includes}"/>
                     </path>
                     <globmapper from="*.java" to="*.class"/>
                 </pathconvert>
+                <tempfile deleteonexit="true" property="javac.includesfile.binary"/>
+                <echo file="${javac.includesfile.binary}" message="${javac.includes.binary}"/>
                 <delete>
-                    <files includes="${javac.includes.binary}"/>
+                    <files includesfile="${javac.includesfile.binary}"/>
                 </delete>
+                <delete file="${javac.includesfile.binary}"/>
             </sequential>
         </macrodef>
     </target>
@@ -374,6 +389,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                     <formatter type="brief" usefile="false"/>
                     <formatter type="xml"/>
                     <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
+                    <jvmarg value="-ea"/>
                     <jvmarg line="${runmain.jvmargs}"/>
                 </junit>
             </sequential>
@@ -517,6 +533,19 @@ exists or setup the property manually. For example like this:
     <target depends="-init-ap-cmdline-properties,-init-ap-cmdline-supported" name="-init-ap-cmdline">
         <property name="ap.cmd.line.internal" value=""/>
     </target>
+    <target depends="-profile-pre-init, init, -profile-post-init, -profile-init-check" name="profile-init"/>
+    <target name="-profile-pre-init">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target name="-profile-post-init">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target depends="-profile-pre-init, init, -profile-post-init" name="-profile-init-check">
+        <fail unless="profiler.info.jvm">Must set JVM to use for profiling in profiler.info.jvm</fail>
+        <fail unless="profiler.info.jvmargs.agent">Must set profiler agent JVM arguments in profiler.info.jvmargs.agent</fail>
+    </target>
     <target depends="-pre-init,-init-private,-init-libraries,-init-user,-init-project,-do-init,-post-init,-init-check,-init-macrodef-property,-init-macrodef-javac,-init-macrodef-junit,-init-macrodef-java,-init-macrodef-nbjpda,-init-macrodef-nbjsdebug,-init-macrodef-debug,-init-taskdefs,-init-ap-cmdline" name="init"/>
     <!--
                 COMPILATION SECTION
@@ -590,6 +619,8 @@ exists or setup the property manually. For example like this:
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target depends="init,deps-jar,-pre-pre-compile,-pre-compile-single,-do-compile-single,-post-compile-single" name="compile-single"/>
+    <property name="jspc.schemas" value="/resources/schemas/"/>
+    <property name="jspc.dtds" value="/resources/dtds/"/>
     <target depends="compile" description="Test compile JSP pages to expose compilation errors." if="do.compile.jsps" name="compile-jsps">
         <mkdir dir="${build.generated.dir}/src"/>
         <java classname="org.netbeans.modules.web.project.ant.JspC" failonerror="true" fork="true">
@@ -598,9 +629,12 @@ exists or setup the property manually. For example like this:
             <arg value="-d"/>
             <arg file="${basedir}/${build.generated.dir}/src"/>
             <arg value="-die1"/>
+            <arg value="-schemas ${jspc.schemas}"/>
+            <arg value="-dtds ${jspc.dtds}"/>
             <arg value="-compilerSourceVM ${javac.source}"/>
             <arg value="-compilerTargetVM ${javac.target}"/>
             <arg value="-javaEncoding ${source.encoding}"/>
+            <arg value="-sysClasspath ${libs.jsp-compilation-syscp.classpath}"/>
             <classpath path="${java.home}/../lib/tools.jar:${libs.jsp-compiler.classpath}:${libs.jsp-compilation.classpath}"/>
         </java>
         <mkdir dir="${build.generated.dir}/classes"/>
@@ -615,6 +649,9 @@ exists or setup the property manually. For example like this:
             <arg value="-d"/>
             <arg file="${basedir}/${build.generated.dir}/src"/>
             <arg value="-die1"/>
+            <arg value="-schemas ${jspc.schemas}"/>
+            <arg value="-dtds ${jspc.dtds}"/>
+            <arg value="-sysClasspath ${libs.jsp-compilation-syscp.classpath}"/>
             <arg value="-jspc.files"/>
             <arg path="${jsp.includes}"/>
             <arg value="-compilerSourceVM ${javac.source}"/>
@@ -882,6 +919,35 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="init,-pre-debug-fix,-do-debug-fix" if="netbeans.home" name="debug-fix"/>
     <!--
+            =================
+            PROFILING SECTION
+            =================
+            -->
+    <target description="Profile a J2EE project in the IDE." name="profile">
+        <condition else="start-profiled-server" property="profiler.startserver.target" value="start-profiled-server-extraargs">
+            <isset property="profiler.info.jvmargs.extra"/>
+        </condition>
+        <antcall target="${profiler.startserver.target}"/>
+        <antcall target="run"/>
+        <antcall target="start-loadgen"/>
+    </target>
+    <target name="start-profiled-server">
+        <nbstartprofiledserver forceRestart="${profiler.j2ee.serverForceRestart}" javaPlatform="${profiler.info.javaPlatform}" startupTimeout="${profiler.j2ee.serverStartupTimeout}">
+            <jvmarg value="${profiler.info.jvmargs.agent}"/>
+            <jvmarg value="${profiler.j2ee.agentID}"/>
+        </nbstartprofiledserver>
+    </target>
+    <target name="start-profiled-server-extraargs">
+        <nbstartprofiledserver forceRestart="${profiler.j2ee.serverForceRestart}" javaPlatform="${profiler.info.javaPlatform}" startupTimeout="${profiler.j2ee.serverStartupTimeout}">
+            <jvmarg value="${profiler.info.jvmargs.extra}"/>
+            <jvmarg value="${profiler.info.jvmargs.agent}"/>
+            <jvmarg value="${profiler.j2ee.agentID}"/>
+        </nbstartprofiledserver>
+    </target>
+    <target if="profiler.loadgen.path" name="start-loadgen">
+        <loadgenstart path="${profiler.loadgen.path}"/>
+    </target>
+    <!--
                 JAVADOC SECTION
             -->
     <target depends="init" if="have.sources" name="javadoc-build">
@@ -1002,6 +1068,35 @@ exists or setup the property manually. For example like this:
         <webproject1:nbjpdareload dir="${build.test.classes.dir}"/>
     </target>
     <target depends="init,-pre-debug-fix,-do-debug-fix-test" if="netbeans.home" name="debug-fix-test"/>
+    <!--
+        =========================
+        TESTS PROFILING  SECTION
+        =========================
+        -->
+    <target depends="profile-init,compile-test-single" if="netbeans.home" name="profile-test-single">
+        <nbprofiledirect>
+            <classpath>
+                <path path="${run.test.classpath}"/>
+                <path path="${j2ee.platform.classpath}"/>
+            </classpath>
+        </nbprofiledirect>
+        <junit dir="${profiler.info.dir}" errorproperty="tests.failed" failureproperty="tests.failed" fork="true" jvm="${profiler.info.jvm}" showoutput="true">
+            <env key="${profiler.info.pathvar}" path="${profiler.info.agentpath}:${profiler.current.path}"/>
+            <jvmarg value="${profiler.info.jvmargs.agent}"/>
+            <jvmarg line="${profiler.info.jvmargs}"/>
+            <test name="${profile.class}"/>
+            <classpath>
+                <path path="${run.test.classpath}"/>
+                <path path="${j2ee.platform.classpath}"/>
+            </classpath>
+            <syspropertyset>
+                <propertyref prefix="test-sys-prop."/>
+                <mapper from="test-sys-prop.*" to="*" type="glob"/>
+            </syspropertyset>
+            <formatter type="brief" usefile="false"/>
+            <formatter type="xml"/>
+        </junit>
+    </target>
     <!--
                 
                 CLEANUP SECTION

@@ -139,7 +139,10 @@ is divided into following sections:
         </condition>
         <path id="endorsed.classpath.path" path="${endorsed.classpath}"/>
         <condition else="" property="endorsed.classpath.cmd.line.arg" value="-Xbootclasspath/p:'${toString:endorsed.classpath.path}'">
-            <length length="0" string="${endorsed.classpath}" when="greater"/>
+            <and>
+                <isset property="endorsed.classpath"/>
+                <length length="0" string="${endorsed.classpath}" when="greater"/>
+            </and>
         </condition>
     </target>
     <target depends="init" name="-init-cos">
@@ -170,6 +173,19 @@ exists or setup the property manually. For example like this:
  ant -Dlibs.CopyLibs.classpath=a/path/to/org-netbeans-modules-java-j2seproject-copylibstask.jar
                 </fail>
         <taskdef classpath="${libs.CopyLibs.classpath}" resource="org/netbeans/modules/java/j2seproject/copylibstask/antlib.xml"/>
+    </target>
+    <target depends="-profile-pre-init, init, -profile-post-init, -profile-init-check" name="profile-init"/>
+    <target name="-profile-pre-init">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target name="-profile-post-init">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target depends="-profile-pre-init, init, -profile-post-init" name="-profile-init-check">
+        <fail unless="profiler.info.jvm">Must set JVM to use for profiling in profiler.info.jvm</fail>
+        <fail unless="profiler.info.jvmargs.agent">Must set profiler agent JVM arguments in profiler.info.jvmargs.agent</fail>
     </target>
     <target depends="pre-init,init-private,init-userdir,init-user,init-project,do-init,post-init,init-check,-init-taskdefs" name="init"/>
     <!--
@@ -434,6 +450,7 @@ exists or setup the property manually. For example like this:
                 <java dir="${basedir}" fork="true" jar="${client.jar}">
                     <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <jvmarg line="${j2ee.appclient.tool.jvmoptions}${client.jar},arg=-name,arg=@{subprojectname}"/>
+                    <jvmarg line="${j2ee.appclient.jvmoptions.param}"/>
                     <arg line="@{args}"/>
                     <syspropertyset>
                         <propertyref prefix="run-sys-prop."/>
@@ -559,11 +576,36 @@ exists or setup the property manually. For example like this:
         <ear2:debug-appclient-pregfv3/>
     </target>
     <target name="-debug-appclient" unless="j2ee.appclient.tool.args">
-        <mkdir dir="${dist.dir}/SignServer-AppClient"/>
-        <copy flatten="true" todir="${dist.dir}/SignServer-AppClient">
-            <fileset dir="${wa.copy.client.jar.from}/SignServer-App" includes="**/*.*ar"/>
-        </copy>
         <ear2:debug-appclient subprojectname="${app.client}"/>
+    </target>
+    <!--
+    =================
+    PROFILING SECTION
+    =================
+    -->
+    <target description="Profile a J2EE project in the IDE." name="profile">
+        <condition else="start-profiled-server" property="profiler.startserver.target" value="start-profiled-server-extraargs">
+            <isset property="profiler.info.jvmargs.extra"/>
+        </condition>
+        <antcall target="${profiler.startserver.target}"/>
+        <antcall target="run"/>
+        <antcall target="start-loadgen"/>
+    </target>
+    <target name="start-profiled-server">
+        <nbstartprofiledserver forceRestart="${profiler.j2ee.serverForceRestart}" javaPlatform="${profiler.info.javaPlatform}" startupTimeout="${profiler.j2ee.serverStartupTimeout}">
+            <jvmarg value="${profiler.info.jvmargs.agent}"/>
+            <jvmarg value="${profiler.j2ee.agentID}"/>
+        </nbstartprofiledserver>
+    </target>
+    <target name="start-profiled-server-extraargs">
+        <nbstartprofiledserver forceRestart="${profiler.j2ee.serverForceRestart}" javaPlatform="${profiler.info.javaPlatform}" startupTimeout="${profiler.j2ee.serverStartupTimeout}">
+            <jvmarg value="${profiler.info.jvmargs.extra}"/>
+            <jvmarg value="${profiler.info.jvmargs.agent}"/>
+            <jvmarg value="${profiler.j2ee.agentID}"/>
+        </nbstartprofiledserver>
+    </target>
+    <target if="profiler.loadgen.path" name="start-loadgen">
+        <loadgenstart path="${profiler.loadgen.path}"/>
     </target>
     <!--
     CLEANUP SECTION

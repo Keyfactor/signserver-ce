@@ -176,15 +176,6 @@
                     <location>../../SignServer-Module-OOXMLSigner/test</location>
                     <encoding>ISO-8859-1</encoding>
                 </source-folder>
-                <build-folder>
-                    <location>../../bin/classes</location>
-                </build-folder>
-                <build-folder>
-                    <location>../../bin/classes</location>
-                </build-folder>
-                <build-folder>
-                    <location>../../bin/classes</location>
-                </build-folder>
                 <build-file>
                     <location>../../dist-server/dummyws-module.jar</location>
                 </build-file>
@@ -273,6 +264,9 @@
                     <location>../../tmp/bin/classes</location>
                 </build-file>
                 <build-file>
+                    <location>../../bin/classes</location>
+                </build-file>
+                <build-file>
                     <location>../../dist-server/dummyws-module.jar</location>
                 </build-file>
                 <build-file>
@@ -358,6 +352,12 @@
                 </build-file>
                 <build-file>
                     <location>../../tmp/bin/classes</location>
+                </build-file>
+                <build-file>
+                    <location>../../bin/classes</location>
+                </build-file>
+                <build-file>
+                    <location>../../bin/classes</location>
                 </build-file>
                 <build-file>
                     <location>../../dist-client/signserver-cli.jar</location>

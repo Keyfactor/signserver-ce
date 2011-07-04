@@ -14,6 +14,7 @@
             -->
     <target name="wsgen-init" depends="init">
         <mkdir dir="${build.generated.sources.dir}/jax-ws/resources/"/>
+        <property name="j2ee.platform.wsgen.classpath" value="${libs.jaxws21.classpath}"/>
         <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen">
             <classpath path="${j2ee.platform.wsgen.classpath}"/>
         </taskdef>

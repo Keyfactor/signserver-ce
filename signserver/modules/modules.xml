@@ -5,7 +5,9 @@
         <fail message="This script is not intented to run on its own"/>
     </target>
 
-    <property name="server.dist.dir" location="../../dist-server"/>
+    <property name="signserver.home" location="../../"/>
+    <property name="server.dist.dir" value="${signserver.home}/dist-server"/>
+    <property name="client.dist.dir" value="${signserver.home}/dist-client"/>
 
     <!--
         ===================
@@ -154,6 +156,62 @@
             </or>
         </condition>
         <antcall target="-do-module-include"/>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Client distributables                                               -->
+    <!-- =================================================================== -->
+
+    <!-- 
+        Create class-path in JAR and copy jar to client-dist and its 
+        dependencies to client-dist/lib.
+        We do this manually to not have to rely on the copylibstask.
+    -->
+    <target name="-do-client-dist" 
+        depends="-do-client-classpath, -do-client-dist-jar, -do-client-dist-lib"/>
+    
+    <!-- Copies the client JAR to client-dist -->
+    <target name="-do-client-dist-jar" depends="-do-client-classpath">
+        <!-- Copy JAR to client-dist -->
+        <mkdir dir="${client.dist.dir}" />
+        <copy todir="${client.dist.dir}" failonerror="true" file="${dist.jar}"/>
+    </target>
+    
+    <!-- Copies all the clients dependencies to client-dist/lib -->
+    <target name="-do-client-dist-lib" depends="-do-client-classpath">
+        <!-- Copy dependencies to client-dist/lib -->
+        <pathconvert pathsep=" " property="copy.libs">
+            <path path="${run.classpath.without.build.classes.dir}"/>
+            <globmapper from="${signserver.home}/*" to="*" />
+        </pathconvert>
+        <mkdir dir="${client.dist.dir}/lib" />
+        <copy todir="${client.dist.dir}/lib" flatten="true" failonerror="true">
+            <fileset includes="${copy.libs}" dir="../../" erroronmissingdir="true"/>
+        </copy>
+    </target>
+    
+    <target name="-do-client-classpath">
+        <!-- Create classpath -->
+        <property location="${build.classes.dir}" name="build.classes.dir.resolved"/>
+        <pathconvert property="run.classpath.without.build.classes.dir">
+            <path path="${run.classpath}"/>
+            <map from="${build.classes.dir.resolved}" to=""/>
+        </pathconvert>
+        <pathconvert pathsep=" " property="jar.classpath">
+            <path path="${run.classpath.without.build.classes.dir}"/>
+            <chainedmapper>
+                <flattenmapper/>
+                <globmapper from="*" to="lib/*"/>
+            </chainedmapper>
+        </pathconvert>
+
+        <!-- Modify manifest -->
+        <jar file="${dist.jar}" update="true">
+            <manifest>
+                <attribute name="Class-Path" value="${jar.classpath}"/>
+            </manifest>
+        </jar>
     </target>
 
 </project>

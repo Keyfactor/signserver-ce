@@ -65,7 +65,7 @@ else
 fi 
 
 # Check that classes exist
-if [ ! -f ${SIGNSRV_HOME}/modules/SignServer-Client-CLI/dist/${MAIN_JAR} ]
+if [ ! -f ${SIGNSRV_HOME}/dist-client/${MAIN_JAR} ]
 then
 	echo "You must build SignServer Client CLI first."
         exit 1
@@ -81,7 +81,7 @@ else
     CP=$CP:"$APPSRV_HOME/client/jbossall-client.jar"
 fi
 
-#CP="$CP":"$SIGNSRV_HOME/modules/SignServer-Client-CLI/dist/${MAIN_JAR}"
+#CP="$CP":"$SIGNSRV_HOME/dist-client/${MAIN_JAR}"
 
 CP="$CP:$SIGNSRV_HOME/lib/log4j.jar:$SIGNSRV_HOME/lib/ext/commons-cli-1.0.jar:$SIGNSRV_HOME/lib/1.6/bcprov-jdk.jar:$SIGNSRV_HOME/lib/cert-cvc.jar:$SIGNSRV_HOME/lib/commons-lang-2.4.jar:$SIGNSRV_HOME/lib/ejbca-util.jar:$SIGNSRV_HOME/lib/1.6/bctsp-jdk.jar:$SIGNSRV_HOME/lib/1.6/bcmail-jdk.jar:$SIGNSRV_HOME/dist-client/timestampclient/timeStampClient.jar:$SIGNSRV_HOME/modules/SignServer-Common/dist/SignServer-Common.jar:$SIGNSRV_HOME/modules/SignServer-Client-SigningAndValidationAPI/dist/SignServer-Client-SigningAndValidationAPI.jar:$SIGNSRV_HOME/modules/SignServer-Client-SignServerWS/dist/SignServer-Client-SignServerWS.jar:$SIGNSRV_HOME/modules/SignServer-ejb-SignServerWS/dist/SignServer-ejb-SignServerWS.jar:$SIGNSRV_HOME/modules/SignServer-Client-ValidationCLI/dist/SignServer-Client-ValidationCLI.jar:$SIGNSRV_HOME/modules/SignServer-Client-CLI/dist/SignServer-Client-CLI.jar"
 

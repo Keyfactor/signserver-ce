@@ -10,6 +10,11 @@
 <project name="SignServer-Client-SigningAndValidationAPI" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Client-SigningAndValidationAPI.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
+    
+    <!-- Copy to client-dist etc. -->
+    <target name="-post-jar" depends="-do-client-dist-lib"/>
+    
     <!--
 
     There exist several targets which are by default empty and which can be 

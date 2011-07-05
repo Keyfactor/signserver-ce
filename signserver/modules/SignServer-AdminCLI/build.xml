@@ -10,6 +10,10 @@
 <project name="SignServer-AdminCLI" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-AdminCLI.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
+
+    <!-- Copy to client-dist etc. -->
+    <target name="-post-jar" depends="-do-client-dist"/>
 
      <!--
         ===================

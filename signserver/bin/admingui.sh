@@ -65,7 +65,7 @@ else
 fi 
 
 # Check that classes exist
-if [ ! -f ${SIGNSRV_HOME}/modules/SignServer-AdminGUI/dist/${MAIN_JAR} ]
+if [ ! -f ${SIGNSRV_HOME}/dist-client/${MAIN_JAR} ]
 then
 	echo "SignServer AdminGUI not available. Build it by running 'ant admingui'."
         exit 1
@@ -81,7 +81,7 @@ else
     CP=$CP:"$APPSRV_HOME/client/jbossall-client.jar"
 fi
 
-CP="$CP":"$SIGNSRV_HOME/modules/SignServer-AdminGUI/dist/${MAIN_JAR}"
+CP="$CP":"$SIGNSRV_HOME/dist-client/${MAIN_JAR}"
 
 
 

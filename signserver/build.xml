@@ -278,14 +278,7 @@ OS version                          = ${os.version}
         description="Build SignServer AdminCLI">
         <ant inheritall="false" target="jar"
             antfile="${admincli.dir}/build.xml"/>
-
-        <mkdir dir="dist-client/lib" />
-        <copy todir="dist-client">
-            <fileset dir="${admincli.dir}/dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
-    	
+	
     	<echo message="Ignore warnings about jar files that can not be copied, they are for other application servers"/>
     	<!-- JBoss:
             For JBoss 4.2.3.GA only jbossall-client.jar is needed.

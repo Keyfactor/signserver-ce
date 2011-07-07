@@ -29,9 +29,8 @@ import org.signserver.common.ArchiveData;
  *
  * Contains about the same methods as the EJB 2 entity beans home interface.
  *
+ * @version $Id$
  */
-
-
 public class ArchiveDataService {
 
 	public transient Logger log = Logger.getLogger(this.getClass());

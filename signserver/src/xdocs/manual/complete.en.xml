@@ -253,6 +253,12 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>Cluster Class Loader</td><td>A Java Class Loader specific for the SignServer project. The class loader simplifies the distribution of new code to a cluster by uploading and fetching it from database. It also enables the use of multiple versions of the same worker code in the same cluster.</td>
                     </tr><tr><td>Module Archive or MAR file</td><td>A 'Module Archive' is a specific packaging format used by the cluster class loader to upload code to a cluster. A MAR files is structured in a specific way with a descriptor containing module and version information.  The MAR file also contains one or more parts depending on were in the system the code will be deployed.<br/>A Module Archive have the postfix .mar and can be generated with a specific ANT-task.</td>
                     </tr>
+                    <tr>
+                        <td>Archiver</td>
+                        <td>
+Implementation handling archiving of a worker's response by storing it in a database or similar.
+                        </td>
+                    </tr>
                 </table>
             </section>
 
@@ -1098,7 +1104,12 @@ The 'resync' command is used after a SignServer had a complete database failure.
 
                         <p><b>Archive Related</b></p>
                         <p>
-This commands can be used for processable workers that have archiving turned on. They are used to find specific archived responses. It's up to the implementation of the worker if it supports archiving or not.
+This commands can be used for processable workers that have archiving turned on. They 
+are used to find specific archived responses. It's up to the implementation of the 
+worker if it supports archiving or not and it is up to the choosen Archiver if it 
+archives the data in way that it can be queried using this commands. For Archivers 
+other than the default "OldDatabaseArchiver" quering might have to be done 
+directly in the database or by some custom application.
                         </p>
                         <p>
 <b>archive findfromarchiveid:</b>
@@ -2206,11 +2217,34 @@ This authorization functionality doesn't work for all use cases. Then it's possi
 
             <section name="Archiving Responses">
                 <p>
-If there is a need to save all generated responses, then set the property "ARCHIVE" to "TRUE" and all generated responses for that signer will be saved to database.
+The archiving feature can be used to save all generated responses.    
                 </p>
                 <p>
-The archived responses can later be extracted from data base using the CLI interface. See the CLI section for more information.
+For the OldDatabaseArchiver the Admin CLI can be used to query the archive. See 
+the CLI section for more information.
                 </p>
+                <p>
+When a requst has been process each Archiver is called one at the time to archive 
+any results.
+                </p>
+                <p>
+<b>ARCHIVE</b>: Previously the archiving was enabled by setting the property to 
+"TRUE". This is the same as to set 
+                </p>
+<source>
+ARCHIVERS=org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver
+</source>
+                <p>
+Default: FALSE.
+                </p>
+                <p>
+<b>ARCHIVERS</b>: Used instead of the old ARCHIVE property to enable archinving 
+by listing the class names of all the Archivers that should be used. Multiple 
+Archivers can be specified separated by a "," (comma character). Exempel: 
+                </p>
+<source>
+ARCHIVERS=org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver,org.signserver.server.archive.otherarchiver.OtherArchiver123
+</source>
             </section>
 
             <section name="Checking validity of signer certificates">
@@ -3753,6 +3787,16 @@ public interface IAuthorizer {
 	void isAuthorized(ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, SignServerException;
 }
                     </pre>
+                </subsection>
+                
+                <subsection name="The Archiving API">
+                    <p>
+Custom ArchiverS can be implemented by implementing the Archiver interface. See 
+org.signserver.server.archive.Archiver.
+                    </p>
+                    <p>
+                        <a href="../images/archivingapi.png"><img src="../images/archivingapi.png" align="middle" border="1" width="603" height="323" alt="Archiving API"/></a>
+                    </p>
                 </subsection>
 
                 <subsection name="Using the Global Configuration Store">

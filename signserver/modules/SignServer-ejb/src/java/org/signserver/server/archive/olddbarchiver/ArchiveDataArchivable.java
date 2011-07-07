@@ -44,6 +44,7 @@ public class ArchiveDataArchivable extends AbstractArchivable {
         this(archiveId, archiveData, type, ARCHIVEDATA);
     }
 
+    @Override
     public byte[] getContentEncoded() {
         return archiveData.getData();
     }

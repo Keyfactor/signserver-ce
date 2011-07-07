@@ -13,7 +13,8 @@
 package org.signserver.server.archive;
 
 /**
- * Abstract Archivable.
+ * Abstract Archivable. Provides default implementation for some boiler plate 
+ * parts of an Archivable.
  * 
  * @author Markus Kilås
  * @version $Id$
@@ -23,15 +24,24 @@ public abstract class AbstractArchivable implements Archivable {
     private String type;
     private String contentType;
 
+    /**
+     * Constructor taking a type and contentType.
+     * @param type The type of Archivable this is.
+     * @param contentType The MIME type of the content or similar.
+     * @see Archivable#TYPE_REQUEST
+     * @see Archivable#TYPE_RESPONSE
+     */
     public AbstractArchivable(final String type, final String contentType) {
         this.type = type;
         this.contentType = contentType;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }

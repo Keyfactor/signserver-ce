@@ -54,6 +54,7 @@ public class Test1Archiver implements Archiver {
     private boolean disabled;
     private boolean doFail;
     
+    @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
         this.listIndex = listIndex;
         this.em = context.getEntityManager();
@@ -71,6 +72,7 @@ public class Test1Archiver implements Archiver {
                 + listIndex + ".DOFAIL", "false"));
     }
 
+    @Override
     public boolean archive(Archivable archivable, RequestContext requestContext)
             throws ArchiveException {
         final boolean archived;

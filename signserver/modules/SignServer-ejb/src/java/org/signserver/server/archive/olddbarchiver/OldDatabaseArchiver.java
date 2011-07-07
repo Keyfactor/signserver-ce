@@ -36,10 +36,12 @@ public class OldDatabaseArchiver implements Archiver {
 
     private ArchiveDataService dataService;
 
+    @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) {
         dataService = new ArchiveDataService(context.getEntityManager());
     }
 
+    @Override
     public boolean archive(Archivable archivable, RequestContext requestContext)
             throws ArchiveException {
         final boolean archived;

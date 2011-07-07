@@ -13,16 +13,31 @@
 package org.signserver.server.archive;
 
 /**
- * An item that can be archived.
+ * An Archivable is an item that can be archived by an Archiver.
  *
  * @author Markus Kilås
  * @version $Id$
  */
 public interface Archivable {
+    
+    /** The item is the request. */
     String TYPE_REQUEST = "REQUEST";
+    
+    /** The item is the response. */
     String TYPE_RESPONSE = "RESPONSE";
 
+    /**
+     * @return The type of this Archivable. TYPE_REQUEST, TYPE_RESPONSE or other.
+     */
     String getType();
+    
+    /**
+     * @return  The type of the content for instance expressed as a MIME type.
+     */
     String getContentType();
+    
+    /**
+     * @return The binary serialization of the content.
+     */
     byte[] getContentEncoded();
 }

@@ -20,21 +20,41 @@ package org.signserver.server.archive;
  */
 public class DefaultArchivable extends AbstractArchivable {
 
+    /** The default content-type. */
     private static final String APPLICATION_OCTET_STREAM 
             = "application/octet-stream";
 
+    /** The data. */
     private byte[] bytes;
 
+    /**
+     * Creates an instance of DefaultArchivable with the given type and 
+     * data.
+     * @param type The type of Archivable.
+     * @param bytes The data to archive.
+     * @see Archivable#TYPE_REQUEST
+     * @see Archivable#TYPE_RESPONSE
+     */
     public DefaultArchivable(final String type, final byte[] bytes) {
         this(type, APPLICATION_OCTET_STREAM, bytes);
     }
 
+    /**
+     * Creates an instance of DefaultArchivable with the given type, 
+     * content-type and data.
+     * @param type The type of Archivable.
+     * @param contentType The content-type of the data.
+     * @param bytes The data to archive.
+     * @see Archivable#TYPE_REQUEST
+     * @see Archivable#TYPE_RESPONSE
+     */
     public DefaultArchivable(final String type, final String contentType,
             final byte[] bytes) {
         super(type, contentType);
         this.bytes = bytes;
     }
 
+    @Override
     public byte[] getContentEncoded() {
         return bytes;
     }

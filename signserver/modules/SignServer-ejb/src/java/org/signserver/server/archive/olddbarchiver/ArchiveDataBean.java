@@ -14,6 +14,7 @@
 
 package org.signserver.server.archive.olddbarchiver;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,9 +32,6 @@ import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.ArchiveDataVO;
-
-
-
 
 /**
  * Entity Bean storing requests and responses of signer beans
@@ -63,7 +61,7 @@ import org.signserver.common.ArchiveDataVO;
 		 @NamedQuery(name="ArchiveDataBean.findByRequestIP",query="SELECT  a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3"),
 		 @NamedQuery(name="ArchiveDataBean.findByRequestIPAndTime",query="SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3 AND a.time>=?4 AND a.time<=?5")
 		})
-public class ArchiveDataBean  {
+public class ArchiveDataBean implements Serializable  {
 
    @Id
    private String uniqueId;

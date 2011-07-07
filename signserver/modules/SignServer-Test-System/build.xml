@@ -10,7 +10,8 @@
 <project name="SignServer-Test-System" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Test-System.</description>
     <import file="nbproject/build-impl.xml"/>
-
+    <import file="../tests.xml"/>
+    
 <!--
         ===================
         Find the application server

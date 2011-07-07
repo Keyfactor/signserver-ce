@@ -341,36 +341,14 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <antcall target="test:signserver:run"/>
     </target>
 
-    <target name="test:signserver:runone" description="run a single JUnit-test specified -Dtest.runone=classname">
-        <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
-        <fail message="'test.runone' not set. Example -Dtest.runone=TestXMLSigner " unless="test.runone" />
-        <echo> Important, in order for all tests to complete must the web service, generic WS and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
-        <delete dir="${test.dir}/reports" />
-        <mkdir dir="${test.dir}/reports/html" />
-        <junit printsummary="yes" haltonfailure="no" showoutput="true">
-            <classpath>
-                <path refid="signserver.test.compile.classpath" />
-                <path location="${test.dir}" />
-            </classpath>
-            <formatter usefile="false" type="brief"/>
-            <formatter type="xml"/>
-            <batchtest fork="yes" todir="${test.dir}/reports">
-                <fileset dir="${test.dir}">
-                    <include name="**/${test.runone}.class" />
-                    <exclude name="**/*Continously*" />
-                    <exclude name="**/TestRunner*" />
-                    <exclude name="**/db/*" />
-                    <exclude name="**/cli/TestMail**" />
-                </fileset>
-            </batchtest>
-        </junit>
+    <!-- Keept only for backwards compatibility -->
+    <target name="test:signserver:runone" depends="test:runone"/>
 
-        <junitreport todir="${test.dir}/reports">
-            <fileset dir="${test.dir}/reports">
-                <include name="TEST-*.xml" />
-            </fileset>
-            <report format="frames" todir="${test.dir}/reports/html" />
-        </junitreport>
+    <target name="test:runone" description="Run a single JUnit-test specified -Dtest.runone=classname">
+        <fail message="'test.runone' not set. Example -Dtest.runone=TestXMLSigner" unless="test.runone" />
+        <ant antfile="${testsystem.dir}/build.xml" target="test:runone" usenativebasedir="true" inheritall="false">
+            <property name="test.runone" value="${test.runone}"/>
+        </ant>
     </target>
 
     <target name="test:signserver:pdfperformance" description="run performance test locally">

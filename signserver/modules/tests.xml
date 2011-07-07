@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Version: $Id$ -->
+<project name="SignServer-tests" default="default" basedir=".">
+
+    <target name="default">
+        <fail message="This script is not intented to run on its own"/>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Targets reusable by test projects.                                  -->
+    <!-- =================================================================== -->
+
+    <target name="-test:runone-init">
+        <property environment="env"/>
+        <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
+        <fail message="'test.runone' not set. Example -Dtest.runone=TestXMLSigner" unless="test.runone" />
+        <property name="test.includes" value="**/${test.runone}.java"/>
+        <property name="javac.includes" value="**/${test.runone}.java"/>
+        <property name="test.dir" location="../../bin/junit"/>
+    </target>
+
+    <target name="test:runone" depends="-test:runone-init,test-single,test:report" 
+        description="Run a single unit test. Set -Dtest.runone=ClassName"/>
+    
+    <target name="test:report" unless="no.report"
+        description="Create HTML test report from previously run tests">
+        <!-- Create report for all tests -->
+        <junitreport todir="${test.dir}/reports">
+            <fileset dir="." includes="**/test/results/TEST-*.xml"/>
+            <report format="frames" todir="${test.dir}/reports/html" />
+        </junitreport>
+        <property name="reportfile" location="${test.dir}/reports/html/index.html"/>
+        <echo message="Test report available at: file://${reportfile}"/>
+    </target>
+
+</project>

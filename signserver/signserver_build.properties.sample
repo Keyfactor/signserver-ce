@@ -282,31 +282,31 @@ admingui.enabled=true
 # Warning: the cluster class loader is still experimental and should
 # be used for development purposes only.
 #
-# Default: true
-useclusterclassloader=true
+# Default: false
+#useclusterclassloader=false
 
 # Set to false if class versions should be disabled (good for
 # development purposes when remote debugging is required).
 #
 # Default: true
-clusterclassloader.useclassversions=true
+#clusterclassloader.useclassversions=true
 
 # Set to true if signing of resource data should be required.
 #
 # Default: false
-clusterclassloader.requiresignature=false
+#clusterclassloader.requiresignature=false
 
 # Setting indicating the path to the truststore file
 # that contains all CA certificates that is trusted
 # for signing of resource data.
 #
 # Only used if clusterclassloader.requiresignedresources is set to true.
-clusterclassloader.pathtotruststore=
+#clusterclassloader.pathtotruststore=
 
 # Password locking the truststore specified above.
 #
 # Only used if clusterclassloader.requiresignedresources is set to true.
-clusterclassloader.truststorepwd=
+#clusterclassloader.truststorepwd=
 
 
 # ------------ PrimeCardHSM ----------------------------------------------------

@@ -1,3 +1,15 @@
+SignServer 3.2.1
+----------------
+TODO: Add release notes here
+
+Notice:
+ - In signserver_build.properties the property "useclusterclassloader" now 
+   defaults to false. To still use the deprecated cluster class loader this 
+   needs to be set explicitly to true.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
+
+
 SignServer 3.2.0
 ----------------
 This is a major release - in total 49 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.

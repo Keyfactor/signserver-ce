@@ -4116,22 +4116,44 @@ Password to unlock the trust store. Only required if signature verification is u
                     There exists some test scripts used to test that the SignServer functions correctly. They are described here.
                 </p>
 
-                <subsection name="Automatic Junit Tests">
+                <subsection name="Automatic JUnit Tests">
                     <p>
 Automatic JUnit tests are in the different projects and system tests in SignServer-Test-System.
                     </p>
                     <p>
-Important: For the SignServer test suite to run successful through all the tests must both the Main WebService and validation service WebService API be enabled in the build configuration.
+Important: For the SignServer test suite to run successful the following 
+properties should be set in signserver_build.properties:
+                    <ul>
+                        <li>signserverws.enabled=true</li>
+                        <li>genericws.enabled=true</li>
+                        <li>validationws.enabled=true</li>
+                        <li>adminws.enabled=true</li>
+                        <li>timestampclient.enabled=true</li>
+                        <li>validationclient.enabled=true</li>
+                        <li>signingandvalidationapi.enabled=true</li>
+                        <li>clientcli.enabled=true</li>
+                        <li>includemodulesinbuild=true</li>
+                        <li>useclusterclassloader=true</li>
+                        <li>clusterclassloader.useclassversions=true</li>
+                    </ul>
                     </p>
                     <p>
 To run the test suite do the following:
                     </p>
                     <ul>
 <li>Set the environment variable SIGNSERVER_HOME</li>
-<li>Make sure the sign server is deployed and JBoss is running</li>
-<li>do 'ant test:run'</li>
-<li>A protocol is generated in the directory 'tmp/bin/junit'</li>
+<li>Make sure SignServer is deployed and the application server is running</li>
+<li>Do 'ant test:run'</li>
+<li>A protocol is generated in the directory 'bin/junit'</li>
                     </ul>
+                    <p>
+A single system test can be run with "ant test:runone -Dtest.runone=ClassName" 
+where ClassName is replaced with the test class to run.
+                    </p>
+                    <p>
+A single test can also be run the same way from any of the other projects that 
+has tests by executing the command from their project directory.
+                    </p>
                 </subsection>
 
                 <subsection name="Testing the TimeStamp Authority">

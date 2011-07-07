@@ -66,6 +66,11 @@ public class RequestContext implements Serializable{
          */
         public static final String TRANSACTION_ID = "TRANSACTION_ID";
 
+        /**
+         * The worker ID (Integer).
+         */
+        public static final String WORKER_ID = "WORKER_ID";
+
         public static final String LOGMAP = "LOGMAP";
 
         /**

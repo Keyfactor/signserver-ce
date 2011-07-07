@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.server.archive;
 
 import java.util.Arrays;
 import java.util.Random;

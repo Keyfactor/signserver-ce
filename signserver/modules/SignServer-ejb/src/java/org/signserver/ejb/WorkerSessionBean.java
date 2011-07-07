@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,6 +58,7 @@ import org.signserver.common.ISignResponse;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.KeyTestResult;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.ProcessableConfig;
@@ -72,17 +74,22 @@ import org.signserver.server.AccounterException;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.IProcessable;
-import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.IWorker;
-import org.signserver.server.log.IWorkerLogger;
-import org.signserver.common.KeyTestResult;
+import org.signserver.server.KeyUsageCounter;
 import org.signserver.server.NotGrantedException;
 import org.signserver.server.SignServerContext;
+import org.signserver.server.WorkerFactory;
+import org.signserver.server.archive.Archivable;
+import org.signserver.server.archive.ArchiveException;
+import org.signserver.server.archive.Archiver;
+import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
+import org.signserver.server.archive.olddbarchiver.ArchiveDataBean;
+import org.signserver.server.archive.olddbarchiver.ArchiveDataService;
+import org.signserver.server.log.ISystemLogger;
+import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
-import org.signserver.server.WorkerFactory;
 import org.signserver.server.log.WorkerLoggerException;
-import org.signserver.server.KeyUsageCounter;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
 
@@ -156,6 +163,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
 
         // Store values for request context and logging
+        requestContext.put(RequestContext.WORKER_ID, Integer.valueOf(workerId));
         requestContext.put(RequestContext.TRANSACTION_ID, transactionID);
         logMap.put(IWorkerLogger.LOG_TIME, String.valueOf(startTime));
         logMap.put(IWorkerLogger.LOG_ID, transactionID);
@@ -351,22 +359,42 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             if (res instanceof IArchivableProcessResponse) {
                 final IArchivableProcessResponse arres =
                         (IArchivableProcessResponse) res;
-                if (awc.getProperties().getProperty(SignServerConstants.ARCHIVE,
-                        "FALSE").equalsIgnoreCase("TRUE")) {
-                    if (arres.getArchiveData() != null) {
-                        final String requestIP = (String)
-                                requestContext.get(RequestContext.REMOTE_IP);
-                        final X509Certificate clientCert = (X509Certificate)
-                                requestContext.get(
-                                    RequestContext.CLIENT_CERTIFICATE);
-                        archiveDataService.create(
-                                ArchiveDataVO.TYPE_RESPONSE,
-                                workerId, arres.getArchiveId(), clientCert,
-                                requestIP, arres.getArchiveData());
-                    } else {
-                        LOG.error("Error archiving response generated of signer "
-                                + workerId
-                                + ", archiving is not supported by signer.");
+                if (arres.getArchiveData() != null) {
+                    // The IArchivableProcessResponse only supports a single
+                    // item to archive. In the future we might get multiple
+                    // Archivables from a worker.
+                    final Archivable archivableResponse
+                            = new ArchiveDataArchivable(arres.getArchiveId(), 
+                                arres.getArchiveData(), Archivable.TYPE_RESPONSE);
+                    final Collection<Archivable> archivables
+                            = Collections.singleton(archivableResponse);
+
+                    // Archive all Archivables using all ArchiverS
+                    final List<Archiver> archivers = WorkerFactory
+                           .getInstance().getArchivers(workerId, awc, em);
+                    if (archivers != null) {
+                        try {
+                            for (Archiver archiver : archivers) {
+                                for (Archivable archivable : archivables) {
+
+                                    final boolean archived = archiver.archive(
+                                            archivable, requestContext);
+
+                                    if (LOG.isDebugEnabled()) {
+                                        final StringBuilder buff = new StringBuilder();
+                                        buff.append("Archiver ");
+                                        buff.append(archiver);
+                                        buff.append(" archived request: ");
+                                        buff.append(archived);
+                                        LOG.debug(buff.toString());
+                                    }
+                                }
+                            }
+                        } catch (ArchiveException ex) {
+                            LOG.error("Archiving failed", ex);
+                            throw new SignServerException(
+                                    "Archiving failed. See server log.");
+                        }
                     }
                 }
             }

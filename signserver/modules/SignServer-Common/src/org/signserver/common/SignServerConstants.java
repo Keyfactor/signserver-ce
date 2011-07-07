@@ -34,6 +34,11 @@ public class SignServerConstants {
 	public static final String ARCHIVE          = "ARCHIVE";
 	
 	/**
+         * Property with list of Archiver implementation classes.
+         */
+        public static String ARCHIVERS = "ARCHIVERS";
+
+	/**
 	 * Constant indicating which module that should be used with
 	 * the cluster class loader.
 	 */

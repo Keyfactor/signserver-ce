@@ -12,11 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Properties;
 import java.util.Random;
 import org.apache.log4j.Logger;
 import org.signserver.cli.CommonAdminInterface;
@@ -69,7 +65,6 @@ public class ArchiveTest extends ModulesTestCase {
 
     /**
      * Test signing with archiving enabled for a new unique document.
-     * 
      * @throws Exception In case of error.
      */
     public void test01archiveNewDocument() throws Exception {
@@ -80,20 +75,49 @@ public class ArchiveTest extends ModulesTestCase {
         LOG.debug("<test01OneArchiverCalled");
     }
     
+    /**
+     * Test signing with archiving disabled.
+     * @throws Exception In case of error.
+     */
+    public void test02archivingDisabled() throws Exception {
+        LOG.debug(">test02archivingDisabled");
+        
+        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
+                "ARCHIVE", "false");
+        getWorkerSession().reloadConfiguration(getSignerIdDummy1());
+        
+        testNoArchive("<document id=\"" + random.nextLong() + "\"/>");
+        
+        LOG.debug("<test02archivingDisabled");
+    }
+    
+    /**
+     * Test signing without archiving properties.
+     * @throws Exception In case of error.
+     */
+    public void test03archivingNotSpecified() throws Exception {
+        LOG.debug(">test03archivingNotSpecified");
+        
+        getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "ARCHIVE");
+        getWorkerSession().reloadConfiguration(getSignerIdDummy1());
+        
+        testNoArchive("<document id=\"" + random.nextLong() + "\"/>");
+        
+        LOG.debug("<test03archivingNotSpecified");
+    }
     
 // This does not work because of bug DSS-408: Can not archive the same document twice    
 //    /**
 //     * Test signing with archiving enabled for the same document twice.
-//     * 
 //     * @throws Exception In case of error.
 //     */
-//    public void test02archiveSameDocumentTwice() throws Exception {
-//        LOG.debug(">test02archiveSameDocumentTwice");
+//    public void test04archiveSameDocumentTwice() throws Exception {
+//        LOG.debug(">test04archiveSameDocumentTwice");
 //        
 //        testArchive("<document/>");
 //        testArchive("<document/>");
 //        
-//        LOG.debug("<test02archiveSameDocumentTwice");
+//        LOG.debug("<test04archiveSameDocumentTwice");
 //    }
     
     private void testArchive(final String document) throws Exception {
@@ -109,11 +133,30 @@ public class ArchiveTest extends ModulesTestCase {
         final ArchiveData expectedArchiveData = response.getArchiveData();
         
         ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
-        assertEquals(expectedArchiveId, archiveData.getArchiveId());
-        assertEquals(getSignerIdDummy1(), archiveData.getSignerId());
+        assertEquals("same id in db", 
+                expectedArchiveId, archiveData.getArchiveId());
+        assertEquals("same signer id in db", 
+                getSignerIdDummy1(), archiveData.getSignerId());
         
-        assertTrue("archived data", Arrays.equals(expectedArchiveData.getData(), 
+        assertTrue("same archived data", 
+                Arrays.equals(expectedArchiveData.getData(), 
                 archiveData.getArchiveData().getData()));
+    }
+    
+    private void testNoArchive(final String document) throws Exception {
+        // Process
+        final GenericSignRequest signRequest =
+                new GenericSignRequest(371, document.getBytes());
+        GenericSignResponse response = (GenericSignResponse) 
+                workerSession.process(getSignerIdDummy1(), signRequest, 
+                new RequestContext());
+        assertNotNull("no response", response);
+        
+        final String expectedArchiveId = response.getArchiveId();
+        
+        ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
+        
+        assertNull("no archivedata in db", archiveData);
     }
     
     /**
@@ -122,12 +165,6 @@ public class ArchiveTest extends ModulesTestCase {
      */
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
-    }
-    
-    private static Properties readArchive(File archiveFile) throws IOException {
-        final Properties result = new Properties();
-        result.load(new FileInputStream(archiveFile));
-        return result;
     }
 
 }

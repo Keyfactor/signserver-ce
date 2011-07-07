@@ -4,9 +4,6 @@
     <target name="default">
         <fail message="This script is not intented to run on its own"/>
     </target>
-    
-    <!-- Import test:runone targets etc. -->
-    <import file="tests.xml"/>
 
     <property name="signserver.home" location="../../"/>
     <property name="server.dist.dir" value="${signserver.home}/dist-server"/>

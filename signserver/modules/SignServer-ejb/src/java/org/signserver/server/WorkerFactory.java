@@ -584,8 +584,9 @@ public  class WorkerFactory {
                 final String list;
 
                 // Support for old way of setting archiving and the new one
-                if (config.getProperty(SignServerConstants.ARCHIVE, "FALSE")
-                        .equalsIgnoreCase("TRUE")) {
+                if (config.getProperty(SignServerConstants.ARCHIVE, 
+                        Boolean.FALSE.toString())
+                        .equalsIgnoreCase(Boolean.TRUE.toString())) {
                     list = OldDatabaseArchiver.class.getName();
                 } else {
                     list = config.getProperty(SignServerConstants.ARCHIVERS);
@@ -597,7 +598,7 @@ public  class WorkerFactory {
                     for (String className : list.split(",")) {
                         className = className.trim();
 
-                        if (!"".equals(className)) {
+                        if (!className.isEmpty()) {
                             try {
                                 final Class<?> c = getClassLoader(em, workerId,
                                         config).loadClass(className);

@@ -48,7 +48,7 @@ import org.signserver.common.ArchiveDataVO;
  * archiveData              : String
  * </pre>
  *
- * @version $Id: ArchiveDataBean.java -1   $
+ * @version $Id$
  *
  */
 @Entity

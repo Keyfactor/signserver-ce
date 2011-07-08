@@ -2228,6 +2228,14 @@ When a requst has been process each Archiver is called one at the time to archiv
 any results.
                 </p>
                 <p>
+<b>ARCHIVERS</b>: Used instead of the old ARCHIVE property to enable archinving 
+by listing the class names of all the Archivers that should be used. Multiple 
+Archivers can be specified separated by a "," (comma character). Exempel: 
+                </p>
+<source>
+ARCHIVERS=org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver,org.signserver.server.archive.otherarchiver.OtherArchiver123
+</source>
+                <p>
 <b>ARCHIVE</b>: Previously the archiving was enabled by setting the property to 
 "TRUE". This is the same as to set 
                 </p>
@@ -2237,14 +2245,6 @@ ARCHIVERS=org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver
                 <p>
 Default: FALSE.
                 </p>
-                <p>
-<b>ARCHIVERS</b>: Used instead of the old ARCHIVE property to enable archinving 
-by listing the class names of all the Archivers that should be used. Multiple 
-Archivers can be specified separated by a "," (comma character). Exempel: 
-                </p>
-<source>
-ARCHIVERS=org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver,org.signserver.server.archive.otherarchiver.OtherArchiver123
-</source>
             </section>
 
             <section name="Checking validity of signer certificates">

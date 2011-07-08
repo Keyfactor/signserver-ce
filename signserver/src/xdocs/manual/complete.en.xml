@@ -544,6 +544,12 @@ section) or by specifying includemodulesinbuild=true to include all modules.
                         <source>
 includemodulesinbuild=true
                         </source>
+                        <p>
+To enable the cluster class loader specify:                            
+                        </p>
+                        <source>
+useclusterclassloader=true
+                        </source>
                     </subsubsection>
 
                 </subsection>

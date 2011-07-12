@@ -152,23 +152,34 @@ j2ee.web-nohttps=true
 #
 # Set to false to disable Main WebService deployment. 
 # If set to false you must also disable the validationclient and signingandvalidationapi modules below.
-signserverws.enabled=true
+#signserverws.enabled=true
 
 # Set to true to enable the Generic WS API
 # Default true
-genericws.enabled=true
+#genericws.enabled=true
 
 # Set to true to enable Validation WebService deployment
 # Default false
-validationws.enabled=false
+#validationws.enabled=false
 
 # Set to true to enable Admin WebService deployment.
 # Default true
-adminws.enabled=true
+#adminws.enabled=true
 
 
 # -------------- Modules Configurations ----------------------------------------
 #
+
+# Set to true to include all the module classes in the main signserver.ear.
+# If you do not enable the cluster class loader this option must be used 
+# in order for signers to be configured.
+#
+# If module.X.enabled=true the module X is compiled.
+# If also module.X.include=true the module X is built in.
+# If includemodulesinbuild=true _all_ modules are compiled and built in.
+#
+# Default: true
+#includemodulesinbuild=true
 
 # Include Log4j configuration in EAR (not needed for JBoss)
 # Default: build=false, include=false
@@ -257,7 +268,7 @@ adminws.enabled=true
 
 # Set to enable build of the AdminGUI
 # Default: true
-admingui.enabled=true
+#admingui.enabled=true
 
 # Set to enable build of the ClientCLI
 # Default: true
@@ -265,17 +276,6 @@ admingui.enabled=true
 
 # -------------- Cluster Class Loader Configuration ---------------------------
 #
-
-# Set to true to include all the module classes in the main signserver.ear.
-# If you do not enable the cluster class loader this option must be used 
-# in order for signers to be configured.
-# If the cluster classloader is used, this option should not be set.
-#
-# If module.X.include=true the module X is built in.
-# If includemodulesinbuild=true _all_ modules are built in.
-#
-# Default: empty (=false)
-#includemodulesinbuild=
 
 # Set to true to enable the use of the cluster class loader
 #
@@ -325,17 +325,17 @@ admingui.enabled=true
 #
 # Setting specifying which remote IPs that may call this healthcheck servlet. Use ';' for between multiple IPs. 
 # Default : 127.0.0.1
-healthcheck.authorizedips=127.0.0.1;::1;0:0:0:0:0:0:0:1
+#healthcheck.authorizedips=127.0.0.1;::1;0:0:0:0:0:0:0:1
 
-# Parameter to set the number of Mega Bytes of memory that must be free before removing 
+# Parameter to set the number of Mega Bytes of memory that must be free before removing     
 # the node out of the cluster.
 # Default : 1
-healthcheck.minimumfreememory=1
+#healthcheck.minimumfreememory=1
 
 # Parameter indicating the string that should be used to do 
 # a minimal check that the database is working. May differ between databases.
 # Default : Select count(*) from signerconfigdata
-healthcheck.checkdbstring=Select count(*) from signerconfigdata
+#healthcheck.checkdbstring=Select count(*) from signerconfigdata
 
 # ------------- Cluster Deployment Configuration -------------------------------
 # Configuration used to centrally deploy the application server in a

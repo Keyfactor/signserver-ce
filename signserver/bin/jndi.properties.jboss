@@ -1,6 +1,8 @@
-## jndi.properties.jboss
 ## $Id$
 ##
+
+## Do not edit "jndi.properties" as it will be overwritten! 
+## Instead edit "jndi.properties.jboss".
 
 # JBoss properites
 java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory

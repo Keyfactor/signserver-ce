@@ -1,5 +1,8 @@
-## jndi.properties.glassfish
 ## $Id$
+##
+
+## Do not edit "jndi.properties" as it will be overwritten! 
+## Instead edit "jndi.properties.glassfish".
 
 ## Glassfish properties
 #java.naming.factory.initial=com.sun.enterprise.naming.SerialInitContextFactory

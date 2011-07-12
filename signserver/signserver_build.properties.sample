@@ -46,7 +46,11 @@
 
 # ------------ Web GUI configuration -------------------------------------------
 
-# Comment this out with a # if the web server should be configured for HTTPS.
+# Configure the web server in JBoss to use HTTPS and the specified bind address 
+# and ports etc.
+# Setting j2ee.web-nohttps to true skips this step.
+# Default: false
+# Comment out or set to false if the web server should be configured.
 j2ee.web-nohttps=true
 
 # When upgrading, the important options are:

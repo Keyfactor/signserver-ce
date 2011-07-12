@@ -43,6 +43,10 @@
 
     <!-- Lastly import the default properties -->
     <property file="src/default_build.properties"/>
+    
+    <condition property="j2ee.web-nohttps.condition">
+        <istrue value="${j2ee.web-nohttps}"/>
+    </condition>
 
     <!-- Import for the right appserver -->
     <import file="bin/${appserver.type}.xml" />  

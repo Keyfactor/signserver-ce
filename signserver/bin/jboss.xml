@@ -90,7 +90,7 @@
 		<chmod file="${jboss.server.home.dir}/${truststore.file}" perm="600"/>		
 	</target>
 			
-	<target name="j2ee:web-configure"  unless="j2ee.web-nohttps"  description="Configure the servlet container">
+	<target name="j2ee:web-configure"  unless="j2ee.web-nohttps.condition"  description="Configure the servlet container">
         <echo message="Using JBoss deploy directory ${jboss.deploy.dir}"/>
 
 		<!-- copy the keystore file to the server -->
@@ -249,7 +249,7 @@
 		   </scp>	
 	</target>
 	
-	<target name="j2ee:web-configure:remotely"  unless="j2ee.web-nohttps" description="Configure the servlet container">
+	<target name="j2ee:web-configure:remotely"  unless="j2ee.web-nohttps.condition" description="Configure the servlet container">
 		<!-- copy the keystore file to the server -->
 		<available file="${httpsserver.keystore}" property="keystore.file.present"/>
 		<fail message="Missing JKS keystore file in '${basedir}/${httpsserver.keystore}'" unless="keystore.file.present"/>

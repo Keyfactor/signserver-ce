@@ -59,7 +59,7 @@
 	<target name="j2ee:deploytruststore">
 	</target>
 			
-	<target name="j2ee:web-configure"  unless="j2ee.web-nohttps"  description="Configure the servlet container">
+	<target name="j2ee:web-configure"  unless="j2ee.web-nohttps.condition"  description="Configure the servlet container">
 	</target>
 	
 	<target name="j2ee:copyPrimeCardJars" description="Deploy the application"  if="primeCard.home"  >
@@ -87,7 +87,7 @@
 	<target name="j2ee:copyPrimeCardJars:remotely" description="Deploy the application"  if="primeCard.home"  >
 	</target>
 	
-	<target name="j2ee:web-configure:remotely"  unless="j2ee.web-nohttps" description="Configure the servlet container">
+	<target name="j2ee:web-configure:remotely"  unless="j2ee.web-nohttps.condition" description="Configure the servlet container">
 	</target>
 
 	<target name="j2ee:assert-run" description="Check that the server is running">

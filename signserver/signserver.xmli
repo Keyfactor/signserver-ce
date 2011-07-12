@@ -79,6 +79,7 @@ build.mode                          = ${build.mode}
 appserver.type                      = ${appserver.type}
 appserver.home                      = ${appserver.home}
 web.contentencoding                 = ${web.contentencoding}
+j2ee.web-nohttps                    = ${j2ee.web-nohttps}
 datasource.jndi-name                = ${datasource.jndi-name}
 datasource.jndi-name-prefix         = ${datasource.jndi-name-prefix}
 database.name                       = ${database.name}

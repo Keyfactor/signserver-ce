@@ -12,20 +12,11 @@
  *************************************************************************/
 package org.signserver.web;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Tests that the right HTTP status codes are returned in different situations.
@@ -33,14 +24,15 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
-public class ServletResponseTest extends ModulesTestCase {
-    
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(ServletResponseTest.class);
+public class GenericProcessServletResponseTest extends WebTestCase {
     
     private static final String KEYDATA = "KEYDATA";
-    private static final String CRLF = "\r\n";
-    
+
+    @Override
+    protected String getServletURL() {
+        return "http://localhost:8080/signserver/process";
+    }
+        
     /**
      * Sets up a dummy signer.
      * @throws Exception in case of error
@@ -191,146 +183,5 @@ public class ServletResponseTest extends ModulesTestCase {
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
     }
-    
-    private static HttpURLConnection openConnection(String queryString) 
-            throws MalformedURLException, IOException {
-        final StringBuilder buff = new StringBuilder();
-        buff.append("http://localhost:8080/signserver/process");
-        if (queryString != null) {
-            buff.append("?");
-            buff.append(queryString);
-        }
-        final URL url = new URL(buff.toString());
-        return (HttpURLConnection) url.openConnection();
-    }
-    
-    private static HttpURLConnection sendGet(final Map<String, String> fields) 
-            throws IOException {
-        final StringBuilder buff = new StringBuilder();
-        for (Entry<String, String> entry : fields.entrySet()) {
-            buff.append(entry.getKey())
-                .append("=")
-                .append(URLEncoder.encode(entry.getValue(), "UTF-8"))
-                .append("&");
-        }   
-        final String body = buff.toString();
-        return openConnection(body);
-    }
-    
-    private static HttpURLConnection sendPostFormUrlencoded(
-            final Map<String, String> fields) throws MalformedURLException, IOException {
-        final StringBuilder buff = new StringBuilder();
-        for (Entry<String, String> entry : fields.entrySet()) {
-            buff.append(entry.getKey())
-                .append("=")
-                .append(URLEncoder.encode(entry.getValue(), "UTF-8"))
-                .append("&");
-        }   
-        final String body = buff.toString();
-            
-        HttpURLConnection con = openConnection(null);
-        con.setRequestMethod("POST");
-        con.setAllowUserInteraction(false);
-        con.setDoOutput(true);
-        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        PrintWriter out = new PrintWriter(con.getOutputStream());
-        out.print(body);
-        out.close();
-        return con;
-    }
-    
-    private static HttpURLConnection sendPostMultipartFormData(
-            final Map<String, String> fields) throws MalformedURLException, IOException {
         
-        final String boundary = 
-                "---------------------------1004178514282965110854332084";
-        
-        HttpURLConnection con = openConnection(null);
-        con.setRequestMethod("POST");
-        con.setAllowUserInteraction(false);
-        con.setDoOutput(true);
-        con.setRequestProperty("Content-Type", 
-                "multipart/form-data; boundary=" + boundary);
-        
-        PrintWriter out = new PrintWriter(con.getOutputStream());
-        for (Entry<String, String> field : fields.entrySet()) {
-            out.print("--");
-            out.print(boundary);
-            out.print(CRLF);
-            out.print("Content-Disposition: form-data; name=\"");
-            out.print(field.getKey());
-            out.print("\"");
-            if (field.getKey().equals("data")) {
-                out.print("; filename=\"data\"");
-                out.print(CRLF);
-                out.print("Content-Type: application/octet-stream");
-            }
-            out.print(CRLF);
-            out.print(CRLF);
-            out.print(field.getValue());
-            out.print(CRLF);
-        }
-        out.print("--");
-        out.print(boundary);
-        out.print("--");
-        out.print(CRLF);
-
-        out.close();
-        return con;
-    }
-    
-    private static void assertStatusReturned(Map<String, String> fields, 
-            int expected) {
-        assertStatusReturned(fields, expected, false);
-    }
-    
-    private static void assertStatusReturned(Map<String, String> fields, 
-            int expected, boolean skipMultipartTest) {
-        // GET
-        try {
-            HttpURLConnection con = sendGet(fields);
-            int response = con.getResponseCode();
-            String message = con.getResponseMessage();
-            LOG.info("Returned " + response + " " + message);
-            assertEquals("status response: " + message, expected, response);
-            
-            con.disconnect();
-        } catch (IOException ex) {
-            LOG.error("IOException", ex);
-            fail(ex.getMessage());
-        }
-        
-        // POST (url-encoded)
-        try {            
-            HttpURLConnection con = sendPostFormUrlencoded(fields);
-            
-            int response = con.getResponseCode();
-            String message = con.getResponseMessage();
-            LOG.info("Returned " + response + " " + message);
-            assertEquals("status response: " + message, expected, response);
-            
-            con.disconnect();
-        } catch (IOException ex) {
-            LOG.error("IOException", ex);
-            fail(ex.getMessage());
-        }
-        
-        // POST (multipart/form-data)
-        if (!skipMultipartTest) {
-            try {
-                HttpURLConnection con = sendPostMultipartFormData(fields);
-
-                int response = con.getResponseCode();
-                String message = con.getResponseMessage();
-                LOG.info("Returned " + response + " " + message);
-                assertEquals("status response: " + message, expected, response);
-
-                con.disconnect();
-            } catch (IOException ex) {
-                LOG.error("IOException", ex);
-                fail(ex.getMessage());
-            }
-        }
-    }
-    
 }

@@ -61,7 +61,7 @@ public class SODProcessServlet extends HttpServlet {
     private static final String CONTENT_TYPE_BINARY = "application/octet-stream";
     private static final String CONTENT_TYPE_TEXT = "text/plain";
 
-    private static final Logger log = Logger.getLogger(SODProcessServlet.class);
+    private static final Logger LOG = Logger.getLogger(SODProcessServlet.class);
 
     private static final String DISPLAYCERT_PROPERTY_NAME = "displayCert";
     private static final String DOWNLOADCERT_PROPERTY_NAME = "downloadCert";
@@ -88,7 +88,7 @@ public class SODProcessServlet extends HttpServlet {
             try {
                 workersession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
             } catch (NamingException e) {
-                log.error(e);
+                LOG.error(e);
             }
         }
 
@@ -110,8 +110,8 @@ public class SODProcessServlet extends HttpServlet {
      */
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        if(log.isTraceEnabled()) {
-            log.trace(">doPost()");
+        if(LOG.isTraceEnabled()) {
+            LOG.trace(">doPost()");
         }
 
         int workerId = 1;
@@ -120,12 +120,12 @@ public class SODProcessServlet extends HttpServlet {
 
         String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
         if(name != null){
-            log.debug("Found a signerName in the request: "+name);
+            LOG.debug("Found a signerName in the request: "+name);
             workerId = getWorkerSession().getWorkerId(name);
         }
         String id = req.getParameter(WORKERID_PROPERTY_NAME);
         if(id != null){
-            log.debug("Found a signerId in the request: "+id);
+            LOG.debug("Found a signerId in the request: "+id);
             workerId = Integer.parseInt(id);
         }
 
@@ -135,14 +135,14 @@ public class SODProcessServlet extends HttpServlet {
         String displayCert = req.getParameter(DISPLAYCERT_PROPERTY_NAME);
         String downloadCert = req.getParameter(DOWNLOADCERT_PROPERTY_NAME);
         if ( (displayCert != null) && (displayCert.length() > 0) ) {
-            log.info("Recieved display cert request for worker " + workerId + ", from ip " + remoteAddr);
+            LOG.info("Recieved display cert request for worker " + workerId + ", from ip " + remoteAddr);
         	displaySignerCertificate(res, workerId);
         } else if ( (downloadCert != null) && (downloadCert.length() > 0) ) {
-        	log.info("Recieved download cert request for worker " + workerId + ", from ip " + remoteAddr);
+        	LOG.info("Recieved download cert request for worker " + workerId + ", from ip " + remoteAddr);
         	sendSignerCertificate(res, workerId);
         } else {
         	// If the command is to process the signing request, do that.
-            log.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
+            LOG.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
 
             boolean base64Encoded = true;
             String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
@@ -151,8 +151,8 @@ public class SODProcessServlet extends HttpServlet {
                     base64Encoded = false;
                 }   
             }
-            if(log.isDebugEnabled()) {
-                log.debug("Base64Encoded="+base64Encoded);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Base64Encoded=" + base64Encoded);
             }
 
             // Collect all [dataGroup1, dataGroup2, ..., dataGroupN]
@@ -168,33 +168,34 @@ public class SODProcessServlet extends HttpServlet {
                             if ( (dataGroupId > -1) && (dataGroupId < 17) ) {
                                 String dataStr = req.getParameter(key);
                                 if ((dataStr != null) && (dataStr.length() > 0)) {
-                                	byte[] data = dataStr.getBytes();
-                                	if (log.isDebugEnabled()) {
-                                    	log.debug("Adding data group "+key);
-                                    	if (log.isTraceEnabled()) {
-                                        	log.trace("with value "+dataStr);                            		
-                                    	}
-                                	}
+                                    byte[] data = dataStr.getBytes();
+                                    if (LOG.isDebugEnabled()) {
+                                    	LOG.debug("Adding data group " + key);
+                                        if (LOG.isTraceEnabled()) {
+                                            LOG.trace("with value " + dataStr);                            		
+                                        }
+                                    }
                                     dataGroups.put(dataGroupId, base64Encoded ? Base64.decode(data) : data);
                                 }                        	
                             } else {
-                            	if (log.isDebugEnabled()) {
-                            		log.debug("Ignoring data group "+dataGroupId);
+                            	if (LOG.isDebugEnabled()) {
+                            		LOG.debug("Ignoring data group "+dataGroupId);
                             	}
                             }
                         } catch(NumberFormatException ex) {
-                            log.warn("Field does not start with \"" + DATAGROUP_PROPERTY_NAME + "\" and ends with a number: \"" + key + "\"");
+                            LOG.warn("Field does not start with \"" + DATAGROUP_PROPERTY_NAME + "\" and ends with a number: \"" + key + "\"");
                         }
                     }
                 }
             }
 
             if (dataGroups.isEmpty()) {
-                throw new ServletException("Missing dataGroup fields in request");
+                sendBadRequest(res, "Missing dataGroup fields in request");
+                return;
             }
 
-            if(log.isDebugEnabled()) {
-                log.debug("Received number of dataGroups: " + dataGroups.size());
+            if(LOG.isDebugEnabled()) {
+                LOG.debug("Received number of dataGroups: " + dataGroups.size());
             }
 
             // LDS versioning
@@ -206,8 +207,8 @@ public class SODProcessServlet extends HttpServlet {
             if (unicodeVersion != null && unicodeVersion.trim().isEmpty()) {
                 unicodeVersion = null;
             }
-            if (log.isDebugEnabled()) {
-                log.debug("Requested versions: LDS=" + ldsVersion
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Requested versions: LDS=" + ldsVersion
                         + ", Unicode=" + unicodeVersion);
             }
 
@@ -228,7 +229,7 @@ public class SODProcessServlet extends HttpServlet {
                 response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, new RequestContext((X509Certificate) clientCertificate, remoteAddr));
                 
                 if (response.getRequestID() != requestId) {
-                    log.error("Response ID " + response.getRequestID() 
+                    LOG.error("Response ID " + response.getRequestID() 
                         + " not matching request ID " + requestId);
                     res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                             "Error in process operation, response id didn't match request id");
@@ -251,12 +252,12 @@ public class SODProcessServlet extends HttpServlet {
             }
         }
 
-        log.debug("<doPost()");
+        LOG.debug("<doPost()");
     } //doPost
 
     private void displaySignerCertificate(final HttpServletResponse response,
             final int workerId) throws IOException {
-        log.debug(">displaySignerCertificate()");
+        LOG.debug(">displaySignerCertificate()");
         Certificate cert = null;
         try {
             cert = getWorkerSession().getSignerCertificate(workerId);
@@ -269,12 +270,12 @@ public class SODProcessServlet extends HttpServlet {
         } else {
             response.getWriter().print(cert);
         }
-        log.debug("<displaySignerCertificate()");
+        LOG.debug("<displaySignerCertificate()");
     }
 
     private void sendSignerCertificate(final HttpServletResponse response,
             final int workerId) throws IOException {
-        log.debug(">sendSignerCertificate()");
+        LOG.debug(">sendSignerCertificate()");
         Certificate cert = null;
         try {
             cert = getWorkerSession().getSignerCertificate(workerId);
@@ -294,11 +295,11 @@ public class SODProcessServlet extends HttpServlet {
                 response.getOutputStream().close();
             }
         } catch (CertificateEncodingException e) {
-            log.error("Error encoding certificate: ", e);
+            LOG.error("Error encoding certificate: ", e);
             response.getWriter().print("Error encoding certificate: "
                     + e.getMessage());
         }
-        log.debug("<sendSignerCertificate()");
+        LOG.debug("<sendSignerCertificate()");
     }
 
     /**
@@ -311,10 +312,16 @@ public class SODProcessServlet extends HttpServlet {
      * @throws ServletException error
      * @throws
      */
+    @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws java.io.IOException, ServletException {
-        log.debug(">doGet()");
+        LOG.debug(">doGet()");
         doPost(req, res);
-        log.debug("<doGet()");
+        LOG.debug("<doGet()");
     } // doGet
 
+    private static void sendBadRequest(HttpServletResponse res, String message) 
+            throws IOException {
+        LOG.info("Bad request: " + message);
+        res.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+    }
 }

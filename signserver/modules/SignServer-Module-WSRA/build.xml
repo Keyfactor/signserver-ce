@@ -16,6 +16,10 @@
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
 
+    <property file="${user.home}/signserver_build.properties"/>
+    <property file="../../signserver_build.properties"/>
+    <property file="../modules-project.properties"/>
+
     <target name="-pre-compile">
         <condition property="genericws.enabled.condition">
             <and>

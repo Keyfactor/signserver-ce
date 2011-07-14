@@ -57,6 +57,7 @@ import org.signserver.server.statistics.Event;
 import org.signserver.validationservice.server.ValidationUtils;
 
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.exceptions.BadPasswordException;
 import com.lowagie.text.pdf.OcspClientBouncyCastle;
 import com.lowagie.text.pdf.PRTokeniser;
 import com.lowagie.text.pdf.PdfDate;
@@ -250,12 +251,13 @@ public class PDFSigner extends BaseSigner {
                         archiveToDisk(sReq, signedbytes, requestContext);
                     }
 		} catch (DocumentException e) {
-			log.error("Error signing PDF: ", e);
-			throw new IllegalRequestException("DocumentException: "
-					+ e.getMessage());
-		} catch (IOException e) {
-			log.error("Error signing PDF: ", e);
-			throw new IllegalRequestException("IOException: " + e.getMessage());
+                    throw new IllegalRequestException("Could not sign document: "
+					+ e.getMessage(), e);
+		} catch (BadPasswordException ex) {
+                    throw new IllegalRequestException(
+                            "Signing of PDF with document restrictions not supported.", ex);
+                } catch (IOException e) {
+                    throw new IllegalRequestException("Could not sign document: " + e.getMessage(), e);
 		}
 
 		return signResponse;
@@ -268,8 +270,8 @@ public class PDFSigner extends BaseSigner {
 		// get signing cert certificate chain and private key
 		Collection<Certificate> certs = this.getSigningCertificateChain();
 		if (certs == null) {
-			throw new IllegalArgumentException(
-					"Null certificate chain. This signer needs a certificate.");
+			throw new SignServerException(
+                            "Null certificate chain. This signer needs a certificate.");
 		}
 		Certificate[] certChain = (Certificate[]) certs
 				.toArray(new Certificate[0]);

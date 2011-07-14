@@ -59,6 +59,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.ProcessableConfig;
@@ -178,9 +179,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         if (worker == null) {
             final IllegalRequestException ex =
-                    new IllegalRequestException("Non-existing workerId: "
-                    + workerId);
-            LOG.error(ex.getMessage(), ex); //TODO: Not really error more like 404 Not Found
+                    new NoSuchWorkerException(String.valueOf(workerId));
 
             logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
             try {
@@ -310,10 +309,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 throw exception;
             } catch (IllegalRequestException ex) {
                 final IllegalRequestException exception =
-                        new IllegalRequestException(
-                        "SignServerException calling signer with id " + workerId
-                        + " : " + ex.getMessage(), ex);
-                LOG.error(exception.getMessage(), exception);
+                        new IllegalRequestException(ex.getMessage());
+                LOG.error("Error calling signer with id " + workerId
+                        + " : " + ex.getMessage(), exception);
                 logMap.put(IWorkerLogger.LOG_EXCEPTION, exception.getMessage());
                 workerLogger.log(logMap);
                 throw exception;

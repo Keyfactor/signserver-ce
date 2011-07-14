@@ -28,7 +28,6 @@ import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +45,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletRequest;
 import org.signserver.common.GenericServletResponse;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -107,9 +107,6 @@ public class GenericProcessServlet extends HttpServlet {
         return workersession;
     }
 
-    public void init(ServletConfig config) {
-    }
-
     /**
      * handles http post
      *
@@ -119,6 +116,7 @@ public class GenericProcessServlet extends HttpServlet {
      * @throws IOException input/output error
      * @throws ServletException error
      */
+    @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         LOG.debug(">doPost()");
@@ -126,6 +124,11 @@ public class GenericProcessServlet extends HttpServlet {
         int workerId = 1;
         byte[] data = null;
         String fileName = null;
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Received a request with length: "
+                    + req.getContentLength());
+        }
 
         if (ServletFileUpload.isMultipartContent(req)) {
             final FileItemFactory factory = new DiskFileItemFactory();
@@ -166,12 +169,12 @@ public class GenericProcessServlet extends HttpServlet {
                 }
 
                 if (fileItem == null) {
-                    throw new ServletException("Missing file content in upload");
+                    sendBadRequest(res, "Missing file content in upload");
+                    return;
+                } else {
+                    fileName = fileItem.getName();
+                    data = fileItem.get();
                 }
-
-                fileName = fileItem.getName();
-                data = fileItem.get();
-
             } catch (FileUploadException ex) {
                 throw new ServletException("Upload failed", ex);
             }
@@ -197,17 +200,21 @@ public class GenericProcessServlet extends HttpServlet {
                 LOG.debug("Request is FORM_URL_ENCODED");
 
                 if(req.getParameter(DATA_PROPERTY_NAME) == null) {
-                    throw new ServletException("Missing field 'data' in request");
+                    sendBadRequest(res, "Missing field 'data' in request");
+                    return;
                 }
                 data = req.getParameter(DATA_PROPERTY_NAME).getBytes();
 
                 String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
-                if(encoding != null && !"".equals(encoding)) {
-                    if(ENCODING_BASE64.equalsIgnoreCase(encoding)) {
+                if (encoding != null && !encoding.isEmpty()) {
+                    if (ENCODING_BASE64.equalsIgnoreCase(encoding)) {
                         LOG.info("Decoding base64 data");
-                        data = org.ejbca.util.Base64.decode(data);
+                        data = Base64.decode(data);
                     } else {
-                        throw new ServletException("Unknown encoding for the 'data' field: " + encoding);
+                        sendBadRequest(res, 
+                                "Unknown encoding for the 'data' field: "
+                                + encoding);
+                        return;
                     }
                 }
             } else {
@@ -231,18 +238,14 @@ public class GenericProcessServlet extends HttpServlet {
             }
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Received a request with length: "
-                    + req.getContentLength());
-        }
-
         // Limit the maximum size of input
         if (data.length > MAX_UPLOAD_SIZE) {
             LOG.error("Content length exceeds 100MB, not processed: " + req.getContentLength());
-            throw new ServletException("Error. Maximum content lenght is 100MB.");
+            res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, 
+                    "Maximum content length is 100 MB");
+        } else {
+            processRequest(req, res, workerId, data, fileName);
         }
-
-        processRequest(req, res, workerId, data, fileName);
 
         LOG.debug("<doPost()");
     } //doPost
@@ -257,6 +260,7 @@ public class GenericProcessServlet extends HttpServlet {
      * @throws ServletException error
      * @throws
      */
+    @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws java.io.IOException, ServletException {
         LOG.debug(">doGet()");
         doPost(req, res);
@@ -264,8 +268,6 @@ public class GenericProcessServlet extends HttpServlet {
     } // doGet
 
     private void processRequest(HttpServletRequest req, HttpServletResponse res, int workerId, byte[] data, String fileName) throws java.io.IOException, ServletException {
-        LOG.debug("Using signerId: " + workerId);
-
         final String remoteAddr = req.getRemoteAddr();
         LOG.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
 
@@ -335,6 +337,23 @@ public class GenericProcessServlet extends HttpServlet {
         try {
             response = (GenericServletResponse) getWorkerSession().process(workerId,
                     new GenericServletRequest(requestId, data, req), context);
+            
+            if (response.getRequestID() != requestId) { // TODO: Is this possible to get at all?
+                LOG.error("Response ID " + response.getRequestID() 
+                        + " not matching request ID " + requestId);
+                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                        "Request and response ID missmatch");
+                return;
+            }
+            byte[] processedBytes = (byte[]) response.getProcessedData();
+
+            res.setContentType(response.getContentType());
+            if(fileName != null) {
+                res.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            }
+            res.setContentLength(processedBytes.length);
+            res.getOutputStream().write(processedBytes);
+            res.getOutputStream().close();
         } catch(AuthorizationRequiredException e) {
             LOG.debug("Sending back HTTP 401");
 
@@ -344,27 +363,15 @@ public class GenericProcessServlet extends HttpServlet {
                     "Basic realm=\"" + httpAuthBasicRealm + "\"");
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                         "Authorization Required");
-            return;
+        } catch (NoSuchWorkerException ex) {
+            res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");
         } catch (IllegalRequestException e) {
-            throw new ServletException(e);
+            res.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         } catch (CryptoTokenOfflineException e) {
-            throw new ServletException(e);
+            res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
         } catch (SignServerException e) {
-            throw new ServletException(e);
+            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
-
-        if (response.getRequestID() != requestId) {
-            throw new ServletException("Error in process operation, response id didn't match request id");
-        }
-        byte[] processedBytes = (byte[]) response.getProcessedData();
-
-        res.setContentType(response.getContentType());
-        if(fileName != null) {
-            res.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-        }
-        res.setContentLength(processedBytes.length);
-        res.getOutputStream().write(processedBytes);
-        res.getOutputStream().close();
     }
 
     /**
@@ -379,5 +386,11 @@ public class GenericProcessServlet extends HttpServlet {
             fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
         }
         return fileName;
+    }
+    
+    private static void sendBadRequest(HttpServletResponse res, String message) 
+            throws IOException {
+        LOG.info("Bad request: " + message);
+        res.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
     }
 }

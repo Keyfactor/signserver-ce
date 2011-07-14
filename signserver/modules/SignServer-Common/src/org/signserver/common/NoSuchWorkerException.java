@@ -13,40 +13,25 @@
 package org.signserver.common;
 
 /**
- * Exception thrown to indicate that the request sent by the client was not 
- * performed successfully.
+ * Exception where the given worker ID or worker name could not be found.
  * 
- * Examples are missing arguments, invalid arguments, syntactically or 
- * semantically incorrect data supplied.
- * 
- * This exception should not be thrown by a worker if there is server-side 
- * exception unlikely to be caused by the client request. If the error is 
- * because of bad configuration or errors not related to the client instead a 
- * SignServerException should be used.
- * 
- * @author Philip Vendil
  * @author Markus Kilås
- * @see SignServerException
  * @version $Id$
  */
-public class IllegalRequestException extends Exception {
+public class NoSuchWorkerException extends IllegalRequestException {
 
-    private static final long serialVersionUID = 1L;
-
-    public IllegalRequestException(String message) {
-        super(message);
+    private String workerIdOrName;
+    
+    public NoSuchWorkerException(String workerIdOrName) {
+        super("No such worker: " + workerIdOrName);
     }
 
-    public IllegalRequestException(String message, Throwable cause) {
-        super(message, cause);
+    public String getWorkerIdOrName() {
+        return workerIdOrName;
     }
 
-    public IllegalRequestException(Throwable cause) {
-        super(cause);
+    public void setWorkerIdOrName(String workerIdOrName) {
+        this.workerIdOrName = workerIdOrName;
     }
-
-    @Override
-    public String getMessage() {
-        return super.getMessage();
-    }
+    
 }

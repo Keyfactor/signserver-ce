@@ -1800,7 +1800,18 @@ try {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Response code:</td><td><b>200</b> (OK) or other in case of failure (i.e. 500 internal server error)</td>
+                                <td>Response code:</td>
+                                <td>
+                                    <ul>
+                                        <li><b>HTTP 200</b> (OK): The request was successfull</li>
+                                        <li><b>HTTP 400</b> (Bad Request): There was an error when procssing the request</li>
+                                        <li><b>HTTP 401</b> (Unauthorized): The worker requires user authentication</li>
+                                        <li><b>HTTP 404</b> (Not Found): The requested workerName or workerId does not represent an existing worker</li>
+                                        <li><b>HTTP 413</b> (Request Entity Too Large): The data field or uploaded file is too large</li> 
+                                        <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when procssing the request</li>
+                                        <li><b>HTTP 503</b> (Service Unavailable): The worker is not active, its crypto token is not activated or similar</li>
+                                    </ul>
+                                </td>
                             </tr>
                             <tr>
                                 <td>Response content-type:</td><td>Depending on the worker</td>
@@ -1863,7 +1874,7 @@ try {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Response code:</td><td><b>200</b> (OK) or other in case of failure (i.e. 500 internal server error)</td>
+                                <td>Response code:</td><td>The same response codes as for the GenericProcessServlet are used.</td>
                             </tr>
                             <tr>
                                 <td>Response content-type:</td><td><b>application/octet-stream</b></td>

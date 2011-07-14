@@ -23,7 +23,7 @@
         <servlet-name>TSADispatcherServlet</servlet-name>
         <servlet-class>org.signserver.web.TSADispatcherServlet</servlet-class>
     </servlet>
-        <servlet>
+    <servlet>
         <servlet-name>WS31Dispatcher</servlet-name>
         <servlet-class>org.signserver.web.WS31Dispatcher</servlet-class>
     </servlet>
@@ -70,4 +70,21 @@
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/errorpages/error404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>400</error-code>
+        <location>/errorpages/error400.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/errorpages/error500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>503</error-code>
+        <location>/errorpages/error503.jsp</location>
+    </error-page>
+    
 </web-app>

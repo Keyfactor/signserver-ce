@@ -174,7 +174,7 @@ public class XMLSigner extends BaseSigner {
         try {
             doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
         } catch (SAXException ex) {
-            throw new SignServerException("Document parsing error", ex);
+            throw new IllegalRequestException("Document parsing error", ex);
         } catch (ParserConfigurationException ex) {
             throw new SignServerException("Document parsing error", ex);
         } catch (IOException ex) {

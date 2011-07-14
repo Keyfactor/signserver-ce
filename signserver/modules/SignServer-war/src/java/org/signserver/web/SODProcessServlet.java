@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.ejbca.util.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
@@ -225,25 +226,30 @@ public class SODProcessServlet extends HttpServlet {
             SODSignResponse response = null;
             try {
                 response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, new RequestContext((X509Certificate) clientCertificate, remoteAddr));
+                
+                if (response.getRequestID() != requestId) {
+                    log.error("Response ID " + response.getRequestID() 
+                        + " not matching request ID " + requestId);
+                    res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                            "Error in process operation, response id didn't match request id");
+                    return;
+                }
+                byte[] processedBytes = (byte[]) response.getProcessedData();
+
+                res.setContentType(CONTENT_TYPE_BINARY);
+                res.setContentLength(processedBytes.length);
+                res.getOutputStream().write(processedBytes);
+                res.getOutputStream().close();        	
+            } catch (NoSuchWorkerException ex) {
+                res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");
             } catch (IllegalRequestException e) {
-                throw new ServletException(e);
+                res.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             } catch (CryptoTokenOfflineException e) {
-                throw new ServletException(e);
+                res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             } catch (SignServerException e) {
-                throw new ServletException(e);
+                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             }
-
-            if (response.getRequestID() != requestId) {
-                throw new ServletException("Error in process operation, response id didn't match request id");
-            }
-            byte[] processedBytes = (byte[]) response.getProcessedData();
-
-            res.setContentType(CONTENT_TYPE_BINARY);
-            res.setContentLength(processedBytes.length);
-            res.getOutputStream().write(processedBytes);
-            res.getOutputStream().close();        	
         }
-
 
         log.debug("<doPost()");
     } //doPost

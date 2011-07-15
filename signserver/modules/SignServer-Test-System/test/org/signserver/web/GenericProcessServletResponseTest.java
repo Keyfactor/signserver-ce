@@ -96,7 +96,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     /**
      * Test that a request for non-existing worker returns status code 404.
      */
-    public void test04HttpStatus404_nonExistingName() {
+    public void test03HttpStatus404_nonExistingName() {
         final String nonExistingWorker = "_NotExistingWorker123_";
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", nonExistingWorker);
@@ -108,7 +108,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     /**
      * Test that a request for non-existing worker returns status code 404.
      */
-    public void test04HttpStatus404_nonExistingId() {
+    public void test03HttpStatus404_nonExistingId() {
         final int nonExistingId = 0;
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerId", String.valueOf(nonExistingId));
@@ -120,7 +120,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     /**
      * Test that when the cryptotoken is offline the status code is 503.
      */
-    public void test05HttpStatus503() {
+    public void test04HttpStatus503() {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("data", "<root/>");
@@ -153,7 +153,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     /**
      * Test that when an exception occurs status code 500 is returned.
      */
-    public void test04HttpStatus500_exception() {
+    public void test05HttpStatus500_exception() {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("data", "<root/>");

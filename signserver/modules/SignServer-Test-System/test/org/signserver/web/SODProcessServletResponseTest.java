@@ -78,32 +78,17 @@ public class SODProcessServletResponseTest extends WebTestCase {
     
     /**
      * Test that a bad request returns status code 400.
-     * This request contains an invalid XML document.
+     * This request contains an unknown LDS version.
      */
-    public void test02HttpStatus400_invalidDocument() {
-        final String nonBase64data = "_this_is_not_base64_";
-        Map<String, String> fields = new HashMap<String, String>();
-        fields.put("workerId", String.valueOf(getSignerIdDummy1()));
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", nonBase64data);
-        fields.put("dataGroup3", "Yy==");
-        fields.put("encoding", "base64");
-        
-        assertStatusReturned(fields, 400, SKIP_MULTIPART);
-    }
-    
-    /**
-     * Test that a bad request returns status code 400.
-     * This request contains an unknown encoding property.
-     */
-    public void test02HttpStatus400_unknownEncoding() {
-        final String unknownEncoding = "_unknownEncoding123_";
+    public void test02HttpStatus400_unknownLdsVersion() {
+        final String unknownLdsVersion = "9999";
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerId", String.valueOf(getSignerIdDummy1()));
         fields.put("dataGroup1", "Yy==");
         fields.put("dataGroup2", "Yy==");
         fields.put("dataGroup3", "Yy==");
-        fields.put("encoding", unknownEncoding);
+        fields.put("encoding", "base64");
+        fields.put("ldsVersion", unknownLdsVersion);
         
         assertStatusReturned(fields, 400, SKIP_MULTIPART);
     }
@@ -111,7 +96,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
     /**
      * Test that a request for non-existing worker returns status code 404.
      */
-    public void test04HttpStatus404_nonExistingName() {
+    public void test03HttpStatus404_nonExistingName() {
         final String nonExistingWorker = "_NotExistingWorker123_";
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", nonExistingWorker);
@@ -120,13 +105,13 @@ public class SODProcessServletResponseTest extends WebTestCase {
         fields.put("dataGroup3", "Yy==");
         fields.put("encoding", "base64");
         
-        assertStatusReturned(fields, 404);
+        assertStatusReturned(fields, 404, SKIP_MULTIPART);
     }
     
     /**
      * Test that a request for non-existing worker returns status code 404.
      */
-    public void test04HttpStatus404_nonExistingId() {
+    public void test03HttpStatus404_nonExistingId() {
         final int nonExistingId = 0;
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerId", String.valueOf(nonExistingId));
@@ -141,7 +126,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
     /**
      * Test that when the cryptotoken is offline the status code is 503.
      */
-    public void test05HttpStatus503() {
+    public void test04HttpStatus503() {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("dataGroup1", "Yy==");
@@ -177,7 +162,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
     /**
      * Test that when an exception occurs status code 500 is returned.
      */
-    public void test04HttpStatus500_exception() {
+    public void test05HttpStatus500_exception() {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("dataGroup1", "Yy==");

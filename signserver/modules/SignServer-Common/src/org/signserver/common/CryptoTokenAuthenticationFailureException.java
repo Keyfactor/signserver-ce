@@ -10,8 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
- 
 package org.signserver.common;
 
 /**
@@ -19,20 +17,18 @@ package org.signserver.common;
  * to activate a signing token. 
  * 
  * @author Philip Vendil
- * $id$
+ * @version $Id$
  */
-
 public class CryptoTokenAuthenticationFailureException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public CryptoTokenAuthenticationFailureException(String message) {
-		super(message);
-	}
-	
-	public String getMessage() {
-		return super.getMessage();
-	}
+    public CryptoTokenAuthenticationFailureException(String message) {
+        super(message);
+    }
 
-
+    @Override
+    public String getMessage() {
+        return super.getMessage();
+    }
 }

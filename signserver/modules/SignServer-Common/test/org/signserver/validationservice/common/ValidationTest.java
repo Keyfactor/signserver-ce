@@ -29,7 +29,7 @@ import org.signserver.validationservice.server.ICertificateManager;
  * serialized data on GlassFish could not be parsed by the test code.
  *
  * @author Markus Kilås
- * @version $id$
+ * @version $Id$
  */
 public class ValidationTest extends TestCase {
     

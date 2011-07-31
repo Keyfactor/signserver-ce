@@ -10,31 +10,44 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server.cryptotokens;
 
 import java.security.KeyPair;
 import java.security.Security;
+import javax.crypto.Cipher;
+import junit.framework.TestCase;
 
 import javax.crypto.SecretKey;
-
-import junit.framework.TestCase;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ejbca.util.Base64;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.server.cryptotokens.ExtendedHardCodedCryptoToken;
  
-
+/**
+ * Tests for the ExtendedHardCodedCryptoToken.
+ * 
+ * @version $Id$
+ */
 public class ExtendedHardCodedCryptoTokenTest extends TestCase {
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		// Install BC Provider
-        Security.addProvider(new BouncyCastleProvider()); 
-	}
-
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        // Install BC Provider
+        Security.addProvider(new BouncyCastleProvider());
+    }
+    
+    /**
+     * Fails if for instance running Oracle JRE and the JCE strong encryption 
+     * policy has not been installed. In that case the maximum key length for 
+     * DES is as low as 64 or at least not Integer.MAX_VALUE.
+     * @throws Exception in case of error
+     */
+    public void testStrongCryptoAvailable() throws Exception {
+        assertEquals("JCE crypto policy was not installed as the key length was limited", 
+                Integer.MAX_VALUE, Cipher.getMaxAllowedKeyLength("DES"));
+    }
+        
 	/*
 	 * Test method for 'org.signserver.server.HardCodedSignToken.getPrivateKey(int)'
 	 * 

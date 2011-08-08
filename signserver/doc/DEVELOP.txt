@@ -1,9 +1,9 @@
 DEVELOP
 ------
 
-After checking out the project there will be errors because some source files
-(i.e. Web Services stubs) has not been generated yet. Those errors will
-disappear after configuring and building SignServer.
+After checking out the project there will be errors in the IDE because some 
+source files (i.e. Web Services stubs) has not been generated yet. Those errors 
+will disappear after configuring and building SignServer.
 
 
 Eclipse
@@ -19,6 +19,7 @@ get rid of all build errors in Eclipse you need to build classes and tests:
  ant test:signserver:compile
 Then do a Refresh in the IDE.
 
+
 NetBeans IDE
 ------------
 There are multiple NetBeans IDE projects for SignServer. The project 
@@ -26,3 +27,29 @@ modules/SignServer-Project is a NetBeans IDE FreeForm project that uses the
 ANT-scripts for building and includes the sources from most modules. In addition 
 each module has its own project under the folder modules/ that can be opened 
 with NetBeans IDE.
+
+
+Writing Documentation
+---------------------
+The SignServer documentation is built using Apache Anakia/Velocity from XML 
+source files under modules/SignServer-Doc/src/xdocs/ when running "ant doc".
+
+The file manual/complete.en.xml contains the source for all chapters in the 
+manual.
+
+
+Automated Tests
+---------------
+SignServer uses JUnit for automated testing. Test cases exists in multiple 
+projects. Which tests are included in the default suite is defined by the 
+property "tests.modules.includes" in modules/modules-project.properties.
+
+This is roughly how tests are currently organized:
+* Each new module can include its own Unit tests.
+* Some components (i.e. web services) uses their own test projects 
+  (SignServer-Test-*WS) to not have to include client-side code in their 
+  projects.
+* Legacy tests and system tests are placed in SignServer-Test-System.
+
+See also the "Testing" chapter of the manual for the prerequisites and 
+instructions for how to run the tests. 

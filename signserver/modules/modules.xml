@@ -37,6 +37,9 @@
     <condition property="clusterclassloader.conditionenabled">
         <istrue value="${useclusterclassloader}"/>
     </condition>
+    <condition property="webdoc.conditionenabled">
+        <istrue value="${webdoc.enabled}"/>
+    </condition>
 
     <!-- Enable clients -->
     <condition property="timestampclient.conditionenabled">

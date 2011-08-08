@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SignServer" href="http://signserver.sourceforge.net/">
+
+    <title>SignServer</title>
+
+    <body>
+       <menusection name="Home" index="0"         href="/index.html">
+            <menu name="General Information">
+                <item name="Home"                  href="/index.html"/>
+                <item name="Features"              href="/features.html"/>                
+                <item name="Architecture"          href="/architecture.html"/>                
+                <item name="License"               href="/license.html"/>
+                <item name="Contact &amp; Support" href="/contact.html"/>
+                <item name="Credits"               href="/credits.html"/>
+                <item name="Reference installations" href="/installations.html"/>
+                <item name="Required software"  href="/required.html"/>
+                <item name="SourceForge project" href="http://sourceforge.net/projects/signserver/"/>
+            </menu>
+
+            <menu name="Documentation">
+                <item name="Manual"	 href="/manual.html"/>
+                <item name="Installation Guide"	 href="/manual/installguide.html"/>
+                <item name="Wiki" href="http://sourceforge.net/apps/mediawiki/signserver/"/>
+                <item name="How To"		  href="/manual/howto.html"/>
+                <item name="Changelog"    href="http://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel"/>
+            </menu>
+
+            <menu name="Download">
+                <item name="Latest releases" href="/download.html"/>
+            </menu>
+
+            <menu name="Contributing">
+                <item name="Contributors"          href="/contributors.html"/>
+                <item name="Bug Database"          href="http://jira.primekey.se/"/>
+                <item name="Repositories"      href="/repositories.html"/>
+            </menu>
+
+            <menu name="Continous integration">
+                <item name="Hudson" href="/hudson.html"/>
+                <item name="FishEye" href="/fisheye.html"/>
+            </menu>
+
+        </menusection>
+
+    </body>
+</project>

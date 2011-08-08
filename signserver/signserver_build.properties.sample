@@ -321,6 +321,14 @@ j2ee.web-nohttps=true
 #primeCard.home=${env.PRIMECARD_HOME}
 
 
+# -------------- Documentation Configuration -----------------------------------
+
+# Deploy the documentation.
+#
+# Default: true
+#webdoc.enabled=true
+
+
 # -------------- Status And Health Check Configuration -------------------------
 #
 # Parameters configuring how health check and status should be

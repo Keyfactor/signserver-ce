@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+  <properties>
+    <title>Contributors</title>
+  </properties>
+
+  <body>
+
+<section name="Contributors">
+<p>
+ Here's a list of contributors of the SignServer project.
+</p>
+<ul>
+<li>Henrik Andréasson, kinneh(at)users.sourceforge.net, Project initiator.</li>
+<li>Philip Vendil, herrvendil(at)users.sourceforge.net, Main developer of the framework.</li>
+<li>Lars Silvèn, lars(at)primekey.se, SSL-RMI parts and the possibility to have custom web front end.</li>
+<li>Tomas Gustavsson, tomas(at)primekey.se, Core developer, PDF Signer, PKCS11 sign token, Improved the TSA client with more arguments, MRTD SOD signer, etc etc</li>
+<li>Markus Kil&#229;s, markus(at)primekey.se, Core developer, XML Signer/validator, MRTD SOD signer, etc etc.</li>
+<li>Ezizmuhammed Muhamedkuliyev, rayback2(at)gmail.com, OOXML, ODF Signer/validator, PDF signer, CRL/OCSP validators.</li>
+<li>Christophe Sahut, christophe.sahut(at)sgs.com, Install howto for SignServer 3.1 on RHEL systems. See doc/howtos.</li>
+<li>Bruno Bonfils, French install howto for SignServer 3.2. See <a href="http://wiki.opencsi.com/public/bin/view/SignServer/Installation">wiki.opencsi.com</a>.</li>
+</ul>
+</section>
+</body>
+</document>

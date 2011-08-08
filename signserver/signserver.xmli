@@ -91,6 +91,7 @@ signserverws.enabled                = ${signserverws.enabled}
 genericws.enabled                   = ${genericws.enabled}
 validationws.enabled                = ${validationws.enabled}
 adminws.enabled                     = ${adminws.enabled}
+webdoc.enabled                      = ${webdoc.enabled}
 timestampclient.enabled             = ${timestampclient.enabled}
 validationclient.enabled            = ${validationclient.enabled}
 pdfperformancetest.enabled          = ${pdfperformancetest.enabled}
@@ -216,10 +217,17 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     </target>
 
 
+    <!-- Local documentation -->
+    <target name="doc.war" if="webdoc.conditionenabled">
+        <ant antfile="${webdoc.dir}/build.xml" target="dist" inheritall="false"/>
+        <copy todir="${server.dist.dir}" file="${webdoc.war}" failonerror="true"/>
+        <replace file="${eardd.src}/META-INF/application.xml" token="!--@SignServer-war-Doc.war@-->" value="module>&lt;web>&lt;web-uri>SignServer-war-Doc.war&lt;/web-uri>&lt;context-root>/signserver/doc&lt;/context-root>&lt;/web>&lt;/module>"/>
+    </target>
+
     <!-- =================================================================== -->
     <!-- Build signserver.ear                                                -->
     <!-- =================================================================== -->
-    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, modules">
+    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, doc.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, modules">
         <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">
             <fileset dir="${eardd.src}">
                 <exclude name="META-INF/application.xml" />

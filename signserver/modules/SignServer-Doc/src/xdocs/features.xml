@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>Features</title>
+  </properties>
+
+<body>
+  <section name="Features">
+    <p>Built on the JEE specification.</p>
+<ul>
+<li>Flexible, component based architecture.</li>
+<li>Using standard, high performance RDBMS for storage.</li>
+<li>Multiple Signers and Validators, serve all your digital signature needs within one instance of SignServer.</li>
+<li>Get your document signer certificate, such as PDF signing certificates, signed by public recognized CAs.</li>
+<li>Supports RSA key algorithm up to 8192 bits.</li>
+<li>Supports ECDSA key algorithm with named curves.</li>
+<li>Support multiple hash algorithms for signatures, MD5, SHA-1, SHA-2.</li>
+<li>Compliant with NSA SUITE B algorithms and certificates.</li>
+<li>Built in RFC3161 compliant Time Stamp Authority (TSA) module.</li>
+<li>Built in modules for signing PDF, XML, ODF, OOXML, CMS and MRTD.</li>
+<li>Generic CMS (PKCS#7) signer signs any document or file.</li>
+<li>Electronic ePassport document signing (MRTD) compliant with ICAO requirements.</li>
+<li>Simple plug-in API for creating new document signers.</li>
+<li>Validators for signed documents, built in support for XML validation, or make your own validator plug-in</li> 
+<li>Simple installation and configuration.</li>
+<li>Administration GUI desktop application for management.</li>
+<li>Command line administration for easy scripting scripts.</li>
+<li>Java API, HTTP, Web service (WS) and command line (CLI) interfaces.</li>
+<li>Support for HSMs. Built in support for nCipher, PrimeCardHSM, SafeNet ProtectServer, SafeNet Luna, Utimaco CryptoServer, AEP Keyper, ARX CoSign and other HSMs with a good PKCS#11 library.</li>
+<li>Support for software based keys for lower security requirements or development.</li>
+<li>Configurable access control using http basic authentication, https client certificates, IP address restrictions etc.</li>
+<li>Optional archival of signed documents.</li>
+<li>Automatic signer certificate renewal when used together with <a href="http://ejbca.org/">EJBCA</a>.</li>
+<li>Audit and transaction logging.</li>
+<li>Possible to integrate into large java applications for optimal integration into business process.</li>
+<li>Deploys easily in a clustered, high availability environment.</li>
+<li>Health check service to support efficient clustering and monitoring.</li>
+<li>Supports multiple application servers: JBoss and Glassfish</li>
+<li>Supports multiple databases: Hypersoniq, MySQL, PostgreSQL, Oracle, etc.</li>
+</ul>    
+
+  </section>
+
+</body>
+</document>
+

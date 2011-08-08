@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+
+  <properties>
+    <title>Download</title>
+  </properties>
+
+<body>
+  <section name="Latest Release">
+    <note>
+    If you have problems with any of the download links below, try to download 
+    through the SourceForge
+    <a href="http://sourceforge.net/projects/signserver/files/">download page</a>.
+    <br/><br/>
+    SignServer 3.2.0 is now available for <a href="https://sourceforge.net/projects/signserver/files/signserver/3.2/signserver-3.2.0.zip/download">download</a>.
+    <br/>
+    SHA1 checksum: 1c3996066fdf76229e28b74dee3fd6fcc18e888c
+    </note>
+  </section>
+  <section name="Main source packages">
+    <p>
+    Download any of the source packages from <a href="http://sourceforge.net/projects/signserver/files/">SourceForge</a>.
+    </p>
+  </section>
+
+  <section name="Live CD">
+    <p>
+        Get up and running quicker by downloading and running our 
+        <a href="http://download.primekey.se/public/livecd.iso">LiveCD</a>. It
+        contains a sample installation of SignServer and also EJBCA.
+    </p>
+    <p>
+        Requires atleast 1512 MB of memory to run. Please see
+        <a href="http://wiki.ejbca.org/livecd">wiki.ejbca.org/livecd</a>
+        for all information.
+    </p>
+  </section>
+</body>
+</document>
+

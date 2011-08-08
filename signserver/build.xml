@@ -115,10 +115,6 @@ OS version                          = ${os.version}
         <delete dir="${wsraadminClientBuild}" />
         <delete dir="${timeStampClientBuild}" />
 
-        <!-- XDocs -->
-        <delete file="velocity.log" />
-        <delete dir="${docs.dest}"/>
-
         <!-- Clean all modules -->
         <subant target="clean">
             <fileset dir="modules" includes="SignServer-*/build.xml"/>
@@ -329,7 +325,16 @@ OS version                          = ${os.version}
 
     <target name="pkgdist" depends="signserver, signserver-cli, signserver-pkgdist"/>
 
-    		
+    <!-- =================================================================== -->
+    <!-- Documentation part                                                  -->
+    <!-- =================================================================== -->
+    <target name="doc"
+        description="Build SignServer web site and docs">
+        <ant antfile="modules/SignServer-Doc/build.xml" target="build"
+            inheritall="false"/>
+    </target>
+    
+    
     <!-- =================================================================== -->
     <!-- Build Javadoc part                                                  -->
     <!-- =================================================================== -->
@@ -358,7 +363,7 @@ OS version                          = ${os.version}
         </javadoc>
         <echo message="Local documentation is now available in file://${apidoc}/index.html"/>
     </target>
-
+    
 
     <!-- =================================================================== -->
     <!-- Test part                                                           -->
@@ -378,187 +383,6 @@ OS version                          = ${os.version}
         <antcall target="test:signserver:performance"/>
     </target>
         
-
-    <!-- =================================================================== -->
-    <!-- Documentation part                                                  -->
-    <!-- =================================================================== -->
-
-    <target name="prepare">
-        <path id="anakia.classpath">
-            <fileset dir="${velocity.dir}">
-                <include name="*.jar"/>
-            </fileset>
-        </path>
-        <available classname="org.apache.velocity.anakia.AnakiaTask"
-                   property="AnakiaTask.present">
-            <classpath refid="anakia.classpath"/>
-        </available>
-        <path id="xmltask.classpath">
-            <fileset dir="lib/ext/">
-                <include name="xmltask.jar"/>
-            </fileset>
-        </path>
-        <available classname="com.oopsconsultancy.xmltask.ant.XmlTask"
-                   property="XmlTask.present">
-            <classpath refid="xmltask.classpath"/>
-        </available>
-    </target>
-
-    <target depends="prepare" name="prepare-error" unless="AnakiaTask.present">
-        <echo>
-            AnakiaTask is not present! Please check to make sure that
-            velocity.jar is in your classpath.
-        </echo>
-        <mkdir dir="${docs.dest}"/>
-    </target>
-
-    <target name="doc:splitmanual" depends="prepare-error">
-
-        <mkdir dir="${docs.singlepages}/manual"/>
-        <copy todir="${docs.singlepages}/stylesheets">
-            <fileset dir="${templ.path}"/>
-        </copy>
-
-        <!-- Split full.xml into xml-files for each chapter -->
-        <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
-            <classpath refid="xmltask.classpath"/>
-        </taskdef>
-
-        <!-- call subtargets using the full manual as the driver -->
-        <xmltask source="${docs.fullmanual}">
-          <call path="/document/body/chapter" target="doc:splitmanual:singlepage" buffer="chapter_buffer" inheritAll="true">
-            <param name="1" path="@name"/>
-            <param name="2" path="@shortname"/>
-            <param name="3" value="${os.name}"/>
-            <param name="4" path="node()"/>
-          </call>
-        </xmltask>
-    </target>
-
-    <target name="doc:splitmanual:singlepage">
-        <xmltask dest="${docs.singlepages}/manual/${2}.xml">
-          <insert path="/">
-            <![CDATA[
-              <document>
-                <properties>
-                    <title/>
-                    <singlepage value="true"/>
-                </properties>
-                <body/>
-              </document>
-            ]]>
-          </insert>
-          <insert path="/document/properties/title">${1}</insert>
-          <insert path="/document/body" buffer="chapter_buffer" position="under"/>
-        </xmltask>
-    </target>
-
-    <target name="doc" if="AnakiaTask.present" depends="prepare-error, doc:splitmanual" description="Build SignServer web site and docs">
-        <taskdef name="anakia" classname="org.apache.velocity.anakia.AnakiaTask">
-            <classpath refid="anakia.classpath"/>
-        </taskdef>
-
-        <!-- Use FOP for creating PDF-files -->
-        <!--<property name="fop.home" value="lib/ext/fop/"/>
-        <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop">
-	  <classpath>
-	    <fileset dir="${fop.home}/lib">
-	      <include name="*.jar"/>
-	    </fileset>
-	    <fileset dir="${fop.home}/build">
-	      <include name="fop.jar"/>
-	      <include name="fop-hyph.jar" />
-	    </fileset>
-	  </classpath>
-	</taskdef>-->
-
-        <!--<echo message="docs.src: ${docs.src}"/>
-        <echo message="docs.dest: ${docs.dest}"/>
-        <echo message="project.file: ${project.file}"/>
-        <echo message="include.xml: ${include.xml}"/>
-        <echo message="templ.path: ${templ.path}"/>
-        <echo message="velocity.props: ${velocity.props}"/>-->
-
-        <anakia basedir="${docs.src}" destdir="${docs.dest}"
-             extension=".html" style="./site.vsl"
-             projectFile="${project.file}"
-             excludes="**/stylesheets/**"
-             includes="${include.xml}"
-             lastModifiedCheck="true"
-             templatePath="${templ.path}"
-             velocityPropertiesFile="${velocity.props}">
-        </anakia>
-
-        <!-- Also for manual singlepages -->
-        <anakia basedir="${docs.singlepages}" destdir="${docs.dest}"
-             extension=".html" style="./site.vsl"
-             projectFile="${project.file}"
-             excludes="**/stylesheets/**"
-             includes="${include.xml}"
-             lastModifiedCheck="true"
-             templatePath="${templ.path}"
-             velocityPropertiesFile="${velocity.props}">
-        </anakia>
-        
-        <copy todir="${docs.dest}">
-        	<fileset dir="${docs.src}" includes="**/*.css,**/*.png,**/*.jpg,**/*.gif"/>        	
-        	<fileset dir="${docs.src}" includes="docs/**/*"/>
-        </copy>
-    	<echo message=""/>
-    	<echo message="Local documentation is now available in file://${docs.dest}/index.html"/>
-    </target>
-    
-    <target name="site:test:publish" depends="doc" description="Publish the website to the sandbox subdirectory.">
-    	<property name="publish.dir" value="/home/project-web/signserver/htdocs/sandbox"/>
-        <property name="publish.host" value="shell.sourceforge.net"/>
-
-        <echo message="Publish to ${publish.host}:${publish.dir}"/>
-        <input message="Please enter username: " addproperty="username"/>
-        <input message="Please enter password: " addproperty="password"/>
-    	<tar destfile="htdocs.tgz" compression="gzip">
-    		<tarfileset dir="${docs.dest}" mode="664" dirmode="775" username="${username}" group="ejbca"/>
-    	</tar>
-    	<scp trust="true" file="htdocs.tgz" todir="${username}:${password}@${publish.host}:"/>
-    	<sshexec trust="true" host="${publish.host}"
-				username="${username}" password="${password}"
-				command="mkdir ${publish.dir} ; tar -xzpf htdocs.tgz -C ${publish.dir};"/>
-		<!-- I'm setting the permissions this way as there seems to be a problem with dirmode -->
-		<echo message="Setting directory permissions"/>
-    	<sshexec trust="true" host="${publish.host}"
-				username="${username}" password="${password}"
-				command="find ${publish.dir} -type d -exec chmod 775 {} \;"/> 
-		<echo message="Setting file permissions"/>
-    	<sshexec trust="true" host="${publish.host}"
-				username="${username}" password="${password}"
-				command="find ${publish.dir} -type f -exec chmod 664 {} \;"/>
-    	<delete file="htdocs.tgz"/>
-    </target>
-    <target name="site:publish" depends="doc" description="Publish the website to the sandbox subdirectory.">
-        <property name="publish.dir" value="/home/project-web/signserver/htdocs"/>
-        <property name="publish.host" value="shell.sourceforge.net"/>
-
-        <echo message="Publish to ${publish.host}:${publish.dir}"/>
-        <input message="Please enter username: " addproperty="username"/>
-        <input message="Please enter password: " addproperty="password"/>
-    	<tar destfile="htdocs.tgz" compression="gzip">
-    		<tarfileset dir="${docs.dest}" mode="664" dirmode="775" username="${username}" group="ejbca"/>
-    	</tar>
-    	<scp trust="true" file="htdocs.tgz" todir="${username}:${password}@${publish.host}:"/>
-    	<sshexec trust="true" host="${publish.host}"
-				username="${username}" password="${password}"
-				command="mkdir ${publish.dir} ; tar -xzpf htdocs.tgz -C ${publish.dir};"/>
-		<!-- I'm setting the permissions this way as there seems to be a problem with dirmode -->
-		<echo message="Setting directory permissions"/>
-    	<sshexec trust="true" host="${publish.host}"
-				username="${username}" password="${password}"
-				command="find ${publish.dir} -type d -exec chmod 775 {} \;"/> 
-		<echo message="Setting file permissions"/>
-    	<sshexec trust="true" host="${publish.host}"
-				username="${username}" password="${password}"
-				command="find ${publish.dir} -type f -exec chmod 664 {} \;"/>
-    	<delete file="htdocs.tgz"/>
-    </target>
-
 
     <!-- =================================================================== -->
     <!-- Release part                                                        -->

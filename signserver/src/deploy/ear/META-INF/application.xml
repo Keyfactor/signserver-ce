@@ -31,5 +31,7 @@
         </web>
     </module>
 
+    <!--@SignServer-war-Doc.war@-->
+
 </application>
 

@@ -70,11 +70,6 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     /** Worker7904: SHA256WithECDSA, DODATAGROUPHASHING=true */
     private static final int WORKER5 = 7904;
 
-    /** Worker7904: SHA256WithECDSA, DODATAGROUPHASHING=true */
-    // Does not work currently, SignServer 3.2.0, 2011-06-28, du to that the response via remote EJB contains a "Certificate" and Java does not support 
-    // explicit parameters in ECC Certificates, so serialization does not work.
-    //private static final int WORKER5 = 7904;
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -234,7 +229,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertTrue(thrown);
     }
 
-        public void test04bMinRemainingCertVValidityWithSoftKeystore()
+    public void test04bMinRemainingCertVValidityWithSoftKeystore()
                 throws Exception {
 
     	// A signing operation that will work
@@ -471,7 +466,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER2});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER3});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER4});
-        //TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER5});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER5});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1B});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1C});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1D});
@@ -479,7 +474,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER2);
         workerSession.reloadConfiguration(WORKER3);
         workerSession.reloadConfiguration(WORKER4);
-        //workerSession.reloadConfiguration(WORKER5);
+        workerSession.reloadConfiguration(WORKER5);
         workerSession.reloadConfiguration(WORKER1B);
         workerSession.reloadConfiguration(WORKER1C);
         workerSession.reloadConfiguration(WORKER1D);

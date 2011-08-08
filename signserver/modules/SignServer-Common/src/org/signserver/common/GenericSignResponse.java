@@ -59,7 +59,8 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
                 this.requestID = requestID;
                 this.processedData = processedData;
                 this.signerCertificate = signerCertificate;
-                this.signerCertificateBytes = signerCertificate.getEncoded();
+                this.signerCertificateBytes = signerCertificate == null ? null 
+                        : signerCertificate.getEncoded();
                 this.archiveData = archiveData;
                 this.archiveId = archiveId;
             } catch (CertificateEncodingException ex) {
@@ -79,7 +80,7 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
 	 * @see org.signserver.common.ProcessResponse#getCertificate()
 	 */
 	public Certificate getSignerCertificate() {
-            if (signerCertificate == null) {
+            if (signerCertificate == null && signerCertificateBytes != null) {
                 try {
                     signerCertificate = CertTools.getCertfromByteArray(
                             signerCertificateBytes);

@@ -19,8 +19,8 @@
             <view>
                 <items>
                     <source-folder style="tree">
-                        <label>Files</label>
-                        <location>.</location>
+                        <label>Sources</label>
+                        <location>src/xdocs</location>
                     </source-folder>
                 </items>
                 <context-menu>

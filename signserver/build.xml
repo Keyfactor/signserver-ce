@@ -171,6 +171,7 @@ OS version                          = ${os.version}
             <entry key="SignServerCommandFactory" value="${custom.commandfactory}"/>
             <entry key="signserver.configfile" value="${signserver.configfile}"/>
             <entry key="signserver.version" value="${app.version}"/>
+            <entry key="webdoc.enabled" value="${webdoc.enabled}"/>
         </propertyfile>
 
 	<!-- Make a copy of the signserver_cli.properties in bin dir -->

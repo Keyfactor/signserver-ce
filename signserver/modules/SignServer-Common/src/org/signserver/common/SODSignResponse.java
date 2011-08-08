@@ -23,7 +23,7 @@ import java.security.cert.Certificate;
  */
 public class SODSignResponse extends GenericSignResponse {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /**
      * Default constructor used during serialization

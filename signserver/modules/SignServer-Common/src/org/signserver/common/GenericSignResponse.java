@@ -33,11 +33,12 @@ import org.ejbca.util.CertTools;
  */
 public class GenericSignResponse extends ProcessResponse implements ISignResponse {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
     protected int tag = RequestAndResponseManager.RESPONSETYPE_GENERICSIGNRESPONSE;
 	private int requestID;
 	private byte[] processedData;
-	private Certificate signerCertificate;
+    private transient Certificate signerCertificate;
+    private byte[] signerCertificateBytes;
 	private ArchiveData archiveData;
 	private String archiveId;
 	
@@ -54,11 +55,16 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
 	public GenericSignResponse(int requestID, byte[] processedData, 
 			                   Certificate signerCertificate, 
 			                   String archiveId, ArchiveData archiveData) {
-		this.requestID = requestID;
-		this.processedData = processedData;
-		this.signerCertificate = signerCertificate;
-		this.archiveData = archiveData;
-		this.archiveId = archiveId;
+            try {
+                this.requestID = requestID;
+                this.processedData = processedData;
+                this.signerCertificate = signerCertificate;
+                this.signerCertificateBytes = signerCertificate.getEncoded();
+                this.archiveData = archiveData;
+                this.archiveId = archiveId;
+            } catch (CertificateEncodingException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/**
@@ -73,7 +79,15 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
 	 * @see org.signserver.common.ProcessResponse#getCertificate()
 	 */
 	public Certificate getSignerCertificate() {
-		return signerCertificate;
+            if (signerCertificate == null) {
+                try {
+                    signerCertificate = CertTools.getCertfromByteArray(
+                            signerCertificateBytes);
+                } catch (CertificateException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            return signerCertificate;
 	}
 
 	/**

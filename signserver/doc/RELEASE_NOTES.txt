@@ -6,6 +6,9 @@ Notice:
  - In signserver_build.properties the property "useclusterclassloader" now 
    defaults to false. To still use the deprecated cluster class loader this 
    needs to be set explicitly to true.
+ - The fix of DSS-371 introduced a change in the EJB interface. Applications 
+   using that interface should run version >=3.2.1 on both client and server 
+   side.
 
 Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
 

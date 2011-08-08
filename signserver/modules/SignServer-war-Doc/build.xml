@@ -10,6 +10,10 @@
 <project name="SignServer-war-Doc" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-war-Doc.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
+
+    <!-- Setup APPSRV_HOME etc -->
+    <target name="-pre-init" depends="-modules-set-appserver-home"/>
     
     <target name="-pre-compile">
         <ant antfile="../SignServer-Doc/build.xml" target="doc"

@@ -234,6 +234,14 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         workers.put(workerId, new Worker(worker, config));
     }
 
+    public byte[] getSignerCertificateBytes(int signerId) throws CryptoTokenOfflineException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<byte[]> getSignerCertificateChainBytes(int signerId) throws CryptoTokenOfflineException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     private static class Worker {
         private IProcessable processable;
         private WorkerConfig config;

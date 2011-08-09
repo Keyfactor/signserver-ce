@@ -448,6 +448,20 @@ public class AdminLayerEJBImpl implements AdminWS {
             final int signerId)
             throws CryptoTokenOfflineException_Exception {
         try {
+            return worker.getSignerCertificateBytes(signerId);
+        } catch (CryptoTokenOfflineException ex) {
+            throw wrap(ex);
+        } catch (RuntimeException ex) {
+            // Old version of server
+            LOG.info("Assuming old version of server");
+            return getSignerCertificateOld(signerId);
+        }
+    }
+    
+    public byte[] getSignerCertificateOld(
+            final int signerId)
+            throws CryptoTokenOfflineException_Exception {
+        try {
             return getEncoded(worker.getSignerCertificate(signerId));
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
@@ -476,6 +490,20 @@ public class AdminLayerEJBImpl implements AdminWS {
      */
     @Override
     public List<byte[]> getSignerCertificateChain(
+            final int signerId)
+            throws CryptoTokenOfflineException_Exception {
+        try {
+            return worker.getSignerCertificateChainBytes(signerId);
+        } catch (CryptoTokenOfflineException ex) {
+            throw wrap(ex);
+        } catch (RuntimeException ex) {
+            // Old version of server
+            LOG.info("Assuming old version of server");
+            return getSignerCertificateChainOld(signerId);
+        }
+    }
+    
+    public List<byte[]> getSignerCertificateChainOld(
             final int signerId)
             throws CryptoTokenOfflineException_Exception {
         try {

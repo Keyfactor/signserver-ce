@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
@@ -1158,6 +1159,38 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
         }
         return ret;
+    }
+    
+    /**
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificateBytes(int) 
+     */
+    @Override
+    public byte[] getSignerCertificateBytes(final int signerId) 
+            throws CryptoTokenOfflineException {
+        try {
+            final Certificate cert = getSignerCertificate(signerId);
+            return cert == null ? null : cert.getEncoded();
+        } catch (CertificateEncodingException ex) {
+            throw new CryptoTokenOfflineException(ex);
+        }
+    }
+
+    /**
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificateChain(int)
+     */
+    @Override
+    public List<byte[]> getSignerCertificateChainBytes(final int signerId)
+            throws CryptoTokenOfflineException {
+        final List<Certificate> certs = getSignerCertificateChain(signerId);
+        final List<byte[]> res = new LinkedList<byte[]>();
+        try {
+            for (Certificate cert : certs) {
+                res.add(cert.getEncoded());
+            }
+        } catch (CertificateEncodingException ex) {
+            throw new CryptoTokenOfflineException(ex);
+        }
+        return res;
     }
 
     /* (non-Javadoc)

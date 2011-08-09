@@ -50,6 +50,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
+import org.ejbca.util.CertTools;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.TaskMonitor;
@@ -1925,16 +1926,7 @@ public class MainView extends FrameView {
         if (certbytes == null || certbytes.length == 0) {
             result = null;
         } else {
-//            try {
-                final CertificateFactory cf
-                        = CertificateFactory.getInstance("X.509");
-                result = (X509Certificate) cf.generateCertificate(
-                        new ByteArrayInputStream(certbytes));
-//            } catch (NoSuchProviderException ex) {
-//                // Log stacktrace and only pass on description to client
-//                LOG.error("Error with provider", ex);
-//                throw new RuntimeException("Internal error");
-//            }
+            result = (X509Certificate) CertTools.getCertfromByteArray(certbytes);
         }
         return result;
     }

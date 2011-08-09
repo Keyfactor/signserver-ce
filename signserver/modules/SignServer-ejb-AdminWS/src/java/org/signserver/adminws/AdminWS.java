@@ -390,19 +390,7 @@ public class AdminWS {
         requireAdminAuthorization("getSignerCertificate",
                 String.valueOf(signerId));
         
-        return getEncoded(worker.getSignerCertificate(signerId));
-    }
-
-    private byte[] getEncoded(final Certificate certificate) {
-        byte[] result = null;
-        try {
-            if (certificate != null) {
-                result = certificate.getEncoded();
-            }
-        } catch (CertificateEncodingException ex) {
-            LOG.error("Certificate encoding error", ex);
-        }
-        return result;
+        return worker.getSignerCertificateBytes(signerId);
     }
 
     /**
@@ -420,18 +408,7 @@ public class AdminWS {
         requireAdminAuthorization("getSignerCertificateChain",
                 String.valueOf(signerId));
         
-        final List<byte[]> result;
-        final List<Certificate> certs
-                = worker.getSignerCertificateChain(signerId);
-        if (certs == null || certs.size() < 1) {
-            result = null;
-        } else {
-            result = new LinkedList<byte[]>();
-            for (Certificate cert : certs) {
-                result.add(getEncoded(cert));
-            }
-        }
-        return result;
+        return worker.getSignerCertificateChainBytes(signerId);
     }
 
     /**

@@ -10,32 +10,32 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
-
 package org.signserver.common;
 
 import java.io.PrintStream;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.Iterator;
+import org.ejbca.util.CertTools;
 
 /**
  * Class used when responding to the SignSession.getStatus() method, represents
- * the status of a specific signer
- * @author Philip Vendil
+ * the status of a specific signer.
  *
- * $Id$
+ * FIXME: This feature should be re-designed. See DSS-304.
+ *
+ * @author Philip Vendil
+ * @version $Id$
  */
-
-public class SignerStatus extends CryptoTokenStatus{
-
-
+public class SignerStatus extends CryptoTokenStatus {
 	
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-
-	private Certificate signerCertificate = null;
+    private transient Certificate signerCertificate;
+    private byte[] signerCertificateBytes;
 
         private long keyUsageCounterValue;
 	
@@ -43,29 +43,40 @@ public class SignerStatus extends CryptoTokenStatus{
 	 * Main constructor
 	 */
 	public SignerStatus(int workerId, int tokenStatus, ProcessableConfig config, Certificate signerCertificate){
-		super(workerId, tokenStatus, config.getWorkerConfig());
-	
-	    this.signerCertificate = signerCertificate;
+            super(workerId, tokenStatus, config.getWorkerConfig());
+            this.signerCertificate = signerCertificate;
+            try {
+                this.signerCertificateBytes = signerCertificate == null ? null 
+                        : signerCertificate.getEncoded();
+            } catch (CertificateEncodingException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
     public SignerStatus(final int workerId, final int status,
             final ProcessableConfig config, final Certificate signerCertificate,
             final long counter) {
-        super(workerId, status, config.getWorkerConfig());
-        this.signerCertificate = signerCertificate;
+        this(workerId, status, config, signerCertificate);
         this.keyUsageCounterValue = counter;
     }
 
 
 
 	 
-	/**
-	 * Method used to retrieve the currently used signercertficate.
-	 * Use this method when checking status and not from config, since the cert isn't always in db.
-	 */
-	public Certificate getSignerCertificate(){
-		return signerCertificate;
-	}
+    /**
+     * Method used to retrieve the currently used signercertficate.
+     * Use this method when checking status and not from config, since the cert isn't always in db.
+     */
+    public Certificate getSignerCertificate() {
+        if (signerCertificate == null && signerCertificateBytes != null) {
+            try {
+                signerCertificate = CertTools.getCertfromByteArray(signerCertificateBytes);
+            } catch (CertificateException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return signerCertificate;
+    }
 
 	@Override
 	public void displayStatus(int workerId, PrintStream out, boolean complete) {

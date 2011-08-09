@@ -200,6 +200,17 @@ public interface IWorkerSession {
      */
     Certificate getSignerCertificate(int signerId)
             throws CryptoTokenOfflineException;
+    
+    /**
+     * Method returning the current signing certificate for the signer.
+     * @param signerId Id of signer
+     * @return Current signing certificate if the worker is a signer and it has
+     * been configured. Otherwise null or an exception is thrown.
+     * @throws CryptoTokenOfflineException In case the crypto token or the worker
+     * is not active
+     */
+    byte[] getSignerCertificateBytes(int signerId)
+            throws CryptoTokenOfflineException;
 
     /**
      * Method returning the current signing certificate chain for the signer.
@@ -210,6 +221,17 @@ public interface IWorkerSession {
      * is not active
      */
     public List<Certificate> getSignerCertificateChain(int signerId)
+            throws CryptoTokenOfflineException;
+    
+    /**
+     * Method returning the current signing certificate chain for the signer.
+     * @param signerId Id of signer
+     * @return Current signing certificate chain if the worker is a signer and it
+     * has been configured. Otherwise null or an exception is thrown.
+     * @throws CryptoTokenOfflineException In case the crypto token or the worker
+     * is not active
+     */
+    public List<byte[]> getSignerCertificateChainBytes(int signerId)
             throws CryptoTokenOfflineException;
 
     /**

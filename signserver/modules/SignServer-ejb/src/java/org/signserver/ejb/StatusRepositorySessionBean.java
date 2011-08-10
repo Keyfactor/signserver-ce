@@ -26,7 +26,7 @@ import org.signserver.server.log.SystemLoggerFactory;
 /**
  * Session bean offering an interface towards the status repository.
  *
- * @author Markus Kil�s
+ * @author Markus Kilås
  * @version $Id$
  */
 @Stateless

@@ -10,10 +10,9 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
-
 package org.signserver.ejb;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -22,11 +21,10 @@ import javax.persistence.Table;
 
 import org.apache.log4j.Logger;
 
-
-
 /**
  * Entity Bean storing each worker configuration.
- * OBS: The old columns signerId and signerConfigData is still used
+ *
+ * Notice: The old columns signerId and signerConfigData is still used
  * for the database columns but their name in the application have been
  * changed to workerId and workerConfig.
  * 
@@ -37,37 +35,33 @@ import org.apache.log4j.Logger;
  * </pre>
  *
  * @version $Id$
- * 
  */
 @Entity
-@Table(name="signerconfigdata")
-public class WorkerConfigDataBean  {
-
-	/** Log4j instance for actual implementation class */
-	public transient Logger log = Logger.getLogger(this.getClass());
-	
-	@Id
-	private int signerId;
+@Table(name = "signerconfigdata")
+public class WorkerConfigDataBean implements Serializable {
+    
+    @Id
+    private int signerId;
+    
     @Lob
-    @Column(length=1048576)
-	private String signerConfigData;
-     
+    @Column(length = 1048576)
+    private String signerConfigData;
+
     /**
      * Unique Id of the signer
      *
      * @return signerId
      */
-	
-    public int getSignerId(){
-		return signerId;
-	}
+    public int getSignerId() {
+        return signerId;
+    }
 
     /**
      * Unique Id of the signer
      * Shouldn't be set after creation.
      */
-    public void setSignerId(int signerId){
-    	this.signerId = signerId;
+    public void setSignerId(int signerId) {
+        this.signerId = signerId;
     }
 
     /**
@@ -76,8 +70,8 @@ public class WorkerConfigDataBean  {
      *
      * @return  xmlencoded encoded WorkerConfig
      */
-    public String getSignerConfigData(){
-    	return signerConfigData;
+    public String getSignerConfigData() {
+        return signerConfigData;
     }
 
     /**
@@ -86,10 +80,7 @@ public class WorkerConfigDataBean  {
      * @param WorkerConfig xmlencoded encoded WorkerConfig
      * @ejb.persistence
      */
-    public void setSignerConfigData(String signerConfigData){
-    	this.signerConfigData = signerConfigData;
+    public void setSignerConfigData(String signerConfigData) {
+        this.signerConfigData = signerConfigData;
     }
-    
-
-
 }

@@ -10,10 +10,9 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
- 
-
 package org.signserver.ejb;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -33,35 +32,28 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name="GlobalConfigurationData")
-public class GlobalConfigurationDataBean  {
+@Table(name = "GlobalConfigurationData")
+public class GlobalConfigurationDataBean implements Serializable {
 
-	@Id
-	private String propertyKey;
+    @Id
+    private String propertyKey;
     @Lob
-	@Column(length=1048576)
-	private String propertyValue;
- 
-    public String getPropertyKey(){
-    	return propertyKey;
+    @Column(length = 1048576)
+    private String propertyValue;
+
+    public String getPropertyKey() {
+        return propertyKey;
     }
-    public void setPropertyKey(String propertyKey){
-    	this.propertyKey = propertyKey;
+
+    public void setPropertyKey(String propertyKey) {
+        this.propertyKey = propertyKey;
     }
-   
 
-    public String getPropertyValue(){
-    	return propertyValue;
+    public String getPropertyValue() {
+        return propertyValue;
     }
-    public void setPropertyValue(String propertyValue){
-    	this.propertyValue = propertyValue;
+
+    public void setPropertyValue(String propertyValue) {
+        this.propertyValue = propertyValue;
     }
-    
-
- 
-
-
-
-
-
 }

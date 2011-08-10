@@ -103,8 +103,6 @@ import org.signserver.server.statistics.StatisticsManager;
 @Stateless
 public class WorkerSessionBean implements IWorkerSession.ILocal,
         IWorkerSession.IRemote {
-
-    private static final long serialVersionUID = 1L;
     
     /** Log4j instance for this class. */
     private static final Logger LOG = Logger.getLogger(WorkerSessionBean.class);

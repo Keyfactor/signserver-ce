@@ -404,9 +404,9 @@ public class TestKeysDialog extends JDialog {
                             sb.append(ex.getMessage());
                             sb.append("\n");
                         } catch (RuntimeException ex) {
-                            sb.append("Not supported by server: "
-                                    + ex.getMessage());
-                            sb.append("\n");
+                            sb.append("Not supported by server: ")
+                                    .append(ex.getMessage())
+                                    .append("\n");
                         }
                         sb.append("\n");
                         setProgress(progress++, 0, numWorkers);

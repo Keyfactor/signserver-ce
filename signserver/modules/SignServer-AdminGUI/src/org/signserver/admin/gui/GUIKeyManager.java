@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
  * Key manager that prompts user for choosing which certificate to use.
  *
  * @author Markus Kilås
- * @version $id$
+ * @version $Id$
  */
 public class GUIKeyManager implements X509KeyManager {
 
@@ -35,10 +35,12 @@ public class GUIKeyManager implements X509KeyManager {
         this.base = base;
     }
 
+    @Override
     public String[] getClientAliases(String string, Principal[] prncpls) {
         return base.getClientAliases(string, prncpls);
     }
 
+    @Override
     public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
 
         if (lastSelectedAlias == null) {
@@ -60,18 +62,22 @@ public class GUIKeyManager implements X509KeyManager {
         return lastSelectedAlias;
     }
 
+    @Override
     public String[] getServerAliases(String string, Principal[] prncpls) {
         return base.getClientAliases(string, prncpls);
     }
 
+    @Override
     public String chooseServerAlias(String string, Principal[] prncpls, Socket socket) {
         return base.chooseServerAlias(string, prncpls, socket);
     }
 
+    @Override
     public X509Certificate[] getCertificateChain(String string) {
         return base.getCertificateChain(string);
     }
 
+    @Override
     public PrivateKey getPrivateKey(String string) {
         return base.getPrivateKey(string);
     }

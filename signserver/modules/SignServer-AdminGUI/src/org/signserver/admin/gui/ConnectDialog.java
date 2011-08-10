@@ -404,6 +404,7 @@ public class ConnectDialog extends javax.swing.JDialog {
 
                 KeyStore.CallbackHandlerProtection pp = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {
 
+                @Override
                     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
                         for (int i = 0; i < callbacks.length; i++) {
                             if (callbacks[i] instanceof PasswordCallback) {
@@ -515,7 +516,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                 ws = service.getAdminWSPort();
             dispose();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.error("Error connecting", ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Connect", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_connectButtonActionPerformed

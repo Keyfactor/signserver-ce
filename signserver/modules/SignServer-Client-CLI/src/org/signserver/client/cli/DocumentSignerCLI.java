@@ -40,7 +40,7 @@ import org.signserver.common.SignServerException;
 /**
  * Command Line Interface (CLI) for signing documents.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class DocumentSignerCLI {
@@ -134,35 +134,35 @@ public class DocumentSignerCLI {
     }
 
     /** ID of worker who should perform the operation. */
-    private transient int workerId;
+    private int workerId;
 
     /** Name of worker who should perform the operation. */
-    private transient String workerName;
+    private String workerName;
 
     /** Data to sign. */
-    private transient String data;
+    private String data;
 
     /** Hostname or IP address of the SignServer host. */
-    private transient String host;
+    private String host;
 
     /** TCP port number of the SignServer host. */
-    private transient Integer port;
+    private Integer port;
 
-    private transient String servlet = "/signserver/process";
+    private String servlet = "/signserver/process";
 
     /** File to read the data from. */
-    private transient File inFile;
+    private File inFile;
 
     /** File to read the signed data to. */
-    private transient File outFile;
+    private File outFile;
 
     /** Protocol to use for contacting SignServer. */
-    private transient Protocol protocol;
+    private Protocol protocol;
 
-    private transient String username;
-    private transient String password;
+    private String username;
+    private String password;
 
-    private transient KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
+    private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     /**
      * Creates an instance of DocumentSignerCLI.

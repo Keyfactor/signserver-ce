@@ -21,11 +21,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -210,6 +208,8 @@ public class MainView extends FrameView {
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
         messageTimer = new Timer(messageTimeout, new ActionListener() {
+            
+            @Override
             public void actionPerformed(ActionEvent e) {
                 statusMessageLabel.setText("");
             }
@@ -222,6 +222,8 @@ public class MainView extends FrameView {
                     "StatusBar.busyIcons[" + i + "]");
         }
         busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
+            
+            @Override
             public void actionPerformed(ActionEvent e) {
                 busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
                 statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
@@ -235,6 +237,8 @@ public class MainView extends FrameView {
         TaskMonitor taskMonitor = new TaskMonitor(
                 getApplication().getContext());
         taskMonitor.addPropertyChangeListener(new PropertyChangeListener() {
+            
+            @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 String propertyName = evt.getPropertyName();
                 if ("started".equals(propertyName)) {
@@ -1722,7 +1726,7 @@ public class MainView extends FrameView {
                         final String error =
                                 "Error activating worker "
                                 + workerId;
-                        sb.append(error + ": " + ex.getMessage());
+                        sb.append(error).append(": ").append(ex.getMessage());
                         sb.append("\n");
                         LOG.error(error, ex);
                     }
@@ -1789,20 +1793,20 @@ public class MainView extends FrameView {
                     final String error = "Error deactivating worker "
                             + workerId;
                     LOG.error(error, ex);
-                    sb.append(error + ": " + ex.getMessage());
+                    sb.append(error).append(": ").append(ex.getMessage());
                     sb.append("\n");
                 } catch (InvalidWorkerIdException_Exception ex) {
                     final String error = "Error deactivating worker "
                             + workerId;
                     LOG.error(error, ex);
                     LOG.error(error, ex);
-                    sb.append(error + ": " + ex.getMessage());
+                    sb.append(error).append(": ").append(ex.getMessage());
                     sb.append("\n");
                 } catch (EJBException ex) {
                     final String error = "Error deactivating worker "
                             + workerId;
                     LOG.error(error, ex);
-                    sb.append(error + ": " + ex.getMessage());
+                    sb.append(error).append(": ").append(ex.getMessage());
                     sb.append(error);
                     sb.append("\n");
                 }

@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.client.api;
 
 import org.signserver.common.CryptoTokenOfflineException;
@@ -27,18 +26,17 @@ import org.signserver.common.SignServerException;
  * @version $Id$
  */
 public interface ISignServerWorker {
-	
-	/**
-	 * Send a request to a specified worker.
-	 * 
-	 * @param workerIdOrName Id or name of worker which should process the request.
-	 * @param request The request.
-	 * @param context The context.
-	 * @return The response from the worker.
-	 * @throws CryptoTokenOfflineException If the signers token isn't activated. 
-	 * @throws IllegalRequestException If illegal request is sent to the method.
-	 * @throws SignServerException If some other error occurred server side during process.
-	 */
-	public ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
-	
+
+    /**
+     * Send a request to a specified worker.
+     * 
+     * @param workerIdOrName Id or name of worker which should process the request.
+     * @param request The request.
+     * @param context The context.
+     * @return The response from the worker.
+     * @throws CryptoTokenOfflineException If the signers token isn't activated. 
+     * @throws IllegalRequestException If illegal request is sent to the method.
+     * @throws SignServerException If some other error occurred server side during process.
+     */
+    ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 }

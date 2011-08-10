@@ -112,27 +112,27 @@ public class DocumentValidatorCLI {
     }
 
     /** ID of worker who should perform the operation. */
-    private transient int workerId;
+    private int workerId;
 
     /** Name of worker who should perform the operation. */
-    private transient String workerName;
+    private String workerName;
 
     /** Data to sign. */
-    private transient String data;
+    private String data;
 
     /** Hostname or IP address of the SignServer host. */
-    private transient String host = KeyStoreOptions.DEFAULT_HOST;
+    private String host = KeyStoreOptions.DEFAULT_HOST;
 
     /** TCP port number of the SignServer host. */
-    private transient Integer port;
+    private Integer port;
 
     /** File to read the data from. */
-    private transient File inFile;
+    private File inFile;
 
-    private transient String username;
-    private transient String password;
+    private String username;
+    private String password;
 
-    private transient KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
+    private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     /**
      * Creates an instance of DocumentSignerCLI.

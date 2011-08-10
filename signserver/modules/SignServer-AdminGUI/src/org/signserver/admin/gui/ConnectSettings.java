@@ -19,7 +19,7 @@ package org.signserver.admin.gui;
  * @version $Id: ConnectSettings.java 9266 2010-06-21 13:54:55Z netmackan $
  */
 public class ConnectSettings {
-    
+
     private String url;
     private String truststoreType;
     private String truststoreFile;
@@ -29,9 +29,8 @@ public class ConnectSettings {
     private char[] keystorePassword;
 
     public ConnectSettings() {
-        
     }
-    
+
     public ConnectSettings(final String url, final String truststoreType,
             final String truststoreFile, final char[] truststorePassword,
             final String keystoreType, final String keystoreFile,
@@ -100,5 +99,4 @@ public class ConnectSettings {
     public void setUrl(String url) {
         this.url = url;
     }
-
 }

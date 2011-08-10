@@ -19,8 +19,9 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 
 /**
+ * Abstract implementation of DocumentValidator.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public abstract class AbstractDocumentValidator implements DocumentValidator {
@@ -58,5 +59,4 @@ public abstract class AbstractDocumentValidator implements DocumentValidator {
             final OutputStream out) throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException,
                 IOException;
-
 }

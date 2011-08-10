@@ -29,6 +29,7 @@ import org.signserver.common.SignServerException;
 
 /**
  * DocumentValidator using web services.
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -36,9 +37,6 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(WebServicesDocumentValidator.class);
-
-    private static final String ENCODING_NONE = "none";
-    private static final String ENCODING_BASE64 = "base64";
 
     private String workerName;
 
@@ -89,10 +87,8 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
                         signResponse.getSignerCertificate()));
             }
 
-            out.write(new String("Valid: "
-                    + signResponse.isValid()).getBytes());
+            out.write(("Valid: " + signResponse.isValid()).getBytes());
             out.write("\n".getBytes());
-
 
             LOG.info("Processing took "
                     + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
@@ -101,5 +97,4 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
                     + response.getClass().getName());
         }
     }
-
 }

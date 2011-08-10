@@ -36,6 +36,7 @@ import org.signserver.admin.gui.adminws.gen
 
 /**
  * Dialog for renewing keys.
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -469,7 +470,7 @@ public class RenewKeysDialog extends JDialog {
                                             result, "Key renewal error",
                                             JOptionPane.ERROR_MESSAGE);
                 }
-                if (data.size() == 0) {
+                if (data.isEmpty()) {
                     JOptionPane.showMessageDialog(RenewKeysDialog.this,
                             "Renewed keys for all choosen signers.");
                     dispose();
@@ -477,8 +478,6 @@ public class RenewKeysDialog extends JDialog {
             }
         }
     }
-
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;

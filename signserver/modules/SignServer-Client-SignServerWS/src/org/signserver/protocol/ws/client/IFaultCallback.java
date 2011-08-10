@@ -10,9 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.protocol.ws.client;
-
 
 /**
  * Interface that should be implemented by all users
@@ -26,12 +24,11 @@ package org.signserver.protocol.ws.client;
  * @version $Id$
  */
 public interface IFaultCallback {
-	
-	/**
-	 * Method called by the message client error occurred to some of the nodes in the cluster
-	 * 
-	 * @param error the error
-	 */
-	public void addCommunicationError(ICommunicationFault fault); 
 
+    /**
+     * Method called by the message client error occurred to some of the nodes in the cluster
+     * 
+     * @param error the error
+     */
+    void addCommunicationError(ICommunicationFault fault);
 }

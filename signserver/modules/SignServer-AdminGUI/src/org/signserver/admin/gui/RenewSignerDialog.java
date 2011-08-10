@@ -495,7 +495,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                             "Problem renewing signer "
                             + item.getSigner().getName();
                     LOG.error(error, ex);
-                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append(error).append(":\n").append(ex.getMessage());
                     errors.append("\n");
                     failure++;
                 } catch (SignServerException_Exception ex) {
@@ -503,7 +503,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                             "Problem renewing signer "
                             + item.getSigner().getName();
                     LOG.error(error, ex);
-                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append(error).append(":\n").append(ex.getMessage());
                     errors.append("\n");
                     failure++;
                 } catch (IllegalRequestException_Exception ex) {
@@ -511,7 +511,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                             "Problem renewing signer "
                             + item.getSigner().getName();
                     LOG.error(error, ex);
-                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append(error).append(":\n").append(ex.getMessage());
                     errors.append("\n");
                     failure++;
                 } catch (IOException ex) {
@@ -519,7 +519,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                             "Problem renewing signer "
                             + item.getSigner().getName();
                     LOG.error(error, ex);
-                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append(error).append(":\n").append(ex.getMessage());
                     errors.append("\n");
                     failure++;
                 } catch (AdminNotAuthorizedException_Exception ex) {
@@ -527,7 +527,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                             "Problem renewing signer "
                             + item.getSigner().getName();
                     LOG.error(error, ex);
-                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append(error).append(":\n").append(ex.getMessage());
                     errors.append("\n");
                     failure++;
                 } catch (InvalidWorkerIdException_Exception ex) {
@@ -535,7 +535,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                             "Problem renewing signer "
                             + item.getSigner().getName();
                     LOG.error(error, ex);
-                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append(error).append(":\n").append(ex.getMessage());
                     errors.append("\n");
                     failure++;
                 } catch (SOAPFaultException ex) {
@@ -543,7 +543,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                             "Problem renewing signer "
                             + item.getSigner().getName();
                     LOG.error(error, ex);
-                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append(error).append(":\n").append(ex.getMessage());
                     errors.append("\n");
                     failure++;
                 }

@@ -1,3 +1,15 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.client.api;
 
 import java.io.IOException;
@@ -42,28 +54,28 @@ import org.signserver.protocol.ws.gen.SignServerWSService;
  */
 public class SigningAndValidationWS implements ISigningAndValidation {
 
-	private static Logger log = Logger.getLogger(SigningAndValidationWS.class);
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(SigningAndValidationWS.class);
+    
+    private SignServerWS signserver;
 
-	private SignServerWS signserver;
+    /**
+     * Creates an instance of SigningAndValidationWS using an WebService host and port.
+     *
+     * @param host The remote host to connect to.
+     * @param port The remote port to connect to.
+     */
+    public SigningAndValidationWS(final String host, final int port) {
+        this(host, port, null, null);
+    }
 
-
-        /**
-	 * Creates an instance of SigningAndValidationWS using an WebService host and port.
-	 *
-	 * @param host The remote host to connect to.
-	 * @param port The remote port to connect to.
-	 */
-	public SigningAndValidationWS(final String host, final int port) {
-            this(host, port, null, null);
-	}
-
-   /**
-    * Creates an instance of SigningAndValidationWS using an WebService host and port.
-    *
-    * @param host The remote host to connect to.
-    * @param port The remote port to connect to.
-    * @param useHTTPS True if SSL/TLS is to be used (HTTPS).
-    */
+    /**
+     * Creates an instance of SigningAndValidationWS using an WebService host and port.
+     *
+     * @param host The remote host to connect to.
+     * @param port The remote port to connect to.
+     * @param useHTTPS True if SSL/TLS is to be used (HTTPS).
+     */
     public SigningAndValidationWS(final String host, final int port,
             final boolean useHTTPS) {
         this(host, port, useHTTPS, null, null);
@@ -110,85 +122,85 @@ public class SigningAndValidationWS implements ISigningAndValidation {
 
         // Authentication
         if (username != null && password != null) {
-            ((BindingProvider) signserver).getRequestContext()
-                    .put(BindingProvider.USERNAME_PROPERTY, username);
-            ((BindingProvider) signserver).getRequestContext()
-                    .put(BindingProvider.PASSWORD_PROPERTY, password);
+            ((BindingProvider) signserver).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
+            ((BindingProvider) signserver).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
         }
 
         SignServerUtil.installBCProvider();
     }
-	
-	public ProcessResponse process(int workerId, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-		return process(""+workerId, request, context);
-	}
-	
-	public ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-		List<ProcessResponse> responses = process(workerIdOrName, Collections.singletonList(request), context);
-		if(responses.size() != 1) {
-			throw new SignServerException("Unexpected number of responses: " + responses.size());
-		}
-		return responses.get(0);
-	}
-	
-	public List<ProcessResponse> process(String workerIdOrName, List<ProcessRequest> requests, RequestContext context)  throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-		try {
-			List<ProcessRequestWS> list = new LinkedList<ProcessRequestWS>();
-			
-			for(ProcessRequest req : requests) {
-				ProcessRequestWS reqWS = new ProcessRequestWS();
-				reqWS.setRequestDataBase64(new String(Base64.encode(RequestAndResponseManager.serializeProcessRequest(req))));
-				list.add(reqWS);
-			}
 
-			List<ProcessResponseWS> resps;
-			try {
-				resps = signserver.process(workerIdOrName, list);
-			} catch (CryptoTokenOfflineException_Exception e) {
-				log.error(null, e);
-				throw new CryptoTokenOfflineException(e.getMessage());
-			} catch (IllegalRequestException_Exception e) {
-				log.error(null, e);
-				throw new IllegalRequestException(e.getMessage());
-			} catch (InvalidWorkerIdException_Exception e) {
-				log.error(null, e);
-				throw new IllegalRequestException(e.getMessage());
-			} catch (SignServerException_Exception e) {
-				log.error(null, e);
-				throw new SignServerException(e.getMessage());
-			}
+    public ProcessResponse process(int workerId, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        return process("" + workerId, request, context);
+    }
 
-			List<org.signserver.protocol.ws.ProcessResponseWS> responses2 = WSClientUtil.convertProcessResponseWS(resps);
+    @Override
+    public ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        List<ProcessResponse> responses = process(workerIdOrName, Collections.singletonList(request), context);
+        if (responses.size() != 1) {
+            throw new SignServerException("Unexpected number of responses: " + responses.size());
+        }
+        return responses.get(0);
+    }
 
-			List<ProcessResponse> responses3 = new LinkedList<ProcessResponse>();
-			for(org.signserver.protocol.ws.ProcessResponseWS resp : responses2) {
-				responses3.add(RequestAndResponseManager.parseProcessResponse(resp.getResponseData()));
-			}
-			
-			return responses3;
+    public List<ProcessResponse> process(String workerIdOrName, List<ProcessRequest> requests, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        try {
+            List<ProcessRequestWS> list = new LinkedList<ProcessRequestWS>();
 
-		} catch (IOException ex) {
-			throw new SignServerException("Serialization/deserialization failed", ex);
-		}
-	}
+            for (ProcessRequest req : requests) {
+                ProcessRequestWS reqWS = new ProcessRequestWS();
+                reqWS.setRequestDataBase64(new String(Base64.encode(RequestAndResponseManager.serializeProcessRequest(req))));
+                list.add(reqWS);
+            }
 
-	public GenericSignResponse sign(String signIdOrName, byte[] document) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-			
-		ProcessResponse resp = process(signIdOrName, new GenericSignRequest(1, document), new RequestContext());
+            List<ProcessResponseWS> resps;
+            try {
+                resps = signserver.process(workerIdOrName, list);
+            } catch (CryptoTokenOfflineException_Exception e) {
+                LOG.error(null, e);
+                throw new CryptoTokenOfflineException(e.getMessage());
+            } catch (IllegalRequestException_Exception e) {
+                LOG.error(null, e);
+                throw new IllegalRequestException(e.getMessage());
+            } catch (InvalidWorkerIdException_Exception e) {
+                LOG.error(null, e);
+                throw new IllegalRequestException(e.getMessage());
+            } catch (SignServerException_Exception e) {
+                LOG.error(null, e);
+                throw new SignServerException(e.getMessage());
+            }
 
-		if(!(resp instanceof GenericSignResponse)) {
-			throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
-		}		
-		return (GenericSignResponse) resp;
-	}
+            List<org.signserver.protocol.ws.ProcessResponseWS> responses2 = WSClientUtil.convertProcessResponseWS(resps);
 
-	public GenericValidationResponse validate(String validatorIdOrName, byte[] document) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-		ProcessResponse resp = process(validatorIdOrName, new GenericValidationRequest(1, document), new RequestContext());
+            List<ProcessResponse> responses3 = new LinkedList<ProcessResponse>();
+            for (org.signserver.protocol.ws.ProcessResponseWS resp : responses2) {
+                responses3.add(RequestAndResponseManager.parseProcessResponse(resp.getResponseData()));
+            }
 
-		if(!(resp instanceof GenericValidationResponse)) {
-			throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
-		}
-		return (GenericValidationResponse) resp;
-	}
+            return responses3;
 
+        } catch (IOException ex) {
+            throw new SignServerException("Serialization/deserialization failed", ex);
+        }
+    }
+
+    @Override
+    public GenericSignResponse sign(String signIdOrName, byte[] document) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+
+        ProcessResponse resp = process(signIdOrName, new GenericSignRequest(1, document), new RequestContext());
+
+        if (!(resp instanceof GenericSignResponse)) {
+            throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
+        }
+        return (GenericSignResponse) resp;
+    }
+
+    @Override
+    public GenericValidationResponse validate(String validatorIdOrName, byte[] document) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        ProcessResponse resp = process(validatorIdOrName, new GenericValidationRequest(1, document), new RequestContext());
+
+        if (!(resp instanceof GenericValidationResponse)) {
+            throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
+        }
+        return (GenericValidationResponse) resp;
+    }
 }

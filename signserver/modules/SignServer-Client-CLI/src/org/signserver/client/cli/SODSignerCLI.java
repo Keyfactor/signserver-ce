@@ -121,40 +121,40 @@ public class SODSignerCLI {
     }
 
     /** ID of worker who should perform the operation. */
-    private transient int workerId;
+    private int workerId;
 
     /** Name of worker who should perform the operation. */
-    private transient String workerName;
+    private String workerName;
 
     /** Data to sign. */
-    private transient String data;
+    private String data;
 
     /** Encoding of the data, if the data should be decoded before signing. */
-    private transient String encoding;
+    private String encoding;
 
     /** Hostname or IP address of the SignServer host. */
-    private transient String host;
+    private String host;
 
     /** TCP port number of the SignServer host. */
-    private transient Integer port;
+    private Integer port;
 
-    private transient String servlet = "/signserver/sod";
+    private String servlet = "/signserver/sod";
 
     /** File to read the data from. */
-    private transient File inFile;
+    private File inFile;
 
     /** Protocol to use for contacting SignServer. */
-    private transient Protocol protocol;
+    private Protocol protocol;
 
-    private transient String username;
+    private String username;
 
-    private transient String password;
+    private String password;
 
-    private transient Map<Integer,byte[]> dataGroups;
+    private Map<Integer,byte[]> dataGroups;
 
-    private transient int repeat = 1;
+    private int repeat = 1;
 
-    private transient KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
+    private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     /**
      * Creates an instance of DocumentSignerCLI.

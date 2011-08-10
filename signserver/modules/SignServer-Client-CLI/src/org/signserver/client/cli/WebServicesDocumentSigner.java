@@ -30,17 +30,15 @@ import org.signserver.common.SignServerException;
 
 
 /**
+ * DocumentSigner using the Web Services interface.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class WebServicesDocumentSigner extends AbstractDocumentSigner {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(WebServicesDocumentSigner.class);
-
-    private static final String ENCODING_NONE = "none";
-    private static final String ENCODING_BASE64 = "base64";
 
     private String workerName;
 
@@ -103,5 +101,4 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
                     + response.getClass().getName());
         }
     }
-
 }

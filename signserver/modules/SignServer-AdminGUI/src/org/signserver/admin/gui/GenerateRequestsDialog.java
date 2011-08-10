@@ -46,6 +46,7 @@ import org.signserver.common.GenericSignResponse;
 
 /**
  * Dialog for generating certificate requests.
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -477,7 +478,8 @@ public class GenerateRequestsDialog extends JDialog {
                         + workerid;
                     LOG.error(error, ex);
                     sb.append(error);
-                    sb.append(":\n" + ex.getMessage());
+                    sb.append(":\n");
+                    sb.append(ex.getMessage());
                     sb.append("\n");
                 } catch (CryptoTokenOfflineException ex) {
                     final String error = "Error generating request for signer "
@@ -529,7 +531,7 @@ public class GenerateRequestsDialog extends JDialog {
                 JOptionPane.showMessageDialog(GenerateRequestsDialog.this,
                         result, "Error", JOptionPane.ERROR_MESSAGE);
             }
-            if (data.size() == 0) {
+            if (data.isEmpty()) {
                 JOptionPane.showMessageDialog(GenerateRequestsDialog.this,
                         "Generated requests for all choosen signers.");
                 dispose();

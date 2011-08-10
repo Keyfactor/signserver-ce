@@ -20,18 +20,15 @@ import org.apache.log4j.Logger;
 import org.signserver.client.validationservice.ValidationCLI;
 
 /**
+ * Main class for the Client CLI.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class Main {
 
      /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(Main.class);
-
-    /** ResourceBundle with internationalized StringS. */
-    private static final ResourceBundle TEXTS =
-            ResourceBundle.getBundle("org/signserver/client/cli/ResourceBundle");
 
     private static final List<String> COMMANDS = Arrays.asList(
             "signdocument",
@@ -73,8 +70,7 @@ public class Main {
             }
         } else {
             printUsage(COMMANDS);
-        }
-        
+        }   
     }
 
     private static void printUsage(List<String> commands) {
@@ -93,5 +89,4 @@ public class Main {
         sb.append(">");
         LOG.info(sb.toString());
     }
-
 }

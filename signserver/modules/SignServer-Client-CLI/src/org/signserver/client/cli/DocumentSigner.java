@@ -20,8 +20,9 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 
 /**
+ * Interface for classes that can sign documents.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * $Id$
  */
 public interface DocumentSigner {

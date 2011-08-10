@@ -28,8 +28,9 @@ import org.signserver.common.SignServerException;
 
 
 /**
+ * DocumentSigner using the HTTP protocol.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class HTTPDocumentSigner extends AbstractDocumentSigner {
@@ -115,8 +116,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             if (username != null && password != null) {
                 conn.setRequestProperty(BASICAUTH_AUTHORIZATION, 
                         BASICAUTH_BASIC + " "
-                        + new String(Base64.encode(new String(
-                        username + ":" + password).getBytes())));
+                        + new String(Base64.encode((username + ":" + password).getBytes())));
             }
             
             final StringBuilder sb = new StringBuilder();
@@ -153,7 +153,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             
             out.write(sb.toString().getBytes());
             out.write(data);
-            out.write(new String("\r\n--" + BOUNDARY + "--\r\n").getBytes());
+            out.write(("\r\n--" + BOUNDARY + "--\r\n").getBytes());
             out.flush();
 
             // Get the response
@@ -201,5 +201,4 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         }
         
     }
-
 }

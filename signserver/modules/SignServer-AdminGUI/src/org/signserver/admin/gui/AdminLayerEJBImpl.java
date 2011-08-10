@@ -157,6 +157,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @param workerId of the worker that should be reloaded, or 0 to reload
      * reload of all available workers
      */
+    @Override
     public void reloadConfiguration(int workerId) {
         worker.reloadConfiguration(workerId);
     }
@@ -237,6 +238,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @throws CryptoTokenOfflineException
      * @throws CryptoTokenAuthenticationFailureException
      */
+    @Override
     public boolean deactivateSigner(int signerId)
                 throws CryptoTokenOfflineException_Exception,
             InvalidWorkerIdException_Exception {
@@ -286,6 +288,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @param key
      * @param value
      */
+    @Override
     public void setWorkerProperty(final int workerId,
             final String key,
             final String value) {
@@ -299,6 +302,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @param key
      * @return true if the property did exist and was removed othervise false
      */
+    @Override
     public boolean removeWorkerProperty(
             final int workerId,
             final String key) {
@@ -773,6 +777,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @param key of the property should not have any scope prefix, never null
      * @param value the value, never null.
      */
+    @Override
     public void setGlobalProperty(
             final String scope,
             final String key,
@@ -787,6 +792,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * never null
      * @return true if removal was successful, othervise false.
      */
+    @Override
     public boolean removeGlobalProperty(
             final String scope,
             final String key) {
@@ -837,6 +843,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * _SIGNERS or _SERVICES
      * @return A List if Integers of worker Ids, never null.
      */
+    @Override
     public List<Integer> getWorkers(
             final int workerType) {
         return global.getWorkers(workerType);

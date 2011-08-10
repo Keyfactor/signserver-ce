@@ -31,7 +31,7 @@ import javax.swing.JTextField;
  * @author Markus Kilås
  * @version $Id$
  */
-class BrowseCellEditor extends DefaultCellEditor implements ActionListener {
+class BrowseCellEditor extends DefaultCellEditor {
 
     private JButton customEditorButton = new JButton("...");
     private JTable table;
@@ -43,10 +43,16 @@ class BrowseCellEditor extends DefaultCellEditor implements ActionListener {
         super(textField);
         chooser.setMultiSelectionEnabled(false);
         chooser.setDialogType(dialogType);
-        customEditorButton.addActionListener(this);
+        customEditorButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                customEditorButtonActionPerformed(e);
+            }
+        });
     }
 
-    public void actionPerformed(ActionEvent e) {
+    private void customEditorButtonActionPerformed(ActionEvent e) {
         stopCellEditing();
         File currentFile = new File((String) table.getValueAt(row, column));
         chooser.setSelectedFile(currentFile);

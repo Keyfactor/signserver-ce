@@ -290,7 +290,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                     final Collection<Certificate> signerCerts =
                             CertTools.getCertsFromPEM(
                             signerCertFile.getAbsolutePath());
-                    if (signerCerts.size() == 0) {
+                    if (signerCerts.isEmpty()) {
                         final String error =
                             "Problem with signer certificate file for signer "
                             + workerid + ":\n" + "No certificate in file";
@@ -315,7 +315,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                         try {
                             signerChain = (List) CertTools.getCertsFromPEM(
                                     signerChainFile.getAbsolutePath());
-                            if (signerChain.size() == 0) {
+                            if (signerChain.isEmpty()) {
                                 final String error =
                                     "Problem with certificate chain file for signer "
                                     + workerid + ":\n" + "No certificates in file";
@@ -364,21 +364,21 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                                 "Authorization denied for worker "
                                 + workerid;
                             LOG.error(error, ex);
-                            errors.append(error + ":\n" + ex.getMessage());
+                            errors.append(error).append(":\n").append(ex.getMessage());
                             errors.append("\n");
                         } catch (IOException ex) {
                             final String error =
                                 "Problem with certificate chain file for signer "
                                 + workerid;
                             LOG.error(error, ex);
-                            errors.append(error + ":\n" + ex.getMessage());
+                            errors.append(error).append(":\n").append(ex.getMessage());
                             errors.append("\n");
                         } catch (CertificateException ex) {
                             final String error =
                                 "Problem with certificate chain file for signer "
                                 + workerid;
                             LOG.error(error, ex);
-                            errors.append(error + ":\n" + ex.getMessage());
+                            errors.append(error).append(":\n").append(ex.getMessage());
                             errors.append("\n");
                         }
                     }
@@ -388,21 +388,21 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                             "Problem with signer certificate file for signer "
                             + workerid;
                     LOG.error(error, ex);
-                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append(error).append(":\n").append(ex.getMessage());
                     errors.append("\n");
                 } catch (CertificateException ex) {
                     final String error =
                             "Problem with signer certificate file for signer "
                             + workerid;
                     LOG.error(error, ex);
-                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append(error).append(":\n").append(ex.getMessage());
                     errors.append("\n");
                 } catch (IllegalRequestException_Exception ex) {
                     final String error =
                             "Problem with certificates for signer "
                             + workerid;
                     LOG.error(error, ex);
-                    errors.append(error + ":\n" + ex.getMessage());
+                    errors.append(error).append(":\n").append(ex.getMessage());
                     errors.append("\n");
                 }
             }

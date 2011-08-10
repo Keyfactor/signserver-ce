@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.protocol.ws.client;
 
 import java.io.FileInputStream;
@@ -27,111 +26,106 @@ import javax.net.ssl.X509KeyManager;
 import org.apache.log4j.Logger;
 
 /**
- * 
- * 
- * 
- * @author Philip Vendil 15 sep 2008
+ * TODO: Document me!
  *
+ * @author Philip Vendil 15 sep 2008
  * @version $Id$
  */
+class CustomJKSKeyManager implements X509KeyManager {
 
-class CustomJKSKeyManager implements X509KeyManager{
-	
-	private static final Logger log = Logger.getLogger(CustomJKSKeyManager.class);
-	
-	KeyStore ks = null;
-	char[] password = null;
-	
-	CustomJKSKeyManager(String keyStorePath, String keyStorePwd) throws Exception{
-		KeyStore trustStore = KeyStore.getInstance("JKS");
-		password = keyStorePwd.toCharArray();
-		trustStore.load(new FileInputStream(keyStorePath), password);
+    private static final Logger log = Logger.getLogger(CustomJKSKeyManager.class);
+    KeyStore ks = null;
+    char[] password = null;
 
-	}
-	
-	public String chooseClientAlias(String[] keyType, Principal[] issuers,
-			Socket socket) 		{
-		return chooseAlias(issuers, socket);
-	}
+    CustomJKSKeyManager(String keyStorePath, String keyStorePwd) throws Exception {
+        KeyStore trustStore = KeyStore.getInstance("JKS");
+        password = keyStorePwd.toCharArray();
+        trustStore.load(new FileInputStream(keyStorePath), password);
 
-	public String chooseServerAlias(String keyType, Principal[] issuers,
-			Socket socket) {		
-		return chooseAlias(issuers, socket);
-	}
-	
-	private String chooseAlias(Principal[] issuers,
-			Socket socket){
-		String retval = null;
-		try{
-			Enumeration<String> aliases = ks.aliases();
-			while(aliases.hasMoreElements()){
-				String alias = aliases.nextElement();
-				X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
-				if(cert.getBasicConstraints() == -1){
-					Principal certIssuer = cert.getIssuerDN();
-					for(Principal issuer : issuers){
-						if(issuer.equals(certIssuer)){
-							retval = alias;
-							break;
-						}
-					}
-				}
-			}
-		}catch(Exception e){
-			log.error("Error fetchin alias from client key store", e);
-		}
+    }
 
-		return retval;
-	}
+    public String chooseClientAlias(String[] keyType, Principal[] issuers,
+            Socket socket) {
+        return chooseAlias(issuers, socket);
+    }
 
-	public X509Certificate[] getCertificateChain(String alias) {
+    public String chooseServerAlias(String keyType, Principal[] issuers,
+            Socket socket) {
+        return chooseAlias(issuers, socket);
+    }
+
+    private String chooseAlias(Principal[] issuers,
+            Socket socket) {
+        String retval = null;
+        try {
+            Enumeration<String> aliases = ks.aliases();
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+                X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
+                if (cert.getBasicConstraints() == -1) {
+                    Principal certIssuer = cert.getIssuerDN();
+                    for (Principal issuer : issuers) {
+                        if (issuer.equals(certIssuer)) {
+                            retval = alias;
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error fetchin alias from client key store", e);
+        }
+
+        return retval;
+    }
+
+    public X509Certificate[] getCertificateChain(String alias) {
         try {
             return (X509Certificate[]) ks.getCertificateChain(alias);
         } catch (Exception e) {
-        	log.error("Error fetching certificate chain for the logon certificate : " +e.getMessage(),e);
+            log.error("Error fetching certificate chain for the logon certificate : " + e.getMessage(), e);
             return null;
         }
-	}
+    }
 
-	public String[] getClientAliases(String keyType, Principal[] issuers) {
-		return getAliases(issuers);
-		
-	}
-	
-	private String[] getAliases(Principal[] issuers){
-		ArrayList<String> retval = null;
-		try{
-			Enumeration<String> aliases = ks.aliases();
-			while(aliases.hasMoreElements()){
-				String alias = aliases.nextElement();
-				X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
-				if(cert.getBasicConstraints() == -1){
-					Principal certIssuer = cert.getIssuerDN();
-					for(Principal issuer : issuers){
-						if(issuer.equals(certIssuer)){
-							retval.add(alias);								
-						}
-					}
-				}
-			}
-		}catch(Exception e){
-			log.error("Error fetchin alias from client key store", e);
-		}
+    public String[] getClientAliases(String keyType, Principal[] issuers) {
+        return getAliases(issuers);
 
-		return retval.toArray(new String[retval.size()]);
-	}
+    }
 
-	public PrivateKey getPrivateKey(String alias) {
+    private String[] getAliases(Principal[] issuers) {
+        ArrayList<String> retval = null;
+        try {
+            Enumeration<String> aliases = ks.aliases();
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+                X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
+                if (cert.getBasicConstraints() == -1) {
+                    Principal certIssuer = cert.getIssuerDN();
+                    for (Principal issuer : issuers) {
+                        if (issuer.equals(certIssuer)) {
+                            retval.add(alias);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error fetchin alias from client key store", e);
+        }
+
+        return retval.toArray(new String[retval.size()]);
+    }
+
+    public PrivateKey getPrivateKey(String alias) {
         try {
             return (PrivateKey) ks.getKey(alias, password);
         } catch (Exception e) {
-        	log.error("Error fetching private key for the logon certificate : " +e.getMessage(),e);
+            log.error("Error fetching private key for the logon certificate : " + e.getMessage(), e);
             return null;
         }
-	}
+    }
 
-	public String[] getServerAliases(String keyType, Principal[] issuers) {
-		return getAliases(issuers);		
-	}
-
+    public String[] getServerAliases(String keyType, Principal[] issuers) {
+        return getAliases(issuers);
+    }
 }

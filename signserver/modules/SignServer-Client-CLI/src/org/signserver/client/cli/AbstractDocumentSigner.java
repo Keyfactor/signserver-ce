@@ -21,8 +21,9 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 
 /**
+ * Abstract implementation of DocumentSigner.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public abstract class AbstractDocumentSigner implements DocumentSigner {

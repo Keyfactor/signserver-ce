@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.protocol.ws.client;
 
 import java.util.List;
@@ -28,15 +27,13 @@ import org.signserver.protocol.ws.ProcessRequestWS;
  * It's up to the implementing class to take care of high-availability
  * related functionality according to a policy that should be added to
  * the SignServerWSClientFactory
- * 
- * 
- * @author Philip Vendil
  *
+ * @author Philip Vendil
  * @version $Id$
  */
 public interface ISignServerWSClient {
-   
-	/**
+
+    /**
      * Method used to initialize a SignServer client with a given
      * high availability policy.
      * 
@@ -48,24 +45,21 @@ public interface ISignServerWSClient {
      * @param faultCallback an interface to which all the problems are reported
      * @param sSLSocketFactory the SSLSocketFactory to use, null means that the Default 
      * SSLSocketFactory will be used if necessary. 
-	 * this is mainly used to report problems when connecting to nodes. 
+     * this is mainly used to report problems when connecting to nodes. 
      */
-	void init(String[] hosts, int port, int timeOut, 
-         String wSDLURI, boolean useHTTPS, IFaultCallback faultCallback,
-         SSLSocketFactory sSLSocketFactory);
+    void init(String[] hosts, int port, int timeOut,
+            String wSDLURI, boolean useHTTPS, IFaultCallback faultCallback,
+            SSLSocketFactory sSLSocketFactory);
 
-	/**
-	 * The main method used to send process requests to a sign server.
-	 * 
-	 * It's up the implementing class to take care of the High-Availability according to
-	 * the policy.
-	 * 
-	 * @param requests a list of requests to process
-	 * @param workerIdOrName name or id of worker.
-	 * 
-	 */
-	List<ProcessResponseWS> process(String workerIdOrName, List<ProcessRequestWS> requests);
-	
-
-
+    /**
+     * The main method used to send process requests to a sign server.
+     * 
+     * It's up the implementing class to take care of the High-Availability according to
+     * the policy.
+     * 
+     * @param requests a list of requests to process
+     * @param workerIdOrName name or id of worker.
+     * 
+     */
+    List<ProcessResponseWS> process(String workerIdOrName, List<ProcessRequestWS> requests);
 }

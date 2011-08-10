@@ -20,9 +20,10 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 
 /**
+ * Abstract implementation of SODSigner.
  *
  * @author Markus Kilas
- * @version $Id: AbstractDocumentSigner.java 910 2010-03-31 12:05:34Z netmackan $
+ * @version $Id$
  */
 public abstract class AbstractSODSigner implements SODSigner {
 

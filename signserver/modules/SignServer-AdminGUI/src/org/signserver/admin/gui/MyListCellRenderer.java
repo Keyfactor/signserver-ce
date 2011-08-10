@@ -22,6 +22,7 @@ import javax.swing.plaf.basic.BasicHTML;
 
 /**
  * Renderer for the main list of workers.
+ *
  * @author Markus Kilås
  * @version $Id$
  */

@@ -57,7 +57,7 @@ import org.signserver.server.signers.BaseSigner;
  * A Signer signing arbitrary content and produces the result in
  * Cryptographic Message Syntax (CMS) - RFC 3852.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class CMSSigner extends BaseSigner {

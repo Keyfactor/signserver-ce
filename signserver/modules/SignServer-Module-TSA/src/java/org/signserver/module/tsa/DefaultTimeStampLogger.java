@@ -77,7 +77,7 @@ public class DefaultTimeStampLogger implements IWorkerLogger {
 
     public void log(Map<String, String> entries) throws WorkerLoggerException {
         final IPatternLogger pl = new PatternLogger(this.pattern.matcher(
-                this.orderString), this.orderString, this.ACCOUNTLOG,
+                this.orderString), this.orderString, ACCOUNTLOG,
                 this.logDateFormat, this.timeZone);
 
         // TODO: Do a new version of pattern logger instead of this copying

@@ -22,6 +22,7 @@ import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,7 +57,6 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ITimeSource;
-import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
@@ -231,7 +231,7 @@ public class TimeStampSigner extends BaseSigner {
     //private String defaultDigestOID = null;
     private String defaultTSAPolicyOID = null;
 
-    
+    @Override
     public void init(final int signerId, final WorkerConfig config,
             final WorkerContext workerContext,
             final EntityManager workerEntityManager) {
@@ -516,10 +516,10 @@ public class TimeStampSigner extends BaseSigner {
                 if (subStrings.length > 0) {
                     acceptedAlgorithms = new HashSet();
                     for (int i = 0; i < subStrings.length; i++) {
-                        final String algorithm =
+                        final String acceptAlg =
                             (String) ACCEPTEDALGORITHMSMAP.get(subStrings[i]);
-                        if (algorithm != null) {
-                            acceptedAlgorithms.add(algorithm);
+                        if (acceptAlg != null) {
+                            acceptedAlgorithms.add(acceptAlg);
                         } else {
                             LOG.error("Error, signer " + workerId
                                     + " configured with incompatible acceptable algorithm : "
@@ -567,9 +567,7 @@ public class TimeStampSigner extends BaseSigner {
             final String[] subStrings = nonParsedPropery.split(";");
             if (subStrings.length > 0) {
                 retval = new HashSet<String>();
-                for (int i = 0; i < subStrings.length; i++) {
-                    retval.add(subStrings[i]);
-                }
+                retval.addAll(Arrays.asList(subStrings));
             }
         }
         return retval;

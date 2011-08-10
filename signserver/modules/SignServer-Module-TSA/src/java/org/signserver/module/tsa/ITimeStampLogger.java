@@ -1,15 +1,23 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.module.tsa;
 
 import org.signserver.server.log.IWorkerLogger;
 
 /**
+ * WorkerLogger for TimeStampSigner.
  *
- * @author Markus Kil�s
+ * @author Markus Kilås
  * @version $Id$
  */
 public interface ITimeStampLogger extends IWorkerLogger {
@@ -45,5 +53,4 @@ public interface ITimeStampLogger extends IWorkerLogger {
             "TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTDIGEST";
 
     String LOG_TSA_TIMESTAMPRESPONSE_ENCODED = "TSA_TIMESTAMPRESPONSE_ENCODED";
-
 }

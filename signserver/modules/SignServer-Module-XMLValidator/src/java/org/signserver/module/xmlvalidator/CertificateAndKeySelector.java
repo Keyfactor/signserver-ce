@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.module.xmlvalidator;
 
 import java.security.Key;
@@ -43,39 +42,40 @@ import org.apache.log4j.Logger;
  */
 class CertificateAndKeySelector extends KeySelector {
 
-	private static Logger log = Logger.getLogger(CertificateAndKeySelector.class);
-	
-	private int requestId;
+    /** Logger for this class. */
+    private static Logger log = Logger.getLogger(CertificateAndKeySelector.class);
+    
+    private int requestId;
     private X509Certificate choosenCert;
     private List<? extends Certificate> certificates;
-	
-	public CertificateAndKeySelector() {
-		this(-1);
-	}
-	
-	public CertificateAndKeySelector(int requestId) {
-		this.requestId = requestId;
-	}
-	
-	@Override
-	public KeySelectorResult select(KeyInfo keyInfo, Purpose purpose, AlgorithmMethod method, XMLCryptoContext context) throws KeySelectorException {
-		
-		if(log.isDebugEnabled()) {
-    		log.debug("Request " + requestId + ":  select(\"" + keyInfo + ", \"" + purpose + ", \"" + method + ", \"" + context + "\")");
-    	}
+
+    public CertificateAndKeySelector() {
+        this(-1);
+    }
+
+    public CertificateAndKeySelector(int requestId) {
+        this.requestId = requestId;
+    }
+
+    @Override
+    public KeySelectorResult select(KeyInfo keyInfo, Purpose purpose, AlgorithmMethod method, XMLCryptoContext context) throws KeySelectorException {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Request " + requestId + ":  select(\"" + keyInfo + ", \"" + purpose + ", \"" + method + ", \"" + context + "\")");
+        }
 
         SignatureMethod signatureMethod = (SignatureMethod) method;
 
         List<X509Certificate> foundCerts = new LinkedList<X509Certificate>();
 
-        for(Object o1 : keyInfo.getContent()) {
+        for (Object o1 : keyInfo.getContent()) {
             log.trace("o1: " + o1);
-            if(o1 instanceof X509Data) {
+            if (o1 instanceof X509Data) {
                 X509Data data = (X509Data) o1;
-                for(Object o2 : data.getContent()) {
-                    if(o2 instanceof X509Certificate) {
+                for (Object o2 : data.getContent()) {
+                    if (o2 instanceof X509Certificate) {
                         X509Certificate cert = (X509Certificate) o2;
-                        if(matchingAlgorithms(cert.getPublicKey().getAlgorithm(), signatureMethod.getAlgorithm())) {
+                        if (matchingAlgorithms(cert.getPublicKey().getAlgorithm(), signatureMethod.getAlgorithm())) {
                             foundCerts.add(cert);
                         }
                     }
@@ -83,41 +83,42 @@ class CertificateAndKeySelector extends KeySelector {
             }
         }
 
-        if(log.isDebugEnabled()) {
-        	log.debug("Request " + requestId + ": foundCerts.size = " + foundCerts.size());
+        if (log.isDebugEnabled()) {
+            log.debug("Request " + requestId + ": foundCerts.size = " + foundCerts.size());
         }
-        
-        if(foundCerts.size() == 0) {
+
+        if (foundCerts.isEmpty()) {
             throw new KeySelectorException("No suitable certificate found");
         }
-        
-		try {
-			CertificateFactory cf;
-			cf = CertificateFactory.getInstance("X.509", "BC");
-			
-			
-			CertPath cp = cf.generateCertPath(foundCerts);
-			
-			// X.509 certificates are by convention returned ordered with the signer certificate first
-			certificates = cp.getCertificates();
-			
-			if(log.isDebugEnabled()) {
-				int i = 0;
-				for(Certificate cert : certificates) {
-					if(cert instanceof X509Certificate) {
-						log.debug("Cert " + i++ + " = " + ((X509Certificate)cert).getSubjectDN().toString());
-					}
-				}
-			}
-			choosenCert = (X509Certificate)certificates.get(0);
-		} catch (CertificateException ex) {
-			throw new KeySelectorException("Certificate path error", ex);
-		} catch (NoSuchProviderException ex) {
-			throw new KeySelectorException("BouncyCastle not loaded", ex);
-		}
-        
-        
+
+        try {
+            CertificateFactory cf;
+            cf = CertificateFactory.getInstance("X.509", "BC");
+
+
+            CertPath cp = cf.generateCertPath(foundCerts);
+
+            // X.509 certificates are by convention returned ordered with the signer certificate first
+            certificates = cp.getCertificates();
+
+            if (log.isDebugEnabled()) {
+                int i = 0;
+                for (Certificate cert : certificates) {
+                    if (cert instanceof X509Certificate) {
+                        log.debug("Cert " + i++ + " = " + ((X509Certificate) cert).getSubjectDN().toString());
+                    }
+                }
+            }
+            choosenCert = (X509Certificate) certificates.get(0);
+        } catch (CertificateException ex) {
+            throw new KeySelectorException("Certificate path error", ex);
+        } catch (NoSuchProviderException ex) {
+            throw new KeySelectorException("BouncyCastle not loaded", ex);
+        }
+
+
         return new KeySelectorResult() {
+
             public Key getKey() {
                 return choosenCert.getPublicKey();
             }
@@ -125,21 +126,21 @@ class CertificateAndKeySelector extends KeySelector {
     }
 
     private boolean matchingAlgorithms(String keyAlg, String signAlg) {
-        if("RSA".equalsIgnoreCase(keyAlg)) {
+        if ("RSA".equalsIgnoreCase(keyAlg)) {
             return SignatureMethod.RSA_SHA1.equalsIgnoreCase(signAlg);
-        } else if("DSA".equalsIgnoreCase(keyAlg)) {
+        } else if ("DSA".equalsIgnoreCase(keyAlg)) {
             return SignatureMethod.DSA_SHA1.equalsIgnoreCase(signAlg);
-        } else if("ECDSA".equalsIgnoreCase(keyAlg)) {
+        } else if ("ECDSA".equalsIgnoreCase(keyAlg)) {
             return "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1".equals(signAlg);
         }
         return false;
     }
 
     public X509Certificate getChoosenCert() {
-    	return choosenCert;
+        return choosenCert;
     }
-    
+
     public List<? extends Certificate> getCertificates() {
-    	return certificates;
+        return certificates;
     }
 }

@@ -80,11 +80,12 @@ import org.xml.sax.SAXException;
  * No properties yet
  * 
  * @author Markus Kilås
- * @version $Id: XMLSigner.java -1   $
+ * @version $Id$
  */
 public class XMLSigner extends BaseSigner {
 
-    private static final Logger LOG = Logger.getLogger(XMLSigner.class.getName());
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(XMLSigner.class);
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
@@ -217,15 +218,15 @@ public class XMLSigner extends BaseSigner {
     private static String getSignatureMethod(final PrivateKey key)
             throws NoSuchAlgorithmException {
         String result;
-        
-        if("DSA".equals(key.getAlgorithm())) {
+
+        if ("DSA".equals(key.getAlgorithm())) {
             result = SignatureMethod.DSA_SHA1;
-        } else if("RSA".equals(key.getAlgorithm())) {
+        } else if ("RSA".equals(key.getAlgorithm())) {
             result = SignatureMethod.RSA_SHA1;
         } else {
             throw new NoSuchAlgorithmException("XMLSigner does not support algorithm: " + key.getAlgorithm());
         }
-        
+
         return result;
     }
 }

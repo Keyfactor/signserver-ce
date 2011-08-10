@@ -109,7 +109,6 @@ public class RenewalWorker extends BaseSigner {
     public static final String PROPERTY_EXPLICITECC = "EXPLICITECC";
     private static final String NEXTCERTSIGNKEY = "NEXTCERTSIGNKEY";
 
-    WorkerConfig config;
     private static final String TRUSTSTORE_TYPE_PEM = "PEM";
     private static final String TRUSTSTORE_TYPE_JKS = "JKS";
 
@@ -144,7 +143,6 @@ public class RenewalWorker extends BaseSigner {
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
-        this.config = config;
         getWorkerSession();
     }
 

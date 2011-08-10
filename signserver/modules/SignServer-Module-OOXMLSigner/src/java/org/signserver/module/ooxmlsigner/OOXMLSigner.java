@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.module.ooxmlsigner;
 
 import java.io.ByteArrayInputStream;
@@ -67,92 +66,92 @@ import org.signserver.server.signers.BaseSigner;
  */
 public class OOXMLSigner extends BaseSigner {
 
-	private String signatureId = "idPackageSignature";
+    private String signatureId = "idPackageSignature";
 
-	@Override
-	public void init(int workerId, WorkerConfig config,
-			WorkerContext workerContext, EntityManager workerEM) {
+    @Override
+    public void init(int workerId, WorkerConfig config,
+            WorkerContext workerContext, EntityManager workerEM) {
 
-		// add opc relationship transform provider
-		Security.addProvider(new RelationshipTransformProvider());
+        // add opc relationship transform provider
+        Security.addProvider(new RelationshipTransformProvider());
 
-		super.init(workerId, config, workerContext, workerEM);
-	}
+        super.init(workerId, config, workerContext, workerEM);
+    }
 
-	@Override
-	public ProcessResponse processData(ProcessRequest signRequest,
-			RequestContext requestContext) throws IllegalRequestException,
-			CryptoTokenOfflineException, SignServerException {
+    @Override
+    public ProcessResponse processData(ProcessRequest signRequest,
+            RequestContext requestContext) throws IllegalRequestException,
+            CryptoTokenOfflineException, SignServerException {
 
-		ProcessResponse signResponse;
-		ISignRequest sReq = (ISignRequest) signRequest;
+        ProcessResponse signResponse;
+        ISignRequest sReq = (ISignRequest) signRequest;
 
-		// Check that the request contains a valid GenericSignRequest object
-		// with a byte[].
-		if (!(signRequest instanceof GenericSignRequest)) {
-			throw new IllegalRequestException(
-					"Recieved request wasn't a expected GenericSignRequest.");
-		}
-		if (!(sReq.getRequestData() instanceof byte[])) {
-			throw new IllegalRequestException(
-					"Recieved request data wasn't a expected byte[].");
-		}
+        // Check that the request contains a valid GenericSignRequest object
+        // with a byte[].
+        if (!(signRequest instanceof GenericSignRequest)) {
+            throw new IllegalRequestException(
+                    "Recieved request wasn't a expected GenericSignRequest.");
+        }
+        if (!(sReq.getRequestData() instanceof byte[])) {
+            throw new IllegalRequestException(
+                    "Recieved request data wasn't a expected byte[].");
+        }
 
-		byte[] data = (byte[]) sReq.getRequestData();
+        byte[] data = (byte[]) sReq.getRequestData();
 
-		byte[] fpbytes = CertTools.generateSHA1Fingerprint(data);
-		String fp = new String(Hex.encode(fpbytes));
+        byte[] fpbytes = CertTools.generateSHA1Fingerprint(data);
+        String fp = new String(Hex.encode(fpbytes));
 
-		Package docxPackage;
-		try {
-			docxPackage = Package.open(new ByteArrayInputStream(data),
-					PackageAccess.READ_WRITE);
-		} catch (InvalidFormatException e) {
-			throw new SignServerException(
-					"Data received is not in valid openxml package format", e);
-		} catch (IOException e) {
-			throw new SignServerException("Error opening received data", e);
-		}
+        Package docxPackage;
+        try {
+            docxPackage = Package.open(new ByteArrayInputStream(data),
+                    PackageAccess.READ_WRITE);
+        } catch (InvalidFormatException e) {
+            throw new SignServerException(
+                    "Data received is not in valid openxml package format", e);
+        } catch (IOException e) {
+            throw new SignServerException("Error opening received data", e);
+        }
 
-		// create digital signature manager object
-		PackageDigitalSignatureManager dsm = new PackageDigitalSignatureManager(
-				docxPackage);
+        // create digital signature manager object
+        PackageDigitalSignatureManager dsm = new PackageDigitalSignatureManager(
+                docxPackage);
 
-		// get signing key
-		PrivateKey privateKey = getCryptoToken().getPrivateKey(
-				ICryptoToken.PURPOSE_SIGN);
+        // get signing key
+        PrivateKey privateKey = getCryptoToken().getPrivateKey(
+                ICryptoToken.PURPOSE_SIGN);
 
-		// get signing certificate
-		X509Certificate cert = (X509Certificate) getSigningCertificate();
+        // get signing certificate
+        X509Certificate cert = (X509Certificate) getSigningCertificate();
 
-		// sign document
-		try {
-			dsm.SignDocument(privateKey, cert);
-		} catch (OpenXML4JException e1) {
-			throw new SignServerException("Problem signing document", e1);
-		}
+        // sign document
+        try {
+            dsm.SignDocument(privateKey, cert);
+        } catch (OpenXML4JException e1) {
+            throw new SignServerException("Problem signing document", e1);
+        }
 
-		// save output to package
-		ByteArrayOutputStream boutFinal = new ByteArrayOutputStream();
-		try {
-			dsm.getContainer().save(boutFinal);
-		} catch (IOException e) {
-			throw new SignServerException(
-					"Error saving final output data to output", e);
-		}
+        // save output to package
+        ByteArrayOutputStream boutFinal = new ByteArrayOutputStream();
+        try {
+            dsm.getContainer().save(boutFinal);
+        } catch (IOException e) {
+            throw new SignServerException(
+                    "Error saving final output data to output", e);
+        }
 
-		byte[] signedbytes = boutFinal.toByteArray();
+        byte[] signedbytes = boutFinal.toByteArray();
 
-		if (signRequest instanceof GenericServletRequest) {
-			signResponse = new GenericServletResponse(sReq.getRequestID(),
-					signedbytes, getSigningCertificate(), fp, new ArchiveData(
-							signedbytes), "application/octet-stream");
-		} else {
-			signResponse = new GenericSignResponse(sReq.getRequestID(),
-					signedbytes, getSigningCertificate(), fp, new ArchiveData(
-							signedbytes));
-		}
-		return signResponse;
+        if (signRequest instanceof GenericServletRequest) {
+            signResponse = new GenericServletResponse(sReq.getRequestID(),
+                    signedbytes, getSigningCertificate(), fp, new ArchiveData(
+                    signedbytes), "application/octet-stream");
+        } else {
+            signResponse = new GenericSignResponse(sReq.getRequestID(),
+                    signedbytes, getSigningCertificate(), fp, new ArchiveData(
+                    signedbytes));
+        }
+        return signResponse;
 
-	}
+    }
 }

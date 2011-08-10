@@ -65,39 +65,33 @@ import org.signserver.server.signers.BaseSigner;
 public class MRTDSODSigner extends BaseSigner {
 
     private static final Logger log = Logger.getLogger(MRTDSODSigner.class);
-
+    
     /** The digest algorithm, for example SHA1, SHA256. Defaults to SHA256. */
     private static final String PROPERTY_DIGESTALGORITHM = "DIGESTALGORITHM";
-
+    
     /** Default value for the digestAlgorithm property */
     private static final String DEFAULT_DIGESTALGORITHM = "SHA256";
-
+    
     /** The signature algorithm, for example SHA1withRSA, SHA256withRSA, SHA256withECDSA. Defaults to SHA256withRSA. */
     private static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
-
+    
     /** Default value for the signature algorithm property */
     private static final String DEFAULT_SIGNATUREALGORITHM = "SHA256withRSA";
-
+    
     /** Determines if the the data group values should be hashed by the signer. If false we assume they are already hashed. */
     private static final String PROPERTY_DODATAGROUPHASHING = "DODATAGROUPHASHING";
-
+    
     /** Default value if the data group values should be hashed by the signer. */
     private static final String DEFAULT_DODATAGROUPHASHING = "false";
-
+    
     private static final String PROPERTY_LDSVERSION = "LDSVERSION";
-
     private static final String REQUEST_LDSVERSION = "LDSVERSION";
-
     private static final String DEFAULT_LDSVERSION = "0107";
-    
     private static final String PROPERTY_UNICODEVERSION = "UNICODEVERSION";
-
     private static final String REQUEST_UNICODEVERSION = "UNICODEVERSION";
-
     private static final String DEFAULT_UNICODEVERSION = "040000";
-
     private static final Object syncObj = new Object();
-    
+
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (log.isTraceEnabled()) {
             log.trace(">processData");
@@ -115,28 +109,28 @@ public class MRTDSODSigner extends BaseSigner {
         // Trying to do a workaround for issue when the PKCS#11 session becomes invalid
         // If autoactivate is on, we can deactivate and re-activate the token.
         synchronized (syncObj) {
-        	int status = token.getCryptoTokenStatus();
-        	if (log.isDebugEnabled()) {
-             	log.debug("Crypto token status: "+status);        		
-        	}
-        	if (status != SignerStatus.STATUS_ACTIVE) {
-            	log.info("Crypto token status is not active, will see if we can autoactivate.");
-        		String pin = config.getProperty("PIN");
-        		if (pin == null) {
-        			pin = config.getProperty("pin");
-        		}
-        		if (pin != null) {
-                	log.info("Deactivating and re-activating crypto token.");
-        			token.deactivate();
-        			try {
-        				token.activate(pin);
-        			} catch (CryptoTokenAuthenticationFailureException e) {
-        				throw new CryptoTokenOfflineException(e);
-        			}					
-        		} else {
-                	log.info("Autoactivation not enabled, can not re-activate crypto token.");
-        		}
-        	}
+            int status = token.getCryptoTokenStatus();
+            if (log.isDebugEnabled()) {
+                log.debug("Crypto token status: " + status);
+            }
+            if (status != SignerStatus.STATUS_ACTIVE) {
+                log.info("Crypto token status is not active, will see if we can autoactivate.");
+                String pin = config.getProperty("PIN");
+                if (pin == null) {
+                    pin = config.getProperty("pin");
+                }
+                if (pin != null) {
+                    log.info("Deactivating and re-activating crypto token.");
+                    token.deactivate();
+                    try {
+                        token.activate(pin);
+                    } catch (CryptoTokenAuthenticationFailureException e) {
+                        throw new CryptoTokenOfflineException(e);
+                    }
+                } else {
+                    log.info("Autoactivation not enabled, can not re-activate crypto token.");
+                }
+            }
         }
         final X509Certificate cert = (X509Certificate) getSigningCertificate();
         final PrivateKey privKey = token.getPrivateKey(ICryptoToken.PURPOSE_SIGN);
@@ -147,7 +141,12 @@ public class MRTDSODSigner extends BaseSigner {
         }
 
         if (log.isDebugEnabled()) {
-        	log.debug("Using signer certificate with subjectDN '"+CertTools.getSubjectDN(cert)+"', issuerDN '"+CertTools.getIssuerDN(cert)+", serNo "+CertTools.getSerialNumberAsString(cert));
+            log.debug("Using signer certificate with subjectDN '" 
+                    + CertTools.getSubjectDN(cert) 
+                    + "', issuerDN '" 
+                    + CertTools.getIssuerDN(cert) 
+                    + ", serNo " 
+                    + CertTools.getSerialNumberAsString(cert));
         }
         // Construct SOD
         final SODFile sod;
@@ -156,14 +155,14 @@ public class MRTDSODSigner extends BaseSigner {
             final String digestAlgorithm = config.getProperty(PROPERTY_DIGESTALGORITHM, DEFAULT_DIGESTALGORITHM);
             final String digestEncryptionAlgorithm = config.getProperty(PROPERTY_SIGNATUREALGORITHM, DEFAULT_SIGNATUREALGORITHM);
             if (log.isDebugEnabled()) {
-                    log.debug("Using algorithms "+digestAlgorithm+", "+digestEncryptionAlgorithm);
+                log.debug("Using algorithms " + digestAlgorithm + ", " + digestEncryptionAlgorithm);
             }
             final String doHashing = config.getProperty(PROPERTY_DODATAGROUPHASHING, DEFAULT_DODATAGROUPHASHING);
             final Map<Integer, byte[]> dgvalues = sodRequest.getDataGroupHashes();
             Map<Integer, byte[]> dghashes = dgvalues;
             if (StringUtils.equalsIgnoreCase(doHashing, "true")) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Converting data group values to hashes using algorithm "+digestAlgorithm);
+                    log.debug("Converting data group values to hashes using algorithm " + digestAlgorithm);
                 }
                 // If true here the "data group hashes" are not really hashes but values that we must hash.
                 // The input is already decoded (if needed) and nice, so we just need to hash it
@@ -171,13 +170,13 @@ public class MRTDSODSigner extends BaseSigner {
                 for (Integer dgId : dgvalues.keySet()) {
                     byte[] value = dgvalues.get(dgId);
                     if (log.isDebugEnabled()) {
-                        log.debug("Hashing data group "+dgId+", value is of length: "+value.length);
+                        log.debug("Hashing data group " + dgId + ", value is of length: " + value.length);
                     }
-                    if ( (value != null) && (value.length > 0) ) {
+                    if ((value != null) && (value.length > 0)) {
                         MessageDigest digest = MessageDigest.getInstance(digestAlgorithm);
-                                byte[] result = digest.digest(value);
+                        byte[] result = digest.digest(value);
                         if (log.isDebugEnabled()) {
-                            log.debug("Resulting hash is of length: "+result.length);
+                            log.debug("Resulting hash is of length: " + result.length);
                         }
                         dghashes.put(dgId, result);
                     }
@@ -187,17 +186,14 @@ public class MRTDSODSigner extends BaseSigner {
             // Version values from configuration
             String ldsVersion = config.getProperty(PROPERTY_LDSVERSION,
                     DEFAULT_LDSVERSION);
-            String unicodeVersion
-                    = config.getProperty(PROPERTY_UNICODEVERSION);
+            String unicodeVersion = config.getProperty(PROPERTY_UNICODEVERSION);
 
             // Version values in request overrides configuration
-            final String ldsVersionRequest
-                    = sodRequest.getLdsVersion();
+            final String ldsVersionRequest = sodRequest.getLdsVersion();
             if (ldsVersionRequest != null) {
                 ldsVersion = ldsVersionRequest;
             }
-            final String unicodeVersionRequest
-                    = sodRequest.getUnicodeVersion();
+            final String unicodeVersionRequest = sodRequest.getUnicodeVersion();
             if (unicodeVersionRequest != null) {
                 unicodeVersion = unicodeVersionRequest;
             }
@@ -211,7 +207,7 @@ public class MRTDSODSigner extends BaseSigner {
                 // LDS V1.8 requires a unicode version
                 if (unicodeVersion == null) {
                     throw new IllegalRequestException(
-                    "Unicode version must be specified in LDS version 1.8");
+                            "Unicode version must be specified in LDS version 1.8");
                 }
             } else {
                 throw new IllegalRequestException(
@@ -251,8 +247,8 @@ public class MRTDSODSigner extends BaseSigner {
             ret = new SODSignResponse(sReq.getRequestID(), signedbytes, cert,
                     fp, new ArchiveData(signedbytes));
         } catch (GeneralSecurityException e) {
-                log.error("Error verifying the SOD we signed ourselves. ", e);
-                throw new SignServerException("SOD verification failure", e);
+            log.error("Error verifying the SOD we signed ourselves. ", e);
+            throw new SignServerException("SOD verification failure", e);
         }
 
         if (log.isTraceEnabled()) {
@@ -312,7 +308,7 @@ public class MRTDSODSigner extends BaseSigner {
                     = CertificateFactory.getInstance("X.509", "BC");
             final X509Certificate signerCert
                     = (X509Certificate) factory.generateCertificate(
-                        new ByteArrayInputStream(sodCert.getEncoded()));
+                    new ByteArrayInputStream(sodCert.getEncoded()));
 
             // Verify the SOD signature using certificate from SOD
             final boolean consistent = sod.checkDocSignature(signerCert);

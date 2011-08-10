@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -43,7 +44,7 @@ import org.signserver.server.WorkerContext;
 /**
  * TimedService that outputs a status report for a configured set of signers.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class SignerStatusReportTimedService extends BaseTimedService {
@@ -75,7 +76,7 @@ public class SignerStatusReportTimedService extends BaseTimedService {
 
     /** Workersession. */
     @EJB
-    private IWorkerSession workerSession;
+    private IWorkerSession workerSession; // FIXME: Better to somehow inject this
 
     /**
      * Initializes the worker.
@@ -105,9 +106,7 @@ public class SignerStatusReportTimedService extends BaseTimedService {
         if (workersValue == null) {
             LOG.error("Property WORKERS missing!");
         } else {
-            for (String worker : workersValue.split(",")) {
-                workers.add(worker);
-            }
+            workers.addAll(Arrays.asList(workersValue.split(",")));
         }
         LOG.info("Worker[" + workerId +"]: " + "Workers: " + workers.size());
 

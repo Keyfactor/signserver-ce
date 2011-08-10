@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server.statistics;
 
 import java.util.Date;
@@ -24,108 +23,101 @@ import java.util.concurrent.TimeUnit;
  * during a defined period of time, either as a single event or
  * longer such as minute or hour.
  * 
- * 
- * 
  * @author Philip Vendil 28 apr 2008
- *
  * @version $Id$
  */
+public class StatisticsEntry implements Delayed {
 
-public class StatisticsEntry implements Delayed{
-	
-	private Date periodStart = null;
-	private Date periodEnd = null;	
-	private Date expireDate = null;
-	private Map<String,Integer> customData = null;	
-	private Integer numberOfEvents = 0;
-	
-	/**
-	 * Creates one StatisticsEntry object.
-	 * 
-	 * @param periodStart defining the start of this collection of statistics
-	 * @param periodEnd defining the end of this collection of statistics
-	 * @param the date when this entry will be expired and removed from the
-	 * StatisticsCollector.
-	 */
-	public StatisticsEntry(Date periodStart, Date periodEnd, Date expireDate){
-		this.periodStart = periodStart;
-		this.periodEnd = periodEnd;
-		this.expireDate = expireDate;
-		
-	}
-	
-	/**
-	 * Method to add the records of this event to the statistics collector. 
-	 */
-	public void addEvent(Event event){
-		numberOfEvents++;
-	    if(event.getCustomData() != null){
-	    	for(String next : event.getCustomData().keySet()){
-	    		if(customData == null){
-	    	       customData = new HashMap<String,Integer>();	
-	    		}
-	    		if(customData.get(next) == null){
-	    			customData.put(next, event.getCustomData().get(next));
-	    		}else{
-	    			customData.put(next, customData.get(next) + event.getCustomData().get(next));
-	    		}
-	    	}
-	    }
-	}
+    private Date periodStart;
+    private Date periodEnd;
+    private Date expireDate;
+    private Map<String, Integer> customData;
+    private Integer numberOfEvents = 0;
 
-	/**
-	 * @return the timestamp when this statistics started.
-	 */
-	public Date getPeriodStart() {
-		return periodStart;
-	}
-
-	/**
-	 * @return the timestamp when this statistics ended.
-	 */
-	public Date getPeriodEnd() {
-		return periodEnd;
-	}
-	
-	/**
-	 * @return The defined expire date
-	 */
-    Date getExpireDate(){
-       return expireDate;	
+    /**
+     * Creates one StatisticsEntry object.
+     * 
+     * @param periodStart defining the start of this collection of statistics
+     * @param periodEnd defining the end of this collection of statistics
+     * @param the date when this entry will be expired and removed from the
+     * StatisticsCollector.
+     */
+    public StatisticsEntry(Date periodStart, Date periodEnd, Date expireDate) {
+        this.periodStart = periodStart;
+        this.periodEnd = periodEnd;
+        this.expireDate = expireDate;
     }
-	
-	/**
-	 * @return the Number of events that have occurred during the
-	 * defined period of time.
-	 */
-	public Integer getNumberOfEvents() {
-		return numberOfEvents;
-	}
 
-	/**
-	 * @return the custom data used for this event or null
-	 * if no custom data have been recorded.
-	 */
-	Map<String,Integer> getCustomData(){
-		return customData;
-	}
-	
-	/**
-	 * 
+    /**
+     * Method to add the records of this event to the statistics collector. 
+     */
+    public void addEvent(Event event) {
+        numberOfEvents++;
+        if (event.getCustomData() != null) {
+            for (String next : event.getCustomData().keySet()) {
+                if (customData == null) {
+                    customData = new HashMap<String, Integer>();
+                }
+                if (customData.get(next) == null) {
+                    customData.put(next, event.getCustomData().get(next));
+                } else {
+                    customData.put(next, customData.get(next) + event.getCustomData().get(next));
+                }
+            }
+        }
+    }
+
+    /**
+     * @return the timestamp when this statistics started.
+     */
+    public Date getPeriodStart() {
+        return periodStart;
+    }
+
+    /**
+     * @return the timestamp when this statistics ended.
+     */
+    public Date getPeriodEnd() {
+        return periodEnd;
+    }
+
+    /**
+     * @return The defined expire date
+     */
+    Date getExpireDate() {
+        return expireDate;
+    }
+
+    /**
+     * @return the Number of events that have occurred during the
+     * defined period of time.
+     */
+    public Integer getNumberOfEvents() {
+        return numberOfEvents;
+    }
+
+    /**
+     * @return the custom data used for this event or null
+     * if no custom data have been recorded.
+     */
+    Map<String, Integer> getCustomData() {
+        return customData;
+    }
+
+    /**
+     * 
      * Returns the remaining delay associated with this object, in the given time unit. 
      * @param unit the time unit
      * @return the remaining time in the specified unit.
-	 */
-	public long getDelay(TimeUnit unit) {	
-		return unit.convert(expireDate.getTime() - System.currentTimeMillis(), TimeUnit.MILLISECONDS);		
-	}
+     */
+    public long getDelay(TimeUnit unit) {
+        return unit.convert(expireDate.getTime() - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+    }
 
-	public int compareTo(Delayed o) {
-		if(o instanceof StatisticsEntry){
-			return expireDate.compareTo(((StatisticsEntry) o).getExpireDate());
-		}
-		return 0;
-	}
-	
-
+    public int compareTo(Delayed o) {
+        if (o instanceof StatisticsEntry) {
+            return expireDate.compareTo(((StatisticsEntry) o).getExpireDate());
+        }
+        return 0;
+    }
 }

@@ -13,8 +13,9 @@
 package org.signserver.server.log;
 
 /**
+ * Exception that can be thrown to indicate a failure to use the SystemLogger.
  *
- * @author Markus Kil�s
+ * @author Markus Kilås
  * @version $Id$
  */
 public class SystemLoggerException extends Exception {
@@ -30,5 +31,4 @@ public class SystemLoggerException extends Exception {
     public SystemLoggerException(String message) {
         super(message);
     }
-
 }

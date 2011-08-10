@@ -14,7 +14,8 @@ package org.signserver.server.log;
 
 /**
  * Exception thrown in case there was a problem writing out the log line.
- * @author Markus Kil�s
+ *
+ * @author Markus Kilås
  * @version $Id$
  */
 public class WorkerLoggerException extends Exception {

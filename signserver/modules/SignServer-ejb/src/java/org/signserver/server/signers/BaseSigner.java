@@ -27,7 +27,7 @@ import org.signserver.server.KeyUsageCounter;
  * functionality.
  *
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
@@ -38,7 +38,6 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         SignerStatus retval = null;
 
         try {
-
             final Certificate cert = getSigningCertificate();
             final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
 
@@ -46,9 +45,9 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 KeyUsageCounter counter = em.find(KeyUsageCounter.class,
                         KeyUsageCounter.createKeyHash(cert.getPublicKey()));
                 int status = getCryptoToken().getCryptoTokenStatus();
-                if (counter == null || keyUsageLimit != -1 &&
-                        status == CryptoTokenStatus.STATUS_ACTIVE &&
-                        counter.getCounter() >= keyUsageLimit) {
+                if (counter == null || keyUsageLimit != -1
+                        && status == CryptoTokenStatus.STATUS_ACTIVE
+                        && counter.getCounter() >= keyUsageLimit) {
                     status = CryptoTokenStatus.STATUS_OFFLINE;
                 }
 
@@ -63,8 +62,6 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         } catch (CryptoTokenOfflineException e) {
             retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), new ProcessableConfig(config), null);
         }
-
-
         return retval;
     }
 }

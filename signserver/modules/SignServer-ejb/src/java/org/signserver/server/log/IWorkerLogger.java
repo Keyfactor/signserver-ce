@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.server.log;
 
-import org.signserver.server.log.WorkerLoggerException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -21,7 +20,7 @@ import java.util.Properties;
  * Audit events not associated with a worker transaction should be logged by a
  * ISystemLogger instead.
  *
- * @author Markus Kil�s
+ * @author Markus Kilås
  * @version $Id$
  */
 public interface IWorkerLogger {
@@ -64,5 +63,4 @@ public interface IWorkerLogger {
      * @throws WorkerLoggerException In case there is a problem writing the log.
      */
     void log(Map<String,String> fields) throws WorkerLoggerException;
-
 }

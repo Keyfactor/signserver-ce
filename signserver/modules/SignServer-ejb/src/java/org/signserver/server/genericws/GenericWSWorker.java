@@ -31,11 +31,9 @@ import org.signserver.server.WorkerContext;
  * module to a signserver.
  *
  * @author Philip Vendil 8 okt 2008
- * @version $$
+ * @version $Id$
  */
 public class GenericWSWorker extends BaseProcessable {
-
-    private transient Logger log = Logger.getLogger(this.getClass());
 
     private GenericWSWorkerImpl delegate;
 
@@ -48,9 +46,9 @@ public class GenericWSWorker extends BaseProcessable {
      * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
      */
     @Override
-    public void init(int workerId, WorkerConfig config, WorkerContext workerContext,EntityManager workerEntityManager) {
-            super.init(workerId, config, workerContext,workerEntityManager);
-            delegate.init(workerId, config, workerContext, workerEM);
+    public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager) {
+        super.init(workerId, config, workerContext, workerEntityManager);
+        delegate.init(workerId, config, workerContext, workerEM);
     }
 
     /**
@@ -61,8 +59,8 @@ public class GenericWSWorker extends BaseProcessable {
      * org.signserver.common.ProcessRequest, java.security.cert.X509Certificate)
      */
     public ProcessResponse processData(ProcessRequest processRequest,
-    		RequestContext requestContext) throws IllegalRequestException,
-    		CryptoTokenOfflineException, SignServerException {
+            RequestContext requestContext) throws IllegalRequestException,
+            CryptoTokenOfflineException, SignServerException {
         return delegate.processData(processRequest, requestContext);
     }
 

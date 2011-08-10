@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server.timedservices;
 
 import java.text.ParseException;
@@ -24,28 +23,23 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.server.BaseWorker;
 
 /**
+ * TODO: Document me!
  *
  * @version $Id$
  */
 public abstract class BaseTimedService extends BaseWorker implements ITimedService {
-	 
-	//Private Property constants
 
-	/** Log4j instance for actual implementation class */
-    public transient Logger log = Logger.getLogger(this.getClass());
-    
+    /** Log4j instance for actual implementation class */
+    private final transient Logger log = Logger.getLogger(this.getClass());
 
-    
-    protected BaseTimedService(){
-
+    protected BaseTimedService() {
     }
-
 
     /**
      * @see org.signserver.server.timedservices.ITimedService#getNextInterval()
      */
     public long getNextInterval() {
-    	long retval = DONT_EXECUTE;
+        long retval = DONT_EXECUTE;
     	final String interval
                 = config.getProperties().getProperty(ServiceConfig.INTERVAL);
         final String intervalMs
@@ -53,72 +47,65 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     	final String cronExpression
                 = config.getProperties().getProperty(ServiceConfig.CRON);
 
-    	if (interval == null && cronExpression == null && intervalMs == null) {
+        if (interval == null && cronExpression == null && intervalMs == null) {
             log.warn("Neither an interval (in seconds or milliseconds) nor CRON expression defined for service with id: " + workerId);
-    	} else if ((interval != null && cronExpression != null)
+        } else if ((interval != null && cronExpression != null)
                 || (interval != null && intervalMs != null)
                 || (cronExpression != null && intervalMs != null)) {
-            log.error("More than on of " + ServiceConfig.INTERVAL + ", " + ServiceConfig.INTERVALMS + " and " + ServiceConfig.CRON +" specified for service with id: " + workerId);
+            log.error("More than on of " + ServiceConfig.INTERVAL + ", " + ServiceConfig.INTERVALMS + " and " + ServiceConfig.CRON + " specified for service with id: " + workerId);
         } else if (interval != null) {
             try {
                 retval = Long.parseLong(interval) * 1000;
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 log.error("Error in Service configuration, Interval must contains numbers only. Service id: " + workerId);
             }
         } else if (intervalMs != null) {
             try {
                 retval = Long.parseLong(intervalMs);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 log.error("Error in Service configuration, Interval must contains numbers only. Service id: " + workerId);
             }
-        } else if(cronExpression != null){
+        } else if (cronExpression != null) {
             try {
                 CronExpression ce = new CronExpression(cronExpression);
                 Date nextDate = ce.getNextValidTimeAfter(new Date());
                 retval = (long) (nextDate.getTime() - System.currentTimeMillis());
-            } catch(ParseException e) {
+            } catch (ParseException e) {
                 log.error("Error in Service configuration, illegal CRON expression : " + cronExpression + " defined for service with id " + workerId);
             }
         }
-    	return retval;
+        return retval;
     }
-
 
     /**
      * @see org.signserver.server.timedservices.ITimedService#isActive()
      */
-	public boolean isActive() {
-		if(config.getProperties().getProperty(ServiceConfig.ACTIVE) == null){
-           return false;			
-		}
-		
-		String active = config.getProperties().getProperty(ServiceConfig.ACTIVE);
-		
-		return active.trim().equalsIgnoreCase("TRUE");
-	}
+    public boolean isActive() {
+        if (config.getProperties().getProperty(ServiceConfig.ACTIVE) == null) {
+            return false;
+        }
 
+        String active = config.getProperties().getProperty(ServiceConfig.ACTIVE);
 
-	/**
-	 * @see org.signserver.server.timedservices.ITimedService#isSingleton()
-	 */
-	public boolean isSingleton() {
-		if(config.getProperties().getProperty(ServiceConfig.SINGLETON) == null){
-			return false;			
-		}
+        return active.trim().equalsIgnoreCase("TRUE");
+    }
 
-		String active = config.getProperties().getProperty(ServiceConfig.SINGLETON);
+    /**
+     * @see org.signserver.server.timedservices.ITimedService#isSingleton()
+     */
+    public boolean isSingleton() {
+        if (config.getProperties().getProperty(ServiceConfig.SINGLETON) == null) {
+            return false;
+        }
 
-		return active.trim().equalsIgnoreCase("TRUE");
-	}
+        String active = config.getProperties().getProperty(ServiceConfig.SINGLETON);
 
+        return active.trim().equalsIgnoreCase("TRUE");
+    }
 
     public WorkerStatus getStatus() {
-		ServiceStatus retval = new ServiceStatus(workerId,  new ServiceConfig( config));
-		
-		return retval;
-	}
+        ServiceStatus retval = new ServiceStatus(workerId, new ServiceConfig(config));
 
-	    
-
-	
+        return retval;
+    }
 }

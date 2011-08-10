@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.validationservice.server.validcache;
 
 import java.util.Date;
@@ -28,79 +27,75 @@ import org.signserver.validationservice.common.ICertificate;
  *
  * @version $Id$
  */
-
 class TimeQueue {
 
-	private Queue<TimeCertPair> timeQueue = new ConcurrentLinkedQueue<TimeCertPair>();
-	private ValidationMap validationMap;
-	private long cacheTimeMS;
-	
-	
-	/**
-	 * Main constructor for a time queue
-	 * 
-	 * @param validationMap a reference to the validation map.
-	 * @param cacheTimeMS time in milliseconds that the certificate should be cached.
-	 */
-	TimeQueue(ValidationMap validationMap, long cacheTimeMS){
-		this.validationMap = validationMap;
-		this.cacheTimeMS = cacheTimeMS;
-	}
-	
-	/**
-	 * Method used to remove all expired validations from the ValidationMap and
-	 * from the end queue
-	 */
-	void popOld(){
-		Date currentDate = new Date();
-		 		
-		while(true){
-		  TimeCertPair timeCertPair = timeQueue.peek();
-		  if(timeCertPair != null && timeCertPair.getDate().before(currentDate)){
-			  timeQueue.remove();
-			  validationMap.remove(timeCertPair.getCert());
-		  }else{
-			  break;
-		  }
-		}
-	}
-	
-	/**
-	 * Inserts a new certificate to the beginning queue
-	 */
-	void pushNew(ICertificate cert){
-		timeQueue.add(new TimeCertPair(new Date(System.currentTimeMillis() + cacheTimeMS),cert));		
-	}
-	
-	
-	/**
-	 * Simple VO containing a time and certificate that was inserted
-	 * into the queue. 
-	 * 
-	 */
-	private class TimeCertPair{
-		private Date date;
-		private ICertificate cert;
-		
-		TimeCertPair(Date date, ICertificate cert) {
-			super();
-			this.date = date;
-			this.cert = cert;
-		}
+    private Queue<TimeCertPair> timeQueue = new ConcurrentLinkedQueue<TimeCertPair>();
+    private ValidationMap validationMap;
+    private long cacheTimeMS;
 
-		/**
-		 * @return the date
-		 */
-		public Date getDate() {
-			return date;
-		}
+    /**
+     * Main constructor for a time queue
+     * 
+     * @param validationMap a reference to the validation map.
+     * @param cacheTimeMS time in milliseconds that the certificate should be cached.
+     */
+    TimeQueue(ValidationMap validationMap, long cacheTimeMS) {
+        this.validationMap = validationMap;
+        this.cacheTimeMS = cacheTimeMS;
+    }
 
-		/**
-		 * @return the cert
-		 */
-		public ICertificate getCert() {
-			return cert;
-		}
-	}
-	
+    /**
+     * Method used to remove all expired validations from the ValidationMap and
+     * from the end queue
+     */
+    void popOld() {
+        Date currentDate = new Date();
+
+        while (true) {
+            TimeCertPair timeCertPair = timeQueue.peek();
+            if (timeCertPair != null && timeCertPair.getDate().before(currentDate)) {
+                timeQueue.remove();
+                validationMap.remove(timeCertPair.getCert());
+            } else {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Inserts a new certificate to the beginning queue
+     */
+    void pushNew(ICertificate cert) {
+        timeQueue.add(new TimeCertPair(new Date(System.currentTimeMillis() + cacheTimeMS), cert));
+    }
+
+    /**
+     * Simple VO containing a time and certificate that was inserted
+     * into the queue. 
+     * 
+     */
+    private class TimeCertPair {
+
+        private Date date;
+        private ICertificate cert;
+
+        TimeCertPair(Date date, ICertificate cert) {
+            this.date = date;
+            this.cert = cert;
+        }
+
+        /**
+         * @return the date
+         */
+        public Date getDate() {
+            return date;
+        }
+
+        /**
+         * @return the cert
+         */
+        public ICertificate getCert() {
+            return cert;
+        }
+    }
 }

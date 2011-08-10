@@ -39,16 +39,16 @@ import org.ejbca.util.IPatternLogger;
  */
 class EjbcaPatternLogger implements IPatternLogger {
 
-    final private Map<String, String> valuepairs = new HashMap<String, String>();
-    final private StringWriter sw = new StringWriter();
-    final private PrintWriter pw = new PrintWriter(this.sw);
-    final private Matcher m;
-    final private String orderString;
-    final private Logger logger;
-    final private String logDateFormat;
-    final private String timeZone;
-    final private Date startTime;
-    final private Priority priority;
+    private final Map<String, String> valuepairs = new HashMap<String, String>();
+    private final StringWriter sw = new StringWriter();
+    private final PrintWriter pw = new PrintWriter(this.sw);
+    private final Matcher m;
+    private final String orderString;
+    private final Logger logger;
+    private final String logDateFormat;
+    private final String timeZone;
+    private final Date startTime;
+    private final Priority priority;
 
     /**
      * @param m A matcher that is used together with orderstring to determine how output is formatted

@@ -10,11 +10,9 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server.signers;
- 
-import org.signserver.server.IProcessable;
 
+import org.signserver.server.IProcessable;
 
 /**
  * ISigner is an interface that all signers should implement
@@ -23,10 +21,7 @@ import org.signserver.server.IProcessable;
  * 
  * 
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
-public interface ISigner extends IProcessable{
-
-
-	
+public interface ISigner extends IProcessable {
 }

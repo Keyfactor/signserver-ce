@@ -10,11 +10,9 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server.validators;
- 
-import org.signserver.server.IProcessable;
 
+import org.signserver.server.IProcessable;
 
 /**
  * Interface that all (document) validators should implement.
@@ -24,4 +22,5 @@ import org.signserver.server.IProcessable;
  * @author Markus Kilås
  * @version $Id$
  */
-public interface IValidator extends IProcessable {}
+public interface IValidator extends IProcessable {
+}

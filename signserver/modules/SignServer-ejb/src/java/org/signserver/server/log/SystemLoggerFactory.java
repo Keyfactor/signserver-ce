@@ -12,16 +12,15 @@
  *************************************************************************/
 package org.signserver.server.log;
 
-import org.signserver.server.log.ISystemLogger;
-import org.signserver.server.log.AllFieldsSystemLogger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 
 /**
+ * Factory for creating SystemLoggerS for specific classes.
  *
- * @author Markus Kil�s
+ * @author Markus Kilås
  * @version $Id$
  */
 public class SystemLoggerFactory {
@@ -94,5 +93,4 @@ public class SystemLoggerFactory {
         }
         return logger;
     }
-
 }

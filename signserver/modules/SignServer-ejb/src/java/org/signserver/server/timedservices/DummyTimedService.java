@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
- 
 package org.signserver.server.timedservices;
 
 import java.io.ByteArrayOutputStream;
@@ -29,60 +28,58 @@ import org.signserver.server.WorkerContext;
 /**
  * Dummy Service that is used for testing and demonstration purposes.
  * Only output to the log that it have been called
- * 
- * 
- * @author Philip Vendil 2007 jan 23
  *
+ * @author Philip Vendil 2007 jan 23
  * @version $Id$
  */
-
 public class DummyTimedService extends BaseTimedService {
 
-	public transient Logger log = Logger.getLogger(this.getClass());
-	
-    String outPath = null;
-	
-	@Override
-	public void init(int workerId, WorkerConfig config, WorkerContext workerContext,EntityManager workerEntityManager) {
-		super.init(workerId, config, workerContext, workerEntityManager);
-		
-		outPath = config.getProperties().getProperty("OUTPATH");
-		
-		log.info("Initializing DummyTimedService, output path : " + outPath);
-	}
-	
-	/**
-	 * Example of super simple service.
-	 * 
-	 * @see org.signserver.server.timedservices.ITimedService#work()
-	 */
-	public void work() throws ServiceExecutionFailedException {
-		
-		int currentCount = 0;
-		
-		try{
-		  FileInputStream fis = new FileInputStream(outPath);
-		  ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		  int next = 0;
-		  while((next = fis.read()) != -1){
-			  baos.write(next);
-		  }
-		  fis.close();
-		  currentCount = Integer.parseInt(new String(baos.toByteArray()));
-		}catch(FileNotFoundException e){
-		}catch(IOException e){
-			throw new ServiceExecutionFailedException(e.getClass().getName() + " : " + e.getMessage());
-		}
-		currentCount++;
-		try{
-			FileOutputStream fos = new FileOutputStream(outPath);
-			fos.write(("" + currentCount).getBytes());
-			fos.close();
-		}catch(IOException e){
-			throw new ServiceExecutionFailedException(e.getClass().getName() + " : " + e.getMessage());
-		}
-		
-		log.info("DummyTimedService.work() called. current count : " + currentCount);
-	}
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(DummyTimedService.class);
+    
+    String outPath;
 
+    @Override
+    public void init(int workerId, WorkerConfig config, 
+        WorkerContext workerContext, EntityManager workerEntityManager) {
+        super.init(workerId, config, workerContext, workerEntityManager);
+
+        outPath = config.getProperties().getProperty("OUTPATH");
+
+        LOG.info("Initializing DummyTimedService, output path : " + outPath);
+    }
+
+    /**
+     * Example of super simple service.
+     * 
+     * @see org.signserver.server.timedservices.ITimedService#work()
+     */
+    public void work() throws ServiceExecutionFailedException {
+
+        int currentCount = 0;
+
+        try {
+            FileInputStream fis = new FileInputStream(outPath);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int next = 0;
+            while ((next = fis.read()) != -1) {
+                baos.write(next);
+            }
+            fis.close();
+            currentCount = Integer.parseInt(new String(baos.toByteArray()));
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+            throw new ServiceExecutionFailedException(e.getClass().getName() + " : " + e.getMessage());
+        }
+        currentCount++;
+        try {
+            FileOutputStream fos = new FileOutputStream(outPath);
+            fos.write(("" + currentCount).getBytes());
+            fos.close();
+        } catch (IOException e) {
+            throw new ServiceExecutionFailedException(e.getClass().getName() + " : " + e.getMessage());
+        }
+
+        LOG.info("DummyTimedService.work() called. current count : " + currentCount);
+    }
 }

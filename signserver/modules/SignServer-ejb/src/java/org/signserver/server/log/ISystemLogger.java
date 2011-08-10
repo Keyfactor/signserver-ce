@@ -20,7 +20,7 @@ import java.util.Properties;
  * associated with the processing performed by a worker.
  *
  * @see IWorkerLogger
- * @author Markus Kil�s
+ * @author Markus Kilås
  * @version $Id$
  */
 public interface ISystemLogger {
@@ -40,5 +40,4 @@ public interface ISystemLogger {
     void init(Properties props);
 
     void log(Map<String,String> entries) throws SystemLoggerException;
-
 }

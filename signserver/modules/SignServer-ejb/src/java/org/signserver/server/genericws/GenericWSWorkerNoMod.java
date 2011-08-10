@@ -36,8 +36,6 @@ import org.signserver.server.WorkerContext;
  */
 public class GenericWSWorkerNoMod extends BaseProcessable {
 
-    private transient Logger log = Logger.getLogger(this.getClass());
-
     private GenericWSWorkerImpl delegate;
 
     public GenericWSWorkerNoMod() {

@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server.statistics.nonpersistent;
 
 import java.util.Date;
@@ -29,57 +28,52 @@ import org.signserver.server.statistics.StatisticsEntry;
  * on second, minute, hour and day level, mainly to be used
  * for a Windows "task manager" like  display of the 
  * load of the current worker. 
- * 
- * 
- * @author Philip Vendil 6 maj 2008
  *
+ * @author Philip Vendil 6 maj 2008
+ * @version $Id$
  */
+public class NonPersistantStatisticsCollector implements IStatisticsCollector {
 
-public class NonPersistantStatisticsCollector implements IStatisticsCollector{
+    private SecondStatisticsCollector secondStatisticsCollector = new SecondStatisticsCollector();
+    private MinuteStatisticsCollector minuteStatisticsCollector = new MinuteStatisticsCollector();
+    private HourStatisticsCollector hourStatisticsCollector = new HourStatisticsCollector();
+    private DayStatisticsCollector dayStatisticsCollector = new DayStatisticsCollector();
 
-	private SecondStatisticsCollector secondStatisticsCollector = new SecondStatisticsCollector();
-	private MinuteStatisticsCollector minuteStatisticsCollector = new MinuteStatisticsCollector();
-	private HourStatisticsCollector hourStatisticsCollector = new HourStatisticsCollector();
-	private DayStatisticsCollector dayStatisticsCollector = new DayStatisticsCollector();
-	
-	public void init(int workerId, WorkerConfig config, EntityManager em) throws SignServerException {
-       secondStatisticsCollector.init(workerId, config, em);
-	   minuteStatisticsCollector.init(workerId, config, em);
-       hourStatisticsCollector.init(workerId, config, em);
-       dayStatisticsCollector.init(workerId, config, em);
+    public void init(int workerId, WorkerConfig config, EntityManager em) throws SignServerException {
+        secondStatisticsCollector.init(workerId, config, em);
+        minuteStatisticsCollector.init(workerId, config, em);
+        hourStatisticsCollector.init(workerId, config, em);
+        dayStatisticsCollector.init(workerId, config, em);
     }
-	
-	public void addEvent(Event event) throws SignServerException {
-		if(secondStatisticsCollector.getExpireTime() != 0){
-			secondStatisticsCollector.addEvent(event);
-		}
-		if(minuteStatisticsCollector.getExpireTime() != 0){
-			minuteStatisticsCollector.addEvent(event);
-		}
-		if(hourStatisticsCollector.getExpireTime() != 0){
-			hourStatisticsCollector.addEvent(event);
-		}
-		if(dayStatisticsCollector.getExpireTime() != 0){
-			dayStatisticsCollector.addEvent(event);
-		}
-	}
 
-	public List<StatisticsEntry> fetchStatistics(String type, Date startTime,
-			Date endTime) {
-		List<StatisticsEntry> retval = secondStatisticsCollector.fetchStatistics(type, startTime, endTime);
-		retval.addAll(minuteStatisticsCollector.fetchStatistics(type, startTime, endTime));
-		retval.addAll(hourStatisticsCollector.fetchStatistics(type, startTime, endTime));
-		retval.addAll(dayStatisticsCollector.fetchStatistics(type, startTime, endTime));
-		return retval;
-	}
+    public void addEvent(Event event) throws SignServerException {
+        if (secondStatisticsCollector.getExpireTime() != 0) {
+            secondStatisticsCollector.addEvent(event);
+        }
+        if (minuteStatisticsCollector.getExpireTime() != 0) {
+            minuteStatisticsCollector.addEvent(event);
+        }
+        if (hourStatisticsCollector.getExpireTime() != 0) {
+            hourStatisticsCollector.addEvent(event);
+        }
+        if (dayStatisticsCollector.getExpireTime() != 0) {
+            dayStatisticsCollector.addEvent(event);
+        }
+    }
 
-	public void flush() {
-		secondStatisticsCollector.flush();
-		minuteStatisticsCollector.flush();
-		hourStatisticsCollector.flush();
-		dayStatisticsCollector.flush();
-	}
+    public List<StatisticsEntry> fetchStatistics(String type, Date startTime,
+            Date endTime) {
+        List<StatisticsEntry> retval = secondStatisticsCollector.fetchStatistics(type, startTime, endTime);
+        retval.addAll(minuteStatisticsCollector.fetchStatistics(type, startTime, endTime));
+        retval.addAll(hourStatisticsCollector.fetchStatistics(type, startTime, endTime));
+        retval.addAll(dayStatisticsCollector.fetchStatistics(type, startTime, endTime));
+        return retval;
+    }
 
-
-
+    public void flush() {
+        secondStatisticsCollector.flush();
+        minuteStatisticsCollector.flush();
+        hourStatisticsCollector.flush();
+        dayStatisticsCollector.flush();
+    }
 }

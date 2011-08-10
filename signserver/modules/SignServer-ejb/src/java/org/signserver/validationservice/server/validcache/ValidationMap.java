@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.validationservice.server.validcache;
 
 import java.util.Collections;
@@ -23,41 +22,38 @@ import org.signserver.validationservice.common.Validation;
 /**
  * 
  * Validation Map containing the Certificate -> validation mappings.
- * 
- * @author Philip Vendil 26 nov 2007
  *
+ * @author Philip Vendil 26 nov 2007
  * @version $Id$
  */
-
 class ValidationMap {
-	
-	Map<ICertificate,Validation> validationMap = Collections.synchronizedMap(new HashMap<ICertificate,Validation>());
 
-	/**
-	 * Adds a entry to the map.
-	 * @param cert key 
-	 * @param validation validation
-	 */
-	void put(ICertificate cert, Validation validation){
-		validationMap.put(cert, validation);
-	}
-	
-	/**
-	 * Returning the validation from the map if it still exists there.
-	 * @param cert the certificate to search a validation for
-	 * @return the validation of null if it doesn't exists in map.
-	 */
-	Validation get(ICertificate cert){
-		return validationMap.get(cert);
-	}
-	
-	/**
-	 * Removing and entry from the cache.
-	 * 
-	 * @param cert key that should be removed from the cache.
-	 */
-	void remove(ICertificate cert){
-		validationMap.remove(cert);
-	}
-	
+    Map<ICertificate, Validation> validationMap = Collections.synchronizedMap(new HashMap<ICertificate, Validation>());
+
+    /**
+     * Adds a entry to the map.
+     * @param cert key 
+     * @param validation validation
+     */
+    void put(ICertificate cert, Validation validation) {
+        validationMap.put(cert, validation);
+    }
+
+    /**
+     * Returning the validation from the map if it still exists there.
+     * @param cert the certificate to search a validation for
+     * @return the validation of null if it doesn't exists in map.
+     */
+    Validation get(ICertificate cert) {
+        return validationMap.get(cert);
+    }
+
+    /**
+     * Removing and entry from the cache.
+     * 
+     * @param cert key that should be removed from the cache.
+     */
+    void remove(ICertificate cert) {
+        validationMap.remove(cert);
+    }
 }

@@ -19,11 +19,12 @@ import org.apache.log4j.Logger;
 /**
  * An IWorkerLogger that renders the log line by appending all the log fields
  * and separating them with semicolons.
- * @author Markus Kil�s
+ * @author Markus Kilås
  * @version $Id$
  */
 public class AllFieldsSystemLogger implements ISystemLogger {
 
+    /** Logger for this class. */
     private static final Logger ACCOUNTLOG =
             Logger.getLogger(ISystemLogger.class);
 

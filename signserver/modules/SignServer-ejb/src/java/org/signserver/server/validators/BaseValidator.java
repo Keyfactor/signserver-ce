@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server.validators;
 
 import org.signserver.common.CryptoTokenStatus;
@@ -19,27 +18,20 @@ import org.signserver.common.ValidatorStatus;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.BaseProcessable;
 
-
 /**
- * 
  * Base class that all (document) validators can extend to cover basic in common
- * functionality
+ * functionality.
  * 
  * @author Markus Kilås
- * 
  * @version $Id$
  */
 public abstract class BaseValidator extends BaseProcessable implements IValidator {
 
-	/**
-	 * @see org.signserver.server.signers.IProcessable#getStatus()
-	 */
-	public WorkerStatus getStatus() {
-		ValidatorStatus retval = null;
-
-		retval = new ValidatorStatus(workerId, CryptoTokenStatus.STATUS_ACTIVE, new ProcessableConfig(config));
-
-		return retval;
-	}
-
+    /**
+     * @see org.signserver.server.signers.IProcessable#getStatus()
+     */
+    public WorkerStatus getStatus() {
+        return new ValidatorStatus(workerId, CryptoTokenStatus.STATUS_ACTIVE, 
+                new ProcessableConfig(config));
+    }
 }

@@ -163,7 +163,10 @@ is divided into following sections:
     </target>
     <target depends="init" name="-init-cos" unless="deploy.on.save">
         <condition property="deploy.on.save" value="true">
-            <istrue value="${j2ee.deploy.on.save}"/>
+            <or>
+                <istrue value="${j2ee.deploy.on.save}"/>
+                <istrue value="${j2ee.compile.on.save}"/>
+            </or>
         </condition>
     </target>
     <target name="-post-init">
@@ -386,7 +389,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                 </nbjpdareload>
             </sequential>
         </macrodef>
-        <macrodef name="nbjpdaappreloaded" uri="http://www.netbeans.org/ns/web-project/1">
+        <macrodef name="nbjpdaappreloaded" uri="http://www.netbeans.org/ns/j2ee-ejbjarproject/1">
             <sequential>
                 <nbjpdaappreloaded/>
             </sequential>
@@ -771,9 +774,7 @@ exists or setup the property manually. For example like this:
     <target name="-run-deploy-am">
         <!-- Task to deploy to the Access Manager runtime. -->
     </target>
-    <target depends="init,-init-cos,-init-deploy,compile,library-inclusion-in-archive,dist-directory-deploy,pre-run-deploy,-pre-nbmodule-run-deploy,-run-deploy-nb,-init-deploy-ant,-deploy-ant,-run-deploy-am,-post-nbmodule-run-deploy,post-run-deploy" name="run-deploy">
-        <nbjpdaappreloaded/>
-    </target>
+    <target depends="init,-init-cos,-init-deploy,compile,library-inclusion-in-archive,dist-directory-deploy,pre-run-deploy,-pre-nbmodule-run-deploy,-run-deploy-nb,-init-deploy-ant,-deploy-ant,-run-deploy-am,-post-nbmodule-run-deploy,post-run-deploy,-do-update-breakpoints" name="run-deploy"/>
     <target if="netbeans.home" name="-run-deploy-nb">
         <nbdeploy debugmode="false" forceRedeploy="${forceRedeploy}"/>
     </target>
@@ -792,6 +793,9 @@ exists or setup the property manually. For example like this:
     <target depends="init,compile-single" name="run-main">
         <fail unless="run.class">Must select one file in the IDE or set run.class</fail>
         <ejbjarproject3:java classname="${run.class}"/>
+    </target>
+    <target depends="init" if="netbeans.home" name="-do-update-breakpoints">
+        <ejbjarproject1:nbjpdaappreloaded/>
     </target>
     <!--
                 DEBUGGING SECTION
@@ -1002,7 +1006,7 @@ exists or setup the property manually. For example like this:
     <!--
                 CLEANUP SECTION
             -->
-    <target depends="init" if="no.dist.ear.dir" name="deps-clean" unless="no.deps">
+    <target depends="init" name="deps-clean" unless="no.deps">
         <ant antfile="${project.SignServer-Common}/build.xml" inheritall="false" target="clean"/>
     </target>
     <target depends="init" name="-do-clean">

@@ -147,7 +147,10 @@ is divided into following sections:
     </target>
     <target depends="init" name="-init-cos">
         <condition else="false" property="build.deploy.on.save">
-            <istrue value="${j2ee.deploy.on.save}"/>
+            <or>
+                <istrue value="${j2ee.deploy.on.save}"/>
+                <istrue value="${j2ee.compile.on.save}"/>
+            </or>
         </condition>
     </target>
     <target name="post-init">
@@ -191,7 +194,13 @@ exists or setup the property manually. For example like this:
     <!--
     COMPILATION SECTION
     -->
-    <target depends="init" name="deps-jar" unless="no.deps"/>
+    <target depends="init" name="deps-jar" unless="no.deps">
+        <condition property="build.deploy.on.save" value="false">
+            <not>
+                <isset property="build.deploy.on.save"/>
+            </not>
+        </condition>
+    </target>
     <target depends="init" name="deps-j2ee-archive" unless="no.deps">
         <condition property="build.deploy.on.save" value="false">
             <not>
@@ -202,47 +211,22 @@ exists or setup the property manually. For example like this:
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.SignServer-ejb-AdminWS}/build.xml" inheritall="false" target="dist-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.SignServer-ejb-SignServerWS}/build.xml" inheritall="false" target="dist-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.SignServer-ejb-ValidationWS}/build.xml" inheritall="false" target="dist-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.SignServer-war}/build.xml" inheritall="false" target="dist-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.SignServer-war-Doc}/build.xml" inheritall="false" target="dist-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
@@ -631,47 +615,22 @@ exists or setup the property manually. For example like this:
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.SignServer-ejb-AdminWS}/build.xml" inheritall="false" target="clean-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.SignServer-ejb-SignServerWS}/build.xml" inheritall="false" target="clean-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.SignServer-ejb-ValidationWS}/build.xml" inheritall="false" target="clean-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.SignServer-war}/build.xml" inheritall="false" target="clean-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.SignServer-war-Doc}/build.xml" inheritall="false" target="clean-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>

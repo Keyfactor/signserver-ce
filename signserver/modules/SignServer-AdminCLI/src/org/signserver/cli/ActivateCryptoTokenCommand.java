@@ -15,7 +15,6 @@
 package org.signserver.cli;
 
 import org.ejbca.ui.cli.util.ConsolePasswordReader;
-import org.signserver.common.MailSignerStatus;
 import org.signserver.common.SignerStatus;
 
 
@@ -71,9 +70,6 @@ public class ActivateCryptoTokenCommand extends BaseCommand {
         	boolean active = false;
         	if(CommonAdminInterface.isSignServerMode()){
         		active = ((SignerStatus) getCommonAdminInterface(hostname).getStatus(workerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE;
-        	}
-        	if(CommonAdminInterface.isMailSignerMode()){
-        		active = ((MailSignerStatus) getCommonAdminInterface(hostname).getStatus(workerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE;
         	}
         	if(active){
         		this.getOutputStream().println(resources[SUCCESS]);

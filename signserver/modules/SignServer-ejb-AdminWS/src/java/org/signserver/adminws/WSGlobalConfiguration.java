@@ -17,6 +17,7 @@ import org.signserver.common.GlobalConfiguration;
 
 /**
  * Class holding the global configuration.
+ *
  * @see GlobalConfiguration
  * @author Markus Kilås
  * @version $Id$
@@ -84,5 +85,4 @@ public class WSGlobalConfiguration {
     public void setUseClassVersions(boolean useClassVersions) {
         this.useClassVersions = useClassVersions;
     }
-    
 }

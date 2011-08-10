@@ -106,5 +106,4 @@ public class WSWorkerStatus implements Serializable {
     public void setCompleteStatusText(String completeStatusText) {
         this.completeStatusText = completeStatusText;
     }
-
 }

@@ -34,5 +34,4 @@ public class AdminNotAuthorizedException extends Exception {
 
     public AdminNotAuthorizedException() {
     }
-    
 }

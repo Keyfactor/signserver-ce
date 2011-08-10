@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.web;
 
 import java.io.ByteArrayOutputStream;
@@ -54,38 +53,33 @@ import org.signserver.server.IClientCredential;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.UsernamePasswordClientCredential;
 
-
-
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
  * workerId or workerName parameters.
  * 
  * It will create a GenericServletRequest that is sent to the worker and expects a GenericServletResponse
  * sent back to the client.
- * 
- * 
+ *
  * @author Philip Vendil
+ * @author Markus Kilås
  * @version $Id$
  */
 public class GenericProcessServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
-    private static final String METHOD_GET = "GET";
-
+    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
             GenericProcessServlet.class);
-
+    
+    private static final long serialVersionUID = 1L;
+    private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
+    private static final String METHOD_GET = "GET";    
     private static final String WORKERID_PROPERTY_NAME = "workerId";
     private static final String WORKERNAME_PROPERTY_NAME = "workerName";
     private static final String DATA_PROPERTY_NAME = "data";
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     private static final String ENCODING_BASE64 = "base64";
     private static final long MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
-
     private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
-
     private static final String HTTP_AUTH_BASIC_WWW_AUTHENTICATE =
             "WWW-Authenticate";
 
@@ -103,7 +97,6 @@ public class GenericProcessServlet extends HttpServlet {
                 LOG.error(e);
             }
         }
-
         return workersession;
     }
 
@@ -124,7 +117,7 @@ public class GenericProcessServlet extends HttpServlet {
         int workerId = 1;
         byte[] data = null;
         String fileName = null;
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received a request with length: "
                     + req.getContentLength());
@@ -158,7 +151,8 @@ public class GenericProcessServlet extends HttpServlet {
                             }
                             try {
                                 workerId = Integer.parseInt(item.getString());
-                            } catch (NumberFormatException ignored) {}
+                            } catch (NumberFormatException ignored) {
+                            }
                         }
                     } else {
                         // We only care for one upload at a time right now
@@ -181,25 +175,25 @@ public class GenericProcessServlet extends HttpServlet {
         } else {
 
             String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
-            if(name != null){
-                if(LOG.isDebugEnabled()) {
-                    LOG.debug("Found a signerName in the request: "+name);
+            if (name != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Found a signerName in the request: " + name);
                 }
                 workerId = getWorkerSession().getWorkerId(name);
             }
             String id = req.getParameter(WORKERID_PROPERTY_NAME);
-            if(id != null){
-                if(LOG.isDebugEnabled()) {
-                    LOG.debug("Found a signerId in the request: "+id);
+            if (id != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Found a signerId in the request: " + id);
                 }
                 workerId = Integer.parseInt(id);
             }
 
-            if(METHOD_GET.equalsIgnoreCase(req.getMethod()) ||
-                    (req.getContentType() != null && req.getContentType().contains(FORM_URL_ENCODED))) {
+            if (METHOD_GET.equalsIgnoreCase(req.getMethod())
+                    || (req.getContentType() != null && req.getContentType().contains(FORM_URL_ENCODED))) {
                 LOG.debug("Request is FORM_URL_ENCODED");
 
-                if(req.getParameter(DATA_PROPERTY_NAME) == null) {
+                if (req.getParameter(DATA_PROPERTY_NAME) == null) {
                     sendBadRequest(res, "Missing field 'data' in request");
                     return;
                 }
@@ -211,7 +205,7 @@ public class GenericProcessServlet extends HttpServlet {
                         LOG.info("Decoding base64 data");
                         data = Base64.decode(data);
                     } else {
-                        sendBadRequest(res, 
+                        sendBadRequest(res,
                                 "Unknown encoding for the 'data' field: "
                                 + encoding);
                         return;
@@ -220,7 +214,7 @@ public class GenericProcessServlet extends HttpServlet {
             } else {
                 // Pass-through the content to be handled by worker if
                 // unknown content-type
-                if(LOG.isDebugEnabled()) {
+                if (LOG.isDebugEnabled()) {
                     LOG.debug("Request Content-type: " + req.getContentType());
                 }
 
@@ -241,7 +235,7 @@ public class GenericProcessServlet extends HttpServlet {
         // Limit the maximum size of input
         if (data.length > MAX_UPLOAD_SIZE) {
             LOG.error("Content length exceeds 100MB, not processed: " + req.getContentLength());
-            res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, 
+            res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
                     "Maximum content length is 100 MB");
         } else {
             processRequest(req, res, workerId, data, fileName);
@@ -292,7 +286,7 @@ public class GenericProcessServlet extends HttpServlet {
         } else {
             // Check is client supplied basic-credentials
             final String authorization =
-                        req.getHeader(HTTP_AUTH_BASIC_AUTHORIZATION);
+                    req.getHeader(HTTP_AUTH_BASIC_AUTHORIZATION);
             if (authorization != null) {
                 LOG.debug("Authentication: password");
 
@@ -300,7 +294,7 @@ public class GenericProcessServlet extends HttpServlet {
                         authorization.split("\\s")[1])).split(":", 2);
 
                 credential = new UsernamePasswordClientCredential(
-                    decoded[0], decoded[1]);
+                        decoded[0], decoded[1]);
             } else {
                 LOG.debug("Authentication: none");
                 credential = null;
@@ -308,13 +302,12 @@ public class GenericProcessServlet extends HttpServlet {
         }
         context.put(RequestContext.CLIENT_CREDENTIAL, credential);
 
-        
-        final Map<String,String> logMap = new HashMap<String, String>();
+
+        final Map<String, String> logMap = new HashMap<String, String>();
         context.put(RequestContext.LOGMAP, logMap);
 
         // Add HTTP specific log entries
-        logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, req.getRequestURL()
-                .append("?").append(req.getQueryString()).toString());
+        logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, req.getRequestURL().append("?").append(req.getQueryString()).toString());
         logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH,
                 String.valueOf(data.length));
         logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
@@ -332,37 +325,37 @@ public class GenericProcessServlet extends HttpServlet {
         }
 
         final int requestId = random.nextInt();
-        
+
         GenericServletResponse response = null;
         try {
             response = (GenericServletResponse) getWorkerSession().process(workerId,
                     new GenericServletRequest(requestId, data, req), context);
-            
+
             if (response.getRequestID() != requestId) { // TODO: Is this possible to get at all?
-                LOG.error("Response ID " + response.getRequestID() 
+                LOG.error("Response ID " + response.getRequestID()
                         + " not matching request ID " + requestId);
-                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                         "Request and response ID missmatch");
                 return;
             }
             byte[] processedBytes = (byte[]) response.getProcessedData();
 
             res.setContentType(response.getContentType());
-            if(fileName != null) {
+            if (fileName != null) {
                 res.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
             }
             res.setContentLength(processedBytes.length);
             res.getOutputStream().write(processedBytes);
             res.getOutputStream().close();
-        } catch(AuthorizationRequiredException e) {
+        } catch (AuthorizationRequiredException e) {
             LOG.debug("Sending back HTTP 401");
 
             final String httpAuthBasicRealm = "SignServer Worker " + workerId;
 
             res.setHeader(HTTP_AUTH_BASIC_WWW_AUTHENTICATE,
                     "Basic realm=\"" + httpAuthBasicRealm + "\"");
-                res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                        "Authorization Required");
+            res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                    "Authorization Required");
         } catch (NoSuchWorkerException ex) {
             res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");
         } catch (IllegalRequestException e) {
@@ -387,8 +380,8 @@ public class GenericProcessServlet extends HttpServlet {
         }
         return fileName;
     }
-    
-    private static void sendBadRequest(HttpServletResponse res, String message) 
+
+    private static void sendBadRequest(HttpServletResponse res, String message)
             throws IOException {
         LOG.info("Bad request: " + message);
         res.sendError(HttpServletResponse.SC_BAD_REQUEST, message);

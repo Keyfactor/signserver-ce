@@ -16,6 +16,8 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
+ * The worker configuration in Properties form to be used by the Admin WS 
+ * interface.
  *
  * @author Markus Kilås
  * @version $Id$
@@ -24,7 +26,6 @@ public class WSWorkerConfig implements Serializable {
 
     /** serialVersionUID for this class. */
     private static final long serialVersionUID = 1;
-
     private Properties properties;
 
     public WSWorkerConfig() {
@@ -41,5 +42,4 @@ public class WSWorkerConfig implements Serializable {
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
-
 }

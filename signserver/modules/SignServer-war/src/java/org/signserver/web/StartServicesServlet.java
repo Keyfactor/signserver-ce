@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
-import org.signserver.ejb.interfaces.IServiceTimerSession.ILocal;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.SystemLoggerException;
@@ -43,9 +42,13 @@ import org.signserver.server.log.SystemLoggerFactory;
 public class StartServicesServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    
+    /** Logger for this class. */
     private static final Logger LOG
             = Logger.getLogger(StartServicesServlet.class);
-    private static final ISystemLogger AUDITLOG= SystemLoggerFactory
+    
+    /** SystemLogger for this class. */
+    private static final ISystemLogger AUDITLOG = SystemLoggerFactory
             .getInstance().getLogger(StartServicesServlet.class);
 
     @EJB

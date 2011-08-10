@@ -29,107 +29,99 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
 
-
-
 /**
- * TSA Health Checker. 
+ * SignServer Health Checker. 
  * 
  * Does the following system checks.
  * 
- * * Not about to run out if memory (configurable through web.xml with param "MinimumFreeMemory")
- * * Database connection can be established.
- * * All SignerTokens are aktive if not set as offline.
+ * Not about to run out if memory (configurable through web.xml with param "MinimumFreeMemory")
+ * Database connection can be established.
+ * All SignerTokens are active if not set as offline.
  * 
  * @author Philip Vendil
  * @version $Id$
  */
-
 public class SignServerHealthCheck implements IHealthCheck {
-	
+
+    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
             SignServerHealthCheck.class);
-
+    
     @EJB
     private IGlobalConfigurationSession.IRemote globalConfigurationSession;
-
+    
     @EJB
     private IWorkerSession.IRemote signserversession;
+    
+    private int minfreememory;
+    private String checkDBString;
 
-    private IGlobalConfigurationSession.IRemote getGlobalConfigurationSession(){
-    	if (globalConfigurationSession == null) {
+    private IGlobalConfigurationSession.IRemote getGlobalConfigurationSession() {
+        if (globalConfigurationSession == null) {
             try {
-                globalConfigurationSession
-                        = ServiceLocator.getInstance().lookupRemote(
-                            IGlobalConfigurationSession.IRemote.class);
-            } catch(NamingException e) {
+                globalConfigurationSession = ServiceLocator.getInstance().lookupRemote(
+                        IGlobalConfigurationSession.IRemote.class);
+            } catch (NamingException e) {
                 LOG.error(e);
             }
-    	}
-    	return globalConfigurationSession;
+        }
+        return globalConfigurationSession;
     }
 
-    private IWorkerSession.IRemote getWorkerSession(){
-    	if (signserversession == null) {
+    private IWorkerSession.IRemote getWorkerSession() {
+        if (signserversession == null) {
             try {
-                signserversession =  ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
-            } catch(NamingException e) {
+                signserversession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
+            } catch (NamingException e) {
                 LOG.error(e);
             }
-    	}
-    	return signserversession;
+        }
+        return signserversession;
     }
-	
-	private int minfreememory = 0;
-	private String checkDBString = null;
-	
-	public void init(ServletConfig config) {
-		minfreememory = Integer.parseInt(config.getInitParameter("MinimumFreeMemory")) * 1024 * 1024;
-		checkDBString = config.getInitParameter("checkDBString");
 
-	}
+    public void init(ServletConfig config) {
+        minfreememory = Integer.parseInt(config.getInitParameter("MinimumFreeMemory")) * 1024 * 1024;
+        checkDBString = config.getInitParameter("checkDBString");
 
-	
-	public String checkHealth(HttpServletRequest request) {
-		LOG.debug("Starting HealthCheck health check requested by : " + request.getRemoteAddr());
-		String errormessage = "";
-		
-		errormessage += HealthCheckUtils.checkDB(checkDBString);
-		if(errormessage.equals("")){
-		  errormessage += HealthCheckUtils.checkMemory(minfreememory);
-		  errormessage += checkSigners();	
-		
-		}
-		
-		if(errormessage.equals("")){
-			// everything seems ok.
-			errormessage = null;
-		}
-		
-		return errormessage;
-	}
- 	
-	private String checkSigners(){
-		String retval = "";		
-		Iterator<Integer> iter = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE).iterator();
-		while(iter.hasNext()){
-			int processableId = ((Integer) iter.next()).intValue(); 
-			
-			try {
-				WorkerStatus workerStatus =  getWorkerSession().getStatus(processableId);
-				String currentMessage = workerStatus.isOK();
-				if(currentMessage != null){
-					retval += "\n " +currentMessage;
-					LOG.error(currentMessage);
-				}
+    }
 
-			} catch (InvalidWorkerIdException e) {
-				LOG.error(e.getMessage(),e);
-				e.printStackTrace();
-			}
-		}				
-		return retval;
-	}
-	
+    public String checkHealth(HttpServletRequest request) {
+        LOG.debug("Starting HealthCheck health check requested by : " + request.getRemoteAddr());
+        String errormessage = "";
 
-	
+        errormessage += HealthCheckUtils.checkDB(checkDBString);
+        if (errormessage.equals("")) {
+            errormessage += HealthCheckUtils.checkMemory(minfreememory);
+            errormessage += checkSigners();
+
+        }
+
+        if (errormessage.equals("")) {
+            // everything seems ok.
+            errormessage = null;
+        }
+
+        return errormessage;
+    }
+
+    private String checkSigners() {
+        String retval = "";
+        Iterator<Integer> iter = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE).iterator();
+        while (iter.hasNext()) {
+            int processableId = ((Integer) iter.next()).intValue();
+
+            try {
+                WorkerStatus workerStatus = getWorkerSession().getStatus(processableId);
+                String currentMessage = workerStatus.isOK();
+                if (currentMessage != null) {
+                    retval += "\n " + currentMessage;
+                    LOG.error(currentMessage);
+                }
+
+            } catch (InvalidWorkerIdException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+        return retval;
+    }
 }

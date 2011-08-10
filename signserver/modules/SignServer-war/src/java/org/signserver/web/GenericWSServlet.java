@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.web;
 
 import java.security.cert.Certificate;
@@ -53,42 +52,42 @@ import org.signserver.server.CertificateClientCredential;
  *
  * @version $Id$
  */
-
-public class GenericWSServlet extends HttpServlet implements ServletContextAttributeListener, ServletContextListener{
+public class GenericWSServlet extends HttpServlet implements ServletContextAttributeListener, ServletContextListener {
 
     private static final long serialVersionUID = 1L;
-
+    
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(GenericWSServlet.class);
-
+    
     private Random rand = new Random();
-	
+    
+    @EJB
+    private IWorkerSession.ILocal workersession;
+
     public void init(ServletConfig servletConfig) throws ServletException {
-        super.init(servletConfig);        
+        super.init(servletConfig);
     }
 
-
-
-    protected void doPost( HttpServletRequest request, HttpServletResponse response) throws ServletException {
-       forwardRequest(GenericWSRequest.REQUESTTYPE_POST, request, response, getServletContext());
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        forwardRequest(GenericWSRequest.REQUESTTYPE_POST, request, response, getServletContext());
     }
 
-    protected void doGet( HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
-    	
-    	forwardRequest(GenericWSRequest.REQUESTTYPE_GET, request, response, getServletContext());
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException {
+
+        forwardRequest(GenericWSRequest.REQUESTTYPE_GET, request, response, getServletContext());
     }
-    
-    protected void doPut( HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
-    	forwardRequest(GenericWSRequest.REQUESTTYPE_PUT, request, response, getServletContext());
+
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException {
+        forwardRequest(GenericWSRequest.REQUESTTYPE_PUT, request, response, getServletContext());
     }
-        
-    protected void doDelete( HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
-    	forwardRequest(GenericWSRequest.REQUESTTYPE_DEL, request, response, getServletContext());
+
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException {
+        forwardRequest(GenericWSRequest.REQUESTTYPE_DEL, request, response, getServletContext());
     }
-    
+
     /**
      * Main method that forwards the HTTP request to a given worker.
      * 
@@ -98,15 +97,15 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
      * @param response the HTTP response.
      * @throws ServletException 
      */
-    private void forwardRequest(int requestType, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) throws ServletException{
+    private void forwardRequest(int requestType, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) throws ServletException {
         LOG.debug(">forwardRequest");
 
-        if(GenericWSRequest.REQUESTTYPE_CONTEXT_INIT != requestType &&
-                GenericWSRequest.REQUESTTYPE_CONTEXT_DESTROYED != requestType) {
+        if (GenericWSRequest.REQUESTTYPE_CONTEXT_INIT != requestType
+                && GenericWSRequest.REQUESTTYPE_CONTEXT_DESTROYED != requestType) {
 
             int workerId = getWorkerId(request);
-            if(workerId == 0){
-                    throw new ServletException("Error, couldn't parse worker name or id from request URI : " + request.getRequestURI());
+            if (workerId == 0) {
+                throw new ServletException("Error, couldn't parse worker name or id from request URI : " + request.getRequestURI());
             }
 
             String remoteAddr = request.getRemoteAddr();
@@ -114,17 +113,16 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
 
             //
             Certificate clientCertificate = null;
-            Certificate[] certificates = (X509Certificate[]) request.getAttribute( "javax.servlet.request.X509Certificate" );
-            if(certificates != null){
-                    clientCertificate = certificates[0];
+            Certificate[] certificates = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+            if (certificates != null) {
+                clientCertificate = certificates[0];
             }
             RequestContext requestContext = new RequestContext(
                     (X509Certificate) clientCertificate, remoteAddr);
 
             if (clientCertificate instanceof X509Certificate) {
                 final X509Certificate cert = (X509Certificate) clientCertificate;
-                final CertificateClientCredential credential
-                        = new CertificateClientCredential(
+                final CertificateClientCredential credential = new CertificateClientCredential(
                         cert.getSerialNumber().toString(16),
                         cert.getIssuerDN().getName());
                 requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
@@ -132,89 +130,84 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
 
             int requestId = rand.nextInt();
 
-            GenericWSRequest wsreq = new GenericWSRequest(requestId,requestType,request,response,getServletConfig(), servletContext);
+            GenericWSRequest wsreq = new GenericWSRequest(requestId, requestType, request, response, getServletConfig(), servletContext);
             try {
-                    getWorkerSession().process(workerId, wsreq, requestContext);
+                getWorkerSession().process(workerId, wsreq, requestContext);
             } catch (IllegalRequestException e) {
-                    throw new ServletException(e);
+                throw new ServletException(e);
             } catch (CryptoTokenOfflineException e) {
-                    throw new ServletException(e);
+                throw new ServletException(e);
             } catch (SignServerException e) {
-                    throw new ServletException(e);
+                throw new ServletException(e);
             }
         }
         LOG.debug("<forwardRequest");
     }
-    
+
     /**
      * Method checking the URI and parses the worker name or worker id
      * from it to know to which worker to forward the WS call to.
      * @param request the http request
      * @return the workerId or 0 if no valid worker id could be parsed.
      */
-    private int getWorkerId(HttpServletRequest request){
-    	int retval =0;
-    	
-    	String requestURI = request.getRequestURI();
-    	String[] splittedURI = requestURI.split("/");
-    	if(splittedURI.length >2){
-    		String workerPart = splittedURI[splittedURI.length-2];    		
-    		try{
-    			retval = Integer.parseInt(workerPart);
-    		}catch(NumberFormatException e){}
-    		
-    		if(retval == 0){
-    			retval = getWorkerSession().getWorkerId(workerPart);
-    		}
-    	}
-    	
-    	return retval;
+    private int getWorkerId(HttpServletRequest request) {
+        int retval = 0;
+
+        String requestURI = request.getRequestURI();
+        String[] splittedURI = requestURI.split("/");
+        if (splittedURI.length > 2) {
+            String workerPart = splittedURI[splittedURI.length - 2];
+            try {
+                retval = Integer.parseInt(workerPart);
+            } catch (NumberFormatException e) {
+            }
+
+            if (retval == 0) {
+                retval = getWorkerSession().getWorkerId(workerPart);
+            }
+        }
+
+        return retval;
     }
 
+    private IWorkerSession.ILocal getWorkerSession() {
+        if (workersession == null) {
+            try {
+                Context context = new InitialContext();
+                workersession = (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
+            } catch (NamingException e) {
+                LOG.error(e);
+            }
+        }
 
-    @EJB
-    private IWorkerSession.ILocal workersession;
-	
-    private IWorkerSession.ILocal getWorkerSession(){
-    	if(workersession == null){
-    		try{
-    		  Context context = new InitialContext();
-    		  workersession =  (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
-    		}catch(NamingException e){
-    			LOG.error(e);
-    		}
-    	}
-    	
-    	return workersession;
+        return workersession;
     }
 
-	public void attributeAdded(ServletContextAttributeEvent arg0) {
-		// Do Nothing		
-	}
+    public void attributeAdded(ServletContextAttributeEvent arg0) {
+        // Do Nothing		
+    }
 
-	public void attributeRemoved(ServletContextAttributeEvent arg0) {
-		// Do Nothing		
-	}
+    public void attributeRemoved(ServletContextAttributeEvent arg0) {
+        // Do Nothing		
+    }
 
-	public void attributeReplaced(ServletContextAttributeEvent arg0) {
-		// Do Nothing		
-	}
+    public void attributeReplaced(ServletContextAttributeEvent arg0) {
+        // Do Nothing		
+    }
 
-	public void contextDestroyed(ServletContextEvent event) {
-		try {
-			forwardRequest(GenericWSRequest.REQUESTTYPE_CONTEXT_DESTROYED, null, null, event.getServletContext());
-		} catch (ServletException e) {
-			LOG.error(e);
-		}		
-	}
+    public void contextDestroyed(ServletContextEvent event) {
+        try {
+            forwardRequest(GenericWSRequest.REQUESTTYPE_CONTEXT_DESTROYED, null, null, event.getServletContext());
+        } catch (ServletException e) {
+            LOG.error(e);
+        }
+    }
 
-	public void contextInitialized(ServletContextEvent event) {
-		try {
-			forwardRequest(GenericWSRequest.REQUESTTYPE_CONTEXT_INIT, null, null, event.getServletContext());
-		} catch (ServletException e) {
-			LOG.error(e);
-		}
-	}
-	
-
+    public void contextInitialized(ServletContextEvent event) {
+        try {
+            forwardRequest(GenericWSRequest.REQUESTTYPE_CONTEXT_INIT, null, null, event.getServletContext());
+        } catch (ServletException e) {
+            LOG.error(e);
+        }
+    }
 }

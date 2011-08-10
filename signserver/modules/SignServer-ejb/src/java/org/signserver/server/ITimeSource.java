@@ -22,7 +22,7 @@ import java.util.Properties;
  * Its main function is getGenTime returning a java.util.Date
  *
  * @author philip
- * $Id$
+ * @version $Id$
  */
 public interface ITimeSource {
 

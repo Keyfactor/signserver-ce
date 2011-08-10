@@ -29,6 +29,7 @@ import org.signserver.server.archive.Archiver;
  * This class could be improved to support any Archivable if the
  * OldDatabaseArchiver should be able to be used with workers not returning
  * ArchiveData object any more.
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -64,5 +65,4 @@ public class OldDatabaseArchiver implements Archiver {
         }
         return archived;
     }
-
 }

@@ -24,7 +24,7 @@ import java.util.Properties;
  * No defined properties.
  *
  * @author markus
- * $Id$
+ * @version  $Id$
  */
 public class NullTimeSource implements ITimeSource {
 

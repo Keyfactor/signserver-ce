@@ -14,7 +14,6 @@ package org.signserver.server.cryptotokens;
 
 import org.signserver.common.CryptoTokenOfflineException;
 
-
 /**
  * Interface that should be implmented by CryptoTokenS supporting key
  * generation.

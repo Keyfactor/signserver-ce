@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server.archive.olddbarchiver;
 
 import java.security.cert.X509Certificate;
@@ -25,7 +24,7 @@ import org.signserver.common.ArchiveData;
 
 /**
  * Entity Service class that acts as migration layer for
- * the old Home Interface for the Archive Data Entity Bean
+ * the old Home Interface for the Archive Data Entity Bean.
  *
  * Contains about the same methods as the EJB 2 entity beans home interface.
  *
@@ -33,32 +32,31 @@ import org.signserver.common.ArchiveData;
  */
 public class ArchiveDataService {
 
-	public transient Logger log = Logger.getLogger(this.getClass());
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(ArchiveDataService.class);
+    
+    private EntityManager em;
 
-	private EntityManager em;
-
-	public ArchiveDataService(EntityManager em){
-		this.em = em;
-	}
+    public ArchiveDataService(EntityManager em) {
+        this.em = em;
+    }
 
     /**
-     * Entity Bean holding info about a archive data
-     *
-     *
+     * Entity Bean holding info about a archive data.
      */
     public String create(int type, int signerId, String archiveid, X509Certificate clientCert,
-    		                       String requestIP, ArchiveData archiveData) {
-        String uniqueId =type+";"+signerId+";"+archiveid;
-        log.debug("Creating archive data, uniqueId=" + uniqueId);
+            String requestIP, ArchiveData archiveData) {
+        String uniqueId = type + ";" + signerId + ";" + archiveid;
+        LOG.debug("Creating archive data, uniqueId=" + uniqueId);
         ArchiveDataBean adb = new ArchiveDataBean();
         adb.setUniqueId(uniqueId);
         adb.setType(type);
         adb.setSignerid(signerId);
         adb.setTime(new Date().getTime());
         adb.setArchiveid(archiveid);
-        if(clientCert!=null){
-        	adb.setRequestIssuerDN(CertTools.getIssuerDN(clientCert));
-        	adb.setRequestCertSerialnumber(clientCert.getSerialNumber().toString(16));
+        if (clientCert != null) {
+            adb.setRequestIssuerDN(CertTools.getIssuerDN(clientCert));
+            adb.setRequestCertSerialnumber(clientCert.getSerialNumber().toString(16));
         }
         adb.setRequestIP(requestIP);
         adb.setArchiveDataObject(archiveData);
@@ -70,84 +68,56 @@ public class ArchiveDataService {
     /**
      * Method finding a AchiveData given its unique Id.
      */
-    public ArchiveDataBean findByArchiveId(int type, int signerid, java.lang.String archiveid){
-    	try{
-    		return (ArchiveDataBean) em.createNamedQuery("ArchiveDataBean.findByArchiveId")
-    		.setParameter(1, type)
-    		.setParameter(2, signerid)
-    		.setParameter(3, archiveid)
-    		.getSingleResult();
-    	}catch(javax.persistence.NoResultException e){}
-
-    	return null;
+    public ArchiveDataBean findByArchiveId(int type, int signerid, java.lang.String archiveid) {
+        try {
+            return (ArchiveDataBean) em.createNamedQuery("ArchiveDataBean.findByArchiveId").setParameter(1, type).setParameter(2, signerid).setParameter(3, archiveid).getSingleResult();
+        } catch (javax.persistence.NoResultException e) {
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
-    public java.util.Collection<ArchiveDataBean> findByTime(int type, int signerid, long starttime, long endtime){
-    	try{
-    		return em.createNamedQuery("ArchiveDataBean.findByTime")
-    		.setParameter(1, type)
-    		.setParameter(2, signerid)
-    		.setParameter(3, starttime)
-    		.setParameter(4, endtime)
-    		.getResultList();
-    	}catch(javax.persistence.NoResultException e){}
-    	return new ArrayList<ArchiveDataBean>();
-    }
-
-
-
-    @SuppressWarnings("unchecked")
-    public java.util.Collection<ArchiveDataBean> findByRequestCertificate(int type, int signerid, java.lang.String requestIssuerDN, java.lang.String requestCertSerialnumber){
-    	try{
-    		return em.createNamedQuery("ArchiveDataBean.findByRequestCertificate")
-    		.setParameter(1, type)
-    		.setParameter(2, signerid)
-    		.setParameter(3, requestIssuerDN)
-    		.setParameter(4, requestCertSerialnumber)
-    		.getResultList();
-    	}catch(javax.persistence.NoResultException e){}
-    	return new ArrayList<ArchiveDataBean>();
+    public java.util.Collection<ArchiveDataBean> findByTime(int type, int signerid, long starttime, long endtime) {
+        try {
+            return em.createNamedQuery("ArchiveDataBean.findByTime").setParameter(1, type).setParameter(2, signerid).setParameter(3, starttime).setParameter(4, endtime).getResultList();
+        } catch (javax.persistence.NoResultException e) {
+        }
+        return new ArrayList<ArchiveDataBean>();
     }
 
     @SuppressWarnings("unchecked")
-    public java.util.Collection<ArchiveDataBean> findByRequestCertificateAndTime(int type, int signerid, java.lang.String requestIssuerDN, java.lang.String requestCertSerialnumber, long starttime, long endtime){
-    	try{
-    		return em.createNamedQuery("ArchiveDataBean.findByRequestCertificateAndTime")
-    		.setParameter(1, type)
-    		.setParameter(2, signerid)
-    		.setParameter(3, requestIssuerDN)
-    		.setParameter(4, requestCertSerialnumber)
-    		.setParameter(5, starttime)
-    		.setParameter(6, endtime)
-    		.getResultList();
-    	}catch(javax.persistence.NoResultException e){}
-    	return new ArrayList<ArchiveDataBean>();
+    public java.util.Collection<ArchiveDataBean> findByRequestCertificate(int type, int signerid, java.lang.String requestIssuerDN, java.lang.String requestCertSerialnumber) {
+        try {
+            return em.createNamedQuery("ArchiveDataBean.findByRequestCertificate").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIssuerDN).setParameter(4, requestCertSerialnumber).getResultList();
+        } catch (javax.persistence.NoResultException e) {
+        }
+        return new ArrayList<ArchiveDataBean>();
     }
 
     @SuppressWarnings("unchecked")
-	public java.util.Collection<ArchiveDataBean> findByRequestIP(int type, int signerid, java.lang.String requestIP){
-    	try{
-    		return em.createNamedQuery("ArchiveDataBean.findByRequestIP")
-    		.setParameter(1, type)
-    		.setParameter(2, signerid)
-    		.setParameter(3, requestIP)
-    		.getResultList();
-    	}catch(javax.persistence.NoResultException e){}
-    	return new ArrayList<ArchiveDataBean>();
+    public java.util.Collection<ArchiveDataBean> findByRequestCertificateAndTime(int type, int signerid, java.lang.String requestIssuerDN, java.lang.String requestCertSerialnumber, long starttime, long endtime) {
+        try {
+            return em.createNamedQuery("ArchiveDataBean.findByRequestCertificateAndTime").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIssuerDN).setParameter(4, requestCertSerialnumber).setParameter(5, starttime).setParameter(6, endtime).getResultList();
+        } catch (javax.persistence.NoResultException e) {
+        }
+        return new ArrayList<ArchiveDataBean>();
     }
 
     @SuppressWarnings("unchecked")
-	public java.util.Collection<ArchiveDataBean> findByRequestIPAndTime(int type, int signerid, java.lang.String requestIP, long starttime, long endtime){
-    	try{
-    		return em.createNamedQuery("ArchiveDataBean.findByRequestCertificateAndTime")
-    		.setParameter(1, type)
-    		.setParameter(2, signerid)
-    		.setParameter(3, requestIP)
-    		.setParameter(4, starttime)
-    		.setParameter(5, endtime)
-    		.getResultList();
-    	}catch(javax.persistence.NoResultException e){}
-    	return new ArrayList<ArchiveDataBean>();
+    public java.util.Collection<ArchiveDataBean> findByRequestIP(int type, int signerid, java.lang.String requestIP) {
+        try {
+            return em.createNamedQuery("ArchiveDataBean.findByRequestIP").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIP).getResultList();
+        } catch (javax.persistence.NoResultException e) {
+        }
+        return new ArrayList<ArchiveDataBean>();
+    }
+
+    @SuppressWarnings("unchecked")
+    public java.util.Collection<ArchiveDataBean> findByRequestIPAndTime(int type, int signerid, java.lang.String requestIP, long starttime, long endtime) {
+        try {
+            return em.createNamedQuery("ArchiveDataBean.findByRequestCertificateAndTime").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIP).setParameter(4, starttime).setParameter(5, endtime).getResultList();
+        } catch (javax.persistence.NoResultException e) {
+        }
+        return new ArrayList<ArchiveDataBean>();
     }
 }

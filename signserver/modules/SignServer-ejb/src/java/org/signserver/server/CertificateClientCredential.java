@@ -10,11 +10,11 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server;
 
 /**
  * Representation of a X509 client certificate for authentication use.
+ *
  * @version $Id$
  */
 public class CertificateClientCredential implements IClientCredential {

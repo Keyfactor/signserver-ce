@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server;
 
 /**
@@ -20,10 +19,8 @@ package org.signserver.server;
  * 
  * 
  * @author Philip Vendil 3 aug 2008
- *
  * @version $Id$
  */
-
 public abstract class WorkerContext {
 
 }

@@ -32,14 +32,13 @@ import org.signserver.common.WorkerConfig;
 /**
  * Client certificate authorizer.
  *
- *
  * @author Philip Vendil 24 nov 2007
- *
  * @version $Id$
  */
 public class ClientCertAuthorizer implements IAuthorizer {
 
-    private transient Logger log = Logger.getLogger(this.getClass());
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(ClientCertAuthorizer.class);
     
     private int workerId;
     private ProcessableConfig config = null;
@@ -98,7 +97,7 @@ public class ClientCertAuthorizer implements IAuthorizer {
                         && clientCert.getSerialNumber()
                         .equals(new BigInteger(next.getCertSN(), 16));
             } catch (IllegalArgumentException e) {
-                log.warn(e.getMessage() + " for athorized client");
+                LOG.warn(e.getMessage() + " for athorized client");
             }
         }
         return isAuthorized;

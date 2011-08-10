@@ -28,13 +28,13 @@ import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.IKeyGenerator;
 
 /**
- * IProcessable is an interface that all processable workers should implement
+ * IProcessable is an interface that all processable workers should implement.
  * 
- * There exists a BaseTimedService that can be extended covering some of it's functions
- * 
+ * There exists a BaseTimedService that can be extended covering some of it's 
+ * functions.
  * 
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public interface IProcessable extends IWorker {
 

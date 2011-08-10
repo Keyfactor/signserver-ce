@@ -22,7 +22,7 @@ import java.util.Properties;
  * Has no defined properties.
  *
  * @author philip
- * $Id$
+ * @version $Id$
  */
 public class LocalComputerTimeSource implements ITimeSource {
 

@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server;
 
 import javax.persistence.EntityManager;
@@ -24,27 +23,22 @@ import org.signserver.common.WorkerConfig;
 /**
  * Simple IAuthorizer accepting all requests.
  * 
- * 
  * @author Philip Vendil 24 nov 2007
- *
  * @version $Id$
  */
-
 public class NoAuthorizer implements IAuthorizer {
 
-	/**
-	 * @see org.signserver.server.IAuthorizer#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
-	 */
-	public void init(int workerId, WorkerConfig config, EntityManager em)
-			throws SignServerException {
+    /**
+     * @see org.signserver.server.IAuthorizer#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
+     */
+    public void init(int workerId, WorkerConfig config, EntityManager em)
+            throws SignServerException {
+    }
 
-	}
-
-	/**
-	 * @see org.signserver.server.IAuthorizer#isAuthorized(ProcessRequest, RequestContext)
-	 */
-	public void isAuthorized(ProcessRequest request,RequestContext requestContext)
-			throws SignServerException, IllegalRequestException {
-	}
-
+    /**
+     * @see org.signserver.server.IAuthorizer#isAuthorized(ProcessRequest, RequestContext)
+     */
+    public void isAuthorized(ProcessRequest request, RequestContext requestContext)
+            throws SignServerException, IllegalRequestException {
+    }
 }

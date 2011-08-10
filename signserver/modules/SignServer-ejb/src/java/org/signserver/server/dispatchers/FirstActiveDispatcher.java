@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.dispatchers;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import javax.naming.NamingException;
@@ -34,7 +35,7 @@ import org.signserver.server.WorkerContext;
  * Properties:<br/>
  * WORKERS = Comma separated list of worker names
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class FirstActiveDispatcher extends BaseDispatcher {
@@ -64,9 +65,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
             if (workersValue == null) {
                 LOG.error("Property WORKERS missing!");
             } else {
-                for (String worker : workersValue.split(",")) {
-                    workers.add(worker);
-                }
+                workers.addAll(Arrays.asList(workersValue.split(",")));
             }
             workerSession = ServiceLocator.getInstance().lookupRemote(
                         IWorkerSession.IRemote.class);

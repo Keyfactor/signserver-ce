@@ -79,11 +79,12 @@ import org.signserver.common.KeyTestResult;
  * NEXTCERTSIGNKEY : Can be used to hold the alias of the next key. (optional)
  *
  * @author Philip Vendil, Markus Kilas
- * $Id$
+ * @version $Id$
  */
 public class KeystoreCryptoToken implements ICryptoToken,
     IKeyGenerator {
 
+    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(KeystoreCryptoToken.class);
 
     public static final String KEYSTOREPATH = "KEYSTOREPATH";
@@ -651,7 +652,6 @@ public class KeystoreCryptoToken implements ICryptoToken,
 
         public PrivateKey getPrivateKey() {
             return privateKey;
-        }
-        
+        }        
     }
 }

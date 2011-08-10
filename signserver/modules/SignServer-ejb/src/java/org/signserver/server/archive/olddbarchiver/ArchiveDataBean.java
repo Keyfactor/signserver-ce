@@ -10,10 +10,10 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
-
 package org.signserver.server.archive.olddbarchiver;
 
+import java.beans.XMLEncoder;
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -52,30 +52,37 @@ import org.signserver.common.ArchiveDataVO;
  *
  */
 @Entity
-@Table(name="ArchiveData")
-@NamedQueries(
-		{@NamedQuery(name="ArchiveDataBean.findByArchiveId",query="SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.archiveid=?3"),
-		 @NamedQuery(name="ArchiveDataBean.findByTime",query="SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.time>=?3 AND a.time<=?4"),
-		 @NamedQuery(name="ArchiveDataBean.findByRequestCertificate",query="SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4"),
-		 @NamedQuery(name="ArchiveDataBean.findByRequestCertificateAndTime",query="SELECT a from ArchiveDataBean a WHERE a.type=?1  AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4 AND a.time>=?5 AND a.time<=?6"),
-		 @NamedQuery(name="ArchiveDataBean.findByRequestIP",query="SELECT  a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3"),
-		 @NamedQuery(name="ArchiveDataBean.findByRequestIPAndTime",query="SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3 AND a.time>=?4 AND a.time<=?5")
-		})
-public class ArchiveDataBean implements Serializable  {
+@Table(name = "ArchiveData")
+@NamedQueries({
+    @NamedQuery(name = "ArchiveDataBean.findByArchiveId", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.archiveid=?3"),
+    @NamedQuery(name = "ArchiveDataBean.findByTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.time>=?3 AND a.time<=?4"),
+    @NamedQuery(name = "ArchiveDataBean.findByRequestCertificate", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4"),
+    @NamedQuery(name = "ArchiveDataBean.findByRequestCertificateAndTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1  AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4 AND a.time>=?5 AND a.time<=?6"),
+    @NamedQuery(name = "ArchiveDataBean.findByRequestIP", query = "SELECT  a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3"),
+    @NamedQuery(name = "ArchiveDataBean.findByRequestIPAndTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3 AND a.time>=?4 AND a.time<=?5")
+})
+public class ArchiveDataBean implements Serializable {
 
-   @Id
-   private String uniqueId;
-   private long time;
-   private int type;
-   private int signerid;
-   private String archiveid;
-   private String requestIssuerDN;
-   private String requestCertSerialnumber;
-   private String requestIP;
-
-   @Lob
-   @Column(length=10485760)
-   private String archiveData;
+    @Id
+    private String uniqueId;
+    
+    private long time;
+    
+    private int type;
+    
+    private int signerid;
+    
+    private String archiveid;
+    
+    private String requestIssuerDN;
+    
+    private String requestCertSerialnumber;
+    
+    private String requestIP;
+    
+    @Lob
+    @Column(length = 10485760)
+    private String archiveData;
 
     /**
      * Unique Id of the archieved data
@@ -83,8 +90,8 @@ public class ArchiveDataBean implements Serializable  {
      *
      * @return uniqueId
      */
-    public  String getUniqueId(){
-    	return uniqueId;
+    public String getUniqueId() {
+        return uniqueId;
     }
 
     /**
@@ -93,18 +100,16 @@ public class ArchiveDataBean implements Serializable  {
      *
      * @param uniqueId  (could be response serialnumber or requestId or other
      */
-    public void setUniqueId(String uniqueId){
-    	this.uniqueId = uniqueId;
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
-
-    public  long getTime(){
-    	return time;
+    public long getTime() {
+        return time;
     }
 
-
-    public void setTime(long time){
-    	this.time = time;
+    public void setTime(long time) {
+        this.time = time;
     }
 
     /**
@@ -113,8 +118,8 @@ public class ArchiveDataBean implements Serializable  {
      *
      * @return  the type (if the archive is of requests or responses
      */
-    public int getType(){
-    	return type;
+    public int getType() {
+        return type;
     }
 
     /**
@@ -122,66 +127,62 @@ public class ArchiveDataBean implements Serializable  {
      * see TYPE constants for more information
      *
      */
-    public void setType(int type){
-    	this.type = type;
+    public void setType(int type) {
+        this.type = type;
     }
 
     /**
      * @return which signer that generated the archived data.
      *
      */
-    public int getSignerid(){
-    	return signerid;
+    public int getSignerid() {
+        return signerid;
     }
 
     /**
      * @param signerid which signer that generated the archived data.
      *
      */
-    public void setSignerid(int signerid){
-    	this.signerid = signerid;
+    public void setSignerid(int signerid) {
+        this.signerid = signerid;
     }
 
     /**
      * The unique ID of the archive, could be the response serial number.
      */
-    public String getArchiveid(){
-    	return archiveid;
+    public String getArchiveid() {
+        return archiveid;
     }
 
     /**
      * The unique ID of the archive, could be the response serial number.
      */
-    public void setArchiveid(String archiveid){
-    	this.archiveid = archiveid;
+    public void setArchiveid(String archiveid) {
+        this.archiveid = archiveid;
     }
 
-    public String getRequestIssuerDN(){
-    	return requestIssuerDN;
+    public String getRequestIssuerDN() {
+        return requestIssuerDN;
     }
 
-
-    public void setRequestIssuerDN(String requestIssuerDN){
-    	this.requestIssuerDN = requestIssuerDN;
+    public void setRequestIssuerDN(String requestIssuerDN) {
+        this.requestIssuerDN = requestIssuerDN;
     }
 
-    public String getRequestCertSerialnumber(){
-    	return requestCertSerialnumber;
+    public String getRequestCertSerialnumber() {
+        return requestCertSerialnumber;
     }
 
-
-    public void setRequestCertSerialnumber(String requestSerialnumber){
-    	this.requestCertSerialnumber = requestSerialnumber;
+    public void setRequestCertSerialnumber(String requestSerialnumber) {
+        this.requestCertSerialnumber = requestSerialnumber;
     }
 
-
-    public String getRequestIP(){
-    	return requestIP;
+    public String getRequestIP() {
+        return requestIP;
     }
 
-
-    public void setRequestIP(String requestIP){
-    	this.requestIP = requestIP;
+    public void setRequestIP(String requestIP) {
+        this.requestIP = requestIP;
     }
 
     /**
@@ -190,8 +191,8 @@ public class ArchiveDataBean implements Serializable  {
      *
      * @return  xmlencoded encoded WorkerConfig
      */
-    public String getArchiveData(){
-    	return archiveData;
+    public String getArchiveData() {
+        return archiveData;
     }
 
     /**
@@ -199,15 +200,13 @@ public class ArchiveDataBean implements Serializable  {
      *
      * @param WorkerConfig xmlencoded encoded data
      */
-    public  void setArchiveData(String archiveData){
-    	this.archiveData = archiveData;
+    public void setArchiveData(String archiveData) {
+        this.archiveData = archiveData;
     }
-
 
     //
     // Public business methods used to help us manage certificates
     //
-
     /**
      * Returns the value object containing the information of the entity bean.
      * This is the method that should be used to retreive archieve data
@@ -217,21 +216,21 @@ public class ArchiveDataBean implements Serializable  {
      */
     public ArchiveData getArchiveDataObject() {
 
-    	java.beans.XMLDecoder decoder;
-    	try {
-    		decoder =
-    			new java.beans.XMLDecoder(
-    					new java.io.ByteArrayInputStream(getArchiveData().getBytes("UTF8")));
-    	} catch (UnsupportedEncodingException e) {
-    		throw new EJBException(e);
-    	}
-    	HashMap<?, ?> h  = (HashMap<?, ?>) decoder.readObject();
-    	decoder.close();
+        java.beans.XMLDecoder decoder;
+        try {
+            decoder =
+                    new java.beans.XMLDecoder(
+                    new java.io.ByteArrayInputStream(getArchiveData().getBytes("UTF8")));
+        } catch (UnsupportedEncodingException e) {
+            throw new EJBException(e);
+        }
+        HashMap<?, ?> h = (HashMap<?, ?>) decoder.readObject();
+        decoder.close();
 
         HashMap<?, ?> data = new Base64GetHashMap(h);
 
-    	ArchiveData archiveData = new ArchiveData();
-    	archiveData.loadData(data);
+        ArchiveData archiveData = new ArchiveData();
+        archiveData.loadData(data);
 
         return archiveData;
     }
@@ -240,41 +239,30 @@ public class ArchiveDataBean implements Serializable  {
      * Method that saves the archive data to database.
      */
     @SuppressWarnings("unchecked")
-	void setArchiveDataObject(ArchiveData data){
+    void setArchiveDataObject(ArchiveData data) {
         // We must base64 encode string for UTF safety
         HashMap a = new Base64PutHashMap();
-        a.putAll((HashMap)data.saveData());
+        a.putAll((HashMap) data.saveData());
 
-    	java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-    	java.beans.XMLEncoder encoder = new java.beans.XMLEncoder(baos);
-    	encoder.writeObject(a);
-    	encoder.close();
+        XMLEncoder encoder = new XMLEncoder(baos);
+        encoder.writeObject(a);
+        encoder.close();
 
-    	try {
-    		setArchiveData(baos.toString("UTF8"));
-    	} catch (UnsupportedEncodingException e) {
-    		throw new EJBException(e);
-    	}
-
-
+        try {
+            setArchiveData(baos.toString("UTF8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new EJBException(e);
+        }
     }
 
     /**
      * Method used to get the ArchiveDataVO representation of the data row.
      */
-    public ArchiveDataVO getArchiveDataVO(){
-    	return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
-    			 getRequestIssuerDN(),getRequestCertSerialnumber(),getRequestIP(),
-    			 getArchiveDataObject());
+    public ArchiveDataVO getArchiveDataVO() {
+        return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
+                getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP(),
+                getArchiveDataObject());
     }
-
-
-
-
-
-
-
-
-
 }

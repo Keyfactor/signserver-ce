@@ -10,29 +10,25 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server;
- 
+
 /**
- * ITimedService is an interface that all services should implement
+ * ITimedService is an interface that all services should implement.
  * 
  * There exists a BaseTimedService that can be extended covering some of it's functions
  * 
- * 
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public class ServiceExecutionFailedException extends Exception {
 
+    private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = 1L;
+    public ServiceExecutionFailedException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public ServiceExecutionFailedException(String message, Throwable cause) {
-		super(message, cause);		
-	}
-
-	public ServiceExecutionFailedException(String message) {
-		super(message);
-	}
-
+    public ServiceExecutionFailedException(String message) {
+        super(message);
+    }
 }

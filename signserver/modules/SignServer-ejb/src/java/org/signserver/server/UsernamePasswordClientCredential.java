@@ -14,7 +14,11 @@ package org.signserver.server;
 
 import java.io.Serializable;
 
-
+/**
+ * TODO: Document me!
+ *
+ * @version $Id$
+ */
 public class UsernamePasswordClientCredential implements IClientCredential,
         Serializable {
 

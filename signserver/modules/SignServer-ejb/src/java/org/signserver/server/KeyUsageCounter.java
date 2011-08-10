@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -25,11 +26,12 @@ import org.bouncycastle.util.encoders.Hex;
 /**
  * Counter in database for number of signings made with a particular key.
  * 
- * @author markus
+ * @author Markus Kilås
+ * @version $Id$
  */
 @Entity
 @Table(name = "KeyUsageCounter")
-public class KeyUsageCounter {
+public class KeyUsageCounter implements Serializable {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(KeyUsageCounter.class);
@@ -79,6 +81,5 @@ public class KeyUsageCounter {
             LOG.error(message, ex);
             throw new RuntimeException(message, ex);
         }
-    }
-    
+    }    
 }

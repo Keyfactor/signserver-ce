@@ -10,8 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
-
 package org.signserver.server;
 
 import java.util.Properties;
@@ -22,31 +20,33 @@ import org.signserver.common.GlobalConfiguration;
  * Cache used to store temporary data during a database failure
  * Should only be used from the GlobalConfigurationSessionBean!
  * 
+ * FIXME: Move closer to GlobalConfigurationSessionBean and maybe shouldn't be public.
+ * 
  * @author Philip Vendil 2007 jan 22
  *
  * @version $Id$
- */ 
-
+ */
 public class GlobalConfigurationCache {
 
-	
-	/**
-	 * Cached configuration used for non-synced state.
-	 */
-	private static Properties cachedGlobalConfig = null;
-	private static String currentState = GlobalConfiguration.STATE_INSYNC;
+    /**
+     * Cached configuration used for non-synced state.
+     */
+    private static Properties cachedGlobalConfig = null;
+    private static String currentState = GlobalConfiguration.STATE_INSYNC;
 
-	public synchronized  static  Properties getCachedGlobalConfig() {
-		return cachedGlobalConfig;
-	}
-	public synchronized static void setCachedGlobalConfig(Properties cachedGlobalConfig) {
-		GlobalConfigurationCache.cachedGlobalConfig = cachedGlobalConfig;
-	}
-	public synchronized static String getCurrentState() {
-		return currentState;
-	}
-	public synchronized static void setCurrentState(String currentState) {
-		GlobalConfigurationCache.currentState = currentState;
-	}
+    public synchronized static Properties getCachedGlobalConfig() {
+        return cachedGlobalConfig;
+    }
 
+    public synchronized static void setCachedGlobalConfig(Properties cachedGlobalConfig) {
+        GlobalConfigurationCache.cachedGlobalConfig = cachedGlobalConfig;
+    }
+
+    public synchronized static String getCurrentState() {
+        return currentState;
+    }
+
+    public synchronized static void setCurrentState(String currentState) {
+        GlobalConfigurationCache.currentState = currentState;
+    }
 }

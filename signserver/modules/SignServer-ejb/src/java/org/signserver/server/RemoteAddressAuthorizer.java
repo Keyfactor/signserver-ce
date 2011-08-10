@@ -44,6 +44,7 @@ import org.signserver.common.WorkerConfig;
  */
 public class RemoteAddressAuthorizer implements IAuthorizer {
 
+    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
             RemoteAddressAuthorizer.class);
 

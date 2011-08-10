@@ -46,7 +46,6 @@ import org.signserver.common.WorkerConfig;
  * ACCEPT_ALL_USERNAMES = true
  * </pre>
  *
- *
  * @version $Id$
  */
 public class UsernameAuthorizer implements IAuthorizer {

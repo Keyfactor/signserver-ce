@@ -39,7 +39,7 @@ public abstract class BaseWorker implements IWorker {
      * @return The global configuration session.
      */
     protected IGlobalConfigurationSession.IRemote
-            getGlobalConfigurationSession() {
+            getGlobalConfigurationSession() { // FIXME: Better to somehow inject this
         if (globalConfig == null) {
             try {
                 globalConfig = ServiceLocator.getInstance().lookupRemote(

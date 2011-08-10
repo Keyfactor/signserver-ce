@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server;
 
 import java.security.KeyStoreException;
@@ -34,185 +33,170 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.IKeyGenerator;
 
-
 public abstract class BaseProcessable extends BaseWorker implements IProcessable {
-	
+
     /** Log4j instance for actual implementation class */
-	private transient Logger log = Logger.getLogger(this.getClass());
-
-	//Private Property constants
-
-    protected ICryptoToken cryptoToken = null;
-
+    private final transient Logger log = Logger.getLogger(this.getClass());
     
-    protected BaseProcessable(){
+    protected ICryptoToken cryptoToken;
+    
+    private X509Certificate cert;
+    private Collection<Certificate> certChain;
 
+    protected BaseProcessable() {
     }
 
-	    
-	public void activateSigner(String authenticationCode)
-			throws CryptoTokenAuthenticationFailureException,
-			CryptoTokenOfflineException {		
-		if (log.isTraceEnabled()) {
-			log.trace(">activateSigner");
-		}	    
-		getCryptoToken().activate(authenticationCode);
+    public void activateSigner(String authenticationCode)
+            throws CryptoTokenAuthenticationFailureException,
+            CryptoTokenOfflineException {
+        if (log.isTraceEnabled()) {
+            log.trace(">activateSigner");
+        }
+        getCryptoToken().activate(authenticationCode);
 
-                // Check if certificate matches key
-                Certificate certificate = getSigningCertificate();
-                if (certificate == null) {
-                    log.info("Activate: Signer " + workerId + ": No certificate");
-                } else {
-                    if (Arrays.equals(certificate.getPublicKey().getEncoded(),
-                            getCryptoToken().getPublicKey(
-                            ICryptoToken.PURPOSE_SIGN).getEncoded())) {
-                        log.info("Activate: Signer " + workerId
-                                + ": Certificate matches key");
-                    } else {
-                        log.info("Activate: Signer " + workerId
-                                + ": Certificat does not match key");
+        // Check if certificate matches key
+        Certificate certificate = getSigningCertificate();
+        if (certificate == null) {
+            log.info("Activate: Signer " + workerId + ": No certificate");
+        } else {
+            if (Arrays.equals(certificate.getPublicKey().getEncoded(),
+                    getCryptoToken().getPublicKey(
+                    ICryptoToken.PURPOSE_SIGN).getEncoded())) {
+                log.info("Activate: Signer " + workerId
+                        + ": Certificate matches key");
+            } else {
+                log.info("Activate: Signer " + workerId
+                        + ": Certificat does not match key");
+            }
+        }
+        if (log.isTraceEnabled()) {
+            log.trace("<activateSigner");
+        }
+    }
+
+    public boolean deactivateSigner() throws CryptoTokenOfflineException {
+        if (log.isTraceEnabled()) {
+            log.trace(">deactivateSigner");
+        }
+        boolean ret = getCryptoToken().deactivate();
+        if (log.isTraceEnabled()) {
+            log.trace("<deactivateSigner");
+        }
+        return ret;
+    }
+
+    /**
+     * Returns the authentication type configured for this signer.
+     * Returns one of the ISigner.AUTHTYPE_ constants or the class path
+     * to a custom authenticator. 
+     * 
+     * default is client certificate authentication.
+     */
+    public String getAuthenticationType() {
+        return config.getProperties().getProperty(WorkerConfig.PROPERTY_AUTHTYPE, IProcessable.AUTHTYPE_CLIENTCERT);
+    }
+
+    protected ICryptoToken getCryptoToken() {
+        if (log.isTraceEnabled()) {
+            log.trace(">getCryptoToken");
+        }
+        if (cryptoToken == null) {
+            GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
+            try {
+                String classpath = gc.getCryptoTokenProperty(workerId, GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);
+                if (log.isDebugEnabled()) {
+                    log.debug("Found cryptotoken classpath: " + classpath);
+                }
+                if (classpath != null) {
+                    Class<?> implClass = Class.forName(classpath);
+                    Object obj = implClass.newInstance();
+                    cryptoToken = (ICryptoToken) obj;
+                    cryptoToken.init(workerId, config.getProperties());
+                }
+            } catch (CryptoTokenInitializationFailureException e) {
+                throw new EJBException(e);
+            } catch (ClassNotFoundException e) {
+                throw new EJBException(e);
+            } catch (IllegalAccessException iae) {
+                throw new EJBException(iae);
+            } catch (InstantiationException ie) {
+                throw new EJBException(ie);
+            }
+        }
+        if (log.isTraceEnabled()) {
+            log.trace("<getCryptoToken: " + cryptoToken);
+        }
+
+        return cryptoToken;
+    }
+
+    /**
+     * Method that returns the certificate used when signing
+     * @throws CryptoTokenOfflineException 
+     */
+    public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
+        if (cert == null) {
+            if (getCryptoToken() != null) {
+                cert = (X509Certificate) getCryptoToken().getCertificate(ICryptoToken.PURPOSE_SIGN);
+            }
+            if (cert == null) {
+                cert = (new ProcessableConfig(config)).getSignerCertificate();
+            }
+        }
+        return cert;
+    }
+
+    /**
+     * Method that returns the certificate chain used when signing
+     * @throws CryptoTokenOfflineException 
+     */
+    public Collection<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+        if (certChain == null) {
+            ICryptoToken cToken = getCryptoToken();
+            if (cToken != null) {
+                certChain = cToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
+                if (certChain == null) {
+                    log.debug("Signtoken did not contain a certificate chain, looking in config.");
+                    certChain = (new ProcessableConfig(config)).getSignerCertificateChain();
+                    if (certChain == null) {
+                        log.error("Neither Signtoken or ProcessableConfig contains a certificate chain!");
                     }
                 }
-		if (log.isTraceEnabled()) {
-			log.trace("<activateSigner");
-		}	    
-	}
+            }
+        }
+        return certChain;
+    }
 
-	public boolean deactivateSigner() throws CryptoTokenOfflineException {
-		if (log.isTraceEnabled()) {
-			log.trace(">deactivateSigner");
-		}
-		boolean ret = getCryptoToken().deactivate();
-		if (log.isTraceEnabled()) {
-			log.trace("<deactivateSigner");
-		}
-		return ret;
-	}
-	
-	/**
-	 * Returns the authentication type configured for this signer.
-	 * Returns one of the ISigner.AUTHTYPE_ constants or the class path
-	 * to a custom authenticator. 
-	 * 
-	 * default is client certificate authentication.
-	 */
-	public String getAuthenticationType(){				
-		return config.getProperties().getProperty(WorkerConfig.PROPERTY_AUTHTYPE, IProcessable.AUTHTYPE_CLIENTCERT);
-	}
-	
-	
-	
-	protected ICryptoToken getCryptoToken() {
-		if (log.isTraceEnabled()) {
-			log.trace(">getCryptoToken");
-		}
-		if(cryptoToken == null){
-			GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
-			try{				
-				String classpath = gc.getCryptoTokenProperty(workerId,GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);
-				if (log.isDebugEnabled()) {
-					log.debug("Found cryptotoken classpath: "+classpath);
-				}
-				if(classpath != null){		
-					Class<?> implClass = Class.forName(classpath);
-					Object obj = implClass.newInstance();
-					cryptoToken = (ICryptoToken) obj;
-					cryptoToken.init(workerId, config.getProperties());								 
-				} 
-			}catch(CryptoTokenInitializationFailureException e){
-				throw new EJBException(e);
-			}catch(ClassNotFoundException e){
-				throw new EJBException(e);
-			}
-			catch(IllegalAccessException iae){
-				throw new EJBException(iae);
-			}
-			catch(InstantiationException ie){
-				throw new EJBException(ie);
-			}
-		}
-		if (log.isTraceEnabled()) {
-			log.trace("<getCryptoToken: "+cryptoToken);
-		}
-		
-		return cryptoToken;
-	}
+    /**
+     * Method sending the request info to the signtoken
+     * @return the request or null if method isn't supported by signertoken.
+     */
+    @Override
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
+            final boolean explicitEccParameters, final boolean defaultKey)
+            throws CryptoTokenOfflineException {
+        if (log.isTraceEnabled()) {
+            log.trace(">genCertificateRequest");
+        }
+        ICryptoToken token = getCryptoToken();
+        if (log.isDebugEnabled()) {
+            log.debug("Found a crypto token of type: " + token.getClass().getName());
+            log.debug("Token status is: " + token.getCryptoTokenStatus());
+        }
+        ICertReqData data = token.genCertificateRequest(info,
+                explicitEccParameters, defaultKey);
+        if (log.isTraceEnabled()) {
+            log.trace("<genCertificateRequest");
+        }
+        return data;
+    }
 
-	
-
-	
-						
-    private X509Certificate cert = null;	
- 
-	/**
-	 * Method that returns the certificate used when signing
-	 * @throws CryptoTokenOfflineException 
-	 */
-	public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
-		if(cert==null){
-			if(getCryptoToken() != null){
-			  cert = (X509Certificate) getCryptoToken().getCertificate(ICryptoToken.PURPOSE_SIGN);
-			}
-			if(cert==null){
-			  cert=( new ProcessableConfig( config)).getSignerCertificate();
-			}
-		}		
-		return cert;
-	}
-	
-	
-	private Collection<Certificate> certChain = null;
-	/**
-	 * Method that returns the certificate chain used when signing
-	 * @throws CryptoTokenOfflineException 
-	 */
-	public Collection<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
-		if(certChain==null){
-			ICryptoToken cToken =  getCryptoToken();
-			if(cToken != null){
-				certChain =  cToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
-				if(certChain==null){
-					log.debug("Signtoken did not contain a certificate chain, looking in config.");
-					certChain=(new ProcessableConfig(config)).getSignerCertificateChain();
-					if (certChain == null) {
-						log.error("Neither Signtoken or ProcessableConfig contains a certificate chain!");					
-					}
-				}
-			}
-		}		
-		return certChain;
-	}
-
-	/**
-	 * Method sending the request info to the signtoken
-	 * @return the request or null if method isn't supported by signertoken.
-	 */
-        @Override
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
-                final boolean explicitEccParameters, final boolean defaultKey)
-                throws CryptoTokenOfflineException {
-		if (log.isTraceEnabled()) {
-			log.trace(">genCertificateRequest");
-		}
-		ICryptoToken token = getCryptoToken();
-		if (log.isDebugEnabled()) {
-			log.debug("Found a crypto token of type: "+token.getClass().getName());
-			log.debug("Token status is: "+token.getCryptoTokenStatus());
-		}
-		ICertReqData data = token.genCertificateRequest(info, 
-                        explicitEccParameters, defaultKey);
-		if (log.isTraceEnabled()) {
-			log.trace("<genCertificateRequest");
-		}
-		return data;		 
-	}
-	
-	/**
-	 * Method sending the removal request to the signtoken
-	 */
-	public boolean destroyKey(int purpose) {
-		return getCryptoToken().destroyKey(purpose);
-	}
+    /**
+     * Method sending the removal request to the signtoken
+     */
+    public boolean destroyKey(int purpose) {
+        return getCryptoToken().destroyKey(purpose);
+    }
 
     /**
      * @see IKeyGenerator#generateKey(java.lang.String, java.lang.String,
@@ -245,5 +229,4 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
         return token.testKey(alias, authCode);
     }
-	
 }

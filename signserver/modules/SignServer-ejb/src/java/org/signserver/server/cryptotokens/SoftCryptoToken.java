@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
 package org.signserver.server.cryptotokens;
- 
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -58,7 +58,6 @@ import org.signserver.common.KeyTestResult;
 import org.signserver.common.ServiceLocator;
 import org.signserver.server.PropertyFileStore;
 
-
 /**
  * Cryptographic token that uses soft keys stored in the worker properties in the database.
  * Is support generation of certificate requests and regeneration of keys.
@@ -80,228 +79,221 @@ import org.signserver.server.PropertyFileStore;
  * $Id$
  */
 public class SoftCryptoToken implements ICryptoToken {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(SoftCryptoToken.class);
 	
-	private static Logger log = Logger.getLogger(SoftCryptoToken.class);
+    public static final String PROPERTY_KEYDATA = "KEYDATA";
+    public static final String PROPERTY_KEYALG = "KEYALG";
+    public static final String PROPERTY_KEYSPEC = "KEYSPEC";
 	
-	public static final String PROPERTY_KEYDATA = "KEYDATA";
-	public static final String PROPERTY_KEYALG = "KEYALG";
-	public static final String PROPERTY_KEYSPEC = "KEYSPEC";
-	
-	private int workerId;
-	private KeyPair keys = null;
-	private String keySpec = null;
-	private String keyAlg = null;
-	private boolean active = true;
+    private int workerId;
+    private KeyPair keys = null;
+    private String keySpec = null;
+    private String keyAlg = null;
+    private boolean active = true;
+    
+    @EJB // FIXME: Won't work, always uses lookup. Consider doing manual injection using the init method or similar. If it really needs to use the worker session?
+    private IWorkerSession.IRemote workerSession;
 
-	
-	
-	/**
-	 * @see org.signserver.server.cryptotokens.ICryptoToken#init(java.util.Properties)
-	 */
-	public void init(int workerId, Properties props) {
-		this.workerId = workerId;
-		keySpec = props.getProperty(PROPERTY_KEYSPEC,"2048");
-		keyAlg = props.getProperty(PROPERTY_KEYALG,"RSA");  
+    /**
+     * @see org.signserver.server.cryptotokens.ICryptoToken#init(java.util.Properties)
+     */
+    public void init(int workerId, Properties props) {
+        this.workerId = workerId;
+        keySpec = props.getProperty(PROPERTY_KEYSPEC, "2048");
+        keyAlg = props.getProperty(PROPERTY_KEYALG, "RSA");
 
-		if(props.getProperty(PROPERTY_KEYDATA) != null){
-			try{
-				KeyFactory keyFactory = KeyFactory.getInstance("RSA");	
+        if (props.getProperty(PROPERTY_KEYDATA) != null) {
+            try {
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 
-				byte[] keyData = Base64.decode(props.getProperty(PROPERTY_KEYDATA).getBytes());		  
-				ByteArrayInputStream bais = new ByteArrayInputStream(keyData);
-				DataInputStream dis = new DataInputStream(bais);
+                byte[] keyData = Base64.decode(props.getProperty(PROPERTY_KEYDATA).getBytes());
+                ByteArrayInputStream bais = new ByteArrayInputStream(keyData);
+                DataInputStream dis = new DataInputStream(bais);
 
-				int pubKeySize = dis.readInt();
-				byte[] pubKeyData = new byte[pubKeySize];
-				dis.read(pubKeyData, 0, pubKeySize);
-				int privKeySize = dis.readInt();
-				byte[] privKeyData = new byte[privKeySize];
-				dis.read(privKeyData, 0, privKeySize);
-				// decode public key
-				X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(pubKeyData);
-				RSAPublicKey pubKey = (RSAPublicKey) keyFactory.generatePublic(pubSpec);
+                int pubKeySize = dis.readInt();
+                byte[] pubKeyData = new byte[pubKeySize];
+                dis.read(pubKeyData, 0, pubKeySize);
+                int privKeySize = dis.readInt();
+                byte[] privKeyData = new byte[privKeySize];
+                dis.read(privKeyData, 0, privKeySize);
+                // decode public key
+                X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(pubKeyData);
+                RSAPublicKey pubKey = (RSAPublicKey) keyFactory.generatePublic(pubSpec);
 
-				// decode private key
-				PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(privKeyData);
-				RSAPrivateKey privKey = (RSAPrivateKey) keyFactory.generatePrivate(privSpec);
+                // decode private key
+                PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(privKeyData);
+                RSAPrivateKey privKey = (RSAPrivateKey) keyFactory.generatePrivate(privSpec);
 
-				keys = new KeyPair(pubKey,privKey);
-			}catch(NoSuchAlgorithmException e){
-				log.error("Error loading soft keys : ",e);
-			} catch (IOException e) {
-				log.error("Error loading soft keys : ",e);
-			} catch (InvalidKeySpecException e) {
-				log.error("Error loading soft keys : ",e);
-			}
-		}else{
-			active = false;
-		}
+                keys = new KeyPair(pubKey, privKey);
+            } catch (NoSuchAlgorithmException e) {
+                LOG.error("Error loading soft keys : ", e);
+            } catch (IOException e) {
+                LOG.error("Error loading soft keys : ", e);
+            } catch (InvalidKeySpecException e) {
+                LOG.error("Error loading soft keys : ", e);
+            }
+        } else {
+            active = false;
+        }
 
-	}
+    }
 
-	/**
-	 * Returns true if the key store was properly loaded
-	 * 
-	 * @see org.signserver.server.cryptotokens.ICryptoToken#getCryptoTokenStatus()
-	 * 
-	 */
-	public int getCryptoTokenStatus() {
-		if(active){
-		  return SignerStatus.STATUS_ACTIVE;
-		}
-		
-		return SignerStatus.STATUS_OFFLINE;
-	}
+    /**
+     * Returns true if the key store was properly loaded
+     * 
+     * @see org.signserver.server.cryptotokens.ICryptoToken#getCryptoTokenStatus()
+     * 
+     */
+    public int getCryptoTokenStatus() {
+        if (active) {
+            return SignerStatus.STATUS_ACTIVE;
+        }
+        return SignerStatus.STATUS_OFFLINE;
+    }
 
-	/**
-	 * Loads the key store into memory
-	 * 
-	 * @see org.signserver.server.cryptotokens.ICryptoToken#activate(java.lang.String)
-	 */
-	public void activate(String authenticationcode)
-			throws CryptoTokenAuthenticationFailureException,
-			CryptoTokenOfflineException {          
-		active = true;
-	}
+    /**
+     * Loads the key store into memory
+     * 
+     * @see org.signserver.server.cryptotokens.ICryptoToken#activate(java.lang.String)
+     */
+    public void activate(String authenticationcode)
+            throws CryptoTokenAuthenticationFailureException,
+            CryptoTokenOfflineException {
+        active = true;
+    }
 
-	/**
-	 * Method that clear the key data from memory.
-	 * 
-	 * @see org.signserver.server.cryptotokens.ICryptoToken#deactivate()
-	 */
-	public boolean deactivate() {
-	    active=false;
-		return true;
-	}
+    /**
+     * Method that clear the key data from memory.
+     * 
+     * @see org.signserver.server.cryptotokens.ICryptoToken#deactivate()
+     */
+    public boolean deactivate() {
+        active = false;
+        return true;
+    }
 
-	/**
-	 * Returns the same private key for all purposes.
-	 * @see org.signserver.server.cryptotokens.ICryptoToken#getPrivateKey(int)
-	 */
-	public PrivateKey getPrivateKey(int purpose)
-			throws CryptoTokenOfflineException {
-				
-			if(!active){
-			  throw new CryptoTokenOfflineException("Signtoken isn't active.");
-			}
-		
-	
-		
-		return keys.getPrivate();
-	}
+    /**
+     * Returns the same private key for all purposes.
+     * @see org.signserver.server.cryptotokens.ICryptoToken#getPrivateKey(int)
+     */
+    public PrivateKey getPrivateKey(int purpose)
+            throws CryptoTokenOfflineException {
 
-	/**
-	 * Returns the same public key for all purposes.
-	 * @see org.signserver.server.cryptotokens.ICryptoToken#getPublicKey(int)
-	 */
-	public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
+        if (!active) {
+            throw new CryptoTokenOfflineException("Signtoken isn't active.");
+        }
+        return keys.getPrivate();
+    }
 
-		if(!active){
-			throw new CryptoTokenOfflineException("Signtoken isn't active.");
-		}
-		return keys.getPublic();
-	}
+    /**
+     * Returns the same public key for all purposes.
+     * @see org.signserver.server.cryptotokens.ICryptoToken#getPublicKey(int)
+     */
+    public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
 
-	/**
-	 * Always returns BC
-	 * @see org.signserver.server.cryptotokens.ICryptoToken#getProvider()
-	 */
-	public String getProvider(int providerUsage) {
-		return "BC";
-	}
+        if (!active) {
+            throw new CryptoTokenOfflineException("Signtoken isn't active.");
+        }
+        return keys.getPublic();
+    }
 
-	public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException{
-		return null;
-	}
+    /**
+     * Always returns BC
+     * @see org.signserver.server.cryptotokens.ICryptoToken#getProvider()
+     */
+    public String getProvider(int providerUsage) {
+        return "BC";
+    }
 
-	public Collection<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {		
-		return null;
-	}
+    public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
+        return null;
+    }
+
+    public Collection<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
+        return null;
+    }
 
     /**
      * Special method that generates a new key pair that is written to the worker configuration
      * before the request is generated. The new keys aren't activated until reload is issued.
      * 
      */
-        @Override
-	public ICertReqData genCertificateRequest(ISignerCertReqInfo info, 
-                final boolean explicitEccParameters, final boolean defaultKey)
-                throws CryptoTokenOfflineException {
-		Base64SignerCertReqData retval = null;
-		
-		try {
-			KeyPair newKeys = KeyTools.genKeys(keySpec, keyAlg);
-            
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	        DataOutputStream dos = new DataOutputStream(baos);
-	        byte[] pubKeyData = newKeys.getPublic().getEncoded();
-	        byte[] prvKeyData = newKeys.getPrivate().getEncoded();
-	        dos.writeInt(pubKeyData.length);
-	        dos.write(pubKeyData);
-	        dos.writeInt(prvKeyData.length);
-	        dos.write(prvKeyData);
-	        
-			try{
-			  getWorkerSession().setWorkerProperty(workerId, PROPERTY_KEYDATA, new String(Base64.encode(baos.toByteArray())));
-		    }catch(NamingException e){
-		    	// If not in SignServer, try to save mail signer style.
-		      PropertyFileStore.getInstance().setWorkerProperty(workerId, PROPERTY_KEYDATA, new String(Base64.encode(baos.toByteArray())));
-		    }
-			if(info instanceof PKCS10CertReqInfo){
-				PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info; 
-				PKCS10CertificationRequest pkcs10;
-                                PublicKey publicKey = newKeys.getPublic();
+    @Override
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
+            final boolean explicitEccParameters, final boolean defaultKey)
+            throws CryptoTokenOfflineException {
+        Base64SignerCertReqData retval = null;
 
-                            // Handle ECDSA key with explicit parameters
-                            if (explicitEccParameters
-                                    && publicKey.getAlgorithm().contains("EC")) {
-                                 publicKey = ECKeyUtil.publicToExplicitParameters(publicKey,
-                                         "BC");
-                            }
-                            // Generate request
-                            pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(),CertTools.stringToBcX509Name(reqInfo.getSubjectDN()), publicKey, reqInfo.getAttributes(),newKeys.getPrivate(),getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
-				retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
-			}
-		} catch (NoSuchAlgorithmException e1) {
-			log.error("Error generating new certificate request : " + e1.getMessage(),e1);
-		} catch (NoSuchProviderException e1) {
-			log.error("Error generating new certificate request : " + e1.getMessage(),e1);
-		} catch (InvalidAlgorithmParameterException e1) {
-			log.error("Error generating new certificate request : " + e1.getMessage(),e1);
-		} catch (InvalidKeyException e1) {
-			log.error("Error generating new certificate request : " + e1.getMessage(),e1);
-		} catch (SignatureException e1) {
-			log.error("Error generating new certificate request : " + e1.getMessage(),e1);
-		} catch (IOException e1) {
-			log.error("Error generating new certificate request : " + e1.getMessage(),e1);
-		}
-		
-		return retval;
-	}
-	
-	/**
-	 * Method not supported
-	 */
-	public boolean destroyKey(int purpose) {	
-		log.error("destroyKey method isn't supported");
-		return false;
-	}
+        try {
+            KeyPair newKeys = KeyTools.genKeys(keySpec, keyAlg);
 
-        @EJB
-	private IWorkerSession.IRemote workerSession;
-	
-    protected IWorkerSession.IRemote getWorkerSession() throws NamingException{
-    	if(workerSession == null){
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(baos);
+            byte[] pubKeyData = newKeys.getPublic().getEncoded();
+            byte[] prvKeyData = newKeys.getPrivate().getEncoded();
+            dos.writeInt(pubKeyData.length);
+            dos.write(pubKeyData);
+            dos.writeInt(prvKeyData.length);
+            dos.write(prvKeyData);
+
+            try {
+                getWorkerSession().setWorkerProperty(workerId, PROPERTY_KEYDATA, new String(Base64.encode(baos.toByteArray())));
+            } catch (NamingException e) {
+                // If not in SignServer, try to save mail signer style.
+                PropertyFileStore.getInstance().setWorkerProperty(workerId, PROPERTY_KEYDATA, new String(Base64.encode(baos.toByteArray())));
+            }
+            if (info instanceof PKCS10CertReqInfo) {
+                PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
+                PKCS10CertificationRequest pkcs10;
+                PublicKey publicKey = newKeys.getPublic();
+
+                // Handle ECDSA key with explicit parameters
+                if (explicitEccParameters
+                        && publicKey.getAlgorithm().contains("EC")) {
+                    publicKey = ECKeyUtil.publicToExplicitParameters(publicKey,
+                            "BC");
+                }
+                // Generate request
+                pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(), CertTools.stringToBcX509Name(reqInfo.getSubjectDN()), publicKey, reqInfo.getAttributes(), newKeys.getPrivate(), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+                retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
+            }
+        } catch (NoSuchAlgorithmException e1) {
+            LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
+        } catch (NoSuchProviderException e1) {
+            LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
+        } catch (InvalidAlgorithmParameterException e1) {
+            LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
+        } catch (InvalidKeyException e1) {
+            LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
+        } catch (SignatureException e1) {
+            LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
+        } catch (IOException e1) {
+            LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
+        }
+        return retval;
+    }
+
+    /**
+     * Method not supported
+     */
+    public boolean destroyKey(int purpose) {
+        LOG.error("destroyKey method isn't supported");
+        return false;
+    }
+
+    protected IWorkerSession.IRemote getWorkerSession() throws NamingException {
+        if (workerSession == null) {
             workerSession = ServiceLocator.getInstance().lookupRemote(
                     IWorkerSession.IRemote.class);
-    	}
-    	
-    	return workerSession;
+        }
+        return workerSession;
     }
 
     public Collection<KeyTestResult> testKey(final String alias,
             final char[] authCode) throws CryptoTokenOfflineException,
-                KeyStoreException {
+            KeyStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

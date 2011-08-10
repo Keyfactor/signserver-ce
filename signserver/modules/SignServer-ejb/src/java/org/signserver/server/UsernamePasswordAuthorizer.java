@@ -34,11 +34,11 @@ import org.signserver.common.WorkerConfig;
 /**
  * Authorizer requiring a username password pair.
  * 
- *
  * @version $Id$
  */
 public class UsernamePasswordAuthorizer implements IAuthorizer {
 
+    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
             UsernamePasswordAuthorizer.class);
     /**

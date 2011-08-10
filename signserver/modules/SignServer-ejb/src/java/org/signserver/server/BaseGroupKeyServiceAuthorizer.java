@@ -34,44 +34,41 @@ import org.signserver.groupkeyservice.common.SwitchEncKeyRequest;
  * @author Philip Vendil
  *  $Id$
  */
-public abstract class BaseGroupKeyServiceAuthorizer implements IAuthorizer{
+public abstract class BaseGroupKeyServiceAuthorizer implements IAuthorizer {
 
-	protected int workerId;
-	protected WorkerConfig config;
-	protected EntityManager em;
-	
-	public void init(int workerId, WorkerConfig config, EntityManager em)
-			throws SignServerException {
-		this.workerId = workerId;
-		this.config = config;
-		this.em = em;
-	}
+    protected int workerId;
+    protected WorkerConfig config;
+    protected EntityManager em;
 
-	/**
-	 * Method that checks that all non-fetchkey requests is called from CLI.
-	 */
-	public void isAuthorized(ProcessRequest request,
-			RequestContext requestContext) throws IllegalRequestException,
-			SignServerException {
-		if(request instanceof FetchKeyRequest){
-			isFetchKeyRequestAuthorized(request, requestContext);
-		}else{
-			if(request instanceof IRemoveGroupKeyRequest ||
-			   request instanceof SwitchEncKeyRequest ||
-			   request instanceof PregenerateKeysRequest){
-				if(!requestContext.isCalledFromCLI()){
-					throw new IllegalRequestException("Request Type can only be called from CLI interface :" + request.getClass().getName());
-				}
-			}else{
-				throw new IllegalRequestException("Unsupported Request Type : " + request.getClass().getName());
-			}
-		}		
-	}
-	
-	public abstract void isFetchKeyRequestAuthorized(ProcessRequest request,
-			RequestContext requestContext) throws IllegalRequestException,
-			SignServerException;
+    public void init(int workerId, WorkerConfig config, EntityManager em)
+            throws SignServerException {
+        this.workerId = workerId;
+        this.config = config;
+        this.em = em;
+    }
 
-	
-	
+    /**
+     * Method that checks that all non-fetchkey requests is called from CLI.
+     */
+    public void isAuthorized(ProcessRequest request,
+            RequestContext requestContext) throws IllegalRequestException,
+            SignServerException {
+        if (request instanceof FetchKeyRequest) {
+            isFetchKeyRequestAuthorized(request, requestContext);
+        } else {
+            if (request instanceof IRemoveGroupKeyRequest
+                    || request instanceof SwitchEncKeyRequest
+                    || request instanceof PregenerateKeysRequest) {
+                if (!requestContext.isCalledFromCLI()) {
+                    throw new IllegalRequestException("Request Type can only be called from CLI interface :" + request.getClass().getName());
+                }
+            } else {
+                throw new IllegalRequestException("Unsupported Request Type : " + request.getClass().getName());
+            }
+        }
+    }
+
+    public abstract void isFetchKeyRequestAuthorized(ProcessRequest request,
+            RequestContext requestContext) throws IllegalRequestException,
+            SignServerException;
 }

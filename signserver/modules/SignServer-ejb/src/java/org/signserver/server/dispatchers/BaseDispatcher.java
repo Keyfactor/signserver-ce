@@ -20,7 +20,7 @@ import org.signserver.server.BaseProcessable;
  * Base class that all dispatchers can extend to cover basic in common
  * functionality.
  *
- * $Id$
+ * @version $Id$
  */
 public abstract class BaseDispatcher extends BaseProcessable {
 
@@ -29,7 +29,6 @@ public abstract class BaseDispatcher extends BaseProcessable {
      * @see org.signserver.server.signers.IProcessable#getStatus()
      */
     public WorkerStatus getStatus() {
-
         return new DispatcherStatus(workerId, config);
     }
 }

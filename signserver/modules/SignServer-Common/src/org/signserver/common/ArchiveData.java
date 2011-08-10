@@ -10,12 +10,9 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
- 
 package org.signserver.common;
 
 import org.ejbca.core.model.UpgradeableDataHashMap;
-
 
 /**
  * Class containing the actual archive data.
@@ -24,50 +21,39 @@ import org.ejbca.core.model.UpgradeableDataHashMap;
  * 
  * 
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public class ArchiveData extends UpgradeableDataHashMap {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final float LATEST_VERSION = 1;
-	
-	private static final String ARCHIVEDATA ="ARCHIVEDATA";
+    private static final float LATEST_VERSION = 1;
+    private static final String ARCHIVEDATA = "ARCHIVEDATA";
 
-	/**
-	 * Don't use this constructor, should only be used internally
-	 *
-	 */
-	public ArchiveData(){}
-	
-	/**
-	 * Constructor that should be used to create an archive data.
-	 * @param archiveData
-	 */
-	@SuppressWarnings("unchecked")
-	public ArchiveData(byte[] archiveData){
-       data.put(ARCHIVEDATA,archiveData);
-	}
-	
+    /**
+     * Don't use this constructor, should only be used internally
+     *
+     */
+    public ArchiveData() {
+    }
 
-	public byte[] getData(){
-		return (byte[]) data.get(ARCHIVEDATA);
-	}
+    /**
+     * Constructor that should be used to create an archive data.
+     * @param archiveData
+     */
+    @SuppressWarnings("unchecked")
+    public ArchiveData(byte[] archiveData) {
+        data.put(ARCHIVEDATA, archiveData);
+    }
 
+    public byte[] getData() {
+        return (byte[]) data.get(ARCHIVEDATA);
+    }
 
+    public float getLatestVersion() {
+        return LATEST_VERSION;
+    }
 
-	public float getLatestVersion() {		
-		return LATEST_VERSION;
-	}
-
-	public void upgrade() {
-		
-		
-	}
-
-
-
+    public void upgrade() {
+    }
 }

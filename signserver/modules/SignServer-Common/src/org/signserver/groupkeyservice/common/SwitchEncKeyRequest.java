@@ -24,36 +24,24 @@ import org.signserver.common.RequestAndResponseManager;
  * used to encrypt the stored group keys in database.
  * 
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public class SwitchEncKeyRequest extends ProcessRequest {
-	
-	private static final long serialVersionUID = 1L;
-	// Not really used in this case.		
 
-	
+    private static final long serialVersionUID = 1L;
+    // Not really used in this case.		
+
     /**
      * Default constructor used during serialization
      */
-	public SwitchEncKeyRequest() {
-	}
+    public SwitchEncKeyRequest() {
+    }
 
+    public void parse(DataInput in) throws IOException {
+        in.readInt();
+    }
 
-
-	public void parse(DataInput in) throws IOException {
-		in.readInt();
-	}
-
-
-
-
-	public void serialize(DataOutput out) throws IOException {
-		out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_SWITCHENCKEY);
-		
-	}
-	
-
-
-
-
+    public void serialize(DataOutput out) throws IOException {
+        out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_SWITCHENCKEY);
+    }
 }

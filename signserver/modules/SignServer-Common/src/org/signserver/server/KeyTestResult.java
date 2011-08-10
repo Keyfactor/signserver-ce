@@ -12,15 +12,13 @@ package org.signserver.server;
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
-
 import java.io.Serializable;
 
 /**
  * This class is for newer clients to be able to call old SignServer 3.1.x.
  *
  * @deprecated Use org.signserver.common.KeyTestResult instead
- * @author markus
+ * @author Markus Kilås
  * @version $Id: KeyTestResult.java 1125 2010-07-20 14:33:50Z netmackan $
  */
 public class KeyTestResult implements Serializable {
@@ -29,13 +27,13 @@ public class KeyTestResult implements Serializable {
 
     /** Name of the key. */
     private String alias;
-
+    
     /** If the signature was found consistent. */
     private boolean success;
-
+    
     /** Status message: "OK" or error message. */
     private String status;
-
+    
     /** Hash of public key. */
     private String publicKeyHash;
 
@@ -102,5 +100,4 @@ public class KeyTestResult implements Serializable {
     public void setSuccess(boolean success) {
         this.success = success;
     }
-
 }

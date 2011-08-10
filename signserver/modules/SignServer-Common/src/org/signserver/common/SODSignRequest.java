@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  * This is not located in the mrtdsod module package because it has to be
  * available at startup to map urls.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class SODSignRequest extends ProcessRequest implements ISignRequest {

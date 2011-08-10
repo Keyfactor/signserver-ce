@@ -22,139 +22,134 @@ import java.util.Map;
  * Object containing extra information about a request not sent by the client
  * this could be the client certificate used to authenticate to the web server,
  * remote IP of the client or other information that could be useful for the worker.
- * 
- * 
- * @author Philip Vendil 1 dec 2007
  *
+ * @author Philip Vendil 1 dec 2007
  * @version $Id$
  */
-public class RequestContext implements Serializable{
+public class RequestContext implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private HashMap<String,Object> context = new HashMap<String, Object>();
-	
-	/**
-	 * Used to fetch the client certificate used for the request if there exists any, otherwise is
-	 * 'null' returned.
-	 */
-	public static final String CLIENT_CERTIFICATE = "CLIENT_CERTIFICATE";
-	
-	/**
-	 * Used to fetch the remote IP address used by the client if there exists any, otherwise is
-	 * 'null' returned.
-	 */
-	public static final String REMOTE_IP          = "REMOTE_IP";
-	
-	/**
-	 * All requests called from a CLI interface should set this setting to Boolean true.
-	 */
-	public static final String CALLED_FROM_CLI    = "CALLED_FROM_CLI";
-	
-	/**
-	 * The current statistics event that a worker can use to add custom data.
-	 * Is null if no statistics is performed.
-	 */
-	public static final String STATISTICS_EVENT    = "STATISTICS_EVENT";
+    private HashMap<String, Object> context = new HashMap<String, Object>();
+    
+    /**
+     * Used to fetch the client certificate used for the request if there exists any, otherwise is
+     * 'null' returned.
+     */
+    public static final String CLIENT_CERTIFICATE = "CLIENT_CERTIFICATE";
+    
+    /**
+     * Used to fetch the remote IP address used by the client if there exists any, otherwise is
+     * 'null' returned.
+     */
+    public static final String REMOTE_IP = "REMOTE_IP";
+    
+    /**
+     * All requests called from a CLI interface should set this setting to Boolean true.
+     */
+    public static final String CALLED_FROM_CLI = "CALLED_FROM_CLI";
+    
+    /**
+     * The current statistics event that a worker can use to add custom data.
+     * Is null if no statistics is performed.
+     */
+    public static final String STATISTICS_EVENT = "STATISTICS_EVENT";
+    
+    /**
+     * The transaction ID.
+     * This value is set by the WorkerSessionBean but could be read by
+     * different workers in order for them to include it in logs to
+     * identify the current transaction.
+     * This value should only be set by the WorkerSessionBean.
+     */
+    public static final String TRANSACTION_ID = "TRANSACTION_ID";
+    
+    /**
+     * The worker ID (Integer).
+     */
+    public static final String WORKER_ID = "WORKER_ID";
+    public static final String LOGMAP = "LOGMAP";
+    
+    /**
+     * True if the worker has processed the request and is able to return
+     * the requested result.
+     * The Worker Session bean can now go on and charge the client for the
+     * request.
+     */
+    public static final String WORKER_FULFILLED_REQUEST = "WORKER_GRANTED_REQUEST";
+    public static final String CLIENT_CREDENTIAL = "CLIENT_CREDENTIAL";
+    
+    /**
+     * Filename of file uploaded by client to the process servlet.
+     */
+    public static final String FILENAME = "FILENAME";
+    
+    /**
+     * A dispatcher such as the TSADispatcherServlet can set this value to
+     * Boolean.TRUE to indicate that authorization has been checked. The
+     * workers can be configured to use an IAuthorizer that only
+     * accepts requests with this value set. This value has no meaning if
+     * an other type of Authorizer is used.
+     */
+    public static final String DISPATCHER_AUTHORIZED_CLIENT =
+            "DISPATCHER_AUTHORIZED_CLIENT";
 
-        /**
-         * The transaction ID.
-         * This value is set by the WorkerSessionBean but could be read by
-         * different workers in order for them to include it in logs to
-         * identify the current transaction.
-         * This value should only be set by the WorkerSessionBean.
-         */
-        public static final String TRANSACTION_ID = "TRANSACTION_ID";
+    /**
+     * Default constructor creating an empty context.
+     */
+    public RequestContext() {
+    }
 
-        /**
-         * The worker ID (Integer).
-         */
-        public static final String WORKER_ID = "WORKER_ID";
+    /**
+     * Help constructor setting the client certificate and Remote IP
+     */
+    public RequestContext(Certificate clientCertificate, String remoteIP) {
+        context.put(CLIENT_CERTIFICATE, clientCertificate);
+        context.put(REMOTE_IP, remoteIP);
+    }
 
-        public static final String LOGMAP = "LOGMAP";
+    /**
+     * Help constructor used for calls from the RMI cli
+     */
+    public RequestContext(boolean calledFromCli) {
+        context.put(CALLED_FROM_CLI, calledFromCli);
+    }
 
-        /**
-         * True if the worker has processed the request and is able to return
-         * the requested result.
-         * The Worker Session bean can now go on and charge the client for the
-         * request.
-         */
-        public static final String WORKER_FULFILLED_REQUEST
-                = "WORKER_GRANTED_REQUEST";
+    /**
+     * Retrieves specified field from the context, this could be a custom value or
+     * one of the specified constants
+     */
+    public Object get(String field) {
+        return context.get(field);
+    }
 
-        public static final String CLIENT_CREDENTIAL = "CLIENT_CREDENTIAL";
+    /**
+     * Sets specified field from the context, this could be a custom value or
+     * one of the specified constants
+     */
+    public void put(String field, Object data) {
+        context.put(field, data);
+    }
 
-        /**
-         * Filename of file uploaded by client to the process servlet.
-         */
-        public static final String FILENAME = "FILENAME";
+    /**
+     * Removes specified field from the context, this could be a custom value or
+     * one of the specified constants
+     */
+    public void remove(String field) {
+        context.remove(field);
+    }
 
-        /**
-         * A dispatcher such as the TSADispatcherServlet can set this value to
-         * Boolean.TRUE to indicate that authorization has been checked. The
-         * workers can be configured to use an IAuthorizer that only
-         * accepts requests with this value set. This value has no meaning if
-         * an other type of Authorizer is used.
-         */
-        public static final String DISPATCHER_AUTHORIZED_CLIENT =
-                "DISPATCHER_AUTHORIZED_CLIENT";
+    public boolean isCalledFromCLI() {
+        boolean retval = false;
 
-	/**
-	 * Default constructor creating an empty context.
-	 */
-	public RequestContext(){}
-	
-	/**
-	 * Help constructor setting the client certificate and Remote IP
-	 */
-	public RequestContext(Certificate clientCertificate, String remoteIP){
-		context.put(CLIENT_CERTIFICATE, clientCertificate);
-		context.put(REMOTE_IP, remoteIP);
-	}
-	
-	/**
-	 * Help constructor used for calls from the RMI cli
-	 */
-	public RequestContext(boolean calledFromCli){
-		context.put(CALLED_FROM_CLI, calledFromCli);
-	}
-	
-	/**
-	 * Retrieves specified field from the context, this could be a custom value or
-	 * one of the specified constants
-	 */
-	public Object get(String field){
-	   	return context.get(field);
-	}
-	
-	/**
-	 * Sets specified field from the context, this could be a custom value or
-	 * one of the specified constants
-	 */
-	public void put(String field, Object data){
-	   	context.put(field,data);
-	}
-	
-	/**
-	 * Removes specified field from the context, this could be a custom value or
-	 * one of the specified constants
-	 */
-	public void remove(String field){
-	   	context.remove(field);
-	}
-	
-	public boolean isCalledFromCLI(){
-	   boolean retval = false;
-	   
-	   if(context.get(CALLED_FROM_CLI) != null){
-		   retval = (Boolean) context.get(CALLED_FROM_CLI);
-	   }
-	   
-	   return retval;
-	}
-	
-        public Map<String, Object> asUnmodifiableMap() {
-            return Collections.unmodifiableMap(context);
+        if (context.get(CALLED_FROM_CLI) != null) {
+            retval = (Boolean) context.get(CALLED_FROM_CLI);
         }
 
+        return retval;
+    }
+
+    public Map<String, Object> asUnmodifiableMap() {
+        return Collections.unmodifiableMap(context);
+    }
 }

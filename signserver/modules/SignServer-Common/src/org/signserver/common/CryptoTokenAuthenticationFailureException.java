@@ -26,9 +26,4 @@ public class CryptoTokenAuthenticationFailureException extends Exception {
     public CryptoTokenAuthenticationFailureException(String message) {
         super(message);
     }
-
-    @Override
-    public String getMessage() {
-        return super.getMessage();
-    }
 }

@@ -19,8 +19,7 @@ package org.signserver.common;
  * 
  * If it is clear that the failure was caused by data supplied by the client, 
  * instead a IllegalRequestException may be thrown.
- * 
- * 
+ *
  * @author Philip Vendil
  * @author Markus Kilås
  * @see IllegalRequestException
@@ -36,10 +35,5 @@ public class SignServerException extends Exception {
 
     public SignServerException(String message, Throwable e) {
         super(message, e);
-    }
-
-    @Override
-    public String getMessage() {
-        return super.getMessage();
     }
 }

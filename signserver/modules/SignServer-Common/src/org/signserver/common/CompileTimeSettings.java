@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
  * Settings loaded from built-in properties-file signservercompile.properties
  * put together during compilation.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class CompileTimeSettings {

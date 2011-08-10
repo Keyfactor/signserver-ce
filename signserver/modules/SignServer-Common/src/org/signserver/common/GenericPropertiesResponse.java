@@ -25,7 +25,7 @@ import java.util.Properties;
  * Could be used by any worker.
  *
  * @author Markus Kilås
- * $Id$
+ * @version $Id$
  */
 public class GenericPropertiesResponse extends ProcessResponse {
 

@@ -12,17 +12,12 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.common;
 
-
 /**
  * Interface that all classes contain data to the
  * groupkeyservice.removeGroupKey method must implement.
- * 
- * 
- * 
- * @author Philip Vendil 13 nov 2007
  *
+ * @author Philip Vendil 13 nov 2007
  * @version $Id$
  */
 public interface IRemoveGroupKeyRequest {
-
 }

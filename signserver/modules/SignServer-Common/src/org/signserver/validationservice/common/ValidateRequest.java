@@ -29,101 +29,90 @@ import org.signserver.validationservice.server.ICertificateManager;
  * validate a certificate.
  * 
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public class ValidateRequest extends ProcessRequest {
 
-	private transient Logger log = Logger.getLogger(this.getClass());
-
-	private static final long serialVersionUID = 1L;
-	// Not really used in this case.	
-	private transient ICertificate certificate;
-	private byte[] certificateData;
-	private String certPurposes;
+    private transient Logger log = Logger.getLogger(this.getClass());
+    private static final long serialVersionUID = 1L;
+    // Not really used in this case.	
+    private transient ICertificate certificate;
+    private byte[] certificateData;
+    private String certPurposes;
 
     /**
      * Default constructor used during serialization
      */
-	public ValidateRequest(){}
-	
-	/**
-	 * Default constructor performing a full validation, verifying the complete chain
-	 * returning the complete chain of the certificates
-	 * @throws CertificateEncodingException 
-	 */
-	public ValidateRequest(ICertificate certificate, String certPurposes) throws CertificateEncodingException {
-		super();
-		this.certificate = certificate;
-		this.certificateData = certificate.getEncoded();
-		this.certPurposes = certPurposes;
+    public ValidateRequest() {
+    }
 
-	}
-	
+    /**
+     * Default constructor performing a full validation, verifying the complete chain
+     * returning the complete chain of the certificates
+     * @throws CertificateEncodingException 
+     */
+    public ValidateRequest(ICertificate certificate, String certPurposes) throws CertificateEncodingException {
+        super();
+        this.certificate = certificate;
+        this.certificateData = certificate.getEncoded();
+        this.certPurposes = certPurposes;
 
+    }
 
-	/**
-	 * @return the certificate
-	 */
-	public ICertificate getCertificate() {
-		if(certificate == null){
-			try {
-				certificate = ICertificateManager.genICertificate(CertTools.getCertfromByteArray(certificateData));
-			} catch (CertificateException e) {
-				log.error(e);
-			}
-		}
-		return certificate;
-	}
+    /**
+     * @return the certificate
+     */
+    public ICertificate getCertificate() {
+        if (certificate == null) {
+            try {
+                certificate = ICertificateManager.genICertificate(CertTools.getCertfromByteArray(certificateData));
+            } catch (CertificateException e) {
+                log.error(e);
+            }
+        }
+        return certificate;
+    }
 
+    /**
+     * @return the certPurposes the client want's to check that the certificate can be used for a list that is splitted by ","
+     */
+    public String[] getCertPurposes() {
 
+        String[] retval = null;
+        if (certPurposes != null && !certPurposes.trim().equals("")) {
+            retval = certPurposes.split(",");
 
-	/**
-	 * @return the certPurposes the client want's to check that the certificate can be used for a list that is splitted by ","
-	 */
-	public String[] getCertPurposes() {
-		
-		String[] retval = null;
-		if(certPurposes != null && !certPurposes.trim().equals("")){
-			retval = certPurposes.split(",");
+            for (String purpose : retval) {
+                purpose = purpose.trim();
+            }
+        }
 
-			for(String purpose : retval){
-				purpose = purpose.trim();
-			}
-		}
-		
-		return retval;
-	}
+        return retval;
+    }
 
+    public void parse(DataInput in) throws IOException {
+        in.readInt();
+        int dataSize = in.readInt();
+        certificateData = new byte[dataSize];
+        in.readFully(certificateData);
+        int stringLen = in.readInt();
+        if (stringLen > 0) {
+            byte[] stringData = new byte[stringLen];
+            in.readFully(stringData);
+            this.certPurposes = new String(stringData, "UTF-8");
+        }
+    }
 
-
-	public void parse(DataInput in) throws IOException {
-		in.readInt();
-		int dataSize = in.readInt();
-		certificateData = new byte[dataSize];
-		in.readFully(certificateData);
-		int stringLen = in.readInt();
-		if(stringLen > 0){
-		  byte[] stringData = new byte[stringLen];
-		  in.readFully(stringData);
-		  this.certPurposes = new String(stringData,"UTF-8");
-		}
-	}
-
-	public void serialize(DataOutput out) throws IOException {
-		out.writeInt(RequestAndResponseManager.RESPONSETYPE_VALIDATE);
-		out.writeInt(certificateData.length);
-		out.write(certificateData);
-		if(certPurposes != null){
-		  byte[] stringData = certPurposes.getBytes("UTF-8");
-		  out.writeInt(stringData.length);
-		  out.write(stringData);
-		}else{
-		  out.writeInt(0);
-		}
-	}
-
-
-
-
-
+    public void serialize(DataOutput out) throws IOException {
+        out.writeInt(RequestAndResponseManager.RESPONSETYPE_VALIDATE);
+        out.writeInt(certificateData.length);
+        out.write(certificateData);
+        if (certPurposes != null) {
+            byte[] stringData = certPurposes.getBytes("UTF-8");
+            out.writeInt(stringData.length);
+            out.write(stringData);
+        } else {
+            out.writeInt(0);
+        }
+    }
 }

@@ -10,8 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
- 
 package org.signserver.common.genericws;
 
 import java.security.cert.Certificate;
@@ -22,29 +20,28 @@ import org.signserver.common.GenericSignResponse;
 /**
  * Response object used for generic WS services. Contains no
  * specific data.
- * 
- * 
+ *
  * @author Philip Vendil
+ * @version $Id$
  */
 public class GenericWSResponse extends GenericSignResponse {
 
-	private static final long serialVersionUID = 1L;	
-	
+    private static final long serialVersionUID = 1L;
+
     /**
      * Default constructor used during serialization
      */
-	public GenericWSResponse(){}
-	
-	/**
-	 * Creates a GenericWSResponse, works as a simple VO.
-	 * 
-	 * @see org.signserver.common.ProcessRequest
-	 */
-	public GenericWSResponse(int requestID,
-			                   Certificate signerCertificate, 
-			                   String archiveId, ArchiveData archiveData) {
-		super(requestID, null, signerCertificate, archiveId, archiveData);		
-	}
+    public GenericWSResponse() {
+    }
 
-
+    /**
+     * Creates a GenericWSResponse, works as a simple VO.
+     * 
+     * @see org.signserver.common.ProcessRequest
+     */
+    public GenericWSResponse(int requestID,
+            Certificate signerCertificate,
+            String archiveId, ArchiveData archiveData) {
+        super(requestID, null, signerCertificate, archiveId, archiveData);
+    }
 }

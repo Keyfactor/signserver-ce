@@ -10,26 +10,23 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
- 
 package org.signserver.common;
 
 /**
  * Class thrown if a resync to data base failed. 
  * 
- * 
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public class ResyncException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ResyncException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
+    public ResyncException(String arg0, Throwable arg1) {
+        super(arg0, arg1);
+    }
 
-	public ResyncException(String arg0) {
-		super(arg0);
-	}
-
+    public ResyncException(String arg0) {
+        super(arg0);
+    }
 }

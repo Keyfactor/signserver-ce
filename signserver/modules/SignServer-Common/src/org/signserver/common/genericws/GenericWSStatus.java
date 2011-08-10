@@ -21,48 +21,38 @@ import org.signserver.common.WorkerConfig;
 /**
  * Class used to display the status of a ValidationService such as 
  * if the connection to the underlying services are OK.
- * 
- * 
+ *
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public class GenericWSStatus extends CryptoTokenStatus {
 
-	public static final String CONNECTION_OK     = "CONNECTION_OK";
-	public static final String CONNECTION_FAILED = "CONNECTION_FAILED";
-	
-	private static final long serialVersionUID = 1L;
-	
-	
-	public GenericWSStatus(int workerId, int tokenStatus, WorkerConfig config) {
-		super(workerId, tokenStatus,config);		
-	}
+    public static final String CONNECTION_OK = "CONNECTION_OK";
+    public static final String CONNECTION_FAILED = "CONNECTION_FAILED";
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public void displayStatus(int workerId, PrintStream out, boolean complete) {
-		out.println("Status of Generic WS with Id " + workerId + " is :\n" +
-				"  SignToken Status : "+signTokenStatuses[getTokenStatus()] + " \n\n" );
+    public GenericWSStatus(int workerId, int tokenStatus, WorkerConfig config) {
+        super(workerId, tokenStatus, config);
+    }
 
-		if(complete){    	
-			out.println("Active Properties are :");
+    @Override
+    public void displayStatus(int workerId, PrintStream out, boolean complete) {
+        out.println("Status of Generic WS with Id " + workerId + " is :\n"
+                + "  SignToken Status : " + signTokenStatuses[getTokenStatus()] + " \n\n");
 
+        if (complete) {
+            out.println("Active Properties are :");
 
-			if(getActiveSignerConfig().getProperties().size() == 0){
-				out.println("  No properties exists in active configuration\n");
-			}
+            if (getActiveSignerConfig().getProperties().size() == 0) {
+                out.println("  No properties exists in active configuration\n");
+            }
 
-			Enumeration<?> propertyKeys = getActiveSignerConfig().getProperties().keys();
-			while(propertyKeys.hasMoreElements()){
-				String key = (String) propertyKeys.nextElement();
-				out.println("  " + key + "=" + getActiveSignerConfig().getProperties().getProperty(key) + "\n");
-			}        		
-
-			out.println("\n");
-
-		}		
-		
-	}
-
-
-
+            Enumeration<?> propertyKeys = getActiveSignerConfig().getProperties().keys();
+            while (propertyKeys.hasMoreElements()) {
+                String key = (String) propertyKeys.nextElement();
+                out.println("  " + key + "=" + getActiveSignerConfig().getProperties().getProperty(key) + "\n");
+            }
+            out.println("\n");
+        }
+    }
 }

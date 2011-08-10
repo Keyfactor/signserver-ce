@@ -16,22 +16,21 @@ package org.signserver.common;
  * Interface that should be implemented by all process responses that could be archived.
  * 
  * @author phive
- *
+ * @version $Id$
  */
 public interface IArchivableProcessResponse {
 
-	
     /**
      * Method that should return an Id of the archived data could be
      * the response serialnumber.
      * 
      * return null of not implemented.
      */
-    public String getArchiveId();
-    
+    String getArchiveId();
+
     /**
      * Method that should return a archive data object used for achiving.
      * return null if not implemented.
      */
-    public ArchiveData getArchiveData();
+    ArchiveData getArchiveData();
 }

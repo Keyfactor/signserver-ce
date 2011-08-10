@@ -18,8 +18,8 @@ import java.security.cert.Certificate;
 /** Response used for a signed SO(d) from the MRTD SOD Signer. Used for ePassports.
  * This is not located in the mrtdsod module package because it has to be available at startup to map urls.
  *
- * @author Markus Kilas
- * $Id$
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class SODSignResponse extends GenericSignResponse {
 

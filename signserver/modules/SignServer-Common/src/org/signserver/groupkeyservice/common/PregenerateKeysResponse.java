@@ -23,48 +23,44 @@ import org.signserver.common.RequestAndResponseManager;
  * Response sent after processing the PregenerateKeysRequest
  * 
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public class PregenerateKeysResponse extends ProcessResponse {
 
-	private static final long serialVersionUID = 1L;
-	
-	int numberOfKeysGenerated;
-	
+    private static final long serialVersionUID = 1L;
+    int numberOfKeysGenerated;
+
     /**
      * Default constructor used during serialization
      */
-	public PregenerateKeysResponse(){}
-	
-   /**
-    * Main constructor
-    * 
-    * @param numberOfKeysGenerated number of keys that were generated.
-    */
-	public PregenerateKeysResponse(int numberOfKeysGenerated) {
-		super();
-		this.numberOfKeysGenerated = numberOfKeysGenerated;
-	}
+    public PregenerateKeysResponse() {
+    }
 
-	/**
-	 * @return number of keys that were generated.
-	 */
-	public int getNumberOfKeysGenerated() {
-		return numberOfKeysGenerated;
-	}
+    /**
+     * Main constructor
+     * 
+     * @param numberOfKeysGenerated number of keys that were generated.
+     */
+    public PregenerateKeysResponse(int numberOfKeysGenerated) {
+        super();
+        this.numberOfKeysGenerated = numberOfKeysGenerated;
+    }
 
+    /**
+     * @return number of keys that were generated.
+     */
+    public int getNumberOfKeysGenerated() {
+        return numberOfKeysGenerated;
+    }
 
-	public void parse(DataInput in) throws IOException {
+    public void parse(DataInput in) throws IOException {
         in.readInt();
         numberOfKeysGenerated = in.readInt();
-		
-	}
 
-	public void serialize(DataOutput out) throws IOException {
-		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_PREGENKEYS);
-		out.writeInt(numberOfKeysGenerated);
-	}
+    }
 
-
-
+    public void serialize(DataOutput out) throws IOException {
+        out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_PREGENKEYS);
+        out.writeInt(numberOfKeysGenerated);
+    }
 }

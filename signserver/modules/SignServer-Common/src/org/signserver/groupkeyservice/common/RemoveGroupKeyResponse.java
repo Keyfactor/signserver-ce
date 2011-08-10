@@ -25,62 +25,58 @@ import org.signserver.common.RequestAndResponseManager;
  * The info is:
  *   If the operation was successful
  *   Number of keys actually removed.
- * 
- * 
- * @author Philip Vendil 13 nov 2007
  *
+ * @author Philip Vendil 13 nov 2007
  * @version $Id$
  */
-public class RemoveGroupKeyResponse extends ProcessResponse{
+public class RemoveGroupKeyResponse extends ProcessResponse {
 
-
-	private static final long serialVersionUID = 1L;
-	
-	private boolean operationSuccessful = false;
-	private long numOfKeysRemoved = 0;
+    private static final long serialVersionUID = 1L;
+    private boolean operationSuccessful = false;
+    private long numOfKeysRemoved = 0;
 
     /**
      * Default constructor used during serialization
      */
-	public RemoveGroupKeyResponse(){}
+    public RemoveGroupKeyResponse() {
+    }
 
-	/**
-	 * 
-	 * @param operationSuccessful true if the operation was successful
-	 * @param numOfKeysRemoved the number of keys actually removed.
-	 */
-	public RemoveGroupKeyResponse(boolean operationSuccessful, long numOfKeysRemoved){
-		super();
-		this.operationSuccessful = operationSuccessful;
-		this.numOfKeysRemoved = numOfKeysRemoved;
-	}
+    /**
+     * 
+     * @param operationSuccessful true if the operation was successful
+     * @param numOfKeysRemoved the number of keys actually removed.
+     */
+    public RemoveGroupKeyResponse(boolean operationSuccessful, long numOfKeysRemoved) {
+        super();
+        this.operationSuccessful = operationSuccessful;
+        this.numOfKeysRemoved = numOfKeysRemoved;
+    }
 
     /**
      * 
      * @return true if the operation was successful
      */
-	public boolean wasOperationSuccessful() {
-		return operationSuccessful;
-	}
+    public boolean wasOperationSuccessful() {
+        return operationSuccessful;
+    }
 
-	/**
-	 * 
-	 * @return the number of keys actually removed.
-	 */
-	public long getNumOfKeysRemoved() {
-		return numOfKeysRemoved;
-	}
+    /**
+     * 
+     * @return the number of keys actually removed.
+     */
+    public long getNumOfKeysRemoved() {
+        return numOfKeysRemoved;
+    }
 
+    public void parse(DataInput in) throws IOException {
+        in.readInt();
+        numOfKeysRemoved = in.readLong();
+        operationSuccessful = in.readBoolean();
+    }
 
-	public void parse(DataInput in) throws IOException {
-		in.readInt();
-		numOfKeysRemoved = in.readLong();
-		operationSuccessful = in.readBoolean();
-	}
-
-	public void serialize(DataOutput out) throws IOException {
-	       out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_REMOVEKEY);
-	       out.writeLong(numOfKeysRemoved);
-	       out.writeBoolean(operationSuccessful);
-	}
+    public void serialize(DataOutput out) throws IOException {
+        out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_REMOVEKEY);
+        out.writeLong(numOfKeysRemoved);
+        out.writeBoolean(operationSuccessful);
+    }
 }

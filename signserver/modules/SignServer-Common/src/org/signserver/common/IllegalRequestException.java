@@ -44,9 +44,4 @@ public class IllegalRequestException extends Exception {
     public IllegalRequestException(Throwable cause) {
         super(cause);
     }
-
-    @Override
-    public String getMessage() {
-        return super.getMessage();
-    }
 }

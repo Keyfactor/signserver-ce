@@ -17,8 +17,9 @@ import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 
 /**
+ * Helper class for doing JNDI lookups.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public final class ServiceLocator {
@@ -143,5 +144,4 @@ public final class ServiceLocator {
         }
         return result;
     }
-
 }

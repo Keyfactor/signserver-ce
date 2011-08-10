@@ -10,35 +10,29 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.common;
 
 import java.io.Serializable;
 import java.util.Date;
 
-
-/**
- * 
- * Class used to store service specific configuration
+/** 
+ * Class used to store service specific configuration.
  * 
  * @author Philip Vendil 2007 jan 23
- *
  * @version $Id$
  */
- 
 public class ServiceConfig {
 
-	private static final long serialVersionUID = 1L;
-
-	
-	/**
-	 * Property if set to the value "TRUE" is runned as active.
-	 */
+    private static final long serialVersionUID = 1L;
+    
+    /**
+     * Property if set to the value "TRUE" is runned as active.
+     */
     public static final String ACTIVE = "ACTIVE";
-	
-	/**
-	 * Property if set to the value "TRUE" is runned as a singleton.
-	 */
+    
+    /**
+     * Property if set to the value "TRUE" is runned as a singleton.
+     */
     public static final String SINGLETON = "SINGLETON";
     
     /**
@@ -53,7 +47,7 @@ public class ServiceConfig {
      * details.
      */
     public static final String CRON = "CRON";
-
+    
     /**
      * Property that defines the interval the service should run (in
      * milliseconds).
@@ -65,42 +59,39 @@ public class ServiceConfig {
      *
      */
     private static final String LASTRUNTIMESTAMP = "LASTRUNTIMESTAMP";
-    
-	private WorkerConfig workerConfig;
-	
-	public ServiceConfig(WorkerConfig workerConfig){
-		super();
-		this.workerConfig = workerConfig;
-		put(WorkerConfig.CLASS, this.getClass().getName());
-	}
-	
-	private void put(String key,Serializable value){
-		workerConfig.getData().put(key, value);
-	}
-	
-	private Serializable get(String key){
-		return workerConfig.getData().get(key);
-	}
-	
-	public Date getLastRunTimestamp() {
-		String time = (String) get(LASTRUNTIMESTAMP);
-		if(time == null){
-			return null;
-		}
-		
-		long timeStamp =Long.parseLong(time);
-		
-		return new Date(timeStamp);
-	}
+    private WorkerConfig workerConfig;
 
+    public ServiceConfig(WorkerConfig workerConfig) {
+        super();
+        this.workerConfig = workerConfig;
+        put(WorkerConfig.CLASS, this.getClass().getName());
+    }
 
-	public void setLastRunTimestamp(Date LastRunDate) {
-		long timeStamp = LastRunDate.getTime();
-		put(LASTRUNTIMESTAMP, "" +timeStamp);
-	}
+    private void put(String key, Serializable value) {
+        workerConfig.getData().put(key, value);
+    }
 
-	public WorkerConfig getWorkerConfig() {
-		return workerConfig;
-	}
+    private Serializable get(String key) {
+        return workerConfig.getData().get(key);
+    }
 
+    public Date getLastRunTimestamp() {
+        String time = (String) get(LASTRUNTIMESTAMP);
+        if (time == null) {
+            return null;
+        }
+
+        long timeStamp = Long.parseLong(time);
+
+        return new Date(timeStamp);
+    }
+
+    public void setLastRunTimestamp(Date LastRunDate) {
+        long timeStamp = LastRunDate.getTime();
+        put(LASTRUNTIMESTAMP, "" + timeStamp);
+    }
+
+    public WorkerConfig getWorkerConfig() {
+        return workerConfig;
+    }
 }

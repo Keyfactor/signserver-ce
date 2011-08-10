@@ -10,8 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
- 
 package org.signserver.common;
 
 import java.io.DataInput;
@@ -27,42 +25,40 @@ import java.io.ObjectOutput;
  * 
  * 
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
-
 public abstract class ProcessResponse implements Serializable {
-	
 
-	   /**
-	    * Method used to populate an empty IProcessRequest from a byte representation
-	    * 
-	    * The parse and serialize method are the methods that should be used
-	    * by protocols to external clients. The Externalizable interface
-	    * should only be used for RMI calls.
-	    * 
-	    * @param in input stream to read data from
-	    * @throws IOException if parsing error occured
-	    */
-	    public abstract void parse(DataInput in) throws IOException;
+    /**
+     * Method used to populate an empty IProcessRequest from a byte representation
+     * 
+     * The parse and serialize method are the methods that should be used
+     * by protocols to external clients. The Externalizable interface
+     * should only be used for RMI calls.
+     * 
+     * @param in input stream to read data from
+     * @throws IOException if parsing error occured
+     */
+    public abstract void parse(DataInput in) throws IOException;
 
-	   /**
-		* Method used to serialize a IProcess object
-		* 
-	    * The parse and serialize method are the methods that should be used
-	    * by protocols to external clients. The Externalizable interface
-	    * should only be used for RMI calls.
-		* 
-		* @param in input stream to read data from
-		* @throws IOException if parsing error occured
-		*/
-	    public abstract void serialize(DataOutput out) throws IOException;
+    /**
+     * Method used to serialize a IProcess object
+     * 
+     * The parse and serialize method are the methods that should be used
+     * by protocols to external clients. The Externalizable interface
+     * should only be used for RMI calls.
+     * 
+     * @param in input stream to read data from
+     * @throws IOException if parsing error occured
+     */
+    public abstract void serialize(DataOutput out) throws IOException;
 
-	    public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {    	
-		    parse(in);
-	    }
+    public void readExternal(ObjectInput in) throws IOException,
+            ClassNotFoundException {
+        parse(in);
+    }
 
-	    public void writeExternal(ObjectOutput out) throws IOException {
-	       serialize(out);
-	    }
+    public void writeExternal(ObjectOutput out) throws IOException {
+        serialize(out);
+    }
 }

@@ -10,8 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
- 
 package org.signserver.common;
 
 /**
@@ -23,18 +21,13 @@ package org.signserver.common;
  */
 public class CryptoTokenOfflineException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public CryptoTokenOfflineException(String message) {
-		super(message);
-	}
-	public CryptoTokenOfflineException(Exception cause) {
-		super(cause);
-	}
-	
-	public String getMessage() {
-		return super.getMessage();
-	}
+    public CryptoTokenOfflineException(String message) {
+        super(message);
+    }
 
-
+    public CryptoTokenOfflineException(Exception cause) {
+        super(cause);
+    }
 }

@@ -7,10 +7,10 @@ package org.signserver.server.annotations;
  * be created.
  * 
  * @author Philip Vendil 23 okt 2008
- *
  * @version $Id$
  */
-public enum TransactionType {	
+public enum TransactionType {
+
     SUPPORTS,
     REQUIRED
 }

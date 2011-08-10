@@ -12,17 +12,15 @@
  *************************************************************************/
 package org.signserver.common;
 
+import java.io.Serializable;
+
 /**
- * 
  * Interface for the value object class used to transport information about
  * a certificate request that the signers genCertificateRequest uses
  * to create the request.
  * 
  * @author Philip Vendil 2007 feb 19
- *
  * @version $Id$
  */
-
-public interface ISignerCertReqInfo extends java.io.Serializable{
-
+public interface ISignerCertReqInfo extends Serializable {
 }

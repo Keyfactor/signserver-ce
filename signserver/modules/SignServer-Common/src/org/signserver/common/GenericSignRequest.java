@@ -10,8 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
- 
 package org.signserver.common;
 
 import java.io.DataInput;
@@ -24,66 +22,59 @@ import java.io.IOException;
  * Could be used for TimeStamp Request.
  * 
  * @author philip
- * $Id$
+ * @version $Id$
  */
 public class GenericSignRequest extends ProcessRequest implements ISignRequest {
 
-
-	private static final long serialVersionUID = 1L;
-
-	private int requestID;
-	private byte[] requestData;
-	
+    private static final long serialVersionUID = 1L;
+    private int requestID;
+    private byte[] requestData;
 
     /**
      * Default constructor used during serialization
      */
-	public GenericSignRequest() {
-		super();
-	}
-	
-	/**
-	 * Creates a GenericSignRequest, works as a simple VO.
-	 * 
-	 * @param requestID
-	 * @param requestData
-	 * @see org.signserver.common.ProcessRequest
-	 */
-	public GenericSignRequest(int requestID, byte[] requestData){
-		this.requestID = requestID;
-		this.requestData = requestData;
-	}
-	
-	/**
-	 * @see org.signserver.common.ProcessRequest
-	 */
-	public int getRequestID() {		
-		return requestID;
-	}
+    public GenericSignRequest() {
+        super();
+    }
 
-	/**
-	 * @see org.signserver.common.ProcessRequest
-	 */
-	public byte[] getRequestData() {	
-		return requestData;
-	}
+    /**
+     * Creates a GenericSignRequest, works as a simple VO.
+     * 
+     * @param requestID
+     * @param requestData
+     * @see org.signserver.common.ProcessRequest
+     */
+    public GenericSignRequest(int requestID, byte[] requestData) {
+        this.requestID = requestID;
+        this.requestData = requestData;
+    }
 
+    /**
+     * @see org.signserver.common.ProcessRequest
+     */
+    public int getRequestID() {
+        return requestID;
+    }
 
-	public void parse(DataInput in) throws IOException {
-		in.readInt();
-		this.requestID = in.readInt();
-		int dataSize = in.readInt();		
-		this.requestData = new byte[dataSize];
-		in.readFully(requestData);			
-	}
+    /**
+     * @see org.signserver.common.ProcessRequest
+     */
+    public byte[] getRequestData() {
+        return requestData;
+    }
 
-	public void serialize(DataOutput out) throws IOException {
-		out.writeInt(RequestAndResponseManager.REQUESTTYPE_GENERICSIGNREQUEST);
-		out.writeInt(requestID);
-		out.writeInt(requestData.length);
-		out.write(requestData);		
-	}
+    public void parse(DataInput in) throws IOException {
+        in.readInt();
+        this.requestID = in.readInt();
+        int dataSize = in.readInt();
+        this.requestData = new byte[dataSize];
+        in.readFully(requestData);
+    }
 
-
-
+    public void serialize(DataOutput out) throws IOException {
+        out.writeInt(RequestAndResponseManager.REQUESTTYPE_GENERICSIGNREQUEST);
+        out.writeInt(requestID);
+        out.writeInt(requestData.length);
+        out.write(requestData);
+    }
 }

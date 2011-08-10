@@ -24,53 +24,47 @@ import org.signserver.common.RequestAndResponseManager;
  * all the processing was successful.
  * 
  * @author phive
- *
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
-public class SwitchEncKeyResponse extends ProcessResponse{
-	private static final long serialVersionUID = 1L;
+public class SwitchEncKeyResponse extends ProcessResponse {
 
-	private String newKeyIndex;
-		
+    private static final long serialVersionUID = 1L;
+    private String newKeyIndex;
+
     /**
      * Default constructor used during serialization
      */
-	public SwitchEncKeyResponse(){}
-	
-	/**
-	 * Main constructor for the FetchKeyResponse
-	 * @param newKeyIndex the index of the new encryption key used.
-	 */
-	public SwitchEncKeyResponse(String newKeyIndex) {
-		this.newKeyIndex = newKeyIndex;
-	}
+    public SwitchEncKeyResponse() {
+    }
 
+    /**
+     * Main constructor for the FetchKeyResponse
+     * @param newKeyIndex the index of the new encryption key used.
+     */
+    public SwitchEncKeyResponse(String newKeyIndex) {
+        this.newKeyIndex = newKeyIndex;
+    }
 
-	/**
-	 * @return the index of the new encryption key used.
-	 */
-	public String getNewKeyIndex() {
-		return newKeyIndex;
-	}
+    /**
+     * @return the index of the new encryption key used.
+     */
+    public String getNewKeyIndex() {
+        return newKeyIndex;
+    }
 
+    public void parse(DataInput in) throws IOException {
+        in.readInt();
+        int stringLen = in.readInt();
+        byte[] stringData = new byte[stringLen];
+        in.readFully(stringData);
+        this.newKeyIndex = new String(stringData, "UTF-8");
+    }
 
-	public void parse(DataInput in) throws IOException {
-		in.readInt();
-		int stringLen = in.readInt();
-		byte[] stringData = new byte[stringLen];
-		in.readFully(stringData);
-		this.newKeyIndex = new String(stringData,"UTF-8");
-	}
-
-	public void serialize(DataOutput out) throws IOException {
-		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_SWITCHENCKEY);
-		byte[] stringData = newKeyIndex.getBytes("UTF-8");
-		out.writeInt(stringData.length);
-		out.write(stringData);
-	}
-
-
-	
-
+    public void serialize(DataOutput out) throws IOException {
+        out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_SWITCHENCKEY);
+        byte[] stringData = newKeyIndex.getBytes("UTF-8");
+        out.writeInt(stringData.length);
+        out.write(stringData);
+    }
 }

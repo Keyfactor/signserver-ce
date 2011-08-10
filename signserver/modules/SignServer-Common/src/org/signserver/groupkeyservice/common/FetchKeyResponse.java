@@ -24,65 +24,62 @@ import org.signserver.common.RequestAndResponseManager;
  * all the processing was successful.
  * 
  * @author phive
- *
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
-public class FetchKeyResponse extends ProcessResponse{
-	private static final long serialVersionUID = 1L;
+public class FetchKeyResponse extends ProcessResponse {
 
-	private String documentId;
-	private byte[] groupKey;
-	
+    private static final long serialVersionUID = 1L;
+    private String documentId;
+    private byte[] groupKey;
+
     /**
      * Default constructor used during serialization
      */
-	public FetchKeyResponse(){}
-		
-	/**
-	 * Main constructor for the FetchKeyResponse
-	 * @param documentId the unique documentId that is related to the group key
-	 * @param groupKey the actual key, decrypted and object serialized.
-	 */
-	public FetchKeyResponse(String documentId, byte[] groupKey) {
-		this.documentId = documentId;
-		this.groupKey = groupKey;
-	}
+    public FetchKeyResponse() {
+    }
 
-	/**
-	 * @return documentId the unique documentId that is related to the group key
-	 */
-	public String getDocumentId() {
-		return documentId;
-	}
+    /**
+     * Main constructor for the FetchKeyResponse
+     * @param documentId the unique documentId that is related to the group key
+     * @param groupKey the actual key, decrypted and object serialized.
+     */
+    public FetchKeyResponse(String documentId, byte[] groupKey) {
+        this.documentId = documentId;
+        this.groupKey = groupKey;
+    }
 
-	/**
-	 * @return the actual key, decrypted.
-	 */
-	public byte[] getGroupKey(){
-		return  groupKey;
-	}
+    /**
+     * @return documentId the unique documentId that is related to the group key
+     */
+    public String getDocumentId() {
+        return documentId;
+    }
 
+    /**
+     * @return the actual key, decrypted.
+     */
+    public byte[] getGroupKey() {
+        return groupKey;
+    }
 
-	public void parse(DataInput in) throws IOException {
-		in.readInt();
-		int stringLen = in.readInt();
-		byte[] stringData = new byte[stringLen];
-		in.readFully(stringData);
-		this.documentId = new String(stringData,"UTF-8");
-		int keySize = in.readInt();
-		groupKey = new byte[keySize];
-		in.readFully(groupKey);	
-	}
+    public void parse(DataInput in) throws IOException {
+        in.readInt();
+        int stringLen = in.readInt();
+        byte[] stringData = new byte[stringLen];
+        in.readFully(stringData);
+        this.documentId = new String(stringData, "UTF-8");
+        int keySize = in.readInt();
+        groupKey = new byte[keySize];
+        in.readFully(groupKey);
+    }
 
-	public void serialize(DataOutput out) throws IOException {
-		out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_FETCHKEY);
-		byte[] stringData = documentId.getBytes("UTF-8");
-		out.writeInt(stringData.length);
-		out.write(stringData);
-		out.writeInt(groupKey.length);
-		out.write(groupKey);
-	}
-	
-
+    public void serialize(DataOutput out) throws IOException {
+        out.writeInt(RequestAndResponseManager.RESPONSETYPE_GKS_FETCHKEY);
+        byte[] stringData = documentId.getBytes("UTF-8");
+        out.writeInt(stringData.length);
+        out.write(stringData);
+        out.writeInt(groupKey.length);
+        out.write(groupKey);
+    }
 }

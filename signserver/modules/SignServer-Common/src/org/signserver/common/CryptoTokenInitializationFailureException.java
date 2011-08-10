@@ -25,9 +25,4 @@ public class CryptoTokenInitializationFailureException extends Exception {
     public CryptoTokenInitializationFailureException(String message) {
         super(message);
     }
-
-    @Override
-    public String getMessage() {
-        return super.getMessage();
-    }
 }

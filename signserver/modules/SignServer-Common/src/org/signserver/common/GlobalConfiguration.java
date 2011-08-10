@@ -25,14 +25,15 @@ import org.apache.log4j.Logger;
  * Contains a merge of static and dynamically defined global properties
  *
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public class GlobalConfiguration implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
+    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(GlobalConfiguration.class);
-
+    
     public static final String SCOPE_GLOBAL = "GLOB.";
     public static final String SCOPE_NODE = "NODE.";
     public static final String STATE_INSYNC = "INSYNC";
@@ -64,11 +65,8 @@ public class GlobalConfiguration implements Serializable {
      * ClusterClassLoading the full path to the jks trust store.
      */
     private static char[] cclTrustStorePWD;
-
     private Properties config;
-
     private String state;
-
 
     /**
      * Constructor that should only be called within
@@ -86,8 +84,7 @@ public class GlobalConfiguration implements Serializable {
         if (clusterClassLoaderEnabled == null) {
             clusterClassLoaderEnabled = Boolean.parseBoolean(
                     CompileTimeSettings.getInstance().getProperty(
-                        CompileTimeSettings
-                        .SIGNSERVER_USECLUSTERCLASSLOADER).trim());
+                    CompileTimeSettings.SIGNSERVER_USECLUSTERCLASSLOADER).trim());
         }
         return clusterClassLoaderEnabled;
     }
@@ -132,8 +129,7 @@ public class GlobalConfiguration implements Serializable {
      */
     public static char[] getCCLTrustStorePasswd() {
         if (cclTrustStorePWD == null) {
-            final String trustStoreValue = CompileTimeSettings.getInstance()
-                    .getProperty(CompileTimeSettings.SIGNSERVER_TRUSTSTOREPWD);
+            final String trustStoreValue = CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_TRUSTSTOREPWD);
             if (trustStoreValue == null || trustStoreValue.trim().isEmpty()) {
                 LOG.error("Error cluster classloader truststore password isn't configured");
             } else {

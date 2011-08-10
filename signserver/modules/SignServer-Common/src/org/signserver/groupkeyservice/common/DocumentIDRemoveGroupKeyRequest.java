@@ -27,61 +27,54 @@ import org.signserver.common.RequestAndResponseManager;
  * 
  * 
  * @author Philip Vendil 13 nov 2007
- *
  * @version $Id$
  */
 public class DocumentIDRemoveGroupKeyRequest extends ProcessRequest implements IRemoveGroupKeyRequest {
 
-	private static final long serialVersionUID = 1L;
-	
-	
-	private List<String> documentIds;
-	
+    private static final long serialVersionUID = 1L;
+    private List<String> documentIds;
+
     /**
      * Default constructor used during serialization
      */
-	public DocumentIDRemoveGroupKeyRequest(){}
-	
+    public DocumentIDRemoveGroupKeyRequest() {
+    }
+
     /**
      * 
      * @param documentIds list of document ids to remove
      */
-	public DocumentIDRemoveGroupKeyRequest(List<String> documentIds) {
-		super();
-		this.documentIds = documentIds;
-	}
+    public DocumentIDRemoveGroupKeyRequest(List<String> documentIds) {
+        super();
+        this.documentIds = documentIds;
+    }
 
+    /**
+     * @return list of document ids to remove
+     */
+    public List<String> getDocumentIds() {
+        return documentIds;
+    }
 
-	/**
-	 * @return list of document ids to remove
-	 */
-	public List<String> getDocumentIds() {
-		return documentIds;
-	}
+    public void parse(DataInput in) throws IOException {
+        in.readInt();
+        int size = in.readInt();
+        this.documentIds = new ArrayList<String>();
+        for (int i = 0; i < size; i++) {
+            int stringLen = in.readInt();
+            byte[] stringData = new byte[stringLen];
+            in.readFully(stringData);
+            documentIds.add(new String(stringData, "UTF-8"));
+        }
+    }
 
-
-	public void parse(DataInput in) throws IOException {
-		in.readInt();
-		int size = in.readInt();
-		this.documentIds = new ArrayList<String>();
-		for(int i=0;i<size;i++){
-			int stringLen = in.readInt();
-			byte[] stringData = new byte[stringLen];
-			in.readFully(stringData);
-			documentIds.add(new String(stringData,"UTF-8"));
-		}	
-	}
-
-	public void serialize(DataOutput out) throws IOException {
-		out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_IDREMKEYS);
-		out.writeInt(documentIds.size());
-		for(String documentId : documentIds){
-			byte[] stringData = documentId.getBytes("UTF-8");
-			out.writeInt(stringData.length);
-			out.write(stringData);
-		}	
-	}
-
-
-
+    public void serialize(DataOutput out) throws IOException {
+        out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_IDREMKEYS);
+        out.writeInt(documentIds.size());
+        for (String documentId : documentIds) {
+            byte[] stringData = documentId.getBytes("UTF-8");
+            out.writeInt(stringData.length);
+            out.write(stringData);
+        }
+    }
 }

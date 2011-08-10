@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.validationservice.common;
 
 import java.io.Serializable;
@@ -23,30 +22,26 @@ import java.security.cert.CertificateEncodingException;
  * Extends the regular Certificate interface with two methods
  * getSubject : which should return a unique subject string
  * getIssuer  : which should return a unique issuer string
- * 
- * 
- * @author Philip Vendil 29 nov 2007
  *
+ * @author Philip Vendil 29 nov 2007
  * @version $Id$
  */
+public interface ICertificate extends Serializable {
 
-public interface ICertificate extends Serializable{
-	
-	/**
-	 * 
-	 * @return a unique subject string identifying the owner, never null. 
-	 */
-	String getSubject();
-	
-	/**
-	 * 
-	 * @return @return a unique subject string identifying the issuer, never null.
-	 */
-	String getIssuer();
+    /**
+     * 
+     * @return a unique subject string identifying the owner, never null. 
+     */
+    String getSubject();
 
-	/**
-	 * Method that should return this certificate i byte array format.
-	 */
-	byte[] getEncoded() throws CertificateEncodingException;
+    /**
+     * 
+     * @return @return a unique subject string identifying the issuer, never null.
+     */
+    String getIssuer();
 
+    /**
+     * Method that should return this certificate i byte array format.
+     */
+    byte[] getEncoded() throws CertificateEncodingException;
 }

@@ -10,21 +10,14 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
- 
 package org.signserver.common;
 
 /**
- * 
  * Interface for the value object class used to transport the data between the signer
- * to the CLI
+ * to the CLI.
  * 
  * @author Philip Vendil 2007 feb 19
- *
  * @version $Id$
  */
-
-public interface ICertReqData extends java.io.Serializable{
-	
-	
-
+public interface ICertReqData extends java.io.Serializable {
 }

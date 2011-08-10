@@ -26,20 +26,19 @@ import org.signserver.common.RequestAndResponseManager;
  * no transaction timeout occurs.
  * 
  * @author Philip Vendil
- * 
- * $Id$
+ * @version $Id$
  */
-public class PregenerateKeysRequest extends ProcessRequest{
+public class PregenerateKeysRequest extends ProcessRequest {
 
-	private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = 1L;
     int numberOfKeys;
-    
+
     /**
      * Default constructor used during serialization
      */
-    public PregenerateKeysRequest(){}
-    
+    public PregenerateKeysRequest() {
+    }
+
     /**
      * Constructor pregenerating unassigned keys with default key type.
      *  
@@ -48,29 +47,25 @@ public class PregenerateKeysRequest extends ProcessRequest{
      * 
      * @param numberOfKeys number of keys to generate
      */
-	public PregenerateKeysRequest(int numberOfKeys) {
-		super();
-		this.numberOfKeys = numberOfKeys;
-	}
-	
+    public PregenerateKeysRequest(int numberOfKeys) {
+        super();
+        this.numberOfKeys = numberOfKeys;
+    }
 
-	
-	/**
-	 * @return number of keys to generate
-	 */
-	public int getNumberOfKeys() {
-		return numberOfKeys;
-	}
+    /**
+     * @return number of keys to generate
+     */
+    public int getNumberOfKeys() {
+        return numberOfKeys;
+    }
 
+    public void parse(DataInput in) throws IOException {
+        in.readInt();
+        this.numberOfKeys = in.readInt();
+    }
 
-	public void parse(DataInput in) throws IOException {
-		in.readInt();
-		this.numberOfKeys = in.readInt();
-	}
-
-	public void serialize(DataOutput out) throws IOException {
+    public void serialize(DataOutput out) throws IOException {
         out.writeInt(RequestAndResponseManager.REQUESTTYPE_GKS_PREGENKEYS);
         out.writeInt(numberOfKeys);
-	}
-
+    }
 }

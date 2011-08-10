@@ -23,61 +23,55 @@ import org.signserver.common.WorkerConfig;
 /**
  * Class used to display the status of a ValidationService such as 
  * if the connection to the underlying services are OK.
- * 
- * 
+ *
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public class ValidationStatus extends CryptoTokenStatus {
 
-	public static final String CONNECTION_OK     = "CONNECTION_OK";
-	public static final String CONNECTION_FAILED = "CONNECTION_FAILED";
-	
-	private static final long serialVersionUID = 1L;
-	
-    private HashMap<Integer,String> validatorStatuses;
-	
-	public ValidationStatus(int workerId, int tokenStatus, WorkerConfig config, 
-			HashMap<Integer,String> validatorStatuses) {
-		super(workerId, tokenStatus,config);
-		this.validatorStatuses = validatorStatuses;
-	}
+    public static final String CONNECTION_OK = "CONNECTION_OK";
+    public static final String CONNECTION_FAILED = "CONNECTION_FAILED";
+    
+    private static final long serialVersionUID = 1L;
+    
+    private HashMap<Integer, String> validatorStatuses;
 
-	@Override
-	public void displayStatus(int workerId, PrintStream out, boolean complete) {
-		out.println("Status of Validation Service with Id " + workerId + " is :\n" +
-				"  SignToken Status : "+signTokenStatuses[getTokenStatus()] + " \n\n" );
+    public ValidationStatus(int workerId, int tokenStatus, WorkerConfig config,
+            HashMap<Integer, String> validatorStatuses) {
+        super(workerId, tokenStatus, config);
+        this.validatorStatuses = validatorStatuses;
+    }
 
-		if(complete){    	
-			out.println("Active Properties are :");
+    @Override
+    public void displayStatus(int workerId, PrintStream out, boolean complete) {
+        out.println("Status of Validation Service with Id " + workerId + " is :\n"
+                + "  SignToken Status : " + signTokenStatuses[getTokenStatus()] + " \n\n");
 
-
-			if(getActiveSignerConfig().getProperties().size() == 0){
-				out.println("  No properties exists in active configuration\n");
-			}
-
-			Enumeration<?> propertyKeys = getActiveSignerConfig().getProperties().keys();
-			while(propertyKeys.hasMoreElements()){
-				String key = (String) propertyKeys.nextElement();
-				out.println("  " + key + "=" + getActiveSignerConfig().getProperties().getProperty(key) + "\n");
-			}        		
-
-			out.println("\n");
-
-			out.println(" Total number of validators : " + validatorStatuses.size() + "\n");
-			for (Iterator<Integer> iterator = validatorStatuses.keySet().iterator(); iterator.hasNext();) {
-				Integer validatorId = iterator.next();
-				if(validatorStatuses.get(validatorId).equals(CONNECTION_OK)){
-					out.println(" Status validator " + validatorId + " : OK");
-				}else{
-					out.println(" Status validator " + validatorId + " : FAILED");
-				}
-				
-			}
-		}		
-		
-	}
+        if (complete) {
+            out.println("Active Properties are :");
 
 
+            if (getActiveSignerConfig().getProperties().size() == 0) {
+                out.println("  No properties exists in active configuration\n");
+            }
 
+            Enumeration<?> propertyKeys = getActiveSignerConfig().getProperties().keys();
+            while (propertyKeys.hasMoreElements()) {
+                String key = (String) propertyKeys.nextElement();
+                out.println("  " + key + "=" + getActiveSignerConfig().getProperties().getProperty(key) + "\n");
+            }
+
+            out.println("\n");
+
+            out.println(" Total number of validators : " + validatorStatuses.size() + "\n");
+            for (Iterator<Integer> iterator = validatorStatuses.keySet().iterator(); iterator.hasNext();) {
+                Integer validatorId = iterator.next();
+                if (validatorStatuses.get(validatorId).equals(CONNECTION_OK)) {
+                    out.println(" Status validator " + validatorId + " : OK");
+                } else {
+                    out.println(" Status validator " + validatorId + " : FAILED");
+                }
+            }
+        }
+    }
 }

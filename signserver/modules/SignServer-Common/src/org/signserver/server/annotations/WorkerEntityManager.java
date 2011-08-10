@@ -13,15 +13,11 @@ import java.lang.annotation.Target;
  * should be used. The WorkerEntityManager must also
  * be initialized before any call the the transaction marked
  * method can be called.
- * 
- * 
- * 
- * @author Philip Vendil 23 okt 2008
  *
+ * @author Philip Vendil 23 okt 2008
  * @version $Id$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface WorkerEntityManager {
-
 }

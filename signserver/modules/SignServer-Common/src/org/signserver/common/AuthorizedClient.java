@@ -10,68 +10,84 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
- 
 package org.signserver.common;
 
 import java.io.Serializable;
 
 import org.ejbca.util.CertTools;
 
-
-
 /**
- * Class representing an authorized client containing the  serial number and issuerDN of trusted client certs.
- * @author Philip Vendil
+ * Class representing an authorized client containing the  serial number and 
+ * issuerDN of trusted client certs.
  * 
- * $Id$
- *
+ * @author Philip Vendil
+ * @version $Id$
  */
-public class AuthorizedClient implements Comparable<Object>, Serializable{
-	
-	private static final long serialVersionUID = 1L;
-	String certSN = null;
-	String issuerDN = null;
-	
-	public AuthorizedClient(){}
-	
-	public void setCertSN(String certSN) {
-		this.certSN = certSN;
-	}
+public class AuthorizedClient implements Comparable<Object>, Serializable {
 
-	public void setIssuerDN(String issuerDN) {
-		this.issuerDN = CertTools.stringToBCDNString(issuerDN);
-	}
+    private static final long serialVersionUID = 1L;
 
-	public AuthorizedClient(String certSN, String issuerDN){
-      this.certSN = certSN;
-      setIssuerDN(issuerDN);      
-	}
+    private String certSN;
+    private String issuerDN;
 
-	/**
-	 * Sort by Cert SN
-	 * @param arg0 must be a AuthorizedClient
-	 */
-	public int compareTo(Object arg0) {
-		if(arg0 instanceof AuthorizedClient){
-			return certSN.compareTo(((AuthorizedClient) arg0).getCertSN()); 
-		}
-		return 0;
-	}
+    public AuthorizedClient() {
+    }
 
-	public String getCertSN() {
-		return certSN;
-	}
+    public void setCertSN(String certSN) {
+        this.certSN = certSN;
+    }
 
-	public String getIssuerDN() {
-		return issuerDN;
-	}
+    public void setIssuerDN(String issuerDN) {
+        this.issuerDN = CertTools.stringToBCDNString(issuerDN);
+    }
 
-	public int hashCode() {		
-		return certSN.hashCode() + issuerDN.hashCode();
-	}
+    public AuthorizedClient(String certSN, String issuerDN) {
+        this.certSN = certSN;
+        this.issuerDN = issuerDN;
+    }
 
-	public boolean equals(Object obj) {		
-		return certSN.equals(((AuthorizedClient) obj).getCertSN()) && issuerDN.equals(((AuthorizedClient) obj).getIssuerDN()); 
-	}
+    /**
+     * Sort by Cert SN
+     * @param arg0 must be a AuthorizedClient
+     */
+    public int compareTo(Object arg0) {
+        if (arg0 instanceof AuthorizedClient) {
+            return certSN.compareTo(((AuthorizedClient) arg0).getCertSN());
+        }
+        return 0;
+    }
+
+    public String getCertSN() {
+        return certSN;
+    }
+
+    public String getIssuerDN() {
+        return issuerDN;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.certSN != null ? this.certSN.hashCode() : 0);
+        hash = 29 * hash + (this.issuerDN != null ? this.issuerDN.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AuthorizedClient other = (AuthorizedClient) obj;
+        if ((this.certSN == null) ? (other.certSN != null) : !this.certSN.equals(other.certSN)) {
+            return false;
+        }
+        if ((this.issuerDN == null) ? (other.issuerDN != null) : !this.issuerDN.equals(other.issuerDN)) {
+            return false;
+        }
+        return true;
+    }
 }

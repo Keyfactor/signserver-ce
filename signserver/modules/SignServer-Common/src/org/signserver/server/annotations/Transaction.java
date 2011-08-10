@@ -1,4 +1,5 @@
 package org.signserver.server.annotations;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,15 +19,13 @@ import java.lang.annotation.Target;
  * 
  * It must be used with the WorkerEntityManager annotation marking
  * the field used for worker entity manager.
- * 
- * 
- * 
- * @author Philip Vendil 23 okt 2008
  *
+ * @author Philip Vendil 23 okt 2008
  * @version $Id$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Transaction {
+
     TransactionType value() default TransactionType.REQUIRED;
 }

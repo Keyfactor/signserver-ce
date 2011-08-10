@@ -10,13 +10,10 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.cli.module;
 
 import org.signserver.cli.BaseCommand;
 import org.signserver.common.GlobalConfiguration;
-
-
 
 /**
  * Command containing common help methods for module commands
@@ -26,9 +23,7 @@ import org.signserver.common.GlobalConfiguration;
  * @author Philip Vendil
  */
 public abstract class BaseModuleCommand extends BaseCommand {
-	
-	
-	
+
     /**
      * 
      *
@@ -38,15 +33,14 @@ public abstract class BaseModuleCommand extends BaseCommand {
         super(args);
     }
 
-    protected boolean isClusterClassLoaderEnabled(){
-    	boolean retval = GlobalConfiguration.isClusterClassLoaderEnabled();
-    	if(retval){
-    		getOutputStream().println("Using cluster class loader.\n");
-    	}else{
-    		getOutputStream().println("ERROR: Module (Cluster Class Loader) functionality is disabled");
-    	}
-    	return retval;
+    protected boolean isClusterClassLoaderEnabled() {
+        boolean retval = GlobalConfiguration.isClusterClassLoaderEnabled();
+        if (retval) {
+            getOutputStream().println("Using cluster class loader.\n");
+        } else {
+            getOutputStream().println("ERROR: Module (Cluster Class Loader) functionality is disabled");
+        }
+        return retval;
     }
-
     // execute
 }

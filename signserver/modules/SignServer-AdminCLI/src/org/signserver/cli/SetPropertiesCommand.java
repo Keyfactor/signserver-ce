@@ -10,14 +10,10 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
-
 package org.signserver.cli;
 
 import java.io.FileInputStream;
 import java.util.Properties;
-
- 
 
 /**
  * Sets properties from a given property file.
@@ -27,9 +23,7 @@ import java.util.Properties;
  * @version $Id$
  */
 public class SetPropertiesCommand extends BaseCommand {
-	
 
-	
     /**
      * Creates a new instance of SetPropertyCommand
      *
@@ -47,49 +41,41 @@ public class SetPropertiesCommand extends BaseCommand {
      */
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
         if (args.length != 2) {
-	       throw new IllegalAdminCommandException("Usage: signserver setproperties <-host hostname (optional)>  <propertyfile>\n" + 
-	       		                                  "Example 1: signserver setproperties mysettings.properties\n" +
-	    		                                  "Example 2: signserver setproperties -host node3.someorg.com mysettings.properties\n\n");	       
-	    }	
-        try {            
-         
-        	SetPropertiesHelper helper = new SetPropertiesHelper(getOutputStream(),getCommonAdminInterface(hostname));
-        	Properties properties = loadProperties(args[1]);
-        
-        	getOutputStream().println("Configuring properties as defined in the file : " + args[1]);
+            throw new IllegalAdminCommandException("Usage: signserver setproperties <-host hostname (optional)>  <propertyfile>\n"
+                    + "Example 1: signserver setproperties mysettings.properties\n"
+                    + "Example 2: signserver setproperties -host node3.someorg.com mysettings.properties\n\n");
+        }
+        try {
+
+            SetPropertiesHelper helper = new SetPropertiesHelper(getOutputStream(), getCommonAdminInterface(hostname));
+            Properties properties = loadProperties(args[1]);
+
+            getOutputStream().println("Configuring properties as defined in the file : " + args[1]);
             helper.process(properties);
 
-        	this.getOutputStream().println("\n\n");
+            this.getOutputStream().println("\n\n");
 
         } catch (IllegalAdminCommandException e) {
-        	throw e;  
+            throw e;
         } catch (Exception e) {
-        	throw new ErrorAdminCommandException(e);            
+            throw new ErrorAdminCommandException(e);
         }
     }
 
+    private Properties loadProperties(String path) {
+        Properties retval = new Properties();
+        try {
+            retval.load(new FileInputStream(path));
+        } catch (Exception e) {
+            getOutputStream().println("Error reading property file : " + path);
+            System.exit(-1);
+        }
 
+        return retval;
+    }
 
-
-
-	private Properties loadProperties(String path) {
-		Properties retval = new Properties();
-		try {
-			retval.load(new FileInputStream(path));
-		} catch (Exception e) {
-			getOutputStream().println("Error reading property file : " + path);
-			System.exit(-1);
-		}
-		
-		return retval;
-	}
-
-
-	// execute
-    
-	public int getCommandType() {
-		return TYPE_EXECUTEONMASTER;
-	}
-	
-
+    // execute
+    public int getCommandType() {
+        return TYPE_EXECUTEONMASTER;
+    }
 }

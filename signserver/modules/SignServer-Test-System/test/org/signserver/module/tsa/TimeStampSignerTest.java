@@ -110,7 +110,6 @@ public class TimeStampSignerTest extends TestCase {
 
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
     }
 
     /* (non-Javadoc)

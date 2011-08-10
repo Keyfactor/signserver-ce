@@ -26,8 +26,6 @@ import javax.naming.NamingException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
 import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.GenericSignResponse;
@@ -93,7 +91,6 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 		TestingSecurityManager.install();
 		signserverhome = System.getenv("SIGNSERVER_HOME");
 		assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
-		CommonAdminInterface.BUILDMODE = "SIGNSERVER";
 		
 		keystoreFileEndentity8 = new File(signserverhome + File.separator + "src/test/org/signserver/client/api/endentity8.p12");
 		if(!keystoreFileEndentity8.exists()) {

@@ -261,9 +261,6 @@ public class WSRATest extends CommonManagerT {
 		TestUtils.redirectToTempOut();
 		TestUtils.redirectToTempErr();
 		TestingSecurityManager.install();
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
-        
-        
 	}
 	public void test01AuthorizedRoles() throws Exception{				
 

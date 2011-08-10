@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.cli.groupkeyservice;
 
 import java.rmi.RemoteException;
@@ -21,8 +20,6 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.groupkeyservice.common.GroupKeyServiceStatus;
 
-
-
 /**
  * Command containing common help methods for group key service commands. 
  *
@@ -30,9 +27,7 @@ import org.signserver.groupkeyservice.common.GroupKeyServiceStatus;
  * @author Philip Vendil
  */
 public abstract class BaseGroupKeyServiceCommand extends BaseCommand {
-	
-	
-	
+
     /**
      * 
      *
@@ -46,13 +41,12 @@ public abstract class BaseGroupKeyServiceCommand extends BaseCommand {
      * Method checking if the given workerId exists and if its a
      * group key service.
      */
-    protected void isWorkerGroupKeyService(String hostname, int workerId) throws RemoteException, InvalidWorkerIdException, Exception{
-    	checkThatWorkerIsProcessable(workerId, hostname);
-    	WorkerStatus status = getCommonAdminInterface(hostname).getStatus(workerId);
-    	if(!(status instanceof GroupKeyServiceStatus)){
-    		throw new IllegalAdminCommandException("Error: given workerId doesn't seem to point to any existing group key service.");
-    	}    	
+    protected void isWorkerGroupKeyService(String hostname, int workerId) throws RemoteException, InvalidWorkerIdException, Exception {
+        checkThatWorkerIsProcessable(workerId, hostname);
+        WorkerStatus status = getCommonAdminInterface(hostname).getStatus(workerId);
+        if (!(status instanceof GroupKeyServiceStatus)) {
+            throw new IllegalAdminCommandException("Error: given workerId doesn't seem to point to any existing group key service.");
+        }
     }
-
     // execute
 }

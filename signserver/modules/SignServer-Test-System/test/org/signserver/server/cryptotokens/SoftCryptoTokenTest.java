@@ -48,8 +48,6 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
 		TestUtils.redirectToTempOut();
 		TestUtils.redirectToTempErr();
 		TestingSecurityManager.install();
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
-
 	}
 	
 	/* (non-Javadoc)

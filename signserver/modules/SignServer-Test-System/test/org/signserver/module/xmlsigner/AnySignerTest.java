@@ -27,10 +27,8 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
-import org.bouncycastle.jce.provider.asymmetric.ec.ECUtil;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.Base64;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
@@ -74,7 +72,6 @@ public class AnySignerTest extends TestCase {
         TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
     }
 
     @Override

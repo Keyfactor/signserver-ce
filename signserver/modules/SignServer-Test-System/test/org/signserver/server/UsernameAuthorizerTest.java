@@ -37,7 +37,6 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
         SignServerUtil.installBCProvider();
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
     }
 
     @Override

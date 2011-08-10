@@ -42,7 +42,6 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
     }
 
     @Override

@@ -29,26 +29,24 @@ public class GenerateKeyCommand extends BaseCommand {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(GenerateKeyCommand.class);
-
     public static final String KEYALG = "keyalg";
     public static final String KEYSPEC = "keyspec";
     public static final String ALIAS = "alias";
     public static final String AUTHCODE = "authcode";
-
+    
     /** The command line options. */
     private static final Options OPTIONS;
-
     private static final String USAGE =
-        "Usage: signserver generatekey <worker id | worker name> [-keyalg <key algorithm> -keyspec <key spec> -alias <alias>]\n"
-        + "Leaving out alias will use the value in property DEFAULTKEY+1.\n"
-        + "Leaving out keyalg will use the value in property KEYALG.\n"
-        + "Leaving out keyspec will use the value in property KEYSPEC.\n"
-        + "Leaving out authcode will prompt for it.\n"
-        + "Example 1: signserver generatekey 71\n"
-        + "Example 2: signserver generatekey 71 -keyalg RSA -keyspec 2048\n"
-        + "Example 3: signserver generatekey 71 -keyalg RSA -keyspec 2048 -alias signKey2\n"
-        + "Example 4: signserver generatekey 71 -keyalg ECC -keyspec secp256r1 -alias signKey2";
-    
+            "Usage: signserver generatekey <worker id | worker name> [-keyalg <key algorithm> -keyspec <key spec> -alias <alias>]\n"
+            + "Leaving out alias will use the value in property DEFAULTKEY+1.\n"
+            + "Leaving out keyalg will use the value in property KEYALG.\n"
+            + "Leaving out keyspec will use the value in property KEYSPEC.\n"
+            + "Leaving out authcode will prompt for it.\n"
+            + "Example 1: signserver generatekey 71\n"
+            + "Example 2: signserver generatekey 71 -keyalg RSA -keyspec 2048\n"
+            + "Example 3: signserver generatekey 71 -keyalg RSA -keyspec 2048 -alias signKey2\n"
+            + "Example 4: signserver generatekey 71 -keyalg ECC -keyspec secp256r1 -alias signKey2";
+
     static {
         OPTIONS = new Options();
         OPTIONS.addOption(KEYALG, true, "Key algorithm");
@@ -56,7 +54,7 @@ public class GenerateKeyCommand extends BaseCommand {
         OPTIONS.addOption(ALIAS, true, "Key alias/name");
         OPTIONS.addOption(AUTHCODE, true, "Authentication code");
     }
-
+    
     private String keyAlg;
     private String keySpec;
     private String alias;
@@ -143,8 +141,7 @@ public class GenerateKeyCommand extends BaseCommand {
         } catch (IllegalAdminCommandException e) {
             throw e;
         } catch (EJBException eJBException) {
-            if (eJBException.getCausedByException()
-                    instanceof IllegalArgumentException) {
+            if (eJBException.getCausedByException() instanceof IllegalArgumentException) {
                 System.err.println(eJBException.getMessage());
             } else {
                 throw new ErrorAdminCommandException(eJBException);

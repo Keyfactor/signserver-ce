@@ -23,11 +23,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
 
@@ -112,8 +108,6 @@ public class CRLValidatorTest extends TestCase {
 		assertNotNull("Environment variable SIGNSERVER_HOME must be set!", envSignServerHome);
 		signServerHome = new File(envSignServerHome);
 		assertTrue(signServerHome.exists());
-
-		CommonAdminInterface.BUILDMODE = "SIGNSERVER";
 	}
 
 	public void test00SetupDatabase() throws Exception {

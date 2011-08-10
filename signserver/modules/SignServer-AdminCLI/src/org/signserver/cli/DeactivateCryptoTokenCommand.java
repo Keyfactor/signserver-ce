@@ -10,10 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.cli;
-
-
 
 /**
  * Command used to deactivate a Crypto Token
@@ -21,10 +18,11 @@ package org.signserver.cli;
  * @version $Id$
  */
 public class DeactivateCryptoTokenCommand extends BaseCommand {
-	protected static final int HELP = 0;
-	protected static final int TRYING = 1;
-	protected static final int SUCCESS = 2;
-	
+
+    protected static final int HELP = 0;
+    protected static final int TRYING = 1;
+    protected static final int SUCCESS = 2;
+
     /**
      * Creates a new instance of DeactivateSignTokenCommand
      *
@@ -42,39 +40,38 @@ public class DeactivateCryptoTokenCommand extends BaseCommand {
      */
     public void execute(String hostname, String[] resources) throws IllegalAdminCommandException, ErrorAdminCommandException {
         if (args.length != 2) {
-	       throw new IllegalAdminCommandException(resources[HELP]);	       
-	    }	
-        try {            
-        	
-        	int workerid = getWorkerId(args[1], hostname);
-        	checkThatWorkerIsProcessable(workerid,hostname);
-        	        	
-        	
-        	this.getOutputStream().println(resources[TRYING] + workerid + "\n");
-        	this.getCommonAdminInterface(hostname).deactivateSigner(workerid);        			                
-        	this.getOutputStream().println(resources[SUCCESS]);
+            throw new IllegalAdminCommandException(resources[HELP]);
+        }
+        try {
 
-        } catch( IllegalAdminCommandException e ) {
+            int workerid = getWorkerId(args[1], hostname);
+            checkThatWorkerIsProcessable(workerid, hostname);
+
+
+            this.getOutputStream().println(resources[TRYING] + workerid + "\n");
+            this.getCommonAdminInterface(hostname).deactivateSigner(workerid);
+            this.getOutputStream().println(resources[SUCCESS]);
+
+        } catch (IllegalAdminCommandException e) {
             throw e;
-        } catch( ErrorAdminCommandException e ) {
+        } catch (ErrorAdminCommandException e) {
             throw e;
         } catch (Exception e) {
             throw new ErrorAdminCommandException(e);
-        }  
+        }
     }
-    
+
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
-    	String[] resources =  {"Usage: signserver deactivatecryptotoken <worker id | worker name> \n" + 
-                               "Example: signserver deactivatecryptotoken 1 \n"+
-                               "Example 2 : signserver deactivatecryptotoken mySigner \n\n",
-                               "Trying to deactivate crypto token of worker with id : ",
-                               "Deactivation of worker was successful\n\n"};
-        execute(hostname,resources);   
+        String[] resources = {"Usage: signserver deactivatecryptotoken <worker id | worker name> \n"
+            + "Example: signserver deactivatecryptotoken 1 \n"
+            + "Example 2 : signserver deactivatecryptotoken mySigner \n\n",
+            "Trying to deactivate crypto token of worker with id : ",
+            "Deactivation of worker was successful\n\n"};
+        execute(hostname, resources);
     }
 
-	public int getCommandType() {
-		return TYPE_EXECUTEONALLNODES;
-	}
-
+    public int getCommandType() {
+        return TYPE_EXECUTEONALLNODES;
+    }
     // execute
 }

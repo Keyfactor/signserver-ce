@@ -51,10 +51,9 @@ public class GetStatusPropertiesCommand extends BaseCommand {
         try {
 
             final Map<String, StatusRepositoryData> properties =
-                getCommonAdminInterface(hostname).getStatusProperties();
+                    getCommonAdminInterface(hostname).getStatusProperties();
 
-            for(Map.Entry<String, StatusRepositoryData> entry
-                    : properties.entrySet()) {
+            for (Map.Entry<String, StatusRepositoryData> entry : properties.entrySet()) {
                 getOutputStream().println(entry.getKey() + ", "
                         + entry.getValue().getExpiration() + " = \""
                         + entry.getValue().getValue() + "\"");

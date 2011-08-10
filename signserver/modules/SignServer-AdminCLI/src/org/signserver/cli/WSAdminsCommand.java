@@ -19,37 +19,32 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
-import org.apache.log4j.Logger;
-import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.common.GlobalConfiguration;
 
 /**
- * 
+ * Command for managing the list of authorized WS admins.
  *
  * @version $Id$
  */
 public class WSAdminsCommand extends BaseCommand {
-
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(WSAdminsCommand.class);
 
     public static final String ADD = "add";
     public static final String REMOVE = "remove";
     public static final String LIST = "list";
     public static final String CERTSERIALNO = "certserialno";
     public static final String ISSUERDN = "issuerdn";
-
+    
     /** The command line options. */
     private static final Options OPTIONS;
-
-    private static final String USAGE =
-          "Usage: signserver wsadmins -add -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
-        + "Usage: signserver wsadmins -remove -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
-        + "Usage: signserver wsadmins -list\n"
-        + "Example 1: signserver wsadmins -add -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
-        + "Example 2: signserver wsadmins -remove -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
-        + "Example 3: signserver wsadmins -list";
     
+    private static final String USAGE =
+            "Usage: signserver wsadmins -add -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
+            + "Usage: signserver wsadmins -remove -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
+            + "Usage: signserver wsadmins -list\n"
+            + "Example 1: signserver wsadmins -add -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
+            + "Example 2: signserver wsadmins -remove -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
+            + "Example 3: signserver wsadmins -list";
+
     static {
         OPTIONS = new Options();
         OPTIONS.addOption(ADD, false, "Add a new WS admin");
@@ -61,7 +56,7 @@ public class WSAdminsCommand extends BaseCommand {
         OPTIONS.addOption(ISSUERDN, true,
                 "Issuer distinguished name");
     }
-
+    
     private String operation;
     private String certSerialNo;
     private String issuerDN;
@@ -106,7 +101,7 @@ public class WSAdminsCommand extends BaseCommand {
             System.err.println("Missing operation: -add, -remove or -list");
             System.err.println(USAGE);
             System.exit(1);
-        } else if (operation != LIST) {
+        } else if (!operation.equals(LIST)) {
             if (certSerialNo == null) {
                 System.err.println("Missing option: -certserialno");
                 System.err.println(USAGE);
@@ -130,9 +125,8 @@ public class WSAdminsCommand extends BaseCommand {
             ErrorAdminCommandException {
 
         try {
-            final String admins = getCommonAdminInterface(hostname)
-                    .getGlobalConfiguration().getProperty(
-                        GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
+            final String admins = getCommonAdminInterface(hostname).getGlobalConfiguration().getProperty(
+                    GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
             final List<Entry> entries = parseAdmins(admins);
 
             if (LIST.equals(operation)) {
@@ -157,8 +151,8 @@ public class WSAdminsCommand extends BaseCommand {
             } else if (REMOVE.equals(operation)) {
                 if (entries.remove(new Entry(certSerialNo, issuerDN))) {
                     getCommonAdminInterface(hostname).setGlobalProperty(
-                        GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
-                        serializeAdmins(entries));
+                            GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
+                            serializeAdmins(entries));
                     System.out.println("Administrator removed");
                 } else {
                     System.err.println("No such administrator");
@@ -167,8 +161,7 @@ public class WSAdminsCommand extends BaseCommand {
         } catch (IllegalAdminCommandException e) {
             throw e;
         } catch (EJBException eJBException) {
-            if (eJBException.getCausedByException()
-                    instanceof IllegalArgumentException) {
+            if (eJBException.getCausedByException() instanceof IllegalArgumentException) {
                 System.err.println(eJBException.getMessage());
             } else {
                 throw new ErrorAdminCommandException(eJBException);
@@ -205,6 +198,7 @@ public class WSAdminsCommand extends BaseCommand {
     }
 
     private static class Entry {
+
         private String certSerialNo;
         private String issuerDN;
 
@@ -246,6 +240,5 @@ public class WSAdminsCommand extends BaseCommand {
             hash = 89 * hash + (this.issuerDN != null ? this.issuerDN.hashCode() : 0);
             return hash;
         }
-        
     }
 }

@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.cli;
 
 /**
@@ -18,11 +17,11 @@ package org.signserver.cli;
  *
  * @version $Id$
  */
-public class ErrorAdminCommandException extends Exception{
+public class ErrorAdminCommandException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
+    /**
      * Creates a new instance of ErrorAdminCommandException
      *
      * @param message error message

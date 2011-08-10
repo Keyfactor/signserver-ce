@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.cli;
 
 import java.math.BigInteger;
@@ -26,7 +25,6 @@ import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
@@ -55,333 +53,305 @@ import org.signserver.common.KeyTestResult;
  * and directs the CLI calls to the appropriate RMI implementation
  *
  * All calls to the server should go through this class.
+ * 
+ * FIXME: Refactor away this class it is not needed anymore. Calls can go directly to the session bean instead.
  *
  * @author Philip Vendil 6 okt 2007
  *
  * @version $Id$
  */
-public class CommonAdminInterface  {
-	
+public class CommonAdminInterface {
+
     /** Log4j instance. */
     private static final Logger LOG = Logger.getLogger(
             CommonAdminInterface.class);
-
+    
     /** The global configuration session. */
-    private transient IGlobalConfigurationSession.IRemote globalConfig;
-
+    private IGlobalConfigurationSession.IRemote globalConfig;
+    
     /** The cluster class loader manager session. */
-    private transient IClusterClassLoaderManagerSession.IRemote cclms;
+    private IClusterClassLoaderManagerSession.IRemote cclms;
     
     /** The SignSession. */
-    private transient IWorkerSession.IRemote signsession;
-
+    private IWorkerSession.IRemote signsession;
+    
     /** The StatusRepositorySession. */
-    private transient IStatusRepositorySession.IRemote statusRepository;
-
-    private String hostname = null;
+    private IStatusRepositorySession.IRemote statusRepository;
     
-	// Not final so it can be used in test scripts
-	public static  String BUILDMODE = CompileTimeSettings.getInstance()
-                .getProperty(CompileTimeSettings.BUILDMODE);
-	
-	public CommonAdminInterface(String hostname){
-		this.hostname = hostname;
-	}
-	
-	
-	/**
-	 * @return true if the build is a SignServer
-	 */
-	public static boolean isSignServerMode(){
-		if(signServerMode == null){
-			signServerMode = BUILDMODE.trim().equalsIgnoreCase("SIGNSERVER");
-		}
-		
-		return signServerMode.booleanValue();
-	}
-	private static Boolean signServerMode = null;
+    private String hostname;
 
-	/**
-	 * @return true if the build is a MailSigner
-	 */
-    public static boolean isMailSignerMode(){
-    	if(mailSignerMode == null){
-    		mailSignerMode =  BUILDMODE.trim().equalsIgnoreCase("MAILSIGNER");
-    	}
-    	
-    	return mailSignerMode.booleanValue();
-	}
-    private static Boolean mailSignerMode = null;
-    
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#activateSigner(int, String)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#activateSigner(int, String)
-	 */
-	public void activateSigner(int signerId, String authenticationCode)
-			throws CryptoTokenAuthenticationFailureException,
-			CryptoTokenOfflineException, InvalidWorkerIdException,
-			RemoteException {
-            getWorkerSession().activateSigner(signerId, authenticationCode);
-	}
+    public CommonAdminInterface(String hostname) {
+        this.hostname = hostname;
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#deactivateSigner(int)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#deactivateSigner(int)
-	 */
-	public boolean deactivateSigner(int signerId)
-			throws CryptoTokenOfflineException, InvalidWorkerIdException,
-			RemoteException {
-            return getWorkerSession().deactivateSigner(signerId);
-	}
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#activateSigner(int, String)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#activateSigner(int, String)
+     */
+    public void activateSigner(int signerId, String authenticationCode)
+            throws CryptoTokenAuthenticationFailureException,
+            CryptoTokenOfflineException, InvalidWorkerIdException,
+            RemoteException {
+        getWorkerSession().activateSigner(signerId, authenticationCode);
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#destroyKey(int, int)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#destroyKey(int, int)
-	 */
-	public boolean destroyKey(int signerId, int purpose)
-			throws InvalidWorkerIdException, RemoteException {
-            return getWorkerSession().destroyKey(signerId, purpose);		
-	}
-
-        public String generateKey(final int signerId,
-                final String keyAlgorithm, final String keySpec,
-                final String alias, final char[] authCode)
-                throws CryptoTokenOfflineException,
-                    InvalidWorkerIdException, RemoteException {
-            return getWorkerSession().generateSignerKey(signerId, keyAlgorithm,
-                    keySpec, alias, authCode);
-        }
-
-        public Collection<KeyTestResult> testKey(final int signerId,
-                final String alias, final char[] authCode)
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#deactivateSigner(int)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#deactivateSigner(int)
+     */
+    public boolean deactivateSigner(int signerId)
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
-                KeyStoreException, RemoteException {
-            return getWorkerSession().testKey(signerId, alias, authCode);
-        }
+            RemoteException {
+        return getWorkerSession().deactivateSigner(signerId);
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#genCertificateRequest(int, ISignerCertReqInfo)
-	 */
-	public ICertReqData genCertificateRequest(int signerId,
-			ISignerCertReqInfo certReqInfo,
-                        final boolean explicitEccParameter,
-                        final boolean defaultKey)
-                            throws CryptoTokenOfflineException,
-			InvalidWorkerIdException, RemoteException {
-            return getWorkerSession().getCertificateRequest(
-                                signerId, certReqInfo, explicitEccParameter,
-                                defaultKey);
-	}
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#destroyKey(int, int)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#destroyKey(int, int)
+     */
+    public boolean destroyKey(int signerId, int purpose)
+            throws InvalidWorkerIdException, RemoteException {
+        return getWorkerSession().destroyKey(signerId, purpose);
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#getCurrentSignerConfig(int)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getCurrentSignerConfig(int)
-	 */	
-	public WorkerConfig getCurrentWorkerConfig(int signerId)
-			throws RemoteException {
-            return getWorkerSession().getCurrentWorkerConfig(signerId);
-	}
+    public String generateKey(final int signerId,
+            final String keyAlgorithm, final String keySpec,
+            final String alias, final char[] authCode)
+            throws CryptoTokenOfflineException,
+            InvalidWorkerIdException, RemoteException {
+        return getWorkerSession().generateSignerKey(signerId, keyAlgorithm,
+                keySpec, alias, authCode);
+    }
 
-	/**
-	 * @see org.signserver.ejb.GlobalConfigurationSessionBean#getGlobalConfiguration()
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getGlobalConfiguration()
-	 */	
-	public GlobalConfiguration getGlobalConfiguration() throws RemoteException {
-		GlobalConfiguration retval = null;
-            return getGlobalConfigurationSession().getGlobalConfiguration();
-	}
+    public Collection<KeyTestResult> testKey(final int signerId,
+            final String alias, final char[] authCode)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException,
+            KeyStoreException, RemoteException {
+        return getWorkerSession().testKey(signerId, alias, authCode);
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#getWorkerId(String)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getWorkerId(String)
-	 */	
-	public int getWorkerId(String signerName) throws RemoteException {
-            return getWorkerSession().getWorkerId(signerName);
-	}
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#genCertificateRequest(int, ISignerCertReqInfo)
+     */
+    public ICertReqData genCertificateRequest(int signerId,
+            ISignerCertReqInfo certReqInfo,
+            final boolean explicitEccParameter,
+            final boolean defaultKey)
+            throws CryptoTokenOfflineException,
+            InvalidWorkerIdException, RemoteException {
+        return getWorkerSession().getCertificateRequest(
+                signerId, certReqInfo, explicitEccParameter,
+                defaultKey);
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#getStatus(int)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#getStatus(int)
-	 */	
-	public WorkerStatus getStatus(int workerId)
-			throws InvalidWorkerIdException, RemoteException {
-            return getWorkerSession().getStatus(workerId);
-	}
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#getCurrentSignerConfig(int)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#getCurrentSignerConfig(int)
+     */
+    public WorkerConfig getCurrentWorkerConfig(int signerId)
+            throws RemoteException {
+        return getWorkerSession().getCurrentWorkerConfig(signerId);
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#reloadConfiguration(int)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#reloadConfiguration(int)
-	 */	
-	public void reloadConfiguration(int workerId) throws RemoteException {
-            getWorkerSession().reloadConfiguration(workerId);
-	}
+    /**
+     * @see org.signserver.ejb.GlobalConfigurationSessionBean#getGlobalConfiguration()
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#getGlobalConfiguration()
+     */
+    public GlobalConfiguration getGlobalConfiguration() throws RemoteException {
+        GlobalConfiguration retval = null;
+        return getGlobalConfigurationSession().getGlobalConfiguration();
+    }
 
-	/**
-	 * @see org.signserver.ejb.GlobalConfigurationSessionBean#removeProperty(String, String)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#removeGlobalProperty(String, String)
-	 */
-	public boolean removeGlobalProperty(String scope, String key)
-			throws RemoteException {
-            return getGlobalConfigurationSession().removeProperty(scope, key);
-	}
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#getWorkerId(String)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#getWorkerId(String)
+     */
+    public int getWorkerId(String signerName) throws RemoteException {
+        return getWorkerSession().getWorkerId(signerName);
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#removeWorkerProperty(int, String)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#removeWorkerProperty(int, String)
-	 */	
-	public boolean removeWorkerProperty(int workerId, String key)
-			throws RemoteException {
-            return getWorkerSession().removeWorkerProperty(workerId, key);
-	}
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#getStatus(int)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#getStatus(int)
+     */
+    public WorkerStatus getStatus(int workerId)
+            throws InvalidWorkerIdException, RemoteException {
+        return getWorkerSession().getStatus(workerId);
+    }
 
-	/**
-	 * @see org.signserver.ejb.GlobalConfigurationSessionBean#setProperty(String, String, String)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#setGlobalProperty(String, String, String)
-	 */
-	public void setGlobalProperty(String scope, String key, String value)
-			throws RemoteException {
-            getGlobalConfigurationSession().setProperty(scope, key, value);
-	}
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#reloadConfiguration(int)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#reloadConfiguration(int)
+     */
+    public void reloadConfiguration(int workerId) throws RemoteException {
+        getWorkerSession().reloadConfiguration(workerId);
+    }
 
-        public void setStatusProperty(final String key, final String value)
-                throws RemoteException {
-            getStatusRepositorySession().setProperty(key, value);
-        }
+    /**
+     * @see org.signserver.ejb.GlobalConfigurationSessionBean#removeProperty(String, String)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#removeGlobalProperty(String, String)
+     */
+    public boolean removeGlobalProperty(String scope, String key)
+            throws RemoteException {
+        return getGlobalConfigurationSession().removeProperty(scope, key);
+    }
 
-        public void setStatusProperty(final String key, final String value,
-                final long expiration) throws RemoteException {
-            getStatusRepositorySession().setProperty(key, value,
-                    expiration);
-        }
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#removeWorkerProperty(int, String)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#removeWorkerProperty(int, String)
+     */
+    public boolean removeWorkerProperty(int workerId, String key)
+            throws RemoteException {
+        return getWorkerSession().removeWorkerProperty(workerId, key);
+    }
 
-        public String getStatusProperty(final String key)
-                throws RemoteException {
-            return getStatusRepositorySession().getProperty(key);
-        }
-	
-	public List<Integer> getWorkers(int workerType) throws RemoteException {
-            return getGlobalConfigurationSession().getWorkers(workerType);
-	}
+    /**
+     * @see org.signserver.ejb.GlobalConfigurationSessionBean#setProperty(String, String, String)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#setGlobalProperty(String, String, String)
+     */
+    public void setGlobalProperty(String scope, String key, String value)
+            throws RemoteException {
+        getGlobalConfigurationSession().setProperty(scope, key, value);
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#setWorkerProperty(int, String, String)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#setWorkerProperty(int, String, String)	 
-	 */	
-	public void setWorkerProperty(int workerId, String key, String value)
-			throws RemoteException {
-            getWorkerSession().setWorkerProperty(workerId, key, value);
-	}
+    public void setStatusProperty(final String key, final String value)
+            throws RemoteException {
+        getStatusRepositorySession().setProperty(key, value);
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#uploadSignerCertificate(int, X509Certificate)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#uploadSignerCertificate(int, X509Certificate)	 
-	 */		
-	public void uploadSignerCertificate(int signerId, byte[] signerCert, String scope)
-			throws RemoteException, CertificateException {
-            getWorkerSession().uploadSignerCertificate(signerId, signerCert, scope);
-	}
+    public void setStatusProperty(final String key, final String value,
+            final long expiration) throws RemoteException {
+        getStatusRepositorySession().setProperty(key, value,
+                expiration);
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#uploadSignerCertificateChain(int, Collection)
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#uploadSignerCertificateChain(int, Collection)	 
-	 */	
-	public void uploadSignerCertificateChain(int signerId, 
-                Collection<byte[]> signerCerts, String scope)
-                throws RemoteException, CertificateException {
-            getWorkerSession().uploadSignerCertificateChain(signerId, signerCerts, scope);
-	}
-	
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#genFreeWorkerId()
-	 * @see org.signserver.mailsigner.cli.IMailSignerRMI#genFreeWorkerId()
-	 */	
-	public int genFreeWorkerId() throws RemoteException{
-            return getWorkerSession().genFreeWorkerId();
-	}
-	
-	public void resync() throws RemoteException, ResyncException {
-            getGlobalConfigurationSession().resync();
-	}
+    public String getStatusProperty(final String key)
+            throws RemoteException {
+        return getStatusRepositorySession().getProperty(key);
+    }
 
-	/**
-	 * @see org.signserver.ejb.WorkerSessionBean#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
-	 */	
-	public ProcessResponse processRequest(int workerId, ProcessRequest request) throws RemoteException, IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-            return getWorkerSession().process(workerId, request, new RequestContext(true));
-	}
-	
-	/**
-	 * Method only supported by SignServer Builds
-	 * @throws RemoteException 
-	 * 
-	 * @see org.signserver.ejb.WorkerSessionBean#getAuthorizedClients(int)
-	 */
-	public Collection<AuthorizedClient> getAuthorizedClients(int signerId) throws RemoteException{
-            return getWorkerSession().getAuthorizedClients(signerId);
-	}
-	
-	/**
-	 * Method adding an authorized client to a signer
-	 * 
-	 * @param signerId
-	 * @param authClient
-	 * @throws RemoteException 
-	 * 
-	 */
-	public void addAuthorizedClient(int signerId, AuthorizedClient authClient) throws RemoteException{
-            getWorkerSession().addAuthorizedClient(signerId, authClient);
-	}
+    public List<Integer> getWorkers(int workerType) throws RemoteException {
+        return getGlobalConfigurationSession().getWorkers(workerType);
+    }
 
-	/**
-	 * Removes an authorized client from a signer
-	 * 
-	 * @param signerId
-	 * @param authClient
-	 * @throws RemoteException 
-	 * 
-	 */
-	public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient) throws RemoteException{
-            return getWorkerSession().removeAuthorizedClient(signerId, authClient);
-	}
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#setWorkerProperty(int, String, String)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#setWorkerProperty(int, String, String)	 
+     */
+    public void setWorkerProperty(int workerId, String key, String value)
+            throws RemoteException {
+        getWorkerSession().setWorkerProperty(workerId, key, value);
+    }
 
-	public ArchiveDataVO findArchiveDataFromArchiveId(int signerid,
-			String archiveid) throws RemoteException {
-            return getWorkerSession().findArchiveDataFromArchiveId(signerid, archiveid);
-	}
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#uploadSignerCertificate(int, X509Certificate)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#uploadSignerCertificate(int, X509Certificate)	 
+     */
+    public void uploadSignerCertificate(int signerId, byte[] signerCert, String scope)
+            throws RemoteException, CertificateException {
+        getWorkerSession().uploadSignerCertificate(signerId, signerCert, scope);
+    }
 
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#uploadSignerCertificateChain(int, Collection)
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#uploadSignerCertificateChain(int, Collection)	 
+     */
+    public void uploadSignerCertificateChain(int signerId,
+            Collection<byte[]> signerCerts, String scope)
+            throws RemoteException, CertificateException {
+        getWorkerSession().uploadSignerCertificateChain(signerId, signerCerts, scope);
+    }
 
-	public List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(int signerid,
-			BigInteger sn, String issuerdn) throws RemoteException {
-            return getWorkerSession().findArchiveDatasFromRequestCertificate(signerid, sn, issuerdn);
-	}
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#genFreeWorkerId()
+     * @see org.signserver.mailsigner.cli.IMailSignerRMI#genFreeWorkerId()
+     */
+    public int genFreeWorkerId() throws RemoteException {
+        return getWorkerSession().genFreeWorkerId();
+    }
 
-	public List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerid, String requestIP) throws RemoteException {
-            return getWorkerSession().findArchiveDatasFromRequestIP(signerid, requestIP);
-	}
-	
-	public void addResource(String moduleName, String part, int version, String jarName, String resourceName, String implInterfaces, String description, String comment, byte[] resourceData) throws RemoteException {
-            getClusterClassLoaderManagerSession().addResource(moduleName, part, version, jarName, resourceName, implInterfaces, description, comment, resourceData);
-	}
+    public void resync() throws RemoteException, ResyncException {
+        getGlobalConfigurationSession().resync();
+    }
 
-	public void removeModulePart(String moduleName, String part, int version) throws RemoteException {
-            getClusterClassLoaderManagerSession().removeModulePart(moduleName, part, version);
-	}
-	
-	public String[] listAllModules() throws RemoteException {
-            return getClusterClassLoaderManagerSession().listAllModules();
-	}
-	
-	public Integer[] listAllModuleVersions(String moduleName) throws RemoteException {
-            return getClusterClassLoaderManagerSession().listAllModuleVersions(moduleName);
-	}
-	
-	public String[] listAllModuleParts(String moduleName, int version) throws RemoteException {
-            return getClusterClassLoaderManagerSession().listAllModuleParts(moduleName, version);
-	}
-	
-	public String[] getJarNames(String moduleName, String part, int version) throws RemoteException {
-            return getClusterClassLoaderManagerSession().getJarNames(moduleName, part, version);
-	}
+    /**
+     * @see org.signserver.ejb.WorkerSessionBean#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
+     */
+    public ProcessResponse processRequest(int workerId, ProcessRequest request) throws RemoteException, IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        return getWorkerSession().process(workerId, request, new RequestContext(true));
+    }
+
+    /**
+     * Method only supported by SignServer Builds
+     * @throws RemoteException 
+     * 
+     * @see org.signserver.ejb.WorkerSessionBean#getAuthorizedClients(int)
+     */
+    public Collection<AuthorizedClient> getAuthorizedClients(int signerId) throws RemoteException {
+        return getWorkerSession().getAuthorizedClients(signerId);
+    }
+
+    /**
+     * Method adding an authorized client to a signer
+     * 
+     * @param signerId
+     * @param authClient
+     * @throws RemoteException 
+     * 
+     */
+    public void addAuthorizedClient(int signerId, AuthorizedClient authClient) throws RemoteException {
+        getWorkerSession().addAuthorizedClient(signerId, authClient);
+    }
+
+    /**
+     * Removes an authorized client from a signer
+     * 
+     * @param signerId
+     * @param authClient
+     * @throws RemoteException 
+     * 
+     */
+    public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient) throws RemoteException {
+        return getWorkerSession().removeAuthorizedClient(signerId, authClient);
+    }
+
+    public ArchiveDataVO findArchiveDataFromArchiveId(int signerid,
+            String archiveid) throws RemoteException {
+        return getWorkerSession().findArchiveDataFromArchiveId(signerid, archiveid);
+    }
+
+    public List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(int signerid,
+            BigInteger sn, String issuerdn) throws RemoteException {
+        return getWorkerSession().findArchiveDatasFromRequestCertificate(signerid, sn, issuerdn);
+    }
+
+    public List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerid, String requestIP) throws RemoteException {
+        return getWorkerSession().findArchiveDatasFromRequestIP(signerid, requestIP);
+    }
+
+    public void addResource(String moduleName, String part, int version, String jarName, String resourceName, String implInterfaces, String description, String comment, byte[] resourceData) throws RemoteException {
+        getClusterClassLoaderManagerSession().addResource(moduleName, part, version, jarName, resourceName, implInterfaces, description, comment, resourceData);
+    }
+
+    public void removeModulePart(String moduleName, String part, int version) throws RemoteException {
+        getClusterClassLoaderManagerSession().removeModulePart(moduleName, part, version);
+    }
+
+    public String[] listAllModules() throws RemoteException {
+        return getClusterClassLoaderManagerSession().listAllModules();
+    }
+
+    public Integer[] listAllModuleVersions(String moduleName) throws RemoteException {
+        return getClusterClassLoaderManagerSession().listAllModuleVersions(moduleName);
+    }
+
+    public String[] listAllModuleParts(String moduleName, int version) throws RemoteException {
+        return getClusterClassLoaderManagerSession().listAllModuleParts(moduleName, version);
+    }
+
+    public String[] getJarNames(String moduleName, String part, int version) throws RemoteException {
+        return getClusterClassLoaderManagerSession().getJarNames(moduleName, part, version);
+    }
 
     /**
      * Gets GlobalConfigurationSession Remote.
@@ -392,7 +362,7 @@ public class CommonAdminInterface  {
             throws RemoteException {
         if (globalConfig == null) {
             try {
-                globalConfig =  ServiceLocator.getInstance().lookupRemote(
+                globalConfig = ServiceLocator.getInstance().lookupRemote(
                         IGlobalConfigurationSession.IRemote.class);
             } catch (NamingException e) {
                 LOG.error("Error instanciating the GlobalConfigurationSession.", e);
@@ -411,7 +381,7 @@ public class CommonAdminInterface  {
             throws RemoteException {
         if (statusRepository == null) {
             try {
-                statusRepository =  ServiceLocator.getInstance().lookupRemote(
+                statusRepository = ServiceLocator.getInstance().lookupRemote(
                         IStatusRepositorySession.IRemote.class);
             } catch (NamingException e) {
                 LOG.error("Error instanciating the StatusRepositorySession.", e);
@@ -439,14 +409,13 @@ public class CommonAdminInterface  {
         }
         return signsession;
     }
-	
+
     /**
      * Gets SignServerSession Remote.
      * @return SignServerSession
      * @throws RemoteException in case the lookup failed
      */
-    private IClusterClassLoaderManagerSession.IRemote
-            getClusterClassLoaderManagerSession() throws RemoteException {
+    private IClusterClassLoaderManagerSession.IRemote getClusterClassLoaderManagerSession() throws RemoteException {
         if (cclms == null) {
             try {
                 cclms = ServiceLocator.getInstance().lookupRemote(

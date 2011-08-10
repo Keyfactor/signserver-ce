@@ -95,7 +95,6 @@ public class SignerStatusReportTimedServiceTest extends TestCase {
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull("Please set SIGNSERVER_HOME environment variable",
                 signserverhome);
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
         outputFile = new File(signserverhome + File.separator
                 + "~test-outputfile.dat");
         if (outputFile.exists()) {

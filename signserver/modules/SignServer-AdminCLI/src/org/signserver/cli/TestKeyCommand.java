@@ -24,7 +24,7 @@ import org.signserver.common.KeyTestResult;
 /**
  * Command used to test one or more keys associated with a Crypto Token.
  *
- * @author markus
+ * @author Markus Kilås
  * @version $Id$
  */
 public class TestKeyCommand extends BaseCommand {
@@ -42,21 +42,20 @@ public class TestKeyCommand extends BaseCommand {
     private static final Options OPTIONS;
 
     private static String USAGE = "Usage: signserver testkey <worker id | worker name> [alias or \"all\"] [-v]\n"
-        + "Leaving out \"alias\" and \"all\" will use the value in DEFAULTKEY.\n\n"
-        + "Specifying \"all\" tests all keys in the slot .\n"
-        + "Example 1: signserver testkey 71\n"
-        + "Example 2: signserver testkey 71 myKey1\n"
-        + "Example 3: signserver testkey 71 all";
+            + "Leaving out \"alias\" and \"all\" will use the value in DEFAULTKEY.\n\n"
+            + "Specifying \"all\" tests all keys in the slot .\n"
+            + "Example 1: signserver testkey 71\n"
+            + "Example 2: signserver testkey 71 myKey1\n"
+            + "Example 3: signserver testkey 71 all";
 
+    private char[] authCode;
+    private boolean verbose;
+    
     static {
         OPTIONS = new Options();
         OPTIONS.addOption(AUTHCODE, true, "Authentication code");
         OPTIONS.addOption(VERBOSE, false, "Verbose output");
     }
-
-    private char[] authCode;
-
-    private boolean verbose;
 
     /**
      * Creates a new instance of ActivateSignTokenCommand
@@ -83,7 +82,7 @@ public class TestKeyCommand extends BaseCommand {
         if (line.hasOption(AUTHCODE)) {
             authCode = line.getOptionValue(AUTHCODE, null).toCharArray();
         }
-       verbose = line.hasOption(VERBOSE);
+        verbose = line.hasOption(VERBOSE);
     }
 
     /**
@@ -92,7 +91,6 @@ public class TestKeyCommand extends BaseCommand {
     private void validateOptions() {
         // No mandatory options.
     }
-
 
     /**
      * Runs the command
@@ -126,16 +124,14 @@ public class TestKeyCommand extends BaseCommand {
 
             if (alias == null) {
                 LOG.info(
-                    "Will test key with alias defined by DEFAULTKEY property");
+                        "Will test key with alias defined by DEFAULTKEY property");
             } else if ("all".equals(alias)) {
                 LOG.info("Will test all keys");
             } else {
                 LOG.info("Test key with alias " + alias + ".");
             }
 
-            final Collection<KeyTestResult> results
-                    = getCommonAdminInterface(hostname)
-                    .testKey(signerId, alias, authCode);
+            final Collection<KeyTestResult> results = getCommonAdminInterface(hostname).testKey(signerId, alias, authCode);
 
             for (KeyTestResult key : results) {
                 final StringBuilder sb = new StringBuilder();

@@ -55,7 +55,6 @@ public class SignServerCLITest extends TestCase {
 		TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
 	}
 	
 	public void testBasicSetup() throws Exception{

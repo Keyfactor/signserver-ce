@@ -10,12 +10,10 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.cli;
 
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
-
 
 /**
  * Gets the current configurations list of authorized clients
@@ -23,8 +21,7 @@ import org.signserver.common.WorkerConfig;
  * @version $Id$
  */
 public class ListAuthorizedClientsCommand extends BaseCommand {
-	
-	
+
     /**
      * Creates a new instance of ListAuthorizedClientsCommand
      *
@@ -42,41 +39,39 @@ public class ListAuthorizedClientsCommand extends BaseCommand {
      */
     public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException {
         if (args.length != 2) {
-	       throw new IllegalAdminCommandException("Usage: signserver listauthorizedclients <signerid> \n" + 
-	       		                                  "Example: signserver listauthorizedclients 1 \n\n");	       
-	    }	
-        try {            
-        	
-        	int signerid = getWorkerId(args[1], hostname);
-        	checkThatWorkerIsProcessable(signerid,hostname);
-        	
-        	WorkerConfig config = this.getCommonAdminInterface(hostname).getCurrentWorkerConfig(signerid);
-        	
-        	this.getOutputStream().println(
-         			                       "OBSERVE that this command displays the current configuration which\n"+
-        			                       "doesn't have to be the same as the active configuration.\n" +
-        			                       "Configurations are activated with the reload command. \n\n" +
-        			                       "The current list of authorized clients to " + signerid + " are :\n");
-        	
-        	if(new ProcessableConfig(config).getAuthorizedClients().size() == 0){
-        		this.getOutputStream().println("  No authorized clients exists-\n");
-        	}
-        	
-        	printAuthorizedClients(config);
-        	
+            throw new IllegalAdminCommandException("Usage: signserver listauthorizedclients <signerid> \n"
+                    + "Example: signserver listauthorizedclients 1 \n\n");
+        }
+        try {
 
-    		this.getOutputStream().println("\n\n");
-        	
+            int signerid = getWorkerId(args[1], hostname);
+            checkThatWorkerIsProcessable(signerid, hostname);
+
+            WorkerConfig config = this.getCommonAdminInterface(hostname).getCurrentWorkerConfig(signerid);
+
+            this.getOutputStream().println(
+                    "OBSERVE that this command displays the current configuration which\n"
+                    + "doesn't have to be the same as the active configuration.\n"
+                    + "Configurations are activated with the reload command. \n\n"
+                    + "The current list of authorized clients to " + signerid + " are :\n");
+
+            if (new ProcessableConfig(config).getAuthorizedClients().isEmpty()) {
+                this.getOutputStream().println("  No authorized clients exists-\n");
+            }
+
+            printAuthorizedClients(config);
+
+            this.getOutputStream().println("\n\n");
+
         } catch (IllegalAdminCommandException e) {
-        	throw e;  
+            throw e;
         } catch (Exception e) {
-        	throw new ErrorAdminCommandException(e);            
+            throw new ErrorAdminCommandException(e);
         }
     }
-    
-	public int getCommandType() {
-		return TYPE_EXECUTEONMASTER;
-	}
 
+    public int getCommandType() {
+        return TYPE_EXECUTEONMASTER;
+    }
     // execute
 }

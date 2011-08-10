@@ -10,36 +10,37 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
- 
 package org.signserver.cli;
- 
+
 /**
  * Interface for Commands used for admin cmdline GUI
  *
  * @version $Id$
  */
 public interface IAdminCommand {
+
     /**
      * Runs the command
      *
      * @throws IllegalAdminCommandException Error in command args
      * @throws ErrorAdminCommandException Error running command
      */
-    public void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException;
+    void execute(String hostname) throws IllegalAdminCommandException, ErrorAdminCommandException;
     
-	/**
-	 * Type of command that only need to call the master node
-	 * to affect the entire cluster.
-	 */
-	public static int TYPE_EXECUTEONMASTER   = 1;
-	/**
-	 * Type of command that needs one call for every node
-	 * in the cluster
-	 */
-	public static int TYPE_EXECUTEONALLNODES = 2;
-	
-	/**
-	 * Method returning on of the TYPE_ constants.
-	 */
-	public abstract int getCommandType();
+    /**
+     * Type of command that only need to call the master node
+     * to affect the entire cluster.
+     */
+    int TYPE_EXECUTEONMASTER = 1;
+    
+    /**
+     * Type of command that needs one call for every node
+     * in the cluster
+     */
+    int TYPE_EXECUTEONALLNODES = 2;
+
+    /**
+     * Method returning on of the TYPE_ constants.
+     */
+    int getCommandType();
 }

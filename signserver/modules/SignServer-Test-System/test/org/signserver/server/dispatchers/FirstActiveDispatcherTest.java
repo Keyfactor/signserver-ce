@@ -63,7 +63,6 @@ public class FirstActiveDispatcherTest extends TestCase {
                         IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
     }
 
     @Override

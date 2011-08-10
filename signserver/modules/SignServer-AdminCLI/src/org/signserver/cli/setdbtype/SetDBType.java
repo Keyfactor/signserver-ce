@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.cli.setdbtype;
 
 import java.io.ByteArrayInputStream;
@@ -39,115 +38,108 @@ import java.util.zip.ZipOutputStream;
  * entitymappings-xml-path
  * 
  * @author Philip Vendil
- *
+ * @version $Id$
  */
 public class SetDBType {
-	
-	private static final int SIGNSERVEREARPATH = 0;
-	private static final int ENITYXMLPATH      = 1;
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) throws Exception {
-		if(args.length != 2){
-			displayUsageAndExit();			
-		}
-		
-		File signServerEAR = new File(args[SIGNSERVEREARPATH]);
-		if(!signServerEAR.exists() || !signServerEAR.canRead() || !signServerEAR.isFile()){
-			System.out.println("Error reading signserver.ear, make sure the file " + args[SIGNSERVEREARPATH] + " is a file and readable for the user.");
-			System.exit(-1);
-		}
-		
-		File entityMappingXML = new File(args[ENITYXMLPATH]);
-		if(!entityMappingXML.exists() || !entityMappingXML.canRead() || !entityMappingXML.isFile()){
-			System.out.println("Error reading entity-mappings.xml, make sure the file " + args[ENITYXMLPATH] + " is a file and readable for the user.");
-			System.exit(-1);
-		}
-		
-		replaceEntityMappings(signServerEAR,entityMappingXML);
-		
+    private static final int SIGNSERVEREARPATH = 0;
+    private static final int ENITYXMLPATH = 1;
 
-		// close the jar and ear again.
-		
-	}
-	
+    /**
+     * @param args
+     */
+    public static void main(String[] args) throws Exception {
+        if (args.length != 2) {
+            displayUsageAndExit();
+        }
 
-	private static void replaceEntityMappings(File signserverearpath,File entityMappingXML) throws ZipException, IOException {
-		ZipInputStream earFile = new ZipInputStream(new FileInputStream(signserverearpath));
-		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ZipOutputStream tempZip = new ZipOutputStream(baos);	
-		ZipEntry next = earFile.getNextEntry();
-		while(next != null){
-			ByteArrayOutputStream  content = new ByteArrayOutputStream();
-			byte[] data = new byte[30000];		  	
-			int numberread;
-			while(( numberread = earFile.read(data)) != -1){
-				content.write(data,0,numberread);
-			}
-			if(next.getName().equals("signserver-ejb.jar")){
-				content = replaceEntityMappings(content, entityMappingXML);
-				next = new ZipEntry("signserver-ejb.jar");
-			}
+        File signServerEAR = new File(args[SIGNSERVEREARPATH]);
+        if (!signServerEAR.exists() || !signServerEAR.canRead() || !signServerEAR.isFile()) {
+            System.out.println("Error reading signserver.ear, make sure the file " + args[SIGNSERVEREARPATH] + " is a file and readable for the user.");
+            System.exit(-1);
+        }
 
-			tempZip.putNextEntry(next);
-			tempZip.write(content.toByteArray());
-			next = earFile.getNextEntry();
+        File entityMappingXML = new File(args[ENITYXMLPATH]);
+        if (!entityMappingXML.exists() || !entityMappingXML.canRead() || !entityMappingXML.isFile()) {
+            System.out.println("Error reading entity-mappings.xml, make sure the file " + args[ENITYXMLPATH] + " is a file and readable for the user.");
+            System.exit(-1);
+        }
 
-		}
-		earFile.close();
-		tempZip.close();
-		
-		FileOutputStream fos = new FileOutputStream(signserverearpath);
-		fos.write(baos.toByteArray());
-		fos.close();
-	}
+        replaceEntityMappings(signServerEAR, entityMappingXML);
 
+        // close the jar and ear again.
+    }
 
-	private static ByteArrayOutputStream replaceEntityMappings(ByteArrayOutputStream content, File entityMappingXML) throws IOException {
-		JarInputStream jarInputStream = new JarInputStream(new ByteArrayInputStream(content.toByteArray()));
-		ByteArrayOutputStream retval = new ByteArrayOutputStream();
-		JarOutputStream tempJar = new JarOutputStream(retval);
-		
-		HashSet<String> insertedNames = new HashSet<String>();
-		
-		JarEntry jarEntry = jarInputStream.getNextJarEntry();
-		while(jarEntry != null){
-			if(!insertedNames.contains(jarEntry.getName())){
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    private static void replaceEntityMappings(File signserverearpath, File entityMappingXML) throws ZipException, IOException {
+        ZipInputStream earFile = new ZipInputStream(new FileInputStream(signserverearpath));
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream tempZip = new ZipOutputStream(baos);
+        ZipEntry next = earFile.getNextEntry();
+        while (next != null) {
+            ByteArrayOutputStream content = new ByteArrayOutputStream();
+            byte[] data = new byte[30000];
+            int numberread;
+            while ((numberread = earFile.read(data)) != -1) {
+                content.write(data, 0, numberread);
+            }
+            if (next.getName().equals("signserver-ejb.jar")) {
+                content = replaceEntityMappings(content, entityMappingXML);
+                next = new ZipEntry("signserver-ejb.jar");
+            }
+
+            tempZip.putNextEntry(next);
+            tempZip.write(content.toByteArray());
+            next = earFile.getNextEntry();
+
+        }
+        earFile.close();
+        tempZip.close();
+
+        FileOutputStream fos = new FileOutputStream(signserverearpath);
+        fos.write(baos.toByteArray());
+        fos.close();
+    }
+
+    private static ByteArrayOutputStream replaceEntityMappings(ByteArrayOutputStream content, File entityMappingXML) throws IOException {
+        JarInputStream jarInputStream = new JarInputStream(new ByteArrayInputStream(content.toByteArray()));
+        ByteArrayOutputStream retval = new ByteArrayOutputStream();
+        JarOutputStream tempJar = new JarOutputStream(retval);
+
+        HashSet<String> insertedNames = new HashSet<String>();
+
+        JarEntry jarEntry = jarInputStream.getNextJarEntry();
+        while (jarEntry != null) {
+            if (!insertedNames.contains(jarEntry.getName())) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 InputStream is = jarInputStream;
-				if(jarEntry.getName().equals("META-INF/entity-mappings.xml")){					
-					jarEntry = new JarEntry("META-INF/entity-mappings.xml");
-					is = new FileInputStream(entityMappingXML);
-				}
-				byte[] data = new byte[30000];		  	
-				int numberread;
-				while(( numberread = is.read(data)) != -1){
-					baos.write(data,0,numberread);
-				}
+                if (jarEntry.getName().equals("META-INF/entity-mappings.xml")) {
+                    jarEntry = new JarEntry("META-INF/entity-mappings.xml");
+                    is = new FileInputStream(entityMappingXML);
+                }
+                byte[] data = new byte[30000];
+                int numberread;
+                while ((numberread = is.read(data)) != -1) {
+                    baos.write(data, 0, numberread);
+                }
 
-				tempJar.putNextEntry(jarEntry);
-				insertedNames.add(jarEntry.getName());
-				tempJar.write(baos.toByteArray());
-			}
-			jarEntry = jarInputStream.getNextJarEntry();
-		}
-		
-		tempJar.close();
-		
-		return retval;
-	}
+                tempJar.putNextEntry(jarEntry);
+                insertedNames.add(jarEntry.getName());
+                tempJar.write(baos.toByteArray());
+            }
+            jarEntry = jarInputStream.getNextJarEntry();
+        }
 
+        tempJar.close();
 
-	private static void displayUsageAndExit() {
-		System.out.println("Usage : java -jar setdbtype.jar <path-to-signserver.ear> <path-to-entity-mappings.xml>\n\n"+
-				           "\n" +
-				           "This program will replace the current entitymappings.xml with the given one" +
-				           "to support multiple databases in binary releases.");
-		System.exit(-1);
-	}
-	
+        return retval;
+    }
 
+    private static void displayUsageAndExit() {
+        System.out.println("Usage : java -jar setdbtype.jar <path-to-signserver.ear> <path-to-entity-mappings.xml>\n\n"
+                + "\n"
+                + "This program will replace the current entitymappings.xml with the given one"
+                + "to support multiple databases in binary releases.");
+        System.exit(-1);
+    }
 }

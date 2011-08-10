@@ -53,7 +53,6 @@ public class SetStatusPropertyCommand extends BaseCommand {
                 setStatusProperty(hostname, args[1], args[2], Long.valueOf(
                         args[3]));
             }
-
             this.getOutputStream().println("\n\n");
 
         } catch (IllegalAdminCommandException e) {

@@ -97,7 +97,6 @@ public class MainWebServiceTestSeparately extends TestCase {
 		TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
 	}
 	
 	/* (non-Javadoc)

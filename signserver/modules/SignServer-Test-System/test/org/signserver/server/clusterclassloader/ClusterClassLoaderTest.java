@@ -40,7 +40,6 @@ public class ClusterClassLoaderTest extends ModulesTestCase {
 		TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
 		QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
 		SignServerWSService signServerWSService =
                         new SignServerWSService(new URL("https://localhost:"

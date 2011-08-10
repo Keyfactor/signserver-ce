@@ -49,7 +49,6 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
         SignServerUtil.installBCProvider();
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
     }
 
     @Override

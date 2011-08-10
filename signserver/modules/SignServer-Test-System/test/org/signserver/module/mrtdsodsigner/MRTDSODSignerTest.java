@@ -77,7 +77,6 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
     }
 
     /* (non-Javadoc)

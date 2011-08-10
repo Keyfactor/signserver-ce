@@ -34,23 +34,23 @@ public class RenewSignerCommand extends BaseCommand {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(RenewSignerCommand.class);
-
+    
     public static final String RENEWALWORKER = "renewalworker";
-
+    
     /** The command line options. */
     private static final Options OPTIONS;
-
+    
     private static final String USAGE =
-        "Usage: signserver renewsigner <worker name> -renewalworker <worker name>\n"
-        + "Example 1: signserver renewsigner signer71 -renewalworker RenewalWorker1\n";
+            "Usage: signserver renewsigner <worker name> -renewalworker <worker name>\n"
+            + "Example 1: signserver renewsigner signer71 -renewalworker RenewalWorker1\n";
+
+    private String renewalWorker;
     
     static {
         OPTIONS = new Options();
-        OPTIONS.addOption(RENEWALWORKER, true, 
+        OPTIONS.addOption(RENEWALWORKER, true,
                 "The worker which performs the renewal");
     }
-
-    private String renewalWorker;
 
     /**
      * Creates a new instance of GenerateKeyCommand.
@@ -112,20 +112,18 @@ public class RenewSignerCommand extends BaseCommand {
 //                    requestProperties.setProperty(
 //                            RenewalWorkerProperties.REQUEST_RENEWKEY,
 //                            RenewalWorkerProperties.REQUEST_RENEWKEY_TRUE);
-            final GenericPropertiesRequest request
-                    = new GenericPropertiesRequest(requestProperties);
+            final GenericPropertiesRequest request = new GenericPropertiesRequest(requestProperties);
 
             final GenericPropertiesResponse response =
-                            (GenericPropertiesResponse)
-                            getCommonAdminInterface(hostname).processRequest(
-                            getWorkerId(renewalWorker, hostname), request);
+                    (GenericPropertiesResponse) getCommonAdminInterface(hostname).processRequest(
+                    getWorkerId(renewalWorker, hostname), request);
 
             final Properties responseProperties =
                     response.getProperties();
 
             if (RenewalWorkerProperties.RESPONSE_RESULT_OK.equals(
                     responseProperties.getProperty(
-                        RenewalWorkerProperties.RESPONSE_RESULT))) {
+                    RenewalWorkerProperties.RESPONSE_RESULT))) {
                 LOG.info("Renewed successfully");
             } else {
                 LOG.error("Renewal failed: " + responseProperties.getProperty(
@@ -136,8 +134,7 @@ public class RenewSignerCommand extends BaseCommand {
         } catch (IllegalAdminCommandException e) {
             throw e;
         } catch (EJBException eJBException) {
-            if (eJBException.getCausedByException()
-                    instanceof IllegalArgumentException) {
+            if (eJBException.getCausedByException() instanceof IllegalArgumentException) {
                 System.err.println(eJBException.getMessage());
             } else {
                 throw new ErrorAdminCommandException(eJBException);

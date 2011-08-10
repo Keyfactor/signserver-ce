@@ -62,7 +62,6 @@ public class CustomAuthTest extends TestCase {
 		TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
 	}
 	
 	/* (non-Javadoc)

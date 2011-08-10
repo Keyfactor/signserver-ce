@@ -49,7 +49,6 @@ public class CMSSignerTest extends ModulesTestCase {
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
     }
 
     @Override

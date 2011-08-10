@@ -53,7 +53,6 @@ public class ArchiveAPITest extends ModulesTestCase {
         super.setUp();
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
         String signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
         File tmp = new File(signserverhome, "tmp");

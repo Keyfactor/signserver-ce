@@ -36,7 +36,6 @@ public class DummyWSTest extends TestCase {
 		TestUtils.redirectToTempOut();
 		TestUtils.redirectToTempErr();
 		TestingSecurityManager.install();
-        CommonAdminInterface.BUILDMODE = "SIGNSERVER";
 	}
 	
 	public void test00SetupDatabase() throws Exception {

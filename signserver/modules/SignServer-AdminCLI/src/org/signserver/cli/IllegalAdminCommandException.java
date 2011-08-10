@@ -10,10 +10,8 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
-
 package org.signserver.cli;
- 
+
 /**
  * Exception throws when illegal parameters are issued for an Admin Command (IadminCommand)
  *
@@ -21,9 +19,9 @@ package org.signserver.cli;
  */
 public class IllegalAdminCommandException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
+    /**
      * Creates a new instance of IllegalAdminCommandException
      *
      * @param message error message

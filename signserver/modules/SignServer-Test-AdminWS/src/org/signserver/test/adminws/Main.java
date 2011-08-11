@@ -16,7 +16,7 @@ package org.signserver.test.adminws;
  * Informs that this class is not intended to be run standalone.
  *
  * @author Markus Kilås
- * @version $id$
+ * @version $Id$
  */
 public class Main {
 
@@ -29,5 +29,4 @@ public class Main {
     public static void main(String[] args) {
         System.err.println("Execute using JUnit");
     }
-
 }

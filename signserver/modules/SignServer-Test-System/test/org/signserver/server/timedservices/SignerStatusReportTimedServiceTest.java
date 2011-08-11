@@ -24,7 +24,6 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.clusterclassloader.MARFileParser;
@@ -38,7 +37,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * Tests for SignerStatusReportTimedService.
  *
  * @author Markus Kilas
- * @version $Id: TestXMLSigner.java 968 2010-04-21 09:15:36Z netmackan $
+ * @version $Id$
  */
 public class SignerStatusReportTimedServiceTest extends TestCase {
 

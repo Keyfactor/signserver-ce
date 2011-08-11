@@ -18,11 +18,9 @@ import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.util.Collection;
 
-
 import org.apache.log4j.Logger;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
@@ -34,7 +32,7 @@ import org.signserver.testutils.TestingSecurityManager;
 /**
  * Tests for CMSSigner.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class CMSSignerTest extends ModulesTestCase {

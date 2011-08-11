@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.RequestContext;
@@ -47,7 +46,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * @version $Id$
  */
 public class MRTDSODSignerTest extends ModulesTestCase {
-	
+
     /** Worker7897: Default algorithms, default hashing setting */
     private static final int WORKER1 = 7897;
 
@@ -89,9 +88,9 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     }
 
     public void test00SetupDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[] { "setproperties",
-            getSignServerHome().getAbsolutePath()
-            + "/modules/SignServer-Module-MRTDSODSigner/src/conf/junittest-part-config.properties"});
+        TestUtils.assertSuccessfulExecution(new String[]{"setproperties",
+                    getSignServerHome().getAbsolutePath()
+                    + "/modules/SignServer-Module-MRTDSODSigner/src/conf/junittest-part-config.properties"});
 
         // WORKER1 uses a P12 keystore
         workerSession.setWorkerProperty(WORKER1, "KEYSTOREPATH",
@@ -101,7 +100,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER1, "KEYSTOREPASSWORD", "foo123");
 
         // WORKER1B uses a P12 keystore
-        workerSession.setWorkerProperty(WORKER1B, "KEYSTOREPATH", 
+        workerSession.setWorkerProperty(WORKER1B, "KEYSTOREPATH",
                 getSignServerHome().getAbsolutePath()
                 + File.separator + "src" + File.separator + "test"
                 + File.separator + "dss10/dss10_signer1.p12");
@@ -170,7 +169,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         dataGroups3.put(1, digestHelper("Dummy Value 7".getBytes(), "SHA512"));
         dataGroups3.put(2, digestHelper("Dummy Value 8".getBytes(), "SHA512"));
         signHelper(WORKER2, 14, dataGroups3, false, "SHA512", "SHA512withRSA");
-        
+
         // DG1, DG2 with the other worker which uses SHA256 and SHA256withECDSA
         signHelper(WORKER5, 15, dataGroups2, false, "SHA256", "SHA256withECDSA");
     }
@@ -205,7 +204,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
 
     public void test04MinRemainingCertVValidity() throws Exception {
 
-    	// A signing operation that will work
+        // A signing operation that will work
         Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
         dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
         dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
@@ -218,20 +217,20 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.uploadSignerCertificate(WORKER1, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
         workerSession.setWorkerProperty(WORKER1, SignServerConstants.MINREMAININGCERTVALIDITY, "6300");
         workerSession.reloadConfiguration(WORKER1);
-    	// Signing operation should not work now
+        // Signing operation should not work now
         boolean thrown = false;
         try {
-            signHelper(WORKER1, 12, dataGroups1, false, "SHA256", "SHA256withRSA");        	
+            signHelper(WORKER1, 12, dataGroups1, false, "SHA256", "SHA256withRSA");
         } catch (CryptoTokenOfflineException e) {
-        	thrown = true;
+            thrown = true;
         }
         assertTrue(thrown);
     }
 
     public void test04bMinRemainingCertVValidityWithSoftKeystore()
-                throws Exception {
+            throws Exception {
 
-    	// A signing operation that will work
+        // A signing operation that will work
         Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
         dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
         dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
@@ -241,13 +240,13 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER1B,
                 SignServerConstants.MINREMAININGCERTVALIDITY, "6300");
         workerSession.reloadConfiguration(WORKER1B);
-    	// Signing operation should not work now
+        // Signing operation should not work now
         boolean thrown = false;
         try {
             signHelper(WORKER1B, 12, dataGroups1, false, "SHA256",
                     "SHA256withRSA");
         } catch (CryptoTokenOfflineException e) {
-        	thrown = true;
+            thrown = true;
         }
         assertTrue(thrown);
     }
@@ -413,18 +412,18 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     private void signHelper(int workerId, int requestId, Map<Integer, byte[]> dataGroups, boolean signerDoesHashing, String digestAlg, String sigAlg) throws Exception {
 
         // Create expected hashes
-    	Map<Integer, byte[]> expectedHashes;
-    	if(signerDoesHashing) {
+        Map<Integer, byte[]> expectedHashes;
+        if (signerDoesHashing) {
             MessageDigest d = MessageDigest.getInstance(digestAlg, "BC");
             expectedHashes = new HashMap<Integer, byte[]>();
-            for(Map.Entry<Integer, byte[]> entry : dataGroups.entrySet()) {
+            for (Map.Entry<Integer, byte[]> entry : dataGroups.entrySet()) {
                 expectedHashes.put(entry.getKey(), d.digest(entry.getValue()));
                 d.reset();
             }
-    	} else {
+        } else {
             expectedHashes = dataGroups;
-    	}
-    	
+        }
+
         SODSignResponse res = (SODSignResponse) workerSession.process(workerId, new SODSignRequest(requestId, dataGroups), new RequestContext());
         assertNotNull(res);
         assertEquals(requestId, res.getRequestID());
@@ -439,8 +438,8 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         // Check the SOD
         Map<Integer, byte[]> actualDataGroupHashes = sod.getDataGroupHashes();
         assertEquals(expectedHashes.size(), actualDataGroupHashes.size());
-        for(Map.Entry<Integer, byte[]> entry : actualDataGroupHashes.entrySet()) {
-            assertTrue("DG"+entry.getKey(), Arrays.equals(expectedHashes.get(entry.getKey()), entry.getValue()));
+        for (Map.Entry<Integer, byte[]> entry : actualDataGroupHashes.entrySet()) {
+            assertTrue("DG" + entry.getKey(), Arrays.equals(expectedHashes.get(entry.getKey()), entry.getValue()));
         }
         assertEquals(digestAlg, sod.getDigestAlgorithm());
         assertEquals(sigAlg, sod.getDigestEncryptionAlgorithm());
@@ -450,7 +449,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
         return md.digest(data);
     }
-    
+
     /**
      * Test method for 'org.signserver.server.MRTDSigner.getStatus()'
      */
@@ -458,17 +457,16 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         SignerStatus stat = (SignerStatus) workerSession.getStatus(7897);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
     }
-    
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1});
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER2});
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER3});
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER4});
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER5});
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1B});
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1C});
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", ""+WORKER1D});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + WORKER1});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + WORKER2});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + WORKER3});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + WORKER4});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + WORKER5});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + WORKER1B});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + WORKER1C});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + WORKER1D});
         workerSession.reloadConfiguration(WORKER1);
         workerSession.reloadConfiguration(WORKER2);
         workerSession.reloadConfiguration(WORKER3);
@@ -478,5 +476,4 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER1C);
         workerSession.reloadConfiguration(WORKER1D);
     }
-
 }

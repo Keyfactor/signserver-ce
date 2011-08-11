@@ -24,7 +24,6 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.clusterclassloader.MARFileParser;
@@ -38,7 +37,6 @@ import org.signserver.testutils.TestingSecurityManager;
 /**
  * Tests for the validatedocument command of Client CLI.
  *
- * 
  * @author Markus Kilås
  * @version $Id$
  */
@@ -211,5 +209,4 @@ public class DocumentValidatorTest extends TestCase {
         }
         return output;
     }
-
 }

@@ -24,12 +24,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.ejb.EntityManagerImpl;
 
 /**
- * 
- * 
+ * TODO: Document me!
+ *
  * @author Markus Kilås
  * @version $Id$
  */
-
 public class EntityManagerUtil {
 
     /** Logger for this class. */

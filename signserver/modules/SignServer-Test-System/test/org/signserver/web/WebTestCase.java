@@ -31,25 +31,25 @@ import org.signserver.testutils.ModulesTestCase;
  * @version $Id$
  */
 public abstract class WebTestCase extends ModulesTestCase {
-    
+
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SODProcessServletResponseTest.class);
     
     private static final String CRLF = "\r\n";
-    
+
     protected abstract String getServletURL();
-    
+
     /** Tests that the returned HTTP status code is the expected. */
-    protected void assertStatusReturned(Map<String, String> fields, 
+    protected void assertStatusReturned(Map<String, String> fields,
             int expected) {
         assertStatusReturned(fields, expected, false);
     }
-    
+
     /** 
      * Tests that the returned HTTP status code is the expected. 
      * Optionally ignoring to test using multipart/form-data "upload".
      */
-    protected void assertStatusReturned(Map<String, String> fields, 
+    protected void assertStatusReturned(Map<String, String> fields,
             int expected, boolean skipMultipartTest) {
         // GET
         try {
@@ -58,29 +58,29 @@ public abstract class WebTestCase extends ModulesTestCase {
             String message = con.getResponseMessage();
             LOG.info("Returned " + response + " " + message);
             assertEquals("status response: " + message, expected, response);
-            
+
             con.disconnect();
         } catch (IOException ex) {
             LOG.error("IOException", ex);
             fail(ex.getMessage());
         }
-        
+
         // POST (url-encoded)
-        try {            
+        try {
             HttpURLConnection con = WebTestCase.sendPostFormUrlencoded(
                     getServletURL(), fields);
-            
+
             int response = con.getResponseCode();
             String message = con.getResponseMessage();
             LOG.info("Returned " + response + " " + message);
             assertEquals("status response: " + message, expected, response);
-            
+
             con.disconnect();
         } catch (IOException ex) {
             LOG.error("IOException", ex);
             fail(ex.getMessage());
         }
-        
+
         // POST (multipart/form-data)
         if (!skipMultipartTest) {
             try {
@@ -99,8 +99,8 @@ public abstract class WebTestCase extends ModulesTestCase {
             }
         }
     }
-    
-    protected static HttpURLConnection openConnection(String baseURL, String queryString) 
+
+    protected static HttpURLConnection openConnection(String baseURL, String queryString)
             throws MalformedURLException, IOException {
         final StringBuilder buff = new StringBuilder();
         buff.append(baseURL);
@@ -111,32 +111,26 @@ public abstract class WebTestCase extends ModulesTestCase {
         final URL url = new URL(buff.toString());
         return (HttpURLConnection) url.openConnection();
     }
-    
-    protected static HttpURLConnection sendGet(String baseURL, 
-            final Map<String, String> fields) 
+
+    protected static HttpURLConnection sendGet(String baseURL,
+            final Map<String, String> fields)
             throws IOException {
         final StringBuilder buff = new StringBuilder();
         for (Entry<String, String> entry : fields.entrySet()) {
-            buff.append(entry.getKey())
-                .append("=")
-                .append(URLEncoder.encode(entry.getValue(), "UTF-8"))
-                .append("&");
-        }   
+            buff.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), "UTF-8")).append("&");
+        }
         final String body = buff.toString();
         return openConnection(baseURL, body);
     }
-    
-    protected static HttpURLConnection sendPostFormUrlencoded(final String baseURL, 
+
+    protected static HttpURLConnection sendPostFormUrlencoded(final String baseURL,
             final Map<String, String> fields) throws MalformedURLException, IOException {
         final StringBuilder buff = new StringBuilder();
         for (Entry<String, String> entry : fields.entrySet()) {
-            buff.append(entry.getKey())
-                .append("=")
-                .append(URLEncoder.encode(entry.getValue(), "UTF-8"))
-                .append("&");
-        }   
+            buff.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), "UTF-8")).append("&");
+        }
         final String body = buff.toString();
-            
+
         HttpURLConnection con = openConnection(baseURL, null);
         con.setRequestMethod("POST");
         con.setAllowUserInteraction(false);
@@ -147,20 +141,20 @@ public abstract class WebTestCase extends ModulesTestCase {
         out.close();
         return con;
     }
-    
-    protected static HttpURLConnection sendPostMultipartFormData(final String baseURL, 
+
+    protected static HttpURLConnection sendPostMultipartFormData(final String baseURL,
             final Map<String, String> fields) throws MalformedURLException, IOException {
-        
-        final String boundary = 
+
+        final String boundary =
                 "---------------------------1004178514282965110854332084";
-        
+
         HttpURLConnection con = openConnection(baseURL, null);
         con.setRequestMethod("POST");
         con.setAllowUserInteraction(false);
         con.setDoOutput(true);
-        con.setRequestProperty("Content-Type", 
+        con.setRequestProperty("Content-Type",
                 "multipart/form-data; boundary=" + boundary);
-        
+
         PrintWriter out = new PrintWriter(con.getOutputStream());
         for (Entry<String, String> field : fields.entrySet()) {
             out.print("--");
@@ -187,5 +181,4 @@ public abstract class WebTestCase extends ModulesTestCase {
         out.close();
         return con;
     }
-    
 }

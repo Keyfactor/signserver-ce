@@ -14,7 +14,6 @@ package org.signserver.server;
 
 import java.security.cert.Certificate;
 import org.apache.log4j.Logger;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -27,22 +26,21 @@ import org.signserver.testutils.TestUtils;
  * Tests limits for the key usages.
  *
  * @author Markus Kilas
- * @version $Id: TestFirstActiveDispatcher.java 950 2010-04-17 19:36:04Z netmackan $
+ * @version $Id$
  */
 public class LimitKeyUsagesTest extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
             LimitKeyUsagesTest.class);
-
+    
     /** WORKERID used in this test case. */
     private static final int WORKERID_1 = 5802;
-
+    
     /**
      * Test with this number of signings.
      */
     private static final int LIMIT = 10;
-
 
     @Override
     protected void setUp() throws Exception {
@@ -90,7 +88,8 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
             doSign();
             fail("Should have failed now");
 
-        } catch (CryptoTokenOfflineException ok) {}
+        } catch (CryptoTokenOfflineException ok) {
+        }
     }
 
     public void test02NoIncreaseWhenOffline() throws Exception {
@@ -125,7 +124,7 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
         GenericSignResponse res;
         // Send request to dispatcher
         res = (GenericSignResponse) workerSession.process(WORKERID_1,
-            request, context);
+                request, context);
         Certificate cert = res.getSignerCertificate();
         assertNotNull(cert);
     }
@@ -139,7 +138,7 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
                     "<root/>".getBytes());
             // Send request to dispatcher
             workerSession.process(WORKERID_1,
-                request, context);
+                    request, context);
         } catch (CryptoTokenOfflineException ok) {
             // OK
         } catch (Exception ex) {

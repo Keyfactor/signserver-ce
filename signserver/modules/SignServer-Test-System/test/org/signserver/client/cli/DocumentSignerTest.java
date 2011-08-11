@@ -21,7 +21,6 @@ import java.io.PrintStream;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -32,7 +31,6 @@ import org.signserver.testutils.TestingSecurityManager;
 /**
  * Tests for the signdocument command of Client CLI.
  *
- * 
  * @author Markus Kilås
  * @version $Id$
  */
@@ -180,5 +178,4 @@ public class DocumentSignerTest extends TestCase {
         }
         return output;
     }
-
 }

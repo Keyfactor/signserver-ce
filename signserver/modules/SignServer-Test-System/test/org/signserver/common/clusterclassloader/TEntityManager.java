@@ -1,3 +1,15 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.common.clusterclassloader;
 
 import javax.persistence.EntityManager;
@@ -10,197 +22,154 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.xa.XAResource;
 
+/**
+ * TODO: Document me!
+ * 
+ * @version $Id$
+ */
 public class TEntityManager implements EntityManager {
-	
-	public boolean beginCalled = false;
-	public boolean commitCalled = false;
-	public boolean rollbackCalled = false;
-	
-	public boolean isActive = false;
 
-	public void clear() {
-	}
+    public boolean beginCalled = false;
+    public boolean commitCalled = false;
+    public boolean rollbackCalled = false;
+    public boolean isActive = false;
 
-	
-	public void close() {
-	}
+    public void clear() {
+    }
 
-	
-	public boolean contains(Object arg0) {		
-		return false;
-	}
+    public void close() {
+    }
 
-	
-	public Query createNamedQuery(String arg0) {		
-		return null;
-	}
+    public boolean contains(Object arg0) {
+        return false;
+    }
 
-	
-	public Query createNativeQuery(String arg0) {		
-		return null;
-	}
+    public Query createNamedQuery(String arg0) {
+        return null;
+    }
 
-	
-	@SuppressWarnings("unchecked")
-	public Query createNativeQuery(String arg0, Class arg1) {		
-		return null;
-	}
+    public Query createNativeQuery(String arg0) {
+        return null;
+    }
 
-	
-	public Query createNativeQuery(String arg0, String arg1) {		
-		return null;
-	}
+    @SuppressWarnings("unchecked")
+    public Query createNativeQuery(String arg0, Class arg1) {
+        return null;
+    }
 
-	
-	public Query createQuery(String arg0) {		
-		return null;
-	}
+    public Query createNativeQuery(String arg0, String arg1) {
+        return null;
+    }
 
-	
-	public <T> T find(Class<T> arg0, Object arg1) {		
-		return null;
-	}
+    public Query createQuery(String arg0) {
+        return null;
+    }
 
-	
-	public void flush() {	
+    public <T> T find(Class<T> arg0, Object arg1) {
+        return null;
+    }
 
-	}
+    public void flush() {
+    }
 
-	
-	public Object getDelegate() {
-		
-		return null;
-	}
+    public Object getDelegate() {
 
-	
-	public FlushModeType getFlushMode() {
-		
-		return null;
-	}
+        return null;
+    }
 
-	
-	public <T> T getReference(Class<T> arg0, Object arg1) {
-		
-		return null;
-	}
+    public FlushModeType getFlushMode() {
 
-	
-	public EntityTransaction getTransaction() {
-		
-		return new TTransaction();
-	}
+        return null;
+    }
 
-	
-	public boolean isOpen() {
-		
-		return false;
-	}
+    public <T> T getReference(Class<T> arg0, Object arg1) {
 
-	
-	public void joinTransaction() {
-	}
+        return null;
+    }
 
-	
-	public void lock(Object arg0, LockModeType arg1) {		
-	}
+    public EntityTransaction getTransaction() {
 
-	
-	public <T> T merge(T arg0) {
-		
-		return null;
-	}
+        return new TTransaction();
+    }
 
-	
-	public void persist(Object arg0) {
-		
+    public boolean isOpen() {
 
-	}
+        return false;
+    }
 
-	
-	public void refresh(Object arg0) {
-		
+    public void joinTransaction() {
+    }
 
-	}
+    public void lock(Object arg0, LockModeType arg1) {
+    }
 
-	
-	public void remove(Object arg0) {
-		
+    public <T> T merge(T arg0) {
 
-	}
+        return null;
+    }
 
-	
-	public void setFlushMode(FlushModeType arg0) {
-		
+    public void persist(Object arg0) {
+    }
 
-	}
+    public void refresh(Object arg0) {
+    }
 
-	
-	public class TTransaction implements EntityTransaction{
+    public void remove(Object arg0) {
+    }
 
-		
-		public void commit() {
-			commitCalled = true;
-			
-		}
+    public void setFlushMode(FlushModeType arg0) {
+    }
 
-		
-		public boolean delistResource(XAResource arg0, int arg1)
-				throws IllegalStateException, SystemException {
-			
-			return false;
-		}
+    public class TTransaction implements EntityTransaction {
 
-		
-		public boolean enlistResource(XAResource arg0)
-				throws RollbackException, IllegalStateException,
-				SystemException {
-			
-			return false;
-		}
+        public void commit() {
+            commitCalled = true;
 
-		
-		public int getStatus() throws SystemException {
-			
-			return 0;
-		}
+        }
 
-		
-		public void registerSynchronization(Synchronization arg0)
-				throws RollbackException, IllegalStateException,
-				SystemException {
-			
-			
-		}
+        public boolean delistResource(XAResource arg0, int arg1)
+                throws IllegalStateException, SystemException {
 
-		
-		public void rollback() {
-			rollbackCalled = true;			
-		}
+            return false;
+        }
 
-		
-		public void setRollbackOnly(){			
-			
-		}
+        public boolean enlistResource(XAResource arg0)
+                throws RollbackException, IllegalStateException,
+                SystemException {
 
-		public void begin(){
-			beginCalled = true;
-		}
+            return false;
+        }
 
+        public int getStatus() throws SystemException {
 
-		public void setTransactionTimeout(int arg0) throws SystemException {			
-			
-		}
+            return 0;
+        }
 
-		
-		public boolean getRollbackOnly() {
-			return false;
-		}
+        public void registerSynchronization(Synchronization arg0)
+                throws RollbackException, IllegalStateException,
+                SystemException {
+        }
 
-		
-		public boolean isActive() {
-			return isActive;
-		}
-		
-	}
+        public void rollback() {
+            rollbackCalled = true;
+        }
+
+        public void setRollbackOnly() {
+        }
+
+        public void begin() {
+            beginCalled = true;
+        }
+
+        public void setTransactionTimeout(int arg0) throws SystemException {
+        }
+
+        public boolean getRollbackOnly() {
+            return false;
+        }
+
+        public boolean isActive() {
+            return isActive;
+        }
+    }
 }
-

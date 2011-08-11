@@ -1,3 +1,15 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.module.wsra.ws;
 
 import java.io.BufferedReader;
@@ -15,216 +27,218 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-public class WSRATestHTTPRequest implements HttpServletRequest{
+/**
+ * TODO: Document me!
+ * 
+ * @version $Id$
+ */
+public class WSRATestHTTPRequest implements HttpServletRequest {
 
-		HashMap<String,Object> map = new HashMap<String,Object>();
-		
-		public String getAuthType() {
-			return null;
-		}
-		
-		public String getContextPath() {
-			return null;
-		}
-		public Cookie[] getCookies() {		
-			return null;
-		}
+    HashMap<String, Object> map = new HashMap<String, Object>();
 
-		public long getDateHeader(String arg0) {
-			return 0;
-		}
+    public String getAuthType() {
+        return null;
+    }
 
-		public String getHeader(String arg0) {
-			return null;
-		}
+    public String getContextPath() {
+        return null;
+    }
 
-		@SuppressWarnings("unchecked")
-		public Enumeration getHeaderNames() {
-			return null;
-		}
+    public Cookie[] getCookies() {
+        return null;
+    }
 
-		@SuppressWarnings("unchecked")
-		public Enumeration getHeaders(String arg0) {
-			return null;
-		}
+    public long getDateHeader(String arg0) {
+        return 0;
+    }
 
-		public int getIntHeader(String arg0) {
-			return 0;
-		}
+    public String getHeader(String arg0) {
+        return null;
+    }
 
-		public String getMethod() {
-			return null;
-		}
+    @SuppressWarnings("unchecked")
+    public Enumeration getHeaderNames() {
+        return null;
+    }
 
-		public String getPathInfo() {
-			return null;
-		}
+    @SuppressWarnings("unchecked")
+    public Enumeration getHeaders(String arg0) {
+        return null;
+    }
 
-		public String getPathTranslated() {
-			return null;
-		}
+    public int getIntHeader(String arg0) {
+        return 0;
+    }
 
-		public String getQueryString() {
-			return null;
-		}
+    public String getMethod() {
+        return null;
+    }
 
-		public String getRemoteUser() {
-			return null;
-		}
+    public String getPathInfo() {
+        return null;
+    }
 
-		public String getRequestURI() {
-			return null;
-		}
+    public String getPathTranslated() {
+        return null;
+    }
 
-		public StringBuffer getRequestURL() {
-			return null;
-		}
+    public String getQueryString() {
+        return null;
+    }
 
-		public String getRequestedSessionId() {
-			return null;
-		}
+    public String getRemoteUser() {
+        return null;
+    }
 
-		public String getServletPath() {
-			return null;
-		}
+    public String getRequestURI() {
+        return null;
+    }
 
-		public HttpSession getSession() {
-			return null;
-		}
+    public StringBuffer getRequestURL() {
+        return null;
+    }
 
-		public HttpSession getSession(boolean arg0) {
-			return null;
-		}
+    public String getRequestedSessionId() {
+        return null;
+    }
 
-		public Principal getUserPrincipal() {
-			return null;
-		}
+    public String getServletPath() {
+        return null;
+    }
 
-		public boolean isRequestedSessionIdFromCookie() {
-			return false;
-		}
+    public HttpSession getSession() {
+        return null;
+    }
 
-		public boolean isRequestedSessionIdFromURL() {
-			return false;
-		}
+    public HttpSession getSession(boolean arg0) {
+        return null;
+    }
 
-		public boolean isRequestedSessionIdFromUrl() {			
-			return false;
-		}
+    public Principal getUserPrincipal() {
+        return null;
+    }
 
-		public boolean isRequestedSessionIdValid() {
-			return false;
-		}
+    public boolean isRequestedSessionIdFromCookie() {
+        return false;
+    }
 
+    public boolean isRequestedSessionIdFromURL() {
+        return false;
+    }
 
-		public boolean isUserInRole(String arg0) {
-			return false;
-		}
-		
-		public Object getAttribute(String arg0) {
-			return map.get(arg0);
-		}
+    public boolean isRequestedSessionIdFromUrl() {
+        return false;
+    }
 
-		@SuppressWarnings("unchecked")
-		public Enumeration getAttributeNames() {
-			return null;
-		}
+    public boolean isRequestedSessionIdValid() {
+        return false;
+    }
 
-		public String getCharacterEncoding() {
-			return null;
-		}
+    public boolean isUserInRole(String arg0) {
+        return false;
+    }
 
-		public int getContentLength() {
-			return 0;
-		}
-		
-		public String getContentType() {
-			return null;
-		}
+    public Object getAttribute(String arg0) {
+        return map.get(arg0);
+    }
 
-		public ServletInputStream getInputStream() throws IOException {
-			return null;
-		}
+    @SuppressWarnings("unchecked")
+    public Enumeration getAttributeNames() {
+        return null;
+    }
 
-		public Locale getLocale() {
-			return null;
-		}
+    public String getCharacterEncoding() {
+        return null;
+    }
 
-		@SuppressWarnings("unchecked")
-		public Enumeration getLocales() {			
-			return null;
-		}
+    public int getContentLength() {
+        return 0;
+    }
 
-		public String getParameter(String arg0) {
-			return (String) map.get(arg0);
-		}
+    public String getContentType() {
+        return null;
+    }
 
-		@SuppressWarnings("unchecked")
-		public Map getParameterMap() {			
-			return map;
-		}
+    public ServletInputStream getInputStream() throws IOException {
+        return null;
+    }
 
-		@SuppressWarnings("unchecked")
-		public Enumeration getParameterNames() {
-			return null;
-		}
+    public Locale getLocale() {
+        return null;
+    }
 
-		public String[] getParameterValues(String arg0) {		
-			return null;
-		}
+    @SuppressWarnings("unchecked")
+    public Enumeration getLocales() {
+        return null;
+    }
 
-		public String getProtocol() {
-			return null;
-		}
+    public String getParameter(String arg0) {
+        return (String) map.get(arg0);
+    }
 
-		public BufferedReader getReader() throws IOException {
-			return null;
-		}
+    @SuppressWarnings("unchecked")
+    public Map getParameterMap() {
+        return map;
+    }
 
-		
-		public String getRealPath(String arg0) {
-			return null;
-		}
+    @SuppressWarnings("unchecked")
+    public Enumeration getParameterNames() {
+        return null;
+    }
 
-		public String getRemoteAddr() {
-			return null;
-		}
+    public String[] getParameterValues(String arg0) {
+        return null;
+    }
 
-		public String getRemoteHost() {
-			return null;
-		}
+    public String getProtocol() {
+        return null;
+    }
 
-		public RequestDispatcher getRequestDispatcher(String arg0) {
-			return null;
-		}
-		
-		public String getScheme() {
-			return null;
-		}
+    public BufferedReader getReader() throws IOException {
+        return null;
+    }
 
-		public String getServerName() {
-			return null;
-		}
+    public String getRealPath(String arg0) {
+        return null;
+    }
 
-		public int getServerPort() {
-			return 0;
-		}
-	
-		public boolean isSecure() {
-			return false;
-		}
+    public String getRemoteAddr() {
+        return null;
+    }
 
-		public void removeAttribute(String arg0) {
-		}
+    public String getRemoteHost() {
+        return null;
+    }
 
-		public void setAttribute(String arg0, Object arg1) {
-            map.put(arg0, arg1);
-			
-		}
+    public RequestDispatcher getRequestDispatcher(String arg0) {
+        return null;
+    }
 
-		public void setCharacterEncoding(String arg0)
-				throws UnsupportedEncodingException {
-			
-		}
-		
-	}
+    public String getScheme() {
+        return null;
+    }
+
+    public String getServerName() {
+        return null;
+    }
+
+    public int getServerPort() {
+        return 0;
+    }
+
+    public boolean isSecure() {
+        return false;
+    }
+
+    public void removeAttribute(String arg0) {
+    }
+
+    public void setAttribute(String arg0, Object arg1) {
+        map.put(arg0, arg1);
+
+    }
+
+    public void setCharacterEncoding(String arg0)
+            throws UnsupportedEncodingException {
+    }
+}

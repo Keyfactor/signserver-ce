@@ -25,7 +25,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
@@ -54,11 +53,12 @@ public class XMLSignerTest extends TestCase {
     /** WORKERID used in this test case as defined in junittest-part-config.properties */
     private static final int WORKERID2 = 5679;
 
+    private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
+    
     private static IWorkerSession.IRemote workerSession;
     private static String signserverhome;
     private static int moduleVersion;
-	
-	
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -212,8 +212,6 @@ public class XMLSignerTest extends TestCase {
             fail("Not well formed XML: " + e.getMessage());
         }
     }
-
-    private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
     /**
      * Returns true if the signed XML document uses the specified algorithm.

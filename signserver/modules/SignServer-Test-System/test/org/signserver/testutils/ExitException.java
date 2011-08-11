@@ -10,22 +10,24 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.testutils;
 
+/**
+ * TODO: Document me!
+ * 
+ * @version $Id$
+ */
 public class ExitException extends SecurityException {
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = -4443566376708240848L;
+
     public final int number;
+
     /**
      * @param message
      */
     ExitException(int nr) {
-        super("System exit with status "+nr);
-        number =nr;
+        super("System exit with status " + nr);
+        number = nr;
     }
-    
-
 }

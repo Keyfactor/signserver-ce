@@ -14,29 +14,23 @@ package org.signserver.module.tsa;
 
 import java.math.BigInteger;
 import java.security.cert.Certificate;
-import java.util.Hashtable;
 import java.util.Random;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import junit.framework.TestCase;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
-
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.ejbca.util.Base64;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -94,6 +88,7 @@ public class TimeStampSignerTest extends TestCase {
     private Random random = new Random(4711);
 
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();

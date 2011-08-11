@@ -13,7 +13,6 @@
 package org.signserver.server;
 
 import org.apache.log4j.Logger;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -26,8 +25,7 @@ import org.signserver.testutils.TestingSecurityManager;
 /**
  * Tests for the UsernamePasswordAuthorizer.
  *
- *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class UsernamePasswordAuthorizerTest extends ModulesTestCase {

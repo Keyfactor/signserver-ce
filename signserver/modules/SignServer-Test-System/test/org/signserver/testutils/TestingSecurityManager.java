@@ -10,55 +10,60 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.testutils;
 
 import java.security.Permission;
 
 import junit.framework.Assert;
 
-
+/**
+ * TODO: Document me!
+ * 
+ * @version $Id$
+ */
 public class TestingSecurityManager extends SecurityManager {
-	public static void install() {
-		final SecurityManager existing = System.getSecurityManager();
-		if (existing instanceof TestingSecurityManager) {
-			return;
-		} else if (existing == null) {
-		    new TestingSecurityManager();
-		} else {
-			ClassLoader loader = existing.getClass().getClassLoader();
-			Assert.fail(
-					"SecurityManager already set "+
-					"<"+existing+">, "+
-					"class: "+existing.getClass()+", "+
-					(loader==null? "bootstap class loader" : (
-							"class loader: <"+loader+"> "+
-							"class loader class: "+loader.getClass()
-					))
-			);
-		}
-	}
+
+    public static void install() {
+        final SecurityManager existing = System.getSecurityManager();
+        if (existing instanceof TestingSecurityManager) {
+            return;
+        } else if (existing == null) {
+            new TestingSecurityManager();
+        } else {
+            ClassLoader loader = existing.getClass().getClassLoader();
+            Assert.fail(
+                    "SecurityManager already set "
+                    + "<" + existing + ">, "
+                    + "class: " + existing.getClass() + ", "
+                    + (loader == null ? "bootstap class loader" : ("class loader: <" + loader + "> "
+                    + "class loader class: " + loader.getClass())));
+        }
+    }
+
     public static void remove() {
         final SecurityManager existing = System.getSecurityManager();
         if (existing instanceof TestingSecurityManager) {
             System.setSecurityManager(null);
         }
     }
+
     private TestingSecurityManager() {
         System.setSecurityManager(this);
     }
-	@Override
+
+    @Override
     public void checkExit(int status) throws ExitException {
         throw new ExitException(status);
-	}
+    }
+
     @Override
     public void checkPermission(Permission perm) {
         // do nothing
     }
+
     @Override
     public void checkPermission(Permission perm,
-                                Object context) {
+            Object context) {
         //do nothing
     }
 }
-

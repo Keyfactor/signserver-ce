@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server.cryptotokens;
 
 import java.security.KeyPair;
@@ -24,7 +23,6 @@ import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
@@ -39,133 +37,133 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
-
+/**
+ * TODO: Document me!
+ * 
+ * @version $Id$
+ */
 public class SoftCryptoTokenTest extends ModulesTestCase {
-	
-	protected void setUp() throws Exception {
-		super.setUp();
-		SignServerUtil.installBCProvider();
-		TestUtils.redirectToTempOut();
-		TestUtils.redirectToTempErr();
-		TestingSecurityManager.install();
-	}
-	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		TestingSecurityManager.remove();
-	}
-	
-	public void test00SetupDatabase() throws Exception{
-		  globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.CLASSPATH", "org.signserver.module.mrtdsigner.MRTDSigner");
-		  globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
-		  
-		  workerSession.setWorkerProperty(88, "AUTHTYPE", "NOAUTH");
-		  String signserverhome = System.getenv("SIGNSERVER_HOME");
-		  assertNotNull(signserverhome);
-		  workerSession.setWorkerProperty(88,"KEYALG","RSA");
-		  workerSession.setWorkerProperty(88, "KEYSPEC", "2048");
-		  
-		  workerSession.reloadConfiguration(88);
-	}
 
-	public void test01BasicTests() throws Exception{
-		SignerStatus stat = (SignerStatus) workerSession.getStatus(88);
-		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_OFFLINE);
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        SignServerUtil.installBCProvider();
+        TestUtils.redirectToTempOut();
+        TestUtils.redirectToTempErr();
+        TestingSecurityManager.install();
+    }
 
-		PKCS10CertReqInfo crInfo = new PKCS10CertReqInfo("SHA1WithRSA","CN=TEST1",null);
-		ICertReqData reqData = workerSession.getCertificateRequest(88, crInfo, false);
-		assertNotNull(reqData);
-		assertTrue(reqData instanceof Base64SignerCertReqData);
-		PKCS10CertificationRequest pkcs10 = new PKCS10CertificationRequest(Base64.decode(((Base64SignerCertReqData) reqData).getBase64CertReq()));
-		assertTrue(pkcs10.getPublicKey() != null);
+    /* (non-Javadoc)
+     * @see junit.framework.TestCase#tearDown()
+     */
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        TestingSecurityManager.remove();
+    }
 
-		KeyPair dummyCAKeys = KeyTools.genKeys("2048","RSA");
-		X509Certificate cert = CertTools.genSelfCert(pkcs10.getCertificationRequestInfo().getSubject().toString(), 10, null, dummyCAKeys.getPrivate(), pkcs10.getPublicKey(), "SHA1WithRSA", false);
-		workerSession.uploadSignerCertificate(88, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-		workerSession.reloadConfiguration(88);
+    public void test00SetupDatabase() throws Exception {
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.CLASSPATH", "org.signserver.module.mrtdsigner.MRTDSigner");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
 
-		stat = (SignerStatus) workerSession.getStatus(88);
-		assertTrue(stat.getActiveSignerConfig().getProperty("KEYDATA")!= null);
-		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
+        workerSession.setWorkerProperty(88, "AUTHTYPE", "NOAUTH");
+        String signserverhome = System.getenv("SIGNSERVER_HOME");
+        assertNotNull(signserverhome);
+        workerSession.setWorkerProperty(88, "KEYALG", "RSA");
+        workerSession.setWorkerProperty(88, "KEYSPEC", "2048");
 
-		int reqid = 12;
-		ArrayList<byte[]> signrequests = new ArrayList<byte[]>();
+        workerSession.reloadConfiguration(88);
+    }
 
-		byte[] signreq1 = "Hello World".getBytes();
-		byte[] signreq2 = "Hello World2".getBytes();
-		signrequests.add(signreq1);
-		signrequests.add(signreq2);
+    public void test01BasicTests() throws Exception {
+        SignerStatus stat = (SignerStatus) workerSession.getStatus(88);
+        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_OFFLINE);
 
-		MRTDSignResponse res =  (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid,signrequests), new RequestContext());
-		assertTrue(res!=null);
-		assertTrue(reqid == res.getRequestID());	      
-		Certificate signercert = res.getSignerCertificate();	      
-		assertNotNull(signercert);
+        PKCS10CertReqInfo crInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=TEST1", null);
+        ICertReqData reqData = workerSession.getCertificateRequest(88, crInfo, false);
+        assertNotNull(reqData);
+        assertTrue(reqData instanceof Base64SignerCertReqData);
+        PKCS10CertificationRequest pkcs10 = new PKCS10CertificationRequest(Base64.decode(((Base64SignerCertReqData) reqData).getBase64CertReq()));
+        assertTrue(pkcs10.getPublicKey() != null);
 
-		Cipher c = Cipher.getInstance("RSA", "BC");
-		c.init(Cipher.DECRYPT_MODE, signercert);
+        KeyPair dummyCAKeys = KeyTools.genKeys("2048", "RSA");
+        X509Certificate cert = CertTools.genSelfCert(pkcs10.getCertificationRequestInfo().getSubject().toString(), 10, null, dummyCAKeys.getPrivate(), pkcs10.getPublicKey(), "SHA1WithRSA", false);
+        workerSession.uploadSignerCertificate(88, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.reloadConfiguration(88);
 
-		byte[] signres1 = c.doFinal((byte[]) ((ArrayList<?>) res.getProcessedData()).get(0));
+        stat = (SignerStatus) workerSession.getStatus(88);
+        assertTrue(stat.getActiveSignerConfig().getProperty("KEYDATA") != null);
+        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
 
-		if (!arrayEquals(signreq1, signres1))
-		{
-			assertTrue("First MRTD doesn't match with request",false);
-		}
+        int reqid = 12;
+        ArrayList<byte[]> signrequests = new ArrayList<byte[]>();
 
-		byte[] signres2 = c.doFinal((byte[]) ((ArrayList<?>) res.getProcessedData()).get(1));
+        byte[] signreq1 = "Hello World".getBytes();
+        byte[] signreq2 = "Hello World2".getBytes();
+        signrequests.add(signreq1);
+        signrequests.add(signreq2);
 
-		if (!arrayEquals(signreq2, signres2))
-		{
-			assertTrue("Second MRTD doesn't match with request",false);
-		}	 
+        MRTDSignResponse res = (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid, signrequests), new RequestContext());
+        assertTrue(res != null);
+        assertTrue(reqid == res.getRequestID());
+        Certificate signercert = res.getSignerCertificate();
+        assertNotNull(signercert);
 
-		assertTrue(signercert.getPublicKey().equals(pkcs10.getPublicKey()));
+        Cipher c = Cipher.getInstance("RSA", "BC");
+        c.init(Cipher.DECRYPT_MODE, signercert);
 
-		reqData = workerSession.getCertificateRequest(88, crInfo, false);
-		assertNotNull(reqData);
-		assertTrue(reqData instanceof Base64SignerCertReqData);
-		PKCS10CertificationRequest pkcs10_2 = new PKCS10CertificationRequest(Base64.decode(((Base64SignerCertReqData) reqData).getBase64CertReq()));
-		assertTrue(pkcs10_2.getPublicKey() != null);
-		assertFalse(pkcs10_2.getPublicKey().equals(pkcs10.getPublicKey()));
-		
-		workerSession.deactivateSigner(88);
-		stat = (SignerStatus) workerSession.getStatus(88);
-		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_OFFLINE);
-		try{
-		  res =  (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid,signrequests), new RequestContext());
-		  assertTrue(false);
-		}catch(CryptoTokenOfflineException e){}
-		
-		workerSession.activateSigner(88,"anypwd");
-		stat = (SignerStatus) workerSession.getStatus(88);
-		assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
-		res =  (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid,signrequests), new RequestContext());
-		
-		
-		
-	}
+        byte[] signres1 = c.doFinal((byte[]) ((ArrayList<?>) res.getProcessedData()).get(0));
 
-	public void test99TearDownDatabase() throws Exception{
-            removeWorker(88);
-	}
+        if (!arrayEquals(signreq1, signres1)) {
+            assertTrue("First MRTD doesn't match with request", false);
+        }
 
-	private boolean arrayEquals(byte[] signreq2, byte[] signres2) {
-		boolean retval = true;
+        byte[] signres2 = c.doFinal((byte[]) ((ArrayList<?>) res.getProcessedData()).get(1));
 
-		if(signreq2.length != signres2.length){
-			return false;
-		}
+        if (!arrayEquals(signreq2, signres2)) {
+            assertTrue("Second MRTD doesn't match with request", false);
+        }
 
-		for(int i=0;i<signreq2.length;i++){
-			if(signreq2[i] != signres2[i]){
-				return false;
-			}
-		}
-		return retval;
-	}
+        assertTrue(signercert.getPublicKey().equals(pkcs10.getPublicKey()));
 
+        reqData = workerSession.getCertificateRequest(88, crInfo, false);
+        assertNotNull(reqData);
+        assertTrue(reqData instanceof Base64SignerCertReqData);
+        PKCS10CertificationRequest pkcs10_2 = new PKCS10CertificationRequest(Base64.decode(((Base64SignerCertReqData) reqData).getBase64CertReq()));
+        assertTrue(pkcs10_2.getPublicKey() != null);
+        assertFalse(pkcs10_2.getPublicKey().equals(pkcs10.getPublicKey()));
+
+        workerSession.deactivateSigner(88);
+        stat = (SignerStatus) workerSession.getStatus(88);
+        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_OFFLINE);
+        try {
+            res = (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid, signrequests), new RequestContext());
+            assertTrue(false);
+        } catch (CryptoTokenOfflineException e) {
+        }
+
+        workerSession.activateSigner(88, "anypwd");
+        stat = (SignerStatus) workerSession.getStatus(88);
+        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
+        res = (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid, signrequests), new RequestContext());
+    }
+
+    public void test99TearDownDatabase() throws Exception {
+        removeWorker(88);
+    }
+
+    private boolean arrayEquals(byte[] signreq2, byte[] signres2) {
+        boolean retval = true;
+
+        if (signreq2.length != signres2.length) {
+            return false;
+        }
+
+        for (int i = 0; i < signreq2.length; i++) {
+            if (signreq2[i] != signres2[i]) {
+                return false;
+            }
+        }
+        return retval;
+    }
 }

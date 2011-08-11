@@ -15,7 +15,6 @@ package org.signserver.server.archive;
 import java.util.Arrays;
 import java.util.Random;
 import org.apache.log4j.Logger;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.GenericSignRequest;
@@ -30,7 +29,6 @@ import org.signserver.testutils.TestingSecurityManager;
  *
  * @author Markus Kilås
  * @version $Id$
- * 
  */
 public class ArchiveTest extends ModulesTestCase {
 

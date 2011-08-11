@@ -19,9 +19,6 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.signserver.server.cryptotokens.ICryptoToken;
-import org.signserver.server.cryptotokens.JKSCryptoToken;
-
 /**
  * Tests for a crypto token that uses a Java Keystore (JKS) file.
  *
@@ -40,7 +37,6 @@ public class JKSCryptoTokenTest extends TestCase {
         homeDir = new File(signServerHome);
         assertTrue("SIGNSERVER_HOME nonexisting directory", homeDir.exists());
     }
-
 
     /**
      * Makes sure that the private key verifies with the public key in the
@@ -66,7 +62,7 @@ public class JKSCryptoTokenTest extends TestCase {
         // Create crypto token
         final JKSCryptoToken signToken = new JKSCryptoToken();
         final Properties props = new Properties();
-        
+
         props.setProperty("KEYSTOREPATH",
                 new File(homeDir, file).getAbsolutePath());
         signToken.init(1, props);

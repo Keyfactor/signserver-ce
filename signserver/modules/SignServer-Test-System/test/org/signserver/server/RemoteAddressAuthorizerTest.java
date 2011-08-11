@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import org.apache.log4j.Logger;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
@@ -28,13 +27,12 @@ import org.signserver.testutils.*;
  *
  *
  * @author Markus Kilas
- * @version $Id: TestUsernamePasswordAuthorizer.java 897 2010-03-21 10:38:48Z netmackan $
+ * @version $Id$
  */
 public class RemoteAddressAuthorizerTest extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(
             RemoteAddressAuthorizerTest.class);
-
 
     @Override
     protected void setUp() throws Exception {
@@ -57,7 +55,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
 
         // Remove old property
         workerSession.removeWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM");
-        
+
         workerSession.reloadConfiguration(getSignerIdDummy1());
     }
 
@@ -109,8 +107,8 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(getSignerIdDummy1());
 
         int responseCode = process(
-                    new URL("http://localhost:" + getPublicHTTPPort()
-                    + "/signserver/process?workerId="
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
 
         assertTrue("HTTP response code: " + responseCode, responseCode == 401
@@ -154,7 +152,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
                 new GenericSignRequest(1, "<root/>".getBytes());
 
         try {
-             workerSession.process(getSignerIdDummy1(), request, new RequestContext());
+            workerSession.process(getSignerIdDummy1(), request, new RequestContext());
         } catch (AuthorizationRequiredException ex) {
             fail(ex.getMessage());
         } catch (Exception ex) {
@@ -184,5 +182,4 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
         removeWorker(getSignerIdDummy1());
         workerSession.reloadConfiguration(getSignerIdDummy1());
     }
-
 }

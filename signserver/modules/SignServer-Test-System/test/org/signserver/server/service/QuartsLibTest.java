@@ -1,3 +1,15 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.server.service;
 
 import java.text.ParseException;
@@ -8,21 +20,24 @@ import junit.framework.TestCase;
 
 import org.quartz.CronExpression;
 
+/**
+ * TODO: Document me!
+ * 
+ * @version $Id$
+ */
 public class QuartsLibTest extends TestCase {
 
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-	
-	public void test01CronExpressions() throws ParseException{
-		CronExpression ce = new CronExpression("0/15 * * ? * *");
-		Calendar c = Calendar.getInstance();
-		c.setTime(ce.getNextValidTimeAfter(new Date()));
-		assertTrue( (c.get(Calendar.SECOND) %15 ) == 0);
-		
-		assertTrue((c.getTime().getTime() - System.currentTimeMillis()) > 0);
-		
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
 
-	}
+    public void test01CronExpressions() throws ParseException {
+        CronExpression ce = new CronExpression("0/15 * * ? * *");
+        Calendar c = Calendar.getInstance();
+        c.setTime(ce.getNextValidTimeAfter(new Date()));
+        assertTrue((c.get(Calendar.SECOND) % 15) == 0);
 
+        assertTrue((c.getTime().getTime() - System.currentTimeMillis()) > 0);
+    }
 }

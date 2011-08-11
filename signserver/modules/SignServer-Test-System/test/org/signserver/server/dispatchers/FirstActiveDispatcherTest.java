@@ -16,7 +16,6 @@ import java.io.File;
 import java.security.cert.X509Certificate;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.signserver.cli.CommonAdminInterface;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -24,15 +23,13 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.TestUtils;
 
 /**
  * Tests for the FirstActiveDispatcher.
  *
- *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class FirstActiveDispatcherTest extends TestCase {
@@ -40,7 +37,6 @@ public class FirstActiveDispatcherTest extends TestCase {
     private static final Logger LOG = Logger.getLogger(
             FirstActiveDispatcherTest.class);
 
-    private static IGlobalConfigurationSession.IRemote confSession;
     private static IWorkerSession.IRemote workSession;
     private static File signServerHome;
     private static int moduleVersion;
@@ -57,8 +53,6 @@ public class FirstActiveDispatcherTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        confSession = ServiceLocator.getInstance().lookupRemote(
-                        IGlobalConfigurationSession.IRemote.class);
         workSession = ServiceLocator.getInstance().lookupRemote(
                         IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
@@ -169,8 +163,6 @@ public class FirstActiveDispatcherTest extends TestCase {
         assertTrue("Response from signer 81",
             cert.getSubjectDN().getName().contains("testdocumentsigner81"));
     }
-
-
 
     public void test99TearDownDatabase() throws Exception {
 

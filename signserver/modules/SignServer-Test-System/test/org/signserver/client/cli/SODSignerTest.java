@@ -132,5 +132,4 @@ public class SODSignerTest extends TestCase {
         }
         return output;
     }
-
 }

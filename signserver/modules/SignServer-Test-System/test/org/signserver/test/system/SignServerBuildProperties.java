@@ -14,7 +14,6 @@ package org.signserver.test.system;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -24,25 +23,25 @@ import org.apache.log4j.Logger;
  * Settings loaded from signserver_build.properties
  * put together during compilation.
  *
- * @author Markus Kilas
- * @version $Id: CompileTimeSettings.java 1279 2010-11-08 08:47:49Z netmackan $
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class SignServerBuildProperties {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
             SignServerBuildProperties.class);
-
+    
     public static final String DATASOURCE_JNDINAMEPREFIX
             = "datasource.jndi-name-prefix";
     public static final String DATASOURCE_JNDINAME
             = "datasource.jndi-name";
-
+    
     /** Default values for the compile-time properties. */
     private static final Properties DEFAULT_PROPERTIES = new Properties();
-
+    
     private static SignServerBuildProperties instance;
-
+    
     /** Properties put together at compile-time. */
     private Properties properties = new Properties(DEFAULT_PROPERTIES);
 
@@ -52,7 +51,6 @@ public class SignServerBuildProperties {
         DEFAULT_PROPERTIES.put(DATASOURCE_JNDINAME, "SignServerDS");
     }
 
-    
     private SignServerBuildProperties() {
         // Load built-in compile-time properties
         InputStream in = null;
@@ -84,5 +82,4 @@ public class SignServerBuildProperties {
     public String getProperty(String key) {
         return properties.getProperty(key);
     }
-
 }

@@ -10,7 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
 package org.signserver.server.genericws.test;
 
 import javax.jws.WebMethod;
@@ -19,10 +18,13 @@ import javax.jws.WebParam;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 
+/**
+ * TODO: Document me!
+ * 
+ * @version $Id$
+ */
 public interface IDummyWS {
 
-	@WebMethod
-	String test(@WebParam(name = "param1")
-	String param1) throws IllegalRequestException, SignServerException;
-
+    @WebMethod
+    String test(@WebParam(name = "param1") String param1) throws IllegalRequestException, SignServerException;
 }

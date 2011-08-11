@@ -12,9 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import java.util.Hashtable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
@@ -23,8 +20,8 @@ import org.signserver.ejb.interfaces.IStatusRepositorySession;
 /**
  * Tests for the StatusRepositorySessionBean.
  *
- * @author Markus Kil�s
- * $Id$
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class StatusRepositorySessionBeanTest extends TestCase {
 
@@ -122,5 +119,4 @@ public class StatusRepositorySessionBeanTest extends TestCase {
         final String value2 = repository.getProperty(PROPERTY3);
         assertNull("getProperty expired", value2);
     }
-
 }

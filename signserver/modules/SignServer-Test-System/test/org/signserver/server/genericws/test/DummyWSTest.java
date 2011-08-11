@@ -10,6 +10,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.genericws.gen.DummyWS;
 import org.signserver.server.genericws.gen.DummyWSService;
 import org.signserver.test.system.SignServerBuildProperties;
 import org.signserver.testutils.TestUtils;

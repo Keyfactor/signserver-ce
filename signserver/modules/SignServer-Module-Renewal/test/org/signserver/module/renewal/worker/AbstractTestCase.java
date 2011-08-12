@@ -29,7 +29,6 @@ import java.util.Random;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -46,9 +45,6 @@ import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
  * @version $Id$
  */
 public abstract class AbstractTestCase extends TestCase {
-
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(AbstractTestCase.class);
 
     private static IWorkerSession.IRemote workerSession;
     private static IGlobalConfigurationSession.IRemote globalSession;

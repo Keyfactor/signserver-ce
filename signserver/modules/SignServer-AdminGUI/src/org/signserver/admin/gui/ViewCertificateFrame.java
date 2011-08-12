@@ -34,6 +34,7 @@ import org.bouncycastle.util.encoders.Hex;
  * @author Markus Kilås
  * @version $Id$
  */
+@SuppressWarnings("PMD.UnusedFormalParameter")
 public class ViewCertificateFrame extends javax.swing.JFrame {
 
     /** Logger for this class. */

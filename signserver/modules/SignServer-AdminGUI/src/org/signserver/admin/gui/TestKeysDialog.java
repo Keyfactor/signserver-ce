@@ -47,6 +47,7 @@ import org.signserver.admin.gui.adminws.gen.KeyTestResult;
  * @author Markus Kilås
  * @version $Id$
  */
+@SuppressWarnings("PMD.UnusedFormalParameter")
 public class TestKeysDialog extends JDialog {
 
     /** Logger for this class. */

@@ -40,6 +40,7 @@ import org.signserver.admin.gui.adminws.gen
  * @author Markus Kilås
  * @version $Id$
  */
+@SuppressWarnings("PMD.UnusedFormalParameter")
 public class RenewKeysDialog extends JDialog {
 
     /** Logger for this class. */

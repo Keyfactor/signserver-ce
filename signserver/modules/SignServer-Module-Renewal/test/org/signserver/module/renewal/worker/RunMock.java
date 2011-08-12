@@ -15,8 +15,12 @@ package org.signserver.module.renewal.worker;
 import javax.xml.ws.Endpoint;
 
 /**
+ * Tool for running the mock stand-alone.
  *
- * @author markus
+ * Could be used for debugging purposes.
+ *
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class RunMock {
 
@@ -26,6 +30,7 @@ public class RunMock {
         MockEjbcaWS ejbcaWs = new MockEjbcaWS();
         Endpoint endpoint
                 = Endpoint.publish("http://localhost:8111/calculator", ejbcaWs);
+        System.out.println("Published endpoint: " + endpoint);
         
 //        synchronized {
 //            try {

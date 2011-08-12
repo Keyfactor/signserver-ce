@@ -50,6 +50,7 @@ import org.signserver.module.renewal.common.RenewalWorkerProperties;
  * @author Markus Kilås
  * @version $Id$
  */
+@SuppressWarnings("PMD.UnusedFormalParameter")
 public class RenewSignerDialog extends javax.swing.JDialog {
 
     /** Logger for this class. */

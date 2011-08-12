@@ -232,7 +232,6 @@ public class RenewalWorker extends BaseSigner {
                 RenewalWorkerProperties.REQUEST_WORKER);
 
         final Properties responseData;
-        final ProcessResponse ret;
 
         if (workerName == null) {
             throw new IllegalRequestException("No worker name in request.");
@@ -467,7 +466,7 @@ public class RenewalWorker extends BaseSigner {
             throw new IllegalArgumentException("Missing EJBCAWSURL property");
         }
         final EjbcaWS ejbcaws = getEjbcaWS(ejbcaWsUrl,
-                alias, truststoreType, truststorePath, truststorePass, authCode);
+                alias, truststoreType, truststorePath, truststorePass);
 
         if (ejbcaws == null) {
             LOG.debug("Could not get EjbcaWS");
@@ -605,7 +604,7 @@ public class RenewalWorker extends BaseSigner {
 
     private EjbcaWS getEjbcaWS(final String ejbcaUrl, final String alias,
             final String truststoreType, final String truststorePath,
-            final String truststorePass, final char[] authcode) throws CryptoTokenOfflineException,
+            final String truststorePass) throws CryptoTokenOfflineException,
             NoSuchAlgorithmException, KeyStoreException,
             UnrecoverableKeyException, IOException, CertificateException,
             NoSuchProviderException, KeyManagementException {

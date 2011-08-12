@@ -47,12 +47,12 @@ class BrowseCellEditor extends DefaultCellEditor {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                customEditorButtonActionPerformed(e);
+                customEditorButtonActionPerformed();
             }
         });
     }
 
-    private void customEditorButtonActionPerformed(ActionEvent e) {
+    private void customEditorButtonActionPerformed() {
         stopCellEditing();
         File currentFile = new File((String) table.getValueAt(row, column));
         chooser.setSelectedFile(currentFile);

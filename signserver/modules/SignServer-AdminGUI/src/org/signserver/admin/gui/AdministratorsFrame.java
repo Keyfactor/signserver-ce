@@ -34,6 +34,7 @@ import  org.signserver.common.GlobalConfiguration;
  * @author Markus Kilås
  * @version $Id$
  */
+@SuppressWarnings("PMD.UnusedFormalParameter")
 public class AdministratorsFrame extends javax.swing.JFrame {
 
     private static final String[] COLUMN_NAMES = new String[] {

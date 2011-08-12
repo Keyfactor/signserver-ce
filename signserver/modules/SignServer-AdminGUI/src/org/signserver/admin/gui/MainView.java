@@ -70,6 +70,7 @@ import org.signserver.common.GlobalConfiguration;
  * @author Markus Kilås
  * @version $Id$
  */
+@SuppressWarnings("PMD.UnusedFormalParameter")
 public class MainView extends FrameView {
 
     /** Logger for this class. */

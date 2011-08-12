@@ -50,6 +50,7 @@ import org.signserver.common.GenericSignResponse;
  * @author Markus Kilås
  * @version $Id$
  */
+@SuppressWarnings("PMD.UnusedFormalParameter")
 public class GenerateRequestsDialog extends JDialog {
 
     /** Logger for this class. */

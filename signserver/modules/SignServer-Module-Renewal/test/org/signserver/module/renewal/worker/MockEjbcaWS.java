@@ -271,10 +271,10 @@ public class MockEjbcaWS {
         return result;
     }
 
-    private byte[] processCertReq(String username, String password, String req, 
-            int reqType, String hardTokenSN, String responseType)
+    private byte[] processCertReq(String username, String password, String req, //NOPMD
+            int reqType, String hardTokenSN, String responseType)               //NOPMD
             throws EjbcaException_Exception,
-            AuthorizationDeniedException_Exception {
+            AuthorizationDeniedException_Exception { 
         try {
             byte[] retval = null;
             
@@ -481,7 +481,7 @@ public class MockEjbcaWS {
     //////////////////////////////////////////////////////////////////////////
     // Methods for controlling the mockup
 
-    private void resetCalls() {
+    public void resetCalls() {
         editUserCalled = false;
         pkcs10RequestCalled = false;
     }

@@ -73,7 +73,7 @@ public class AdminWS {
     private IGlobalConfigurationSession.IRemote global;
 
     @PostConstruct
-    private void postConstruct() {
+    private void postConstruct() { // NOPMD
         if (worker == null) {
             try {
                 worker = ServiceLocator.getInstance().lookupRemote(
@@ -572,26 +572,6 @@ public class AdminWS {
         }
     }
 
-    private X509Certificate getX509Certificate(byte[] certbytes)
-            throws CertificateException {
-        final X509Certificate result;
-        if (certbytes == null || certbytes.length == 0) {
-            result = null;
-        } else {
-            try {
-                final CertificateFactory cf
-                        = CertificateFactory.getInstance("X.509", "BC");
-                result = (X509Certificate) cf.generateCertificate(
-                        new ByteArrayInputStream(certbytes));
-            } catch (NoSuchProviderException ex) {
-                // Log stacktrace and only pass on description to client
-                LOG.error("Error with provider", ex);
-                throw new RuntimeException("Internal error");
-            }
-        }
-        return result;
-    }
-
     /**
      * Method used to upload a complete certificate chain to a configuration
      *
@@ -872,7 +852,7 @@ public class AdminWS {
     }
 
     private boolean isAdminAuthorized(final X509Certificate cert,
-            final String operation) {
+            final String operation) { //NOPMD
         boolean authorized = false;
         final String admins = global.getGlobalConfiguration().getProperty(
                 GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");

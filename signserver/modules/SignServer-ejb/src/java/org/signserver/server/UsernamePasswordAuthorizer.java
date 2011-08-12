@@ -52,22 +52,17 @@ public class UsernamePasswordAuthorizer implements IAuthorizer {
      */
     private static final String USER_PREFIX = "USER.";
 
-
     private Map<String, Account> userMap = Collections.emptyMap();
-    
-    private int workerId;
-    private ProcessableConfig config;
 
     
+    @Override
     public void init(final int workerId, final WorkerConfig config,
             final EntityManager em)
             throws SignServerException {
-        this.config = new ProcessableConfig(config);
-        this.workerId = workerId;
-
         loadAccounts(config);
     }
 
+    @Override
     public void isAuthorized(final ProcessRequest request,
             final RequestContext requestContext)
             throws SignServerException, IllegalRequestException {

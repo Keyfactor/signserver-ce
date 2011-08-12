@@ -104,7 +104,6 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     public void setWorkerProperty(int workerId, String key, String value) {
-        final boolean result;
         final Worker worker = workers.get(workerId);
         if (worker == null) {
             LOG.error("No such worker: " + workerId);

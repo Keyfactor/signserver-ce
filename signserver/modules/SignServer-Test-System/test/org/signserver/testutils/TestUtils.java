@@ -13,7 +13,6 @@
 package org.signserver.testutils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -70,7 +69,6 @@ public class TestUtils {
     /**
      * Method used to clear the current content of the
      * temporary output stream.
-     * @throws IOException 
      */
     public static void flushTempOut() {
         tempOutputStream = new ByteArrayOutputStream();
@@ -102,7 +100,6 @@ public class TestUtils {
     /**
      * Method used to clear the current content of the
      * temporary error stream.
-     * @throws IOException 
      */
     public static void flushTempErr() {
         tempErrorStream = new ByteArrayOutputStream();

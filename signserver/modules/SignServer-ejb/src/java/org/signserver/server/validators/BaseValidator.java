@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.server.validators;
 
-import org.signserver.common.CryptoTokenStatus;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.ValidatorStatus;
 import org.signserver.common.WorkerStatus;
@@ -30,8 +29,8 @@ public abstract class BaseValidator extends BaseProcessable implements IValidato
     /**
      * @see org.signserver.server.signers.IProcessable#getStatus()
      */
+    @Override
     public WorkerStatus getStatus() {
-        return new ValidatorStatus(workerId, CryptoTokenStatus.STATUS_ACTIVE, 
-                new ProcessableConfig(config));
+        return new ValidatorStatus(workerId, new ProcessableConfig(config));
     }
 }

@@ -42,12 +42,6 @@ public class ValidationWSServiceTest extends TestCase {
     private static final String ENDPOINT =
             "https://localhost:8442/signserver/validationws/validationws?wsdl";
 
-    /** Worker ID as defined in test-configuration.properties. **/
-    private static final String WORKERID = "7001";
-
-    /** A worker ID assumed to not be existing. */
-    private static final String NONEXISTING_WORKERID = "1231231";
-
     private static final String WORKER_NAME
             = "ValidationWSServiceTest_CertValidationWorker1";
     
@@ -120,11 +114,6 @@ public class ValidationWSServiceTest extends TestCase {
         ws =  wsService.getValidationWSPort();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     /** Overridden by org.signserver.test.validationws.v32.ValidationWSServiceTest */
     protected String getWsEndPointUrl() {
     	return ENDPOINT;
@@ -147,8 +136,8 @@ public class ValidationWSServiceTest extends TestCase {
     public void testGetStatusNonExisting() {
         try {
             final String status = ws.getStatus(NONEXISTING_WORKER);
-            fail("Should have thrown exception");
-        } catch (IllegalRequestException_Exception ok) {
+            fail("Should have thrown exception but got status: " + status);
+        } catch (IllegalRequestException_Exception ok) { //NOPMD
             // OK
         }
     }
@@ -178,7 +167,7 @@ public class ValidationWSServiceTest extends TestCase {
             ws.isValid(NONEXISTING_WORKER, CERT_XMLSIGNER4,
                 ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
             fail("Should have thrown exception");
-        } catch (IllegalRequestException_Exception ex) {
+        } catch (IllegalRequestException_Exception ex) { //NOPMD
             // OK
         } catch (SignServerException_Exception ex) {
             LOG.error(ex, ex);

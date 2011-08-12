@@ -135,7 +135,8 @@ public class SignServerWSServiceTest extends TestCase {
         try {
             final List<WorkerStatusWS> statuses
                     = ws.getStatus(NONEXISTING_WORKERID);
-            fail("Should have thrown InvalidWorkerIdException_Exception");
+            fail("Should have thrown InvalidWorkerIdException_Exception but got "
+                    + statuses);
         } catch (InvalidWorkerIdException_Exception ok) {
             // OK
         }
@@ -204,7 +205,8 @@ public class SignServerWSServiceTest extends TestCase {
             request.setRequestDataBase64(new String(Base64.encode(RequestAndResponseManager.serializeProcessRequest(new GenericSignRequest(4711, "< not-an-well-formed-xml-doc".getBytes())))));
             requests.add(request);
             final List<ProcessResponseWS> responses = ws.process(WORKERID, requests);
-            fail("Should have thrown IllegalRequest or SignServerException");
+            fail("Should have thrown IllegalRequest or SignServerException but got: "
+                    + responses);
         } catch (IOException ex) {
             LOG.error(ex, ex);
             fail(ex.getMessage());

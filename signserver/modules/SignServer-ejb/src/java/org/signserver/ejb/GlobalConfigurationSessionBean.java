@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -170,16 +169,16 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
                 log.trace("getWorkers, processing key : " + key);
             }
             if (key.startsWith("GLOB.WORKER")) {
-                retval = (ArrayList<Integer>) getWorkerHelper(retval, gc, key, workerType, false);
+                retval = (ArrayList<Integer>) getWorkerHelper(retval, key, workerType, false);
             }
             if (key.startsWith("GLOB.SIGNER")) {
-                retval = (ArrayList<Integer>) getWorkerHelper(retval, gc, key, workerType, true);
+                retval = (ArrayList<Integer>) getWorkerHelper(retval, key, workerType, true);
             }
         }
         return retval;
     }
 
-    private List<Integer> getWorkerHelper(List<Integer> retval, GlobalConfiguration gc, String key, int workerType, boolean signersOnly) {
+    private List<Integer> getWorkerHelper(List<Integer> retval, String key, int workerType, boolean signersOnly) {
 
         String unScopedKey = key.substring("GLOB.".length());
         if (log.isTraceEnabled()) {
@@ -304,7 +303,6 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
      * Helper method used to set properties in a table.
      * @param tempKey
      * @param value
-     * @throws SQLException 
      */
     private void setPropertyHelper(String key, String value) {
         try {

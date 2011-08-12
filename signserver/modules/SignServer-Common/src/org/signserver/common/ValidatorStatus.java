@@ -30,7 +30,7 @@ public class ValidatorStatus extends WorkerStatus {
     /** 
      * Main constructor
      */
-    public ValidatorStatus(int workerId, int tokenStatus, ProcessableConfig config) {
+    public ValidatorStatus(int workerId, ProcessableConfig config) {
         super(workerId, config.getWorkerConfig());
     }
 

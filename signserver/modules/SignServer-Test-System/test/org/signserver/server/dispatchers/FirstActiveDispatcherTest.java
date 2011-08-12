@@ -15,7 +15,6 @@ package org.signserver.server.dispatchers;
 import java.io.File;
 import java.security.cert.X509Certificate;
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -33,9 +32,6 @@ import org.signserver.testutils.TestUtils;
  * @version $Id$
  */
 public class FirstActiveDispatcherTest extends TestCase {
-
-    private static final Logger LOG = Logger.getLogger(
-            FirstActiveDispatcherTest.class);
 
     private static IWorkerSession.IRemote workSession;
     private static File signServerHome;

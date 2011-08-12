@@ -128,8 +128,6 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         final GenericSignRequest request =
                 new GenericSignRequest(1, "<root/>".getBytes());
 
-        final GenericSignResponse res;
-
         // With correct username password
         context.put(RequestContext.CLIENT_CREDENTIAL,
                 new UsernamePasswordClientCredential("user1", "foo123"));
@@ -152,8 +150,6 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
 
         final GenericSignRequest request =
                 new GenericSignRequest(1, "<root/>".getBytes());
-
-        final GenericSignResponse res;
 
         // With correct username password
         context.put(RequestContext.CLIENT_CREDENTIAL,

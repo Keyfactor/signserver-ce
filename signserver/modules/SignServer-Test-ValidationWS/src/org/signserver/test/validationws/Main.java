@@ -20,9 +20,6 @@ package org.signserver.test.validationws;
  */
 public class Main {
 
-    private Main() {
-    }
-
     /**
      * @param args the command line arguments
      */

@@ -19,8 +19,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
-import org.apache.log4j.Logger;
-
 /**
  * Entity Bean storing each worker configuration.
  *

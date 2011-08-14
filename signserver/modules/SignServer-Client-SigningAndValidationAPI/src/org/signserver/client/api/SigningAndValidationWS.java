@@ -82,7 +82,11 @@ public class SigningAndValidationWS implements ISigningAndValidation {
     }
 
     /**
-     * Creates an instance of SigningAndValidationWS using an WebService host and port.
+     * Creates an instance of SigningAndValidationWS using WebService host and port
+     * as well as username and password.
+     * 
+     * Notice: The password is transmitted insecurely over HTTP. This constructor 
+     * should only be used if the communication is secured by some other means.
      *
      * @param host The remote host to connect to.
      * @param port The remote port to connect to.
@@ -91,7 +95,7 @@ public class SigningAndValidationWS implements ISigningAndValidation {
      */
     public SigningAndValidationWS(final String host, final int port,
             final String username, final String password) {
-        this(host, port, false, null, null);
+        this(host, port, false, username, password);
     }
 
     /**

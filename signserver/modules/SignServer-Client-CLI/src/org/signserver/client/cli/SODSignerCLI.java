@@ -141,10 +141,10 @@ public class SODSignerCLI {
     private String servlet = "/signserver/sod";
 
     /** File to read the data from. */
-    private File inFile;
+    private File inFile;  //NOPMD //TODO Add support for reading from file
 
     /** Protocol to use for contacting SignServer. */
-    private Protocol protocol;
+    private Protocol protocol; //NOPMD //TODO Add support for choosing protocol
 
     private String username;
 
@@ -238,9 +238,9 @@ public class SODSignerCLI {
     }
 
     /**
-     * Creates a DocumentSigner using the choosen protocol.
+     * Creates a DocumentSigner using the chosen protocol.
      *
-     * @return a DocumentSigner using the choosen protocol
+     * @return a DocumentSigner using the chosen protocol
      * @throws MalformedURLException in case an URL can not be constructed
      * using the given host and port
      */

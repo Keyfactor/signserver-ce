@@ -43,8 +43,6 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
 
     private X509Certificate certificate;
 
-    private List<X509Certificate> certificates;
-
     private List<Field> fields;
 
     private List<String> usages;
@@ -52,7 +50,6 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
     /** Creates new form ViewStatusFrame. */
     public ViewCertificateFrame(final List<X509Certificate> certificates) {
         this.certificate = certificates.get(0);
-        this.certificates = certificates;
         initComponents();
         chainList.setModel(new AbstractListModel() {
 

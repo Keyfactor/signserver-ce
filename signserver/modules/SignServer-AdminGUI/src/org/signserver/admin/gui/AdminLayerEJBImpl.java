@@ -725,26 +725,6 @@ public class AdminLayerEJBImpl implements AdminWS {
         }
     }
 
-    private X509Certificate getX509Certificate(byte[] certbytes)
-            throws CertificateException {
-        final X509Certificate result;
-        if (certbytes == null || certbytes.length == 0) {
-            result = null;
-        } else {
-            try {
-                final CertificateFactory cf
-                        = CertificateFactory.getInstance("X.509", "BC");
-                result = (X509Certificate) cf.generateCertificate(
-                        new ByteArrayInputStream(certbytes));
-            } catch (NoSuchProviderException ex) {
-                // Log stacktrace and only pass on description to client
-                LOG.error("Error with provider", ex);
-                throw new RuntimeException("Internal error");
-            }
-        }
-        return result;
-    }
-
     /**
      * Method used to upload a complete certificate chain to a configuration
      *
@@ -814,8 +794,6 @@ public class AdminLayerEJBImpl implements AdminWS {
             result = new WsGlobalConfiguration();
             final WsGlobalConfiguration.Config wConf = new WsGlobalConfiguration.Config();
 
-
-            final Properties props = new Properties();
             final Enumeration<String> en = config.getKeyEnumeration();
             while (en.hasMoreElements()) {
                 final String key = en.nextElement();
@@ -869,15 +847,6 @@ public class AdminLayerEJBImpl implements AdminWS {
     @Override
     public void globalReload() {
         global.reload();
-    }
-
-    private char[] fixAuthCode(List<Integer> _authCode) {
-        final char[] result = new char[_authCode.size()];
-        int i = 0;
-        for (Integer inte : _authCode) {
-            result[i++] = (char) inte.intValue();
-        }
-        return result;
     }
 
     @Override

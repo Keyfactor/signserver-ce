@@ -77,8 +77,8 @@ public class CommonAdminInterface {
     
     /** The StatusRepositorySession. */
     private IStatusRepositorySession.IRemote statusRepository;
-    
-    private String hostname;
+
+    private String hostname; // TODO: Is the hostname used by any feature?
 
     public CommonAdminInterface(String hostname) {
         this.hostname = hostname;
@@ -158,7 +158,6 @@ public class CommonAdminInterface {
      * @see org.signserver.mailsigner.cli.IMailSignerRMI#getGlobalConfiguration()
      */
     public GlobalConfiguration getGlobalConfiguration() throws RemoteException {
-        GlobalConfiguration retval = null;
         return getGlobalConfigurationSession().getGlobalConfiguration();
     }
 

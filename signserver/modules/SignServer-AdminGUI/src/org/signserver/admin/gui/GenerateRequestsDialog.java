@@ -92,15 +92,12 @@ public class GenerateRequestsDialog extends JDialog {
 
     private List<Worker> workers;
 
-    private List<Worker> signers;
-
     /** Creates new form GenerateRequestsDialog. */
     public GenerateRequestsDialog(final Frame parent, final boolean modal,
             final List<Worker> workers, final List<Worker> signers,
             final ResourceMap resourceMap) {
         super(parent, modal);
         this.workers = new ArrayList<Worker>(workers);
-        this.signers = signers;
         sigAlgComboBox.setEditable(true);
         initComponents();
         setTitle("Generate CSRs for " + workers.size() + " signers");

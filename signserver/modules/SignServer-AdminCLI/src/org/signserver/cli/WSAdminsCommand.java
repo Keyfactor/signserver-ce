@@ -140,9 +140,6 @@ public class WSAdminsCommand extends BaseCommand {
                 }
                 System.out.println(buff.toString());
             } else if (ADD.equals(operation)) {
-                final String newAdmins =
-                        admins + ";" + certSerialNo + "," + issuerDN;
-
                 entries.add(new Entry(certSerialNo, issuerDN));
                 getCommonAdminInterface(hostname).setGlobalProperty(
                         GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",

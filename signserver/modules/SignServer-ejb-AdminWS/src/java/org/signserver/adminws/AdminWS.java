@@ -12,11 +12,9 @@
  *************************************************************************/
 package org.signserver.adminws;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -28,7 +26,6 @@ import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import java.security.cert.X509Certificate;
 import java.security.KeyStoreException;
-import java.security.cert.CertificateFactory;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;

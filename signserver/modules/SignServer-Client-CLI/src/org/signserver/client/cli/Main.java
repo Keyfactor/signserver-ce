@@ -15,7 +15,6 @@ package org.signserver.client.cli;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.signserver.client.validationservice.ValidationCLI;
 

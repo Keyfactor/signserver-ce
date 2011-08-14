@@ -35,11 +35,11 @@ public class MyListCellRenderer extends javax.swing.JPanel
     * <code>getListCellRendererComponent</code> method and set the border
     * of the returned component directly.
     */
-    private static final Border SAFE_NO_FOCUS_BORDER
+    private static final Border SAFE_NO_FOCUS_BORDER  //NOPMD //TODO Fix focus border
             = new EmptyBorder(1, 1, 1, 1);
     private static final Border DEFAULT_NO_FOCUS_BORDER
             = new EmptyBorder(1, 1, 1, 1);
-    private static Border noFocusBorder = DEFAULT_NO_FOCUS_BORDER;
+    private static Border noFocusBorder = DEFAULT_NO_FOCUS_BORDER; //NOPMD //TODO Fix focus border
 
     /** Creates new form MyListCellRenderer */
     public MyListCellRenderer() {

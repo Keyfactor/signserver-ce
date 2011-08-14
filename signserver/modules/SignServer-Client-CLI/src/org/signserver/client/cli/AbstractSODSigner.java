@@ -28,7 +28,6 @@ import org.signserver.common.SignServerException;
 public abstract class AbstractSODSigner implements SODSigner {
 
     private static final String ENCODING_BINARY = "binary";
-    private static final String ENCODING_BASE64 = "base64";
 
     public AbstractSODSigner() {
     }

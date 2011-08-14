@@ -76,8 +76,6 @@ public class MainView extends FrameView {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(MainView.class);
 
-    private DefaultTableModel workersModel;
-
     private List<Worker> allWorkers = new ArrayList<Worker>();
     private List<Worker> selectedWorkers = new ArrayList<Worker>();
     private Worker selectedWorker;
@@ -1549,7 +1547,6 @@ public class MainView extends FrameView {
                         j++;
                     }
                     // Status
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
                     String statusSummary;
                     String tokenStatus;
                     WsWorkerStatus status = null;

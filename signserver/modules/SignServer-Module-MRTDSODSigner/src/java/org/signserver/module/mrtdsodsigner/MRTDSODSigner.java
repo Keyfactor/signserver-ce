@@ -84,12 +84,15 @@ public class MRTDSODSigner extends BaseSigner {
     /** Default value if the data group values should be hashed by the signer. */
     private static final String DEFAULT_DODATAGROUPHASHING = "false";
     
+    /** Determines which version of the LDS to use. */
     private static final String PROPERTY_LDSVERSION = "LDSVERSION";
-    private static final String REQUEST_LDSVERSION = "LDSVERSION";
+    
+    /** Default value if the LDS version is not specified. */
     private static final String DEFAULT_LDSVERSION = "0107";
+    
+    /** Determines which version of Unicode to set. */
     private static final String PROPERTY_UNICODEVERSION = "UNICODEVERSION";
-    private static final String REQUEST_UNICODEVERSION = "UNICODEVERSION";
-    private static final String DEFAULT_UNICODEVERSION = "040000";
+    
     private static final Object syncObj = new Object();
 
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {

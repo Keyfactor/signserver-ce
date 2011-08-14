@@ -24,7 +24,6 @@ import java.util.Collection;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Hex;
@@ -48,8 +47,6 @@ import org.signserver.testutils.TestingSecurityManager;
  * @version $Id$
  */
 public class AnySignerTest extends TestCase {
-
-    private static final Logger LOG = Logger.getLogger(AnySignerTest.class);
 
     /** WORKERID used in this test case as defined in 
      * junittest-part-config.properties for XMLSigner. */

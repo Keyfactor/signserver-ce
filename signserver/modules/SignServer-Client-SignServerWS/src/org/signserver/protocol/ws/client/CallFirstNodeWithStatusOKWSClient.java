@@ -55,7 +55,6 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
     private String protocol = SignServerWSClientFactory.PROTOCOL;
     private int port = 0;
     private String wSDLURL = null;
-    private SSLSocketFactory sSLSocketFactory = null;
     private HashMap<String, SignServerWS> serviceMap = new HashMap<String, SignServerWS>();
     private IFaultCallback faultCallback;
 

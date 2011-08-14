@@ -248,21 +248,6 @@ public class XMLValidatorTestData {
             +"</Signature ></root>";
 	
     /**
-     * Ok sig, missing cert 2.
-     */
-    private static final String TESTXML4 = 
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-            +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
-            +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
-            +"    <SignatureValue>"+SIGNATURE_BY_XMLSIGNER2+"</SignatureValue>"
-            +"    <KeyInfo>"
-            +"        <X509Data>"
-            +"            <X509Certificate>"+CERT_XMLSIGNER+"</X509Certificate>"
-            +"        </X509Data>"
-            +"    </KeyInfo>"
-            +"</Signature ></root>";
-	
-    /**
      * OK signature, first ca cert then signer cert.
      */
     static final String TESTXML5 = 

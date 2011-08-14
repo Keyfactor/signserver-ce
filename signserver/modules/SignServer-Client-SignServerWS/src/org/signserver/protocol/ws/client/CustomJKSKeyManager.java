@@ -46,16 +46,15 @@ class CustomJKSKeyManager implements X509KeyManager {
 
     public String chooseClientAlias(String[] keyType, Principal[] issuers,
             Socket socket) {
-        return chooseAlias(issuers, socket);
+        return chooseAlias(issuers);
     }
 
     public String chooseServerAlias(String keyType, Principal[] issuers,
             Socket socket) {
-        return chooseAlias(issuers, socket);
+        return chooseAlias(issuers);
     }
 
-    private String chooseAlias(Principal[] issuers,
-            Socket socket) {
+    private String chooseAlias(Principal[] issuers) {
         String retval = null;
         try {
             Enumeration<String> aliases = ks.aliases();

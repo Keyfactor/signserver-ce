@@ -66,8 +66,6 @@ import org.signserver.server.signers.BaseSigner;
  */
 public class OOXMLSigner extends BaseSigner {
 
-    private String signatureId = "idPackageSignature";
-
     @Override
     public void init(int workerId, WorkerConfig config,
             WorkerContext workerContext, EntityManager workerEM) {

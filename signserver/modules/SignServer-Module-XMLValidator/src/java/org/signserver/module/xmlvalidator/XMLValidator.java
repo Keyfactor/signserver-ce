@@ -270,15 +270,6 @@ public class XMLValidator extends BaseValidator {
         return new GenericValidationResponse(requestId, validSignature && validCertificate, vresponse, processedBytes);
     }
 
-    private static IWorkerSession.IRemote lookupWorkerSessionBean() {
-        try {
-            Context context = new InitialContext();
-            return (IWorkerSession.IRemote) context.lookup(IWorkerSession.IRemote.JNDI_NAME);
-        } catch (NamingException ne) {
-            throw new RuntimeException(ne);
-        }
-    }
-
     private int getValidationServiceWorkerId() {
         if (validationServiceWorkerId < 1) {
             validationServiceWorkerId = workersession.getWorkerId(

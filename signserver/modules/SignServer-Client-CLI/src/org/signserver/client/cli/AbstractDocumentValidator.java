@@ -27,7 +27,6 @@ import org.signserver.common.SignServerException;
 public abstract class AbstractDocumentValidator implements DocumentValidator {
 
     private static final String ENCODING_NONE = "none";
-    private static final String ENCODING_BASE64 = "base64";
 
     public AbstractDocumentValidator() {
     }

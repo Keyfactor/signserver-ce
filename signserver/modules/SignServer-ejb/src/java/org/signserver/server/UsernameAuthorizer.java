@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -62,9 +61,6 @@ public class UsernameAuthorizer implements IAuthorizer {
 
     /** Set with all the accepted usernames. */
     private Set<String> acceptUsernames = Collections.emptySet();
-    
-    private int workerId;
-    private ProcessableConfig config;
 
     /** True if all usernames should be accepted */
     private boolean acceptAllUsernames;
@@ -76,11 +72,10 @@ public class UsernameAuthorizer implements IAuthorizer {
      * @param em
      * @throws SignServerException
      */
+    @Override
     public void init(final int workerId, final WorkerConfig config,
             final EntityManager em)
             throws SignServerException {
-        this.config = new ProcessableConfig(config);
-        this.workerId = workerId;
 
         acceptAllUsernames =
                 Boolean.parseBoolean(config.getProperty(ACCEPT_ALL_USERNAMES));
@@ -94,6 +89,7 @@ public class UsernameAuthorizer implements IAuthorizer {
         }
     }
 
+    @Override
     public void isAuthorized(final ProcessRequest request,
             final RequestContext requestContext)
             throws SignServerException, IllegalRequestException {
@@ -160,5 +156,4 @@ public class UsernameAuthorizer implements IAuthorizer {
         }
         logMap.put(IAuthorizer.LOG_USERNAME, username);
     }
-
 }

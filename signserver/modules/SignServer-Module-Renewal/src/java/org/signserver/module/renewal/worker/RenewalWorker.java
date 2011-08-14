@@ -355,7 +355,7 @@ public class RenewalWorker extends BaseSigner {
                 // Renew worker
                 renewWorker(reneweeId, sigAlg, keyAlg, endEntity,
                         Boolean.valueOf(explicitEccParameters),
-                        defaultKey, nextCertSignKey, authCode.toCharArray(),
+                        defaultKey, nextCertSignKey,
                         logMap);
 
                 responseData.setProperty(
@@ -426,7 +426,7 @@ public class RenewalWorker extends BaseSigner {
             final String sigAlg, final String subjectDN, final String endEntity,
             final boolean explicitEccParameters,
             final boolean defaultKey, final String nextCertSignKey, 
-            final char[] authCode, final Map<String, String> logMap)
+            final Map<String, String> logMap)
             throws Exception {
 
         final String pkcs10

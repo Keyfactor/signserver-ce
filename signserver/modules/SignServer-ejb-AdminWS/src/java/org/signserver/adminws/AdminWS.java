@@ -800,8 +800,7 @@ public class AdminWS {
                     "Administrator not authorized to resource. "
                     + "Client certificate authentication required.");
         } else {
-           final boolean authorized = isAdminAuthorized(certificates[0],
-                   operation);
+           final boolean authorized = isAdminAuthorized(certificates[0]);
 
            log(certificates[0], authorized, operation, args);
 
@@ -848,8 +847,7 @@ public class AdminWS {
         LOG.info(line.toString());
     }
 
-    private boolean isAdminAuthorized(final X509Certificate cert,
-            final String operation) { //NOPMD
+    private boolean isAdminAuthorized(final X509Certificate cert) { 
         boolean authorized = false;
         final String admins = global.getGlobalConfiguration().getProperty(
                 GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");

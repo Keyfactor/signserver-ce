@@ -85,7 +85,6 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
         this.wSDLURL = wSDLURL;
         this.faultCallback = faultCallback;
 
-        this.sSLSocketFactory = sSLSocketFactory;
         if (sSLSocketFactory != null) {
             HttpsURLConnection.setDefaultSSLSocketFactory(sSLSocketFactory);
         }

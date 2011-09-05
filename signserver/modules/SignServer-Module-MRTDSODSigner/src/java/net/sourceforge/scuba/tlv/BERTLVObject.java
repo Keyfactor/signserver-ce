@@ -584,8 +584,11 @@ public class BERTLVObject
 
 		/* NOTE: Not primitive, and also not instance of BERTLVObject[]... */
 		if (value instanceof byte[]) {
-			System.err.println("DEBUG: WARNING: BERTLVobject with non-primitive tag "
-					+ Hex.intToHexString(tag) + " has byte[] value");
+                        // DSS-418: We are only using this method for getting the value of the SOD
+                        // without interpreting it so a warning on STDERR is not apropriate thus
+                        // it is commented out.
+			//System.err.println("DEBUG: WARNING: BERTLVobject with non-primitive tag "
+			//		+ Hex.intToHexString(tag) + " has byte[] value");
 			return (byte[])value;
 		}
 		throw new IllegalStateException("Cannot decode value of "

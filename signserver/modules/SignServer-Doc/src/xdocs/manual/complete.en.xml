@@ -2113,11 +2113,23 @@ Authorizing administrators can be done using the Admin CLI command "wsadmins".
 Usage: signserver wsadmins -add -certserialno &lt;certificate serial number&gt; -issuerdn &lt;issuer DN&gt;
 Usage: signserver wsadmins -remove -certserialno &lt;certificate serial number&gt; -issuerdn &lt;issuer DN&gt;
 Usage: signserver wsadmins -list
-Example 1: signserver wsadmins -add -certserialno 0123ABCDEF -issuerdn "CN=Neo Morpheus, C=SE"
-Example 2: signserver wsadmins -remove -certserialno 0123ABCDEF -issuerdn "CN=Neo Morpheus, C=SE"
+Example 1: signserver wsadmins -add -certserialno 123abcdef -issuerdn "C=SE, CN=Neo Morpheus"
+Example 2: signserver wsadmins -remove -certserialno 123abcdef -issuerdn "C=SE, CN=Neo Morpheus"
 Example 3: signserver wsadmins -list
                     </source>
-
+                    <p>
+Notice that the certificate serial number should be entered with lower case characters. 
+Also notice that the issuer DN currently should be entered in the reversed order 
+and with spaces after each component. In the example above the issuer DN from the 
+certificate actually is "CN=Neo Morpheus, C=SE". 
+                    </p>
+                    <p>
+To troubleshoot an "Administrator not authorized to resource" see the logs for how 
+SignServer interprets the serialnumber and subject DN. Example:
+                    </p>
+                    <pre>
+19:00:33,946 INFO  [AdminWS] ADMIN OPERATION; subjectDN=C=SE, O=Markus Organization, OU=Internal Testing 1, CN=External RA Admin 1; serialNumber=4a3442e98e3ce428; issuerDN=C=SE, O=Markus Organization, OU=Internal Testing 1, CN=MarkusAdminCA1; authorized=false; operation=getWorkers; arguments=
+                    </pre>
                 </section>
         </chapter>
 

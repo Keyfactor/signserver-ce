@@ -45,8 +45,8 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
-import org.signserver.test.mock.GlobalConfigurationSessionMock;
-import org.signserver.test.mock.WorkerSessionMock;
+import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
+import org.signserver.test.utils.mock.WorkerSessionMock;
 
 /**
  * Unit tests for MRTDSODSigner.

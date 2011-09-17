@@ -29,8 +29,8 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.test.mock.GlobalConfigurationSessionMock;
-import org.signserver.test.mock.WorkerSessionMock;
+import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
+import org.signserver.test.utils.mock.WorkerSessionMock;
 
 /**
  * Unit tests for PDFSigner.

@@ -53,6 +53,7 @@
 	<classpathentry kind="src" path="modules/SignServer-Test-SignServerWS/test"/>
 	<classpathentry kind="src" path="modules/SignServer-Test-System/src"/>
 	<classpathentry kind="src" path="modules/SignServer-Test-System/test"/>
+	<classpathentry kind="src" path="modules/SignServer-Test-Utils/src"/>
 	<classpathentry kind="src" path="modules/SignServer-Test-ValidationWS/src"/>
 	<classpathentry kind="src" path="modules/SignServer-Test-ValidationWS/test"/>
 	<classpathentry kind="src" path="src/test"/>

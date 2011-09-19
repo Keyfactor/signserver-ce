@@ -66,7 +66,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                         + ": Certificate matches key");
             } else {
                 log.info("Activate: Signer " + workerId
-                        + ": Certificat does not match key");
+                        + ": Certificate does not match key");
             }
         }
         if (log.isTraceEnabled()) {

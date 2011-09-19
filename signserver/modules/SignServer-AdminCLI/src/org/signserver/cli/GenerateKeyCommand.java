@@ -45,7 +45,7 @@ public class GenerateKeyCommand extends BaseCommand {
             + "Example 1: signserver generatekey 71\n"
             + "Example 2: signserver generatekey 71 -keyalg RSA -keyspec 2048\n"
             + "Example 3: signserver generatekey 71 -keyalg RSA -keyspec 2048 -alias signKey2\n"
-            + "Example 4: signserver generatekey 71 -keyalg ECC -keyspec secp256r1 -alias signKey2";
+            + "Example 4: signserver generatekey 71 -keyalg ECDSA -keyspec secp256r1 -alias signKey2";
 
     static {
         OPTIONS = new Options();

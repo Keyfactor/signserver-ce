@@ -517,8 +517,7 @@ adminws.enabled=true
 
                     <subsubsection name="Modules Configuration">
                         <p>
-Enable all modules that should be built and choose if they should be built into
-SignServer.
+Enable all modules that should be built and choose if they should be included in the SignServer enterprise application archive (EAR). By setting includemodulesinbuild=true (default) all modules are built in. Otherwise for each module specify that it should be enabled and included:
                         </p>
                         <source>
 module.xmlsigner.enabled=true
@@ -541,9 +540,9 @@ signers loaded on all nodes. If it is not used the modules must be built into
 signserver.ear either by specifying that for each module (as in previous
 section) or by specifying includemodulesinbuild=true to include all modules.
                         </p>
-                        <source>
-includemodulesinbuild=true
-                        </source>
+						<p>
+Notice that this feature is experimental and should not be used in production. It will be removed in future versions of SignServer.
+						</p>
                         <p>
 To enable the cluster class loader specify:                            
                         </p>

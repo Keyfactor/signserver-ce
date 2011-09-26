@@ -4502,7 +4502,7 @@ At the current moment are the platforms Linux (mainly Debian distribution is tes
                 </p>
                 <subsection name="Using the Installation Packages">
                     <p>
-The installation package can be used either by using a GUI or on the command line by specifying the argument '–mode text'
+The installation package can be used either by using a GUI or on the command line by specifying the argument '-mode text'
                     </p>
                     <p>
 For an advanced set-up, for instance if many nodes should be installed with similar configuration, it is possible to preconfigure the installation by specifying a properties file containing some or all the properties asked during the installation. The properties will be used directly during installation and there will be no questions about it. See each package section for details about supported properties.

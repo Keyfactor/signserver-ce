@@ -5,6 +5,10 @@ After checking out the project there will be errors in the IDE because some
 source files (i.e. Web Services stubs) has not been generated yet. Those errors 
 will disappear after configuring and building SignServer.
 
+See also the Developers page of the SignServer Wiki for the latest guidelines,
+http://sourceforge.net/apps/mediawiki/signserver/index.php?title=Developers or 
+click the Wiki link on http://www.signserver.org.
+
 
 Eclipse
 -------

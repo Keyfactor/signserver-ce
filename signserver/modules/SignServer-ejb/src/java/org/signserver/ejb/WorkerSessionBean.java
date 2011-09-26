@@ -309,8 +309,10 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             } catch (IllegalRequestException ex) {
                 final IllegalRequestException exception =
                         new IllegalRequestException(ex.getMessage());
-                LOG.error("Error calling signer with id " + workerId
-                        + " : " + ex.getMessage(), exception);
+				if (LOG.isInfoEnabled()) {
+					LOG.info("Illegal request calling signer with id " + workerId
+                        + " : " + ex.getMessage());
+				}
                 logMap.put(IWorkerLogger.LOG_EXCEPTION, exception.getMessage());
                 workerLogger.log(logMap);
                 throw exception;

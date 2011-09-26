@@ -18,6 +18,8 @@
         <property name="test.includes" value="**/${test.runone}.java"/>
         <property name="javac.includes" value="**/${test.runone}.java"/>
         <property name="test.dir" location="../../bin/junit"/>
+		<delete dir="${test.dir}/reports" />
+        <mkdir dir="${test.dir}/reports/html" />
     </target>
 
     <target name="test:runone" depends="-test:runone-init,test-single,test:report" 

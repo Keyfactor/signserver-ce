@@ -566,9 +566,12 @@ ant clean deploy
 Start the application server and verify that SignServer was deployed and
 database tables were created. 
                     </p>
-                    <p>
-After startup the SignServer CLI is available.
-                    </p>
+				</subsection>
+				<subsection name="8. Accessing SignServer">
+					<p>
+After startup and few different user interfaces are available.	
+					</p>
+					<subsubsection name="Command Line Interface">
                     <source>
 bin/signserver.sh getstatus brief all
 Assuming JBoss JNDI provider...
@@ -579,6 +582,17 @@ Executing Command on host : localhost
 
 Current version of server is : SignServer 3.2-svn
                     </source>
+					</subsubsection>
+					<subsubsection name="Graphical User Interface">
+						<source>
+bin/admingui.sh	
+						</source>
+					</subsubsection>
+					<subsubsection name="Web Interface">
+					<p>
+Point your web browser to <a href="http://localhost:8080/signserver">http://localhost:8080/signserver</a> for demo web pages and local documentation.
+					</p>
+					</subsubsection>
                 </subsection>
             </section>
 

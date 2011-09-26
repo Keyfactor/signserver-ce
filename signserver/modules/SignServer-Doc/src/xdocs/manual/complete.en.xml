@@ -569,7 +569,7 @@ database tables were created.
 				</subsection>
 				<subsection name="8. Accessing SignServer">
 					<p>
-After startup and few different user interfaces are available.	
+After startup a few different user interfaces are available.	
 					</p>
 					<subsubsection name="Command Line Interface">
                     <source>

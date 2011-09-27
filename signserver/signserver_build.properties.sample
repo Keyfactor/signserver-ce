@@ -50,7 +50,8 @@
 # and ports etc.
 # Setting j2ee.web-nohttps to true skips this step.
 # Default: false
-# Comment out or set to false if the web server should be configured.
+# Comment out or set to false if the web server should be configured. 
+# Note that you will need p12/tomcat.jks and p12/truststore.jks keystore for web server https configuration. 
 j2ee.web-nohttps=true
 
 # When upgrading, the important options are:

@@ -21,6 +21,7 @@ import javax.crypto.SecretKey;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ejbca.util.Base64;
+import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.IllegalRequestException;
 
 /**
@@ -78,17 +79,9 @@ public class ExtendedHardCodedCryptoTokenTest extends TestCase {
     public void testGenExportableKey() throws Exception {
         ExtendedHardCodedCryptoToken ehct = new ExtendedHardCodedCryptoToken();
         SecretKey key = (SecretKey) ehct.genExportableKey("AES", "256");
-        System.out.println(new String(Base64.encode(key.getEncoded(), true)));
-        System.out.println("\n");
+        assertNotNull(key);
         KeyPair keys = (KeyPair) ehct.genExportableKey("RSA", "1024");
-        System.out.println("\n");
-        System.out.println("\n");
-        System.out.println(new String(Base64.encode(keys.getPrivate().getEncoded(), true)));
-        System.out.println("\n");
-        System.out.println("\n");
-        System.out.println(new String(Base64.encode(keys.getPublic().getEncoded(), true)));
-
-
+        KeyTools.testKey(keys.getPrivate(), keys.getPublic(), "BC");
         try {
             ehct.genExportableKey("ASE", "256");
             assertTrue(false);

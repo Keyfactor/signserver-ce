@@ -22,7 +22,7 @@ import org.signserver.common.SignServerException;
  * Interface for classes that can validate documents.
  *
  * @author Markus Kilas
- * @version $Id: DocumentSigner.java 910 2010-03-31 12:05:34Z netmackan $
+ * @version $Id$
  */
 public interface DocumentValidator {
 

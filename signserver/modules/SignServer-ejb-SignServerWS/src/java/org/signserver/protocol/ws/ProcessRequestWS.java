@@ -25,7 +25,7 @@ import org.signserver.common.RequestAndResponseManager;
  * the the existing GeneralSignatureRequest class.
  * 
  * @author Philip Vendil 28 okt 2007
- * @version $Id: ProcessRequestWS.java 500 2009-04-22 12:10:07Z anatom $
+ * @version $Id$
  */
 public class ProcessRequestWS {
 

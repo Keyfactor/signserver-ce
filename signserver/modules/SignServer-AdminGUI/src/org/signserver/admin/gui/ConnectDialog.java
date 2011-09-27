@@ -58,7 +58,7 @@ import sun.security.pkcs11.SunPKCS11;
  * Dialog for connection and authentication settings.
  *
  * @author Markus Kilås
- * @version $Id: ConnectDialog.java 9352 2010-07-02 09:15:12Z netmackan $
+ * @version $Id$
  */
 @SuppressWarnings("PMD.UnusedFormalParameter")
 public class ConnectDialog extends javax.swing.JDialog {

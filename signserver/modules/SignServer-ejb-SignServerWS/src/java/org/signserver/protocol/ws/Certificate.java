@@ -28,7 +28,7 @@ import org.signserver.validationservice.common.ICertificate;
  * Base64 format.
  *
  * @author Philip Vendil 29 okt 2007
- * @version $Id: Certificate.java 500 2009-04-22 12:10:07Z anatom $
+ * @version $Id$
  */
 public class Certificate {
 

@@ -19,7 +19,7 @@ import java.io.Serializable;
  *
  * @deprecated Use org.signserver.common.KeyTestResult instead
  * @author Markus Kilås
- * @version $Id: KeyTestResult.java 1125 2010-07-20 14:33:50Z netmackan $
+ * @version $Id$
  */
 public class KeyTestResult implements Serializable {
 

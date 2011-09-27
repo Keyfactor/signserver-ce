@@ -36,7 +36,7 @@ import org.signserver.common.SignServerException;
  * Command Line Interface (CLI) for signing MRTD SODs.
  *
  * @author Markus Kilås
- * @version $Id: DocumentSignerCLI.java 940 2010-04-15 07:55:35Z netmackan $
+ * @version $Id$
  */
 public class SODSignerCLI {
 

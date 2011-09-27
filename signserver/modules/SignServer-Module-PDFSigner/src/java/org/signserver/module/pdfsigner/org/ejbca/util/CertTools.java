@@ -47,7 +47,7 @@ import org.bouncycastle.asn1.x509.X509Extensions;
 /**
  * Tools to handle common certificate operations.
  *
- * @version $Id: CertTools.java 8825 2010-03-29 07:36:46Z anatom $
+ * @version $Id$
  */
 public class CertTools {
     private static final Logger log = Logger.getLogger(CertTools.class);

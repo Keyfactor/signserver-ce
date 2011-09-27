@@ -62,7 +62,7 @@ import org.signserver.server.UsernamePasswordClientCredential;
  * Implementor of the ISignServerWS interface.
  * 
  * @author Philip Vendil
- * @version $Id: SignServerWS.java 1306 2010-11-23 21:06:39Z netmackan $
+ * @version $Id$
  */
 @Stateless
 @WebService(wsdlLocation = "META-INF/wsdl/SignServerWSService.wsdl",

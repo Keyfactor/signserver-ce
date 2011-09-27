@@ -32,7 +32,7 @@ import org.signserver.common.SignServerException;
  * Signs data groups using the HTTP(s) interface.
  *
  * @author Markus Kilås
- * @version $Id: HTTPDocumentSigner.java 941 2010-04-15 08:20:15Z netmackan $
+ * @version $Id$
  */
 public class HTTPSODSigner extends AbstractSODSigner {
     

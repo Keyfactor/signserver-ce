@@ -20,7 +20,7 @@ import org.signserver.validationservice.common.Validation;
  * WS representation of a Validation
  *
  * @author Philip Vendil 2 dec 2007
- * @version $Id: ValidationResponse.java 500 2009-04-22 12:10:07Z anatom $
+ * @version $Id$
  */
 public class ValidationResponse {
 

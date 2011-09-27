@@ -71,7 +71,8 @@ then
         exit 1
 fi
 
-#CP="${SIGNSRV_HOME}/bin/jndi.properties":"$CP"
+# Add for jndi.properties
+CP="${SIGNSRV_HOME}/bin/":"$CP"
 
 if [ -r "$APPSRV_HOME"/lib/appserv-rt.jar ]; then
     echo Using GlassFish JNDI provider...

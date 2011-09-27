@@ -18,13 +18,15 @@ set class_name=org.signserver.admin.gui.SignServerAdminGUIApplication
 
 rem check that we have built the classes
 
-if not exist %SIGNSRV_HOME%\dist-client\SignServer-AdminCLI.jar  (
+if not exist %SIGNSRV_HOME%\dist-client\SignServer-AdminGUI.jar  (
     echo SignServer AdminGUI not available. Build it by running 'ant admingui'.
     goto end
 )
 
+rem Add for jndi.properties
+set BINCP=%SIGNSRV_HOME%\bin
 
-set CLASSPATH=%J2EE_CP%;%SIGNSERVER_CP%;%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\dist-client\SignServer-AdminCLI.jar;%SIGNSERVER_PKG_CP%
+set CLASSPATH=%BINCP%;%J2EE_CP%;%SIGNSERVER_CP%;%SIGNSRV_HOME%\dist-client\SignServer-AdminCLI.jar;%SIGNSERVER_PKG_CP%
 rem echo %CLASSPATH%
 
 rem Fixup arguments, we have to do this since windows normally only 

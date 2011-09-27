@@ -64,12 +64,6 @@
         =========
     -->
 
-    <target name="-pre-compile">
-        <copy todir="${src.dir}" overwrite="true">
-            <fileset dir="../../bin" includes="jndi.properties"/>
-        </copy>
-    </target>
-
     <!-- We override the below target to redefine "excludes" -->
     <target name="-init-macrodef-junit">
         <macrodef name="junit" uri="http://www.netbeans.org/ns/j2se-project/3">

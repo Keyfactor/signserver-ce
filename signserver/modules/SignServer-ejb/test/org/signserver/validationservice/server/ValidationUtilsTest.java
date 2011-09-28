@@ -17,6 +17,7 @@ import java.net.URL;
 import java.security.cert.X509CRL;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.signserver.common.SignServerUtil;
 
 /**
  * Test cases for the ValidationUtils class.
@@ -28,6 +29,12 @@ public class ValidationUtilsTest extends TestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ValidationUtilsTest.class);
+	
+	@Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        SignServerUtil.installBCProvider();
+    }
 	
 	/**
 	 * Tests to fetch a CRL from an URL.

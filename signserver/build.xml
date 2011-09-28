@@ -179,7 +179,6 @@ OS version                          = ${os.version}
 
         <!-- Copy the correct jndi.properties for your appserver -->
         <copy file="bin/jndi.properties.${appserver.type}" tofile="bin/jndi.properties" overwrite="true" failonerror="true"/>
-        <copy file="bin/jndi.properties.${appserver.type}" tofile="${src.java}/jndi.properties" overwrite="true" failonerror="true"/>
 
         <!-- Persistence -->
         <echo message="Database type:      ${database.name}"/>

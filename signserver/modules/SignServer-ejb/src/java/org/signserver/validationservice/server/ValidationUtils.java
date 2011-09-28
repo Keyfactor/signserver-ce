@@ -25,6 +25,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509CRLEntry;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.DEREnumerated;
 import org.bouncycastle.asn1.x509.CRLReason;
 import org.bouncycastle.asn1.x509.X509Extensions;
@@ -38,6 +39,9 @@ import org.signserver.common.SignServerException;
  * @version $Id$
  */
 public class ValidationUtils {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(ValidationUtils.class);
 
     /**
      * retrieve X509CRL from specified URL
@@ -74,85 +78,94 @@ public class ValidationUtils {
             CertificateFactory certFactory) throws SignServerException {
         URLConnection connection;
         try {
-            connection = url.openConnection();
-        } catch (IOException e) {
-            throw new SignServerException(
-                    "Error opening connection for fetching CRL from address : "
-                    + url.toString(), e);
-        }
-        connection.setDoInput(true);
-        connection.setUseCaches(false);
-
-        byte[] responsearr = null;
-        InputStream reader;
-        try {
-            reader = connection.getInputStream();
-        } catch (IOException e) {
-            throw new SignServerException(
-                    "Error getting input stream for fetching CRL from address : "
-                    + url.toString(), e);
-        }
-        int responselen = connection.getContentLength();
-
-        if (responselen != -1) {
-
-            // header indicating content-length is present, so go ahead and use
-            // it
-            responsearr = new byte[responselen];
-
-            int offset = 0;
-            int bread;
-            try {
-                while ((responselen > 0)
-                        && (bread = reader.read(responsearr, offset,
-                        responselen)) != -1) {
-                    offset += bread;
-                    responselen -= bread;
-                }
+                connection = url.openConnection();
             } catch (IOException e) {
                 throw new SignServerException(
-                        "Error reading CRL bytes from address : "
+                        "Error opening connection for fetching CRL from address : "
                         + url.toString(), e);
             }
+            connection.setDoInput(true);
 
-            // read.read returned -1 but we expect inputstream to contain more
-            // data
-            // is it a dreadful unexpected EOF we were afraid of ??
-            if (responselen > 0) {
-                throw new SignServerException(
-                        "Unexpected EOF encountered while reading crl from : "
-                        + url.toString());
-            }
-        } else {
-            // getContentLength() returns -1. no panic , perfect normal value if
-            // header indicating length is missing (javadoc)
-            // try to read response manually byte by byte (small response
-            // expected , no need to buffer)
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            int b;
+            byte[] responsearr = null;
+            InputStream reader = null;
             try {
-                while ((b = reader.read()) != -1) {
-                    baos.write(b);
+                try {
+                    reader = connection.getInputStream();
+                } catch (IOException e) {
+                    throw new SignServerException(
+                            "Error getting input stream for fetching CRL from address : "
+                            + url.toString(), e);
                 }
-            } catch (IOException e) {
+                int responselen = connection.getContentLength();
+
+                if (responselen != -1) {
+
+                    // header indicating content-length is present, so go ahead and use
+                    // it
+                    responsearr = new byte[responselen];
+
+                    int offset = 0;
+                    int bread;
+                    try {
+                        while ((responselen > 0)
+                                && (bread = reader.read(responsearr, offset,
+                                responselen)) != -1) {
+                            offset += bread;
+                            responselen -= bread;
+                        }
+                    } catch (IOException e) {
+                        throw new SignServerException(
+                                "Error reading CRL bytes from address : "
+                                + url.toString(), e);
+                    }
+
+                    // read.read returned -1 but we expect inputstream to contain more
+                    // data
+                    // is it a dreadful unexpected EOF we were afraid of ??
+                    if (responselen > 0) {
+                        throw new SignServerException(
+                                "Unexpected EOF encountered while reading crl from : "
+                                + url.toString());
+                    }
+                } else {
+                    // getContentLength() returns -1. no panic , perfect normal value if
+                    // header indicating length is missing (javadoc)
+                    // try to read response manually byte by byte (small response
+                    // expected , no need to buffer)
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    int b;
+                    try {
+                        while ((b = reader.read()) != -1) {
+                            baos.write(b);
+                        }
+                    } catch (IOException e) {
+                        throw new SignServerException(
+                                "Error reading input stream for fetching CRL from address (no length header): "
+                                + url.toString(), e);
+                    }
+
+                    responsearr = baos.toByteArray();
+                }
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException ex) {
+                        LOG.info("Could not close stream after reading CRL", ex);
+                    }
+                }
+            }
+        
+            ByteArrayInputStream bis = new ByteArrayInputStream(responsearr);
+            X509CRL crl;
+            try {
+                crl = (X509CRL) certFactory.generateCRL(bis);
+            } catch (CRLException e) {
                 throw new SignServerException(
-                        "Error reading input stream for fetching CRL from address (no length header): "
+                        "Error creating CRL object with bytes from address : "
                         + url.toString(), e);
             }
-
-            responsearr = baos.toByteArray();
-        }
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(responsearr);
-        X509CRL crl;
-        try {
-            crl = (X509CRL) certFactory.generateCRL(bis);
-        } catch (CRLException e) {
-            throw new SignServerException(
-                    "Error creating CRL object with bytes from address : "
-                    + url.toString(), e);
-        }
-
+  
         return crl;
     }
 

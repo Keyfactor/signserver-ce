@@ -118,6 +118,7 @@
 	<classpathentry kind="lib" path="lib/module/pdfsigner/itext/itext.jar"/>
 	<classpathentry kind="lib" path="lib/module/ooxmlsigner/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/module/ooxmlsigner/openxml4j_beta_v538.jar"/>
+	<classpathentry kind="lib" path="bin/"/>
 
 	<!-- AdminGUI -->
 	<classpathentry kind="lib" path="modules/SignServer-AdminGUI/lib/swing-app-framework/appframework-1.0.3.jar"/>

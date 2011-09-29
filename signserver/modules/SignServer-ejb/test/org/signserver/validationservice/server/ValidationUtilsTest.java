@@ -29,25 +29,25 @@ public class ValidationUtilsTest extends TestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ValidationUtilsTest.class);
-	
-	@Override
+
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
     }
-	
-	/**
-	 * Tests to fetch a CRL from an URL.
-	 * @throws Exception in case of error
-	 */
-	public void test01fetchCRLFromURL() throws Exception {
-		File homeFolder = new File(System.getenv("SIGNSERVER_HOME"));
-		assertTrue("No such folder: " + homeFolder.getAbsolutePath(), homeFolder.exists());
-		File crlFile = new File(homeFolder, "src/test/dss10/DSSRootCA10-1.crl");
-		assertTrue("No such file: " + crlFile.getAbsolutePath(), crlFile.exists());
-		URL crlURL = crlFile.toURI().toURL();
-		X509CRL crl = ValidationUtils.fetchCRLFromURL(crlURL);
-		assertNotNull("null crl", crl);
-	}
-	
+
+    /**
+    * Tests to fetch a CRL from an URL.
+    * @throws Exception in case of error
+    */
+    public void test01fetchCRLFromURL() throws Exception {  	
+        File homeFolder = new File(System.getenv("SIGNSERVER_HOME"));
+        assertTrue("No such folder: " + homeFolder.getAbsolutePath(), homeFolder.exists());
+        File crlFile = new File(homeFolder, "src/test/dss10/DSSRootCA10-1.crl");
+        assertTrue("No such file: " + crlFile.getAbsolutePath(), crlFile.exists());
+        URL crlURL = crlFile.toURI().toURL();
+        X509CRL crl = ValidationUtils.fetchCRLFromURL(crlURL);
+        assertNotNull("null crl", crl);
+    }
+
 }

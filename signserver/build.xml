@@ -11,6 +11,7 @@
 <!--  See terms of license at gnu.org.                                       -->
 <!--                                                                         -->
 <!-- ======================================================================= -->
+<!-- Version: $Id$ -->
 <project name="signserver" default="default" basedir=".">
 
     <!-- Load properties before including files -->
@@ -58,6 +59,61 @@
     <property file="modules/modules-project.properties"/>
 
     <import file="modules/modules.xml"/>
+    
+    <!-- Classpaths -->
+    <path id="signserver.compile.classpath">
+        <path refid="signserver.ext.classpath" />
+        <fileset dir="dist-server/lib" includes="*.jar"/>
+        <fileset dir="lib" includes="*.jar" />
+        <fileset dir="lib/quartz" includes="*.jar" />
+        <fileset dir="lib/${server.java.target}" includes="*.jar" />
+	    
+        <fileset dir="lib/module/tsa/${client.java.target}" includes="*.jar" />
+        <fileset dir="lib/module/pdfsigner/itext" includes="*.jar"/>
+        <fileset dir="lib/module/odfsigner" includes="*.jar"/>
+        <fileset dir="lib/module/ooxmlsigner" includes="*.jar"/>
+        <fileset dir="lib/jaxws" includes="*.jar" />
+        <fileset dir="lib/asm" includes="*.jar" />
+        <fileset dir="lib/hibernate" includes="*.jar"/>
+        <fileset dir="${ant.home}/lib" includes="ant.jar" />
+        <path refid="j2ee.classpath" />
+	        
+        <path location="tmp/jaxws/gen-classes/client" />
+        <path location="tmp/validationws/gen-classes/client" />
+    </path>
+
+    <path id="server.compile.classpath">
+        <path refid="signserver.compile.classpath" />
+    </path>
+		
+    <path id="client.compile.classpath">
+        <fileset dir="${client.primeCard.dist}" includes="*.jar" />
+        <path refid="signserver.compile.classpath" />
+    </path>
+	
+    <path id="signserver.ext.classpath">
+        <fileset dir="lib/ext" includes="*.jar" />
+    </path>
+        
+    <path id="j2ee.classpath">
+        <fileset dir="${appserver.home}">
+	        	<!-- jboss -->
+            <include name="client/jbossall-client.jar" />
+            <include name="client/jboss-j2ee.jar" />
+            <include name="client/jboss-javaee.jar" />
+            <include name="client/ejb3-persistence.jar" />
+            <include name="client/jboss-ejb3x.jar" />
+	        	<!-- glassfish -->
+            <include name="lib/javaee.jar"/>
+            <include name="lib/appserv-rt.jar"/>
+	        	<!-- weblogic -->
+            <include name="server/lib/weblogic.jar"/>
+	        	<!-- oracle -->
+            <include name="j2ee/home/oc4jclient.jar"/>
+	        	<!-- websphere -->
+            <include name="runtimes/com.ibm.*.jar"/>
+        </fileset>
+    </path>
 
     <!-- =================================================================== -->
     <!-- Build ALL                                                           -->
@@ -342,12 +398,8 @@ OS version                          = ${os.version}
     <target name="javadoc" depends="build"
         description="Build JavaDoc for SignServer">
         <mkdir dir="${apidoc}" />
-        <javadoc packagenames="org.signserver.*" maxmemory="256m" sourcepath="${src.java}" destdir="${apidoc}"
-        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/ext/james:${lib}/asm:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/module/wsra:${lib}/reports:${lib}/quartz:${lib}/jaxws:${lib}/module/odfsigner/odfdom.jar"
-        	classpath="${server.compile.classpath}:${tmp}/jaxws/gen-classes/client:${lib}/module/odfsigner/odfdom.jar:${lib}/module/ooxmlsigner/openxml4j_beta_v538.jar"
-        	author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2011 PrimeKey Solutions AB."
-                encoding="utf-8"
-                charset="utf-8">
+        <javadoc failonerror="true" packagenames="org.signserver.*" maxmemory="256m" sourcepath="${src.java}" destdir="${apidoc}"
+        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/ext/james:${lib}/asm:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/module/wsra:${lib}/reports:${lib}/quartz:${lib}/jaxws:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2011 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
                 <fileset dir="${src.java}">
                     <include name="**/*.java"/>
                 </fileset>
@@ -358,8 +410,11 @@ OS version                          = ${os.version}
                     <include name="**/*.java"/>
                 </fileset>
 
-                <!-- Include all modules that has a src/java/ folder. -->
-                <fileset dir="modules" includes="*/src/java/**/*.java"/>
+                <!-- Include all java files in the modules folder but excluding the tests -->
+                <fileset dir="modules" includes="**/*.java" excludes="*/test/**/*.java"/>
+                
+                <classpath refid="server.compile.classpath"/>
+                <classpath path="modules/SignServer-AdminGUI/lib/swing-app-framework/appframework-1.0.3.jar:modules/SignServer-AdminGUI/lib/swing-app-framework/swing-worker-1.1.jar:modules/SignServer-AdminGUI/lib/beans-binding/beansbinding-1.2.1.jar"/>
         </javadoc>
         <echo message="Local documentation is now available in file://${apidoc}/index.html"/>
     </target>

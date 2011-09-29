@@ -146,7 +146,7 @@ public class EncKeyDataBean implements Serializable {
     }
 
     /**
-     * @param isUse if the current key is in use.
+     * @param inUse if the current key is in use.
      */
     public void setInUse(boolean inUse) {
         this.inUse = inUse;

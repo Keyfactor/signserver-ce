@@ -43,9 +43,7 @@ public class GenericPropertiesRequest extends ProcessRequest {
     /**
      * Creates a GenericSignRequest, works as a simple VO.
      *
-     * @param requestID
-     * @param requestData
-     * @see org.signserver.common.ProcessRequest
+     * @param properties the request data
      */
     public GenericPropertiesRequest(final Properties properties) {
         this.properties = properties;

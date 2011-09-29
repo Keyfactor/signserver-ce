@@ -74,9 +74,7 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
         return requestID;
     }
 
-    /**
-     * @see org.signserver.common.ProcessResponse#getCertificate()
-     */
+    @Override
     public Certificate getSignerCertificate() {
         if (signerCertificate == null && signerCertificateBytes != null) {
             try {
@@ -89,16 +87,12 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
         return signerCertificate;
     }
 
-    /**
-     * @see org.signserver.common.ProcessResponse#getArchiveData()
-     */
+    @Override
     public ArchiveData getArchiveData() {
         return archiveData;
     }
 
-    /**
-     * @see org.signserver.common.ProcessResponse#getArchiveId()
-     */
+    @Override
     public String getArchiveId() {
         return archiveId;
     }

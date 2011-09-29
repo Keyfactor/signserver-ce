@@ -47,7 +47,7 @@ public class ValidationUtils {
      * retrieve X509CRL from specified URL
      * 
      * @param url
-     * @return
+     * @return the downloaded CRL
      * @throws CertificateException
      * @throws NoSuchProviderException
      * @throws CRLException

@@ -53,7 +53,7 @@ public abstract class ProcessRequest implements Externalizable {
      * by protocols to external clients. The Externalizable interface
      * should only be used for RMI calls.
      * 
-     * @param in input stream to read data from
+     * @param out output stream to write data to
      * @throws IOException if parsing error occured
      */
     public abstract void serialize(DataOutput out) throws IOException;

@@ -78,7 +78,7 @@ public class ProcessableConfig {
     /**
      * Adds a Certificate SN to the collection of authorized clients	  
      * 
-     * @param the AuthorizedClient to add
+     * @param client the AuthorizedClient to add
      */
     @SuppressWarnings("unchecked")
     public void addAuthorizedClient(AuthorizedClient client) {
@@ -88,7 +88,7 @@ public class ProcessableConfig {
     /**
      * Removes a Certificate SN from the collection of authorized clients	  
      * 
-     * @param the AuthorizedClient to remove
+     * @param client the AuthorizedClient to remove
      */
     @SuppressWarnings("unchecked")
     public boolean removeAuthorizedClient(AuthorizedClient client) {

@@ -52,7 +52,7 @@ public class ValidationResponse {
     }
 
     /**
-     * @param validStatus the validStatus to set
+     * @param status the validStatus to set
      */
     public void setStatus(Validation.Status status) {
         this.status = status;

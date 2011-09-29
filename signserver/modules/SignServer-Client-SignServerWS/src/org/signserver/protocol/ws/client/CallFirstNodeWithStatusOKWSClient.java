@@ -61,10 +61,8 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
     /**
      * Special constructor used from test scripts
      * 
-     * @param host to connect to
-     * @param port to connect to
-     * @param securityLayer to use
-     * @param transportLayer to use
+     * @param hosts to connect to
+     * @param port to connect t
      * @param timeOut in milliseconds
      * @param wSDLURL the URL to the WSDL of the service appended to the host and port.
      * @param useHTTPS if HTTPS should be used.  
@@ -125,7 +123,7 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
     }
 
     /**
-     * @see org.signserver.protocol.ws.client.ISignServerWSClient#process(String, List, IFaultCallback)
+     * @see org.signserver.protocol.ws.client.ISignServerWSClient#process(String, List)
      */
     public List<ProcessResponseWS> process(String workerId, List<ProcessRequestWS> requests) {
         List<ProcessResponseWS> resp = null;

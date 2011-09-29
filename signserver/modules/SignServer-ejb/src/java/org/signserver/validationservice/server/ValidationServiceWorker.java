@@ -83,8 +83,9 @@ public class ValidationServiceWorker extends BaseProcessable {
      * Main method of the container calling the appropriate method
      * of the ValidationService depending on the type of request.
      * 
-     * @see org.signserver.server.signers.IProcessable#processData(org.signserver.common.ProcessRequest, java.security.cert.X509Certificate)
+     * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext) 
      */
+    @Override
     public ProcessResponse processData(ProcessRequest processRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
@@ -97,8 +98,9 @@ public class ValidationServiceWorker extends BaseProcessable {
     }
 
     /**
-     * @see org.signserver.server.signers.BaseProcessable#getStatus()
+     * @see org.signserver.server.BaseProcessable#getStatus()
      */
+    @Override
     public WorkerStatus getStatus() {
         return validationService.getStatus();
     }

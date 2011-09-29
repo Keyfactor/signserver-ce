@@ -188,7 +188,7 @@ public class RequestAndResponseManager {
 
     /**
      * Help method used to transform a process response to a byte array.
-     * @param request to serialize 
+     * @param response to serialize 
      * @return a serialized representation of the response
      * @throws IOException if error occurred during serialization
      */
@@ -233,7 +233,7 @@ public class RequestAndResponseManager {
     /**
      * Method to remove a custom process response from available custom process response
      * 
-     * @param requestTypeId unique id of process response to remove.
+     * @param responseTypeId unique id of process response to remove.
      */
     public static void unregisterCustomProcessResponse(int responseTypeId) {
         AVAILABLE_RESPONSE_TYPES.remove(responseTypeId);

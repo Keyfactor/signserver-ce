@@ -74,7 +74,7 @@ public class ValidationWS implements IValidationWS {
     private IGlobalConfigurationSession.ILocal globalconfigsession;
 
     /**
-     * @see org.signserver.protocol.validationservice.ws.IValidationWS#isValid(String, CertType)
+     * @see org.signserver.protocol.validationservice.ws.IValidationWS#isValid(String, String, String)
      */
     @WebMethod
     public ValidationResponse isValid(@WebParam(name = "serviceName") String serviceName, @WebParam(name = "base64Cert") String base64Cert, @WebParam(name = "certPurposes") String certPurposes) throws IllegalRequestException, SignServerException {
@@ -142,7 +142,7 @@ public class ValidationWS implements IValidationWS {
     }
 
     /**
-     * @see org.signserver.protocol.validationservice.ws.IValidationWS#getStatus()
+     * @see org.signserver.protocol.validationservice.ws.IValidationWS#getStatus(java.lang.String)
      */
     @WebMethod
     public String getStatus(@WebParam(name = "serviceName") String serviceName) throws IllegalRequestException {

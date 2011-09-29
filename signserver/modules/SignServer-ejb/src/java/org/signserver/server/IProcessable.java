@@ -57,8 +57,7 @@ public interface IProcessable extends IWorker {
      *
      * Optional method, if not supported throw a CryptoTokenOfflineException
      *
-     * @param authenticationCode
-     * @param props the configuration that should be used for activation, doesn't have to be the active one for smooth shift of keys.
+     * @param authCode
      */
     void activateSigner(String authCode) throws
             CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException;

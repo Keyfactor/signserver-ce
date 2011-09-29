@@ -43,9 +43,7 @@ public class GenericPropertiesResponse extends ProcessResponse {
     /**
      * Creates a GenericSignResponse, works as a simple VO.
      *
-     * @param requestID
-     * @param requestData
-     * @see org.signserver.common.ProcessRequest
+     * @param properties the request data
      */
     public GenericPropertiesResponse(final Properties properties) {
         this.properties = properties;

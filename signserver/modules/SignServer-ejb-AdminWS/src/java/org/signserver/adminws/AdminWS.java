@@ -203,7 +203,7 @@ public class AdminWS {
      * Observe that this config might not be active until a reload command
      * has been excecuted.
      *
-     * @param signerId
+     * @param workerId
      * @return the current (not always active) configuration
      */
     @WebMethod(operationName = "getCurrentWorkerConfig")
@@ -261,7 +261,7 @@ public class AdminWS {
      * Method that returns a collection of AuthorizedClient of
      * client certificate sn and issuerid accepted for a given signer.
      *
-     * @param signerId
+     * @param workerId
      * @return Sorted collection of authorized clients
      */
     @WebMethod(operationName = "getAuthorizedClients")
@@ -277,7 +277,7 @@ public class AdminWS {
     /**
      * Method adding an authorized client to a signer.
 
-     * @param signerId
+     * @param workerId
      * @param authClient
      */
     @WebMethod(operationName = "addAuthorizedClient")
@@ -294,7 +294,7 @@ public class AdminWS {
     /**
      * Removes an authorized client from a signer.
      *
-     * @param signerId
+     * @param workerId
      * @param authClient
      */
     @WebMethod(operationName = "removeAuthorizedClient")

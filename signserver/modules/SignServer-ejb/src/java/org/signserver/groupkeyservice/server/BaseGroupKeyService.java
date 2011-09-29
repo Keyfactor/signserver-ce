@@ -32,8 +32,9 @@ public abstract class BaseGroupKeyService implements IGroupKeyService {
     protected IExtendedCryptoToken ect;
 
     /**
-     * @see org.signserver.server.IWorker#init(int, org.signserver.common.WorkerConfig,EntityManager)
+     * @see org.signserver.server.IWorker#init(int, org.signserver.common.WorkerConfig, org.signserver.server.WorkerContext, javax.persistence.EntityManager)
      */
+    @Override
     public void init(int workerId, WorkerConfig config, EntityManager em, IExtendedCryptoToken ect) {
         this.workerId = workerId;
         this.config = config;

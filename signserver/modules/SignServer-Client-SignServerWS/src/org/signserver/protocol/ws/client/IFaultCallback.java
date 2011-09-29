@@ -28,7 +28,7 @@ public interface IFaultCallback {
     /**
      * Method called by the message client error occurred to some of the nodes in the cluster
      * 
-     * @param error the error
+     * @param fault the error
      */
     void addCommunicationError(ICommunicationFault fault);
 }

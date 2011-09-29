@@ -90,7 +90,8 @@ public class WorkerFactory {
      * 
      * @param signerId the Id that should match the one in the config file.
      * @param workerConfigHome The service interface of the signer config entity bean
-     * @param mailSignerContext 
+     * @param gCSession
+     * @param workerContext
      * @return A ISigner as defined in the configuration file, or null if no configuration
      * for the specified signerId could be found.
      */

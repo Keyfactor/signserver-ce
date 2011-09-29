@@ -26,8 +26,9 @@ public abstract class BaseDispatcher extends BaseProcessable {
 
     /**
      * @return WorkerStatus
-     * @see org.signserver.server.signers.IProcessable#getStatus()
+     * @see org.signserver.server.IProcessable#getStatus()
      */
+    @Override
     public WorkerStatus getStatus() {
         return new DispatcherStatus(workerId, config);
     }

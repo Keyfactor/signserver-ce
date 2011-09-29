@@ -73,7 +73,7 @@ public class GlobalConfigurationFileParser implements Serializable {
      * Method returning the global configuration instance used in testscripts
      * SHOULD ONLY BE USED FOR TESTING
      * 
-     * @param testpropertes contains the test properties.
+     * @param testproperties contains the test properties.
      * 
      * @return the GlobalConfigurationFileParser instance.
      */

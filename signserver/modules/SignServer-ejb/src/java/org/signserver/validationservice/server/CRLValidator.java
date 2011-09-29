@@ -66,7 +66,7 @@ public class CRLValidator extends BaseValidator {
     private static final Logger LOG = Logger.getLogger(CRLValidator.class);
 
     /**
-     * @see org.signserver.validationservice.server.IValidator#init(int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.IExtendedCryptoToken)
+     * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override
     public void init(int workerId, int validatorId, Properties props, EntityManager em,
@@ -84,7 +84,7 @@ public class CRLValidator extends BaseValidator {
      * this method is introduced for calling validator from other validators, not defined in config
      * @param cert
      * @param props
-     * @return
+     * @return the validation result
      * @throws IllegalRequestException
      * @throws CryptoTokenOfflineException
      * @throws SignServerException

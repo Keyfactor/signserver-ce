@@ -37,7 +37,7 @@ public interface ISignServerWSClient {
      * Method used to initialize a SignServer client with a given
      * high availability policy.
      * 
-     * @param host to connect to
+     * @param hosts to connect to
      * @param port to connect to
      * @param timeOut in milliseconds
      * @param wSDLURI the URL to the WSDL of the service appended to the host and port.

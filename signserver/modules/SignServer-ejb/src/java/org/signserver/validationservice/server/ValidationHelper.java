@@ -174,7 +174,7 @@ public class ValidationHelper {
      * all properties with keys starting 'issuer..' overrides general properties.
      * <li>If no 'issuer<issuerId>.' exists for the given id then, null will be returned.
      * </ul>
-     * @param config a worker config containing all properties
+     * @param validatorProperties a worker config containing all properties
      * @return a Propertes according to above specification or 'null' if no property with 'issuer...' exists
      * in configuration.
      */

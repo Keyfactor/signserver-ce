@@ -42,7 +42,7 @@ public class ValidateResponse extends ProcessResponse {
     /**
      * Main constructor
      * 
-     * @param validations of the certificate verified.
+     * @param validation of the certificate verified.
      */
     public ValidateResponse(Validation validation, String[] validPurposes) {
         super();

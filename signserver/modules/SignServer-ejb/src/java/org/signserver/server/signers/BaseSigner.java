@@ -32,8 +32,9 @@ import org.signserver.server.KeyUsageCounter;
 public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
     /**
-     * @see org.signserver.server.signers.IProcessable#getStatus()
+     * @see org.signserver.server.IProcessable#getStatus()
      */
+    @Override
     public WorkerStatus getStatus() {
         SignerStatus retval = null;
 

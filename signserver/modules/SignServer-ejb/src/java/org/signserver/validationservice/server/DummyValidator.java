@@ -55,9 +55,7 @@ public class DummyValidator extends BaseValidator {
      * @param entityManager
      * @param cryptoToken
      * @throws SignServerException
-     * @see org.signserver.validationservice.server.IValidator#init(int,
-     * java.util.Properties, javax.persistence.EntityManager,
-     * org.signserver.server.cryptotokens.IExtendedCryptoToken)
+     * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override
     public void init(final int workerId, final int validatorId,
@@ -86,9 +84,9 @@ public class DummyValidator extends BaseValidator {
 
     /**
      * @param cert
-     * @see org.signserver.validationservice.server.IValidator#validate(
-     * java.security.cert.Certificate)
+     * @see org.signserver.validationservice.server.IValidator#validate(org.signserver.validationservice.common.ICertificate)
      */
+    @Override
     public Validation validate(final ICertificate cert)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {

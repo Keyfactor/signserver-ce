@@ -39,7 +39,7 @@ public class StatisticsEntry implements Delayed {
      * 
      * @param periodStart defining the start of this collection of statistics
      * @param periodEnd defining the end of this collection of statistics
-     * @param the date when this entry will be expired and removed from the
+     * @param expireDate the date when this entry will be expired and removed from the
      * StatisticsCollector.
      */
     public StatisticsEntry(Date periodStart, Date periodEnd, Date expireDate) {

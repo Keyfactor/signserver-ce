@@ -40,7 +40,6 @@ public class ArchiveDataVO implements Serializable {
     private int signerId = 0;
 
     /**
-     * @param pk
      * @param type
      * @param time
      * @param requestIssuerDN

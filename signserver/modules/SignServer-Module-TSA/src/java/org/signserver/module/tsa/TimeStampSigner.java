@@ -146,7 +146,7 @@ import org.signserver.server.signers.BaseSigner;
  * </table>
  *
  * @author philip
- * $Id$
+ * @version $Id$
  */
 public class TimeStampSigner extends BaseSigner {
 
@@ -285,9 +285,7 @@ public class TimeStampSigner extends BaseSigner {
      * @param signRequest
      * @param requestContext
      * @return the sign response
-     * @see org.signserver.server.signers.IProcessable#signData(
-     *  org.signserver.common.ProcessRequest,
-     *  java.security.cert.X509Certificate)
+     * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     public ProcessResponse processData(final ProcessRequest signRequest,
             final RequestContext requestContext) throws

@@ -51,9 +51,9 @@ public abstract class BaseValidationService implements IValidationService {
     private ICertPurposeChecker certTypeChecker;
     
     /**
-     * @throws SignServerException 
-     * @see org.signserver.server.IWorker#init(int, org.signserver.common.WorkerConfig,EntityManager)
+     * @see org.signserver.server.IWorker#init(int, org.signserver.common.WorkerConfig, org.signserver.server.WorkerContext, javax.persistence.EntityManager)
      */
+    @Override
     public void init(int workerId, WorkerConfig config, EntityManager em, ICryptoToken ct) {
         this.workerId = workerId;
         this.config = config;

@@ -101,7 +101,7 @@ public class GenericProcessServlet extends HttpServlet {
     }
 
     /**
-     * handles http post
+     * Handles http post.
      *
      * @param req servlet request
      * @param res servlet response
@@ -245,14 +245,13 @@ public class GenericProcessServlet extends HttpServlet {
     } //doPost
 
     /**
-     * handles http get
+     * Handles http get.
      *
      * @param req servlet request
      * @param res servlet response
      *
      * @throws IOException input/output error
      * @throws ServletException error
-     * @throws
      */
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws java.io.IOException, ServletException {

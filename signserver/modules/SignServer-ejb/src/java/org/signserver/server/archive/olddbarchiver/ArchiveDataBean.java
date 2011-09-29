@@ -196,9 +196,7 @@ public class ArchiveDataBean implements Serializable {
     }
 
     /**
-     * WorkerConfig in  xmlencoded String format
-     *
-     * @param WorkerConfig xmlencoded encoded data
+     * @param archiveData the archive data
      */
     public void setArchiveData(String archiveData) {
         this.archiveData = archiveData;

@@ -163,8 +163,8 @@ public class AdminLayerEJBImpl implements AdminWS {
      *
      * @param signerId of the signer
      * @param authenticationCode (PIN) used to activate the token.
-     * @throws CryptoTokenOfflineException
-     * @throws CryptoTokenAuthenticationFailureException
+     * @throws CryptoTokenOfflineException_Exception
+     * @throws CryptoTokenAuthenticationFailureException_Exception
      */
     @Override
     public void activateSigner(int signerId,
@@ -230,8 +230,8 @@ public class AdminLayerEJBImpl implements AdminWS {
      *
      * @param signerId of the signer
      * @return true if deactivation was successful
-     * @throws CryptoTokenOfflineException
-     * @throws CryptoTokenAuthenticationFailureException
+     * @throws CryptoTokenOfflineException_Exception
+     * @throws CryptoTokenAuthenticationFailureException_Exception
      */
     @Override
     public boolean deactivateSigner(int signerId)
@@ -254,7 +254,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * Observe that this config might not be active until a reload command
      * has been excecuted.
      *
-     * @param signerId
+     * @param workerId
      * @return the current (not always active) configuration
      */
     @Override
@@ -308,7 +308,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * Method that returns a collection of AuthorizedClient of
      * client certificate sn and issuerid accepted for a given signer.
      *
-     * @param signerId
+     * @param workerId
      * @return Sorted collection of authorized clients
      */
     @Override
@@ -333,7 +333,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     /**
      * Method adding an authorized client to a signer.
 
-     * @param signerId
+     * @param workerId
      * @param authClient
      */
     @Override
@@ -349,7 +349,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     /**
      * Removes an authorized client from a signer.
      *
-     * @param signerId
+     * @param workerId
      * @param authClient
      */
     @Override
@@ -439,7 +439,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @param signerId Id of signer
      * @return Current signing certificate if the worker is a signer and it has
      * been configured. Otherwise null or an exception is thrown.
-     * @throws CryptoTokenOfflineException In case the crypto token or the worker
+     * @throws CryptoTokenOfflineException_Exception In case the crypto token or the worker
      * is not active
      */
     @Override
@@ -484,7 +484,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @param signerId Id of signer
      * @return Current signing certificate chain if the worker is a signer and it
      * has been configured. Otherwise null or an exception is thrown.
-     * @throws CryptoTokenOfflineException In case the crypto token or the worker
+     * @throws CryptoTokenOfflineException_Exception In case the crypto token or the worker
      * is not active
      */
     @Override
@@ -526,7 +526,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * Gets the last date the specified worker can do signings.
      * @param workerId Id of worker to check.
      * @return The last date or null if no last date (=unlimited).
-     * @throws CryptoTokenOfflineException In case the cryptotoken is offline
+     * @throws CryptoTokenOfflineException_Exception In case the cryptotoken is offline
      * for some reason.
      */
     @Override
@@ -554,7 +554,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * Gets the first date the specified worker can do signings.
      * @param workerId Id of worker to check.
      * @return The first date or null if no last date (=unlimited).
-     * @throws CryptoTokenOfflineException In case the cryptotoken is offline
+     * @throws CryptoTokenOfflineException_Exception In case the cryptotoken is offline
      * for some reason.
      */
     @Override
@@ -643,8 +643,8 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @param alias Name of key to test or "all" to test all available
      * @param authCode Authorization code
      * @return Collection with test results for each key
-     * @throws CryptoTokenOfflineException
-     * @throws KeyStoreException
+     * @throws CryptoTokenOfflineException_Exception
+     * @throws KeyStoreException_Exception
      */
     @Override
     public List<KeyTestResult> testKey(
@@ -825,7 +825,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     /**
      * Method that is used after a database crash to restore all cached data to
      * database.
-     * @throws ResyncException if resync was unsuccessfull
+     * @throws ResyncException_Exception if resync was unsuccessfull
      */
     @Override
     public void globalResync() throws ResyncException_Exception {

@@ -305,14 +305,13 @@ public class SODProcessServlet extends HttpServlet {
     }
 
     /**
-     * handles http get
+     * Handles http get.
      *
      * @param req servlet request
      * @param res servlet response
      *
      * @throws IOException input/output error
      * @throws ServletException error
-     * @throws
      */
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws java.io.IOException, ServletException {

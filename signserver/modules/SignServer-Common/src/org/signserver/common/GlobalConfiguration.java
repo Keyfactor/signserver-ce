@@ -154,7 +154,7 @@ public class GlobalConfiguration implements Serializable {
      *
      * Use this method only if you know what you are doing.
      *
-     * @param property the actual property (with  GLOB. or NODE. prefixes)
+     * @param propertyWithScope the actual property (with  GLOB. or NODE. prefixes)
      * @return the currently set global property or null if it doesn't exist.
      */
     public String getProperty(String propertyWithScope) {

@@ -429,7 +429,6 @@ public class TSADispatcherServlet extends HttpServlet {
      *
      * @throws IOException input/output error
      * @throws ServletException error
-     * @throws
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws java.io.IOException, ServletException {
         LOG.debug(">doGet()");

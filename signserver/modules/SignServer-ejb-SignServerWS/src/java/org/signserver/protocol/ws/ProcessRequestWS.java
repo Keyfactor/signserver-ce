@@ -73,7 +73,6 @@ public class ProcessRequestWS {
 
     /**
      * Help method returning the  request data in binary form. 
-     * @param signedData the actual data
      */
     public byte[] getRequestData() {
         if (requestDataBase64 == null) {

@@ -127,7 +127,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     /**
      * Method that removes a worker config
      * 
-     * @returns true if the removal was successful
+     * @return true if the removal was successful
      */
     public boolean removeWorkerConfig(int workerId) {
         boolean retval = false;

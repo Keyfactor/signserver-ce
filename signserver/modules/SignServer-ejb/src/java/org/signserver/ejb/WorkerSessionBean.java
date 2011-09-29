@@ -134,10 +134,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession#process(int,
-     * org.signserver.common.ISignRequest, java.security.cert.X509Certificate,
-     * java.lang.String)
+     * @see org.signserver.ejb.interfaces.IWorkerSession#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
+    @Override
     public ProcessResponse process(final int workerId,
             final ProcessRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
@@ -1127,7 +1126,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificate(int) 
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getSignerCertificate(int)
      */
     public Certificate getSignerCertificate(final int signerId) throws CryptoTokenOfflineException {
         Certificate ret = null;
@@ -1143,6 +1142,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /**
      * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificateChain(int)
      */
+    @Override
     public List<Certificate> getSignerCertificateChain(final int signerId)
             throws CryptoTokenOfflineException {
         List<Certificate> ret = null;
@@ -1162,7 +1162,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificateBytes(int) 
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getSignerCertificateBytes(int) 
      */
     @Override
     public byte[] getSignerCertificateBytes(final int signerId) 
@@ -1176,7 +1176,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificateChain(int)
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getSignerCertificateChain(int)
      */
     @Override
     public List<byte[]> getSignerCertificateChainBytes(final int signerId)

@@ -47,7 +47,7 @@ public class GroupKeyServiceWorker extends BaseProcessable {
 
     /**
      * Initialization method creating the group key service
-     * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
+     * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, org.signserver.server.WorkerContext, javax.persistence.EntityManager)
      */
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager) {

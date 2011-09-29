@@ -173,7 +173,7 @@ public class MarAntTask extends Task {
     }
 
     /**
-     * @param moduleName the moduleName to set
+     * @param modulename the moduleName to set
      */
     public void setModulename(String modulename) {
         this.modulename = modulename;

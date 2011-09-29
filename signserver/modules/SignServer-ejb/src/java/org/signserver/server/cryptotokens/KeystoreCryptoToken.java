@@ -111,8 +111,9 @@ public class KeystoreCryptoToken implements ICryptoToken,
     private char[] authenticationCode;
 
     /**
-     * @see org.signserver.server.cryptotokens.ICryptoToken#init(java.util.Properties)
+     * @see org.signserver.server.cryptotokens.ICryptoToken#init(int, java.util.Properties)
      */
+    @Override
     public void init(int workerId, Properties properties) {
         this.properties = properties;
         keystorepath = properties.getProperty(KEYSTOREPATH);
@@ -302,9 +303,10 @@ public class KeystoreCryptoToken implements ICryptoToken,
     }
 
     /**
-     * Always returns BC
-     * @see org.signserver.server.cryptotokens.ICryptoToken#getProvider()
+     * Always returns BC.
+     * @see org.signserver.server.cryptotokens.ICryptoToken#getProvider(int)
      */
+    @Override
     public String getProvider(int providerUsage) {
         return provider;
     }
@@ -371,9 +373,9 @@ public class KeystoreCryptoToken implements ICryptoToken,
     }
 
     /**
-     * @see ICryptoToken#genCertificateRequest(
-     *  org.signserver.common.ISignerCertReqInfo, boolean)
+     * @see ICryptoToken#genCertificateRequest(org.signserver.common.ISignerCertReqInfo, boolean, boolean)
      */
+    @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info, 
             final boolean explicitEccParameters, final boolean defaultKey)
             throws CryptoTokenOfflineException {

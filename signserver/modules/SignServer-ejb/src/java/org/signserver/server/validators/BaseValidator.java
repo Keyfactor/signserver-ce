@@ -27,7 +27,7 @@ import org.signserver.server.BaseProcessable;
 public abstract class BaseValidator extends BaseProcessable implements IValidator {
 
     /**
-     * @see org.signserver.server.signers.IProcessable#getStatus()
+     * @see org.signserver.server.IProcessable#getStatus()
      */
     @Override
     public WorkerStatus getStatus() {

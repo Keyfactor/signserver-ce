@@ -97,7 +97,7 @@ public class SoftCryptoToken implements ICryptoToken {
     private IWorkerSession.IRemote workerSession;
 
     /**
-     * @see org.signserver.server.cryptotokens.ICryptoToken#init(java.util.Properties)
+     * @see org.signserver.server.cryptotokens.ICryptoToken#init(int, java.util.Properties)
      */
     public void init(int workerId, Properties props) {
         this.workerId = workerId;
@@ -200,9 +200,10 @@ public class SoftCryptoToken implements ICryptoToken {
     }
 
     /**
-     * Always returns BC
-     * @see org.signserver.server.cryptotokens.ICryptoToken#getProvider()
+     * Always returns BC.
+     * @see org.signserver.server.cryptotokens.ICryptoToken#getPrivateKey(int)
      */
+    @Override
     public String getProvider(int providerUsage) {
         return "BC";
     }

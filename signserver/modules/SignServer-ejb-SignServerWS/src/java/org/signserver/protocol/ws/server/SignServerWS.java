@@ -17,9 +17,11 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import java.util.Map;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -57,6 +59,7 @@ import org.signserver.protocol.ws.WorkerStatusWS;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
+import org.signserver.server.log.IWorkerLogger;
 
 /**
  * Implementor of the ISignServerWS interface.
@@ -202,6 +205,18 @@ public class SignServerWS implements ISignServerWS {
             }
         }
         requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
+        
+        final Map<String, String> logMap = new HashMap<String, String>();
+        requestContext.put(RequestContext.LOGMAP, logMap);
+
+        // Add HTTP specific log entries
+        logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, 
+                servletRequest.getRequestURL().append("?")
+                .append(servletRequest.getQueryString()).toString());
+        logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, 
+                servletRequest.getHeader("Content-Length"));
+        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR,
+                servletRequest.getHeader("X-Forwarded-For"));
 
         int workerId = getWorkerId(workerIdOrName);
 

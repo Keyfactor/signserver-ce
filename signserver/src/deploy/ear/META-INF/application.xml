@@ -9,7 +9,7 @@
     <description> The Sign Server
     </description>
     <module>
-        <ejb>signserver-ejb.jar</ejb>
+        <ejb>SignServer-ejb.jar</ejb>
     </module>
     
     <!--@signserverws-ejb.jar@-->

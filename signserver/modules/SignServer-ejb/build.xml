@@ -15,6 +15,14 @@
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
     
+    <target name="-post-dist">
+        <copy todir="../../dist-server/">
+            <fileset dir="dist">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+    </target>
+    
     <!--
 
     There exist several targets which are by default empty and which can be 

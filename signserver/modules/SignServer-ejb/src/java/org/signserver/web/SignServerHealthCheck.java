@@ -1,3 +1,5 @@
+package org.signserver.web;
+
 /*************************************************************************
  *                                                                       *
  *  SignServer: The OpenSource Automated Signing Server                  *
@@ -10,7 +12,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.web;
+
 
 import java.util.Iterator;
 import javax.ejb.EJB;

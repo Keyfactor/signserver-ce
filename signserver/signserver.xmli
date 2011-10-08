@@ -75,7 +75,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- =================================================================== -->
     <!-- Build SignServer                                                    -->
     <!-- =================================================================== -->
-    <target name="signserver" depends="signserver.ear">
+    <target name="signserver">
     </target>
 
     <!-- =================================================================== -->
@@ -111,16 +111,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <target name="signserver-ejb.jar" depends="preprocess, timeStampTestClient,
         PDFPerformanceTestTool,
         signserver:compile">
-        <jar jarfile="${server.dist.dir}/signserver-ejb.jar">
-            <metainf dir="${preprocessed}/deploy/ejb/persistence-mappings/${database.name}">
-                <include name="entity-mappings.xml"/>
-            </metainf>
-
-            <fileset dir="." includes="signserver_server.properties"/>
-            <fileset dir="${build}">
-                <exclude name="org/signserver/client/**" />
-            </fileset>
-        </jar>
+        <ant antfile="${signserverejb.dir}/build.xml" target="dist" inheritall="false"/>
     </target>
 	       
 	
@@ -128,8 +119,10 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- Build web part                                                      -->
     <!-- =================================================================== -->
     <target name="web.war" depends="signserver:compile">
-        <war destfile="${webwar}" webxml="${webwebxml}">
-            <fileset dir="${web.src}" excludes="WEB-INF/web.xml" />
+        <ant antfile="modules/SignServer-war/build.xml" target="dist" inheritall="false"/>
+        <war destfile="${webwar}" webxml="${webwebxml}" >
+            <fileset dir="${web.src}" excludes="WEB-INF/web.xml,*.java" />
+            <zipfileset dir="modules/SignServer-war/build/web/WEB-INF/classes" prefix="WEB-INF/classes"/>
         </war>
     </target>
 
@@ -139,7 +132,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- =================================================================== -->
     <target name="healthcheck.war" depends="signserver:compile">
         <war destfile="${healthcheckwar}" webxml="${healthcheckwebxml}">
-            <fileset dir="${healthcheck.src}" excludes="WEB-INF/web.xml" />
         </war>
     </target>
 
@@ -147,84 +139,33 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- SignServerWS -->
     <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
         <ant antfile="${signserverws.dir}/build.xml" target="dist" inheritall="false"/>
-        <replace file="${eardd.src}/META-INF/application.xml" token="!--@signserverws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-SignServerWS.jar&lt;/ejb>&lt;/module>"/>
     </target>
 
     <!-- ValidationWS -->
     <target name="validationws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
         <ant antfile="${validationws.dir}/build.xml" target="dist" inheritall="false"/>
-        <replace file="${eardd.src}/META-INF/application.xml" token="!--@validationws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-ValidationWS.jar&lt;/ejb>&lt;/module>"/>
     </target>
 
     <!-- AdminWS -->
     <target name="adminws-ejb.jar" depends="signserver-ejb.jar" if="adminws.conditionenabled">
         <ant antfile="${adminws.dir}/build.xml" target="dist" inheritall="false"/>
-        <replace file="${eardd.src}/META-INF/application.xml" token="!--@adminws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-AdminWS.jar&lt;/ejb>&lt;/module>"/>
     </target>
-
 
     <!-- Local documentation -->
     <target name="doc.war" if="webdoc.conditionenabled">
         <ant antfile="${webdoc.dir}/build.xml" target="dist" inheritall="false"/>
         <copy todir="${server.dist.dir}" file="${webdoc.war}" failonerror="true"/>
-        <replace file="${eardd.src}/META-INF/application.xml" token="!--@SignServer-war-Doc.war@-->" value="module>&lt;web>&lt;web-uri>SignServer-war-Doc.war&lt;/web-uri>&lt;context-root>/signserver/doc&lt;/context-root>&lt;/web>&lt;/module>"/>
     </target>
 
     <!-- =================================================================== -->
     <!-- Build signserver.ear                                                -->
     <!-- =================================================================== -->
-    <target name="signserver.ear" description="Creates master signserver.ear" depends="init, preprocess, signserver-ejb.jar, web.war, doc.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, modules">
-        <ear destfile="${caear}" appxml="${eardd.src}/META-INF/application.xml">
-            <fileset dir="${eardd.src}">
-                <exclude name="META-INF/application.xml" />
-            </fileset>
-             <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
-             subdirectories though so we must flatten the structure. zipfileset is a good was of flattening the structure, so
-             all jar files is directly in lib directory in the ear file -->
-            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,commons-lang-2.4.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar,commons-logging.jar,commons-collections-3.2.jar" prefix="lib"/>
-            <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
-            <zipfileset dir="lib/module/pdfsigner/itext" includes="*.jar"  prefix="lib"/>
-            <zipfileset dir="lib/module/odfsigner" includes="*.jar" prefix="lib"/>
-            <zipfileset dir="lib/module/ooxmlsigner" includes="*.jar" prefix="lib"/>
-            <zipfileset dir="lib/module/wsra" includes="dom4j.jar,antlr.jar,cglib.jar" prefix="lib"/>
-            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
-            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>
-            <zipfileset dir="lib/jaxws/" prefix="lib" >
-                <include name="*.jar" if="includejaxws" />
-                <exclude name="saaj*.jar"/>
-            </zipfileset>
-            <fileset dir="${server.dist.dir}">
-                <include name="*-ejb.jar" />
-                <include name="*.war" />
-            </fileset>
-
-            <!--
-                Include application server depended extra JAR files.
-                Edit ${appserver}.xml to define this set.
-            -->
-            <zipfileset refid="appserver.extralibs"/>
-
-            <!-- Include SignServerWS -->
-            <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"
-                erroronmissingdir="false"/>
-
-            <!-- Include ValidationWS -->
-            <zipfileset dir="${validationws.dir}/dist" includes="*.jar"
-                erroronmissingdir="false"/>
-
-            <!-- Include AdminWS -->
-            <zipfileset dir="${adminws.dir}/dist" includes="*.jar"
-                erroronmissingdir="false"/>
-
-            <!-- Modules can be placed in dist-server/lib to be included in ear -->
-            <zipfileset dir="${server.dist.dir}/lib" includes="*.jar" prefix="lib"/>
-        </ear>
-    </target>
+    
     
     <!-- ======================================================================= -->
     <!-- Deploy Sign Server ear to JBoss                                               -->
     <!-- ======================================================================= -->
-    <target name="deploy" depends="build, signserver.ear"
+    <target name="deploy" depends="build, compose-ear"
         description="Deploys SignServer">
         <antcall target="j2ee:deploy" />
         <antcall target="showtime" />

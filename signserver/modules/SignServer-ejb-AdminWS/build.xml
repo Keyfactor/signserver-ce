@@ -28,6 +28,14 @@ Remember to update the soap:address location in the WSDL to start with
 "https://" for WS to work on JBoss 4.
         </echo>
     </target>
+    
+    <target name="-post-dist">
+        <copy todir="../../dist-server/">
+            <fileset dir="dist">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+    </target>
 
     <!-- Overrides the target with an empty implementation as a workaround
         to prevent the inclusion of JAR-files. This can be removed when

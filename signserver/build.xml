@@ -114,6 +114,311 @@
             <include name="runtimes/com.ibm.*.jar"/>
         </fileset>
     </path>
+    
+    <target name="configure-client" description="Configure CLI and GUI">
+        <!-- Make a copy of the signserver_cli.properties in bin dir -->
+        <copy file="signserver_cli.properties" todir="bin" />
+
+        <!-- Copy the correct jndi.properties for your appserver -->
+        <copy file="bin/jndi.properties.${appserver.type}" tofile="bin/jndi.properties" overwrite="true" failonerror="true"/>
+    </target>
+    
+    
+    <target name="compose-ear" description="Compose the configured EAR file" depends="-init-configure, -configure-ear, -configure-SignServer-ejb.jar, -configure-healthcheck.war, -configure-SignServer-ejb-ValidationWS.jar, -configure-SignServer-ejb-SignServerWS.jar, -configure-SignServer-ejb-AdminWS.jar">
+        
+        <ear destfile="${server.dist.dir}/signserver.ear" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
+            <fileset dir="${signserver.ear.dir}">
+                <exclude name="META-INF/application.xml" />
+            </fileset>
+            
+             <!-- EJB3 has automatic inclusion of all jars in 'lib' to the classpath. The jars should not be in
+             subdirectories though so we must flatten the structure. zipfileset is a good was of flattening the structure, so
+             all jar files is directly in lib directory in the ear file -->
+            <zipfileset dir="lib" includes="log4j.jar,ejbca-util.jar,cert-cvc.jar,commons-lang-2.4.jar,commons-fileupload-1.2.1.jar,commons-io-1.4.jar,commons-logging.jar,commons-collections-3.2.jar" prefix="lib"/>
+            <zipfileset dir="lib/asm" includes="*.jar" prefix="lib"/>
+            <zipfileset dir="lib/module/pdfsigner/itext" includes="*.jar"  prefix="lib"/>
+            <zipfileset dir="lib/module/odfsigner" includes="*.jar" prefix="lib"/>
+            <zipfileset dir="lib/module/ooxmlsigner" includes="*.jar" prefix="lib"/>
+            <zipfileset dir="lib/module/wsra" includes="dom4j.jar,antlr.jar,cglib.jar" prefix="lib"/>
+            <zipfileset dir="lib/quartz" includes="*.jar" prefix="lib"/>
+            <zipfileset dir="lib/${server.java.target}" includes="*.jar" prefix="lib"/>
+            <zipfileset dir="lib/jaxws/" prefix="lib" >
+                <include name="*.jar" if="includejaxws" />
+                <exclude name="saaj*.jar"/>
+            </zipfileset>
+            <fileset dir="${server.dist.dir}">
+                <include name="*-ejb.jar" />
+                <include name="*.war" />
+                
+                <!-- Exclude all files that has been preprocessed -->
+                <exclude name="SignServer-ejb.jar"/>
+                <exclude name="SignServer-ejb-ValidationWS.jar"/>
+                <exclude name="SignServer-ejb-SignServerWS.jar"/>
+                <exclude name="healthcheck.war"/>
+            </fileset>
+
+            <!--
+                Include application server depended extra JAR files.
+                Edit ${appserver}.xml to define this set.
+            -->
+            <zipfileset refid="appserver.extralibs"/>
+
+
+            <!-- TODO The following should already have been moved to dist-server -->
+
+            <!-- Include SignServerWS -->
+<!--            <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"
+                erroronmissingdir="false"/>-->
+
+            <!-- Include ValidationWS -->
+<!--            <zipfileset dir="${validationws.dir}/dist" includes="*.jar"
+                erroronmissingdir="false"/>-->
+
+            <!-- Include AdminWS -->
+<!--            <zipfileset dir="${adminws.dir}/dist" includes="*.jar"
+                erroronmissingdir="false"/>-->
+
+            <!-- Modules can be placed in dist-server/lib to be included in ear -->
+            <zipfileset dir="${server.dist.dir}/lib" includes="*.jar" prefix="lib"/>
+        </ear>
+    
+    </target>
+    
+    <target name="-init-configure">
+        <property name="signserver.ear.dir" location="tmp/signserver.ear"/>
+        <delete dir="${signserver.ear.dir}"/>
+        <mkdir dir="${signserver.ear.dir}"/>
+        
+    </target>
+    <target name="-configure-ear" depends="-init-configure">
+        
+        <mkdir dir="${signserver.ear.dir}/META-INF"/>
+        
+        <copy todir="${signserver.ear.dir}">
+            <fileset dir="src/deploy/ear" includes="*/*.*"/>
+        </copy>
+        
+        <!-- TODO Enable enterprise module, how to disable? -->
+        <replace file="${signserver.ear.dir}/META-INF/application.xml" token="!--@signserverws-ejb.jar@-->" value="module&gt;&lt;ejb&gt;SignServer-ejb-SignServerWS.jar&lt;/ejb&gt;&lt;/module&gt;"/>
+        <replace file="${signserver.ear.dir}/META-INF/application.xml" token="!--@signserverws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-SignServerWS.jar&lt;/ejb>&lt;/module>"/>
+        <replace file="${signserver.ear.dir}/META-INF/application.xml" token="!--@validationws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-ValidationWS.jar&lt;/ejb>&lt;/module>"/>
+        <replace file="${signserver.ear.dir}/META-INF/application.xml" token="!--@adminws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-AdminWS.jar&lt;/ejb>&lt;/module>"/>
+        <replace file="${signserver.ear.dir}/META-INF/application.xml" token="!--@SignServer-war-Doc.war@-->" value="module>&lt;web>&lt;web-uri>SignServer-war-Doc.war&lt;/web-uri>&lt;context-root>/signserver/doc&lt;/context-root>&lt;/web>&lt;/module>"/>
+        
+    </target>
+    
+    <target name="-preprocess-persistence" depends="-init-configure">
+        <property name="persistence.xml" location="tmp/persistence.xml"/>
+        <property name="entity-mappings.xml" location="tmp/entity-mappings.xml"/>
+        
+        <!-- Persistence -->
+        <echo message="Database type:      ${database.name}"/>
+        <echo message="DataSource mapping: ${datasource.jndi-name-prefix}${datasource.jndi-name}"/>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.DB2Dialect">
+            <equals arg1="${database.name}" arg2="db2"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect">
+            <equals arg1="${database.name}" arg2="derby"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect">
+            <equals arg1="${database.name}" arg2="hsqldb"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.InformixDialect">
+            <equals arg1="${database.name}" arg2="informix"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.IngresDialect">
+            <equals arg1="${database.name}" arg2="ingres"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect">
+            <equals arg1="${database.name}" arg2="mssql"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect">
+            <equals arg1="${database.name}" arg2="mysql"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect">
+            <equals arg1="${database.name}" arg2="oracle"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect">
+            <equals arg1="${database.name}" arg2="postgres"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.SybaseDialect">
+            <equals arg1="${database.name}" arg2="sybase"/>
+        </condition>
+        <fail unless="hibernate.dialect" message="Unsupported database type '${database.name}'."/>
+        <mkdir dir="${build}/META-INF"/>
+        <copy file="src/appserver/${appserver.type}/persistence.xml" tofile="${persistence.xml}" failonerror="true" overwrite="true">
+            <filterchain>
+                <expandproperties/>
+            </filterchain>
+        </copy>
+        
+        <!-- Entity mappings -->
+        <copy file="src/deploy/ejb/persistence-mappings/${database.name}/entity-mappings.xml" tofile="${entity-mappings.xml}"/>
+    </target>
+    
+    <target name="-configure-SignServer-ejb.jar" depends="-init-configure, -preprocess-persistence">
+        <property name="SignServer-ejb.jar.dir" location="tmp/SignServer-ejb.jar"/>
+        <delete dir="${SignServer-ejb.jar.dir}"/>
+        <mkdir dir="${SignServer-ejb.jar.dir}"/>
+        <mkdir dir="${SignServer-ejb.jar.dir}/META-INF"/>
+    
+        <!-- Update SignServer-ejb.jar -->
+        <zip destfile="${signserver.ear.dir}/SignServer-ejb.jar" duplicate="fail">
+            <zipfileset src="${server.dist.dir}/SignServer-ejb.jar">
+                <exclude name="META-INF/persistence.xml"/>
+                <exclude name="META-INF/entity-mappings.xml"/>
+            </zipfileset>
+            <zipfileset file="${persistence.xml}" prefix="META-INF"/>
+            <zipfileset file="${entity-mappings.xml}" prefix="META-INF"/>
+        </zip>
+    </target>
+    
+    <target name="-configure-SignServer-ejb-ValidationWS.jar" depends="-init-configure, -preprocess-persistence">
+        <property name="signserver-ejb-ValidationWS.jar.dir" location="tmp/signserver-ejb-ValidationWS.jar.dir"/>
+        <delete dir="${signserver-ejb-ValidationWS.jar.dir}"/>
+        <mkdir dir="${signserver-ejb-ValidationWS.jar.dir}"/>
+        <mkdir dir="${signserver-ejb-ValidationWS.jar.dir}/META-INF"/>
+    
+        <unzip src="${server.dist.dir}/SignServer-ejb-ValidationWS.jar" dest="${signserver-ejb-ValidationWS.jar.dir}">
+            <patternset>
+                <include name="META-INF/ejb-jar.xml"/>
+            </patternset>
+        </unzip>
+    
+<!--        <property name="datasource.jndi-name" value="SignServerDS"/>
+        <property name="datasource.jndi-name-prefix" value="java:/"/>-->
+        <copy file="${signserver-ejb-ValidationWS.jar.dir}/META-INF/ejb-jar.xml" tofile="${signserver-ejb-ValidationWS.jar.dir}/META-INF/ejb-jar.xml.2"
+            failonerror="true" overwrite="true">
+                <filterchain>
+                    <expandproperties/>
+                </filterchain>
+        </copy>
+        <copy file="${signserver-ejb-ValidationWS.jar.dir}/META-INF/ejb-jar.xml.2" tofile="${signserver-ejb-ValidationWS.jar.dir}/META-INF/ejb-jar.xml" overwrite="true"/>
+        
+        <!-- Update JAR -->
+        <zip destfile="${signserver.ear.dir}/SignServer-ejb-ValidationWS.jar" duplicate="fail">
+            <zipfileset src="${server.dist.dir}/SignServer-ejb-ValidationWS.jar">
+                <exclude name="META-INF/ejb-jar.xml"/>
+            </zipfileset>
+            <zipfileset dir="${signserver-ejb-ValidationWS.jar.dir}">
+                <include name="META-INF/ejb-jar.xml" />
+            </zipfileset>
+        </zip>
+    </target>
+    
+    <target name="-configure-SignServer-ejb-SignServerWS.jar" depends="-init-configure, -preprocess-persistence">
+        <property name="signserver-ejb-SignServerWS.jar.dir" location="tmp/signserver-ejb-SignServerWS.jar"/>
+        <delete dir="${signserver-ejb-SignServerWS.jar.dir}"/>
+        <mkdir dir="${signserver-ejb-SignServerWS.jar.dir}"/>
+        <mkdir dir="${signserver-ejb-SignServerWS.jar.dir}/META-INF"/>
+    
+        <unzip src="${server.dist.dir}/SignServer-ejb-SignServerWS.jar" dest="${signserver-ejb-SignServerWS.jar.dir}">
+            <patternset>
+                <include name="META-INF/ejb-jar.xml"/>
+            </patternset>
+        </unzip>
+    
+<!--        <property name="datasource.jndi-name" value="SignServerDS"/>
+        <property name="datasource.jndi-name-prefix" value="java:/"/>-->
+        <copy file="${signserver-ejb-SignServerWS.jar.dir}/META-INF/ejb-jar.xml" tofile="${signserver-ejb-SignServerWS.jar.dir}/META-INF/ejb-jar.xml.2"
+            failonerror="true" overwrite="true">
+                <filterchain>
+                    <expandproperties/>
+                </filterchain>
+        </copy>
+        <copy file="${signserver-ejb-SignServerWS.jar.dir}/META-INF/ejb-jar.xml.2" tofile="${signserver-ejb-SignServerWS.jar.dir}/META-INF/ejb-jar.xml" overwrite="true"/>
+        
+        <!-- Update JAR -->
+        <zip destfile="${signserver.ear.dir}/SignServer-ejb-SignServerWS.jar" duplicate="fail">
+            <zipfileset src="${server.dist.dir}/SignServer-ejb-SignServerWS.jar">
+                <exclude name="META-INF/ejb-jar.xml"/>
+            </zipfileset>
+            <zipfileset dir="${signserver-ejb-SignServerWS.jar.dir}">
+                <include name="META-INF/ejb-jar.xml" />
+            </zipfileset>
+        </zip>
+    </target>
+    
+    <target name="-configure-SignServer-ejb-AdminWS.jar" depends="-init-configure, -preprocess-persistence">
+        <!-- Nothing to do -->
+        <copy todir="${signserver.ear.dir}">
+            <fileset file="${server.dist.dir}/SignServer-ejb-AdminWS.jar"/>
+        </copy>
+        
+    </target>
+    
+    <target name="-configure-healthcheck.war" depends="-init-configure">
+        <property name="healthcheck.war.dir" location="tmp/healthcheck.war"/>
+        <delete dir="${healthcheck.war.dir}"/>
+        <mkdir dir="${healthcheck.war.dir}"/>
+        <mkdir dir="${healthcheck.war.dir}/WEB-INF"/>
+        
+        <!-- Configure -->
+        <copy todir="${healthcheck.war.dir}">
+            <fileset dir="./modules/SignServer-war/web/healthcheck">
+                <include name="WEB-INF/web.xml"/>
+            </fileset>
+
+            <filterchain>
+                <tokenfilter>
+                    <replacestring from="@datasource.jndi-name-prefix@"
+                        to="${datasource.jndi-name-prefix}"/>
+                    <replacestring from="@datasource.jndi-name@"
+                        to="${datasource.jndi-name}"/>
+                    <replacestring from="@healthcheck.authorizedips@"
+                        to="${healthcheck.authorizedips}"/>
+                    <replacestring from="@healthcheck.minimumfreememory@"
+                        to="${healthcheck.minimumfreememory}"/>
+                    <replacestring from="@healthcheck.checkdbstring@"
+                        to="${healthcheck.checkdbstring}"/>
+                </tokenfilter>
+            </filterchain>
+        </copy>
+    
+        <!-- Update web -->
+        <zip destfile="${signserver.ear.dir}/healthcheck.war" duplicate="fail">
+            <zipfileset src="${server.dist.dir}/healthcheck.war">
+                <exclude name="WEB-INF/web.xml"/>
+            </zipfileset>
+            <zipfileset dir="${healthcheck.war.dir}/WEB-INF" prefix="WEB-INF">
+                <include name="web.xml" />
+            </zipfileset>
+        </zip>
+    </target>
+    
+    <target name="-configure-SignServer-Common.jar" depends="-init-configure">
+        <property name="SignServer-Common.jar.dir" location="tmp/SignServer-Common.jar"/>
+        <delete dir="${SignServer-Common.jar.dir}"/>
+        <mkdir dir="${SignServer-Common.jar.dir}"/>
+    
+        <unzip src="${server.dist.dir}/lib/SignServer-Common.jar" dest="${SignServer-Common.jar.dir}">
+            <patternset>
+                <include name="org/signserver/common/signservercompile.properties"/>
+            </patternset>
+        </unzip>
+    
+<!--        <property name="datasource.jndi-name" value="SignServerDS"/>
+        <property name="datasource.jndi-name-prefix" value="java:/"/>-->
+        <copy file="${SignServer-Common.jar.dir}/org/signserver/common/signservercompile.properties" tofile="${SignServer-Common.jar.dir}/org/signserver/common/signservercompile.properties.2"
+            failonerror="true" overwrite="true">
+                <filterchain>
+                    <expandproperties/>
+                </filterchain>
+        </copy>
+        <copy file="${SignServer-Common.jar.dir}/org/signserver/common/signservercompile.properties.2" tofile="${SignServer-Common.jar.dir}/org/signserver/common/signservercompile.properties" overwrite="true"/>
+        
+        <!-- Update JAR -->
+        <zip destfile="${signserver.ear.dir}/lib/SignServer-Common.jar" duplicate="fail">
+            <zipfileset src="${server.dist.dir}/lib/SignServer-Common.jar">
+                <exclude name="org/signserver/common/signservercompile.properties"/>
+            </zipfileset>
+            <zipfileset dir="${SignServer-Common.jar.dir}">
+                <include name="org/signserver/common/signservercompile.properties" />
+            </zipfileset>
+        </zip>
+    </target>
+    
+        
 
     <!-- =================================================================== -->
     <!-- Build ALL                                                           -->
@@ -122,7 +427,7 @@
 
     <target name="build" depends="signserver, signserver-cli,
         validationClient, signingAndValidationAPI, -build-admingui,
-        -build-clientcli">
+        -build-clientcli, init, preprocess, signserver-ejb.jar, web.war, doc.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, modules">
             <antcall target="showtime"/>
     </target>
 
@@ -181,32 +486,7 @@ OS version                          = ${os.version}
       Preprocesses SignServer by replacing tags with correct version and
       application texts.
     -->
-    <target name="preprocess" depends="preprocess-extjava, preprocess-extweb" >
-        <!-- Copy xml-files and replace some values -->
-        <copy todir="${preprocessed}">
-            <fileset dir="src">
-                <include name="**/*.xml"/>
-            </fileset>
-            <fileset dir="./modules/SignServer-war">
-                <include name="*web/**/*.xml"/>
-                <include name="*web/**/*.xml"/>
-            </fileset>
-
-            <filterchain>
-                <tokenfilter>
-                    <replacestring from="@datasource.jndi-name-prefix@"
-                        to="${datasource.jndi-name-prefix}"/>
-                    <replacestring from="@datasource.jndi-name@"
-                        to="${datasource.jndi-name}"/>
-                    <replacestring from="@healthcheck.authorizedips@"
-                        to="${healthcheck.authorizedips}"/>
-                    <replacestring from="@healthcheck.minimumfreememory@"
-                        to="${healthcheck.minimumfreememory}"/>
-                    <replacestring from="@healthcheck.checkdbstring@"
-                        to="${healthcheck.checkdbstring}"/>
-                </tokenfilter>
-            </filterchain>
-        </copy>
+    <target name="preprocess" depends="preprocess-extjava, preprocess-extweb, configure-client" >
 
         <mkdir dir="${build}/org/signserver/common"/>
 
@@ -230,52 +510,6 @@ OS version                          = ${os.version}
             <entry key="webdoc.enabled" value="${webdoc.enabled}"/>
         </propertyfile>
 
-	<!-- Make a copy of the signserver_cli.properties in bin dir -->
-        <copy file="signserver_cli.properties" todir="bin" />
-
-        <!-- Copy the correct jndi.properties for your appserver -->
-        <copy file="bin/jndi.properties.${appserver.type}" tofile="bin/jndi.properties" overwrite="true" failonerror="true"/>
-
-        <!-- Persistence -->
-        <echo message="Database type:      ${database.name}"/>
-        <echo message="DataSource mapping: ${datasource.jndi-name-prefix}${datasource.jndi-name}"/>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.DB2Dialect">
-            <equals arg1="${database.name}" arg2="db2"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect">
-            <equals arg1="${database.name}" arg2="derby"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect">
-            <equals arg1="${database.name}" arg2="hsqldb"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.InformixDialect">
-            <equals arg1="${database.name}" arg2="informix"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.IngresDialect">
-            <equals arg1="${database.name}" arg2="ingres"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect">
-            <equals arg1="${database.name}" arg2="mssql"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect">
-            <equals arg1="${database.name}" arg2="mysql"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect">
-            <equals arg1="${database.name}" arg2="oracle"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect">
-            <equals arg1="${database.name}" arg2="postgres"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.SybaseDialect">
-            <equals arg1="${database.name}" arg2="sybase"/>
-        </condition>
-        <fail unless="hibernate.dialect" message="Unsupported database type '${database.name}'."/>
-        <mkdir dir="${build}/META-INF"/>
-        <copy file="${preprocessed}/appserver/${appserver.type}/persistence.xml" tofile="${build}/META-INF/persistence.xml" failonerror="true" overwrite="true">
-            <filterchain>
-                <expandproperties/>
-            </filterchain>
-        </copy>
     </target>
 
     <target name="preprocess-extjava"  if="custom.src.java">

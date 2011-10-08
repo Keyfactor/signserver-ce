@@ -148,20 +148,10 @@
             
             <!-- 
                 TODO: Solve automatic inclusion of enterprise modules som other way
+                -->
             <fileset dir="${server.dist.dir}">
-                
-                
-                <include name="*-ejb.jar" />
-                <include name="*.war" />
-                
-                !- Exclude all files that has been preprocessed -
-                <exclude name="SignServer-ejb.jar"/>
-                <exclude name="SignServer-ejb-ValidationWS.jar"/>
-                <exclude name="SignServer-ejb-SignServerWS.jar"/>
-                <exclude name="SignServer-war-Healthcheck.war"/>
+                <include name="signserver.war" />
             </fileset>
-            
-            -->
 
             <!--
                 Include application server depended extra JAR files.

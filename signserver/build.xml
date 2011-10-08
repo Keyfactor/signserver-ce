@@ -124,7 +124,7 @@
     </target>
     
     
-    <target name="compose-ear" description="Compose the configured EAR file" depends="-init-configure, -configure-ear, -configure-SignServer-ejb.jar, -configure-healthcheck.war, -configure-SignServer-ejb-ValidationWS.jar, -configure-SignServer-ejb-SignServerWS.jar, -configure-SignServer-ejb-AdminWS.jar">
+    <target name="compose-ear" description="Compose the configured EAR file" depends="-init-configure, -configure-ear, -configure-SignServer-ejb.jar, -configure-SignServer-war-Healthcheck, -configure-SignServer-ejb-ValidationWS.jar, -configure-SignServer-ejb-SignServerWS.jar, -configure-SignServer-ejb-AdminWS.jar">
         
         <ear destfile="${server.dist.dir}/signserver.ear" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
             <fileset dir="${signserver.ear.dir}">
@@ -154,7 +154,7 @@
                 <exclude name="SignServer-ejb.jar"/>
                 <exclude name="SignServer-ejb-ValidationWS.jar"/>
                 <exclude name="SignServer-ejb-SignServerWS.jar"/>
-                <exclude name="healthcheck.war"/>
+                <exclude name="SignServer-war-Healthcheck.war"/>
             </fileset>
 
             <!--
@@ -162,21 +162,6 @@
                 Edit ${appserver}.xml to define this set.
             -->
             <zipfileset refid="appserver.extralibs"/>
-
-
-            <!-- TODO The following should already have been moved to dist-server -->
-
-            <!-- Include SignServerWS -->
-<!--            <zipfileset dir="${signserverws.dir}/dist" includes="*.jar"
-                erroronmissingdir="false"/>-->
-
-            <!-- Include ValidationWS -->
-<!--            <zipfileset dir="${validationws.dir}/dist" includes="*.jar"
-                erroronmissingdir="false"/>-->
-
-            <!-- Include AdminWS -->
-<!--            <zipfileset dir="${adminws.dir}/dist" includes="*.jar"
-                erroronmissingdir="false"/>-->
 
             <!-- Modules can be placed in dist-server/lib to be included in ear -->
             <zipfileset dir="${server.dist.dir}/lib" includes="*.jar" prefix="lib"/>
@@ -347,18 +332,20 @@
         
     </target>
     
-    <target name="-configure-healthcheck.war" depends="-init-configure">
+    <target name="-configure-SignServer-war-Healthcheck" depends="-init-configure">
         <property name="healthcheck.war.dir" location="tmp/healthcheck.war"/>
         <delete dir="${healthcheck.war.dir}"/>
         <mkdir dir="${healthcheck.war.dir}"/>
         <mkdir dir="${healthcheck.war.dir}/WEB-INF"/>
         
-        <!-- Configure -->
-        <copy todir="${healthcheck.war.dir}">
-            <fileset dir="./modules/SignServer-war/web/healthcheck">
+        <unzip src="${server.dist.dir}/SignServer-war-Healthcheck.war" dest="${healthcheck.war.dir}">
+            <patternset>
                 <include name="WEB-INF/web.xml"/>
-            </fileset>
-
+            </patternset>
+        </unzip>
+        
+        <!-- Configure -->
+        <copy file="${healthcheck.war.dir}/WEB-INF/web.xml" tofile="${healthcheck.war.dir}/WEB-INF/web.xml.2" overwrite="true">
             <filterchain>
                 <tokenfilter>
                     <replacestring from="@datasource.jndi-name-prefix@"
@@ -374,14 +361,15 @@
                 </tokenfilter>
             </filterchain>
         </copy>
+        <copy file="${healthcheck.war.dir}/WEB-INF/web.xml.2" tofile="${healthcheck.war.dir}/WEB-INF/web.xml" overwrite="true"/>
     
         <!-- Update web -->
-        <zip destfile="${signserver.ear.dir}/healthcheck.war" duplicate="fail">
-            <zipfileset src="${server.dist.dir}/healthcheck.war">
+        <zip destfile="${signserver.ear.dir}/SignServer-war-Healthcheck.war" duplicate="fail">
+            <zipfileset src="${server.dist.dir}/SignServer-war-Healthcheck.war">
                 <exclude name="WEB-INF/web.xml"/>
             </zipfileset>
-            <zipfileset dir="${healthcheck.war.dir}/WEB-INF" prefix="WEB-INF">
-                <include name="web.xml" />
+            <zipfileset dir="${healthcheck.war.dir}">
+                <include name="WEB-INF/web.xml" />
             </zipfileset>
         </zip>
     </target>

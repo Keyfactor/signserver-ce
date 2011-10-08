@@ -118,21 +118,18 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- =================================================================== -->
     <!-- Build web part                                                      -->
     <!-- =================================================================== -->
-    <target name="web.war" depends="signserver:compile">
+    <target name="web.war">
         <ant antfile="modules/SignServer-war/build.xml" target="dist" inheritall="false"/>
-        <war destfile="${webwar}" webxml="${webwebxml}" >
-            <fileset dir="${web.src}" excludes="WEB-INF/web.xml,*.java" />
-            <zipfileset dir="modules/SignServer-war/build/web/WEB-INF/classes" prefix="WEB-INF/classes"/>
-        </war>
+        <copy todir="${server.dist.dir}" file="modules/SignServer-war/dist/signserver.war" failonerror="true"/>
     </target>
 
 
     <!-- =================================================================== -->
     <!-- Build health check part                                             -->
     <!-- =================================================================== -->
-    <target name="healthcheck.war" depends="signserver:compile">
-        <war destfile="${healthcheckwar}" webxml="${healthcheckwebxml}">
-        </war>
+    <target name="healthcheck.war">
+        <ant antfile="modules/SignServer-war-Healthcheck/build.xml" target="dist" inheritall="false"/>
+        <copy todir="${server.dist.dir}" file="modules/SignServer-war-Healthcheck/dist/SignServer-war-Healthcheck.war" failonerror="true"/>
     </target>
 
 

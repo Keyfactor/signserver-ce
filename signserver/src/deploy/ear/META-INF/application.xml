@@ -20,13 +20,13 @@
 
     <module>
         <web>
-            <web-uri>web.war</web-uri>
+            <web-uri>signserver.war</web-uri>
             <context-root>/signserver</context-root>
         </web>
     </module>
     <module>
         <web>
-            <web-uri>healthcheck.war</web-uri>
+            <web-uri>SignServer-war-Healthcheck.war</web-uri>
             <context-root>/signserver/healthcheck</context-root>
         </web>
     </module>

@@ -1,0 +1,61 @@
+ 
+body {
+    background: lightgray;
+}
+
+ul#topMenu li {
+    color: Navy;
+    display: inline;
+    margin-right: 1em;
+    margin-left: 0;
+}
+
+#container1 {
+    margin: 1em;
+    margin-top: 2em;
+    padding: 2em;
+    padding-top: 0.5em;
+    padding-bottom: 0;
+    /*                padding-top: 5em;*/
+    background-color: white;
+    /*                background-image: url("/home/markus/VersionControlled/signserver/trunk-156/signserver/SignServer-war/web/pub/logo.png");*/
+    background-repeat: no-repeat;
+    border: black thin solid;
+    /*                width: 40em;*/
+    /*                left: 8em;
+                    right: 8em;*/
+}
+
+.logo {
+    margin: 0;
+    padding: 0;
+    /*                border-bottom: thin solid black;*/
+    /*                text-align: right;*/
+
+}
+
+.header {
+    margin: 0; padding: 0; text-align: right; font-size: small;
+}
+
+.version {
+    text-align: right;
+}
+
+.topSeparator {
+/*    margin-bottom: 4em;*/
+}
+
+#footer {
+    font-size: x-small;
+    color: gray;
+    padding-top: 10em;
+}
+
+#container1 ul a {
+    text-decoration: none;
+}
+
+.resourcesList {
+    list-style-type: none;
+}

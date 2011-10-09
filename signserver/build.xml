@@ -48,7 +48,7 @@
     <condition property="j2ee.web-nohttps.condition">
         <istrue value="${j2ee.web-nohttps}"/>
     </condition>
-
+    
     <!-- Import for the right appserver -->
     <import file="bin/${appserver.type}.xml" />  
 	
@@ -166,6 +166,19 @@
     </target>
     
     <target name="-init-configure">
+        <condition property="no.signserverws">
+            <isfalse value="${signserverws.enabled}"/>
+        </condition>
+        <condition property="no.validationws">
+            <isfalse value="${validationws.enabled}"/>
+        </condition>
+        <condition property="no.adminws">
+            <isfalse value="${adminws.enabled}"/>
+        </condition>
+        <condition property="no.webdoc">
+            <isfalse value="${webdoc.enabled}"/>
+        </condition>
+    
         <property name="signserver.ear.dir" location="tmp/signserver.ear"/>
         <delete dir="${signserver.ear.dir}"/>
         <mkdir dir="${signserver.ear.dir}"/>
@@ -177,22 +190,22 @@
     </target>
     <target name="-configure-ear" depends="-init-configure, -configure-ear-module-signserverws, -configure-ear-module-validationws, -configure-ear-module-adminws, -configure-ear-module-doc"/>
     
-    <target name="-configure-ear-module-signserverws" depends="-init-configure" if="${signserverws.enabled}">
+    <target name="-configure-ear-module-signserverws" depends="-init-configure" unless="no.signserverws">
         <replace file="${signserver.ear.dir}/META-INF/application.xml" token="!--@signserverws-ejb.jar@-->" value="module&gt;&lt;ejb&gt;SignServer-ejb-SignServerWS.jar&lt;/ejb&gt;&lt;/module&gt;"/>
         <copy todir="${signserver.ear.dir}" file="${server.dist.dir}/SignServer-ejb-SignServerWS.jar"/>
     </target>
     
-    <target name="-configure-ear-module-validationws" depends="-init-configure" if="${validationws.enabled}">
+    <target name="-configure-ear-module-validationws" depends="-init-configure" unless="no.validationws">
         <replace file="${signserver.ear.dir}/META-INF/application.xml" token="!--@validationws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-ValidationWS.jar&lt;/ejb>&lt;/module>"/>
         <copy todir="${signserver.ear.dir}" file="${server.dist.dir}/SignServer-ejb-ValidationWS.jar"/>
     </target>
     
-    <target name="-configure-ear-module-adminws" depends="-init-configure" if="${adminws.enabled}">
+    <target name="-configure-ear-module-adminws" depends="-init-configure" unless="no.adminws">
         <replace file="${signserver.ear.dir}/META-INF/application.xml" token="!--@adminws-ejb.jar@-->" value="module>&lt;ejb>SignServer-ejb-AdminWS.jar&lt;/ejb>&lt;/module>"/>
         <copy todir="${signserver.ear.dir}" file="${server.dist.dir}/SignServer-ejb-AdminWS.jar"/>
     </target>
     
-    <target name="-configure-ear-module-doc" depends="-init-configure" if="${webdoc.enabled}">
+    <target name="-configure-ear-module-doc" depends="-init-configure" unless="no.webdoc">
         <replace file="${signserver.ear.dir}/META-INF/application.xml" token="!--@SignServer-war-Doc.war@-->" value="module>&lt;web>&lt;web-uri>SignServer-war-Doc.war&lt;/web-uri>&lt;context-root>/signserver/doc&lt;/context-root>&lt;/web>&lt;/module>"/>
         <copy todir="${signserver.ear.dir}" file="${server.dist.dir}/SignServer-war-Doc.war"/>
     </target>
@@ -263,7 +276,7 @@
         </zip>
     </target>
     
-    <target name="-configure-SignServer-ejb-ValidationWS.jar" depends="-init-configure, -preprocess-persistence" if="${validationws.enabled}">
+    <target name="-configure-SignServer-ejb-ValidationWS.jar" depends="-init-configure, -preprocess-persistence" unless="no.validationws">
         <property name="signserver-ejb-ValidationWS.jar.dir" location="tmp/signserver-ejb-ValidationWS.jar.dir"/>
         <delete dir="${signserver-ejb-ValidationWS.jar.dir}"/>
         <mkdir dir="${signserver-ejb-ValidationWS.jar.dir}"/>
@@ -294,7 +307,7 @@
         </zip>
     </target>
     
-    <target name="-configure-SignServer-ejb-SignServerWS.jar" depends="-init-configure, -preprocess-persistence" if="${signserverws.enabled}">
+    <target name="-configure-SignServer-ejb-SignServerWS.jar" depends="-init-configure, -preprocess-persistence" unless="no.signserverws">
         <property name="signserver-ejb-SignServerWS.jar.dir" location="tmp/signserver-ejb-SignServerWS.jar"/>
         <delete dir="${signserver-ejb-SignServerWS.jar.dir}"/>
         <mkdir dir="${signserver-ejb-SignServerWS.jar.dir}"/>
@@ -325,7 +338,7 @@
         </zip>
     </target>
     
-    <target name="-configure-SignServer-ejb-AdminWS.jar" depends="-init-configure, -preprocess-persistence" if="${adminws.enabled}">
+    <target name="-configure-SignServer-ejb-AdminWS.jar" depends="-init-configure, -preprocess-persistence" unless="no.adminws">
         <!-- Nothing to do -->
         <copy todir="${signserver.ear.dir}">
             <fileset file="${server.dist.dir}/SignServer-ejb-AdminWS.jar"/>

@@ -15,6 +15,7 @@ package org.signserver.server.archive;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.signserver.common.GenericSignRequest;
@@ -58,9 +59,16 @@ public class ArchiveAPITest extends ModulesTestCase {
         archiver0File = new File(tmp, "archiver0.out");
         archiver1File = new File(tmp, "archiver1.out");
         archiver2File = new File(tmp, "archiver2.out");
-        archiver0File.delete();
-        archiver1File.delete();
-        archiver2File.delete();
+        
+        if (archiver0File.exists()) {
+            assertTrue("delete archiver 0 file", archiver0File.delete());
+        }
+        if (archiver1File.exists()) {
+            assertTrue("delete archiver 1 file", archiver1File.delete());
+        }
+        if (archiver2File.exists()) {
+            assertTrue("delete archiver 2 file", archiver2File.delete());
+        }
     }
 
     @Override
@@ -307,7 +315,17 @@ public class ArchiveAPITest extends ModulesTestCase {
     
     private static Properties readArchive(File archiveFile) throws IOException {
         final Properties result = new Properties();
-        result.load(new FileInputStream(archiveFile));
+        InputStream in = null;
+        try {
+            in = new FileInputStream(archiveFile);
+            result.load(in);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {} // NOPMD
+            }
+        }
         return result;
     }
 

@@ -15,6 +15,7 @@ package org.signserver.server.archive.test1archiver;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Properties;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -88,10 +89,18 @@ public class Test1Archiver implements Archiver {
             properties.setProperty(PROCESSED, String.valueOf(true));
             properties.setProperty(WORKERID, String.valueOf(workerId));
             properties.setProperty(ENTITYMANAGER_AVAILABLE, String.valueOf(em != null));
+            OutputStream out = null;
             try {
-                properties.store(new FileOutputStream(outFile), null);
+                out = new FileOutputStream(outFile);
+                properties.store(out, null);
             } catch (IOException ex) {
                 throw new ArchiveException(ex);
+            } finally {
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException ignored) {} // NOPMD
+                }
             }
             
             archived = true;

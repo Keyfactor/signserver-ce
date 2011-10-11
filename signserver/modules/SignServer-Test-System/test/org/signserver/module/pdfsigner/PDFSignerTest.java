@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -256,7 +256,7 @@ public class PDFSignerTest extends TestCase {
     public void test09FormatFromPattern() throws Exception {
         Pattern p1 = Pattern.compile("\\$\\{(.+?)\\}");
 
-        Calendar cal = Calendar.getInstance(Locale.US);
+        Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, 2010);
         cal.set(Calendar.MONTH, 3);
         cal.set(Calendar.DAY_OF_MONTH, 10);
@@ -264,9 +264,12 @@ public class PDFSignerTest extends TestCase {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("WORKERID", "4311");
 
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMMMMMMM");
+        String expectedMonth = sdf.format(date);
+
         String actual = PDFSigner.formatFromPattern(p1,
                 "${WORKERID}/${DATE: yyyy}/${DATE:MMMMMMMMM}", date, fields);
-        assertEquals("4311/2010/April", actual);
+        assertEquals("4311/2010/" + expectedMonth, actual);
     }
 
     public void test10ArchiveToDisk() throws Exception {

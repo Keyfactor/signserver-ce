@@ -12,20 +12,20 @@
     <import file="nbproject/build-impl.xml"/>
     
     <!-- Set ANT_HOME from env. -->
-    <target name="-pre-init">
+<!--    <target name="-pre-init">
         <property environment="env" />
         <available file="${env.ANT_HOME}/lib/ant.jar" 
             property="var.ANT_HOME" value="${env.ANT_HOME}" />
         <echo message="var.ANT_HOME = ${var.ANT_HOME}" />
-    </target>
+    </target>-->
 
     <target name="-pre-jar">
         <!-- Copy the generated signservercompile.properties -->
-        <copy todir="build/classes/org/signserver/common" overwrite="true">
+<!--        <copy todir="build/classes/org/signserver/common" overwrite="true">
             <fileset dir="../../bin/classes/org/signserver/common">
                 <include name="signservercompile.properties"/>
             </fileset>
-        </copy>
+        </copy>-->
     </target>
     <!--
 

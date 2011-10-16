@@ -1,0 +1,1 @@
+ant -f build.xml -q $@ | grep -v "Trying to override old definition of task http://www.netbeans.org/"

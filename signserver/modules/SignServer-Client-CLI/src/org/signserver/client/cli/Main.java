@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.log4j.Logger;
+import org.signserver.client.PerformanceTestTool;
 import org.signserver.client.validationservice.ValidationCLI;
 
 /**
@@ -28,13 +29,16 @@ public class Main {
 
      /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(Main.class);
+    
+    private static final String CMD_PDFPERFORMANCETEST = "pdfperformancetest";
 
     private static final List<String> COMMANDS = Arrays.asList(
             "signdocument",
             "validatedocument",
             "timestamp",
             "validatecertificate",
-            "signdatagroups");
+            "signdatagroups",
+            CMD_PDFPERFORMANCETEST);
 
 
     /** No instances of this class. */
@@ -63,6 +67,13 @@ public class Main {
         } else if ("validatecertificate".equals(args[0])) {
             try {
                 ValidationCLI.main(
+                        Arrays.copyOfRange(args, 1, args.length));
+            } catch (Exception ex) {
+                LOG.error(ex, ex);
+            }
+        } else if (CMD_PDFPERFORMANCETEST.equals(args[0])) {
+            try {
+                PerformanceTestTool.main(
                         Arrays.copyOfRange(args, 1, args.length));
             } catch (Exception ex) {
                 LOG.error(ex, ex);

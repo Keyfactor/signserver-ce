@@ -22,7 +22,7 @@
  -->
 
     <target name="-pre-init" depends="-set-from-file,-set-from-env">
-        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
+<!--        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>-->
         <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
     </target>
 
@@ -30,7 +30,7 @@
         <!-- Read properties from the main SignServer configuration if available -->
         <property file="${user.home}/signserver_build.properties" />
         <property file="../../signserver_build.properties" />
-        <echo message="appserver.home = ${appserver.home}"/>
+<!--        <echo message="appserver.home = ${appserver.home}"/>-->
         <!-- JBoss -->
         <available file="${appserver.home}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${appserver.home}" />
         <!-- GlassFish -->
@@ -40,7 +40,7 @@
     <target name="-set-from-env" unless="var.APPSRV_HOME">
         <!-- Get property from environment variable -->
         <property environment="env" />
-        <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>
+<!--        <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>-->
         <!-- JBoss -->
         <available file="${env.APPSRV_HOME}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
         <!-- GlassFish -->
@@ -48,14 +48,14 @@
     </target>
 
     <target name="-post-init">
-        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
+<!--        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>-->
         <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
     </target>
 
     <target name="wsimport-init" depends="init">
         <mkdir dir="${build.generated.sources.dir}/jax-ws"/>
         <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
-        <echo message="cp: ${jaxws.wsimport.classpath}"/>
+        <echo message="cp: ${jaxws.wsimport.classpath}" level="debug"/>
         <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
             <classpath path="${jaxws.wsimport.classpath}"/>
         </taskdef>

@@ -177,13 +177,16 @@
 	</target>
 	
 	<target name="j2ee:deploy:locally" description="Deploy the application" unless="deploy.hostname.node1" depends="j2ee:configure, j2ee:copyPrimeCardJars"  >
-    	<copy todir="${jboss.deploy.dir}" overwrite="true">
+    	<echo>
+Deploying to ${jboss.deploy.dir}
+        </echo>
+        <copy todir="${jboss.deploy.dir}" overwrite="true" failonerror="true">
             <fileset dir="${tmp}">
             	<include name="signserver-ds.xml"/>
             </fileset>	
         </copy>
-    	<copy todir="${jboss.deploy.dir}">	
-    		<fileset dir="${server.dist.dir}" includes="*.ear"/>    		
+    	<copy todir="${jboss.deploy.dir}" failonerror="true">	
+    		<fileset dir="${server.dist.dir}" includes="*.ear"/>
     	</copy>
 	</target>
 	

@@ -12,7 +12,7 @@
 <!--                                                                         -->
 <!-- ======================================================================= -->
 <!-- Version: $Id$ -->
-<project name="signserver" default="default" basedir=".">
+<project name="signserver" default="usage" basedir=".">
 
     <!-- Load properties before including files -->
     <property environment="env" />
@@ -57,7 +57,7 @@
     <!-- Properties with paths to all module projects -->
     <property file="modules/modules-project.properties"/>
 
-    <import file="modules/modules.xml"/>
+    <import file="modules/modules.xml" optional="true"/>
     
     <!-- Classpaths -->
     <path id="signserver.compile.classpath">
@@ -114,6 +114,74 @@
         </fileset>
     </path>
     
+    <import file="modules/compile.xml" optional="true"/>
+    
+    
+    <target name="help" depends="usage"/>
+    <target name="usage" description="Displays usage examples for this Ant script">
+        <echo>
+Usage examples for the SignServer Ant script
+
+
+bin/ant -p                  Prints the main Ant targets supported by this 
+                            script.
+bin/ant usage               Prints this text with sample usages.
+bin/ant clean               Cleans temporary files, the final EAR file and if 
+                            this is a source distribution all the built 
+                            binaries.
+
+Some targets available in both binary and source distribution:
+bin/ant display-properties  Prints the properties that will be used to build or
+                            composing the EAR file.
+bin/ant compose-ear         Puts together the final configured EAR file.
+bin/ant deploy              Configures the EAR file and then deploys it and 
+                            data sources etc (if supported) to the configured 
+                            application server.
+
+Some targets available only in the source distribution:
+bin/ant build               Builds everything enabled.
+bin/ant test:run            Run the default JUnit tests.
+bin/ant test:compile        Compiles the tests so they can be run by an IDE.
+
+To clean &amp; build and deploy run:
+bin/ant clean build deploy
+        </echo>
+    </target>
+    
+    <target name="display-properties">
+        <echo>
+------------- SYSTEM PROPERTIES --------------
+ANT version                         = ${ant.version}
+JRE version                         = ${java.version}
+JRE vendor                          = ${java.vendor}
+Java home                           = ${java.home}
+Java extensions dir                 = ${java.ext.dirs}
+OS name                             = ${os.name}
+OS architecture                     = ${os.arch}
+OS version                          = ${os.version}
+        </echo>
+
+        <!-- Build properties, if source distribution -->
+        <subant target="display-build-properties" inheritall="true">
+            <fileset dir="modules" includes="compile.xml"/>
+         </subant>
+         
+         <echo>
+------------- CONFIG PROPERTIES --------------
+appserver.type                      = ${appserver.type}
+appserver.home                      = ${appserver.home}
+web.contentencoding                 = ${web.contentencoding}
+j2ee.web-nohttps                    = ${j2ee.web-nohttps}
+datasource.jndi-name                = ${datasource.jndi-name}
+datasource.jndi-name-prefix         = ${datasource.jndi-name-prefix}
+database.name                       = ${database.name}
+database.url                        = ${database.url}
+database.driver                     = ${database.driver}
+database.username                   = ${database.username}
+database.password                   = ${database.password}
+        </echo>
+    </target>
+    
     <target name="configure-client" description="Configure CLI and GUI">
         <!-- Make a copy of the signserver_cli.properties in bin dir -->
         <copy file="signserver_cli.properties" todir="bin" />
@@ -122,8 +190,12 @@
         <copy file="bin/jndi.properties.${appserver.type}" tofile="bin/jndi.properties" overwrite="true" failonerror="true"/>
     </target>
     
+    <target name="-check-built">
+        <available file="${server.dist.dir}/SignServer-ejb.jar" property="signserver-ejb.jar.available"/>
+        <fail message="SignServer needs to be built first. Run 'ant build'." unless="signserver-ejb.jar.available"/>
+    </target>
     
-    <target name="compose-ear" description="Compose the configured EAR file" depends="-init-configure, -configure-ear, -configure-SignServer-ejb.jar, -configure-SignServer-war-Healthcheck, -configure-SignServer-ejb-ValidationWS.jar, -configure-SignServer-ejb-SignServerWS.jar, -configure-SignServer-ejb-AdminWS.jar">
+    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -configure-ear, -configure-SignServer-ejb.jar, -configure-SignServer-war-Healthcheck, -configure-SignServer-ejb-ValidationWS.jar, -configure-SignServer-ejb-SignServerWS.jar, -configure-SignServer-ejb-AdminWS.jar">
         
         <ear destfile="${server.dist.dir}/signserver.ear" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
             <fileset dir="${signserver.ear.dir}">
@@ -166,6 +238,9 @@
     </target>
     
     <target name="-init-configure">
+        <echo>
+Configuring EAR...    
+        </echo>
         <condition property="no.signserverws">
             <isfalse value="${signserverws.enabled}"/>
         </condition>
@@ -392,102 +467,8 @@
         <delete dir="${SignServer-Common.jar.dir}"/>
         <mkdir dir="${SignServer-Common.jar.dir}"/>
     
-        <unzip src="${server.dist.dir}/lib/SignServer-Common.jar" dest="${SignServer-Common.jar.dir}">
-            <patternset>
-                <include name="org/signserver/common/signservercompile.properties"/>
-            </patternset>
-        </unzip>
-    
-        <copy file="${SignServer-Common.jar.dir}/org/signserver/common/signservercompile.properties" tofile="${SignServer-Common.jar.dir}/org/signserver/common/signservercompile.properties.2"
-            failonerror="true" overwrite="true">
-                <filterchain>
-                    <expandproperties/>
-                </filterchain>
-        </copy>
-        <copy file="${SignServer-Common.jar.dir}/org/signserver/common/signservercompile.properties.2" tofile="${SignServer-Common.jar.dir}/org/signserver/common/signservercompile.properties" overwrite="true"/>
-        
-        <!-- Update JAR -->
-        <zip destfile="${signserver.ear.dir}/lib/SignServer-Common.jar" duplicate="fail">
-            <zipfileset src="${server.dist.dir}/lib/SignServer-Common.jar">
-                <exclude name="org/signserver/common/signservercompile.properties"/>
-            </zipfileset>
-            <zipfileset dir="${SignServer-Common.jar.dir}">
-                <include name="org/signserver/common/signservercompile.properties" />
-            </zipfileset>
-        </zip>
-    </target>
-
-    <!-- =================================================================== -->
-    <!-- Build ALL                                                           -->
-    <!-- =================================================================== -->
-    <target name="default" depends="build" description="Default target"/>
-
-    <target name="build" depends="signserver, signserver-cli,
-        validationClient, signingAndValidationAPI, -build-admingui,
-        -build-clientcli, init, preprocess, signserver-ejb.jar, web.war, doc.war, healthcheck.war, signserverws-ejb.jar, validationws-ejb.jar, adminws-ejb.jar, modules">
-            <antcall target="showtime"/>
-    </target>
-
-
-    <!-- =================================================================== -->
-    <!-- Create the time stamp and build directory -->
-    <!-- =================================================================== -->
-    <target name="init" depends="j2ee:check">
-        <echo>
-------------- SYSTEM PROPERTIES --------------
-ANT version                         = ${ant.version}
-JRE version                         = ${java.version}
-JRE vendor                          = ${java.vendor}
-Java home                           = ${java.home}
-Java extensions dir                 = ${java.ext.dirs}
-OS name                             = ${os.name}
-OS architecture                     = ${os.arch}
-OS version                          = ${os.version}
-        </echo>
-    	<antcall target="signserver.init"/>
-
-        <!-- Create the time stamp -->
-        <tstamp/>
-        <!-- Create the build directory structure used by compile -->
-        <mkdir dir="${build}"/>
-        <mkdir dir="${server.dist.dir}/lib"/>
-        <mkdir dir="${client.dist.dir}/lib"/>
-    </target>
-
-
-    <!-- =================================================================== -->
-    <!-- Main Clean                                                          -->
-    <!-- =================================================================== -->
-
-    <target name="clean">
-        <!-- Delete the ${build} and ${server.dist.dir} directory trees -->
-        <delete dir="${build}" />
-        <delete dir="${server.dist.dir}" />
-    	<delete dir="${pkg.dist.dir}" />
-        <delete dir="${apidoc}" />
-        <delete dir="${tmp}"/>	
-    	<delete dir="${client.dist.dir}" />
-        <delete dir="${test.dir}" />
-        <delete dir="${validationClientBuild}" />
-        <delete dir="${signingAndValidationBuild}" />
-        <delete dir="${wsraadminClientBuild}" />
-        <delete dir="${timeStampClientBuild}" />
-
-        <!-- Clean all modules -->
-        <subant target="clean">
-            <fileset dir="modules" includes="SignServer-*/build.xml"/>
-         </subant>
-    </target>
-
-    <!--
-      Preprocesses SignServer by replacing tags with correct version and
-      application texts.
-    -->
-    <target name="preprocess" depends="preprocess-extjava, preprocess-extweb, configure-client" >
-
-        <mkdir dir="${build}/org/signserver/common"/>
-
-        <propertyfile file="${build}/org/signserver/common/signservercompile.properties" comment="SignServer compile-time properties. Generated file do not edit manually!">
+        <propertyfile file="${SignServer-Common.jar.dir}/org/signserver/common/signservercompile.properties" 
+            comment="SignServer compile-time properties. Generated file do not edit manually!">
             <entry key="appname" value="${app.name}"/>
             <entry key="appname_capital" value="${app.name.cap}"/>
             <entry key="buildmode" value="${build.mode}"/>
@@ -504,304 +485,36 @@ OS version                          = ${os.version}
             <entry key="SignServerCommandFactory" value="${custom.commandfactory}"/>
             <entry key="signserver.configfile" value="${signserver.configfile}"/>
             <entry key="signserver.version" value="${app.version}"/>
-            <entry key="webdoc.enabled" value="${webdoc.enabled}"/>
         </propertyfile>
-
-    </target>
-
-    <target name="preprocess-extjava"  if="custom.src.java">
-        <mkdir dir="${preprocessed}/java"/>
-        <copy todir="${preprocessed}/java">
-            <fileset dir="${custom.src.java}">
-              <include name="**"/>
-            </fileset>
-        </copy>
-    </target>
-	
-    <target name="preprocess-extweb"  if="custom.src.web">
-       <mkdir dir="${preprocessed}/web/pub"/>       	
-       <copy todir="${preprocessed}/web/pub">
-          <fileset dir="${custom.src.web}">
-             <include name="**"/>
-           </fileset>	      
-       </copy>
-     </target>
-
-
-     <!-- SignServer-Common -->
-     <target name="signserver-common" depends="preprocess">
-        <ant inheritall="false" target="jar"
-            antfile="${signservercommon.dir}/build.xml"/>
-        <mkdir dir="dist-client/lib" />
-        <copy todir="dist-client/lib">
-            <fileset dir="${signservercommon.dir}/dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
-        <mkdir dir="dist-server/lib" />
-        <copy todir="dist-server/lib">
-            <fileset dir="${signservercommon.dir}/dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
-     </target>
-
-
-     <!-- SignServer-ejb -->
-     <target name="signserver-ejb">
-        <ant inheritall="false" target="dist"
-            antfile="${signserverejb.dir}/build.xml"/>
-        <mkdir dir="dist-client/lib" />
-        <copy todir="dist-client/lib">
-            <fileset dir="${signserverejb.dir}/dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
-     </target>
-
-
-    <!-- AdminCLI -->
-    <target name="signserver-cli" depends="signserver-common, signserver-ejb"
-        description="Build SignServer AdminCLI">
-        <ant inheritall="false" target="jar"
-            antfile="${admincli.dir}/build.xml"/>
-	
-    	<echo message="Ignore warnings about jar files that can not be copied, they are for other application servers"/>
-    	<!-- JBoss:
-            For JBoss 4.2.3.GA only jbossall-client.jar is needed.
-            For JBoss 5.1.0.GA jbossall-client.jar is referencing the needed
-            libraries so all of them needs to be copied.
-            <copy file="${appserver.home}/client/jbossall-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/>
-        -->
-        <copy todir="${client.dist.dir}/lib" failonerror="false">
-          <fileset dir="${appserver.home}/client">
-             <include name="*.jar"/>
-           </fileset>
-       </copy>
-    	<!-- Glassfish -->
-    	<copy file="${appserver.home}/lib/appserv-rt.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
-    	<copy file="${appserver.home}/lib/appserv-deployment-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
-    	<copy file="${appserver.home}/lib/appserv-ext.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
-    </target>
-
-
-    <!-- AdminGUI -->
-    <target name="admingui" depends="preprocess"
-        description="Build the administration GUI">
-        <ant antfile="${admingui.dir}/build.xml" target="jar"
-            inheritall="false"/>
-    </target>
-    <target name="-build-admingui" if="admingui.conditionenabled">
-        <antcall target="admingui"/>
-    </target>
-
-    <!-- ClientCLI -->
-    <target name="clientcli"
-        description="Build the client CLI">
-        <ant antfile="${clientcli.dir}/build.xml" target="jar"
-            inheritall="false"/>
-    </target>
-    <target name="-build-clientcli" if="clientcli.conditionenabled">
-        <antcall target="clientcli"/>
-    </target>
-
-
-    <!-- =================================================================== -->
-    <!-- Build preparation for package distribution                         -->
-    <!-- =================================================================== -->
-
-    <target name="pkgdist" depends="signserver, signserver-cli, signserver-pkgdist"/>
-
-    <!-- =================================================================== -->
-    <!-- Documentation part                                                  -->
-    <!-- =================================================================== -->
-    <target name="doc"
-        description="Build SignServer web site and docs">
-        <ant antfile="modules/SignServer-Doc/build.xml" target="build"
-            inheritall="false"/>
-    </target>
-    
-    
-    <!-- =================================================================== -->
-    <!-- Build Javadoc part                                                  -->
-    <!-- =================================================================== -->
-
-    <target name="javadoc" depends="build"
-        description="Build JavaDoc for SignServer">
-        <mkdir dir="${apidoc}" />
-        <javadoc failonerror="true" useexternalfile="true" packagenames="org.signserver.*" maxmemory="256m" sourcepath="${src.java}" destdir="${apidoc}"
-        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/ext/james:${lib}/asm:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/module/wsra:${lib}/reports:${lib}/quartz:${lib}/jaxws:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2011 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
-                <fileset dir="${src.java}">
-                    <include name="**/*.java"/>
-                </fileset>
-                <fileset dir="${signservercommon.src.java}">
-                    <include name="**/*.java"/>
-                </fileset>
-                <fileset dir="${signserverejb.src.java}">
-                    <include name="**/*.java"/>
-                </fileset>
-
-                <!-- Include all java files in the modules folder but excluding the tests -->
-                <fileset dir="modules" includes="**/*.java" excludes="*/test/**/*.java"/>
-                
-                <classpath refid="server.compile.classpath"/>
-                <classpath path="modules/SignServer-AdminGUI/lib/swing-app-framework/appframework-1.0.3.jar:modules/SignServer-AdminGUI/lib/swing-app-framework/swing-worker-1.1.jar:modules/SignServer-AdminGUI/lib/beans-binding/beansbinding-1.2.1.jar"/>
-        </javadoc>
-        <echo message="Local documentation is now available in file://${apidoc}/index.html"/>
-    </target>
-    
-
-    <!-- =================================================================== -->
-    <!-- Test part                                                           -->
-    <!-- =================================================================== -->
-
-    <target name="test:compile"/>
-
-    <!-- Run tests -->
-    <target name="test:run" depends="test:signserver:run" 
-        description="Run the default JUnit testcases"/>
-
-    <!-- Run all tests -->
-    <target name="test:runall" depends="test:signserver:runall"
-        description="Run all JUnit testcases"/>
-
-    <target name="test:runperf" description="Test performace of signing modules">
-        <antcall target="test:signserver:performance"/>
-    </target>
         
-
-    <!-- =================================================================== -->
-    <!-- Release part                                                        -->
-    <!-- =================================================================== -->
-
-    <!-- Deprecated: New target called release:zip -->
-    <target name="ziprelease" depends="release:zip"/>
-
-    <target name="release:zip" description="Make a zip file for SignServer release" >
-        <property name="signserver.zipversion" value="${app.version.number}"/>
-        <!-- <input message="Version tag for zipfile (ex 3_1_0):" addproperty="signserver.zipversion" /> -->
-        <antcall target="-release:zip-lgpl21"/>
-    </target>
-
-    <target name="release:source-zip" description="Make a source zip files for SignServer release" >
-        <property name="signserver.zipversion" value="${app.version.number}"/>
-        <!-- <input message="Version tag for zipfile (ex 3_1_0):" addproperty="signserver.zipversion" /> -->
-        <antcall target="-release:source-zip-lgpl21"/>
-    </target>
-
-    <target name="release:source-tarball" description="Make a source tarball for SignServer release">
-        <property name="signserver.zipversion" value="${app.version.number}"/>
-        <antcall target="-release:source-tarball-lgpl21"/>
-    </target>
-
-    <target name="-release:zip-lgpl21" depends="clean">
-        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <zip destfile="../signserver-${signserver.zipversion}.zip">
-            <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="600" dirmode="700">
-                <include name="**/**" />
-                <exclude name="doc/lgpl-**" />
-                <exclude name="**/CVS/**" />
-                <exclude name="signserver_build.properties" />
-                <exclude name="tmp/**" />
-                <exclude name="p12/**" />
-                <exclude name="dist/**" />
-                <exclude name="dist-client/**" />
-                <exclude name="dist-server/**" />
-                <exclude name="out/**" />
-                <exclude name="eclipseBuild/**" />
-                <exclude name="**/*.class" />
-                <exclude name=".classpath" />
-                <exclude name=".project" />
-                <exclude name=".eclipse/**" />
-                <exclude name=".settings/**" />
-                <exclude name="**/.cvsignore" />
-                <exclude name="**/*.sh" />
-                <exclude name="**/nbproject/private/**" />
+        <!-- Update JAR -->
+        <zip destfile="${signserver.ear.dir}/lib/SignServer-Common.jar" duplicate="fail">
+            <zipfileset src="${server.dist.dir}/lib/SignServer-Common.jar">
+                <exclude name="org/signserver/common/signservercompile.properties"/>
             </zipfileset>
-            <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="700" dirmode="700">
-                <include name="**/*.sh" />
+            <zipfileset dir="${SignServer-Common.jar.dir}">
+                <include name="org/signserver/common/signservercompile.properties" />
             </zipfileset>
         </zip>
-        <delete file="LICENSE"/>
-        <checksum file="../signserver-${signserver.zipversion}.zip" algorithm="SHA1" forceOverwrite="yes"/>
-        <checksum file="../signserver-${signserver.zipversion}.zip" algorithm="SHA1" property="signserverSHA1"/>
-        <echo message="SHA1 checksum: ${signserverSHA1}" />
     </target>
 
-    <target name="-release:source-zip-lgpl21" depends="clean">
-        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <zip destfile="../signserver-${signserver.zipversion}-src.zip">
-            <zipfileset dir="." prefix="signserver-${signserver.zipversion}-src" filemode="600" dirmode="700">
-                <include name="**/**" />
-                <exclude name="doc/lgpl-**" />
-                <exclude name="**/CVS/**" />
+    
 
-                <exclude name="signserver_build.properties" />
-                <exclude name="tmp/**" />
-                <exclude name="p12/**" />
-                <exclude name="**/dist/**" />
-                <exclude name="**/build/**" />
-                <exclude name="SignServer-AdminGUI/lib/**" />
-                <exclude name="dist-client/**" />
-                <exclude name="dist-server/**" />
-                <exclude name="out/**" />
-                <exclude name="eclipseBuild/**" />
-                <exclude name="**/*.class" />
-                <exclude name=".classpath" />
-                <exclude name=".project" />
-                <exclude name=".eclipse/**" />
-                <exclude name=".settings/**" />
-                <exclude name="**/.cvsignore" />
-                <exclude name="**/*.sh" />
-                <exclude name="**/nbproject/private/**" />
-                <exclude name="**/lib/**" />
-            </zipfileset>
-            <zipfileset dir="." prefix="signserver-${signserver.zipversion}-src" filemode="700" dirmode="700">
-                <include name="**/*.sh" />
-            </zipfileset>
-        </zip>
-        <delete file="LICENSE"/>
-        <checksum file="../signserver-${signserver.zipversion}-src.zip" algorithm="SHA1" forceOverwrite="yes"/>
-        <checksum file="../signserver-${signserver.zipversion}-src.zip" algorithm="SHA1" property="signserverSHA1"/>
-        <echo message="SHA1 checksum: ${signserverSHA1}" />
+
+
+    <!-- =================================================================== -->
+    <!-- Main Clean                                                          -->
+    <!-- =================================================================== -->
+
+    <target name="clean">
+        <echo>Cleaning tmp</echo>
+        <delete dir="${tmp}"/>	
+
+        <!-- Clean everything if this is a source distribution -->
+        <subant target="clean-build" inheritall="true">
+            <fileset dir="modules" includes="compile.xml"/>
+         </subant>
     </target>
-
-    <target name="-release:source-tarball-lgpl21" depends="clean">
-        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <property name="tarball.tar" value="../signserver-${signserver.zipversion}-src.tar" />
-        <property name="tarball.tar.gz" value="${tarball.tar}.gz" />
-        <tar tarfile="${tarball.tar}" basedir="." longfile="gnu">
-            <include name="**/**" />
-            <exclude name="doc/lgpl-**" />
-            <exclude name="**/CVS/**" />
-            <exclude name="signserver_build.properties" />
-            <exclude name="tmp/**" />
-            <exclude name="p12/**" />
-            <exclude name="**/dist/**" />
-            <exclude name="**/build/**" />
-            <exclude name="SignServer-AdminGUI/lib/**" />
-            <exclude name="dist-client/**" />
-            <exclude name="dist-server/**" />
-            <exclude name="out/**" />
-            <exclude name="eclipseBuild/**" />
-            <exclude name="**/*.class" />
-            <exclude name=".classpath" />
-            <exclude name=".project" />
-            <exclude name=".eclipse/**" />
-            <exclude name=".settings/**" />
-            <exclude name="**/.cvsignore" />
-            <exclude name="**/*.sh" />
-            <exclude name="**/nbproject/private/**" />
-            <exclude name="**/lib/**" />
-        </tar>
-        <gzip destfile="${tarball.tar.gz}" src="${tarball.tar}"/>
-        <delete file="${tarball.tar}"/>
-        <delete file="LICENSE"/>
-        <checksum file="${tarball.tar.gz}" algorithm="SHA1" forceOverwrite="yes"/>
-        <checksum file="${tarball.tar.gz}" algorithm="SHA1" property="signserverSHA1"/>
-        <echo message="SHA1 checksum: ${signserverSHA1}" />
-    </target>
-
 
     <!-- =================================================================== -->
     <!-- Other part                                                        -->
@@ -813,548 +526,14 @@ OS version                          = ${os.version}
         </tstamp>
         <echo message="Task completed ${completiontime}."/>
     </target>
-
-    <!-- =================================================================== -->
-    <!-- From signserver.xmli                                                -->
-    <!-- =================================================================== -->
-
-    <!-- Init -->
-    <target name="signserver.init">
-        <antcall target="j2ee:check"/>
-        <echo>
----------- CONFIGURATION PROPERTIES ----------
-build.mode                          = ${build.mode}
-appserver.type                      = ${appserver.type}
-appserver.home                      = ${appserver.home}
-web.contentencoding                 = ${web.contentencoding}
-j2ee.web-nohttps                    = ${j2ee.web-nohttps}
-datasource.jndi-name                = ${datasource.jndi-name}
-datasource.jndi-name-prefix         = ${datasource.jndi-name-prefix}
-database.name                       = ${database.name}
-database.url                        = ${database.url}
-database.driver                     = ${database.driver}
-database.username                   = ${database.username}
-database.password                   = ${database.password}
-signserverws.enabled                = ${signserverws.enabled}
-genericws.enabled                   = ${genericws.enabled}
-validationws.enabled                = ${validationws.enabled}
-adminws.enabled                     = ${adminws.enabled}
-webdoc.enabled                      = ${webdoc.enabled}
-timestampclient.enabled             = ${timestampclient.enabled}
-validationclient.enabled            = ${validationclient.enabled}
-pdfperformancetest.enabled          = ${pdfperformancetest.enabled}
-useclusterclassloader               = ${useclusterclassloader}
-clusterclassloader.useclassversions = ${clusterclassloader.useclassversions}
-clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
-signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
-admingui.enabled                    = ${admingui.enabled}
-clientcli.enabled                   = ${clientcli.enabled}
-includemodulesinbuild               = ${includemodulesinbuild}
-module.log4j.include                = ${module.log4j.include}
-module.pdfsigner.enabled            = ${module.pdfsigner.enabled}
-module.pdfsigner.include            = ${module.pdfsigner.include}
-module.renewal.enabled              = ${module.renewal.enabled}
-module.renewal.include              = ${module.renewal.include}
-module.xmlsigner.enabled            = ${module.xmlsigner.enabled}
-module.xmlsigner.include            = ${module.xmlsigner.include}
-module.xmlvalidator.enabled         = ${module.xmlvalidator.enabled}
-module.xmlvalidator.include         = ${module.xmlvalidator.include}
-module.cmssigner.enabled            = ${module.cmssigner.enabled}
-module.cmssigner.include            = ${module.cmssigner.include}
-module.odfsigner.enabled            = ${module.odfsigner.enabled}
-module.odfsigner.include            = ${module.odfsigner.include}
-module.tsa.enabled                  = ${module.tsa.enabled}
-module.tsa.include                  = ${module.tsa.include}
-module.mrtdsodsigner.enabled        = ${module.mrtdsodsigner.enabled}
-module.mrtdsodsigner.include        = ${module.mrtdsodsigner.include}
-module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
-module.mrtdsigner.include           = ${module.mrtdsigner.include}
-module.wsra.enabled                 = ${module.wsra.enabled}
-        </echo>
-    </target>
-
-
-    <!-- =================================================================== -->
-    <!-- Build SignServer                                                    -->
-    <!-- =================================================================== -->
-    <target name="signserver">
-    </target>
-
-    <!-- =================================================================== -->
-    <!-- Compile java sources                                                -->
-    <!-- =================================================================== -->
-    <target name="signserver:compile" depends="signserver-common">
-        <javac destdir="${build}" debug="on" includeantruntime="no" 
-            encoding="iso8859-1"
-            target="${server.java.target}" source="${server.java.target}">
-            <classpath refid="server.compile.classpath" />
-            <src path="${src.java}" />
-            <src path="${signserverejb.src.java}" />
-            <src path="${signserverwar.src.java}" />
-            <exclude name="org/signserver/appserver/**"/>
-            <exclude name="org/signserver/cli/GenerateCertReqCommand.*"/>
-            <exclude name="org/signserver/protocol/ws/client/**"/>
-            <exclude name="org/signserver/client/validationservice/**"/>
-            <exclude name="org/signserver/client/PerformanceTest*"/>
-            <exclude name="org/signserver/client/api/**"/>
-        </javac>
-        <copy todir="${build}">
-            <fileset dir="${src.java}">
-                <include name="**/*.properties"/>
-            </fileset>
-        </copy>
-    </target>
-
-
-    <!-- =================================================================== -->
-    <!-- Build signserver ejb part                                           -->
-    <!-- =================================================================== -->
-
-    <target name="signserver-ejb.jar" depends="preprocess, timeStampTestClient,
-        PDFPerformanceTestTool,
-        signserver:compile">
-        <ant antfile="${signserverejb.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-	       
-	
-    <!-- =================================================================== -->
-    <!-- Build web part                                                      -->
-    <!-- =================================================================== -->
-    <target name="web.war">
-        <ant antfile="modules/SignServer-war/build.xml" target="dist" inheritall="false"/>
-        <copy todir="${server.dist.dir}" file="modules/SignServer-war/dist/signserver.war" failonerror="true"/>
-    </target>
-
-
-    <!-- =================================================================== -->
-    <!-- Build health check part                                             -->
-    <!-- =================================================================== -->
-    <target name="healthcheck.war">
-        <ant antfile="modules/SignServer-war-Healthcheck/build.xml" target="dist" inheritall="false"/>
-        <copy todir="${server.dist.dir}" file="modules/SignServer-war-Healthcheck/dist/SignServer-war-Healthcheck.war" failonerror="true"/>
-    </target>
-
-
-    <!-- SignServerWS -->
-    <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
-        <ant antfile="${signserverws.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-
-    <!-- ValidationWS -->
-    <target name="validationws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
-        <ant antfile="${validationws.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-
-    <!-- AdminWS -->
-    <target name="adminws-ejb.jar" depends="signserver-ejb.jar" if="adminws.conditionenabled">
-        <ant antfile="${adminws.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-
-    <!-- Local documentation -->
-    <target name="doc.war" if="webdoc.conditionenabled">
-        <ant antfile="${webdoc.dir}/build.xml" target="dist" inheritall="false"/>
-        <copy todir="${server.dist.dir}" file="${webdoc.war}" failonerror="true"/>
-    </target>
-
-    <!-- =================================================================== -->
-    <!-- Build signserver.ear                                                -->
-    <!-- =================================================================== -->
-    
+ 
     
     <!-- ======================================================================= -->
     <!-- Deploy Sign Server ear to JBoss                                               -->
     <!-- ======================================================================= -->
-    <target name="deploy" depends="build, compose-ear"
-        description="Deploys SignServer">
-        <antcall target="j2ee:deploy" />
+    <target name="deploy" depends="compose-ear, j2ee:deploy" description="Deploys SignServer">
         <antcall target="showtime" />
     </target>
 
-    <target name="test:signserver:pre-run">
-        <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
-        <echo> Important, in order for all tests to complete must the web service, generic WS and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
-        <echo> For Test-SignServerWS to complete the following must be run first:
-            bin/signserver.sh setproperties modules/SignServer-Test-SignServerWS/test-configuration.properties
-            bin/signserver.sh reload 7001
-        </echo>
-        <echo> For Test-ValidationWS to complete the following must be run first:
-            bin/signserver.sh setproperties modules/SignServer-Test-ValidationWS/test-configuration.properties
-            bin/signserver.sh reload 7101
-        </echo>
-
-        <delete dir="${test.dir}/reports" />
-        <mkdir dir="${test.dir}/reports/html" />
-    </target>
-
-    <!-- Target that can be called to explicit compile all tests for instance
-        to get rid of build errors in your IDE if you are using Eclipse -->
-    <target name="test:signserver:compile" description="Compile all tests">
-        <!-- SignServer-Test-SignServerWS -->
-        <ant target="compile-test" inheritall="false"
-            antfile="${testsignserverws.dir}/build.xml"/>
-
-        <!-- SignServer-Test-ValidationWS -->
-        <ant target="compile-test" inheritall="false"
-            antfile="${testvalidationws.dir}/build.xml"/>
-
-        <!-- SignServer-Test-AdminWS -->
-        <ant target="compile-test" inheritall="false"
-            antfile="${testadminws.dir}/build.xml"/>
-
-        <!-- SignServer-Test-System -->
-        <ant target="compile-test" inheritall="false"
-            antfile="${testsystem.dir}/build.xml"/>
-    </target>
-	
-    <target name="test:signserver:run" depends="test:signserver:pre-run, build"
-        description="Run the default JUnit testcases">
-
-        <!-- Run all tests defined in modules-project.properties. -->
-        <subant target="test">
-            <fileset dir="." includes="${tests.modules.includes}"/>
-        </subant>
-        <antcall target="test:report"/>
-    </target>
-
-    <target name="test:report"
-        description="Create HTML test report from previously run tests">
-        <!-- Create report for all tests -->
-        <junitreport todir="${test.dir}/reports">
-            <fileset dir="." includes="**/test/results/TEST-*.xml"/>
-            <report format="frames" todir="${test.dir}/reports/html" />
-        </junitreport>
-        <property name="reportfile" location="${test.dir}/reports/html/index.html"/>
-        <echo message="Test report available at: file://${reportfile}"/>
-    </target>
-
-    <target name="test:signserver:runall"
-        depends="test:signserver:pre-run, build"
-        description="Run the most JUnit testcases">
-
-        <!-- Currently we run all tests by default. When that is no longer the
-            case copy and modify the test:signserver:run target to here -->
-        <antcall target="test:signserver:run"/>
-    </target>
-
-    <!-- Keept only for backwards compatibility -->
-    <target name="test:signserver:runone" depends="test:runone"/>
-
-    <target name="test:runone" description="Run a single JUnit-test specified -Dtest.runone=classname">
-        <fail message="'test.runone' not set. Example -Dtest.runone=TestXMLSigner" unless="test.runone" />
-        <ant antfile="${testsystem.dir}/build.xml" target="test:runone" usenativebasedir="true" inheritall="false">
-            <property name="test.runone" value="${test.runone}"/>
-        </ant>
-    </target>
-
-    <target name="test:signserver:pdfperformance" description="run performance test locally">
-        <available file="${performanceTestToolJar}" property="perfTestExists"/>
-        <antcall target="test:signserver:initpdfperformance" />
-        <antcall target="j2ee:assert-run" />
-        <property name="performancetest.host" value="http://localhost:8080/signserver/" />
-        <property name="performancetest.runtime" value="3000" />
-        <property name="performancetest.threads" value="10" />
-        <property name="performancetest.intervalsize" value="1" />
-        <property name="performancetest.statisticsdir" value="${tmp}/statistics/" />
-        <mkdir dir="${performancetest.statisticsdir}"/>
-        <echo>Starting performance tests..</echo>
-        <echo>Assuming: </echo>
-        <echo> - collected data to be found in ${performancetest.statisticsdir} (set by worker property STATISTICS.CSVFILE.OUTPUTDIR).</echo>
-        <echo> - A PDF worker with name "PDFSigner" exists.</echo>
-        <echo />
-        <echo>Processed data can be found in ${performancetest.statisticsdir}.</echo>
-        <delete dir="${testperf.dir}" />
-        <java jar="${performanceTestToolJar}" fork="true">
-            <jvmarg line="-Xmx512m -XX:+UseConcMarkSweepGC" />
-            <arg line="test ${performancetest.runtime} ${performancetest.threads} ${performancetest.host}" />
-        </java>
-        <java jar="${performanceTestToolJar}" fork="true">
-            <arg line="postprocess ${performancetest.statisticsdir} ${performancetest.intervalsize}" />
-        </java>
-    </target>
-
-    <target name="test:signserver:initpdfperformance" unless="perfTestExists" >
-        <antcall target="build" />
-    </target>
-
-    <target name="genservercert.jar" depends="signserver">
-        <jar destfile="${tmp}/${genServerCertJar}" basedir="${build}">
-            <manifest>
-                <attribute name="Class-Path" value="bcprov-jdk.jar"/>
-                <attribute name="Main-Class" value="org.signserver.cli.genservercert.GenServerCertificate"/>
-            </manifest>
-            <include name="org/signserver/cli/genservercert/*.class"/>
-        </jar>
-   	
-    </target>
-    <target name="setdbtype.jar" depends="signserver">
-        <jar destfile="${tmp}/${setDBTypeJar}" basedir="${build}">
-            <manifest>
-                <attribute name="Class-Path" value=""/>
-                <attribute name="Main-Class" value="org.signserver.cli.setdbtype.SetDBType"/>
-            </manifest>
-            <include name="org/signserver/cli/setdbtype/*.class"/>
-        </jar>
-   	
-    </target>
-
-    <target name="signserver-pkgdist" depends="signserver-pkgdist-server, signserver-pkgdist-mgmt,genservercert.jar, setdbtype.jar">
-    </target>
-    		
-    <target name="signserver-pkgdist-server" depends="genservercert.jar, setdbtype.jar">
-        <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
-            <isset property="${env.DESTDIR}"/>
-        </condition>
-		
-        <mkdir dir="${pkgdist.destdir}"/>
-
-        <property name="pkgdist.deploydir" value="${pkgdist.destdir}/usr/share/signserver-server/deploy"/>
-        <mkdir dir="${pkgdist.deploydir}"/>
-        <copy todir="${pkgdist.deploydir}" >
-            <fileset dir="dist-server">
-                <include name="signserver.ear"/>
-            </fileset>
-            <fileset dir="src/appserver/jboss">
-                <include name="signserver-ds.xml"/>
-                <include name="signserver-mysql-cluster-ds.xml"/>
-            </fileset>
-        </copy>
-
-        <property name="pkgdist.webconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/webconf"/>
-        <mkdir dir="${pkgdist.webconfdir}"/>
-        <copy todir="${pkgdist.webconfdir}" >
-            <fileset dir="src/install/common">
-                <include name="tomcat-server*.xml"/>
-            </fileset>
-        </copy>
-        <property name="pkgdist.dbconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/dbconf"/>
-        <mkdir dir="${pkgdist.dbconfdir}"/>
-        <copy todir="${pkgdist.dbconfdir}" >
-            <fileset dir="src/deploy/ejb/persistence-mappings">
-                <include name="**/**"/>
-            </fileset>
-        </copy>
-        <property name="pkgdist.logconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/logconf"/>
-        <mkdir dir="${pkgdist.logconfdir}"/>
-        <copy todir="${pkgdist.logconfdir}" >
-            <fileset dir="src/install/common">
-                <include name="jboss-log4j*.xml"/>
-            </fileset>
-        </copy>
-        <property name="pkgdist.gencertdir" value="${pkgdist.destdir}/usr/share/signserver-server/lib"/>
-        <mkdir dir="${pkgdist.gencertdir}"/>
-        <copy todir="${pkgdist.gencertdir}" >
-            <fileset dir="${tmp}">
-                <include name="${genServerCertJar}"/>
-            </fileset>
-        </copy>
-        <copy todir="${pkgdist.gencertdir}" >
-            <fileset dir="${lib}/1.5">
-                <include name="bcprov-jdk.jar"/>
-            </fileset>
-        </copy>
-        <property name="pkgdist.setdbtypedir" value="${pkgdist.destdir}/usr/share/signserver-server/lib"/>
-        <mkdir dir="${pkgdist.setdbtypedir}"/>
-        <copy todir="${pkgdist.setdbtypedir}" >
-            <fileset dir="${tmp}">
-                <include name="${setDBTypeJar}"/>
-            </fileset>
-        </copy>
-        <property name="pkgdist.initscriptdir" value="${pkgdist.destdir}/usr/share/signserver-server/bin"/>
-        <mkdir dir="${pkgdist.initscriptdir}"/>
-        <copy todir="${pkgdist.initscriptdir}" >
-            <fileset dir="src/install/common">
-                <include name="signserver*.sh"/>
-            </fileset>
-            <fileset dir="bin">
-                <include name="genservercert.sh"/>
-            </fileset>
-        </copy>
-
-    </target>
-	 	
-    <target name="signserver-pkgdist-mgmt" depends="genservercert.jar, setdbtype.jar">
-        <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
-            <isset property="${env.DESTDIR}"/>
-        </condition>
-	
-        <mkdir dir="${pkgdist.destdir}"/>
-	 		
-        <property name="pkgdist.bindir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/bin" />
-        <mkdir dir="${pkgdist.bindir}"/>
-		
-        <property name="pkgdist.clilibdir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/lib" />
-        <mkdir dir="${pkgdist.clilibdir}"/>
-     		
-        <copy todir="${pkgdist.bindir}">
-            <fileset dir="bin">
-                <include name="signserver.sh"/>
-                <include name="signserver.cmd"/>
-                <include name="log4j.properties"/>
-            </fileset>
-        </copy>
-        <copy todir="${pkgdist.clilibdir}">
-            <fileset dir="${client.dist.dir}">
-                <include name="signserver-cli.jar"/>
-            </fileset>
-            <fileset dir="${client.dist.dir}/lib">
-                <include name="jbossall-client.jar"/>
-            </fileset>
-            <fileset dir="${lib}">
-                <include name="log4j.jar"/>
-                <include name="cert-cvc.jar"/>
-                <include name="ejbca-util.jar"/>
-                <include name="commons-lang-2.4.jar"/>
-            </fileset>
-            <fileset dir="${lib}/1.5">
-                <include name="bcprov-jdk.jar"/>
-                <include name="bcmail-jdk.jar"/>
-            </fileset>
-            <fileset dir="${lib}/asm">
-                <include name="asm-3.1.jar"/>
-                <include name="asm-commons-3.1.jar"/>
-            </fileset>
-            <fileset dir="${lib}/ext/ejb">
-                <include name="jboss-ejb3x.jar"/>
-            </fileset>
-            <fileset dir="${lib}/ext/james">
-                <include name="james-2.3.1.jar"/>
-            </fileset>
-        </copy>
-
-        <property name="pkgdist.sampleconfigdir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/sample-configs" />
-        <mkdir dir="${pkgdist.sampleconfigdir}"/>
-        <copy todir="${pkgdist.sampleconfigdir}">
-            <fileset dir="sample-configs">
-                <include name="*.*"/>
-            </fileset>
-        </copy>
-
-        <property name="pkgdist.moduledir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/modules" />
-        <mkdir dir="${pkgdist.moduledir}"/>
-        <copy todir="${pkgdist.moduledir}">
-            <fileset dir="dist-server">
-                <include name="*.mar"/>
-            </fileset>
-        </copy>
-    </target>
-	
-	 <!--                                                   -->
-	 <!-- Target used to build the Performace-test          -->
-	 <!--                                                   -->
-    <target name="PDFPerformanceTestTool" depends="signserver:compile" if="pdfperformancetest.conditionenabled">
-        <mkdir dir="${performanceTestToolBuild}"/>
-        <javac srcdir="${src.java}" destdir="${performanceTestToolBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
-            <include name="org/signserver/client/PerformanceTest*"/>
-            <classpath path="${lib}/reports/jcommon-1.0.12.jar"/>
-            <classpath path="${lib}/reports/jfreechart-1.0.9.jar"/>
-            <classpath refid="signserver.compile.classpath"/>
-        </javac>
-	    
-        <unzip src="${lib}/module/pdfsigner/itext/itext.jar" dest="${performanceTestToolBuild}/" />
-        <unzip src="${lib}/reports/jcommon-1.0.12.jar" dest="${performanceTestToolBuild}/" />
-        <unzip src="${lib}/reports/jfreechart-1.0.9.jar" dest="${performanceTestToolBuild}/" />
-
-        <jar destfile="${performanceTestToolJar}" basedir="${performanceTestToolBuild}">
-            <manifest>
-	        <!--<attribute name="Class-Path" value="itext.jar"/>-->
-                <attribute name="Main-Class" value="org.signserver.client.PerformanceTestTool"/>
-            </manifest>
-        </jar>
-    </target>
-
-	
-	 <!--                                                   -->
-	 <!-- Target Used to test the TimeStamp communication     -->
-	 <!--                                                   -->
-    <target name="timeStampTestClient" depends="signserver:compile" if="timestampclient.conditionenabled" >
-        <mkdir dir="${timeStampClientBuild}"/>
-        <javac srcdir="${src.java}" destdir="${timeStampClientBuild}" debug="on" target="${client.java.target}" source="${client.java.target}">
-            <include name="org/signserver/client/TimeStampClient.java"/>
-            <classpath refid="signserver.compile.classpath"/>
-        </javac>
-
-        <mkdir dir="${timeStampClientDir}/lib"/>
-        <copy todir="${timeStampClientDir}/lib" >
-            <fileset dir="${lib}">
-                <include name="log4j.jar"/>
-            </fileset>
-            <fileset dir="${lib}/${client.java.target}">
-                <include name="bcprov-jdk.jar"/>
-                <include name="bcmail-jdk.jar"/>
-                <include name="bctsp-jdk.jar"/>
-            </fileset>
-	      <!--<fileset dir="${lib}/module/tsa/${client.java.target}">
-	        <include name="bctsp-jdk.jar"/>
-	      </fileset>-->
-            <fileset dir="${lib}/ext">
-                <include name="commons-cli-1.0.jar"/>
-            </fileset>
-        </copy>
-          
-        <jar destfile="${timeStampClientJar}" basedir="${timeStampClientBuild}">
-            <manifest>
-                <attribute name="Class-Path" value="lib/bctsp-jdk.jar lib/bcprov-jdk.jar lib/bcmail-jdk.jar lib/commons-cli-1.0.jar lib/log4j.jar"/>
-                <attribute name="Main-Class" value="org.signserver.client.TimeStampClient"/>
-            </manifest>
-
-              <!-- Place log4j.properties in root of jar. Workaround until DSS-125 -->
-            <fileset dir="${src.java}/org/signserver/client">
-                <include name="log4j.properties" />
-            </fileset>
-        </jar>
-    </target>
-	
-     <!--                                                   -->
-     <!-- Target Used to perform validations using CLI     -->
-     <!--                                                   -->
-    <target name="validationClient" if="validationclient.conditionenabled" >
-        <ant target="test" inheritall="false"
-            antfile="${clientvalidationcli.dir}/build.xml"/>
-    </target>
-	
-     <!--                                                 -->
-     <!--   Target for building signingAndValidationAPI   -->
-     <!--                                                 -->
-    <target name="signingAndValidationAPI" depends="signserver-ejb.jar" if="signingandvalidationapi.conditionenabled" >
-        <ant target="jar" inheritall="false"
-            antfile="${clientsigningandvalidationapi.dir}/build.xml"/>
-        <mkdir dir="${signingAndValidationDir}/lib"/>
-        <copy file="${clientsigningandvalidationapi.dir}/dist/SignServer-Client-SigningAndValidationAPI.jar" tofile="${signingAndValidationDir}/signingandvalidationapi.jar"/>
-        <copy todir="${signingAndValidationDir}/lib">
-            <fileset dir="${signservercommon.dir}/dist" includes="SignServer-Common.jar"/>
-            <fileset dir="${signserverws.dir}/dist" includes="SignServer-ejb-SignServerWS.jar"/>
-            <fileset dir="${clientsignserverws.dir}/dist" includes="SignServer-Client-SignServerWS.jar"/>
-            <fileset dir="${signserverejb.dir}/dist" includes="SignServer-ejb.jar"/>
-            <fileset dir="${lib}">
-                <include name="commons-logging.jar"/>
-                <include name="log4j.jar"/>
-                <include name="cert-cvc.jar"/>
-                <include name="ejbca-util.jar"/>
-                <include name="commons-collections-3.2.jar"/>
-                <include name="commons-io.jar"/>
-                <include name="commons-lang-2.4.jar"/>
-            </fileset>
-            <fileset dir="${lib}/1.6">
-                <include name="bcprov-jdk.jar"/>
-            </fileset>
-        </copy>
-    </target>
-
-    <target name="martest">
-        <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" classpathref="signserver.test.compile.classpath"/>
-        <taskdef name="part" classname="org.signserver.anttasks.PartAntTask" classpathref="signserver.test.compile.classpath"/>
-        <mar version="3" verbose="true" destfile="${tmp}/test.mar">
-            <part name="test">
-                <fileset dir="${lib}/ext">
-                    <include name="commons-cli-1.0.jar"/>
-                </fileset>
-            </part>
-            <part name="test2">
-                <fileset dir="${lib}">
-                    <include name="*.jar"/>
-                </fileset>
-            </part>
-        </mar>
-    </target>
-
+   
 </project>

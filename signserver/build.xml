@@ -29,6 +29,7 @@
        net it checks the properties file here. -->
     <property file="${user.home}/${app.name}_build.properties" />
     <property file="${app.name}_build.properties" />
+    <property file="conf/${app.name}_build.properties" />
  	
     <!--
     A little special something to handle backward compatibility with people

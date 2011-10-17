@@ -10,7 +10,48 @@
 <project name="SignServer-Test-SignServerWS" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Test-SignServerWS.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
     <import file="../tests.xml"/>
+    
+    <!-- Setup APPSRV_HOME etc -->
+    <target name="-pre-init" depends="-modules-set-appserver-home"/>
+
+    <target name="wsimport-init" depends="init">
+        <mkdir dir="${build.generated.sources.dir}/jax-ws"/>
+        <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
+        <echo message="cp: ${jaxws.wsimport.classpath}" level="debug"/>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath path="${jaxws.wsimport.classpath}"/>
+        </taskdef>
+    </target>
+
+   <!--
+        ===================
+        JAX-WS WSGEN SECTION
+        ===================
+    
+     Run wsgen after compilation if it has not already been run. 
+    <target name="-post-compile">
+        <available file="${build.generated.sources.dir}/jax-ws/resources/"
+            property="wsgenDone"/>
+        <antcall target="-run-wsgen"/>
+    </target>
+    <target name="-run-wsgen" unless="wsgenDone">
+        <antcall target="wsgen-SignServerWSService31"/>
+        <antcall target="dist"/>
+    </target>
+
+    
+    SignServer: We need to override this target as the default
+    implementaion in jaxws-build.xml fails with an Exception. Adding the
+    attribute fork="true" seems to solve the issue so that is what we do below.
+    
+    <target name="wsgen-SignServerWSService31" depends="wsgen-init">
+        <wsgen sourcedestdir="${build.generated.sources.dir}/jax-ws" resourcedestdir="${build.generated.sources.dir}/jax-ws/resources/" destdir="${build.generated.sources.dir}/jax-ws" verbose="true" xendorsed="true" keep="true" genwsdl="true" sei="org.signserver.test.signserverws.v31.SignServerWSService" fork="true">
+            <classpath path="${java.home}/../lib/tools.jar:${build.classes.dir}:${j2ee.platform.wsgen.classpath}:${javac.classpath}"/>
+        </wsgen>
+    </target>-->
+    
     <!--
 
     There exist several targets which are by default empty and which can be 
@@ -72,78 +113,5 @@
     nbproject/build-impl.xml file. 
 
     -->
-
-<!--
-        ===================
-        Find the application server
-        ===================
- -->
-    
-    <target name="-pre-init" depends="-set-from-file,-set-from-env">
-<!--        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>-->
-        <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
-    </target>
-
-    <target name="-set-from-file" unless="var.APPSRV_HOME">
-        <!-- Read properties from the main SignServer configuration if available -->
-        <property file="${user.home}/signserver_build.properties" />
-        <property file="../../signserver_build.properties" />
-<!--        <echo message="appserver.home = ${appserver.home}"/>-->
-        <!-- JBoss -->
-        <available file="${appserver.home}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${appserver.home}" />
-        <!-- GlassFish -->
-        <available file="${appserver.home}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${appserver.home}"/>
-    </target>
-
-    <target name="-set-from-env" unless="var.APPSRV_HOME">
-        <!-- Get property from environment variable -->
-        <property environment="env" />
-<!--        <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>-->
-        <!-- JBoss -->
-        <available file="${env.APPSRV_HOME}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
-        <!-- GlassFish -->
-        <available file="${env.APPSRV_HOME}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}"/>
-    </target>
-
-    <target name="-post-init">
-<!--        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>-->
-        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
-    </target>
-
-    <target name="wsimport-init" depends="init">
-        <mkdir dir="${build.generated.sources.dir}/jax-ws"/>
-        <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
-        <echo message="cp: ${jaxws.wsimport.classpath}"/>
-        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
-            <classpath path="${jaxws.wsimport.classpath}"/>
-        </taskdef>
-    </target>
-
-   <!--
-        ===================
-        JAX-WS WSGEN SECTION
-        ===================
-    
-     Run wsgen after compilation if it has not already been run. 
-    <target name="-post-compile">
-        <available file="${build.generated.sources.dir}/jax-ws/resources/"
-            property="wsgenDone"/>
-        <antcall target="-run-wsgen"/>
-    </target>
-    <target name="-run-wsgen" unless="wsgenDone">
-        <antcall target="wsgen-SignServerWSService31"/>
-        <antcall target="dist"/>
-    </target>
-
-    
-    SignServer: We need to override this target as the default
-    implementaion in jaxws-build.xml fails with an Exception. Adding the
-    attribute fork="true" seems to solve the issue so that is what we do below.
-    
-    <target name="wsgen-SignServerWSService31" depends="wsgen-init">
-        <wsgen sourcedestdir="${build.generated.sources.dir}/jax-ws" resourcedestdir="${build.generated.sources.dir}/jax-ws/resources/" destdir="${build.generated.sources.dir}/jax-ws" verbose="true" xendorsed="true" keep="true" genwsdl="true" sei="org.signserver.test.signserverws.v31.SignServerWSService" fork="true">
-            <classpath path="${java.home}/../lib/tools.jar:${build.classes.dir}:${j2ee.platform.wsgen.classpath}:${javac.classpath}"/>
-        </wsgen>
-    </target>-->
 
 </project>

@@ -70,7 +70,7 @@
     -->
     <target name="-modules-set-appserver-home" depends="-set-from-file,-set-from-env">
 <!--        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>-->
-        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
+        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit conf/signserver_build.propertes and set appserver.home."/>
         <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
     </target>
     

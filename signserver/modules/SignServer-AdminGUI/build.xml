@@ -33,9 +33,9 @@
             value="signserver-admingui-${app.version.number}"/>
 
         <zip destfile="dist/${zipname}.zip">
-            <zipfileset dir="." prefix="${zipname}"
+            <zipfileset dir="../../conf/" prefix="${zipname}" 
                 filemode="600" dirmode="700">
-                <include name="default_connect.properties"/>
+                <include name="admingui_default.properties"/>
             </zipfileset>
             <zipfileset dir="./dist" prefix="${zipname}"
                 filemode="600" dirmode="700">

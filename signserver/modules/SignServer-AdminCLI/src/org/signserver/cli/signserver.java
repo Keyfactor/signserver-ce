@@ -113,34 +113,27 @@ public class signserver {
     }
 
     private Properties getProperties() throws IOException {
-        String propsfile = "signserver_cli.properties";
+        String propsfile = "conf/signserver_cli.properties";
 
         File unixConfigFile = new File("/etc/signserver/signserver.conf");
         File windowsConfigFile = new File(System.getenv("SYSTEMROOT") + "/signserver.conf");
         File mailSignerUnixConfigFile = new File("/etc/mailsigner/mailsigner.conf");
         File mailSignerWindowsConfigFile = new File(System.getenv("SYSTEMROOT") + "/mailsigner.conf");
+        File legacyFile = new File("signserver_cli.properties");
         if (unixConfigFile.exists()) {
             propsfile = "/etc/signserver/signserver.conf";
-        } else {
-            if (windowsConfigFile.exists()) {
-                propsfile = System.getenv("SYSTEMROOT") + "/signserver.conf";
-            } else {
-                if (mailSignerUnixConfigFile.exists()) {
-                    propsfile = "/etc/mailsigner/mailsigner.conf";
-                } else {
-                    if (mailSignerWindowsConfigFile.exists()) {
-                        propsfile = System.getenv("SYSTEMROOT") + "/mailsigner.conf";
-                    } else {
-                        if (System.getenv("SIGNSERVER_HOME") != null) {
-                            propsfile = System.getenv("SIGNSERVER_HOME") + "/" + propsfile;
-                        } else {
-                            if (System.getenv("SIGNSRV_HOME") != null) {
-                                propsfile = System.getenv("SIGNSRV_HOME") + "/" + propsfile;
-                            }
-                        }
-                    }
-                }
-            }
+        } else if (windowsConfigFile.exists()) {
+            propsfile = System.getenv("SYSTEMROOT") + "/signserver.conf";
+        } else if (mailSignerUnixConfigFile.exists()) {
+                propsfile = "/etc/mailsigner/mailsigner.conf";
+        } else if (mailSignerWindowsConfigFile.exists()) {
+            propsfile = System.getenv("SYSTEMROOT") + "/mailsigner.conf";
+        } else if (System.getenv("SIGNSERVER_HOME") != null) {
+                propsfile = System.getenv("SIGNSERVER_HOME") + "/" + propsfile;
+        } else if (System.getenv("SIGNSRV_HOME") != null) {
+            propsfile = System.getenv("SIGNSRV_HOME") + "/" + propsfile;
+        } else if (legacyFile.exists()) {
+            propsfile = legacyFile.getAbsolutePath();
         }
 
         InputStream is = new FileInputStream(propsfile);

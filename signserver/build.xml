@@ -185,10 +185,19 @@ database.password                   = ${database.password}
     
     <target name="configure-client" description="Configure CLI and GUI">
         <!-- Make a copy of the signserver_cli.properties in bin dir -->
-        <copy file="signserver_cli.properties" todir="bin" />
+        <copy file="conf/signserver_cli.properties" todir="bin" overwrite="true" failonerror="true"/>
+        <!-- Legacy file -->
+        <copy todir="bin" overwrite="true">
+            <fileset dir="." includes="signserver_cli.properties"/>
+        </copy>
 
         <!-- Copy the correct jndi.properties for your appserver -->
-        <copy file="bin/jndi.properties.${appserver.type}" tofile="bin/jndi.properties" overwrite="true" failonerror="true"/>
+        <copy file="conf/jndi.properties.${appserver.type}" tofile="bin/jndi.properties" overwrite="true" failonerror="true"/>
+        <!-- Legacy file -->
+        <copy todir="bin" overwrite="true">
+            <fileset dir="bin" includes="jndi.properties.${appserver.type}"/>
+        </copy>
+        
     </target>
     
     <target name="-check-built">

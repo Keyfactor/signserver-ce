@@ -144,7 +144,7 @@
         <property file="../modules-project.properties"/>
         <taskdef name="setmoduleprops"
             classname="org.signserver.anttasks.SetModuleEnablePropertiesTask"
-            classpath="../SignServer-Common/build/classes/"/>
+            classpath="../SignServer-BuildTools/build/classes/"/>
         <setmoduleprops/>
         <echo message="Enable:  ${moduleEnable}"/>
         <echo message="Include: ${moduleInclude}"/>

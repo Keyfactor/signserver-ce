@@ -7,18 +7,9 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="SignServer-Common" default="default" basedir=".">
-    <description>Builds, tests, and runs the project SignServer-Common.</description>
+<project name="SignServer-BuildTools" default="default" basedir=".">
+    <description>Builds, tests, and runs the project SignServer-BuildTools.</description>
     <import file="nbproject/build-impl.xml"/>
-
-    <target name="-pre-jar">
-        <!-- Copy the generated signservercompile.properties -->
-<!--        <copy todir="build/classes/org/signserver/common" overwrite="true">
-            <fileset dir="../../bin/classes/org/signserver/common">
-                <include name="signservercompile.properties"/>
-            </fileset>
-        </copy>-->
-    </target>
     <!--
 
     There exist several targets which are by default empty and which can be 
@@ -68,7 +59,7 @@
 
     An example of overriding the target for project execution could look like this:
 
-        <target name="run" depends="SignServer-Common-impl.jar">
+        <target name="run" depends="SignServer-BuildTools-impl.jar">
             <exec dir="bin" executable="launcher.exe">
                 <arg file="${dist.jar}"/>
             </exec>

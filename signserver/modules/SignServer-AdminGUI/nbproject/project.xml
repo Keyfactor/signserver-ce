@@ -65,6 +65,14 @@
                 <clean-target>clean</clean-target>
                 <id>dist</id>
             </reference>
+            <reference>
+                <foreign-project>SignServer-ejb-interfaces</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
         </references>
         <swingapp xmlns="http://www.netbeans.org/ns/form-swingapp/1">
             <application-class name="org.signserver.admin.gui.SignServerAdminGUIApplication"/>

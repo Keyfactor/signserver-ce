@@ -53,6 +53,7 @@
             <included-library dirs="200">file.reference.lucene-core-2.4.1.jar</included-library>
             <included-library dirs="200">file.reference.slf4j-api-1.5.2.jar</included-library>
             <included-library dirs="200">file.reference.slf4j-log4j12.jar</included-library>
+            <included-library dirs="200">reference.SignServer-ejb-interfaces.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>
@@ -66,6 +67,14 @@
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
                 <foreign-project>SignServer-Common</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-ejb-interfaces</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>

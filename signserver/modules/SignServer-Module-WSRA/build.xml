@@ -19,7 +19,7 @@
     <property file="${user.home}/signserver_build.properties"/>
     <property file="../../signserver_build.properties"/>
     <property file="../../conf/signserver_build.properties"/>
-    <property file="../modules-project.properties"/>
+    <property file="../../res/modules-project.properties"/>
 
     <target name="-pre-compile">
         <condition property="genericws.enabled.condition">
@@ -44,7 +44,7 @@
     -->
 
     <!-- Import property file containing version numbers and other constants -->
-    <property file="../../src/compile.properties"/>
+    <property file="../../res/compile.properties"/>
 
     <!-- Import signserver_build.properties -->
     <property file="../../signserver_build.properties"/>

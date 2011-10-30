@@ -65,12 +65,12 @@ public class ClusterClassLoaderTest extends ModulesTestCase {
 
     public void testClusterClassLoader() throws Exception {
         assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/src/test/testcodev1.mar"});
+                    signserverhome + "/res/test/testcodev1.mar"});
         assertTrue(TestUtils.grepTempOut("Loading module TESTCODE with version 1"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
         assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/src/test/testcodev2.mar"});
+                    signserverhome + "/res/test/testcodev2.mar"});
         assertTrue(TestUtils.grepTempOut("Loading module TESTCODE with version 2"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 

@@ -27,7 +27,7 @@
     <target name="release:bin-zip" depends="clean, jar"
         description="Creates binary release in ZIP format">
 
-        <property file="../../src/compile.properties"/>
+        <property file="../../res/compile.properties"/>
 
         <property name="zipname" 
             value="signserver-admingui-${app.version.number}"/>

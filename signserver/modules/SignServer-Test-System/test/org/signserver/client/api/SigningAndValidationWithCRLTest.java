@@ -87,17 +87,17 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
 
-        keystoreFileEndentity8 = new File(signserverhome + File.separator + "src/test/org/signserver/client/api/endentity8.p12");
+        keystoreFileEndentity8 = new File(signserverhome + File.separator + "res/test/org/signserver/client/api/endentity8.p12");
         if (!keystoreFileEndentity8.exists()) {
             throw new FileNotFoundException("Keystore file: " + keystoreFileEndentity8.getAbsolutePath());
         }
 
         crlWithCertOk = new File(signserverhome + File.separator
-                + "src/test/org/signserver/client/api/EightCA-ok.crl");
+                + "res/test/org/signserver/client/api/EightCA-ok.crl");
         crlWithCertRevoked = new File(signserverhome + File.separator
-                + "src/test/org/signserver/client/api/EightCA-revoked.crl");
+                + "res/test/org/signserver/client/api/EightCA-revoked.crl");
         crlToUse = new File(signserverhome + File.separator
-                + "src/test/org/signserver/client/api/EightCA-use.crl");
+                + "res/test/org/signserver/client/api/EightCA-use.crl");
 
         if (!crlWithCertOk.exists()) {
             throw new FileNotFoundException("Missing CRL: "

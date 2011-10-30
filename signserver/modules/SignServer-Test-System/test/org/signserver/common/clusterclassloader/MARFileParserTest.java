@@ -33,7 +33,7 @@ public class MARFileParserTest extends TestCase {
     }
 
     public void testMarFileWithoutDescriptor() throws Exception {
-        MARFileParser mARFileParser = new MARFileParser(signserverhome + "/src/test/testmodule-withoutdescr.mar");
+        MARFileParser mARFileParser = new MARFileParser(signserverhome + "/res/test/testmodule-withoutdescr.mar");
         assertTrue(mARFileParser.getMARName().equals("testmodule-withoutdescr.mar"));
         assertTrue(mARFileParser.getModuleName().equals("TESTMODULE-WITHOUTDESCR"));
         assertTrue(mARFileParser.getDescriptionFromMARFile().equals(""));
@@ -65,7 +65,7 @@ public class MARFileParserTest extends TestCase {
     }
 
     public void testMarFileWithDescriptor() throws Exception {
-        MARFileParser mARFileParser = new MARFileParser(signserverhome + "/src/test/testmodule-withdescr.mar");
+        MARFileParser mARFileParser = new MARFileParser(signserverhome + "/res/test/testmodule-withdescr.mar");
         assertTrue(mARFileParser.getMARName().equals("testmodule-withdescr.mar"));
         assertTrue(mARFileParser.getDescriptionFromMARFile(), mARFileParser.getDescriptionFromMARFile().equals("sometext"));
         assertTrue(mARFileParser.getVersionFromMARFile() == 2);

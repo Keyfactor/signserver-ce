@@ -14,7 +14,7 @@
     <import file="../tests.xml"/>
 
     <!-- Import property file containing version numbers and other constants -->
-    <property file="../../src/compile.properties"/>
+    <property file="../../res/compile.properties"/>
 
     
     <target name="-post-jar" depends="pdfsignermar">

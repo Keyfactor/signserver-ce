@@ -101,10 +101,10 @@ public class ClusterClassLoaderUtilsTest extends TestCase {
         assertTrue(new String(rawData).equals("testData"));
 
         KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream(signserverhome + "/src/test/TESTCODESIGN.jks"), "foo123".toCharArray());
+        ks.load(new FileInputStream(signserverhome + "/res/test/TESTCODESIGN.jks"), "foo123".toCharArray());
 
         KeyStore trustStore = KeyStore.getInstance("JKS");
-        trustStore.load(new FileInputStream(signserverhome + "/src/test/codesigntruststore.jks"), "foo123".toCharArray());
+        trustStore.load(new FileInputStream(signserverhome + "/res/test/codesigntruststore.jks"), "foo123".toCharArray());
 
 
         signedData = ClusterClassLoaderUtils.generateCMSMessageFromResource(testData, (X509Certificate) ks.getCertificate("TESTCODESIGN"), (PrivateKey) ks.getKey("TESTCODESIGN", "foo123".toCharArray()), "BC");
@@ -123,7 +123,7 @@ public class ClusterClassLoaderUtilsTest extends TestCase {
         // Test to sign with certificate without code signing
         try {
             ks = KeyStore.getInstance("JKS");
-            ks.load(new FileInputStream(signserverhome + "/src/test/TESTNOCODESIGN.jks"), "foo123".toCharArray());
+            ks.load(new FileInputStream(signserverhome + "/res/test/TESTNOCODESIGN.jks"), "foo123".toCharArray());
 
             signedData = ClusterClassLoaderUtils.generateCMSMessageFromResource(testData, (X509Certificate) ks.getCertificate("testnocodesign"), (PrivateKey) ks.getKey("testnocodesign", "foo123".toCharArray()), "BC");
 
@@ -135,9 +135,9 @@ public class ClusterClassLoaderUtilsTest extends TestCase {
         // Test to verify without trust
         try {
             ks = KeyStore.getInstance("JKS");
-            ks.load(new FileInputStream(signserverhome + "/src/test/TESTCODESIGN.jks"), "foo123".toCharArray());
+            ks.load(new FileInputStream(signserverhome + "/res/test/TESTCODESIGN.jks"), "foo123".toCharArray());
             trustStore = KeyStore.getInstance("JKS");
-            trustStore.load(new FileInputStream(signserverhome + "/src/test/codesignnottruststore.jks"), "foo123".toCharArray());
+            trustStore.load(new FileInputStream(signserverhome + "/res/test/codesignnottruststore.jks"), "foo123".toCharArray());
             signedData = ClusterClassLoaderUtils.generateCMSMessageFromResource(testData, (X509Certificate) ks.getCertificate("TESTCODESIGN"), (PrivateKey) ks.getKey("TESTCODESIGN", "foo123".toCharArray()), "BC");
 
             rawData = ClusterClassLoaderUtils.verifyResourceData(signedData, trustStore);

@@ -114,9 +114,9 @@ public class SignServerCLITest extends TestCase {
         TestUtils.assertSuccessfulExecution(new String[]{"reload",
                     "all"});
 
-        assertTrue(new File(signserverhome + "/src/test/test_add_timestamp_configuration.properties").exists());
+        assertTrue(new File(signserverhome + "/res/test/test_add_timestamp_configuration.properties").exists());
         TestUtils.assertSuccessfulExecution(new String[]{"setproperties",
-                    signserverhome + "/src/test/test_add_timestamp_configuration.properties"});
+                    signserverhome + "/res/test/test_add_timestamp_configuration.properties"});
         assertTrue(TestUtils.grepTempOut("Setting the property NAME to timestampSigner1000 for worker 1000"));
 
 
@@ -263,7 +263,7 @@ public class SignServerCLITest extends TestCase {
     public void testRemoveTimeStamp() {
         // Remove and restore
         TestUtils.assertSuccessfulExecution(new String[]{"setproperties",
-                    signserverhome + "/src/test/test_rem_timestamp_configuration.properties"});
+                    signserverhome + "/res/test/test_rem_timestamp_configuration.properties"});
         assertTrue(TestUtils.grepTempOut("Removing the property NAME  for worker 1000"));
 
         TestUtils.assertSuccessfulExecution(new String[]{"getconfig",
@@ -290,9 +290,9 @@ public class SignServerCLITest extends TestCase {
         TestUtils.assertSuccessfulExecution(new String[]{"reload",
                     "all"});
 
-        assertTrue(new File(signserverhome + "/src/test/test_add_groupkeyservice_configuration.properties").exists());
+        assertTrue(new File(signserverhome + "/res/test/test_add_groupkeyservice_configuration.properties").exists());
         TestUtils.assertSuccessfulExecution(new String[]{"setproperties",
-                    signserverhome + "/src/test/test_add_groupkeyservice_configuration.properties"});
+                    signserverhome + "/res/test/test_add_groupkeyservice_configuration.properties"});
         assertTrue(TestUtils.grepTempOut("Setting the property NAME to Test1 for worker 1023"));
 
         TestUtils.assertSuccessfulExecution(new String[]{"reload",
@@ -356,19 +356,19 @@ public class SignServerCLITest extends TestCase {
     public void testSetupModules() throws Exception {
 
         TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/src/test/testmodule-withoutdescr.mar"});
+                    signserverhome + "/res/test/testmodule-withoutdescr.mar"});
         assertTrue(TestUtils.grepTempOut("Loading module TESTMODULE-WITHOUTDESCR with version 1"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
         TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/src/test/testmodule-withdescr.mar"});
+                    signserverhome + "/res/test/testmodule-withdescr.mar"});
 
         assertTrue(TestUtils.grepTempOut("Loading module TESTMODULE-WITHDESCR with version 2"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
         assertTrue(TestUtils.grepTempOut("Setting the property ENV to PROD for worker 4321"));
 
         TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/src/test/testmodule-withdescr.mar", "devel"});
+                    signserverhome + "/res/test/testmodule-withdescr.mar", "devel"});
         assertTrue(TestUtils.grepTempOut("Setting the property ENV to DEVEL for worker 3433"));
 
         TestUtils.assertSuccessfulExecution(new String[]{"module", "list"});

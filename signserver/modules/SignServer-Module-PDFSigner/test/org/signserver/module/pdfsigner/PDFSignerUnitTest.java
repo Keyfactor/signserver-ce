@@ -63,8 +63,8 @@ public class PDFSignerUnitTest extends TestCase {
         SignServerUtil.installBCProvider();
         File home = new File(System.getenv("SIGNSERVER_HOME"));
         assertTrue("Environment variable SIGNSERVER_HOME", home.exists());
-        sampleOk = new File(home, "src/test/ok.pdf");
-        sampleRestricted = new File(home, "src/test/sample-restricted.pdf");
+        sampleOk = new File(home, "res/test/ok.pdf");
+        sampleRestricted = new File(home, "res/test/sample-restricted.pdf");
     }
 
     @Override

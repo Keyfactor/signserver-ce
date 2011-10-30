@@ -573,10 +573,10 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <property name="pkgdist.deploydir" value="${pkgdist.destdir}/usr/share/signserver-server/deploy"/>
         <mkdir dir="${pkgdist.deploydir}"/>
         <copy todir="${pkgdist.deploydir}" >
-            <fileset dir="dist-server">
+            <fileset dir="../dist-server">
                 <include name="signserver.ear"/>
             </fileset>
-            <fileset dir="src/appserver/jboss">
+            <fileset dir="../res/appserver/jboss">
                 <include name="signserver-ds.xml"/>
                 <include name="signserver-mysql-cluster-ds.xml"/>
             </fileset>
@@ -585,21 +585,21 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <property name="pkgdist.webconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/webconf"/>
         <mkdir dir="${pkgdist.webconfdir}"/>
         <copy todir="${pkgdist.webconfdir}" >
-            <fileset dir="src/install/common">
+            <fileset dir="../res/install/common">
                 <include name="tomcat-server*.xml"/>
             </fileset>
         </copy>
         <property name="pkgdist.dbconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/dbconf"/>
         <mkdir dir="${pkgdist.dbconfdir}"/>
         <copy todir="${pkgdist.dbconfdir}" >
-            <fileset dir="src/deploy/ejb/persistence-mappings">
+            <fileset dir="../res/deploy/ejb/persistence-mappings">
                 <include name="**/**"/>
             </fileset>
         </copy>
         <property name="pkgdist.logconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/logconf"/>
         <mkdir dir="${pkgdist.logconfdir}"/>
         <copy todir="${pkgdist.logconfdir}" >
-            <fileset dir="src/install/common">
+            <fileset dir="../res/install/common">
                 <include name="jboss-log4j*.xml"/>
             </fileset>
         </copy>
@@ -625,10 +625,10 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <property name="pkgdist.initscriptdir" value="${pkgdist.destdir}/usr/share/signserver-server/bin"/>
         <mkdir dir="${pkgdist.initscriptdir}"/>
         <copy todir="${pkgdist.initscriptdir}" >
-            <fileset dir="src/install/common">
+            <fileset dir="../res/install/common">
                 <include name="signserver*.sh"/>
             </fileset>
-            <fileset dir="bin">
+            <fileset dir="../bin">
                 <include name="genservercert.sh"/>
             </fileset>
         </copy>
@@ -649,7 +649,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <mkdir dir="${pkgdist.clilibdir}"/>
      		
         <copy todir="${pkgdist.bindir}">
-            <fileset dir="bin">
+            <fileset dir="../bin">
                 <include name="signserver.sh"/>
                 <include name="signserver.cmd"/>
                 <include name="log4j.properties"/>
@@ -692,7 +692,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <property name="pkgdist.moduledir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/modules" />
         <mkdir dir="${pkgdist.moduledir}"/>
         <copy todir="${pkgdist.moduledir}">
-            <fileset dir="dist-server">
+            <fileset dir="../dist-server">
                 <include name="*.mar"/>
             </fileset>
         </copy>

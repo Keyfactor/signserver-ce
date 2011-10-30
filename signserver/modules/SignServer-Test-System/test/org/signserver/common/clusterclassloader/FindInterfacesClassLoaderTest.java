@@ -31,7 +31,7 @@ public class FindInterfacesClassLoaderTest extends TestCase {
         super.setUp();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
-        mARFileParser = new MARFileParser(signserverhome + "/src/test/testmodule-withoutdescr.mar");
+        mARFileParser = new MARFileParser(signserverhome + "/res/test/testmodule-withoutdescr.mar");
         assertNotNull(mARFileParser);
     }
 

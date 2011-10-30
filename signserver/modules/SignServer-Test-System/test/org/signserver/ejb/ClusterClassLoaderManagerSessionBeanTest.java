@@ -46,7 +46,7 @@ public class ClusterClassLoaderManagerSessionBeanTest extends TestCase {
     }
 
     public void testMARFile() throws Exception {
-        addMAR(signserverhome + "/src/test/testmodule-withoutdescr.mar");
+        addMAR(signserverhome + "/res/test/testmodule-withoutdescr.mar");
 
         String[] moduleNames = cclMan.listAllModules();
         assertNotNull(moduleNames);
@@ -67,7 +67,7 @@ public class ClusterClassLoaderManagerSessionBeanTest extends TestCase {
         assertNotNull(allJars);
         assertTrue(allJars.length == 3);
 
-        addMAR(signserverhome + "/src/test/testmodule-withdescr.mar");
+        addMAR(signserverhome + "/res/test/testmodule-withdescr.mar");
         moduleNames = cclMan.listAllModules();
         assertNotNull(moduleNames);
         assertTrue(moduleNames.length > 0);

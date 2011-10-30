@@ -41,7 +41,7 @@ public class JKSTokenProfileTest extends TestCase {
 
     public void testGetKeyStore() throws Exception {
         KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream(signserverhome + "/src/test/codesigntruststore.jks"), "foo123".toCharArray());
+        ks.load(new FileInputStream(signserverhome + "/res/test/codesigntruststore.jks"), "foo123".toCharArray());
 
         HashSet<String> allAliases = new HashSet<String>();
         Enumeration<String> e = ks.aliases();

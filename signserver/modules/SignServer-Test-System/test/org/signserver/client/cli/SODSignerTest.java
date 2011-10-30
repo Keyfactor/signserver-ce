@@ -71,7 +71,7 @@ public class SODSignerTest extends TestCase {
 
         TestUtils.assertSuccessfulExecution(new String[] { "setproperties",
             getSignServerHome().getAbsolutePath()
-            + "/modules/SignServer-Module-MRTDSODSigner/src/conf/junittest-part-config.properties"});
+            + "/modules/SignServer-Module-MRTDSODSigner/res/conf/junittest-part-config.properties"});
 
         // WORKER1 uses a P12 keystore
         workerSession.setWorkerProperty(WORKERID, "KEYSTOREPATH",

@@ -809,7 +809,7 @@ public class WSRATest extends CommonManagerT {
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
         sSSession.setWorkerProperty(WORKERID, "TESTCERT", superadmincertdata);
-        sSSession.setWorkerProperty(WORKERID, WSRAConstants.SETTING_TESTDATA, signserverhome + "/src/test/testwsradata.xml");
+        sSSession.setWorkerProperty(WORKERID, WSRAConstants.SETTING_TESTDATA, signserverhome + "/res/test/testwsradata.xml");
         sSSession.reloadConfiguration(WORKERID);
 
         File cAFile = new File(DummyCAData.getStoreFileName(issuerDN));

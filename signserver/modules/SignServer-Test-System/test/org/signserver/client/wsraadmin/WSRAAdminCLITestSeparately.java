@@ -38,7 +38,7 @@ public class WSRAAdminCLITestSeparately extends TestCase {
 	}
 	
 	public void test00SetupDatabase() throws Exception{
-         File in = new File(signserverhome + "/src/module-configs/wsra/cli/wsraadmin.properties");
+         File in = new File(signserverhome + "/res/module-configs/wsra/cli/wsraadmin.properties");
          File out = new File(signserverhome + "/tmp/test-wsraadmin.properties");
          StringBuilder sb = new StringBuilder();
          BufferedReader br  = new BufferedReader(new FileReader(in));
@@ -69,13 +69,13 @@ public class WSRAAdminCLITestSeparately extends TestCase {
 	}
 	
 	public void testAdd() throws Exception{
-		int result = TestUtils.assertFailedExecution(new WSRAAdminCLI(),new String[] {"-action","add","-data",signserverhome + "/src/test/testwsraadmin1.xml","-config",signserverhome + "/tmp/test-wsraadmin.properties","-type","all"});
+		int result = TestUtils.assertFailedExecution(new WSRAAdminCLI(),new String[] {"-action","add","-data",signserverhome + "/res/test/testwsraadmin1.xml","-config",signserverhome + "/tmp/test-wsraadmin.properties","-type","all"});
 		assertTrue(result == WSRAAdminCLI.RETURN_OK);
-		result = TestUtils.assertFailedExecution(new WSRAAdminCLI(),new String[] {"-action","add","-data",signserverhome + "/src/test/testwsraadmin1.xml","-config",signserverhome + "/tmp/test-wsraadmin.properties"});
+		result = TestUtils.assertFailedExecution(new WSRAAdminCLI(),new String[] {"-action","add","-data",signserverhome + "/res/test/testwsraadmin1.xml","-config",signserverhome + "/tmp/test-wsraadmin.properties"});
 		assertTrue(result == WSRAAdminCLI.RETURN_BADARGUMENT);
 		result = TestUtils.assertFailedExecution(new WSRAAdminCLI(),new String[] {"-action","add","-data","-config",signserverhome + "/tmp/test-wsraadmin.properties","-type","all"});
 		assertTrue(result == WSRAAdminCLI.RETURN_BADARGUMENT);
-		result = TestUtils.assertFailedExecution(new WSRAAdminCLI(),new String[] {"-data",signserverhome + "/src/test/testwsraadmin1.xml","-config",signserverhome + "/tmp/test-wsraadmin.properties","-type","all"});
+		result = TestUtils.assertFailedExecution(new WSRAAdminCLI(),new String[] {"-data",signserverhome + "/res/test/testwsraadmin1.xml","-config",signserverhome + "/tmp/test-wsraadmin.properties","-type","all"});
 		assertTrue(result == WSRAAdminCLI.RETURN_BADARGUMENT);
 	}
 	
@@ -123,7 +123,7 @@ public class WSRAAdminCLITestSeparately extends TestCase {
 	}
 	
 	public void testAddWithUsers() throws Exception{
-		int result = TestUtils.assertFailedExecution(new WSRAAdminCLI(),new String[] {"-action","add","-data",signserverhome + "/src/test/testwsraadmin1.xml","-config",signserverhome + "/tmp/test-wsraadmin.properties","-type","organizations","-includeusers"});
+		int result = TestUtils.assertFailedExecution(new WSRAAdminCLI(),new String[] {"-action","add","-data",signserverhome + "/res/test/testwsraadmin1.xml","-config",signserverhome + "/tmp/test-wsraadmin.properties","-type","organizations","-includeusers"});
 		assertTrue(result == WSRAAdminCLI.RETURN_OK);
 		result = TestUtils.assertFailedExecution(new WSRAAdminCLI(),new String[] {"-action","dump","-data",signserverhome + "/tmp/testwsraadmindump.xml","-config",signserverhome + "/tmp/test-wsraadmin.properties","-type","organizations","-includeusers"});
 		assertTrue(result == WSRAAdminCLI.RETURN_OK);	

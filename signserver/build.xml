@@ -19,8 +19,8 @@
     <property name="base" location="."/>
 
     <!-- Import property file containing version numbers and other constants -->
-    <property file="src/compile.properties"/>
-    <property file="src/signserver-project.properties"/>
+    <property file="res/compile.properties"/>
+    <property file="res/signserver-project.properties"/>
     
 
     <!-- Give user a chance to override without editing this file

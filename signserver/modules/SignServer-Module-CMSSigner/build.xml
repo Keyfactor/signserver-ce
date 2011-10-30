@@ -17,7 +17,7 @@
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
 
     <!-- Import property file containing version numbers and other constants -->
-    <property file="../../src/compile.properties"/>
+    <property file="../../res/compile.properties"/>
 
     <property name="modulename" value="cmssigner"/>
     

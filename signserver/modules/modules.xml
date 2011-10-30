@@ -128,6 +128,7 @@
         <target name="-module-include">
             <fail unless="moduleEnable.condition"
                 message="Module '${ant.project.name}' must have enabled=true to be included."/>
+                <echo>Copy to ${server.dist.dir}</echo>
             <copy todir="${server.dist.dir}">
                 <fileset dir="./dist" includes="*.jar"/>
             </copy>
@@ -141,7 +142,7 @@
         <property file="${user.home}/signserver_build.properties"/>
         <property file="../../signserver_build.properties"/>
         <property file="../../conf/signserver_build.properties"/>
-        <property file="../../src/modules-project.properties"/>
+        <property file="../../res/modules-project.properties"/>
         <taskdef name="setmoduleprops"
             classname="org.signserver.anttasks.SetModuleEnablePropertiesTask"
             classpath="../SignServer-BuildTools/build/classes/"/>

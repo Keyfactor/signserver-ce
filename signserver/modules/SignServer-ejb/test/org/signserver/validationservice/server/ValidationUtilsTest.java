@@ -43,7 +43,7 @@ public class ValidationUtilsTest extends TestCase {
     public void test01fetchCRLFromURL() throws Exception {  	
         File homeFolder = new File(System.getenv("SIGNSERVER_HOME"));
         assertTrue("No such folder: " + homeFolder.getAbsolutePath(), homeFolder.exists());
-        File crlFile = new File(homeFolder, "src/test/dss10/DSSRootCA10-1.crl");
+        File crlFile = new File(homeFolder, "res/test/dss10/DSSRootCA10-1.crl");
         assertTrue("No such file: " + crlFile.getAbsolutePath(), crlFile.exists());
         URL crlURL = crlFile.toURI().toURL();
         X509CRL crl = ValidationUtils.fetchCRLFromURL(crlURL);

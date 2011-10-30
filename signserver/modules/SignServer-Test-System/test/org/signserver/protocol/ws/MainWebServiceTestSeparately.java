@@ -124,7 +124,7 @@ public class MainWebServiceTestSeparately extends TestCase {
         sSSession.setWorkerProperty(9, "NAME", "TestTimeStamp");
         String signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
-        sSSession.setWorkerProperty(9, "KEYSTOREPATH", signserverhome + "/src/test/timestamp1.p12");
+        sSSession.setWorkerProperty(9, "KEYSTOREPATH", signserverhome + "/res/test/timestamp1.p12");
         //sSSession.setWorkerProperty(9, "KEYSTOREPASSWORD", "foo123");
         sSSession.setWorkerProperty(9, TimeStampSigner.DEFAULTTSAPOLICYOID, "1.0.1.2.33");
         sSSession.setWorkerProperty(9, TimeStampSigner.TSA, "CN=TimeStampTest1");

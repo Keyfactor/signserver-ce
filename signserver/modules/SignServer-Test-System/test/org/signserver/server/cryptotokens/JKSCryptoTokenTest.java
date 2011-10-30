@@ -44,7 +44,7 @@ public class JKSCryptoTokenTest extends TestCase {
      * @throws Exception
      */
     public final void testGetPrivateKeyWithRSA() throws Exception {
-        signTester("SHA256WITHRSA", "/src/test/xmlsigner2.jks");
+        signTester("SHA256WITHRSA", "/res/test/xmlsigner2.jks");
     }
 
     /**
@@ -53,7 +53,7 @@ public class JKSCryptoTokenTest extends TestCase {
      * @throws Exception
      */
     public final void testGetPrivateKeyWithDSA() throws Exception {
-        signTester("SHA1WITHDSA", "/src/test/xmlsigner4.jks");
+        signTester("SHA1WITHDSA", "/res/test/xmlsigner4.jks");
     }
 
     public final void signTester(final String signatureAlg, final String file)

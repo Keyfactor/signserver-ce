@@ -381,7 +381,7 @@ public class PDFSignerTest extends TestCase {
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
         final File file = new File(signserverhome,
-                "src" + File.separator + "test" + File.separator + name);
+                "res" + File.separator + "test" + File.separator + name);
         FileInputStream in = null;
         try {
             in = new FileInputStream(file);

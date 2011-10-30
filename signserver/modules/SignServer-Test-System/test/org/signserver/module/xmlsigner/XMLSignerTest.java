@@ -99,7 +99,7 @@ public class XMLSignerTest extends TestCase {
 
         // Update path to JKS file
         workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
-                new File(signserverhome + File.separator + "src" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
+                new File(signserverhome + File.separator + "res" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
         workerSession.reloadConfiguration(WORKERID2);
     }
 

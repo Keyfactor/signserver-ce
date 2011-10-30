@@ -76,7 +76,7 @@ public class SODSignerTest extends TestCase {
         // WORKER1 uses a P12 keystore
         workerSession.setWorkerProperty(WORKERID, "KEYSTOREPATH",
                 getSignServerHome().getAbsolutePath()
-                + File.separator + "src" + File.separator + "test"
+                + File.separator + "res" + File.separator + "test"
                 + File.separator + "demods1.p12");
         workerSession.setWorkerProperty(WORKERID, "KEYSTOREPASSWORD", "foo123");
 

@@ -141,7 +141,7 @@
         <property file="${user.home}/signserver_build.properties"/>
         <property file="../../signserver_build.properties"/>
         <property file="../../conf/signserver_build.properties"/>
-        <property file="../modules-project.properties"/>
+        <property file="../../src/modules-project.properties"/>
         <taskdef name="setmoduleprops"
             classname="org.signserver.anttasks.SetModuleEnablePropertiesTask"
             classpath="../SignServer-BuildTools/build/classes/"/>

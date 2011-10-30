@@ -56,7 +56,7 @@
     <import file="${custom.build.xml}" optional="true"/>
 
     <!-- Properties with paths to all module projects -->
-    <property file="${modules}/modules-project.properties"/>
+    <property file="${res}/modules-project.properties"/>
     <import file="${modules}/modules.xml" optional="true"/>
     
     <!-- Classpaths -->
@@ -160,7 +160,7 @@ OS version                          = ${os.version}
 
         <!-- Build properties, if source distribution -->
         <subant target="display-build-properties" inheritall="true">
-            <fileset dir="modules" includes="compile.xml"/>
+            <fileset dir="." includes="${modules}/compile.xml"/>
          </subant>
          
          <echo>
@@ -281,7 +281,7 @@ Libraries to include:
         </copy>
         
         <!-- For each module call postprocess -->
-        <taskdef name="antcallforall" classname="org.signserver.anttasks.AntCallForAllTask" classpath="${javac.classpath}:modules/SignServer-BuildTools/dist/SignServer-BuildTools.jar"/>
+        <taskdef name="antcallforall" classname="org.signserver.anttasks.AntCallForAllTask" classpath="${server.dist.dir}/SignServer-BuildTools.jar"/>
         <antcallforall names="${enabledModules}" target="-postprocess-module" newPropertyPrefix="_acfa" unlessEmpty="postprocess.files" />
     </target>
     

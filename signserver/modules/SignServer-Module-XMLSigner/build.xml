@@ -19,7 +19,13 @@
     <property name="modulename" value="xmlsigner"/>
 
     <!-- Create MAR: -->
-    <target name="-post-jar" depends="xmlsignermar"/>
+    <target name="-post-jar" depends="xmlsignermar,descriptor"/>
+    <target name="descriptor">
+        <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
+        <property name="moduleName" value="module.xmlsigner"/>
+        <property name="distJar" value="SignServer-Module-XMLSigner.jar"/>
+        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/40_${moduleName}.properties" moduleName="${moduleName}" moduleType="lib" libsPrefix="../../lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/ext/ejb/jboss,../../lib/hibernate/" />
+    </target>
     <target name="xmlsignermar">
         <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
             classpath="${javac.classpath}"/>

@@ -35,6 +35,15 @@ Remember to update the soap:address location in the WSDL to start with
                 <include name="*.jar"/>
             </fileset>
         </copy>
+        <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
+        <property name="moduleName" value="validationws"/>
+        <property name="distJar" value="SignServer-ejb-ValidationWS.jar"/>
+        <moddesc classpathValue="${javac.classpath}" dists="SignServer-ejb-ValidationWS.jar" toFile="../../mods-available/20_${moduleName}.properties" moduleName="${moduleName}" moduleType="ejb" libsPrefix="../../lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/ext/ejb/,../../lib/ext/servlet-2.3.jar">
+            <property name="module.ejb" value="${distJar}"/>
+            <property name="postprocess.files" value="postprocess.file1"/>
+            <property name="postprocess.file1.src" value="${distJar}"/>
+            <property name="postprocess.file1.includes" value="META-INF/ejb-jar.xml"/>
+        </moddesc>
     </target>
 
     <!--

@@ -123,8 +123,8 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 <include name="*.jar"/>
             </fileset>
         </copy>
-        <mkdir dir="dist-server/lib" />
-        <copy todir="dist-server/lib">
+        <mkdir dir="dist-server" />
+        <copy todir="dist-server">
             <fileset dir="${signservercommon.dir}/dist">
                 <include name="*.jar"/>
             </fileset>

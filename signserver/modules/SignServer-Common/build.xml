@@ -11,14 +11,6 @@
     <description>Builds, tests, and runs the project SignServer-Common.</description>
     <import file="nbproject/build-impl.xml"/>
 
-    <target name="-pre-jar">
-        <!-- Copy the generated signservercompile.properties -->
-<!--        <copy todir="build/classes/org/signserver/common" overwrite="true">
-            <fileset dir="../../bin/classes/org/signserver/common">
-                <include name="signservercompile.properties"/>
-            </fileset>
-        </copy>-->
-    </target>
     <!--
 
     There exist several targets which are by default empty and which can be 

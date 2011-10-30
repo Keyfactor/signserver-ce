@@ -20,6 +20,21 @@
             inheritall="false"/>
     </target>
     
+    <target name="-post-dist">
+        <copy todir="../../dist-server/">
+            <fileset dir="dist">
+                <include name="*.war"/>
+            </fileset>
+        </copy>
+        <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
+        <property name="moduleName" value="webdoc"/>
+        <property name="distJar" value="SignServer-war-Doc.war"/>
+        <moddesc classpathValue="" dists="${distJar}" toFile="../../mods-available/30_${moduleName}.properties" moduleName="${moduleName}" moduleType="war" libsPrefix="" excludePrefix="">
+            <property name="module.web.web-uri" value="${distJar}"/>
+            <property name="module.web.context-root" value="/signserver/doc"/>
+        </moddesc>
+    </target>
+    
     <!--
 
     There exist several targets which are by default empty and which can be 

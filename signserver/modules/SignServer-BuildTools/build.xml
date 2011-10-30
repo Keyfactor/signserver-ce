@@ -10,6 +10,15 @@
 <project name="SignServer-BuildTools" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-BuildTools.</description>
     <import file="nbproject/build-impl.xml"/>
+    
+    <target name="-post-jar">
+        <copy todir="../../dist-server/">
+            <fileset dir="dist">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+    </target>
+    
     <!--
 
     There exist several targets which are by default empty and which can be 

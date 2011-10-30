@@ -14,6 +14,23 @@
 
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
+    
+    <target name="-post-dist">
+        <copy todir="../../dist-server/">
+            <fileset dir="dist">
+                <include name="*.war"/>
+            </fileset>
+        </copy>
+        <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
+        <property name="moduleName" value="signserverweb"/>
+        <property name="distJar" value="signserver.war"/>
+        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/30_${moduleName}.properties" moduleName="${moduleName}" moduleType="war" libsPrefix="../../lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/dist/SignServer-ejb.jar,../../lib/javaee-web">
+            <property name="module.web.web-uri" value="${distJar}"/>
+            <property name="module.web.context-root" value="/signserver"/>
+        </moddesc>
+    </target>
+    
+    <!--            <property name="module.war.-->
     <!--
 
     There exist several targets which are by default empty and which can be 

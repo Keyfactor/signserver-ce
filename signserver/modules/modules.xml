@@ -128,7 +128,7 @@
         <target name="-module-include">
             <fail unless="moduleEnable.condition"
                 message="Module '${ant.project.name}' must have enabled=true to be included."/>
-            <copy todir="${server.dist.dir}/lib">
+            <copy todir="${server.dist.dir}">
                 <fileset dir="./dist" includes="*.jar"/>
             </copy>
         </target>

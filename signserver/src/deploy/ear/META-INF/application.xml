@@ -8,30 +8,7 @@
     <display-name>SignServer</display-name>
     <description> The Sign Server
     </description>
-    <module>
-        <ejb>SignServer-ejb.jar</ejb>
-    </module>
     
-    <!--@signserverws-ejb.jar@-->
-
-    <!--@validationws-ejb.jar@-->
-
-    <!--@adminws-ejb.jar@-->
-
-    <module>
-        <web>
-            <web-uri>signserver.war</web-uri>
-            <context-root>/signserver</context-root>
-        </web>
-    </module>
-    <module>
-        <web>
-            <web-uri>SignServer-war-Healthcheck.war</web-uri>
-            <context-root>/signserver/healthcheck</context-root>
-        </web>
-    </module>
-
-    <!--@SignServer-war-Doc.war@-->
-
+    <!--@MODULES@-->
 </application>
 

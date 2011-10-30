@@ -29,7 +29,7 @@
        net it checks the properties file here. -->
     <property file="${user.home}/${app.name}_build.properties" />
     <property file="${app.name}_build.properties" />
-    <property file="conf/${app.name}_build.properties" />
+    <property file="${conf}/${app.name}_build.properties" />
  	
     <!--
     A little special something to handle backward compatibility with people
@@ -44,21 +44,20 @@
     <property name="j2ee.server.home" value="${appserver.home}"/>
 
     <!-- Lastly import the default properties -->
-    <property file="src/default_build.properties"/>
+    <property file="${res}/default_build.properties"/>
     
     <condition property="j2ee.web-nohttps.condition">
         <istrue value="${j2ee.web-nohttps}"/>
     </condition>
     
     <!-- Import for the right appserver -->
-    <import file="bin/${appserver.type}.xml" />  
+    <import file="${res}/appserver/${appserver.type}.xml" />  
 	
     <import file="${custom.build.xml}" optional="true"/>
 
     <!-- Properties with paths to all module projects -->
-    <property file="modules/modules-project.properties"/>
-
-    <import file="modules/modules.xml" optional="true"/>
+    <property file="${modules}/modules-project.properties"/>
+    <import file="${modules}/modules.xml" optional="true"/>
     
     <!-- Classpaths -->
     <path id="signserver.compile.classpath">
@@ -77,9 +76,6 @@
         <fileset dir="lib/hibernate" includes="*.jar"/>
         <fileset dir="${ant.home}/lib" includes="ant.jar" />
         <path refid="j2ee.classpath" />
-	        
-        <path location="tmp/jaxws/gen-classes/client" />
-        <path location="tmp/validationws/gen-classes/client" />
     </path>
 
     <path id="server.compile.classpath">
@@ -115,7 +111,7 @@
         </fileset>
     </path>
     
-    <import file="modules/compile.xml" optional="true"/>
+    <import file="${modules}/compile.xml" optional="true"/>
     
     
     <target name="help" depends="usage"/>
@@ -187,12 +183,12 @@ database.password                   = ${database.password}
         <!-- Make a copy of the signserver_cli.properties in bin dir -->
         <copy file="conf/signserver_cli.properties" todir="bin" overwrite="true" failonerror="true"/>
         <!-- Legacy file -->
-        <copy todir="bin" overwrite="true">
+        <copy todir="${bin}" overwrite="true">
             <fileset dir="." includes="signserver_cli.properties"/>
         </copy>
 
         <!-- Copy the correct jndi.properties for your appserver -->
-        <copy file="conf/jndi.properties.${appserver.type}" tofile="bin/jndi.properties" overwrite="true" failonerror="true"/>
+        <copy file="${conf}/jndi.properties.${appserver.type}" tofile="${bin}/jndi.properties" overwrite="true" failonerror="true"/>
         <!-- Legacy file -->
         <copy todir="bin" overwrite="true">
             <fileset dir="bin" includes="jndi.properties.${appserver.type}"/>
@@ -205,7 +201,7 @@ database.password                   = ${database.password}
         <fail message="SignServer needs to be built first. Run 'ant build'." unless="signserver-ejb.jar.available"/>
     </target>
     
-    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -process-modules,  -configure-SignServer-ejb.jar">
+    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -process-modules,  -configure-SignServer-ejb.jar, -configure-SignServer-Common.jar">
         <!-- Build the ear file from the signserver.ear folder -->
         <ear destfile="${server.dist.dir}/signserver.ear" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
             <fileset dir="${signserver.ear.dir}">
@@ -310,13 +306,13 @@ Configuring EAR...
         
         <mkdir dir="${signserver.ear.dir}/META-INF"/>
         <copy todir="${signserver.ear.dir}">
-            <fileset dir="src/deploy/ear" includes="*/*.*"/>
+            <fileset dir="${res}/deploy/ear" includes="*/*.*"/>
         </copy>
     </target>
     
     <target name="-preprocess-persistence" depends="-init-configure">
-        <property name="persistence.xml" location="tmp/persistence.xml"/>
-        <property name="entity-mappings.xml" location="tmp/entity-mappings.xml"/>
+        <property name="persistence.xml" value="${tmp}/persistence.xml"/>
+        <property name="entity-mappings.xml" value="${tmp}/entity-mappings.xml"/>
         
         <!-- Persistence -->
         <echo message="Database type:      ${database.name}"/>
@@ -352,19 +348,18 @@ Configuring EAR...
             <equals arg1="${database.name}" arg2="sybase"/>
         </condition>
         <fail unless="hibernate.dialect" message="Unsupported database type '${database.name}'."/>
-        <mkdir dir="${build}/META-INF"/>
-        <copy file="src/appserver/${appserver.type}/persistence.xml" tofile="${persistence.xml}" failonerror="true" overwrite="true">
+        <copy file="${res}/appserver/${appserver.type}/persistence.xml" tofile="${persistence.xml}" failonerror="true" overwrite="true">
             <filterchain>
                 <expandproperties/>
             </filterchain>
         </copy>
         
         <!-- Entity mappings -->
-        <copy file="src/deploy/ejb/persistence-mappings/${database.name}/entity-mappings.xml" tofile="${entity-mappings.xml}"/>
+        <copy file="${res}/deploy/ejb/persistence-mappings/${database.name}/entity-mappings.xml" tofile="${entity-mappings.xml}"/>
     </target>
     
     <target name="-configure-SignServer-ejb.jar" depends="-init-configure, -preprocess-persistence">
-        <property name="SignServer-ejb.jar.dir" location="tmp/SignServer-ejb.jar"/>
+        <property name="SignServer-ejb.jar.dir" value="${tmp}/SignServer-ejb.jar"/>
         <delete dir="${SignServer-ejb.jar.dir}"/>
         <mkdir dir="${SignServer-ejb.jar.dir}"/>
         <mkdir dir="${SignServer-ejb.jar.dir}/META-INF"/>
@@ -381,9 +376,10 @@ Configuring EAR...
     </target>
     
     <target name="-configure-SignServer-Common.jar" depends="-init-configure">
-        <property name="SignServer-Common.jar.dir" location="tmp/SignServer-Common.jar"/>
+        <property name="SignServer-Common.jar.dir" value="${tmp}/SignServer-Common.jar"/>
         <delete dir="${SignServer-Common.jar.dir}"/>
         <mkdir dir="${SignServer-Common.jar.dir}"/>
+        <mkdir dir="${SignServer-Common.jar.dir}/org/signserver/common/"/>
     
         <propertyfile file="${SignServer-Common.jar.dir}/org/signserver/common/signservercompile.properties" 
             comment="SignServer compile-time properties. Generated file do not edit manually!">
@@ -406,7 +402,7 @@ Configuring EAR...
         </propertyfile>
         
         <!-- Update JAR -->
-        <zip destfile="${signserver.ear.dir}/SignServer-Common.jar" duplicate="fail">
+        <zip destfile="${signserver.ear.dir}/lib/SignServer-Common.jar" duplicate="fail">
             <zipfileset src="${server.dist.dir}/SignServer-Common.jar">
                 <exclude name="org/signserver/common/signservercompile.properties"/>
             </zipfileset>
@@ -415,9 +411,6 @@ Configuring EAR...
             </zipfileset>
         </zip>
     </target>
-
-    
-
 
 
     <!-- =================================================================== -->
@@ -430,7 +423,7 @@ Configuring EAR...
 
         <!-- Clean everything if this is a source distribution -->
         <subant target="clean-build" inheritall="true">
-            <fileset dir="modules" includes="compile.xml"/>
+            <fileset dir="${modules}" includes="compile.xml"/>
          </subant>
     </target>
 

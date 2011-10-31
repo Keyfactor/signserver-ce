@@ -381,6 +381,48 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <echo message="SHA1 checksum: ${signserverSHA1}" />
     </target>
 
+    <target name="release:bin-tarball" > <!-- depends="build" -->
+        <property name="signserver.zipversion" value="${app.version.number}"/>
+        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+        <property name="tarball.tar" value="../signserver-${signserver.zipversion}-bin.tar" />
+        <property name="tarball.tar.gz" value="${tarball.tar}.gz" />
+        <tar tarfile="${tarball.tar}" basedir="." longfile="gnu">
+            <exclude name="**/**"/>
+            <tarfileset dir="." prefix="signserver-${signserver.zipversion}">
+                <include name="**/**" />
+                <exclude name="signserver_build.properties" />
+                <exclude name="conf/signserver_build.properties" />
+                <exclude name="conf/admingui.properties" />
+                <exclude name="lib/**" />
+                <exclude name="dist-client/lib/**" />
+                <exclude name="dist-client/wsraadminClient/**"/>
+                <exclude name="dist-client/signingandvalidationapi/lib/**"/>
+                <exclude name="modules/**" />
+                <exclude name="p12/**" />
+                <exclude name="tmp/**" />
+                <exclude name="velocity.log" />
+                <exclude name=".eclipse/**" />
+                <exclude name=".settings/**" />
+                <exclude name=".classpath" />
+                <exclude name=".project" />
+                <exclude name="**/.svn/**" />
+
+                <exclude name="res/install/**" />
+                <exclude name="res/test/**" />
+
+                <!-- TODO: The following should be moved anyway -->
+                <exclude name="bin/wsraadminClient/**"/>
+                <exclude name="bin/junit/**"/>
+                <exclude name="bin/classes/**"/>
+            </tarfileset>
+        </tar>
+        <gzip destfile="${tarball.tar.gz}" src="${tarball.tar}"/>
+        <delete file="${tarball.tar}"/>
+        <delete file="LICENSE"/>
+        <checksum file="${tarball.tar.gz}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${tarball.tar.gz}" algorithm="SHA1" property="signserverSHA1"/>
+        <echo message="SHA1 checksum: ${signserverSHA1}" />
+    </target>
 
     <!-- =================================================================== -->
     <!-- Build signserver ejb part                                           -->

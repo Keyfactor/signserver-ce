@@ -24,7 +24,8 @@
         <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
         <property name="moduleName" value="healthcheck"/>
         <property name="distJar" value="SignServer-war-Healthcheck.war"/>
-        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/30_${moduleName}.properties" moduleName="${moduleName}" moduleType="war" libsPrefix="../../lib/" excludePrefix="../SignServer-BuildTools/">
+        <property name="base" location="../../"/>
+        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/30_${moduleName}.properties" moduleName="${moduleName}" moduleType="war" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/">
             <property name="module.web.web-uri" value="${distJar}"/>
             <property name="module.web.context-root" value="/signserver/healthcheck"/>
             <property name="postprocess.files" value="postprocess.file1"/>

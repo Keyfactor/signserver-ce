@@ -69,6 +69,13 @@ public class ModulesDescriptorTask extends Task {
                 System.out.println("exclude: " + exclude);
             }
         }
+        Set<String> libsPrefixes = new HashSet<String>();
+        if (libsPrefix != null) {
+            for (String exclude : libsPrefix.split(",")) {
+                libsPrefixes.add(exclude);
+                System.out.println("libPrefix: " + exclude);
+            }
+        }
         
         outer: for (String lib : getClasspathValue().split(":")) {
             if (!lib.isEmpty()) {
@@ -78,10 +85,15 @@ public class ModulesDescriptorTask extends Task {
                         continue outer;
                     }
                 }
-                if (lib.startsWith(libsPrefix)) {
-                    lib = "lib/" + lib.substring(libsPrefix.length());
-                    System.out.println("lib: " + lib);
-                } else if (lib.startsWith("..")) {
+                for (String libs : libsPrefixes) {
+                    if (!libs.isEmpty() && lib.startsWith(libs)) {
+                        lib = "lib/" + lib.substring(libs.length());
+                        System.out.println("lib: " + lib);
+                        libJars.append(lib).append(":");
+                        continue outer;
+                    }
+                }
+                if (lib.startsWith("..")) {
                     lib = "dist-server/" + new File(lib).getName();
                     System.out.println("local dep: " + lib);
                 } else {
@@ -192,5 +204,5 @@ public class ModulesDescriptorTask extends Task {
         nestedProperties.add(msg);
         return msg;
     }
-    
+
 }

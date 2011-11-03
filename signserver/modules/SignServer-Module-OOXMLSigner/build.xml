@@ -24,7 +24,8 @@
         <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
         <property name="moduleName" value="module.ooxmlsigner"/>
         <property name="distJar" value="SignServer-Module-OOXMLSigner.jar"/>
-        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/40_${moduleName}.properties" moduleName="${moduleName}" moduleType="lib" libsPrefix="../../lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/ext/ejb/jboss,../../lib/hibernate/" />
+        <property name="base" location="../../"/>
+        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/40_${moduleName}.properties" moduleName="${moduleName}" moduleType="lib" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/ext/ejb/jboss,../../lib/hibernate/" />
     </target>
     <target name="ooxmlsignermar">
 

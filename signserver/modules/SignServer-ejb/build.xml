@@ -24,7 +24,9 @@
         <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
         <property name="moduleName" value="signserverejb"/>
         <property name="distJar" value="SignServer-ejb.jar"/>
-        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/10_${moduleName}.properties" moduleName="${moduleName}" moduleType="ejb" libsPrefix="../../lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/ext/ejb/,../../lib/ext/servlet-2.3.jar,../../lib/hibernate/,../../lib/jaxws/saaj-api.jar,../../lib/jaxws/saaj-impl.jar">
+        
+        <property name="base" location="../../"/>
+        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/10_${moduleName}.properties" moduleName="${moduleName}" moduleType="ejb" libsPrefix="../../lib/,${base}/lib" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/ext/ejb/,../../lib/ext/servlet-2.3.jar,../../lib/hibernate/,../../lib/jaxws/saaj-api.jar,../../lib/jaxws/saaj-impl.jar">
             <property name="module.ejb" value="${distJar}"/>
         </moddesc>
     </target>

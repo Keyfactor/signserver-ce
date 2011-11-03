@@ -519,14 +519,9 @@ exists or setup the property manually. For example like this:
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target depends="compile" if="is.server.weblogic" name="library-inclusion-in-archive">
-        <basename file="${reference.SignServer-ejb.dist}" property="manifest.reference.SignServer-ejb.dist"/>
-        <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 "/>
-            <attribute name="jar-1-Extension-Name" value="${manifest.reference.SignServer-ejb.dist}"/>
-        </manifest>
+        <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
-        <copyfiles files="${reference.SignServer-ejb.dist}" todir="${dist.ear.dir}"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">

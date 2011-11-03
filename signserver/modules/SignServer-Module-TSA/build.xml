@@ -23,7 +23,8 @@
         <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}:modules/SignServer-BuildTools/dist/SignServer-BuildTools.jar"/>
         <property name="moduleName" value="module.tsa"/>
         <property name="distJar" value="SignServer-Module-TSA.jar"/>
-        <moddesc classpathValue="${javac.classpath}"  dists="${distJar}" toFile="../../mods-available/40_${moduleName}.properties" moduleName="${moduleName}" moduleType="lib" libsPrefix="../../lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/ext/ejb/jboss,../../lib/hibernate/" />
+        <property name="base" location="../../"/>
+        <moddesc classpathValue="${javac.classpath}"  dists="${distJar}" toFile="../../mods-available/40_${moduleName}.properties" moduleName="${moduleName}" moduleType="lib" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/ext/ejb/jboss,../../lib/hibernate/" />
     </target>
     <target name="tsamar">
 

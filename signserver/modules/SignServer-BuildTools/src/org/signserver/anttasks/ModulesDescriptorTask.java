@@ -88,7 +88,7 @@ public class ModulesDescriptorTask extends Task {
                 for (String libs : libsPrefixes) {
                     if (!libs.isEmpty() && lib.startsWith(libs)) {
                         lib = "lib/" + lib.substring(libs.length());
-                        System.out.println("lib: " + lib);
+                        System.out.println("lib: " + new File(lib).getPath());
                         libJars.append(lib).append(":");
                         continue outer;
                     }

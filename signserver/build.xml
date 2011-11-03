@@ -160,7 +160,7 @@ OS version                          = ${os.version}
 
         <!-- Build properties, if source distribution -->
         <subant target="display-build-properties" inheritall="true">
-            <fileset dir="." includes="${modules}/compile.xml"/>
+            <fileset dir="${modules}" includes="compile.xml"/>
          </subant>
          
          <echo>

@@ -20,6 +20,10 @@
 
     <!-- Import property file containing version numbers and other constants -->
     <property file="res/compile.properties"/>
+    
+    <!-- Project properties such as folder names and locations. Can be overriden 
+        by creating a file called signserver-project-custom.properties. -->
+    <property file="res/signserver-project-custom.properties"/>
     <property file="res/signserver-project.properties"/>
     
 
@@ -160,7 +164,7 @@ OS version                          = ${os.version}
 
         <!-- Build properties, if source distribution -->
         <subant target="display-build-properties" inheritall="true">
-            <fileset dir="${modules}" includes="compile.xml"/>
+            <fileset dir="${base}" includes="modules/compile.xml"/>
          </subant>
          
          <echo>
@@ -203,12 +207,15 @@ database.password                   = ${database.password}
     
     <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -process-modules,  -configure-SignServer-ejb.jar, -configure-SignServer-Common.jar">
         <!-- Build the ear file from the signserver.ear folder -->
-        <ear destfile="${server.dist.dir}/signserver.ear" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
+        <ear destfile="${ear.dist.file}" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
             <fileset dir="${signserver.ear.dir}">
                 <exclude name="META-INF/application.xml" />
             </fileset>
             <zipfileset refid="appserver.extralibs"/>
         </ear>
+        <echo>
+Configured ear file available at: ${ear.dist.file}    
+        </echo>
     </target>
     
     <target name="-process-modules" depends="-init-configure">
@@ -292,7 +299,7 @@ Libraries to include:
     
     <target name="-postprocess-file">
         <echo level="verbose">Post processing file "${_acfa2.src}" with includes "${_acfa2.includes}"</echo>
-        <postprocess-jar src="${server.dist.dir}/${_acfa2.src}" destfile="${signserver.ear.dir}/${_acfa2.src}" tempdir="tmp/${_acfa.calledname}-${_acfa2.src}.dir" replace-includes="${_acfa2.includes}"/>
+        <postprocess-jar src="${server.dist.dir}/${_acfa2.src}" destfile="${signserver.ear.dir}/${_acfa2.src}" tempdir="${tmp}/${_acfa.calledname}-${_acfa2.src}.dir" replace-includes="${_acfa2.includes}"/>
     </target>
         
     <target name="-init-configure">
@@ -300,7 +307,7 @@ Libraries to include:
 Configuring EAR...    
         </echo>
         
-        <property name="signserver.ear.dir" location="tmp/signserver.ear"/>
+        <property name="signserver.ear.dir" location="${tmp}/signserver.ear"/>
         <delete dir="${signserver.ear.dir}"/>
         <mkdir dir="${signserver.ear.dir}"/>
         
@@ -423,7 +430,7 @@ Configuring EAR...
 
         <!-- Clean everything if this is a source distribution -->
         <subant target="clean-build" inheritall="true">
-            <fileset dir="${modules}" includes="compile.xml"/>
+            <fileset dir="${base}" includes="modules/compile.xml"/>
          </subant>
     </target>
 

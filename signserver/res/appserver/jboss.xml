@@ -186,7 +186,7 @@ Deploying to ${jboss.deploy.dir}
             </fileset>	
         </copy>
     	<copy todir="${jboss.deploy.dir}" failonerror="true">	
-    		<fileset dir="${server.dist.dir}" includes="*.ear"/>
+    		<fileset file="${dist.ear.file}"/>
     	</copy>
 	</target>
 	

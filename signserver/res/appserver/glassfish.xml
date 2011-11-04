@@ -76,11 +76,9 @@
 	
 	<target name="j2ee:deploy:locally" description="Deploy the application" unless="deploy.hostname.node1" depends="j2ee:configure, j2ee:copyPrimeCardJars"  >
         <echo>
-Deploying to ${glassfish.deploy.dir}
+Deploying ${ear.dist.file} to ${glassfish.deploy.dir}
         </echo>
-        <copy todir="${glassfish.deploy.dir}" failonerror="true">
-            <fileset file="${dist.ear.file}"/>
-        </copy>
+        <copy file="${ear.dist.file}" todir="${glassfish.deploy.dir}" failonerror="true"/>
 	</target>
 	
 	

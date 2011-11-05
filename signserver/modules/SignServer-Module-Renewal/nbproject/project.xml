@@ -32,6 +32,14 @@
                 <id>jar</id>
             </reference>
             <reference>
+                <foreign-project>SignServer-Module-Renewal-interface</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
                 <foreign-project>SignServer-ejb</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>

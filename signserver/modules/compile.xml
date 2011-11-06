@@ -100,6 +100,8 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <delete dir="${apidoc}" />
         <delete dir="${tmp}"/>	
     	<delete dir="${client.dist.dir}" />
+        <delete dir="${debian.pkgdist.destdir}"/>
+        <delete dir="mods-available"/>
         <delete dir="${test.dir}" />
         <delete dir="${signingAndValidationBuild}" />
         <delete dir="${timeStampClientBuild}" />
@@ -304,9 +306,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <zip destfile="../signserver-${signserver.zipversion}-src.zip">
             <zipfileset dir="." prefix="signserver-${signserver.zipversion}-src" filemode="600" dirmode="700">
                 <include name="**/**" />
-                <exclude name="doc/lgpl-**" />
                 <exclude name="**/CVS/**" />
-
                 <exclude name="signserver_build.properties" />
                 <exclude name="conf/signserver_build.properties" />
                 <exclude name="tmp/**" />
@@ -319,14 +319,11 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 <exclude name="out/**" />
                 <exclude name="eclipseBuild/**" />
                 <exclude name="**/*.class" />
-                <exclude name=".classpath" />
-                <exclude name=".project" />
-                <exclude name=".eclipse/**" />
-                <exclude name=".settings/**" />
                 <exclude name="**/.cvsignore" />
-                <exclude name="**/*.sh" />
                 <exclude name="**/nbproject/private/**" />
-                <exclude name="**/lib/**" />
+                <exclude name="lib/**/*.jar" />
+                <exclude name="lib/**/*.zip" />
+                <exclude name="**/velocity.log" />
             </zipfileset>
             <zipfileset dir="." prefix="signserver-${signserver.zipversion}-src" filemode="700" dirmode="700">
                 <include name="**/*.sh" />
@@ -343,29 +340,29 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <property name="tarball.tar" value="../signserver-${signserver.zipversion}-src.tar" />
         <property name="tarball.tar.gz" value="${tarball.tar}.gz" />
         <tar tarfile="${tarball.tar}" basedir="." longfile="gnu">
-            <include name="**/**" />
-            <exclude name="doc/lgpl-**" />
-            <exclude name="**/CVS/**" />
-            <exclude name="signserver_build.properties" />
-            <exclude name="conf/signserver_build.properties" />
-            <exclude name="tmp/**" />
-            <exclude name="p12/**" />
-            <exclude name="**/dist/**" />
-            <exclude name="**/build/**" />
-            <exclude name="SignServer-AdminGUI/lib/**" />
-            <exclude name="dist-client/**" />
-            <exclude name="dist-server/**" />
-            <exclude name="out/**" />
-            <exclude name="eclipseBuild/**" />
-            <exclude name="**/*.class" />
-            <exclude name=".classpath" />
-            <exclude name=".project" />
-            <exclude name=".eclipse/**" />
-            <exclude name=".settings/**" />
-            <exclude name="**/.cvsignore" />
-            <exclude name="**/*.sh" />
-            <exclude name="**/nbproject/private/**" />
-            <exclude name="**/lib/**" />
+            <exclude name="**"/>
+            <tarfileset dir="." prefix="signserver-${signserver.zipversion}">
+                <include name="**/**" />
+                <exclude name="**/CVS/**" />
+                <exclude name="signserver_build.properties" />
+                <exclude name="conf/signserver_build.properties" />
+                <exclude name="tmp/**" />
+                <exclude name="p12/**" />
+                <exclude name="mods-available/**" />
+                <exclude name="**/dist/**" />
+                <exclude name="**/build/**" />
+                <exclude name="SignServer-AdminGUI/lib/**" />
+                <exclude name="dist-client/**" />
+                <exclude name="dist-server/**" />
+                <exclude name="out/**" />
+                <exclude name="eclipseBuild/**" />
+                <exclude name="**/*.class" />
+                <exclude name="**/.cvsignore" />
+                <exclude name="**/nbproject/private/**" />
+                <exclude name="lib/**/*.jar" />
+                <exclude name="lib/**/*.zip" />
+                <exclude name="**/velocity.log" />
+            </tarfileset>
         </tar>
         <gzip destfile="${tarball.tar.gz}" src="${tarball.tar}"/>
         <delete file="${tarball.tar}"/>
@@ -394,7 +391,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 <exclude name="modules/**" />
                 <exclude name="p12/**" />
                 <exclude name="tmp/**" />
-                <exclude name="velocity.log" />
+                <exclude name="**/velocity.log" />
                 <exclude name=".eclipse/**" />
                 <exclude name=".settings/**" />
                 <exclude name=".classpath" />
@@ -593,6 +590,211 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         </jar>
     </target>
 
+    <!-- =================================================================== -->
+    <!-- Debian packaging                                                    -->
+    <!-- =================================================================== -->
+    <target name="debian-pkgdist" depends="clean, build" 
+        description="Put together files to be included in Debian (or other) packages">
+        <property name="pkg.basename" value="signserver3.3"/>
+        <property name="pkg.version" value="3.3"/>
+        <property name="prefix" value="usr/share"/>
+        
+        <delete dir="${debian.pkgdist.destdir}"/>
+        
+        <!-- libsignserver-common -->
+        <mkdir dir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/dist-server">
+            <fileset dir="${server.dist.dir}">
+                <include name="SignServer-Common.jar"/>
+                <include name="SignServer-ejb-interfaces.jar"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${debian.pkgdist.destdir}/libsignserver-common/usr/share/java"/>
+        <symlink resource="../${pkg.basename}/dist-server/SignServer-Common.jar" 
+            link="${debian.pkgdist.destdir}/libsignserver-common/usr/share/java/signserver-common-${pkg.version}.jar"/>
+        <symlink resource="../${pkg.basename}/dist-server/SignServer-ejb-interfaces.jar" 
+            link="${debian.pkgdist.destdir}/libsignserver-common/usr/share/java/signserver-ejb-interfaces-${pkg.version}.jar"/>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <include name="nblibraries.properties"/>
+                <include name="readme.txt"/>
+                
+                <!-- Bouncycastle (all) -->
+                <include name="1.6/**"/>
+                
+                <!-- EJB/Servlet (cli, gui) -->
+                <include name="ext/ejb/**"/>
+                <include name="ext/servlet-2.3.jar"/>
+                
+                <!-- CLI (both client and admin) -->
+                <include name="ext/commons-cli-1.0.jar"/>
+                
+                <!-- Common (all) -->
+                <include name="cert-cvc.jar"/>
+                <include name="commons-collections-3.2.jar"/>
+                <include name="commons-io-1.4.jar"/>
+                <include name="commons-lang-2.4.jar"/>
+                <include name="commons-logging.jar"/>
+                <include name="ejbca-util.jar"/>
+                <include name="log4j.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/conf">
+            <fileset dir="${base}/conf">
+                <include name="jndi.properties.*"/>
+            </fileset>
+        </copy>
+        
+        <!-- signserver-server -->
+        <mkdir dir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/bin">
+            <fileset dir="${base}/bin">
+                <include name="signserver"/>
+                <include name="ant"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/conf">
+            <fileset dir="${base}/conf">
+                <include name="signserver_build.properties.sample"/>
+                <include name="signserver_cli.properties"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/dist-client">
+            <fileset dir="${base}/dist-client">
+                <include name="SignServer-AdminCLI.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/dist-server">
+            <fileset dir="${base}/dist-server">
+                <exclude name="lib"/>
+                <exclude name="*.mar"/>
+                <exclude name="SignServer-Common.jar"/>     <!-- libsignserver-common -->
+                <exclude name="SignServer-ejb-interfaces.jar"/>      <!-- libsignserver-common -->
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/doc">
+            <fileset dir="${base}/doc"/>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+               
+                <!-- EJB -->
+                <include name="ext/ejb/**"/>
+                <include name="hibernate/**"/>
+                <include name="javaee-api-6.0/**"/>
+                <include name="javaee-web-api-6.0/**"/>
+                
+                <!-- Quartz -->
+                <include name="quartz/**"/>
+                
+                <!-- File uploads -->
+                <include name="commons-fileupload-1.2.1.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/mods-available">
+            <fileset dir="${base}/mods-available">
+                <include name="10_signserverejb.properties"/>
+                <include name="20_adminws.properties"/>
+                <include name="20_signserverws.properties"/>
+                <include name="20_validationws.properties"/>
+                <include name="30_healthcheck.properties"/>
+                <include name="30_module.log4j.properties"/>
+                <include name="30_signserverweb.properties"/>
+                <include name="30_webdoc.properties"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/p12"/>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/res">
+            <fileset dir="${base}/res">
+                <exclude name="install/**"/>
+                <exclude name="module-configs/**"/>
+                <exclude name="test/**"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}">
+            <fileset dir="${base}">
+                <include name="build.xml"/>
+                <include name="ChangeLog.txt"/>
+                <include name="README"/>
+            </fileset>
+        </copy>
+        
+        <!-- signserver-admingui -->
+        <mkdir dir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/bin">
+            <fileset dir="${base}/bin">
+                <include name="admingui-splash.png"/>
+                <include name="signserver-gui"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/conf">
+            <fileset dir="${base}/conf">
+                <include name="admingui_default.properties"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <!-- TODO -->
+                <exclude name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/dist-client">
+            <fileset dir="${base}/dist-client">
+                <include name="SignServer-AdminGUI.jar"/>
+            </fileset>
+        </copy>
+        
+        <!-- signserver-client -->
+        <mkdir dir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/bin">
+            <fileset dir="${base}/bin">
+                <include name="signclient"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/dist-client">
+            <fileset dir="${base}/dist-client">
+                <include name="SignServer-Client-CLI.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <!-- TODO -->
+                <exclude name="**"/>
+            </fileset>
+        </copy>
+        
+        <!-- libsignserver-modules -->
+        <mkdir dir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <!-- TODO -->
+                <exclude name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/mods-available">
+            <fileset dir="${base}/mods-available">
+                <include name="40_module.cmssigner.properties"/>
+                <include name="40_module.mrtdsigner.properties"/>
+                <include name="40_module.mrtdsodsigner.properties"/>
+                <include name="40_module.odfsigner.properties"/>
+                <include name="40_module.ooxmlsigner.properties"/>
+                <include name="40_module.pdfsigner.properties"/>
+                <include name="40_module.renewal.properties"/>
+                <include name="40_module.tsa.properties"/>
+                <include name="40_module.xmlsigner.properties"/>
+                <include name="40_module.xmlvalidator.properties"/>
+            </fileset>
+        </copy>
+        
+        <!-- signserver-doc -->
+        <!-- TODO -->
+
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Legacy packaging                                                    -->
+    <!-- =================================================================== -->
     <target name="signserver-pkgdist" depends="signserver-pkgdist-server, signserver-pkgdist-mgmt,genservercert.jar, setdbtype.jar">
     </target>
     		

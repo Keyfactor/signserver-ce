@@ -26,6 +26,7 @@
         <mkdir dir="${build}"/>
         <mkdir dir="${server.dist.dir}/lib"/>
         <mkdir dir="${client.dist.dir}/lib"/>
+        <mkdir dir="${mods-available}"/>
     </target>
     
     <target name="display-build-properties">
@@ -101,7 +102,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <delete dir="${tmp}"/>	
     	<delete dir="${client.dist.dir}" />
         <delete dir="${debian.pkgdist.destdir}"/>
-        <delete dir="mods-available"/>
+        <delete dir="${mods-available}"/>
         <delete dir="${test.dir}" />
         <delete dir="${signingAndValidationBuild}" />
         <delete dir="${timeStampClientBuild}" />

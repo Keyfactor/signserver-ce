@@ -36,19 +36,19 @@ ADMINCLI_JAR=SignServer-AdminCLI.jar
 
 
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
-  if [ -f /usr/share/signserver/bin/signserver.sh ]; then
+  if [ -f /usr/share/signserver/bin/signserver ]; then
      SIGNSRV_HOME=/usr/share/signserver
   fi
-  if [ -f /opt/signserver/bin/signserver.sh ]; then
+  if [ -f /opt/signserver/bin/signserver ]; then
      SIGNSRV_HOME=/opt/signserver
   fi
-  if [ -f /usr/local/signserver/bin/signserver.sh ]; then
+  if [ -f /usr/local/signserver/bin/signserver ]; then
      SIGNSRV_HOME=/usr/local/signserver
   fi
-  if [ -f ./signserver.sh ]; then
+  if [ -f ./signserver ]; then
      SIGNSRV_HOME=..
   fi
-  if [ -f bin/signserver.sh ]; then
+  if [ -f bin/signserver ]; then
      SIGNSRV_HOME=.
   fi
 else

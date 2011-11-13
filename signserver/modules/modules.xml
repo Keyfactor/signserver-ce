@@ -40,6 +40,9 @@
     <condition property="webdoc.conditionenabled">
         <istrue value="${webdoc.enabled}"/>
     </condition>
+    <condition property="healthcheck.conditionenabled">
+        <istrue value="${healthcheck.enabled}"/>
+    </condition>
 
     <!-- Enable clients -->
     <condition property="timestampclient.conditionenabled">

@@ -437,7 +437,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
     <!-- =================================================================== -->
     <!-- Build health check part                                             -->
     <!-- =================================================================== -->
-    <target name="healthcheck.war">
+    <target name="healthcheck.war" if="healthcheck.conditionenabled">
         <ant antfile="modules/SignServer-war-Healthcheck/build.xml" target="dist" inheritall="false"/>
         <copy todir="${server.dist.dir}" file="modules/SignServer-war-Healthcheck/dist/SignServer-war-Healthcheck.war" failonerror="true"/>
     </target>

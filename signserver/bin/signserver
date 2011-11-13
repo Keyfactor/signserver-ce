@@ -64,10 +64,9 @@ fi
 
 # library classpath
 CP="$SIGNSRV_HOME/dist-client/${ADMINCLI_JAR}"
-for i in "${SIGNSRV_HOME}"/dist-client/lib/*.jar
-do
-	CP="$i":"$CP"
-done
+CP="$CP:$SIGNSRV_HOME/dist-server/SignServer-Common.jar"
+CP="$CP:$SIGNSRV_HOME/dist-server/SignServer-ejb-interfaces.jar"
+CP="$CP:$SIGNSRV_HOME/dist-server/SignServer-Module-Renewal-interface.jar"
 for i in "${SIGNSRV_HOME}"/lib/*.jar
 do
 	CP="$i":"$CP"
@@ -96,6 +95,7 @@ if [ -r "$APPSRV_HOME"/lib/appserv-rt.jar ]; then
     CP=$CP:"$APPSRV_HOME/lib/appserv-rt.jar"
 else
     echo "Assuming JBoss JNDI provider..."
+    CP=$CP:"$APPSRV_HOME/client/jbossall-client.jar"
 fi
 
 export SIGNSRV_HOME

@@ -1,25 +1,20 @@
-Source: signserver
-Section: unknown
-Priority: extra
-Maintainer: Henrik Andreasson <debian@han.pp.se>
-Build-Depends: debhelper (>= 5), ant-optional, ant, sun-java6-jdk
+Source: signserver3.3
+Section: misc
+Priority: optional
+Maintainer: Markus Kilås <markus@primekey.se>
+Build-Depends: debhelper (>= 5), ant (>= 1.7.1), ant-optional, default-jdk (>= 1.6), libcertcvc-java (>= 1.2.11), libejbca-util-signserver-java (>= 1.45), libcommons-lang-java, libcommons-configuration-java, liblog4j1.2-java, libservlet2.5-java, libjline-java, libgnumail-java, libcommons-configuration-java, libbcprov-java (>= 1.45), libbcmail-java (>= 1.45), glassfish-javaee (>=1:2ur2-b04-6), glassfish-appserv (>=1:2ur2-b04-6)
 Standards-Version: 3.7.2
+Homepage: http://www.signserver.org/
 
-Package: signserver-server
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, sun-java6-jre
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Package: libsignserver3.3-common
+Architecture: all
+Depends: libcertcvc-java (>= 1.2.11), libejbca-util-signserver-java (>= 1.45), libcommons-lang-java, libcommons-configuration-java, liblog4j1.2-java, libservlet2.5-java, libbcprov-java (>= 1.45), libbcmail-java (>= 1.45), ${misc:Depends}
+Description: SignServer common classes
+ Common classes for different parts of signserver
 
-Package: signserver-mailserver
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, sun-java6-jre
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Package: signserver3.3-server
+Architecture: all
+Depends: libsignserver3.3-common, libcertcvc-java, libejbca-util-signserver-java, libbcprov-java (>=1.45), libbcmail-java (>=1.45), liblog4j1.2-java, libbctsp-java (>=1.45), libitext-java (>=2.1.7-1), libquartz-java, libservlet2.3-java, libcommons-cli-java, libhibernate3-java, libhibernate-entitymanager-java, libhibernate-annotations-java, libjboss-ejb3x-java (>=4.2.3.GA-1), libjaxp1.3-java (>=1.3.04-5ubuntu2), junit (>=3.8.2-4), libjsch-java, libjdom1-java, libnekohtml-java, libxalan2-java, libgnujaf-java, velocity, libxerces2-java, libjfreechart-java, libjcommon-java, libcommons-lang-java, libasm3-java, libasm3-java, ${misc:Depends}
+Description: SignServer automated signing server
+ SignServer is an automated signing server
 
-
-Package: signserver-mgmt
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, sun-java6-jre
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>

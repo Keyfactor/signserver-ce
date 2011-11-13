@@ -1,112 +1,171 @@
 #!/usr/bin/make -f
-# -*- makefile -*-
-# Sample debian/rules that uses debhelper.
-# This file was originally written by Joey Hess and Craig Small.
-# As a special exception, when this file is copied by dh-make into a
-# dh-make output file, you may use that output file without restriction.
-# This special exception was added by Craig Small in version 0.37 of dh-make.
+# Based on http://pkg-java.alioth.debian.org/docs/tutorial.html
 
-# Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
-export APPSRV_HOME=/usr/share/jboss4
-export JBOSS_HOME=/misc/pkg/signserver/jboss-4.2.2.GA
-export JAVA_HOME=/usr/lib/jvm/java-6-sun/
-export PATH=$(JAVA_HOME)/bin:/usr/local/bin:/usr/bin:/bin
-
-
-
-
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-# Add here commands to configure the package.
-	cp signserver_build.properties.sample signserver_build.properties
-	perl -pi -e 's/^#database.name=mysql/database.name=mysql/gio' signserver_build.properties
-	perl -pi -e 's/^#database.mapping=mySQL/database.mapping=mySQL/gio' signserver_build.properties
-	perl -pi -e 's#^\#database.url=jdbc:mysql://127.0.0.1:3306/signserver#database.url=jdbc:mysql://127.0.0.1:3306/signserver#gio' signserver_build.properties
-	perl -pi -e 's/^#database.driver=com.mysql.jdbc.Driver/#atabase.driver=com.mysql.jdbc.Driver/gio' signserver_build.properties
-	perl -pi -e 's/^#database.username=signserver/database.username=signserver/gio' signserver_build.properties
-	perl -pi -e 's/^#database.password=foo123/database.password=foo123/gio' signserver_build.properties
-	perl -pi -e 's/^#java.trustpassword=changeit/java.trustpassword=changeit/gio' signserver_build.properties
-	perl -pi -e 's/^#java.trustcert=p12\/rootcert.cer/java.trustcert=p12\/rootcert.cer/gio' signserver_build.properties
-	perl -pi -e 's/^#httpsserver.password=serverpwd/httpsserver.password=serverpwd/gio' signserver_build.properties
-	perl -pi -e 's/^#httpsserver.keystore=p12\/tomcat.jks/httpsserver.keystore=p12\/tomcat.jks/gio' signserver_build.properties
-	perl -pi -e 's#<property name="pkg.dist.dir" location=".*" />#<property name="pkg.dist.dir" location="debian/signserver/" />#' build.xml
-	
-
-	touch configure-stamp
-
+export JAVA_HOME=/usr/lib/jvm/default-java
+export APPSRV_HOME=${CURDIR}/debian/temp/appserver
 
 build: build-stamp
-
-build-stamp: configure-stamp 
+build-stamp:
 	dh_testdir
-
-# Add here commands to compile the package.
-#$(MAKE)
-	ant 
-#docbook-to-man debian/signserver.sgml > signserver.1
-
+#	Mock appserver
+	mkdir -pv ${APPSRV_HOME}/lib
+	rm -f ${APPSRV_HOME}/lib/appserv-rt.jar
+	ln -s /usr/share/java/glassfish-appserv-rt.jar ${APPSRV_HOME}/lib/appserv-rt.jar
+#	Dependencies
+	mkdir lib/ext
+	mkdir lib/1.6
+	mkdir lib/ext/ejb
+	mkdir lib/javaee-web-api-6.0
+	mkdir lib/asm
+	mkdir lib/quartz
+	mkdir lib/hibernate
+	mkdir -p lib/module/tsa/1.6
+	mkdir -p lib/module/pdfsigner/itext
+	mkdir -p lib/module/odfsigner
+	mkdir -p lib/module/ooxmlsigner
+	mkdir -p ${APPSRV_HOME}/client
+#	ejbca-util-signserver
+	ln -s /usr/share/java/ejbca-util-signserver.jar lib/ejbca-util.jar
+#	Log4J
+	ln -s /usr/share/java/log4j-1.2.jar lib/log4j.jar
+#	Servlet
+	ln -s /usr/share/java/servlet-2.3.jar lib/ext/servlet-2.3.jar
+	ln -s /usr/share/java/servlet-2.3.jar lib/javaee-web-api-6.0/javaee-web-api-6.0.jar
+#	ln -s /usr/share/java/servlet-2.3.jar ${APPSRV_HOME}/lib/servlet-api.jar
+#	Bouncy Castle
+	ln -s /usr/share/java/bcprov.jar lib/1.6/bcprov-jdk.jar
+	ln -s /usr/share/java/bcmail.jar lib/1.6/bcmail-jdk.jar
+	ln -s /usr/share/java/bctsp.jar lib/1.6/bctsp-jdk.jar
+#	Persistence
+	ln -s /usr/share/java/hibernate3.jar lib/hibernate/
+	ln -s /usr/share/java/hibernate-annotations.jar lib/hibernate/
+	ln -s /usr/share/java/hibernate-entitymanager.jar lib/hibernate/
+	ln -s /usr/share/java/hibernate-core.jar lib/hibernate/
+#	EJB
+	ln -s /usr/share/java/glassfish-javaee.jar lib/ext/ejb/jboss-j2ee.jar
+	ln -s /usr/share/java/glassfish-javaee.jar ${APPSRV_HOME}/client/jboss-j2ee.jar
+	ln -s /usr/share/java/glassfish-javaee.jar lib/hibernate/ejb3-persistence.jar
+#	Cluster classloader
+	ln -s /usr/share/java/asm3-3.2.jar lib/asm/asm-3.1.jar
+	ln -s /usr/share/java/asm3-commons.jar lib/asm/asm-commons-3.1.jar
+	ln -s /usr/share/java/asm3-tree.jar lib/asm/asm-tree-3.1.jar
+#	Commons CLI
+	ln -s /usr/share/java/commons-cli.jar lib/ext/commons-cli-1.0.jar
+	ln -s /usr/share/java/commons-lang-2.4.jar lib/
+#	Quartz
+	ln -s /usr/share/java/quartz-1.6.6.jar lib/quartz/quartz-1.6.0.jar
+#	Commons FileUpload
+	ln -s /usr/share/java/commons-fileupload-1.2.1.jar lib/ 
+	mkdir -p mods-available
+	ant debian-pkgdist
 	touch $@
 
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp configure-stamp
-
-# Add here commands to clean up after the build process.
+#	Mock appserver
+	mkdir -pv ${APPSRV_HOME}/lib
+	rm -f ${APPSRV_HOME}/lib/appserv-rt.jar
+	ln -s /usr/share/java/glassfish-appserv-rt.jar ${APPSRV_HOME}/lib/appserv-rt.jar
+#	Clean
 	ant clean
-	perl -pi -e 's#<property name="pkg.dist.dir" location=".*" />#<property name="pkg.dist.dir" location="dist-pkg" />#' build.xml
-	dh_clean 
+	rm lib/*.jar -f
+	rm lib/ext -rf
+	rm lib/hibernate -rf
+	rm lib/asm -rf
+	rm lib/quartz -rf
+	rm lib/1.6 -rf
+	rm lib/javaee-web-api-6.0 -rf
+	rm ${APPSRV_HOME} -rf
+	rm -f build-stamp
+	dh_clean
 
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k 
+	dh_prep 
 	dh_installdirs
 
-# Add here commands to install the package into debian/signserver.
-#$(MAKE)  install	
+#	Install
+	mkdir -p debian/libsignserver3.3-common/
+	cp -rv dist-debian/libsignserver-common/*  debian/libsignserver3.3-common/
+	rm debian/libsignserver3.3-common/usr/share/signserver3.3/lib -rf
 
+	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/
+	ln -s /usr/share/java/commons-lang-2.4.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/commons-lang-2.4.jar
+	ln -s /usr/share/java/log4j-1.2.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/log4j.jar
+	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/1.6
+	ln -s /usr/share/java/bcmail.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/1.6/bcmail-jdk.jar
+	ln -s /usr/share/java/bctsp.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/1.6/bctsp-jdk.jar
+	ln -s /usr/share/java/bcprov.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/1.6/bcprov-jdk.jar
+	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext
+	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ejb
+	ln -s /usr/share/java/jboss-j2ee.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ejb/jboss-j2ee.jar
+	ln -s /usr/share/java/servlet-2.3.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/servlet-2.3.jar
+	ln -s /usr/share/java/commons-cli.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/commons-cli-1.0.jar
+	cp lib/nblibraries.properties debian/libsignserver3.3-common/usr/share/signserver3.3/lib/nblibraries.properties
+	ln -s /usr/share/java/ejbca-util-signserver.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ejbca-util.jar
+	ln -s /usr/share/java/cert-cvc.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/cert-cvc.jar
+	ln -s /usr/share/java/commons-configuration.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/
+
+#	cp -r dist-debian/libsignserver-modules/* debian/libsignserver3.3-modules/
+#	cp -r dist-debian/signserver-admingui/* debian/signserver3.3-admingui/
+#	cp -r dist-debian/signserver-client/* debian/signserver3.3-clients/
+	mkdir -p debian/signserver3.3-server/
+	cp -rv dist-debian/signserver-server/* debian/signserver3.3-server/
+	rm debian/signserver3.3-server/usr/share/signserver3.3/lib -rf
 	
-	ant signserver-pkgdist-server
-	
-	ant signserver-pkgdist-mgmt
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/lucene-core-2.4.1.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/slf4j-api-1.5.2.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/slf4j-log4j12.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/javassist-3.4.GA.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/ejb3-persistence.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-search-3.1.1.GA.jar
+	ln -s /usr/share/java/hibernate-annotations.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-annotations.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/dom4j-1.6.1.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/jta-1.1.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/antlr-2.7.6.jar
+	ln -s /usr/share/java/hibernate-core.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-core.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-commons-annotations.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-validator-3.1.0.GA.jar
+	ln -s /usr/share/java/hibernate-entitymanager.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-entitymanager.jar
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/javaee-web-api-6.0
+	ln -s /usr/share/java/servlet-2.3.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/javaee-web-api-6.0/javaee-web-api-6.0.jar
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ejb
+	ln -s /usr/share/java/jboss-ejb3x.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ejb/jboss-ejb3x.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ejb/jboss-j2ee.jar
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/javaee-api-6.0
+	ln -s /usr/share/java/glassfish-javaee.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/javaee-api-6.0/javaee-api-6.0.jar
+	ln -s /usr/share/java/commons-fileupload-1.2.1.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/commons-fileupload-1.2.1.jar
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/quartz
+	ln -s /usr/share/java/quartz-1.6.6.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/quartz/quartz-1.6.0.jar
 
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
+	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/signserver
+	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/ant
 
-# Build architecture-dependent files here.
+
+
 binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs 
-	dh_installdocs
-	dh_installexamples
-	dh_install --list-missing --sourcedir=debian/signserver
-#	dh_installmenu
-#	dh_installdebconf	
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_python
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
-	dh_installman
-	dh_link
-	dh_strip
-	dh_compress
-	dh_fixperms
-#	dh_perl
-#	dh_makeshlibs
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
+#	Java packages are arch: all, nothing to do here
+
+binary-indep: build install
+#	Create the package here
+	dh_install -i
+	jh_installjavadoc -i
+	dh_installdocs -i
+	dh_installchangelogs -i
+	jh_installlibs -i
+	jh_depends -i
+	dh_compress -i
+	dh_fixperms -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
 
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
+.PHONY: build clean binary-indep binary-arch binary install
+

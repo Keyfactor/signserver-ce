@@ -1,3 +1,33 @@
+signserver3.3 (3.3.0alpha1-1markus9) natty; urgency=low
+
+  * Fixed commands in debian/rules.
+
+ -- Markus Kilås <markus@markuspage.com>  Thu, 17 Nov 2011 16:41:38 +0100
+
+signserver3.3 (3.3.0alpha1-1markus8) natty; urgency=low
+
+  * Added missing build dependency: libejbca-util-signserver-java.
+
+ -- Markus Kilås <markus@markuspage.com>  Thu, 17 Nov 2011 09:28:54 +0100
+
+signserver3.3 (3.3.0alpha1-1markus7) natty; urgency=low
+
+  * Removed conflicting dependency.
+
+ -- Markus Kilås <markus@markuspage.com>  Wed, 16 Nov 2011 19:39:52 +0100
+
+signserver3.3 (3.3.0alpha1-1markus6) natty; urgency=low
+
+  * Fixed dependencies.
+
+ -- Markus Kilås <markus@markuspage.com>  Wed, 16 Nov 2011 10:46:54 +0100
+
+signserver3.3 (3.3.0alpha1-1markus5) natty; urgency=low
+
+  * Added missing dependencies.
+
+ -- Markus Kilås <markus@markuspage.com>  Tue, 15 Nov 2011 19:23:50 +0100
+
 signserver3.3 (3.3.0alpha1-1markus4) natty; urgency=low
 
   * Excluding some parts using Ant instead of removing the sources.

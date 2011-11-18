@@ -19,8 +19,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.cert.Certificate;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
@@ -43,6 +47,9 @@ import org.signserver.test.utils.mock.WorkerSessionMock;
  */
 public class PDFSignerUnitTest extends TestCase {
 
+    /** Logger for this class. */
+    public static final Logger LOG = Logger.getLogger(PDFSigner.class);
+    
     /** Worker7897: Default algorithms, default hashing setting. */
     private static final int WORKER1 = 7897;
 
@@ -58,6 +65,11 @@ public class PDFSignerUnitTest extends TestCase {
     private File sampleOk;
     private File sampleRestricted;
 
+    private File sample;
+    private File sampleOpen123;
+    private File sampleOpen123Owner123;
+    private File sampleOwner123;
+    private File sampleUseraao;
     
     public PDFSignerUnitTest() {
         SignServerUtil.installBCProvider();
@@ -65,8 +77,13 @@ public class PDFSignerUnitTest extends TestCase {
         assertTrue("Environment variable SIGNSERVER_HOME", home.exists());
         sampleOk = new File(home, "res/test/ok.pdf");
         sampleRestricted = new File(home, "res/test/sample-restricted.pdf");
+        sample = new File(home, "res/test/pdf/sample.pdf");
+        sampleOpen123 = new File(home, "res/test/pdf/sample-open123.pdf");
+        sampleOpen123Owner123 = new File(home, "res/test/pdf/sample-open123-owner123.pdf");
+        sampleOwner123 = new File(home, "res/test/pdf/sample-owner123.pdf");
+        sampleUseraao = new File(home, "res/test/pdf/sample-useraao.pdf");
     }
-
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -99,22 +116,79 @@ public class PDFSignerUnitTest extends TestCase {
     }
 
     /**
-     * Tries to sign a PDF with document restrictions. As this is not (yet?) 
-     * supported it throws an IllegalRequestException.
+     * Tries to sign a PDF with document restrictions. As no password is 
+     * supplied it throws an IllegalRequestException.
      * @throws Exception in case of error
      */
-    public void test02SignWithRestrictions() throws Exception { 
-        byte[] data = readFile(sampleRestricted);
+    public void test02SignWithRestrictionsNoPasswordSupplied() throws Exception { 
         try {
             workerSession.process(
                 WORKER1,
-                new GenericSignRequest(200, data),
+                new GenericSignRequest(200, readFile(sampleRestricted)),
                 new RequestContext());
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
             // OK
         }
 
+        try {
+            workerSession.process(
+                WORKER1,
+                new GenericSignRequest(200, readFile(sampleOpen123)),
+                new RequestContext());
+            fail("Should have thrown exception");
+        } catch (IllegalRequestException ignored) {
+            // OK
+    }
+
+        try {
+            workerSession.process(
+                WORKER1,
+                new GenericSignRequest(200, readFile(sampleOpen123Owner123)),
+                new RequestContext());
+            fail("Should have thrown exception");
+        } catch (IllegalRequestException ignored) {
+            // OK
+        }
+        
+        try {
+            workerSession.process(
+                WORKER1,
+                new GenericSignRequest(200, readFile(sampleOwner123)),
+                new RequestContext());
+            fail("Should have thrown exception");
+        } catch (IllegalRequestException ignored) {
+            // OK
+        }
+    }
+    
+    public void test02SignWithRestrictionsPasswordSupplied() throws Exception {         
+        signProtectedPDF(sampleOpen123, "open123");
+        signProtectedPDF(sampleOwner123, "owner123");
+        signProtectedPDF(sampleOpen123Owner123, "owner123");
+        signProtectedPDF(sample, null);
+        signProtectedPDF(sample, "");
+        signProtectedPDF(sampleUseraao, "user\u00e5\u00e4\u00f6");
+    }
+    
+    private void signProtectedPDF(File file, String password) throws Exception {
+        LOG.debug("Tests signing of " + file.getName() + " with password:");
+        if (password == null) {
+            LOG.debug("null");
+        } else {
+            LOG.debug("\"" + password + "\" " + Arrays.toString(password.toCharArray()));
+        }
+        
+        RequestContext context = new RequestContext();
+        Map<String, String> metadata = new HashMap<String, String>();
+        metadata.put(RequestContext.METADATA_PDFPASSWORD, password);
+        context.put(RequestContext.REQUEST_METADATA, metadata);
+        
+        final GenericSignResponse response = 
+                (GenericSignResponse) workerSession.process(WORKER1, 
+                new GenericSignRequest(200, readFile(file)), 
+                context);
+        assertNotNull(response);
     }
 
     private void setupWorkers() {

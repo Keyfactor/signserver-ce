@@ -43,6 +43,10 @@ public class DocumentSignerTest extends TestCase {
      * junittest-part-config.properties for XMLSigner. */
     private static final int WORKERID = 5676;
 
+    /** WORKERID used in this test case as defined in 
+     * junittest-part-config.properties for PDFSigner. */
+    private static final int WORKERID2 = 5675;
+
     private static IWorkerSession.IRemote workerSession;
     private static String signserverhome;
     private static int moduleVersion;
@@ -56,6 +60,7 @@ public class DocumentSignerTest extends TestCase {
         TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
+        TestUtils.setupSSLTruststore();
     }
 
     @Override
@@ -72,6 +77,8 @@ public class DocumentSignerTest extends TestCase {
 
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
+        
+        // Worker 1
         TestUtils.assertSuccessfulExecution(new String[] {
                 "module",
                 "add",
@@ -82,10 +89,22 @@ public class DocumentSignerTest extends TestCase {
                 TestUtils.grepTempOut("Loading module XMLSIGNER"));
         assertTrue("Module loaded",
                 TestUtils.grepTempOut("Module loaded successfully."));
+        workerSession.reloadConfiguration(WORKERID);
+        
+        // Worker 2
+        TestUtils.assertSuccessfulExecution(new String[] {
+                "module",
+                "add",
+                signserverhome + "/dist-server/pdfsigner.mar",
+                "junittest"
+            });
+        assertTrue("Loading module",
+                TestUtils.grepTempOut("Loading module PDFSIGNER"));
+        assertTrue("Module loaded",
+                TestUtils.grepTempOut("Module loaded successfully."));
+        workerSession.reloadConfiguration(WORKERID2);
         TestUtils.flushTempOut();
         TestUtils.flushTempErr();
-
-        workerSession.reloadConfiguration(WORKERID);
     }
 
     public void test01missingArguments() throws Exception {
@@ -146,6 +165,44 @@ public class DocumentSignerTest extends TestCase {
         }
     }
 
+    /**
+     * Test for the "-pdfpassword" argument.
+     * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf
+     * @throws Exception
+     */
+    public void test03signPDFwithPasswordOverHTTP() throws Exception {
+        try {
+
+            byte[] res = execute("signdocument", "-workername", 
+                    "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
+                    "-pdfpassword", "open123");
+            assertNotNull("No result", res);
+            assertNotSame("Empty result", 0, res.length);
+        } catch (IllegalArgumentException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Test for the "-pdfpassword" argument.
+     * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf -protocol WEBSERVICES
+     * @throws Exception
+     */
+    public void test04signPDFwithPasswordOverWebservices() throws Exception {
+        try {
+            
+            byte[] res = execute("signdocument", "-workername", 
+                    "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
+                    "-pdfpassword", "open123", "-protocol", "WEBSERVICES",
+                    "-truststore", "../../p12/truststore.jks", "-truststorepwd", "changeit");
+            assertNotNull("No result", res);
+            assertNotSame("Empty result", 0, res.length);
+        } catch (IllegalArgumentException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
 
     public void test99TearDownDatabase() throws Exception {
         TestUtils.assertSuccessfulExecution(new String[] {
@@ -162,6 +219,21 @@ public class DocumentSignerTest extends TestCase {
         assertTrue("module remove",
                 TestUtils.grepTempOut("Removal of module successful."));
         workerSession.reloadConfiguration(WORKERID);
+        
+        TestUtils.assertSuccessfulExecution(new String[] {
+            "removeworker",
+            String.valueOf(WORKERID2)
+        });
+
+        TestUtils.assertSuccessfulExecution(new String[] {
+            "module",
+            "remove",
+            "PDFSIGNER",
+            String.valueOf(moduleVersion)
+        });
+        assertTrue("module remove",
+                TestUtils.grepTempOut("Removal of module successful."));
+        workerSession.reloadConfiguration(WORKERID2);
     }
 
     private byte[] execute(String... args) throws IllegalArgumentException, IOException {

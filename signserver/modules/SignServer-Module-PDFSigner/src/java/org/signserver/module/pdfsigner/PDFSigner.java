@@ -15,6 +15,7 @@ package org.signserver.module.pdfsigner;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -84,6 +85,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.signserver.server.UsernamePasswordClientCredential;
+import org.signserver.server.log.IWorkerLogger;
 
 /**
  * A Signer signing PDF files using the IText PDF library.
@@ -109,8 +111,8 @@ import org.signserver.server.UsernamePasswordClientCredential;
  */
 public class PDFSigner extends BaseSigner {
 
-    /** Log4j instance for actual implementation class */
-    public static final Logger log = Logger.getLogger(PDFSigner.class);
+    /** Logger for this class. */
+    public static final Logger LOG = Logger.getLogger(PDFSigner.class);
     
     // private final CSVFileStatisticsCollector cSVFileStatisticsCollector =
     // CSVFileStatisticsCollector.getInstance(this.getClass().getName(),
@@ -173,16 +175,16 @@ public class PDFSigner extends BaseSigner {
         // Check properties for archive to disk
         if (StringUtils.equalsIgnoreCase("TRUE",
                 config.getProperty(PROPERTY_ARCHIVETODISK))) {
-            if (log.isDebugEnabled()) {
-                log.debug("Archiving to disk");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Archiving to disk");
             }
 
             final String path = config.getProperty(PROPERTY_ARCHIVETODISK_PATH_BASE);
             if (path == null) {
-                log.warn("Worker[" + workerId
+                LOG.warn("Worker[" + workerId
                         + "]: Archiving path missing");
             } else if (!new File(path).exists()) {
-                log.warn("Worker[" + workerId
+                LOG.warn("Worker[" + workerId
                         + "]: Archiving path does not exists: "
                         + path);
             }
@@ -214,6 +216,10 @@ public class PDFSigner extends BaseSigner {
                     "Recieved request data wasn't a expected byte[].");
         }
 
+        // Log values
+        final Map<String, String> logMap =
+                (Map<String, String>) requestContext.get(RequestContext.LOGMAP);
+
         // retrieve and preprocess configuration parameter values
         PDFSignerParameters params = new PDFSignerParameters(config);
 
@@ -232,7 +238,21 @@ public class PDFSigner extends BaseSigner {
                 checkForDuplicateObjects(pdfbytes);
             }
 
-            byte[] signedbytes = addSignatureToPDFDocument(params, pdfbytes);
+            // Get the password to open the PDF with
+            final byte[] password = getPassword(requestContext);
+            if (password == null || password.length == 0) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Password was null or empty");
+                }
+                logMap.put(IWorkerLogger.LOG_PDF_PASSWORD_SUPPLIED, Boolean.FALSE.toString());
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Password length was " + password.length + " bytes");
+                }
+                logMap.put(IWorkerLogger.LOG_PDF_PASSWORD_SUPPLIED, Boolean.TRUE.toString());
+            }
+            
+            byte[] signedbytes = addSignatureToPDFDocument(params, pdfbytes, password);
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         signedbytes, getSigningCertificate(), fp,
@@ -252,8 +272,9 @@ public class PDFSigner extends BaseSigner {
             throw new IllegalRequestException("Could not sign document: "
                     + e.getMessage(), e);
         } catch (BadPasswordException ex) {
-            throw new IllegalRequestException(
-                    "Signing of PDF with document restrictions not supported.", ex);
+            throw new IllegalRequestException("A valid password is required to sign the document: " + ex.getMessage(), ex);
+        } catch (UnsupportedEncodingException ex) {
+            throw new IllegalRequestException("The supplied password could not be read: " + ex.getMessage(), ex);
         } catch (IOException e) {
             throw new IllegalRequestException("Could not sign document: " + e.getMessage(), e);
         }
@@ -262,7 +283,7 @@ public class PDFSigner extends BaseSigner {
     }
 
     private byte[] addSignatureToPDFDocument(PDFSignerParameters params,
-            byte[] pdfbytes) throws IOException, DocumentException,
+            byte[] pdfbytes, byte[] password) throws IOException, DocumentException,
             CryptoTokenOfflineException, SignServerException {
 
         // get signing cert certificate chain and private key
@@ -275,7 +296,7 @@ public class PDFSigner extends BaseSigner {
         PrivateKey privKey = this.getCryptoToken().getPrivateKey(
                 ICryptoToken.PURPOSE_SIGN);
 
-        PdfReader reader = new PdfReader(pdfbytes);
+        PdfReader reader = new PdfReader(pdfbytes, password);
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
         PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', null,
                 true);
@@ -469,8 +490,8 @@ public class PDFSigner extends BaseSigner {
     }
 
     private void archiveToDisk(ISignRequest sReq, byte[] signedbytes, RequestContext requestContext) throws SignServerException {
-        if (log.isDebugEnabled()) {
-            log.debug("Archiving to disk");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Archiving to disk");
         }
 
         // Fill in fields that can be used to construct path and filename
@@ -499,7 +520,7 @@ public class PDFSigner extends BaseSigner {
 
         if (!outputPath.exists()) {
             if (!outputPath.mkdirs()) {
-                log.warn("Output path could not be created: "
+                LOG.warn("Output path could not be created: "
                         + outputPath.getAbsolutePath());
             }
         }
@@ -512,8 +533,8 @@ public class PDFSigner extends BaseSigner {
 
         final File outputFile = new File(outputPath, fileNameFromPattern);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Worker[" + workerId + "]: Archive to file: "
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Worker[" + workerId + "]: Archive to file: "
                     + outputFile.getAbsolutePath());
         }
 
@@ -529,7 +550,7 @@ public class PDFSigner extends BaseSigner {
                 try {
                     out.close();
                 } catch (IOException ex) {
-                    log.debug("Exception closing file", ex);
+                    LOG.debug("Exception closing file", ex);
                     throw new SignServerException(
                             "Could not archive signed document", ex);
                 }
@@ -558,8 +579,8 @@ public class PDFSigner extends BaseSigner {
             final Date date, final Map<String, String> fields) {
         final String result;
 
-        if (log.isDebugEnabled()) {
-            log.debug("Input string: " + text);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Input string: " + text);
         }
 
         final StringBuffer sb = new StringBuffer();
@@ -592,16 +613,16 @@ public class PDFSigner extends BaseSigner {
         m.appendTail(sb);
         result = sb.toString();
 
-        if (log.isDebugEnabled()) {
-            log.debug("Result: " + result);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Result: " + result);
         }
         return result;
     }
 
     private void checkForDuplicateObjects(byte[] pdfbytes) throws IOException,
             SignServerException {
-        if (log.isDebugEnabled()) {
-            log.debug(">checkForDuplicateObjects");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">checkForDuplicateObjects");
         }
         final PRTokeniser tokens = new PRTokeniser(pdfbytes);
         final Set<String> idents = new HashSet<String>();
@@ -613,19 +634,37 @@ public class PDFSigner extends BaseSigner {
                 final String ident = obj[0] + " " + obj[1];
 
                 if (idents.add(ident)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Object: " + ident);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Object: " + ident);
                     }
                 } else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Duplicate object: " + ident);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Duplicate object: " + ident);
                     }
                     throw new SignServerException("Incorrect document");
                 }
             }
         }
-        if (log.isDebugEnabled()) {
-            log.debug("<checkForDuplicateObjects");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("<checkForDuplicateObjects");
         }
     }
+
+    private static byte[] getPassword(final RequestContext context) throws UnsupportedEncodingException {
+        final byte[] result;    
+        Object o = context.get(RequestContext.REQUEST_METADATA);
+        if (o instanceof Map) {
+            Map<String, String> metadata = (Map<String, String>) o;
+            String password = metadata.get(RequestContext.METADATA_PDFPASSWORD);
+            if (password == null) {
+                result = null;
+            } else {
+                result = password.getBytes("ISO-8859-1");
+}
+        } else {
+            result = null;
+        }
+        return result;
+    }
+
 }

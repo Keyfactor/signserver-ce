@@ -48,7 +48,7 @@
                 and you will get back the same PDF, but signed by SignServer.
                 This is a central organization signature.
             </p>
-            <form id="recievefile" action="../process" method="post" enctype="multipart/form-data">
+            <form id="recievefile" action="../process" method="post" enctype="multipart/form-data" accept-charset="ISO-8859-1">
                 <fieldset>
                     <input type="hidden" name="workerName" value="PDFSigner"/>
                 </fieldset>
@@ -57,7 +57,20 @@
                         <td style="width: 50%" valign="top" align="right">Select PDF file to upload and sign</td>
                         <td style="width: 50%" valign="top">
                             <input type="file" name="filerecievefile"/>
-                                <input type="submit" name="buttonrecievefile" onclick="return check()" value="Submit"/><br/><br/>
+                        </td>
+                    </tr>
+                    <tr id="Row1">
+                        <td style="width: 50%" valign="top" align="right">Password (if required):</td>
+                        <td style="width: 50%" valign="top">
+                            <input type="password" name="pdfPassword"/>
+                        </td>
+                    </tr>
+                    <tr id="Row2">
+                        <td style="width: 50%" valign="top" align="right">
+                            &nbsp;
+                        </td>
+                        <td style="width: 50%" valign="top">
+                            <input type="submit" name="buttonrecievefile" onclick="return check()" value="Submit"/>
                         </td>
                     </tr>
                 </table>

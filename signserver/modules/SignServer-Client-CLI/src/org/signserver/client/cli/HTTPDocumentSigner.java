@@ -50,16 +50,20 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private URL processServlet;
 
     private String username;
-
     private String password;
 
+    /** Password used for changing the PDF if required (user or owner password). */
+    private String pdfPassword;
+
     public HTTPDocumentSigner(final URL processServlet,
-            final String workerName, final String username,
-            final String password) {
+            final String workerName, 
+            final String username, final String password,
+            final String pdfPassword) {
         this.processServlet = processServlet;
         this.workerName = workerName;
         this.username = username;
         this.password = password;
+        this.pdfPassword = pdfPassword;
     }
 
     protected void doSign(final byte[] data, final String encoding,
@@ -127,6 +131,14 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             sb.append(CRLF);
             sb.append(workerName);
             sb.append(CRLF);
+            
+            if (pdfPassword != null) {
+                sb.append("--" + BOUNDARY).append(CRLF)
+                    .append("Content-Disposition: form-data; name=\"pdfPassword\"").append(CRLF)
+                    .append(CRLF)
+                    .append(pdfPassword).append(CRLF);
+            }
+            
             sb.append("--" + BOUNDARY);
             sb.append(CRLF);
             sb.append("Content-Disposition: form-data; name=\"datafile\"");
@@ -153,6 +165,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             
             out.write(sb.toString().getBytes());
             out.write(data);
+            
             out.write(("\r\n--" + BOUNDARY + "--\r\n").getBytes());
             out.flush();
 

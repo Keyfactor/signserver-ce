@@ -82,6 +82,7 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
     private static final String HTTP_AUTH_BASIC_WWW_AUTHENTICATE =
             "WWW-Authenticate";
+    private static final String PDFPASSWORD_PROPERTY_NAME = "pdfPassword";
 
     private final Random random = new Random();
 
@@ -117,6 +118,7 @@ public class GenericProcessServlet extends HttpServlet {
         int workerId = 1;
         byte[] data = null;
         String fileName = null;
+        String pdfPassword = null;
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received a request with length: "
@@ -153,6 +155,11 @@ public class GenericProcessServlet extends HttpServlet {
                                 workerId = Integer.parseInt(item.getString());
                             } catch (NumberFormatException ignored) {
                             }
+                        } else if (PDFPASSWORD_PROPERTY_NAME.equals(item.getFieldName())) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Found a pdfPassword in the request.");
+                        }
+                            pdfPassword = item.getString("ISO-8859-1");
                         }
                     } else {
                         // We only care for one upload at a time right now
@@ -187,6 +194,12 @@ public class GenericProcessServlet extends HttpServlet {
                     LOG.debug("Found a signerId in the request: " + id);
                 }
                 workerId = Integer.parseInt(id);
+            }
+            if (req.getParameter(PDFPASSWORD_PROPERTY_NAME) != null) {
+                pdfPassword = req.getParameter(PDFPASSWORD_PROPERTY_NAME);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Found a pdfPassword in the request.");
+                }
             }
 
             if (METHOD_GET.equalsIgnoreCase(req.getMethod())
@@ -238,7 +251,7 @@ public class GenericProcessServlet extends HttpServlet {
             res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
                     "Maximum content length is 100 MB");
         } else {
-            processRequest(req, res, workerId, data, fileName);
+            processRequest(req, res, workerId, data, fileName, pdfPassword);
         }
 
         LOG.debug("<doPost()");
@@ -260,7 +273,7 @@ public class GenericProcessServlet extends HttpServlet {
         LOG.debug("<doGet()");
     } // doGet
 
-    private void processRequest(HttpServletRequest req, HttpServletResponse res, int workerId, byte[] data, String fileName) throws java.io.IOException, ServletException {
+    private void processRequest(HttpServletRequest req, HttpServletResponse res, int workerId, byte[] data, String fileName, String pdfPassword) throws java.io.IOException, ServletException {
         final String remoteAddr = req.getRemoteAddr();
         LOG.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
 
@@ -273,6 +286,8 @@ public class GenericProcessServlet extends HttpServlet {
 
         final RequestContext context = new RequestContext(clientCertificate,
                 remoteAddr);
+        final Map<String, String> metadata = new HashMap<String, String>();
+        context.put(RequestContext.REQUEST_METADATA, metadata);
 
         IClientCredential credential;
 
@@ -318,6 +333,11 @@ public class GenericProcessServlet extends HttpServlet {
             fileName = stripPath(fileName);
         }
         context.put(RequestContext.FILENAME, fileName);
+
+        // PDF Password
+        if (pdfPassword != null) {
+            metadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
+        }
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received bytes of length: " + data.length);

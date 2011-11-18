@@ -14,6 +14,7 @@ package org.signserver.client.cli;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +42,7 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
     private static final Logger LOG = Logger.getLogger(WebServicesDocumentSigner.class);
 
     private String workerName;
+    private String pdfPassword;
 
     private ISignServerWorker signServer;
 
@@ -48,10 +50,11 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
 
     public WebServicesDocumentSigner(final String host, final int port,
             final String workerName, final boolean useHTTPS, 
-            final String username, final String password) {
+            final String username, final String password, final String pdfPassword) {
         this.signServer = new SigningAndValidationWS(host, port, useHTTPS, 
                 username, password);
         this.workerName = workerName;
+        this.pdfPassword = pdfPassword;
     }
 
     protected void doSign(final byte[] data, final String encoding,
@@ -71,8 +74,14 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
         // Take start time
         final long startTime = System.nanoTime();
 
+        // RequestContext is used by this API to transfer the metadata
+        RequestContext context = new RequestContext();
+        Map<String, String> metadata = new HashMap<String, String>();
+        metadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
+        context.put(RequestContext.REQUEST_METADATA, metadata);
+        
         final ProcessResponse response = signServer.process(workerName,
-                new GenericSignRequest(requestId, data), new RequestContext());
+                new GenericSignRequest(requestId, data), context);
 
         // Take stop time
         final long estimatedTime = System.nanoTime() - startTime;

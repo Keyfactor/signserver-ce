@@ -3,9 +3,9 @@
   <services/>
   <clients>
     <client name="SignServerWSService">
-      <wsdl-url>file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-SignServerWS/xml-resources/web-service-references/SignServerWSService/wsdl/SignServerWSService.wsdl</wsdl-url>
+      <wsdl-url>file:/home/markus/VersionControlled/signserver/branch32-1/signserver/modules/SignServer-ejb-SignServerWS/src/java/META-INF/wsdl/SignServerWSService.wsdl</wsdl-url>
       <local-wsdl-file>SignServerWSService.wsdl</local-wsdl-file>
-      <package-name forceReplace="true">org.signserver.protocol.ws.gen</package-name>
+      <package-name>org.signserver.protocol.ws.gen</package-name>
       <catalog-file>catalog.xml</catalog-file>
       <wsimport-options>
         <wsimport-option>
@@ -18,15 +18,11 @@
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>wsdlLocation</wsimport-option-name>
-          <wsimport-option-value>file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-SignServerWS/xml-resources/web-service-references/SignServerWSService/wsdl/SignServerWSService.wsdl</wsimport-option-value>
+          <wsimport-option-value>file:/home/markus/VersionControlled/signserver/branch32-1/signserver/modules/SignServer-ejb-SignServerWS/src/java/META-INF/wsdl/SignServerWSService.wsdl</wsimport-option-value>
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>xendorsed</wsimport-option-name>
           <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>package</wsimport-option-name>
-          <wsimport-option-value>org.signserver.protocol.ws.gen</wsimport-option-value>
         </wsimport-option>
       </wsimport-options>
     </client>

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
@@ -65,6 +66,12 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         if (worker == null) {
             throw new CryptoTokenOfflineException("No such worker: "
                     + workerId);
+        }
+        Map<String, String> logMap = (Map)
+                requestContext.get(RequestContext.LOGMAP);
+        if (logMap == null) {
+            logMap = new HashMap<String, String>();
+            requestContext.put(RequestContext.LOGMAP, logMap);
         }
         return worker.getProcessable().processData(request, requestContext);
     }

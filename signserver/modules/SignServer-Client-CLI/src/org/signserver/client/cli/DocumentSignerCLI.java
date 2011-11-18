@@ -90,6 +90,9 @@ public class DocumentSignerCLI {
     /** Option PASSWORD. */
     public static final String PASSWORD = "password";
 
+    /** Option PDFPASSWORD. */
+    public static final String PDFPASSWORD = "pdfpassword";
+
     /** The command line options. */
     private static final Options OPTIONS;
 
@@ -128,6 +131,8 @@ public class DocumentSignerCLI {
                 TEXTS.getString("USERNAME_DESCRIPTION"));
         OPTIONS.addOption(PASSWORD, true,
                 TEXTS.getString("PASSWORD_DESCRIPTION"));
+        OPTIONS.addOption(PDFPASSWORD, true,
+                TEXTS.getString("PDFPASSWORD_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -161,6 +166,8 @@ public class DocumentSignerCLI {
 
     private String username;
     private String password;
+
+    private String pdfPassword;
 
     private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
@@ -221,6 +228,9 @@ public class DocumentSignerCLI {
         if (line.hasOption(PASSWORD)) {
             password = line.getOptionValue(PASSWORD, null);
         }
+        if (line.hasOption(PDFPASSWORD)) {
+            pdfPassword = line.getOptionValue(PDFPASSWORD, null);
+        }
         
         keyStoreOptions.parseCommandLine(line);
     }
@@ -274,13 +284,13 @@ public class DocumentSignerCLI {
                 port,
                 workerIdOrName,
                 keyStoreOptions.isUseHTTPS(),
-                username,
-                password);
+                username, password,
+                pdfPassword);
         } else {
             LOG.debug("Using HTTP as procotol");
             signer = new HTTPDocumentSigner(
                 new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host,
-                port, servlet), workerIdOrName, username, password);
+                port, servlet), workerIdOrName, username, password, pdfPassword);
         }
         return signer;
     }

@@ -231,6 +231,14 @@ public class SignServerWS implements ISignServerWS {
                 LOG.error("Error parsing process request", e1);
                 throw new IllegalRequestException(e1.getMessage());
             }
+            
+            Map<String, String> metadata = next.getRequestMetadata();
+            if (metadata == null) {
+                requestContext.remove(RequestContext.REQUEST_METADATA);
+            } else {
+                requestContext.put(RequestContext.REQUEST_METADATA, metadata);
+            }
+            
             ProcessResponse resp = getWorkerSession().process(workerId, req, requestContext);
             ProcessResponseWS wsresp = new ProcessResponseWS();
             try {

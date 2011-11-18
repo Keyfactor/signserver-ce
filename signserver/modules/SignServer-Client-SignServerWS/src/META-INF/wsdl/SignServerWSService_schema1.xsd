@@ -53,6 +53,20 @@
   <xs:complexType name="processRequestWS">
     <xs:sequence>
       <xs:element name="requestDataBase64" type="xs:string" minOccurs="0"/>
+      <xs:element name="requestMetadata">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="key" minOccurs="0" type="xs:string"/>
+                  <xs:element name="value" minOccurs="0" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

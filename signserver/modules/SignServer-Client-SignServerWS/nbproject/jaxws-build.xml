@@ -21,7 +21,7 @@
     <target name="wsimport-client-SignServerWSService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/SignServerWSService"/>
         <property name="wsdl-SignServerWSService" location="xml-resources/web-service-references/SignServerWSService/wsdl/SignServerWSService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/SignServerWSService" destdir="${build.generated.dir}/jax-wsCache/SignServerWSService" wsdl="${wsdl-SignServerWSService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-SignServerWS/xml-resources/web-service-references/SignServerWSService/wsdl/SignServerWSService.wsdl" xendorsed="true" package="org.signserver.protocol.ws.gen">
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/SignServerWSService" destdir="${build.generated.dir}/jax-wsCache/SignServerWSService" wsdl="${wsdl-SignServerWSService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="file:/home/markus/VersionControlled/signserver/branch32-1/signserver/modules/SignServer-ejb-SignServerWS/src/java/META-INF/wsdl/SignServerWSService.wsdl" xendorsed="true">
             <depends file="${wsdl-SignServerWSService}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/SignServerWSService"/>
         </wsimport>

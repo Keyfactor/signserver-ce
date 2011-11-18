@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 
@@ -41,6 +42,7 @@ import org.signserver.protocol.ws.gen.CryptoTokenOfflineException_Exception;
 import org.signserver.protocol.ws.gen.IllegalRequestException_Exception;
 import org.signserver.protocol.ws.gen.InvalidWorkerIdException_Exception;
 import org.signserver.protocol.ws.gen.ProcessRequestWS;
+import org.signserver.protocol.ws.gen.ProcessRequestWS.RequestMetadata.Entry;
 import org.signserver.protocol.ws.gen.ProcessResponseWS;
 import org.signserver.protocol.ws.gen.SignServerException_Exception;
 import org.signserver.protocol.ws.gen.SignServerWS;
@@ -150,9 +152,22 @@ public class SigningAndValidationWS implements ISigningAndValidation {
         try {
             List<ProcessRequestWS> list = new LinkedList<ProcessRequestWS>();
 
+            ProcessRequestWS.RequestMetadata metadata = new ProcessRequestWS.RequestMetadata();
+            Map<String, String> requestMetadata = (Map<String, String>) context.get(RequestContext.REQUEST_METADATA);
+            if (requestMetadata != null) {
+                List<Entry> entries = metadata.getEntry();
+                for (Map.Entry<String, String> entry : requestMetadata.entrySet()) {
+                    Entry e = new Entry();
+                    e.setKey(entry.getKey());
+                    e.setValue(entry.getValue());
+                    entries.add(e);
+                }
+            }
+            
             for (ProcessRequest req : requests) {
                 ProcessRequestWS reqWS = new ProcessRequestWS();
                 reqWS.setRequestDataBase64(new String(Base64.encode(RequestAndResponseManager.serializeProcessRequest(req))));
+                reqWS.setRequestMetadata(metadata);
                 list.add(reqWS);
             }
 

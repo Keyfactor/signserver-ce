@@ -49,6 +49,7 @@ public interface IWorkerLogger {
 
     String LOG_PURCHASED = "PURCHASED";
 
+    String LOG_PDF_PASSWORD_SUPPLIED = "PDF_PASSWORD_SUPPLIED";
 
     /**
      * Method called after creation of instance.

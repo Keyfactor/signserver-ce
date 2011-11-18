@@ -13,14 +13,20 @@
 package org.signserver.testutils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
+import org.apache.log4j.Logger;
 import org.signserver.cli.signserver;
 
 /**
@@ -31,6 +37,29 @@ import org.signserver.cli.signserver;
  */
 public class TestUtils {
 
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(TestUtils.class);
+    
+    public static void setupSSLTruststore() {
+        Properties buildConfig = new Properties();
+        try {
+            buildConfig.load(new FileInputStream(new File(new File(
+                    System.getenv("SIGNSERVER_HOME")),
+                    "signserver_build.properties")));
+        } catch (FileNotFoundException ignored) {
+            LOG.debug("No signserver_build.properties");
+        } catch (IOException ex) {
+            LOG.error("Not using signserver_build.properties: " + ex.getMessage());
+        }
+        System.setProperty("javax.net.ssl.trustStore", 
+                new File(new File(System.getenv("SIGNSERVER_HOME")),
+                    "p12/truststore.jks").getAbsolutePath());
+        System.setProperty("javax.net.ssl.trustStorePassword",
+                buildConfig.getProperty("java.trustpassword", "changeit"));
+        //System.setProperty("javax.net.ssl.keyStore", "../../p12/testadmin.jks");
+        //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
+    }
+    
     /**
      * A simple grep util that searches a large string if the substring exists.
      * @param inString the input data

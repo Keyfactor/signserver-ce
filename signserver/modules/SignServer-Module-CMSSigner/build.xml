@@ -51,7 +51,7 @@
         <property name="moduleName" value="module.cmssigner"/>
         <property name="distJar" value="SignServer-Module-CMSSigner.jar"/>
         <property name="base" location="../../"/>
-        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/40_${moduleName}.properties" moduleName="${moduleName}" moduleType="lib" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/hibernate/" />
+        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/40_${moduleName}.properties" moduleName="${moduleName}" moduleType="lib" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,${base}/lib/hibernate/" />
     </target>
 
     <!--

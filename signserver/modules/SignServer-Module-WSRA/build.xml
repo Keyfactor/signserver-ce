@@ -63,7 +63,7 @@
         <property name="moduleName" value="module.wsra"/>
         <property name="distJar" value="SignServer-Module-WSRA.jar:dummyws-module.jar:genericws-module-common.jar"/>
         <property name="base" location="../../"/>
-        <moddesc classpathValue="${javac.classpath}:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/antlr.jar::../../lib/module/wsra/dom4j.jar" dists="${distJar}" toFile="../../mods-available/40_${moduleName}.properties" moduleName="${moduleName}" moduleType="lib" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/ext/ejb/jboss,../../lib/ext/servlet-,../SignServer-ejb-SignServerWS/,../SignServer-ejb-ValidationWS/,${base}/lib/hibernate/,../../lib/ext/commons-cli-1.0.jar,${base}/lib/jaxws/saaj-api.jar,${base}/lib/jaxws/saaj-impl.jar" />
+        <moddesc classpathValue="${javac.classpath}:../../lib/asm/asm-3.1.jar:../../lib/asm/asm-commons-3.1.jar:../../lib/asm/asm-tree-3.1.jar:../../lib/module/wsra/cglib.jar:../../lib/module/wsra/antlr.jar::../../lib/module/wsra/dom4j.jar" dists="${distJar}" toFile="../../mods-available/40_${moduleName}.properties" moduleName="${moduleName}" moduleType="lib" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/ext/ejb/jboss,../../lib/ext/servlet-,../SignServer-ejb-SignServerWS/,../SignServer-ejb-ValidationWS/,${base}/lib/hibernate/,${base}/lib/ext/commons-cli-1.0.jar,${base}/lib/jaxws/saaj-api.jar,${base}/lib/jaxws/saaj-impl.jar" />
     </target>
 
     <property name="bin" location="../../bin"/>

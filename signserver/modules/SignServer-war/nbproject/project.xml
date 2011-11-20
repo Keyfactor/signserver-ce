@@ -20,16 +20,16 @@
                     <file>${reference.SignServer-BuildTools.jar}</file>
                 </library>
                 <library dirs="200">
-                    <file>${file.reference.commons-fileupload-1.2.1.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.quartz-1.6.0.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.javaee-web-api-6.0.jar}</file>
-                </library>
-                <library dirs="200">
                     <file>${libs.CryptoDependencies.classpath}</file>
+                </library>
+                <library dirs="200">
+                    <file>${libs.javaee-web-api-6.0.classpath}</file>
+                </library>
+                <library dirs="200">
+                    <file>${libs.Commons-Fileupload.classpath}</file>
+                </library>
+                <library dirs="200">
+                    <file>${libs.Quartz.classpath}</file>
                 </library>
             </web-module-libraries>
             <web-module-additional-libraries/>

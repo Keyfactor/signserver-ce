@@ -26,6 +26,9 @@ import org.signserver.common.WorkerConfig;
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class that holds configuration values passed to pdfsigner.
@@ -67,6 +70,10 @@ public class PDFSignerParameters {
     
     /** Used to mitigate a collision signature vulnerability described in http://pdfsig-collision.florz.de/ */
     private boolean refuseDoubleIndirectObjects;
+    
+    /** Permissions to not allow in a document. */
+    private Set<String> rejectPermissions = new HashSet<String>();
+    
     
     // helper variables
     private boolean use_custom_image = false;
@@ -140,6 +147,13 @@ public class PDFSignerParameters {
                     PDFSigner.REFUSE_DOUBLE_INDIRECT_OBJECTS));
         }
 
+        // Reject permissions
+        String rejectPermissionsValue = config.getProperties().getProperty(PDFSigner.REJECT_PERMISSIONS);
+        if (rejectPermissionsValue != null) {
+            String[] array = rejectPermissionsValue.split(",");
+            rejectPermissions.addAll(Arrays.asList(array));
+        }
+        
         // if signature is chosen to be visible proceed with setting visibility
         // properties
         if (add_visible_signature) {
@@ -417,5 +431,12 @@ public class PDFSignerParameters {
 
     public int getCertification_level() {
         return certification_level;
+    }
+
+    /**
+     * @return Set with permissions to reject.
+     */
+    public Set<String> getRejectPermissions() {
+        return rejectPermissions;
     }
 }

@@ -58,6 +58,8 @@ public class PDFSignerUnitTest extends TestCase {
     
     private static final String CRYPTOTOKEN_CLASSNAME = 
             "org.signserver.server.cryptotokens.HardCodedCryptoToken";
+    private final String SAMPLE_OWNER123_PASSWORD = "owner123";
+    private final String SAMPLE_USER_AAA_PASSWORD = "user\u00e5\u00e4\u00f6";
     
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
@@ -70,6 +72,7 @@ public class PDFSignerUnitTest extends TestCase {
     private File sampleOpen123Owner123;
     private File sampleOwner123;
     private File sampleUseraao;
+//    private File sampleLowprintingOwner123;
     
     public PDFSignerUnitTest() {
         SignServerUtil.installBCProvider();
@@ -82,6 +85,7 @@ public class PDFSignerUnitTest extends TestCase {
         sampleOpen123Owner123 = new File(home, "res/test/pdf/sample-open123-owner123.pdf");
         sampleOwner123 = new File(home, "res/test/pdf/sample-owner123.pdf");
         sampleUseraao = new File(home, "res/test/pdf/sample-useraao.pdf");
+//        sampleLowprintingOwner123 = new File(home, "res/test/pdf/sample-lowprinting-owner123.pdf");
     }
     
     @Override
@@ -164,11 +168,74 @@ public class PDFSignerUnitTest extends TestCase {
     
     public void test02SignWithRestrictionsPasswordSupplied() throws Exception {         
         signProtectedPDF(sampleOpen123, "open123");
-        signProtectedPDF(sampleOwner123, "owner123");
+        signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD);
         signProtectedPDF(sampleOpen123Owner123, "owner123");
         signProtectedPDF(sample, null);
         signProtectedPDF(sample, "");
-        signProtectedPDF(sampleUseraao, "user\u00e5\u00e4\u00f6");
+        signProtectedPDF(sampleUseraao, SAMPLE_USER_AAA_PASSWORD);
+    }
+    
+    public void test03RejectingPermissions() throws Exception {
+        
+        // First test without any constraints
+        signProtectedPDF(sampleUseraao, SAMPLE_USER_AAA_PASSWORD);
+        
+        // Test with empty list of constraints
+        workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "");
+        workerSession.reloadConfiguration(WORKER1);
+        signProtectedPDF(sampleUseraao, SAMPLE_USER_AAA_PASSWORD);
+        
+        // Test with unknown permission
+        workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "_NON_EXISTING_PERMISSION_");
+        workerSession.reloadConfiguration(WORKER1);
+        signProtectedPDF(sampleUseraao, SAMPLE_USER_AAA_PASSWORD);
+        
+        // Test with document containing an not allowed permission
+        workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_PRINTING");
+        workerSession.reloadConfiguration(WORKER1);
+        try {
+            signProtectedPDF(sampleUseraao, SAMPLE_USER_AAA_PASSWORD);
+            fail("Should have thrown exception");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("OK: " + ok.getMessage());
+        }
+        
+        // Test with document containing two not allowed permissions
+        workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_PRINTING,ALLOW_COPY");
+        workerSession.reloadConfiguration(WORKER1);
+        try {
+            signProtectedPDF(sampleUseraao, SAMPLE_USER_AAA_PASSWORD);
+            fail("Should have thrown exception");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("OK: " + ok.getMessage());
+        }
+        
+        // Test with document containing one not allowed permission and 
+        // not the other disallowed permission
+        workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_COPY,ALLOW_MODIFY_CONTENTS");
+        workerSession.reloadConfiguration(WORKER1);
+        try {
+            signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD);
+            fail("Should have thrown exception");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("OK: " + ok.getMessage());
+        }
+        
+        // Test a document where only low-res printing is allowed
+        /* TODO: When found such a document
+        workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_PRINTING");
+        workerSession.reloadConfiguration(WORKER1);
+        signProtectedPDF(sampleLowprintingOwner123, SAMPLE_OWNER123_PASSWORD);
+        workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_DEGRADED_PRINTING");
+        workerSession.reloadConfiguration(WORKER1);
+        try {
+            signProtectedPDF(sampleLowprintingOwner123, SAMPLE_OWNER123_PASSWORD);
+            fail("Should have thrown exception");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("OK: " + ok.getMessage());
+        }*/
+        
+        
     }
     
     private void signProtectedPDF(File file, String password) throws Exception {

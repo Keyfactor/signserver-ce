@@ -106,7 +106,13 @@ import org.signserver.server.log.IWorkerLogger;
  * refused. Used to mitigate a collision signature vulnerability described in 
  * http://pdfsig-collision.florz.de/
  *
+ * REJECT_PERMISSIONS: Comma separated list of permissions for which SignServer 
+ * will refuse to  sign the document if present. See Permissions for available 
+ * permission names.
+ *
  * @author Tomas Gustavsson
+ * @author Aziz Göktepe
+ * @author Markus Kilås
  * @version $Id$
  */
 public class PDFSigner extends BaseSigner {
@@ -152,6 +158,10 @@ public class PDFSigner extends BaseSigner {
     
     /** Used to mitigate a collision signature vulnerability described in http://pdfsig-collision.florz.de/ */
     public static final String REFUSE_DOUBLE_INDIRECT_OBJECTS = "REFUSE_DOUBLE_INDIRECT_OBJECTS";
+    
+    // Permissions properties
+    /** List of permissions for which SignServer will refuse to sign the document if present. **/
+    public static final String REJECT_PERMISSIONS = "REJECT_PERMISSIONS";
     
     // archivetodisk properties
     public static final String PROPERTY_ARCHIVETODISK = "ARCHIVETODISK";
@@ -284,7 +294,7 @@ public class PDFSigner extends BaseSigner {
 
     private byte[] addSignatureToPDFDocument(PDFSignerParameters params,
             byte[] pdfbytes, byte[] password) throws IOException, DocumentException,
-            CryptoTokenOfflineException, SignServerException {
+            CryptoTokenOfflineException, SignServerException, IllegalRequestException {
 
         // get signing cert certificate chain and private key
         Collection<Certificate> certs = this.getSigningCertificateChain();
@@ -302,6 +312,19 @@ public class PDFSigner extends BaseSigner {
                 true);
         PdfSignatureAppearance sap = stp.getSignatureAppearance();
 
+        Permissions currentPermissions = Permissions.fromInt(reader.getPermissions());
+        Permissions rejectPermissions = Permissions.fromSet(params.getRejectPermissions());
+        if (LOG.isDebugEnabled()) {
+            StringBuilder buff = new StringBuilder();
+            buff.append("Current permissions: ").append(currentPermissions).append(", ")
+                    .append("Reject permissions: ").append(rejectPermissions);
+            LOG.debug(buff.toString());
+        }
+        
+        if (currentPermissions.containsAnyOf(rejectPermissions)) {
+            throw new IllegalRequestException("Document contains permissions not allowed by this signer");
+        }
+        
         // include signer certificate crl inside cms package if requested
         CRL[] crlList = null;
         if (params.isEmbed_crl()) {

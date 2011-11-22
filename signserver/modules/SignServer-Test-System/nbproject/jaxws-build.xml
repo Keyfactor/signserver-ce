@@ -18,23 +18,6 @@
             <classpath path="${libs.jaxws21.classpath}"/>
         </taskdef>
     </target>
-    <target name="wsimport-client-WSRAService" depends="wsimport-init">
-        <mkdir dir="${build.generated.dir}/jax-wsCache/WSRAService"/>
-        <property name="wsdl-WSRAService" location="xml-resources/web-service-references/WSRAService/wsdl/WSRAService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/WSRAService" destdir="${build.generated.dir}/jax-wsCache/WSRAService" wsdl="${wsdl-WSRAService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/WSRAService.wsdl" xendorsed="true" package="org.signserver.module.wsra.ws.gen">
-            <depends file="${wsdl-WSRAService}"/>
-            <produces dir="${build.generated.dir}/jax-wsCache/WSRAService"/>
-        </wsimport>
-        <copy todir="${build.generated.sources.dir}/jax-ws">
-            <fileset dir="${build.generated.dir}/jax-wsCache/WSRAService">
-                <include name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="wsimport-client-clean-WSRAService" depends="-init-project">
-        <delete dir="${build.generated.dir}/jax-wsCache/WSRAService"/>
-        <delete dir="${build.generated.sources.dir}/jax-ws/org/signserver/module/wsra/ws/gen"/>
-    </target>
     <target name="wsimport-client-SignServerWSService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/SignServerWSService"/>
         <property name="wsdl-SignServerWSService" location="xml-resources/web-service-references/SignServerWSService/wsdl/SignServerWSService.wsdl"/>
@@ -86,5 +69,5 @@
         <delete dir="${build.generated.dir}/jax-wsCache/ValidationWSService"/>
         <delete dir="${build.generated.sources.dir}/jax-ws/org/signserver/protocol/validationservice/ws/gen"/>
     </target>
-    <target name="wsimport-client-generate" depends="wsimport-client-WSRAService, wsimport-client-SignServerWSService, wsimport-client-DummyWSService, wsimport-client-ValidationWSService"/>
+    <target name="wsimport-client-generate" depends="wsimport-client-SignServerWSService, wsimport-client-DummyWSService, wsimport-client-ValidationWSService"/>
 </project>

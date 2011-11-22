@@ -16,7 +16,7 @@ import javax.jws.WebParam;
 
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
-import org.signserver.module.wsra.common.AuthorizationDeniedException;
+import org.ejbca.core.model.authorization.AuthorizationDeniedException;
 
 /**
  * TODO: Document me!

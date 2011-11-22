@@ -68,7 +68,6 @@ module.mrtdsodsigner.enabled        = ${module.mrtdsodsigner.enabled}
 module.mrtdsodsigner.include        = ${module.mrtdsodsigner.include}
 module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
 module.mrtdsigner.include           = ${module.mrtdsigner.include}
-module.wsra.enabled                 = ${module.wsra.enabled}
         </echo>
     </target>
 
@@ -110,7 +109,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
 
         <!-- Clean all modules -->
         <echo>Cleaning sub projects</echo>
-        <subant target="clean">
+        <subant target="clean" failonerror="false">
             <fileset dir="${modules}" includes="SignServer-*/build.xml"/>
          </subant>
     </target>
@@ -214,7 +213,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         description="Build JavaDoc for SignServer">
         <mkdir dir="${apidoc}" />
         <javadoc failonerror="true" useexternalfile="true" packagenames="org.signserver.*" maxmemory="256m" destdir="${apidoc}"
-        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/ext/james:${lib}/asm:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/module/wsra:${lib}/reports:${lib}/quartz:${lib}/jaxws:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2011 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
+        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/ext/james:${lib}/asm:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/reports:${lib}/quartz:${lib}/jaxws:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2011 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
 
                 <!-- Include all java files in the modules folder but excluding the tests -->
                 <fileset dir="modules" includes="**/*.java" excludes="*/test/**/*.java"/>
@@ -387,7 +386,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 <exclude name="conf/admingui.properties" />
                 <exclude name="lib/**" />
                 <exclude name="dist-client/lib/**" />
-                <exclude name="dist-client/wsraadminClient/**"/>
                 <exclude name="dist-client/signingandvalidationapi/lib/**"/>
                 <exclude name="modules/**" />
                 <exclude name="p12/**" />
@@ -403,7 +401,6 @@ module.wsra.enabled                 = ${module.wsra.enabled}
                 <exclude name="res/test/**" />
 
                 <!-- TODO: The following should be moved anyway -->
-                <exclude name="bin/wsraadminClient/**"/>
                 <exclude name="bin/junit/**"/>
                 <exclude name="bin/classes/**"/>
             </tarfileset>

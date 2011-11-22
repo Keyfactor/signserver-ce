@@ -41,6 +41,7 @@ public class PDFSignerParameters {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(PDFSignerParameters.class);
     
+    private int workerId;
     private WorkerConfig config;
     
     // private member declarations holding configuration property values
@@ -73,6 +74,10 @@ public class PDFSignerParameters {
     
     /** Permissions to not allow in a document. */
     private Set<String> rejectPermissions = new HashSet<String>();
+    /** Permissions to set. **/
+    private Permissions setPermissions;
+    /** Permissions to remove. **/
+    private Set<String> removePermissions;
     
     
     // helper variables
@@ -81,9 +86,10 @@ public class PDFSignerParameters {
     private boolean use_timestamp_authorization = false;
     private Image custom_image = null;
 
-    public PDFSignerParameters(WorkerConfig pConfig)
+    public PDFSignerParameters(int workerId, WorkerConfig config)
             throws IllegalRequestException, SignServerException {
-        config = pConfig;
+        this.workerId = workerId;
+        this.config = config;
         extractAndProcessConfigurationProperties();
     }
 
@@ -152,6 +158,23 @@ public class PDFSignerParameters {
         if (rejectPermissionsValue != null) {
             String[] array = rejectPermissionsValue.split(",");
             rejectPermissions.addAll(Arrays.asList(array));
+        }
+        // Set permissions
+        String setPermissionsValue = config.getProperties().getProperty(PDFSigner.SET_PERMISSIONS);
+        if (setPermissionsValue != null) {
+            String[] array = setPermissionsValue.split(",");
+            try {
+                setPermissions = Permissions.fromSet(Arrays.asList(array), true);
+            } catch (UnknownPermissionException ex) {
+                throw new SignServerException("Signer " + workerId + " missconfigured: " + ex.getMessage());
+            }
+        }
+        // Remove permissions
+        String removePermissionsValue = config.getProperties().getProperty(PDFSigner.REMOVE_PERMISSIONS);
+        if (removePermissionsValue != null) {
+            String[] array = removePermissionsValue.split(",");
+            removePermissions = new HashSet<String>();
+            removePermissions.addAll(Arrays.asList(array));
         }
         
         // if signature is chosen to be visible proceed with setting visibility
@@ -439,4 +462,19 @@ public class PDFSignerParameters {
     public Set<String> getRejectPermissions() {
         return rejectPermissions;
     }
+
+    /**
+     * @return Permissions to remove or null.
+     */
+    public Set<String> getRemovePermissions() {
+        return removePermissions;
+    }
+
+    /**
+     * @return The permissions to use or null.
+     */
+    public Permissions getSetPermissions() {
+        return setPermissions;
+    }
+
 }

@@ -16,6 +16,7 @@ package org.signserver.module.pdfsigner;
 import com.lowagie.text.pdf.PdfWriter;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import junit.framework.TestCase;
 
@@ -67,6 +68,19 @@ public class PermissionsUnitTest extends TestCase {
         }        
     }
     
+    public void testToSet() throws Exception {
+        
+        Permissions degradedPrinting = Permissions.fromInt(4);
+        assertEquals(Arrays.asList("ALLOW_DEGRADED_PRINTING").toString(), degradedPrinting.asSet().toString());
+        
+        Permissions copyScreenreaders = Permissions.fromInt(528);
+        assertEquals(new HashSet(Arrays.asList("ALLOW_COPY", "ALLOW_SCREENREADERS")), copyScreenreaders.asSet());
+        
+        Permissions printingDegradedPrinting = Permissions.fromInt(2052);
+        LOG.debug("printingDegradedPrinting: " + printingDegradedPrinting);
+        assertEquals(new HashSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_DEGRADED_PRINTING")), printingDegradedPrinting.asSet());
+    }
+    
     public void testContainsAnyRejected() throws Exception {
         
         // Permissions: COPY, Reject: COPY
@@ -93,6 +107,68 @@ public class PermissionsUnitTest extends TestCase {
         Permissions copyDegradedPrinting = Permissions.fromSet(Arrays.asList("ALLOW_COPY", "ALLOW_DEGRADED_PRINTING"), true);
         assertTrue(copyDegradedPrinting.containsAnyOf(printing));
         assertTrue(copyDegradedPrinting.containsAnyOf(degradedPrinting));
+        
+        // Permissions: DEGRADED_PRINTING, PRINTING
+        Permissions printingDegradedPrinting = Permissions.fromSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_DEGRADED_PRINTING"), true);
+        LOG.debug("printingDegradedPrinting: " + printingDegradedPrinting);
+        assertTrue(printingDegradedPrinting.containsAnyOf(printing));
+        assertTrue(printingDegradedPrinting.containsAnyOf(degradedPrinting));
+    }
+
+    public void testWithRemovedPermissions() throws Exception {
+        
+        Permissions all = Permissions.fromSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"), true);
+        
+        Permissions a1 = all.withRemoved(Arrays.asList("ALLOW_ASSEMBLY"));
+        Permissions e1 = Permissions.fromSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_DEGRADED_PRINTING"), true);
+        assertEquals(e1, a1);
+        
+        Permissions a2 = a1.withRemoved(Arrays.asList("ALLOW_COPY"));
+        Permissions e2 = Permissions.fromSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_DEGRADED_PRINTING"), true);
+        assertEquals(e2, a2);
+        
+        Permissions a3 = a2.withRemoved(Arrays.asList("ALLOW_MODIFY_ANNOTATIONS"));
+        Permissions e3 = Permissions.fromSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_DEGRADED_PRINTING"), true);
+        assertEquals(e3, a3);
+        
+        Permissions a4 = a3.withRemoved(Arrays.asList("ALLOW_SCREENREADERS"));
+        Permissions e4 = Permissions.fromSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"), true);
+        assertEquals(e4, a4);
+        
+        Permissions a5 = a4.withRemoved(Arrays.asList("ALLOW_MODIFY_CONTENTS"));
+        Permissions e5 = Permissions.fromSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"), true);
+        LOG.debug("e5: " + e5);
+        assertEquals(e5, a5);
+        
+        Permissions a6 = a5.withRemoved(Arrays.asList("ALLOW_FILL_IN"));
+        Permissions e6 = Permissions.fromSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_DEGRADED_PRINTING"), true);
+        LOG.debug("e6: " + e6);
+        assertEquals(e6, a6);
+        
+        // Special case in SignServer: removing PRINTING shouldnt' remove DEGRADED_PRINTING
+        Permissions a7 = a6.withRemoved(Arrays.asList("ALLOW_PRINTING"));
+        Permissions e7 = Permissions.fromSet(Arrays.asList("ALLOW_DEGRADED_PRINTING"), true);
+        assertEquals(e7, a7);
+        
+        Permissions a8 = a7.withRemoved(Arrays.asList("_NON_EXISTiNG"));
+        Permissions e8 = e7;
+        assertEquals(e8, a8);
+        
+        Permissions a9 = a8.withRemoved(new LinkedList<String>());
+        Permissions e9 = e7;
+        assertEquals(e9, a9);
+        
+        Permissions a10 = a9.withRemoved(Arrays.asList("ALLOW_DEGRADED_PRINTING"));
+        Permissions e10 = Permissions.fromSet(new LinkedList<String>(), true);
+        assertEquals(e10, a10);
+        
+        Permissions a11 = a10.withRemoved(new LinkedList<String>());
+        Permissions e11 = e10;
+        assertEquals(e11, a11);
+        
+        Permissions a12 = a11.withRemoved(Arrays.asList("_NON_EXISTiNG123"));
+        Permissions e12 = e10;
+        assertEquals(e12, a12);
     }
 
 }

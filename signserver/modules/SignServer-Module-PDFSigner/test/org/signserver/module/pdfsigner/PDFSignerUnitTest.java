@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
+import com.lowagie.text.pdf.PdfReader;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -20,8 +21,12 @@ import java.io.IOException;
 import java.security.cert.Certificate;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
@@ -29,6 +34,7 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -238,7 +244,126 @@ public class PDFSignerUnitTest extends TestCase {
         
     }
     
-    private void signProtectedPDF(File file, String password) throws Exception {
+    public void test04SetPermissions() throws Exception {
+        
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_COPY", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_FILL_IN"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, new LinkedList<String>());
+        
+        // Without SET_PERMISSIONS the original permissions should remain
+        // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
+        workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
+        workerSession.reloadConfiguration(WORKER1);
+        Set<String> expected = new HashSet<String>(Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
+        Permissions actual = getPermissions(signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD), 
+                SAMPLE_OWNER123_PASSWORD.getBytes("ISO-8859-1"));
+        assertEquals(expected, actual.asSet());
+    }
+    
+    private void doTestSetPermissions(int workerId, File pdf, String password, Collection<String> permissions) throws Exception {
+        Set<String> expected = new HashSet<String>(permissions);
+        workerSession.setWorkerProperty(workerId, "SET_PERMISSIONS", toString(expected, ","));
+        workerSession.reloadConfiguration(workerId);
+        Permissions actual = getPermissions(signProtectedPDF(pdf, password), 
+                password == null ? null : password.getBytes("ISO-8859-1"));
+        assertEquals(expected, actual.asSet());
+    }
+    
+    private void doTestRemovePermissions(int workerId, File pdf, String password, Collection<String> removePermissions, Collection<String> expected) throws Exception {
+        Set<String> expectedSet = new HashSet<String>(expected);
+        workerSession.setWorkerProperty(workerId, "REMOVE_PERMISSIONS", toString(removePermissions, ","));
+        workerSession.reloadConfiguration(workerId);
+        Permissions actual = getPermissions(signProtectedPDF(pdf, password), 
+                password.getBytes("ISO-8859-1"));
+        assertEquals(expectedSet, actual.asSet());
+    }
+    
+    private static String toString(Collection<String> collection, String separator) {
+        StringBuilder buff = new StringBuilder();
+        for (String s : collection) {
+            buff.append(s).append(separator);
+        }
+        return buff.toString();
+    }
+    
+    public void test04RemovePermissions() throws Exception {
+        // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_FILL_IN"), Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_MODIFY_ANNOTATIONS"), Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_CONTENTS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS"));
+        
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_FILL_IN"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_MODIFY_ANNOTATIONS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS"), Arrays.asList("ALLOW_MODIFY_CONTENTS"));
+        
+        
+    }
+    
+    /**
+     * Tests illegal configuration: specifying mutually exclusive properties.
+     */
+    public void test04SetAndRemovePermissions() throws Exception {
+        workerSession.setWorkerProperty(WORKER1, "SET_PERMISSIONS", "ALLOW_COPY");
+        workerSession.setWorkerProperty(WORKER1, "REMOVE_PERMISSIONS", "ALLOW_FILL_IN");
+        workerSession.reloadConfiguration(WORKER1);
+        try {
+            signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD);
+            fail("Should have thrown exception");
+        } catch (SignServerException ok) {
+            LOG.debug("OK: " + ok.getMessage());
+        }
+    }
+    
+    /**
+     * Tests that rejecting permissions still works even do we set permissions 
+     * explicitly.
+     */
+    public void test05SetAndRejectPermissions() throws Exception {
+        // Setting a permission we then reject. Not so clever :)
+        workerSession.setWorkerProperty(WORKER1, "SET_PERMISSIONS", "ALLOW_MODIFY_CONTENTS,ALLOW_COPY");
+        workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_COPY");
+        workerSession.reloadConfiguration(WORKER1);
+        try {
+            signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD);
+            fail("Should have thrown exception");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("OK: " + ok.getMessage());
+        }
+    }
+    
+    /**
+     * Tests that even do we remove some permission we will still check for 
+     * permissions to reject. But if we remove all rejected the document is ok.
+     */
+    public void test06RemoveAndRejectPermissions() throws Exception {
+        // Remove a permissions but still the document contains a permission we reject
+        workerSession.setWorkerProperty(WORKER1, "REMOVE_PERMISSIONS", "ALLOW_MODIFY_CONTENTS");
+        workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_FILL_IN");
+        workerSession.reloadConfiguration(WORKER1);
+        try {
+            signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD);
+            fail("Should have thrown exception");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("OK: " + ok.getMessage());
+        }
+        
+        // Remove the permission we reject
+        workerSession.setWorkerProperty(WORKER1, "REMOVE_PERMISSIONS", "ALLOW_FILL_IN");
+        workerSession.reloadConfiguration(WORKER1);
+        signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD);
+    }
+    
+    public void test07ChangePermissionOfUnprotectedDocument() throws Exception {
+        doTestSetPermissions(WORKER1, sampleOk, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+    }
+    
+    private byte[] signProtectedPDF(File file, String password) throws Exception {
         LOG.debug("Tests signing of " + file.getName() + " with password:");
         if (password == null) {
             LOG.debug("null");
@@ -256,6 +381,7 @@ public class PDFSignerUnitTest extends TestCase {
                 new GenericSignRequest(200, readFile(file)), 
                 context);
         assertNotNull(response);
+        return response.getProcessedData();
     }
 
     private void setupWorkers() {
@@ -295,5 +421,10 @@ public class PDFSignerUnitTest extends TestCase {
             bout.write(b);
         }
         return bout.toByteArray();
+    }
+
+    private Permissions getPermissions(byte[] pdfBytes, byte[] password) throws IOException {
+        PdfReader reader = new PdfReader(pdfBytes, password);
+        return Permissions.fromInt(reader.getPermissions());
     }
 }

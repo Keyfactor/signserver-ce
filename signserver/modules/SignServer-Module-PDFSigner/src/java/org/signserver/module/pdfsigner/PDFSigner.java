@@ -31,7 +31,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import javax.persistence.EntityManager;
 
@@ -71,12 +70,14 @@ import com.lowagie.text.pdf.PdfSignatureAppearance;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfString;
 import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.TSAClient;
 import com.lowagie.text.pdf.TSAClientBouncyCastle;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
@@ -162,6 +163,12 @@ public class PDFSigner extends BaseSigner {
     // Permissions properties
     /** List of permissions for which SignServer will refuse to sign the document if present. **/
     public static final String REJECT_PERMISSIONS = "REJECT_PERMISSIONS";
+    /** List of permissions to set (all other are cleared). **/
+    public static final String SET_PERMISSIONS = "SET_PERMISSIONS";
+    /** List of permissions to remove (all other existing permissions are left untouched). **/
+    public static final String REMOVE_PERMISSIONS = "REMOVE_PERMISSIONS";
+    /** Future property with list of permissions to add). **/
+    // public static final String ADD_PERMISSIONS = "ADD_PERMISSIONS";
     
     // archivetodisk properties
     public static final String PROPERTY_ARCHIVETODISK = "ARCHIVETODISK";
@@ -231,7 +238,7 @@ public class PDFSigner extends BaseSigner {
                 (Map<String, String>) requestContext.get(RequestContext.LOGMAP);
 
         // retrieve and preprocess configuration parameter values
-        PDFSignerParameters params = new PDFSignerParameters(config);
+        PDFSignerParameters params = new PDFSignerParameters(workerId, config);
 
         // Start processing the actual signature
         GenericSignResponse signResponse = null;
@@ -307,18 +314,61 @@ public class PDFSigner extends BaseSigner {
                 ICryptoToken.PURPOSE_SIGN);
 
         PdfReader reader = new PdfReader(pdfbytes, password);
-        ByteArrayOutputStream fout = new ByteArrayOutputStream();
-        PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', null,
-                true);
-        PdfSignatureAppearance sap = stp.getSignatureAppearance();
+        boolean appendMode = true; // TODO: Make a workerproperty for this
 
         Permissions currentPermissions = Permissions.fromInt(reader.getPermissions());
+        
+        if (params.getSetPermissions() != null && params.getRemovePermissions() != null) {
+            throw new SignServerException("Signer " + workerId
+                    + " missconfigured. Only one of " + SET_PERMISSIONS
+                    + " and " + REMOVE_PERMISSIONS + " should be specified.");
+        }
+        
+        Permissions newPermissions;
+        if (params.getSetPermissions() != null) {
+            newPermissions = params.getSetPermissions();
+        } else if (params.getRemovePermissions() != null) {
+            newPermissions = currentPermissions.withRemoved(params.getRemovePermissions());
+        } else {
+            newPermissions = null;
+        }
+        
         Permissions rejectPermissions = Permissions.fromSet(params.getRejectPermissions());
+        byte[] userPassword = reader.computeUserPassword();
+        int cryptoMode = reader.getCryptoMode();
         if (LOG.isDebugEnabled()) {
             StringBuilder buff = new StringBuilder();
-            buff.append("Current permissions: ").append(currentPermissions).append(", ")
-                    .append("Reject permissions: ").append(rejectPermissions);
+            buff.append("Current permissions: ").append(currentPermissions).append("\n")
+                    .append("Reject permissions: ").append(rejectPermissions).append("\n")
+                    .append("New permissions: ").append(newPermissions).append("\n")
+                    .append("userPassword: ").append(userPassword == null ? "null" : "yes").append("\n")
+                    .append("ownerPassword: ").append(password == null ? "null" : "yes").append("\n")
+                    .append("cryptoMode: ").append(cryptoMode);
             LOG.debug(buff.toString());
+        }
+        
+        if (newPermissions != null && appendMode) {
+            appendMode = false;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Changing appendMode to false to be able to change permissions");
+            }
+        }
+        
+        ByteArrayOutputStream fout = new ByteArrayOutputStream();
+        PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', null,
+                appendMode);
+        PdfSignatureAppearance sap = stp.getSignatureAppearance();
+        
+        // Set the new permissions
+        if (newPermissions != null) {
+            if (cryptoMode < 0) {
+                cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Setting default encryption algorithm");
+                }
+            }
+            stp.setEncryption(userPassword, password, newPermissions.asInt(), cryptoMode);
+            currentPermissions = newPermissions;
         }
         
         if (currentPermissions.containsAnyOf(rejectPermissions)) {
@@ -447,11 +497,11 @@ public class PDFSigner extends BaseSigner {
      * @return n
      * @throws SignServerException
      */
-    private CRL[] getCrlsForChain(Collection<Certificate> pCertChain)
+    private CRL[] getCrlsForChain(final Collection<Certificate> certChain)
             throws SignServerException {
 
-        List<CRL> retCrls = new Vector<CRL>();
-        for (Certificate currCert : pCertChain) {
+        List<CRL> retCrls = new ArrayList<CRL>();
+        for (Certificate currCert : certChain) {
             CRL currCrl = null;
             try {
                 URL currCertURL = getCRLDistributionPoint(currCert);

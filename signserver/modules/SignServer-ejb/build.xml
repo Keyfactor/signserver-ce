@@ -26,7 +26,7 @@
         <property name="distJar" value="SignServer-ejb.jar"/>
         
         <property name="base" location="../../"/>
-        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/10_${moduleName}.properties" moduleName="${moduleName}" moduleType="ejb" libsPrefix="../../lib/,${base}/lib" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,../../lib/ext/ejb/,../../lib/ext/servlet-2.3.jar,${base}/lib/hibernate/,${base}/lib/jaxws/saaj-api.jar,${base}/lib/jaxws/saaj-impl.jar">
+        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/10_${moduleName}.properties" moduleName="${moduleName}" moduleType="ejb" libsPrefix="../../lib/,${base}/lib" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,${base}/lib/ext/ejb/,${base}/lib/ext/servlet-2.3.jar,${base}/lib/hibernate/,${base}/lib/jaxws/saaj-api.jar,${base}/lib/jaxws/saaj-impl.jar,${base}/lib/javaee-">
             <property name="module.ejb" value="${distJar}"/>
         </moddesc>
     </target>

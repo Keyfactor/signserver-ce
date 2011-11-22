@@ -25,7 +25,7 @@
         <property name="moduleName" value="healthcheck"/>
         <property name="distJar" value="SignServer-war-Healthcheck.war"/>
         <property name="base" location="../../"/>
-        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/30_${moduleName}.properties" moduleName="${moduleName}" moduleType="war" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/">
+        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/30_${moduleName}.properties" moduleName="${moduleName}" moduleType="war" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/,${base}/lib/javaee-">
             <property name="module.web.web-uri" value="${distJar}"/>
             <property name="module.web.context-root" value="/signserver/healthcheck"/>
             <property name="postprocess.files" value="postprocess.file1"/>

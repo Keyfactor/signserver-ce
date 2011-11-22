@@ -111,7 +111,7 @@ module.wsra.enabled                 = ${module.wsra.enabled}
         <!-- Clean all modules -->
         <echo>Cleaning sub projects</echo>
         <subant target="clean">
-            <fileset dir="." includes="SignServer-*/build.xml"/>
+            <fileset dir="${modules}" includes="SignServer-*/build.xml"/>
          </subant>
     </target>
 

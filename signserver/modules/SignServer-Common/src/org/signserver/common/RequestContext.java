@@ -30,7 +30,14 @@ public class RequestContext implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The request metadata optionally supplied by the client.
+     */
     public static final String REQUEST_METADATA = "REQUEST_METADATA";
+    
+    /**
+     * The metadata property with the PDF password.
+     */
     public static String METADATA_PDFPASSWORD = "pdfPassword";
 
     private HashMap<String, Object> context = new HashMap<String, Object>();
@@ -96,8 +103,6 @@ public class RequestContext implements Serializable {
      */
     public static final String DISPATCHER_AUTHORIZED_CLIENT =
             "DISPATCHER_AUTHORIZED_CLIENT";
-
-//    public static final String PDF_PASSWORD = "PDF_PASSWORD";
 
     /**
      * Default constructor creating an empty context.

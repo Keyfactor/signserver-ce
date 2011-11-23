@@ -1692,6 +1692,9 @@ It's possible to turn off the WebService interface by disabling it in the build 
                     <p>
 Important, Due to class path conflict in JBoss 4.2.x own JBoss WebService stack and the JAX-WS stack used by the SignServer must the JBoss WebService stack be removed before the WebService is used. This is done by going to JBOSS_HOME/server/default/deploy and remove the directory jbossws.sar.
                     </p>
+                    <p>
+Since SignServer >=3.2.1 it is possible to supply extra request data called RequestMetadata containing key/value pairs that can be used by the signers. For instance the PDFSigner uses this feature to let the client supply a PDF password. 
+                    </p>
 		</section>
 
 		<section name="Java Client API">
@@ -1807,6 +1810,8 @@ try {
                                         <li><b>workerName</b> - Name of the worker that should handle the request. Required unless workerId specified.</li>
                                         <li><b>workerId</b> - Id of the worker that should handle the request. Required unless workerName specified.</li>
                                         <li><b>data</b> - The bytes that should be signed or validated. Required for x-www-form-urlencoded.</li>
+                                        <li><b>filerecievefile</b> - File upload used with multipart/form-data.</li>
+                                        <li><b>pdfPassword</b> - Password for changing PDF. Optionally and only used by PDFSigner.</li>
                                         <li><b>encoding</b> - Encoding of the data field. Optional. By specifying "base64" SignServer Base64-decodes
                                         the data property before passing it to the worker.</li>
                                     </ul>
@@ -1817,11 +1822,11 @@ try {
                                 <td>
                                     <ul>
                                         <li><b>HTTP 200</b> (OK): The request was successfull</li>
-                                        <li><b>HTTP 400</b> (Bad Request): There was an error when procssing the request</li>
+                                        <li><b>HTTP 400</b> (Bad Request): The request could not be fulfilled. Some request data were missing or incorrect etc.</li>
                                         <li><b>HTTP 401</b> (Unauthorized): The worker requires user authentication</li>
                                         <li><b>HTTP 404</b> (Not Found): The requested workerName or workerId does not represent an existing worker</li>
                                         <li><b>HTTP 413</b> (Request Entity Too Large): The data field or uploaded file is too large</li> 
-                                        <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when procssing the request</li>
+                                        <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when processing the request. Typically indicating an configuration problem or unexpected error at the server side.</li>
                                         <li><b>HTTP 503</b> (Service Unavailable): The worker is not active, its crypto token is not activated or similar</li>
                                     </ul>
                                 </td>
@@ -1935,6 +1940,7 @@ Request a document to be signed by SignServer
  -outfile          File to write the result to. If not specified the
                    result is written to stdout.
  -password         Password for authentication.
+ -pdfpassword      Password for changing the PDF (if required).
  -port             Server port. Default: 8080 (for HTTP), 8442 for HTTPS
                    and 8443 for HTTPS with client authentication.
  -protocol         Method of interacting with SignServer. HTTP or
@@ -1947,7 +1953,7 @@ Request a document to be signed by SignServer
  -workername       Name of worker which should perform the operation.
 
 Sample usages:
-a) signdocument -workername XMLSigner -data "<root/>"
+a) signdocument -workername XMLSigner -data "&lt;root/&gt;"
 b) signdocument -workername XMLSigner -infile /tmp/document.xml
 c) signdocument -workerid 2 -data "&lt;root/&gt;" -truststore truststore.jks
 -truststorepwd changeit
@@ -2478,220 +2484,336 @@ No configuration properties exists.
 
                 <subsection name="PDF Signer">
                     <p>
-Important, From 3.1 must the PDF Signer module be uploaded to the SignServer before it can be used. This is done with the command:
-                    </p>
-                    <pre>
- 'bin/signserver.sh module add dist-server/pdfsigner.mar'
-                    </pre>
-                    <p>
-The PDF signer have the class path: org.signserver.server.signers.PDFSigner
+The PDF signer has the class name: org.signserver.module.PDFSigner
                     </p>
 
                     <subsubsection name="Overview">
                         <p>
-The PDF signer adds digital signatures to PDF documents. It supports addition of visible or invisible signatures. Both visible and invisible signatures serve the same purpose of signing document, and technically are equivalent in that sense. The difference is that when visible signature  is applied to a document, signature image (in shape of rectangle) is placed at the specified place in the document, clicking on which will allow seeing properties of the signature (Adobe Acrobat Reader). On the other hand when invisible signature is applied, signature properties are accessed through menu items. For visible signatures properties such as : custom signature image, signature rectangle, page at which signature rectangle to be drawn and others can be specified (see Available Properties below)
+The main purpose of the PDF signer is to add digital signatures to PDF documents. 
+                        </p>
+                        
+                        <p>
+The signer supports the addition of visible or invisible signatures. Both visible and invisible signatures serve the same purpose of signing document, and technically are equivalent in that sense. The difference is that when visible signature  is applied to a document, signature image (in shape of rectangle) is placed at the specified place in the document, clicking on which will allow seeing properties of the signature (Adobe Acrobat Reader). On the other hand when invisible signature is applied, signature properties are accessed through menu items. For visible signatures properties such as : custom signature image, signature rectangle, page at which signature rectangle to be drawn and others can be specified (see Available Properties below)
                         </p>
                         <p>
-PDF Signer can also apply timestamp to a signature. If the signature is timestamped, it can be viewable through signature properties in Adobe Acrobat Reader. Timestamping is used to prove that  document was signed before the time specified by timestamp token. If the signature is not timestamped then the signature time specified in the signature properties is not considered to be "safe". It is strongly advised to apply timestamp to a signature, and TSA module can be used for this purpose.
+PDF Signer can also apply timestamp to a signature. If the signature is timestamped, it can be viewable through signature properties in Adobe Acrobat Reader. Timestamping is used to prove that  document was signed before the time specified by timestamp token. If the signature is not timestamped then the signature time specified in the signature properties is not considered to be trusted. It is strongly advised to apply timestamp to a signature, and the TSA module can be used for this purpose.
                         </p>
                         <p>
 Also CRL or OCSP Response of the signer's certificate can be embedded inside the signature package. Embedding CRL or OCSP response with the package will help validate signature even after the signer's certificate is expired. (Though it will not totally guarantee the long term signature preservation. Topic of long term signature preservation for archival purposes is a large one and is discussed to be implemented in future versions of SignServer).
                         </p>
                         <p>
-PDF signing requests are served through a http service at the URL:
+
                         </p>
-                        <pre>
-'http://&lt;host name&gt;/signserver/process?workerId=&lt;worker Id&gt;'
-                        </pre>
+                    </subsubsection>
+                    
+                    <subsubsection name="PDF passwords">
                         <p>
-If no 'worker Id' parameter is specified then will the id of 1 be used as default.
+PDF documents can optionally be protected by a password.
                         </p>
                         <p>
-The PDF signer requires a signing keystore with a signing certificate.
+There are two different types of passwords:
+                            <ul>
+                                <li>
+                                    User password:<br/>
+                                    Also sometimes referred to as "open password" or "document password". It can be used for reading an encrypted document.
+                                </li>
+                                <li>
+                                    Owner password:<br/>
+                                    Also sometimes referred to as "permission password" or "security restriction password". It can be used for reading an encrypted document and making changes to a document that has permissions.
+                                </li>
+                            </ul>
+If a document is protected by an owner password it has to be supplied with the request for SignServer to sign the document. If the document is protected by a user password, either the user password or the owner password has to be supplied with the request for SignServer to sign the document.
+                        </p>
+                    </subsubsection>
+                    
+                    <subsubsection name="PDFSigner Requests">
+                        <p>
+PDF signing requests can be served using either web services or the web server interface (HTTP). See <a href="integration.html">Integration</a> for general information about the different interfaces.    
+                        </p>
+                        
+                        <p>
+For the web server interface the GenericProcessServlet can be used. The PDFSigner supports the extra request field "pdfPassword" letting the client supply a PDF password to be used for opening the PDF for signing (not required unless the PDF is already password protected).
+                        </p>
+                        <p>
+For the web services interface the request should contain an encoded GenericProcessesRequest and the response will be an GenericProcessResponse. It is possible to supply a PDF password by including it in the requestMetaData with the key "pdfPassword".
                         </p>
                     </subsubsection>
 
-                    <subsubsection name="Available Properties">
+                    <subsubsection name="Worker Properties">
                         <p>
 The following properties can be configured with the signer:
                         </p>
-                        <p>
-<b>REASON</b> =
-	 The reason included in the PDF signature and displayed by the PDF reader. Default value is "Signed by SignServer".
-                        </p>
-                        <p>
-<b>LOCATION</b> =
-	The location included in the PDF signature and displayed by the PDF reader. Default value is "SignServer".
-                        </p>
-                        <p>
-<b>ADD_VISIBLE_SIGNATURE</b> =
-	Setting that control whether signature to be added should be visible or invisible. Possible values : True or False. Default is "False"
-                        </p>
-                        <p>
-<b>VISIBLE_SIGNATURE_PAGE</b> =
-	Specifies the page on which the visible signature will be drawn. This property is ignored if ADD_VISIBLE_SIGNATURE is set to False.
-                        </p>
-                        <p>
-Possible values :<br/>
+                        
+                        <table>
+                            <tr>
+                                <td><b>REASON</b></td>
+                                <td>
+                                    <p>
+The reason included in the PDF signature and displayed by the PDF reader. 
+                                    </p>
+                                    <p>
+Default: "Signed by SignServer".
+                                    </p>
+                                </td>
+                            </tr>
+                                                                           
+                            <tr>
+                                <td><b>LOCATION</b></td>
+                                <td>
+                                    <p>
+The location included in the PDF signature and displayed by the PDF reader. 
+                                    </p>
+                                    <p>
+Default: "SignServer".
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><b>ADD_VISIBLE_SIGNATURE</b></td>
+                                <td>
+                                    <p>
+Setting that control whether signature to be added should be visible or invisible.
+                                    </p>
+                                    <p>
+Possible values: True or False.
+                                    </p>
+                                    <p>
+Default: "False"                                        
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><b>VISIBLE_SIGNATURE_PAGE</b></td>
+                                <td>
+                                    <p>
+Specifies the page on which the visible signature will be drawn. This property is ignored if ADD_VISIBLE_SIGNATURE is set to False.
+                                    </p>
+                                    <p>
+Possible values:<br/>
 "First" : signature drawn on first page of the document,<br/>
 "Last"  : signature drawn on last page of the document,<br/>
 page_number : signature is drawn on a page specified by numeric argument. If specified page number exceeds page count of the document ,signature is drawn on last page. If page_number specified is not numeric (or negative number) the signature will be drawn on first page
-	                </p>
-                        <p>
-	Default value is "First".
-                        </p>
-                        <p>
-	<b>VISIBLE_SIGNATURE_RECTANGLE</b>=
-		Specifies the rectangle signature is going to be 	drawn in. This property is 	ignored if ADD_VISIBLE_SIGNATURE is set to False. Format 	is :
-		(llx,lly,urx,ury).
-	                        </p>
-                        <p>
-	Here :<br/>
+                                    </p>
+                                    <p>
+Default: "First".
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <tr>                        
+                                <td><b>VISIBLE_SIGNATURE_RECTANGLE</b></td>
+                                <td>
+                                    <p>
+Specifies the rectangle signature is going to be drawn in. 
+                                    </p>
+                                    <p>
+This property is ignored if ADD_VISIBLE_SIGNATURE is set to False. Format is : (llx,lly,urx,ury).<br/>
+Here :<br/>
 llx =left lower x coordinate,<br/>
 lly=left lower y coordinate,<br/>
 urx =upper right x coordinate,<br/>
 ury = upper right y coordinate<br/>
-                        </p>
-                        <p>
-Default value is "400,700,500,800".
-                        </p>
-                        <p>
-<b>VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 &amp; VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH</b> =
-	If we want the visible signature to contain custom image , specify image as base64 encoded byte array. Alternatively custom image can be specified by giving a path to image on file system.
-                        </p>
-                        <p>
-Note : if specifying a path to an image "\" should be escaped ( thus C:\photo.jpg => "C:\\photo.jpg" )
-                        </p>
-                        <p>
-Note : if specifying image as base64 encoded byte array "=" should be escaped (this "BBCXMI==" => "BBCXMI\=\=")
-                        </p>
-                        <p>
+                                    </p>
+                                    <p>
+Default: "400,700,500,800".
+                                    </p>
+                                </td>
+	                        </tr>
+                        
+                            <tr>
+                                <td><b>VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 &amp; VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH</b></td>
+                                <td>
+                                    <p>
+	If we want the visible signature to contain custom image, specify image as base64 encoded byte array. Alternatively custom image can be specified by giving a path to image on file system.
+                                    </p>
+                                    <p>
+Note: if specifying a path to an image "\" should be escaped (thus C:\photo.jpg => "C:\\photo.jpg")
+                                    </p>
+                                    <p>
+Note: if specifying image as base64 encoded byte array "=" should be escaped (this "BBCXMI==" => "BBCXMI\=\=")
+                                    </p>
+                                    <p>
 If both of these properties are set then VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 will take priority.
-                        </p>
-                        <p>
+                                    </p>
+                                    <p>
 If we do not want this feature then do not set these properties.
-                        </p>
-                        <p>
-Default is not set (no custom image).
-                        </p>
-                        <p>
+                                    </p>
+                                    <p>
+Default: not set (no custom image).
+                                    </p>
+                                    <p>
 These properties are ignored if ADD_VISIBLE_SIGNATURE is set to False.
-                        </p>
-                        <p>
-NOTE: in clustered environment it is more manageable and advised to specify image as base64 string, since image data will be stored in central database. Otherwise each node should contain copy of the image, and each image managed separately (ex : on image updates, or insertion of new image for different worker).
-                        </p>
-                        <p>
-<b>VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE</b>=
+                                    </p>
+                                    <p>
+NOTE: in clustered environment it is more manageable and advised to specify image as base64 string, since image data will be stored in central database. Otherwise each node should contain copy of the image, and each image managed separately (ex: on image updates, or insertion of new image for different worker)
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE</b></td>
+                                <td>
+                                    <p>
 	If we want our custom image to be resized to specified rectangle (set by VISIBLE_SIGNATURE_RECTANGLE) then set to True. If set to True image might look different that original (as an effect of resizing). If set to False the rectangle drawn will be resized to specified image's sizes.
-                        </p>
-                        <p>
+                                    </p>
+                                    <p>
 If set to False llx and lly coordinates specified by VISIBLE_SIGNATURE_RECTANGLE property will be used for drawing rectangle (urx and ury will be calculated from specified image's size).
-                        </p>
-                        <p>
+                                    </p>
+                                    <p>
 This property is ignored if ADD_VISIBLE_SIGNATURE is set to False or if custom image to use is not specified.
-                        </p>
-                        <p>
-Possible values : True, False. Default value is True.
-                        </p>
+                                    </p>
+                                    <p>
+Possible values: True, False.
+                                    </p>
+                                    <p>
+Default: "True".
+                                    </p>
+                                </td>
+                            </tr>
 
-                        <p>
-<b>CERTIFICATION_LEVEL</b>=
-    Set this property to have the document certified with a certifying signature.
-                        </p>
-                        <p>
+                            <tr>
+                                <td><b>CERTIFICATION_LEVEL</b></td>
+                                <td>
+                                    <p>
+Set this property to have the document certified with a certifying signature.
+                                    </p>
+                                    <p>
 Possible values:<br/>
 NOT_CERTIFIED: The document is not certified.<br/>
 FORM_FILLING: The document is certified but the form can be filled in without invalidating the signature.<br/>
 FORM_FILLING_AND_ANNOTATIONS: The document is certified but the form can be filled in and annotations added without invalidating the signature.<br/>
 NO_CHANGES_ALLOWED: The document is certified and no changes can be made.<br/>
-Default value is NOT_CERTIFIED.
-                        </p>
+                                    </p>
+                                    <p>
+Default: "NOT_CERTIFIED".
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><b>TSA_URL</b></td>
+                                <td>
+                                    <p>
+If we want to timestamp document signature, specify timestamp authority URL.
+                                    </p>
+                                    <p>
+If we do not want to timestamp document signature, do not set property.
+                                    </p>
+                                    <p>
+Note: if path contains characters "\" or "=" , these characters should be escaped (thus "\" = "\\", "=" =>"\=")
+                                    </p>
+                                    <p>
+Default: not set (no timestamping).
+                                    </p>
+                                </td>
+                            </tr>
 
-                        <p>
-<b>TSA_URL</b>=
-	If we want to timestamp document signature, specify timestamp authority url.  If we do not want to timestamp document signature , do not set property.
-	                        </p>
-                        <p>
-Note : if path contains characters "\" or "=" , these characters should be escaped (thus "\" = "\\", "=" =>"\=")
-                        </p>
-                        <p>
-Default is not set (no timestamping).
-                        </p>
-                        <p>
-
-	<b>TSA_USERNAME &amp; TSA_PASSWORD</b>=
-		If tsa requires authentication for timestamping , specify username and password. If 	tsa does not require authentication, do not set these properties. These properties are ignored 	if TSA_URL is not set (no timestamping).
-                        </p>
-                        <p>
-		Default value is not set (tsa does not require authentication).
-                        </p>
-                        <p>
-	<b>EMBED_CRL</b>=
-		If we want to embedd the crl for signer certificate inside the signature package set to 	True, otherwise set to False.
-                        </p>
-                        <p>
-	Default value is False
-                        </p>
-                        <p>
-	<b>EMBED_OCSP_RESPONSE</b>=
-		If we want to embedd the ocsp responce for signer certificate inside the signature 	package set to True, otherwise set to False.
-                        </p>
-                        <p>
-		Note : issuer certificate (of signing certificate) should be in certificate chain.
-                        </p>
-                        <p>
-		Default value is False.
-                        </p>
-                        <p>
-
-        <b>ARCHIVETODISK</b>=
-                If we want the produced signed document to be stored in the
-                local file system set this property to true and add the
-                ARCHIVETODISK_PATH_BASE property explained below.
-                        </p>
-                        <p>
-        Default value is False.
-                        </p>
-                        <p>
-        <b>ARCHIVETODISK_PATH_BASE</b>=
-                The file path to the folder to store the signed documents in.
-                        </p>
-                        <p>
-        Required if ARCHIVETODISK is True.
-                        </p>
-                        <p>
-        <b>ARCHIVETODISK_PATH_PATTERN</b>=
-        Pattern used for creating sub-folders under the ARCHIVETODISK_PATH_BASE
-        folder. Current date can be put in by adding ${DATE:yyyy} where yyyy can
-        be replaced be the same syntax as defined in the class
-        java.text.SimpleDateFormat. Other fields are:
-        <ul>
-            <li>${WORKERID}</li>
-            <li>${WORKERNAME}</li>
-            <li>${REMOTEIP}</li>
-            <li>${REQUESTID}</li>
-            <li>${TRANSACTIONID}</li>
-            <li>${USERNAME}</li>
-        </ul>
-                        </p>
-                        <p>
-        Default value is "${DATE:yyyy/MM/dd}".
-                        </p>
-                        <p>
-        <b>PROPERTY_ARCHIVETODISK_FILENAME_PATTERN</b>=
-        Pattern used for creating the filename. The same fields and syntax as
-        for the ARCHIVETODISK_PATH_PATTERN property can be used.
-                        </p>
-                        <p>
-        Default value is "${WORKERID}-${REQUESTID}-${DATE:HHmmssSSS}.pdf".
-                        </p>
-                        <p>
-        <b>REFUSE_DOUBLE_INDIRECT_OBJECTS</b>=
-        True if PDF documents containing multiple indirect objects with the
-        same name should be refused. Used to mitigate a collision signature 
-        vulnerability described in <a href="http://pdfsig-collision.florz.de/">http://pdfsig-collision.florz.de/</a>.
-        
-                        </p>
+                            <tr>
+	                                <td><b>TSA_USERNAME &amp; TSA_PASSWORD</b></td>
+                                    <td>
+                                        <p>
+If the TSA requires authentication for timestamping, specify username and password. If the TSA does not require authentication, do not set these properties. These properties are ignored if TSA_URL is not set (no timestamping).
+                                        </p>
+                                        <p>
+Default: not set (tsa does not require authentication).
+                                        </p>
+                                    </td>
+                            </tr>
+                        
+                            <tr>
+	                                <td><b>EMBED_CRL</b></td>
+                                    <td>
+If we want to embed the CRL for signer certificate inside the signature package set to True, otherwise set to False.
+                                        <p>
+Default: "False".
+                                        </p>
+                                    </td>
+                            </tr>
+                        
+                            <tr>
+	                                <td><b>EMBED_OCSP_RESPONSE</b></td>
+                                    <td>
+                                        <p>
+If we want to embed the OCSP response for the signer certificate inside the signature package set to True, otherwise set to False.
+                                        </p>
+                                        <p>
+Note: issuer certificate (of signing certificate) should be in certificate chain.
+                                        </p>
+                                        <p>
+Default: "False".
+                                        </p>
+                                    </td>
+                            </tr>
+                       
+                            <tr>
+                                    <td><b>ARCHIVETODISK</b></td>
+                                    <td>
+                                        <p>
+If we want the produced signed document to be stored in the local file system set this property to true and add the ARCHIVETODISK_PATH_BASE property explained below.
+                                        </p>
+                                        <p>
+Default: "False".
+                                        </p>
+                                    </td>
+                            </tr>
+                        
+                            <tr>
+                                    <td><b>ARCHIVETODISK_PATH_BASE</b></td>
+                                    <td>
+                                        <p>
+The file path to the folder to store the signed documents in.
+                                        </p>
+                                        <p>
+Required if ARCHIVETODISK is True.
+                                        </p>
+                                    </td>
+                            </tr>
+                        
+                            <tr>
+                                    <td><b>ARCHIVETODISK_PATH_PATTERN</b></td>
+                                    <td>
+                                        <p>
+Pattern used for creating sub-folders under the ARCHIVETODISK_PATH_BASE folder. 
+                                        </p>
+                                        <p>
+Current date can be put in by adding ${DATE:yyyy} where yyyy can be replaced be the same syntax as defined in the class java.text.SimpleDateFormat. Other fields are:
+                                        <ul>
+                                            <li>${WORKERID}</li>
+                                            <li>${WORKERNAME}</li>
+                                            <li>${REMOTEIP}</li>
+                                            <li>${REQUESTID}</li>
+                                            <li>${TRANSACTIONID}</li>
+                                            <li>${USERNAME}</li>
+                                        </ul>
+                                        </p>
+                                        <p>
+Default: "${DATE:yyyy/MM/dd}".
+                                        </p>
+                                    </td>
+                            </tr>
+                        
+                            <tr>
+                                    <td><b>ARCHIVETODISK_FILENAME_PATTERN</b></td>
+                                    <td>
+                                        <p>
+Pattern used for creating the filename. The same fields and syntax as for the ARCHIVETODISK_PATH_PATTERN property can be used.
+                                        </p>
+                                        <p>
+Default: "${WORKERID}-${REQUESTID}-${DATE:HHmmssSSS}.pdf".
+                                        </p>
+                                    </td>
+                            </tr>
+                        
+                            <tr>
+                                    <td><b>REFUSE_DOUBLE_INDIRECT_OBJECTS</b></td>
+                                    <td>
+                                        <p>
+True if PDF documents containing multiple indirect objects with the same name should be refused. Used to mitigate a collision signature  vulnerability described in <a href="http://pdfsig-collision.florz.de/">http://pdfsig-collision.florz.de/</a>.
+                                        </p>
+                                    </td>
+                            </tr>
+                        </table>
                     </subsubsection>
                 </subsection>
 

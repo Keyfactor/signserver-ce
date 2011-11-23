@@ -174,6 +174,10 @@ public class PDFSignerUnitTest extends TestCase {
         }
     }
     
+    /**
+     * Tries to sign a PDF with document restrictions. As the correct passwords 
+     * are supplied it should succeed.
+     */
     public void test02SignWithRestrictionsPasswordSupplied() throws Exception {         
         signProtectedPDF(sampleOpen123, "open123");
         signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD);

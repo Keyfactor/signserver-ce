@@ -187,6 +187,10 @@ public class PDFSignerUnitTest extends TestCase {
         signProtectedPDF(sampleUseraao, SAMPLE_USER_AAA_PASSWORD);
     }
     
+    /**
+     * Tests the REJECT_PERMISSIONS with different values to see that the 
+     * signer rejects documents with permissions not allowed.
+     */
     public void test03RejectingPermissions() throws Exception {
         
         // First test without any constraints

@@ -2813,6 +2813,31 @@ True if PDF documents containing multiple indirect objects with the same name sh
                                         </p>
                                     </td>
                             </tr>
+                            
+                            <tr>
+                                    <td><b>REJECT_PERMISSIONS</b></td>
+                                    <td>
+                                        <p>
+Reject signing of the document if any of the permissions in the comma separated list would be in the document.
+                                        </p>
+                                        <p>
+Available permissions:
+                                            <ul>
+                                                <li>ALLOW_PRINTING</li>
+                                                <li>ALLOW_MODIFY_CONTENTS</li>
+                                                <li>ALLOW_COPY</li>
+                                                <li>ALLOW_MODIFY_ANNOTATIONS</li>
+                                                <li>ALLOW_FILL_IN</li>
+                                                <li>ALLOW_SCREENREADERS</li>
+                                                <li>ALLOW_ASSEMBLY</li>
+                                                <li>ALLOW_DEGRADED_PRINTING</li>
+                                            </ul>
+                                        </p>
+                                        <p>
+Default: unset/empty (no permissions are rejected)
+                                        </p>
+                                    </td>
+                            </tr>
                         </table>
                     </subsubsection>
                 </subsection>

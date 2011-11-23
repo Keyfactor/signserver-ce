@@ -31,6 +31,9 @@ public class UnknownPermissionException extends Exception {
         this.permission = permission;
     }
 
+    /**
+     * @return The unknown permission.
+     */
     public String getPermission() {
         return permission;
     }

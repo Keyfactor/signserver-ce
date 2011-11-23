@@ -78,7 +78,8 @@ public class PDFSignerParameters {
     private Permissions setPermissions;
     /** Permissions to remove. **/
     private Set<String> removePermissions;
-    
+    /** Password to set as owner password. */
+    private String setOwnerPassword;
     
     // helper variables
     private boolean use_custom_image = false;
@@ -176,6 +177,8 @@ public class PDFSignerParameters {
             removePermissions = new HashSet<String>();
             removePermissions.addAll(Arrays.asList(array));
         }
+        // Set ownerpassword
+        setOwnerPassword = config.getProperties().getProperty(PDFSigner.SET_OWNERPASSWORD);
         
         // if signature is chosen to be visible proceed with setting visibility
         // properties
@@ -475,6 +478,13 @@ public class PDFSignerParameters {
      */
     public Permissions getSetPermissions() {
         return setPermissions;
+    }
+
+    /**
+     * @return The owner password to set or null.
+     */
+    public String getSetOwnerPassword() {
+        return setOwnerPassword;
     }
 
 }

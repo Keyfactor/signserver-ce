@@ -12,7 +12,9 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -240,8 +242,6 @@ public class PDFSignerUnitTest extends TestCase {
         } catch (IllegalRequestException ok) {
             LOG.debug("OK: " + ok.getMessage());
         }*/
-        
-        
     }
     
     public void test04SetPermissions() throws Exception {
@@ -301,8 +301,6 @@ public class PDFSignerUnitTest extends TestCase {
         doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_FILL_IN"));
         doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_MODIFY_ANNOTATIONS"));
         doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS"), Arrays.asList("ALLOW_MODIFY_CONTENTS"));
-        
-        
     }
     
     /**
@@ -361,6 +359,66 @@ public class PDFSignerUnitTest extends TestCase {
     
     public void test07ChangePermissionOfUnprotectedDocument() throws Exception {
         doTestSetPermissions(WORKER1, sampleOk, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+    }
+    
+    /**
+     * Test helper method for asserting that a certain owner password is really 
+     * set.
+     */
+    public void test08assertOwnerPassword() throws Exception {
+        try {
+            assertOwnerPassword(readFile(sampleOpen123Owner123), "open123");
+            fail("Should have thrown exception as it was not openned with owner password");
+        } catch (IOException ok) { // NOPMD
+            // OK
+        }
+        try {
+            assertOwnerPassword(readFile(sampleOk), "open123a");
+            fail("Should have thrown exception as the password was not needed");
+        } catch (IOException ok) { // NOPMD
+            // OK
+        }
+        assertOwnerPassword(readFile(sampleOpen123Owner123), SAMPLE_OWNER123_PASSWORD);
+    }
+    
+    /**
+     * Tests the worker property SET_OWNERPASSWORD with documents containing 
+     * different password types.
+     */
+    public void test09SetOwnerPassword() throws Exception {
+        // Set owner password on a document that does not have any password
+        String ownerPassword1 = "newownerpassword%%_1";
+        workerSession.setWorkerProperty(WORKER1, "SET_OWNERPASSWORD", ownerPassword1);
+        workerSession.reloadConfiguration(WORKER1);
+        byte[] pdf1 = signProtectedPDF(sampleOk, null);
+        assertOwnerPassword(pdf1, ownerPassword1);
+        
+        // Set owner password on a document that already has a user password
+        // The user password should still be the same
+        String ownerPassword2 = "newownerpassword%%_2";
+        workerSession.setWorkerProperty(WORKER1, "SET_OWNERPASSWORD", ownerPassword2);
+        workerSession.reloadConfiguration(WORKER1);
+        byte[] pdf2 = signProtectedPDF(sampleOpen123, "open123");
+        assertOwnerPassword(pdf2, ownerPassword2);
+        assertUserPassword(pdf2, "open123");
+        
+        // Set owner password on a document that already has a user and owner password
+        // The user password should still be the same
+        String ownerPassword3 = "newownerpassword%%_3";
+        workerSession.setWorkerProperty(WORKER1, "SET_OWNERPASSWORD", ownerPassword3);
+        workerSession.reloadConfiguration(WORKER1);
+        byte[] pdf3 = signProtectedPDF(sampleOpen123Owner123, "owner123");
+        assertOwnerPassword(pdf3, ownerPassword3);
+        assertUserPassword(pdf3, "open123");
+        
+        // Set owner password on a document that already has an owner password
+        // The user password should still not be needed
+        String ownerPassword4 = "newownerpassword%%_4";
+        workerSession.setWorkerProperty(WORKER1, "SET_OWNERPASSWORD", ownerPassword4);
+        workerSession.reloadConfiguration(WORKER1);
+        byte[] pdf4 = signProtectedPDF(sampleOwner123, "owner123");
+        assertOwnerPassword(pdf4, ownerPassword4);
+        assertUserPassword(pdf4, "");
     }
     
     private byte[] signProtectedPDF(File file, String password) throws Exception {
@@ -426,5 +484,55 @@ public class PDFSignerUnitTest extends TestCase {
     private Permissions getPermissions(byte[] pdfBytes, byte[] password) throws IOException {
         PdfReader reader = new PdfReader(pdfBytes, password);
         return Permissions.fromInt(reader.getPermissions());
+    }
+
+    /**
+     * Asserts that the password really can be used as user password.
+     */
+    private static void assertUserPassword(byte[] pdfBytes, String password) throws IOException, DocumentException {
+        // This will fail unless password is owner or user
+        System.out.println("password: " + password);
+        PdfReader reader = new PdfReader(pdfBytes, password.getBytes("ISO-8859-1"));
+        
+        // Still if the document did not contain a password it would not have failed yet
+        // Test that it really fails when specifying a wrong password
+        boolean exceptionThrown = true;
+        try {
+            PdfReader reader2 = new PdfReader(pdfBytes, "_ABSOLUTLEY_NOT_THE_RIGHT_PASSWORD_".getBytes("ISO-8859-1"));
+            reader2.close();
+            exceptionThrown = false;
+        } catch (IOException ok) {
+            LOG.debug(ok.getMessage());
+}
+        if (!exceptionThrown) {
+            throw new IOException("PDF did not require a password");
+        }
+    }
+    
+    /**
+     * Asserts that the password really can be used as owner password.
+     */
+    private static void assertOwnerPassword(byte[] pdfBytes, String password) throws IOException, DocumentException {
+        // This will fail unless password is owner or user
+        PdfReader reader = new PdfReader(pdfBytes, password.getBytes("ISO-8859-1"));
+        ByteArrayOutputStream fout = new ByteArrayOutputStream();
+        PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', null, false);
+        
+        // This will fail unless password is owner
+        stp.setEncryption(reader.computeUserPassword(), password.getBytes("ISO-8859-1"), 0, 1);
+        
+        // Still if the document did not contain a password it would not have failed yet
+        // Test that it really fails when specifying a wrong password
+        boolean exceptionThrown = true;
+        try {
+            PdfReader reader2 = new PdfReader(pdfBytes, "_ABSOLUTLEY_NOT_THE_RIGHT_PASSWORD_".getBytes("ISO-8859-1"));
+            reader2.close();
+            exceptionThrown = false;
+        } catch (IOException ok) {
+            LOG.debug(ok.getMessage());
+        }
+        if (!exceptionThrown) {
+            throw new IOException("PDF did not require a password");
+        }
     }
 }

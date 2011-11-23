@@ -169,6 +169,8 @@ public class PDFSigner extends BaseSigner {
     public static final String REMOVE_PERMISSIONS = "REMOVE_PERMISSIONS";
     /** Future property with list of permissions to add). **/
     // public static final String ADD_PERMISSIONS = "ADD_PERMISSIONS";
+    /** Password to set as owner password. */
+    public static final String SET_OWNERPASSWORD = "SET_OWNERPASSWORD";
     
     // archivetodisk properties
     public static final String PROPERTY_ARCHIVETODISK = "ARCHIVETODISK";
@@ -343,11 +345,12 @@ public class PDFSigner extends BaseSigner {
                     .append("New permissions: ").append(newPermissions).append("\n")
                     .append("userPassword: ").append(userPassword == null ? "null" : "yes").append("\n")
                     .append("ownerPassword: ").append(password == null ? "null" : "yes").append("\n")
+                    .append("setOwnerPassword: ").append(params.getSetOwnerPassword() == null ? "no" : "yes").append("\n")
                     .append("cryptoMode: ").append(cryptoMode);
             LOG.debug(buff.toString());
         }
         
-        if (newPermissions != null && appendMode) {
+        if (appendMode && (newPermissions != null || params.getSetOwnerPassword() != null)) {
             appendMode = false;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Changing appendMode to false to be able to change permissions");
@@ -360,12 +363,18 @@ public class PDFSigner extends BaseSigner {
         PdfSignatureAppearance sap = stp.getSignatureAppearance();
         
         // Set the new permissions
-        if (newPermissions != null) {
+        if (newPermissions != null || params.getSetOwnerPassword() != null) {
             if (cryptoMode < 0) {
                 cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Setting default encryption algorithm");
                 }
+            }
+            if (newPermissions == null) {
+                newPermissions = currentPermissions;
+            }
+            if (params.getSetOwnerPassword() != null) {
+                password = params.getSetOwnerPassword().getBytes("ISO-8859-1");
             }
             stp.setEncryption(userPassword, password, newPermissions.asInt(), cryptoMode);
             currentPermissions = newPermissions;

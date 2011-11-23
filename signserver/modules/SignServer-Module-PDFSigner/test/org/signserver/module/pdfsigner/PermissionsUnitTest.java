@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-
 import com.lowagie.text.pdf.PdfWriter;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -24,7 +23,6 @@ import org.apache.log4j.Logger;
 
 /**
  * Unit tests for Permissions.
- *
  *
  * @author Markus Kilås
  * @version $Id$
@@ -45,6 +43,10 @@ public class PermissionsUnitTest extends TestCase {
         super.tearDown();
     }
 
+    /**
+     * Tests getting Permissions instances from collections of permission 
+     * strings.
+     */
     public void testCustructingFromStrings() throws Exception {
         Set set1 = new HashSet(Arrays.asList("ALLOW_COPY", "ALLOW_SCREENREADERS", "_NON_EXISTING_PERM_"));
         Set set2 = new HashSet(Arrays.asList("ALLOW_COPY", "ALLOW_SCREENREADERS"));
@@ -68,6 +70,9 @@ public class PermissionsUnitTest extends TestCase {
         }        
     }
     
+    /**
+     * Getting the permissions as a set of permission strings.
+     */
     public void testToSet() throws Exception {
         
         Permissions degradedPrinting = Permissions.fromInt(4);
@@ -81,6 +86,10 @@ public class PermissionsUnitTest extends TestCase {
         assertEquals(new HashSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_DEGRADED_PRINTING")), printingDegradedPrinting.asSet());
     }
     
+    /**
+     * Tests the method checking of the Permissions contains any of the supplied 
+     * permissions.
+     */
     public void testContainsAnyRejected() throws Exception {
         
         // Permissions: COPY, Reject: COPY
@@ -115,6 +124,11 @@ public class PermissionsUnitTest extends TestCase {
         assertTrue(printingDegradedPrinting.containsAnyOf(degradedPrinting));
     }
 
+    /**
+     * Tests the methods returning a new/different Permissions object with the 
+     * same permissions as the original one but with the supplied permissions
+     * removed.
+     */
     public void testWithRemovedPermissions() throws Exception {
         
         Permissions all = Permissions.fromSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"), true);

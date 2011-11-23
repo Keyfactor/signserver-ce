@@ -56,7 +56,7 @@ import org.signserver.test.utils.mock.WorkerSessionMock;
 public class PDFSignerUnitTest extends TestCase {
 
     /** Logger for this class. */
-    public static final Logger LOG = Logger.getLogger(PDFSigner.class);
+    public static final Logger LOG = Logger.getLogger(PDFSignerUnitTest.class);
     
     /** Worker7897: Default algorithms, default hashing setting. */
     private static final int WORKER1 = 7897;
@@ -80,6 +80,10 @@ public class PDFSignerUnitTest extends TestCase {
     private File sampleOpen123Owner123;
     private File sampleOwner123;
     private File sampleUseraao;
+    private File sampleCertifiedSigningAllowed;
+    private File sampleCertifiedNoChangesAllowed;
+    private File sampleCertifiedFormFillingAllowed;
+    private File sampleSigned;
 //    private File sampleLowprintingOwner123;
     
     public PDFSignerUnitTest() {
@@ -93,6 +97,10 @@ public class PDFSignerUnitTest extends TestCase {
         sampleOpen123Owner123 = new File(home, "res/test/pdf/sample-open123-owner123.pdf");
         sampleOwner123 = new File(home, "res/test/pdf/sample-owner123.pdf");
         sampleUseraao = new File(home, "res/test/pdf/sample-useraao.pdf");
+        sampleCertifiedSigningAllowed = new File(home, "res/test/pdf/sample-certified-signingallowed.pdf");
+        sampleCertifiedNoChangesAllowed = new File(home, "res/test/pdf/sample-certified-nochangesallowed.pdf");
+        sampleCertifiedFormFillingAllowed = new File(home, "res/test/pdf/sample-certified-formfillingallowed.pdf");
+        sampleSigned = new File(home, "res/test/pdf/sample-signed.pdf");
 //        sampleLowprintingOwner123 = new File(home, "res/test/pdf/sample-lowprinting-owner123.pdf");
     }
     
@@ -440,6 +448,80 @@ public class PDFSignerUnitTest extends TestCase {
         byte[] pdf4 = signProtectedPDF(sampleOwner123, "owner123");
         assertOwnerPassword(pdf4, ownerPassword4);
         assertUserPassword(pdf4, "");
+    }
+    
+    /**
+     * Tests that it is possible to sign a certified document which allows 
+     * signing and not one the does not.
+     */
+    public void test10SignCertifiedDocument() throws Exception {
+        signPDF(sampleCertifiedSigningAllowed);
+        try {
+            signPDF(sampleCertifiedNoChangesAllowed);
+            fail("Should not be possible to sign a certified document with NO_CHANGES_ALLOWED");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("ok: " + ok.getMessage());
+        }
+        try {
+            signPDF(sampleCertifiedFormFillingAllowed);
+            fail("Should not be possible to sign a certified document with FORM_FILLING");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("ok: " + ok.getMessage());
+        }
+    }
+    
+    /**
+     * Tests that it is possible to certify a document that already is signed.
+     */
+    public void test11CertifySignedDocument() throws Exception {
+        workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING");
+        workerSession.reloadConfiguration(WORKER1);
+        signPDF(sampleSigned);
+        
+        workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING_AND_ANNOTATIONS");
+        workerSession.reloadConfiguration(WORKER1);
+        signPDF(sampleSigned);
+        
+        workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "NO_CHANGES_ALLOWED");
+        workerSession.reloadConfiguration(WORKER1);
+        signPDF(sampleSigned);
+    }
+    
+    /**
+     * Tests that it is possible to sign an already signed document.
+     */
+    public void test12SignSignedDocument() throws Exception {
+        signPDF(sampleSigned);
+    }
+    
+    /**
+     * Tests that it is not possible to certify an already certified document.
+     */
+    public void test13CertifyCertifiedDocument() throws Exception {
+        workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING");
+        workerSession.reloadConfiguration(WORKER1);
+        try {
+            signPDF(sampleCertifiedNoChangesAllowed);
+            fail("Should not be possible to certify a certified document");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("ok: " + ok.getMessage());
+        }
+        try {
+            signPDF(sampleCertifiedFormFillingAllowed);
+            fail("Should not be possible to sign a certified document");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("ok: " + ok.getMessage());
+        }
+        try {
+            signPDF(sampleCertifiedSigningAllowed);
+            fail("Should not be possible to sign a certified document");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("ok: " + ok.getMessage());
+        }
+    }
+    
+    private byte[] signPDF(File file) throws Exception {
+        return signProtectedPDF(file, null);
     }
     
     private byte[] signProtectedPDF(File file, String password) throws Exception {

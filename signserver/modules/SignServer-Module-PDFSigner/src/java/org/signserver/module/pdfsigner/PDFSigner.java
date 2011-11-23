@@ -318,6 +318,18 @@ public class PDFSigner extends BaseSigner {
         PdfReader reader = new PdfReader(pdfbytes, password);
         boolean appendMode = true; // TODO: This could be good to have as a property in the future
 
+        // Don't certify already certified documents
+        if (reader.getCertificationLevel() != PdfSignatureAppearance.NOT_CERTIFIED 
+                && params.getCertification_level() != PdfSignatureAppearance.NOT_CERTIFIED) {
+            throw new IllegalRequestException("Will not certify an already certified document");
+        }
+        
+        // Don't sign documents where the certification does not allow it
+        if (reader.getCertificationLevel() == PdfSignatureAppearance.CERTIFIED_NO_CHANGES_ALLOWED
+                || reader.getCertificationLevel() == PdfSignatureAppearance.CERTIFIED_FORM_FILLING) {
+            throw new IllegalRequestException("Will not sign a certified document where signing is not allowed");
+        }
+        
         Permissions currentPermissions = Permissions.fromInt(reader.getPermissions());
         
         if (params.getSetPermissions() != null && params.getRemovePermissions() != null) {

@@ -2502,7 +2502,7 @@ PDF Signer can also apply timestamp to a signature. If the signature is timestam
 Also CRL or OCSP Response of the signer's certificate can be embedded inside the signature package. Embedding CRL or OCSP response with the package will help validate signature even after the signer's certificate is expired. (Though it will not totally guarantee the long term signature preservation. Topic of long term signature preservation for archival purposes is a large one and is discussed to be implemented in future versions of SignServer).
                         </p>
                         <p>
-
+The PDF Signer can also be configured to enforce that certain PDF permissions are not available in the signed document and/or that certain permissions should be removed.
                         </p>
                     </subsubsection>
                     
@@ -2835,6 +2835,48 @@ Available permissions:
                                         </p>
                                         <p>
 Default: unset/empty (no permissions are rejected)
+                                        </p>
+                                    </td>
+                            </tr>
+                            
+                            <tr>
+                                    <td><b>SET_PERMISSIONS</b></td>
+                                    <td>
+                                        <p>
+Replace the current permissions (if any) with the permissions specified in this comma separated list of permissions.
+                                        </p>
+                                        <p>
+Available permissions: The same permission names as for the property REJECT_PERMISSIONS.    
+                                        </p>
+                                        <p>
+This property can not be specified if REMOVE_PERMISSIONS is used.    
+                                        </p>
+                                        <p>
+Default: unset (permissions are not set by this property)
+                                        </p>
+                                    </td>
+                            </tr>
+                            
+                            <tr>
+                                    <td><b>REMOVE_PERMISSIONS</b></td>
+                                    <td>
+                                        <p>
+Remove all permissions specified in this comma separated list from the document.
+                                        </p>
+                                        <p>
+Available permissions: The same permission names as for the property REJECT_PERMISSIONS.    
+                                        </p>
+                                        <p>
+This property can not be specified if SET_PERMISSIONS is used.    
+                                        </p>
+                                        <p>
+Notice: This property only removes the permissions listed even if some permissions (i.e. ALLOW_PRINTING) by the standard gives more permissions (i.e. also ALLOW_DEGRADED_PRINTING). To remove all permissions to print remove both ALLOW_PRINTING and ALLOW_DEGRADED_PRINTING. To still have ALLOW_DEGRADED_PRINTING it is possible to specify to only remove ALLOW_PRINTING.
+                                        </p>
+                                        <p>
+Removing only ALLOW_DEGRADED_PRINTING has no effect as degraded printing is implicitly allowed if printing is allowed.    
+                                        </p>
+                                        <p>
+Default: unset/empty (no permissions are removed)
                                         </p>
                                     </td>
                             </tr>

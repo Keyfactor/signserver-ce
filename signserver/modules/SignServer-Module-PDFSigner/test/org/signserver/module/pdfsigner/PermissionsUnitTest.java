@@ -183,6 +183,12 @@ public class PermissionsUnitTest extends TestCase {
         Permissions a12 = a11.withRemoved(Arrays.asList("_NON_EXISTiNG123"));
         Permissions e12 = e10;
         assertEquals(e12, a12);
+        
+        // Special case in SignServer: removing DEGRADED_PRINTING has no effect 
+        // as ALLOW_PRINTING will still be there
+        Permissions a13 = a6.withRemoved(Arrays.asList("ALLOW_DEGRADED_PRINTING"));
+        Permissions e13 = Permissions.fromSet(Arrays.asList("ALLOW_PRINTING", "ALLOW_DEGRADED_PRINTING"), true);
+        assertEquals(e13, a13);
     }
 
 }

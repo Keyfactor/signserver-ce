@@ -35,23 +35,6 @@
         <delete dir="${build.generated.dir}/jax-wsCache/SignServerWSService"/>
         <delete dir="${build.generated.sources.dir}/jax-ws/org/signserver/protocol/ws/gen"/>
     </target>
-    <target name="wsimport-client-DummyWSService" depends="wsimport-init">
-        <mkdir dir="${build.generated.dir}/jax-wsCache/DummyWSService"/>
-        <property name="wsdl-DummyWSService" location="xml-resources/web-service-references/DummyWSService/wsdl/DummyWSService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/DummyWSService" destdir="${build.generated.dir}/jax-wsCache/DummyWSService" wsdl="${wsdl-DummyWSService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/DummyWSService.wsdl" xendorsed="true" package="org.signserver.server.genericws.gen">
-            <depends file="${wsdl-DummyWSService}"/>
-            <produces dir="${build.generated.dir}/jax-wsCache/DummyWSService"/>
-        </wsimport>
-        <copy todir="${build.generated.sources.dir}/jax-ws">
-            <fileset dir="${build.generated.dir}/jax-wsCache/DummyWSService">
-                <include name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="wsimport-client-clean-DummyWSService" depends="-init-project">
-        <delete dir="${build.generated.dir}/jax-wsCache/DummyWSService"/>
-        <delete dir="${build.generated.sources.dir}/jax-ws/org/signserver/server/genericws/gen"/>
-    </target>
     <target name="wsimport-client-ValidationWSService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/ValidationWSService"/>
         <property name="wsdl-ValidationWSService" location="xml-resources/web-service-references/ValidationWSService/wsdl/ValidationWSService.wsdl"/>
@@ -69,5 +52,5 @@
         <delete dir="${build.generated.dir}/jax-wsCache/ValidationWSService"/>
         <delete dir="${build.generated.sources.dir}/jax-ws/org/signserver/protocol/validationservice/ws/gen"/>
     </target>
-    <target name="wsimport-client-generate" depends="wsimport-client-SignServerWSService, wsimport-client-DummyWSService, wsimport-client-ValidationWSService"/>
+    <target name="wsimport-client-generate" depends="wsimport-client-SignServerWSService, wsimport-client-ValidationWSService"/>
 </project>

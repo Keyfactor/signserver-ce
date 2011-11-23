@@ -316,7 +316,7 @@ public class PDFSigner extends BaseSigner {
                 ICryptoToken.PURPOSE_SIGN);
 
         PdfReader reader = new PdfReader(pdfbytes, password);
-        boolean appendMode = true; // TODO: Make a workerproperty for this
+        boolean appendMode = true; // TODO: This could be good to have as a property in the future
 
         Permissions currentPermissions = Permissions.fromInt(reader.getPermissions());
         

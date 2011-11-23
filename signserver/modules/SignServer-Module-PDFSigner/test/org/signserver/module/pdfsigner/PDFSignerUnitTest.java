@@ -252,6 +252,11 @@ public class PDFSignerUnitTest extends TestCase {
         }*/
     }
     
+    /**
+     * Tests the property SET_PERMISSIONS by setting different values and make 
+     * sure they end up in the signed PDF. Also tests that when not setting 
+     * the property the original permissions remain.
+     */
     public void test04SetPermissions() throws Exception {
         
         doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
@@ -300,6 +305,10 @@ public class PDFSignerUnitTest extends TestCase {
         return buff.toString();
     }
     
+    /**
+     * Tests the REMOVE_PERMISSIONS property by setting different values for 
+     * what to remove and check that they were removed from the signed PDF.
+     */
     public void test04RemovePermissions() throws Exception {
         // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
         doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_FILL_IN"), Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
@@ -365,6 +374,10 @@ public class PDFSignerUnitTest extends TestCase {
         signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD);
     }
     
+    /**
+     * Tests that it is possible also to change the permissions on a document 
+     * not previously protected by any password.
+     */
     public void test07ChangePermissionOfUnprotectedDocument() throws Exception {
         doTestSetPermissions(WORKER1, sampleOk, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
     }

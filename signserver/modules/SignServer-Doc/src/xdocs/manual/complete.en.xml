@@ -2880,6 +2880,21 @@ Default: unset/empty (no permissions are removed)
                                         </p>
                                     </td>
                             </tr>
+                            
+                            <tr>
+                                    <td><b>SET_OWNERPASSWORD</b></td>
+                                    <td>
+                                        <p>
+Sets the specified password as owner password in the document.
+                                        </p>
+                                        <p>
+The same permissions as before will be used (unless other properties will change them). The same encryption algorithm as the original document will be used. If the original document did not use any encryption then the default encryption algorithm will be used.    
+                                        </p>
+                                        <p>
+Default: unset (if the permissions are changed, the existing owner password will be used or if no such password is used in the document a semi-random password will be created)
+                                        </p>
+                                    </td>
+                            </tr>
                         </table>
                     </subsubsection>
                 </subsection>

@@ -47,7 +47,7 @@ public class PermissionsUnitTest extends TestCase {
      * Tests getting Permissions instances from collections of permission 
      * strings.
      */
-    public void testCustructingFromStrings() throws Exception {
+    public void testConstructingFromStrings() throws Exception {
         Set set1 = new HashSet(Arrays.asList("ALLOW_COPY", "ALLOW_SCREENREADERS", "_NON_EXISTING_PERM_"));
         Set set2 = new HashSet(Arrays.asList("ALLOW_COPY", "ALLOW_SCREENREADERS"));
         

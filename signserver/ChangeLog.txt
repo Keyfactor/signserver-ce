@@ -1,3 +1,48 @@
+SignServer 3.2.1, 2011-11-30
+----------------------------
+
+** Bug
+
+    [DSS-369] - Ant target test:signserver:runone did not work
+    [DSS-371] - Remote EJB worker interface could not be used with ECC with explicit parameters
+    [DSS-376] - Switching application server type did not update jndi.properties
+    [DSS-407] - Typo in sample configuration for PDFSigner
+    [DSS-410] - JavaDoc failed to build
+    [DSS-412] - Setting healthcheck properties had no effect
+    [DSS-416] - Supplied username and password ignored in one SigningAndValidationWS constructor
+    [DSS-418] - Warning about BERTLVObject printed on STDERR
+    [DSS-423] - WorkerSessionMock and GlobalConfigurationSessionMock had duplicates
+    [DSS-424] - Web service interface did not log XFORWARDEDFOR headers
+    [DSS-425] - CRL download should close streams correctly and allow for caching
+    [DSS-428] - Archiving API test failed on certain platforms
+    [DSS-429] - A PDFSigner unit test failed if the OS language were not English
+
+** Improvement
+
+    [DSS-183] - Improve servlet error handling
+    [DSS-241] - JUnit test for archiving
+    [DSS-274] - Improve error message when trying to sign PDF with document restrictions
+    [DSS-355] - Improved API for archiving
+    [DSS-358] - Should be able to set j2ee.web-nohttps=false
+    [DSS-368] - Default to not use clusterclassloader
+    [DSS-415] - Improve source code quality
+    [DSS-435] - Refuse to certify PDFs already certified and refuse to sign when signing is not allowed
+
+** New Feature
+
+    [DSS-194] - Deploy documentation with application
+    [DSS-430] - Support for signing PDFs with document restrictions
+    [DSS-431] - Support for PDF permissions enforcement
+    [DSS-432] - Support for modifying PDF permissions
+    [DSS-433] - Support for setting a PDF permissions password
+
+** Task
+
+    [DSS-259] - Include modules in build in the default configuration
+    [DSS-406] - Upgrade projects to NetBeans IDE 7.0
+    [DSS-414] - JUnit test to show when JCE crypto policy has not been applied
+
+
 SignServer 3.2.0, 2011-06-30
 ----------------------------
 

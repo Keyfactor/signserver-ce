@@ -1,11 +1,41 @@
 SignServer 3.2.1
 ----------------
-TODO: Add release notes here
+
+Major new features and improvements:
+
+ - Improve servlet error handling
+ - Deploy documentation with application
+ - Improved API for archiving
+ - Support for signing PDFs with document restrictions
+ - Support for PDF permissions enforcement
+ - Support for modifying PDF permissions
+ - Support for setting a PDF permissions password
+ - Refuse to certify PDFs already certified and refuse to sign when signing is 
+   not allowed
+
+Bug fixes:
+ - Remote EJB worker interface could not be used with ECC with explicit parameters
+ - Warnings printed on STDERR
+ - Web service interface did not log XFORWARDEDFOR headers
+ - Typo in sample configuration for PDFSigner
+ - Setting healthcheck properties had no effect
+ - CRL download should close streams correctly and allow for caching
+ - Supplied username and password ignored in SigningAndValidationWS
+ - Unit tests failed in certain situations
+ - Ant target for testing individual tests did not work
+ - Switching application server type did not update jndi.properties    
+ - JavaDoc failed to build
+
+
+
 
 Notice:
  - In signserver_build.properties the property "useclusterclassloader" now 
-   defaults to false. To still use the deprecated cluster class loader this 
+   defaults to false. To still use the deprecated clusterclassloader this 
    needs to be set explicitly to true.
+ - In signserver_build.properties the property "includemodulesinbuild" now 
+   defaults to true. To not have all modules built in this needs to be set to 
+   explicitly to false.
  - The fix of DSS-371 introduced a change in the EJB interface. Applications 
    using that interface should run version >=3.2.1 on both client and server 
    side.

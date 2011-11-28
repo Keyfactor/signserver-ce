@@ -158,7 +158,7 @@ public class GenericProcessServlet extends HttpServlet {
                         } else if (PDFPASSWORD_PROPERTY_NAME.equals(item.getFieldName())) {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Found a pdfPassword in the request.");
-                        }
+                            }
                             pdfPassword = item.getString("ISO-8859-1");
                         }
                     } else {
@@ -333,7 +333,7 @@ public class GenericProcessServlet extends HttpServlet {
             fileName = stripPath(fileName);
         }
         context.put(RequestContext.FILENAME, fileName);
-
+        
         // PDF Password
         if (pdfPassword != null) {
             metadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);

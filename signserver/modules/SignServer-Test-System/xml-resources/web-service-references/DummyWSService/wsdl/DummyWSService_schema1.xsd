@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="gen.genericws.server.signserver.org" xmlns:tns="gen.genericws.server.signserver.org" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="IllegalRequestException" type="tns:IllegalRequestException"/>
+
+  <xs:element name="SignServerException" type="tns:SignServerException"/>
+
+  <xs:element name="test" type="tns:test"/>
+
+  <xs:element name="testResponse" type="tns:testResponse"/>
+
+  <xs:complexType name="test">
+    <xs:sequence>
+      <xs:element name="param1" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="testResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IllegalRequestException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignServerException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+

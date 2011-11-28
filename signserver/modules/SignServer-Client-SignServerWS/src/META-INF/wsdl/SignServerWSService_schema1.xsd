@@ -61,8 +61,8 @@
                 <xs:sequence>
                   <xs:element name="key" minOccurs="0" type="xs:string"/>
                   <xs:element name="value" minOccurs="0" type="xs:string"/>
-    </xs:sequence>
-  </xs:complexType>
+                </xs:sequence>
+              </xs:complexType>
             </xs:element>
           </xs:sequence>
         </xs:complexType>

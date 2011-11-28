@@ -28,21 +28,6 @@ Remember to update the soap:address location in the WSDL to start with
 "https://" for WS to work on JBoss 4.
         </echo>
     </target>
-    
-    <target name="-post-dist">
-        <copy todir="../../dist-server/">
-            <fileset dir="dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
-        <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}:../SignServer-BuildTools/dist/SignServer-BuildTools.jar"/>
-        <property name="moduleName" value="adminws"/>
-        <property name="distJar" value="SignServer-ejb-AdminWS.jar"/>
-        <property name="base" location="../../"/>
-        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/20_${moduleName}.properties" moduleName="${moduleName}" moduleType="ejb" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,${base}/lib/ext/ejb/,${base}/lib/ext/servlet-2.3.jar,${base}/lib/javaee-">
-            <property name="module.ejb" value="${distJar}"/>
-        </moddesc>
-    </target>
 
     <!-- Overrides the target with an empty implementation as a workaround
         to prevent the inclusion of JAR-files. This can be removed when

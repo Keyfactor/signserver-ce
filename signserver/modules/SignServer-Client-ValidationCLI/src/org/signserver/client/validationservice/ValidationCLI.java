@@ -46,7 +46,8 @@ import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.Validation.Status;
 
 /**
- * TODO: Document!
+ * CLI Tool used to administrate the data in the
+ * WSRA interface.
  * 
  * @author Philip Vendil 13 sep 2008
  *

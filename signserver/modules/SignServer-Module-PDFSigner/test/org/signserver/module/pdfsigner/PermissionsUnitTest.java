@@ -123,7 +123,7 @@ public class PermissionsUnitTest extends TestCase {
         assertTrue(printingDegradedPrinting.containsAnyOf(printing));
         assertTrue(printingDegradedPrinting.containsAnyOf(degradedPrinting));
     }
-
+    
     /**
      * Tests the methods returning a new/different Permissions object with the 
      * same permissions as the original one but with the supplied permissions

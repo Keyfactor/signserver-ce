@@ -218,5 +218,5 @@ public class ModulesTestCase extends TestCase {
     /** Setup keystores for SSL. **/
     protected void setupSSLKeystores() {
         TestUtils.setupSSLTruststore();
-        }
     }
+}

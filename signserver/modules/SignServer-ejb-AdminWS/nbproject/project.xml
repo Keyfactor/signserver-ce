@@ -8,6 +8,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
             <name>SignServer-ejb-AdminWS</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <included-library dirs="100">reference.SignServer-ejb.dist</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>
@@ -34,14 +35,6 @@
                 <target>dist</target>
                 <clean-target>clean</clean-target>
                 <id>dist</id>
-            </reference>
-            <reference>
-                <foreign-project>SignServer-ejb-interfaces</foreign-project>
-                <artifact-type>jar</artifact-type>
-                <script>build.xml</script>
-                <target>jar</target>
-                <clean-target>clean</clean-target>
-                <id>jar</id>
             </reference>
         </references>
     </configuration>

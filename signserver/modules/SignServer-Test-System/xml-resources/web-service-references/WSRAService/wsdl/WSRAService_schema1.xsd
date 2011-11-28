@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="gen.ws.wsra.module.signserver.org" xmlns:tns="gen.ws.wsra.module.signserver.org" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="AuthorizationDeniedException" type="tns:AuthorizationDeniedException"/>
+
+  <xs:element name="IllegalRequestException" type="tns:IllegalRequestException"/>
+
+  <xs:element name="SignServerException" type="tns:SignServerException"/>
+
+  <xs:element name="checkCertStatus" type="tns:checkCertStatus"/>
+
+  <xs:element name="checkCertStatusResponse" type="tns:checkCertStatusResponse"/>
+
+  <xs:element name="editUsers" type="tns:editUsers"/>
+
+  <xs:element name="editUsersResponse" type="tns:editUsersResponse"/>
+
+  <xs:element name="existsToken" type="tns:existsToken"/>
+
+  <xs:element name="existsTokenResponse" type="tns:existsTokenResponse"/>
+
+  <xs:element name="findUserByUsername" type="tns:findUserByUsername"/>
+
+  <xs:element name="findUserByUsernameResponse" type="tns:findUserByUsernameResponse"/>
+
+  <xs:element name="findUsersByAlias" type="tns:findUsersByAlias"/>
+
+  <xs:element name="findUsersByAliasResponse" type="tns:findUsersByAliasResponse"/>
+
+  <xs:element name="generateCertificateFromPKCS10" type="tns:generateCertificateFromPKCS10"/>
+
+  <xs:element name="generateCertificateFromPKCS10Response" type="tns:generateCertificateFromPKCS10Response"/>
+
+  <xs:element name="generateSoftToken" type="tns:generateSoftToken"/>
+
+  <xs:element name="generateSoftTokenResponse" type="tns:generateSoftTokenResponse"/>
+
+  <xs:element name="getCACertificateChain" type="tns:getCACertificateChain"/>
+
+  <xs:element name="getCACertificateChainResponse" type="tns:getCACertificateChainResponse"/>
+
+  <xs:element name="getCallerOrganizationData" type="tns:getCallerOrganizationData"/>
+
+  <xs:element name="getCallerOrganizationDataResponse" type="tns:getCallerOrganizationDataResponse"/>
+
+  <xs:element name="getCallerUserData" type="tns:getCallerUserData"/>
+
+  <xs:element name="getCallerUserDataResponse" type="tns:getCallerUserDataResponse"/>
+
+  <xs:element name="getTokenData" type="tns:getTokenData"/>
+
+  <xs:element name="getTokenDataResponse" type="tns:getTokenDataResponse"/>
+
+  <xs:element name="listUsers" type="tns:listUsers"/>
+
+  <xs:element name="listUsersResponse" type="tns:listUsersResponse"/>
+
+  <xs:element name="revokeCertificate" type="tns:revokeCertificate"/>
+
+  <xs:element name="revokeCertificateResponse" type="tns:revokeCertificateResponse"/>
+
+  <xs:element name="revokeToken" type="tns:revokeToken"/>
+
+  <xs:element name="revokeTokenResponse" type="tns:revokeTokenResponse"/>
+
+  <xs:element name="revokeUser" type="tns:revokeUser"/>
+
+  <xs:element name="revokeUserResponse" type="tns:revokeUserResponse"/>
+
+  <xs:complexType name="listUsers">
+    <xs:sequence>
+      <xs:element name="roles" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="listUsersResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:userDataBean" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="userDataBean">
+    <xs:sequence>
+      <xs:element name="aliases" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="alias" type="tns:userAliasDataBean" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="authDatas" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="authData" type="tns:authDataBean" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="clearPassword" type="xs:boolean" default="true"/>
+      <xs:element name="comment" type="xs:string" minOccurs="0"/>
+      <xs:element name="displayName" type="xs:string"/>
+      <xs:element name="password" type="xs:string" minOccurs="0"/>
+      <xs:element name="roles">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="role" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="status" type="xs:string"/>
+      <xs:element name="tokens" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="token" type="tns:tokenDataBean" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="userName" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="userAliasDataBean">
+    <xs:sequence>
+      <xs:element name="aliasValue" type="xs:string"/>
+      <xs:element name="comment" type="xs:string" minOccurs="0"/>
+      <xs:element name="aliasType" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="authDataBean">
+    <xs:sequence>
+      <xs:element name="authType" type="xs:int"/>
+      <xs:element name="authValue" type="xs:string"/>
+      <xs:element name="comment" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="tokenDataBean">
+    <xs:sequence>
+      <xs:element name="certificates" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="certificate" type="tns:certificateDataBean" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="comment" type="xs:string" minOccurs="0"/>
+      <xs:element name="profile" type="xs:string"/>
+      <xs:element name="sensitiveData" type="xs:base64Binary" minOccurs="0"/>
+      <xs:element name="serialNumber" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="certificateDataBean">
+    <xs:sequence>
+      <xs:element name="certificateData" type="xs:base64Binary"/>
+      <xs:element name="comment" type="xs:string" minOccurs="0"/>
+      <xs:element name="expireDate" type="xs:dateTime"/>
+      <xs:element name="fingerprint" type="xs:string"/>
+      <xs:element name="issuerDN" type="xs:string"/>
+      <xs:element name="profile" type="xs:string"/>
+      <xs:element name="serialNumber" type="xs:string"/>
+      <xs:element name="status" type="xs:int"/>
+      <xs:element name="subjectDN" type="xs:string"/>
+      <xs:element name="type" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IllegalRequestException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignServerException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AuthorizationDeniedException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="existsToken">
+    <xs:sequence>
+      <xs:element name="tokenSerialNumber" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="existsTokenResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="generateSoftToken">
+    <xs:sequence>
+      <xs:element name="username" type="xs:string" minOccurs="0"/>
+      <xs:element name="password" type="xs:string" minOccurs="0"/>
+      <xs:element name="requests" type="tns:userCertRequestData" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="tokenProfile" type="xs:string" minOccurs="0"/>
+      <xs:element name="tokenSN" type="xs:string" minOccurs="0"/>
+      <xs:element name="overwriteExisting" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="userCertRequestData">
+    <xs:sequence>
+      <xs:element name="certificateProfile" type="xs:string" minOccurs="0"/>
+      <xs:element name="issuerDN" type="xs:string" minOccurs="0"/>
+      <xs:element name="keyAlg" type="xs:string" minOccurs="0"/>
+      <xs:element name="keySpec" type="xs:string" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="subjectAltName" type="xs:string" minOccurs="0"/>
+      <xs:element name="subjectDN" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="generateSoftTokenResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:tokenDataBean" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="checkCertStatus">
+    <xs:sequence>
+      <xs:element name="certificate" type="tns:certificate" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="certificate">
+    <xs:sequence>
+      <xs:element name="certType" type="xs:string" minOccurs="0"/>
+      <xs:element name="certificateBase64" type="xs:string" minOccurs="0"/>
+      <xs:element name="provider" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="checkCertStatusResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:validationResponse" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="validationResponse">
+    <xs:sequence>
+      <xs:element name="revocationDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="revocationReason" type="xs:int"/>
+      <xs:element name="status" type="tns:status" minOccurs="0"/>
+      <xs:element name="statusMessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="validCertificatePurposes" type="xs:string" minOccurs="0"/>
+      <xs:element name="validationDate" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="generateCertificateFromPKCS10">
+    <xs:sequence>
+      <xs:element name="username" type="xs:string" minOccurs="0"/>
+      <xs:element name="pkcs10ReqData" type="tns:pkcs10CertRequestData" minOccurs="0"/>
+      <xs:element name="tokenSN" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="pkcs10CertRequestData">
+    <xs:sequence>
+      <xs:element name="certificateProfile" type="xs:string" minOccurs="0"/>
+      <xs:element name="issuerDN" type="xs:string" minOccurs="0"/>
+      <xs:element name="pkcs10Data" type="xs:base64Binary" minOccurs="0"/>
+      <xs:element name="subjectAltName" type="xs:string" minOccurs="0"/>
+      <xs:element name="subjectDN" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="generateCertificateFromPKCS10Response">
+    <xs:sequence>
+      <xs:element name="return" type="tns:certificate" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="revokeToken">
+    <xs:sequence>
+      <xs:element name="tokenSerialNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="revocationReason" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="revokeTokenResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="editUsers">
+    <xs:sequence>
+      <xs:element name="userData" type="tns:userDataBean" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="editUsersResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="revokeUser">
+    <xs:sequence>
+      <xs:element name="userName" type="xs:string" minOccurs="0"/>
+      <xs:element name="revocationReason" type="xs:int"/>
+      <xs:element name="newUserStatus" type="tns:userStatus" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="revokeUserResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="findUserByUsername">
+    <xs:sequence>
+      <xs:element name="username" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findUserByUsernameResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:userDataBean" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="revokeCertificate">
+    <xs:sequence>
+      <xs:element name="certificate" type="tns:certificate" minOccurs="0"/>
+      <xs:element name="revocationReason" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="revokeCertificateResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="findUsersByAlias">
+    <xs:sequence>
+      <xs:element name="matchType" type="xs:string" minOccurs="0"/>
+      <xs:element name="aliasType" type="xs:string" minOccurs="0"/>
+      <xs:element name="alias" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findUsersByAliasResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:userDataBean" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getCallerUserData">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="getCallerUserDataResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:userDataBean" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getCACertificateChain">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getCACertificateChainResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:certificate" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getCallerOrganizationData">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="getCallerOrganizationDataResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:organizationDataBean" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="organizationDataBean">
+    <xs:sequence>
+      <xs:element name="allowedCertificateProfiles">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="allowedCertificateProfile" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="allowedIssuers">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="allowedIssuer" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="allowedTokenProfiles">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="allowedTokenProfile" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="comment" type="xs:string" minOccurs="0"/>
+      <xs:element name="displayName" type="xs:string"/>
+      <xs:element name="organizationName" type="xs:string"/>
+      <xs:element name="products" type="tns:productsInOrganizationDataBean" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="relatedData" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="property" type="tns:dataBankDataBean" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="status" type="xs:string"/>
+      <xs:element name="type" type="xs:string"/>
+      <xs:element name="users" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="user" type="tns:userDataBean" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="productsInOrganizationDataBean">
+    <xs:sequence>
+      <xs:element name="comment" type="xs:string" minOccurs="0"/>
+      <xs:element name="currency" type="xs:string"/>
+      <xs:element name="priceClass" type="xs:string"/>
+      <xs:element name="productNumber" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="dataBankDataBean">
+    <xs:sequence>
+      <xs:element name="comment" type="xs:string" minOccurs="0"/>
+      <xs:element name="key" type="xs:string"/>
+      <xs:element name="type" type="xs:int"/>
+      <xs:element name="value" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getTokenData">
+    <xs:sequence>
+      <xs:element name="tokenSerialNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="includeSensitiveData" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getTokenDataResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:tokenDataBean" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="status">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="VALID"/>
+      <xs:enumeration value="REVOKED"/>
+      <xs:enumeration value="NOTYETVALID"/>
+      <xs:enumeration value="EXPIRED"/>
+      <xs:enumeration value="DONTVERIFY"/>
+      <xs:enumeration value="CAREVOKED"/>
+      <xs:enumeration value="CANOTYETVALID"/>
+      <xs:enumeration value="CAEXPIRED"/>
+      <xs:enumeration value="BADCERTPURPOSE"/>
+      <xs:enumeration value="ISSUERNOTSUPPORTED"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="userStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="READYFORGENERATION"/>
+      <xs:enumeration value="GENERATED"/>
+      <xs:enumeration value="DISABLED"/>
+      <xs:enumeration value="ARCHIVED"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+

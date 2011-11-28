@@ -42,7 +42,7 @@ public class DocumentSignerTest extends TestCase {
     /** WORKERID used in this test case as defined in 
      * junittest-part-config.properties for XMLSigner. */
     private static final int WORKERID = 5676;
-
+    
     /** WORKERID used in this test case as defined in 
      * junittest-part-config.properties for PDFSigner. */
     private static final int WORKERID2 = 5675;
@@ -167,14 +167,14 @@ public class DocumentSignerTest extends TestCase {
 
     /**
      * Test for the "-pdfpassword" argument.
-     * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf
+     * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/src/test/pdf/sample-open123.pdf
      * @throws Exception
      */
     public void test03signPDFwithPasswordOverHTTP() throws Exception {
         try {
-
+            
             byte[] res = execute("signdocument", "-workername", 
-                    "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
+                    "TestPDFSigner", "-infile", signserverhome + "/src/test/pdf/sample-open123.pdf",
                     "-pdfpassword", "open123");
             assertNotNull("No result", res);
             assertNotSame("Empty result", 0, res.length);
@@ -186,14 +186,14 @@ public class DocumentSignerTest extends TestCase {
     
     /**
      * Test for the "-pdfpassword" argument.
-     * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf -protocol WEBSERVICES
+     * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/src/test/pdf/sample-open123.pdf -protocol WEBSERVICES
      * @throws Exception
      */
     public void test04signPDFwithPasswordOverWebservices() throws Exception {
         try {
             
             byte[] res = execute("signdocument", "-workername", 
-                    "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
+                    "TestPDFSigner", "-infile", signserverhome + "/src/test/pdf/sample-open123.pdf",
                     "-pdfpassword", "open123", "-protocol", "WEBSERVICES",
                     "-truststore", "../../p12/truststore.jks", "-truststorepwd", "changeit");
             assertNotNull("No result", res);

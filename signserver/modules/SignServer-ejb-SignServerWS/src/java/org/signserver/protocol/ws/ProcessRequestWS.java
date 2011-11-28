@@ -32,7 +32,7 @@ import org.signserver.common.RequestAndResponseManager;
 public class ProcessRequestWS {
 
     private String requestDataBase64;
-
+    
     private Map<String, String> requestMetadata = new HashMap<String, String>();
 
     public ProcessRequestWS() {
@@ -87,7 +87,7 @@ public class ProcessRequestWS {
 
     public Map<String, String> getRequestMetadata() {
         return requestMetadata;
-}
+    }
 
     public void setRequestMetadata(Map<String, String> requestMetadata) {
         this.requestMetadata = requestMetadata;

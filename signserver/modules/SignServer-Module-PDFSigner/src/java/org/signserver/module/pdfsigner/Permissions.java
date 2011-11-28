@@ -102,16 +102,16 @@ public class Permissions {
         if (permissionsSet != null) {
             for (String permission: permissionsSet) {
                 if (!permission.isEmpty()) {
-                Integer permissionInt = permissionStringToInt.get(permission);
-                if (permissionInt == null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Unknown permission specified: \"" + permission + "\"");
-                    }
-                } else {
+                    Integer permissionInt = permissionStringToInt.get(permission);
+                    if (permissionInt == null) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Unknown permission specified: \"" + permission + "\"");
+                        }
+                    } else {
                         result |= permissionInt;
+                    }
                 }
             }
-        }
         }
         return result;
     }
@@ -121,16 +121,16 @@ public class Permissions {
         if (permissionsSet != null) {
             for (String permission: permissionsSet) {
                 if (!permission.isEmpty()) {
-                Integer permissionInt = permissionStringToInt.get(permission);
-                if (permissionInt == null) {
-                    if (failOnUnknown) {
-                        throw new UnknownPermissionException(permission);
-                    }
-                } else {
+                    Integer permissionInt = permissionStringToInt.get(permission);
+                    if (permissionInt == null) {
+                        if (failOnUnknown) {
+                            throw new UnknownPermissionException(permission);
+                        }
+                    } else {
                         result |= permissionInt;
+                    }
                 }
             }
-        }
         }
         return result;
     }
@@ -196,7 +196,7 @@ public class Permissions {
         // of permissions BITWISEAND others will be non-zero
         return (permissions & others.permissions) != 0;
     }
-
+    
     /**
      * Get an other Permissions object with the specified permission names 
      * removed. Notice that this method traits all permissions individually. 

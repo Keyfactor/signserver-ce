@@ -89,7 +89,7 @@ public class DocumentSignerCLI {
 
     /** Option PASSWORD. */
     public static final String PASSWORD = "password";
-
+    
     /** Option PDFPASSWORD. */
     public static final String PDFPASSWORD = "pdfpassword";
 
@@ -166,7 +166,7 @@ public class DocumentSignerCLI {
 
     private String username;
     private String password;
-
+    
     private String pdfPassword;
 
     private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();

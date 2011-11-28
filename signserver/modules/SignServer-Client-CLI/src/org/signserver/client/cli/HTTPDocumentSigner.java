@@ -51,7 +51,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
 
     private String username;
     private String password;
-
+    
     /** Password used for changing the PDF if required (user or owner password). */
     private String pdfPassword;
 

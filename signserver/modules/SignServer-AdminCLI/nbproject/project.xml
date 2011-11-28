@@ -11,9 +11,6 @@
                 <root id="test.src.dir"/>
             </test-roots>
         </data>
-        <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
-            <definitions>../../lib/nblibraries.properties</definitions>
-        </libraries>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
                 <foreign-project>SignServer-Common</foreign-project>
@@ -24,7 +21,7 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>SignServer-Module-Renewal-interface</foreign-project>
+                <foreign-project>SignServer-Module-Renewal</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
@@ -32,12 +29,12 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>SignServer-ejb-interfaces</foreign-project>
+                <foreign-project>SignServer-ejb</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
-                <target>jar</target>
+                <target>dist</target>
                 <clean-target>clean</clean-target>
-                <id>jar</id>
+                <id>dist</id>
             </reference>
         </references>
     </configuration>

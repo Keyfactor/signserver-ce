@@ -234,7 +234,7 @@ public class PDFSigner extends BaseSigner {
             throw new IllegalRequestException(
                     "Recieved request data wasn't a expected byte[].");
         }
-
+        
         // Log values
         final Map<String, String> logMap =
                 (Map<String, String>) requestContext.get(RequestContext.LOGMAP);
@@ -314,10 +314,10 @@ public class PDFSigner extends BaseSigner {
         Certificate[] certChain = (Certificate[]) certs.toArray(new Certificate[0]);
         PrivateKey privKey = this.getCryptoToken().getPrivateKey(
                 ICryptoToken.PURPOSE_SIGN);
-
+        
         PdfReader reader = new PdfReader(pdfbytes, password);
         boolean appendMode = true; // TODO: This could be good to have as a property in the future
-
+        
         // Don't certify already certified documents
         if (reader.getCertificationLevel() != PdfSignatureAppearance.NOT_CERTIFIED 
                 && params.getCertification_level() != PdfSignatureAppearance.NOT_CERTIFIED) {
@@ -754,7 +754,7 @@ public class PDFSigner extends BaseSigner {
                 result = null;
             } else {
                 result = password.getBytes("ISO-8859-1");
-}
+            }
         } else {
             result = null;
         }

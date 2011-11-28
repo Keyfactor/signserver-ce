@@ -15,22 +15,6 @@
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
     
-    <target name="-post-dist">
-        <copy todir="../../dist-server/">
-            <fileset dir="dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
-        <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
-        <property name="moduleName" value="signserverejb"/>
-        <property name="distJar" value="SignServer-ejb.jar"/>
-        
-        <property name="base" location="../../"/>
-        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/10_${moduleName}.properties" moduleName="${moduleName}" moduleType="ejb" libsPrefix="../../lib/,${base}/lib" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,${base}/lib/ext/ejb/,${base}/lib/ext/servlet-2.3.jar,${base}/lib/hibernate/,${base}/lib/jaxws/saaj-api.jar,${base}/lib/jaxws/saaj-impl.jar,${base}/lib/javaee-">
-            <property name="module.ejb" value="${distJar}"/>
-        </moddesc>
-    </target>
-    
     <!--
 
     There exist several targets which are by default empty and which can be 

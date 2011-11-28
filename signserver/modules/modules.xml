@@ -40,9 +40,6 @@
     <condition property="webdoc.conditionenabled">
         <istrue value="${webdoc.enabled}"/>
     </condition>
-    <condition property="healthcheck.conditionenabled">
-        <istrue value="${healthcheck.enabled}"/>
-    </condition>
 
     <!-- Enable clients -->
     <condition property="timestampclient.conditionenabled">
@@ -72,17 +69,16 @@
         ===================
     -->
     <target name="-modules-set-appserver-home" depends="-set-from-file,-set-from-env">
-<!--        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>-->
-        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit conf/signserver_build.propertes and set appserver.home."/>
+        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>
+        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit ../signserver_build.propertes and set appserver.home."/>
         <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
     </target>
-    
+
     <target name="-set-from-file" unless="var.APPSRV_HOME">
         <!-- Read properties from the main SignServer configuration if available -->
         <property file="${user.home}/signserver_build.properties" />
         <property file="../../signserver_build.properties" />
-        <property file="../../conf/signserver_build.properties" />
-<!--        <echo message="appserver.home = ${appserver.home}"/>-->
+        <echo message="appserver.home = ${appserver.home}"/>
         <!-- JBoss -->
         <available file="${appserver.home}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${appserver.home}" />
         <!-- GlassFish -->
@@ -92,7 +88,7 @@
     <target name="-set-from-env" unless="var.APPSRV_HOME">
         <!-- Get property from environment variable -->
         <property environment="env" />
-<!--        <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>-->
+        <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>
         <!-- JBoss -->
         <available file="${env.APPSRV_HOME}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
         <!-- GlassFish -->
@@ -131,8 +127,7 @@
         <target name="-module-include">
             <fail unless="moduleEnable.condition"
                 message="Module '${ant.project.name}' must have enabled=true to be included."/>
-                <echo>Copy to ${server.dist.dir}</echo>
-            <copy todir="${server.dist.dir}">
+            <copy todir="${server.dist.dir}/lib">
                 <fileset dir="./dist" includes="*.jar"/>
             </copy>
         </target>
@@ -144,11 +139,10 @@
         <echo message="Module:  ${ant.project.name}"/>
         <property file="${user.home}/signserver_build.properties"/>
         <property file="../../signserver_build.properties"/>
-        <property file="../../conf/signserver_build.properties"/>
-        <property file="../../res/modules-project.properties"/>
+        <property file="../modules-project.properties"/>
         <taskdef name="setmoduleprops"
             classname="org.signserver.anttasks.SetModuleEnablePropertiesTask"
-            classpath="../SignServer-BuildTools/build/classes/"/>
+            classpath="../SignServer-Common/build/classes/"/>
         <setmoduleprops/>
         <echo message="Enable:  ${moduleEnable}"/>
         <echo message="Include: ${moduleInclude}"/>

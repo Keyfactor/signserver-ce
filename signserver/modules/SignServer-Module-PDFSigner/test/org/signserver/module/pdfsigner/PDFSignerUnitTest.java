@@ -74,7 +74,7 @@ public class PDFSignerUnitTest extends TestCase {
 
     private File sampleOk;
     private File sampleRestricted;
-
+    
     private File sample;
     private File sampleOpen123;
     private File sampleOpen123Owner123;
@@ -85,25 +85,25 @@ public class PDFSignerUnitTest extends TestCase {
     private File sampleCertifiedFormFillingAllowed;
     private File sampleSigned;
 //    private File sampleLowprintingOwner123;
-    
+
     public PDFSignerUnitTest() {
         SignServerUtil.installBCProvider();
         File home = new File(System.getenv("SIGNSERVER_HOME"));
         assertTrue("Environment variable SIGNSERVER_HOME", home.exists());
-        sampleOk = new File(home, "res/test/ok.pdf");
-        sampleRestricted = new File(home, "res/test/sample-restricted.pdf");
-        sample = new File(home, "res/test/pdf/sample.pdf");
-        sampleOpen123 = new File(home, "res/test/pdf/sample-open123.pdf");
-        sampleOpen123Owner123 = new File(home, "res/test/pdf/sample-open123-owner123.pdf");
-        sampleOwner123 = new File(home, "res/test/pdf/sample-owner123.pdf");
-        sampleUseraao = new File(home, "res/test/pdf/sample-useraao.pdf");
-        sampleCertifiedSigningAllowed = new File(home, "res/test/pdf/sample-certified-signingallowed.pdf");
-        sampleCertifiedNoChangesAllowed = new File(home, "res/test/pdf/sample-certified-nochangesallowed.pdf");
-        sampleCertifiedFormFillingAllowed = new File(home, "res/test/pdf/sample-certified-formfillingallowed.pdf");
-        sampleSigned = new File(home, "res/test/pdf/sample-signed.pdf");
-//        sampleLowprintingOwner123 = new File(home, "res/test/pdf/sample-lowprinting-owner123.pdf");
+        sampleOk = new File(home, "src/test/ok.pdf");
+        sampleRestricted = new File(home, "src/test/sample-restricted.pdf");
+        sample = new File(home, "src/test/pdf/sample.pdf");
+        sampleOpen123 = new File(home, "src/test/pdf/sample-open123.pdf");
+        sampleOpen123Owner123 = new File(home, "src/test/pdf/sample-open123-owner123.pdf");
+        sampleOwner123 = new File(home, "src/test/pdf/sample-owner123.pdf");
+        sampleUseraao = new File(home, "src/test/pdf/sample-useraao.pdf");
+        sampleCertifiedSigningAllowed = new File(home, "src/test/pdf/sample-certified-signingallowed.pdf");
+        sampleCertifiedNoChangesAllowed = new File(home, "src/test/pdf/sample-certified-nochangesallowed.pdf");
+        sampleCertifiedFormFillingAllowed = new File(home, "src/test/pdf/sample-certified-formfillingallowed.pdf");
+        sampleSigned = new File(home, "src/test/pdf/sample-signed.pdf");
+//        sampleLowprintingOwner123 = new File(home, "src/test/pdf/sample-lowprinting-owner123.pdf");
     }
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -150,7 +150,7 @@ public class PDFSignerUnitTest extends TestCase {
         } catch (IllegalRequestException ignored) {
             // OK
         }
-
+        
         try {
             workerSession.process(
                 WORKER1,
@@ -159,8 +159,8 @@ public class PDFSignerUnitTest extends TestCase {
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
             // OK
-    }
-
+        }
+        
         try {
             workerSession.process(
                 WORKER1,
@@ -606,7 +606,7 @@ public class PDFSignerUnitTest extends TestCase {
             exceptionThrown = false;
         } catch (IOException ok) {
             LOG.debug(ok.getMessage());
-}
+        }
         if (!exceptionThrown) {
             throw new IOException("PDF did not require a password");
         }

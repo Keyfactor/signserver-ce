@@ -27,6 +27,7 @@ SignServer 3.2.1, 2011-11-30
     [DSS-368] - Default to not use clusterclassloader
     [DSS-415] - Improve source code quality
     [DSS-435] - Refuse to certify PDFs already certified and refuse to sign when signing is not allowed
+    [DSS-438] - Retry failed CRL downloads
 
 ** New Feature
 

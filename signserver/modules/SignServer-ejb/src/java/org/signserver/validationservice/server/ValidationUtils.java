@@ -66,7 +66,32 @@ public class ValidationUtils {
             throw new SignServerException(
                     "Error creating BC CertificateFactory provider", e);
         }
-        return fetchCRLFromURL(url, certFactory);
+        return fetchCRLFromURLwithRetry(url, certFactory, 3, 100);
+    }
+
+    private static X509CRL fetchCRLFromURLwithRetry(URL url, CertificateFactory certFactory, int retries, long waitTime) throws SignServerException {
+        X509CRL result = null;
+        Exception lastException = null;
+        for (int i = 0; i < retries && result == null; i++) {
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Fetching CRL from: " + url);
+                }
+                result = fetchCRLFromURL(url, certFactory);
+            } catch (SignServerException ex) {
+                lastException = ex;
+                LOG.info("CRL fetch (" + (i + 1) + " of " + retries + ")" + " failed: " + ex.getMessage());
+                try {
+                    Thread.sleep(waitTime);
+                } catch (InterruptedException ignored) {
+                    break;
+                }
+            }
+        }
+        if (result == null && lastException != null) {
+            throw new SignServerException(lastException.getMessage(), lastException);
+        }
+        return result;
     }
 
     /**

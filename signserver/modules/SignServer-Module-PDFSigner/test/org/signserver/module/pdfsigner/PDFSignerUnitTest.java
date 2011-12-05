@@ -245,6 +245,17 @@ public class PDFSignerUnitTest extends TestCase {
             LOG.debug("OK: " + ok.getMessage());
         }
         
+        // Test with document not contianing any permissions and thus implicitly 
+        // allows everything
+        workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_PRINTING");
+        workerSession.reloadConfiguration(WORKER1);
+        try {
+            signProtectedPDF(sampleOk, null);
+            fail("Should have thrown exception");
+        } catch (IllegalRequestException ok) {
+            LOG.debug("OK: " + ok.getMessage());
+        }
+        
         // Test a document where only low-res printing is allowed
         /* TODO: When found such a document
         workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_PRINTING");

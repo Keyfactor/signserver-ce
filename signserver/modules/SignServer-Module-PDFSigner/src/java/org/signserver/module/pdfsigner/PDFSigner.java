@@ -392,8 +392,12 @@ public class PDFSigner extends BaseSigner {
             currentPermissions = newPermissions;
         }
         
-        if (currentPermissions.containsAnyOf(rejectPermissions)) {
-            throw new IllegalRequestException("Document contains permissions not allowed by this signer");
+        // Reject if any permissions are rejected and the document does not use a permission password
+        // or if it contains any of the rejected permissions
+        if (rejectPermissions.asInt() != 0) {
+            if (cryptoMode < 0 || currentPermissions.containsAnyOf(rejectPermissions)) {
+                throw new IllegalRequestException("Document contains permissions not allowed by this signer");
+            }
         }
         
         // include signer certificate crl inside cms package if requested

@@ -2852,6 +2852,12 @@ Available permissions: The same permission names as for the property REJECT_PERM
 This property can not be specified if REMOVE_PERMISSIONS is used.    
                                         </p>
                                         <p>
+Notice 1: This property and the REMOVE_PERMISSIONS property only sets the permissions setting in the document. All permissions might not be enforced by the PDF reader and some permissions even though specified by this property to be allowed might not be allowed when opening the final document (i.e. if that would invalidate the signature and/or certification).
+                                        </p>
+                                        <p>
+Notice 2: If the document is not already protected by an owner password and the SET_OWNERPASSWORD is not specified a random password will be used as owner password.    
+                                        </p>
+                                        <p>
 Default: unset (permissions are not set by this property)
                                         </p>
                                     </td>
@@ -2871,6 +2877,9 @@ This property can not be specified if SET_PERMISSIONS is used.
                                         </p>
                                         <p>
 Notice: This property only removes the permissions listed even if some permissions (i.e. ALLOW_PRINTING) by the standard gives more permissions (i.e. also ALLOW_DEGRADED_PRINTING). To remove all permissions to print remove both ALLOW_PRINTING and ALLOW_DEGRADED_PRINTING. To still have ALLOW_DEGRADED_PRINTING it is possible to specify to only remove ALLOW_PRINTING.
+                                        </p>
+                                        <p>
+See also Notice 1 and Notice 2 for REMOVE_PERMISSIONS which also applies to this setting.
                                         </p>
                                         <p>
 Removing only ALLOW_DEGRADED_PRINTING has no effect as degraded printing is implicitly allowed if printing is allowed.    

@@ -76,8 +76,10 @@ import com.lowagie.text.pdf.TSAClientBouncyCastle;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
@@ -186,6 +188,9 @@ public class PDFSigner extends BaseSigner {
 
     private Pattern archivetodiskPattern;
 
+    /** Random used for instance when setting a random owner/permissions password*/
+    private SecureRandom random = new SecureRandom();
+    
     @Override
     public void init(int signerId, WorkerConfig config,
             WorkerContext workerContext, EntityManager workerEntityManager) {
@@ -353,10 +358,11 @@ public class PDFSigner extends BaseSigner {
         if (LOG.isDebugEnabled()) {
             StringBuilder buff = new StringBuilder();
             buff.append("Current permissions: ").append(currentPermissions).append("\n")
+                    .append("Remove permissions: ").append(params.getRemovePermissions()).append("\n")
                     .append("Reject permissions: ").append(rejectPermissions).append("\n")
                     .append("New permissions: ").append(newPermissions).append("\n")
                     .append("userPassword: ").append(userPassword == null ? "null" : "yes").append("\n")
-                    .append("ownerPassword: ").append(password == null ? "null" : "yes").append("\n")
+                    .append("ownerPassword: ").append(password == null ? "no" : (isUserPassword(reader, password) ? "no" : "yes")).append("\n")
                     .append("setOwnerPassword: ").append(params.getSetOwnerPassword() == null ? "no" : "yes").append("\n")
                     .append("cryptoMode: ").append(cryptoMode);
             LOG.debug(buff.toString());
@@ -387,6 +393,13 @@ public class PDFSigner extends BaseSigner {
             }
             if (params.getSetOwnerPassword() != null) {
                 password = params.getSetOwnerPassword().getBytes("ISO-8859-1");
+            } else if (isUserPassword(reader, password)) {
+                // We do not have an owner password so lets use a random one
+                password = new byte[16];
+                random.nextBytes(password);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Setting random owner password");
+                }
             }
             stp.setEncryption(userPassword, password, newPermissions.asInt(), cryptoMode);
             currentPermissions = newPermissions;
@@ -763,6 +776,14 @@ public class PDFSigner extends BaseSigner {
             result = null;
         }
         return result;
+    }
+
+    /**
+     * @return True if the supplied password is equal to the user password 
+     * and thus is not the owner password.
+     */
+    private boolean isUserPassword(PdfReader reader, byte[] password) {        
+        return Arrays.equals(reader.computeUserPassword(), password);
     }
 
 }

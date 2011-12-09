@@ -66,6 +66,10 @@
     <import file="${modules}/compile.xml" optional="true"/>
     
     
+    <!-- =================================================================== -->
+    <!-- Help targets                                                        -->
+    <!-- =================================================================== -->
+    
     <target name="help" depends="usage"/>
     <target name="usage" description="Displays usage examples for this Ant script">
         <echo>
@@ -131,6 +135,33 @@ database.password                   = ${database.password}
         </echo>
     </target>
     
+    <target name="showtime">
+        <tstamp>
+                <format property="completiontime" pattern="yyyy-MM-dd HH:mm:ss Z"/>
+        </tstamp>
+        <echo message="Task completed ${completiontime}."/>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Main Clean                                                          -->
+    <!-- =================================================================== -->
+
+    <target name="clean">
+        <echo>Cleaning tmp</echo>
+        <delete dir="${tmp}"/>	
+
+        <!-- Clean everything if this is a source distribution -->
+        <subant target="clean-build" inheritall="true">
+            <fileset dir="${base}" includes="modules/compile.xml"/>
+         </subant>
+    </target>
+
+    
+    <!-- =================================================================== -->
+    <!-- Configuring                                                         -->
+    <!-- =================================================================== -->
+
     <target name="configure-client" description="Configure CLI and GUI">
         <!-- Make a copy of the signserver_cli.properties in bin dir -->
         <copy file="conf/signserver_cli.properties" todir="bin" overwrite="true" failonerror="true"/>
@@ -366,37 +397,11 @@ Configuring EAR...
             </zipfileset>
         </zip>
     </target>
-
-
-    <!-- =================================================================== -->
-    <!-- Main Clean                                                          -->
-    <!-- =================================================================== -->
-
-    <target name="clean">
-        <echo>Cleaning tmp</echo>
-        <delete dir="${tmp}"/>	
-
-        <!-- Clean everything if this is a source distribution -->
-        <subant target="clean-build" inheritall="true">
-            <fileset dir="${base}" includes="modules/compile.xml"/>
-         </subant>
-    </target>
-
-    <!-- =================================================================== -->
-    <!-- Other part                                                        -->
-    <!-- =================================================================== -->
-
-    <target name="showtime">
-        <tstamp>
-                <format property="completiontime" pattern="yyyy-MM-dd HH:mm:ss Z"/>
-        </tstamp>
-        <echo message="Task completed ${completiontime}."/>
-    </target>
- 
     
-    <!-- ======================================================================= -->
-    <!-- Deploy Sign Server ear to JBoss                                               -->
-    <!-- ======================================================================= -->
+    
+    <!-- =================================================================== -->
+    <!-- Deploy target                                                       -->
+    <!-- =================================================================== -->
     <target name="deploy" depends="compose-ear, j2ee:deploy" description="Deploys SignServer">
         <antcall target="showtime" />
     </target>

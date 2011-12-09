@@ -16,8 +16,12 @@
 
     <import file="../build.xml"/>
     <import file="modules.xml"/>
+
+
+    <!-- =================================================================== -->
+    <!-- Main targets                                                        -->
+    <!-- =================================================================== -->
     
-    <!-- Init -->
     <target name="init" depends="display-build-properties">
         <antcall target="j2ee:check"/>
         <!-- Create the time stamp -->
@@ -115,6 +119,10 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
     </target>
 
 
+    <!-- =================================================================== -->
+    <!-- Sub build targets                                                   -->
+    <!-- =================================================================== -->
+
      <!-- SignServer-Common -->
      <target name="signserver-common"> <!-- TODO: Move copying of files to the project build.xml -->
         <ant inheritall="false" target="jar"
@@ -133,7 +141,6 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
         </copy>
      </target>
 
-
      <!-- SignServer-ejb -->
      <target name="signserver-ejb">  <!-- TODO: Move copying of files to the project build.xml -->
         <ant inheritall="false" target="dist"
@@ -145,7 +152,6 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
             </fileset>
         </copy>
      </target>
-
 
     <!-- AdminCLI -->
     <target name="signserver-cli" depends="signserver-common, signserver-ejb"
@@ -171,7 +177,6 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
     	<copy file="${appserver.home}/lib/appserv-ext.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
     </target>
 
-
     <!-- AdminGUI -->
     <target name="admingui" description="Build the administration GUI">
         <ant antfile="${admingui.dir}/build.xml" target="jar" inheritall="false"/>
@@ -189,25 +194,10 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
         <antcall target="clientcli"/>
     </target>
 
-
-    <!-- =================================================================== -->
-    <!-- Build preparation for package distribution                         -->
-    <!-- =================================================================== -->
-
-    <target name="pkgdist" depends="signserver-cli, signserver-pkgdist"/>
-
-    <!-- =================================================================== -->
-    <!-- Documentation part                                                  -->
-    <!-- =================================================================== -->
     <target name="doc" description="Build SignServer web site and docs">
         <ant antfile="modules/SignServer-Doc/build.xml" target="build"
             inheritall="false"/>
     </target>
-    
-    
-    <!-- =================================================================== -->
-    <!-- Build Javadoc part                                                  -->
-    <!-- =================================================================== -->
 
     <target name="javadoc" depends="build"
         description="Build JavaDoc for SignServer">
@@ -240,6 +230,41 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
                 <classpath path="lib/swing-app-framework/appframework-1.0.3.jar:lib/swing-app-framework/swing-worker-1.1.jar:lib/beans-binding/beansbinding-1.2.1.jar"/>
         </javadoc>
         <echo message="Local documentation is now available in file://${apidoc}/index.html"/>
+    </target>
+
+    <target name="signserver-ejb.jar" depends="init">
+        <ant antfile="${signserverejb.dir}/build.xml" target="dist" inheritall="false"/>
+    </target>
+	       
+    <target name="web.war">
+        <ant antfile="modules/SignServer-war/build.xml" target="dist" inheritall="false"/>
+        <copy todir="${server.dist.dir}" file="modules/SignServer-war/dist/signserver.war" failonerror="true"/>
+    </target>
+
+    <target name="healthcheck.war" if="healthcheck.conditionenabled">
+        <ant antfile="modules/SignServer-war-Healthcheck/build.xml" target="dist" inheritall="false"/>
+        <copy todir="${server.dist.dir}" file="modules/SignServer-war-Healthcheck/dist/SignServer-war-Healthcheck.war" failonerror="true"/>
+    </target>
+
+    <!-- SignServerWS -->
+    <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
+        <ant antfile="${signserverws.dir}/build.xml" target="dist" inheritall="false"/>
+    </target>
+
+    <!-- ValidationWS -->
+    <target name="validationws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
+        <ant antfile="${validationws.dir}/build.xml" target="dist" inheritall="false"/>
+    </target>
+
+    <!-- AdminWS -->
+    <target name="adminws-ejb.jar" depends="signserver-ejb.jar" if="adminws.conditionenabled">
+        <ant antfile="${adminws.dir}/build.xml" target="dist" inheritall="false"/>
+    </target>
+
+    <!-- Local documentation -->
+    <target name="doc.war" if="webdoc.conditionenabled">
+        <ant antfile="${webdoc.dir}/build.xml" target="dist" inheritall="false"/>
+        <copy todir="${server.dist.dir}" file="${webdoc.war}" failonerror="true"/>
     </target>
     
 
@@ -431,59 +456,10 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
         <echo message="SHA1 checksum: ${signserverSHA1}" />
     </target>
 
-    <!-- =================================================================== -->
-    <!-- Build signserver ejb part                                           -->
-    <!-- =================================================================== -->
-
-    <target name="signserver-ejb.jar" depends="init">
-        <ant antfile="${signserverejb.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-	       
-	
-    <!-- =================================================================== -->
-    <!-- Build web part                                                      -->
-    <!-- =================================================================== -->
-    <target name="web.war">
-        <ant antfile="modules/SignServer-war/build.xml" target="dist" inheritall="false"/>
-        <copy todir="${server.dist.dir}" file="modules/SignServer-war/dist/signserver.war" failonerror="true"/>
-    </target>
-
 
     <!-- =================================================================== -->
-    <!-- Build health check part                                             -->
+    <!-- Tests                                                               -->
     <!-- =================================================================== -->
-    <target name="healthcheck.war" if="healthcheck.conditionenabled">
-        <ant antfile="modules/SignServer-war-Healthcheck/build.xml" target="dist" inheritall="false"/>
-        <copy todir="${server.dist.dir}" file="modules/SignServer-war-Healthcheck/dist/SignServer-war-Healthcheck.war" failonerror="true"/>
-    </target>
-
-
-    <!-- SignServerWS -->
-    <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
-        <ant antfile="${signserverws.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-
-    <!-- ValidationWS -->
-    <target name="validationws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
-        <ant antfile="${validationws.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-
-    <!-- AdminWS -->
-    <target name="adminws-ejb.jar" depends="signserver-ejb.jar" if="adminws.conditionenabled">
-        <ant antfile="${adminws.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-
-    <!-- Local documentation -->
-    <target name="doc.war" if="webdoc.conditionenabled">
-        <ant antfile="${webdoc.dir}/build.xml" target="dist" inheritall="false"/>
-        <copy todir="${server.dist.dir}" file="${webdoc.war}" failonerror="true"/>
-    </target>
-
-    <!-- =================================================================== -->
-    <!-- Build signserver.ear                                                -->
-    <!-- =================================================================== -->
-    
-    
 
     <target name="test:signserver:pre-run">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
@@ -587,24 +563,6 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
         </ant>
     </target>
 
-    <target name="genservercert.jar" depends="signserver-cli">
-        <jar destfile="${tmp}/${genServerCertJar}" basedir="${base}/modules/SignServer-AdminCLI/build/classes/">
-            <manifest>
-                <attribute name="Class-Path" value="bcprov-jdk.jar"/>
-                <attribute name="Main-Class" value="org.signserver.cli.genservercert.GenServerCertificate"/>
-            </manifest>
-            <include name="org/signserver/cli/genservercert/*.class"/>
-        </jar>
-    </target>
-    <target name="setdbtype.jar" depends="signserver-cli">
-        <jar destfile="${tmp}/${setDBTypeJar}" basedir="${base}/modules/SignServer-AdminCLI/build/classes/">
-            <manifest>
-                <attribute name="Class-Path" value=""/>
-                <attribute name="Main-Class" value="org.signserver.cli.setdbtype.SetDBType"/>
-            </manifest>
-            <include name="org/signserver/cli/setdbtype/*.class"/>
-        </jar>
-    </target>
 
     <!-- =================================================================== -->
     <!-- Debian packaging                                                    -->
@@ -811,6 +769,10 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
     <!-- =================================================================== -->
     <!-- Legacy packaging                                                    -->
     <!-- =================================================================== -->
+    
+    <!-- Build preparation for package distribution                         -->
+    <target name="pkgdist" depends="signserver-cli, signserver-pkgdist"/>
+    
     <target name="signserver-pkgdist" depends="signserver-pkgdist-server, signserver-pkgdist-mgmt,genservercert.jar, setdbtype.jar">
     </target>
     		
@@ -949,18 +911,37 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
         </copy>
     </target>
 
-	
-     <!--                                                   -->
-     <!-- Target Used to perform validations using CLI     -->
-     <!--                                                   -->
+
+    <!-- =================================================================== -->
+    <!-- Other                                                               -->
+    <!-- =================================================================== -->
+
+    <target name="genservercert.jar" depends="signserver-cli">
+        <jar destfile="${tmp}/${genServerCertJar}" basedir="${base}/modules/SignServer-AdminCLI/build/classes/">
+            <manifest>
+                <attribute name="Class-Path" value="bcprov-jdk.jar"/>
+                <attribute name="Main-Class" value="org.signserver.cli.genservercert.GenServerCertificate"/>
+            </manifest>
+            <include name="org/signserver/cli/genservercert/*.class"/>
+        </jar>
+    </target>
+    <target name="setdbtype.jar" depends="signserver-cli">
+        <jar destfile="${tmp}/${setDBTypeJar}" basedir="${base}/modules/SignServer-AdminCLI/build/classes/">
+            <manifest>
+                <attribute name="Class-Path" value=""/>
+                <attribute name="Main-Class" value="org.signserver.cli.setdbtype.SetDBType"/>
+            </manifest>
+            <include name="org/signserver/cli/setdbtype/*.class"/>
+        </jar>
+    </target>
+    
+     <!-- Target Used to perform validations using CLI -->
     <target name="validationClient" if="validationclient.conditionenabled" >
         <ant target="test" inheritall="false"
             antfile="${clientvalidationcli.dir}/build.xml"/>
     </target>
 	
-     <!--                                                 -->
-     <!--   Target for building signingAndValidationAPI   -->
-     <!--                                                 -->
+     <!-- Target for building signingAndValidationAPI -->
     <target name="signingAndValidationAPI" depends="signserver-ejb.jar" if="signingandvalidationapi.conditionenabled" >
         <ant target="jar" inheritall="false"
             antfile="${clientsigningandvalidationapi.dir}/build.xml"/>

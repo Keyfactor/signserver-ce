@@ -13,6 +13,7 @@
 package org.signserver.module.pdfsigner;
 
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.exceptions.BadPasswordException;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import java.io.BufferedInputStream;
@@ -68,13 +69,14 @@ public class PDFSignerUnitTest extends TestCase {
             "org.signserver.server.cryptotokens.HardCodedCryptoToken";
     private final String SAMPLE_OWNER123_PASSWORD = "owner123";
     private final String SAMPLE_USER_AAA_PASSWORD = "user\u00e5\u00e4\u00f6";
+    private final String SAMPLE_OPEN123_PASSWORD = "open123";
     
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
 
     private File sampleOk;
     private File sampleRestricted;
-
+    
     private File sample;
     private File sampleOpen123;
     private File sampleOpen123Owner123;
@@ -85,7 +87,7 @@ public class PDFSignerUnitTest extends TestCase {
     private File sampleCertifiedFormFillingAllowed;
     private File sampleSigned;
 //    private File sampleLowprintingOwner123;
-    
+
     public PDFSignerUnitTest() {
         SignServerUtil.installBCProvider();
         File home = new File(System.getenv("SIGNSERVER_HOME"));
@@ -103,7 +105,7 @@ public class PDFSignerUnitTest extends TestCase {
         sampleSigned = new File(home, "res/test/pdf/sample-signed.pdf");
 //        sampleLowprintingOwner123 = new File(home, "res/test/pdf/sample-lowprinting-owner123.pdf");
     }
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -150,7 +152,7 @@ public class PDFSignerUnitTest extends TestCase {
         } catch (IllegalRequestException ignored) {
             // OK
         }
-
+        
         try {
             workerSession.process(
                 WORKER1,
@@ -159,8 +161,8 @@ public class PDFSignerUnitTest extends TestCase {
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
             // OK
-    }
-
+        }
+        
         try {
             workerSession.process(
                 WORKER1,
@@ -278,15 +280,15 @@ public class PDFSignerUnitTest extends TestCase {
      */
     public void test04SetPermissions() throws Exception {
         
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_COPY", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList( "ALLOW_FILL_IN"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, new LinkedList<String>());
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_FILL_IN"));
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, new LinkedList<String>());
         
         // Without SET_PERMISSIONS the original permissions should remain
         // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
@@ -298,22 +300,60 @@ public class PDFSignerUnitTest extends TestCase {
         assertEquals(expected, actual.asSet());
     }
     
-    private void doTestSetPermissions(int workerId, File pdf, String password, Collection<String> permissions) throws Exception {
+    /** Tests the property SET_PERMISSIONS by setting different values and make 
+     * sure they end up in the signed PDF. Also tests that when not setting 
+     * the property the original permissions remain.
+     * This time for documents without owner password set or with both user 
+     * and owner passwords.
+     */
+    public void test04SetPermissionsWithoutOwner() throws Exception {
+        doTestSetPermissions(WORKER1, sample, null, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOpen123, null, SAMPLE_OPEN123_PASSWORD, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOpen123Owner123, SAMPLE_OWNER123_PASSWORD, SAMPLE_OPEN123_PASSWORD, Arrays.asList( "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+    }
+    
+    private void doTestSetPermissions(int workerId, File pdf, String ownerPassword, String userPassword, Collection<String> permissions) throws Exception {
         Set<String> expected = new HashSet<String>(permissions);
         workerSession.setWorkerProperty(workerId, "SET_PERMISSIONS", toString(expected, ","));
         workerSession.reloadConfiguration(workerId);
-        Permissions actual = getPermissions(signProtectedPDF(pdf, password), 
-                password == null ? null : password.getBytes("ISO-8859-1"));
+        String password = ownerPassword == null ? userPassword : ownerPassword;
+        byte[] pdfbytes = signProtectedPDF(pdf, password);
+        Permissions actual = getPermissions(pdfbytes, 
+                userPassword == null ? (ownerPassword == null ? null : ownerPassword.getBytes("ISO-8859-1")) : userPassword.getBytes("ISO-8859-1"));
         assertEquals(expected, actual.asSet());
+        
+        // Check that user password hasn't become the owner password (unless it already were)
+        if (ownerPassword != null && userPassword != null && !ownerPassword.equals(userPassword)) {
+            assertUserNotOwnerPassword(pdfbytes, userPassword);
+        }
+        
+        // Check that the document is protected by an permissions password
+        PdfReader reader = new PdfReader(pdfbytes, userPassword == null ? null : userPassword.getBytes("ISO-8859-1"));
+        assertFalse("Should not be openned with full permissions", 
+                reader.isOpenedWithFullPermissions());
     }
     
-    private void doTestRemovePermissions(int workerId, File pdf, String password, Collection<String> removePermissions, Collection<String> expected) throws Exception {
+    private byte[] doTestRemovePermissions(int workerId, File pdf, String ownerPassword, String userPassword, Collection<String> removePermissions, Collection<String> expected) throws Exception {
         Set<String> expectedSet = new HashSet<String>(expected);
         workerSession.setWorkerProperty(workerId, "REMOVE_PERMISSIONS", toString(removePermissions, ","));
         workerSession.reloadConfiguration(workerId);
-        Permissions actual = getPermissions(signProtectedPDF(pdf, password), 
-                password.getBytes("ISO-8859-1"));
+        byte[] pdfbytes = signProtectedPDF(pdf, ownerPassword == null ? userPassword : ownerPassword);
+        Permissions actual = getPermissions(pdfbytes, ownerPassword == null ? (userPassword == null ? null : userPassword.getBytes("ISO-8859-1")) : ownerPassword.getBytes("ISO-8859-1"));
         assertEquals(expectedSet, actual.asSet());
+        
+        // Check that user password hasn't become the owner password (unless it already were)
+        if (ownerPassword != null && userPassword != null && !ownerPassword.equals(userPassword)) {
+            assertUserNotOwnerPassword(pdfbytes, userPassword);
+        }
+        
+        // If some permissions are removed, check that the document is protected by an permissions password
+        if (!removePermissions.isEmpty()) {
+            PdfReader reader = new PdfReader(pdfbytes, userPassword == null ? null : userPassword.getBytes("ISO-8859-1"));
+            assertFalse("Should not be openned with full permissions", 
+                    reader.isOpenedWithFullPermissions());
+        }
+        
+        return pdfbytes;
     }
     
     private static String toString(Collection<String> collection, String separator) {
@@ -330,13 +370,30 @@ public class PDFSignerUnitTest extends TestCase {
      */
     public void test04RemovePermissions() throws Exception {
         // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_FILL_IN"), Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_MODIFY_ANNOTATIONS"), Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_CONTENTS"));
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_FILL_IN"), Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_MODIFY_ANNOTATIONS"), Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_CONTENTS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS"));
         
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_FILL_IN"));
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_MODIFY_ANNOTATIONS"));
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS"), Arrays.asList("ALLOW_MODIFY_CONTENTS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_FILL_IN"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_MODIFY_ANNOTATIONS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS"), Arrays.asList("ALLOW_MODIFY_CONTENTS"));
+    }
+    
+    public void test04RemovePermissionsWithoutOwner() throws Exception {
+        
+        // Removing any permissions should protected the document even 
+        // if it did not contain the permission before but was unprotected
+        // (unprotected means all permissions)
+        Collection<String> anyPermissions = Arrays.asList("ALLOW_FILL_IN");
+        
+        // sample has Permissions(0)
+        byte[] pdfbytes = doTestRemovePermissions(WORKER1, sample, null, null, anyPermissions, new LinkedList<String>());
+        assertUserNotOwnerPassword(pdfbytes, null);
+        
+        // sampleOpen123 has Permissions(-1028)[ALLOW_FILL_IN, ALLOW_MODIFY_ANNOTATIONS, ALLOW_DEGRADED_PRINTING, ALLOW_SCREENREADERS, ALLOW_COPY, ALLOW_PRINTING, ALLOW_MODIFY_CONTENTS]
+        Collection<String> anyPermissionsRemoved = Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_DEGRADED_PRINTING", "ALLOW_SCREENREADERS", "ALLOW_COPY", "ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS");
+        pdfbytes = doTestRemovePermissions(WORKER1, sampleOpen123, null, SAMPLE_OPEN123_PASSWORD, anyPermissions, anyPermissionsRemoved);
+        assertUserNotOwnerPassword(pdfbytes, SAMPLE_OPEN123_PASSWORD);
     }
     
     /**
@@ -398,7 +455,7 @@ public class PDFSignerUnitTest extends TestCase {
      * not previously protected by any password.
      */
     public void test07ChangePermissionOfUnprotectedDocument() throws Exception {
-        doTestSetPermissions(WORKER1, sampleOk, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(WORKER1, sampleOk, null, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
     }
     
     /**
@@ -607,6 +664,7 @@ public class PDFSignerUnitTest extends TestCase {
         // This will fail unless password is owner or user
         System.out.println("password: " + password);
         PdfReader reader = new PdfReader(pdfBytes, password.getBytes("ISO-8859-1"));
+        reader.close();
         
         // Still if the document did not contain a password it would not have failed yet
         // Test that it really fails when specifying a wrong password
@@ -617,9 +675,34 @@ public class PDFSignerUnitTest extends TestCase {
             exceptionThrown = false;
         } catch (IOException ok) {
             LOG.debug(ok.getMessage());
-}
+        }
         if (!exceptionThrown) {
             throw new IOException("PDF did not require a password");
+        }
+    }
+    
+    /**
+     * Asserts that the supplied password is user but not an owner password.
+     */
+    private static void assertUserNotOwnerPassword(byte[] pdfBytes, String password) throws IOException, DocumentException {
+        // This will fail unless password is owner or user
+        PdfReader reader;
+        PdfStamper stp;
+        try {
+            reader = new PdfReader(pdfBytes, password == null ? null : password.getBytes("ISO-8859-1"));
+        } catch (BadPasswordException ex) {
+            fail("Not a valid password: " + ex.getMessage());
+            return;
+        }
+        
+        try {
+            // This should fail if password is not owner
+            ByteArrayOutputStream fout = new ByteArrayOutputStream();
+            stp = PdfStamper.createSignature(reader, fout, '\0', null, false);
+            stp.setEncryption(reader.computeUserPassword(), password == null ? null : password.getBytes("ISO-8859-1"), 0, 1);
+            fail("Password was an owner password");
+        } catch (BadPasswordException ok) {
+            LOG.debug("ok: " + ok.getMessage());
         }
     }
     

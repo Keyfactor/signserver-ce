@@ -124,61 +124,22 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
     <!-- =================================================================== -->
 
      <!-- SignServer-Common -->
-     <target name="signserver-common"> <!-- TODO: Move copying of files to the project build.xml -->
-        <ant inheritall="false" target="jar"
-            antfile="${signservercommon.dir}/build.xml"/>
-        <mkdir dir="dist-client/lib" />
-        <copy todir="dist-client/lib">
-            <fileset dir="${signservercommon.dir}/dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
-        <mkdir dir="dist-server" />
-        <copy todir="dist-server">
-            <fileset dir="${signservercommon.dir}/dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
+     <target name="signserver-common"> <!-- TODO: Make this build by a generic mechanism -->
+        <ant inheritall="false" target="jar" antfile="${signservercommon.dir}/build.xml"/>
      </target>
 
      <!-- SignServer-ejb -->
-     <target name="signserver-ejb">  <!-- TODO: Move copying of files to the project build.xml -->
-        <ant inheritall="false" target="dist"
-            antfile="${signserverejb.dir}/build.xml"/>
-        <mkdir dir="dist-client/lib" />
-        <copy todir="dist-client/lib">
-            <fileset dir="${signserverejb.dir}/dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
+     <target name="signserver-ejb">  <!-- TODO: Make this build by a generic mechanism -->
+        <ant inheritall="false" target="dist" antfile="${signserverejb.dir}/build.xml"/>
      </target>
 
     <!-- AdminCLI -->
-    <target name="signserver-cli" depends="signserver-common, signserver-ejb"
-        description="Build SignServer AdminCLI">
-        <ant inheritall="false" target="jar"
-            antfile="${admincli.dir}/build.xml"/>
-	
-    	<echo message="Ignore warnings about jar files that can not be copied, they are for other application servers"/>
-    	<!-- JBoss:
-            For JBoss 4.2.3.GA only jbossall-client.jar is needed.
-            For JBoss 5.1.0.GA jbossall-client.jar is referencing the needed
-            libraries so all of them needs to be copied.
-            <copy file="${appserver.home}/client/jbossall-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/>
-        -->
-        <copy todir="${client.dist.dir}/lib" failonerror="false">
-          <fileset dir="${appserver.home}/client">
-             <include name="*.jar"/>
-           </fileset>
-       </copy>
-    	<!-- Glassfish -->
-    	<copy file="${appserver.home}/lib/appserv-rt.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
-    	<copy file="${appserver.home}/lib/appserv-deployment-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
-    	<copy file="${appserver.home}/lib/appserv-ext.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
+    <target name="signserver-cli" depends="signserver-common, signserver-ejb" description="Build SignServer AdminCLI">  <!-- TODO: Make this build by a generic mechanism -->
+        <ant inheritall="false" target="jar" antfile="${admincli.dir}/build.xml"/>
     </target>
 
     <!-- AdminGUI -->
-    <target name="admingui" description="Build the administration GUI">
+    <target name="admingui" description="Build the administration GUI">  <!-- TODO: Make this build by a generic mechanism -->
         <ant antfile="${admingui.dir}/build.xml" target="jar" inheritall="false"/>
     </target>
     <target name="-build-admingui" if="admingui.conditionenabled">
@@ -186,19 +147,50 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
     </target>
 
     <!-- ClientCLI -->
-    <target name="clientcli" description="Build the client CLI">
-        <ant antfile="${clientcli.dir}/build.xml" target="jar"
-            inheritall="false"/>
+    <target name="clientcli" description="Build the client CLI"> <!-- TODO: Make this build by a generic mechanism -->
+        <ant antfile="${clientcli.dir}/build.xml" target="jar" inheritall="false"/>
     </target>
     <target name="-build-clientcli" if="clientcli.conditionenabled">
         <antcall target="clientcli"/>
     </target>
 
-    <target name="doc" description="Build SignServer web site and docs">
+    <target name="doc" description="Build SignServer web site and docs"> <!-- TODO: Make this build by a generic mechanism -->
         <ant antfile="modules/SignServer-Doc/build.xml" target="build"
             inheritall="false"/>
     </target>
 
+    <target name="signserver-ejb.jar" depends="init"> <!-- TODO: Make this build by a generic mechanism -->
+        <ant antfile="${signserverejb.dir}/build.xml" target="dist" inheritall="false"/>
+    </target>
+	       
+    <target name="web.war"> <!-- TODO: Make this build by a generic mechanism -->
+        <ant antfile="modules/SignServer-war/build.xml" target="dist" inheritall="false"/>
+    </target>
+
+    <target name="healthcheck.war" if="healthcheck.conditionenabled"> <!-- TODO: Make this build by a generic mechanism -->
+        <ant antfile="modules/SignServer-war-Healthcheck/build.xml" target="dist" inheritall="false"/>
+    </target>
+
+    <!-- SignServerWS -->
+    <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled"> <!-- TODO: Make this build by a generic mechanism -->
+        <ant antfile="${signserverws.dir}/build.xml" target="dist" inheritall="false"/>
+    </target>
+
+    <!-- ValidationWS -->
+    <target name="validationws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled"> <!-- TODO: Make this build by a generic mechanism -->
+        <ant antfile="${validationws.dir}/build.xml" target="dist" inheritall="false"/>
+    </target>
+
+    <!-- AdminWS -->
+    <target name="adminws-ejb.jar" depends="signserver-ejb.jar" if="adminws.conditionenabled"> <!-- TODO: Make this build by a generic mechanism -->
+        <ant antfile="${adminws.dir}/build.xml" target="dist" inheritall="false"/>
+    </target>
+
+    <!-- Local documentation -->
+    <target name="doc.war" if="webdoc.conditionenabled"> <!-- TODO: Make this build by a generic mechanism -->
+        <ant antfile="${webdoc.dir}/build.xml" target="dist" inheritall="false"/>
+    </target>
+    
     <target name="javadoc" depends="build"
         description="Build JavaDoc for SignServer">
         <!-- Load the classpath variable -->
@@ -232,41 +224,6 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
         <echo message="Local documentation is now available in file://${apidoc}/index.html"/>
     </target>
 
-    <target name="signserver-ejb.jar" depends="init">
-        <ant antfile="${signserverejb.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-	       
-    <target name="web.war">
-        <ant antfile="modules/SignServer-war/build.xml" target="dist" inheritall="false"/>
-        <copy todir="${server.dist.dir}" file="modules/SignServer-war/dist/signserver.war" failonerror="true"/>
-    </target>
-
-    <target name="healthcheck.war" if="healthcheck.conditionenabled">
-        <ant antfile="modules/SignServer-war-Healthcheck/build.xml" target="dist" inheritall="false"/>
-        <copy todir="${server.dist.dir}" file="modules/SignServer-war-Healthcheck/dist/SignServer-war-Healthcheck.war" failonerror="true"/>
-    </target>
-
-    <!-- SignServerWS -->
-    <target name="signserverws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
-        <ant antfile="${signserverws.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-
-    <!-- ValidationWS -->
-    <target name="validationws-ejb.jar" depends="signserver-ejb.jar" if="signserverws.conditionenabled">
-        <ant antfile="${validationws.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-
-    <!-- AdminWS -->
-    <target name="adminws-ejb.jar" depends="signserver-ejb.jar" if="adminws.conditionenabled">
-        <ant antfile="${adminws.dir}/build.xml" target="dist" inheritall="false"/>
-    </target>
-
-    <!-- Local documentation -->
-    <target name="doc.war" if="webdoc.conditionenabled">
-        <ant antfile="${webdoc.dir}/build.xml" target="dist" inheritall="false"/>
-        <copy todir="${server.dist.dir}" file="${webdoc.war}" failonerror="true"/>
-    </target>
-    
 
     <!-- =================================================================== -->
     <!-- Test part                                                           -->

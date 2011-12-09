@@ -21,6 +21,12 @@
                 <include name="*.jar"/>
             </fileset>
         </copy>
+        <mkdir dir="../../dist-client/lib" />
+        <copy todir="../../dist-client/lib">
+            <fileset dir="dist">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
         <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
         <property name="moduleName" value="signserverejb"/>
         <property name="distJar" value="SignServer-ejb.jar"/>

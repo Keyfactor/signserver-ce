@@ -211,6 +211,8 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
 
     <target name="javadoc" depends="build"
         description="Build JavaDoc for SignServer">
+        <!-- Load the classpath variable -->
+        <property file="lib/nblibraries.properties"/>
         <mkdir dir="${apidoc}" />
         <javadoc failonerror="true" useexternalfile="true" packagenames="org.signserver.*" maxmemory="256m" destdir="${apidoc}"
         	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/ext/james:${lib}/asm:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/reports:${lib}/quartz:${lib}/jaxws:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2011 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
@@ -218,7 +220,23 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
                 <!-- Include all java files in the modules folder but excluding the tests -->
                 <fileset dir="modules" includes="**/*.java" excludes="*/test/**/*.java"/>
                 
-                <classpath refid="server.compile.classpath"/>
+                <!-- When possible: this should be moved out to a properties file instead -->
+                <classpath>
+                    <fileset dir="lib/ext" includes="*.jar" />
+                    <fileset dir="dist-server/lib" includes="*.jar"/>
+                    <fileset dir="lib" includes="*.jar" />
+                    <fileset dir="lib/quartz" includes="*.jar" />
+                    <fileset dir="lib/1.6" includes="*.jar" />
+                    <fileset dir="lib/module/tsa/${client.java.target}" includes="*.jar" />
+                    <fileset dir="lib/module/pdfsigner/itext" includes="*.jar"/>
+                    <fileset dir="lib/module/odfsigner" includes="*.jar"/>
+                    <fileset dir="lib/module/ooxmlsigner" includes="*.jar"/>
+                    <fileset dir="lib/jaxws" includes="*.jar" />
+                    <fileset dir="lib/asm" includes="*.jar" />
+                    <fileset dir="lib/hibernate" includes="*.jar"/>
+                    <fileset dir="${ant.home}/lib" includes="ant.jar" />
+                    <path path="${libs.JBoss-Java-EE-Library.classpath}" />                    
+                </classpath>
                 <classpath path="lib/swing-app-framework/appframework-1.0.3.jar:lib/swing-app-framework/swing-worker-1.1.jar:lib/beans-binding/beansbinding-1.2.1.jar"/>
         </javadoc>
         <echo message="Local documentation is now available in file://${apidoc}/index.html"/>

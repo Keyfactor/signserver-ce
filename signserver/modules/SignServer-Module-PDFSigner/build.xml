@@ -16,8 +16,10 @@
     <!-- Import property file containing version numbers and other constants -->
     <property file="../../res/compile.properties"/>
 
+    <property name="dist-module.available" value="true"/>
+    <property name="clean.available" value="true"/>
     
-    <target name="-post-jar" depends="pdfsignermar">
+    <target name="dist-module" depends="jar,pdfsignermar">
         <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
         <property name="moduleName" value="module.pdfsigner"/>
         <property name="distJar" value="SignServer-Module-PDFSigner.jar"/>

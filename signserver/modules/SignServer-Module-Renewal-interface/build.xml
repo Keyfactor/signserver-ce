@@ -17,6 +17,11 @@
     <property file="../../res/compile.properties"/>
 
     <property name="modulename" value="renewal-interface"/>
+    <property name="clean.available" value="true"/>
+    <property name="dist-module.available" value="true"/>
+    
+    <target name="dist-module" depends="jar"/>
+    
     <!--
 
     There exist several targets which are by default empty and which can be 

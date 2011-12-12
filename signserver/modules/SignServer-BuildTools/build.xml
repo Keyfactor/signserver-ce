@@ -10,6 +10,7 @@
 <project name="SignServer-BuildTools" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-BuildTools.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
     
     <target name="-post-jar">
         <copy todir="../../dist-server/">

@@ -10,6 +10,7 @@
 <project name="SignServer-Test-Utils" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Test-Utils.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
     <!--
 
     There exist several targets which are by default empty and which can be 

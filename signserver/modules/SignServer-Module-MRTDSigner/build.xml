@@ -16,10 +16,12 @@
     <!-- Import property file containing version numbers and other constants -->
     <property file="../../res/compile.properties"/>
 
+    <property name="dist-module.available" value="true"/>
+    <property name="clean.available" value="true"/>
     <property name="modulename" value="mrtdsigner"/>
 
     <!-- Create MAR -->
-    <target name="-post-jar" depends="mrtdsignermar,descriptor"/>
+    <target name="dist-module" depends="jar,mrtdsignermar,descriptor"/>
     <target name="descriptor">
         <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
         <property name="moduleName" value="module.mrtdsigner"/>

@@ -10,6 +10,7 @@
 <project name="SignServer-Common" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Common.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
 
     <target name="-post-jar">
         <mkdir dir="../../dist-client/lib" />

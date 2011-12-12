@@ -11,6 +11,10 @@
     <description>Builds, tests, and runs the project SignServer-ejb-ValidationWS.</description>
     <import file="nbproject/build-impl.xml"/>
     <import file="../modules.xml"/>
+    
+    <property name="modulename" value="validationws"/>
+    <property name="dist-module.available" value="true"/>
+    <property name="clean.available" value="true"/>
 
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
@@ -29,7 +33,7 @@ Remember to update the soap:address location in the WSDL to start with
         </echo>
     </target>
     
-    <target name="-post-dist">
+    <target name="dist-module" depends="dist">
         <copy todir="../../dist-server/">
             <fileset dir="dist">
                 <include name="*.jar"/>

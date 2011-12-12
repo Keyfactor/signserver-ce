@@ -28,14 +28,10 @@ public class SetModuleEnablePropertiesTask extends Task {
     @Override
     public void execute() throws BuildException {
         final String projectName = getProject().getProperty("ant.project.name");
-        final String enablename = "module." + projectName + ".enabled";
-        final String includename = "module." + projectName + ".include";
+        final String enablename = projectName + ".enabled";
         getProject().setProperty("moduleEnableProperty", enablename);
-        getProject().setProperty("moduleIncludeProperty", includename);
         getProject().setProperty("moduleEnable",
                 getProject().getProperty(enablename));
-        getProject().setProperty("moduleInclude",
-                getProject().getProperty(includename));
     }
     
 }

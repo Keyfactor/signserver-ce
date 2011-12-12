@@ -11,9 +11,13 @@
     <description>Builds, tests, and runs the project SignServer-AdminCLI.</description>
     <import file="nbproject/build-impl.xml"/>
     <import file="../modules.xml"/>
+    
+    <property name="modulename" value="admincli"/>
+    <property name="dist-module.available" value="true"/>
+    <property name="clean.available" value="true"/>
 
     <!-- Copy to client-dist etc. -->
-    <target name="-post-jar" depends="-do-client-dist">
+    <target name="dist-module" depends="jar,-do-client-dist">
         
     	<echo message="Ignore warnings about jar files that can not be copied, they are for other application servers"/>
     	<!-- JBoss:

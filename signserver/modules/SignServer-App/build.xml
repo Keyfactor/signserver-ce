@@ -10,6 +10,7 @@
 <project name="SignServer-App" default="default" basedir="." xmlns:ear="http://www.netbeans.org/ns/j2ee-earproject/2">
     <description>Builds, tests, and runs the project SignServer-App.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
     <!--
 
     There exist several targets which are by default empty and which can be 

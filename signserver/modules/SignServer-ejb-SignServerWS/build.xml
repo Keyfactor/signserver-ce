@@ -12,6 +12,10 @@
     <import file="nbproject/build-impl.xml"/>
     <import file="../modules.xml"/>
 
+    <property name="moduleName" value="signserverws"/>
+    <property name="dist-module.available" value="true"/>
+    <property name="clean.available" value="true"/>
+
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
 
@@ -47,14 +51,13 @@ Remember to update the soap:address location in the WSDL to start with
         </copy>
     </target>-->
     
-    <target name="-post-dist">
+    <target name="dist-module" depends="dist">
         <copy todir="../../dist-server/">
             <fileset dir="dist">
                 <include name="*.jar"/>
             </fileset>
         </copy>
         <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
-        <property name="moduleName" value="signserverws"/>
         <property name="distJar" value="SignServer-ejb-SignServerWS.jar"/>
         <property name="base" location="../../"/>
         <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/20_${moduleName}.properties" moduleName="${moduleName}" moduleType="ejb" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,${base}/lib/ext/ejb/,${base}/lib/ext/servlet-2.3.jar,${base}/lib/javaee-">

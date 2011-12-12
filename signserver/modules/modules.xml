@@ -17,7 +17,7 @@
     <target name="default">
         <fail message="This script is not intented to run on its own"/>
     </target>
-
+   
     <property name="signserver.home" location="../../"/>
     <property name="server.dist.dir" value="${signserver.home}/dist-server"/>
     <property name="client.dist.dir" value="${signserver.home}/dist-client"/>
@@ -106,49 +106,39 @@
         <available file="${env.APPSRV_HOME}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}"/>
     </target>
 
+    <!-- =================================================================== -->
+    <!-- Clean modules -->
+    <!-- =================================================================== -->
+    
+    <target name="-do-clean-module">
+        <echo>Cleaning ${ant.project.name}...</echo>
+        <antcall target="clean"/>
+    </target>
 
     <!-- =================================================================== -->
     <!-- Build modules -->
     <!-- =================================================================== -->
 
     <target name="modules" description="Build all enabled modules">
-        <echo message="Include all modules: ${includemodulesinbuild}"/>
         <subant target="-do-module" verbose="false">
-            <fileset dir="modules" includes="SignServer-Module-*/build.xml"/>
+            <fileset dir="modules" includes="${modules.build.includes}"/>
         </subant>
     </target>
-
+    
     <target name="-do-module-build" if="moduleEnable.condition">
-        <echo message="Project ${ant.project.name} enabled"/>
-        <antcall target="jar"/>
+        <echo message="Module: ${ant.project.name} enabled"/>
+        <antcall target="dist-module"/>
         <copy todir="${server.dist.dir}">
             <fileset dir="./dist" includes="*.mar"/>
+            <fileset dir="./dist" includes="*.jar"/>
         </copy>
-    </target>
-
-    <target name="-do-module-include" depends="-do-module-build"
-        if="moduleInclude.condition">
-        <echo message="Project ${ant.project.name} included"/>
-        <antcall target="-module-include"/>
         <antcall target="-post-module-include"/>
     </target>
-
-    <!-- Copies the module JAR to the EAR lib folder for inclusion. This target
-        can be overridden the module project to do copy special files -->
-        <target name="-module-include">
-            <fail unless="moduleEnable.condition"
-                message="Module '${ant.project.name}' must have enabled=true to be included."/>
-                <echo>Copy to ${server.dist.dir}</echo>
-            <copy todir="${server.dist.dir}">
-                <fileset dir="./dist" includes="*.jar"/>
-            </copy>
-        </target>
         
-        <!-- Override this target to copy additional files. -->
-        <target name="-post-module-include"/>
+    <!-- Override this target to copy additional files. -->
+    <target name="-post-module-include"/>
 
     <target name="-do-module">
-        <echo message="Module:  ${ant.project.name}"/>
         <property file="${user.home}/signserver_build.properties"/>
         <property file="../../signserver_build.properties"/>
         <property file="../../conf/signserver_build.properties"/>
@@ -157,21 +147,19 @@
             classname="org.signserver.anttasks.SetModuleEnablePropertiesTask"
             classpath="../SignServer-BuildTools/build/classes/"/>
         <setmoduleprops/>
-        <echo message="Enable:  ${moduleEnable}"/>
-        <echo message="Include: ${moduleInclude}"/>
+        <property name="dist-module.available" value="false"/>
+        <property name="moduleEnable" value="false"/>
         <condition property="moduleEnable.condition">
-            <or>
-                <istrue value="${moduleEnable}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
+            <and>
+                <or>
+                    <istrue value="${moduleEnable}"/>
+                    <istrue value="${includemodulesinbuild}"/>
+                </or>
+                <istrue value="${dist-module.available}"/>
+            </and>
         </condition>
-        <condition property="moduleInclude.condition">
-            <or>
-                <istrue value="${moduleInclude}"/>
-                <istrue value="${includemodulesinbuild}"/>
-            </or>
-        </condition>
-        <antcall target="-do-module-include"/>
+        <echo>Module: ${ant.project.name}</echo>
+        <antcall target="-do-module-build"/>
     </target>
 
 

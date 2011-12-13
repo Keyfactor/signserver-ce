@@ -1,5 +1,6 @@
 
-Jax-ws jars are from https://jax-ws.dev.java.net/, License is BSD.
+JAX-WS jars are from https://jax-ws.dev.java.net/, 
+License is GPLv2 with Classpath exception.
 
  
 This is version 2.1.3

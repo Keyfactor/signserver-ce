@@ -1678,7 +1678,7 @@ New to version 3.0 is the Main WebService interface. It replaces the RMI-SSL int
 The WebService interface have two calls, the main one is 'process' which takes a collection of process request to a processable worker and returns a collection of process responses, the second one is getStatus that performs a health check of the node and returns an OK message if the node is healthy.
                     </p>
                     <p>
-The WebService stack used is the JAX-WS stack from SUN. And the actual process data is a externalized Base64 byte-arrays. The reason why the are externalized is to simply the integration towards non-Java platforms. See the source of the actual request to see how the data is structured.
+The WebService stack used is JAX-WS and the actual process data is a externalized Base64 byte-arrays. The reason why the are externalized is to simply the integration towards non-Java platforms. See the source of the actual request to see how the data is structured.
                     </p>
                     <p>
 The getStatus call can be used to implement high-availability towards the client. The Java client API described in the next section have built in support for different high availability policies.
@@ -1688,9 +1688,6 @@ The WebService WSDL file is located at the URL http://&lt;hostname&gt;:8080/sign
                     </p>
                     <p>
 It's possible to turn off the WebService interface by disabling it in the build configuration.
-                    </p>
-                    <p>
-Important, Due to class path conflict in JBoss 4.2.x own JBoss WebService stack and the JAX-WS stack used by the SignServer must the JBoss WebService stack be removed before the WebService is used. This is done by going to JBOSS_HOME/server/default/deploy and remove the directory jbossws.sar.
                     </p>
                     <p>
 Since SignServer >=3.2.1 it is possible to supply extra request data called RequestMetadata containing key/value pairs that can be used by the signers. For instance the PDFSigner uses this feature to let the client supply a PDF password. 
@@ -3053,9 +3050,6 @@ If not configured otherwise will the validation service use the DefaultX509CertT
                         <p>
 There exists a validation specific WebService that can be used for platform independent client calls.
 The WebService must be enabled during the build and isn't by default. The WebService WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/validationws/validationws?wsdl and it contains two calls one is 'isValid' that performs the validation check and the other is a getStatus call that checks the health of the node and its underlying systems. The last calls can be used by clients for monitoring or implementing redundancy.
-                        </p>
-                        <p>
-Important, Due to class path conflict in JBoss 4.2.x own JBoss WebService stack and the JAX-WS stack used by the SignServer must the JBoss WebService stack be removed before the WebService is used. This is done by going to JBOSS_HOME/server/default/deploy and remove the directory jbossws.sar.
                         </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">

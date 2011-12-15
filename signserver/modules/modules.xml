@@ -128,7 +128,7 @@
     <target name="-do-module-build" if="moduleEnable.condition">
         <echo message="Module: ${ant.project.name} enabled"/>
         <antcall target="dist-module"/>
-        <copy todir="${server.dist.dir}">
+        <copy todir="../../lib/">
             <fileset dir="./dist" includes="*.mar"/>
             <fileset dir="./dist" includes="*.jar"/>
         </copy>

@@ -20,7 +20,7 @@
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
     
     <target name="dist-module" depends="init,-init-macrodef-convertclasspath,dist">
-        <copy todir="../../dist-server/">
+        <copy todir="../../lib/">
             <fileset dir="dist">
                 <include name="*.war"/>
             </fileset>
@@ -28,15 +28,15 @@
         
         <!-- Create the module descriptor file for this module -->
         <property name="distJar" value="signserver.war"/>
-        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ejb/,lib/hibernate/,lib/javaee-*/*"/>
+        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/ejb/,lib/ext/hibernate/,lib/ext/javaee-*/*"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
-        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="dist-server/*"/>
+        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
         <propertyfile file="../../mods-available/30_${moduleName}.properties">
             <entry key="module.name" value="${moduleName}"/>
             <entry key="module.type" value="war"/>
             <entry key="module.ejb" value="${distJar}"/>
             <entry key="to.lib" value="${libsToLib},${modsToLib}"/>
-            <entry key="to.root" value="dist-server/${distJar}"/>
+            <entry key="to.root" value="lib/${distJar}"/>
             <entry key="module.web.web-uri" value="${distJar}"/>
             <entry key="module.web.context-root" value="/signserver"/>
         </propertyfile>

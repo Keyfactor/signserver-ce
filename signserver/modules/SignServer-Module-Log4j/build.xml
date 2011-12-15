@@ -19,10 +19,10 @@
     <target name="descriptor" depends="init,-init-macrodef-convertclasspath">
         <!-- Create the module descriptor file for this module -->
         <property name="moduleName" value="module.log4j"/>
-        <property name="distJar" value="dist-server/SignServer-Module-Log4j.jar"/>
-        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/hibernate/"/>
+        <property name="distJar" value="lib/SignServer-Module-Log4j.jar"/>
+        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/hibernate/"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
-        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="dist-server/*"/>
+        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
         <propertyfile file="../../mods-available/30_${moduleName}.properties">
             <entry key="module.name" value="${moduleName}"/>
             <entry key="module.type" value="lib"/>

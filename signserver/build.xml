@@ -180,7 +180,7 @@ database.password                   = ${database.password}
     </target>
     
     <target name="-check-built">
-        <available file="${server.dist.dir}/SignServer-ejb.jar" property="signserver-ejb.jar.available"/>
+        <available file="lib/SignServer-ejb.jar" property="signserver-ejb.jar.available"/>
         <fail message="SignServer needs to be built first. Run 'ant build'." unless="signserver-ejb.jar.available"/>
     </target>
     
@@ -233,7 +233,7 @@ Configured ear file available at: ${ear.dist.file}
                 </zip>
             </sequential>
         </macrodef>
-        <taskdef name="mods" classname="org.signserver.anttasks.ProcessModulesTask" classpath="${server.dist.dir}/SignServer-BuildTools.jar"/>
+        <taskdef name="mods" classname="org.signserver.anttasks.ProcessModulesTask" classpath="lib/SignServer-BuildTools.jar"/>
         
         <condition property="allEnabled">
             <istrue value="${includemodulesinbuild}"/>
@@ -267,7 +267,7 @@ Libraries to include:
         </copy>
         
         <!-- For each module call postprocess -->
-        <taskdef name="antcallforall" classname="org.signserver.anttasks.AntCallForAllTask" classpath="${server.dist.dir}/SignServer-BuildTools.jar"/>
+        <taskdef name="antcallforall" classname="org.signserver.anttasks.AntCallForAllTask" classpath="lib/SignServer-BuildTools.jar"/>
         <antcallforall names="${enabledModules}" target="-postprocess-module" newPropertyPrefix="_acfa" unlessEmpty="postprocess.files" />
     </target>
     
@@ -278,7 +278,7 @@ Libraries to include:
     
     <target name="-postprocess-file">
         <echo level="verbose">Post processing file "${_acfa2.src}" with includes "${_acfa2.includes}"</echo>
-        <postprocess-jar src="${server.dist.dir}/${_acfa2.src}" destfile="${signserver.ear.dir}/${_acfa2.src}" tempdir="${tmp}/${_acfa.calledname}-${_acfa2.src}.dir" replace-includes="${_acfa2.includes}"/>
+        <postprocess-jar src="lib/${_acfa2.src}" destfile="${signserver.ear.dir}/${_acfa2.src}" tempdir="${tmp}/${_acfa.calledname}-${_acfa2.src}.dir" replace-includes="${_acfa2.includes}"/>
     </target>
         
     <target name="-init-configure">
@@ -352,7 +352,7 @@ Configuring EAR...
     
         <!-- Update SignServer-ejb.jar -->
         <zip destfile="${signserver.ear.dir}/SignServer-ejb.jar" duplicate="fail">
-            <zipfileset src="${server.dist.dir}/SignServer-ejb.jar">
+            <zipfileset src="lib/SignServer-ejb.jar">
                 <exclude name="META-INF/persistence.xml"/>
                 <exclude name="META-INF/entity-mappings.xml"/>
             </zipfileset>
@@ -389,7 +389,7 @@ Configuring EAR...
         
         <!-- Update JAR -->
         <zip destfile="${signserver.ear.dir}/lib/SignServer-Common.jar" duplicate="fail">
-            <zipfileset src="${server.dist.dir}/SignServer-Common.jar">
+            <zipfileset src="${lib}/SignServer-Common.jar">
                 <exclude name="org/signserver/common/signservercompile.properties"/>
             </zipfileset>
             <zipfileset dir="${SignServer-Common.jar.dir}">

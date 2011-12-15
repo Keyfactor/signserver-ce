@@ -18,9 +18,7 @@
 
     <property name="modulename" value="renewal-interface"/>
     <property name="clean.available" value="true"/>
-    <property name="dist-module.available" value="true"/>
-    
-    <target name="dist-module" depends="jar"/>
+    <property name="dist-module.available" value="false"/>
     
     <!--
 

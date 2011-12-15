@@ -13,7 +13,7 @@
     <import file="../modules.xml"/>
     
     <target name="-post-jar">
-        <copy todir="../../dist-server/">
+        <copy todir="../../lib/">
             <fileset dir="dist">
                 <include name="*.jar"/>
             </fileset>

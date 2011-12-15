@@ -27,7 +27,7 @@
             <classpath refid="anakia.classpath"/>
         </available>
         <path id="xmltask.classpath">
-            <fileset dir="../../lib/ext/">
+            <fileset dir="../../lib/ext/ext/">
                 <include name="xmltask.jar"/>
             </fileset>
         </path>

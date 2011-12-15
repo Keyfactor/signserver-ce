@@ -20,7 +20,7 @@
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
     
     <target name="dist-module" depends="init,-init-macrodef-convertclasspath,dist">
-        <copy todir="../../dist-server/">
+        <copy todir="../../lib/">
             <fileset dir="dist">
                 <include name="*.jar"/>
             </fileset>
@@ -34,15 +34,15 @@
         
         <!-- Create the module descriptor file for this module -->
         <property name="distJar" value="SignServer-ejb.jar"/>
-        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ejb/,lib/hibernate/,lib/javaee-*/*,lib/ext/servlet-*,lib/jaxws/saaj-api.jar,lib/jaxws/saaj-impl.jar"/>
+        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/ejb/,lib/ext/hibernate/,lib/ext/javaee-*/*,lib/ext/servlet-*,lib/ext/jaxws/saaj-api.jar,lib/ext/jaxws/saaj-impl.jar"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
-        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="dist-server/*"/>
+        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
         <propertyfile file="../../mods-available/10_${moduleName}.properties">
             <entry key="module.name" value="${moduleName}"/>
             <entry key="module.type" value="ejb"/>
             <entry key="module.ejb" value="${distJar}"/>
             <entry key="to.lib" value="${libsToLib},${modsToLib}"/>
-            <entry key="to.root" value="dist-server/${distJar}"/>
+            <entry key="to.root" value="lib/${distJar}"/>
         </propertyfile>
     </target>
     

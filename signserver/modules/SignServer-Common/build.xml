@@ -19,8 +19,7 @@
                 <include name="*.jar"/>
             </fileset>
         </copy>
-        <mkdir dir="../../dist-server" />
-        <copy todir="../../dist-server">
+        <copy todir="../../lib">
             <fileset dir="dist">
                 <include name="*.jar"/>
             </fileset>

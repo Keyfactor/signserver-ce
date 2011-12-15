@@ -34,7 +34,7 @@ Remember to update the soap:address location in the WSDL to start with
     </target>
 
     <target name="dist-module" depends="init,-init-macrodef-convertclasspath,dist">
-        <copy todir="../../dist-server/">
+        <copy todir="../../lib/">
             <fileset dir="dist">
                 <include name="*.jar"/>
             </fileset>
@@ -42,15 +42,15 @@ Remember to update the soap:address location in the WSDL to start with
         
         <!-- Create the module descriptor file for this module -->
         <property name="distJar" value="SignServer-ejb-SignServerWS.jar"/>
-        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ejb/,lib/hibernate/,lib/javaee-*/*,lib/ext/servlet-*"/>
+        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/ejb/,lib/ext/hibernate/,lib/ext/javaee-*/*,lib/ext/ext/servlet-*"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
-        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="dist-server/*"/>
+        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
         <propertyfile file="../../mods-available/20_${moduleName}.properties">
             <entry key="module.name" value="${moduleName}"/>
             <entry key="module.type" value="ejb"/>
             <entry key="module.ejb" value="${distJar}"/>
             <entry key="to.lib" value="${libsToLib},${modsToLib}"/>
-            <entry key="to.root" value="dist-server/${distJar}"/>
+            <entry key="to.root" value="lib/${distJar}"/>
             <entry key="postprocess.files" value="postprocess.file1"/>
             <entry key="postprocess.file1.src" value="${distJar}"/>
             <entry key="postprocess.file1.includes" value="META-INF/ejb-jar.xml"/>
@@ -58,7 +58,7 @@ Remember to update the soap:address location in the WSDL to start with
     </target>
     
 <!--    <target name="-post-dist">
-        <copy todir="../../dist-server/">
+        <copy todir="../../lib/">
         <fileset dir="src">
             <include name="**/*.xml"/>
         </fileset>

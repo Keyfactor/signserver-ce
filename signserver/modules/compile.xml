@@ -82,25 +82,15 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
         modules">
             <antcall target="showtime"/>
     </target>
-    
-    <!--        validationClient, 
-        signingAndValidationAPI, 
-        -build-admingui,
-        -build-clientcli,
-        signserver-ejb.jar, 
-        web.war, 
-        doc.war, 
-        healthcheck.war, 
-        signserverws-ejb.jar, 
-        validationws-ejb.jar, 
-        adminws-ejb.jar, -->
 
 
     <target name="clean-build">
         <!-- Delete the ${build} and ${server.dist.dir} directory trees -->
         <echo>Cleaning built files</echo>
         <delete dir="${build}" />
-        <delete dir="${server.dist.dir}" failonerror="true" verbose="true"/>
+        <delete dir="../lib/" failonerror="true" verbose="true">
+            <include name="*.*ar"/>
+        </delete>
     	<delete dir="${pkg.dist.dir}" />
         <delete dir="${apidoc}" />
         <delete dir="${tmp}"/>	

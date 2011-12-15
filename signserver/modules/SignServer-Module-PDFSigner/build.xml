@@ -22,10 +22,10 @@
     <target name="dist-module" depends="jar,pdfsignermar,-init-macrodef-convertclasspath">
         <!-- Create the module descriptor file for this module -->
         <property name="moduleName" value="module.pdfsigner"/>
-        <property name="distJar" value="dist-server/SignServer-Module-PDFSigner.jar"/>
-        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/hibernate/"/>
+        <property name="distJar" value="lib/SignServer-Module-PDFSigner.jar"/>
+        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/hibernate/"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
-        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="dist-server/*"/>
+        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
         <propertyfile file="../../mods-available/40_${moduleName}.properties">
             <entry key="module.name" value="${moduleName}"/>
             <entry key="module.type" value="lib"/>

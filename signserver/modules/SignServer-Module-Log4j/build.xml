@@ -16,12 +16,19 @@
     <property name="clean.available" value="true"/>
     
     <target name="dist-module" depends="jar,descriptor"/>
-    <target name="descriptor">
-        <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
+    <target name="descriptor" depends="init,-init-macrodef-convertclasspath">
+        <!-- Create the module descriptor file for this module -->
         <property name="moduleName" value="module.log4j"/>
-        <property name="distJar" value="SignServer-Module-Log4j.jar"/>
-        <property name="base" location="../../"/>
-        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/30_${moduleName}.properties" moduleName="${moduleName}" moduleType="lib" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/," />
+        <property name="distJar" value="dist-server/SignServer-Module-Log4j.jar"/>
+        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/hibernate/"/>
+        <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
+        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="dist-server/*"/>
+        <propertyfile file="../../mods-available/30_${moduleName}.properties">
+            <entry key="module.name" value="${moduleName}"/>
+            <entry key="module.type" value="lib"/>
+            <entry key="to.lib" value="${libsToLib},${modsToLib},${distJar}"/>
+            <entry key="to.root" value=""/>
+        </propertyfile>
     </target>
     <!--
 

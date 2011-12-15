@@ -24,18 +24,27 @@
             inheritall="false"/>
     </target>
     
-    <target name="dist-module" depends="dist">
+    <target name="dist-module" depends="init,-init-macrodef-convertclasspath,dist">
         <copy todir="../../dist-server/">
             <fileset dir="dist">
                 <include name="*.war"/>
             </fileset>
         </copy>
-        <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
+        
+        <!-- Create the module descriptor file for this module -->
         <property name="distJar" value="SignServer-war-Doc.war"/>
-        <moddesc classpathValue="" dists="${distJar}" toFile="../../mods-available/30_${moduleName}.properties" moduleName="${moduleName}" moduleType="war" libsPrefix="" excludePrefix="">
-            <property name="module.web.web-uri" value="${distJar}"/>
-            <property name="module.web.context-root" value="/signserver/doc"/>
-        </moddesc>
+        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ejb/,lib/hibernate/,lib/javaee-*/*"/>
+        <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
+        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="dist-server/*"/>
+        <propertyfile file="../../mods-available/30_${moduleName}.properties">
+            <entry key="module.name" value="${moduleName}"/>
+            <entry key="module.type" value="war"/>
+            <entry key="module.ejb" value="${distJar}"/>
+            <entry key="to.lib" value="${libsToLib},${modsToLib}"/>
+            <entry key="to.root" value="dist-server/${distJar}"/>
+            <entry key="module.web.web-uri" value="${distJar}"/>
+            <entry key="module.web.context-root" value="/signserver/doc"/>
+        </propertyfile>
     </target>
     
     <!--

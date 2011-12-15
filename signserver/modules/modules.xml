@@ -162,6 +162,44 @@
         <antcall target="-do-module-build"/>
     </target>
 
+    <!-- Convert from a colon separated classpath to comma separated list with 
+        some jars excluded -->
+    <target name="-init-macrodef-convertclasspath">
+        <macrodef name="convertclasspath">
+            <attribute name="classpath"/>
+            <attribute default="converted.classpath" name="id"/>
+            <attribute default="" name="excludes"/>
+            <attribute default="identity" name="mapperType"/>
+            <attribute default="*" name="mapperTo"/>
+            <sequential>
+                <property name="base.dir" location="${basedir}/../../"/>
+
+                <pathconvert property="as_includes_pattern" pathsep=",">
+                    <path path="@{classpath}"/>
+                    <map from="${base.dir}\" to=""/>
+                    <map from="${base.dir}/" to=""/>
+                    <map from="${base.dir}" to=""/>
+                </pathconvert>
+                <fileset dir="${base.dir}" includes="${as_includes_pattern}" id="as_fileset" excludes="@{excludes}"/>
+                <pathconvert property="@{id}" pathsep="," refid="as_fileset">
+                    <map from="${base.dir}\" to=""/>
+                    <map from="${base.dir}/" to=""/>
+                    <map from="${base.dir}" to=""/>
+                    <chainedmapper>
+                        <mapper type="@{mapperType}"/>
+                        <globmapper from="*" to="@{mapperTo}" />
+                    </chainedmapper>
+                </pathconvert>
+                
+                <echo level="debug">
+                    basedir             : ${base.dir}
+                    classpath           : @{classpath}
+                    as_includes_pattern : ${as_includes_pattern}
+                    result              : ${@{id}}
+                </echo>
+            </sequential>
+        </macrodef>
+    </target>
 
     <!-- =================================================================== -->
     <!-- Client distributables                                               -->

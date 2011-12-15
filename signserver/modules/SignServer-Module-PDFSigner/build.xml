@@ -19,12 +19,19 @@
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
     
-    <target name="dist-module" depends="jar,pdfsignermar">
-        <taskdef name="moddesc" classname="org.signserver.anttasks.ModulesDescriptorTask" classpath="${javac.classpath}"/>
+    <target name="dist-module" depends="jar,pdfsignermar,-init-macrodef-convertclasspath">
+        <!-- Create the module descriptor file for this module -->
         <property name="moduleName" value="module.pdfsigner"/>
-        <property name="distJar" value="SignServer-Module-PDFSigner.jar"/>
-        <property name="base" location="../../"/>
-        <moddesc classpathValue="${javac.classpath}" dists="${distJar}" toFile="../../mods-available/40_${moduleName}.properties" moduleName="${moduleName}" moduleType="lib" libsPrefix="../../lib/,${base}/lib/" excludePrefix="../SignServer-BuildTools/,../SignServer-ejb/,${base}/lib/hibernate/" />
+        <property name="distJar" value="dist-server/SignServer-Module-PDFSigner.jar"/>
+        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/hibernate/"/>
+        <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
+        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="dist-server/*"/>
+        <propertyfile file="../../mods-available/40_${moduleName}.properties">
+            <entry key="module.name" value="${moduleName}"/>
+            <entry key="module.type" value="lib"/>
+            <entry key="to.lib" value="${libsToLib},${modsToLib},${distJar}"/>
+            <entry key="to.root" value=""/>
+        </propertyfile>
     </target>
     
     <!-- Create MAR -->

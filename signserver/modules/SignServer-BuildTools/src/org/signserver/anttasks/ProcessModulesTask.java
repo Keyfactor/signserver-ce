@@ -75,12 +75,12 @@ public class ProcessModulesTask extends Task {
                 setPropertiesWithPrefix(name, properties);
                 
                 String toRoot = properties.getProperty("to.root");
-                List<String> toRootList = Arrays.asList(toRoot.split(":"));
+                List<String> toRootList = Arrays.asList(toRoot.split(","));
                 rootJars.addAll(toRootList);
                 log("To root: " + toRootList.toString(), Project.MSG_VERBOSE);
                 
                 String toLib = properties.getProperty("to.lib");
-                List<String> toLibList = Arrays.asList(toLib.split(":")); 
+                List<String> toLibList = Arrays.asList(toLib.split(",")); 
                 libJars.addAll(toLibList);
                 log("To lib: " + toLibList.toString(), Project.MSG_VERBOSE);
                 

@@ -33,10 +33,10 @@ if [ ! -n "$APPSRV_HOME" ]; then
         APPSRV_HOME=$WEBLOGIC_HOME
     fi
 fi
-
 if [ ! -n "$APPSRV_HOME" ]; then
     echo "To connect to a local SignServer please set APPSRV_HOME first."
 fi
+
 
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
   if [ -f /etc/signserver/signservermgmt.env ]; then
@@ -65,32 +65,24 @@ else
 fi 
 
 # Check that classes exist
-if [ ! -f ${SIGNSRV_HOME}/dist-client/${MAIN_JAR} ]
+if [ ! -f ${SIGNSRV_HOME}/lib/${MAIN_JAR} ]
 then
-	echo "SignServer AdminGUI not available. Build it by running 'ant admingui'."
+	echo "SignServer AdminGUI not available. Build it by running 'ant'."
         exit 1
 fi
 
-# Add for jndi.properties
-CP="${SIGNSRV_HOME}/bin/":"$CP"
+# Construct the classpath
+CP="$SIGNSRV_HOME/lib/${MAIN_JAR}"
+CP="${SIGNSRV_HOME}/bin":"$CP"
 
-if [ -r "$APPSRV_HOME"/lib/appserv-rt.jar ]; then
-    echo Using GlassFish JNDI provider...
-    CP=$CP:"$APPSRV_HOME"/lib/appserv-rt.jar
-else
-    echo "Assuming JBoss JNDI provider..."
-    CP=$CP:"$APPSRV_HOME/client/jbossall-client.jar"
-fi
-
-CP="$CP":"$SIGNSRV_HOME/dist-client/${MAIN_JAR}"
-
-
-
-export SIGNSRV_HOME
+# Application server jars
+CP=$CP:"$APPSRV_HOME/lib/appserv-rt.jar"
+CP=$CP:"$APPSRV_HOME/client/jbossall-client.jar"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
   CP=`cygpath --path --windows "$CP"`
 fi
 
+# Execute the command
 exec "$JAVACMD" -cp $CP -splash:$SIGNSRV_HOME/bin/admingui-splash.png $class_name "$@" -connectfile $SIGNSRV_HOME/conf/admingui.properties -defaultconnectfile $SIGNSRV_HOME/conf/admingui_default.properties

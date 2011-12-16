@@ -212,8 +212,39 @@
         dependencies to client-dist/lib.
         We do this manually to not have to rely on the copylibstask.
     -->
-    <target name="-do-client-dist" 
-        depends="-do-client-classpath, -do-client-dist-jar, -do-client-dist-lib"/>
+    <target name="-do-client-dist" depends="-init-macrodef-convertclasspath">
+   
+        <available file="${dist.jar}" property="dist.jar.available"/>
+        <fail unless="dist.jar.available" message="Error: dist.jar should have been configured by the module: ${ant.project.name}"/>
+        
+        <!-- Convert classpath to be relative to the lib folders -->
+        <convertclasspath classpath="${javac.classpath}" id="libs" excludes="modules/" dir="${basedir}/../../lib" pathsep=" "/>
+        <convertclasspath classpath="${javac.classpath}" id="mods" excludes="lib/" mapperType="flatten" mapperTo="*" pathsep=" "/>
+        <property name="jar.classpath" value="${libs} ${mods}"/>
+        <jar file="${dist.jar}" update="true">
+            <manifest>
+                <attribute name="Class-Path" value="${jar.classpath}"/>
+            </manifest>
+        </jar>
+        
+        <!-- Move to lib -->
+        <copy todir="../../lib" failonerror="true" file="${dist.jar}"/>
+        
+        <!-- Convert classpath to be relative to this modules dist folder -->
+        <property name="base.dir" location="${distdir}/../../"/>
+        <property name="base2.dir" location="${distdir}/../../../"/>
+        <pathconvert property="localjar.classpath" pathsep=" ">
+            <path path="${javac.classpath}"/>
+            <map from="${base.dir}/" to="../../"/>
+            <map from="${base2.dir}/" to="../../../"/>
+        </pathconvert>
+        <jar file="${dist.jar}" update="true">
+            <manifest>
+                <attribute name="Class-Path" value="${localjar.classpath}"/>
+            </manifest>
+        </jar>
+            
+    </target>
     
     <!-- Copies the client JAR to client-dist -->
     <target name="-do-client-dist-jar" depends="-do-client-classpath">

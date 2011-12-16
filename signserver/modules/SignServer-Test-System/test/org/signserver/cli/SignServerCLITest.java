@@ -103,11 +103,11 @@ public class SignServerCLITest extends TestCase {
     }
 
     public void testSetupTimeStamp() throws Exception {
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/dist-server/tsa.mar");
+        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/tsa.mar");
         tsaModuleVersion = marFileParser.getVersionFromMARFile();
 
         TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/dist-server/tsa.mar"});
+                    signserverhome + "/lib/tsa.mar"});
         assertTrue(TestUtils.grepTempOut("Loading module TSA"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 

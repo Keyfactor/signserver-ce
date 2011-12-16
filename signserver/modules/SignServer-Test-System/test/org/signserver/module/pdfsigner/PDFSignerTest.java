@@ -94,11 +94,11 @@ public class PDFSignerTest extends TestCase {
 
     public void test00SetupDatabase() throws Exception {
 
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/dist-server/pdfsigner.mar");
+        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/pdfsigner.mar");
         moduleVersion = marFileParser.getVersionFromMARFile();
 
         TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/dist-server/pdfsigner.mar", "junittest"});
+                    signserverhome + "/lib/pdfsigner.mar", "junittest"});
         assertTrue(TestUtils.grepTempOut("Loading module PDFSIGNER"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 

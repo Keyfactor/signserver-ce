@@ -92,7 +92,7 @@ public class XMLValidatorTest extends TestCase {
 
     public void test00SetupDatabase() throws Exception {
 
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/dist-server/xmlvalidator.mar");
+        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/xmlvalidator.mar");
         moduleVersion = marFileParser.getVersionFromMARFile();
 
         // VALIDATION SERVICE
@@ -108,7 +108,7 @@ public class XMLValidatorTest extends TestCase {
         sSSession.reloadConfiguration(17);
 
         // XMLVALIDATOR
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add", signserverhome + "/dist-server/xmlvalidator.mar", "junittest"});
+        TestUtils.assertSuccessfulExecution(new String[]{"module", "add", signserverhome + "/lib/xmlvalidator.mar", "junittest"});
         assertTrue(TestUtils.grepTempOut("Loading module XMLVALIDATOR"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
         sSSession.setWorkerProperty(WORKERID, "VALIDATIONSERVICEWORKER", VALIDATION_WORKER);

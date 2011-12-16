@@ -72,7 +72,7 @@ public class DocumentSignerTest extends TestCase {
     public void test00SetupDatabase() throws Exception {
 
         final MARFileParser marFileParser = new MARFileParser(signserverhome
-                + "/dist-server/xmlsigner.mar");
+                + "/lib/xmlsigner.mar");
         moduleVersion = marFileParser.getVersionFromMARFile();
 
         TestUtils.redirectToTempOut();
@@ -82,7 +82,7 @@ public class DocumentSignerTest extends TestCase {
         TestUtils.assertSuccessfulExecution(new String[] {
                 "module",
                 "add",
-                signserverhome + "/dist-server/xmlsigner.mar",
+                signserverhome + "/lib/xmlsigner.mar",
                 "junittest"
             });
         assertTrue("Loading module",
@@ -95,7 +95,7 @@ public class DocumentSignerTest extends TestCase {
         TestUtils.assertSuccessfulExecution(new String[] {
                 "module",
                 "add",
-                signserverhome + "/dist-server/pdfsigner.mar",
+                signserverhome + "/lib/pdfsigner.mar",
                 "junittest"
             });
         assertTrue("Loading module",

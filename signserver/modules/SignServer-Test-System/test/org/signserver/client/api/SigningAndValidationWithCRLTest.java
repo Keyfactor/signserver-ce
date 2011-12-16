@@ -142,9 +142,9 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
 
         // XMLSIGNER: module
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/dist-server/xmlsigner.mar");
+        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/xmlsigner.mar");
         moduleVersion = marFileParser.getVersionFromMARFile();
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add", signserverhome + "/dist-server/xmlsigner.mar", "junittest"});
+        TestUtils.assertSuccessfulExecution(new String[]{"module", "add", signserverhome + "/lib/xmlsigner.mar", "junittest"});
         assertTrue(TestUtils.grepTempOut("Loading module XMLSIGNER"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
@@ -157,9 +157,9 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         setupValidation();
 
         // XMLVALIDATOR: module
-        marFileParser = new MARFileParser(signserverhome + "/dist-server/xmlvalidator.mar");
+        marFileParser = new MARFileParser(signserverhome + "/lib/xmlvalidator.mar");
         moduleVersion = marFileParser.getVersionFromMARFile();
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add", signserverhome + "/dist-server/xmlvalidator.mar", "junittest"});
+        TestUtils.assertSuccessfulExecution(new String[]{"module", "add", signserverhome + "/lib/xmlvalidator.mar", "junittest"});
         assertTrue(TestUtils.grepTempOut("Loading module XMLVALIDATOR"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 

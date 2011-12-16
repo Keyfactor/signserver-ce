@@ -60,10 +60,10 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     }
 
     public void test00SetupDatabase() throws Exception {
-//		MARFileParser marFileParser = new MARFileParser(signserverhome +"/dist-server/mrtdsigner.mar");
+//		MARFileParser marFileParser = new MARFileParser(signserverhome +"/lib/mrtdsigner.mar");
 //		moduleVersion = marFileParser.getVersionFromMARFile();
 //		TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
-//				signserverhome +"/dist-server/mrtdsigner.mar"});
+//				signserverhome +"/lib/mrtdsigner.mar"});
 //		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,

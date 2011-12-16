@@ -88,10 +88,10 @@ public class OOXMLSignerTest extends TestCase {
 
     public void test00SetupDatabase() throws Exception {
 
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/dist-server/ooxmlsigner.mar");
+        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/ooxmlsigner.mar");
         moduleVersion = marFileParser.getVersionFromMARFile();
 
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add", signserverhome + "/dist-server/ooxmlsigner.mar", "junittest"});
+        TestUtils.assertSuccessfulExecution(new String[]{"module", "add", signserverhome + "/lib/ooxmlsigner.mar", "junittest"});
         assertTrue(TestUtils.grepTempOut("Loading module OOXMLSIGNER"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 

@@ -119,11 +119,11 @@ public class TimeStampSignerTest extends TestCase {
     public void test00SetupDatabase() throws Exception {
 
         MARFileParser marFileParser = new MARFileParser(signserverhome
-                + "/dist-server/tsa.mar");
+                + "/lib/tsa.mar");
         moduleVersion = marFileParser.getVersionFromMARFile();
 
         TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/dist-server/tsa.mar", "junittest"});
+                    signserverhome + "/lib/tsa.mar", "junittest"});
         assertTrue(TestUtils.grepTempOut("Loading module TSA"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 

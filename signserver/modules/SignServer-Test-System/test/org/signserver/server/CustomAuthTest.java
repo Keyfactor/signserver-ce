@@ -72,10 +72,10 @@ public class CustomAuthTest extends TestCase {
     }
 
     public void test00SetupDatabase() throws Exception {
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/dist-server/tsa.mar");
+        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/tsa.mar");
         moduleVersion = marFileParser.getVersionFromMARFile();
         TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/dist-server/tsa.mar"});
+                    signserverhome + "/lib/tsa.mar"});
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH", "org.signserver.module.tsa.TimeStampSigner");

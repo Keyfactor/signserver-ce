@@ -28,7 +28,6 @@
         <tstamp/>
         <!-- Create the build directory structure used by compile -->
         <mkdir dir="${build}"/>
-        <mkdir dir="${server.dist.dir}/lib"/>
         <mkdir dir="${client.dist.dir}/lib"/>
         <mkdir dir="${mods-available}"/>
     </target>
@@ -200,20 +199,20 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
                 <!-- When possible: this should be moved out to a properties file instead -->
                 <classpath>
                     <fileset dir="lib/ext" includes="*.jar" />
-                    <fileset dir="dist-server/lib" includes="*.jar"/>
-                    <fileset dir="lib" includes="*.jar" />
-                    <fileset dir="lib/quartz" includes="*.jar" />
-                    <fileset dir="lib/1.6" includes="*.jar" />
-                    <fileset dir="lib/module/tsa/${client.java.target}" includes="*.jar" />
-                    <fileset dir="lib/module/pdfsigner/itext" includes="*.jar"/>
-                    <fileset dir="lib/module/odfsigner" includes="*.jar"/>
-                    <fileset dir="lib/module/ooxmlsigner" includes="*.jar"/>
-                    <fileset dir="lib/asm" includes="*.jar" />
-                    <fileset dir="lib/hibernate" includes="*.jar"/>
+                    <fileset dir="lib" includes="*.jar"/>
+                    <fileset dir="lib/ext" includes="*.jar" />
+                    <fileset dir="lib/ext/quartz" includes="*.jar" />
+                    <fileset dir="lib/ext/1.6" includes="*.jar" />
+                    <fileset dir="lib/ext/module/tsa/${client.java.target}" includes="*.jar" />
+                    <fileset dir="lib/ext/module/pdfsigner/itext" includes="*.jar"/>
+                    <fileset dir="lib/ext/module/odfsigner" includes="*.jar"/>
+                    <fileset dir="lib/ext/module/ooxmlsigner" includes="*.jar"/>
+                    <fileset dir="lib/ext/asm" includes="*.jar" />
+                    <fileset dir="lib/ext/hibernate" includes="*.jar"/>
                     <fileset dir="${ant.home}/lib" includes="ant.jar" />
                     <path path="${libs.JBoss-Java-EE-Library.classpath}" />                    
                 </classpath>
-                <classpath path="lib/swing-app-framework/appframework-1.0.3.jar:lib/swing-app-framework/swing-worker-1.1.jar:lib/beans-binding/beansbinding-1.2.1.jar"/>
+                <classpath path="lib/ext/swing-app-framework/appframework-1.0.3.jar:lib/ext/swing-app-framework/swing-worker-1.1.jar:lib/ext/beans-binding/beansbinding-1.2.1.jar"/>
         </javadoc>
         <echo message="Local documentation is now available in file://${apidoc}/index.html"/>
     </target>
@@ -273,7 +272,7 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
                 <exclude name="p12/**" />
                 <exclude name="dist/**" />
                 <exclude name="dist-client/**" />
-                <exclude name="dist-server/**" />
+                <exclude name="lib/*.*ar" />
                 <exclude name="out/**" />
                 <exclude name="eclipseBuild/**" />
                 <exclude name="**/*.class" />
@@ -528,16 +527,16 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
         
         <!-- libsignserver-common -->
         <mkdir dir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}"/>
-        <copy todir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/dist-server">
-            <fileset dir="${server.dist.dir}">
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
                 <include name="SignServer-Common.jar"/>
                 <include name="SignServer-ejb-interfaces.jar"/>
             </fileset>
         </copy>
         <mkdir dir="${debian.pkgdist.destdir}/libsignserver-common/usr/share/java"/>
-        <symlink resource="../${pkg.basename}/dist-server/SignServer-Common.jar" 
+        <symlink resource="../${pkg.basename}/lib/SignServer-Common.jar" 
             link="${debian.pkgdist.destdir}/libsignserver-common/usr/share/java/signserver-common-${pkg.version}.jar"/>
-        <symlink resource="../${pkg.basename}/dist-server/SignServer-ejb-interfaces.jar" 
+        <symlink resource="../${pkg.basename}/lib/SignServer-ejb-interfaces.jar" 
             link="${debian.pkgdist.destdir}/libsignserver-common/usr/share/java/signserver-ejb-interfaces-${pkg.version}.jar"/>
         <copy todir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/lib">
             <fileset dir="${base}/lib">
@@ -589,8 +588,8 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
                 <include name="SignServer-AdminCLI.jar"/>
             </fileset>
         </copy>
-        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/dist-server">
-            <fileset dir="${base}/dist-server">
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
                 <exclude name="lib"/>
                 <exclude name="*.mar"/>
                 <exclude name="SignServer-Common.jar"/>     <!-- libsignserver-common -->
@@ -737,7 +736,7 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
         <property name="pkgdist.deploydir" value="${pkgdist.destdir}/usr/share/signserver-server/deploy"/>
         <mkdir dir="${pkgdist.deploydir}"/>
         <copy todir="${pkgdist.deploydir}" >
-            <fileset dir="../dist-server">
+            <fileset dir="../lib">
                 <include name="signserver.ear"/>
             </fileset>
             <fileset dir="../res/appserver/jboss">
@@ -856,7 +855,7 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
         <property name="pkgdist.moduledir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/modules" />
         <mkdir dir="${pkgdist.moduledir}"/>
         <copy todir="${pkgdist.moduledir}">
-            <fileset dir="../dist-server">
+            <fileset dir="../lib">
                 <include name="*.mar"/>
             </fileset>
         </copy>

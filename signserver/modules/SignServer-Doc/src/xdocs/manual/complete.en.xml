@@ -3534,7 +3534,7 @@ by running "ant". After that the tool can be executed with something similar
 to:
                         </p>
                         <pre>
-java -cp dist-server/signserver-ejb.jar:lib/1.6/bcprov-jdk.jar:dist-server/lib/SignServer-Common.jar:lib/ejbca-util.jar org.signserver.server.cryptotokens.CryptoTokenUtils createsoft src/test/dss10/dss10_signer1.p12 "signer 1" foo123
+java -cp lib/signserver-ejb.jar:lib/ext/1.6/bcprov-jdk.jar:lib/SignServer-Common.jar:lib/ext/ejbca-util.jar org.signserver.server.cryptotokens.CryptoTokenUtils createsoft src/test/dss10/dss10_signer1.p12 "signer 1" foo123
                         </pre>
                     </subsubsection>
                     <subsubsection name="SIGNERTOKEN.CLASSPATH">

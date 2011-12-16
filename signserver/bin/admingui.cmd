@@ -26,8 +26,8 @@ if not exist %SIGNSRV_HOME%\lib\SignServer-AdminGUI.jar  (
 set class_name=org.signserver.admin.gui.SignServerAdminGUIApplication
 
 rem check that we have built the classes
-if not exist %SIGNSRV_HOME%\dist-client\SignServer-AdminGUI.jar  (
-    echo SignServer AdminGUI not available. Build it by running 'ant admingui'.
+if not exist %SIGNSRV_HOME%\lib\SignServer-AdminGUI.jar  (
+    echo SignServer AdminGUI not available. Build it by running 'ant'.
     goto end
 )
 

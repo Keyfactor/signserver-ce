@@ -17,7 +17,7 @@
     <property name="clean.available" value="true"/>
     
     <!-- Copy to client-dist etc. -->
-    <target name="dist-module" depends="jar,-do-client-dist-lib"/>
+    <target name="dist-module" depends="jar,-do-client-dist"/>
 
     <!--
         ===================

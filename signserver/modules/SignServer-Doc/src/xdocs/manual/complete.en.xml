@@ -1696,7 +1696,7 @@ Since SignServer >=3.2.1 it is possible to supply extra request data called Requ
 
 		<section name="Java Client API">
                     <p>
-Built along with the WebService is a Java API that can be used by clients. It's located in dist-client/signserverwscli and the file signserverws.jar and all the files in the lib directory is required to use the API. The client API have support for different high availability policies to avoid the need for load balance hardware.
+Built along with the WebService is a Java API that can be used by clients. It's available in the file lib/SignServer-Client-SignServerWS.jar. The client API have support for different high availability policies to avoid the need for load balance hardware.
                     </p>
                     <p>
 The client classes is in the package org.signserver.protocol.ws.client and the main code are SignServerWSClientFactory creating a client using the specified load balance policy, it returns a
@@ -1720,9 +1720,7 @@ Other future load balance policies could be round robin or that all nodes are ca
 				is the same regardless if WebService or EJB Remote calls are used.
 			</p>
 			<p>
-				To use the API include the file signingandvalidationapi.jar
-				as well as all JAR-files in the lib-folder available in
-				SIGNSERVER_HOME/dist-client/signingandvalidationapi/.
+				To use the API include the file lib/SignServer-Client-SigningAndValidationAPI.jar.
 			</p>
 			<subsection name="Sample Code">
 				<subsubsection name="Signing and validating an XML document">
@@ -3117,10 +3115,10 @@ WORKER1.VAL2.ISSUER1.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....
 There exists a Java CLI tool that can be used to check the validity of a certificate from scripts. It supports a clustered SignServer installation by using the "Use first host that response OK" policy.
                     </p>
                     <p>
-When compiling, make sure that setting validationclient.enabled is set to "true" in the build properties. The client is found in dist-client/validationclient. Just copy the validate.jar and all the files in the 'lib' directory to the location where you want to use the client.
+When compiling, make sure that setting validationclient.enabled is set to "true" in the build properties. The client is lib/SignServer-Client-ValidationCLI.jar.
                     </p>
                     <p>
-Use the client with 'java -jar validate.jar &lt;options&gt;'.
+Use the client with 'java -jar lib/SignServer-Client-ValidationCLI.jar &lt;options&gt;'.
                     </p>
                     <pre>
 Here is a list of available options:
@@ -4417,9 +4415,7 @@ It only works without client authentication requirements and through HTTP.
 To run the client do
                         </p>
                         <pre>
-ant
-cd dist-client
-java -jar timeStampClient.jar "http://&lt;hostname&gt;:8080/signserver/tsa?signerId=1"
+bin/client timestamp "http://&lt;hostname&gt;:8080/signserver/tsa?signerId=1"
                         </pre>
                         <p>
 It will continuously make one request per second. Run the test client without arguments to get a list of possible arguments, you can use it as a full time stamp client to get real document time stamps.

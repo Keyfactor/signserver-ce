@@ -18,7 +18,7 @@ rem Application server jars
 set J2EE_CP=%APPSRV_HOME%\lib\jbossall-client.jar;%APPSRV_HOME%\lib\appserv-rt.jar
 
 rem check that we have built the classes
-if not exist %SIGNSRV_HOME%\dist-client\SignServer-AdminCLI.jar  (
+if not exist %SIGNSRV_HOME%\lib\SignServer-AdminCLI.jar  (
     echo You must build SignServer before using the cli, use 'ant'.
     goto end
 )

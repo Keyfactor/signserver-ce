@@ -25,12 +25,6 @@
                 <include name="*.jar"/>
             </fileset>
         </copy>
-        <mkdir dir="../../dist-client/lib" />
-        <copy todir="../../dist-client/lib">
-            <fileset dir="dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
         
         <!-- Create the module descriptor file for this module -->
         <property name="distJar" value="SignServer-ejb.jar"/>

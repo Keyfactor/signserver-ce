@@ -28,7 +28,6 @@
         <tstamp/>
         <!-- Create the build directory structure used by compile -->
         <mkdir dir="${build}"/>
-        <mkdir dir="${client.dist.dir}/lib"/>
         <mkdir dir="${mods-available}"/>
     </target>
     
@@ -93,7 +92,6 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
     	<delete dir="${pkg.dist.dir}" />
         <delete dir="${apidoc}" />
         <delete dir="${tmp}"/>	
-    	<delete dir="${client.dist.dir}" />
         <delete dir="${debian.pkgdist.destdir}"/>
         <delete dir="${mods-available}"/>
         <delete dir="${test.dir}" />
@@ -272,7 +270,6 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
                 <exclude name="tmp/**" />
                 <exclude name="p12/**" />
                 <exclude name="dist/**" />
-                <exclude name="dist-client/**" />
                 <exclude name="lib/*.*ar" />
                 <exclude name="out/**" />
                 <exclude name="eclipseBuild/**" />
@@ -308,8 +305,6 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
                 <exclude name="**/dist/**" />
                 <exclude name="**/build/**" />
                 <exclude name="SignServer-AdminGUI/lib/**" />
-                <exclude name="dist-client/**" />
-                <exclude name="dist-server/**" />
                 <exclude name="out/**" />
                 <exclude name="eclipseBuild/**" />
                 <exclude name="**/*.class" />
@@ -346,8 +341,6 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
                 <exclude name="**/dist/**" />
                 <exclude name="**/build/**" />
                 <exclude name="SignServer-AdminGUI/lib/**" />
-                <exclude name="dist-client/**" />
-                <exclude name="dist-server/**" />
                 <exclude name="out/**" />
                 <exclude name="eclipseBuild/**" />
                 <exclude name="**/*.class" />
@@ -379,8 +372,6 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
                 <exclude name="conf/signserver_build.properties" />
                 <exclude name="conf/admingui.properties" />
                 <exclude name="lib/**" />
-                <exclude name="dist-client/lib/**" />
-                <exclude name="dist-client/signingandvalidationapi/lib/**"/>
                 <exclude name="modules/**" />
                 <exclude name="p12/**" />
                 <exclude name="tmp/**" />
@@ -820,27 +811,27 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
             </fileset>
         </copy>
         <copy todir="${pkgdist.clilibdir}">
-            <fileset dir="${client.dist.dir}">
+            <fileset dir="../lib">
                 <include name="signserver-cli.jar"/>
             </fileset>
-            <fileset dir="${client.dist.dir}/lib">
+            <fileset dir="../lib/ext">
                 <include name="jbossall-client.jar"/>
             </fileset>
-            <fileset dir="${lib}">
+            <fileset dir="${lib}/ext">
                 <include name="log4j.jar"/>
                 <include name="cert-cvc.jar"/>
                 <include name="ejbca-util.jar"/>
                 <include name="commons-lang-2.4.jar"/>
             </fileset>
-            <fileset dir="${lib}/1.6">
+            <fileset dir="${lib}/ext/1.6">
                 <include name="bcprov-jdk.jar"/>
                 <include name="bcmail-jdk.jar"/>
             </fileset>
-            <fileset dir="${lib}/asm">
+            <fileset dir="${lib}/ext/asm">
                 <include name="asm-3.1.jar"/>
                 <include name="asm-commons-3.1.jar"/>
             </fileset>
-            <fileset dir="${lib}/ext/ejb">
+            <fileset dir="${lib}/ext/ext/ejb">
                 <include name="jboss-ejb3x.jar"/>
             </fileset>
         </copy>

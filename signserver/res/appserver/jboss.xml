@@ -18,7 +18,7 @@
         The zipfileset should have the id "appserver.extralibs" and the
         prefix "lib".
     -->
-    <zipfileset id="appserver.extralibs" prefix="lib" dir="lib/ext/ejb">
+    <zipfileset id="appserver.extralibs" prefix="lib" dir="lib/ext/ext/ejb">
             <!-- Currently no extra jars are needed for JBoss. -->
             <exclude name="*"/>
     </zipfileset>

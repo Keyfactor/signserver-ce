@@ -17,24 +17,36 @@
     <property name="clean.available" value="true"/>
 
     <!-- Copy to client-dist etc. -->
-    <target name="dist-module" depends="jar,-do-client-dist">
+    <target name="dist-module" depends="jar,-init-macrodef-convertclasspath">
         
-    	<echo message="Ignore warnings about jar files that can not be copied, they are for other application servers"/>
-    	<!-- JBoss:
-            For JBoss 4.2.3.GA only jbossall-client.jar is needed.
-            For JBoss 5.1.0.GA jbossall-client.jar is referencing the needed
-            libraries so all of them needs to be copied.
-            <copy file="${appserver.home}/client/jbossall-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/>
-        -->
-        <copy todir="${client.dist.dir}/lib" failonerror="false">
-          <fileset dir="${appserver.home}/client">
-             <include name="*.jar"/>
-           </fileset>
-       </copy>
-    	<!-- Glassfish -->
-    	<copy file="${appserver.home}/lib/appserv-rt.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
-    	<copy file="${appserver.home}/lib/appserv-deployment-client.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
-    	<copy file="${appserver.home}/lib/appserv-ext.jar" todir="${client.dist.dir}/lib" failonerror="false"/> 
+        <property name="dist.jar" location="dist/SignServer-AdminCLI.jar"/>
+        
+        <!-- Convert classpath to be relative to the lib folders -->
+        <convertclasspath classpath="${javac.classpath}" id="libs" excludes="modules/" dir="${basedir}/../../lib" pathsep=" "/>
+        <convertclasspath classpath="${javac.classpath}" id="mods" excludes="lib/" mapperType="flatten" mapperTo="*" pathsep=" "/>
+        <property name="jar.classpath" value="${libs} ${mods}"/>
+        <jar file="${dist.jar}" update="true">
+            <manifest>
+                <attribute name="Class-Path" value="${jar.classpath}"/>
+            </manifest>
+        </jar>
+        
+        <!-- Move to lib -->
+        <copy todir="../../lib" failonerror="true" file="${dist.jar}"/>
+        
+        <!-- Convert classpath to be relative to this modules dist folder -->
+        <property name="base.dir" location="${distdir}/../../"/>
+        <property name="base2.dir" location="${distdir}/../../../"/>
+        <pathconvert property="localjar.classpath" pathsep=" ">
+            <path path="${javac.classpath}"/>
+            <map from="${base.dir}/" to="../../"/>
+            <map from="${base2.dir}/" to="../../../"/>
+        </pathconvert>
+        <jar file="${dist.jar}" update="true">
+            <manifest>
+                <attribute name="Class-Path" value="${localjar.classpath}"/>
+            </manifest>
+        </jar>
      </target>
 
      <!--

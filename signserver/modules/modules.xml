@@ -171,20 +171,22 @@
             <attribute default="" name="excludes"/>
             <attribute default="identity" name="mapperType"/>
             <attribute default="*" name="mapperTo"/>
+            <attribute default="${basedir}/../../" name="dir"/>
+            <attribute default="," name="pathsep"/>
             <sequential>
-                <property name="base.dir" location="${basedir}/../../"/>
+                <property name="@{id}.base.dir" location="@{dir}"/>
 
-                <pathconvert property="as_includes_pattern" pathsep=",">
+                <pathconvert property="@{id}.as_includes_pattern" pathsep="@{pathsep}">
                     <path path="@{classpath}"/>
-                    <map from="${base.dir}\" to=""/>
-                    <map from="${base.dir}/" to=""/>
-                    <map from="${base.dir}" to=""/>
+                    <map from="${@{id}.base.dir}\" to=""/>
+                    <map from="${@{id}.base.dir}/" to=""/>
+                    <map from="${@{id}.base.dir}" to=""/>
                 </pathconvert>
-                <fileset dir="${base.dir}" includes="${as_includes_pattern}" id="as_fileset" excludes="@{excludes}"/>
-                <pathconvert property="@{id}" pathsep="," refid="as_fileset">
-                    <map from="${base.dir}\" to=""/>
-                    <map from="${base.dir}/" to=""/>
-                    <map from="${base.dir}" to=""/>
+                <fileset dir="${@{id}.base.dir}" includes="${@{id}.as_includes_pattern}" id="@{id}.as_fileset" excludes="@{excludes}"/>
+                <pathconvert property="@{id}" pathsep="@{pathsep}" refid="@{id}.as_fileset">
+                    <map from="${@{id}.base.dir}\" to=""/>
+                    <map from="${@{id}.base.dir}/" to=""/>
+                    <map from="${@{id}.base.dir}" to=""/>
                     <chainedmapper>
                         <mapper type="@{mapperType}"/>
                         <globmapper from="*" to="@{mapperTo}" />
@@ -192,9 +194,9 @@
                 </pathconvert>
                 
                 <echo level="debug">
-                    basedir             : ${base.dir}
+                    basedir             : ${@{id}.base.dir}
                     classpath           : @{classpath}
-                    as_includes_pattern : ${as_includes_pattern}
+                    as_includes_pattern : ${@{id}.as_includes_pattern}
                     result              : ${@{id}}
                 </echo>
             </sequential>

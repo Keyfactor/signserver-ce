@@ -11,13 +11,37 @@
     <description>Builds, tests, and runs the project SignServer-Common.</description>
     <import file="nbproject/build-impl.xml"/>
     <import file="../modules.xml"/>
+    
+    <property name="dist-module.available" value="true"/>
+    <property name="clean.available" value="true"/>
+    <property name="moduleName" value="signservercommon"/>
 
-    <target name="-post-jar">
-        <copy todir="../../lib">
-            <fileset dir="dist">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
+    <target name="dist-module" depends="jar,descriptor">
+        <!-- Copy to dist but replace signservercompile.properties -->
+        <zip destfile="../../lib/SignServer-Common.jar" duplicate="fail">
+            <zipfileset src="dist/SignServer-Common.jar">
+                <exclude name="org/signserver/common/signservercompile.properties"/>
+            </zipfileset>
+            <zipfileset dir="." prefix="org/signserver/common">
+                <include name="signservercompile.properties" />
+            </zipfileset>
+        </zip>
+    </target>
+    <target name="descriptor" depends="init,-init-macrodef-convertclasspath">
+        <!-- Create the module descriptor file for this module -->
+        <property name="distJar" value="SignServer-Common.jar"/>
+        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/ejb/jboss*,lib/ext/hibernate/,lib/ext/javaee-*/*"/>
+        <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
+        <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
+        <propertyfile file="../../mods-available/10_${moduleName}.properties">
+            <entry key="module.name" value="${moduleName}"/>
+            <entry key="module.type" value="lib"/>
+            <entry key="to.lib" value="${libsToLib},${modsToLib},${distJar}"/>
+            <entry key="to.root" value=""/>
+            <entry key="postprocess.files" value="postprocess.file1"/>
+            <entry key="postprocess.file1.src" value="${distJar}"/>
+            <entry key="postprocess.file1.includes" value="org/signserver/common/signservercompile.properties"/>
+        </propertyfile>
     </target>
 
     <!--

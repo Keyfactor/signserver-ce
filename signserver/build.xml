@@ -167,7 +167,7 @@ database.password                   = ${database.password}
         <fail message="SignServer needs to be built first. Run 'ant build'." unless="signserver-ejb.jar.available"/>
     </target>
     
-    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -process-modules,  -configure-SignServer-ejb.jar, -configure-SignServer-Common.jar">
+    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -process-modules,  -configure-SignServer-ejb.jar">
         <!-- Build the ear file from the signserver.ear folder -->
         <ear destfile="${ear.dist.file}" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
             <fileset dir="${signserver.ear.dir}">
@@ -261,7 +261,16 @@ Libraries to include:
     
     <target name="-postprocess-file">
         <echo level="verbose">Post processing file "${_acfa2.src}" with includes "${_acfa2.includes}"</echo>
-        <postprocess-jar src="lib/${_acfa2.src}" destfile="${signserver.ear.dir}/${_acfa2.src}" tempdir="${tmp}/${_acfa.calledname}-${_acfa2.src}.dir" replace-includes="${_acfa2.includes}"/>
+        <echo>module.type: ${_acfa.module.type}</echo>
+        <condition property="_acfa2.destdir" value="lib/">
+            <equals arg1="${_acfa.module.type}" arg2="lib"/>
+        </condition>
+        <condition property="_acfa2.destdir" value="">
+            <not>
+                <equals arg1="${_acfa.module.type}" arg2="lib"/>
+            </not>
+        </condition>
+        <postprocess-jar src="lib/${_acfa2.src}" destfile="${signserver.ear.dir}/${_acfa2.destdir}${_acfa2.src}" tempdir="${tmp}/${_acfa.calledname}-${_acfa2.src}.dir" replace-includes="${_acfa2.includes}"/>
     </target>
         
     <target name="-init-configure">

@@ -26,8 +26,6 @@
         <antcall target="j2ee:check"/>
         <!-- Create the time stamp -->
         <tstamp/>
-        <!-- Create the build directory structure used by compile -->
-        <mkdir dir="${build}"/>
         <mkdir dir="${mods-available}"/>
     </target>
     
@@ -83,10 +81,8 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
 
 
     <target name="clean-build">
-        <!-- Delete the ${build} and ${server.dist.dir} directory trees -->
         <echo>Cleaning built files</echo>
-        <delete dir="${build}" />
-        <delete dir="../lib/" failonerror="true" verbose="true">
+        <delete dir="../lib/" failonerror="true">
             <include name="*.*ar"/>
         </delete>
     	<delete dir="${pkg.dist.dir}" />

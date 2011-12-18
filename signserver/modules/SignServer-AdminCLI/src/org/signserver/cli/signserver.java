@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.cli;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -33,7 +31,14 @@ public class signserver {
 
     private ISignServerCommandFactory signServerCommandFactory;
     private Properties cliProperties;
-    
+    private Properties defaultCliProperties = new Properties();
+
+    public signserver() {
+        defaultCliProperties.setProperty("hostname.masternode", "localhost");
+        defaultCliProperties.setProperty("hostname.allnodes", "localhost");
+        defaultCliProperties.setProperty("custom.commandfactory", "org.signserver.cli.DefaultSignServerCommandFactory");
+    }
+
     protected signserver(String[] args) {
         try {
             String hostname = checkHostParameter(args);
@@ -118,11 +123,13 @@ public class signserver {
 
     private Properties getProperties() throws IOException {
         if (cliProperties == null) {
-            Properties properties = new Properties();
+            Properties properties = new Properties(defaultCliProperties);
             InputStream in = null; 
             try {
-                in = getClass().getResourceAsStream("signserver_cli.properties");
-                cliProperties.load(in);
+                in = getClass().getResourceAsStream("/signserver_cli.properties");
+                if (in != null) {
+                    properties.load(in);
+                }
                 cliProperties = properties;
             } finally {
                 if (in != null) {

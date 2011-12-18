@@ -17,7 +17,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import org.signserver.common.CompileTimeSettings;
+import org.apache.log4j.Logger;
 
 import org.signserver.common.InvalidWorkerIdException;
 
@@ -27,8 +27,12 @@ import org.signserver.common.InvalidWorkerIdException;
  * @version $Id$
  */
 public class signserver {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(signserver.class);
 
     private ISignServerCommandFactory signServerCommandFactory;
+    private Properties cliProperties;
     
     protected signserver(String[] args) {
         try {
@@ -113,34 +117,24 @@ public class signserver {
     }
 
     private Properties getProperties() throws IOException {
-        String propsfile = "conf/signserver_cli.properties";
-
-        File unixConfigFile = new File("/etc/signserver/signserver.conf");
-        File windowsConfigFile = new File(System.getenv("SYSTEMROOT") + "/signserver.conf");
-        File mailSignerUnixConfigFile = new File("/etc/mailsigner/mailsigner.conf");
-        File mailSignerWindowsConfigFile = new File(System.getenv("SYSTEMROOT") + "/mailsigner.conf");
-        File legacyFile = new File("signserver_cli.properties");
-        if (unixConfigFile.exists()) {
-            propsfile = "/etc/signserver/signserver.conf";
-        } else if (windowsConfigFile.exists()) {
-            propsfile = System.getenv("SYSTEMROOT") + "/signserver.conf";
-        } else if (mailSignerUnixConfigFile.exists()) {
-                propsfile = "/etc/mailsigner/mailsigner.conf";
-        } else if (mailSignerWindowsConfigFile.exists()) {
-            propsfile = System.getenv("SYSTEMROOT") + "/mailsigner.conf";
-        } else if (System.getenv("SIGNSERVER_HOME") != null) {
-                propsfile = System.getenv("SIGNSERVER_HOME") + "/" + propsfile;
-        } else if (System.getenv("SIGNSRV_HOME") != null) {
-            propsfile = System.getenv("SIGNSRV_HOME") + "/" + propsfile;
-        } else if (legacyFile.exists()) {
-            propsfile = legacyFile.getAbsolutePath();
+        if (cliProperties == null) {
+            Properties properties = new Properties();
+            InputStream in = null; 
+            try {
+                in = getClass().getResourceAsStream("signserver_cli.properties");
+                cliProperties.load(in);
+                cliProperties = properties;
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException ex) {
+                        LOG.error("Failed to close configuration", ex);
+                    }
+                }
+            }
         }
-
-        InputStream is = new FileInputStream(propsfile);
-        Properties properties = new Properties();
-        properties.load(is);
-        is.close();
-        return properties;
+        return cliProperties;
     }
 
     /**
@@ -195,9 +189,13 @@ public class signserver {
 
     private ISignServerCommandFactory getSignServerCommandFactory() {
         if (signServerCommandFactory == null) {
-            final String commandFactoryClass =
-                    CompileTimeSettings.getInstance().getProperty(
-                    CompileTimeSettings.SIGNSERVERCOMMANDFACTORY);
+            String commandFactoryClass = null;
+            try {
+                commandFactoryClass = getProperties().getProperty("custom.commandfactory");
+            } catch (IOException ex) {
+                LOG.error("Failed to load CLI configuration", ex);
+            }
+            
             if (commandFactoryClass == null) {
                 signServerCommandFactory = new DefaultSignServerCommandFactory();
             } else {

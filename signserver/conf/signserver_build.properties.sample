@@ -409,8 +409,3 @@ j2ee.web-nohttps=true
 # Location of optional custom build xml that will be imported.
 #custom.build.xml= <custom-code>/build.xml
 #
-# Setting defining a custom ISignServerCommandFactory used for customizing
-# the CLI interface.
-#
-# Default : org.signserver.cli.DefaultSignServerCommandFactory
-#custom.commandfactory=org.signserver.cli.DefaultSignServerCommandFactory

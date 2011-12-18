@@ -1,3 +1,16 @@
+SignServer 3.3.0
+----------------
+
+TODO
+
+
+Notice:
+ - The property "custom.commandfactory" previously defined in 
+   signserver_build.properties should now be defined in 
+   signserver_cli.properties instead.
+
+
+
 SignServer 3.2.1
 ----------------
 

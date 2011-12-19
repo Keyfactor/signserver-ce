@@ -26,9 +26,6 @@ Bug fixes:
  - Switching application server type did not update jndi.properties    
  - JavaDoc failed to build
 
-
-
-
 Notice:
  - In signserver_build.properties the property "useclusterclassloader" now 
    defaults to false. To still use the deprecated clusterclassloader this 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="modules/SignServer-Client-SigningAndValidationAPI/src"/>
 	<classpathentry kind="src" path="modules/SignServer-Client-SigningAndValidationAPI/test"/>
 	<classpathentry kind="src" path="modules/SignServer-Client-SignServerWS/src"/>
@@ -29,14 +28,14 @@
 	<classpathentry kind="src" path="modules/SignServer-Module-CMSSigner/src/java"/>
 	<classpathentry kind="src" path="modules/SignServer-Module-Renewal/test"/>
 	<classpathentry kind="src" path="modules/SignServer-Module-Renewal/src/java"/>
-	<classpathentry kind="src" path="modules/SignServer-Module-WSRA/test"/>
-	<classpathentry kind="src" path="modules/SignServer-Module-WSRA/src/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-Renewal-interface/src"/>
 	<classpathentry kind="src" path="modules/SignServer-AdminCLI/test"/>
 	<classpathentry kind="src" path="modules/SignServer-AdminCLI/src"/>
 	<classpathentry kind="src" path="modules/SignServer-war/src/java"/>
 	<classpathentry kind="src" path="modules/SignServer-war/test"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb/src/java"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb/test"/>
+	<classpathentry kind="src" path="modules/SignServer-ejb-interfaces/src/"/>
 	<classpathentry kind="src" path="modules/SignServer-Common/test"/>
 	<classpathentry kind="src" path="modules/SignServer-Common/src"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb-AdminWS/test"/>
@@ -56,73 +55,56 @@
 	<classpathentry kind="src" path="modules/SignServer-Test-Utils/src"/>
 	<classpathentry kind="src" path="modules/SignServer-Test-ValidationWS/src"/>
 	<classpathentry kind="src" path="modules/SignServer-Test-ValidationWS/test"/>
-	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="lib" path="lib/hibernate/ejb3-persistence.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate/hibernate-core.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate/hibernate-annotations.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate/hibernate-entitymanager.jar"/>
-	<classpathentry kind="lib" path="lib/ext/ejb/jboss-ejb3x.jar"/>
-	<classpathentry kind="lib" path="lib/ext/ejb/jboss-j2ee.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/resolver.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/saaj-api.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/saaj-impl.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/sjsxp.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/stax-ex.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/streambuffer.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/activation.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/FastInfoset.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/http.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/jaxb-api.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/jaxb-impl.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/jaxb-xjc.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/jaxws-api.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/jsr173_api.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/jsr181-api.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/jsr250-api.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/mimepull.jar"/>
-	<classpathentry kind="lib" path="lib/ext/jdom-b9.jar"/>
-	<classpathentry kind="lib" path="lib/ext/xml-apis.jar"/>
-	<classpathentry kind="lib" path="lib/cert-cvc.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections-3.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/ext/hibernate/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="lib/ext/hibernate/hibernate-core.jar"/>
+	<classpathentry kind="lib" path="lib/ext/hibernate/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/ext/hibernate/hibernate-entitymanager.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ext/ejb/jboss-ejb3x.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ext/ejb/jboss-j2ee.jar"/>
+	<classpathentry kind="lib" path="lib/ext/jaxws/saaj-api.jar"/>
+	<classpathentry kind="lib" path="lib/ext/jaxws/saaj-impl.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ext/jdom-b9.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ext/xml-apis.jar"/>
+	<classpathentry kind="lib" path="lib/ext/cert-cvc.jar"/>
+	<classpathentry kind="lib" path="lib/ext/commons-collections-3.2.jar"/>
+	<classpathentry kind="lib" path="lib/ext/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/ext/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/jbossall-client.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/lib/jboss-system.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/jboss-j2ee.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/ejb3-persistence.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/jboss-ejb3x.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/ejbca-util.jar"/>
+	<classpathentry kind="lib" path="lib/ext/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/ext/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ejbca-util.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/jaxws-tools.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws/jaxws-rt.jar"/>
-	<classpathentry kind="lib" path="lib/quartz/quartz-1.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/asm/asm-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/asm/asm-commons-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/1.6/bcmail-jdk.jar"/>
-	<classpathentry kind="lib" path="lib/1.6/bcprov-jdk.jar"/>
-	<classpathentry kind="lib" path="lib/ext/servlet-2.3.jar"/>
-	<classpathentry kind="lib" path="lib/ext/junit-3.8.1.jar"/>
-	<classpathentry kind="lib" path="lib/ext/commons-cli-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/reports/jcommon-1.0.12.jar"/>
-	<classpathentry kind="lib" path="lib/reports/jfreechart-1.0.9.jar"/>
-	<classpathentry kind="lib" path="lib/1.6/bctsp-jdk.jar"/>
+	<classpathentry kind="lib" path="lib/ext/quartz/quartz-1.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/ext/asm/asm-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/ext/asm/asm-commons-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/ext/1.6/bcmail-jdk.jar"/>
+	<classpathentry kind="lib" path="lib/ext/1.6/bcprov-jdk.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ext/servlet-2.3.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ext/junit-3.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ext/commons-cli-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/ext/reports/jcommon-1.0.12.jar"/>
+	<classpathentry kind="lib" path="lib/ext/reports/jfreechart-1.0.9.jar"/>
+	<classpathentry kind="lib" path="lib/ext/1.6/bctsp-jdk.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/hsqldb.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/dom4j.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/cglib.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/antlr.jar"/>
 	<classpathentry kind="var" path="ANT_HOME/lib/ant.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry kind="lib" path="lib/module/odfsigner/odfdom.jar"/>
-	<classpathentry kind="lib" path="lib/module/pdfsigner/itext/itext.jar"/>
-	<classpathentry kind="lib" path="lib/module/ooxmlsigner/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="lib/module/ooxmlsigner/openxml4j_beta_v538.jar"/>
+	<classpathentry kind="lib" path="lib/ext/module/odfsigner/odfdom.jar"/>
+	<classpathentry kind="lib" path="lib/ext/module/pdfsigner/itext/itext.jar"/>
+	<classpathentry kind="lib" path="lib/ext/module/ooxmlsigner/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="lib/ext/module/ooxmlsigner/openxml4j_beta_v538.jar"/>
 	<classpathentry kind="lib" path="bin/"/>
 
 	<!-- AdminGUI -->
-	<classpathentry kind="lib" path="modules/SignServer-AdminGUI/lib/swing-app-framework/appframework-1.0.3.jar"/>
-	<classpathentry kind="lib" path="modules/SignServer-AdminGUI/lib/swing-app-framework/swing-worker-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/ext/swing-app-framework/appframework-1.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/ext/swing-app-framework/swing-worker-1.1.jar"/>
 	<classpathentry kind="lib" path="modules/SignServer-AdminGUI/build/generated/jax-wsCache/AdminWebServiceService/"/>
 
 	<!-- Module Renewal -->
@@ -130,10 +112,6 @@
 
 	<!-- Client-WS -->
 	<classpathentry kind="lib" path="modules/SignServer-Client-SignServerWS/build/generated/jax-wsCache/SignServerWSService/"/>/
-
-	<!-- WSRA -->
-	<classpathentry kind="lib" path="modules/SignServer-Module-WSRA/tmp/wsra/gen-classes/client/"/>
-	<classpathentry kind="lib" path="modules/SignServer-Module-WSRA/tmp/dummyws/gen-classes/client/"/>
 
 	<!-- Tests -->
 	<classpathentry kind="lib" path="modules/SignServer-Test-SignServerWS/build/generated/jax-wsCache/SignServerWSService/">

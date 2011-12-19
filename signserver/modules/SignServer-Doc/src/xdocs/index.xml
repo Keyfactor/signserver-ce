@@ -8,7 +8,7 @@
 <body>
   <section name="Latest News">
     <note>
-        <strong>SignServer 3.2.0 is now out!</strong>
+        <strong>SignServer 3.2.1 is now out!</strong>
         <br/><br/>
         <!-- Read <a href="http://www.primekey.se/digitalAssets/2/2334_Product_Release_SignServer3.1.1.pdf">release notes</a>. | --> 
         Visit the <a href="download.html">download</a> section to get SignServer.
@@ -20,7 +20,7 @@
 <p>
 SignServer is an application framework performing cryptographic operations for
 other applications. It's intended to be used in environments where keys are
-supposed to be protected in hardware but there isn't possible to connect such
+supposed to be protected in hardware but it isn't possible to connect such
 hardware to existing enterprise applications or where the operations are
 considered extra sensitive so the hardware have to protected more carefully.
 Another usage is to provide a simplified method to provide signatures in

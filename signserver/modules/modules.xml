@@ -42,9 +42,6 @@
             <istrue value="${genericws.enabled}"/>
         </or>
     </condition>
-    <condition property="clusterclassloader.conditionenabled">
-        <istrue value="${useclusterclassloader}"/>
-    </condition>
     <condition property="webdoc.conditionenabled">
         <istrue value="${webdoc.enabled}"/>
     </condition>

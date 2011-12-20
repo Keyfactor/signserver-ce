@@ -10,25 +10,6 @@
         name="GlobalConfigurationDataBean">
         <table name="GLOBALCONFIG"/>
     </entity>
-
-    <!-- Column types was mapped to LONG -->
-    <entity class="org.signserver.ejb.ClusterClassLoaderDataBean"
-        name="ClusterClassLoaderDataBean">
-        <table name="CLUSTEREDCLASSES"/>
-
-        <attributes>
-            <basic name="implInterfaces">
-                <column name="implinterfaces" column-definition="clob"/>
-            </basic>
-            <basic name="description">
-                <column name="description" column-definition="clob"/>
-            </basic>
-            <basic name="comment">
-                <column name="comment0" column-definition="clob"/>
-            </basic>
-        </attributes>
-    </entity>
-
     
 </entity-mappings>
 

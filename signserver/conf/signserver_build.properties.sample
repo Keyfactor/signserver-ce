@@ -2,8 +2,8 @@
 # $Id$
 #
 # Build configuration of SignServer. Modify at will before building.
-# Note: You might have to run "ant clean" before building for some changes to
-# take effect.
+# Note: You might have to run "bin/ant clean" before building for some changes 
+# to take effect.
 # 
 
 
@@ -241,10 +241,6 @@ j2ee.web-nohttps=true
 #module.mrtdsigner.enabled=true
 #module.mrtdsigner.include=false
 
-# Module WSRA
-# Default: build=true
-#module.wsra.enabled=true
-
 
 # -------------- Client Configurations -----------------------------------------
 #
@@ -278,40 +274,6 @@ j2ee.web-nohttps=true
 # Set to enable build of the ClientCLI
 # Default: true
 #clientcli.enabled=true
-
-# -------------- Cluster Class Loader Configuration ---------------------------
-#
-
-# Set to true to enable the use of the cluster class loader
-#
-# Warning: the cluster class loader is still experimental and should
-# be used for development purposes only.
-#
-# Default: false
-#useclusterclassloader=false
-
-# Set to false if class versions should be disabled (good for
-# development purposes when remote debugging is required).
-#
-# Default: true
-#clusterclassloader.useclassversions=true
-
-# Set to true if signing of resource data should be required.
-#
-# Default: false
-#clusterclassloader.requiresignature=false
-
-# Setting indicating the path to the truststore file
-# that contains all CA certificates that is trusted
-# for signing of resource data.
-#
-# Only used if clusterclassloader.requiresignedresources is set to true.
-#clusterclassloader.pathtotruststore=
-
-# Password locking the truststore specified above.
-#
-# Only used if clusterclassloader.requiresignedresources is set to true.
-#clusterclassloader.truststorepwd=
 
 
 # ------------ PrimeCardHSM ----------------------------------------------------

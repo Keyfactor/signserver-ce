@@ -53,18 +53,6 @@ public class CompileTimeSettings {
             = "healthcheck.minimumfreememory";
     public static final String HEALTHECK_CHECKDBSTRING
             = "healthcheck.checkdbstring";
-    public static final String SIGNSERVER_USECLUSTERCLASSLOADER
-            = "signserver.useclusterclassloader";
-    public static final String SIGNSERVER_USECLASSVERSIONS
-            = "signserver.useclassversions";
-    public static final String SIGNSERVER_REQUIRESIGNATURE
-            = "signserver.requiresignature";
-    public static final String SIGNSERVER_PATHTOTRUSTSTORE
-            = "signserver.pathtotruststore";
-    public static final String SIGNSERVER_TRUSTSTOREPWD
-            = "signserver.truststorepwd";
-    public static final String SIGNSERVERCOMMANDFACTORY
-            = "SignServerCommandFactory";
     public static final String SIGNSERVER_CONFIGFILE
             = "signserver.configfile";
     public static final String SIGNSERVER_VERSION
@@ -81,12 +69,6 @@ public class CompileTimeSettings {
     static {
         // Setup default properties
         DEFAULT_PROPERTIES.put(BUILDMODE, "SIGNSERVER");
-        DEFAULT_PROPERTIES.put(SIGNSERVER_USECLUSTERCLASSLOADER,
-                Boolean.toString(true));
-        DEFAULT_PROPERTIES.put(SIGNSERVER_USECLASSVERSIONS,
-                Boolean.toString(true));
-        DEFAULT_PROPERTIES.put(SIGNSERVER_REQUIRESIGNATURE,
-                Boolean.toString(false));
     }
 
     

@@ -369,12 +369,6 @@ Configuring EAR...
             <entry key="healthcheck.authorizedips" value="${healthcheck.authorizedips}"/>
             <entry key="healthcheck.minimumfreememory" value="${healthcheck.minimumfreememory}"/>
             <entry key="healthcheck.checkdbstring" value="${healthcheck.checkdbstring}"/>
-            <entry key="signserver.useclusterclassloader" value="${useclusterclassloader}"/>
-            <entry key="signserver.useclassversions" value="${clusterclassloader.useclassversions}"/>
-            <entry key="signserver.requiresignature" value="${clusterclassloader.requiresignature}"/>
-            <entry key="signserver.pathtotruststore" value="${clusterclassloader.pathtotruststore}"/>
-            <entry key="signserver.truststorepwd" value="${clusterclassloader.truststorepwd}"/>
-            <entry key="SignServerCommandFactory" value="${custom.commandfactory}"/>
             <entry key="signserver.configfile" value="${signserver.configfile}"/>
             <entry key="signserver.version" value="${app.version}"/>
         </propertyfile>

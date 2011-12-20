@@ -42,9 +42,6 @@ webdoc.enabled                      = ${webdoc.enabled}
 timestampclient.enabled             = ${timestampclient.enabled}
 validationclient.enabled            = ${validationclient.enabled}
 pdfperformancetest.enabled          = ${pdfperformancetest.enabled}
-useclusterclassloader               = ${useclusterclassloader}
-clusterclassloader.useclassversions = ${clusterclassloader.useclassversions}
-clusterclassloader.requiresignature = ${clusterclassloader.requiresignature}
 signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 admingui.enabled                    = ${admingui.enabled}
 clientcli.enabled                   = ${clientcli.enabled}
@@ -401,7 +398,7 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
 
     <target name="test:signserver:pre-run">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
-        <echo> Important, in order for all tests to complete must the web service, generic WS and validation web service interfaces be enabled, ClusterClassLoader with versioning enabled, and HTTPS be turned off.</echo>
+        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled, and HTTPS be turned on.</echo>
         <echo> For Test-SignServerWS to complete the following must be run first:
             bin/signserver.sh setproperties modules/SignServer-Test-SignServerWS/test-configuration.properties
             bin/signserver.sh reload 7001
@@ -908,23 +905,6 @@ module.mrtdsigner.include           = ${module.mrtdsigner.include}
                 <include name="bcprov-jdk.jar"/>
             </fileset>
         </copy>
-    </target>
-
-    <target name="martest">
-        <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask" classpathref="signserver.test.compile.classpath"/>
-        <taskdef name="part" classname="org.signserver.anttasks.PartAntTask" classpathref="signserver.test.compile.classpath"/>
-        <mar version="3" verbose="true" destfile="${tmp}/test.mar">
-            <part name="test">
-                <fileset dir="${lib}/ext">
-                    <include name="commons-cli-1.0.jar"/>
-                </fileset>
-            </part>
-            <part name="test2">
-                <fileset dir="${lib}">
-                    <include name="*.jar"/>
-                </fileset>
-            </part>
-        </mar>
     </target>
 
 </project>

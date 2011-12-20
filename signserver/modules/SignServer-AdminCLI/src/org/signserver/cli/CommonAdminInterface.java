@@ -41,7 +41,6 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.StatusRepositoryData;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
-import org.signserver.ejb.interfaces.IClusterClassLoaderManagerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -68,10 +67,7 @@ public class CommonAdminInterface {
     
     /** The global configuration session. */
     private IGlobalConfigurationSession.IRemote globalConfig;
-    
-    /** The cluster class loader manager session. */
-    private IClusterClassLoaderManagerSession.IRemote cclms;
-    
+
     /** The SignSession. */
     private IWorkerSession.IRemote signsession;
     
@@ -328,30 +324,6 @@ public class CommonAdminInterface {
         return getWorkerSession().findArchiveDatasFromRequestIP(signerid, requestIP);
     }
 
-    public void addResource(String moduleName, String part, int version, String jarName, String resourceName, String implInterfaces, String description, String comment, byte[] resourceData) throws RemoteException {
-        getClusterClassLoaderManagerSession().addResource(moduleName, part, version, jarName, resourceName, implInterfaces, description, comment, resourceData);
-    }
-
-    public void removeModulePart(String moduleName, String part, int version) throws RemoteException {
-        getClusterClassLoaderManagerSession().removeModulePart(moduleName, part, version);
-    }
-
-    public String[] listAllModules() throws RemoteException {
-        return getClusterClassLoaderManagerSession().listAllModules();
-    }
-
-    public Integer[] listAllModuleVersions(String moduleName) throws RemoteException {
-        return getClusterClassLoaderManagerSession().listAllModuleVersions(moduleName);
-    }
-
-    public String[] listAllModuleParts(String moduleName, int version) throws RemoteException {
-        return getClusterClassLoaderManagerSession().listAllModuleParts(moduleName, version);
-    }
-
-    public String[] getJarNames(String moduleName, String part, int version) throws RemoteException {
-        return getClusterClassLoaderManagerSession().getJarNames(moduleName, part, version);
-    }
-
     /**
      * Gets GlobalConfigurationSession Remote.
      * @return SignServerSession
@@ -407,24 +379,6 @@ public class CommonAdminInterface {
             }
         }
         return signsession;
-    }
-
-    /**
-     * Gets SignServerSession Remote.
-     * @return SignServerSession
-     * @throws RemoteException in case the lookup failed
-     */
-    private IClusterClassLoaderManagerSession.IRemote getClusterClassLoaderManagerSession() throws RemoteException {
-        if (cclms == null) {
-            try {
-                cclms = ServiceLocator.getInstance().lookupRemote(
-                        IClusterClassLoaderManagerSession.IRemote.class);
-            } catch (NamingException e) {
-                LOG.error("Error looking up cluster class loader manager interface");
-                throw new RemoteException("Error looking up cluster class loader manager interface", e);
-            }
-        }
-        return cclms;
     }
 
     public Map<String, StatusRepositoryData> getStatusProperties() throws RemoteException {

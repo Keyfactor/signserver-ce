@@ -19,7 +19,7 @@
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
     
-    <target name="dist-module" depends="jar,pdfsignermar,-init-macrodef-convertclasspath">
+    <target name="dist-module" depends="jar,-init-macrodef-convertclasspath">
         <!-- Create the module descriptor file for this module -->
         <property name="moduleName" value="module.pdfsigner"/>
         <property name="distJar" value="lib/SignServer-Module-PDFSigner.jar"/>
@@ -36,28 +36,6 @@
     
     <!-- Create MAR -->
     <property name="modulename" value="pdfsigner"/>
-    <target name="pdfsignermar">
-
-        <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
-            classpath="${javac.classpath}"/>
-        <taskdef name="part" classname="org.signserver.anttasks.PartAntTask"
-            classpath="${javac.classpath}"/>
-
-        <property location="${dist.dir}" name="full.dist.dir"/>
-        <property location="${conf.dir}" name="full.conf.dir"/>
-        <property location="${dist.jar}" name="full.dist.jar"/>
-
-        <mar version="${mar.versions}" modulename="${modulename}"
-            verbose="true" destfile="${full.dist.dir}/${modulename}.mar">
-            <part>
-                <fileset file="${full.dist.jar}"/>
-                <fileset dir="${full.conf.dir}">
-                    <include name="*.properties"/>
-                </fileset>
-            </part>
-        </mar>
-
-    </target>
 
     <!--
 

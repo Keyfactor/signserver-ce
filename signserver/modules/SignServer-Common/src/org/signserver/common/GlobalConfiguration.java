@@ -48,23 +48,6 @@ public class GlobalConfiguration implements Serializable {
     public static final String OLD_CRYPTOTOKENPROPERTY_BASE = ".SIGNERTOKEN";
     public static final String CRYPTOTOKENPROPERTY_CLASSPATH = ".CLASSPATH";
 
-    /** Indicates if ClusterClassLoading should be enabled. */
-    private static Boolean clusterClassLoaderEnabled;
-
-    /** Indicates if ClusterClassLoading should support class versions. */
-    private static Boolean useClassVersions;
-
-    /** Indicates if ClusterClassLoading the full path to the jks trust store. */
-    private static String pathToTrustStore;
-
-    /** Indicates if ClusterClassLoading should require signing. */
-    private static Boolean requireSigning;
-
-    /**
-     * The password to unlock the truststore password. Indicates if
-     * ClusterClassLoading the full path to the jks trust store.
-     */
-    private static char[] cclTrustStorePWD;
     private Properties config;
     private String state;
 
@@ -75,68 +58,6 @@ public class GlobalConfiguration implements Serializable {
     public GlobalConfiguration(Properties config, String state) {
         this.config = config;
         this.state = state;
-    }
-
-    /**
-     * @return True if ClusterClassLoading should be enabled
-     */
-    public static boolean isClusterClassLoaderEnabled() {
-        if (clusterClassLoaderEnabled == null) {
-            clusterClassLoaderEnabled = Boolean.parseBoolean(
-                    CompileTimeSettings.getInstance().getProperty(
-                    CompileTimeSettings.SIGNSERVER_USECLUSTERCLASSLOADER).trim());
-        }
-        return clusterClassLoaderEnabled;
-    }
-
-    /**
-     * @return True if ClusterClassLoading should support class versions
-     */
-    public static boolean isUseClassVersions() {
-        if (useClassVersions == null) {
-            useClassVersions = Boolean.parseBoolean(
-                    CompileTimeSettings.getInstance().getProperty(
-                    CompileTimeSettings.SIGNSERVER_USECLASSVERSIONS).trim());
-        }
-        return useClassVersions;
-    }
-
-    /**
-     * @return True if ClusterClassLoading should require signing
-     */
-    public static boolean isRequireSigning() {
-        if (requireSigning == null) {
-            requireSigning = Boolean.parseBoolean(
-                    CompileTimeSettings.getInstance().getProperty(
-                    CompileTimeSettings.SIGNSERVER_REQUIRESIGNATURE).trim());
-        }
-        return requireSigning;
-    }
-
-    /**
-     * @return the full path to the jks trust store
-     */
-    public static String getPathToTrustStore() {
-        if (pathToTrustStore == null) {
-            pathToTrustStore = CompileTimeSettings.getInstance().getProperty(
-                    CompileTimeSettings.SIGNSERVER_PATHTOTRUSTSTORE);
-        }
-        return pathToTrustStore;
-    }
-
-    /**
-     * @return the trust store password
-     */
-    public static char[] getCCLTrustStorePasswd() {
-        if (cclTrustStorePWD == null) {
-            final String trustStoreValue = CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_TRUSTSTOREPWD);
-            if (trustStoreValue == null || trustStoreValue.trim().isEmpty()) {
-                LOG.error("Error cluster classloader truststore password isn't configured");
-            } else {
-                cclTrustStorePWD = trustStoreValue.toCharArray();
-            }
-        }
-        return cclTrustStorePWD;
     }
 
     /**
@@ -217,11 +138,4 @@ public class GlobalConfiguration implements Serializable {
                 CompileTimeSettings.SIGNSERVER_VERSION);
     }
 
-    /**
-     * @return the build mode
-     */
-    public static String getBuildMode() {
-        return CompileTimeSettings.getInstance().getProperty(
-                CompileTimeSettings.BUILDMODE).trim();
-    }
 }

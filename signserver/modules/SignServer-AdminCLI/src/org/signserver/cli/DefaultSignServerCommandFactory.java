@@ -20,9 +20,6 @@ import org.signserver.cli.archive.FindFromRequestIPCommand;
 import org.signserver.cli.groupkeyservice.PregenerateKeyCommand;
 import org.signserver.cli.groupkeyservice.RemoveGroupKeysCommand;
 import org.signserver.cli.groupkeyservice.SwitchEncKeyCommand;
-import org.signserver.cli.module.AddModuleCommand;
-import org.signserver.cli.module.ListModulesCommand;
-import org.signserver.cli.module.RemoveModuleCommand;
 
 /**
  * Factory for General signserver Commands.
@@ -101,9 +98,6 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
         if (args[0].equalsIgnoreCase("groupkeyservice")) {
             return getGroupKeyServiceCommand(args);
         }
-        if (args[0].equalsIgnoreCase("module")) {
-            return getModuleCommand(args);
-        }
         if (args[0].equalsIgnoreCase("setstatusproperty")) {
             return new SetStatusPropertyCommand(args);
         }
@@ -146,26 +140,6 @@ public class DefaultSignServerCommandFactory implements ISignServerCommandFactor
 
         if (args[1].equalsIgnoreCase("pregeneratekeys")) {
             return new PregenerateKeyCommand(args);
-        }
-
-        return null;
-    }
-
-    private IAdminCommand getModuleCommand(String[] args) {
-        if (args.length < 2) {
-            return null;
-        }
-
-        if (args[1].equalsIgnoreCase("add")) {
-            return new AddModuleCommand(args);
-        }
-
-        if (args[1].equalsIgnoreCase("remove")) {
-            return new RemoveModuleCommand(args);
-        }
-
-        if (args[1].equalsIgnoreCase("list")) {
-            return new ListModulesCommand(args);
         }
 
         return null;

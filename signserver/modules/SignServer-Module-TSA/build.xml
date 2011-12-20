@@ -21,7 +21,7 @@
     <property name="modulename" value="tsa"/>
 
     <!-- Create MAR -->
-    <target name="dist-module" depends="init,jar,tsamar,-init-macrodef-convertclasspath">
+    <target name="dist-module" depends="init,jar,-init-macrodef-convertclasspath">
         <!-- Create the module descriptor file for this module -->
         <property name="moduleName" value="module.tsa"/>
         <property name="distJar" value="lib/SignServer-Module-TSA.jar"/>
@@ -34,28 +34,6 @@
             <entry key="to.lib" value="${libsToLib},${modsToLib},${distJar}"/>
             <entry key="to.root" value=""/>
         </propertyfile>
-    </target>
-    <target name="tsamar">
-
-        <taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
-            classpath="${javac.classpath}"/>
-        <taskdef name="part" classname="org.signserver.anttasks.PartAntTask"
-            classpath="${javac.classpath}"/>
-
-        <property location="${dist.dir}" name="full.dist.dir"/>
-        <property location="${conf.dir}" name="full.conf.dir"/>
-        <property location="${dist.jar}" name="full.dist.jar"/>
-
-        <mar version="${mar.versions}" modulename="${modulename}"
-            verbose="true" destfile="${full.dist.dir}/${modulename}.mar">
-            <part>
-                <fileset file="${full.dist.jar}"/>
-                <fileset dir="${full.conf.dir}">
-                    <include name="*.properties"/>
-                </fileset>
-            </part>
-        </mar>
-
     </target>
 
     <!--

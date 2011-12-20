@@ -143,17 +143,8 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      * 
      */
     public static String getNodeId() {
-
-
         if (nodeId == null) {
-
-            if (GlobalConfiguration.getBuildMode().equalsIgnoreCase("MAILSIGNER")) {
-                nodeId = "NODE1";
-            }
-
-            if (nodeId == null) {
-                nodeId = System.getenv(NODEID_ENVVAR);
-            }
+            nodeId = System.getenv(NODEID_ENVVAR);
 
             if (nodeId == null) {
                 File confFile = new File(getSignServerConfigFile());

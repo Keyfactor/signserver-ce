@@ -14,7 +14,7 @@
                 <p>
 The SignServer is an application framework performing cryptographic operations
 for other applications. It's intended to be used in environments where keys are
-supposed to be protected in hardware but there isn't possible to connect such
+supposed to be protected in hardware but it isn't possible to connect such
 hardware to existing enterprise applications or where the operations are
 considered extra sensitive so the hardware have to protected more carefully.
 Another usage is to provide a simplified method to provide signatures in
@@ -39,6 +39,19 @@ lookup the validation of a given certificate.
             </section>
 
             <section name="Changes from previous versions">
+                <subsection name="Changes between version 3.2 and 3.3">
+                    <ul>
+<!-- New major features -->
+<!-- New support -->
+<!-- New workers -->
+<!-- Improvements -->
+<!-- Other -->
+                        <li>
+Clusterclassloader has been removed.
+                        </li>
+
+                    </ul>
+                </subsection>
                 <subsection name="Changes between version 3.1 and 3.2">
                     <ul>
 <!-- New major features -->
@@ -250,8 +263,6 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>ODF (Open Document Format) Document</td><td>XML-based file format for representing electronic documents such as spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/OpenDocument">more...</a></td>
                     </tr><tr><td>OOXML (Office Open XML) Document</td><td>XML-based file format  for representing spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/Office_Open_XML">more...</a></td>
                     </tr><tr><td>OOXML Signer</td><td>A Signer that attaches an electronic signature to an OOXML document.</td>
-                    </tr><tr><td>Cluster Class Loader</td><td>A Java Class Loader specific for the SignServer project. The class loader simplifies the distribution of new code to a cluster by uploading and fetching it from database. It also enables the use of multiple versions of the same worker code in the same cluster.</td>
-                    </tr><tr><td>Module Archive or MAR file</td><td>A 'Module Archive' is a specific packaging format used by the cluster class loader to upload code to a cluster. A MAR files is structured in a specific way with a descriptor containing module and version information.  The MAR file also contains one or more parts depending on were in the system the code will be deployed.<br/>A Module Archive have the postfix .mar and can be generated with a specific ANT-task.</td>
                     </tr>
                     <tr>
                         <td>Archiver</td>
@@ -533,24 +544,6 @@ module.log4j.include=true
                         </source>
                     </subsubsection>
 
-                    <subsubsection name="Cluster Class Loader Configuration">
-                        <p>
-The cluster class loader can be used in development for having the code of the
-signers loaded on all nodes. If it is not used the modules must be built into
-signserver.ear either by specifying that for each module (as in previous
-section) or by specifying includemodulesinbuild=true to include all modules.
-                        </p>
-						<p>
-Notice that this feature is experimental and should not be used in production. It will be removed in future versions of SignServer.
-						</p>
-                        <p>
-To enable the cluster class loader specify:                            
-                        </p>
-                        <source>
-useclusterclassloader=true
-                        </source>
-                    </subsubsection>
-
                 </subsection>
 
                 <subsection name="7. Build and deploy SignServer">
@@ -603,9 +596,7 @@ SignServer CLI.
                 </p>
                 <subsection name="Loading signers">
                     <p>
-Signers (and other workers) can be loaded in two different ways. Either using
-"module add" or by setting properties using "setproperty" or "setproperties"
-etc.
+Signers (and other workers) can be loaded by setting properties using "setproperty" or "setproperties" etc.
                     </p>
                     <subsubsection name="setproperties">
                         <p>
@@ -619,20 +610,8 @@ module.MODULENAME.include=true properties in signserver_build.properties.
 bin/signserver.sh setproperties doc/sample-configs/CONFIGURATION.PROPERTIES
                         </source>
                     </subsubsection>
-                    <subsubsection name="module add">
                     <p>
-Notice: This method is deprecated and will not be supported in future versions.
-                        </p>
-                        <p>
-The "module add" command loads both the code and the configuration from a MAR
-file and thus requires the clustered class loader to be enabled.
-                        </p>
-                        <source>
-bin/signserver.sh modules add dist-server/MODULE.mar CONFIGURATION
-                        </source>
-                    </subsubsection>
-                    <p>
-After adding or changing a property for a worker (either with "module add" or by
+After adding or changing a property for a worker (by
 any of the "setpropery" or "setproperties" commands) the configuration needs be
 applied by issuing the reload command with the ID of the worker.
                     </p>
@@ -1173,25 +1152,6 @@ Command used to remove group keys not used any more. A time range of when create
 Command used manually switch the encryption key used to secure the group keys in database. Usually is the encryption key switched automatically but this command can be used to override this default behaviour.
                         </p>
 
-                        <p><b>Module Archive Related</b></p>
-                        <p>
-There exists three commands for managing module archives in a cluster, they are quite straightforward. Use the command 'signserver.sh/cmd module' command for more details.
-                        </p>
-                        <p>
-<b>module add:</b>
-The 'add' command uploads a '.mar' file to the cluster. It is possible to define in which environment the module should be used, for instance 'production' or 'test' but this is all depending on which environments the module supports.
-                        </p>
-                        <p>
-If signature verification is required by the server it is also possible to specify a path to a JKS key store along with an alias and password to the key used.
-                        </p>
-                        <p>
-<b>module remove:</b>
-Command used to remove a specified version of a module.
-                        </p>
-                        <p>
-<b>module list:</b>
-Command to list all uploaded modules, it is also possible to see all JAR files that is included in the  modules.
-                        </p>
                         <p><b>Administrators Related</b></p>
                         <p>
 <b>wsadmins -list:</b>
@@ -1485,39 +1445,7 @@ ID. A worker can also be configured with a name by setting the property NAME.
 After the configuration has been activated (by issuing reload with the worker ID) 
 that name can also be used to address the worker.
                     </p>
-                    <p>
-Workers are configured slitly differently depending on if the cluster class
-loader is used and the plugin is a separate module or if the plugin is built-in
-to SignServer.
-                    </p>
-                    <subsubsection name="Configuring using a module">
-                        <p>
-To configure the worker using a module the cluster class loader must be 
-activated (see <a href="complete.en.html#Changing%20the%20default%20configuration%20of%20the%20Cluster%20Class%20Loader">Changing the default configuration of the Cluster Class Loader</a>)
-and the code for the plugin available as .MAR-file. To setup a worker using a
-module archive issue the following command:
-                        </p>
-                        <source>
-bin/signserver.sh module add dist-server/MODULE.MAR ENVIRONMENT
-                        </source>
-                        <p>
-Replace "MODULE.MAR" with the name of the module file and "ENVIRONMENT" with the
-name of the built-in configuration to load. For example to load the TSA module
-using the demo configuration issue the following command:
-                        </p>
-                        <source>
-bin/signserver.sh module add dist-server/tsa.mar demo
-                        </source>
-                        <p>
-Notice the created workerId and use it when applying the configuration using the
-reload command:
-                        </p>
-                        <source>
-bin/signserver.sh reload WORKER-ID
-                        </source>
-                    </subsubsection>
-                    <subsubsection name="Configuring using a built-in plugin">
-                    <p>Configuring using a build-in plugin only works if you have set the option includemodulesinbuild=true in signserver_build.properties.</p>
+                    <subsubsection name="Configuring">
                         <p>
 A worker is configured by setting properties for it. Specifically if the plugin
 is built-in it is specified by setting the property CLASSPATH to the fully
@@ -1575,54 +1503,6 @@ bin/signserver.sh reload all
                     </source>
                 </subsubsection>
             </subsection>
-            <subsection name="Working with Modules">
-                <subsubsection name="Remove modules">
-					<p>
-					If you have made changes to the module, and you are using the cluser classloader (i.e. not built in modules) you have to remove the module before deploying a new one.
-					</p>
-                    <source>
-bin/signserver.sh modules list
-
-===========================================
-  Executing Command on host : localhost
-===========================================
-
-
-Using cluster class loader.
-
-Listing all available modules :
-  Module : MRTDSODSIGNER, version 3200
-    Parts : 
-      server
-
-bin/signserver.sh module remove MRTDSODSIGNER 3200
-
-===========================================
-  Executing Command on host : localhost
-===========================================
-
-
-Using cluster class loader.
-
-  Removing module MRTDSODSIGNER version 3200 ...
-  Removal of module successful.
-                    </source>
-                </subsubsection>
-                <subsubsection name="Add updated modules">
-					<note>
-					If you added configurations under src/module-configs you must rebuild the modules with the command 'ant', before you can use 'module add' with your updated configs.
-					</note>					
-					<p>
-					After rebuilding the modules you can add updated modules.
-					</p>                    
-					<source>
-bin/signserver.sh module add dist-server/pdfsigner.mar soft					
-bin/signserver.sh reload all
-bin/signserver.sh getstatus complete all
-					</source>
-				</subsubsection>                 
-
-                </subsection>
             </section>
 
             <section name="Making the SignServer highly-available">
@@ -2347,11 +2227,7 @@ can sign any document-type and produces the output in Cryptographic Message Synt
 
                 <subsection name="Time-stamp Signer">
                     <p>
-Important, From 3.1 must the Time-Stamp Authority module be uploaded to the SignServer before it can be used. This is done with the command:
- 'bin/signserver.sh module add dist-server/tsa.mar'
-                    </p>
-                    <p>
-The time-stamp signer have the class path: org.signserver.server.signers.TimeStampSigner
+The time-stamp signer has the class name: org.signserver.server.signers.TimeStampSigner
                     </p>
 
                     <subsubsection name="Overview">
@@ -2460,13 +2336,7 @@ Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, R
 
                 <subsection name="MRTD Signer">
                     <p>
-Important, From 3.1 must the MRTD Signer module be uploaded to the SignServer before it can be used. This is done with the command:
-                    </p>
-                    <pre>
- 'bin/signserver.sh module add dist-server/mrtdsigner.mar'
-                    </pre>
-                    <p>
-The MRTD signer have the class path: org.signserver.server.signers.MRTDSigner
+The MRTD signer has the class name: org.signserver.server.signers.MRTDSigner
                     </p>
                     <subsubsection name="Overview">
                         <p>
@@ -4099,267 +3969,6 @@ Reserved values are all property keys starting with "WORKER".
                 </subsection>
             </section>
 
-            <section name="The Cluster Class Loader">
-                <p>
-Important, this feature is very new in version 3.1 and should still be considered experimental.
-                </p>
-                <p>
-New to SignServer 3.1.x is the Cluster Class Loader.  Simplifying the management of code in clusters. Instead of manually having to synchronize all the required JAR files to all nodes, it is possible to upload the code once and it will be accessible to all nodes in the cluster directly without having to restart the cluster. This is archived by storing the JAR resource data (such as class files) in database instead of in the application server class path.
-                </p>
-                <p>
-Each worker will have their own Cluster Class Loader instance that will be reinitialized upon reload.
-                </p>
-                <p>
-It is also possible to run multiple code versions of a worker simultaneously in a cluster, something that haven't been possible until now since only one version of class can exists in one JVM. This is a great feature for migration purposes where you have an old worker that is known to be stable, then it is possible to upload a new module beside the old one, with newer code, and migrate calling clients one by one.  Under the hood is actually a version prefix appended on the fly to the class name by the Cluster Class Loader when converting the byte code into a class. For example a class called somepkg.SomeWorker with version 3 will be called v3.somepkg.SomeWorker internally in the JVM. A developer should have to thing about this when developing his module but it might cause problems when remotely debugging the SignServer since the IDE won't find the source class to the modified code. If remote debugging is going to be used should class versioning be turned off.
-                </p>
-                <p>
-To improve the security of the code stored in database it is possible to enforce signature verification of all the uploaded code. This is a good feature if the database is in a different security zone or managed by different administrator than the SignServer nodes itself. If verification is turned on will the Cluster Class Loader check that the class is signed with a certificate issued by issuers stored in a specific trust key store for this purpose. Important, make sure the v the code signing certificate and it's issuers have a validity long enough to avoid production stop since the signature will not verify after the certificate have expired. The code is signed by a separate JKS key store when the module is uploaded to a cluster. The code signing certificate must have the extended key usage 'code signing' in order for the Cluster Class Loader to verify it.
-                </p>
-                <p>
-Before code can be uploaded to the Cluster Class Loader must it's JAR files be packaged in something called a Module Archive (MAR). See section 15.2 for details about generating a MAR file.
-                </p>
-
-                <subsection name="Building Module Archives">
-                    <p>
-A 'Module Archive' is a package containing all the jars required by the module along with a descriptor with information about the name of the module and it's version. A module archive is uploaded once and is then accessible for all the nodes in the cluster. A module archive can also have multiple parts indicating where in the system the code should be uploaded. In 3.1.x is only one part called 'server' supported, but in the future will other parts such as 'admin' exist. In that case will the code that should be executed on the server, such as worker code, be sent to the cluster, while the administrative part of the code is only sent to the node with an administrative web interface.
-                    </p>
-                    <p>
-A 'Module Archive' have the postfix '.mar' and is managed with the CLI interface using the 'module' commands.
-                    </p>
-                </subsection>
-
-                <subsection name="The MAR Descriptor">
-                    <p>
-Every Module archive should have a descriptor file in it's META-INF directory. It follows the JAVA Properties notation and is used to specify general information about the module such as version and name of the module. This file is generated automatically when using the ANT tasks.
-                    </p>
-                    <p>
-The MAR descriptor supports the following properties:
-                    </p>
-                    <table>
-                        <tr>
-                            <th>Property</th>
-                            <th>Description</th>
-                        </tr>
-                        <tr>
-                            <td>version</td>
-                            <td>The version of the module archive, can only contain digits. If not set "1" will be used. (Optional)</td>
-                        </tr>
-                        <tr>
-                            <td>modulename</td>
-                            <td>The name of the module, if not set will the MAR file name be used, but  without '.mar'. The name will always be converted to upper case. (Optional)</td>
-                        </tr>
-                        <tr>
-                            <td>default-description</td>
-                            <td>The default description of all the resources in the module (Optional)</td>
-                        </tr>
-                        <tr>
-                            <td>parts</td>
-                            <td>The parts in the module archive, if not set will only the 'server' part be used. (Optional)</td>
-                        </tr>
-                    </table>
-                </subsection>
-
-                <subsection name="Including Worker Configurations">
-                    <p>
-It is also possible to include a set of worker configurations in the 'server' part of the module archive, these settings is configured directly after all the JAR files have been uploaded. These worker configurations should be property files that follows the same notation as if they where used with the 'setproperties' CLI command.
-                    </p>
-                    <p>
-By default it should be named 'part-config.properties' and be in the 'server' part directory. It is also possible to have multiple configurations that is used depending on the environment the SignServer cluster is used. For instance it is possible to have one configuration file for test, another for production and a third for development. This makes it easy to manage the module since exactly the same file will be used in all environments. In case of multiple configurations should every property file be named '&lt;environment&gt;-part-config.properties', for instance test-part-config.properties. Later when the module is uploaded and the environment 'test' is specified will the test configuration be used.
-                    </p>
-                    <p>
-Important, if a part-config.properties file is included in the MAR file will the worker properties MODULENAME and MODULEVERION automatically the be set to all workers defined in the  configuration file and there is no need to manually define these settings.
-                    </p>
-                </subsection>
-
-                <subsection name="Using ANT">
-                    <p>
-The simplest way to build a Module Archive is by using ANT. The SignServer have provided two ant tasks to do this.
-                    </p>
-                    <p>
-All that is required to use these tasks is to add the following two lines in your target:
-                    </p>
-                    <source>
-    &lt;taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
-       classpathref="signserver.test.compile.classpath"/&gt;
-    &lt;taskdef name="part" classname="org.signserver.anttasks.PartAntTask"
-       classpathref="signserver.test.compile.classpath"/&gt;
-                    </source>
-                    <p>
-With these two lines included you will have access the the 'mar' and 'part' tasks. The tasks have the following properties.
-                    </p>
-                    <p>
-MAR Task Properties
-                    </p>
-                    <table>
-                        <tr>
-                            <th>Property</th>
-                            <th>Description</th>
-                        </tr>
-                        <tr>
-                            <td>version</td>
-                            <td>
-The version of the module archive, can only contain digits. If not set will "1" be used. (Optional)
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>modulename</td>
-                            <td>
-The name of the module, if not set will the destfile property be used, but only the file name without '.mar'. Will always be converted to upper case. (Optional)
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>description</td>
-                            <td>
-The default description of the module that is set in the MAR descriptor.(Optional)
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>destfile</td>
-                            <td>
-The path and file name of the mar file to generate. (Required)
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>verbose</td>
-                            <td>
-Set to true if verbose output should be done during execution.(Optional)
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>part</td>
-                            <td>
-One or more 'part' tasks is required in order to generate a MAR file. (Required)
-                            </td>
-                        </tr>
-                    </table>
-
-                    <p>
-PART Task Properties
-                    </p>
-                    <table>
-                        <tr>
-                            <th>Property</th>
-                            <th>Description</th>
-                        </tr>
-                        <tr>
-                            <td>name</td>
-                            <td>The name of the part, if not set will the default 'server' (and the only part supported in 3.1.x) be used. (Optional)</td>
-                        </tr>
-                        <tr>
-                            <td>fileset</td>
-                            <td>One or more 'filesets' are required containing JAR file or worker configurations. (Required)</td>
-                        </tr>
-                    </table>
-                    <p>
-Here is an example of a simple ANT task building a MAR file, it will have the module name of SOME, version of 3 and have a 'server' part with all the JARs in 'somejarlocation' and all the worker properties in the directory 'someworkerpropertieslocation' :
-                    </p>
-                    <source>
-    &lt;target name="gensomemar" depends="signserver.ear"&gt;
-    &lt;taskdef name="mar" classname="org.signserver.anttasks.MarAntTask"
-       classpathref="signserver.test.compile.classpath"/&gt;
-    &lt;taskdef name="part" classname="org.signserver.anttasks.PartAntTask"
-       classpathref="signserver.test.compile.classpath"/&gt;
-    	&lt;mar version="3" destfile="dist/some.mar" verbose="true"&gt;
-    		&lt;part&gt;
-    	         &lt;fileset dir="${somelibrarylocation}"&gt;
-    	           &lt;include name="*.jar"/&gt;
-    	         &lt;/fileset&gt;
-    	         &lt;fileset dir="${somejarlocation}"&gt;
-    	           &lt;include name="*.jar"/&gt;
-    	         &lt;/fileset&gt;
-    	         &lt;fileset dir="${someworkerproperiteslocation}"&gt;
-    	           &lt;include name="*.properties"/&gt;
-    	         &lt;/fileset&gt;
-    		&lt;/part&gt;
-    	&lt;/mar&gt;
-    &lt;/target&gt;</source>
-
-
-                </subsection>
-
-                <subsection name="Building Manually">
-                    <p>
-A Module Archive is just like a JAR or EAR file basically a ZIP with a certain file structure. And it is quite easy to create one manually if the ANT task cannot be used. The following rules should be followed when creating a MAR file:
-                    </p>
-                    <p>
-The module descriptor file should be in META-INF/mar-descriptor.properties. If other than  just the 'server' part is used, then it is important that the 'parts' property is set correctly.
-Every part should have a directory with the same name as the part containing all the JAR files and worker configuration files. In 3.1.x is only one part supported and it should be named 'server'. No subdirectories should exists in the parts directory.
-                    </p>
-                </subsection>
-
-               <subsection name="Managing Module Archives">
-                    <p>
-Managing of MAR files is done using the CLI command 'signserver.sh/.cmd module' it have three subcommands: add, remove and list. See chapter 17.2.5 for more details.
-                    </p>
-                    <p>
-Here is an example usage of adding a module to a SignServer:
-                    </p>
-                    <pre>
-'bin/signserver.sh module add dist-server/tsa.mar demo'
-                    </pre>
-                    <p>
-This will load the Time-Stamp Authority module with the demo environment, this requires that the mar file have a file called demo-part-config.properties in the server directory.
-                    </p>
-                </subsection>
-
-                <subsection name="Changing the default configuration of the Cluster Class Loader">
-                    <p>
-                        When enabled, the default configuration of the Cluster Class Loader is to support multiple versions but not requiring signature verification. This behaviour can be changed in the signserver_build.properties file under the 'Cluster Class Loader Configurations' section.
-                    </p>
-                    <p>
-The following properties can be set:
-                    </p>
-                    <table>
-                        <tr>
-                            <th>Property</th>
-                            <th>Description</th>
-                        </tr>
-                        <tr>
-                            <td>useclusterclassloader</td>
-                            <td>Set to true to enable the use of the cluster class loader. Default is true.</td>
-                        </tr>
-                        <tr>
-                            <td>
-clusterclassloader.useclassversions
-                            </td>
-                            <td>
-Indicates if multiple versions of the same worker code should be supported. Default true. Turn this of if remote debugging should be used.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-clusterclassloader.requiresignature
-                            </td>
-                            <td>
-Set to true if signing of resource data should be required. Default false
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-clusterclassloader.pathtotruststore
-                            </td>
-                            <td>
-Path to the JKS trust store containing all CA certificates that is trusted for signing of resource data.
-
-Only required if signature verification is used.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-clusterclassloader.truststorepwd
-                            </td>
-                            <td>
-Password to unlock the trust store. Only required if signature verification is used.
-                            </td>
-                        </tr>
-                    </table>
-                    <p>
-                        Remember to do an 'ant clean' when changing settings in the signserver_build.properties
-                    </p>
-                </subsection>
-
-
-            </section>
 
             <section name="Testing">
                 <p>

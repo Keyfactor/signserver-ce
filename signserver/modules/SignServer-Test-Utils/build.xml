@@ -10,7 +10,24 @@
 <project name="SignServer-Test-Utils" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-Test-Utils.</description>
     <import file="nbproject/build-impl.xml"/>
+    <property file="../../res/signserver-project-custom.properties"/>
+    <property file="../../res/signserver-project.properties"/>
+    <property file="${user.home}/signserver_build.properties" />
+    <property file="../../signserver_build.properties" />
+    <property file="../../conf/signserver_build.properties" />
+    <property file="../../res/default_build.properties"/>
     <import file="../modules.xml"/>
+    
+    <target name="-post-compile-single" depends="-move-jndi-properties"/>
+    <target name="-post-compile" depends="-move-jndi-properties"/>
+    <target name="-move-jndi-properties">
+        <echo>Using jndi.properties for application server type "${appserver.type}"</echo>
+        <mkdir dir="../../tmp/conf/"/>
+        <copy todir="../../tmp/conf/" overwrite="true">
+            <fileset dir="../../conf/${appserver.type}" includes="jndi.properties"/>
+        </copy>
+    </target>
+    
     <!--
 
     There exist several targets which are by default empty and which can be 

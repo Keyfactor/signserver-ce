@@ -12,10 +12,10 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.util.Random;
-import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
@@ -31,9 +31,8 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
-import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -42,13 +41,11 @@ import org.signserver.testutils.TestingSecurityManager;
  *
  * @version $Id$
  */
-public class TimeStampSignerTest extends TestCase {
+public class TimeStampSignerTest extends ModulesTestCase {
 
     /** Logger for class. */
     private static final Logger LOG = Logger.getLogger(
             TimeStampSignerTest.class);
-
-    private static IWorkerSession.IRemote sSSession = null;
 
     /** The status repository session. */
     private static IStatusRepositorySession.IRemote repository;
@@ -92,9 +89,6 @@ public class TimeStampSignerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        
-        sSSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
 
         repository = ServiceLocator.getInstance().lookupRemote(
                 IStatusRepositorySession.IRemote.class);
@@ -102,9 +96,6 @@ public class TimeStampSignerTest extends TestCase {
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull(signserverhome);
     }
 
     /* (non-Javadoc)
@@ -117,20 +108,11 @@ public class TimeStampSignerTest extends TestCase {
     }
 
     public void test00SetupDatabase() throws Exception {
-
-        MARFileParser marFileParser = new MARFileParser(signserverhome
-                + "/lib/tsa.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/lib/tsa.mar", "junittest"});
-        assertTrue(TestUtils.grepTempOut("Loading module TSA"));
-        assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
-
-        sSSession.reloadConfiguration(WORKER1);
-        sSSession.reloadConfiguration(WORKER2);
-        sSSession.reloadConfiguration(WORKER3);
-        sSSession.reloadConfiguration(WORKER4);
+        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-TSA/src/conf/junittest-part-config.properties"));
+        workerSession.reloadConfiguration(WORKER1);
+        workerSession.reloadConfiguration(WORKER2);
+        workerSession.reloadConfiguration(WORKER3);
+        workerSession.reloadConfiguration(WORKER4);
     }
 
     public void test01BasicTimeStamp() throws Exception {
@@ -150,7 +132,7 @@ public class TimeStampSignerTest extends TestCase {
                 new GenericSignRequest(reqid, requestBytes);
 
 
-        final GenericSignResponse res = (GenericSignResponse) sSSession.process(
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
                 worker, signRequest, new RequestContext());
 
         assertTrue(reqid == res.getRequestID());
@@ -174,7 +156,7 @@ public class TimeStampSignerTest extends TestCase {
      */
     public void test02GetStatus() throws Exception {
 
-        SignerStatus stat = (SignerStatus) sSSession.getStatus(8901);
+        SignerStatus stat = (SignerStatus) workerSession.getStatus(8901);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
     }
 
@@ -194,7 +176,7 @@ public class TimeStampSignerTest extends TestCase {
         final GenericSignRequest signRequest = new GenericSignRequest(13,
                 requestBytes);
 
-        final GenericSignResponse res = (GenericSignResponse) sSSession.process(
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
                 WORKER2, signRequest, new RequestContext());
 
         final TimeStampResponse timeStampResponse = new TimeStampResponse(
@@ -245,7 +227,7 @@ public class TimeStampSignerTest extends TestCase {
                 new GenericSignRequest(reqid, requestBytes);
 
 
-        final GenericSignResponse res = (GenericSignResponse) sSSession.process(
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
                 worker, signRequest, new RequestContext());
 
         assertTrue(reqid == res.getRequestID());
@@ -274,15 +256,10 @@ public class TimeStampSignerTest extends TestCase {
                     String.valueOf(WORKER2)});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
                     String.valueOf(WORKER3)});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove",
-            "TSA", String.valueOf(moduleVersion)});
-        assertTrue("module remove", TestUtils.grepTempOut(
-                "Removal of module successful."));
-        sSSession.reloadConfiguration(WORKER1);
-        sSSession.reloadConfiguration(WORKER2);
-        sSSession.reloadConfiguration(WORKER3);
-        sSSession.reloadConfiguration(WORKER4);
+        workerSession.reloadConfiguration(WORKER1);
+        workerSession.reloadConfiguration(WORKER2);
+        workerSession.reloadConfiguration(WORKER3);
+        workerSession.reloadConfiguration(WORKER4);
     }
 
 }

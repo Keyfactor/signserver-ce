@@ -29,10 +29,6 @@ import org.apache.log4j.Logger;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ServiceLocator;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.cryptotokens.P12CryptoToken;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
@@ -49,9 +45,8 @@ import org.w3c.dom.Document;
  */
 public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
-    private static Logger log = Logger.getLogger(SigningAndValidationWithCRLTest.class);
-    private static IWorkerSession.IRemote sSSession = null;
-    private static IGlobalConfigurationSession.IRemote gCSession;
+    /** Logger for this class. */
+    private static Logger LOG = Logger.getLogger(SigningAndValidationWithCRLTest.class);
     
     private static final int SIGNER1_WORKERID = 5676;
     private static final int CERTVALIDATION_WORKERID = 105;
@@ -62,8 +57,6 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     private static final String XMLVALIDATOR_WORKER = "XMLValidatorWorker2";
     private static final String KEYSTORE8_PASSWORD = "foo123";
     
-    private static String signserverhome;
-    private static int moduleVersion;
     private static File keystoreFileEndentity8;
     private static File crlWithCertOk;
     private static File crlWithCertRevoked;
@@ -77,26 +70,20 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        gCSession = ServiceLocator.getInstance().lookupRemote(
-                IGlobalConfigurationSession.IRemote.class);
-        sSSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
 
-        keystoreFileEndentity8 = new File(signserverhome + File.separator + "res/test/org/signserver/client/api/endentity8.p12");
+        keystoreFileEndentity8 = new File(getSignServerHome() + File.separator + "res/test/org/signserver/client/api/endentity8.p12");
         if (!keystoreFileEndentity8.exists()) {
             throw new FileNotFoundException("Keystore file: " + keystoreFileEndentity8.getAbsolutePath());
         }
 
-        crlWithCertOk = new File(signserverhome + File.separator
+        crlWithCertOk = new File(getSignServerHome() + File.separator
                 + "res/test/org/signserver/client/api/EightCA-ok.crl");
-        crlWithCertRevoked = new File(signserverhome + File.separator
+        crlWithCertRevoked = new File(getSignServerHome() + File.separator
                 + "res/test/org/signserver/client/api/EightCA-revoked.crl");
-        crlToUse = new File(signserverhome + File.separator
+        crlToUse = new File(getSignServerHome() + File.separator
                 + "res/test/org/signserver/client/api/EightCA-use.crl");
 
         if (!crlWithCertOk.exists()) {
@@ -142,58 +129,50 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
 
         // XMLSIGNER: module
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/xmlsigner.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add", signserverhome + "/lib/xmlsigner.mar", "junittest"});
-        assertTrue(TestUtils.grepTempOut("Loading module XMLSIGNER"));
-        assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
 
         // XMLSIGNER: endentity1
         setupSigner(SIGNER1_WORKERID, SIGNER1_WORKER, keystoreFileEndentity8, KEYSTORE8_PASSWORD);
 
 
         // VALIDATION
-        sSSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CRLPATHS", crlToUse.toURI().toString());
+        workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CRLPATHS", crlToUse.toURI().toString());
         setupValidation();
 
         // XMLVALIDATOR: module
-        marFileParser = new MARFileParser(signserverhome + "/lib/xmlvalidator.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add", signserverhome + "/lib/xmlvalidator.mar", "junittest"});
-        assertTrue(TestUtils.grepTempOut("Loading module XMLVALIDATOR"));
-        assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLValidator/src/conf/junittest-part-config.properties"));
 
         // XMLVALIDATOR: worker
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH", "org.signserver.module.xmlvalidator.XMLValidator");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
-        sSSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "NAME", XMLVALIDATOR_WORKER);
-        sSSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "AUTHTYPE", "NOAUTH");
-        sSSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "VALIDATIONSERVICEWORKER", CERTVALIDATION_WORKER);
-        sSSession.reloadConfiguration(XMLVALIDATOR_WORKERID);
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH", "org.signserver.module.xmlvalidator.XMLValidator");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "NAME", XMLVALIDATOR_WORKER);
+        workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "VALIDATIONSERVICEWORKER", CERTVALIDATION_WORKER);
+        workerSession.reloadConfiguration(XMLVALIDATOR_WORKERID);
     }
 
     private void setupSigner(int workerId, String workerName, File keystore, String keystorePassword) throws Exception {
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
-        sSSession.setWorkerProperty(workerId, "NAME", workerName);
-        sSSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        sSSession.setWorkerProperty(workerId, P12CryptoToken.KEYSTOREPATH, keystore.getAbsolutePath());
-        sSSession.setWorkerProperty(workerId, P12CryptoToken.KEYSTOREPASSWORD, keystorePassword);
-        sSSession.reloadConfiguration(workerId);
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
+        workerSession.setWorkerProperty(workerId, "NAME", workerName);
+        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, P12CryptoToken.KEYSTOREPATH, keystore.getAbsolutePath());
+        workerSession.setWorkerProperty(workerId, P12CryptoToken.KEYSTOREPASSWORD, keystorePassword);
+        workerSession.reloadConfiguration(workerId);
 
         // We are using a P12CryptoToken so we also need to activate it
-        sSSession.activateSigner(SIGNER1_WORKERID, KEYSTORE8_PASSWORD);
+        workerSession.activateSigner(SIGNER1_WORKERID, KEYSTORE8_PASSWORD);
     }
 
     private void setupValidation() {
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
-        sSSession.setWorkerProperty(CERTVALIDATION_WORKERID, "AUTHTYPE", "NOAUTH");
-        sSSession.setWorkerProperty(CERTVALIDATION_WORKERID, "NAME", CERTVALIDATION_WORKER);
-        sSSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.CLASSPATH", "org.signserver.validationservice.server.CRLValidator");
-        sSSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CERTCHAIN", "-----BEGIN CERTIFICATE-----\n" + SigningAndValidationTestData.CERT_EIGHTCA + "\n-----END CERTIFICATE-----\n");
-        sSSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.TESTPROP", "TEST");
-        sSSession.reloadConfiguration(CERTVALIDATION_WORKERID);
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "NAME", CERTVALIDATION_WORKER);
+        workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.CLASSPATH", "org.signserver.validationservice.server.CRLValidator");
+        workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CERTCHAIN", "-----BEGIN CERTIFICATE-----\n" + SigningAndValidationTestData.CERT_EIGHTCA + "\n-----END CERTIFICATE-----\n");
+        workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.TESTPROP", "TEST");
+        workerSession.reloadConfiguration(CERTVALIDATION_WORKERID);
     }
 
     public void test01SignAndValidate() throws Exception {
@@ -204,7 +183,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         byte[] data = result.getProcessedData();
 
         // Output for manual inspection
-        File file = new File(signserverhome + File.separator + "tmp" + File.separator + "signed_endentity8.xml");
+        File file = new File(getSignServerHome() + File.separator + "tmp" + File.separator + "signed_endentity8.xml");
         FileOutputStream fos = new FileOutputStream(file);
         fos.write((byte[]) data);
         fos.close();
@@ -344,7 +323,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         List<ICertificate> caChain = res.getCertificateValidation().getCAChain();
         assertEquals("ca certificate 0", "CN=EightCA,O=EJBCA Testing,C=SE", caChain.get(0).getSubject());
         assertEquals("caChain length", 1, caChain.size());
-        log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
+        LOG.info("Status message: " + res.getCertificateValidation().getStatusMessage());
         assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
     }
 
@@ -353,7 +332,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test09SigOkCertRevokedByUpdatingFile() throws Exception {
-        log.info("test09SigOkCertRevocedByUpdatingFile");
+        LOG.info("test09SigOkCertRevocedByUpdatingFile");
 
         // Change the file to be one with CRL revoked
         crlToUse.delete();
@@ -369,10 +348,10 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test10SigOkCertRevoked() throws Exception {
-        log.info("test10SigOkCertRevoced");
+        LOG.info("test10SigOkCertRevoced");
 
         // Change to a CRL where endentity8 is revoked
-        sSSession.setWorkerProperty(CERTVALIDATION_WORKERID,
+        workerSession.setWorkerProperty(CERTVALIDATION_WORKERID,
                 "VAL1.ISSUER1.CRLPATHS", crlWithCertRevoked.toURI().toString());
         setupValidation();
 
@@ -400,7 +379,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         //assertEquals(Validation.Status.REVOKED, res.getCertificateValidation().getStatus());
         assertFalse(Validation.Status.VALID.equals(
                 res.getCertificateValidation().getStatus()));
-        log.info("Revoked cert status: "
+        LOG.info("Revoked cert status: "
                 + res.getCertificateValidation().getStatusMessage());
 
         final ICertificate cert = res.getSignerCertificate();
@@ -410,26 +389,21 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     public void test99TearDownDatabase() throws Exception {
         // XMLVALIDATOR
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + XMLVALIDATOR_WORKERID});
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove", "XMLVALIDATOR", "" + moduleVersion});
-        assertTrue(TestUtils.grepTempOut("Removal of module successful."));
-        sSSession.reloadConfiguration(XMLVALIDATOR_WORKERID);
+        workerSession.reloadConfiguration(XMLVALIDATOR_WORKERID);
 
         // VALIDATION SERVICE
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH");
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".SIGNERTOKEN.CLASSPATH");
-        sSSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "AUTHTYPE");
-        sSSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.CLASSPATH");
-        sSSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.TESTPROP");
-        sSSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CERTCHAIN");
-        sSSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CRLPATHS");
-        sSSession.reloadConfiguration(CERTVALIDATION_WORKERID);
+        globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH");
+        globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".SIGNERTOKEN.CLASSPATH");
+        workerSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "AUTHTYPE");
+        workerSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.CLASSPATH");
+        workerSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.TESTPROP");
+        workerSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CERTCHAIN");
+        workerSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CRLPATHS");
+        workerSession.reloadConfiguration(CERTVALIDATION_WORKERID);
 
         // XMLSIGNER
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + SIGNER1_WORKERID});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove", "XMLSIGNER", "" + moduleVersion});
-        assertTrue(TestUtils.grepTempOut("Removal of module successful."));
-        sSSession.reloadConfiguration(SIGNER1_WORKERID);
+        workerSession.reloadConfiguration(SIGNER1_WORKERID);
     }
 
     private static String getStatus(GenericValidationResponse res) {
@@ -451,7 +425,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
             Document doc = builder.parse(in);
             doc.toString();
         } catch (Exception e) {
-            log.error("Not well formed XML", e);
+            LOG.error("Not well formed XML", e);
             fail("Not well formed XML: " + e.getMessage());
         }
     }

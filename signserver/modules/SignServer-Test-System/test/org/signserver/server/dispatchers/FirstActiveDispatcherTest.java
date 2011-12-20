@@ -14,15 +14,14 @@ package org.signserver.server.dispatchers;
 
 import java.io.File;
 import java.security.cert.X509Certificate;
-import junit.framework.TestCase;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
-import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 
 /**
@@ -31,11 +30,7 @@ import org.signserver.testutils.TestUtils;
  * @author Markus Kilås
  * @version $Id$
  */
-public class FirstActiveDispatcherTest extends TestCase {
-
-    private static IWorkerSession.IRemote workSession;
-    private static File signServerHome;
-    private static int moduleVersion;
+public class FirstActiveDispatcherTest extends ModulesTestCase {
 
     /**
      * WORKERID used in this test case as defined in
@@ -49,7 +44,7 @@ public class FirstActiveDispatcherTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        workSession = ServiceLocator.getInstance().lookupRemote(
+        workerSession = ServiceLocator.getInstance().lookupRemote(
                         IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
@@ -61,28 +56,12 @@ public class FirstActiveDispatcherTest extends TestCase {
 
     public void test00SetupDatabase() throws Exception {
 
-        System.out.println("File: " + getSignServerHome()
-                + "/lib/xmlsigner.mar");
+        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
 
-        final MARFileParser marFileParser = new MARFileParser(getSignServerHome()
-                + "/lib/xmlsigner.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-                "module",
-                "add",
-                getSignServerHome() + "/lib/xmlsigner.mar",
-                "junittest"
-            });
-        assertTrue("Loading module",
-                TestUtils.grepTempOut("Loading module XMLSIGNER"));
-        assertTrue("Module loaded",
-                TestUtils.grepTempOut("Module loaded successfully."));
-
-        workSession.reloadConfiguration(WORKERID_DISPATCHER);
-        workSession.reloadConfiguration(WORKERID_1);
-        workSession.reloadConfiguration(WORKERID_2);
-        workSession.reloadConfiguration(WORKERID_3);
+        workerSession.reloadConfiguration(WORKERID_DISPATCHER);
+        workerSession.reloadConfiguration(WORKERID_1);
+        workerSession.reloadConfiguration(WORKERID_2);
+        workerSession.reloadConfiguration(WORKERID_3);
     }
 
     /**
@@ -100,7 +79,7 @@ public class FirstActiveDispatcherTest extends TestCase {
         GenericSignResponse res;
 
         // Send request to dispatcher
-        res = (GenericSignResponse) workSession.process(WORKERID_DISPATCHER,
+        res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
                 request, context);
         
         X509Certificate cert = (X509Certificate) res.getSignerCertificate();
@@ -110,11 +89,11 @@ public class FirstActiveDispatcherTest extends TestCase {
             || cert.getSubjectDN().getName().contains("testdocumentsigner83"));
 
         // Disable signer 81
-        workSession.setWorkerProperty(WORKERID_1, "DISABLED", "TRUE");
-        workSession.reloadConfiguration(WORKERID_1);
+        workerSession.setWorkerProperty(WORKERID_1, "DISABLED", "TRUE");
+        workerSession.reloadConfiguration(WORKERID_1);
 
         // Send request to dispatcher
-        res = (GenericSignResponse) workSession.process(WORKERID_DISPATCHER,
+        res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
                 request, context);
 
         cert = (X509Certificate) res.getSignerCertificate();
@@ -123,11 +102,11 @@ public class FirstActiveDispatcherTest extends TestCase {
             || cert.getSubjectDN().getName().contains("testdocumentsigner83"));
 
         // Disable signer 83
-        workSession.setWorkerProperty(WORKERID_3, "DISABLED", "TRUE");
-        workSession.reloadConfiguration(WORKERID_3);
+        workerSession.setWorkerProperty(WORKERID_3, "DISABLED", "TRUE");
+        workerSession.reloadConfiguration(WORKERID_3);
 
         // Send request to dispatcher
-        res = (GenericSignResponse) workSession.process(WORKERID_DISPATCHER,
+        res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
                 request, context);
 
         cert = (X509Certificate) res.getSignerCertificate();
@@ -135,12 +114,12 @@ public class FirstActiveDispatcherTest extends TestCase {
             cert.getSubjectDN().getName().contains("testdocumentsigner82"));
 
         // Disable signer 82
-        workSession.setWorkerProperty(WORKERID_2, "DISABLED", "TRUE");
-        workSession.reloadConfiguration(WORKERID_2);
+        workerSession.setWorkerProperty(WORKERID_2, "DISABLED", "TRUE");
+        workerSession.reloadConfiguration(WORKERID_2);
 
         // Send request to dispatcher
         try {
-            res = (GenericSignResponse) workSession.process(WORKERID_DISPATCHER,
+            res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
                 request, context);
             fail("Should have got CryptoTokenOfflineException");
         } catch(CryptoTokenOfflineException ex) {
@@ -148,11 +127,11 @@ public class FirstActiveDispatcherTest extends TestCase {
         }
 
         // Enable signer 81
-        workSession.setWorkerProperty(WORKERID_1, "DISABLED", "FALSE");
-        workSession.reloadConfiguration(WORKERID_1);
+        workerSession.setWorkerProperty(WORKERID_1, "DISABLED", "FALSE");
+        workerSession.reloadConfiguration(WORKERID_1);
 
         // Send request to dispatcher
-        res = (GenericSignResponse) workSession.process(WORKERID_DISPATCHER,
+        res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
                 request, context);
 
         cert = (X509Certificate) res.getSignerCertificate();
@@ -179,27 +158,10 @@ public class FirstActiveDispatcherTest extends TestCase {
             String.valueOf(WORKERID_3)
         });
 
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "module",
-            "remove",
-            "XMLSIGNER",
-            String.valueOf(moduleVersion)
-        });
-        assertTrue("module remove",
-                TestUtils.grepTempOut("Removal of module successful."));
-        workSession.reloadConfiguration(WORKERID_DISPATCHER);
-        workSession.reloadConfiguration(WORKERID_1);
-        workSession.reloadConfiguration(WORKERID_2);
-        workSession.reloadConfiguration(WORKERID_3);
+        workerSession.reloadConfiguration(WORKERID_DISPATCHER);
+        workerSession.reloadConfiguration(WORKERID_1);
+        workerSession.reloadConfiguration(WORKERID_2);
+        workerSession.reloadConfiguration(WORKERID_3);
     }
 
-    private File getSignServerHome() throws Exception {
-        if (signServerHome == null) {
-            final String home = System.getenv("SIGNSERVER_HOME");
-            assertNotNull("SIGNSERVER_HOME", home);
-            signServerHome = new File(home);
-            assertTrue("SIGNSERVER_HOME exists", signServerHome.exists());
-        }
-        return signServerHome;
-    }
 }

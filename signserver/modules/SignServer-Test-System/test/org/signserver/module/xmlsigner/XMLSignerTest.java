@@ -22,17 +22,13 @@ import java.security.cert.Certificate;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.ServiceLocator;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import org.w3c.dom.Document;
@@ -43,7 +39,7 @@ import org.w3c.dom.Document;
  * @author Markus Kilås
  * @version $Id$
  */
-public class XMLSignerTest extends TestCase {
+public class XMLSignerTest extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(XMLSignerTest.class);
 
@@ -54,22 +50,14 @@ public class XMLSignerTest extends TestCase {
     private static final int WORKERID2 = 5679;
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
-    
-    private static IWorkerSession.IRemote workerSession;
-    private static String signserverhome;
-    private static int moduleVersion;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        workerSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
     }
 
     @Override
@@ -80,26 +68,12 @@ public class XMLSignerTest extends TestCase {
 	
     public void test00SetupDatabase() throws Exception {
 
-        final MARFileParser marFileParser = new MARFileParser(signserverhome
-                + "/lib/xmlsigner.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-                "module",
-                "add",
-                signserverhome + "/lib/xmlsigner.mar",
-                "junittest"
-            });
-        assertTrue("Loading module",
-                TestUtils.grepTempOut("Loading module XMLSIGNER"));
-        assertTrue("Module loaded",
-                TestUtils.grepTempOut("Module loaded successfully."));
-
+        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID);
 
         // Update path to JKS file
         workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
-                new File(signserverhome + File.separator + "res" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
+                new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
         workerSession.reloadConfiguration(WORKERID2);
     }
 
@@ -119,7 +93,7 @@ public class XMLSignerTest extends TestCase {
         assertSame("Request ID", reqid, res.getRequestID());
 
         // Output for manual inspection
-        final FileOutputStream fos = new FileOutputStream(new File(signserverhome
+        final FileOutputStream fos = new FileOutputStream(new File(getSignServerHome()
                 + File.separator
                 + "tmp" + File.separator + "signedxml_rsa.xml"));
         fos.write((byte[]) data);
@@ -160,7 +134,7 @@ public class XMLSignerTest extends TestCase {
 
         // Output for manual inspection
         final FileOutputStream fos = new FileOutputStream(
-                new File(signserverhome +
+                new File(getSignServerHome() +
                 File.separator + "tmp" +
                 File.separator + "signedxml_dsa.xml"));
         fos.write((byte[]) data);
@@ -187,15 +161,6 @@ public class XMLSignerTest extends TestCase {
             "removeworker",
             String.valueOf(WORKERID2)
         });
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "module",
-            "remove",
-            "XMLSIGNER",
-            String.valueOf(moduleVersion)
-        });
-        assertTrue("module remove",
-                TestUtils.grepTempOut("Removal of module successful."));
         workerSession.reloadConfiguration(WORKERID);
         workerSession.reloadConfiguration(WORKERID2);
     }

@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 
 import org.bouncycastle.tsp.TSPAlgorithms;
@@ -38,12 +37,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.RequestAndResponseManager;
-import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.ServiceLocator;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.tsa.TimeStampSigner;
 import org.signserver.protocol.ws.client.ISignServerWSClient;
 import org.signserver.protocol.ws.client.SignServerWSClientFactory;
@@ -55,6 +49,7 @@ import org.signserver.protocol.ws.gen.ProcessResponseWS;
 import org.signserver.protocol.ws.gen.SignServerWS;
 import org.signserver.protocol.ws.gen.SignServerWSService;
 import org.signserver.protocol.ws.gen.WorkerStatusWS;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.common.ICertificate;
@@ -70,24 +65,17 @@ import org.signserver.validationservice.server.ValidationTestUtils;
  * 
  * @version $Id$
  */
-public class MainWebServiceTestSeparately extends TestCase {
+public class MainWebServiceTestSeparately extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(MainWebServiceTestSeparately.class);
-    private static IGlobalConfigurationSession.IRemote gCSession = null;
-    private static IWorkerSession.IRemote sSSession = null;
+    
     private static X509Certificate validCert1;
     private SignServerWS signServerWS;
-    private String signserverhome;
-    private int moduleVersion;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        gCSession = ServiceLocator.getInstance().lookupRemote(
-                IGlobalConfigurationSession.IRemote.class);
-        sSSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
 
         QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
         SignServerWSService signServerWSService = new SignServerWSService(new URL("http://localhost:8080/signserver/signserverws/signserverws?wsdl"), qname);
@@ -95,8 +83,6 @@ public class MainWebServiceTestSeparately extends TestCase {
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull(signserverhome);
     }
 
     /* (non-Javadoc)
@@ -109,29 +95,19 @@ public class MainWebServiceTestSeparately extends TestCase {
     }
 
     public void test00SetupDatabase() throws Exception {
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/tsa.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/lib/tsa.mar"});
-        assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH", "org.signserver.module.tsa.TimeStampSigner");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
 
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH", "org.signserver.module.tsa.TimeStampSigner");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
-
-
-        sSSession.setWorkerProperty(9, "AUTHTYPE", "org.signserver.server.DummyAuthorizer");
-        sSSession.setWorkerProperty(9, "TESTAUTHPROP", "DATA");
-        sSSession.setWorkerProperty(9, "NAME", "TestTimeStamp");
+        workerSession.setWorkerProperty(9, "AUTHTYPE", "org.signserver.server.DummyAuthorizer");
+        workerSession.setWorkerProperty(9, "TESTAUTHPROP", "DATA");
+        workerSession.setWorkerProperty(9, "NAME", "TestTimeStamp");
         String signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
-        sSSession.setWorkerProperty(9, "KEYSTOREPATH", signserverhome + "/res/test/timestamp1.p12");
+        workerSession.setWorkerProperty(9, "KEYSTOREPATH", signserverhome + "/src/test/timestamp1.p12");
         //sSSession.setWorkerProperty(9, "KEYSTOREPASSWORD", "foo123");
-        sSSession.setWorkerProperty(9, TimeStampSigner.DEFAULTTSAPOLICYOID, "1.0.1.2.33");
-        sSSession.setWorkerProperty(9, TimeStampSigner.TSA, "CN=TimeStampTest1");
-        sSSession.setWorkerProperty(9, SignServerConstants.MODULENAME, "TSA");
-        sSSession.setWorkerProperty(9, SignServerConstants.MODULEVERSION, moduleVersion + "");
-
-        sSSession.reloadConfiguration(9);
+        workerSession.setWorkerProperty(9, TimeStampSigner.DEFAULTTSAPOLICYOID, "1.0.1.2.33");
+        workerSession.setWorkerProperty(9, TimeStampSigner.TSA, "CN=TimeStampTest1");
+        workerSession.reloadConfiguration(9);
 
         KeyPair validRootCA1Keys = KeyTools.genKeys("1024", "RSA");
         X509Certificate validRootCA1 = ValidationTestUtils.genCert("CN=ValidRootCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
@@ -148,16 +124,16 @@ public class MainWebServiceTestSeparately extends TestCase {
         validChain1.add(validRootCA1);
         validChain1.add(validSubCA1);
 
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
 
-        sSSession.setWorkerProperty(16, "AUTHTYPE", "NOAUTH");
-        sSSession.setWorkerProperty(16, "NAME", "ValTest");
-        sSSession.setWorkerProperty(16, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
-        sSSession.setWorkerProperty(16, "VAL1.TESTPROP", "TEST");
-        sSSession.setWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(validChain1));
+        workerSession.setWorkerProperty(16, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(16, "NAME", "ValTest");
+        workerSession.setWorkerProperty(16, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
+        workerSession.setWorkerProperty(16, "VAL1.TESTPROP", "TEST");
+        workerSession.setWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(validChain1));
 
-        sSSession.reloadConfiguration(16);
+        workerSession.reloadConfiguration(16);
     }
 
     public void test01BasicWSStatuses() throws MalformedURLException, InvalidWorkerIdException_Exception, CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException, InvalidWorkerIdException {
@@ -168,7 +144,7 @@ public class MainWebServiceTestSeparately extends TestCase {
         assertTrue(statuses.get(0).getWorkerName().equals("9"));
         assertTrue(statuses.get(0).getOverallStatus().equals(org.signserver.protocol.ws.WorkerStatusWS.OVERALLSTATUS_ERROR));
         assertTrue(statuses.get(0).getErrormessage() != null);
-        sSSession.activateSigner(9, "foo123");
+        workerSession.activateSigner(9, "foo123");
         statuses = signServerWS.getStatus("TestTimeStamp");
         assertTrue(statuses.size() == 1);
         assertTrue(statuses.get(0).getWorkerName().equals("TestTimeStamp"));
@@ -218,17 +194,17 @@ public class MainWebServiceTestSeparately extends TestCase {
         } catch (IllegalRequestException_Exception e) {
         }
 
-        sSSession.setWorkerProperty(9, "AUTHTYPE", "NOAUTH");
-        sSSession.reloadConfiguration(9);
+        workerSession.setWorkerProperty(9, "AUTHTYPE", "NOAUTH");
+        workerSession.reloadConfiguration(9);
 
-        sSSession.deactivateSigner(9);
+        workerSession.deactivateSigner(9);
         try {
             signServerWS.process("9", WSClientUtil.convertProcessRequestWS(reqs));
             assertTrue(false);
         } catch (CryptoTokenOfflineException_Exception e) {
         }
 
-        sSSession.activateSigner(9, "foo123");
+        workerSession.activateSigner(9, "foo123");
 
         List<ProcessResponseWS> resps = signServerWS.process("TestTimeStamp", WSClientUtil.convertProcessRequestWS(reqs));
         assertTrue(resps.size() == 2);
@@ -333,20 +309,17 @@ public class MainWebServiceTestSeparately extends TestCase {
     public void test99TearDownDatabase() throws Exception {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
                     "9"});
+        workerSession.reloadConfiguration(9);
 
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove", "TSA", "" + moduleVersion});
+        globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH");
+        globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH");
 
-        sSSession.reloadConfiguration(9);
+        workerSession.removeWorkerProperty(16, "AUTHTYPE");
+        workerSession.removeWorkerProperty(16, "VAL1.CLASSPATH");
+        workerSession.removeWorkerProperty(16, "VAL1.TESTPROP");
+        workerSession.removeWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN");
 
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH");
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH");
-
-        sSSession.removeWorkerProperty(16, "AUTHTYPE");
-        sSSession.removeWorkerProperty(16, "VAL1.CLASSPATH");
-        sSSession.removeWorkerProperty(16, "VAL1.TESTPROP");
-        sSSession.removeWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN");
-
-        sSSession.reloadConfiguration(16);
+        workerSession.reloadConfiguration(16);
     }
 
     /**

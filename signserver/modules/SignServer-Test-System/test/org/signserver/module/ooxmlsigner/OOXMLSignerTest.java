@@ -16,17 +16,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.security.cert.Certificate;
 
-import junit.framework.TestCase;
-
 import org.ejbca.util.Base64;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
-import org.signserver.common.ServiceLocator;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -38,17 +34,13 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Aziz Göktepe
  * @version $Id$
  */
-public class OOXMLSignerTest extends TestCase {
+public class OOXMLSignerTest extends ModulesTestCase {
 
     /**
      * WORKERID used in this test case as defined in
      * junittest-part-config.properties
      */
     private static final int WORKERID = 5677;
-
-    private static IWorkerSession.IRemote sSSession = null;
-    private static String signserverhome;
-    private static int moduleVersion;
 
     /**
      * predefined docx file in base64 format.
@@ -72,12 +64,9 @@ public class OOXMLSignerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        sSSession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
     }
 
     @Override
@@ -87,15 +76,8 @@ public class OOXMLSignerTest extends TestCase {
     }
 
     public void test00SetupDatabase() throws Exception {
-
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/ooxmlsigner.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add", signserverhome + "/lib/ooxmlsigner.mar", "junittest"});
-        assertTrue(TestUtils.grepTempOut("Loading module OOXMLSIGNER"));
-        assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
-
-        sSSession.reloadConfiguration(WORKERID);
+        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-OOXMLSigner/src/conf/junittest-part-config.properties"));
+        workerSession.reloadConfiguration(WORKERID);
     }
 
     public void test01SignDocx() throws Exception {
@@ -104,14 +86,14 @@ public class OOXMLSignerTest extends TestCase {
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, Base64.decode(TEST_DOCX.getBytes()));
 
-        GenericSignResponse res = (GenericSignResponse) sSSession.process(WORKERID, signRequest, new RequestContext());
+        GenericSignResponse res = (GenericSignResponse) workerSession.process(WORKERID, signRequest, new RequestContext());
         byte[] data = res.getProcessedData();
 
         // Answer to right question
         assertTrue(reqid == res.getRequestID());
 
         // Output for manual inspection
-        File file = new File(signserverhome + File.separator + "tmp" + File.separator + "signedTestDoc.docx");
+        File file = new File(getSignServerHome() + File.separator + "tmp" + File.separator + "signedTestDoc.docx");
         FileOutputStream fos = new FileOutputStream(file);
         fos.write((byte[]) data);
         fos.close();
@@ -125,15 +107,12 @@ public class OOXMLSignerTest extends TestCase {
     }
 
     public void test02GetStatus() throws Exception {
-        SignerStatus stat = (SignerStatus) sSSession.getStatus(WORKERID);
+        SignerStatus stat = (SignerStatus) workerSession.getStatus(WORKERID);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
     }
 
     public void test99TearDownDatabase() throws Exception {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + WORKERID});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove", "ooxmlsigner", "" + moduleVersion});
-        assertTrue(TestUtils.grepTempOut("Removal of module successful."));
-        sSSession.reloadConfiguration(WORKERID);
+        workerSession.reloadConfiguration(WORKERID);
     }
 }

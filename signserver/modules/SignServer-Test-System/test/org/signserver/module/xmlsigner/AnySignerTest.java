@@ -22,8 +22,6 @@ import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.util.Collection;
 
-import junit.framework.TestCase;
-
 import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Hex;
@@ -31,10 +29,8 @@ import org.ejbca.util.Base64;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.KeyTestResult;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -46,15 +42,13 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Markus Kilås
  * @version $Id$
  */
-public class AnySignerTest extends TestCase {
+public class AnySignerTest extends ModulesTestCase {
 
     /** WORKERID used in this test case as defined in 
      * junittest-part-config.properties for XMLSigner. */
     private static final int WORKERID = 5803;
 
-    private static IWorkerSession.IRemote workerSession;
     private static String signserverhome;
-    private static int moduleVersion;
 
     private static File keystoreFile;
 	
@@ -62,8 +56,6 @@ public class AnySignerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        workerSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
@@ -78,22 +70,7 @@ public class AnySignerTest extends TestCase {
     }	
 	
     public void test00SetupDatabase() throws Exception {
-
-        final MARFileParser marFileParser = new MARFileParser(signserverhome
-                + "/lib/xmlsigner.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-                "module",
-                "add",
-                signserverhome + "/lib/xmlsigner.mar",
-                "junittest"
-            });
-        assertTrue("Loading module",
-                TestUtils.grepTempOut("Loading module XMLSIGNER"));
-        assertTrue("Module loaded",
-                TestUtils.grepTempOut("Module loaded successfully."));
-
+        setProperties(new File(signserverhome, "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID);
 
         final File newKeystore = new File(signserverhome + File.separator + "tmp"
@@ -274,15 +251,6 @@ public class AnySignerTest extends TestCase {
             "removeworker",
             String.valueOf(WORKERID)
         });
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "module",
-            "remove",
-            "XMLSIGNER",
-            String.valueOf(moduleVersion)
-        });
-        assertTrue("module remove",
-                TestUtils.grepTempOut("Removal of module successful."));
         workerSession.reloadConfiguration(WORKERID);
     }
 

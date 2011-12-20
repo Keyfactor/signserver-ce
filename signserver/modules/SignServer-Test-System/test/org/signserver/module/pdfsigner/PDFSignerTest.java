@@ -12,14 +12,11 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
@@ -32,8 +29,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
-
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -44,25 +39,21 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
-import org.signserver.common.ServiceLocator;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
+
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfSignatureAppearance;
 
 /**
  * Unit tests for the PDFSigner.
  *
  * @version $Id$
  */
-public class PDFSignerTest extends TestCase {
+public class PDFSignerTest extends ModulesTestCase {
 
     private static final int WORKERID = 5675;
-
-    private static IWorkerSession.IRemote sSSession = null;
-	
-    private static String signserverhome;
-    private static int moduleVersion;
 
     private static Random random = new Random(WORKERID);
 
@@ -75,12 +66,9 @@ public class PDFSignerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        sSSession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull(signserverhome);
     }
 
     /* (non-Javadoc)
@@ -93,16 +81,8 @@ public class PDFSignerTest extends TestCase {
     }
 
     public void test00SetupDatabase() throws Exception {
-
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/pdfsigner.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/lib/pdfsigner.mar", "junittest"});
-        assertTrue(TestUtils.grepTempOut("Loading module PDFSIGNER"));
-        assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
-
-        sSSession.reloadConfiguration(WORKERID);
+        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-PDFSigner/src/conf/junittest-part-config.properties"));
+        workerSession.reloadConfiguration(WORKERID);
     }
 
     public void test01BasicPdfSign() throws Exception {
@@ -114,17 +94,14 @@ public class PDFSignerTest extends TestCase {
         assertFalse("isTampered", reader.isTampered());
 
         // TODO: verify PDF file
-        FileOutputStream fos = new FileOutputStream(signserverhome + "/tmp/signedpdf.pdf");
+        FileOutputStream fos = new FileOutputStream(getSignServerHome() + "/tmp/signedpdf.pdf");
         fos.write((byte[]) res.getProcessedData());
         fos.close();
     }
 
     public void test02GetStatus() throws Exception {
-
-
-        SignerStatus stat = (SignerStatus) sSSession.getStatus(WORKERID);
+        SignerStatus stat = (SignerStatus) workerSession.getStatus(WORKERID);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
-
     }
 
     /**
@@ -134,8 +111,8 @@ public class PDFSignerTest extends TestCase {
     public void test03CertificationLevelDefault() throws Exception {
 
         // Test default which is no certification
-        sSSession.removeWorkerProperty(WORKERID, CERTIFICATION_LEVEL);
-        sSSession.reloadConfiguration(WORKERID);
+        workerSession.removeWorkerProperty(WORKERID, CERTIFICATION_LEVEL);
+        workerSession.reloadConfiguration(WORKERID);
 
         final GenericSignResponse res = signDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
@@ -154,8 +131,8 @@ public class PDFSignerTest extends TestCase {
     public void test04CertificationLevelNotCertified() throws Exception {
 
         // Test default which is no certification
-        sSSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "NOT_CERTIFIED");
-        sSSession.reloadConfiguration(WORKERID);
+        workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "NOT_CERTIFIED");
+        workerSession.reloadConfiguration(WORKERID);
 
         final GenericSignResponse res = signDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
@@ -174,8 +151,8 @@ public class PDFSignerTest extends TestCase {
     public void test05CertificationLevelNoChangesAllowed() throws Exception {
 
         // Test default which is no certification
-        sSSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "NO_CHANGES_ALLOWED");
-        sSSession.reloadConfiguration(WORKERID);
+        workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "NO_CHANGES_ALLOWED");
+        workerSession.reloadConfiguration(WORKERID);
 
         final GenericSignResponse res = signDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
@@ -194,8 +171,8 @@ public class PDFSignerTest extends TestCase {
     public void test06CertificationLevelFormFillingAndAnnotations() throws Exception {
 
         // Test default which is no certification
-        sSSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "FORM_FILLING_AND_ANNOTATIONS");
-        sSSession.reloadConfiguration(WORKERID);
+        workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "FORM_FILLING_AND_ANNOTATIONS");
+        workerSession.reloadConfiguration(WORKERID);
 
         final GenericSignResponse res = signDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
@@ -214,8 +191,8 @@ public class PDFSignerTest extends TestCase {
     public void test07CertificationLevelFormFillingAndAnnotations() throws Exception {
 
         // Test default which is no certification
-        sSSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "FORM_FILLING");
-        sSSession.reloadConfiguration(WORKERID);
+        workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "FORM_FILLING");
+        workerSession.reloadConfiguration(WORKERID);
 
         final GenericSignResponse res = signDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
@@ -274,21 +251,21 @@ public class PDFSignerTest extends TestCase {
 
     public void test10ArchiveToDisk() throws Exception {
 
-        final File archiveFolder = new File(signserverhome + File.separator
+        final File archiveFolder = new File(getSignServerHome() + File.separator
                 + "tmp" + File.separator + "archivetest");
 
         if (!archiveFolder.exists()) {
             assertTrue("Create dir: " + archiveFolder, archiveFolder.mkdirs());
         }
 
-        sSSession.setWorkerProperty(WORKERID, "ARCHIVETODISK", "True");
-        sSSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_BASE",
+        workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK", "True");
+        workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_BASE",
                 archiveFolder.getAbsolutePath());
-        sSSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_PATTERN",
+        workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_PATTERN",
                 "${DATE:yyyy}/${WORKERID}");
-        sSSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_FILENAME_PATTERN",
+        workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_FILENAME_PATTERN",
                 "${REQUESTID}.pdf");
-        sSSession.reloadConfiguration(WORKERID);
+        workerSession.reloadConfiguration(WORKERID);
 
         final GenericSignResponse res = signDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
@@ -312,9 +289,9 @@ public class PDFSignerTest extends TestCase {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
         final byte[] pdf2Catalogs = getTestFile(TESTPDF_2CATALOGS);
 
-        sSSession.setWorkerProperty(WORKERID,
+        workerSession.setWorkerProperty(WORKERID,
                 "REFUSE_DOUBLE_INDIRECT_OBJECTS", "FALSE");
-        sSSession.reloadConfiguration(WORKERID);
+        workerSession.reloadConfiguration(WORKERID);
 
         // Just test that we can sign a normal PDF
         signNoCheck(WORKERID, pdfOk);
@@ -323,9 +300,9 @@ public class PDFSignerTest extends TestCase {
         signDocument(WORKERID, pdf2Catalogs);
 
         // Enable the check
-        sSSession.setWorkerProperty(WORKERID,
+        workerSession.setWorkerProperty(WORKERID,
                 "REFUSE_DOUBLE_INDIRECT_OBJECTS", "TRUE");
-        sSSession.reloadConfiguration(WORKERID);
+        workerSession.reloadConfiguration(WORKERID);
 
         // Test that we can't sign the strange PDF when the check is on
         try {
@@ -342,24 +319,20 @@ public class PDFSignerTest extends TestCase {
     public void test99TearDownDatabase() throws Exception {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
                     "5675"});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove", "PDFSIGNER", "" + moduleVersion});
-        assertTrue(TestUtils.grepTempOut("Removal of module successful."));
-        sSSession.reloadConfiguration(WORKERID);
-
+        workerSession.reloadConfiguration(WORKERID);
     }
 
-    private static GenericSignResponse signNoCheck(final int workerId,
+    private GenericSignResponse signNoCheck(final int workerId,
             final byte[] data) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         final int requestId = random.nextInt();
         final GenericSignRequest request = new GenericSignRequest(requestId,
                 data);
-        final GenericSignResponse response = (GenericSignResponse) sSSession.process(workerId, request, new RequestContext());
+        final GenericSignResponse response = (GenericSignResponse) workerSession.process(workerId, request, new RequestContext());
         return response;
     }
 
-    private static GenericSignResponse signDocument(final int workerId,
+    private GenericSignResponse signDocument(final int workerId,
             final byte[] data) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
 
@@ -368,7 +341,7 @@ public class PDFSignerTest extends TestCase {
         final GenericSignRequest request = new GenericSignRequest(requestId,
                 data);
 
-        final GenericSignResponse response = (GenericSignResponse) sSSession.process(workerId, request, new RequestContext());
+        final GenericSignResponse response = (GenericSignResponse) workerSession.process(workerId, request, new RequestContext());
         assertEquals("requestId", requestId, response.getRequestID());
 
         Certificate signercert = response.getSignerCertificate();
@@ -377,10 +350,10 @@ public class PDFSignerTest extends TestCase {
         return response;
     }
 
-    private byte[] getTestFile(String name) throws IOException {
+    private byte[] getTestFile(String name) throws Exception {
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
-        final File file = new File(signserverhome,
+        final File file = new File(getSignServerHome(),
                 "res" + File.separator + "test" + File.separator + name);
         FileInputStream in = null;
         try {

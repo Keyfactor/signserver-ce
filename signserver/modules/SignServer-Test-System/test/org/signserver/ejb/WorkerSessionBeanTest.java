@@ -42,6 +42,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     /**
      * Set up the test case
      */
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
@@ -60,12 +61,6 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     }
 
     public void test00SetupDatabase() throws Exception {
-//		MARFileParser marFileParser = new MARFileParser(signserverhome +"/lib/mrtdsigner.mar");
-//		moduleVersion = marFileParser.getVersionFromMARFile();
-//		TestUtils.assertSuccessfulExecution(new String[] {"module", "add",
-//				signserverhome +"/lib/mrtdsigner.mar"});
-//		assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
-
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                 "WORKER3.CLASSPATH",
                 "org.signserver.module.mrtdsigner.MRTDSigner");
@@ -114,15 +109,12 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         if (!arrayEquals(signreq2, signres2)) {
             assertTrue("Second MRTD doesn't match with request", false);
         }
-
     }
 
     /*
      * Test method for 'org.signserver.ejb.SignSessionBean.getStatus(int)'
      */
     public void test02GetStatus() throws Exception {
-
-
         assertTrue(((SignerStatus) workerSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_ACTIVE
                 || ((SignerStatus) workerSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_OFFLINE);
     }

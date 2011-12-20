@@ -18,12 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.signserver.client.TimeStampClient;
-import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.testutils.ExitException;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -34,14 +32,11 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Philip Vendil 21 okt 2007
  * @version $Id$
  */
-public class SignServerCLITest extends TestCase {
+public class SignServerCLITest extends ModulesTestCase {
 
     private static final String TESTID = "100";
     private static final String TESTTSID = "1000";
     private static final String TESTGSID = "1023";
-	
-    private static String signserverhome;
-    private static int tsaModuleVersion;
 
     @Override
     protected void setUp() throws Exception {
@@ -50,8 +45,6 @@ public class SignServerCLITest extends TestCase {
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull(signserverhome);
     }
 
     public void testBasicSetup() throws Exception {
@@ -103,20 +96,10 @@ public class SignServerCLITest extends TestCase {
     }
 
     public void testSetupTimeStamp() throws Exception {
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/tsa.mar");
-        tsaModuleVersion = marFileParser.getVersionFromMARFile();
 
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/lib/tsa.mar"});
-        assertTrue(TestUtils.grepTempOut("Loading module TSA"));
-        assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
-
-        TestUtils.assertSuccessfulExecution(new String[]{"reload",
-                    "all"});
-
-        assertTrue(new File(signserverhome + "/res/test/test_add_timestamp_configuration.properties").exists());
+        assertTrue(new File(getSignServerHome() + "/src/test/test_add_timestamp_configuration.properties").exists());
         TestUtils.assertSuccessfulExecution(new String[]{"setproperties",
-                    signserverhome + "/res/test/test_add_timestamp_configuration.properties"});
+                    getSignServerHome() + "/res/test/test_add_timestamp_configuration.properties"});
         assertTrue(TestUtils.grepTempOut("Setting the property NAME to timestampSigner1000 for worker 1000"));
 
 
@@ -210,12 +193,12 @@ public class SignServerCLITest extends TestCase {
         // Dump
         TestUtils.assertSuccessfulExecution(new String[]{"dumpproperties",
                     "TIMESTAMPSIGNER1000",
-                    signserverhome + "/tmp/testdump.properties"});
+                    getSignServerHome() + "/tmp/testdump.properties"});
         assertTrue(TestUtils.grepTempOut("Properties successfully dumped into file"));
 
 
         Properties props = new Properties();
-        props.load(new FileInputStream(signserverhome + "/tmp/testdump.properties"));
+        props.load(new FileInputStream(getSignServerHome() + "/tmp/testdump.properties"));
         assertNotNull(props.get("WORKER1000.AUTHTYPE"));
 
         // Test the timestamp client
@@ -226,9 +209,9 @@ public class SignServerCLITest extends TestCase {
                         "-instr",
                         "TEST",
                         "-outrep",
-                        signserverhome + "/tmp/timestamptest.data"});
+                        getSignServerHome() + "/tmp/timestamptest.data"});
 
-            FileInputStream fis = new FileInputStream(signserverhome + "/tmp/timestamptest.data");
+            FileInputStream fis = new FileInputStream(getSignServerHome() + "/tmp/timestamptest.data");
             TimeStampResponse tsr = new TimeStampResponse(fis);
             assertTrue(tsr != null);
             String archiveId = tsr.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16);
@@ -238,16 +221,16 @@ public class SignServerCLITest extends TestCase {
                         "findfromarchiveid",
                         TESTTSID,
                         archiveId,
-                        signserverhome + "/tmp"});
-            File datafile = new File(signserverhome + "/tmp/" + archiveId);
+                        getSignServerHome() + "/tmp"});
+            File datafile = new File(getSignServerHome() + "/tmp/" + archiveId);
             assertTrue(datafile.exists());
             datafile.delete();
             TestUtils.assertSuccessfulExecution(new String[]{"archive",
                         "findfromrequestip",
                         TESTTSID,
                         "127.0.0.1",
-                        signserverhome + "/tmp"});
-            datafile = new File(signserverhome + "/tmp/" + archiveId);
+                        getSignServerHome() + "/tmp"});
+            datafile = new File(getSignServerHome() + "/tmp/" + archiveId);
             assertTrue(datafile.exists());
 
 
@@ -260,10 +243,10 @@ public class SignServerCLITest extends TestCase {
         TestingSecurityManager.remove();
     }
 
-    public void testRemoveTimeStamp() {
+    public void testRemoveTimeStamp() throws Exception {
         // Remove and restore
         TestUtils.assertSuccessfulExecution(new String[]{"setproperties",
-                    signserverhome + "/res/test/test_rem_timestamp_configuration.properties"});
+                    getSignServerHome() + "/res/test/test_rem_timestamp_configuration.properties"});
         assertTrue(TestUtils.grepTempOut("Removing the property NAME  for worker 1000"));
 
         TestUtils.assertSuccessfulExecution(new String[]{"getconfig",
@@ -273,11 +256,6 @@ public class SignServerCLITest extends TestCase {
         TestUtils.assertSuccessfulExecution(new String[]{"removeproperty",
                     TESTTSID,
                     "TESTKEY"});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove",
-                    "TSA", "" + tsaModuleVersion});
-        assertTrue(TestUtils.grepTempOut("Removing module TSA"));
-        assertTrue(TestUtils.grepTempOut("Removal of module successful."));
 
         TestUtils.assertSuccessfulExecution(new String[]{"reload",
                     TESTTSID});
@@ -290,9 +268,9 @@ public class SignServerCLITest extends TestCase {
         TestUtils.assertSuccessfulExecution(new String[]{"reload",
                     "all"});
 
-        assertTrue(new File(signserverhome + "/res/test/test_add_groupkeyservice_configuration.properties").exists());
+        assertTrue(new File(getSignServerHome() + "/res/test/test_add_groupkeyservice_configuration.properties").exists());
         TestUtils.assertSuccessfulExecution(new String[]{"setproperties",
-                    signserverhome + "/res/test/test_add_groupkeyservice_configuration.properties"});
+                    getSignServerHome() + "/res/test/test_add_groupkeyservice_configuration.properties"});
         assertTrue(TestUtils.grepTempOut("Setting the property NAME to Test1 for worker 1023"));
 
         TestUtils.assertSuccessfulExecution(new String[]{"reload",
@@ -356,19 +334,19 @@ public class SignServerCLITest extends TestCase {
     public void testSetupModules() throws Exception {
 
         TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/res/test/testmodule-withoutdescr.mar"});
+                    getSignServerHome() + "/res/test/testmodule-withoutdescr.mar"});
         assertTrue(TestUtils.grepTempOut("Loading module TESTMODULE-WITHOUTDESCR with version 1"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
 
         TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/res/test/testmodule-withdescr.mar"});
+                    getSignServerHome() + "/res/test/testmodule-withdescr.mar"});
 
         assertTrue(TestUtils.grepTempOut("Loading module TESTMODULE-WITHDESCR with version 2"));
         assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
         assertTrue(TestUtils.grepTempOut("Setting the property ENV to PROD for worker 4321"));
 
         TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/res/test/testmodule-withdescr.mar", "devel"});
+                    getSignServerHome() + "/res/test/testmodule-withdescr.mar", "devel"});
         assertTrue(TestUtils.grepTempOut("Setting the property ENV to DEVEL for worker 3433"));
 
         TestUtils.assertSuccessfulExecution(new String[]{"module", "list"});
@@ -389,7 +367,6 @@ public class SignServerCLITest extends TestCase {
         assertTrue(TestUtils.grepTempOut("server"));
         assertTrue(TestUtils.grepTempOut("testjar.jar"));
         assertTrue(TestUtils.grepTempOut("testjar2.jar"));
-
 
         TestingSecurityManager.remove();
     }
@@ -415,8 +392,6 @@ public class SignServerCLITest extends TestCase {
 
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
                     "3433"});
-
-
 
         TestingSecurityManager.remove();
     }

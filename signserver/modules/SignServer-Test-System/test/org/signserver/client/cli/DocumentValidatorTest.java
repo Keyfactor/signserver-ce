@@ -21,16 +21,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.ServiceLocator;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.module.xmlvalidator.XMLValidatorTestData;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -40,7 +35,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Markus Kilås
  * @version $Id$
  */
-public class DocumentValidatorTest extends TestCase {
+public class DocumentValidatorTest extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(DocumentValidatorTest.class);
@@ -52,19 +47,11 @@ public class DocumentValidatorTest extends TestCase {
     private static final String VALIDATION_WORKER = "TestValidationWorker";
 
     private static String signserverhome;
-    private static int moduleVersion;
-
-    private IWorkerSession.IRemote sSSession;
-    private IGlobalConfigurationSession.IRemote gCSession;
 	
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        gCSession = ServiceLocator.getInstance().lookupRemote(
-                        IGlobalConfigurationSession.IRemote.class);
-        sSSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
         TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
@@ -90,27 +77,22 @@ public class DocumentValidatorTest extends TestCase {
 	
     public void test00SetupDatabase() throws Exception {
 
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/xmlvalidator.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
         // VALIDATION SERVICE
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
-        sSSession.setWorkerProperty(17, "AUTHTYPE", "NOAUTH");
-        sSSession.setWorkerProperty(17, "NAME", VALIDATION_WORKER);
-        sSSession.setWorkerProperty(17, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
-        sSSession.setWorkerProperty(17, "VAL1.ISSUER1.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + XMLValidatorTestData.CERT_ISSUER + "\n-----END CERTIFICATE-----\n");
-        sSSession.setWorkerProperty(17, "VAL1.ISSUER2.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + XMLValidatorTestData.CERT_ISSUER4 + "\n-----END CERTIFICATE-----\n");
-        sSSession.setWorkerProperty(17, "VAL1.TESTPROP", "TEST");
-        sSSession.setWorkerProperty(17, "VAL1.REVOKED", "");
-        sSSession.reloadConfiguration(17);
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        workerSession.setWorkerProperty(17, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(17, "NAME", VALIDATION_WORKER);
+        workerSession.setWorkerProperty(17, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
+        workerSession.setWorkerProperty(17, "VAL1.ISSUER1.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + XMLValidatorTestData.CERT_ISSUER + "\n-----END CERTIFICATE-----\n");
+        workerSession.setWorkerProperty(17, "VAL1.ISSUER2.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + XMLValidatorTestData.CERT_ISSUER4 + "\n-----END CERTIFICATE-----\n");
+        workerSession.setWorkerProperty(17, "VAL1.TESTPROP", "TEST");
+        workerSession.setWorkerProperty(17, "VAL1.REVOKED", "");
+        workerSession.reloadConfiguration(17);
 
         // XMLVALIDATOR
-        TestUtils.assertSuccessfulExecution(new String[] { "module", "add", signserverhome + "/lib/xmlvalidator.mar", "junittest" });
-        assertTrue(TestUtils.grepTempOut("Loading module XMLVALIDATOR"));
-        assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
-        sSSession.setWorkerProperty(WORKERID, "VALIDATIONSERVICEWORKER", VALIDATION_WORKER);
-        sSSession.reloadConfiguration(WORKERID);
+        setProperties(new File(signserverhome, "modules/SignServer-Module-XMLValidator/src/conf/junittest-part-config.properties"));
+        workerSession.setWorkerProperty(WORKERID, "VALIDATIONSERVICEWORKER", VALIDATION_WORKER);
+        workerSession.reloadConfiguration(WORKERID);
     }
 
     public void test01missingArguments() throws Exception {
@@ -183,16 +165,7 @@ public class DocumentValidatorTest extends TestCase {
             "removeworker",
             String.valueOf(WORKERID)
         });
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "module",
-            "remove",
-            "XMLVALIDATOR",
-            String.valueOf(moduleVersion)
-        });
-        assertTrue("module remove",
-                TestUtils.grepTempOut("Removal of module successful."));
-        sSSession.reloadConfiguration(WORKERID);
+        workerSession.reloadConfiguration(WORKERID);
     }
 
     private byte[] execute(String... args) throws IllegalArgumentException, IOException {

@@ -21,15 +21,10 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.ServiceLocator;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -39,7 +34,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Markus Kilas
  * @version $Id$
  */
-public class SignerStatusReportTimedServiceTest extends TestCase {
+public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG
@@ -73,28 +68,17 @@ public class SignerStatusReportTimedServiceTest extends TestCase {
 
     private static final long serviceInterval = 10;
 
-    private static IWorkerSession.IRemote workerSession;
-    private static IGlobalConfigurationSession.IRemote globalSession;
-    private static String signserverhome;
-    private static int moduleVersion;
     private static File outputFile;
 	
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        workerSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
-        globalSession = ServiceLocator.getInstance().lookupRemote(
-                IGlobalConfigurationSession.IRemote.class);
         
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull("Please set SIGNSERVER_HOME environment variable",
-                signserverhome);
-        outputFile = new File(signserverhome + File.separator
+        outputFile = new File(getSignServerHome() + File.separator
                 + "~test-outputfile.dat");
         if (outputFile.exists()) {
             if (!outputFile.delete()) {
@@ -115,21 +99,7 @@ public class SignerStatusReportTimedServiceTest extends TestCase {
      */
     public void test00SetupDatabase() throws Exception {
 
-        final MARFileParser marFileParser = new MARFileParser(signserverhome
-                + "/lib/xmlsigner.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-                "module",
-                "add",
-                signserverhome + "/lib/xmlsigner.mar",
-                "junittest"
-            });
-        assertTrue("Loading module",
-                TestUtils.grepTempOut("Loading module XMLSIGNER"));
-        assertTrue("Module loaded",
-                TestUtils.grepTempOut("Module loaded successfully."));
-
+        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID_SIGNER1);
         workerSession.reloadConfiguration(WORKERID_SIGNER2);
         workerSession.reloadConfiguration(WORKERID_SIGNER3);
@@ -233,16 +203,10 @@ public class SignerStatusReportTimedServiceTest extends TestCase {
             String.valueOf(WORKERID_SIGNER3)
         });
 
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "module",
-            "remove",
-            "XMLSIGNER",
-            String.valueOf(moduleVersion)
-        });
-        assertTrue("module remove",
-                TestUtils.grepTempOut("Removal of module successful."));
+        workerSession.reloadConfiguration(WORKERID_SERVICE);
         workerSession.reloadConfiguration(WORKERID_SIGNER1);
         workerSession.reloadConfiguration(WORKERID_SIGNER2);
+        workerSession.reloadConfiguration(WORKERID_SIGNER3);
     }
 
     /**

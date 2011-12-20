@@ -18,13 +18,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.clusterclassloader.MARFileParser;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.common.ServiceLocator;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -34,7 +32,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Markus Kilås
  * @version $Id$
  */
-public class DocumentSignerTest extends TestCase {
+public class DocumentSignerTest extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(DocumentSignerTest.class);
@@ -47,9 +45,7 @@ public class DocumentSignerTest extends TestCase {
      * junittest-part-config.properties for PDFSigner. */
     private static final int WORKERID2 = 5675;
 
-    private static IWorkerSession.IRemote workerSession;
     private static String signserverhome;
-    private static int moduleVersion;
 	
     @Override
     protected void setUp() throws Exception {
@@ -59,6 +55,7 @@ public class DocumentSignerTest extends TestCase {
                 IWorkerSession.IRemote.class);
         TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
+        LOG.info("HOME:"+signserverhome);
         assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
         TestUtils.setupSSLTruststore();
     }
@@ -71,37 +68,15 @@ public class DocumentSignerTest extends TestCase {
 	
     public void test00SetupDatabase() throws Exception {
 
-        final MARFileParser marFileParser = new MARFileParser(signserverhome
-                + "/lib/xmlsigner.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         
         // Worker 1
-        TestUtils.assertSuccessfulExecution(new String[] {
-                "module",
-                "add",
-                signserverhome + "/lib/xmlsigner.mar",
-                "junittest"
-            });
-        assertTrue("Loading module",
-                TestUtils.grepTempOut("Loading module XMLSIGNER"));
-        assertTrue("Module loaded",
-                TestUtils.grepTempOut("Module loaded successfully."));
+        setProperties(new File(signserverhome, "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID);
         
         // Worker 2
-        TestUtils.assertSuccessfulExecution(new String[] {
-                "module",
-                "add",
-                signserverhome + "/lib/pdfsigner.mar",
-                "junittest"
-            });
-        assertTrue("Loading module",
-                TestUtils.grepTempOut("Loading module PDFSIGNER"));
-        assertTrue("Module loaded",
-                TestUtils.grepTempOut("Module loaded successfully."));
+        setProperties(new File(signserverhome, "modules/SignServer-Module-PDFSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID2);
         TestUtils.flushTempOut();
         TestUtils.flushTempErr();
@@ -195,7 +170,7 @@ public class DocumentSignerTest extends TestCase {
             byte[] res = execute("signdocument", "-workername", 
                     "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
                     "-pdfpassword", "open123", "-protocol", "WEBSERVICES",
-                    "-truststore", "../../p12/truststore.jks", "-truststorepwd", "changeit");
+                    "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit");
             assertNotNull("No result", res);
             assertNotSame("Empty result", 0, res.length);
         } catch (IllegalArgumentException ex) {
@@ -204,37 +179,20 @@ public class DocumentSignerTest extends TestCase {
         }
     }
 
-    public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID)
-        });
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "module",
-            "remove",
-            "XMLSIGNER",
-            String.valueOf(moduleVersion)
-        });
-        assertTrue("module remove",
-                TestUtils.grepTempOut("Removal of module successful."));
-        workerSession.reloadConfiguration(WORKERID);
-        
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID2)
-        });
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "module",
-            "remove",
-            "PDFSIGNER",
-            String.valueOf(moduleVersion)
-        });
-        assertTrue("module remove",
-                TestUtils.grepTempOut("Removal of module successful."));
-        workerSession.reloadConfiguration(WORKERID2);
-    }
+//    public void test99TearDownDatabase() throws Exception {
+//        TestUtils.assertSuccessfulExecution(new String[] {
+//            "removeworker",
+//            String.valueOf(WORKERID)
+//        });
+//        
+//        TestUtils.assertSuccessfulExecution(new String[] {
+//            "removeworker",
+//            String.valueOf(WORKERID2)
+//        });
+//
+//        workerSession.reloadConfiguration(WORKERID);
+//        workerSession.reloadConfiguration(WORKERID2);
+//    }
 
     private byte[] execute(String... args) throws IllegalArgumentException, IOException {
         byte[] output = null;

@@ -12,13 +12,12 @@
  *************************************************************************/
 package org.signserver.module.mrtdsigner;
 
+import java.io.File;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
-
-import junit.framework.TestCase;
 
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -27,9 +26,7 @@ import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
-import org.signserver.common.ServiceLocator;
-import org.signserver.common.clusterclassloader.MARFileParser;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -38,21 +35,15 @@ import org.signserver.testutils.TestingSecurityManager;
  * 
  * @version $Id$
  */
-public class MRTDSignerTest extends TestCase {
+public class MRTDSignerTest extends ModulesTestCase {
 
-    private static IWorkerSession.IRemote sSSession = null;
-    private static String signserverhome;
-    private static int moduleVersion;
-
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        sSSession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
         TestUtils.redirectToTempOut();
         TestUtils.redirectToTempErr();
         TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull(signserverhome);
     }
 
     /* (non-Javadoc)
@@ -65,16 +56,8 @@ public class MRTDSignerTest extends TestCase {
     }
 
     public void test00SetupDatabase() throws Exception {
-
-        MARFileParser marFileParser = new MARFileParser(signserverhome + "/lib/mrtdsigner.mar");
-        moduleVersion = marFileParser.getVersionFromMARFile();
-
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "add",
-                    signserverhome + "/lib/mrtdsigner.mar", "junittest"});
-        assertTrue(TestUtils.grepTempOut("Loading module MRTDSIGNER"));
-        assertTrue(TestUtils.grepTempOut("Module loaded successfully."));
-
-        sSSession.reloadConfiguration(7890);
+        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-MRTDSigner/src/conf/junittest-part-config.properties"));
+        workerSession.reloadConfiguration(7890);
     }
 
     /*
@@ -89,7 +72,7 @@ public class MRTDSignerTest extends TestCase {
         signrequests.add(signreq1);
         signrequests.add(signreq2);
 
-        MRTDSignResponse res = (MRTDSignResponse) sSSession.process(7890, new MRTDSignRequest(reqid, signrequests), new RequestContext());
+        MRTDSignResponse res = (MRTDSignResponse) workerSession.process(7890, new MRTDSignRequest(reqid, signrequests), new RequestContext());
         assertTrue(res != null);
         assertTrue(reqid == res.getRequestID());
         Certificate signercert = res.getSignerCertificate();
@@ -130,7 +113,7 @@ public class MRTDSignerTest extends TestCase {
      * Test method for 'org.signserver.server.MRTDSigner.getStatus()'
      */
     public void testGetStatus() throws Exception {
-        SignerStatus stat = (SignerStatus) sSSession.getStatus(7890);
+        SignerStatus stat = (SignerStatus) workerSession.getStatus(7890);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
 
     }
@@ -140,7 +123,7 @@ public class MRTDSignerTest extends TestCase {
         int reqid = 13;
         byte[] signreq1 = "Hello World".getBytes();
 
-        GenericSignResponse res = (GenericSignResponse) sSSession.process(7890, new GenericSignRequest(reqid, signreq1), new RequestContext());
+        GenericSignResponse res = (GenericSignResponse) workerSession.process(7890, new GenericSignRequest(reqid, signreq1), new RequestContext());
         assertTrue(res != null);
         assertTrue(reqid == res.getRequestID());
         Certificate signercert = res.getSignerCertificate();
@@ -155,11 +138,7 @@ public class MRTDSignerTest extends TestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
-                    "7890"});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove", "MRTDSIGNER", "" + moduleVersion});
-        assertTrue(TestUtils.grepTempOut("Removal of module successful."));
-        sSSession.reloadConfiguration(7890);
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "7890"});
+        workerSession.reloadConfiguration(7890);
     }
 }

@@ -607,15 +607,6 @@ Signers (and other workers) can be loaded in two different ways. Either using
 "module add" or by setting properties using "setproperty" or "setproperties"
 etc.
                     </p>
-                    <subsubsection name="module add">
-                        <p>
-The "module add" command loads both the code and the configuration from a MAR
-file and thus requires the clustered class loader to be enabled.
-                        </p>
-                        <source>
-bin/signserver.sh modules add dist-server/MODULE.mar CONFIGURATION
-                        </source>
-                    </subsubsection>
                     <subsubsection name="setproperties">
                         <p>
 The "setproperties" command loads all the properties from a property file that
@@ -626,6 +617,18 @@ module.MODULENAME.include=true properties in signserver_build.properties.
                         </p>
                         <source>
 bin/signserver.sh setproperties doc/sample-configs/CONFIGURATION.PROPERTIES
+                        </source>
+                    </subsubsection>
+                    <subsubsection name="module add">
+                    <p>
+Notice: This method is deprecated and will not be supported in future versions.
+                        </p>
+                        <p>
+The "module add" command loads both the code and the configuration from a MAR
+file and thus requires the clustered class loader to be enabled.
+                        </p>
+                        <source>
+bin/signserver.sh modules add dist-server/MODULE.mar CONFIGURATION
                         </source>
                     </subsubsection>
                     <p>

@@ -109,7 +109,7 @@ module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
         <property file="lib/nblibraries.properties"/>
         <mkdir dir="${apidoc}" />
         <javadoc failonerror="true" useexternalfile="true" packagenames="org.signserver.*" maxmemory="256m" destdir="${apidoc}"
-        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/ext/james:${lib}/asm:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2011 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
+        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/tsa/${server.java.target}:${lib}/module/pdfsigner/itext:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2011 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
 
                 <!-- Include all java files in the modules folder but excluding the tests -->
                 <fileset dir="modules" includes="**/*.java" excludes="*/test/**/*.java"/>
@@ -126,7 +126,6 @@ module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
                     <fileset dir="lib/ext/module/pdfsigner/itext" includes="*.jar"/>
                     <fileset dir="lib/ext/module/odfsigner" includes="*.jar"/>
                     <fileset dir="lib/ext/module/ooxmlsigner" includes="*.jar"/>
-                    <fileset dir="lib/ext/asm" includes="*.jar" />
                     <fileset dir="lib/ext/hibernate" includes="*.jar"/>
                     <fileset dir="${ant.home}/lib" includes="ant.jar" />
                     <path path="${libs.JBoss-Java-EE-Library.classpath}" />                    

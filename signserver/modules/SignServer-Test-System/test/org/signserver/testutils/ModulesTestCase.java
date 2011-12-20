@@ -14,7 +14,6 @@ package org.signserver.testutils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateException;
@@ -124,6 +123,54 @@ public class ModulesTestCase extends TestCase {
             throws CertificateException {
         addSoftDummySigner(className, DUMMY1_SIGNER_ID, DUMMY1_SIGNER_NAME,
                 KEYDATA1, CERTCHAIN1);
+    }
+
+    /**
+     * Load worker/global properties from file. This is not a complete 
+     * implementation as the one used by the "setproperties" CLI command but 
+     * enough to load the junittest-part-config.properties files used by the 
+     * tests.
+     * @param file The properties file to load
+     * @throws IOException
+     * @throws CertificateException 
+     */
+    protected void setProperties(final File file) throws IOException, CertificateException {
+        InputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            Properties properties = new Properties();
+            properties.load(in);
+            for (Object o : properties.keySet()) {
+                if (o instanceof String) {
+                    String key = (String) o;
+                    String value = properties.getProperty(key);
+                    if (key.startsWith("GLOB")) {
+                        key = key.substring("GLOB".length() + 1);
+                        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, key, value);
+                    } else {
+                        int id = Integer.parseInt(key.substring("WORKER".length(), key.indexOf(".")));
+                        key = key.substring(key.indexOf(".") + 1);
+                        
+                        if (key.startsWith("SIGNERCERTCHAIN")) {
+                            String certs[] = value.split(";");
+                            ArrayList<byte[]> chain = new ArrayList<byte[]>();
+                            for (String base64cert : certs) {
+                                byte[] cert = Base64.decode(base64cert.getBytes());
+                                chain.add(cert);
+                            }
+                            workerSession.uploadSignerCertificateChain(id, chain, GlobalConfiguration.SCOPE_GLOBAL);
+                        } else {
+                            workerSession.setWorkerProperty(id, key, value);
+                        }
+
+                    }
+                }
+            }
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
     }
 
     protected void addSoftDummySigner(final int signerId, final String signerName, final String keyData, final String certChain) throws CertificateException {

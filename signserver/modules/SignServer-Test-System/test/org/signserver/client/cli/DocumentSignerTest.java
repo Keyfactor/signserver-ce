@@ -179,20 +179,20 @@ public class DocumentSignerTest extends ModulesTestCase {
         }
     }
 
-//    public void test99TearDownDatabase() throws Exception {
-//        TestUtils.assertSuccessfulExecution(new String[] {
-//            "removeworker",
-//            String.valueOf(WORKERID)
-//        });
-//        
-//        TestUtils.assertSuccessfulExecution(new String[] {
-//            "removeworker",
-//            String.valueOf(WORKERID2)
-//        });
-//
-//        workerSession.reloadConfiguration(WORKERID);
-//        workerSession.reloadConfiguration(WORKERID2);
-//    }
+    public void test99TearDownDatabase() throws Exception {
+        TestUtils.assertSuccessfulExecution(new String[] {
+            "removeworker",
+            String.valueOf(WORKERID)
+        });
+        
+        TestUtils.assertSuccessfulExecution(new String[] {
+            "removeworker",
+            String.valueOf(WORKERID2)
+        });
+
+        workerSession.reloadConfiguration(WORKERID);
+        workerSession.reloadConfiguration(WORKERID2);
+    }
 
     private byte[] execute(String... args) throws IllegalArgumentException, IOException {
         byte[] output = null;

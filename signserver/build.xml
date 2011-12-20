@@ -351,39 +351,7 @@ Configuring EAR...
             <zipfileset file="${persistence.xml}" prefix="META-INF"/>
             <zipfileset file="${entity-mappings.xml}" prefix="META-INF"/>
         </zip>
-    </target>
-    
-    <target name="-configure-SignServer-Common.jar" depends="-init-configure">
-        <property name="SignServer-Common.jar.dir" value="${tmp}/SignServer-Common.jar"/>
-        <delete dir="${SignServer-Common.jar.dir}"/>
-        <mkdir dir="${SignServer-Common.jar.dir}"/>
-        <mkdir dir="${SignServer-Common.jar.dir}/org/signserver/common/"/>
-    
-        <propertyfile file="${SignServer-Common.jar.dir}/org/signserver/common/signservercompile.properties" 
-            comment="SignServer compile-time properties. Generated file do not edit manually!">
-            <entry key="appname" value="${app.name}"/>
-            <entry key="appname_capital" value="${app.name.cap}"/>
-            <entry key="buildmode" value="${build.mode}"/>
-            <entry key="datasource.jndi-name-prefix" value="${datasource.jndi-name-prefix}"/>
-            <entry key="datasource.jndi-name" value="${datasource.jndi-name}"/>
-            <entry key="healthcheck.authorizedips" value="${healthcheck.authorizedips}"/>
-            <entry key="healthcheck.minimumfreememory" value="${healthcheck.minimumfreememory}"/>
-            <entry key="healthcheck.checkdbstring" value="${healthcheck.checkdbstring}"/>
-            <entry key="signserver.configfile" value="${signserver.configfile}"/>
-            <entry key="signserver.version" value="${app.version}"/>
-        </propertyfile>
-        
-        <!-- Update JAR -->
-        <zip destfile="${signserver.ear.dir}/lib/SignServer-Common.jar" duplicate="fail">
-            <zipfileset src="${lib}/SignServer-Common.jar">
-                <exclude name="org/signserver/common/signservercompile.properties"/>
-            </zipfileset>
-            <zipfileset dir="${SignServer-Common.jar.dir}">
-                <include name="org/signserver/common/signservercompile.properties" />
-            </zipfileset>
-        </zip>
-    </target>
-    
+    </target>    
     
     <!-- =================================================================== -->
     <!-- Deploy target                                                       -->

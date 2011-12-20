@@ -27,13 +27,12 @@
 
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
-    <property name="modulename" value="renewal"/>
+    <property name="modulename" value="module.renewal"/>
 
     <!-- Create MAR -->
     <target name="dist-module" depends="jar,descriptor"/>
     <target name="descriptor" depends="init,-init-macrodef-convertclasspath">
         <!-- Create the module descriptor file for this module -->
-        <property name="moduleName" value="module.renewal"/>
         <property name="distJar" value="lib/SignServer-Module-Renewal.jar"/>
         <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/ejb/jboss*,lib/ext/hibernate/,lib/ext/javaee-*/*,lib/ext/ext/servlet-*"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>

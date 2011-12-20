@@ -14,7 +14,7 @@
     
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
-    <property name="moduleName" value="signservercommon"/>
+    <property name="modulename" value="signservercommon"/>
 
     <target name="dist-module" depends="jar,descriptor">
         <!-- Copy to dist but replace signservercompile.properties -->
@@ -33,8 +33,8 @@
         <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/ejb/jboss*,lib/ext/hibernate/,lib/ext/javaee-*/*"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
         <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
-        <propertyfile file="../../mods-available/10_${moduleName}.properties">
-            <entry key="module.name" value="${moduleName}"/>
+        <propertyfile file="../../mods-available/10_${modulename}.properties">
+            <entry key="module.name" value="${modulename}"/>
             <entry key="module.type" value="lib"/>
             <entry key="to.lib" value="${libsToLib},${modsToLib},${distJar}"/>
             <entry key="to.root" value=""/>

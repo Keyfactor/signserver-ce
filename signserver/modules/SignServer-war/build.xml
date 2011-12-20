@@ -12,7 +12,7 @@
     <import file="nbproject/build-impl.xml"/>
     <import file="../modules.xml"/>
     
-    <property name="moduleName" value="signserverweb"/>
+    <property name="modulename" value="signserverweb"/>
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
 
@@ -31,8 +31,8 @@
         <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/ejb/,lib/ext/hibernate/,lib/ext/javaee-*/*"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
         <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
-        <propertyfile file="../../mods-available/30_${moduleName}.properties">
-            <entry key="module.name" value="${moduleName}"/>
+        <propertyfile file="../../mods-available/30_${modulename}.properties">
+            <entry key="module.name" value="${modulename}"/>
             <entry key="module.type" value="war"/>
             <entry key="module.ejb" value="${distJar}"/>
             <entry key="to.lib" value="${libsToLib},${modsToLib}"/>

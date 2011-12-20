@@ -13,7 +13,7 @@
     <import file="../modules.xml"/>
     <import file="../tests.xml"/>
     
-    <property name="modulename" value="cmssigner"/>
+    <property name="modulename" value="module.cmssigner"/>
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
 
@@ -28,13 +28,12 @@
     
     <target name="descriptor" depends="init,-init-macrodef-convertclasspath">
         <!-- Create the module descriptor file for this module -->
-        <property name="moduleName" value="module.cmssigner"/>
         <property name="distJar" value="lib/SignServer-Module-CMSSigner.jar"/>
         <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/hibernate/"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
         <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
-        <propertyfile file="../../mods-available/40_${moduleName}.properties">
-            <entry key="module.name" value="${moduleName}"/>
+        <propertyfile file="../../mods-available/40_${modulename}.properties">
+            <entry key="module.name" value="${modulename}"/>
             <entry key="module.type" value="lib"/>
             <entry key="to.lib" value="${libsToLib},${modsToLib},${distJar}"/>
             <entry key="to.root" value=""/>

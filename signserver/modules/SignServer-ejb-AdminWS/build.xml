@@ -15,7 +15,7 @@
     <!-- Enable this project to be part of the SignServer build process -->
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
-    <property name="moduleName" value="adminws"/>
+    <property name="modulename" value="adminws"/>
 
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
@@ -46,8 +46,8 @@ Remember to update the soap:address location in the WSDL to start with
         <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/ejb/,lib/ext/hibernate/,lib/ext/javaee-*/*,lib/ext/ext/servlet-*"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
         <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
-        <propertyfile file="../../mods-available/20_${moduleName}.properties">
-            <entry key="module.name" value="${moduleName}"/>
+        <propertyfile file="../../mods-available/20_${modulename}.properties">
+            <entry key="module.name" value="${modulename}"/>
             <entry key="module.type" value="ejb"/>
             <entry key="module.ejb" value="${distJar}"/>
             <entry key="to.lib" value="${libsToLib},${modsToLib}"/>

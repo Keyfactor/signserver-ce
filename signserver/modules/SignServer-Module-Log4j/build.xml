@@ -12,13 +12,13 @@
     <import file="nbproject/build-impl.xml"/>
     <import file="../modules.xml"/>
     
+    <property name="modulename" value="module.log4j"/>
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
     
     <target name="dist-module" depends="jar,descriptor"/>
     <target name="descriptor" depends="init,-init-macrodef-convertclasspath">
         <!-- Create the module descriptor file for this module -->
-        <property name="moduleName" value="module.log4j"/>
         <property name="distJar" value="lib/SignServer-Module-Log4j.jar"/>
         <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/hibernate/"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>

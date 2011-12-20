@@ -97,7 +97,7 @@ public class SignServerCLITest extends ModulesTestCase {
 
     public void testSetupTimeStamp() throws Exception {
 
-        assertTrue(new File(getSignServerHome() + "/src/test/test_add_timestamp_configuration.properties").exists());
+        assertTrue(new File(getSignServerHome() + "/res/test/test_add_timestamp_configuration.properties").exists());
         TestUtils.assertSuccessfulExecution(new String[]{"setproperties",
                     getSignServerHome() + "/res/test/test_add_timestamp_configuration.properties"});
         assertTrue(TestUtils.grepTempOut("Setting the property NAME to timestampSigner1000 for worker 1000"));

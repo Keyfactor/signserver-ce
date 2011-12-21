@@ -17,12 +17,16 @@ build-stamp:
 	mkdir -p lib/ext/1.6
 	mkdir -p lib/ext/ext/ejb
 	mkdir -p lib/ext/javaee-web-api-6.0
+	mkdir -p lib/ext/javaee-api-6.0
 	mkdir -p lib/ext/quartz
 	mkdir -p lib/ext/hibernate
 	mkdir -p lib/ext/module/tsa/1.6
 	mkdir -p lib/ext/module/pdfsigner/itext
 	mkdir -p lib/ext/module/odfsigner
 	mkdir -p lib/ext/module/ooxmlsigner
+	mkdir -p lib/ext/swing-app-framework
+	mkdir -p lib/ext/reports/
+	mkdir -p lib/ext/ext/velocity
 	mkdir -p ${APPSRV_HOME}/client
 #	ejbca-util-signserver
 	ln -s /usr/share/java/ejbca-util-signserver.jar lib/ext/ejbca-util.jar
@@ -53,8 +57,30 @@ build-stamp:
 	ln -s /usr/share/java/quartz-1.6.6.jar lib/ext/quartz/quartz-1.6.0.jar
 #	Commons FileUpload
 	ln -s /usr/share/java/commons-fileupload-1.2.1.jar lib/ext/ 
+#	Swing Application Framework		
+	ln -s /usr/share/java/AppFramework-1.03.jar lib/ext/swing-app-framework/appframework-1.0.3.jar
+	ln -s /usr/share/java/swing-worker-1.1.jar lib/ext/swing-app-framework/swing-worker-1.1.jar
+#	itext
+	ln -s /usr/share/java/itext.jar lib/ext/module/pdfsigner/itext/itext.jar
+#	jfreechart
+	ln -s /usr/share/java/jfreechart.jar lib/ext/reports/jfreechart-1.0.9.jar
+	ln -s /usr/share/java/jcommon.jar lib/ext/reports/jcommon-1.0.12.jar
+#	velocity
+	ln -s /usr/share/java/velocity.jar lib/ext/ext/velocity/
+
+#	Configuration
+	echo "includemodulesinbuild=false" > conf/signserver_build.properties
+
+#	Disable modules with unsatisfied dependencies
+	echo "module.odfsigner.enabled=false" >> conf/signserver_build.properties
+	echo "module.ooxmlsigner.enabled=false" >> conf/signserver_build.properties
+	
+#	TODO: Find the dependencies and enable the following modules
+	echo "webdoc.enabled=false" >> conf/signserver_build.properties
+
 	mkdir -p mods-available
 	ant debian-pkgdist
+
 	touch $@
 
 clean:
@@ -69,10 +95,13 @@ clean:
 	rm lib/ext/*.jar -f
 	rm lib/ext/ext -rf
 	rm lib/ext/hibernate -rf
-	rm lib/ext/asm -rf
 	rm lib/ext/quartz -rf
 	rm lib/ext/1.6 -rf
 	rm lib/ext/javaee-web-api-6.0 -rf
+	rm lib/ext/javaee-api-6.0 -rf
+	rm lib/ext/swing-app-framework -rf
+	rm lib/ext/reports -rf
+	rm lib/ext/module/pdfsigner/itext/ -rf
 	rm ${APPSRV_HOME} -rf
 	rm -f build-stamp
 	dh_clean
@@ -88,9 +117,9 @@ install: build
 	cp -rv dist-debian/libsignserver-common/*  debian/libsignserver3.3-common/
 	rm debian/libsignserver3.3-common/usr/share/signserver3.3/lib -rf
 
-	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/
-	ln -s /usr/share/java/commons-lang-2.4.jar debian/libsignserver3.3-common/usr/share/signserver3.3/ext/lib/commons-lang-2.4.jar
-	ln -s /usr/share/java/log4j-1.2.jar debian/libsignserver3.3-common/usr/share/signserver3.3/ext/lib/log4j.jar
+	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext
+	ln -s /usr/share/java/commons-lang-2.4.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/commons-lang-2.4.jar
+	ln -s /usr/share/java/log4j-1.2.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/log4j.jar
 	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/1.6
 	ln -s /usr/share/java/bcmail.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/1.6/bcmail-jdk.jar
 	ln -s /usr/share/java/bctsp.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/1.6/bctsp-jdk.jar

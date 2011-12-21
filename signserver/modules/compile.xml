@@ -455,28 +455,30 @@ module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
                 <include name="readme.txt"/>
                 
                 <!-- Bouncycastle (all) -->
-                <include name="1.6/**"/>
+                <include name="ext/1.6/**"/>
                 
                 <!-- EJB/Servlet (cli, gui) -->
-                <include name="ext/ejb/**"/>
-                <include name="ext/servlet-2.3.jar"/>
+                <include name="ext/ext/ejb/**"/>
+                <include name="ext/ext/servlet-2.3.jar"/>
                 
                 <!-- CLI (both client and admin) -->
-                <include name="ext/commons-cli-1.0.jar"/>
+                <include name="ext/ext/commons-cli-1.0.jar"/>
                 
                 <!-- Common (all) -->
-                <include name="cert-cvc.jar"/>
-                <include name="commons-collections-3.2.jar"/>
-                <include name="commons-io-1.4.jar"/>
-                <include name="commons-lang-2.4.jar"/>
-                <include name="commons-logging.jar"/>
-                <include name="ejbca-util.jar"/>
-                <include name="log4j.jar"/>
+                <include name="ext/cert-cvc.jar"/>
+                <include name="ext/commons-collections-3.2.jar"/>
+                <include name="ext/commons-io-1.4.jar"/>
+                <include name="ext/commons-lang-2.4.jar"/>
+                <include name="ext/commons-logging.jar"/>
+                <include name="ext/ejbca-util.jar"/>
+                <include name="ext/log4j.jar"/>
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/conf">
             <fileset dir="${base}/conf">
-                <include name="jndi.properties.*"/>
+                <include name="jboss/*"/>
+                <include name="glassfish/*"/>
+                <include name="log4j.properties"/>
             </fileset>
         </copy>
         
@@ -494,24 +496,25 @@ module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
                 <include name="signserver_cli.properties"/>
             </fileset>
         </copy>
-        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/dist-client">
-            <fileset dir="${base}/dist-client">
-                <include name="SignServer-AdminCLI.jar"/>
-            </fileset>
-        </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/lib">
             <fileset dir="${base}/lib">
-                <exclude name="lib"/>
-                <exclude name="*.mar"/>
+                <exclude name="ext/*"/>
+                <exclude name="ext/**"/>
+                <exclude name="ext/**/*"/>
+                <exclude name="readme.txt"/>
+                <exclude name="nblibraries.properties"/>
                 <exclude name="SignServer-Common.jar"/>     <!-- libsignserver-common -->
                 <exclude name="SignServer-ejb-interfaces.jar"/>      <!-- libsignserver-common -->
+                <exclude name="SignServer-AdminGUI.jar"/> <!-- signserver-admingui -->
+                <exclude name="SignServer-Client-CLI.jar"/> <!-- signserver-client -->
+                <exclude name="SignServer-Module*.jar"/> <!-- libsignserver-modules -->
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/doc">
             <fileset dir="${base}/doc"/>
         </copy>
-        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/lib">
-            <fileset dir="${base}/lib">
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/lib/ext">
+            <fileset dir="${base}/lib/ext">
                
                 <!-- EJB -->
                 <include name="ext/ejb/**"/>
@@ -528,22 +531,15 @@ module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
         </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/mods-available">
             <fileset dir="${base}/mods-available">
-                <include name="10_signserverejb.properties"/>
-                <include name="20_adminws.properties"/>
-                <include name="20_signserverws.properties"/>
-                <include name="20_validationws.properties"/>
-                <include name="30_healthcheck.properties"/>
-                <include name="30_module.log4j.properties"/>
-                <include name="30_signserverweb.properties"/>
-                <include name="30_webdoc.properties"/>
+                <exclude name="40_*"/> <!-- libsignserver-modules -->
             </fileset>
         </copy>
         <mkdir dir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/p12"/>
         <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/res">
             <fileset dir="${base}/res">
                 <exclude name="install/**"/>
-                <exclude name="module-configs/**"/>
                 <exclude name="test/**"/>
+                <exclude name="admingui-splash.png"/>
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}">
@@ -568,13 +564,13 @@ module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib">
-            <fileset dir="${base}/lib">
+            <fileset dir="${base}/lib/ext">
                 <!-- TODO -->
                 <exclude name="**"/>
             </fileset>
         </copy>
-        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/dist-client">
-            <fileset dir="${base}/dist-client">
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
                 <include name="SignServer-AdminGUI.jar"/>
             </fileset>
         </copy>
@@ -586,8 +582,8 @@ module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
                 <include name="signclient"/>
             </fileset>
         </copy>
-        <copy todir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/dist-client">
-            <fileset dir="${base}/dist-client">
+        <copy todir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
                 <include name="SignServer-Client-CLI.jar"/>
             </fileset>
         </copy>
@@ -603,21 +599,13 @@ module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
         <copy todir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/lib">
             <fileset dir="${base}/lib">
                 <!-- TODO -->
-                <exclude name="**"/>
+                <exclude name="ext/**"/>
+                <include name="SignServer-Module*.jar"/>
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/mods-available">
             <fileset dir="${base}/mods-available">
-                <include name="40_module.cmssigner.properties"/>
-                <include name="40_module.mrtdsigner.properties"/>
-                <include name="40_module.mrtdsodsigner.properties"/>
-                <include name="40_module.odfsigner.properties"/>
-                <include name="40_module.ooxmlsigner.properties"/>
-                <include name="40_module.pdfsigner.properties"/>
-                <include name="40_module.renewal.properties"/>
-                <include name="40_module.tsa.properties"/>
-                <include name="40_module.xmlsigner.properties"/>
-                <include name="40_module.xmlvalidator.properties"/>
+                <include name="40_*"/>
             </fileset>
         </copy>
         

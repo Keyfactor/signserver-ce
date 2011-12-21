@@ -25,9 +25,8 @@
     <target name="wsimport-init" depends="init">
         <mkdir dir="${build.generated.sources.dir}/jax-ws"/>
         <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
-<!--        <echo message="cp: ${jaxws.wsimport.classpath}"/>-->
-        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
-            <classpath path="${jaxws.wsimport.classpath}"/>
+        <taskdef name="wsimport" classname="org.signserver.anttasks.ws.WsImport">
+            <classpath path="../../lib/SignServer-BuildTools.jar"/>
         </taskdef>
     </target>
     

@@ -13,50 +13,46 @@ build-stamp:
 	rm -f ${APPSRV_HOME}/lib/appserv-rt.jar
 	ln -s /usr/share/java/glassfish-appserv-rt.jar ${APPSRV_HOME}/lib/appserv-rt.jar
 #	Dependencies
-	mkdir lib/ext
-	mkdir lib/1.6
-	mkdir lib/ext/ejb
-	mkdir lib/javaee-web-api-6.0
-	mkdir lib/asm
-	mkdir lib/quartz
-	mkdir lib/hibernate
-	mkdir -p lib/module/tsa/1.6
-	mkdir -p lib/module/pdfsigner/itext
-	mkdir -p lib/module/odfsigner
-	mkdir -p lib/module/ooxmlsigner
+	mkdir -p lib/ext/ext
+	mkdir -p lib/ext/1.6
+	mkdir -p lib/ext/ext/ejb
+	mkdir -p lib/ext/javaee-web-api-6.0
+	mkdir -p lib/ext/quartz
+	mkdir -p lib/ext/hibernate
+	mkdir -p lib/ext/module/tsa/1.6
+	mkdir -p lib/ext/module/pdfsigner/itext
+	mkdir -p lib/ext/module/odfsigner
+	mkdir -p lib/ext/module/ooxmlsigner
 	mkdir -p ${APPSRV_HOME}/client
 #	ejbca-util-signserver
-	ln -s /usr/share/java/ejbca-util-signserver.jar lib/ejbca-util.jar
+	ln -s /usr/share/java/ejbca-util-signserver.jar lib/ext/ejbca-util.jar
 #	Log4J
-	ln -s /usr/share/java/log4j-1.2.jar lib/log4j.jar
+	ln -s /usr/share/java/log4j-1.2.jar lib/ext/log4j.jar
 #	Servlet
-	ln -s /usr/share/java/servlet-2.3.jar lib/ext/servlet-2.3.jar
-	ln -s /usr/share/java/servlet-2.3.jar lib/javaee-web-api-6.0/javaee-web-api-6.0.jar
+	ln -s /usr/share/java/servlet-2.3.jar lib/ext/ext/servlet-2.3.jar
+	ln -s /usr/share/java/servlet-2.3.jar lib/ext/javaee-web-api-6.0/javaee-web-api-6.0.jar
 #	ln -s /usr/share/java/servlet-2.3.jar ${APPSRV_HOME}/lib/servlet-api.jar
 #	Bouncy Castle
-	ln -s /usr/share/java/bcprov.jar lib/1.6/bcprov-jdk.jar
-	ln -s /usr/share/java/bcmail.jar lib/1.6/bcmail-jdk.jar
-	ln -s /usr/share/java/bctsp.jar lib/1.6/bctsp-jdk.jar
+	ln -s /usr/share/java/bcprov.jar lib/ext/1.6/bcprov-jdk.jar
+	ln -s /usr/share/java/bcmail.jar lib/ext/1.6/bcmail-jdk.jar
+	ln -s /usr/share/java/bctsp.jar lib/ext/1.6/bctsp-jdk.jar
 #	Persistence
-	ln -s /usr/share/java/hibernate3.jar lib/hibernate/
-	ln -s /usr/share/java/hibernate-annotations.jar lib/hibernate/
-	ln -s /usr/share/java/hibernate-entitymanager.jar lib/hibernate/
-	ln -s /usr/share/java/hibernate-core.jar lib/hibernate/
+	ln -s /usr/share/java/hibernate3.jar lib/ext/hibernate/
+	ln -s /usr/share/java/hibernate-annotations.jar lib/ext/hibernate/
+	ln -s /usr/share/java/hibernate-entitymanager.jar lib/ext/hibernate/
+	ln -s /usr/share/java/hibernate-core.jar lib/ext/hibernate/
 #	EJB
-	ln -s /usr/share/java/glassfish-javaee.jar lib/ext/ejb/jboss-j2ee.jar
+	ln -s /usr/share/java/glassfish-javaee.jar lib/ext/ext/ejb/jboss-j2ee.jar
 	ln -s /usr/share/java/glassfish-javaee.jar ${APPSRV_HOME}/client/jboss-j2ee.jar
-	ln -s /usr/share/java/glassfish-javaee.jar lib/hibernate/ejb3-persistence.jar
-#	Cluster classloader
-	ln -s /usr/share/java/asm3-3.2.jar lib/asm/asm-3.1.jar
-	ln -s /usr/share/java/asm3-commons.jar lib/asm/asm-commons-3.1.jar
-	ln -s /usr/share/java/asm3-tree.jar lib/asm/asm-tree-3.1.jar
+	ln -s /usr/share/java/glassfish-javaee.jar lib/ext/hibernate/ejb3-persistence.jar
+	ln -s /usr/share/java/glassfish-javaee.jar lib/ext/javaee-api-6.0/javaee-api-6.0.jar
 #	Commons CLI
-	ln -s /usr/share/java/commons-cli.jar lib/ext/commons-cli-1.0.jar
-	ln -s /usr/share/java/commons-lang-2.4.jar lib/
+	ln -s /usr/share/java/commons-cli.jar lib/ext/ext/commons-cli-1.0.jar
+	ln -s /usr/share/java/commons-lang-2.4.jar lib/ext/
 #	Quartz
-	ln -s /usr/share/java/quartz-1.6.6.jar lib/quartz/quartz-1.6.0.jar
+	ln -s /usr/share/java/quartz-1.6.6.jar lib/ext/quartz/quartz-1.6.0.jar
 #	Commons FileUpload
-	ln -s /usr/share/java/commons-fileupload-1.2.1.jar lib/ 
+	ln -s /usr/share/java/commons-fileupload-1.2.1.jar lib/ext/ 
 	mkdir -p mods-available
 	ant debian-pkgdist
 	touch $@
@@ -70,13 +66,13 @@ clean:
 	ln -s /usr/share/java/glassfish-appserv-rt.jar ${APPSRV_HOME}/lib/appserv-rt.jar
 #	Clean
 	ant clean
-	rm lib/*.jar -f
-	rm lib/ext -rf
-	rm lib/hibernate -rf
-	rm lib/asm -rf
-	rm lib/quartz -rf
-	rm lib/1.6 -rf
-	rm lib/javaee-web-api-6.0 -rf
+	rm lib/ext/*.jar -f
+	rm lib/ext/ext -rf
+	rm lib/ext/hibernate -rf
+	rm lib/ext/asm -rf
+	rm lib/ext/quartz -rf
+	rm lib/ext/1.6 -rf
+	rm lib/ext/javaee-web-api-6.0 -rf
 	rm ${APPSRV_HOME} -rf
 	rm -f build-stamp
 	dh_clean
@@ -93,55 +89,55 @@ install: build
 	rm debian/libsignserver3.3-common/usr/share/signserver3.3/lib -rf
 
 	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/
-	ln -s /usr/share/java/commons-lang-2.4.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/commons-lang-2.4.jar
-	ln -s /usr/share/java/log4j-1.2.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/log4j.jar
-	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/1.6
-	ln -s /usr/share/java/bcmail.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/1.6/bcmail-jdk.jar
-	ln -s /usr/share/java/bctsp.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/1.6/bctsp-jdk.jar
-	ln -s /usr/share/java/bcprov.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/1.6/bcprov-jdk.jar
-	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext
-	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ejb
-	ln -s /usr/share/java/jboss-j2ee.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ejb/jboss-j2ee.jar
-	ln -s /usr/share/java/servlet-2.3.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/servlet-2.3.jar
-	ln -s /usr/share/java/commons-cli.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/commons-cli-1.0.jar
-	cp lib/nblibraries.properties debian/libsignserver3.3-common/usr/share/signserver3.3/lib/nblibraries.properties
-	ln -s /usr/share/java/ejbca-util-signserver.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ejbca-util.jar
-	ln -s /usr/share/java/cert-cvc.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/cert-cvc.jar
-	ln -s /usr/share/java/commons-configuration.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/
+	ln -s /usr/share/java/commons-lang-2.4.jar debian/libsignserver3.3-common/usr/share/signserver3.3/ext/lib/commons-lang-2.4.jar
+	ln -s /usr/share/java/log4j-1.2.jar debian/libsignserver3.3-common/usr/share/signserver3.3/ext/lib/log4j.jar
+	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/1.6
+	ln -s /usr/share/java/bcmail.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/1.6/bcmail-jdk.jar
+	ln -s /usr/share/java/bctsp.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/1.6/bctsp-jdk.jar
+	ln -s /usr/share/java/bcprov.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/1.6/bcprov-jdk.jar
+	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ext
+	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ext/ejb
+	ln -s /usr/share/java/jboss-j2ee.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ext/ejb/jboss-j2ee.jar
+	ln -s /usr/share/java/servlet-2.3.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ext/servlet-2.3.jar
+	ln -s /usr/share/java/commons-cli.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ext/commons-cli-1.0.jar
+	cp lib/nblibraries.properties debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/nblibraries.properties
+	ln -s /usr/share/java/ejbca-util-signserver.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ejbca-util.jar
+	ln -s /usr/share/java/cert-cvc.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/cert-cvc.jar
+	ln -s /usr/share/java/commons-configuration.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/
 
 #	cp -r dist-debian/libsignserver-modules/* debian/libsignserver3.3-modules/
 #	cp -r dist-debian/signserver-admingui/* debian/signserver3.3-admingui/
 #	cp -r dist-debian/signserver-client/* debian/signserver3.3-clients/
 	mkdir -p debian/signserver3.3-server/
 	cp -rv dist-debian/signserver-server/* debian/signserver3.3-server/
-	rm debian/signserver3.3-server/usr/share/signserver3.3/lib -rf
+	rm debian/signserver3.3-server/usr/share/signserver3.3/lib/ext -rf
 	
-	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/lucene-core-2.4.1.jar
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/slf4j-api-1.5.2.jar
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/slf4j-log4j12.jar
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/javassist-3.4.GA.jar
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/ejb3-persistence.jar
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-search-3.1.1.GA.jar
-	ln -s /usr/share/java/hibernate-annotations.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-annotations.jar
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/dom4j-1.6.1.jar
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/jta-1.1.jar
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/antlr-2.7.6.jar
-	ln -s /usr/share/java/hibernate-core.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-core.jar
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-commons-annotations.jar
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-validator-3.1.0.GA.jar
-	ln -s /usr/share/java/hibernate-entitymanager.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/hibernate/hibernate-entitymanager.jar
-	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/javaee-web-api-6.0
-	ln -s /usr/share/java/servlet-2.3.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/javaee-web-api-6.0/javaee-web-api-6.0.jar
-	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext
-	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ejb
-	ln -s /usr/share/java/jboss-ejb3x.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ejb/jboss-ejb3x.jar
-#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ejb/jboss-j2ee.jar
-	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/javaee-api-6.0
-	ln -s /usr/share/java/glassfish-javaee.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/javaee-api-6.0/javaee-api-6.0.jar
-	ln -s /usr/share/java/commons-fileupload-1.2.1.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/commons-fileupload-1.2.1.jar
-	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/quartz
-	ln -s /usr/share/java/quartz-1.6.6.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/quartz/quartz-1.6.0.jar
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/lucene-core-2.4.1.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/slf4j-api-1.5.2.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/slf4j-log4j12.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/javassist-3.4.GA.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/ejb3-persistence.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/hibernate-search-3.1.1.GA.jar
+	ln -s /usr/share/java/hibernate-annotations.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/hibernate-annotations.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/dom4j-1.6.1.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/jta-1.1.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/antlr-2.7.6.jar
+	ln -s /usr/share/java/hibernate-core.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/hibernate-core.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/hibernate-commons-annotations.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/hibernate-validator-3.1.0.GA.jar
+	ln -s /usr/share/java/hibernate-entitymanager.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/hibernate-entitymanager.jar
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-web-api-6.0
+	ln -s /usr/share/java/servlet-2.3.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-web-api-6.0/javaee-web-api-6.0.jar
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ext
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ext/ejb
+	ln -s /usr/share/java/jboss-ejb3x.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ext/ejb/jboss-ejb3x.jar
+#	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ext/ejb/jboss-j2ee.jar
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-api-6.0
+	ln -s /usr/share/java/glassfish-javaee.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-api-6.0/javaee-api-6.0.jar
+	ln -s /usr/share/java/commons-fileupload-1.2.1.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/commons-fileupload-1.2.1.jar
+	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/quartz
+	ln -s /usr/share/java/quartz-1.6.6.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/quartz/quartz-1.6.0.jar
 
 	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/signserver
 	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/ant
@@ -183,4 +179,3 @@ binary-indep: build install
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install
-

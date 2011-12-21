@@ -175,71 +175,54 @@ j2ee.web-nohttps=true
 # -------------- Modules Configurations ----------------------------------------
 #
 
-# Set to true to include all the module classes in the main signserver.ear.
-# If you do not enable the cluster class loader this option must be used 
-# in order for signers to be configured.
-#
-# If module.X.enabled=true the module X is compiled.
-# If also module.X.include=true the module X is built in.
-# If includemodulesinbuild=true _all_ modules are compiled and built in.
+# Include all modules in build. Set to true to enable all modules.
 #
 # Default: true
 #includemodulesinbuild=true
 
 # Include Log4j configuration in EAR (not needed for JBoss)
-# Default: build=false, include=false
+# Default: false
 #module.log4j.enabled=false
-#module.log4j.include=false
 
 # Module Renewal
-# Default: build=false, include=true
+# Default: false
 #module.renewal.enabled=false
-#module.renewal.include=true
 
 # Module XMLSigner
-# Default: build=true, include=false
+# Default: true
 #module.xmlsigner.enabled=true
-#module.xmlsigner.include=false
 
 # Module XMLValidator
-# Default: build=true, include=false
+# Default: true
 #module.xmlvalidator.enabled=true
-#module.xmlvalidator.include=false
 
 # Module CMSSigner
-# Default: build=true, include=false
+# Default: true
 #module.cmssigner.enabled=true
-#module.cmssigner.include=false
 
 # Module ODFSigner
-# Default: build=true, include=false
+# Default: true
 #module.odfsigner.enabled=true
-#module.odfsigner.include=false
 
 # Module OOXMLSigner
-# Default: build=true, include=false
+# Default: true
 #module.ooxmlsigner.enabled=true
-#module.ooxmlsigner.include=false
 
 # Module PDFSigner
-# Default: build=true, include=false
+# Default: true
 #module.pdfsigner.enabled=true
-#module.pdfsigner.include=false
 
 # Module TSA
-# Default: build=true, include=false
+# Default: true
 #module.tsa.enabled=true
-#module.tsa.include=false
 
 # Module MRTDSODSigner
-# Default: build=true, include=false
+# Default: true
 #module.mrtdsodsigner.enabled=true
-#module.mrtdsodsigner.include=false
 
 # Module MRTDSigner
-# Default: build=true, include=false
+# Default: true
 #module.mrtdsigner.enabled=true
-#module.mrtdsigner.include=false
 
 
 # -------------- Client Configurations -----------------------------------------

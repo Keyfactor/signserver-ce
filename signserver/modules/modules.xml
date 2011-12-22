@@ -146,6 +146,7 @@
                 <istrue value="${dist-module.available}"/>
             </and>
         </condition>
+        <echo/>
         <echo>Module: ${ant.project.name}</echo>
         <antcall target="-do-module-build"/>
     </target>

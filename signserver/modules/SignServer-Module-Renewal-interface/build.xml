@@ -15,10 +15,6 @@
 
     <!-- Import property file containing version numbers and other constants -->
     <property file="../../res/compile.properties"/>
-
-    <property name="modulename" value="renewal-interface"/>
-    <property name="clean.available" value="true"/>
-    <property name="dist-module.available" value="false"/>
     
     <!--
 

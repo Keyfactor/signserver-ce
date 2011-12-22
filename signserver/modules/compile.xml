@@ -35,7 +35,6 @@
 appserver.type                      = ${appserver.type}
 appserver.home                      = ${appserver.home}
 signserverws.enabled                = ${signserverws.enabled}
-genericws.enabled                   = ${genericws.enabled}
 validationws.enabled                = ${validationws.enabled}
 adminws.enabled                     = ${adminws.enabled}
 webdoc.enabled                      = ${webdoc.enabled}
@@ -46,15 +45,6 @@ signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
 admingui.enabled                    = ${admingui.enabled}
 clientcli.enabled                   = ${clientcli.enabled}
 includemodulesinbuild               = ${includemodulesinbuild}
-module.pdfsigner.enabled            = ${module.pdfsigner.enabled}
-module.renewal.enabled              = ${module.renewal.enabled}
-module.xmlsigner.enabled            = ${module.xmlsigner.enabled}
-module.xmlvalidator.enabled         = ${module.xmlvalidator.enabled}
-module.cmssigner.enabled            = ${module.cmssigner.enabled}
-module.odfsigner.enabled            = ${module.odfsigner.enabled}
-module.tsa.enabled                  = ${module.tsa.enabled}
-module.mrtdsodsigner.enabled        = ${module.mrtdsodsigner.enabled}
-module.mrtdsigner.enabled           = ${module.mrtdsigner.enabled}
         </echo>
     </target>
 

@@ -39,7 +39,6 @@
         <fail message="Please set the property 'appserver.home' for this project" unless="appserver.home"/>
         <available file="${appserver.home}/lib/appserv-rt.jar" property="appserver.home.valid"/>
         <fail message="'appserver.home' (${appserver.home}) does not seem to be a valid Glassfish home directory" unless="appserver.home.valid"/>
-        <echo message="Using appserver.home : ${appserver.home}"/>
 	</target>
 
 

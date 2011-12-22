@@ -124,15 +124,7 @@
     <target name="-do-module-build" if="moduleEnable.condition">
         <echo message="Module: ${ant.project.name} enabled"/>
         <antcall target="dist-module"/>
-        <copy todir="../../lib/">
-            <fileset dir="./dist" includes="*.mar"/>
-            <fileset dir="./dist" includes="*.jar"/>
-        </copy>
-        <antcall target="-post-module-include"/>
     </target>
-        
-    <!-- Override this target to copy additional files. -->
-    <target name="-post-module-include"/>
 
     <target name="-do-module">
         <property file="${user.home}/signserver_build.properties"/>
@@ -239,7 +231,13 @@
                 <attribute name="Class-Path" value="${localjar.classpath}"/>
             </manifest>
         </jar>
-            
+    </target>
+    
+    <!-- Copy all jars to lib without updating manifest file or anything. -->
+    <target name="-do-module-dist">
+        <copy todir="../../lib/">
+            <fileset dir="./dist" includes="*.jar"/>
+        </copy>
     </target>
 
 </project>

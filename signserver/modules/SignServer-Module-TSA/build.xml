@@ -21,7 +21,7 @@
     <property name="modulename" value="module.tsa"/>
 
     <!-- Create MAR -->
-    <target name="dist-module" depends="init,jar,-init-macrodef-convertclasspath">
+    <target name="dist-module" depends="init,jar,-init-macrodef-convertclasspath,-do-module-dist">
         <!-- Create the module descriptor file for this module -->
         <property name="distJar" value="lib/SignServer-Module-TSA.jar"/>
         <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/ejb/jboss*,lib/ext/hibernate/,lib/ext/javaee-*/*,lib/ext/ext/servlet-*"/>

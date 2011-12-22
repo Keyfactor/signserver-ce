@@ -21,7 +21,7 @@
     <property name="modulename" value="module.mrtdsodsigner"/>
 
     <!-- Create MAR -->
-    <target name="dist-module" depends="jar,descriptor"/>
+    <target name="dist-module" depends="jar,descriptor,-do-module-dist"/>
     <target name="descriptor" depends="init,-init-macrodef-convertclasspath">
         <!-- Create the module descriptor file for this module -->
         <property name="distJar" value="lib/SignServer-Module-MRTDSODSigner.jar"/>

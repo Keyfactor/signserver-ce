@@ -24,7 +24,7 @@
     <property file="../../res/compile.properties"/>
     
     <!-- Create MAR -->
-    <target name="dist-module" depends="jar, descriptor"/>
+    <target name="dist-module" depends="jar, descriptor,-do-module-dist"/>
     
     <target name="descriptor" depends="init,-init-macrodef-convertclasspath">
         <!-- Create the module descriptor file for this module -->

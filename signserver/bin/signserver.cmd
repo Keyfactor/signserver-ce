@@ -9,13 +9,10 @@ if "%SIGNSERVER_HOME%" == "" (
     set SIGNSRV_HOME=%SIGNSERVER_HOME%
 ) 
   
-if "%APPSRV_HOME%" == " (
+if "%APPSRV_HOME%" == "" (
     echo You must set APPSRV_HOME before running the SignServer cli.
     goto end
 )
-
-rem Application server jars
-set J2EE_CP=%APPSRV_HOME%\lib\jbossall-client.jar;%APPSRV_HOME%\lib\appserv-rt.jar
 
 rem check that we have built the classes
 if not exist %SIGNSRV_HOME%\lib\SignServer-AdminCLI.jar  (
@@ -23,7 +20,18 @@ if not exist %SIGNSRV_HOME%\lib\SignServer-AdminCLI.jar  (
     goto end
 )
 
-set CLASSPATH=%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\lib\SignServer-AdminCLI.jar;%J2EE_CP%
+rem Construct the classpath
+set MAIN_CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\lib\SignServer-AdminCLI.jar
+
+rem Application server dependencies
+if exist %APPSRV_HOME%\lib\appserv-rt.jar (
+    set JEE_CLASSPATH=%CLASSPATH%;%SIGNSRV_HOME%\conf\glassfish;%APPSRV_HOME%\lib\appserv-rt.jar
+)
+if exist %APPSRV_HOME%\client\jbossall-client.jar  (
+    set JEE_CLASSPATH=%CLASSPATH%;%SIGNSRV_HOME%\conf\jboss;%APPSRV_HOME%\client\jbossall-client.jar
+)
+
+set CLASSPATH=%MAIN_CLASSPATH%;%JEE_CLASSPATH%
 rem echo %CLASSPATH%
 
 rem Fixup arguments, we have to do this since windows normally only 

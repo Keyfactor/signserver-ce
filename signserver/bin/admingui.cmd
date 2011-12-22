@@ -9,13 +9,10 @@ if "%SIGNSERVER_HOME%" == "" (
     set SIGNSRV_HOME=%SIGNSERVER_HOME%
 ) 
   
-if "%APPSRV_HOME%" == " (
+if "%APPSRV_HOME%" == "" (
     echo You must set APPSRV_HOME before running the SignServer AdminGUI.
     goto end
 )
-
-rem Application server jars
-set J2EE_CP=%APPSRV_HOME%\lib\jbossall-client.jar;%APPSRV_HOME%\lib\appserv-rt.jar
 
 rem check that we have built the classes
 if not exist %SIGNSRV_HOME%\lib\SignServer-AdminGUI.jar  (
@@ -31,7 +28,18 @@ if not exist %SIGNSRV_HOME%\lib\SignServer-AdminGUI.jar  (
     goto end
 )
 
-set CLASSPATH=%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\lib\SignServer-AdminGUI.jar;%J2EE_CP%
+rem Construct the classpath
+set MAIN_CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\lib\SignServer-AdminGUI.jar
+
+rem Application server dependencies
+if exist %APPSRV_HOME%\lib\appserv-rt.jar (
+    set JEE_CLASSPATH=%CLASSPATH%;%SIGNSRV_HOME%\conf\glassfish;%APPSRV_HOME%\lib\appserv-rt.jar
+)
+if exist %APPSRV_HOME%\client\jbossall-client.jar  (
+    set JEE_CLASSPATH=%CLASSPATH%;%SIGNSRV_HOME%\conf\jboss;%APPSRV_HOME%\client\jbossall-client.jar
+)
+
+set CLASSPATH=%MAIN_CLASSPATH%;%JEE_CLASSPATH%
 rem echo %CLASSPATH%
 
 rem Fixup arguments, we have to do this since windows normally only 
@@ -49,9 +57,9 @@ set i=%8
 set j=%9
 rem echo %a% %b% %c% %d% %e% %f% %g% %h% %i% %j%
 if "%JAVA_HOME%" == "" (
-  java -cp %CLASSPATH% -splash:%SIGNSRV_HOME%/bin/admingui-splash.png %class_name% %a% %b% %c% %d% %e% %f% %g% %h% %i% %j% -connectfile %SIGNSRV_HOME%/conf/admingui.properties -defaultconnectfile %SIGNSRV_HOME%/conf/admingui_default.properties
+  java -cp %CLASSPATH% -splash:%SIGNSRV_HOME%\res\admingui-splash.png %class_name% %a% %b% %c% %d% %e% %f% %g% %h% %i% %j% -connectfile %SIGNSRV_HOME%/conf/admingui.properties -defaultconnectfile %SIGNSRV_HOME%/conf/admingui_default.properties
 ) else (
-  "%JAVA_HOME%\bin\java" -cp %CLASSPATH% -splash:%SIGNSRV_HOME%/bin/admingui-splash.png %class_name% %a% %b% %c% %d% %e% %f% %g% %h% %i% %j% -connectfile %SIGNSRV_HOME%/conf/admingui.properties -defaultconnectfile %SIGNSRV_HOME%/conf/admingui_default.properties
+  "%JAVA_HOME%\bin\java" -cp %CLASSPATH% -splash:%SIGNSRV_HOME%\res\admingui-splash.png %class_name% %a% %b% %c% %d% %e% %f% %g% %h% %i% %j% -connectfile %SIGNSRV_HOME%/conf/admingui.properties -defaultconnectfile %SIGNSRV_HOME%/conf/admingui_default.properties
 
 )
 :end

@@ -50,14 +50,16 @@ public class GlobalConfiguration implements Serializable {
 
     private Properties config;
     private String state;
+    private String appVersion;
 
     /**
      * Constructor that should only be called within
      * the GlobalConfigurationSessionBean.
      */
-    public GlobalConfiguration(Properties config, String state) {
+    public GlobalConfiguration(Properties config, String state, String appVersion) {
         this.config = config;
         this.state = state;
+        this.appVersion = appVersion;
     }
 
     /**
@@ -134,8 +136,7 @@ public class GlobalConfiguration implements Serializable {
      * @return the version of the server
      */
     public String getAppVersion() {
-        return CompileTimeSettings.getInstance().getProperty(
-                CompileTimeSettings.SIGNSERVER_VERSION);
+        return appVersion;
     }
 
 }

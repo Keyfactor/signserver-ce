@@ -28,6 +28,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 
 import org.apache.log4j.Logger;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ResyncException;
 import org.signserver.common.SignServerUtil;
@@ -71,6 +72,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#setProperty(String, String, String)
      */
+    @Override
     public void setProperty(String scope, String key, String value) {
 
         auditLog("setProperty", scope + key, value);
@@ -102,6 +104,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#removeProperty(String, String)
      */
+    @Override
     public boolean removeProperty(String scope, String key) {
         boolean retval = false;
 
@@ -125,6 +128,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#getGlobalConfiguration()
      */
+    @Override
     public GlobalConfiguration getGlobalConfiguration() {
         GlobalConfiguration retval = null;
 
@@ -150,7 +154,9 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 
             GlobalConfigurationCache.setCachedGlobalConfig(properties);
         }
-        retval = new GlobalConfiguration(GlobalConfigurationCache.getCachedGlobalConfig(), GlobalConfigurationCache.getCurrentState());
+        retval = new GlobalConfiguration(GlobalConfigurationCache.getCachedGlobalConfig(), 
+                GlobalConfigurationCache.getCurrentState(), 
+                CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION));
 
         return retval;
     }
@@ -158,6 +164,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#getWorkers(int)
      */
+    @Override
     public List<Integer> getWorkers(int workerType) {
         ArrayList<Integer> retval = new ArrayList<Integer>();
         GlobalConfiguration gc = getGlobalConfiguration();
@@ -225,6 +232,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#resync()
      */
+    @Override
     public void resync() throws ResyncException {
 
         auditLog("resync", null, null); // TODO Should handle errors
@@ -288,6 +296,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#reload()
      */
+    @Override
     public void reload() {
         auditLog("reload", null, null);
 

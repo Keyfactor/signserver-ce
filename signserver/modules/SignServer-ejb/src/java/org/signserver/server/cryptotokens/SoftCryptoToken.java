@@ -56,7 +56,6 @@ import org.signserver.common.SignerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.ServiceLocator;
-import org.signserver.server.PropertyFileStore;
 
 /**
  * Cryptographic token that uses soft keys stored in the worker properties in the database.
@@ -239,12 +238,8 @@ public class SoftCryptoToken implements ICryptoToken {
             dos.writeInt(prvKeyData.length);
             dos.write(prvKeyData);
 
-            try {
-                getWorkerSession().setWorkerProperty(workerId, PROPERTY_KEYDATA, new String(Base64.encode(baos.toByteArray())));
-            } catch (NamingException e) {
-                // If not in SignServer, try to save mail signer style.
-                PropertyFileStore.getInstance().setWorkerProperty(workerId, PROPERTY_KEYDATA, new String(Base64.encode(baos.toByteArray())));
-            }
+            getWorkerSession().setWorkerProperty(workerId, PROPERTY_KEYDATA, new String(Base64.encode(baos.toByteArray())));
+
             if (info instanceof PKCS10CertReqInfo) {
                 PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
                 PKCS10CertificationRequest pkcs10;
@@ -271,6 +266,8 @@ public class SoftCryptoToken implements ICryptoToken {
         } catch (SignatureException e1) {
             LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
         } catch (IOException e1) {
+            LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
+        } catch (NamingException e1) {
             LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
         }
         return retval;

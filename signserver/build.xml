@@ -326,7 +326,7 @@ Configuring EAR...
             <equals arg1="${database.name}" arg2="sybase"/>
         </condition>
         <fail unless="hibernate.dialect" message="Unsupported database type '${database.name}'."/>
-        <copy file="${res}/appserver/${appserver.type}/persistence.xml" tofile="${persistence.xml}" failonerror="true" overwrite="true">
+        <copy file="${res}/appserver/persistence.xml" tofile="${persistence.xml}" failonerror="true" overwrite="true">
             <filterchain>
                 <expandproperties/>
             </filterchain>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Version: $Id: tests.xml 1791 2011-07-07 15:43:05Z netmackan $ -->
-<project name="SignServer-doc" default="build" basedir=".">
+<project name="SignServer-Doc" default="build" basedir=".">
     <property file="nbproject/project.properties"/>
     <import file="../modules.xml"/>
 

@@ -17,6 +17,9 @@
     <property name="clean.available" value="true"/>
     <property name="modulename" value="adminws"/>
 
+    <!-- Setup APPSRV_HOME etc -->
+    <target name="-pre-init" depends="-modules-set-appserver-home"/>
+    
     <!-- Target for regenerating the WSDL. -->
     <target name="regenerate-wsdl" depends="wsgen-AdminWS" description="Regenerates the WSDL from the source.">
         <copy todir="${src.dir}/META-INF/wsdl/" failonerror="true">

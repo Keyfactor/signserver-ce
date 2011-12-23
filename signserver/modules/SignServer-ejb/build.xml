@@ -16,6 +16,9 @@
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
         
+    <!-- Setup APPSRV_HOME etc -->
+    <target name="-pre-init" depends="-modules-set-appserver-home"/>
+    
     <target name="dist-module" depends="init,-init-macrodef-convertclasspath,dist">
         <copy todir="../../lib/">
             <fileset dir="dist">

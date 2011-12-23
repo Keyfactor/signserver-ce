@@ -17,6 +17,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.ExecTask;
 import org.apache.tools.ant.types.Commandline;
+import org.apache.tools.ant.types.Commandline.Argument;
 
 /**
  * Wrapper task around the wsimport command line tool available with the JDK.
@@ -42,11 +43,7 @@ public class WsImport extends Task {
     @Override
     public void execute() throws BuildException {
         StringBuilder buff = new StringBuilder();
-        
-        
-        
-        buff.append("wsimport").append(" ")
-                .append("-d").append(" ").append(new File(getProject().getBaseDir(), getDestdir()).getAbsolutePath()).append(" ");
+        buff.append("-d").append(" ").append(new File(getProject().getBaseDir(), getDestdir()).getAbsolutePath()).append(" ");
         if (isExtension()) {
             buff.append("-extension").append(" ");
         }
@@ -62,12 +59,12 @@ public class WsImport extends Task {
         }
         buff.append(getWsdl());
         
-        log("wsimport command line: " + buff.toString());
+        log("Command line: wsimport " + buff.toString());
         ExecTask exec = new ExecTask(this);
         exec.setFailIfExecutionFails(true);
-        exec.setCommand(new Commandline(buff.toString()));
-//        Argument arg1 = exec.createArg();
-//        arg1.setLine(buff.toString());
+        exec.setExecutable("wsimport");
+        Argument arg1 = exec.createArg();
+        arg1.setLine(buff.toString());
         exec.execute();
     }
     

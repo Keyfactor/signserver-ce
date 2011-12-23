@@ -327,7 +327,7 @@ Make sure all required softwares are installed:
                     <p>
 Download and unzip the
 <a href="http://sourceforge.net/projects/signserver/files/signserver/">latest
-SignServer release</a> archive from SourceForge or for the absolutly latest
+SignServer release</a> archive from SourceForge or for the absolutely latest
 unstable version checkout from the Subversion (SVN)
 <a href="http://sourceforge.net/projects/signserver/develop">repository</a>.
                     </p>
@@ -372,7 +372,7 @@ export SIGNSERVER_NODEID=node1
                     <p>
 Create a database and user for SignServer. The application server will try to
 create tables during startup of SignServer but if the database user does not
-have table create permissions or if you run on Glassfish the tables must be
+have table create permissions or if you run on GlassFish the tables must be
 created manually. See doc/howtos/create-tables-signserver32-*.sql.
                     </p>
                     <p>
@@ -445,11 +445,11 @@ when it's time for upgrades! This is a bug tracked by JBoss as JBAS-7882.
 
                 <subsection name="6. Configure build">
                     <p>
-Copy signserver_build.properties.sample to signserver_build.properties and open
+Copy conf/signserver_build.properties.sample to conf/signserver_build.properties and open
 it for editing in your favorite text editor.
                     </p>
                     <source>
-cp signserver_build.properties.sample signserver_build.properties
+cp conf/signserver_build.properties.sample conf/signserver_build.properties
                     </source>
 
                     <subsubsection name="Application server configuration">
@@ -545,7 +545,7 @@ server. If the configuration changed since the last build run the clean target
 first.
                     </p>
                     <source>
-ant clean deploy
+bin/ant clean build deploy
                     </source>
                     <p>
 Start the application server and verify that SignServer was deployed and
@@ -558,19 +558,19 @@ After startup a few different user interfaces are available.
 					</p>
 					<subsubsection name="Command Line Interface">
                     <source>
-bin/signserver.sh getstatus brief all
+bin/signserver getstatus brief all
 Assuming JBoss JNDI provider...
 ===========================================
 Executing Command on host : localhost
 ===========================================
 
 
-Current version of server is : SignServer 3.2-svn
+Current version of server is : SignServer 3.3.0alpha0
                     </source>
 					</subsubsection>
 					<subsubsection name="Graphical User Interface">
 						<source>
-bin/admingui.sh	
+bin/signserver-gui	
 						</source>
 					</subsubsection>
 					<subsubsection name="Web Interface">
@@ -599,7 +599,7 @@ includemodulesinbuild=true to include all modules or by setting individual
 module.MODULENAME.include=true properties in signserver_build.properties.
                         </p>
                         <source>
-bin/signserver.sh setproperties doc/sample-configs/CONFIGURATION.PROPERTIES
+bin/signserver setproperties doc/sample-configs/CONFIGURATION.PROPERTIES
                         </source>
                     </subsubsection>
                     <p>
@@ -608,7 +608,7 @@ any of the "setpropery" or "setproperties" commands) the configuration needs be
 applied by issuing the reload command with the ID of the worker.
                     </p>
                     <source>
-bin/signserver.sh reload 4711
+bin/signserver reload 4711
                     </source>
                 </subsection>
 
@@ -627,19 +627,19 @@ modules built in.
                         <li>
 Load the Timestamp demo configuration and notice the generated worker ID (in this
 example 1):<br/>
-<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_timestamp_configuration.properties</code>
+<code>$ bin/signserver setproperties doc/sample-configs/qs_timestamp_configuration.properties</code>
                         </li>
                         <li>
 Activate the configuration with:<br/>
-<code>$ bin/signserver.sh reload 1</code>
+<code>$ bin/signserver reload 1</code>
                         </li>
                         <li>
 You can check the status and configuration with:<br/>
-<code>$ bin/signserver.sh getstatus complete all</code>
+<code>$ bin/signserver getstatus complete all</code>
                         </li>
                         <li>
 Run the test client to see that everything is up:<br/>
-<code>$ bin/client.sh timestamp http://localhost:8080/signserver/process?workerName=TimeStampSigner</code>
+<code>$ bin/signclient timestamp http://localhost:8080/signserver/process?workerName=TimeStampSigner</code>
 <br/>The message "TimeStampRequest validated" should appear once a second. Also
 check JBOSS_HOME/server/default/log/server.log or
 GLASSFISH_HOME/domains/domain1/logs/server.log that successful messages appear.
@@ -661,15 +661,15 @@ modules built in.
                         <li>
 Load the PDF signer demo configuration and notice the generated worker ID (in this
 example 2):<br/>
-<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_pdfsigner_configuration.properties</code>
+<code>$ bin/signserver setproperties doc/sample-configs/qs_pdfsigner_configuration.properties</code>
                         </li>
                         <li>
 Activate the configuration with:<br/>
-<code>$ bin/signserver.sh reload 2</code>
+<code>$ bin/signserver reload 2</code>
                         </li>
                         <li>
 You can check the status and configuration with:<br/>
-<code>$ bin/signserver.sh getstatus complete all</code>
+<code>$ bin/signserver getstatus complete all</code>
                         </li>
 </ol>
 <p>
@@ -691,15 +691,15 @@ modules built in.
                         <li>
 Load the OOXML signer demo configuration and notice the generated worker ID (in this
 example 3):<br/>
-<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_ooxmlsigner_configuration.properties</code>
+<code>$ bin/signserver setproperties doc/sample-configs/qs_ooxmlsigner_configuration.properties</code>
                         </li>
                         <li>
 Activate the configuration with:<br/>
-<code>$ bin/signserver.sh reload 3</code>
+<code>$ bin/signserver reload 3</code>
                         </li>
                         <li>
 You can check the status and configuration with:<br/>
-<code>$ bin/signserver.sh getstatus complete all</code>
+<code>$ bin/signserver getstatus complete all</code>
                         </li>
                     </ol>
 <p>
@@ -721,15 +721,15 @@ modules built in.
                         <li>
 Load the ODF signer demo configuration and notice the generated worker ID (in this
 example 4):<br/>
-<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_odfsigner_configuration.properties</code>
+<code>$ bin/signserver setproperties doc/sample-configs/qs_odfsigner_configuration.properties</code>
                         </li>
                         <li>
 Activate the configuration with:<br/>
-<code>$ bin/signserver.sh reload 4</code>
+<code>$ bin/signserver reload 4</code>
                         </li>
                         <li>
 You can check the status and configuration with:<br/>
-<code>$ bin/signserver.sh getstatus complete all</code>
+<code>$ bin/signserver getstatus complete all</code>
                         </li>
                     </ol>
                     <p>
@@ -752,16 +752,16 @@ modules built in.
                         <li>
 Load the XML signer demo configuration and notice the generated worker ID (in this
 example 5):<br/>
-<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_xmlsigner_configuration.properties</code>
+<code>$ bin/signserver setproperties doc/sample-configs/qs_xmlsigner_configuration.properties</code>
                         </li>
                         <li>
 Activate the configuration with:<br/>
-<code># bin/signserver.sh reload 5</code>
+<code># bin/signserver reload 5</code>
 <br/>
                         </li>
                         <li>
 You can check the status and configuration with:<br/>
-<code>$ bin/signserver.sh getstatus complete all</code>
+<code>$ bin/signserver getstatus complete all</code>
                         </li>
                     </ol>
                     <p>
@@ -781,16 +781,16 @@ To install a certificate validation service worker issue the following commands:
                     <ol>
                         <li>
 Load the configuration and notice the worker ID (in this example: 6):<br/>
-<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_validator_dummy_configuration.properties</code>
+<code>$ bin/signserver setproperties doc/sample-configs/qs_validator_dummy_configuration.properties</code>
                         </li>
                         <li>
 Activate the configuration with:<br/>
-<code>$ bin/signserver.sh reload 6</code>
+<code>$ bin/signserver reload 6</code>
 <br/>
                         </li>
                         <li>
 The status of the Worker can now be viewed with:<br/>
-<code>$ bin/signserver.sh getstatus complete CertValidationWorker</code>
+<code>$ bin/signserver getstatus complete CertValidationWorker</code>
 <br/>
                         </li>
                     </ol>
@@ -807,21 +807,21 @@ modules built in.
                         <li>
 Load the XML validator demo configuration and notice the generated worker ID (in this
 example 7):
-<br/>$ bin/signserver.sh setproperties doc/sample-configs/qs_xmlvalidator_configuration.properties
+<br/>$ bin/signserver setproperties doc/sample-configs/qs_xmlvalidator_configuration.properties
                         </li>
                     <li>
 Verify the configuration with (notice that VALIDATIONSERVICEWORKER is set to "CertValidationWorker"):<br/>
-<code>$ bin/signserver.sh getconfig 7</code>
+<code>$ bin/signserver getconfig 7</code>
 <br/>
                     </li>
                     <li>
 Activate the configuration with:<br/>
-<code>$ bin/signserver.sh reload 7</code>
+<code>$ bin/signserver reload 7</code>
 <br/>
                     </li>
                     <li>
 The status of the Validator can now be viewed with:<br/>
-<code>$ bin/signserver.sh getstatus complete DemoXMLValidator</code>
+<code>$ bin/signserver getstatus complete DemoXMLValidator</code>
 <br/>
                     </li>
                     </ol>
@@ -847,15 +847,15 @@ modules built in.
                         <li>
 Load the MRTD SOD signer demo configuration and notice the generated worker ID (in this
 example 8):<br/>
-<code>$ bin/signserver.sh setproperties doc/sample-configs/qs_mrtdsodsigner_configuration.properties</code>
+<code>$ bin/signserver setproperties doc/sample-configs/qs_mrtdsodsigner_configuration.properties</code>
                         </li>
                         <li>
 Activate the configuration with:<br/>
-<code>$ bin/signserver.sh reload 8</code><br/>
+<code>$ bin/signserver reload 8</code><br/>
                         </li>
                         <li>
 The status of the signer can now be viewed with:<br/>
-<code>$ bin/signserver.sh getstatus complete mrtdsodsigner</code><br/>
+<code>$ bin/signserver getstatus complete mrtdsodsigner</code><br/>
                         </li>
                     </ol>
                     <p>
@@ -880,10 +880,10 @@ Before starting with an HSM installation you should read the about the
 section of the manual.
                         </p>
 <source>
-bin/signserver.sh setproperties doc/sample-config/qs_mrtdsodsigner_configuration.properties
-bin/signserver.sh getconfig 9
-bin/signserver.sh reload 9
-bin/signserver.sh generatecertreq 9 "C=SE,CN=MRTD SOD Signer" SHA256WithRSA mrtdsodsigner.req
+bin/signserver setproperties doc/sample-config/qs_mrtdsodsigner_configuration.properties
+bin/signserver getconfig 9
+bin/signserver reload 9
+bin/signserver generatecertreq 9 "C=SE,CN=MRTD SOD Signer" SHA256WithRSA mrtdsodsigner.req
 </source>
                         <p>
 Where 9 is the signerId that you got when running the 'setproperties' command.<br/>
@@ -892,9 +892,9 @@ If you have the returned signer certificate as cert.pem and the CA certificate a
                         </p>
 <source>
 cat cert.pem cacert.pem &gt; certchain.pem
-bin/signserver.sh uploadsignercertificate 9 glob cert.pem
-bin/signserver.sh uploadsignercertificatechain 9 glob certchain.pem
-bin/signserver.sh reload 9
+bin/signserver uploadsignercertificate 9 glob cert.pem
+bin/signserver uploadsignercertificatechain 9 glob certchain.pem
+bin/signserver reload 9
 </source>
                         <p>
 Hint: you can use EJBCA to create keys on a PKCS#11 HSM using clientToolBox.<br/>
@@ -931,7 +931,7 @@ Version 2.0 of the same documentation.<a href="../docs/SignServer_2_0_Installati
             <section name="Configuration/Administration">
                 <p>
 The SignServer administration command line interface (Admin CLI) is started
-using bin/signserver.sh (or bin/signserver.cmd).
+using bin/signserver (or bin/signserver.cmd).
                 </p>
                 <p>
 Every worker is identified by an ID and an optional name that can be used in all
@@ -1453,14 +1453,14 @@ To setup a PDFSigner using the quick start configuration file issue the
 following command:
                         </p>
                         <source>
-bin/signserver.sh setproperties sample-configs/qs_pdfsigner_configuration.properties
+bin/signserver setproperties sample-configs/qs_pdfsigner_configuration.properties
                         </source>
                         <p>
 Notice the created workerId and use it when applying the configuration using the
 reload command:
                         </p>
                         <source>
-bin/signserver.sh reload WORKER-ID
+bin/signserver reload WORKER-ID
                         </source>
                     </subsubsection>
                 <subsubsection name="Remove Workers">
@@ -1468,7 +1468,7 @@ bin/signserver.sh reload WORKER-ID
                     You can list which workers you have with the command:
                     </p>
                     <source>
-bin/signserver.sh getstatus brief all                    
+bin/signserver getstatus brief all                    
                     </source>
                     <p>
                     If will display for example:
@@ -1479,7 +1479,7 @@ Executing Command on host : localhost
 ===========================================
 
 
-Current version of server is : SignServer 3.2-svn
+Current version of server is : SignServer 3.3.0alpha0
 
 
 Status of Signer with Id 1 is :
@@ -1490,8 +1490,8 @@ Status of Signer with Id 1 is :
                     You can remove the worker with Id 1 with the command:                    
 					</p>
                     <source>
-bin/signserver.sh removeworker 1
-bin/signserver.sh reload all                    
+bin/signserver removeworker 1
+bin/signserver reload all                    
                     </source>
                 </subsubsection>
             </subsection>
@@ -2028,7 +2028,7 @@ SignServer interprets the serialnumber and subject DN. Example:
 		Configuring workers are done by setting properties in the worker configuration.
 		There is one set of configuration options that are handled by the framework, and that applies to all workers, then there are worker specific properties handled by the worker implementation.
 		</p>
-		<p>Properties are usually defined in the module configuration file used to install a module, or configured manually using one of the <i>bin/signserver.sh setproperty</i> variant.</p>
+		<p>Properties are usually defined in the module configuration file used to install a module, or configured manually using one of the <i>bin/signserver setproperty</i> variant.</p>
 		
             <section name="Setting Authorization Type">
                 <subsection name="SignServer">
@@ -3348,19 +3348,19 @@ attributes(generate, CKO_PRIVATE_KEY,*) = {
                     <subsubsection name="Example usage">
                         <p>
 Edit qs_pdfsigner_configuration.properties and choose the sign token setting for the PKCS11 sign token. Run the following command to set up a PDF signer using the PKCS11 properties configured:
-bin/signserver.sh setproperties qs_pdfsigner_configuration.properties
+bin/signserver setproperties qs_pdfsigner_configuration.properties
                         </p>
                         <p>
 Generate a keypair for the signer:
-bin/signserver.sh generatekey 8 -alias defaultKey -keyalg RSA -keyspec 2048
+bin/signserver generatekey 8 -alias defaultKey -keyalg RSA -keyspec 2048
                         </p>
                         <p>
 Test the keypair:
-bin/signserver.sh testkey 8
+bin/signserver testkey 8
                         </p>
                         <p>
 You also need a certificate for the signer. Generate a certificate request with the command:
-bin/signserver.sh generatecertreq 8 "CN=PKCS11 Signer token" SHA1WithRSA /tmp/certreq.pem
+bin/signserver generatecertreq 8 "CN=PKCS11 Signer token" SHA1WithRSA /tmp/certreq.pem
                         </p>
                         <p>
 Add a user in EJBCA with a certificate profile suitable for signing, and enrol for a "Server Certificate" using the public web pages.
@@ -3374,7 +3374,7 @@ The signer certificate must be first, and the root CA certificate last.
                         </p>
                         <p>
 Upload the signing certificate chain to the signer using the command:
-bin/signserver.sh uploadsignercertificatechain 8 GLOB /tmp/certchain.pem
+bin/signserver uploadsignercertificatechain 8 GLOB /tmp/certchain.pem
                         </p>
                         <p>
 After the certificate chain has been uploaded to the server, the configuration must be reloaded and the server must be restarted. It is not sufficient to only reload the configuration.
@@ -3424,13 +3424,13 @@ First change the global property of WORKER&lt;ID&gt;.CRYPTOTOKEN.CLASSPATH of th
 Then generate a certificate request with the command, in this step will new keys be generated
                         </p>
                         <pre>
-bin/signserver.sh generatecertreq &lt;id&gt; "CN=Soft Signer token" SHA1WithRSA /tmp/certreq.pem
+bin/signserver generatecertreq &lt;id&gt; "CN=Soft Signer token" SHA1WithRSA /tmp/certreq.pem
                         </pre>
                         <p>
 Then upload the signing certificate  to the worker using the command:
                         </p>
                         <pre>
-bin/signserver.sh uploadsignercertificatechain &lt;id&gt; GLOB /tmp/cert.pem
+bin/signserver uploadsignercertificatechain &lt;id&gt; GLOB /tmp/cert.pem
                         </pre>
                         <p>
 After the certificate chain has been uploaded to the server, the configuration must be reloaded and the SoftCryptoToken will be active and ready to use.
@@ -4164,13 +4164,11 @@ access to this file when the service is executed.
                 <subsection name="Installing a service">
                     <p>To install a service you use the same commands as for installing a worker:</p>
                     <source>
-bin/signserver.sh setproperties configuration.properties
+$ bin/signserver setproperties configuration.properties
                     </source>
                     <p>Example:</p>
                     <source>
-> bin/signserver.sh setproperties doc/sample-configs/qs_signerstatusreport_configuration.properties
-
-Using Glassfish JNDI provider...
+$ bin/signserver setproperties doc/sample-configs/qs_signerstatusreport_configuration.properties
 ===========================================
   Executing Command on host : localhost
 ===========================================
@@ -4182,9 +4180,7 @@ Setting the property WORKERS to PDFSigner1 for worker 2
 Setting the property NAME to SignerStatusReporter for worker 2
 Setting the property OUTPUTFILE to /tmp/statusreport for worker 2
 
-> bin/signserver.sh reload 2
-
-Using Glassfish JNDI provider...
+$ bin/signserver reload 2
 ===========================================
 Executing Command on host : localhost
 ===========================================
@@ -4431,7 +4427,7 @@ This package installs the CLI interface on the management station (which can be 
                             <li>By default is everything unpacked in /opt/signserver-&lt;version&gt; .</li>
                             <li>If a /etc/signserver/signserver.conf file exists it's read and used during installation.</li>
                             <li>The user and group 'signserver' is created</li>
-                            <li>A link from /opt/signserver-&lt;version&gt;/bin/signserver.sh is done to /usr/local/bin.</li>
+                            <li>A link from /opt/signserver-&lt;version&gt;/bin/signserver is done to /usr/local/bin.</li>
                         </ul>
                         <p>
 	Windows:

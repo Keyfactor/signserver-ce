@@ -59,14 +59,11 @@ includemodulesinbuild               = ${includemodulesinbuild}
         <delete dir="../lib/" failonerror="true">
             <include name="*.*ar"/>
         </delete>
-    	<delete dir="${pkg.dist.dir}" />
         <delete dir="${apidoc}" />
         <delete dir="${tmp}"/>	
         <delete dir="${debian.pkgdist.destdir}"/>
         <delete dir="${mods-available}"/>
         <delete dir="${test.dir}" />
-        <delete dir="${signingAndValidationBuild}" />
-        <delete dir="${timeStampClientBuild}" />
         <delete file="../velocity.log"/>
 
         <!-- Clean all modules -->
@@ -686,185 +683,8 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
 
     </target>
 
-
-    <!-- =================================================================== -->
-    <!-- Legacy packaging                                                    -->
-    <!-- =================================================================== -->
-    
-    <!-- Build preparation for package distribution                         -->
-    <target name="pkgdist" depends="signserver-cli, signserver-pkgdist"/>
-    
-    <target name="signserver-pkgdist" depends="signserver-pkgdist-server, signserver-pkgdist-mgmt,genservercert.jar, setdbtype.jar">
-    </target>
-    		
-    <target name="signserver-pkgdist-server" depends="genservercert.jar, setdbtype.jar">
-        <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
-            <isset property="${env.DESTDIR}"/>
-        </condition>
-		
-        <mkdir dir="${pkgdist.destdir}"/>
-
-        <property name="pkgdist.deploydir" value="${pkgdist.destdir}/usr/share/signserver-server/deploy"/>
-        <mkdir dir="${pkgdist.deploydir}"/>
-        <copy todir="${pkgdist.deploydir}" >
-            <fileset dir="../lib">
-                <include name="signserver.ear"/>
-            </fileset>
-            <fileset dir="../res/appserver/jboss">
-                <include name="signserver-ds.xml"/>
-                <include name="signserver-mysql-cluster-ds.xml"/>
-            </fileset>
-        </copy>
-
-        <property name="pkgdist.webconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/webconf"/>
-        <mkdir dir="${pkgdist.webconfdir}"/>
-        <copy todir="${pkgdist.webconfdir}" >
-            <fileset dir="../res/install/common">
-                <include name="tomcat-server*.xml"/>
-            </fileset>
-        </copy>
-        <property name="pkgdist.dbconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/dbconf"/>
-        <mkdir dir="${pkgdist.dbconfdir}"/>
-        <copy todir="${pkgdist.dbconfdir}" >
-            <fileset dir="../res/deploy/ejb/persistence-mappings">
-                <include name="**/**"/>
-            </fileset>
-        </copy>
-        <property name="pkgdist.logconfdir" value="${pkgdist.destdir}/usr/share/signserver-server/logconf"/>
-        <mkdir dir="${pkgdist.logconfdir}"/>
-        <copy todir="${pkgdist.logconfdir}" >
-            <fileset dir="../res/install/common">
-                <include name="jboss-log4j*.xml"/>
-            </fileset>
-        </copy>
-        <property name="pkgdist.gencertdir" value="${pkgdist.destdir}/usr/share/signserver-server/lib"/>
-        <mkdir dir="${pkgdist.gencertdir}"/>
-        <copy todir="${pkgdist.gencertdir}" >
-            <fileset dir="${tmp}">
-                <include name="${genServerCertJar}"/>
-            </fileset>
-        </copy>
-        <copy todir="${pkgdist.gencertdir}" >
-            <fileset dir="${lib}/1.6">
-                <include name="bcprov-jdk.jar"/>
-            </fileset>
-        </copy>
-        <property name="pkgdist.setdbtypedir" value="${pkgdist.destdir}/usr/share/signserver-server/lib"/>
-        <mkdir dir="${pkgdist.setdbtypedir}"/>
-        <copy todir="${pkgdist.setdbtypedir}" >
-            <fileset dir="${tmp}">
-                <include name="${setDBTypeJar}"/>
-            </fileset>
-        </copy>
-        <property name="pkgdist.initscriptdir" value="${pkgdist.destdir}/usr/share/signserver-server/bin"/>
-        <mkdir dir="${pkgdist.initscriptdir}"/>
-        <copy todir="${pkgdist.initscriptdir}" >
-            <fileset dir="../res/install/common">
-                <include name="signserver*.sh"/>
-            </fileset>
-            <fileset dir="../bin">
-                <include name="genservercert.sh"/>
-            </fileset>
-        </copy>
-
-    </target>
-	 	
-    <target name="signserver-pkgdist-mgmt" depends="genservercert.jar, setdbtype.jar">
-        <condition property="pkgdist.destdir" value="${env.DESTDIR}" else="${pkg.dist.dir}">
-            <isset property="${env.DESTDIR}"/>
-        </condition>
-	
-        <mkdir dir="${pkgdist.destdir}"/>
-	 		
-        <property name="pkgdist.bindir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/bin" />
-        <mkdir dir="${pkgdist.bindir}"/>
-		
-        <property name="pkgdist.clilibdir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/lib" />
-        <mkdir dir="${pkgdist.clilibdir}"/>
-     		
-        <copy todir="${pkgdist.bindir}">
-            <fileset dir="../bin">
-                <include name="signserver.sh"/>
-                <include name="signserver.cmd"/>
-                <include name="log4j.properties"/>
-            </fileset>
-        </copy>
-        <copy todir="${pkgdist.clilibdir}">
-            <fileset dir="../lib">
-                <include name="signserver-cli.jar"/>
-            </fileset>
-            <fileset dir="../lib/ext">
-                <include name="jbossall-client.jar"/>
-            </fileset>
-            <fileset dir="${lib}/ext">
-                <include name="log4j.jar"/>
-                <include name="cert-cvc.jar"/>
-                <include name="ejbca-util.jar"/>
-                <include name="commons-lang-2.4.jar"/>
-            </fileset>
-            <fileset dir="${lib}/ext/1.6">
-                <include name="bcprov-jdk.jar"/>
-                <include name="bcmail-jdk.jar"/>
-            </fileset>
-            <fileset dir="${lib}/ext/asm">
-                <include name="asm-3.1.jar"/>
-                <include name="asm-commons-3.1.jar"/>
-            </fileset>
-            <fileset dir="${lib}/ext/ext/ejb">
-                <include name="jboss-ejb3x.jar"/>
-            </fileset>
-        </copy>
-
-        <property name="pkgdist.sampleconfigdir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/sample-configs" />
-        <mkdir dir="${pkgdist.sampleconfigdir}"/>
-        <copy todir="${pkgdist.sampleconfigdir}">
-            <fileset dir="doc/sample-configs">
-                <include name="*.*"/>
-            </fileset>
-        </copy>
-
-        <property name="pkgdist.moduledir" value="${pkgdist.destdir}/usr/share/signserver-mgmt/modules" />
-        <mkdir dir="${pkgdist.moduledir}"/>
-        <copy todir="${pkgdist.moduledir}">
-            <fileset dir="../lib">
-                <include name="*.mar"/>
-            </fileset>
-        </copy>
-    </target>
-
-
     <!-- =================================================================== -->
     <!-- Other                                                               -->
     <!-- =================================================================== -->
-
-    <target name="signserver-cli" description="Build SignServer AdminCLI">
-        <ant inheritall="false" target="jar" antfile="${admincli.dir}/build.xml"/>
-    </target>
-
-    <target name="genservercert.jar" depends="signserver-cli">
-        <ant inheritall="false" target="jar" antfile="${admincli.dir}/build.xml"/>
-        <jar destfile="${tmp}/${genServerCertJar}" basedir="${base}/modules/SignServer-AdminCLI/build/classes/">
-            <manifest>
-                <attribute name="Class-Path" value="bcprov-jdk.jar"/>
-                <attribute name="Main-Class" value="org.signserver.cli.genservercert.GenServerCertificate"/>
-            </manifest>
-            <include name="org/signserver/cli/genservercert/*.class"/>
-        </jar>
-    </target>
-    <target name="setdbtype.jar" depends="signserver-cli">
-        <jar destfile="${tmp}/${setDBTypeJar}" basedir="${base}/modules/SignServer-AdminCLI/build/classes/">
-            <manifest>
-                <attribute name="Class-Path" value=""/>
-                <attribute name="Main-Class" value="org.signserver.cli.setdbtype.SetDBType"/>
-            </manifest>
-            <include name="org/signserver/cli/setdbtype/*.class"/>
-        </jar>
-    </target>
-    
-     <!-- Target Used to perform validations using CLI -->
-    <target name="validationClient" if="validationclient.conditionenabled" >
-        <ant target="test" inheritall="false"
-            antfile="${clientvalidationcli.dir}/build.xml"/>
-    </target>
 
 </project>

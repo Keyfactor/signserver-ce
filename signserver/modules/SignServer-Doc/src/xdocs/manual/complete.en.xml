@@ -342,14 +342,6 @@ Set APPSRV_HOME to point to your application server installation.
 export APPSRV_HOME=/opt/jboss-4.2.3.GA
                         </source>
                     </subsubsection>
-                    <subsubsection name="ANT_HOME">
-                        <p>
-Set ANT_HOME to point to your Apache Ant installation.
-                        </p>
-                        <source>
-export ANT_HOME=/usr/share/ant
-                        </source>
-                    </subsubsection>
                     <subsubsection name="ANT_OPTS">
                         <p>
 Set ANT_OPTS to give Ant more memory for building SignServer.

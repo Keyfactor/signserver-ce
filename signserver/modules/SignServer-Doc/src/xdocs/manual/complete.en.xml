@@ -3457,7 +3457,87 @@ It is possible to have your own code in a separate code tree to avoid a mix of c
                 <p>
 <b>custom.build.xml</b> = This can point to a custom build.xml that will be imported from the main build.xml and lets the developer include his own ant tasks if necessary.
                 </p>
+            </section>
+            
+            <section name="Custom modules">
                 <p>
+Custom code can be included in the SignServer build process by placing the projects under the modules directory and adhere to the modules contract.    
+                </p>
+                <p>
+First, the property modules.build.includes in res/modules-project.properties defines which projects that should be included in the build process. All projects with a folder name starting with SignServer-Module-*, SignServer-ejb* or SignServer-war are included. Other patterns can be included by setting a property extra.modules.build.includes.
+                </p>
+                <p>
+Second, in the project folder there should be an Ant script called build.xml.    
+                </p>
+                <p>
+Third, if the project should be called it should define the properties:
+                    <ul>
+                        <li><b>modulename</b>: The name of the module. Will be used as prefix to the enable-property. Example: module.pdfsigner (the enable property will then be module.pdfsigner.enabled)</li>
+                        <li><b>clean.available</b>: True if the "clean" target should be called when the rest of SignServer is getting cleaned.</li>
+                        <li><b>dist-module.available</b>: True if the "dist-module" target should be called when SignServer is getting built</li>
+                    </ul>
+                    Example:
+                </p>
+                <pre>
+&lt;property name="modulename" value="module.pdfsigner"/&gt;
+&lt;property name="clean.available" value="true"/&gt;
+&lt;property name="dist-module.available" value="true"/&gt;    
+                </pre>
+                <p>
+Forth, the dist-module target should take care of moving all distributables to the ../../lib directory and if the module should be deployed as part of the signserver.ear file a module descriptor should be placed in ../../mods-available. The name of the descriptor file should be priority_modulename.properties where priority is the order in which the module should be built and modulename is the name as defined by the property with the same name.
+                </p>
+                <p>
+The priorities are basically like this:
+                    <ul>
+                        <li>10: Essential core modules (like signserverejb and signservercommon)</li>
+                        <li>20: Other core modules (like web services)</li>
+                        <li>30: Other core modules (like web components etc)</li>
+                        <li>40: Other modules (like signers/validators etc)</li>
+                    </ul>
+                </p>
+                <p>
+The module descriptor can contain:
+                    <ul>
+                        <li>module.name: Same as the modulename property</li>
+                        <li>module.type: The type of the module. "lib" if the module should be put in signserver.ear/lib, "ejb" if it is an EJB module or "war" if it is and WAR module.</li>
+                        <li>to.root: Comma separated list of files to move to the root of signserver.ear. Basedir is SIGNSERVER_HOME and all files should be taken from lib/ (not modules/ as it is not available in the binary distribution).</li>
+                        <li>to.lib: Same as to.root but for jar files to be moved to signserver.ear/lib/.</li>
+                        <li>module.ejb: Only if module.type is "ear" or "war". The name of the enterprise module file (example: signserver.war).</li>
+                        <li>module.web.web-uri: Only if module.type is "war". The name to put in the web-uri part of the application.xml for this enterprise module.</li>
+                        <li>module.web.context-root: Only if module.type is "war". The name to put in the context-root part of the application.xml for this enterprise module.</li>
+                        <li>postprocess.files: Optionally. Comma separated list of property name prefixes for each file to postprocess (example: postprocess.file1)</li>
+                        <li>postprocess.file1.src: Only if postprocess.files specified. Path of file to postprocess (relative to SIGNSERVER_HOME/lib/, example: SignServer-ejb-SignServerWS.jar)</li>
+                        <li>postprocess.file1.includes: Only if postprocess.files. Ant includes pattern with files in the jar to postprocess (example: META-INF/ejb-jar.xml)</li>
+                    </ul>
+                    Example (mods-available/40_module.pdfsigner.properties):
+                </p>
+                <pre>
+module.name=module.pdfsigner
+module.type=lib
+to.root=
+to.lib=lib/ext/1.6/bcmail-jdk.jar,lib/ext/1.6/bcprov-jdk.jar,lib/ext/1.6/bctsp-jdk.jar,lib/ext/cert-cvc.jar,lib/ext/commons-collections-3.2.jar,lib/ext/commons-io-1.4.jar,lib/ext/commons-lang-2.4.jar,lib/ext/commons-logging.jar,lib/ext/ejbca-util.jar,lib/ext/log4j.jar,lib/ext/module/pdfsigner/itext/itext.jar,lib/SignServer-Common.jar,lib/SignServer-ejb-interfaces.jar,lib/SignServer-Module-PDFSigner.jar
+                </pre>
+                <p>
+                Example (mods-available/20_signserverws.properties):    
+                </p>
+                <pre>
+module.name=signserverws
+module.type=ejb
+module.ejb=SignServer-ejb-SignServerWS.jar
+to.root=lib/SignServer-ejb-SignServerWS.jar
+to.lib=lib/ext/1.6/bcmail-jdk.jar,lib/ext/1.6/bcprov-jdk.jar,lib/ext/1.6/bctsp-jdk.jar,lib/ext/cert-cvc.jar,lib/ext/commons-collections-3.2.jar,lib/ext/commons-io-1.4.jar,lib/ext/commons-lang-2.4.jar,lib/ext/commons-logging.jar,lib/ext/ejbca-util.jar,lib/ext/log4j.jar,lib/SignServer-Common.jar,lib/SignServer-ejb-interfaces.jar
+postprocess.files=postprocess.file1
+postprocess.file1.src=SignServer-ejb-SignServerWS.jar
+postprocess.file1.includes=META-INF/ejb-jar.xml
+                </pre>
+            
+            </section>
+                    
+           <section name="Custom CLI">
+               <p>
+                   In signserver_cli.properties:
+               </p>
+               <p>
 <b>custom.commandfactory</b> = Should point to a custom implementation of the interface org.signserver.cli.ISignServerCommandFactory. This gives to ability to extend (or replace) the default CLI with another one. The best way of extending the CLI is to look at  how the DefaultSignServerCommandFactory  is structured.
                 </p>
             </section>

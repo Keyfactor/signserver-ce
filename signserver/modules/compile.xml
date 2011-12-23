@@ -23,7 +23,6 @@
     <!-- =================================================================== -->
     
     <target name="init" depends="display-build-properties">
-        <antcall target="j2ee:check"/>
         <!-- Create the time stamp -->
         <tstamp/>
         <mkdir dir="${mods-available}"/>
@@ -74,7 +73,7 @@ includemodulesinbuild               = ${includemodulesinbuild}
 
         <!-- Clean all modules -->
         <echo>Cleaning sub projects</echo>
-        <subant target="-do-clean-module" failonerror="false">
+        <subant target="-do-clean-module" failonerror="true">
             <fileset dir="${modules}" includes="SignServer-*/build.xml"/>
          </subant>
     </target>

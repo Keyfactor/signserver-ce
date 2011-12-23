@@ -74,9 +74,9 @@
     <!-- Find application server                                             -->
     <!-- =================================================================== -->
 
+    <!-- Trying to find APPSRV_HOME. Does not fail if not found. -->
     <target name="-modules-set-appserver-home" depends="-set-from-file,-set-from-env">
 <!--        <echo message="var.APPSRV_HOME = ${var.APPSRV_HOME}"/>-->
-        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit conf/signserver_build.propertes and set appserver.home."/>
         <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>
     </target>
     
@@ -100,6 +100,11 @@
         <available file="${env.APPSRV_HOME}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
         <!-- GlassFish -->
         <available file="${env.APPSRV_HOME}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}"/>
+    </target>
+    
+    <!-- Fail if APPSRV_HOME was not set -->
+    <target name="-modules-check-appserver-home">
+        <fail unless="var.APPSRV_HOME" message="Missing variable APPSRV_HOME. Either set the environment variable APPSRV_HOME or edit conf/signserver_build.propertes and set appserver.home."/>
     </target>
 
     <!-- =================================================================== -->

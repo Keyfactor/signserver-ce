@@ -152,7 +152,7 @@ database.password                   = ${database.password}
         <delete dir="${tmp}"/>	
 
         <!-- Clean everything if this is a source distribution -->
-        <subant target="clean-build" inheritall="true">
+        <subant target="clean-build" inheritall="true" failonerror="true">
             <fileset dir="${base}" includes="modules/compile.xml"/>
          </subant>
     </target>
@@ -356,7 +356,7 @@ Configuring EAR...
     <!-- =================================================================== -->
     <!-- Deploy target                                                       -->
     <!-- =================================================================== -->
-    <target name="deploy" depends="compose-ear, j2ee:deploy" description="Deploys SignServer">
+    <target name="deploy" depends="j2ee:check,compose-ear, j2ee:deploy" description="Deploys SignServer">
         <antcall target="showtime" />
     </target>
 

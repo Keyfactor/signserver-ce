@@ -42,10 +42,14 @@ public class TestUtils {
     
     public static void setupSSLTruststore() {
         Properties buildConfig = new Properties();
+        File confFile1 = new File("../../signserver_build.properties");
+        File confFile2 = new File("../../conf/signserver_build.properties");
         try {
-            buildConfig.load(new FileInputStream(new File(new File(
-                    System.getenv("SIGNSERVER_HOME")),
-                    "signserver_build.properties")));
+            if (confFile1.exists()) {
+                buildConfig.load(new FileInputStream(confFile1));
+            } else {
+                buildConfig.load(new FileInputStream(confFile2));
+            }
         } catch (FileNotFoundException ignored) {
             LOG.debug("No signserver_build.properties");
         } catch (IOException ex) {

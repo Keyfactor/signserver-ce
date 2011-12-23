@@ -19,15 +19,6 @@
     <!-- Copy to client-dist etc. -->
     <target name="dist-module" depends="jar,-do-client-dist"/>
 
-    <!--
-        ===================
-        Find the application server
-        ===================
- -->
-
-    <!-- Setup APPSRV_HOME etc -->
-    <target name="-pre-init" depends="-modules-set-appserver-home"/>
-
     <target name="wsimport-init" depends="init">
         <mkdir dir="${build.generated.sources.dir}/jax-ws"/>
         <taskdef name="wsimport" classname="org.signserver.anttasks.ws.WsImport">

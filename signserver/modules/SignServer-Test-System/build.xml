@@ -12,7 +12,7 @@
     <import file="nbproject/build-impl.xml"/>
     <import file="../modules.xml"/>
     <import file="../tests.xml"/>
-    
+
 <!--
         ===================
         Find the application server
@@ -21,6 +21,8 @@
     
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
+    <target name="-pre-compile-test" depends="-modules-check-appserver-home"/>
+    <target name="-pre-compile-test-single" depends="-modules-check-appserver-home"/>
 
     <target name="wsimport-init" depends="init">
         <mkdir dir="${build.generated.sources.dir}/jax-ws"/>

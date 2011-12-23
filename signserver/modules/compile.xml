@@ -31,8 +31,6 @@
     <target name="display-build-properties">
         <echo>
 -------------- BUILD PROPERTIES --------------
-appserver.type                      = ${appserver.type}
-appserver.home                      = ${appserver.home}
 signserverws.enabled                = ${signserverws.enabled}
 validationws.enabled                = ${validationws.enabled}
 adminws.enabled                     = ${adminws.enabled}
@@ -146,6 +144,130 @@ includemodulesinbuild               = ${includemodulesinbuild}
     <!-- Release part                                                        -->
     <!-- =================================================================== -->
 
+    <target name="-init-release-patternsets">
+        <!-- All files for source release except scripts -->
+        <patternset id="source.normalfiles">
+            <include name="**/**" />
+            
+            <exclude name="bin/admingui.sh"/>
+            <exclude name="bin/ant"/>
+            <exclude name="bin/client.sh"/>
+            <exclude name="bin/genservercert.sh"/>
+            <exclude name="bin/setstatusinsync.sh"/>
+            <exclude name="bin/signclient"/>
+            <exclude name="bin/signserver"/>
+            <exclude name="bin/signserver.sh"/>
+            <exclude name="bin/signserver-gui"/>
+            
+            <exclude name="**/CVS/**" />
+            <exclude name="signserver_build.properties" />
+            <exclude name="conf/signserver_build.properties" />
+            <exclude name="tmp/**" />
+            <exclude name="p12/**" />
+            <exclude name="mods-available/**" />
+            <exclude name="**/dist/**" />
+            <exclude name="**/build/**" />
+            <exclude name="SignServer-AdminGUI/lib/**" />
+            <exclude name="out/**" />
+            <exclude name="eclipseBuild/**" />
+            <exclude name="**/*.class" />
+            <exclude name="**/.cvsignore" />
+            <exclude name="**/nbproject/private/**" />
+            <exclude name="lib/**/*.jar" />
+            <exclude name="lib/**/*.zip" />
+            <exclude name="**/velocity.log" />
+        </patternset>
+        
+        <!-- All scripts for source release -->
+        <patternset id="source.executablefiles">
+            <include name="bin/admingui.sh"/>
+            <include name="bin/ant"/>
+            <include name="bin/client.sh"/>
+            <include name="bin/genservercert.sh"/>
+            <include name="bin/setstatusinsync.sh"/>
+            <include name="bin/signclient"/>
+            <include name="bin/signserver"/>
+            <exclude name="bin/signserver.sh"/>
+            <include name="bin/signserver-gui"/>
+        </patternset>
+        
+        <!-- All files for binary release except scripts -->
+        <patternset id="binary.normalfiles">
+            <include name="**/**" />
+            
+            <exclude name="bin/admingui.sh"/>
+            <exclude name="bin/ant"/>
+            <exclude name="bin/client.sh"/>
+            <exclude name="bin/genservercert.sh"/>
+            <exclude name="bin/setstatusinsync.sh"/>
+            <exclude name="bin/signclient"/>
+            <exclude name="bin/signserver"/>
+            <exclude name="bin/signserver.sh"/>
+            <exclude name="bin/signserver-gui"/>
+
+            <exclude name="signserver_build.properties" />
+            <exclude name="conf/signserver_build.properties" />
+            <exclude name="conf/admingui.properties" />
+            <exclude name="modules/**" />
+            <exclude name="p12/**" />
+            <exclude name="tmp/**" />
+            <exclude name="**/velocity.log" />
+            <exclude name=".eclipse/**" />
+            <exclude name=".settings/**" />
+            <exclude name=".classpath" />
+            <exclude name=".project" />
+            <exclude name="**/.svn/**" />
+
+            <exclude name="res/install/**" />
+            <exclude name="res/test/**" />
+
+            <!-- TODO: The following should be moved anyway -->
+            <exclude name="bin/junit/**"/>
+            <exclude name="bin/classes/**"/>
+        </patternset>
+        
+        <!-- All scripts for binary release -->
+        <patternset id="binary.executablefiles">
+            <!-- <include name="bin/admingui.sh"/>-->
+            <include name="bin/ant"/>
+            <!-- <include name="bin/client.sh"/>-->
+            <include name="bin/genservercert.sh"/>
+            <include name="bin/setstatusinsync.sh"/>
+            <include name="bin/signclient"/>
+            <include name="bin/signserver"/>
+            <!-- <include name="bin/signserver.sh"/>-->
+            <include name="bin/signserver-gui"/>
+        </patternset>
+        
+        <!-- All files for mixed release except scripts -->
+        <patternset id="mixed.normalfiles">
+            <include name="**/**" />
+            <exclude name="doc/lgpl-**" />
+            <exclude name="**/CVS/**" />
+            <exclude name="signserver_build.properties" />
+            <exclude name="conf/signserver_build.properties" />
+            <exclude name="tmp/**" />
+            <exclude name="p12/**" />
+            <exclude name="dist/**" />
+            <exclude name="lib/*.*ar" />
+            <exclude name="out/**" />
+            <exclude name="eclipseBuild/**" />
+            <exclude name="**/*.class" />
+            <exclude name=".classpath" />
+            <exclude name=".project" />
+            <exclude name=".eclipse/**" />
+            <exclude name=".settings/**" />
+            <exclude name="**/.cvsignore" />
+            <exclude name="**/*.sh" />
+            <exclude name="**/nbproject/private/**" />
+        </patternset>
+        
+        <!-- All scripts for source release -->
+        <patternset id="mixed.executablefiles">
+            <patternset refid="source.executablefiles"/>
+        </patternset>
+    </target>
+
     <!-- Deprecated: New target called release:zip -->
     <target name="ziprelease" depends="release:zip"/>
 
@@ -166,144 +288,105 @@ includemodulesinbuild               = ${includemodulesinbuild}
         <antcall target="-release:source-tarball-lgpl21"/>
     </target>
 
-    <target name="-release:zip-lgpl21" depends="clean">
+    <target name="-release:zip-lgpl21" depends="clean,-init-release-patternsets">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <zip destfile="../signserver-${signserver.zipversion}.zip">
+        <property name="zip.dest.file" location="../signserver-${signserver.zipversion}.zip"/>
+        <zip destfile="${zip.dest.file}">
             <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="600" dirmode="700">
-                <include name="**/**" />
-                <exclude name="doc/lgpl-**" />
-                <exclude name="**/CVS/**" />
-                <exclude name="signserver_build.properties" />
-                <exclude name="conf/signserver_build.properties" />
-                <exclude name="tmp/**" />
-                <exclude name="p12/**" />
-                <exclude name="dist/**" />
-                <exclude name="lib/*.*ar" />
-                <exclude name="out/**" />
-                <exclude name="eclipseBuild/**" />
-                <exclude name="**/*.class" />
-                <exclude name=".classpath" />
-                <exclude name=".project" />
-                <exclude name=".eclipse/**" />
-                <exclude name=".settings/**" />
-                <exclude name="**/.cvsignore" />
-                <exclude name="**/*.sh" />
-                <exclude name="**/nbproject/private/**" />
+                <patternset refid="mixed.normalfiles"/>
             </zipfileset>
             <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="700" dirmode="700">
-                <include name="**/*.sh" />
+                <patternset refid="mixed.executablefiles"/>
             </zipfileset>
         </zip>
         <delete file="LICENSE"/>
-        <checksum file="../signserver-${signserver.zipversion}.zip" algorithm="SHA1" forceOverwrite="yes"/>
-        <checksum file="../signserver-${signserver.zipversion}.zip" algorithm="SHA1" property="signserverSHA1"/>
-        <echo message="SHA1 checksum: ${signserverSHA1}" />
+        <checksum file="${zip.dest.file}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${zip.dest.file}" algorithm="SHA1" property="zip.dest.file.sha1"/>
+        <echo>Released file: ${zip.dest.file}
+SHA1 checksum: ${zip.dest.file.sha1}</echo>
     </target>
 
-    <target name="-release:source-zip-lgpl21" depends="clean">
+    <target name="-release:source-zip-lgpl21" depends="clean,-init-release-patternsets">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <zip destfile="../signserver-${signserver.zipversion}-src.zip">
+        <property name="zip.src.dest.file" location="../signserver-${signserver.zipversion}-src.zip"/>
+        <zip destfile="${zip.src.dest.file}">
             <zipfileset dir="." prefix="signserver-${signserver.zipversion}-src" filemode="600" dirmode="700">
-                <include name="**/**" />
-                <exclude name="**/CVS/**" />
-                <exclude name="signserver_build.properties" />
-                <exclude name="conf/signserver_build.properties" />
-                <exclude name="tmp/**" />
-                <exclude name="p12/**" />
-                <exclude name="**/dist/**" />
-                <exclude name="**/build/**" />
-                <exclude name="SignServer-AdminGUI/lib/**" />
-                <exclude name="out/**" />
-                <exclude name="eclipseBuild/**" />
-                <exclude name="**/*.class" />
-                <exclude name="**/.cvsignore" />
-                <exclude name="**/nbproject/private/**" />
-                <exclude name="lib/**/*.jar" />
-                <exclude name="lib/**/*.zip" />
-                <exclude name="**/velocity.log" />
+                <patternset refid="source.normalfiles"/>
             </zipfileset>
             <zipfileset dir="." prefix="signserver-${signserver.zipversion}-src" filemode="700" dirmode="700">
-                <include name="**/*.sh" />
+                <patternset refid="source.executablefiles"/>
             </zipfileset>
         </zip>
         <delete file="LICENSE"/>
-        <checksum file="../signserver-${signserver.zipversion}-src.zip" algorithm="SHA1" forceOverwrite="yes"/>
-        <checksum file="../signserver-${signserver.zipversion}-src.zip" algorithm="SHA1" property="signserverSHA1"/>
-        <echo message="SHA1 checksum: ${signserverSHA1}" />
+        <checksum file="${zip.src.dest.file}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${zip.src.dest.file}" algorithm="SHA1" property="zip.src.dest.file.sha1"/>
+        <echo>Released file: ${zip.src.dest.file}
+SHA1 checksum: ${zip.src.dest.file.sha1}</echo>
     </target>
 
-    <target name="-release:source-tarball-lgpl21" depends="clean">
+    <target name="-release:source-tarball-lgpl21" depends="clean,-init-release-patternsets">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <property name="tarball.tar" value="../signserver-${signserver.zipversion}-src.tar" />
-        <property name="tarball.tar.gz" value="${tarball.tar}.gz" />
-        <tar tarfile="${tarball.tar}" basedir="." longfile="gnu">
-            <exclude name="**"/>
-            <tarfileset dir="." prefix="signserver-${signserver.zipversion}">
-                <include name="**/**" />
-                <exclude name="**/CVS/**" />
-                <exclude name="signserver_build.properties" />
-                <exclude name="conf/signserver_build.properties" />
-                <exclude name="tmp/**" />
-                <exclude name="p12/**" />
-                <exclude name="mods-available/**" />
-                <exclude name="**/dist/**" />
-                <exclude name="**/build/**" />
-                <exclude name="SignServer-AdminGUI/lib/**" />
-                <exclude name="out/**" />
-                <exclude name="eclipseBuild/**" />
-                <exclude name="**/*.class" />
-                <exclude name="**/.cvsignore" />
-                <exclude name="**/nbproject/private/**" />
-                <exclude name="lib/**/*.jar" />
-                <exclude name="lib/**/*.zip" />
-                <exclude name="**/velocity.log" />
+        <property name="tgz.src.tar.file" value="../signserver-${signserver.zipversion}-src.tar" />
+        <property name="tgz.src.tar.gz" location="${tgz.src.tar.file}.gz" />
+        <tar tarfile="${tgz.src.tar.file}" basedir="." longfile="gnu">
+            <exclude name="**/**"/>
+            <tarfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="600" dirmode="700">
+                <patternset refid="source.normalfiles"/>
+            </tarfileset>
+            <tarfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="700" dirmode="700">
+                <patternset refid="source.executablefiles"/>
             </tarfileset>
         </tar>
-        <gzip destfile="${tarball.tar.gz}" src="${tarball.tar}"/>
-        <delete file="${tarball.tar}"/>
+        <gzip destfile="${tgz.src.tar.gz}" src="${tgz.src.tar.file}"/>
+        <delete file="${tgz.src.tar.file}"/>
         <delete file="LICENSE"/>
-        <checksum file="${tarball.tar.gz}" algorithm="SHA1" forceOverwrite="yes"/>
-        <checksum file="${tarball.tar.gz}" algorithm="SHA1" property="signserverSHA1"/>
-        <echo message="SHA1 checksum: ${signserverSHA1}" />
+        <checksum file="${tgz.src.tar.gz}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${tgz.src.tar.gz}" algorithm="SHA1" property="tgz.src.tar.gz.sha1"/>
+        <echo>Released file: ${tgz.src.tar.gz}
+SHA1 checksum: ${tgz.src.tar.gz.sha1}</echo>
     </target>
 
-    <target name="release:bin-tarball" > <!-- depends="build" -->
+    <target name="release:binary-tarball" depends="build,-init-release-patternsets" description="Make a binary tarball for SignServer release">
         <property name="signserver.zipversion" value="${app.version.number}"/>
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <property name="tarball.tar" value="../signserver-${signserver.zipversion}-bin.tar" />
-        <property name="tarball.tar.gz" value="${tarball.tar}.gz" />
-        <tar tarfile="${tarball.tar}" basedir="." longfile="gnu">
+        <property name="tgz.bin.tar" value="../signserver-${signserver.zipversion}-bin.tar" />
+        <property name="tgz.bin.tar.gz" location="${tgz.bin.tar}.gz" />
+        <tar tarfile="${tgz.bin.tar}" basedir="." longfile="gnu">
             <exclude name="**/**"/>
-            <tarfileset dir="." prefix="signserver-${signserver.zipversion}">
-                <include name="**/**" />
-                <exclude name="signserver_build.properties" />
-                <exclude name="conf/signserver_build.properties" />
-                <exclude name="conf/admingui.properties" />
-                <exclude name="lib/**" />
-                <exclude name="modules/**" />
-                <exclude name="p12/**" />
-                <exclude name="tmp/**" />
-                <exclude name="**/velocity.log" />
-                <exclude name=".eclipse/**" />
-                <exclude name=".settings/**" />
-                <exclude name=".classpath" />
-                <exclude name=".project" />
-                <exclude name="**/.svn/**" />
-
-                <exclude name="res/install/**" />
-                <exclude name="res/test/**" />
-
-                <!-- TODO: The following should be moved anyway -->
-                <exclude name="bin/junit/**"/>
-                <exclude name="bin/classes/**"/>
+            <tarfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="600" dirmode="700">
+                <patternset refid="binary.normalfiles"/>
+            </tarfileset>
+            <tarfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="700" dirmode="700">
+                <patternset refid="binary.executablefiles"/>
             </tarfileset>
         </tar>
-        <gzip destfile="${tarball.tar.gz}" src="${tarball.tar}"/>
-        <delete file="${tarball.tar}"/>
+        <gzip destfile="${tgz.bin.tar.gz}" src="${tgz.bin.tar}"/>
+        <delete file="${tgz.bin.tar}"/>
         <delete file="LICENSE"/>
-        <checksum file="${tarball.tar.gz}" algorithm="SHA1" forceOverwrite="yes"/>
-        <checksum file="${tarball.tar.gz}" algorithm="SHA1" property="signserverSHA1"/>
-        <echo message="SHA1 checksum: ${signserverSHA1}" />
+        <checksum file="${tgz.bin.tar.gz}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${tgz.bin.tar.gz}" algorithm="SHA1" property="tgz.bin.tar.gz.sha1"/>
+        <echo>Released file: ${tgz.bin.tar.gz}
+SHA1 checksum: ${tgz.bin.tar.gz.sha1}</echo>
+    </target>
+    
+    <target name="release:binary-zip" depends="build,-init-release-patternsets" description="Make a binary zip for SignServer release">
+        <property name="signserver.zipversion" value="${app.version.number}"/>
+        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+        <property name="zip.bin" location="../signserver-${signserver.zipversion}-bin.zip"/>
+        <zip destfile="${zip.bin}">
+            <exclude name="**/**"/>
+            <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="600" dirmode="700">
+                <patternset refid="binary.normalfiles"/>
+            </zipfileset>
+            <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="700" dirmode="700">
+                <patternset refid="binary.executablefiles"/>
+            </zipfileset>
+        </zip>
+        <delete file="LICENSE"/>
+        <checksum file="${zip.bin}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${zip.bin}" algorithm="SHA1" property="zip.bin.sha1"/>
+        <echo>Released file: ${zip.bin}
+SHA1 checksum: ${zip.bin.sha1}</echo>
     </target>
 
 

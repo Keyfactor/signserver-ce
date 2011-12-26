@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Find directory for this script
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink -f "$SOURCE")"; done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
 # OS specific support.
 cygwin=false;
 case "`uname`" in
@@ -40,6 +45,9 @@ fi
 
 
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
+  if [ -f $DIR/signserver ]; then
+    SIGNSRV_HOME=$DIR/..
+  fi
   if [ -f /usr/share/signserver/bin/signserver ]; then
      SIGNSRV_HOME=/usr/share/signserver
   fi

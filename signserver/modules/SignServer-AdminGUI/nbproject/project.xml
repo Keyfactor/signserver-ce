@@ -50,14 +50,6 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>SignServer-ejb-SignServerWS</foreign-project>
-                <artifact-type>jar</artifact-type>
-                <script>build.xml</script>
-                <target>dist</target>
-                <clean-target>clean</clean-target>
-                <id>dist</id>
-            </reference>
-            <reference>
                 <foreign-project>SignServer-ejb-interfaces</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>

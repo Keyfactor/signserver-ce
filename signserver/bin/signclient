@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Find directory for this script
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink -f "$SOURCE")"; done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
 # OS specific support.
 cygwin=false;
 case "`uname`" in
@@ -38,25 +43,28 @@ if [ ! -n "$APPSRV_HOME" ]; then
 fi
 
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
+  if [ -f $DIR/signclient ]; then
+    SIGNSRV_HOME=$DIR/..
+  fi
   if [ -f /etc/signserver/signservermgmt.env ]; then
      . /etc/signserver/signservermgmt.env
   fi
   if [ -f /etc/mailsigner/mailsignermgmt.env ]; then
      . /etc/mailsigner/mailsignermgmt.env
   fi
-  if [ -f /usr/share/signserver/bin/signserver.sh ]; then
+  if [ -f /usr/share/signserver/bin/signclient ]; then
      SIGNSRV_HOME=/usr/share/signserver
   fi
-  if [ -f /opt/signserver/bin/signserver.sh ]; then
+  if [ -f /opt/signserver/bin/signclient ]; then
      SIGNSRV_HOME=/opt/signserver
   fi
-  if [ -f /usr/local/signserver/bin/signserver.sh ]; then
+  if [ -f /usr/local/signserver/bin/signclient ]; then
      SIGNSRV_HOME=/usr/local/signserver
   fi
-  if [ -f ./signserver.sh ]; then
+  if [ -f ./signclient ]; then
      SIGNSRV_HOME=..
   fi
-  if [ -f bin/signserver.sh ]; then
+  if [ -f bin/signclient ]; then
      SIGNSRV_HOME=.
   fi
 else

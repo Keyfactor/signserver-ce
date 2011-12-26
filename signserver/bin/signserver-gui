@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Find directory for this script
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink -f "$SOURCE")"; done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
 # OS specific support.
 cygwin=false;
 case "`uname`" in
@@ -39,6 +44,9 @@ fi
 
 
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
+  if [ -f $DIR/signserver-gui ]; then
+    SIGNSRV_HOME=$DIR/..
+  fi
   if [ -f /etc/signserver/signservermgmt.env ]; then
      . /etc/signserver/signservermgmt.env
   fi
@@ -48,16 +56,16 @@ if [ ! -n "${SIGNSERVER_HOME}" ]; then
   if [ -f /usr/share/signserver/bin/signserver ]; then
      SIGNSRV_HOME=/usr/share/signserver
   fi
-  if [ -f /opt/signserver/bin/signserver ]; then
+  if [ -f /opt/signserver/bin/signserver-gui ]; then
      SIGNSRV_HOME=/opt/signserver
   fi
-  if [ -f /usr/local/signserver/bin/signserver ]; then
+  if [ -f /usr/local/signserver/bin/signserver-gui ]; then
      SIGNSRV_HOME=/usr/local/signserver
   fi
-  if [ -f ./signserver ]; then
+  if [ -f ./signserver-gui ]; then
      SIGNSRV_HOME=..
   fi
-  if [ -f bin/signserver ]; then
+  if [ -f bin/signserver-gui ]; then
      SIGNSRV_HOME=.
   fi
 else

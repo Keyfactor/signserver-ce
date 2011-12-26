@@ -511,6 +511,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
             <fileset dir="${base}/lib">
                 <include name="SignServer-Common.jar"/>
                 <include name="SignServer-ejb-interfaces.jar"/>
+                <include name="SignServer-Module-Renewal-interface.jar"/>
             </fileset>
         </copy>
         <mkdir dir="${debian.pkgdist.destdir}/libsignserver-common/usr/share/java"/>
@@ -576,6 +577,8 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <exclude name="SignServer-ejb-interfaces.jar"/>      <!-- libsignserver-common -->
                 <exclude name="SignServer-AdminGUI.jar"/> <!-- signserver-admingui -->
                 <exclude name="SignServer-Client-CLI.jar"/> <!-- signserver-client -->
+                <exclude name="SignServer-Client-SignServerWS.jar"/> <!-- signserver-client -->
+                <exclude name="SignServer-Client-SigningAndValidationAPI.jar"/> <!-- signserver-client -->
                 <exclude name="SignServer-Module*.jar"/> <!-- libsignserver-modules -->
             </fileset>
         </copy>
@@ -654,6 +657,8 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
         <copy todir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/lib">
             <fileset dir="${base}/lib">
                 <include name="SignServer-Client-CLI.jar"/>
+                <include name="SignServer-Client-SignServerWS.jar"/>
+                <include name="SignServer-Client-SigningAndValidationAPI.jar"/>
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/lib">

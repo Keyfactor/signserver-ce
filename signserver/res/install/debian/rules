@@ -25,11 +25,18 @@ build-stamp:
 	mkdir -p lib/ext/module/odfsigner
 	mkdir -p lib/ext/module/ooxmlsigner
 	mkdir -p lib/ext/swing-app-framework
+	mkdir -p lib/ext/beans-binding
 	mkdir -p lib/ext/reports/
 	mkdir -p lib/ext/ext/velocity
 	mkdir -p ${APPSRV_HOME}/client
 #	ejbca-util-signserver
 	ln -s /usr/share/java/ejbca-util-signserver.jar lib/ext/ejbca-util.jar
+	ln -s /usr/share/java/cert-cvc.jar lib/ext/cert-cvc.jar
+	ln -s /usr/share/java/commons-collections3.jar lib/ext/commons-collections-3.2.jar
+	ln -s /usr/share/java/commons-io.jar lib/ext/commons-io-1.4.jar
+	ln -s /usr/share/java/commons-logging.jar lib/ext/commons-logging.jar
+	ln -s /usr/share/java/jboss-ejb3x.jar lib/ext/ext/ejb/jboss-ejb3x.jar
+	ln -s /usr/share/java/commons-configuration.jar lib/ext/
 #	Log4J
 	ln -s /usr/share/java/log4j-1.2.jar lib/ext/log4j.jar
 #	Servlet
@@ -56,10 +63,11 @@ build-stamp:
 #	Quartz
 	ln -s /usr/share/java/quartz-1.6.6.jar lib/ext/quartz/quartz-1.6.0.jar
 #	Commons FileUpload
-	ln -s /usr/share/java/commons-fileupload-1.2.1.jar lib/ext/ 
+	ln -s /usr/share/java/commons-fileupload.jar lib/ext/commons-fileupload-1.2.1.jar
 #	Swing Application Framework		
 	ln -s /usr/share/java/AppFramework-1.03.jar lib/ext/swing-app-framework/appframework-1.0.3.jar
 	ln -s /usr/share/java/swing-worker-1.1.jar lib/ext/swing-app-framework/swing-worker-1.1.jar
+	ln -s /usr/share/java/beansbinding.jar lib/ext/beans-binding/beansbinding-1.2.1.jar
 #	itext
 	ln -s /usr/share/java/itext.jar lib/ext/module/pdfsigner/itext/itext.jar
 #	jfreechart
@@ -74,12 +82,19 @@ build-stamp:
 #	Disable modules with unsatisfied dependencies
 	echo "module.odfsigner.enabled=false" >> conf/signserver_build.properties
 	echo "module.ooxmlsigner.enabled=false" >> conf/signserver_build.properties
+
+	echo "signserverclientws.enabled=true" >> conf/signserver_build.properties
 	
 #	TODO: Find the dependencies and enable the following modules
 	echo "webdoc.enabled=false" >> conf/signserver_build.properties
 
+
+#	Update paths to work with unprivileged user
+	sed -i 's/tmp=.*/tmp=\/tmp\/signserver-$${user.name}/g' res/signserver-project.properties
+	sed -i 's/ear.dist.file=.*/ear.dist.file=$${tmp}\/dist\/signserver.ear/g' res/signserver-project.properties
+
 	mkdir -p mods-available
-	ant debian-pkgdist
+	ant debian-pkgdist > ant.log
 
 	touch $@
 
@@ -100,6 +115,7 @@ clean:
 	rm lib/ext/javaee-web-api-6.0 -rf
 	rm lib/ext/javaee-api-6.0 -rf
 	rm lib/ext/swing-app-framework -rf
+	rm lib/ext/beans-binding -rf
 	rm lib/ext/reports -rf
 	rm lib/ext/module/pdfsigner/itext/ -rf
 	rm ${APPSRV_HOME} -rf
@@ -112,14 +128,14 @@ install: build
 	dh_prep 
 	dh_installdirs
 
-#	Install
+#	Install libsignserver3.3-common
 	mkdir -p debian/libsignserver3.3-common/
 	cp -rv dist-debian/libsignserver-common/*  debian/libsignserver3.3-common/
-	rm debian/libsignserver3.3-common/usr/share/signserver3.3/lib -rf
+	rm debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext -rf
 
 	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext
 	ln -s /usr/share/java/commons-lang-2.4.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/commons-lang-2.4.jar
-	ln -s /usr/share/java/log4j-1.2.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/log4j.jar
+	ln -s /usr/share/java/log4j-1.2.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/log4j.jar
 	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/1.6
 	ln -s /usr/share/java/bcmail.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/1.6/bcmail-jdk.jar
 	ln -s /usr/share/java/bctsp.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/1.6/bctsp-jdk.jar
@@ -133,14 +149,57 @@ install: build
 	ln -s /usr/share/java/ejbca-util-signserver.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ejbca-util.jar
 	ln -s /usr/share/java/cert-cvc.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/cert-cvc.jar
 	ln -s /usr/share/java/commons-configuration.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/
+	ln -s /usr/share/java/commons-collections3.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/commons-collections-3.2.jar
+	ln -s /usr/share/java/commons-logging.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/commons-logging.jar
 
-#	cp -r dist-debian/libsignserver-modules/* debian/libsignserver3.3-modules/
-#	cp -r dist-debian/signserver-admingui/* debian/signserver3.3-admingui/
-#	cp -r dist-debian/signserver-client/* debian/signserver3.3-clients/
-	mkdir -p debian/signserver3.3-server/
+#	Install libsignserver3.3-modules
+	mkdir -p debian/libsignserver3.3-modules/
+	cp -r dist-debian/libsignserver-modules/* debian/libsignserver3.3-modules/
+
+#	Install signserver3.3-admingui
+	mkdir -p debian/signserver3.3-admingui/bin
+	cp -r dist-debian/signserver-admingui/* debian/signserver3.3-admingui/
+	mkdir -p debian/signserver3.3-admingui/usr/share/icons
+	cp modules/SignServer-AdminGUI/src/org/signserver/admin/gui/resources/cogwheel_gear_zahnrad_6.png debian/signserver3.3-admingui/usr/share/icons/signserver-admingui.png
+	mkdir -p debian/signserver3.3-admingui/usr/share/applications
+	cp debian/signserver-admingui-local.desktop debian/signserver3.3-admingui/usr/share/applications/
+	cp debian/signserver-admingui-ws.desktop debian/signserver3.3-admingui/usr/share/applications/
+	mkdir debian/signserver3.3-admingui/usr/bin
+
+	chmod +x debian/signserver3.3-admingui/usr/share/signserver3.3/bin/signserver-gui
+	ln -sf /usr/share/signserver3.3/bin/signserver-gui debian/signserver3.3-admingui/usr/bin/
+
+	mkdir -p debian/signserver3.3-admingui/usr/share/signserver3.3/lib/ext/swing-app-framework
+	ln -s /usr/share/java/AppFramework-1.03.jar debian/signserver3.3-admingui/usr/share/signserver3.3/lib/ext/swing-app-framework/appframework-1.0.3.jar
+	ln -s /usr/share/java/swing-worker-1.1.jar debian/signserver3.3-admingui/usr/share/signserver3.3/lib/ext/swing-app-framework/swing-worker-1.1.jar
+	mkdir -p debian/signserver3.3-admingui/usr/share/signserver3.3/lib/ext/beans-binding
+	ln -s /usr/share/java/beansbinding.jar debian/signserver3.3-admingui/usr/share/signserver3.3/lib/ext/beans-binding/beansbinding-1.2.1.jar
+
+#	Install signserver3.3-client
+	mkdir -p debian/signserver3.3-client/usr/bin/
+	cp -r dist-debian/signserver-client/* debian/signserver3.3-client/
+	chmod +x debian/signserver3.3-client/usr/share/signserver3.3/bin/signclient
+	ln -sf /usr/share/signserver3.3/bin/signclient debian/signserver3.3-client/usr/bin/
+
+#	Install signserver3.3-server
+	mkdir -p debian/signserver3.3-server/usr/bin
 	cp -rv dist-debian/signserver-server/* debian/signserver3.3-server/
 	rm debian/signserver3.3-server/usr/share/signserver3.3/lib/ext -rf
-	
+	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/signserver
+	ln -sf /usr/share/signserver3.3/bin/signserver debian/signserver3.3-server/usr/bin/
+
+	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/ant
+	ln -sf /usr/share/signserver3.3/bin/ant debian/signserver3.3-server/usr/bin/signant
+
+#	TODO
+#	mkdir -p debian/signserver3.3-doc/doc/htdocs/
+#	mkdir -p debian/signserver3.3-doc/mods-available/
+#	mkdir -p debian/signserver3.3-doc/lib/
+#	cp -r doc/htdocs/* debian/signserver3.3-doc/doc/htdocs/
+#	cp mods-available/30_webdoc.properties debian/signserver3.3-doc/mods-available/
+#	cp lib/SignServer-war-Doc.war debian/signserver3.3-doc/lib/
+		
+
 	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate
 #	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/lucene-core-2.4.1.jar
 #	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/slf4j-api-1.5.2.jar
@@ -164,7 +223,7 @@ install: build
 #	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ext/ejb/jboss-j2ee.jar
 	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-api-6.0
 	ln -s /usr/share/java/glassfish-javaee.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-api-6.0/javaee-api-6.0.jar
-	ln -s /usr/share/java/commons-fileupload-1.2.1.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/commons-fileupload-1.2.1.jar
+	ln -s /usr/share/java/commons-fileupload.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/commons-fileupload-1.2.1.jar
 	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/quartz
 	ln -s /usr/share/java/quartz-1.6.6.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/quartz/quartz-1.6.0.jar
 

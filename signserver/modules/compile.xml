@@ -626,8 +626,12 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
         <mkdir dir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}"/>
         <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/bin">
             <fileset dir="${base}/bin">
-                <include name="admingui-splash.png"/>
                 <include name="signserver-gui"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/res">
+            <fileset dir="${base}/res">
+                <include name="admingui-splash.png"/>
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/conf">

@@ -75,6 +75,7 @@ build-stamp:
 	ln -s /usr/share/java/jcommon.jar lib/ext/reports/jcommon-1.0.12.jar
 #	velocity
 	ln -s /usr/share/java/velocity.jar lib/ext/ext/velocity/
+	ln -s /usr/share/java/xmltask.jar lib/ext/ext/
 
 #	Configuration
 	echo "includemodulesinbuild=false" > conf/signserver_build.properties
@@ -84,9 +85,6 @@ build-stamp:
 	echo "module.ooxmlsigner.enabled=false" >> conf/signserver_build.properties
 
 	echo "signserverclientws.enabled=true" >> conf/signserver_build.properties
-	
-#	TODO: Find the dependencies and enable the following modules
-	echo "webdoc.enabled=false" >> conf/signserver_build.properties
 
 
 #	Update paths to work with unprivileged user
@@ -94,7 +92,7 @@ build-stamp:
 	sed -i 's/ear.dist.file=.*/ear.dist.file=$${tmp}\/dist\/signserver.ear/g' res/signserver-project.properties
 
 	mkdir -p mods-available
-	ant debian-pkgdist > ant.log
+	ant -q debian-pkgdist | grep -v "Trying to override old definition of task http://www.netbeans.org/" | grep -v "org/netbeans/modules/java/j2seproject/copylibstask/antlib.xml"
 
 	touch $@
 
@@ -106,7 +104,7 @@ clean:
 	rm -f ${APPSRV_HOME}/lib/appserv-rt.jar
 	ln -s /usr/share/java/glassfish-appserv-rt.jar ${APPSRV_HOME}/lib/appserv-rt.jar
 #	Clean
-	ant clean
+	ant -q clean | grep -v "Trying to override old definition of task http://www.netbeans.org/" | grep -v "org/netbeans/modules/java/j2seproject/copylibstask/antlib.xml"
 	rm lib/ext/*.jar -f
 	rm lib/ext/ext -rf
 	rm lib/ext/hibernate -rf
@@ -191,14 +189,15 @@ install: build
 	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/ant
 	ln -sf /usr/share/signserver3.3/bin/ant debian/signserver3.3-server/usr/bin/signant
 
-#	TODO
-#	mkdir -p debian/signserver3.3-doc/doc/htdocs/
-#	mkdir -p debian/signserver3.3-doc/mods-available/
-#	mkdir -p debian/signserver3.3-doc/lib/
-#	cp -r doc/htdocs/* debian/signserver3.3-doc/doc/htdocs/
-#	cp mods-available/30_webdoc.properties debian/signserver3.3-doc/mods-available/
-#	cp lib/SignServer-war-Doc.war debian/signserver3.3-doc/lib/
-		
+#	Install signserver3.3-doc
+	mkdir -p debian/signserver3.3-doc/usr/share/signserver3.3/doc/htdocs/
+	mkdir -p debian/signserver3.3-doc/usr/share/signserver3.3/mods-available/
+	mkdir -p debian/signserver3.3-doc/usr/share/signserver3.3/lib/
+	cp -r doc/htdocs/* debian/signserver3.3-doc/usr/share/signserver3.3/doc/htdocs/
+	cp mods-available/30_webdoc.properties debian/signserver3.3-doc/usr/share/signserver3.3/mods-available/
+	cp lib/SignServer-war-Doc.war debian/signserver3.3-doc/usr/share/signserver3.3/lib/
+	mkdir -p debian/signserver3.3-doc/usr/share/signserver3.3/lib/ext/ext/
+	ln -s /usr/share/java/xmltask.jar debian/signserver3.3-doc/usr/share/signserver3.3/lib/ext/ext/xmltask.jar
 
 	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate
 #	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/lucene-core-2.4.1.jar

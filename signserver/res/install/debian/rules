@@ -192,12 +192,9 @@ install: build
 	ln -sf /usr/share/signserver3.3/bin/ant debian/signserver3.3-server/usr/bin/signant
 
 #	Install signserver3.3-doc
-	mkdir -p debian/signserver3.3-doc/usr/share/signserver3.3/doc/htdocs/
-	mkdir -p debian/signserver3.3-doc/usr/share/signserver3.3/mods-available/
-	mkdir -p debian/signserver3.3-doc/usr/share/signserver3.3/lib/
-	cp -r doc/htdocs/* debian/signserver3.3-doc/usr/share/signserver3.3/doc/htdocs/
-	cp mods-available/30_webdoc.properties debian/signserver3.3-doc/usr/share/signserver3.3/mods-available/
-	cp lib/SignServer-war-Doc.war debian/signserver3.3-doc/usr/share/signserver3.3/lib/
+	mkdir -p debian/signserver3.3-doc
+	cp -rv dist-debian/signserver-doc/* debian/signserver3.3-doc/
+	rm debian/signserver3.3-server/usr/share/signserver3.3/lib/ext -rf
 	mkdir -p debian/signserver3.3-doc/usr/share/signserver3.3/lib/ext/ext/
 	ln -s /usr/share/java/xmltask.jar debian/signserver3.3-doc/usr/share/signserver3.3/lib/ext/ext/xmltask.jar
 

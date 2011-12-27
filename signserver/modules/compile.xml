@@ -580,10 +580,13 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <exclude name="SignServer-Client-SignServerWS.jar"/> <!-- signserver-client -->
                 <exclude name="SignServer-Client-SigningAndValidationAPI.jar"/> <!-- signserver-client -->
                 <exclude name="SignServer-Module*.jar"/> <!-- libsignserver-modules -->
+                <exclude name="SignServer-war-Doc.war"/> <!-- signserver-doc -->
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/doc">
-            <fileset dir="${base}/doc"/>
+            <fileset dir="${base}/doc">
+                <exclude name="htdocs/**"/> <!-- signserver-doc -->
+            </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/lib/ext">
             <fileset dir="${base}/lib/ext">
@@ -604,6 +607,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
         <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/mods-available">
             <fileset dir="${base}/mods-available">
                 <exclude name="40_*"/> <!-- libsignserver-modules -->
+                <exclude name="30_webdoc.properties"/> <!-- signserver-doc -->
             </fileset>
         </copy>
         <mkdir dir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/p12"/>
@@ -688,7 +692,22 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
         </copy>
         
         <!-- signserver-doc -->
-        <!-- TODO -->
+        <mkdir dir="${debian.pkgdist.destdir}/signserver-doc/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/signserver-doc/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <include name="SignServer-war-Doc.war"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-doc/${prefix}/${pkg.basename}/mods-available">
+            <fileset dir="${base}/mods-available">
+                <include name="30_webdoc.properties"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-doc/${prefix}/${pkg.basename}/doc">
+            <fileset dir="${base}/doc">
+                <include name="htdocs/**"/>
+            </fileset>
+        </copy>
 
     </target>
 

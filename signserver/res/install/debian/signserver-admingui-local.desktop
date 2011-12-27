@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=SignServer Admin GUI (local)
+Icon=signserver-admingui
+Exec=/usr/bin/signserver-gui

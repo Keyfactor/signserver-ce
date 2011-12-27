@@ -85,6 +85,7 @@ build-stamp:
 	echo "module.ooxmlsigner.enabled=false" >> conf/signserver_build.properties
 
 	echo "signserverclientws.enabled=true" >> conf/signserver_build.properties
+	echo "module.renewal.enabled=true" >> conf/signserver_build.properties
 
 
 #	Update paths to work with unprivileged user
@@ -149,6 +150,7 @@ install: build
 	ln -s /usr/share/java/commons-configuration.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/
 	ln -s /usr/share/java/commons-collections3.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/commons-collections-3.2.jar
 	ln -s /usr/share/java/commons-logging.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/commons-logging.jar
+	ln -s /usr/share/java/commons-io.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/commons-io-1.4.jar
 
 #	Install libsignserver3.3-modules
 	mkdir -p debian/libsignserver3.3-modules/

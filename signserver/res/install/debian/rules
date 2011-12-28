@@ -40,9 +40,9 @@ build-stamp:
 #	Log4J
 	ln -s /usr/share/java/log4j-1.2.jar lib/ext/log4j.jar
 #	Servlet
-	ln -s /usr/share/java/servlet-2.3.jar lib/ext/ext/servlet-2.3.jar
-	ln -s /usr/share/java/servlet-2.3.jar lib/ext/javaee-web-api-6.0/javaee-web-api-6.0.jar
-#	ln -s /usr/share/java/servlet-2.3.jar ${APPSRV_HOME}/lib/servlet-api.jar
+	ln -s /usr/share/java/servlet-api-2.5.jar lib/ext/ext/servlet-2.3.jar
+	ln -s /usr/share/java/servlet-api-2.5.jar lib/ext/javaee-web-api-6.0/javaee-web-api-6.0.jar
+#	ln -s /usr/share/java/servlet-api-2.5.jar ${APPSRV_HOME}/lib/servlet-api.jar
 #	Bouncy Castle
 	ln -s /usr/share/java/bcprov.jar lib/ext/1.6/bcprov-jdk.jar
 	ln -s /usr/share/java/bcmail.jar lib/ext/1.6/bcmail-jdk.jar
@@ -86,6 +86,9 @@ build-stamp:
 
 	echo "signserverclientws.enabled=true" >> conf/signserver_build.properties
 	echo "module.renewal.enabled=true" >> conf/signserver_build.properties
+
+#	Patch AdminGUI to use the GTK look and feel (DSS-319)
+	sed -i 's/Application.lookAndFeel.*=.*/Application.lookAndFeel = com.sun.java.swing.plaf.gtk.GTKLookAndFeel/g' modules/SignServer-AdminGUI/src/org/signserver/admin/gui/resources/SignServerAdminGUIApplication.properties
 
 
 #	Update paths to work with unprivileged user
@@ -142,7 +145,7 @@ install: build
 	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ext
 	mkdir -p debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ext/ejb
 	ln -s /usr/share/java/jboss-j2ee.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ext/ejb/jboss-j2ee.jar
-	ln -s /usr/share/java/servlet-2.3.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ext/servlet-2.3.jar
+#	ln -s /usr/share/java/servlet-api-2.5.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ext/servlet-2.3.jar
 	ln -s /usr/share/java/commons-cli.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ext/commons-cli-1.0.jar
 	cp lib/nblibraries.properties debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/nblibraries.properties
 	ln -s /usr/share/java/ejbca-util-signserver.jar debian/libsignserver3.3-common/usr/share/signserver3.3/lib/ext/ejbca-util.jar
@@ -155,6 +158,8 @@ install: build
 #	Install libsignserver3.3-modules
 	mkdir -p debian/libsignserver3.3-modules/
 	cp -r dist-debian/libsignserver-modules/* debian/libsignserver3.3-modules/
+	mkdir -p debian/libsignserver3.3-modules/usr/share/signserver3.3/lib/ext/module/pdfsigner/itext
+	ln -s /usr/share/java/itext.jar debian/libsignserver3.3-modules/usr/share/signserver3.3/lib/ext/module/pdfsigner/itext/itext.jar
 
 #	Install signserver3.3-admingui
 	mkdir -p debian/signserver3.3-admingui/bin
@@ -191,13 +196,6 @@ install: build
 	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/ant
 	ln -sf /usr/share/signserver3.3/bin/ant debian/signserver3.3-server/usr/bin/signant
 
-#	Install signserver3.3-doc
-	mkdir -p debian/signserver3.3-doc
-	cp -rv dist-debian/signserver-doc/* debian/signserver3.3-doc/
-	rm debian/signserver3.3-server/usr/share/signserver3.3/lib/ext -rf
-	mkdir -p debian/signserver3.3-doc/usr/share/signserver3.3/lib/ext/ext/
-	ln -s /usr/share/java/xmltask.jar debian/signserver3.3-doc/usr/share/signserver3.3/lib/ext/ext/xmltask.jar
-
 	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate
 #	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/lucene-core-2.4.1.jar
 #	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/slf4j-api-1.5.2.jar
@@ -214,13 +212,13 @@ install: build
 #	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/hibernate-validator-3.1.0.GA.jar
 	ln -s /usr/share/java/hibernate-entitymanager.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/hibernate/hibernate-entitymanager.jar
 	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-web-api-6.0
-	ln -s /usr/share/java/servlet-2.3.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-web-api-6.0/javaee-web-api-6.0.jar
+#	ln -s /usr/share/java/servlet-api-2.5.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-web-api-6.0/javaee-web-api-6.0.jar
 	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ext
 	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ext/ejb
-	ln -s /usr/share/java/jboss-ejb3x.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ext/ejb/jboss-ejb3x.jar
+#	ln -s /usr/share/java/jboss-ejb3x.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ext/ejb/jboss-ejb3x.jar
 #	ln -s debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/ext/ejb/jboss-j2ee.jar
 	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-api-6.0
-	ln -s /usr/share/java/glassfish-javaee.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-api-6.0/javaee-api-6.0.jar
+#	ln -s /usr/share/java/glassfish-javaee.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/javaee-api-6.0/javaee-api-6.0.jar
 	ln -s /usr/share/java/commons-fileupload.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/commons-fileupload-1.2.1.jar
 	mkdir -p debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/quartz
 	ln -s /usr/share/java/quartz-1.6.6.jar debian/signserver3.3-server/usr/share/signserver3.3/lib/ext/quartz/quartz-1.6.0.jar
@@ -228,6 +226,9 @@ install: build
 	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/signserver
 	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/ant
 
+#	Install signserver3.3-doc
+	mkdir -p debian/signserver3.3-doc
+	cp -rv dist-debian/signserver-doc/* debian/signserver3.3-doc/
 
 
 binary-arch: build install

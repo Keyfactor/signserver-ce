@@ -1,3 +1,15 @@
+signserver3.3 (3.3.0alpha5-1markus3) natty; urgency=low
+
+  * Fixing desktop shortcuts.
+
+ -- Markus Kilås <markus@markuspage.com>  Thu, 29 Dec 2011 20:39:01 +0100
+
+signserver3.3 (3.3.0alpha5-1markus2) natty; urgency=low
+
+  * Fixing dependencies.
+
+ -- Markus Kilås <markus@markuspage.com>  Tue, 27 Dec 2011 22:30:34 +0100
+
 signserver3.3 (3.3.0alpha5-1markus1) natty; urgency=low
 
   * New upstream release.

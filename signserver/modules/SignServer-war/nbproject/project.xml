@@ -26,6 +26,9 @@
                     <file>${libs.javaee-web-api-6.0.classpath}</file>
                 </library>
                 <library dirs="200">
+                    <file>${libs.javaee-api-6.0.classpath}</file>
+                </library>
+                <library dirs="200">
                     <file>${libs.Commons-Fileupload.classpath}</file>
                 </library>
                 <library dirs="200">

@@ -1,3 +1,9 @@
+signserver3.3 (3.3.0alpha6-1markus1) oneiric; urgency=low
+
+  * Simplified packaging.
+
+ -- Markus Kilås <markus@markuspage.com>  Sat, 31 Dec 2011 21:28:55 +0100
+
 signserver3.3 (3.3.0alpha5-1markus3) natty; urgency=low
 
   * Fixing desktop shortcuts.

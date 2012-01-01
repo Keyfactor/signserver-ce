@@ -496,7 +496,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
     <!-- =================================================================== -->
     <!-- Debian packaging                                                    -->
     <!-- =================================================================== -->
-    <target name="debian-pkgdist" depends="clean, build" 
+    <target name="debian-pkgdist" depends="clean, unix-create-jar-symlinks, build" 
         description="Put together files to be included in Debian (or other) packages">
         <property name="pkg.basename" value="signserver3.3"/>
         <property name="pkg.version" value="3.3"/>
@@ -539,6 +539,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="ext/commons-io-1.4.jar"/>
                 <include name="ext/commons-lang-2.4.jar"/>
                 <include name="ext/commons-logging.jar"/>
+                <include name="ext/commons-configuration.jar"/>
                 <include name="ext/ejbca-util.jar"/>
                 <include name="ext/log4j.jar"/>
             </fileset>
@@ -550,6 +551,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="log4j.properties"/>
             </fileset>
         </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
         
         <!-- signserver-server -->
         <mkdir dir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}"/>
@@ -591,7 +593,6 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
             <fileset dir="${base}/lib/ext">
                
                 <!-- EJB -->
-                <include name="ext/ejb/**"/>
                 <include name="hibernate/**"/>
                 <include name="javaee-api-6.0/**"/>
                 <include name="javaee-web-api-6.0/**"/>
@@ -624,6 +625,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="README"/>
             </fileset>
         </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
         
         <!-- signserver-admingui -->
         <mkdir dir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}"/>
@@ -642,10 +644,10 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="admingui_default.properties"/>
             </fileset>
         </copy>
-        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib">
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib/ext">
             <fileset dir="${base}/lib/ext">
-                <!-- TODO -->
-                <exclude name="**"/>
+                <include name="swing-app-framework/**"/>
+                <include name="beans-binding/**"/>
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib">
@@ -653,6 +655,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="SignServer-AdminGUI.jar"/>
             </fileset>
         </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
         
         <!-- signserver-client -->
         <mkdir dir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}"/>
@@ -674,14 +677,19 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <exclude name="**"/>
             </fileset>
         </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
         
         <!-- libsignserver-modules -->
         <mkdir dir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}"/>
         <copy todir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/lib">
             <fileset dir="${base}/lib">
-                <!-- TODO -->
                 <exclude name="ext/**"/>
                 <include name="SignServer-Module*.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/lib/ext">
+            <fileset dir="${base}/lib/ext">
+                <include name="module/pdfsigner/**"/>
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/mods-available">
@@ -689,6 +697,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="40_*"/>
             </fileset>
         </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
         
         <!-- signserver-doc -->
         <mkdir dir="${debian.pkgdist.destdir}/signserver-doc/${prefix}/${pkg.basename}"/>
@@ -707,7 +716,16 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="htdocs/**"/>
             </fileset>
         </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/signserver-doc/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
 
+    </target>
+    
+    <!-- Creates symlinks to all needed jars in the lib folder as specified by the mappingsFile. -->
+    <target name="unix-create-jar-symlinks" depends="-build-buildtools">
+        <taskdef name="symlinklibs" classname="org.signserver.anttasks.UnixSymlinkLibsTask" classpath="lib/SignServer-BuildTools.jar"/>
+        <property name="libdir" location="lib"/>
+        <property name="mappingsFile" location="res/install/debian/oneiric-jars.properties"/>
+        <symlinklibs action="create" dir="${libdir}" mappingsFile="${mappingsFile}"/>
     </target>
 
     <!-- =================================================================== -->

@@ -50,6 +50,7 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
 
     private static AdminWS adminWS;
     private static ISigningAndValidation clientWS;
+    private static String serverHost;
 
     private static File connectFile;
     private static File defaultConnectFile;
@@ -178,10 +179,11 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
                         connectFile, defaultConnectFile);
                 dlg.setVisible(true);
                 adminWS = dlg.getWS();
-                
+                serverHost = dlg.getServerHost();
             } else {
                 try {
                     adminWS = new AdminLayerEJBImpl();
+                    serverHost = "local";
                 } catch (NamingException ex) {
                     LOG.error("Startup error", ex);
                     JOptionPane.showMessageDialog(null,
@@ -221,6 +223,13 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
                     + ex.getMessage(),
                     "SignServer Administration GUI startup",
                     JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * @return Address of the server to connect to in some human readable form.
+     */
+    public static String getServerHost() {
+        return serverHost;
     }
 
 }

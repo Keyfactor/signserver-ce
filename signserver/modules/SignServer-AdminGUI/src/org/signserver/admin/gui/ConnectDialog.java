@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -71,6 +72,8 @@ public class ConnectDialog extends javax.swing.JDialog {
 
     private ConnectSettings settings;
     private AdminWS ws;
+    private String serverHost;
+    
     private static final File LEGACY_DEFAULT_CONNECT_FILE =
             new File("default_connect.properties");
     private static final File DEFAULT_CONNECT_FILE =
@@ -406,6 +409,7 @@ public class ConnectDialog extends javax.swing.JDialog {
         try {
 
             final String urlstr = settings.getUrl() + WS_PATH;
+            serverHost = getSimplifiedHostAddress(settings.getUrl());
 
                 KeyStore.CallbackHandlerProtection pp = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {
 
@@ -737,6 +741,36 @@ public class ConnectDialog extends javax.swing.JDialog {
 
     public AdminWS getWS() {
         return ws;
+    }
+
+    /**
+     * @return Something to display as host address.
+     */
+    private String getSimplifiedHostAddress(String stringURL) {
+        try {
+            // Only use host:port and skip protocol and path
+            URL url = new URL(stringURL);
+            StringBuilder buff = new StringBuilder();
+            buff.append(url.getHost());
+            if (url.getPort() == -1) {
+                if (url.getDefaultPort() != -1) {
+                    buff.append(":").append(url.getDefaultPort());
+                }
+            } else {
+                buff.append(":").append(url.getPort());
+            }
+            return buff.toString();
+        } catch (MalformedURLException ex) {
+            // Use the String in case it was not an correct URL
+            return stringURL;
+        }
+    }
+
+    /**
+     * @return Address of the server to connect to in some human readable form.
+     */
+    public String getServerHost() {
+        return serverHost;
     }
 
 }

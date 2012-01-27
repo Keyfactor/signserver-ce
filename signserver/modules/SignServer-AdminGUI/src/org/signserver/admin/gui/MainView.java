@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Vector;
 import javax.ejb.EJBException;
@@ -75,12 +76,14 @@ public class MainView extends FrameView {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(MainView.class);
 
+    private ResourceBundle texts = ResourceBundle.getBundle("org/signserver/admin/gui/resources/SignServerAdminGUIApplication");
+    
     private List<Worker> allWorkers = new ArrayList<Worker>();
     private List<Worker> selectedWorkers = new ArrayList<Worker>();
     private Worker selectedWorker;
     private Worker selectedWorkerBeforeRefresh;
     
-
+    
     private static String[] statusColumns = {
         "Property", "Value"
     };
@@ -1604,6 +1607,9 @@ public class MainView extends FrameView {
         @Override protected void succeeded(final Object result) {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
+            
+            SignServerAdminGUIApplication.getApplication().getMainFrame().setTitle(SignServerAdminGUIApplication.getServerHost() + " - " + texts.getString("Application.title"));
+            
             final List<Worker> newWorkers = (List) result;
 
             // Save selection

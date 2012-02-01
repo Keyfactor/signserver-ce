@@ -78,9 +78,13 @@ then
         exit 1
 fi
 
+# Optional JARs
+OPTIONAL_CLASSPATH=${SIGNSRV_HOME}/lib/SignServer-Client-ValidationCLI.jar
+
 # Construct the classpath
 CP="${SIGNSRV_HOME}/lib/${MAIN_JAR}"
 CP="${SIGNSRV_HOME}/conf":"$CP"
+CP="$CP":${OPTIONAL_CLASSPATH}
 
 # Application server dependencies
 if [ -f $APPSRV_HOME/lib/appserv-rt.jar ]; then

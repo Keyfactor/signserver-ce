@@ -24,7 +24,10 @@ if not exist %SIGNSRV_HOME%/lib/SignServer-Client-CLI.jar  (
     goto end
 )
 
-set CLASSPATH=%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%/lib/SignServer-Client-CLI.jar;%J2EE_CP%
+rem Optional JARs
+OPTIONAL_CLASSPATH=%SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI.jar
+
+set CLASSPATH=%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%/lib/SignServer-Client-CLI.jar;%J2EE_CP%;%OPTIONAL_CLASSPATH%
 rem echo %CLASSPATH%
 
 rem Fixup arguments, we have to do this since windows normally only 

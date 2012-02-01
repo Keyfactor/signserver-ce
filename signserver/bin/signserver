@@ -24,7 +24,7 @@ else
 fi
 
 
-class_name=org.signserver.cli.signserver
+class_name=org.signserver.admin.cli.AdminCLI
 ADMINCLI_JAR=SignServer-AdminCLI.jar
 
 # discard $1 from the command line args
@@ -74,9 +74,13 @@ then
         exit 1
 fi
 
+# Optional JARs
+OPTIONAL_CLASSPATH=
+
 # Construct the classpath
 CP="$SIGNSRV_HOME/lib/${ADMINCLI_JAR}"
 CP="${SIGNSRV_HOME}/conf":"$CP"
+CP="$CP":${OPTIONAL_CLASSPATH}
 
 # Application server dependencies
 if [ -f $APPSRV_HOME/lib/appserv-rt.jar ]; then

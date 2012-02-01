@@ -12,12 +12,12 @@
  *************************************************************************/
 package org.signserver.client.cli;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.io.IOException;
 import org.apache.log4j.Logger;
-import org.signserver.client.PerformanceTestTool;
-import org.signserver.client.validationservice.ValidationCLI;
+import org.signserver.cli.CommandLineInterface;
+import org.signserver.cli.spi.CommandFailureException;
+import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.client.cli.spi.ClientCommandFactory;
 
 /**
  * Main class for the Client CLI.
@@ -29,17 +29,6 @@ public class Main {
 
      /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(Main.class);
-    
-    private static final String CMD_PDFPERFORMANCETEST = "pdfperformancetest";
-
-    private static final List<String> COMMANDS = Arrays.asList(
-            "signdocument",
-            "validatedocument",
-            "timestamp",
-            "validatecertificate",
-            "signdatagroups",
-            CMD_PDFPERFORMANCETEST);
-
 
     /** No instances of this class. */
     private Main() { }
@@ -48,55 +37,17 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(final String[] args) {
-
-        if (args.length == 0) {
-            printUsage(COMMANDS);
-        } else if ("signdocument".equals(args[0])) {
-            DocumentSignerCLI.main(args);
-        } else if ("validatedocument".equals(args[0])) {
-            DocumentValidatorCLI.main(args);
-        } else if ("signdatagroups".equals(args[0])) {
-            SODSignerCLI.main(args);
-        } else if ("timestamp".equals(args[0])) {
-            try {
-                org.signserver.client.TimeStampClient.main(
-                        Arrays.copyOfRange(args, 1, args.length));
-            } catch (Exception ex) {
-                LOG.error(ex, ex);
-            }
-        } else if ("validatecertificate".equals(args[0])) {
-            try {
-                ValidationCLI.main(
-                        Arrays.copyOfRange(args, 1, args.length));
-            } catch (Exception ex) {
-                LOG.error(ex, ex);
-            }
-        } else if (CMD_PDFPERFORMANCETEST.equals(args[0])) {
-            try {
-                PerformanceTestTool.main(
-                        Arrays.copyOfRange(args, 1, args.length));
-            } catch (Exception ex) {
-                LOG.error(ex, ex);
-            }
-        } else {
-            printUsage(COMMANDS);
-        }   
-    }
-
-    private static void printUsage(List<String> commands) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("usage:");
-        sb.append(" ");
-        sb.append("client");
-        sb.append(" ");
-        sb.append("<");
-        for (final Iterator<String> it = commands.iterator(); it.hasNext();) {
-            sb.append(it.next());
-            if(it.hasNext()) {
-                sb.append(" | ");
-            }
+        try {
+            CommandLineInterface cli = new CommandLineInterface();
+            cli.setFactoryClass(ClientCommandFactory.class);
+            cli.execute(args);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error(ex.getMessage());
+        } catch (CommandFailureException ex) {
+            LOG.error(ex.getMessage());
+        } catch (IOException ex) {
+            LOG.error("Unexpected failure running the command", ex);
         }
-        sb.append(">");
-        LOG.info(sb.toString());
     }
+
 }

@@ -282,7 +282,7 @@ public class SignDocumentCommand extends AbstractCommand {
     /**
      * Execute the signing operation.
      */
-    public final void run() {
+    private void run() {
         FileInputStream fin = null;
         try {
             final byte[] bytes;

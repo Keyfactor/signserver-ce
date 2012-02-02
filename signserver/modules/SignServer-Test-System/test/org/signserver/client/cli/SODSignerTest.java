@@ -16,13 +16,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-
 import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
+import org.signserver.cli.spi.CommandFailureException;
+import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.client.cli.defaultimpl.SignDataGroupsCommand;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.ServiceLocator;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -87,7 +88,7 @@ public class SODSignerTest extends TestCase {
         try {
             execute("signdatagroups");
             fail("Should have thrown exception about missing arguments");
-        } catch (IllegalArgumentException expected) {}
+        } catch (IllegalCommandArgumentsException expected) {}
     }
 
     /**
@@ -104,7 +105,7 @@ public class SODSignerTest extends TestCase {
                     "-data", "1=value1&2=value2&3=value3"));
             assertNotNull("non null result", res);
             assertTrue("non empty result: " + res.length(), res.length() > 50);
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
         }
@@ -118,13 +119,13 @@ public class SODSignerTest extends TestCase {
         workerSession.reloadConfiguration(WORKERID);
     }
 
-    private byte[] execute(String... args) throws IllegalArgumentException, IOException {
-        byte[] output = null;
+    private byte[] execute(String... args) throws IllegalCommandArgumentsException, IOException, CommandFailureException {
+        byte[] output;
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
         try {
-            final SODSignerCLI cli = new SODSignerCLI(args);
-            cli.run();
+            final SignDataGroupsCommand cmd = new SignDataGroupsCommand();
+            cmd.execute(args);
         } finally {
             output = out.toByteArray();
             System.setOut(System.out);

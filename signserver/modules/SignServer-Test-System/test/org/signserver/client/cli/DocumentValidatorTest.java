@@ -12,16 +12,12 @@
  *************************************************************************/
 package org.signserver.client.cli;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.Properties;
-
 import org.apache.log4j.Logger;
+import org.signserver.cli.spi.CommandFailureException;
+import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.client.cli.defaultimpl.ValidateDocumentCommand;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.module.xmlvalidator.XMLValidatorTestData;
@@ -105,7 +101,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
         try {
             execute("validatedocument");
             fail("Should have thrown exception about missing arguments");
-        } catch (IllegalArgumentException expected) {}
+        } catch (IllegalCommandArgumentsException expected) {}
     }
 
     /**
@@ -125,7 +121,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
                     "-truststorepwd", getTruststorePassword()));
             assertTrue("contains Valid: true: "
                     + res, res.contains("Valid: true"));
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
         }
@@ -174,13 +170,13 @@ public class DocumentValidatorTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID);
     }
 
-    private byte[] execute(String... args) throws IllegalArgumentException, IOException {
-        byte[] output = null;
+    private byte[] execute(String... args) throws IllegalCommandArgumentsException, IOException, CommandFailureException {
+        byte[] output;
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
         try {
-            final DocumentValidatorCLI cli = new DocumentValidatorCLI(args);
-            cli.run();
+            final ValidateDocumentCommand cli = new ValidateDocumentCommand();
+            cli.execute(args);
         } finally {
             output = out.toByteArray();
             System.setOut(System.out);

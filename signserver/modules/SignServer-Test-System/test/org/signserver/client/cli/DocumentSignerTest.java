@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.apache.log4j.Logger;
+import org.signserver.cli.spi.CommandFailureException;
+import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.common.ServiceLocator;
@@ -86,7 +89,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         try {
             execute("signdocument");
             fail("Should have thrown exception about missing arguments");
-        } catch (IllegalArgumentException expected) {}
+        } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
 
     /**
@@ -102,7 +105,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                     new String(execute("signdocument", "-workername", "TestXMLSigner", "-data", "<root/>"));
             assertTrue("contains signature tag: "
                     + res, res.contains("<root><Signature"));
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
         }
@@ -134,7 +137,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                     "TestXMLSigner", "-infile", doc.getAbsolutePath()));
             assertTrue("contains signature tag: "
                     + res, res.contains("<tag><Signature"));
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
         }
@@ -153,7 +156,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                     "-pdfpassword", "open123");
             assertNotNull("No result", res);
             assertNotSame("Empty result", 0, res.length);
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
         }
@@ -173,7 +176,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                     "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit");
             assertNotNull("No result", res);
             assertNotSame("Empty result", 0, res.length);
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
         }
@@ -194,13 +197,13 @@ public class DocumentSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID2);
     }
 
-    private byte[] execute(String... args) throws IllegalArgumentException, IOException {
-        byte[] output = null;
+    private byte[] execute(String... args) throws IOException, IllegalCommandArgumentsException, CommandFailureException {
+        byte[] output;
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
         try {
-            final DocumentSignerCLI cli = new DocumentSignerCLI(args);
-            cli.run();
+            final SignDocumentCommand cmd = new SignDocumentCommand();
+            cmd.execute(args);
         } finally {
             output = out.toByteArray();
             System.setOut(System.out);

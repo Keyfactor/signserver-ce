@@ -21,13 +21,17 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
-import org.signserver.cli.signserver;
+import org.signserver.admin.cli.AdminCLI;
+import org.signserver.cli.spi.Command;
+import org.signserver.cli.spi.CommandFailureException;
+import org.signserver.cli.spi.IllegalCommandArgumentsException;
 
 /**
  * Class containing utility methods used to simplify testing.
@@ -156,7 +160,7 @@ public class TestUtils {
     public static void assertSuccessfulExecution(String[] args) {
         try {
             TestUtils.flushTempOut();
-            signserver.main(args);
+            AdminCLI.main(args);
         } catch (ExitException e) {
             TestUtils.printTempErr();
             TestUtils.printTempOut();
@@ -197,7 +201,7 @@ public class TestUtils {
     public static int assertFailedExecution(String[] args) {
         try {
             TestUtils.flushTempOut();
-            signserver.main(args);
+            AdminCLI.main(args);
             Assert.assertTrue(false);
         } catch (ExitException e) {
             return e.number;
@@ -230,4 +234,17 @@ public class TestUtils {
         }
         return 0;
     }
+    
+    public static int assertFailedExecution(Command o, String[] args) {
+        try {
+            final int result = o.execute(args);
+            Assert.fail("Should have failed");
+            return result;
+        } catch (IllegalCommandArgumentsException ignored) {
+            return -2;
+        } catch (CommandFailureException ex) {
+            return -1;
+        }
+    }
+    
 }

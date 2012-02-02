@@ -17,9 +17,8 @@ import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-
 import org.bouncycastle.tsp.TimeStampResponse;
-import org.signserver.client.TimeStampClient;
+import org.signserver.client.cli.defaultimpl.TimeStampCommand;
 import org.signserver.testutils.ExitException;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
@@ -204,7 +203,8 @@ public class SignServerCLITest extends ModulesTestCase {
         // Test the timestamp client
         try {
             TestUtils.flushTempOut();
-            TimeStampClient.main(new String[]{
+            TimeStampCommand cmd = new TimeStampCommand();
+            cmd.execute(new String[]{
                         "http://localhost:8080/signserver/process?workerId=" + TESTTSID,
                         "-instr",
                         "TEST",

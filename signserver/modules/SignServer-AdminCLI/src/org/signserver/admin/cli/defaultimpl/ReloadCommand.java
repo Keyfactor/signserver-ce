@@ -37,7 +37,7 @@ public class ReloadCommand extends AbstractAdminCommand {
         try {
             int workerId = 0;
 
-            if (!args[1].equalsIgnoreCase("all")) {
+            if (!args[0].equalsIgnoreCase("all")) {
                 workerId = getWorkerId(args[0]);
                 if (workerId == 0) {
                     throw new IllegalAdminCommandException("Error: Worker Id cannot be 0.");

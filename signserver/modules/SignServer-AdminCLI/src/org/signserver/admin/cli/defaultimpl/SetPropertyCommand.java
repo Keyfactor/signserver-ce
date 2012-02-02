@@ -29,6 +29,7 @@ public class SetPropertyCommand extends AbstractAdminCommand {
         return "Sets a property for a given worker";
     }
 
+    @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
         if (args.length != 3) {
             throw new IllegalCommandArgumentsException("Usage: signserver setproperty <signerid | signerName | global | node> <propertykey> <propertyvalue>\n"
@@ -56,7 +57,7 @@ public class SetPropertyCommand extends AbstractAdminCommand {
                         // named worker is requested
                         int id = getWorkerSession().getWorkerId(workerid);
                         if (id == 0) {
-                            throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
+                            throw new IllegalCommandArgumentsException("Error: No worker with the given name could be found");
                         }
                         setWorkerProperty(id, propertykey, propertyvalue);
                     }

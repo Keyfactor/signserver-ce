@@ -50,14 +50,14 @@ public class UploadSignerCertificateCommand extends AbstractAdminCommand {
                 if (scope.equalsIgnoreCase("GLOB")) {
                     scope = GlobalConfiguration.SCOPE_GLOBAL;
                 } else {
-                    throw new IllegalAdminCommandException("Error: scope must be one of 'glob' or 'node'");
+                    throw new IllegalCommandArgumentsException("Error: scope must be one of 'glob' or 'node'");
                 }
             }
 
             String filename = args[2];
             Collection<?> certs = CertTools.getCertsFromPEM(filename);
             if (certs.isEmpty()) {
-                throw new IllegalAdminCommandException("Invalid PEM file, couldn't find any certificate");
+                throw new IllegalCommandArgumentsException("Invalid PEM file, couldn't find any certificate");
             }
             X509Certificate cert = (X509Certificate) certs.iterator().next();
 
@@ -66,6 +66,8 @@ public class UploadSignerCertificateCommand extends AbstractAdminCommand {
 
             getWorkerSession().uploadSignerCertificate(signerid, cert.getEncoded(), scope);
             return 0;
+        } catch (IllegalCommandArgumentsException ex) {
+            throw ex;
         } catch (Exception e) {
             throw new CommandFailureException(e);
         }

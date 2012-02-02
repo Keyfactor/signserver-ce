@@ -18,7 +18,6 @@ import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 import org.signserver.admin.cli.defaultimpl.AbstractAdminCommand;
-import org.signserver.admin.cli.defaultimpl.IllegalAdminCommandException;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.common.ArchiveDataVO;
@@ -49,10 +48,10 @@ public class FindFromRequestCertCommand extends AbstractAdminCommand {
             BigInteger sn = new BigInteger(certsn, 16);
             File outputPath = new File(args[3]);
             if (!outputPath.exists()) {
-                throw new IllegalAdminCommandException("Error output path " + args[3] + " doesn't exist\n\n");
+                throw new IllegalCommandArgumentsException("Error output path " + args[3] + " doesn't exist\n\n");
             }
             if (!outputPath.isDirectory()) {
-                throw new IllegalAdminCommandException("Error output path " + args[3] + " isn't a directory\n\n");
+                throw new IllegalCommandArgumentsException("Error output path " + args[3] + " isn't a directory\n\n");
             }
 
             this.getOutputStream().println("Trying to find archive datas requested from client with certificate " + certsn + " issued by " + issuerdn + "\n");

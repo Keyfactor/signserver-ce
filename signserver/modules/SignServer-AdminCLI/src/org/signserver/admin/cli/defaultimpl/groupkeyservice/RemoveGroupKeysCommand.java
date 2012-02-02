@@ -15,7 +15,6 @@ package org.signserver.admin.cli.defaultimpl.groupkeyservice;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.signserver.admin.cli.defaultimpl.IllegalAdminCommandException;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -70,15 +69,15 @@ public class RemoveGroupKeysCommand extends BaseGroupKeyServiceCommand {
         }
     }
 
-    private Date getDate(String dateString, String errorMessage) throws IllegalAdminCommandException {
+    private Date getDate(String dateString, String errorMessage) throws IllegalCommandArgumentsException {
         Date retval = dateFormat.parse(dateString, new ParsePosition(0));
         if (retval == null) {
-            throw new IllegalAdminCommandException(errorMessage);
+            throw new IllegalCommandArgumentsException(errorMessage);
         }
         return retval;
     }
 
-    private int getType(String typeString) throws IllegalAdminCommandException {
+    private int getType(String typeString) throws IllegalCommandArgumentsException {
         if (typeString.equalsIgnoreCase("CREATED")) {
             return TimeRemoveGroupKeyRequest.TYPE_CREATIONDATE;
         } else if (typeString.equalsIgnoreCase("FIRSTUSED")) {
@@ -86,7 +85,7 @@ public class RemoveGroupKeysCommand extends BaseGroupKeyServiceCommand {
         } else if (typeString.equalsIgnoreCase("LASTFETCHED")) {
             return TimeRemoveGroupKeyRequest.TYPE_LASTFETCHEDDATE;
         } else {
-            throw new IllegalAdminCommandException("Error: the type parameter '" + typeString + "' must be either CREATED FIRSTUSED LASTFETCHED");
+            throw new IllegalCommandArgumentsException("Error: the type parameter '" + typeString + "' must be either CREATED FIRSTUSED LASTFETCHED");
         }
     }
 }

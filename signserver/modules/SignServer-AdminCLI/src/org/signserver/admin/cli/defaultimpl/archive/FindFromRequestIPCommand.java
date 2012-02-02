@@ -17,7 +17,6 @@ import java.io.FileOutputStream;
 import java.util.Iterator;
 import java.util.List;
 import org.signserver.admin.cli.defaultimpl.AbstractAdminCommand;
-import org.signserver.admin.cli.defaultimpl.IllegalAdminCommandException;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.common.ArchiveDataVO;
@@ -47,10 +46,10 @@ public class FindFromRequestIPCommand extends AbstractAdminCommand {
             String requestIP = args[1];
             File outputPath = new File(args[2]);
             if (!outputPath.exists()) {
-                throw new IllegalAdminCommandException("Error output path " + args[2] + " doesn't exist\n\n");
+                throw new IllegalCommandArgumentsException("Error output path " + args[2] + " doesn't exist\n\n");
             }
             if (!outputPath.isDirectory()) {
-                throw new IllegalAdminCommandException("Error output path " + args[2] + " isn't a directory\n\n");
+                throw new IllegalCommandArgumentsException("Error output path " + args[2] + " isn't a directory\n\n");
             }
 
             this.getOutputStream().println("Trying to find archive datas requested from IP " + requestIP + "\n");

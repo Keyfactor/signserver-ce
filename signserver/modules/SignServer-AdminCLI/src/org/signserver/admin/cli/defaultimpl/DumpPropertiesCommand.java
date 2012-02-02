@@ -60,7 +60,7 @@ public class DumpPropertiesCommand extends AbstractAdminCommand {
                     // named worker is requested
                     int id = getWorkerSession().getWorkerId(workerid);
                     if (id == 0) {
-                        throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
+                        throw new IllegalCommandArgumentsException("Error: No worker with the given name could be found");
                     }
                     dumpWorkerProperties(id, outProps);
                 }
@@ -74,6 +74,8 @@ public class DumpPropertiesCommand extends AbstractAdminCommand {
             this.getOutputStream().println("\n\n");
             return 0;
 
+        } catch (IllegalCommandArgumentsException ex) {
+            throw ex;
         } catch (Exception e) {
             throw new CommandFailureException(e);
         }

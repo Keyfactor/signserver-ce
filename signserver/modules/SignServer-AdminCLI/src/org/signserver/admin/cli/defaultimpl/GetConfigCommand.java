@@ -60,7 +60,7 @@ public class GetConfigCommand extends AbstractCommand {
                     // named worker is requested
                     int id = helper.getWorkerSession().getWorkerId(workerid);
                     if (id == 0) {
-                        throw new IllegalAdminCommandException("Error: No worker with the given name could be found");
+                        throw new IllegalCommandArgumentsException("Error: No worker with the given name could be found");
                     }
                     displayWorkerConfig(id);
                 }

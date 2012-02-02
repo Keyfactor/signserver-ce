@@ -27,6 +27,7 @@ public class ReloadCommand extends AbstractAdminCommand {
         return "Reloads the current configuration";
     }
 
+    @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
         if (args.length != 1) {
             throw new IllegalCommandArgumentsException("Usage: signserver reload <worker id or name | all> \n\n"
@@ -40,7 +41,7 @@ public class ReloadCommand extends AbstractAdminCommand {
             if (!args[0].equalsIgnoreCase("all")) {
                 workerId = getWorkerId(args[0]);
                 if (workerId == 0) {
-                    throw new IllegalAdminCommandException("Error: Worker Id cannot be 0.");
+                    throw new IllegalCommandArgumentsException("Error: Worker Id cannot be 0.");
                 }
             }
 
@@ -49,7 +50,10 @@ public class ReloadCommand extends AbstractAdminCommand {
             this.getOutputStream().println("SignServer reloaded successfully\n");
             this.getOutputStream().println("Current configuration is now activated.\n");
             return 0;
-        } catch (Exception e) {
+        } catch (IllegalCommandArgumentsException ex) {
+            throw ex;
+        }
+        catch (Exception e) {
             throw new CommandFailureException(e);
         }
     }

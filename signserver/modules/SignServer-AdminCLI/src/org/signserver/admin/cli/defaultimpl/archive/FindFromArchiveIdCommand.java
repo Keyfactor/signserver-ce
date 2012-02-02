@@ -15,7 +15,6 @@ package org.signserver.admin.cli.defaultimpl.archive;
 import java.io.File;
 import java.io.FileOutputStream;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
-import org.signserver.admin.cli.defaultimpl.IllegalAdminCommandException;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
@@ -48,10 +47,10 @@ public class FindFromArchiveIdCommand extends AbstractCommand {
             String archiveid = args[1];
             File outputPath = new File(args[2]);
             if (!outputPath.exists()) {
-                throw new IllegalAdminCommandException("Error output path " + args[2] + " doesn't exist\n\n");
+                throw new IllegalCommandArgumentsException("Error output path " + args[2] + " doesn't exist\n\n");
             }
             if (!outputPath.isDirectory()) {
-                throw new IllegalAdminCommandException("Error output path " + args[2] + " isn't a directory\n\n");
+                throw new IllegalCommandArgumentsException("Error output path " + args[2] + " isn't a directory\n\n");
             }
 
             out.println("Trying to find archive data with archiveid " + archiveid + "\n");

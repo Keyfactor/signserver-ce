@@ -79,7 +79,7 @@ public class SetPropertyFromFileCommand extends AbstractAdminCommand {
         }
     }
 
-    private String readDataFromFile(String filename) throws IllegalAdminCommandException {
+    private String readDataFromFile(String filename) throws IllegalCommandArgumentsException {
         String retval = null;
         try {
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filename));
@@ -87,9 +87,9 @@ public class SetPropertyFromFileCommand extends AbstractAdminCommand {
             bis.read(buffer);
             retval = new String(Base64.encode(buffer));
         } catch (FileNotFoundException e) {
-            throw new IllegalAdminCommandException("Error : File " + filename + " wasn't found or readable.");
+            throw new IllegalCommandArgumentsException("Error : File " + filename + " wasn't found or readable.");
         } catch (IOException e) {
-            throw new IllegalAdminCommandException("Error reading file " + filename + ": " + e.getMessage());
+            throw new IllegalCommandArgumentsException("Error reading file " + filename + ": " + e.getMessage());
         }
         return retval;
     }

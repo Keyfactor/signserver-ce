@@ -12,10 +12,7 @@
  *************************************************************************/
 package org.signserver.client.cli.defaultimpl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -44,7 +41,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
 
     /** ResourceBundle with internationalized StringS. */
     private static final ResourceBundle TEXTS = ResourceBundle.getBundle(
-            "org/signserver/client/cli/ResourceBundle");
+            "org/signserver/client/cli/defaultimpl/ResourceBundle");
 
     /** System-specific new line characters. **/
     private static final String NL = System.getProperty("line.separator");
@@ -136,6 +133,25 @@ public class ValidateDocumentCommand extends AbstractCommand {
     public String getDescription() {
         return "Request a document to be validated by SignServer";
     }
+
+    public String getUsages() {
+
+        StringBuilder footer = new StringBuilder();
+        footer.append(NL)
+            .append("Sample usages:").append(NL)
+            .append("a) ").append(COMMAND).append(" -workername XMLValidator -data \"<root><Signature...").append(NL)
+            .append("b) ").append(COMMAND).append(" -workername XMLValidator -infile /tmp/signed.xml").append(NL)
+            .append("c) ").append(COMMAND).append(" -workerid 2 -infile /tmp/signed.xml -truststore truststore.jks -truststorepwd changeit").append(NL)
+            .append("d) ").append(COMMAND).append(" -workerid 2 -infile /tmp/signed.xml -keystore superadmin.jks -keystorepwd foo123").append(NL);
+
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        final HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp(new PrintWriter(bout), HelpFormatter.DEFAULT_WIDTH, "validatedocument <-workername WORKERNAME | -workerid WORKERID> [options]",
+                "Request a document to be validated by SignServer", OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        return bout.toString();
+    }
+    
+    
 
     /**
      * Reads all the options from the command line.
@@ -281,19 +297,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
             run();
             return 0;
         } catch (ParseException ex) {
-                        LOG.error(ex);
-            final StringBuilder buff = new StringBuilder();
-            buff.append(NL)
-                .append("Sample usages:").append(NL)
-                .append("a) ").append(COMMAND).append(" -workername XMLValidator -data \"<root><Signature...").append(NL)
-                .append("b) ").append(COMMAND).append(" -workername XMLValidator -infile /tmp/signed.xml").append(NL)
-                .append("c) ").append(COMMAND).append(" -workerid 2 -infile /tmp/signed.xml -truststore truststore.jks -truststorepwd changeit").append(NL)
-                .append("d) ").append(COMMAND).append(" -workerid 2 -infile /tmp/signed.xml -keystore superadmin.jks -keystorepwd foo123").append(NL);
-            final String footer = buff.toString();
-            final HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("validatedocument <-workername WORKERNAME | -workerid WORKERID> [options]",
-                    "Request a document to be validated by SignServer", OPTIONS, footer);
-            return -1;
+            throw new IllegalCommandArgumentsException(ex.getMessage());
         }
     }
 }

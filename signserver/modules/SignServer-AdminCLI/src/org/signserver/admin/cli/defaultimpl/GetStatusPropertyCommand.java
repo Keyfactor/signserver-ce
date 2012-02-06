@@ -14,6 +14,7 @@ package org.signserver.admin.cli.defaultimpl;
 
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 
 /**
  * Gets a status property.
@@ -28,11 +29,15 @@ public class GetStatusPropertyCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public String getUsages() {
+        return "Usage: signserver getstatusproperty <propertykey>\n"
+                    + "Example 1: signserver getstatusproperty INSYNC\n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 1) {
-            throw new IllegalCommandArgumentsException(
-                    "Usage: signserver getstatusproperty <propertykey>\n"
-                    + "Example 1: signserver getstatusproperty INSYNC\n\n");
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             final String value = getStatusRepositorySession().getProperty(args[0]);
@@ -42,7 +47,7 @@ public class GetStatusPropertyCommand extends AbstractAdminCommand {
             this.getOutputStream().println("\n\n");
             return 0;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

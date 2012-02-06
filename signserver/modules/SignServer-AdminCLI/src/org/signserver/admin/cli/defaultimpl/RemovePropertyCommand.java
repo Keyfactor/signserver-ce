@@ -15,6 +15,7 @@ package org.signserver.admin.cli.defaultimpl;
 import java.rmi.RemoteException;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 
 /**
@@ -30,17 +31,22 @@ public class RemovePropertyCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        if (args.length != 3) {
-            throw new IllegalCommandArgumentsException("Usage: signserver <-host hostname (optional)> removeproperty  <workerid | workerName | global | node> <propertykey>\n"
+    public String getUsages() {
+        return "Usage: signserver removeproperty <workerid | workerName | global | node> <propertykey>\n"
                     + "Example 1 : signserver removeproperty 1 defaultKey\n"
-                    + "Example 2 : signserver removeproperty -host node3.someorg.com mySigner defaultKey\n\n");
+                    + "Example 2 : signserver removeproperty -host node3.someorg.com mySigner defaultKey\n\n";
+    }
+    
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        if (args.length != 2) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
 
-            String propertykey = args[2];
+            String propertykey = args[1];
 
-            String workerid = args[1];
+            String workerid = args[0];
 
             if (workerid.substring(0, 1).matches("\\d")) {
                 removeWorkerProperty(Integer.parseInt(workerid), propertykey);
@@ -66,7 +72,7 @@ public class RemovePropertyCommand extends AbstractAdminCommand {
         } catch (IllegalCommandArgumentsException ex ) {
             throw ex;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

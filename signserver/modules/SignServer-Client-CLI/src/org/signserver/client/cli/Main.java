@@ -15,8 +15,7 @@ package org.signserver.client.cli;
 import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.signserver.cli.CommandLineInterface;
-import org.signserver.cli.spi.CommandFailureException;
-import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.client.cli.spi.ClientCommandFactory;
 
 /**
@@ -41,11 +40,7 @@ public class Main {
             CommandLineInterface cli = new CommandLineInterface();
             cli.setFactoryClass(ClientCommandFactory.class);
             cli.execute(args);
-        } catch (IllegalCommandArgumentsException ex) {
-            LOG.error(ex.getMessage());
-        } catch (CommandFailureException ex) {
-            LOG.error(ex.getMessage());
-        } catch (IOException ex) {
+        } catch (UnexpectedCommandFailureException ex) {
             LOG.error("Unexpected failure running the command", ex);
         }
     }

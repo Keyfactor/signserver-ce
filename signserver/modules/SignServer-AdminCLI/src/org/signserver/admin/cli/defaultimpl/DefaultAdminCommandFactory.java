@@ -15,7 +15,7 @@ package org.signserver.admin.cli.defaultimpl;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromArchiveIdCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromRequestCertCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromRequestIPCommand;
-import org.signserver.admin.cli.defaultimpl.groupkeyservice.PregenerateKeyCommand;
+import org.signserver.admin.cli.defaultimpl.groupkeyservice.PregenerateKeysCommand;
 import org.signserver.admin.cli.defaultimpl.groupkeyservice.RemoveGroupKeysCommand;
 import org.signserver.admin.cli.defaultimpl.groupkeyservice.SwitchEncKeyCommand;
 import org.signserver.admin.cli.spi.AdminCommandFactory;
@@ -34,8 +34,10 @@ public class DefaultAdminCommandFactory extends AbstractCommandFactory implement
     protected void registerCommands() {
         // Top level commands
         put("activatecryptotoken", ActivateCryptoTokenCommand.class);
+        put("activatesigntoken", ActivateCryptoTokenCommand.class, false);
         put("addauthorizedclient", AddAuthorizedClientCommand.class);
         put("deactivatecryptotoken", DeactivateCryptoTokenCommand.class);
+        put("deactivatesigntoken", DeactivateCryptoTokenCommand.class, false);
         put("dumpproperties", DumpPropertiesCommand.class);
         put("generatecertreq", GenerateCertReqCommand.class);
         put("generatekey", GenerateKeyCommand.class);
@@ -65,7 +67,7 @@ public class DefaultAdminCommandFactory extends AbstractCommandFactory implement
         put("archive", "findfromrequestip", FindFromRequestIPCommand.class);
         
         // Groupkeyservice commands
-        put("groupkeyservice", "pregeneratekey", PregenerateKeyCommand.class);
+        put("groupkeyservice", "pregeneratekeys", PregenerateKeysCommand.class);
         put("groupkeyservice", "removegroupkeys", RemoveGroupKeysCommand.class);
         put("groupkeyservice", "switchenckey", SwitchEncKeyCommand.class);
     }

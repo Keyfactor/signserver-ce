@@ -43,7 +43,7 @@ public class SignDocumentCommand extends AbstractCommand {
 
     /** ResourceBundle with internationalized StringS. */
     private static final ResourceBundle TEXTS = ResourceBundle.getBundle(
-            "org/signserver/client/cli/ResourceBundle");
+            "org/signserver/client/cli/defaultimpl/ResourceBundle");
 
     /** System-specific new line characters. **/
     private static final String NL = System.getProperty("line.separator");
@@ -170,6 +170,24 @@ public class SignDocumentCommand extends AbstractCommand {
         return "Request a document to be signed by SignServer";
     }
 
+    @Override
+    public String getUsages() {
+        StringBuilder footer = new StringBuilder();
+        footer.append(NL)
+            .append("Sample usages:").append(NL)
+            .append("a) ").append(COMMAND).append(" -workername XMLSigner -data \"<root/>\"").append(NL)
+            .append("b) ").append(COMMAND).append(" -workername XMLSigner -infile /tmp/document.xml").append(NL)
+            .append("c) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -truststore truststore.jks -truststorepwd changeit").append(NL)
+            .append("d) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystore superadmin.jks -keystorepwd foo123").append(NL);
+                
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        final HelpFormatter formatter = new HelpFormatter();
+        
+        formatter.printHelp(new PrintWriter(bout), HelpFormatter.DEFAULT_WIDTH, "signdocument <-workername WORKERNAME | -workerid WORKERID> [options]",  getDescription(), OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        
+        return bout.toString();
+    }
+
     /**
      * Reads all the options from the command line.
      *
@@ -222,9 +240,9 @@ public class SignDocumentCommand extends AbstractCommand {
     /**
      * Checks that all mandadory options are given.
      */
-    private void validateOptions() {
+    private void validateOptions() throws IllegalCommandArgumentsException {
         if (workerName == null && workerId == 0) {
-            throw new IllegalArgumentException(
+            throw new IllegalCommandArgumentsException(
                     "Missing -workername or -workerid");
         } else if (data == null && inFile == null) {
             throw new IllegalArgumentException("Missing -data or -infile");
@@ -343,29 +361,13 @@ public class SignDocumentCommand extends AbstractCommand {
     @Override
     public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException {
         try {
-            try {
-                // Parse the command line
-                parseCommandLine(new GnuParser().parse(OPTIONS, args));
-            } catch (ParseException ex) {
-                throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
-            }
+            // Parse the command line
+            parseCommandLine(new GnuParser().parse(OPTIONS, args));
             validateOptions();
             run();
             return 0;
-        } catch (IllegalArgumentException ex) {
-            LOG.error(ex);
-            final StringBuilder buff = new StringBuilder();
-            buff.append(NL)
-                .append("Sample usages:").append(NL)
-                .append("a) ").append(COMMAND).append(" -workername XMLSigner -data \"<root/>\"").append(NL)
-                .append("b) ").append(COMMAND).append(" -workername XMLSigner -infile /tmp/document.xml").append(NL)
-                .append("c) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -truststore truststore.jks -truststorepwd changeit").append(NL)
-                .append("d) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystore superadmin.jks -keystorepwd foo123").append(NL);
-            final String footer = buff.toString();
-            final HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("signdocument <-workername WORKERNAME | -workerid WORKERID> [options]", 
-                    getDescription(), OPTIONS, footer);
-            return -1;
+        } catch (ParseException ex) {
+            throw new IllegalCommandArgumentsException(ex.getMessage());
         }
     }
     

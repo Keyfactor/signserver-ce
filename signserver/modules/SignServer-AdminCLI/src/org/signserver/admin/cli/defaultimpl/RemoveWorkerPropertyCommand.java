@@ -17,6 +17,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerConfig;
 
@@ -33,11 +34,16 @@ public class RemoveWorkerPropertyCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        if (args.length != 1) {
-            throw new IllegalCommandArgumentsException("Usage: signserver removeworker  <workerid | workerName> \n"
+    public String getUsages() {
+        return "Usage: signserver removeworker  <workerid | workerName> \n"
                     + "Example 1 : signserver removeworker 1 \n"
-                    + "Example 2 : signserver removeworker -host node3.someorg.com mySigner\n\n");
+                    + "Example 2 : signserver removeworker -host node3.someorg.com mySigner\n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        if (args.length != 1) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             String workerid = args[0];
@@ -57,7 +63,7 @@ public class RemoveWorkerPropertyCommand extends AbstractAdminCommand {
         } catch (IllegalCommandArgumentsException ex) {
             throw ex;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

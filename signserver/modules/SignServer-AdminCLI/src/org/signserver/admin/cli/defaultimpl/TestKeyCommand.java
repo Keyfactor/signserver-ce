@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.KeyTestResult;
 
 /**
@@ -64,6 +65,11 @@ public class TestKeyCommand extends AbstractAdminCommand {
         return "Tests one or more keys in a Crypto Token";
     }
 
+    @Override
+    public String getUsages() {
+        return USAGE;
+    }
+    
     /**
      * Reads all the options from the command line.
      *
@@ -84,7 +90,7 @@ public class TestKeyCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         try {
             // Parse the command line
             parseCommandLine(new GnuParser().parse(OPTIONS, args));
@@ -141,7 +147,7 @@ public class TestKeyCommand extends AbstractAdminCommand {
             return 0;
 
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

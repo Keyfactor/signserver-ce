@@ -20,6 +20,7 @@ import java.util.List;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerStatus;
 
@@ -42,11 +43,16 @@ public class GetStatusCommand extends AbstractCommand {
     public String getDescription() {
         return "Gets a status report from one or all workers";
     }
+
+    @Override
+    public String getUsages() {
+        return ERROR_MESSAGE;
+    }
     
     @Override
-    public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 2) {
-            throw new IllegalCommandArgumentsException(ERROR_MESSAGE);
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
 
@@ -87,7 +93,7 @@ public class GetStatusCommand extends AbstractCommand {
             if (e instanceof IllegalCommandArgumentsException) {
                 throw (IllegalCommandArgumentsException) e;
             }
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
         return 0;
     }

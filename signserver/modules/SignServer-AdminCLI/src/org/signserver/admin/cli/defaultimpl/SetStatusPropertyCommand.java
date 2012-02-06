@@ -14,6 +14,7 @@ package org.signserver.admin.cli.defaultimpl;
 
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 
 /**
  * Sets a status property.
@@ -28,14 +29,18 @@ public class SetStatusPropertyCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        if (args.length < 2 || args.length > 3) {
-            throw new IllegalCommandArgumentsException(
-                    "Usage: signserver setstatusproperty <propertykey> "
+    public String getUsages() {
+        return "Usage: signserver setstatusproperty <propertykey> "
                     + "<propertyvalue> <expiration (optional)>\n"
                     + "Example 1: signserver setstatusproperty INSYNC true\n"
                     + "Example 2: signserver setstatusproperty INSYNC true "
-                    + "1263297710\n\n");
+                    + "1263297710\n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        if (args.length < 2 || args.length > 3) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
 
@@ -49,7 +54,7 @@ public class SetStatusPropertyCommand extends AbstractAdminCommand {
         } catch (IllegalCommandArgumentsException e) {
             throw e;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

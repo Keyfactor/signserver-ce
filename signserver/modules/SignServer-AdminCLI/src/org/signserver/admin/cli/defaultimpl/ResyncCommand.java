@@ -14,6 +14,7 @@ package org.signserver.admin.cli.defaultimpl;
 
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ResyncException;
 
@@ -30,13 +31,18 @@ public class ResyncCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        if (args.length != 1) {
-            throw new IllegalCommandArgumentsException("Usage: signserver resync <sure> \n\n"
+    public String getUsages() {
+        return "Usage: signserver resync <sure> \n\n"
                     + "Example 1 : signserver resync true \n"
                     + "Example 2 : signserver resync yes \n"
                     + "This command resyncronizes a out-of-sync Global Configuration.\n"
-                    + "Warning: Only use this commando if you know what you are doing.");
+                    + "Warning: Only use this commando if you know what you are doing.";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        if (args.length != 1) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             if (args[0].equalsIgnoreCase("true") || args[0].equalsIgnoreCase("yes")) {
@@ -59,7 +65,7 @@ public class ResyncCommand extends AbstractAdminCommand {
             }
             return 0;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

@@ -12,17 +12,19 @@
  *************************************************************************/
 package org.signserver.cli;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.log4j.Logger;
 import org.bouncycastle.tsp.TimeStampResponse;
+import org.signserver.admin.cli.AdminCLI;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.client.cli.defaultimpl.TimeStampCommand;
-import org.signserver.testutils.ExitException;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
-import org.signserver.testutils.TestingSecurityManager;
+import org.signserver.testutils.TeeOutputStream;
 
 /**
  * Class used to test the basic aspects of the SignServer CLI such
@@ -33,167 +35,175 @@ import org.signserver.testutils.TestingSecurityManager;
  */
 public class SignServerCLITest extends ModulesTestCase {
 
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(SignServerCLITest.class);
+    
     private static final String TESTID = "100";
     private static final String TESTTSID = "1000";
     private static final String TESTGSID = "1023";
 
+    private ByteArrayOutputStream bout;
+    private ByteArrayOutputStream berr;
+    
+    private int execute(String... args) throws UnexpectedCommandFailureException, IOException {
+        bout = new ByteArrayOutputStream();
+        berr = new ByteArrayOutputStream();
+        AdminCLI cli = new AdminCLI();
+        cli.setOut(new PrintStream(new TeeOutputStream(System.out, bout)));
+        cli.setErr(new PrintStream(new TeeOutputStream(System.err, berr)));
+        return cli.execute(args);
+    }
+    
+    /**
+     * A simple grep utility that searches a byte stream if the substring exists.
+     * @param stream the output stream to grep in
+     * @param searchString the text to search for.
+     * @return true if searchString exists
+     */
+    private static boolean grep(ByteArrayOutputStream stream, String searchString) {
+        Pattern p = Pattern.compile(searchString);
+        // Create a matcher with an input string
+        Matcher m = p.matcher(stream.toString());
+        return m.find();
+    }
+    
+    public static void assertPrinted(String message, ByteArrayOutputStream stream, String searchString) {
+        assertTrue(message + ", expected: " + searchString, grep(stream, searchString));
+    }
+    
+    public static void assertNotPrinted(String message, ByteArrayOutputStream stream, String searchString) {
+        assertFalse(message + ", should not match: " + searchString, grep(stream, searchString));
+    }
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
     }
 
     public void testBasicSetup() throws Exception {
+        
+        assertEquals("No arguments", CommandLineInterface.RETURN_INVALID_ARGUMENTS, 
+                execute("noarguments"));
+        assertPrinted("Print usages", bout, "use one of:");
 
-        TestUtils.assertFailedExecution(new String[]{"noarguments"});
-        assertTrue(TestUtils.grepTempOut("Usage: signserver"));
+        assertEquals("Setproperty", CommandLineInterface.RETURN_SUCCESS, 
+                execute("setproperty", "global", "WORKER" + TESTID + ".CLASSPATH", "org.signserver.server.signers.TimeStampSigner"));
 
+        assertEquals("Getconfig", CommandLineInterface.RETURN_SUCCESS, 
+                execute("getconfig", "global"));
+        assertPrinted("Prints a worker property", bout, "WORKER" + TESTID + ".CLASSPATH");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"setproperty",
-                    "global",
-                    "WORKER" + TESTID + ".CLASSPATH",
-                    "org.signserver.server.signers.TimeStampSigner"});
+        assertEquals("Setproperty2", CommandLineInterface.RETURN_SUCCESS, 
+                execute("setproperty", TESTID, "TESTKEY", "TESTVALUE"));
 
-        TestUtils.assertSuccessfulExecution(new String[]{"getconfig",
-                    "global"});
+        assertEquals("Getconfig2", CommandLineInterface.RETURN_SUCCESS, 
+                execute("getconfig", TESTID));
+        assertPrinted("Contains TESTKEY",  bout, "TESTKEY");
 
-        assertTrue(TestUtils.grepTempOut("WORKER" + TESTID + ".CLASSPATH"));
+        assertEquals("Removeproperty", CommandLineInterface.RETURN_SUCCESS, 
+                execute("removeproperty", "" + TESTID, "TESTKEY"));
+        assertEquals("Removeproperty2", CommandLineInterface.RETURN_SUCCESS, 
+                execute("removeproperty", "global", "WORKER" + TESTID + ".CLASSPATH"));
 
-        TestUtils.assertSuccessfulExecution(new String[]{"setproperty",
-                    TESTID,
-                    "TESTKEY",
-                    "TESTVALUE"});
+        assertEquals("Getglobalconfig", CommandLineInterface.RETURN_SUCCESS, 
+                execute("getconfig", "global"));
+        assertNotPrinted("Contains a worker property", bout, "WORKER" + TESTID + ".CLASSPATH");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"getconfig",
-                    TESTID});
+        assertEquals("Getconfig 3", CommandLineInterface.RETURN_SUCCESS, 
+                execute("getconfig", "" + TESTID));
+        assertNotPrinted("Contains TESTKEY", bout, "TESTKEY");
 
-        assertTrue(TestUtils.grepTempOut("TESTKEY"));
-
-        TestUtils.assertSuccessfulExecution(new String[]{"removeproperty",
-                    "" + TESTID,
-                    "TESTKEY"});
-        TestUtils.assertSuccessfulExecution(new String[]{"removeproperty",
-                    "global",
-                    "WORKER" + TESTID + ".CLASSPATH"});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"getconfig",
-                    "global"});
-        assertFalse(TestUtils.grepTempOut("WORKER" + TESTID + ".CLASSPATH"));
-
-        TestUtils.assertSuccessfulExecution(new String[]{"getconfig",
-                    "" + TESTID});
-        assertFalse(TestUtils.grepTempOut("TESTKEY"));
-
-        TestUtils.assertSuccessfulExecution(new String[]{"getconfig",
-                    "-host",
-                    "localhost",
-                    "" + TESTID});
-        TestingSecurityManager.remove();
+        assertEquals("Getconfig 4", CommandLineInterface.RETURN_SUCCESS, 
+                execute("getconfig", "" + TESTID));
     }
 
     public void testSetupTimeStamp() throws Exception {
 
         assertTrue(new File(getSignServerHome() + "/res/test/test_add_timestamp_configuration.properties").exists());
-        TestUtils.assertSuccessfulExecution(new String[]{"setproperties",
-                    getSignServerHome() + "/res/test/test_add_timestamp_configuration.properties"});
-        assertTrue(TestUtils.grepTempOut("Setting the property NAME to timestampSigner1000 for worker 1000"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("setproperties", getSignServerHome() + "/res/test/test_add_timestamp_configuration.properties"));
+        assertPrinted("", bout, "Setting the property NAME to timestampSigner1000 for worker 1000");
+
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("reload", "1000"));
+
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("getstatus", "complete", TESTTSID));
+
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("setproperty", TESTTSID, "TESTKEY", "TESTVALUE"));
+
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("getstatus", "complete", TESTTSID));
+
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("reload", TESTTSID));
+        assertPrinted("", bout, "SignServer reloaded successfully");
 
 
-        TestUtils.assertSuccessfulExecution(new String[]{"reload",
-                    "1000"});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"getstatus",
-                    "complete",
-                    TESTTSID});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"setproperty",
-                    TESTTSID,
-                    "TESTKEY",
-                    "TESTVALUE"});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"getstatus",
-                    "complete",
-                    TESTTSID});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"reload",
-                    TESTTSID});
-        assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("getstatus", "complete", TESTTSID));
+        assertPrinted("", bout, "NAME=timestampSigner1000");
+        assertPrinted("", bout, "TESTKEY");
 
 
-        TestUtils.assertSuccessfulExecution(new String[]{"getstatus",
-                    "complete",
-                    TESTTSID});
-        assertTrue(TestUtils.grepTempOut("NAME=timestampSigner1000"));
-        assertTrue(TestUtils.grepTempOut("TESTKEY"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("reload", TESTTSID));
+        assertPrinted("", bout, "SignServer reloaded successfully");
 
 
-        TestUtils.assertSuccessfulExecution(new String[]{"reload",
-                    TESTTSID});
-        assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
-
-
-        TestUtils.assertSuccessfulExecution(new String[]{"getstatus",
-                    "complete",
-                    TESTTSID});
-        assertTrue(TestUtils.grepTempOut("NAME=timestampSigner1000"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("getstatus", "complete", TESTTSID));
+        assertPrinted("", bout, "NAME=timestampSigner1000");
 
         // Test token operations
-        TestUtils.assertFailedExecution(new String[]{"activatesigntoken",
+        assertFalse("", CommandLineInterface.RETURN_SUCCESS ==
+                execute("activatesigntoken", TESTTSID, "9876"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, execute("activatesigntoken",
                     TESTTSID,
-                    "9876"});
-        TestUtils.assertSuccessfulExecution(new String[]{"activatesigntoken",
-                    TESTTSID,
-                    "1234"});
-        assertTrue(TestUtils.grepTempOut("Activation of worker was successful"));
+                    "1234"));
+        assertPrinted("", bout, "Activation of worker was successful");
 
 
-        TestUtils.assertSuccessfulExecution(new String[]{"deactivatesigntoken",
-                    TESTTSID});
-        assertTrue(TestUtils.grepTempOut("Deactivation of worker was successful"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("deactivatesigntoken", TESTTSID));
+        assertPrinted("", bout, "Deactivation of worker was successful");
 
 
         // Test operations by name
-        TestUtils.assertSuccessfulExecution(new String[]{"activatecryptotoken",
-                    "timestampSigner1000",
-                    "1234"});
-        assertTrue(TestUtils.grepTempOut("Activation of worker was successful"));
-        TestUtils.assertSuccessfulExecution(new String[]{"activatecryptotoken",
-                    "TIMESTAMPSIGNER1000",
-                    "1234"});
-        TestUtils.assertFailedExecution(new String[]{"activatecryptotoken",
-                    "TIMESTAMPSIGNER2000",
-                    "1234"});
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("activatecryptotoken", "timestampSigner1000", "1234"));
+        assertPrinted("", bout, "Activation of worker was successful");
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("activatecryptotoken", "TIMESTAMPSIGNER1000", "1234"));
+        assertFalse("", CommandLineInterface.RETURN_SUCCESS ==
+            execute("activatecryptotoken", "TIMESTAMPSIGNER2000", "1234"));
 
         // Test authorized clients
-        TestUtils.assertSuccessfulExecution(new String[]{"addauthorizedclient",
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("addauthorizedclient", "TIMESTAMPSIGNER1000", "EF34242D2324", "CN=Test Root CA"));
+        assertPrinted("", bout, "Adding the client certificate with sn EF34242D2324");
+
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("listauthorizedclients", "TIMESTAMPSIGNER1000"));
+        assertPrinted("", bout, "ef34242d2324, CN=Test Root CA");
+
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, execute("removeauthorizedclient",
                     "TIMESTAMPSIGNER1000",
                     "EF34242D2324",
-                    "CN=Test Root CA"});
-        assertTrue(TestUtils.grepTempOut("Adding the client certificate with sn EF34242D2324"));
+                    "CN=Test Root CA"));
+        assertPrinted("", bout, "Client Removed");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"listauthorizedclients",
-                    "TIMESTAMPSIGNER1000"});
-        assertTrue(TestUtils.grepTempOut("ef34242d2324, CN=Test Root CA"));
-
-        TestUtils.assertSuccessfulExecution(new String[]{"removeauthorizedclient",
-                    "TIMESTAMPSIGNER1000",
-                    "EF34242D2324",
-                    "CN=Test Root CA"});
-        assertTrue(TestUtils.grepTempOut("Client Removed"));
-
-        TestUtils.assertSuccessfulExecution(new String[]{"listauthorizedclients",
-                    "TIMESTAMPSIGNER1000"});
-        assertFalse(TestUtils.grepTempOut("ef34242d2324, CN=Test Root CA"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, execute("listauthorizedclients",
+                    "TIMESTAMPSIGNER1000"));
+        assertNotPrinted("", bout, "ef34242d2324, CN=Test Root CA");
 
 
         // Dump
-        TestUtils.assertSuccessfulExecution(new String[]{"dumpproperties",
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, execute("dumpproperties",
                     "TIMESTAMPSIGNER1000",
-                    getSignServerHome() + "/tmp/testdump.properties"});
-        assertTrue(TestUtils.grepTempOut("Properties successfully dumped into file"));
+                    getSignServerHome() + "/tmp/testdump.properties"));
+        assertPrinted("", bout, "Properties successfully dumped into file");
 
 
         Properties props = new Properties();
@@ -201,134 +211,116 @@ public class SignServerCLITest extends ModulesTestCase {
         assertNotNull(props.get("WORKER1000.AUTHTYPE"));
 
         // Test the timestamp client
-        try {
-            TestUtils.flushTempOut();
-            TimeStampCommand cmd = new TimeStampCommand();
-            cmd.execute(new String[]{
-                        "http://localhost:8080/signserver/process?workerId=" + TESTTSID,
-                        "-instr",
-                        "TEST",
-                        "-outrep",
-                        getSignServerHome() + "/tmp/timestamptest.data"});
+        TimeStampCommand cmd = new TimeStampCommand();
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
+                cmd.execute("http://localhost:8080/signserver/process?workerId=" + TESTTSID,
+                    "-instr",
+                    "TEST",
+                    "-outrep",
+                    getSignServerHome() + "/tmp/timestamptest.data"));
 
-            FileInputStream fis = new FileInputStream(getSignServerHome() + "/tmp/timestamptest.data");
-            TimeStampResponse tsr = new TimeStampResponse(fis);
-            assertTrue(tsr != null);
-            String archiveId = tsr.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16);
-            assertNotNull(archiveId);
+        FileInputStream fis = new FileInputStream(getSignServerHome() + "/tmp/timestamptest.data");
+        TimeStampResponse tsr = new TimeStampResponse(fis);
+        assertTrue(tsr != null);
+        String archiveId = tsr.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16);
+        assertNotNull(archiveId);
 
-            TestUtils.assertSuccessfulExecution(new String[]{"archive",
-                        "findfromarchiveid",
-                        TESTTSID,
-                        archiveId,
-                        getSignServerHome() + "/tmp"});
-            File datafile = new File(getSignServerHome() + "/tmp/" + archiveId);
-            assertTrue(datafile.exists());
-            datafile.delete();
-            TestUtils.assertSuccessfulExecution(new String[]{"archive",
-                        "findfromrequestip",
-                        TESTTSID,
-                        "127.0.0.1",
-                        getSignServerHome() + "/tmp"});
-            datafile = new File(getSignServerHome() + "/tmp/" + archiveId);
-            assertTrue(datafile.exists());
-
-
-        } catch (ExitException e) {
-            TestUtils.printTempErr();
-            TestUtils.printTempOut();
-            assertTrue(false);
-        }
-
-        TestingSecurityManager.remove();
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, execute("archive",
+                    "findfromarchiveid",
+                    TESTTSID,
+                    archiveId,
+                    getSignServerHome() + "/tmp"));
+        File datafile = new File(getSignServerHome() + "/tmp/" + archiveId);
+        assertTrue(datafile.exists());
+        datafile.delete();
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, execute("archive",
+                    "findfromrequestip",
+                    TESTTSID,
+                    "127.0.0.1",
+                    getSignServerHome() + "/tmp"));
+        datafile = new File(getSignServerHome() + "/tmp/" + archiveId);
+        assertTrue(datafile.exists());
     }
 
     public void testRemoveTimeStamp() throws Exception {
         // Remove and restore
-        TestUtils.assertSuccessfulExecution(new String[]{"setproperties",
-                    getSignServerHome() + "/res/test/test_rem_timestamp_configuration.properties"});
-        assertTrue(TestUtils.grepTempOut("Removing the property NAME  for worker 1000"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("setproperties", getSignServerHome() + "/res/test/test_rem_timestamp_configuration.properties"));
+        assertPrinted("", bout, "Removing the property NAME  for worker 1000");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"getconfig",
-                    TESTTSID});
-        assertFalse(TestUtils.grepTempOut("NAME=timestampSigner1000"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("getconfig", TESTTSID));
+        assertNotPrinted("", bout, "NAME=timestampSigner1000");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"removeproperty",
-                    TESTTSID,
-                    "TESTKEY"});
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("removeproperty", TESTTSID, "TESTKEY"));
 
-        TestUtils.assertSuccessfulExecution(new String[]{"reload",
-                    TESTTSID});
-        assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
-
-        TestingSecurityManager.remove();
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                execute("reload", TESTTSID));
+        assertPrinted("", bout, "SignServer reloaded successfully");
     }
 
     public void testSetupGroupKeyService() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[]{"reload",
-                    "all"});
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("reload", "all"));
 
         assertTrue(new File(getSignServerHome() + "/res/test/test_add_groupkeyservice_configuration.properties").exists());
-        TestUtils.assertSuccessfulExecution(new String[]{"setproperties",
-                    getSignServerHome() + "/res/test/test_add_groupkeyservice_configuration.properties"});
-        assertTrue(TestUtils.grepTempOut("Setting the property NAME to Test1 for worker 1023"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("setproperties", getSignServerHome() + "/res/test/test_add_groupkeyservice_configuration.properties"));
+        assertPrinted("", bout, "Setting the property NAME to Test1 for worker 1023");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"reload",
-                    TESTGSID});
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("reload", TESTGSID));
 
-        TestUtils.assertSuccessfulExecution(new String[]{"getstatus",
-                    "complete",
-                    TESTGSID});
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("getstatus", "complete", TESTGSID));
 
-        TestUtils.assertSuccessfulExecution(new String[]{"groupkeyservice",
-                    "switchenckey", "" + TESTGSID});
-        assertTrue(TestUtils.grepTempOut("key switched successfully"));
-        TestUtils.assertSuccessfulExecution(new String[]{"groupkeyservice",
-                    "switchenckey", "Test1"});
-        assertTrue(TestUtils.grepTempOut("key switched successfully"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("groupkeyservice", "switchenckey", "" + TESTGSID));
+        assertPrinted("", bout, "key switched successfully");
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("groupkeyservice", "switchenckey", "Test1"));
+        assertPrinted("", bout, "key switched successfully");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"groupkeyservice",
-                    "pregeneratekeys", "" + TESTGSID, "1"});
-        assertTrue(TestUtils.grepTempOut("1 Pregenerated successfully"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("groupkeyservice", "pregeneratekeys", "" + TESTGSID, "1"));
+        assertPrinted("", bout, "1 Pregenerated successfully");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"groupkeyservice",
-                    "pregeneratekeys", "" + TESTGSID, "101"});
-        assertTrue(TestUtils.grepTempOut("101 Pregenerated successfully"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("groupkeyservice", "pregeneratekeys", "" + TESTGSID, "101"));
+        assertPrinted("", bout, "101 Pregenerated successfully");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"groupkeyservice",
-                    "pregeneratekeys", "" + TESTGSID, "1000"});
-        assertTrue(TestUtils.grepTempOut("1000 Pregenerated successfully"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("groupkeyservice", "pregeneratekeys", "" + TESTGSID, "1000"));
+        assertPrinted("", bout, "1000 Pregenerated successfully");
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String startDate = dateFormat.format(new Date(0));
         String endDate = dateFormat.format(new Date(System.currentTimeMillis() + 120000));
 
-        TestUtils.assertSuccessfulExecution(new String[]{"groupkeyservice",
-                    "removegroupkeys", "" + TESTGSID, "created", startDate, endDate});
-        assertTrue(TestUtils.grepTempOut("1102 Group keys removed"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("groupkeyservice", "removegroupkeys", "" + TESTGSID, "created", startDate, endDate));
+        assertPrinted("", bout, "1102 Group keys removed");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"groupkeyservice",
-                    "removegroupkeys", "" + TESTGSID, "FIRSTUSED", startDate, endDate});
-        assertTrue(TestUtils.grepTempOut("0 Group keys removed"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("groupkeyservice", "removegroupkeys", "" + TESTGSID, "FIRSTUSED", startDate, endDate));
+        assertPrinted("", bout, "0 Group keys removed");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"groupkeyservice",
-                    "removegroupkeys", "" + TESTGSID, "LASTFETCHED", startDate, endDate});
-        assertTrue(TestUtils.grepTempOut("0 Group keys removed"));
-
-        TestingSecurityManager.remove();
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("groupkeyservice", "removegroupkeys", "" + TESTGSID, "LASTFETCHED", startDate, endDate));
+        assertPrinted("", bout, "0 Group keys removed");
     }
 
-    public void testRemoveGroupKeyService() {
+    public void testRemoveGroupKeyService() throws Exception {
         // Remove and restore
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
-                    "Test1"});
-        assertTrue(TestUtils.grepTempOut("Property 'NAME' removed"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("removeworker", "Test1"));
+        assertPrinted("", bout, "Property 'NAME' removed");
 
-        TestUtils.assertSuccessfulExecution(new String[]{"reload",
-                    TESTGSID});
-        assertTrue(TestUtils.grepTempOut("SignServer reloaded successfully"));
-
-        TestingSecurityManager.remove();
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            execute("reload", TESTGSID));
+        assertPrinted("", bout, "SignServer reloaded successfully");
     }
+
 
 }

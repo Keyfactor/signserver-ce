@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import org.ejbca.util.Base64;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 
 /**
@@ -34,14 +35,18 @@ public class SetPropertyFromFileCommand extends AbstractAdminCommand {
         return "Sets a property for a given worker with byte data from file";
     }
 
-    @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        if (args.length != 3) {
-            throw new IllegalCommandArgumentsException("Usage: signserver setpropertyfromfile <signerid | signerName | global | node> <propertykey> <filename>\n"
+    public String getUsages() {
+        return "Usage: signserver setpropertyfromfile <signerid | signerName | global | node> <propertykey> <filename>\n"
                     + "Example 1: signserver setproperty 1 defaultKey myfile.dat\n"
                     + "Example 2: signserver setproperty mySigner defaultKey myfile.dat\n"
                     + "Example 3: signserver setproperty global WORKER6.CLASSPATH myfile.dat\n"
-                    + "Example 4: signserver setproperty -host node3.someorg.com node SOMENODEDATA myfile.dat\n\n");
+                    + "Example 4: signserver setproperty -host node3.someorg.com node SOMENODEDATA myfile.dat\n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        if (args.length != 3) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
 
@@ -75,7 +80,7 @@ public class SetPropertyFromFileCommand extends AbstractAdminCommand {
         } catch (IllegalCommandArgumentsException e) {
             throw e;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

@@ -15,6 +15,7 @@ package org.signserver.admin.cli.defaultimpl;
 import java.util.Map;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.StatusRepositoryData;
 
 /**
@@ -30,13 +31,17 @@ public class GetStatusPropertiesCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        if (args.length != 0) {
-            throw new IllegalCommandArgumentsException(
-                    "Usage: signserver getstatusproperties\n"
+    public String getUsages() {
+        return "Usage: signserver getstatusproperties\n"
                     + "Example 1: signserver setstatusproperty INSYNC true\n"
                     + "Example 2: signserver setstatusproperty INSYNC true "
-                    + "1263375588000\n\n");
+                    + "1263375588000\n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        if (args.length != 0) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
 
@@ -52,7 +57,7 @@ public class GetStatusPropertiesCommand extends AbstractAdminCommand {
             this.getOutputStream().println("\n\n");
             return 0;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

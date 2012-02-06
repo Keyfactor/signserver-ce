@@ -14,26 +14,10 @@ package org.signserver.cli;
  *************************************************************************/
 
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import java.util.ServiceConfigurationError;
-import java.util.ServiceLoader;
+import java.util.*;
 import org.apache.log4j.Logger;
-
-import org.signserver.cli.spi.Command;
-import org.signserver.cli.spi.CommandFactory;
-import org.signserver.cli.spi.CommandFactoryContext;
-import org.signserver.cli.spi.CommandFailureException;
-import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.*;
 
 /**
  * Implements the signserver command line interface
@@ -44,15 +28,31 @@ public class CommandLineInterface {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(CommandLineInterface.class);
+    
+    public static final int RETURN_SUCCESS = 0;
+    public static final int RETURN_INVALID_ARGUMENTS = -1;
+    public static final int RETURN_ERROR = -2;
 
     private ServiceLoader<? extends CommandFactory> loader;
-    private Class<? extends CommandFactory> factoryClazz;
-    private Properties cliProperties;
+    private Properties configuration;
     
     private PrintStream out = System.out;
     private PrintStream err = System.err;
 
     private CommandFactoryContext factoryContext;
+
+    public CommandLineInterface() {
+        this(AbstractCommandFactory.class, new Properties());
+    }
+    
+    public CommandLineInterface(Class<? extends CommandFactory> factoryClazz) {
+        this(factoryClazz, new Properties());
+    }
+    
+    public CommandLineInterface(Class<? extends CommandFactory> factoryClazz, Properties configuration) {
+        this.loader = ServiceLoader.load(factoryClazz);
+        this.configuration = configuration;
+    }
     
     public void setFactoryClass(Class<? extends CommandFactory> factoryClazz) {
         loader = ServiceLoader.load(factoryClazz);
@@ -74,33 +74,46 @@ public class CommandLineInterface {
         this.out = out;
     }
     
-    public int execute(final String[] args) throws IllegalCommandArgumentsException, CommandFailureException, IOException {
+    public int execute(final String... args) throws UnexpectedCommandFailureException {
         int resultCode = 0;
         
         if (loader == null) {
             loader = ServiceLoader.load(CommandFactory.class);
         }
         
-        factoryContext = new CommandFactoryContext(getProperties(), getOut(), getErr());
+        factoryContext = new CommandFactoryContext(getConfiguration(), getOut(), getErr());
 
         Command cmd = getCommand(args);
 
         if (cmd != null) {
-            final int shift;
-            if (cmd.getCommandGroup() == null) {
-                shift = 1;
-            } else {
-                shift = 2;
+            try {
+                final int shift;
+                if (cmd.getCommandGroup() == null) {
+                    shift = 1;
+                } else {
+                    shift = 2;
+                }
+                // Run with args without the name of the command and sub command
+                cmd.execute(Arrays.copyOfRange(args, shift, args.length));
+            } catch (IllegalCommandArgumentsException ex) {
+                out.println(ex.getMessage());
+                out.println(cmd.getUsages());
+                resultCode = RETURN_INVALID_ARGUMENTS;
+            } catch (CommandFailureException ex) {
+                out.println(ex.getMessage());
+                if (ex.getExitCode() == null) {
+                    resultCode = RETURN_ERROR;
+                } else {
+                    resultCode = ex.getExitCode();
+                }
             }
-            // Run with args without the name of the command and sub command
-            cmd.execute(Arrays.copyOfRange(args, shift, args.length));
         } else {
             if (args.length > 0) {
                 outputHelp(out, args[0], getCommands(args[0]));
             } else {
                 outputHelp(out, null, null);
             }
-            resultCode = -1;
+            resultCode = RETURN_INVALID_ARGUMENTS;
         }
 
         return resultCode;
@@ -111,19 +124,13 @@ public class CommandLineInterface {
      *
      * @param args command line arguments
      */
-    public static void main(String[] args) throws IOException {
-        try {
-            CommandLineInterface cli = new CommandLineInterface();
-            int returnCode = cli.execute(args);
-            System.exit(returnCode);
-        } catch (IllegalCommandArgumentsException ex) {
-            LOG.error(ex.getMessage());
-        } catch (CommandFailureException ex) {
-            LOG.error(ex.getMessage());
-        }
+    public static void main(String[] args) throws UnexpectedCommandFailureException {
+        CommandLineInterface cli = new CommandLineInterface();
+        int returnCode = cli.execute(args);
+        System.exit(returnCode);
     }
 
-    protected Command getCommand(String[] args) throws CommandFailureException {
+    protected Command getCommand(String[] args) throws UnexpectedCommandFailureException {
         Command result = null;
         try {
             Iterator<? extends CommandFactory> iterator = loader.iterator();
@@ -138,7 +145,7 @@ public class CommandLineInterface {
                 result = factory.getCommand(args);
             }
         } catch (ServiceConfigurationError error) {
-            throw new CommandFailureException("Error loading command factories", error);
+            throw new UnexpectedCommandFailureException("Error loading command factories", error);
         }
         return result;
     }
@@ -162,27 +169,12 @@ public class CommandLineInterface {
         return result;
     }
 
-    private Properties getProperties() throws IOException {
-        if (cliProperties == null) {
-            Properties properties = new Properties();
-            InputStream in = null; 
-            try {
-                in = getClass().getResourceAsStream("/signserver_cli.properties");
-                if (in != null) {
-                    properties.load(in);
-                }
-                cliProperties = properties;
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException ex) {
-                        LOG.error("Failed to close configuration", ex);
-                    }
-                }
-            }
-        }
-        return cliProperties;
+    public Properties getConfiguration() {
+        return configuration;
+    }
+    
+    public void setConfiguration(Properties cliProperties) {
+        this.configuration = cliProperties;
     }
     
     private void outputHelp(PrintStream out, String group, List<Command> commands) {
@@ -211,7 +203,7 @@ public class CommandLineInterface {
                 out.println("] to see additional sub commands.");
                 out.println("Or use one of:");
             } else {
-                out.println(" Use on of:");
+                out.println(" Use one of:");
             }
         } else  {
             out.println(" Available sub commands for '" + group + "':");

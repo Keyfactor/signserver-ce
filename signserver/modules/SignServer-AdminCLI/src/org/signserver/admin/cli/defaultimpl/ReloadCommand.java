@@ -14,6 +14,7 @@ package org.signserver.admin.cli.defaultimpl;
 
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 
 /**
  * Reloads the current configuration
@@ -28,12 +29,17 @@ public class ReloadCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        if (args.length != 1) {
-            throw new IllegalCommandArgumentsException("Usage: signserver reload <worker id or name | all> \n\n"
+    public String getUsages() {
+        return "Usage: signserver reload <worker id or name | all> \n\n"
                     + "Example 1 : signserver reload all \n"
                     + "Example 2 : signserver reload myWorker \n"
-                    + "Example 1 : signserver reload 1 \n");
+                    + "Example 1 : signserver reload 1 \n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        if (args.length != 1) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             int workerId = 0;
@@ -54,7 +60,7 @@ public class ReloadCommand extends AbstractAdminCommand {
             throw ex;
         }
         catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

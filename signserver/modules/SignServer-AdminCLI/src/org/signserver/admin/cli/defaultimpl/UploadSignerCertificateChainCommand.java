@@ -20,6 +20,7 @@ import java.util.Iterator;
 import org.ejbca.util.CertTools;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerStatus;
 
@@ -42,9 +43,14 @@ public class UploadSignerCertificateChainCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public String getUsages() {
+        return HELP;
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 3) {
-            throw new IllegalCommandArgumentsException(HELP);
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
 
@@ -84,7 +90,7 @@ public class UploadSignerCertificateChainCommand extends AbstractAdminCommand {
         } catch (IllegalCommandArgumentsException e) {
             throw e;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

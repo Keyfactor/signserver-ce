@@ -36,7 +36,7 @@ public class KeyStoreOptions {
 
     /** ResourceBundle with internationalized StringS. */
     private static final ResourceBundle TEXTS = ResourceBundle.getBundle(
-            "org/signserver/client/cli/ResourceBundle");
+            "org/signserver/client/cli/defaultimpl/ResourceBundle");
 
     /** Default host */
     public static final String DEFAULT_HOST = "localhost";

@@ -15,15 +15,17 @@ package org.signserver.cli.spi;
 /**
  *
  * @author Markus Kilås
+ * @version $Id$
  */
-public interface Command {
+public class UnexpectedCommandFailureException extends Exception {
+
+    public UnexpectedCommandFailureException(Throwable cause) {
+        super(cause);
+    }
+
+    public UnexpectedCommandFailureException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
     
-    void init(CommandContext context);
-    
-    String getCommand();
-    String getCommandGroup();
-    String getDescription();
-    String getUsages();
-    
-    int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException;
 }

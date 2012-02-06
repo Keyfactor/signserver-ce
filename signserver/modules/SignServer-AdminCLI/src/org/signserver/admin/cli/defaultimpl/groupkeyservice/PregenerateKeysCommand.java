@@ -14,6 +14,7 @@ package org.signserver.admin.cli.defaultimpl.groupkeyservice;
 
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.RequestContext;
 import org.signserver.groupkeyservice.common.PregenerateKeysRequest;
@@ -25,7 +26,7 @@ import org.signserver.groupkeyservice.common.PregenerateKeysResponse;
  * @version $Id$
  * @author Philip Vendil
  */
-public class PregenerateKeyCommand extends BaseGroupKeyServiceCommand {
+public class PregenerateKeysCommand extends BaseGroupKeyServiceCommand {
 
     private static final int NUMBEROFKEYSPERREQUESTS = 100;
 
@@ -33,12 +34,17 @@ public class PregenerateKeyCommand extends BaseGroupKeyServiceCommand {
     public String getDescription() {
         return "Pregenerate group keys";
     }
+
+    @Override
+    public String getUsages() {
+        return "Usage: signserver groupkeyservice pregeneratekeys <workerId or name> <number of keys>\n"
+                    + "Example: signserver groupkeyservice pregeneratekeys GroupKeyService1 1000\n\n";
+    }
     
     @Override
-    public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 2) {
-            throw new IllegalCommandArgumentsException("Usage: signserver groupkeyservice pregeneratekeys <workerId or name> <number of keys>\n"
-                    + "Example: signserver groupkeyservice pregeneratekeys GroupKeyService1 1000\n\n");
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             int workerId = helper.getWorkerId(args[0]);
@@ -73,7 +79,7 @@ public class PregenerateKeyCommand extends BaseGroupKeyServiceCommand {
         } catch (IllegalCommandArgumentsException e) {
             throw e;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
         return 0;
     }

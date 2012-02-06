@@ -19,6 +19,7 @@ import java.util.List;
 import org.signserver.admin.cli.defaultimpl.AbstractAdminCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.ArchiveDataVO;
 
 /**
@@ -34,10 +35,15 @@ public class FindFromRequestIPCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public String getUsages() {
+        return "Usage: signserver archive findfromrequestip <signerid> <requestip> <outputpath>\n"
+                    + "Example: signserver archive findfromrequestip 1 10.1.1.1 /tmp/archivedata \n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 3) {
-            throw new IllegalCommandArgumentsException("Usage: signserver archive findfromrequestip <signerid> <requestip> <outputpath>\n"
-                    + "Example: signserver archive findfromrequestip 1 10.1.1.1 /tmp/archivedata \n\n");
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             int signerid = getWorkerId(args[0]);
@@ -75,7 +81,7 @@ public class FindFromRequestIPCommand extends AbstractAdminCommand {
         } catch (IllegalCommandArgumentsException e) {
             throw e;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

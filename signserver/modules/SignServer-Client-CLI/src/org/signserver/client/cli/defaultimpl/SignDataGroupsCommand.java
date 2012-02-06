@@ -12,8 +12,10 @@
  *************************************************************************/
 package org.signserver.client.cli.defaultimpl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -43,7 +45,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
 
     /** ResourceBundle with internationalized StringS. */
     private static final ResourceBundle TEXTS = ResourceBundle.getBundle(
-            "org/signserver/client/cli/ResourceBundle");
+            "org/signserver/client/cli/defaultimpl/ResourceBundle");
 
     /** System-specific new line characters. **/
     private static final String NL = System.getProperty("line.separator");
@@ -158,6 +160,19 @@ public class SignDataGroupsCommand extends AbstractCommand {
     @Override
     public String getDescription() {
         return "Request MRTD data groups to be signed";
+    }
+
+    @Override
+    public String getUsages() {
+        StringBuilder footer = new StringBuilder();
+        footer.append(NL)
+                .append("Sample usages:").append(NL)
+                .append("a) ").append(COMMAND).append(" -workername MRTDSODSigner -data \"1=value1&2=value2&3=value3\"").append(NL)
+                .toString();
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        final HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp(new PrintWriter(bout), HelpFormatter.DEFAULT_WIDTH, "signdatagroups <options>", null, OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        return bout.toString();
     }
 
     /**
@@ -314,15 +329,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
             run();
             return 0;
         } catch (ParseException ex) {
-            LOG.error(ex);
-            final HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("signdatagroups <options>", OPTIONS);
-            System.out.println(new StringBuilder()
-                .append(NL)
-                .append("Sample usages:").append(NL)
-                .append("a) ").append(COMMAND).append(" -workername MRTDSODSigner -data \"1=value1&2=value2&3=value3\"").append(NL)
-                .toString());
-            return -1;
+            throw new IllegalCommandArgumentsException(ex.getMessage());
         }
     }
 

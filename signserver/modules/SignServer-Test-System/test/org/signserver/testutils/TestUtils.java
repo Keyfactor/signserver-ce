@@ -158,14 +158,7 @@ public class TestUtils {
     }
 
     public static void assertSuccessfulExecution(String[] args) {
-        try {
-            TestUtils.flushTempOut();
-            AdminCLI.main(args);
-        } catch (ExitException e) {
-            TestUtils.printTempErr();
-            TestUtils.printTempOut();
-            Assert.assertTrue(false);
-        }
+        throw new UnsupportedOperationException("TODO: Remove this method"); // TODO
     }
 
     public static void assertSuccessfulExecution(Object o, String[] args) {
@@ -199,14 +192,7 @@ public class TestUtils {
     }
 
     public static int assertFailedExecution(String[] args) {
-        try {
-            TestUtils.flushTempOut();
-            AdminCLI.main(args);
-            Assert.assertTrue(false);
-        } catch (ExitException e) {
-            return e.number;
-        }
-        return 0;
+        throw new UnsupportedOperationException("TODO: Remove this method"); // TODO
     }
 
     public static int assertFailedExecution(Object o, String[] args) {
@@ -236,15 +222,7 @@ public class TestUtils {
     }
     
     public static int assertFailedExecution(Command o, String[] args) {
-        try {
-            final int result = o.execute(args);
-            Assert.fail("Should have failed");
-            return result;
-        } catch (IllegalCommandArgumentsException ignored) {
-            return -2;
-        } catch (CommandFailureException ex) {
-            return -1;
-        }
+        throw new UnsupportedOperationException("TODO: Remove this method"); // TODO
     }
     
 }

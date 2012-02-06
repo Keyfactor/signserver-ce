@@ -14,6 +14,7 @@ package org.signserver.admin.cli.defaultimpl;
 
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 
@@ -30,10 +31,15 @@ public class ListAuthorizedClientsCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public String getUsages() {
+        return "Usage: signserver listauthorizedclients <signerid> \n"
+                    + "Example: signserver listauthorizedclients 1 \n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 1) {
-            throw new IllegalCommandArgumentsException("Usage: signserver listauthorizedclients <signerid> \n"
-                    + "Example: signserver listauthorizedclients 1 \n\n");
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             int signerid = getWorkerId(args[0]);
@@ -56,7 +62,7 @@ public class ListAuthorizedClientsCommand extends AbstractAdminCommand {
             this.getOutputStream().println("\n\n");
             return 0;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

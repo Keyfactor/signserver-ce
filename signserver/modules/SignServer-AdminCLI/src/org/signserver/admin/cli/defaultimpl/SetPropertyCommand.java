@@ -15,6 +15,7 @@ package org.signserver.admin.cli.defaultimpl;
 import java.rmi.RemoteException;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 
 /**
@@ -30,13 +31,18 @@ public class SetPropertyCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        if (args.length != 3) {
-            throw new IllegalCommandArgumentsException("Usage: signserver setproperty <signerid | signerName | global | node> <propertykey> <propertyvalue>\n"
+    public String getUsages() {
+        return "Usage: signserver setproperty <signerid | signerName | global | node> <propertykey> <propertyvalue>\n"
                     + "Example 1: signserver setproperty 1 defaultKey c21cc935b284929beac36d66658106018b2c4ee5\n"
                     + "Example 2: signserver setproperty mySigner defaultKey c21cc935b284929beac36d66658106018b2c4ee5\n"
                     + "Example 3: signserver setproperty global WORKER6.CLASSPATH some.org.SomeWorkerClass\n"
-                    + "Example 4: signserver setproperty -host node3.someorg.com node SOMENODEDATA 123456\n\n");
+                    + "Example 4: signserver setproperty -host node3.someorg.com node SOMENODEDATA 123456\n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        if (args.length != 3) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             String propertykey = args[1];
@@ -57,7 +63,7 @@ public class SetPropertyCommand extends AbstractAdminCommand {
                         // named worker is requested
                         int id = getWorkerSession().getWorkerId(workerid);
                         if (id == 0) {
-                            throw new IllegalCommandArgumentsException("Error: No worker with the given name could be found");
+                            throw new CommandFailureException("Error: No such worker");
                         }
                         setWorkerProperty(id, propertykey, propertyvalue);
                     }
@@ -68,18 +74,18 @@ public class SetPropertyCommand extends AbstractAdminCommand {
             return 0;
 
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 
-    private void setGlobalProperty(String scope, String key, String value) throws RemoteException, Exception {
+    private void setGlobalProperty(String scope, String key, String value) throws RemoteException {
         this.getOutputStream().println("Setting the global property " + key + " to " + value + " with scope " + scope + "\n");
         this.getOutputStream().println("See current configuration with the getconfig command, activate it with the reload command");
 
         getGlobalConfigurationSession().setProperty(scope, key, value);
     }
 
-    private void setWorkerProperty(int workerId, String propertykey, String propertyvalue) throws RemoteException, Exception {
+    private void setWorkerProperty(int workerId, String propertykey, String propertyvalue) throws RemoteException {
         this.getOutputStream().println("Setting the property " + propertykey + " to " + propertyvalue + " for worker " + workerId + "\n");
         this.getOutputStream().println("See current configuration with the getconfig command, activate it with the reload command");
 

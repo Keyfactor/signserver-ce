@@ -10,20 +10,29 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.cli.spi;
+package org.signserver.testutils;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  *
  * @author Markus Kilås
+ * @version $Id$
  */
-public interface Command {
+public class TeeOutputStream extends OutputStream {
+
+    private OutputStream[] streams;
+
+    public TeeOutputStream(OutputStream... streams) {
+        this.streams = streams;
+    }
     
-    void init(CommandContext context);
+    @Override
+    public void write(int b) throws IOException {
+        for (OutputStream out : streams) {
+            out.write(b);
+        }
+    }
     
-    String getCommand();
-    String getCommandGroup();
-    String getDescription();
-    String getUsages();
-    
-    int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException;
 }

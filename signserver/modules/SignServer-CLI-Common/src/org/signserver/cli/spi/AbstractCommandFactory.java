@@ -24,8 +24,8 @@ import java.util.Map;
  */
 public abstract class AbstractCommandFactory implements CommandFactory {
     
-    private Map<String, Class<? extends AbstractCommand>> commands = new HashMap<String, Class<? extends AbstractCommand>>();
-    private Map<String, Map<String, Class<? extends AbstractCommand>>> subCommands = new HashMap<String, Map<String, Class<? extends AbstractCommand>>>();
+    private Map<String, CommandEntry> commands = new HashMap<String, CommandEntry>();
+    private Map<String, Map<String, CommandEntry>> subCommands = new HashMap<String, Map<String, CommandEntry>>();
     
     private String usagePrefix = "";
     
@@ -45,19 +45,30 @@ public abstract class AbstractCommandFactory implements CommandFactory {
     protected abstract void registerCommands();
     
     protected void put(String command, Class<? extends AbstractCommand> clazz) {
-        commands.put(command, clazz);
+        put(command, clazz, true);
     }
     protected void put(String group, String subCommand, Class<? extends AbstractCommand> clazz) {
-        Map<String, Class<? extends AbstractCommand>> subCommandMap = subCommands.get(group);
+        put(group, subCommand, clazz, true);
+    }
+    
+    protected void put(String command, Class<? extends AbstractCommand> clazz, boolean visible) {
+        commands.put(command, new CommandEntry(clazz, visible));
+    }
+    protected void put(String group, String subCommand, Class<? extends AbstractCommand> clazz, boolean visible) {
+        Map<String, CommandEntry> subCommandMap = subCommands.get(group);
         if (subCommandMap == null) {
-            subCommandMap = new HashMap<String, Class<? extends AbstractCommand>>();
+            subCommandMap = new HashMap<String, CommandEntry>();
             subCommands.put(group, subCommandMap);
         }
-        subCommandMap.put(subCommand, clazz);
+        subCommandMap.put(subCommand, new CommandEntry(clazz, visible));
     }
     
     @Override
-    public Command getCommand(final String... args) {
+    public Command getCommand(final String[] args) {
+        return getCommand(args, false);
+    }
+    
+    private Command getCommand(final String[] args, boolean onlyVisible) {
         if (args.length < 1) {
             return null;
         }
@@ -65,27 +76,29 @@ public abstract class AbstractCommandFactory implements CommandFactory {
         String commandGroupName = null;
         StringBuilder usage = new StringBuilder();
         usage.append(usagePrefix).append(" ");
-        Class<? extends AbstractCommand> clazz = commands.get(args[0]);
-        if (clazz == null) {
-            Map<String, Class<? extends AbstractCommand>> commandGroup = subCommands.get(args[0]);
+        CommandEntry entry = commands.get(args[0]);
+        if (entry == null) {
+            Map<String, CommandEntry> commandGroup = subCommands.get(args[0]);
             if (commandGroup != null) {
                 if (args.length < 2) {
                     return null;
                 }
-                clazz = commandGroup.get(args[1]);
-                commandName = args[1];
-                commandGroupName = args[0];
-                usage.append(args[0]).append(" ").append(commandName);
+                entry = commandGroup.get(args[1]);
+                if (entry != null && (entry.isVisible() || !onlyVisible)) {
+                    commandName = args[1];
+                    commandGroupName = args[0];
+                    usage.append(args[0]).append(" ").append(commandName);
+                }
             }
-        } else {
+        } else if (entry.isVisible()) {
             commandName = args[0];
             usage.append(commandName);
         }
-        if (clazz != null) {
+        if (entry != null && (entry.isVisible() || !onlyVisible)) {
             try {
                 CommandContext context = new CommandContext(commandGroupName, commandName, factoryContext);
                 context.setUsagePrefix(usage.toString());
-                AbstractCommand command = clazz.newInstance();
+                AbstractCommand command = entry.getCommandClazz().newInstance();
                 command.init(context);
                 return command;
             } catch (InstantiationException ex) {
@@ -102,8 +115,10 @@ public abstract class AbstractCommandFactory implements CommandFactory {
     public Collection<Command> getTopLevelCommands() {
         final LinkedList<Command> result = new LinkedList<Command>();
         for (String name : commands.keySet()) {
-            Command command = getCommand(name);
-            result.add(command);
+            Command command = getCommand(new String[] { name }, true);
+            if (command != null) {
+                result.add(command);
+            }
         }
         return result;
     }
@@ -116,17 +131,38 @@ public abstract class AbstractCommandFactory implements CommandFactory {
     @Override
     public Collection<Command> getSubCommands(String group) {
         final Collection<Command> result;
-        Map<String, Class<? extends AbstractCommand>> commandsInGroup = subCommands.get(group);
+        Map<String, CommandEntry> commandsInGroup = subCommands.get(group);
         if (commandsInGroup == null) {
             result = null;
         } else {
             result = new LinkedList<Command>();
             for (String command : commandsInGroup.keySet()) {
-                result.add(getCommand(group, command));
+                Command c = getCommand(new String[] { group, command }, true);
+                if (c != null) {
+                    result.add(c);
+                }
             }
         }
         return result;
     }
-    
+ 
+    private static class CommandEntry {
+        private Class<? extends AbstractCommand> commandClazz;
+        private boolean visible;
+
+        public CommandEntry(Class<? extends AbstractCommand> commandClazz, boolean visible) {
+            this.commandClazz = commandClazz;
+            this.visible = visible;
+        }
+
+        public Class<? extends AbstractCommand> getCommandClazz() {
+            return commandClazz;
+        }
+
+        public boolean isVisible() {
+            return visible;
+        }
+        
+    }
     
 }

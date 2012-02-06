@@ -20,6 +20,7 @@ import java.util.List;
 import org.signserver.admin.cli.defaultimpl.AbstractAdminCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.ArchiveDataVO;
 
 /**
@@ -34,10 +35,15 @@ public class FindFromRequestCertCommand extends AbstractAdminCommand {
         return "Returns all archive datas requested from given IP";
     }
 
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    @Override
+    public String getUsages() {
+        return "Usage: signserver archive findfromrequestcert <signerid> <certificatesn (hex)> <issuerd> <outputpath>\n"
+                    + "Example: signserver archive findfromrequestcert 1 EF34242D2324 \"CN=Test Root CA\" /tmp/archivedata \n\n";
+    }
+
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 4) {
-            throw new IllegalCommandArgumentsException("Usage: signserver archive findfromrequestcert <signerid> <certificatesn (hex)> <issuerd> <outputpath>\n"
-                    + "Example: signserver archive findfromrequestcert 1 EF34242D2324 \"CN=Test Root CA\" /tmp/archivedata \n\n");
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             int signerid = getWorkerId(args[0]);
@@ -77,7 +83,7 @@ public class FindFromRequestCertCommand extends AbstractAdminCommand {
         } catch (IllegalCommandArgumentsException e) {
             throw e;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

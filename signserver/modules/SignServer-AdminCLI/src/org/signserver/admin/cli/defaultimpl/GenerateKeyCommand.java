@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 
 /**
  * Command used to generate a new signing key.
@@ -68,6 +69,11 @@ public class GenerateKeyCommand extends AbstractAdminCommand {
         return "Generates a new signing key-pair";
     }
 
+    @Override
+    public String getUsages() {
+        return USAGE;
+    }
+
     /**
      * Reads all the options from the command line.
      *
@@ -96,7 +102,7 @@ public class GenerateKeyCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length < 1) {
             throw new IllegalCommandArgumentsException(USAGE);
         }
@@ -138,10 +144,10 @@ public class GenerateKeyCommand extends AbstractAdminCommand {
                 err.println(eJBException.getMessage());
                 return -1;
             } else {
-                throw new CommandFailureException(eJBException);
+                throw new UnexpectedCommandFailureException(eJBException);
             }
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         } finally {
             authCode = null;
         }

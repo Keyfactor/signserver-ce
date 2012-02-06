@@ -18,11 +18,7 @@ package org.signserver.cli.spi;
  */
 public class CommandFailureException extends Exception {
 
-    /**
-     * Creates a new instance of <code>CommandFailureException</code> without detail message.
-     */
-    public CommandFailureException() {
-    }
+    private Integer exitCode;
 
     /**
      * Constructs an instance of <code>CommandFailureException</code> with the specified detail message.
@@ -32,13 +28,13 @@ public class CommandFailureException extends Exception {
         super(msg);
     }
 
-    public CommandFailureException(Throwable cause) {
-        super(cause);
+    public CommandFailureException(String msg, Integer exitCode) {
+        super(msg);
+        this.exitCode = exitCode;
     }
 
-    public CommandFailureException(String message, Throwable cause) {
-        super(message, cause);
+    public Integer getExitCode() {
+        return exitCode;
     }
-
     
 }

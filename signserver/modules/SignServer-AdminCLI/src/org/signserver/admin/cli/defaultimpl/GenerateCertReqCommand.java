@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.PKCS10CertReqInfo;
@@ -39,8 +40,13 @@ public class GenerateCertReqCommand extends AbstractAdminCommand {
     public String getDescription() {
         return "Requests a signer to generate a PKCS#10 certificate request";
     }
+    
+    @Override
+    public String getUsages() {
+        return HELP;
+    }
 
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length < 4 || args.length > 6) {
             throw new IllegalCommandArgumentsException(HELP);
         }
@@ -103,7 +109,7 @@ public class GenerateCertReqCommand extends AbstractAdminCommand {
         } catch (FileNotFoundException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

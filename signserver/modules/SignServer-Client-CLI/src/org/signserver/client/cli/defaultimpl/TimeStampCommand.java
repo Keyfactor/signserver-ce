@@ -34,9 +34,11 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
+import org.signserver.cli.CommandLineInterface;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 
 /**
  * Class makeing a simple timestamp request to a timestamp server and tries to
@@ -89,28 +91,10 @@ public class TimeStampCommand extends AbstractCommand {
 
     /** Number of milliseconds to sleep after a request. */
     private int sleep = 1000;
-
-
-    @Override
-    public String getDescription() {
-        return "Send time stamp requests to a TSA";
-    }
     
-    private void usage(final Options options) {
-        // automatically generate the help statement
-        final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("signclient timestamp <options> <url>",
-                options);
-        final StringBuilder footer = new StringBuilder();
-        footer.append(NL)
-            .append("Sample usages:").append(NL)
-            .append("a) ").append(COMMAND).append(" -url http://localhost:8080/signserver/tsa?workerName=TimeStampSigner").append(NL);
-        System.out.println(footer.toString());
-        System.exit(-1);
-    }
+    private Options options = new Options();
 
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        
+    public TimeStampCommand() {
         // Create options
         final Option help = new Option("help", false, "Print this message.");
         final Option b64 = new Option("base64", false,
@@ -179,7 +163,6 @@ public class TimeStampCommand extends AbstractCommand {
         final Option optionSleep = OptionBuilder.create("sleep");
 
         // Add options
-        final Options options = new Options();
         options.addOption(help);
         options.addOption(verifyopt);
         options.addOption(url);
@@ -192,12 +175,37 @@ public class TimeStampCommand extends AbstractCommand {
         options.addOption(instr);
         options.addOption(inreq);
         options.addOption(optionSleep);
+    }
+
+    @Override
+    public String getDescription() {
+        return "Send time stamp requests to a TSA";
+    }
+
+    public String getUsages() {
+        return usage(options);
+    }
+    
+    private String usage(final Options options) {
+        // automatically generate the help statement
+        final HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("signclient timestamp <options> <url>",
+                options);
+        final StringBuilder footer = new StringBuilder();
+        footer.append(NL)
+            .append("Sample usages:").append(NL)
+            .append("a) ").append(COMMAND).append(" -url http://localhost:8080/signserver/tsa?workerName=TimeStampSigner").append(NL);
+        return footer.toString();
+    }
+
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
 
         final CommandLineParser parser = new GnuParser();
         try {
             final CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption("help")) {
-                usage(options);
+                out.println(usage(options));
+                return CommandLineInterface.RETURN_SUCCESS;
             }
             if (cmd.hasOption("url")) {
                 urlstring = cmd.getOptionValue("url");
@@ -238,29 +246,30 @@ public class TimeStampCommand extends AbstractCommand {
             }
 
             if (args.length < 1) {
-                usage(options);
-                return -1;
+                out.println(usage(options));
+                return CommandLineInterface.RETURN_INVALID_ARGUMENTS;
             } else if (urlstring == null) {
                 LOG.error("Missing URL");
-                usage(options);
+                out.println(usage(options));
                 return -1;
-            } else if (Security.addProvider(new BouncyCastleProvider()) < 0) {
+            } /*else if (Security.addProvider(new BouncyCastleProvider()) < 0) {
+                LOG.error("Could not install BC provider");
                 // If already installed, remove so we can handle redeploy
                 Security.removeProvider("BC");
                 if (Security.addProvider(new BouncyCastleProvider()) < 0) {
                     LOG.error("Cannot even install BC provider again!");
                 }
-                return -1;
-            } else {
+                return -2;
+            }*/ else {
                 run();
-                return 0;
+                return CommandLineInterface.RETURN_SUCCESS;
             }
         } catch (ParseException e) {
             // oops, something went wrong
-            usage(options);
-            return -1;
+            out.println(usage(options));
+            return CommandLineInterface.RETURN_INVALID_ARGUMENTS;
         } catch (Exception ex) {
-            throw new CommandFailureException(ex);
+            throw new UnexpectedCommandFailureException(ex);
         }
     }
 

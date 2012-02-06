@@ -17,6 +17,7 @@ import java.util.Enumeration;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
@@ -36,15 +37,20 @@ public class GetConfigCommand extends AbstractCommand {
     public String getDescription() {
         return "Get the configuration either global or for a worker";
     }
-    
+
     @Override
-    public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException {
-        
-        if (args.length != 1) {
-            throw new IllegalCommandArgumentsException("Usage: signserver getconfig <workerid | workerName | global> \n"
+    public String getUsages() {
+        return "Usage: signserver getconfig <workerid | workerName | global> \n"
                     + "Example 1 : signserver getconfig 1 \n"
                     + "Example 2 : signserver getconfig mySigner \n"
-                    + "Example 3 : signserver getconfig global \n\n");
+                    + "Example 3 : signserver getconfig global \n\n";
+    }
+    
+    @Override
+    public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        
+        if (args.length != 1) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             String workerid = args[0];
@@ -68,7 +74,7 @@ public class GetConfigCommand extends AbstractCommand {
         } catch (IllegalCommandArgumentsException e) {
             throw e;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
         return 0;
     }

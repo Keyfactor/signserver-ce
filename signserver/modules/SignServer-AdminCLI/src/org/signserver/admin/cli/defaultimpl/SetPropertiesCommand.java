@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 
 /**
  * Sets properties from a given property file.
@@ -31,11 +32,16 @@ public class SetPropertiesCommand extends AbstractAdminCommand {
         return "Sets properties from a given property file";
     }
 
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        if (args.length != 1) {
-            throw new IllegalCommandArgumentsException("Usage: signserver setproperties <propertyfile>\n"
+    @Override
+    public String getUsages() {
+        return "Usage: signserver setproperties <propertyfile>\n"
                     + "Example 1: signserver setproperties mysettings.properties\n"
-                    + "Example 2: signserver setproperties -host node3.someorg.com mysettings.properties\n\n");
+                    + "Example 2: signserver setproperties -host node3.someorg.com mysettings.properties\n\n";
+    }
+
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        if (args.length != 1) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
 
@@ -48,7 +54,7 @@ public class SetPropertiesCommand extends AbstractAdminCommand {
             this.getOutputStream().println("\n\n");
             return 0;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

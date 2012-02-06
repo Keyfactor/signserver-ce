@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GenericPropertiesRequest;
 import org.signserver.common.GenericPropertiesResponse;
 import org.signserver.common.RequestContext;
@@ -60,6 +61,11 @@ public class RenewSignerCommand extends AbstractAdminCommand {
         return "Renews a signer by calling a Renewal Worker";
     }
 
+    @Override
+    public String getUsages() {
+        return USAGE;
+    }
+
     /**
      * Reads all the options from the command line.
      *
@@ -83,7 +89,7 @@ public class RenewSignerCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         try {
             // Parse the command line
             parseCommandLine(new GnuParser().parse(OPTIONS, args));
@@ -130,12 +136,12 @@ public class RenewSignerCommand extends AbstractAdminCommand {
                 err.println(eJBException.getMessage());
                 return -2;
             } else {
-                throw new CommandFailureException(eJBException);
+                throw new UnexpectedCommandFailureException(eJBException);
             }
         } catch(IllegalCommandArgumentsException ex) {
             throw ex;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

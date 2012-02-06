@@ -18,6 +18,7 @@ import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.ArchiveDataVO;
 
 /**
@@ -33,12 +34,17 @@ public class FindFromArchiveIdCommand extends AbstractCommand {
     public String getDescription() {
         return "Find archivables matching an archive id";
     }
+
+    @Override
+    public String getUsages() {
+        return "Usage: signserver archive findfromarchiveid <signerid> <archiveid> <outputpath>\n"
+                    + "Example: signserver archive findfromarchiveid 1 EF34242D2324 /tmp/archivedata\n\n";
+    }
     
     @Override
-    public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 3) {
-            throw new IllegalCommandArgumentsException("Usage: signserver archive findfromarchiveid <signerid> <archiveid> <outputpath>\n"
-                    + "Example: signserver archive findfromarchiveid 1 EF34242D2324 /tmp/archivedata\n\n");
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             int signerid = helper.getWorkerId(args[0]);
@@ -73,7 +79,7 @@ public class FindFromArchiveIdCommand extends AbstractCommand {
         } catch (IllegalCommandArgumentsException e) {
             throw e;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

@@ -14,9 +14,11 @@ package org.signserver.admin.cli.defaultimpl;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import org.apache.log4j.Logger;
 import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
@@ -29,6 +31,9 @@ import org.signserver.common.SignerStatus;
  */
 public class ActivateCryptoTokenCommand extends AbstractAdminCommand {
 
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(ActivateCryptoTokenCommand.class);
+    
     private static final String HELP = 
             "Usage: signserver activatesigntoken <worker id | worker name> <authentication code> \n"
             + "Leaving out authorization code will prompt for it.\n\n"
@@ -45,6 +50,11 @@ public class ActivateCryptoTokenCommand extends AbstractAdminCommand {
         return "Activates a crypto token";
     }
 
+    @Override
+    public String getUsages() {
+        return HELP;
+    }
+
     /**
      * Runs the command
      *
@@ -52,9 +62,9 @@ public class ActivateCryptoTokenCommand extends AbstractAdminCommand {
      * @throws CommandFailureException Error running command
      */
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length < 1) {
-            throw new IllegalCommandArgumentsException(HELP);
+            throw new IllegalCommandArgumentsException("Missing arguments");
         }
         
         try {
@@ -84,13 +94,16 @@ public class ActivateCryptoTokenCommand extends AbstractAdminCommand {
         } catch (InvalidWorkerIdException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());
         } catch (RemoteException ex) {
-            throw new CommandFailureException(ex);
+            throw new UnexpectedCommandFailureException(ex);
         } catch (IOException ex) {
-            throw new CommandFailureException(ex);
+            throw new UnexpectedCommandFailureException(ex);
         } catch (CryptoTokenAuthenticationFailureException ex) {
-            throw new CommandFailureException(ex);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Crypto token authentication failed", ex);
+            }
+            throw new CommandFailureException("Crypto token authentication failed: " + ex.getLocalizedMessage());
         } catch (CryptoTokenOfflineException ex) {
-            throw new CommandFailureException(ex);
+            throw new CommandFailureException("Crypto token is offline: " + ex.getLocalizedMessage());
         }
     }
 

@@ -14,6 +14,7 @@ package org.signserver.admin.cli.defaultimpl;
 
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 
 /**
  * Command used to deactivate a Crypto Token
@@ -35,9 +36,14 @@ public class DeactivateCryptoTokenCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public String getUsages() {
+        return HELP;
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 1) {
-            throw new IllegalCommandArgumentsException(HELP);
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             int workerid = getWorkerId(args[0]);
@@ -50,7 +56,7 @@ public class DeactivateCryptoTokenCommand extends AbstractAdminCommand {
         } catch (IllegalCommandArgumentsException e) {
             throw new IllegalCommandArgumentsException(e.getMessage());
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

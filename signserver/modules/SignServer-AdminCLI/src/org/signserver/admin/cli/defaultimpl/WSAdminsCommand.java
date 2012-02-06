@@ -21,6 +21,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 
 /**
@@ -68,6 +69,11 @@ public class WSAdminsCommand extends AbstractAdminCommand {
         return "Manages authorizations for WS administrators";
     }
 
+    @Override
+    public String getUsages() {
+        return USAGE;
+    }
+
     /**
      * Reads all the options from the command line.
      *
@@ -107,7 +113,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         try {
             // Parse the command line
             parseCommandLine(new GnuParser().parse(OPTIONS, args));
@@ -153,10 +159,10 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                 err.println(eJBException.getMessage());
                 return -2;
             } else {
-                throw new CommandFailureException(eJBException);
+                throw new UnexpectedCommandFailureException(eJBException);
             }
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

@@ -12,25 +12,15 @@
  *************************************************************************/
 package org.signserver.client.cli.validationservice;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.net.ssl.SSLSocketFactory;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.ejbca.util.CertTools;
+import org.signserver.cli.CommandLineInterface;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
@@ -38,11 +28,7 @@ import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.SignServerUtil;
 import org.signserver.protocol.ws.ProcessRequestWS;
 import org.signserver.protocol.ws.ProcessResponseWS;
-import org.signserver.protocol.ws.client.ICommunicationFault;
-import org.signserver.protocol.ws.client.IFaultCallback;
-import org.signserver.protocol.ws.client.ISignServerWSClient;
-import org.signserver.protocol.ws.client.SignServerWSClientFactory;
-import org.signserver.protocol.ws.client.WSClientUtil;
+import org.signserver.protocol.ws.client.*;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
@@ -78,8 +64,8 @@ public class ValidateCertificateCommand extends AbstractCommand {
     public static final String OPTION_TRUSTSTORE = "truststore";
     public static final String OPTION_TRUSTSTOREPWD = "truststorepwd";
     
-    public static final int RETURN_ERROR = -2;
-    public static final int RETURN_BADARGUMENT = -1;
+    public static final int RETURN_ERROR = CommandLineInterface.RETURN_ERROR;
+    public static final int RETURN_BADARGUMENT = CommandLineInterface.RETURN_INVALID_ARGUMENTS;
     public static final int RETURN_VALID = 0;
     public static final int RETURN_REVOKED = 1;
     public static final int RETURN_NOTYETVALID = 2;
@@ -101,9 +87,77 @@ public class ValidateCertificateCommand extends AbstractCommand {
     private boolean useSSL = false;
     private String usages = null;
     private String service = null;
+    
+    Options options = new Options();
 
+    public ValidateCertificateCommand() {
+        Option help = new Option(OPTION_HELP, false, "Display this info");
+        Option silent = new Option(OPTION_SILENT, false, "Don't produce any output, only return value.");
+        Option pem = new Option(OPTION_PEM, false, "Certificate is in PEM format (Default).");
+        Option der = new Option(OPTION_DER, false, "Certificate is in DER format.");
+
+        OptionBuilder.withArgName("service-name");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("The name or id of the validation service to process request. (Required)");
+        Option serviceOption = OptionBuilder.create(OPTION_SERVICE);
+
+        OptionBuilder.withArgName("cert-file");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Path to certificate file (DER or PEM) (Required).");
+        Option certOption = OptionBuilder.create(OPTION_CERT);
+
+        OptionBuilder.withArgName("hosts");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("A ',' separated string containing the hostnames of the validation service nodes. Ex 'host1.someorg.org,host2.someorg.org' (Required).");
+        Option hostsOption = OptionBuilder.create(OPTION_HOSTS);
+
+        OptionBuilder.withArgName("port");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Remote port of service (Default is 8080 or 8442 for SSL).");
+        Option portOption = OptionBuilder.create(OPTION_PORT);
+
+        OptionBuilder.withArgName("certpurposes");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("A ',' separated string containing requested certificate purposes.");
+        Option usagesOption = OptionBuilder.create(OPTION_CERTPURPOSES);
+
+        OptionBuilder.withArgName("jks-file");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Path to JKS truststore containing trusted CA for SSL Server certificates.");
+        Option truststore = OptionBuilder.create(OPTION_TRUSTSTORE);
+
+        OptionBuilder.withArgName("password");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Password to unlock the truststore.");
+        Option truststorepwd = OptionBuilder.create(OPTION_TRUSTSTOREPWD);
+
+        options.addOption(help);
+        options.addOption(serviceOption);
+        options.addOption(certOption);
+        options.addOption(hostsOption);
+        options.addOption(portOption);
+        options.addOption(usagesOption);
+        options.addOption(pem);
+        options.addOption(der);
+        options.addOption(silent);
+        options.addOption(truststore);
+        options.addOption(truststorepwd);
+    }
+
+    @Override
     public String getDescription() {
         return "Request a certificate to get validated";
+    }
+
+    @Override
+    public String getUsages() {
+        final StringBuilder footer = new StringBuilder();
+        footer.append(NL).append("The following values is returned by the program that can be used when scripting.").append(NL).append("  -2   : Error happened during execution").append(NL).append("  -1   : Bad arguments").append(NL).append("   0   : Certificate is valid").append(NL).append("   1   : Certificate is revoked").append(NL).append("   2   : Certificate is not yet valid").append(NL).append("   3   : Certificate have expired").append(NL).append("   4   : Certificate doesn't verify").append(NL).append("   5   : CA Certificate have been revoked").append(NL).append("   6   : CA Certificate is not yet valid").append(NL).append("   7   : CA Certificate have expired.").append(NL).append("   8   : Certificate have no valid certificate purpose.").append(NL).append(NL).append("Sample usages:").append(NL).append("a) ").append(COMMAND).append(" -service CertValidationWorker -hosts localhost -cert").append(NL).append("    certificate.pem").append(NL).append("b) ").append(COMMAND).append(" -service 5806 -hosts localhost -cert certificate.pem").append(NL).append("    -truststore p12/truststore.jks -truststorepwd changeit").append(NL);
+
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        final HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp(new PrintWriter(bout), HelpFormatter.DEFAULT_WIDTH, "Usage: signclient validatecertificate <options>\n", null, options, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        return bout.toString();
     }
 
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
@@ -111,64 +165,12 @@ public class ValidateCertificateCommand extends AbstractCommand {
         try {
             SignServerUtil.installBCProvider();
 
-            Option help = new Option(OPTION_HELP, false, "Display this info");
-            Option silent = new Option(OPTION_SILENT, false, "Don't produce any output, only return value.");
-            Option pem = new Option(OPTION_PEM, false, "Certificate is in PEM format (Default).");
-            Option der = new Option(OPTION_DER, false, "Certificate is in DER format.");
-
-            OptionBuilder.withArgName("service-name");
-            OptionBuilder.hasArg();
-            OptionBuilder.withDescription("The name or id of the validation service to process request. (Required)");
-            Option serviceOption = OptionBuilder.create(OPTION_SERVICE);
-
-            OptionBuilder.withArgName("cert-file");
-            OptionBuilder.hasArg();
-            OptionBuilder.withDescription("Path to certificate file (DER or PEM) (Required).");
-            Option certOption = OptionBuilder.create(OPTION_CERT);
-
-            OptionBuilder.withArgName("hosts");
-            OptionBuilder.hasArg();
-            OptionBuilder.withDescription("A ',' separated string containing the hostnames of the validation service nodes. Ex 'host1.someorg.org,host2.someorg.org' (Required).");
-            Option hostsOption = OptionBuilder.create(OPTION_HOSTS);
-
-            OptionBuilder.withArgName("port");
-            OptionBuilder.hasArg();
-            OptionBuilder.withDescription("Remote port of service (Default is 8080 or 8442 for SSL).");
-            Option portOption = OptionBuilder.create(OPTION_PORT);
-
-            OptionBuilder.withArgName("certpurposes");
-            OptionBuilder.hasArg();
-            OptionBuilder.withDescription("A ',' separated string containing requested certificate purposes.");
-            Option usagesOption = OptionBuilder.create(OPTION_CERTPURPOSES);
-
-            OptionBuilder.withArgName("jks-file");
-            OptionBuilder.hasArg();
-            OptionBuilder.withDescription("Path to JKS truststore containing trusted CA for SSL Server certificates.");
-            Option truststore = OptionBuilder.create(OPTION_TRUSTSTORE);
-
-            OptionBuilder.withArgName("password");
-            OptionBuilder.hasArg();
-            OptionBuilder.withDescription("Password to unlock the truststore.");
-            Option truststorepwd = OptionBuilder.create(OPTION_TRUSTSTOREPWD);
-
-            Options options = new Options();
-            options.addOption(help);
-            options.addOption(serviceOption);
-            options.addOption(certOption);
-            options.addOption(hostsOption);
-            options.addOption(portOption);
-            options.addOption(usagesOption);
-            options.addOption(pem);
-            options.addOption(der);
-            options.addOption(silent);
-            options.addOption(truststore);
-            options.addOption(truststorepwd);
-
             CommandLineParser parser = new GnuParser();
             try {
                 CommandLine cmd = parser.parse(options, args);
                 if (cmd.hasOption(OPTION_HELP)) {
-                    printUsage(options);
+                    printUsage();
+                    return RETURN_BADARGUMENT;
                 }
 
                 silentMode = cmd.hasOption(OPTION_SILENT);
@@ -177,7 +179,8 @@ public class ValidateCertificateCommand extends AbstractCommand {
 
                 if (derFlag && pemFlag) {
                     System.err.println("Error, only one of -pem and -der options can be specified.");
-                    printUsage(options);
+                    printUsage();
+                    return RETURN_BADARGUMENT;
                 }
 
                 if (!derFlag) {
@@ -188,7 +191,8 @@ public class ValidateCertificateCommand extends AbstractCommand {
                     service = cmd.getOptionValue(OPTION_SERVICE);
                 } else {
                     System.err.println("Error, an name or id of the validation service must be specified with the -" + OPTION_SERVICE + " option.");
-                    printUsage(options);
+                    printUsage();
+                    return RETURN_BADARGUMENT;
                 }
 
                 if (cmd.hasOption(OPTION_TRUSTSTORE)) {
@@ -197,11 +201,13 @@ public class ValidateCertificateCommand extends AbstractCommand {
                         File f = new File(trustStorePath);
                         if (!f.exists() || !f.canRead() || f.isDirectory()) {
                             System.err.println("Error, a path to the truststore must point to a readable JKS file.");
-                            printUsage(options);
+                            printUsage();
+                            return RETURN_BADARGUMENT;
                         }
                     } else {
                         System.err.println("Error, a path to the truststore must be supplied to the -" + OPTION_TRUSTSTORE + " option.");
-                        printUsage(options);
+                        printUsage();
+                        return RETURN_BADARGUMENT;
                     }
                 }
 
@@ -209,13 +215,15 @@ public class ValidateCertificateCommand extends AbstractCommand {
                     trustStorePwd = cmd.getOptionValue(OPTION_TRUSTSTOREPWD);
                     if (trustStorePwd == null) {
                         System.err.println("Error, a truststore password must be supplied to the -" + OPTION_TRUSTSTOREPWD + " option.");
-                        printUsage(options);
+                        printUsage();
+                        return RETURN_BADARGUMENT;
                     }
                 }
 
                 if (trustStorePath == null ^ trustStorePwd == null) {
                     System.err.println("Error, if HTTPS is going to be used must both the options -" + OPTION_TRUSTSTORE + " and -" + OPTION_TRUSTSTOREPWD + " be specified");
-                    printUsage(options);
+                    printUsage();
+                    return RETURN_BADARGUMENT;
                 }
 
                 useSSL = trustStorePath != null;
@@ -224,7 +232,8 @@ public class ValidateCertificateCommand extends AbstractCommand {
                     hosts = cmd.getOptionValue(OPTION_HOSTS).split(",");
                 } else {
                     System.err.println("Error, at least one validation service host must be specified.");
-                    printUsage(options);
+                    printUsage();
+                    return RETURN_BADARGUMENT;
                 }
 
                 if (cmd.hasOption(OPTION_PORT)) {
@@ -234,11 +243,13 @@ public class ValidateCertificateCommand extends AbstractCommand {
                             port = Integer.parseInt(portString);
                         } catch (NumberFormatException e) {
                             System.err.println("Error, port value must be an integer for option -" + OPTION_PORT + ".");
-                            printUsage(options);
+                            printUsage();
+                            return RETURN_BADARGUMENT;
                         }
                     } else {
                         System.err.println("Error, a port value must be supplied to the -" + OPTION_PORT + " option.");
-                        printUsage(options);
+                        printUsage();
+                        return RETURN_BADARGUMENT;
                     }
                 } else {
                     if (useSSL) {
@@ -253,7 +264,8 @@ public class ValidateCertificateCommand extends AbstractCommand {
                         usages = cmd.getOptionValue(OPTION_CERTPURPOSES);
                     } else {
                         System.err.println("Error, at least one usage must be specified with the -" + OPTION_CERTPURPOSES + " option.");
-                        printUsage(options);
+                        printUsage();
+                        return RETURN_BADARGUMENT;
                     }
                 }
 
@@ -261,21 +273,25 @@ public class ValidateCertificateCommand extends AbstractCommand {
                     certPath = new File(cmd.getOptionValue(OPTION_CERT));
                     if (!certPath.exists() || !certPath.canRead() || certPath.isDirectory()) {
                         System.err.println("Error, the certificate file must exist and be readable by the user.");
-                        printUsage(options);
+                        printUsage();
+                        return RETURN_BADARGUMENT;
                     }
                 } else {
                     System.err.println("Error, the certificate to validate must be specified with the -" + OPTION_CERT + " option.");
-                    printUsage(options);
+                    printUsage();
+                    return RETURN_BADARGUMENT;
                 }
 
 
             } catch (ParseException e) {
                 System.err.println("Error occurred when parsing options.  Reason: " + e.getMessage());
-                printUsage(options);
+                printUsage();
+                return RETURN_BADARGUMENT;
             }
 
             if (args.length < 1) {
-                printUsage(options);
+                printUsage();
+                return RETURN_BADARGUMENT;
             }
             result = run();
         } catch (Exception e) {
@@ -408,14 +424,8 @@ public class ValidateCertificateCommand extends AbstractCommand {
         }
     }
 
-    private static void printUsage(Options options) {
-        final StringBuilder footer = new StringBuilder();
-        footer.append(NL).append("The following values is returned by the program that can be used when scripting.").append(NL).append("  -2   : Error happened during execution").append(NL).append("  -1   : Bad arguments").append(NL).append("   0   : Certificate is valid").append(NL).append("   1   : Certificate is revoked").append(NL).append("   2   : Certificate is not yet valid").append(NL).append("   3   : Certificate have expired").append(NL).append("   4   : Certificate doesn't verify").append(NL).append("   5   : CA Certificate have been revoked").append(NL).append("   6   : CA Certificate is not yet valid").append(NL).append("   7   : CA Certificate have expired.").append(NL).append("   8   : Certificate have no valid certificate purpose.").append(NL).append(NL).append("Sample usages:").append(NL).append("a) ").append(COMMAND).append(" -service CertValidationWorker -hosts localhost -cert").append(NL).append("    certificate.pem").append(NL).append("b) ").append(COMMAND).append(" -service 5806 -hosts localhost -cert certificate.pem").append(NL).append("    -truststore p12/truststore.jks -truststorepwd changeit").append(NL);
-
-        final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("Usage: signclient validatecertificate <options>\n", options);
-        System.out.println(footer.toString());
-
-        System.exit(RETURN_BADARGUMENT);
+    private void printUsage() {
+        System.out.println(getUsages());
     }
+   
 }

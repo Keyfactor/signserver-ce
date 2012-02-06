@@ -17,6 +17,7 @@ import java.util.Collection;
 import org.ejbca.util.CertTools;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerStatus;
 
@@ -33,10 +34,15 @@ public class UploadSignerCertificateCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public String getUsages() {
+        return "Usage: signserver uploadsignercertificate <signerid or name>  <NODE | GLOB> <filename>\n"
+                    + "Example: signserver uploadsignercertificate 1 GLOB /home/user/singercert.pem\n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 3) {
-            throw new IllegalCommandArgumentsException("Usage: signserver uploadsignercertificate <signerid or name>  <NODE | GLOB> <filename>\n"
-                    + "Example: signserver uploadsignercertificate 1 GLOB /home/user/singercert.pem\n\n");
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             int signerid = getWorkerId(args[0]);
@@ -69,7 +75,7 @@ public class UploadSignerCertificateCommand extends AbstractAdminCommand {
         } catch (IllegalCommandArgumentsException ex) {
             throw ex;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

@@ -34,10 +34,14 @@ public class PDFPerformanceCommand extends AbstractCommand {
         return "Run PDF performance testing";
     }
 
+    @Override
+    public String getUsages() {
+        return "Parameters: <test | postprocess>\n";
+    }
+
     public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException {
         if (args.length==0) {
-			String basicUsage = "Parameters: <test | postprocess>\n";
-			throw new IllegalCommandArgumentsException(basicUsage);
+			throw new IllegalCommandArgumentsException("Wrong number of arguments");
 		}
 
 		if (args[0].equalsIgnoreCase("test")) {

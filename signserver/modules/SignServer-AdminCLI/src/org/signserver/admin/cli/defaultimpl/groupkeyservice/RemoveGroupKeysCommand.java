@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.RequestContext;
 import org.signserver.groupkeyservice.common.RemoveGroupKeyResponse;
@@ -35,16 +36,21 @@ public class RemoveGroupKeysCommand extends BaseGroupKeyServiceCommand {
 
     @Override
     public String getDescription() {
-        return "remove a specific set of group keys";
+        return "Remove a specific set of group keys";
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        if (args.length != 4) {
-            throw new IllegalCommandArgumentsException("Usage: signserver groupkeyservice removegroupkeys <workerId or name> <type> <start date> <end date>\n"
+    public String getUsages() {
+        return "Usage: signserver groupkeyservice removegroupkeys <workerId or name> <type> <start date> <end date>\n"
                     + "  Where: <type> one of CREATED FIRSTUSED LASTFETCHED\n"
                     + "  Tip: Use \" around dates requiring spaces.\n"
-                    + "Example: signserver groupkeyservice removegroupkeys GroupKeyService1 LASTFETCHED \"2007-12-01 00:00\" \"2007-12-31 00:00\"\n\n");
+                    + "Example: signserver groupkeyservice removegroupkeys GroupKeyService1 LASTFETCHED \"2007-12-01 00:00\" \"2007-12-31 00:00\"\n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        if (args.length != 4) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             int workerId = getWorkerId(args[0]);
@@ -65,7 +71,7 @@ public class RemoveGroupKeysCommand extends BaseGroupKeyServiceCommand {
         } catch (IllegalCommandArgumentsException e) {
             throw e;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

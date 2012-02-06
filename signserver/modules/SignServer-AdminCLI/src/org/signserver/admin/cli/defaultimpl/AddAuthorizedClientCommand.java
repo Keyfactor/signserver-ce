@@ -15,6 +15,7 @@ package org.signserver.admin.cli.defaultimpl;
 import java.math.BigInteger;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.AuthorizedClient;
 
 /**
@@ -31,11 +32,16 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public String getUsages() {
+        return "Usage: signserver addauthorizedclient <signerid> <certificatesn (hex)> <issuerd>\n"
+                    + "Example: signserver addauthorizedclient 1 EF34242D2324 \"CN=Test Root CA\"\n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         
         if (args.length != 3) {
-            throw new IllegalCommandArgumentsException("Usage: signserver addauthorizedclient <signerid> <certificatesn (hex)> <issuerd>\n"
-                    + "Example: signserver addauthorizedclient 1 EF34242D2324 \"CN=Test Root CA\"\n\n");
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
 
         try {
@@ -61,7 +67,7 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
         } catch (IllegalCommandArgumentsException ex) {
             throw ex;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

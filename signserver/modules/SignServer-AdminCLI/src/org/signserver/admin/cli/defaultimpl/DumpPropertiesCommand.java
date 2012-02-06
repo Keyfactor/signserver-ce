@@ -20,6 +20,7 @@ import java.util.*;
 import org.ejbca.util.Base64;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ProcessableConfig;
@@ -38,11 +39,16 @@ public class DumpPropertiesCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
-        if (args.length != 2) {
-            throw new IllegalCommandArgumentsException("Usage: signserver dumpproperties < all | workerid > <outfile>\n"
+    public String getUsages() {
+        return "Usage: signserver dumpproperties < all | workerid > <outfile>\n"
                     + "Example 1: signserver dumpproperties 1 myworkerbackup.properties\n"
-                    + "Example 2: signserver dumpproperties all singserverbackup.properties\n\n");
+                    + "Example 2: signserver dumpproperties all singserverbackup.properties\n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        if (args.length != 2) {
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
 
@@ -77,7 +83,7 @@ public class DumpPropertiesCommand extends AbstractAdminCommand {
         } catch (IllegalCommandArgumentsException ex) {
             throw ex;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 

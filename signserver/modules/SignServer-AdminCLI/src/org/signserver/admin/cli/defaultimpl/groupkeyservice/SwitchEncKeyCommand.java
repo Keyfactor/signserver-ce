@@ -14,6 +14,7 @@ package org.signserver.admin.cli.defaultimpl.groupkeyservice;
 
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.RequestContext;
 import org.signserver.groupkeyservice.common.SwitchEncKeyRequest;
@@ -34,10 +35,15 @@ public class SwitchEncKeyCommand extends BaseGroupKeyServiceCommand {
     }
 
     @Override
-    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
+    public String getUsages() {
+        return "Usage: signserver groupkeyservice switchenckey <workerId or name>\n"
+                    + "Example: signserver groupkeyservice switchenckey GroupKeyService1\n\n";
+    }
+
+    @Override
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 1) {
-            throw new IllegalCommandArgumentsException("Usage: signserver groupkeyservice switchenckey <workerId or name>\n"
-                    + "Example: signserver groupkeyservice switchenckey GroupKeyService1\n\n");
+            throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
             int workerId = getWorkerId(args[0]);
@@ -54,7 +60,7 @@ public class SwitchEncKeyCommand extends BaseGroupKeyServiceCommand {
         } catch (IllegalCommandArgumentsException e) {
             throw e;
         } catch (Exception e) {
-            throw new CommandFailureException(e);
+            throw new UnexpectedCommandFailureException(e);
         }
     }
 }

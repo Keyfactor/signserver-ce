@@ -40,6 +40,13 @@ public class AdminCLI extends CommandLineInterface {
      * @param args command line arguments
      */
     public static void main(String[] args) throws UnexpectedCommandFailureException {
+        // Remove the legacy host parameter if existing
+        String hostname = checkHostParameter(args);
+        if (hostname != null) {
+            args = removeHostParameters(args);
+            System.err.println("Warning: The -host parameter is no longer supported and will be ignored!");
+        }
+        // Execute the CLI
         AdminCLI adminCLI = new AdminCLI();
         System.exit(adminCLI.execute(args));
     }
@@ -64,6 +71,56 @@ public class AdminCLI extends CommandLineInterface {
             }
         }
         return properties;
+    }
+    
+    /**
+     * Method that checks if a '-host host' parameter exists 
+     * and return the given hostname.
+     * @return hostname or null if host param didn't exist
+     */
+    private static String checkHostParameter(String[] args) {
+        String retval = null;
+
+        for (int i = 0; i < args.length - 1; i++) {
+            if (args[i].equalsIgnoreCase("-host")) {
+                retval = args[i + 1];
+                break;
+            }
+        }
+
+        return retval;
+    }
+
+    /**
+     * Method that checks if a '-host host' parameter exist and removes the parameters
+     * and returns a new args array
+     * @return a args arrray with -host paramter removed
+     */
+    private static String[] removeHostParameters(String[] args) {
+        String[] retval = null;
+        boolean found = false;
+        int index = 0;
+        for (int i = 0; i < args.length - 1; i++) {
+            if (args[i].equalsIgnoreCase("-host")) {
+                index = i;
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            String newargs[] = new String[args.length - 2];
+            for (int i = 0; i < args.length; i++) {
+                if (i < index) {
+                    newargs[i] = args[i];
+                }
+                if (i > index + 1) {
+                    newargs[i - 2] = args[i];
+                }
+            }
+            retval = newargs;
+        }
+        return retval;
     }
 
 }

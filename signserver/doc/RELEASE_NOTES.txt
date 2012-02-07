@@ -5,10 +5,10 @@ TODO
 
 
 Notice:
- - The property "custom.commandfactory" previously defined in 
-   signserver_build.properties should now be defined in 
-   signserver_cli.properties instead.
  - Apache Ant 1.8.0 or later is now required to build SignServer.
+ - The property "custom.commandfactory" is no longer supported. See the manual 
+   for how to add custom Admin or Client CLI commands.
+ - The Admin CLI now ignores the "-host" argument if present.
 
 
 SignServer 3.2.1

@@ -50,7 +50,6 @@ import org.signserver.protocol.ws.gen.SignServerWS;
 import org.signserver.protocol.ws.gen.SignServerWSService;
 import org.signserver.protocol.ws.gen.WorkerStatusWS;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
@@ -80,9 +79,6 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
         SignServerWSService signServerWSService = new SignServerWSService(new URL("http://localhost:8080/signserver/signserverws/signserverws?wsdl"), qname);
         signServerWS = signServerWSService.getSignServerWSPort();
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
     }
 
     /* (non-Javadoc)

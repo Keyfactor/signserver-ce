@@ -41,8 +41,6 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
         SignServerUtil.installBCProvider();
         workerSession = ServiceLocator.getInstance().lookupRemote(
                         IWorkerSession.IRemote.class);
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
     }
 
     @Override

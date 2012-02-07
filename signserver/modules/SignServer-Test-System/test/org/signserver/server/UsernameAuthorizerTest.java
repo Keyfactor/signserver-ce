@@ -17,7 +17,7 @@ import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
-import org.signserver.testutils.*;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Tests for the UsernameAuthorizer.
@@ -34,8 +34,6 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
     @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
     }
 
     @Override

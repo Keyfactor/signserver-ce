@@ -18,8 +18,6 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
-import org.signserver.testutils.TestingSecurityManager;
 
 /**
  * Tests for the UsernamePasswordAuthorizer.
@@ -35,9 +33,6 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
     @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
     }
 
     @Override

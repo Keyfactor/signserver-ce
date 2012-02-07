@@ -16,26 +16,13 @@ import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-
 import javax.crypto.Cipher;
-
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
-import org.signserver.common.Base64SignerCertReqData;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.MRTDSignRequest;
-import org.signserver.common.MRTDSignResponse;
-import org.signserver.common.PKCS10CertReqInfo;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerUtil;
-import org.signserver.common.SignerStatus;
+import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
-import org.signserver.testutils.TestingSecurityManager;
 
 /**
  * TODO: Document me!
@@ -48,9 +35,6 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
     }
 
     /* (non-Javadoc)
@@ -59,7 +43,6 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        TestingSecurityManager.remove();
     }
 
     public void test00SetupDatabase() throws Exception {

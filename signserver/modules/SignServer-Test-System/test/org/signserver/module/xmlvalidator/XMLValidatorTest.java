@@ -16,24 +16,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.log4j.Logger;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericValidationRequest;
-import org.signserver.common.GenericValidationResponse;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
-import org.signserver.common.SignServerUtil;
-import org.signserver.common.ValidatorStatus;
+import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
-import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.Validation.Status;
@@ -58,22 +45,16 @@ public class XMLValidatorTest extends ModulesTestCase {
     private static final String SIGNER2_ISSUERDN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
     private static final String SIGNER2_SUBJECTDN = "CN=Signer 2,OU=Testing,O=SignServer,C=SE";
 	
-    private String signserverhome;
-    private static int moduleVersion;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        TestingSecurityManager.remove();
     }
 
     public void test00SetupDatabase() throws Exception {

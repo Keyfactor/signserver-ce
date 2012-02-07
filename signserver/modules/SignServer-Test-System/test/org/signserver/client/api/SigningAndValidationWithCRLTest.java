@@ -12,27 +12,18 @@
  *************************************************************************/
 package org.signserver.client.api;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.security.cert.Certificate;
 import java.util.List;
-
 import javax.naming.NamingException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.server.cryptotokens.P12CryptoToken;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
-import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
 import org.w3c.dom.Document;
@@ -70,10 +61,6 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
-
         keystoreFileEndentity8 = new File(getSignServerHome() + File.separator + "res/test/org/signserver/client/api/endentity8.p12");
         if (!keystoreFileEndentity8.exists()) {
             throw new FileNotFoundException("Keystore file: " + keystoreFileEndentity8.getAbsolutePath());
@@ -108,7 +95,6 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        TestingSecurityManager.remove();
     }
 
     /**

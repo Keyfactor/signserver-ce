@@ -17,20 +17,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
-
 import javax.crypto.Cipher;
-
-import org.signserver.common.AuthorizedClient;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.MRTDSignRequest;
-import org.signserver.common.MRTDSignResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerUtil;
-import org.signserver.common.ProcessableConfig;
-import org.signserver.common.SignerStatus;
+import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
-import org.signserver.testutils.TestingSecurityManager;
 
 /**
  * TODO: Document me!
@@ -46,9 +35,6 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
     }
     /* (non-Javadoc)
      * @see junit.framework.TestCase#tearDown()
@@ -57,7 +43,6 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        TestingSecurityManager.remove();
     }
 
     public void test00SetupDatabase() throws Exception {

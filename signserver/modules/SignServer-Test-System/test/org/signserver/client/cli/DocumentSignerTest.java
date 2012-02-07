@@ -65,10 +65,6 @@ public class DocumentSignerTest extends ModulesTestCase {
     }	
 	
     public void test00SetupDatabase() throws Exception {
-
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        
         // Worker 1
         setProperties(new File(signserverhome, "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID);
@@ -76,8 +72,6 @@ public class DocumentSignerTest extends ModulesTestCase {
         // Worker 2
         setProperties(new File(signserverhome, "modules/SignServer-Module-PDFSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID2);
-        TestUtils.flushTempOut();
-        TestUtils.flushTempErr();
     }
 
     public void test01missingArguments() throws Exception {

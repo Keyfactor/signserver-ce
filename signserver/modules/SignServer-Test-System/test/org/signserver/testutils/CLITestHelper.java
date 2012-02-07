@@ -43,7 +43,7 @@ public class CLITestHelper {
         err = new ByteArrayOutputStream();
         try {
             CommandLineInterface cli = cliClazz.newInstance();
-            cli.setOut(new PrintStream(new TeeOutputStream(/*System.out, */out)));
+            cli.setOut(new PrintStream(new TeeOutputStream(System.out, out)));
             cli.setErr(new PrintStream(new TeeOutputStream(System.err, err)));
             return cli.execute(args);
         } catch (IllegalAccessException ex) {

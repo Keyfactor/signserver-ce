@@ -12,26 +12,12 @@
  *************************************************************************/
 package org.signserver.testutils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import junit.framework.Assert;
-
 import org.apache.log4j.Logger;
-import org.signserver.admin.cli.AdminCLI;
-import org.signserver.cli.spi.Command;
-import org.signserver.cli.spi.CommandFailureException;
-import org.signserver.cli.spi.IllegalCommandArgumentsException;
 
 /**
  * Class containing utility methods used to simplify testing.
@@ -67,156 +53,5 @@ public class TestUtils {
         //System.setProperty("javax.net.ssl.keyStore", "../../p12/testadmin.jks");
         //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
     }
-    
-    /**
-     * A simple grep util that searches a large string if the substring exists.
-     * @param inString the input data
-     * @param searchstring the text to search for.
-     * @return true if searchstring exists
-     */
-    public static boolean grep(String inString, String searchstring) {
-        Pattern p = Pattern.compile(searchstring);
-        // Create a matcher with an input string
-        Matcher m = p.matcher(inString);
-        return m.find();
-    }
-
-    /**
-     * Method to see if the matchString is a subset of all the output
-     * in the temporary system output buffer. 
-     * @param matchString the string to search for
-     * @return true if it exists.
-     */
-    public static boolean grepTempOut(String matchString) {
-        return grep(new String(tempOutputStream.toByteArray()), matchString);
-    }
-
-    /**
-     * Method used to redirect OutputStream to a temporate buffer
-     * so it is possible to search for matching values later.
-     */
-    public static void redirectToTempOut() {
-        stdOut = System.out;
-        tempOutputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(tempOutputStream));
-    }
-    private static ByteArrayOutputStream tempOutputStream;
-    private static PrintStream stdOut;
-
-    /**
-     * Method used to clear the current content of the
-     * temporary output stream.
-     */
-    public static void flushTempOut() {
-        tempOutputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(tempOutputStream));
-    }
-
-    /**
-     * Method to see if the matchString is a subset of all the output
-     * in the temporary system error buffer. 
-     * @param matchString the string to search for
-     * @return true if it exists.
-     */
-    public static boolean grepTempErr(String matchString) {
-        return grep(new String(tempErrorStream.toByteArray()), matchString);
-    }
-
-    /**
-     * Method used to redirect error stream to a temporary buffer
-     * so it is possible to search for matching values later.
-     */
-    public static void redirectToTempErr() {
-        //stdErr = System.err;
-        tempErrorStream = new ByteArrayOutputStream();
-        System.setErr(new PrintStream(tempErrorStream));
-    }
-    private static ByteArrayOutputStream tempErrorStream;
-    //private static PrintStream stdErr;
-
-    /**
-     * Method used to clear the current content of the
-     * temporary error stream.
-     */
-    public static void flushTempErr() {
-        tempErrorStream = new ByteArrayOutputStream();
-        System.setErr(new PrintStream(tempErrorStream));
-    }
-
-    /**
-     * Method used to print the contents in TempOut to System.out
-     */
-    public static void printTempOut() {
-        stdOut.print(tempOutputStream);
-    }
-
-    /**
-     * Method used to print the contents in TempErr to System.out
-     */
-    public static void printTempErr() {
-        stdOut.print(tempErrorStream);
-    }
-
-    public static void assertSuccessfulExecution(Object o, String[] args) {
-        try {
-            TestUtils.flushTempOut();
-            Method m = o.getClass().getMethod("main", String[].class);
-            Object[] arguments = {args};
-            m.invoke(o, arguments);
-        } catch (ExitException e) {
-            TestUtils.printTempErr();
-            TestUtils.printTempOut();
-            Assert.assertTrue(false);
-        } catch (SecurityException e) {
-            Assert.assertTrue(false);
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            Assert.assertTrue(false);
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(false);
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            Assert.assertTrue(false);
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            if (!(e.getTargetException() instanceof ExitException)) {
-                Assert.assertTrue(false);
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static int assertFailedExecution(String[] args) {
-        throw new UnsupportedOperationException("TODO: Remove this method"); // TODO
-    }
-
-    public static int assertFailedExecution(Object o, String[] args) {
-        try {
-            TestUtils.flushTempOut();
-            Method m = o.getClass().getMethod("main", String[].class);
-            Object[] arguments = {args};
-            m.invoke(o, arguments);
-            Assert.assertTrue(false);
-        } catch (ExitException e) {
-            return e.number;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            Assert.assertTrue(false);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            Assert.assertTrue(false);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            Assert.assertTrue(false);
-        } catch (InvocationTargetException e) {
-            if (e.getTargetException() instanceof ExitException) {
-                return ((ExitException) e.getTargetException()).number;
-            }
-        }
-        return 0;
-    }
-    
-
-    
+        
 }

@@ -12,21 +12,13 @@
  *************************************************************************/
 package org.signserver.server.timedservices;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
-import org.signserver.testutils.TestingSecurityManager;
 
 /**
  * Tests for SignerStatusReportTimedService.
@@ -75,9 +67,6 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         super.setUp();
         SignServerUtil.installBCProvider();
         
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
         outputFile = new File(getSignServerHome() + File.separator
                 + "~test-outputfile.dat");
         if (outputFile.exists()) {
@@ -90,7 +79,6 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        TestingSecurityManager.remove();
     }	
 
     /**

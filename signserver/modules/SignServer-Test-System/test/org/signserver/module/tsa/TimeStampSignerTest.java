@@ -16,7 +16,6 @@ import java.io.File;
 import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.util.Random;
-
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
@@ -25,15 +24,9 @@ import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.ejbca.util.Base64;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.ServiceLocator;
-import org.signserver.common.SignServerUtil;
-import org.signserver.common.SignerStatus;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
 /**
@@ -92,10 +85,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
         repository = ServiceLocator.getInstance().lookupRemote(
                 IStatusRepositorySession.IRemote.class);
-
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
     }
 
     /* (non-Javadoc)

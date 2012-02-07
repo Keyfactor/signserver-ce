@@ -42,10 +42,6 @@ public class CustomAuthTest extends ModulesTestCase {
                 IGlobalConfigurationSession.IRemote.class);
         workerSession = ServiceLocator.getInstance().lookupRemote(
                 IWorkerSession.IRemote.class);
-
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
     }

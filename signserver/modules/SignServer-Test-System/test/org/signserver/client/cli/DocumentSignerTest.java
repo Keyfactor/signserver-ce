@@ -12,19 +12,14 @@
  *************************************************************************/
 package org.signserver.client.cli;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-
+import java.io.*;
 import org.apache.log4j.Logger;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.ServiceLocator;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
@@ -183,18 +178,8 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID)
-        });
-        
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID2)
-        });
-
-        workerSession.reloadConfiguration(WORKERID);
-        workerSession.reloadConfiguration(WORKERID2);
+        removeWorker(WORKERID);
+        removeWorker(WORKERID2);
     }
 
     private byte[] execute(String... args) throws IOException, IllegalCommandArgumentsException, CommandFailureException {

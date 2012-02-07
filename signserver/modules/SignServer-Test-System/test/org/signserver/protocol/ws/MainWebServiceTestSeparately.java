@@ -307,9 +307,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
-                    "9"});
-        workerSession.reloadConfiguration(9);
+        removeWorker(9);
 
         globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH");
         globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH");

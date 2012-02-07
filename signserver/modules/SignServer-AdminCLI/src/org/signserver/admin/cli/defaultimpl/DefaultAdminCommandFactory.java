@@ -49,7 +49,7 @@ public class DefaultAdminCommandFactory extends AbstractCommandFactory implement
         put("reload", ReloadCommand.class);
         put("removeauthorizedclient", RemoveAuthorizedClientCommand.class);
         put("removeproperty", RemovePropertyCommand.class);
-        put("removeworker", RemoveWorkerPropertyCommand.class);
+        put("removeworker", RemoveWorkerCommand.class);
         put("renewsigner", RenewSignerCommand.class);
         put("resync", ResyncCommand.class);
         put("setproperties", SetPropertiesCommand.class);

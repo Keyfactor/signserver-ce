@@ -12,19 +12,15 @@
  *************************************************************************/
 package org.signserver.client.cli;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.signserver.cli.spi.CommandFailureException;
-import org.signserver.cli.spi.IllegalCommandArgumentsException;
-import org.signserver.client.cli.defaultimpl.SignDataGroupsCommand;
+import org.signserver.admin.cli.AdminCLI;
+import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.testutils.TestUtils;
+import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.TestingSecurityManager;
 
 /**
@@ -43,6 +39,9 @@ public class SODSignerTest extends TestCase {
 
     private static IWorkerSession.IRemote workerSession;
     private static File signServerHome;
+    
+    private CLITestHelper adminCLI = new CLITestHelper(new AdminCLI());
+    private CLITestHelper clientCLI = new CLITestHelper(new ClientCLI());
 	
     @Override
     protected void setUp() throws Exception {
@@ -70,9 +69,8 @@ public class SODSignerTest extends TestCase {
 	
     public void test00SetupDatabase() throws Exception {
 
-        TestUtils.assertSuccessfulExecution(new String[] { "setproperties",
-            getSignServerHome().getAbsolutePath()
-            + "/modules/SignServer-Module-MRTDSODSigner/src/conf/junittest-part-config.properties"});
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
+                adminCLI.execute("setproperties", getSignServerHome().getAbsolutePath() + "/modules/SignServer-Module-MRTDSODSigner/src/conf/junittest-part-config.properties"));
 
         // WORKER1 uses a P12 keystore
         workerSession.setWorkerProperty(WORKERID, "KEYSTOREPATH",
@@ -85,10 +83,8 @@ public class SODSignerTest extends TestCase {
     }
 
     public void test01missingArguments() throws Exception {
-        try {
-            execute("signdatagroups");
-            fail("Should have thrown exception about missing arguments");
-        } catch (IllegalCommandArgumentsException expected) {}
+        assertEquals("missing arguments", CommandLineInterface.RETURN_INVALID_ARGUMENTS, 
+                clientCLI.execute("signdatagroups"));
     }
 
     /**
@@ -99,38 +95,18 @@ public class SODSignerTest extends TestCase {
      * @throws Exception
      */
     public void test02signDataFromParameter() throws Exception {
-        try {
-            String res =
-                    new String(execute("signdatagroups", "-workername", "TestMRTDSODSigner1",
-                    "-data", "1=value1&2=value2&3=value3"));
-            assertNotNull("non null result", res);
-            assertTrue("non empty result: " + res.length(), res.length() > 50);
-        } catch (IllegalCommandArgumentsException ex) {
-            LOG.error("Execution failed", ex);
-            fail(ex.getMessage());
-        }
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
+                clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=value1&2=value2&3=value3"));
+        String res = clientCLI.getOut().toString();
+        assertNotNull("non null result", res);
+        assertTrue("non empty result: " + res.length(), res.length() > 50);
     }
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[] {
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, adminCLI.execute(
             "removeworker",
             String.valueOf(WORKERID)
-        });
+        ));
         workerSession.reloadConfiguration(WORKERID);
-    }
-
-    private byte[] execute(String... args) throws IllegalCommandArgumentsException, IOException, CommandFailureException {
-        byte[] output;
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(out));
-        try {
-            final SignDataGroupsCommand cmd = new SignDataGroupsCommand();
-            cmd.execute(args);
-        } finally {
-            output = out.toByteArray();
-            System.setOut(System.out);
-            System.out.write(output);
-        }
-        return output;
     }
 }

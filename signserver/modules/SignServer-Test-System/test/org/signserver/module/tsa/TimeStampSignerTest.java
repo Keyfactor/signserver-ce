@@ -250,16 +250,9 @@ public class TimeStampSignerTest extends ModulesTestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
-                    String.valueOf(WORKER1)});
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
-                    String.valueOf(WORKER2)});
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
-                    String.valueOf(WORKER3)});
-        workerSession.reloadConfiguration(WORKER1);
-        workerSession.reloadConfiguration(WORKER2);
-        workerSession.reloadConfiguration(WORKER3);
-        workerSession.reloadConfiguration(WORKER4);
+        removeWorker(WORKER1);
+        removeWorker(WORKER2);
+        removeWorker(WORKER3);
     }
 
 }

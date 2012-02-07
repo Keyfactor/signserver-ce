@@ -45,8 +45,8 @@ set i=%8
 set j=%9
 rem echo %a% %b% %c% %d% %e% %f% %g% %h% %i% %j%
 if "%JAVA_HOME%" == "" (
-  java -cp %CLASSPATH%  org.signserver.client.cli.Main %a% %b% %c% %d% %e% %f% %g% %h% %i% %j%
+  java -cp %CLASSPATH%  org.signserver.client.cli.ClientCLI %a% %b% %c% %d% %e% %f% %g% %h% %i% %j%
 ) else (
-  "%JAVA_HOME%\bin\java" -cp %CLASSPATH% org.signserver.client.cli.Main %a% %b% %c% %d% %e% %f% %g% %h% %i% %j% 
+  "%JAVA_HOME%\bin\java" -cp %CLASSPATH% org.signserver.client.cli.ClientCLI %a% %b% %c% %d% %e% %f% %g% %h% %i% %j% 
 )
 :end

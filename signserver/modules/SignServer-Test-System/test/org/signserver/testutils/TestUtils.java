@@ -157,10 +157,6 @@ public class TestUtils {
         stdOut.print(tempErrorStream);
     }
 
-    public static void assertSuccessfulExecution(String[] args) {
-        throw new UnsupportedOperationException("TODO: Remove this method"); // TODO
-    }
-
     public static void assertSuccessfulExecution(Object o, String[] args) {
         try {
             TestUtils.flushTempOut();
@@ -221,8 +217,6 @@ public class TestUtils {
         return 0;
     }
     
-    public static int assertFailedExecution(Command o, String[] args) {
-        throw new UnsupportedOperationException("TODO: Remove this method"); // TODO
-    }
+
     
 }

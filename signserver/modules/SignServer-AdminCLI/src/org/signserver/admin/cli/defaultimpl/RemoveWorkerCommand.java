@@ -22,22 +22,22 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerConfig;
 
 /**
- * Removes a property for a given signer.
+ * Removes all properties for a given worker.
  *
  * @version $Id$
  */
-public class RemoveWorkerPropertyCommand extends AbstractAdminCommand {
+public class RemoveWorkerCommand extends AbstractAdminCommand {
 
     @Override
     public String getDescription() {
-        return "Removes a property for a given signer";
+        return "Removes all properties for a given worker";
     }
 
     @Override
     public String getUsages() {
         return "Usage: signserver removeworker  <workerid | workerName> \n"
                     + "Example 1 : signserver removeworker 1 \n"
-                    + "Example 2 : signserver removeworker -host node3.someorg.com mySigner\n\n";
+                    + "Example 2 : signserver removeworker mySigner\n\n";
     }
 
     @Override

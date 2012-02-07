@@ -177,36 +177,15 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         assertNotNull("Worker 3 signings", status.get(WORKER_SIGNER3).get("signings"));
     }
 
-    
     /**
      * Removes all test workers.
      * @throws Exception
      */
     public void test99TearDownDatabase() throws Exception {
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID_SERVICE)
-        });
-        workerSession.reloadConfiguration(WORKERID_SERVICE);
-
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID_SIGNER1)
-        });
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID_SIGNER2)
-        });
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID_SIGNER3)
-        });
-
-        workerSession.reloadConfiguration(WORKERID_SERVICE);
-        workerSession.reloadConfiguration(WORKERID_SIGNER1);
-        workerSession.reloadConfiguration(WORKERID_SIGNER2);
-        workerSession.reloadConfiguration(WORKERID_SIGNER3);
+        removeWorker(WORKERID_SERVICE);
+        removeWorker(WORKERID_SIGNER1);
+        removeWorker(WORKERID_SIGNER2);
+        removeWorker(WORKERID_SIGNER3);
     }
 
     /**

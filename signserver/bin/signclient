@@ -24,7 +24,7 @@ else
 fi
 
 
-class_name=org.signserver.client.cli.Main
+class_name=org.signserver.client.cli.ClientCLI
 MAIN_JAR=SignServer-Client-CLI.jar
 
 # discard $1 from the command line args

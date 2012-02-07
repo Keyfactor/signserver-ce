@@ -12,10 +12,7 @@
  *************************************************************************/
 package org.signserver.client.cli.defaultimpl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -287,7 +284,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
             Worker workers[] = new Worker[NUM_WORKERS];
             for(int i = 0; i < NUM_WORKERS; i++) {
                 workers[i] = new Worker("Worker " + i, createSigner(),
-                        dataGroups, encoding, repeat);
+                        dataGroups, encoding, repeat, getOutputStream());
             }
 
             // Start workers
@@ -339,21 +336,23 @@ public class SignDataGroupsCommand extends AbstractCommand {
         private Map<Integer,byte[]> dataGroups;
         private String encoding;
         private int repeat;
+        private OutputStream out;
 
         public Worker(String name, SODSigner signer, Map<Integer,byte[]> dataGroups,
-                String encoding, int repeat) {
+                String encoding, int repeat, OutputStream out) {
             super(name);
             this.signer = signer;
             this.dataGroups = dataGroups;
             this.encoding = encoding;
             this.repeat = repeat;
+            this.out = out;
         }
 
         @Override
         public void run() {
             try {
                 for (int i = 0; i < repeat || repeat == -1; i++) {
-                    signer.sign(dataGroups, encoding);
+                    signer.sign(dataGroups, encoding, out);
                 }
             } catch (IOException ex) {
                 LOG.error(ex);

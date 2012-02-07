@@ -138,7 +138,6 @@ public class MRTDSignerTest extends ModulesTestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "7890"});
-        workerSession.reloadConfiguration(7890);
+        removeWorker(7890);
     }
 }

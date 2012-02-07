@@ -13,6 +13,8 @@
 package org.signserver.client.cli;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -24,25 +26,45 @@ import org.signserver.client.cli.spi.ClientCommandFactory;
  * @author Markus Kilås
  * @version $Id$
  */
-public class Main {
+public class ClientCLI extends CommandLineInterface {
 
-     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(Main.class);
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(ClientCLI.class);
 
-    /** No instances of this class. */
-    private Main() { }
+    public ClientCLI() {
+        super(ClientCommandFactory.class, getCLIProperties());
+    }
  
     /**
-     * @param args the command line arguments
+     * Main
+     *
+     * @param args command line arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) throws UnexpectedCommandFailureException {
+        ClientCLI adminCLI = new ClientCLI();
+        System.exit(adminCLI.execute(args));
+    }
+    
+    private static Properties getCLIProperties() {
+        Properties properties = new Properties();
+        InputStream in = null; 
         try {
-            CommandLineInterface cli = new CommandLineInterface();
-            cli.setFactoryClass(ClientCommandFactory.class);
-            cli.execute(args);
-        } catch (UnexpectedCommandFailureException ex) {
-            LOG.error("Unexpected failure running the command", ex);
+            in = ClientCLI.class.getResourceAsStream("/signserver_cli.properties");
+            if (in != null) {
+                properties.load(in);
+            }
+        } catch (IOException ex) {
+            LOG.error("Could not load configuration: " + ex.getMessage());
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    LOG.error("Failed to close configuration", ex);
+                }
+            }
         }
+        return properties;
     }
 
 }

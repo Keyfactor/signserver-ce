@@ -437,7 +437,7 @@ public class XMLValidatorTest extends ModulesTestCase {
 
     public void test99TearDownDatabase() throws Exception {
 
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + WORKERID});
+        removeWorker(WORKERID);
 
         workerSession.removeWorkerProperty(WORKERID, "RETURNDOCUMENT");
         workerSession.removeWorkerProperty(WORKERID, "STRIPSIGNATURE");

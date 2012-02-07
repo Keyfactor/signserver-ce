@@ -24,15 +24,18 @@ import junit.framework.TestCase;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.ejbca.util.Base64;
 import org.ejbca.util.keystore.KeyTools;
+import org.signserver.client.cli.ClientCLI;
 import org.signserver.client.cli.validationservice.ValidateCertificateCommand;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.common.ServiceLocator;
+import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.server.ValidationTestUtils;
+import static org.signserver.testutils.CLITestHelper.assertPrinted;
 
 /**
  * Tests for the ValidateCertificateCommand.
@@ -52,6 +55,8 @@ public class ValidationCLITest extends TestCase {
     private static String validcert1path;
     private static String revokedcertpath;
 
+    private CLITestHelper clientCLI = new CLITestHelper(new ClientCLI());
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -121,14 +126,12 @@ public class ValidationCLITest extends TestCase {
     }
 
     public void testHelp() throws Exception {
-        int result = TestUtils.assertFailedExecution(new ValidateCertificateCommand(), new String[]{});
-        assertTrue(result == ValidateCertificateCommand.RETURN_BADARGUMENT);
-        assertTrue(TestUtils.grepTempOut("Usage: "));
-        result = TestUtils.assertFailedExecution(new ValidateCertificateCommand(), new String[]{"-help"});
-        assertTrue(TestUtils.grepTempOut("Usage: "));
-        assertTrue(result == ValidateCertificateCommand.RETURN_BADARGUMENT);
-
-        TestingSecurityManager.remove();
+        int result = clientCLI.execute("validatecertificate");
+        assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
+        assertPrinted("", clientCLI.getOut(), "Usage: ");
+        result = clientCLI.execute("validatecertificate", "-help");
+        assertPrinted("", clientCLI.getOut(), "Usage: ");
+        assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
     }
 
     public void testValidationCLI() {

@@ -112,7 +112,6 @@ public class OOXMLSignerTest extends ModulesTestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + WORKERID});
-        workerSession.reloadConfiguration(WORKERID);
+        removeWorker(WORKERID);
     }
 }

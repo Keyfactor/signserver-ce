@@ -26,6 +26,10 @@ import javax.naming.NamingException;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.ejbca.util.Base64;
+import org.signserver.admin.cli.AdminCLI;
+import org.signserver.cli.CommandLineInterface;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
+import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ServiceLocator;
@@ -59,6 +63,9 @@ public class ModulesTestCase extends TestCase {
     private static File signServerHome;
 
     private Properties config;
+    
+    private CLITestHelper adminCLI;
+    private CLITestHelper clientCLI;
 
     public ModulesTestCase() {
         try {
@@ -97,6 +104,22 @@ public class ModulesTestCase extends TestCase {
             }
         }
     }
+
+    public CLITestHelper getAdminCLI() {
+        if (adminCLI == null) {
+            adminCLI = new CLITestHelper(new AdminCLI());
+        }
+        return adminCLI;
+    }
+
+    public CLITestHelper getClientCLI() {
+        if (clientCLI == null) {
+            clientCLI = new CLITestHelper(new ClientCLI());
+        }
+        return clientCLI;
+    }
+    
+    
 
     protected IWorkerSession getWorkerSession() {
         return workerSession;
@@ -265,5 +288,5 @@ public class ModulesTestCase extends TestCase {
     /** Setup keystores for SSL. **/
     protected void setupSSLKeystores() {
         TestUtils.setupSSLTruststore();
-        }
     }
+}

@@ -299,9 +299,7 @@ public class PDFSignerTest extends ModulesTestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
-                    "5675"});
-        workerSession.reloadConfiguration(WORKERID);
+        removeWorker(5675);
     }
 
     private GenericSignResponse signNoCheck(final int workerId,

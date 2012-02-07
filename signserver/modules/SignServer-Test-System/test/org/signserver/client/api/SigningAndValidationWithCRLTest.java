@@ -388,8 +388,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
     public void test99TearDownDatabase() throws Exception {
         // XMLVALIDATOR
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + XMLVALIDATOR_WORKERID});
-        workerSession.reloadConfiguration(XMLVALIDATOR_WORKERID);
+        removeWorker(XMLVALIDATOR_WORKERID);
 
         // VALIDATION SERVICE
         globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH");
@@ -402,8 +401,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         workerSession.reloadConfiguration(CERTVALIDATION_WORKERID);
 
         // XMLSIGNER
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker", "" + SIGNER1_WORKERID});
-        workerSession.reloadConfiguration(SIGNER1_WORKERID);
+        removeWorker(SIGNER1_WORKERID);
     }
 
     private static String getStatus(GenericValidationResponse res) {

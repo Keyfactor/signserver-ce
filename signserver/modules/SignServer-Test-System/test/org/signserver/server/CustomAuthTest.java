@@ -16,18 +16,10 @@ import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Properties;
-
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.RequestContext;
-import org.signserver.common.ServiceLocator;
-import org.signserver.common.SignServerConstants;
-import org.signserver.common.SignServerUtil;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.tsa.TimeStampSigner;
@@ -133,8 +125,6 @@ public class CustomAuthTest extends ModulesTestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
-                    "9"});
-        workerSession.reloadConfiguration(9);
+        removeWorker(9);
     }
 }

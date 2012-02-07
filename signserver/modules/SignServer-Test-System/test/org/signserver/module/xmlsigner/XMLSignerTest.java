@@ -153,16 +153,8 @@ public class XMLSignerTest extends ModulesTestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID)
-        });
-        TestUtils.assertSuccessfulExecution(new String[] {
-            "removeworker",
-            String.valueOf(WORKERID2)
-        });
-        workerSession.reloadConfiguration(WORKERID);
-        workerSession.reloadConfiguration(WORKERID2);
+        removeWorker(WORKERID);
+        removeWorker(WORKERID2);
     }
 
     private void checkXmlWellFormed(final InputStream input) {

@@ -40,8 +40,8 @@ public class SODSignerTest extends TestCase {
     private static IWorkerSession.IRemote workerSession;
     private static File signServerHome;
     
-    private CLITestHelper adminCLI = new CLITestHelper(new AdminCLI());
-    private CLITestHelper clientCLI = new CLITestHelper(new ClientCLI());
+    private CLITestHelper adminCLI = new CLITestHelper(AdminCLI.class);
+    private CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
 	
     @Override
     protected void setUp() throws Exception {

@@ -25,7 +25,6 @@ import org.signserver.common.*;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
 /**
@@ -61,9 +60,6 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
     }
 
     /* (non-Javadoc)

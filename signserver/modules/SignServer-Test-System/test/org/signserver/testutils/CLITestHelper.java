@@ -18,7 +18,6 @@ import java.io.PrintStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import junit.framework.TestCase;
-import org.signserver.admin.cli.AdminCLI;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 
@@ -33,18 +32,25 @@ public class CLITestHelper {
     private ByteArrayOutputStream out;
     private ByteArrayOutputStream err;
     
-    private CommandLineInterface cli;
+    private Class<? extends CommandLineInterface> cliClazz;
 
-    public CLITestHelper(CommandLineInterface cli) {
-        this.cli = cli;
+    public CLITestHelper(Class<? extends CommandLineInterface> cli) {
+        this.cliClazz = cli;
     }
     
     public int execute(String... args) throws UnexpectedCommandFailureException, IOException {
         out = new ByteArrayOutputStream();
         err = new ByteArrayOutputStream();
-        cli.setOut(new PrintStream(new TeeOutputStream(System.out, out)));
-        cli.setErr(new PrintStream(new TeeOutputStream(System.err, err)));
-        return cli.execute(args);
+        try {
+            CommandLineInterface cli = cliClazz.newInstance();
+            cli.setOut(new PrintStream(new TeeOutputStream(/*System.out, */out)));
+            cli.setErr(new PrintStream(new TeeOutputStream(System.err, err)));
+            return cli.execute(args);
+        } catch (IllegalAccessException ex) {
+            throw new UnexpectedCommandFailureException(ex);
+        } catch (InstantiationException ex) {
+            throw new UnexpectedCommandFailureException(ex);
+        }
     }
 
     public ByteArrayOutputStream getErr() {

@@ -23,24 +23,18 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.ejbca.core.model.ca.crl.RevokedCertInfo;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
+import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.validationservice.common.ICertificate;
-import org.signserver.validationservice.common.ValidateRequest;
-import org.signserver.validationservice.common.ValidateResponse;
-import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.common.ValidationServiceConstants;
+import org.signserver.validationservice.common.*;
 
 /**
  * Tests for the CRL Validator.

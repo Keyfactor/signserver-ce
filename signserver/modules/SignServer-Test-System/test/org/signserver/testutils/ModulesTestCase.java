@@ -17,18 +17,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Properties;
+import java.util.*;
 import javax.naming.NamingException;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.ejbca.util.Base64;
 import org.signserver.admin.cli.AdminCLI;
-import org.signserver.cli.CommandLineInterface;
-import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
@@ -107,14 +101,14 @@ public class ModulesTestCase extends TestCase {
 
     public CLITestHelper getAdminCLI() {
         if (adminCLI == null) {
-            adminCLI = new CLITestHelper(new AdminCLI());
+            adminCLI = new CLITestHelper(AdminCLI.class);
         }
         return adminCLI;
     }
 
     public CLITestHelper getClientCLI() {
         if (clientCLI == null) {
-            clientCLI = new CLITestHelper(new ClientCLI());
+            clientCLI = new CLITestHelper(ClientCLI.class);
         }
         return clientCLI;
     }

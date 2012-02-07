@@ -168,7 +168,9 @@ public class SignDataGroupsCommand extends AbstractCommand {
                 .toString();
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp(new PrintWriter(bout), HelpFormatter.DEFAULT_WIDTH, "signdatagroups <options>", null, OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        PrintWriter pw = new PrintWriter(bout);
+        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "signdatagroups <options>", null, OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        pw.close();
         return bout.toString();
     }
 

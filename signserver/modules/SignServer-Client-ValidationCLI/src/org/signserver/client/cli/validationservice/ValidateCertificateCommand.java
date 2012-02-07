@@ -156,10 +156,14 @@ public class ValidateCertificateCommand extends AbstractCommand {
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp(new PrintWriter(bout), HelpFormatter.DEFAULT_WIDTH, "Usage: signclient validatecertificate <options>\n", null, options, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        
+        PrintWriter pw = new PrintWriter(bout);
+        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "Usage: signclient validatecertificate <options>\n", null, options, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString(), false);        
+        pw.close();
         return bout.toString();
     }
 
+    @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException {
         int result = RETURN_BADARGUMENT;
         try {
@@ -178,7 +182,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
                 pemFlag = cmd.hasOption(OPTION_PEM);
 
                 if (derFlag && pemFlag) {
-                    System.err.println("Error, only one of -pem and -der options can be specified.");
+                    err.println("Error, only one of -pem and -der options can be specified.");
                     printUsage();
                     return RETURN_BADARGUMENT;
                 }
@@ -190,7 +194,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
                 if (cmd.hasOption(OPTION_SERVICE) && cmd.getOptionValue(OPTION_SERVICE) != null) {
                     service = cmd.getOptionValue(OPTION_SERVICE);
                 } else {
-                    System.err.println("Error, an name or id of the validation service must be specified with the -" + OPTION_SERVICE + " option.");
+                    err.println("Error, an name or id of the validation service must be specified with the -" + OPTION_SERVICE + " option.");
                     printUsage();
                     return RETURN_BADARGUMENT;
                 }
@@ -200,12 +204,12 @@ public class ValidateCertificateCommand extends AbstractCommand {
                     if (trustStorePath != null) {
                         File f = new File(trustStorePath);
                         if (!f.exists() || !f.canRead() || f.isDirectory()) {
-                            System.err.println("Error, a path to the truststore must point to a readable JKS file.");
+                            err.println("Error, a path to the truststore must point to a readable JKS file.");
                             printUsage();
                             return RETURN_BADARGUMENT;
                         }
                     } else {
-                        System.err.println("Error, a path to the truststore must be supplied to the -" + OPTION_TRUSTSTORE + " option.");
+                        err.println("Error, a path to the truststore must be supplied to the -" + OPTION_TRUSTSTORE + " option.");
                         printUsage();
                         return RETURN_BADARGUMENT;
                     }
@@ -214,14 +218,14 @@ public class ValidateCertificateCommand extends AbstractCommand {
                 if (cmd.hasOption(OPTION_TRUSTSTOREPWD)) {
                     trustStorePwd = cmd.getOptionValue(OPTION_TRUSTSTOREPWD);
                     if (trustStorePwd == null) {
-                        System.err.println("Error, a truststore password must be supplied to the -" + OPTION_TRUSTSTOREPWD + " option.");
+                        err.println("Error, a truststore password must be supplied to the -" + OPTION_TRUSTSTOREPWD + " option.");
                         printUsage();
                         return RETURN_BADARGUMENT;
                     }
                 }
 
                 if (trustStorePath == null ^ trustStorePwd == null) {
-                    System.err.println("Error, if HTTPS is going to be used must both the options -" + OPTION_TRUSTSTORE + " and -" + OPTION_TRUSTSTOREPWD + " be specified");
+                    err.println("Error, if HTTPS is going to be used must both the options -" + OPTION_TRUSTSTORE + " and -" + OPTION_TRUSTSTOREPWD + " be specified");
                     printUsage();
                     return RETURN_BADARGUMENT;
                 }
@@ -231,7 +235,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
                 if (cmd.hasOption(OPTION_HOSTS) && cmd.getOptionValue(OPTION_HOSTS) != null) {
                     hosts = cmd.getOptionValue(OPTION_HOSTS).split(",");
                 } else {
-                    System.err.println("Error, at least one validation service host must be specified.");
+                    err.println("Error, at least one validation service host must be specified.");
                     printUsage();
                     return RETURN_BADARGUMENT;
                 }
@@ -242,12 +246,12 @@ public class ValidateCertificateCommand extends AbstractCommand {
                         try {
                             port = Integer.parseInt(portString);
                         } catch (NumberFormatException e) {
-                            System.err.println("Error, port value must be an integer for option -" + OPTION_PORT + ".");
+                            err.println("Error, port value must be an integer for option -" + OPTION_PORT + ".");
                             printUsage();
                             return RETURN_BADARGUMENT;
                         }
                     } else {
-                        System.err.println("Error, a port value must be supplied to the -" + OPTION_PORT + " option.");
+                        err.println("Error, a port value must be supplied to the -" + OPTION_PORT + " option.");
                         printUsage();
                         return RETURN_BADARGUMENT;
                     }
@@ -263,7 +267,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
                     if (cmd.getOptionValue(OPTION_CERTPURPOSES) != null) {
                         usages = cmd.getOptionValue(OPTION_CERTPURPOSES);
                     } else {
-                        System.err.println("Error, at least one usage must be specified with the -" + OPTION_CERTPURPOSES + " option.");
+                        err.println("Error, at least one usage must be specified with the -" + OPTION_CERTPURPOSES + " option.");
                         printUsage();
                         return RETURN_BADARGUMENT;
                     }
@@ -272,19 +276,19 @@ public class ValidateCertificateCommand extends AbstractCommand {
                 if (cmd.hasOption(OPTION_CERT) && cmd.getOptionValue(OPTION_CERT) != null) {
                     certPath = new File(cmd.getOptionValue(OPTION_CERT));
                     if (!certPath.exists() || !certPath.canRead() || certPath.isDirectory()) {
-                        System.err.println("Error, the certificate file must exist and be readable by the user.");
+                        err.println("Error, the certificate file must exist and be readable by the user.");
                         printUsage();
                         return RETURN_BADARGUMENT;
                     }
                 } else {
-                    System.err.println("Error, the certificate to validate must be specified with the -" + OPTION_CERT + " option.");
+                    err.println("Error, the certificate to validate must be specified with the -" + OPTION_CERT + " option.");
                     printUsage();
                     return RETURN_BADARGUMENT;
                 }
 
 
             } catch (ParseException e) {
-                System.err.println("Error occurred when parsing options.  Reason: " + e.getMessage());
+                err.println("Error occurred when parsing options.  Reason: " + e.getMessage());
                 printUsage();
                 return RETURN_BADARGUMENT;
             }
@@ -297,9 +301,9 @@ public class ValidateCertificateCommand extends AbstractCommand {
         } catch (Exception e) {
             if (!e.getClass().getSimpleName().equals("ExitException")) {
 
-                System.err.println("Error occured during validation : " + e.getClass().getName());
+                err.println("Error occured during validation : " + e.getClass().getName());
                 if (e.getMessage() != null) {
-                    System.err.println("  Message : " + e.getMessage());
+                    err.println("  Message : " + e.getMessage());
                 }
                 result = RETURN_ERROR;
             }
@@ -374,7 +378,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
 
     private void println(String string) {
         if (!silentMode) {
-            System.out.println(string);
+            out.println(string);
         }
 
     }
@@ -416,16 +420,16 @@ public class ValidateCertificateCommand extends AbstractCommand {
         public void addCommunicationError(ICommunicationFault error) {
             final String s = "Error communication with host : " + error.getHostName() + ", " + error.getDescription();
             if (error.getThrowed() != null) {
-                System.out.println(s);
+                out.println(s);
                 error.getThrowed().printStackTrace();
             } else {
-                System.out.println(s);
+                out.println(s);
             }
         }
     }
 
     private void printUsage() {
-        System.out.println(getUsages());
+        out.println(getUsages());
     }
    
 }

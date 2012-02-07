@@ -14,7 +14,6 @@ package org.signserver.admin.cli.defaultimpl;
 
 import java.rmi.RemoteException;
 import java.util.Enumeration;
-import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -29,7 +28,7 @@ import org.signserver.common.WorkerStatus;
  *
  * @version $Id$
  */
-public class GetConfigCommand extends AbstractCommand {
+public class GetConfigCommand extends AbstractAdminCommand {
 
     private AdminCommandHelper helper = new AdminCommandHelper();
 
@@ -82,6 +81,7 @@ public class GetConfigCommand extends AbstractCommand {
     private void displayGlobalConfiguration() throws RemoteException, Exception {
         GlobalConfiguration gc = helper.getGlobalConfigurationSession().getGlobalConfiguration();
         Enumeration<String> en = gc.getKeyEnumeration();
+        System.out.println("out = " + out.getClass());
         out.println(" This node has the following Global Configuration:");
         while (en.hasMoreElements()) {
             String key = en.nextElement();

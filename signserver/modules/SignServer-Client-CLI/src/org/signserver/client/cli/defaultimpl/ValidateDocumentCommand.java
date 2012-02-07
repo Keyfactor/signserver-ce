@@ -146,8 +146,10 @@ public class ValidateDocumentCommand extends AbstractCommand {
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp(new PrintWriter(bout), HelpFormatter.DEFAULT_WIDTH, "validatedocument <-workername WORKERNAME | -workerid WORKERID> [options]",
+        PrintWriter pw = new PrintWriter(bout);
+        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "validatedocument <-workername WORKERNAME | -workerid WORKERID> [options]",
                 "Request a document to be validated by SignServer", OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        pw.close();
         return bout.toString();
     }
     

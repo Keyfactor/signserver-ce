@@ -75,7 +75,7 @@ public class CommandLineInterface {
     }
     
     public int execute(final String... args) throws UnexpectedCommandFailureException {
-        int resultCode = 0;
+        int resultCode;
         
         if (loader == null) {
             loader = ServiceLoader.load(CommandFactory.class);
@@ -94,7 +94,7 @@ public class CommandLineInterface {
                     shift = 2;
                 }
                 // Run with args without the name of the command and sub command
-                cmd.execute(Arrays.copyOfRange(args, shift, args.length));
+                resultCode = cmd.execute(Arrays.copyOfRange(args, shift, args.length));
             } catch (IllegalCommandArgumentsException ex) {
                 out.println(ex.getMessage());
                 out.println(cmd.getUsages());

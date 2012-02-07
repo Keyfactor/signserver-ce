@@ -42,7 +42,7 @@ public class SignServerCLITest extends ModulesTestCase {
     private static final String TESTTSID = "1000";
     private static final String TESTGSID = "1023";
 
-    private CLITestHelper cli = new CLITestHelper(new AdminCLI());
+    private CLITestHelper cli = getAdminCLI();
     
     @Override
     protected void setUp() throws Exception {

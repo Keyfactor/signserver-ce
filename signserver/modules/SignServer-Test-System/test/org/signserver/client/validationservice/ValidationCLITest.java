@@ -18,24 +18,22 @@ import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
-
 import junit.framework.TestCase;
-
 import org.bouncycastle.jce.X509KeyUsage;
 import org.ejbca.util.Base64;
 import org.ejbca.util.keystore.KeyTools;
+import org.signserver.cli.CommandLineInterface;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.client.cli.validationservice.ValidateCertificateCommand;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.ServiceLocator;
 import org.signserver.testutils.CLITestHelper;
-import org.signserver.testutils.TestUtils;
+import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.server.ValidationTestUtils;
-import static org.signserver.testutils.CLITestHelper.assertPrinted;
 
 /**
  * Tests for the ValidateCertificateCommand.
@@ -55,7 +53,7 @@ public class ValidationCLITest extends TestCase {
     private static String validcert1path;
     private static String revokedcertpath;
 
-    private CLITestHelper clientCLI = new CLITestHelper(new ClientCLI());
+    private CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
     
     @Override
     protected void setUp() throws Exception {
@@ -66,10 +64,6 @@ public class ValidationCLITest extends TestCase {
                 IGlobalConfigurationSession.IRemote.class);
         sSSession = ServiceLocator.getInstance().lookupRemote(
                 IWorkerSession.IRemote.class);
-
-        TestUtils.redirectToTempOut();
-        TestUtils.redirectToTempErr();
-        TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull("SIGNSERVER_HOME env variable", signserverhome);
     }
@@ -99,7 +93,6 @@ public class ValidationCLITest extends TestCase {
         sSSession.setWorkerProperty(16, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
         sSSession.setWorkerProperty(16, "VAL1.TESTPROP", "TEST");
         sSSession.setWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(validChain1));
-        String signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
 
         sSSession.reloadConfiguration(16);
@@ -134,26 +127,24 @@ public class ValidationCLITest extends TestCase {
         assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
     }
 
-    public void testValidationCLI() {
+    public void testValidationCLI() throws Exception {
         final String jksFile = new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath();
 
-        TestUtils.assertSuccessfulExecution(new ValidateCertificateCommand(), new String[]{"-hosts", "localhost", "-service", "16", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"});
-        int result = TestUtils.assertFailedExecution(new ValidateCertificateCommand(), new String[]{"-hosts", "localhost", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"));
+        int result = clientCLI.execute("validatecertificate", "-hosts", "localhost", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit");
         assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
-        result = TestUtils.assertFailedExecution(new ValidateCertificateCommand(), new String[]{"-service", "16", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        result = clientCLI.execute("validatecertificate", "-service", "16", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit");
         assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
-        result = TestUtils.assertFailedExecution(new ValidateCertificateCommand(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-pem", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        result = clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-pem", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit");
         assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
-        TestUtils.assertSuccessfulExecution(new ValidateCertificateCommand(), new String[]{"-hosts", "localhost", "-service", "16", "-pem", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"});
-        TestUtils.assertSuccessfulExecution(new ValidateCertificateCommand(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"});
-        result = TestUtils.assertFailedExecution(new ValidateCertificateCommand(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-pem", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"));
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"));
+        result = clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit");
         assertEquals(ValidateCertificateCommand.RETURN_REVOKED, result);
-        TestUtils.assertSuccessfulExecution(new ValidateCertificateCommand(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "IDENTIFICATION", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"});
-        TestUtils.assertSuccessfulExecution(new ValidateCertificateCommand(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "IDENTIFICATION,ELECTROINIC_SIGNATURE", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"});
-        result = TestUtils.assertFailedExecution(new ValidateCertificateCommand(), new String[]{"-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "ELECTROINIC_SIGNATURE", "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit"});
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "IDENTIFICATION", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"));
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "IDENTIFICATION,ELECTROINIC_SIGNATURE", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"));
+        result = clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "ELECTROINIC_SIGNATURE", "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit");
         assertEquals(ValidateCertificateCommand.RETURN_BADCERTPURPOSE, result);
-
-        TestingSecurityManager.remove();
     }
 
     public void test99RemoveDatabase() throws Exception {

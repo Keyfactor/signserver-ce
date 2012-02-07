@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.bouncycastle.tsp.TimeStampResponse;
-import org.signserver.admin.cli.AdminCLI;
 import org.signserver.client.cli.defaultimpl.TimeStampCommand;
 import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertNotPrinted;

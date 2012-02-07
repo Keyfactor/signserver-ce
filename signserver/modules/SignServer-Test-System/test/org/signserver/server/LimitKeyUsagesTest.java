@@ -16,7 +16,6 @@ import java.security.cert.Certificate;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
 
 /**
  * Tests limits for the key usages.

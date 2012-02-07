@@ -3535,10 +3535,7 @@ postprocess.file1.includes=META-INF/ejb-jar.xml
                     
            <section name="Custom CLI">
                <p>
-                   In signserver_cli.properties:
-               </p>
-               <p>
-<b>custom.commandfactory</b> = Should point to a custom implementation of the interface org.signserver.cli.ISignServerCommandFactory. This gives to ability to extend (or replace) the default CLI with another one. The best way of extending the CLI is to look at  how the DefaultSignServerCommandFactory  is structured.
+The SignServer AdminCLI or ClientCLI can be extended by putting additional JAR files with custom implementations of the ClientCommandFactory or AdminCommandFactory interfaces on the classpath. The implementation classes should be listed in the JAR files under META-INF/services in a file with the full class name of the interface. See SignServer-Client-ValidationCLI as an example. 
                 </p>
             </section>
             <section name="Plugin development">

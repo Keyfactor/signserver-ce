@@ -13,9 +13,16 @@
 package org.signserver.cli.spi;
 
 /**
- *
+ * Exception thrown in case an unexpected failure happened when executing a 
+ * CLI command. 
+ * 
+ * Typically this exception will cause the CLI to display a 
+ * stacktrace. Commands should try to use the CommandFailureException with a 
+ * good error message as far as possible and only use this for unexpected 
+ * failures.
  * @author Markus Kilås
  * @version $Id$
+ * @see CommandFailureException
  */
 public class UnexpectedCommandFailureException extends Exception {
 
@@ -27,5 +34,4 @@ public class UnexpectedCommandFailureException extends Exception {
         super(message, cause);
     }
 
-    
 }

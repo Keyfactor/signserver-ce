@@ -15,9 +15,10 @@ package org.signserver.module.tsa;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.ejbca.util.IPatternLogger;
-import org.ejbca.util.PatternLogger;
+import org.signserver.server.log.EjbcaPatternLogger;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.WorkerLoggerException;
 
@@ -65,6 +66,7 @@ public class DefaultTimeStampLogger implements IWorkerLogger {
     public DefaultTimeStampLogger() {
     }
 
+    @Override
     public void init(Properties properties) {
         
         this.pattern = Pattern.compile(properties.getProperty("LOGPATTERN",
@@ -72,13 +74,13 @@ public class DefaultTimeStampLogger implements IWorkerLogger {
         this.orderString = properties.getProperty("LOGORDER", DEFAULT_LOGORDER);
         this.logDateFormat = properties.getProperty("LOGDATEFORMAT", DEFAULT_LOGDATEFORMAT);
         this.timeZone = properties.getProperty("LOGTIMEZONE", DEFAULT_LOGTIMEZONE);
-
     }
 
+    @Override
     public void log(Map<String, String> entries) throws WorkerLoggerException {
-        final IPatternLogger pl = new PatternLogger(this.pattern.matcher(
+        final IPatternLogger pl = new EjbcaPatternLogger(this.pattern.matcher(
                 this.orderString), this.orderString, ACCOUNTLOG,
-                this.logDateFormat, this.timeZone);
+                this.logDateFormat, this.timeZone, Level.INFO);
 
         // TODO: Do a new version of pattern logger instead of this copying
         for (Map.Entry<String, String> entry : entries.entrySet()) {

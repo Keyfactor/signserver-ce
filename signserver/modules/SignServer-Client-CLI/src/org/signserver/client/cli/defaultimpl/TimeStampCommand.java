@@ -19,7 +19,6 @@ import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -30,7 +29,6 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
@@ -91,6 +89,9 @@ public class TimeStampCommand extends AbstractCommand {
 
     /** Number of milliseconds to sleep after a request. */
     private int sleep = 1000;
+    
+    private boolean certReq;
+    private String reqPolicy;
     
     private Options options = new Options();
 
@@ -161,6 +162,15 @@ public class TimeStampCommand extends AbstractCommand {
         OptionBuilder.withDescription("Sleep a number of milliseconds after "
                 + "each request. Default 1000 ms.");
         final Option optionSleep = OptionBuilder.create("sleep");
+        
+        OptionBuilder.hasArg(false);
+        OptionBuilder.withDescription("Request signer certificate");
+        final Option certReqOption = OptionBuilder.create("certreq");
+        
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("oid");
+        OptionBuilder.withDescription("Request timestamp issued under a policy OID");
+        final Option reqPolicyOption = OptionBuilder.create("reqpolicy");
 
         // Add options
         options.addOption(help);
@@ -175,6 +185,8 @@ public class TimeStampCommand extends AbstractCommand {
         options.addOption(instr);
         options.addOption(inreq);
         options.addOption(optionSleep);
+        options.addOption(certReqOption);
+        options.addOption(reqPolicyOption);
     }
 
     @Override
@@ -243,6 +255,12 @@ public class TimeStampCommand extends AbstractCommand {
             final String[] strargs = cmd.getArgs();
             if (strargs.length > 0) {
                 urlstring = strargs[PARAM_URL];
+            }
+            if (cmd.hasOption("certreq")) {
+                certReq = true;
+            }
+            if (cmd.hasOption("reqpolicy")) {
+                reqPolicy = cmd.getOptionValue("reqpolicy");
             }
 
             if (args.length < 1) {
@@ -362,6 +380,10 @@ public class TimeStampCommand extends AbstractCommand {
             final TimeStampRequest timeStampRequest;
             if (inreqstring == null) {
                 LOG.debug("Generating a new request");
+                timeStampRequestGenerator.setCertReq(certReq);
+                if (reqPolicy != null) {
+                    timeStampRequestGenerator.setReqPolicy(reqPolicy);
+                }
                 timeStampRequest = timeStampRequestGenerator.generate(
                         TSPAlgorithms.SHA1, digest, BigInteger.valueOf(nonce));
             } else {
@@ -488,7 +510,7 @@ public class TimeStampCommand extends AbstractCommand {
         try {
             os = new ByteArrayOutputStream();
             in = new FileInputStream(file);
-            int len = 0;
+            int len;
             final byte[] buf = new byte[1024];
 
             while ((len = in.read(buf)) > 0) {
@@ -535,7 +557,7 @@ public class TimeStampCommand extends AbstractCommand {
             in = new FileInputStream(file);
 
             final byte[] buf = new byte[2048];
-            int len = 0;
+            int len;
             while ((len = in.read(buf)) > 0) {
                 dig.update(buf, 0, len);
             }

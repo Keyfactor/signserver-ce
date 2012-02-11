@@ -12,17 +12,7 @@
  *************************************************************************/
 package org.signserver.client;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
@@ -38,23 +28,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.tsp.TSPAlgorithms;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampRequestGenerator;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.tsp.TimeStampTokenInfo;
+import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -110,6 +87,8 @@ public class TimeStampClient {
     /** Number of milliseconds to sleep after a request. */
     private int sleep = 1000;
 
+    private boolean certReq;
+    private String reqPolicy;
 
     /**
      * Creates a new instance of TimeStampClient.
@@ -185,6 +164,15 @@ public class TimeStampClient {
                 + "each request. Default 1000 ms.");
         final Option optionSleep = OptionBuilder.create("sleep");
 
+        OptionBuilder.hasArg(false);
+        OptionBuilder.withDescription("Request signer certificate");
+        final Option certReqOption = OptionBuilder.create("certreq");
+        
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("oid");
+        OptionBuilder.withDescription("Request timestamp issued under a policy OID");
+        final Option reqPolicyOption = OptionBuilder.create("reqpolicy");
+
         // Add options
         final Options options = new Options();
         options.addOption(help);
@@ -199,6 +187,8 @@ public class TimeStampClient {
         options.addOption(instr);
         options.addOption(inreq);
         options.addOption(optionSleep);
+        options.addOption(certReqOption);
+        options.addOption(reqPolicyOption);
 
         final CommandLineParser parser = new GnuParser();
         try {
@@ -242,6 +232,12 @@ public class TimeStampClient {
             final String[] strargs = cmd.getArgs();
             if (strargs.length > 0) {
                 urlstring = strargs[PARAM_URL];
+            }
+            if (cmd.hasOption("certreq")) {
+                certReq = true;
+            }
+            if (cmd.hasOption("reqpolicy")) {
+                reqPolicy = cmd.getOptionValue("reqpolicy");
             }
 
             if (args.length < 1) {
@@ -378,6 +374,10 @@ public class TimeStampClient {
             final TimeStampRequest timeStampRequest;
             if (inreqstring == null) {
                 LOG.debug("Generating a new request");
+                timeStampRequestGenerator.setCertReq(certReq);
+                if (reqPolicy != null) {
+                    timeStampRequestGenerator.setReqPolicy(reqPolicy);
+                }
                 timeStampRequest = timeStampRequestGenerator.generate(
                         TSPAlgorithms.SHA1, digest, BigInteger.valueOf(nonce));
             } else {
@@ -504,7 +504,7 @@ public class TimeStampClient {
         try {
             os = new ByteArrayOutputStream();
             in = new FileInputStream(file);
-            int len = 0;
+            int len;
             final byte[] buf = new byte[1024];
 
             while ((len = in.read(buf)) > 0) {
@@ -551,7 +551,7 @@ public class TimeStampClient {
             in = new FileInputStream(file);
 
             final byte[] buf = new byte[2048];
-            int len = 0;
+            int len;
             while ((len = in.read(buf)) > 0) {
                 dig.update(buf, 0, len);
             }

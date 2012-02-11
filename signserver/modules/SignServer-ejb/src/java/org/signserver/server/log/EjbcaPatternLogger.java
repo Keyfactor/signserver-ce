@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
-
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
@@ -37,7 +36,7 @@ import org.ejbca.util.IPatternLogger;
  * @author thamwickenberg
  * @version $Id$
  */
-class EjbcaPatternLogger implements IPatternLogger {
+public class EjbcaPatternLogger implements IPatternLogger {
 
     private final Map<String, String> valuepairs = new HashMap<String, String>();
     private final StringWriter sw = new StringWriter();

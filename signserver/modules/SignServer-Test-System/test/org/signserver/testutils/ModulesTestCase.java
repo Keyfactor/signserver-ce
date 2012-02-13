@@ -149,7 +149,7 @@ public class ModulesTestCase extends TestCase {
      * tests.
      * @param file The properties file to load
      * @throws IOException
-     * @throws CertificateException 
+     * @throws CertificateException in case a certificate could not be decoded 
      */
     protected void setProperties(final File file) throws IOException, CertificateException {
         InputStream in = null;
@@ -157,35 +157,68 @@ public class ModulesTestCase extends TestCase {
             in = new FileInputStream(file);
             Properties properties = new Properties();
             properties.load(in);
-            for (Object o : properties.keySet()) {
-                if (o instanceof String) {
-                    String key = (String) o;
-                    String value = properties.getProperty(key);
-                    if (key.startsWith("GLOB")) {
-                        key = key.substring("GLOB".length() + 1);
-                        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, key, value);
-                    } else {
-                        int id = Integer.parseInt(key.substring("WORKER".length(), key.indexOf(".")));
-                        key = key.substring(key.indexOf(".") + 1);
-                        
-                        if (key.startsWith("SIGNERCERTCHAIN")) {
-                            String certs[] = value.split(";");
-                            ArrayList<byte[]> chain = new ArrayList<byte[]>();
-                            for (String base64cert : certs) {
-                                byte[] cert = Base64.decode(base64cert.getBytes());
-                                chain.add(cert);
-                            }
-                            workerSession.uploadSignerCertificateChain(id, chain, GlobalConfiguration.SCOPE_GLOBAL);
-                        } else {
-                            workerSession.setWorkerProperty(id, key, value);
-                        }
-
-                    }
-                }
-            }
+            setProperties(properties);
         } finally {
             if (in != null) {
                 in.close();
+            }
+        }
+    }
+    
+    /**
+     * Load worker/global properties from file. This is not a complete 
+     * implementation as the one used by the "setproperties" CLI command but 
+     * enough to load the junittest-part-config.properties files used by the 
+     * tests.
+     * @param in The inputstream to read properties from
+     * @throws IOException
+     * @throws CertificateException in case a certificate could not be decoded 
+     */
+    protected void setProperties(final InputStream in) throws IOException, CertificateException {
+        try {
+            Properties properties = new Properties();
+            properties.load(in);
+            setProperties(properties);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+    }
+    
+    /**
+     * Load worker/global properties. This is not a complete 
+     * implementation as the one used by the "setproperties" CLI command but 
+     * enough to load the junittest-part-config.properties files used by the 
+     * tests.
+     * @param file The properties file to load
+     * @throws CertificateException in case a certificate could not be decoded
+     */
+    protected void setProperties(final Properties properties) throws CertificateException {
+        for (Object o : properties.keySet()) {
+            if (o instanceof String) {
+                String key = (String) o;
+                String value = properties.getProperty(key);
+                if (key.startsWith("GLOB")) {
+                    key = key.substring("GLOB".length() + 1);
+                    globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, key, value);
+                } else {
+                    int id = Integer.parseInt(key.substring("WORKER".length(), key.indexOf(".")));
+                    key = key.substring(key.indexOf(".") + 1);
+
+                    if (key.startsWith("SIGNERCERTCHAIN")) {
+                        String certs[] = value.split(";");
+                        ArrayList<byte[]> chain = new ArrayList<byte[]>();
+                        for (String base64cert : certs) {
+                            byte[] cert = Base64.decode(base64cert.getBytes());
+                            chain.add(cert);
+                        }
+                        workerSession.uploadSignerCertificateChain(id, chain, GlobalConfiguration.SCOPE_GLOBAL);
+                    } else {
+                        workerSession.setWorkerProperty(id, key, value);
+                    }
+
+                }
             }
         }
     }

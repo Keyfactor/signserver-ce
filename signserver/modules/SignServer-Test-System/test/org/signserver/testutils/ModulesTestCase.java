@@ -132,7 +132,7 @@ public class ModulesTestCase extends TestCase {
      * tests.
      * @param file The properties file to load
      * @throws IOException
-     * @throws CertificateException 
+     * @throws CertificateException in case a certificate could not be decoded 
      */
     protected void setProperties(final File file) throws IOException, CertificateException {
         InputStream in = null;
@@ -140,6 +140,44 @@ public class ModulesTestCase extends TestCase {
             in = new FileInputStream(file);
             Properties properties = new Properties();
             properties.load(in);
+            setProperties(properties);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+    }
+    
+    /**
+     * Load worker/global properties from file. This is not a complete 
+     * implementation as the one used by the "setproperties" CLI command but 
+     * enough to load the junittest-part-config.properties files used by the 
+     * tests.
+     * @param in The inputstream to read properties from
+     * @throws IOException
+     * @throws CertificateException in case a certificate could not be decoded 
+     */
+    protected void setProperties(final InputStream in) throws IOException, CertificateException {
+        try {
+            Properties properties = new Properties();
+            properties.load(in);
+            setProperties(properties);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+    }
+    
+    /**
+     * Load worker/global properties. This is not a complete 
+     * implementation as the one used by the "setproperties" CLI command but 
+     * enough to load the junittest-part-config.properties files used by the 
+     * tests.
+     * @param file The properties file to load
+     * @throws CertificateException in case a certificate could not be decoded
+     */
+    protected void setProperties(final Properties properties) throws CertificateException {
             for (Object o : properties.keySet()) {
                 if (o instanceof String) {
                     String key = (String) o;
@@ -166,12 +204,7 @@ public class ModulesTestCase extends TestCase {
                     }
                 }
             }
-        } finally {
-            if (in != null) {
-                in.close();
             }
-        }
-    }
 
     protected void addSoftDummySigner(final int signerId, final String signerName, final String keyData, final String certChain) throws CertificateException {
         addSoftDummySigner("org.signserver.module.xmlsigner.XMLSigner",

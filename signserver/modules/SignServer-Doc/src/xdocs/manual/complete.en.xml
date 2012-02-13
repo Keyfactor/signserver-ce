@@ -2125,6 +2125,17 @@ users from using the CertValidator (indirectly through the XMLValidator) an
 Autorizer could be configured for the XMLValidator.
                         </p>
                     </subsubsection>
+                    <subsubsection name="DispatchedAuthorizer">
+                        <p>
+<b>AUTHTYPE</b> = org.signserver.server.DispatchedAuthorizer    
+                        </p>
+                        <p>
+<b>AUTHORIZEALLDISPATCHERS</b> = True, if any Dispatcher should be authorized. (Default: true, currently only true is supported)
+                        </p>
+                        <p>
+Only accepts requests that has gone through a Dispatcher. This Authorizer only checks the present of the DISPATCHER_AUTHORIZED_CLIENT field in the request context to know that the request has passed a Dispatcher.
+                        </p>
+                    </subsubsection>
                     <subsubsection name="Custom">
                         <p>
 This authorization functionality doesn't work for all use cases. Then it's possible to create a customized authorizer and specify it's class path as value in the AUTHTYPE property. The Processable will then automatically instantiate and use it. How to develop such a plug-in is explained in the developers section.
@@ -2876,6 +2887,30 @@ certificate etc.
                     </subsubsection>
                     <subsubsection name="Available Properties">
                         <p><b>WORKERS</b> = Comma separated list of workerNameS to try to forward requests to.</p>
+                    </subsubsection>
+                </subsection>
+                
+                <subsection name="RequestedPolicyDispatcher">
+                    <p>
+Fully qualified class name: org.signserver.module.tsa.RequestedPolicyDispatcher
+                    </p>
+                        
+                    <subsubsection name="Overview">
+                        <p>
+Dispatches the Time-stamp request to an other signer based on the requested TSA Policy according to an configured mapping table.
+
+This dispatcher can be useful if you want to have multiple signers (Time Stamp Units) signing with different TSA policies but don't want the client to have to call different workers.
+                        </p>
+                        <p>
+See also the DispatchedAuthorizer which if configured by a signer can allow all requests that has gone through a Dispatcher.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p><b>DEFAULTWORKER</b> = Worker name or ID to dispatch to in case no policy was requested.</p>
+                        <p><b>USEDEFAULTIFMISMATCH</b> = If true dispatches to DEFAULTWORKER in case no mapping existed for the requested policy OID (default: false)</p>
+                        <p><b>MAPPINGS</b> = Mapping from requested policy OID to a worker name.
+                        <br/>The property is of the form:
+                        <br/>POLICYOID1:WORKERNAMEORID1; POLICYOID2:WORKERNAMEORID2; POLICYOID3:WORKERNAMEORID3;</p>
                     </subsubsection>
                 </subsection>
             </section>

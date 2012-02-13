@@ -13,6 +13,7 @@
 package org.signserver.server;
 
 import javax.persistence.EntityManager;
+import org.apache.log4j.Logger;
 import org.signserver.common.*;
 
 /**
@@ -24,18 +25,35 @@ import org.signserver.common.*;
  * should not be possible to call the workers directly using for instance the
  * GenericProcessServlet.
  * 
+ * AUTHORIZEALLDISPATCHERS = True, if any Dispatcher should be authorized. (Default: true, currently only true is supported)
+ * 
  * @author Markus Kilås
  * @version $Id$
  * @see RequestContext#DISPATCHER_AUTHORIZED_CLIENT
  */
 public class DispatchedAuthorizer implements IAuthorizer {
 
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(DispatchedAuthorizer.class);
+    
+    private static final String AUTHORIZEALLDISPATCHERS = "AUTHORIZEALLDISPATCHERS";
+    
     private int workerId;
 
+    private boolean authorizeAllDispatchers;
+
+    
 
     @Override
     public void init(int workerId, WorkerConfig config, EntityManager em) throws SignServerException {
         this.workerId = workerId;
+        
+        String value = config.getProperty(AUTHORIZEALLDISPATCHERS);
+        if (value == null) {
+            LOG.error("DispatchedAuthorizer[" + workerId + "]: Missing property " + AUTHORIZEALLDISPATCHERS);
+        } else {
+            authorizeAllDispatchers = Boolean.parseBoolean(value);
+        }
     }
 
     @Override
@@ -43,7 +61,7 @@ public class DispatchedAuthorizer implements IAuthorizer {
             final RequestContext requestContext)
                 throws IllegalRequestException, SignServerException {
 
-        if (!authorizedToRequest(requestContext)) {
+        if (!authorizeAllDispatchers || !authorizedToRequest(requestContext)) {
             throw new IllegalRequestException(
                     "Error, client is not authorized to worker with id "
                     + workerId);

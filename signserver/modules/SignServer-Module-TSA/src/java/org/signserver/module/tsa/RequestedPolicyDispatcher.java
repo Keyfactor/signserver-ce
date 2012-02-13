@@ -168,6 +168,9 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                     toWorkerId = getWorkerSession().getWorkerId(toWorker);
                 }
                 
+                // Mark request comming from a dispatcher so the DispatchedAuthorizer can be used
+                context.put(RequestContext.DISPATCHER_AUTHORIZED_CLIENT, true);
+                
                 HttpServletRequest httpRequest = null;
                 if (sReq instanceof GenericServletRequest) {
                     httpRequest = ((GenericServletRequest) sReq).getHttpServletRequest();   

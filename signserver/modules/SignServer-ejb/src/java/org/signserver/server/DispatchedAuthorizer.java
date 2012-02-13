@@ -13,15 +13,11 @@
 package org.signserver.server;
 
 import javax.persistence.EntityManager;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
-import org.signserver.common.WorkerConfig;
+import org.signserver.common.*;
 
 /**
  * Authorizer that examines the RequestContext and only accepts requests if
- * the value Boolean.TRUE is set for RequestContextDISPATCHER_AUTHORIZED_CLIENT.
+ * the value Boolean.TRUE is set for RequestContext.DISPATCHER_AUTHORIZED_CLIENT.
  *
  * This authorizer can be set for all worker if a dispatcher such as the
  * TSADispatcherServlet is resposible for looking up the authorization and it
@@ -37,10 +33,12 @@ public class DispatchedAuthorizer implements IAuthorizer {
     private int workerId;
 
 
+    @Override
     public void init(int workerId, WorkerConfig config, EntityManager em) throws SignServerException {
         this.workerId = workerId;
     }
 
+    @Override
     public void isAuthorized(final ProcessRequest request,
             final RequestContext requestContext)
                 throws IllegalRequestException, SignServerException {

@@ -9,7 +9,7 @@ if "%SIGNSERVER_HOME%" == "" (
     set SIGNSRV_HOME=%SIGNSERVER_HOME%
 ) 
   
-if "%APPSRV_HOME%" == " (
+if "%APPSRV_HOME%" == "" (
     echo You must set APPSRV_HOME before running the SignServer cli.
     goto end
 )
@@ -19,15 +19,15 @@ set J2EE_CP=%APPSRV_HOME%\lib\jbossall-client.jar;%APPSRV_HOME%\lib\appserv-rt.j
 
 
 rem check that we have built the classes
-if not exist %SIGNSRV_HOME%/lib/SignServer-Client-CLI.jar  (
+if not exist %SIGNSRV_HOME%\lib\SignServer-Client-CLI.jar  (
     echo You must build SignServer Client CLI first.
     goto end
 )
 
 rem Optional JARs
-OPTIONAL_CLASSPATH=%SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI.jar
+set OPTIONAL_CLASSPATH=%SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI.jar
 
-set CLASSPATH=%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%/lib/SignServer-Client-CLI.jar;%J2EE_CP%;%OPTIONAL_CLASSPATH%
+set CLASSPATH=%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\lib\SignServer-Client-CLI.jar;%J2EE_CP%;%OPTIONAL_CLASSPATH%
 rem echo %CLASSPATH%
 
 rem Fixup arguments, we have to do this since windows normally only 

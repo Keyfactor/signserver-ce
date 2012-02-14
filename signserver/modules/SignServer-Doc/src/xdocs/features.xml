@@ -27,7 +27,7 @@
 <li>Administration GUI desktop application for management.</li>
 <li>Command line administration for easy scripting scripts.</li>
 <li>Java API, HTTP, Web service (WS) and command line (CLI) interfaces.</li>
-<li>Support for HSMs. Built in support for nCipher, PrimeCardHSM, SafeNet ProtectServer, SafeNet Luna, Utimaco CryptoServer, AEP Keyper, ARX CoSign and other HSMs with a good PKCS#11 library.</li>
+<li>Support for HSMs. Built in support for nCipher, PrimeCardHSM, SafeNet ProtectServer, SafeNet Luna, Utimaco CryptoServer, AEP Keyper, ARX CoSign and other HSMs with a good PKCS#11 library (HSM support is not available on Windows 64-bit, since the Java platform lacks a PKCS#11 wrapper for that platform).</li>
 <li>Support for software based keys for lower security requirements or development.</li>
 <li>Configurable access control using http basic authentication, https client certificates, IP address restrictions etc.</li>
 <li>Optional archival of signed documents.</li>

@@ -109,8 +109,7 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
 
         subjectTextArea.setText(certificate.getSubjectDN().getName());
         issuerTextArea.setText(certificate.getIssuerDN().getName());
-        serialNumberLabel.setText(String.valueOf(
-                certificate.getSerialNumber()));
+        serialNumberLabel.setText(certificate.getSerialNumber().toString(16));
         notBeforeLabel.setText(String.valueOf(certificate.getNotBefore()));
         notAfterLabel.setText(String.valueOf(certificate.getNotAfter()));
 
@@ -516,7 +515,7 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
             fields.add(new Field("Version",
                     String.valueOf(certificate.getVersion())));
             fields.add(new Field("Serial Number",
-                    String.valueOf(certificate.getSerialNumber())));
+            		certificate.getSerialNumber().toString(16)));
             fields.add(new Field("Certificate Signature Algorithm",
                     String.valueOf(certificate.getSigAlgName())));
             fields.add(new Field("Issuer",

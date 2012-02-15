@@ -19,7 +19,7 @@ Plan is to make a binary package of the "not found" packages and depend on that 
 
 2506890  416 -rw-r--r--   1 han      han        421601 May  1 22:41 ./quartz/quartz-1.6.0.jar			libquartz-java (1.6.1~RC1-1)	libquartz-java (1.6.6-1)
 1524090   84 -rw-r--r--   1 han      han         79265 May  1 22:40 ./ext/servlet-2.3.jar			libservlet2.3-java 4.0-10	libservlet2.3-java (4.0-10ubuntu3)
-1524094   32 -rw-r--r--   1 han      han         30117 May  1 22:40 ./ext/commons-cli-1.0.jar			libcommons-cli-java 1.1-3	libcommons-cli-java (1.2-2ubuntu1)
+1524094   32 -rw-r--r--   1 han      han         30117 May  1 22:40 ./ext/commons-cli-1.2.jar			libcommons-cli-java 1.1-3	libcommons-cli-java (1.2-2ubuntu1)
 
 1819009   56 -rw-r--r--   1 han      han         52220 May 21 19:40 ./ext/ejb/ejb3-persistence.jar		not found			libhibernate3-java, libhibernate-entitymanager-java, libhibernate-annotations-java etc
 1818662   20 -rw-r--r--   1 han      han         20385 May  1 22:40 ./ext/ejb/jboss-ejb3x.jar			libjboss-ejb3x-java 4.2.2.GA-5	libjboss-ejb3x-java (4.2.3.GA-1)

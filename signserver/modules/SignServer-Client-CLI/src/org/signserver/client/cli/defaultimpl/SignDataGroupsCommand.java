@@ -164,12 +164,11 @@ public class SignDataGroupsCommand extends AbstractCommand {
         StringBuilder footer = new StringBuilder();
         footer.append(NL)
                 .append("Sample usages:").append(NL)
-                .append("a) ").append(COMMAND).append(" -workername MRTDSODSigner -data \"1=value1&2=value2&3=value3\"").append(NL)
-                .toString();
+                .append("a) ").append(COMMAND).append(" -workername MRTDSODSigner -data \"1=value1&2=value2&3=value3\"").append(NL);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
         PrintWriter pw = new PrintWriter(bout);
-        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "signdatagroups <options>", null, OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "signdatagroups <options>", getDescription(), OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
         pw.close();
         return bout.toString();
     }

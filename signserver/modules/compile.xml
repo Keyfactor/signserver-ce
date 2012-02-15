@@ -531,7 +531,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="ext/ext/servlet-2.3.jar"/>
                 
                 <!-- CLI (both client and admin) -->
-                <include name="ext/ext/commons-cli-1.0.jar"/>
+                <include name="ext/ext/commons-cli-1.2.jar"/>
                 
                 <!-- Common (all) -->
                 <include name="ext/cert-cvc.jar"/>

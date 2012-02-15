@@ -1601,7 +1601,10 @@ Other future load balance policies could be round robin or that all nodes are ca
 				<subsubsection name="Signing and validating an XML document">
                                     <source>
 try {
-    ISigningAndValidation signserver = new SigningAndValidationWS("localhost", 8080);
+    System.setProperty("javax.net.ssl.trustStore", "p12/truststore.jks");
+    System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+  
+    ISigningAndValidation signserver = new SigningAndValidationWS("localhost", 8442, true);
 
     // Document to sign
     byte[] unsigned = "&lt;document&gt;&lt;name&gt;Some content&lt;/name&gt;&lt;/document&gt;".getBytes();
@@ -1626,33 +1629,6 @@ try {
     ex.printStackTrace();
 }                                   </source>
 				</subsubsection>
-
-				<subsubsection name="MRTD Signing">
-                                    <source>
-try {
-    ISigningAndValidation signserver = new SigningAndValidationWS("localhost", 8080);
-
-    // Bytes to sign
-    ArrayList&lt;byte[]&gt; bytesToSign = new ArrayList&lt;byte[]&gt;();
-    bytesToSign.add("Sample data 1".getBytes());
-    bytesToSign.add("Sample data 2".getBytes());
-
-    // Signing
-    MRTDSignResponse signResp = (MRTDSignResponse) signserver.process("MRTDSigner", new MRTDSignRequest(1234, bytesToSign), new RequestContext());
-
-    System.out.println("Certificate: " + signResp.getSignerCertificate());
-
-    if(signResp.getProcessedData() instanceof Collection) {
-        Collection&lt;byte[]&gt; signed = (Collection) signResp.getProcessedData();
-        for(byte[] data : signed) {
-            System.out.println("Signed: " + new String(Base64.encode(data)));
-        }
-    }
-} catch (Exception ex) {
-    ex.printStackTrace();
-}                               </source>
-                            </subsubsection>
-			
 
 			</subsection>
 		</section>

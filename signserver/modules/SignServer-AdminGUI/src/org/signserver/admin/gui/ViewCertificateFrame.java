@@ -109,7 +109,7 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
 
         subjectTextArea.setText(certificate.getSubjectDN().getName());
         issuerTextArea.setText(certificate.getIssuerDN().getName());
-        serialNumberLabel.setText(certificate.getSerialNumber().toString(16));
+        serialNumberField.setText(certificate.getSerialNumber().toString(16));
         notBeforeLabel.setText(String.valueOf(certificate.getNotBefore()));
         notAfterLabel.setText(String.valueOf(certificate.getNotAfter()));
 
@@ -235,7 +235,7 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setLocationByPlatform(true);
         setName("Form"); // NOI18N
-
+        
         jTabbedPane1.setName("jTabbedPane1"); // NOI18N
 
         jPanel1.setName("jPanel1"); // NOI18N

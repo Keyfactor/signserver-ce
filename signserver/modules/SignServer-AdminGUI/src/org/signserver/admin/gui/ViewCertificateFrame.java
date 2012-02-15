@@ -235,7 +235,7 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setLocationByPlatform(true);
         setName("Form"); // NOI18N
-        
+
         jTabbedPane1.setName("jTabbedPane1"); // NOI18N
 
         jPanel1.setName("jPanel1"); // NOI18N
@@ -313,6 +313,7 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
         jLabel12.setText(resourceMap.getString("jLabel12.text")); // NOI18N
         jLabel12.setName("jLabel12"); // NOI18N
 
+        serialNumberField.setEditable(false);
         serialNumberField.setText(resourceMap.getString("serialNumberLabel.text")); // NOI18N
         serialNumberField.setInheritsPopupMenu(true);
         serialNumberField.setName("serialNumberLabel"); // NOI18N

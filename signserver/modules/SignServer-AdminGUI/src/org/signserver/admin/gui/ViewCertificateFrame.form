@@ -305,6 +305,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="serialNumberField">
               <Properties>
+                <Property name="editable" type="boolean" value="false"/>
                 <Property name="text" type="java.lang.String" resourceKey="serialNumberLabel.text"/>
                 <Property name="inheritsPopupMenu" type="boolean" value="true"/>
                 <Property name="name" type="java.lang.String" value="serialNumberLabel" noResource="true"/>

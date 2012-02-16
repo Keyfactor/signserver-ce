@@ -55,3 +55,11 @@ This is roughly how tests are currently organized:
 
 See also the "Testing" chapter of the manual for the prerequisites and 
 instructions for how to run the tests. 
+
+Admin GUI Development
+---------------------
+The SignServer AdminGUI is implemented using the Swing Application Framework 
+(JSR 296) and requires NetBeans IDE 7.0 if you want to do GUI changes. Since 
+JSR 296 didn't make it into the JDK, support for it was dropped in later 
+versions of the IDE.
+

@@ -281,10 +281,7 @@ The SignServer is a framework designed to perform different kind of cryptographi
 Since the 3.0 version there are three kind of processable services. Signers (used to sign or in other way  process requested data). Validation Services used to verify the validity of a certificate against a set of backed issuers. The validation service can be used to simply the integration of PKIs into existing applications. The the third processable service is a group key service framework used to manage and to distribute group keys for different applications, these keys can be both symmetric and asymmetric. In addition to processable services there also exists another concept called Timed Service (called just 'service' in 2.0 edition) which are plug-ins run at defined intervals performing maintenance or reporting routines.
                     </p>
                     <p>
-Out-of-the-box are there three Signers ready to be used. They are a MRTD Signer used for signing Machine Readable Travel Documents (also known as Electronic Passports), a Timestamp Signer that can be used to set up a Timestamp Authority and a PDF signer that can be used to automatically sign documents.
-                    </p>
-                    <p>
-The main way of communicating with the SignServer is through a WebService interface (previous versions had a RMI-SSL interface, but that have been replaced by the WS for better platform independence.) but the Timestamp Signer is also available through HTTP communication and the PDF signer have a simple HTML page that allows users to upload documents to be signed.
+The main way of communicating with the SignServer is through HTTP (web server) interface. There is also a web services (SOAP WS) interface available but that uses a special binary format for encoding the requests and responses.
                     </p>
                     <p>
 For an overview of the different concepts in the SignServer see illustration 1. The base component is called Worker which is assigned an id, optionally a name and a configuration. A sub component is a Processable which receives and processes requests. A Processable (optionally) have access to a cryptographic token (CryptoToken) in charge of managing the keys of a Processable. A CryptoToken can be either software or hardware based.
@@ -1563,6 +1560,9 @@ The WebService WSDL file is located at the URL http://&lt;hostname&gt;:8080/sign
                     </p>
                     <p>
 It's possible to turn off the WebService interface by disabling it in the build configuration.
+                    </p>
+                    <p>
+Web services is only supported using HTTPS. The reason is that JBoss 4 does not rewrite the protocol part of the WSDL URL so we had to hard code it for it to work with HTTPS. For details about this see <a href="https://jira.primekey.se/browse/DSS-327">DSS-327</a>. 
                     </p>
                     <p>
 Since SignServer >=3.2.1 it is possible to supply extra request data called RequestMetadata containing key/value pairs that can be used by the signers. For instance the PDFSigner uses this feature to let the client supply a PDF password. 

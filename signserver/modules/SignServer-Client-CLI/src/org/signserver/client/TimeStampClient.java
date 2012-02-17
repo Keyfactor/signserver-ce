@@ -34,6 +34,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
+import org.signserver.client.cli.KeyStoreOptions;
 
 /**
  * Class makeing a simple timestamp request to a timestamp server and tries to
@@ -89,6 +90,8 @@ public class TimeStampClient {
 
     private boolean certReq;
     private String reqPolicy;
+    
+    private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     /**
      * Creates a new instance of TimeStampClient.
@@ -189,6 +192,10 @@ public class TimeStampClient {
         options.addOption(optionSleep);
         options.addOption(certReqOption);
         options.addOption(reqPolicyOption);
+        
+        for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
+            options.addOption(option);
+        }
 
         final CommandLineParser parser = new GnuParser();
         try {
@@ -240,6 +247,8 @@ public class TimeStampClient {
                 reqPolicy = cmd.getOptionValue("reqpolicy");
             }
 
+            keyStoreOptions.parseCommandLine(cmd);
+
             if (args.length < 1) {
                 usage(options);
             } else if (urlstring == null) {
@@ -252,6 +261,7 @@ public class TimeStampClient {
                     LOG.error("Cannot even install BC provider again!");
                 }
             }
+            keyStoreOptions.validateOptions();
         } catch (ParseException e) {
             // oops, something went wrong
             LOG.error(e.getMessage());
@@ -405,6 +415,8 @@ public class TimeStampClient {
                     }
                 }
             }
+
+            keyStoreOptions.setupHTTPS();
 
             URL url;
             URLConnection urlConn;

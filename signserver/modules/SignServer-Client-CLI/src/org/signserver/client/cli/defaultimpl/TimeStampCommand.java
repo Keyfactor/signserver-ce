@@ -94,7 +94,9 @@ public class TimeStampCommand extends AbstractCommand {
     private String reqPolicy;
     
     private Options options = new Options();
-
+    
+    private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
+    
     public TimeStampCommand() {
         // Create options
         final Option help = new Option("help", false, "Print this message.");
@@ -171,7 +173,7 @@ public class TimeStampCommand extends AbstractCommand {
         OptionBuilder.withArgName("oid");
         OptionBuilder.withDescription("Request timestamp issued under a policy OID");
         final Option reqPolicyOption = OptionBuilder.create("reqpolicy");
-
+        
         // Add options
         options.addOption(help);
         options.addOption(verifyopt);
@@ -186,7 +188,10 @@ public class TimeStampCommand extends AbstractCommand {
         options.addOption(inreq);
         options.addOption(optionSleep);
         options.addOption(certReqOption);
-        options.addOption(reqPolicyOption);
+        
+        for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
+            options.addOption(option);
+        }
     }
 
     @Override
@@ -262,6 +267,8 @@ public class TimeStampCommand extends AbstractCommand {
             if (cmd.hasOption("reqpolicy")) {
                 reqPolicy = cmd.getOptionValue("reqpolicy");
             }
+            
+            keyStoreOptions.parseCommandLine(cmd);
 
             if (args.length < 1) {
                 out.println(usage(options));
@@ -278,7 +285,9 @@ public class TimeStampCommand extends AbstractCommand {
                     LOG.error("Cannot even install BC provider again!");
                 }
                 return -2;
-            }*/ else {
+            }*/ else { 
+                keyStoreOptions.validateOptions();
+                
                 run();
                 return CommandLineInterface.RETURN_SUCCESS;
             }
@@ -411,6 +420,8 @@ public class TimeStampCommand extends AbstractCommand {
                     }
                 }
             }
+            
+            keyStoreOptions.setupHTTPS();
 
             URL url;
             URLConnection urlConn;

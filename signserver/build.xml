@@ -169,7 +169,6 @@ OS version                          = ${os.version}
         <delete dir="${validationClientBuild}" />
         <delete dir="${signingAndValidationBuild}" />
         <delete dir="${wsraadminClientBuild}" />
-        <delete dir="${timeStampClientBuild}" />
 
         <!-- Clean all modules -->
         <subant target="clean">

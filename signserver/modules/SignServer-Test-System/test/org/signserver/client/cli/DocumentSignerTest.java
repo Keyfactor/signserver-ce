@@ -21,7 +21,6 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
 /**
@@ -44,7 +43,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     private static final int WORKERID2 = 5675;
 
     private static String signserverhome;
-	
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -55,7 +54,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         signserverhome = System.getenv("SIGNSERVER_HOME");
         LOG.info("HOME:"+signserverhome);
         assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
-        TestUtils.setupSSLTruststore();
+        setupSSLKeystores();
     }
 
     @Override

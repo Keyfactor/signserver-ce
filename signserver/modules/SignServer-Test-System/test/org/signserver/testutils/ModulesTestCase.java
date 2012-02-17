@@ -60,6 +60,7 @@ public class ModulesTestCase extends TestCase {
     
     private CLITestHelper adminCLI;
     private CLITestHelper clientCLI;
+    private TestUtils testUtils = new TestUtils();
 
     public ModulesTestCase() {
         try {
@@ -314,6 +315,10 @@ public class ModulesTestCase extends TestCase {
 
     /** Setup keystores for SSL. **/
     protected void setupSSLKeystores() {
-        TestUtils.setupSSLTruststore();
+        testUtils.setupSSLTruststore();
+    }
+    
+    protected TestUtils getTestUtils() {
+        return testUtils;
     }
 }

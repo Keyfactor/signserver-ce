@@ -1982,20 +1982,30 @@ usage: java -jar timeStampClient.jar &lt;options> &lt;url&gt;
                       message.
  -base64              Give this option if the stored request/reply should
                       be base64 encoded, default is not.
+ -certreq             Request signer certificate
  -help                Print this message.
  -infile &lt;file&gt;       File containing message to time stamp.
  -inrep &lt;file&gt;        Input file containing an earlier stored base64
                       encoded response, to verify.You must specify the verify flag also.
  -inreq &lt;file&gt;        Input file containing an earlier stored request to
                       use instead of creating a new. You must specify the request flag also.
+ -keyalias            Alias of the key in the keystore to use for
+                      authentication.
+ -keystore            Keystore with private key and certificate for client
+                      certificate authentication.
+ -keystorepwd         Password for reading the keystore.
  -outrep &lt;file&gt;       Output file to store the recevied TSA reply, if not
                       given the reply is not stored.
  -outreq &lt;file&gt;       Output file to store the sent TSA request, if not
                       given the request is not stored.
+ -reqpolicy &lt;oid&gt;     Request timestamp issued under a policy OID
  -signerfile &lt;file&gt;   Input file containing the PEM encoded certificate of
                       the TSA signer.Used to verify a stored response.
  -sleep &lt;num&gt;         Sleep a number of milliseconds after each request.
                       Default 1000 ms.
+ -truststore          Keystore with trusted certificates to use with
+                      HTTPS.
+ -truststorepwd       Password for the keystore with trusted certificates.
  -url &lt;url&gt;           Url of TSA, e.g.
                       http://127.0.0.1:8080/signserver/process?workerId=1.
  -verify              Give this option if verification of a stored reply

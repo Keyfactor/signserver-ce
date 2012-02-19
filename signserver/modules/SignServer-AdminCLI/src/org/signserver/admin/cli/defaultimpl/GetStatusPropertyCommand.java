@@ -12,9 +12,12 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import org.signserver.cli.CommandLineInterface;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
+import org.signserver.statusrepo.common.StatusEntry;
 
 /**
  * Gets a status property.
@@ -40,12 +43,16 @@ public class GetStatusPropertyCommand extends AbstractAdminCommand {
             throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
-            final String value = getStatusRepositorySession().getProperty(args[0]);
-
+            final StatusEntry entry = getStatusRepositorySession().getValidEntry(args[0]);
             this.getOutputStream().print(args[0] + " = ");
-            this.getOutputStream().println(value);
-            this.getOutputStream().println("\n\n");
-            return 0;
+            if (entry != null) {
+                this.getOutputStream().println(entry.getValue());
+            } else {
+                this.getOutputStream().println();
+            }
+            return CommandLineInterface.RETURN_SUCCESS;
+        } catch (NoSuchPropertyException ex) {
+            throw new IllegalCommandArgumentsException(ex.getMessage());
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);
         }

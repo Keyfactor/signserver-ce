@@ -10,12 +10,13 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.ejb.interfaces;
+package org.signserver.statusrepo;
 
 import java.util.Map;
 import javax.ejb.Local;
 import javax.ejb.Remote;
-import org.signserver.common.StatusRepositoryData;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
+import org.signserver.statusrepo.common.StatusEntry;
 
 /**
  * Interface towards the status repository session bean.
@@ -36,7 +37,7 @@ public interface IStatusRepositorySession {
      * @param key Key to get the value for
      * @return The value if existing and not expired, otherwise null
      */
-    String getProperty(String key);
+    StatusEntry getValidEntry(String key) throws NoSuchPropertyException;
 
     /**
      * Set a property without expiration, the value will live until the
@@ -45,7 +46,7 @@ public interface IStatusRepositorySession {
      * @param key The key to set the value for
      * @param value The value to set
      */
-    void setProperty(String key, String value);
+    void update(String key, String value) throws NoSuchPropertyException;
 
      /**
      * Set a property with a given expiration timestamp.
@@ -55,19 +56,13 @@ public interface IStatusRepositorySession {
      * @param key The key to set the value for
      * @param value The value to set
      */
-    void setProperty(String key, String value, long expiration);
+    void update(String key, String value, long expiration) throws NoSuchPropertyException;
 
-    /**
-     * Removes a property.
-     *
-     * @param key The property to remove.
-     */
-    void removeProperty(String key);
 
     /**
      * @return An unmodifiable map of all properties
      */
-    Map<String,StatusRepositoryData> getProperties();
+    Map<String, StatusEntry> getAllEntries();
 
     /**
      * Remote interface.

@@ -25,7 +25,8 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.ejbca.util.Base64;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IStatusRepositorySession;
+import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.statusrepo.common.StatusName;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -195,11 +196,11 @@ public class TimeStampSignerTest extends ModulesTestCase {
     public void test05ReadingStatusTimeSource() throws Exception {
         
         // Test with insync
-        repository.setProperty("INSYNC", "true");
+        repository.update(StatusName.INSYNC.name(), "true");
         assertSuccessfulTimestamp(WORKER4);
 
         // Test without insync
-        repository.removeProperty("INSYNC");
+        repository.update(StatusName.INSYNC.name(), "");
         assertTimeNotAvailable(WORKER4);
     }
 

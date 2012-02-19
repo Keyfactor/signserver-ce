@@ -10,18 +10,20 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.ejb;
+package org.signserver.statusrepo.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 import javax.ejb.EJBException;
-import org.signserver.common.StatusRepositoryData;
 import javax.ejb.Stateless;
 import org.apache.log4j.Logger;
-import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
+import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
+import org.signserver.statusrepo.common.StatusEntry;
+import org.signserver.statusrepo.common.StatusName;
 
 /**
  * Session bean offering an interface towards the status repository.
@@ -58,23 +60,28 @@ public class StatusRepositorySessionBean implements
      * @param key Key to get the value for
      * @return The value if existing and not expired, otherwise null
      */
-    public String getProperty(final String key) {
-        final StatusRepositoryData data = repository.get(key);
-        final String property;
+    @Override
+    public StatusEntry getValidEntry(String key) throws NoSuchPropertyException {
+        try {
+            final StatusEntry result;
+            final StatusEntry data = repository.get(StatusName.valueOf(key));
 
-        final long time = System.currentTimeMillis();
+            final long time = System.currentTimeMillis();
 
-        if (data != null && LOG.isDebugEnabled()) {
-            LOG.debug("data.expire=" + data.getExpiration() + ", " + time);
+            if (data != null && LOG.isDebugEnabled()) {
+                LOG.debug("data.expire=" + data.getExpirationTime() + ", " + time);
+            }
+
+            // First check the expiration and then read the value
+            if (data != null && (data.getExpirationTime() == 0  || data.getExpirationTime() > time)) {
+                result = data;
+            } else {
+                result = null;
+            }
+            return result;
+        } catch (IllegalArgumentException ex) {
+            throw new NoSuchPropertyException(key);
         }
-
-        if (data != null && (data.getExpiration() == 0
-                || data.getExpiration() > time)) {
-            property = data.getValue();
-        } else {
-            property = null;
-        }
-        return property;
     }
 
     /**
@@ -84,8 +91,9 @@ public class StatusRepositorySessionBean implements
      * @param key The key to set the value for
      * @param value The value to set
      */
-    public void setProperty(final String key, final String value) {
-        setProperty(key, value, 0L);
+    @Override
+    public void update(final String key, final String value) throws NoSuchPropertyException {
+        update(key, value, 0L);
     }
 
      /**
@@ -96,29 +104,26 @@ public class StatusRepositorySessionBean implements
      * @param key The key to set the value for
      * @param value The value to set
      */
-    public void setProperty(final String key, final String value,
-            final long expiration) {
-        repository.put(key, new StatusRepositoryData(value, expiration));
-        auditLog("setProperty", key, value, expiration);
-    }
-
-    /**
-     * Removes a property.
-     *
-     * @param key The property to remove.
-     */
-    public void removeProperty(final String key) {
-        repository.remove(key);
-        auditLog("removeProperty", key, null, null);
+    @Override
+    public void update(final String key, final String value,
+            final long expiration) throws NoSuchPropertyException {
+        try {
+            final long currentTime = System.currentTimeMillis();
+            repository.set(StatusName.valueOf(key), new StatusEntry(currentTime, value, expiration));
+            auditLog("setProperty", key, value, expiration);
+        } catch (IllegalArgumentException ex) {
+            throw new NoSuchPropertyException(key);
+        }
     }
 
     /**
      * @return An unmodifiable map of all properties
      */
-    public Map<String, StatusRepositoryData> getProperties() {
-        return repository.getProperties();
+    @Override
+    public Map<String, StatusEntry> getAllEntries() {
+        return repository.getEntries();
     }
-
+    
     private static void auditLog(String operation, String property, 
             String value,
             Long expiration) {

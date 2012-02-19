@@ -15,6 +15,7 @@ package org.signserver.admin.cli.defaultimpl;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
 
 /**
  * Sets a status property.
@@ -45,24 +46,17 @@ public class SetStatusPropertyCommand extends AbstractAdminCommand {
         try {
 
             if (args.length < 3) {
-                setStatusProperty(args[0], args[1]);
+                getStatusRepositorySession().update(args[0], args[1]);
             } else {
-                setStatusProperty(args[0], args[1], Long.valueOf(args[2]));
+                getStatusRepositorySession().update(args[0], args[1], Long.valueOf(args[2]));
             }
             this.getOutputStream().println("\n\n");
             return 0;
-        } catch (IllegalCommandArgumentsException e) {
-            throw e;
+        } catch (NoSuchPropertyException ex) {
+            throw new IllegalCommandArgumentsException(ex.getMessage());
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);
         }
     }
 
-    private void setStatusProperty(final String key, final String value) throws Exception {
-        getStatusRepositorySession().setProperty(key, value);
-    }
-
-    private void setStatusProperty(final String key, final String value, final long expiration) throws Exception {
-        getStatusRepositorySession().setProperty(key, value, expiration);
-    }
 }

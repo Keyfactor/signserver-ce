@@ -21,8 +21,8 @@ import org.signserver.common.AuthorizedClient;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
+import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
  *

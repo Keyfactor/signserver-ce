@@ -15,7 +15,9 @@ package org.signserver.ejb;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
-import org.signserver.ejb.interfaces.IStatusRepositorySession;
+import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.statusrepo.common.StatusEntry;
+import org.signserver.statusrepo.common.StatusName;
 
 /**
  * Tests for the StatusRepositorySessionBean.
@@ -28,15 +30,6 @@ public class StatusRepositorySessionBeanTest extends TestCase {
     /** Logger for this class. */
     private static final Logger LOG =
             Logger.getLogger(StatusRepositorySessionBeanTest.class);
-
-    /** Property key. */
-    private static final String PROPERTY1 = "_TEST_PROPERTY_1";
-    
-    /** Property key. */
-    private static final String PROPERTY2 = "_TEST_PROPERTY_2";
-    
-    /** Property key. */
-    private static final String PROPERTY3 = "_TEST_PROPERTY_3";
 
     /** Property value. */
     private static final String VALUE1 = "_TEST_VALUE_1";
@@ -62,9 +55,9 @@ public class StatusRepositorySessionBeanTest extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        repository.removeProperty(PROPERTY1);
-        repository.removeProperty(PROPERTY2);
-        repository.removeProperty(PROPERTY3);
+        repository.update(StatusName.TEST1.name(), null);
+        repository.update(StatusName.TEST2.name(), null);
+        repository.update(StatusName.TEST3.name(), null);
     }
 
     /**
@@ -75,24 +68,24 @@ public class StatusRepositorySessionBeanTest extends TestCase {
     public void testSetGetRemoveProperty() throws Exception {
 
         // Set properties
-        repository.setProperty(PROPERTY1, VALUE1);
-        repository.setProperty(PROPERTY2, VALUE2);
+        repository.update(StatusName.TEST1.name(), VALUE1);
+        repository.update(StatusName.TEST2.name(), VALUE2);
 
         // Read the properties
-        final String value1 = repository.getProperty(PROPERTY1);
-        assertEquals("Property 1", VALUE1, value1);
-        final String value2 = repository.getProperty(PROPERTY2);
-        assertEquals("Property 2", VALUE2, value2);
+        final StatusEntry entry1 = repository.getValidEntry(StatusName.TEST1.name());
+        assertEquals("Property 1", VALUE1, entry1.getValue());
+        final StatusEntry entry2 = repository.getValidEntry(StatusName.TEST2.name());
+        assertEquals("Property 2", VALUE2, entry2.getValue());
 
         // Remove the properties
-        repository.removeProperty(PROPERTY1);
-        repository.removeProperty(PROPERTY2);
+        repository.update(StatusName.TEST1.name(), null);
+        repository.update(StatusName.TEST2.name(), null);
 
         // Should return null now
-        final String value3 = repository.getProperty(PROPERTY1);
-        assertNull("Property 1 null", value3);
-        final String value4 = repository.getProperty(PROPERTY2);
-        assertNull("Property 2 null", value4);
+        final StatusEntry entry3 = repository.getValidEntry(StatusName.TEST1.name());
+        assertNull("Property 1 null", entry3.getValue());
+        final StatusEntry entry4 = repository.getValidEntry(StatusName.TEST2.name());
+        assertNull("Property 2 null", entry4.getValue());
     }
 
     /**
@@ -102,11 +95,11 @@ public class StatusRepositorySessionBeanTest extends TestCase {
      */
     public void testSetGetTimeout() throws Exception {
         final long expiration = System.currentTimeMillis() + TIMEOUT;
-        repository.setProperty(PROPERTY3, VALUE3, expiration);
+        repository.update(StatusName.TEST3.name(), VALUE3, expiration);
 
         // Get the value right away
-        final String value1 = repository.getProperty(PROPERTY3);
-        assertEquals("getProperty right away", VALUE3, value1);
+        final StatusEntry entry1 = repository.getValidEntry(StatusName.TEST3.name());
+        assertEquals("getProperty right away", VALUE3, entry1.getValue());
 
         // Wait a time (twice the TIMEOUT to be sure)
         try {
@@ -116,7 +109,7 @@ public class StatusRepositorySessionBeanTest extends TestCase {
         }
 
         // Now the value should have expired
-        final String value2 = repository.getProperty(PROPERTY3);
-        assertNull("getProperty expired", value2);
+        final StatusEntry entry2 = repository.getValidEntry(StatusName.TEST3.name());
+        assertNull("getProperty expired", entry2);
     }
 }

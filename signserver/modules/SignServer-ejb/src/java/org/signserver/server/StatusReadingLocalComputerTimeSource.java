@@ -17,7 +17,10 @@ import java.util.Properties;
 import javax.ejb.EJB;
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
-import org.signserver.ejb.interfaces.IStatusRepositorySession;
+import org.signserver.statusrepo.common.StatusEntry;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
+import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.statusrepo.common.StatusName;
 
 /**
  * ITimeSource taking the current time from the computer clock in case it has
@@ -34,18 +37,17 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     private static final Logger LOG = Logger.getLogger(
             StatusReadingLocalComputerTimeSource.class);
 
-    /** Status property set to true if the time is in sync. */
-    private static final String INSYNC = "INSYNC";
-
     /** Status repository session. */
     @EJB
-    private transient IStatusRepositorySession.IRemote statusSession;
+    private IStatusRepositorySession.IRemote statusSession;
 
+    private StatusName insyncPropertyName = StatusName.INSYNC;
 
     /**
      * @param props Properties for this TimeSource (not used)
      * @see org.signserver.server.ITimeSource#init(java.util.Properties)
      */
+    @Override
     public void init(final Properties props) {
         try {
             statusSession = ServiceLocator.getInstance().lookupRemote(
@@ -59,12 +61,18 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
      * Main method that should retrieve the current time from the device.
      * @return an accurate current time or null if it is not available.
      */
+    @Override
     public Date getGenTime() {
-        Date date = null;
-        if (Boolean.valueOf(statusSession.getProperty(INSYNC))) {
-            date = new Date();
+        try {
+            Date date = null;
+            StatusEntry entry = statusSession.getValidEntry(insyncPropertyName.name());
+            if (entry != null && Boolean.valueOf(entry.getValue())) {
+                date = new Date();
+            }
+            return date;
+        } catch (NoSuchPropertyException ex) {
+            throw new RuntimeException(ex);
         }
-        return date;
     }
 
 }

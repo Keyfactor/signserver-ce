@@ -20,8 +20,8 @@ import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
  *

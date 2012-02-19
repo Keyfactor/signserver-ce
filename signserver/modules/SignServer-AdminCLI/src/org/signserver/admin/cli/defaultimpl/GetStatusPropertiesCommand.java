@@ -16,7 +16,7 @@ import java.util.Map;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
-import org.signserver.common.StatusRepositoryData;
+import org.signserver.statusrepo.common.StatusEntry;
 
 /**
  * Gets all status properties and their expiration time.
@@ -25,6 +25,8 @@ import org.signserver.common.StatusRepositoryData;
  */
 public class GetStatusPropertiesCommand extends AbstractAdminCommand {
 
+    private static final String FORMAT = "%-15s %-14s %-14s %s";
+    
     @Override
     public String getDescription() {
         return "Gets all status properties and their expiration time";
@@ -45,16 +47,22 @@ public class GetStatusPropertiesCommand extends AbstractAdminCommand {
         }
         try {
 
-            final Map<String, StatusRepositoryData> properties =
-                    getStatusRepositorySession().getProperties();
+            final Map<String, StatusEntry> properties =
+                    getStatusRepositorySession().getAllEntries();
 
-            for (Map.Entry<String, StatusRepositoryData> entry : properties.entrySet()) {
-                getOutputStream().println(entry.getKey() + ", "
-                        + entry.getValue().getExpiration() + " = \""
-                        + entry.getValue().getValue() + "\"");
+            
+            getOutputStream().println(String.format(FORMAT, "Property", "Updated", "Expiration", "Value"));
+            
+            for (Map.Entry<String, StatusEntry> entry : properties.entrySet()) {
+                StatusEntry status = entry.getValue();    
+                if (status == null) {
+                    getOutputStream().println(String.format(FORMAT, entry.getKey(), "-", "-", "-"));
+                } else {
+                    getOutputStream().println(String.format(FORMAT, entry.getKey(), status.getUpdateTime(), status.getExpirationTime(), status.getValue()));
+                }
             }
 
-            this.getOutputStream().println("\n\n");
+            getOutputStream().println("\n\n");
             return 0;
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);

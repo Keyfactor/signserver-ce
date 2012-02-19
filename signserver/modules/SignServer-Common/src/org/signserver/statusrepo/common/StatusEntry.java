@@ -10,40 +10,47 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.common;
+package org.signserver.statusrepo.common;
 
 import java.io.Serializable;
 
 /**
  *
  * @author Markus Kilås
- * @version $Id$
+ * @version $Id: StatusRepositoryData.java 1624 2011-02-27 10:37:16Z netmackan $
  */
-public class StatusRepositoryData implements Serializable {
+public class StatusEntry implements Serializable {
 
     /** Serialization version ID. */
     private static final long serialVersionUID = 1L;
+    
+    private long updateTime;
 
     private String value;
 
-    private long expiration;
+    private long expirationTime;
 
-
-    public StatusRepositoryData(String value) {
+    public StatusEntry(long updateTime, String value, long expirationTime) {
+        this.updateTime = updateTime;
         this.value = value;
+        this.expirationTime = expirationTime;
     }
 
-    public StatusRepositoryData(String value, long expiration) {
-        this.value = value;
-        this.expiration = expiration;
+    public long getExpirationTime() {
+        return expirationTime;
     }
 
-    public long getExpiration() {
-        return expiration;
+    public long getUpdateTime() {
+        return updateTime;
     }
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return "StatusEntry {updateTime: " + updateTime + ", value: " + value + ", expirationTime: " + expirationTime + "}";
     }
     
 }

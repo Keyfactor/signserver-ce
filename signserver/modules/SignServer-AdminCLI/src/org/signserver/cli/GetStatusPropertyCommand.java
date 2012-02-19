@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.cli;
 
+import org.signserver.statusrepo.common.StatusEntry;
+
 /**
  * Gets a status property.
  *
@@ -43,23 +45,19 @@ public class GetStatusPropertyCommand extends BaseCommand {
                     + "Example 1: signserver getstatusproperty INSYNC\n\n");
         }
         try {
-
-            final String value = getStatusProperty(hostname, args[1]);
+            final StatusEntry entry = getCommonAdminInterface(hostname).getValidEntry(args[1]);
 
             this.getOutputStream().print(args[1] + " = ");
-            this.getOutputStream().println(value);
-            this.getOutputStream().println("\n\n");
-
+            if (entry != null) {
+                this.getOutputStream().println(entry.getValue());
+            } else {
+                this.getOutputStream().println();
+            }
         } catch (IllegalAdminCommandException e) {
             throw e;
         } catch (Exception e) {
             throw new ErrorAdminCommandException(e);
         }
-    }
-
-    private String getStatusProperty(final String hostname, final String key)
-            throws Exception {
-        return getCommonAdminInterface(hostname).getStatusProperty(key);
     }
 
     public int getCommandType() {

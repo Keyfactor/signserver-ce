@@ -19,33 +19,15 @@ import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 import javax.naming.NamingException;
-
 import org.apache.log4j.Logger;
-import org.signserver.common.ArchiveDataVO;
-import org.signserver.common.AuthorizedClient;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.ResyncException;
-import org.signserver.common.ServiceLocator;
-import org.signserver.common.SignServerException;
-import org.signserver.common.StatusRepositoryData;
-import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IClusterClassLoaderManagerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IStatusRepositorySession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.KeyTestResult;
+import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
+import org.signserver.statusrepo.common.StatusEntry;
 
 /**
  * A class that maintains the type of sign server build
@@ -214,19 +196,19 @@ public class CommonAdminInterface {
     }
 
     public void setStatusProperty(final String key, final String value)
-            throws RemoteException {
-        getStatusRepositorySession().setProperty(key, value);
+            throws RemoteException, NoSuchPropertyException {
+        getStatusRepositorySession().update(key, value);
     }
 
     public void setStatusProperty(final String key, final String value,
-            final long expiration) throws RemoteException {
-        getStatusRepositorySession().setProperty(key, value,
+            final long expiration) throws RemoteException, NoSuchPropertyException {
+        getStatusRepositorySession().update(key, value,
                 expiration);
     }
 
-    public String getStatusProperty(final String key)
-            throws RemoteException {
-        return getStatusRepositorySession().getProperty(key);
+    public StatusEntry getValidEntry(final String key)
+            throws RemoteException, NoSuchPropertyException {
+        return getStatusRepositorySession().getValidEntry(key);
     }
 
     public List<Integer> getWorkers(int workerType) throws RemoteException {
@@ -427,7 +409,7 @@ public class CommonAdminInterface {
         return cclms;
     }
 
-    public Map<String, StatusRepositoryData> getStatusProperties() throws RemoteException {
-        return getStatusRepositorySession().getProperties();
+    public Map<String, StatusEntry> getAllEntries() throws RemoteException {
+        return getStatusRepositorySession().getAllEntries();
     }
 }

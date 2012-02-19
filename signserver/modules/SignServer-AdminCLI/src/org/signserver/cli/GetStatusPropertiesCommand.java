@@ -13,8 +13,7 @@
 package org.signserver.cli;
 
 import java.util.Map;
-
-import org.signserver.common.StatusRepositoryData;
+import org.signserver.statusrepo.common.StatusEntry;
 
 /**
  * Gets all status properties and their expiration time.
@@ -22,6 +21,8 @@ import org.signserver.common.StatusRepositoryData;
  * @version $Id$
  */
 public class GetStatusPropertiesCommand extends BaseCommand {
+    
+    private static final String FORMAT = "%-15s %-14s %-14s %s";
 
     /**
      * Creates a new instance of GetStatusPropertiesCommand.
@@ -50,13 +51,18 @@ public class GetStatusPropertiesCommand extends BaseCommand {
         }
         try {
 
-            final Map<String, StatusRepositoryData> properties =
-                    getCommonAdminInterface(hostname).getStatusProperties();
+            final Map<String, StatusEntry> properties =
+                    getCommonAdminInterface(hostname).getAllEntries();
 
-            for (Map.Entry<String, StatusRepositoryData> entry : properties.entrySet()) {
-                getOutputStream().println(entry.getKey() + ", "
-                        + entry.getValue().getExpiration() + " = \""
-                        + entry.getValue().getValue() + "\"");
+            getOutputStream().println(String.format(FORMAT, "Property", "Updated", "Expiration", "Value"));
+            
+            for (Map.Entry<String, StatusEntry> entry : properties.entrySet()) {
+                StatusEntry status = entry.getValue();    
+                if (status == null) {
+                    getOutputStream().println(String.format(FORMAT, entry.getKey(), "-", "-", "-"));
+                } else {
+                    getOutputStream().println(String.format(FORMAT, entry.getKey(), status.getUpdateTime(), status.getExpirationTime(), status.getValue()));
+                }
             }
 
             this.getOutputStream().println("\n\n");

@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.cli;
 
+import org.signserver.statusrepo.common.NoSuchPropertyException;
+
 /**
  * Sets a status property.
  *
@@ -41,20 +43,21 @@ public class SetStatusPropertyCommand extends BaseCommand {
             throw new IllegalAdminCommandException(
                     "Usage: signserver setstatusproperty <propertykey> "
                     + "<propertyvalue> <expiration (optional)>\n"
-                    + "Example 1: signserver setstatusproperty INSYNC true\n"
-                    + "Example 2: signserver setstatusproperty INSYNC true "
+                    + "Example 1: signserver setstatusproperty TIMESOURCE0_INSYNC true\n"
+                    + "Example 2: signserver setstatusproperty TIMESOURCE0_INSYNC true "
                     + "1263297710\n\n");
         }
         try {
-
+            this.getOutputStream().println("Setting status property " + args[1] + " = " + args[2]);
+            
             if (args.length < 4) {
                 setStatusProperty(hostname, args[1], args[2]);
             } else {
                 setStatusProperty(hostname, args[1], args[2], Long.valueOf(
                         args[3]));
             }
-            this.getOutputStream().println("\n\n");
-
+        } catch (NoSuchPropertyException ex) { 
+            throw new IllegalAdminCommandException(ex.getMessage());
         } catch (IllegalAdminCommandException e) {
             throw e;
         } catch (Exception e) {

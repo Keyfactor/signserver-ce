@@ -55,9 +55,9 @@ public class StatusRepositorySessionBeanTest extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        repository.update(StatusName.TEST1.name(), null);
-        repository.update(StatusName.TEST2.name(), null);
-        repository.update(StatusName.TEST3.name(), null);
+        repository.update(StatusName.TEST_PROPERTY1.name(), null);
+        repository.update(StatusName.TEST_PROPERTY2.name(), null);
+        repository.update(StatusName.TEST_PROPERTY3.name(), null);
     }
 
     /**
@@ -68,23 +68,23 @@ public class StatusRepositorySessionBeanTest extends TestCase {
     public void testSetGetRemoveProperty() throws Exception {
 
         // Set properties
-        repository.update(StatusName.TEST1.name(), VALUE1);
-        repository.update(StatusName.TEST2.name(), VALUE2);
+        repository.update(StatusName.TEST_PROPERTY1.name(), VALUE1);
+        repository.update(StatusName.TEST_PROPERTY2.name(), VALUE2);
 
         // Read the properties
-        final StatusEntry entry1 = repository.getValidEntry(StatusName.TEST1.name());
+        final StatusEntry entry1 = repository.getValidEntry(StatusName.TEST_PROPERTY1.name());
         assertEquals("Property 1", VALUE1, entry1.getValue());
-        final StatusEntry entry2 = repository.getValidEntry(StatusName.TEST2.name());
+        final StatusEntry entry2 = repository.getValidEntry(StatusName.TEST_PROPERTY2.name());
         assertEquals("Property 2", VALUE2, entry2.getValue());
 
         // Remove the properties
-        repository.update(StatusName.TEST1.name(), null);
-        repository.update(StatusName.TEST2.name(), null);
+        repository.update(StatusName.TEST_PROPERTY1.name(), null);
+        repository.update(StatusName.TEST_PROPERTY2.name(), null);
 
         // Should return null now
-        final StatusEntry entry3 = repository.getValidEntry(StatusName.TEST1.name());
+        final StatusEntry entry3 = repository.getValidEntry(StatusName.TEST_PROPERTY1.name());
         assertNull("Property 1 null", entry3.getValue());
-        final StatusEntry entry4 = repository.getValidEntry(StatusName.TEST2.name());
+        final StatusEntry entry4 = repository.getValidEntry(StatusName.TEST_PROPERTY2.name());
         assertNull("Property 2 null", entry4.getValue());
     }
 
@@ -95,10 +95,10 @@ public class StatusRepositorySessionBeanTest extends TestCase {
      */
     public void testSetGetTimeout() throws Exception {
         final long expiration = System.currentTimeMillis() + TIMEOUT;
-        repository.update(StatusName.TEST3.name(), VALUE3, expiration);
+        repository.update(StatusName.TEST_PROPERTY3.name(), VALUE3, expiration);
 
         // Get the value right away
-        final StatusEntry entry1 = repository.getValidEntry(StatusName.TEST3.name());
+        final StatusEntry entry1 = repository.getValidEntry(StatusName.TEST_PROPERTY3.name());
         assertEquals("getProperty right away", VALUE3, entry1.getValue());
 
         // Wait a time (twice the TIMEOUT to be sure)
@@ -109,7 +109,7 @@ public class StatusRepositorySessionBeanTest extends TestCase {
         }
 
         // Now the value should have expired
-        final StatusEntry entry2 = repository.getValidEntry(StatusName.TEST3.name());
+        final StatusEntry entry2 = repository.getValidEntry(StatusName.TEST_PROPERTY3.name());
         assertNull("getProperty expired", entry2);
     }
 }

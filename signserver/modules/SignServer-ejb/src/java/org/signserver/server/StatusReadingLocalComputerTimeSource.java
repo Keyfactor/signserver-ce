@@ -17,9 +17,9 @@ import java.util.Properties;
 import javax.ejb.EJB;
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
-import org.signserver.statusrepo.common.StatusEntry;
-import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
+import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
 
 /**
@@ -41,7 +41,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     @EJB
     private IStatusRepositorySession.IRemote statusSession;
 
-    private StatusName insyncPropertyName = StatusName.INSYNC;
+    private StatusName insyncPropertyName = StatusName.TIMESOURCE0_INSYNC;
 
     /**
      * @param props Properties for this TimeSource (not used)
@@ -64,15 +64,17 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     @Override
     public Date getGenTime() {
         try {
-        Date date = null;
-            StatusEntry entry = statusSession.getValidEntry(insyncPropertyName.name());
+            final Date date;
+            final StatusEntry entry = statusSession.getValidEntry(insyncPropertyName.name());
             if (entry != null && Boolean.valueOf(entry.getValue())) {
-            date = new Date();
-        }
-        return date;
+                date = new Date();
+            } else {
+                date = null;
+            }
+            return date;
         } catch (NoSuchPropertyException ex) {
             throw new RuntimeException(ex);
-    }
+        }
     }
 
 }

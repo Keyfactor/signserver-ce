@@ -12,10 +12,11 @@
  *************************************************************************/
 package org.signserver.cli;
 
+import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
 
 /**
- * Gets a status property.
+ * Gets a status property if it is valid.
  *
  * @version $Id$
  */
@@ -37,12 +38,13 @@ public class GetStatusPropertyCommand extends BaseCommand {
      * @throws IllegalAdminCommandException Error in command args
      * @throws ErrorAdminCommandException Error running command
      */
+    @Override
     public void execute(String hostname) throws IllegalAdminCommandException,
             ErrorAdminCommandException {
         if (args.length != 2) {
             throw new IllegalAdminCommandException(
                     "Usage: signserver getstatusproperty <propertykey>\n"
-                    + "Example 1: signserver getstatusproperty INSYNC\n\n");
+                    + "Example 1: signserver getstatusproperty TIMESOURCE0_INSYNC\n\n");
         }
         try {
             final StatusEntry entry = getCommonAdminInterface(hostname).getValidEntry(args[1]);
@@ -53,6 +55,8 @@ public class GetStatusPropertyCommand extends BaseCommand {
             } else {
                 this.getOutputStream().println();
             }
+        } catch (NoSuchPropertyException ex) { 
+            throw new IllegalAdminCommandException(ex.getMessage());
         } catch (IllegalAdminCommandException e) {
             throw e;
         } catch (Exception e) {
@@ -60,6 +64,7 @@ public class GetStatusPropertyCommand extends BaseCommand {
         }
     }
 
+    @Override
     public int getCommandType() {
         return TYPE_EXECUTEONMASTER;
     }

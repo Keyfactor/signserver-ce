@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.cli;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import org.signserver.statusrepo.common.StatusEntry;
 
@@ -22,7 +24,8 @@ import org.signserver.statusrepo.common.StatusEntry;
  */
 public class GetStatusPropertiesCommand extends BaseCommand {
     
-    private static final String FORMAT = "%-15s %-14s %-14s %s";
+    private static final String FORMAT = "%-20s %-25s %-25s %s";
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
 
     /**
      * Creates a new instance of GetStatusPropertiesCommand.
@@ -40,13 +43,14 @@ public class GetStatusPropertiesCommand extends BaseCommand {
      * @throws IllegalAdminCommandException Error in command args
      * @throws ErrorAdminCommandException Error running command
      */
+    @Override
     public void execute(final String hostname)
             throws IllegalAdminCommandException, ErrorAdminCommandException {
         if (args.length != 1) {
             throw new IllegalAdminCommandException(
                     "Usage: signserver getstatusproperties\n"
-                    + "Example 1: signserver setstatusproperty INSYNC true\n"
-                    + "Example 2: signserver setstatusproperty INSYNC true "
+                    + "Example 1: signserver setstatusproperty TIMESOURCE0_INSYNC true\n"
+                    + "Example 2: signserver setstatusproperty TIMESOURCE0_INSYNC true "
                     + "1263375588000\n\n");
         }
         try {
@@ -61,7 +65,7 @@ public class GetStatusPropertiesCommand extends BaseCommand {
                 if (status == null) {
                     getOutputStream().println(String.format(FORMAT, entry.getKey(), "-", "-", "-"));
                 } else {
-                    getOutputStream().println(String.format(FORMAT, entry.getKey(), status.getUpdateTime(), status.getExpirationTime(), status.getValue()));
+                    getOutputStream().println(String.format(FORMAT, entry.getKey(), format(status.getUpdateTime()), format(status.getExpirationTime()), status.getValue()));
                 }
             }
 
@@ -74,7 +78,16 @@ public class GetStatusPropertiesCommand extends BaseCommand {
         }
     }
 
+    @Override
     public int getCommandType() {
         return TYPE_EXECUTEONMASTER;
+    }
+    
+    private static String format(long timestamp) {
+        if (timestamp <= 0) {
+            return "-";
+        } else {
+            return SDF.format(new Date(timestamp));
+        }
     }
 }

@@ -196,11 +196,11 @@ public class TimeStampSignerTest extends ModulesTestCase {
     public void test05ReadingStatusTimeSource() throws Exception {
         
         // Test with insync
-        repository.update(StatusName.INSYNC.name(), "true");
+        repository.update(StatusName.TIMESOURCE0_INSYNC.name(), "true");
         assertSuccessfulTimestamp(WORKER4);
 
         // Test without insync
-        repository.update(StatusName.INSYNC.name(), "");
+        repository.update(StatusName.TIMESOURCE0_INSYNC.name(), "");
         assertTimeNotAvailable(WORKER4);
     }
 

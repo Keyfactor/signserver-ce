@@ -43,11 +43,8 @@
 
 
             <h3 style="margin-top: 4em;">XML Signing Demo</h3>
-            <form id="recievefile" action="../process"
+            <form id="recievefile" action="../worker/XMLSigner"
                   method="post" enctype="multipart/form-data">
-                <fieldset>
-                    <input type="hidden" name="workerName" value="XMLSigner"/>
-                </fieldset>
 
                 <p>Simply upload a XML document to the XML signer and you will get
                     back the same XML, but signed by SignServer. This is a central

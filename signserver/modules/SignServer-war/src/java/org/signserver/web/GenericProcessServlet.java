@@ -83,6 +83,7 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String HTTP_AUTH_BASIC_WWW_AUTHENTICATE =
             "WWW-Authenticate";
     private static final String PDFPASSWORD_PROPERTY_NAME = "pdfPassword";
+    private static final String WORKER_URI_START = "/signserver/worker/";
 
     private final Random random = new Random();
 
@@ -119,12 +120,22 @@ public class GenericProcessServlet extends HttpServlet {
         byte[] data = null;
         String fileName = null;
         String pdfPassword = null;
+        boolean workerRequest = false; // set to true when URL is overriding worker ID (/worker)
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received a request with length: "
                     + req.getContentLength());
         }
 
+        System.out.println("URI: " + req.getRequestURI());
+        final String requestURI = req.getRequestURI();
+        if (WORKER_URI_START.equals(requestURI.substring(0, WORKER_URI_START.length()))) {
+        	final String name = requestURI.substring(WORKER_URI_START.length()); 
+        	workerRequest = true;
+        	workerId = getWorkerSession().getWorkerId(name);
+        }
+        
+        
         if (ServletFileUpload.isMultipartContent(req)) {
             final FileItemFactory factory = new DiskFileItemFactory();
             final ServletFileUpload upload = new ServletFileUpload(factory);
@@ -140,21 +151,23 @@ public class GenericProcessServlet extends HttpServlet {
                     final FileItem item = (FileItem) iter.next();
 
                     if (item.isFormField()) {
-                        if (WORKERNAME_PROPERTY_NAME.equals(item.getFieldName())) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Found a signerName in the request: "
-                                        + item.getString());
-                            }
-                            workerId = getWorkerSession().getWorkerId(item.getString());
-                        } else if (WORKERID_PROPERTY_NAME.equals(item.getFieldName())) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Found a signerId in the request: "
-                                        + item.getString());
-                            }
-                            try {
-                                workerId = Integer.parseInt(item.getString());
-                            } catch (NumberFormatException ignored) {
-                            }
+                    	if (!workerRequest) {
+	                        if (WORKERNAME_PROPERTY_NAME.equals(item.getFieldName())) {
+	                            if (LOG.isDebugEnabled()) {
+	                                LOG.debug("Found a signerName in the request: "
+	                                        + item.getString());
+	                            }
+	                            workerId = getWorkerSession().getWorkerId(item.getString());
+	                        } else if (WORKERID_PROPERTY_NAME.equals(item.getFieldName())) {
+	                            if (LOG.isDebugEnabled()) {
+	                                LOG.debug("Found a signerId in the request: "
+	                                        + item.getString());
+	                            }
+	                            try {
+	                                workerId = Integer.parseInt(item.getString());
+	                            } catch (NumberFormatException ignored) {
+	                            }
+	                        }
                         } else if (PDFPASSWORD_PROPERTY_NAME.equals(item.getFieldName())) {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Found a pdfPassword in the request.");
@@ -180,21 +193,22 @@ public class GenericProcessServlet extends HttpServlet {
                 throw new ServletException("Upload failed", ex);
             }
         } else {
-
-            String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
-            if (name != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found a signerName in the request: " + name);
-                }
-                workerId = getWorkerSession().getWorkerId(name);
-            }
-            String id = req.getParameter(WORKERID_PROPERTY_NAME);
-            if (id != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found a signerId in the request: " + id);
-                }
-                workerId = Integer.parseInt(id);
-            }
+        	if (!workerRequest) {
+	            String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
+	            if (name != null) {
+	                if (LOG.isDebugEnabled()) {
+	                    LOG.debug("Found a signerName in the request: " + name);
+	                }
+	                workerId = getWorkerSession().getWorkerId(name);
+	            }
+	            String id = req.getParameter(WORKERID_PROPERTY_NAME);
+	            if (id != null) {
+	                if (LOG.isDebugEnabled()) {
+	                    LOG.debug("Found a signerId in the request: " + id);
+	                }
+	                workerId = Integer.parseInt(id);
+	            }
+        	}
             if (req.getParameter(PDFPASSWORD_PROPERTY_NAME) != null) {
                 pdfPassword = req.getParameter(PDFPASSWORD_PROPERTY_NAME);
                 if (LOG.isDebugEnabled()) {

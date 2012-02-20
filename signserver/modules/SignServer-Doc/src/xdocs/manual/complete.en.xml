@@ -2290,9 +2290,7 @@ always returns the time.
                             </tr>
                             <tr>
                                 <td>
-This TimeSource returns the time from the local computer but only if the
-status property <i>INSYNC</i> is returned as <i>true</i> from the
-Status Repository.
+This TimeSource returns the time from the local computer but only if the status property <i>TIMESOURCE0_INSYNC</i> is not expired and returned as <i>true</i> from the Status Repository.
                                 </td>
                             </tr>
                         </table>
@@ -4309,13 +4307,13 @@ Database failure is handled differently. If a node looses connection to the data
 
             <section name="Status Repository">
                 <p>
-The status repository holds local (per JVM) status information (properties)
-with optional expiration times. After the expiration time the property is not
-returned.
+The status repository holds non-persistent local (per JVM) status information (properties) with optional expiration times. After the expiration time the property is not returned. The value is also not preserved among server restarts. 
                 </p>
                 <p>
-This could be used by having workers read status from the repository while it
-is an external service updating it.
+This could be used by having workers read the status from the repository while an external (or internal) service periodically updates it. The (optional) expiration time on the values makes it possible to detect if an periodic service has failed to update the value within the specified time.
+                </p>
+                <p>
+From the Admin CLI the status repository can be controlled using the <i>getstatusproperties</i>, <i>getstatusproperty</i> and <i>setstatusproperty</i> commands.
                 </p>
             </section>
 

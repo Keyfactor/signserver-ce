@@ -20,7 +20,7 @@ import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
 
 /**
- * Gets a status property.
+ * Gets a status property if it is valid.
  *
  * @version $Id$
  */
@@ -34,7 +34,7 @@ public class GetStatusPropertyCommand extends AbstractAdminCommand {
     @Override
     public String getUsages() {
         return "Usage: signserver getstatusproperty <propertykey>\n"
-                    + "Example 1: signserver getstatusproperty INSYNC\n\n";
+                    + "Example 1: signserver getstatusproperty TIMESOURCE0_INSYNC\n\n";
     }
 
     @Override

@@ -35,6 +35,7 @@ import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
+import org.signserver.statusrepo.common.StatusName;
 
 /**
  * Servlet used to start services by calling the ServiceTimerSession.load() at
@@ -137,7 +138,7 @@ public class StartServicesServlet extends HttpServlet {
         // Instantiate the status repository session and list all available status properties
         LOG.debug(">init StatusReposotorySession");
         try {
-            getStatusRepositorySession().update("INIT", String.valueOf(System.currentTimeMillis()));
+            getStatusRepositorySession().update(StatusName.SERVER_STARTED.name(), String.valueOf(System.currentTimeMillis()));
             for(Map.Entry<String, StatusEntry> entry : getStatusRepositorySession().getAllEntries().entrySet()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Status property: " + entry.getKey() + " = " + entry.getValue());

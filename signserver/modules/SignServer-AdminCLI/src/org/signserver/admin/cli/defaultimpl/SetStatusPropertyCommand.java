@@ -44,13 +44,12 @@ public class SetStatusPropertyCommand extends AbstractAdminCommand {
             throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
-
+            this.getOutputStream().println("Setting status property " + args[0] + " = " + args[1]);
             if (args.length < 3) {
                 getStatusRepositorySession().update(args[0], args[1]);
             } else {
                 getStatusRepositorySession().update(args[0], args[1], Long.valueOf(args[2]));
             }
-            this.getOutputStream().println("\n\n");
             return 0;
         } catch (NoSuchPropertyException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());

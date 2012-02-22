@@ -127,9 +127,9 @@ public class GenericProcessServlet extends HttpServlet {
                     + req.getContentLength());
         }
 
-        System.out.println("URI: " + req.getRequestURI());
         final String requestURI = req.getRequestURI();
-        if (WORKER_URI_START.equals(requestURI.substring(0, WORKER_URI_START.length()))) {
+        if (requestURI.length() >= WORKER_URI_START.length() &&
+        		WORKER_URI_START.equals(requestURI.substring(0, WORKER_URI_START.length()))) {
         	final String name = requestURI.substring(WORKER_URI_START.length()); 
         	workerRequest = true;
         	workerId = getWorkerSession().getWorkerId(name);
@@ -168,10 +168,12 @@ public class GenericProcessServlet extends HttpServlet {
 	                            } catch (NumberFormatException ignored) {
 	                            }
 	                        }
-                        } else if (PDFPASSWORD_PROPERTY_NAME.equals(item.getFieldName())) {
+                        }
+                    	
+                    	if (PDFPASSWORD_PROPERTY_NAME.equals(item.getFieldName())) {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Found a pdfPassword in the request.");
-                        }
+                            }
                             pdfPassword = item.getString("ISO-8859-1");
                         }
                     } else {

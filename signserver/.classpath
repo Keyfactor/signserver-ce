@@ -35,7 +35,7 @@
 	<classpathentry kind="src" path="modules/SignServer-war/test"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb/src/java"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb/test"/>
-	<classpathentry kind="src" path="modules/SignServer-ejb-interfaces/src/"/>
+	<classpathentry kind="src" path="modules/SignServer-ejb-interfaces/src"/>
 	<classpathentry kind="src" path="modules/SignServer-Common/test"/>
 	<classpathentry kind="src" path="modules/SignServer-Common/src"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb-AdminWS/test"/>
@@ -86,7 +86,6 @@
 	<classpathentry kind="lib" path="lib/ext/1.6/bcprov-jdk.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/servlet-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/junit-3.8.1.jar"/>
-	<classpathentry kind="lib" path="lib/ext/ext/commons-cli-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/ext/reports/jcommon-1.0.12.jar"/>
 	<classpathentry kind="lib" path="lib/ext/reports/jfreechart-1.0.9.jar"/>
 	<classpathentry kind="lib" path="lib/ext/1.6/bctsp-jdk.jar"/>
@@ -101,19 +100,11 @@
 	<classpathentry kind="lib" path="lib/ext/module/ooxmlsigner/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/ext/module/ooxmlsigner/openxml4j_beta_v538.jar"/>
 	<classpathentry kind="lib" path="bin/"/>
-
-	<!-- AdminGUI -->
 	<classpathentry kind="lib" path="lib/ext/swing-app-framework/appframework-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/ext/swing-app-framework/swing-worker-1.1.jar"/>
 	<classpathentry kind="lib" path="modules/SignServer-AdminGUI/build/generated/jax-wsCache/AdminWebServiceService/"/>
-
-	<!-- Module Renewal -->
 	<classpathentry kind="lib" path="modules/SignServer-Module-Renewal/build/generated/jax-wsCache/EjbcaWSService/"/>
-
-	<!-- Client-WS -->
-	<classpathentry kind="lib" path="modules/SignServer-Client-SignServerWS/build/generated/jax-wsCache/SignServerWSService/"/>/
-
-	<!-- Tests -->
+	<classpathentry kind="lib" path="modules/SignServer-Client-SignServerWS/build/generated/jax-wsCache/SignServerWSService/"/>
 	<classpathentry kind="lib" path="modules/SignServer-Test-SignServerWS/build/generated/jax-wsCache/SignServerWSService/">
 		<attributes>
 			<attribute name="optional" value="true"/>
@@ -134,7 +125,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-
-	<!-- Out folder -->
+	<classpathentry kind="lib" path="lib/ext/ext/commons-cli-1.2.jar"/>
 	<classpathentry kind="output" path=".eclipse/out"/>
 </classpath>

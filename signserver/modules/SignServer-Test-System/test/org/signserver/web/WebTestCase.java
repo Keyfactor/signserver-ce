@@ -12,7 +12,9 @@
  *************************************************************************/
 package org.signserver.web;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -33,7 +35,7 @@ import org.signserver.testutils.ModulesTestCase;
 public abstract class WebTestCase extends ModulesTestCase {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(SODProcessServletResponseTest.class);
+    private static final Logger LOG = Logger.getLogger(WebTestCase.class);
     
     private static final String CRLF = "\r\n";
 
@@ -140,6 +142,35 @@ public abstract class WebTestCase extends ModulesTestCase {
         out.print(body);
         out.close();
         return con;
+    }
+
+    protected static byte[] sendPostFormUrlencodedReadBody(final String baseURL,
+            final Map<String, String> fields) throws MalformedURLException, IOException {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        HttpURLConnection conn = null;
+        InputStream in = null;
+        try {
+            conn = sendPostFormUrlencoded(baseURL, fields);
+            
+            LOG.info("Response (" + conn.getResponseCode() + "): " + conn.getResponseMessage());
+            conn.getResponseCode();
+            
+            in = conn.getInputStream();
+            
+            int b;
+            while ((b = in.read()) != -1) {
+                bout.write(b);
+            }
+            
+            return bout.toByteArray();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {} // NOPMD
+            }
+            conn.disconnect();
+        }
     }
 
     protected static HttpURLConnection sendPostMultipartFormData(final String baseURL,

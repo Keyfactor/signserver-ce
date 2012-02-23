@@ -30,6 +30,7 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
  * Base class for test cases.
@@ -53,6 +54,7 @@ public class ModulesTestCase extends TestCase {
 
     protected IWorkerSession workerSession;
     protected IGlobalConfigurationSession globalSession;
+    protected IStatusRepositorySession statusSession;
 
     private static File signServerHome;
 
@@ -124,6 +126,17 @@ public class ModulesTestCase extends TestCase {
         return globalSession;
     }
 
+    protected IStatusRepositorySession getStatusSession() {
+        if (statusSession == null) {
+            try {
+               statusSession = ServiceLocator.getInstance().lookupRemote(
+                    IStatusRepositorySession.IRemote.class);
+            } catch (NamingException ex) {
+                throw new RuntimeException("Could not lookup IStatusSession: " + ex.getMessage());
+            }
+        }
+        return statusSession;
+    }
 
     protected void addDummySigner1() throws CertificateException {
         addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());

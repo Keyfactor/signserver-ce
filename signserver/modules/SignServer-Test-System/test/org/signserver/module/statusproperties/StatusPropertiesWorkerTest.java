@@ -94,7 +94,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
             String value = properties.getProperty(name + ".VALUE");
             String expiration = properties.getProperty(name + ".EXPIRATION");
             LOG.info("Value: " + allEntries.get(name).getValue() + ", " + value);
-            assertEquals(allEntries.get(name).getValue(), value);
+            assertEquals(allEntries.get(name).getValue() == null ? "" : allEntries.get(name).getValue(), value);
             assertEquals(String.valueOf(allEntries.get(name).getExpirationTime()), expiration);
         }
     }

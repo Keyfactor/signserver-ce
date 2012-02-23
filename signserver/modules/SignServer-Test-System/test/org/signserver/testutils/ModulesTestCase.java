@@ -224,6 +224,7 @@ public class ModulesTestCase extends TestCase {
                 }
             }
         }
+    }
 
     protected void addSoftDummySigner(final int signerId, final String signerName, final String keyData, final String certChain) throws CertificateException {
         addSoftDummySigner("org.signserver.module.xmlsigner.XMLSigner",

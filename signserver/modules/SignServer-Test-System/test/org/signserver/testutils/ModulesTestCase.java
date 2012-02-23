@@ -200,10 +200,10 @@ public class ModulesTestCase extends TestCase {
             if (o instanceof String) {
                 String key = (String) o;
                 String value = properties.getProperty(key);
-                if (key.startsWith("GLOB")) {
-                    key = key.substring("GLOB".length() + 1);
+                if (key.startsWith("GLOB.")) {
+                    key = key.substring("GLOB.".length());
                     globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, key, value);
-                } else {
+                } else if (key.startsWith("WORKER") && key.contains(".") && key.indexOf(".") + 1 < key.length()) {
                     int id = Integer.parseInt(key.substring("WORKER".length(), key.indexOf(".")));
                     key = key.substring(key.indexOf(".") + 1);
 
@@ -219,10 +219,11 @@ public class ModulesTestCase extends TestCase {
                         workerSession.setWorkerProperty(id, key, value);
                     }
 
+                } else {
+                    throw new RuntimeException("Unknown format for property: " + key);
                 }
             }
         }
-    }
 
     protected void addSoftDummySigner(final int signerId, final String signerName, final String keyData, final String certChain) throws CertificateException {
         addSoftDummySigner("org.signserver.module.xmlsigner.XMLSigner",

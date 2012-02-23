@@ -21,15 +21,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.signserver.statusrepo.common.StatusName;
 
 /**
  * Tests that the right HTTP status codes are returned in different situations.
  * 
  * @author Markus Kilås
- * @version $Id: GenericProcessServletResponseTest.java -1   $
+ * @version $Id$
  */
 public class StatusPropertiesWorkerTest extends WebTestCase {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(StatusPropertiesWorkerTest.class);
     
     private static final String WORKERNAME = "TestStatusPropertiesWorker";
     private static final int WORKERID = 9310;
@@ -89,6 +93,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
         for (String name : allValidNames) {
             String value = properties.getProperty(name + ".VALUE");
             String expiration = properties.getProperty(name + ".EXPIRATION");
+            LOG.info("Value: " + allEntries.get(name).getValue() + ", " + value);
             assertEquals(allEntries.get(name).getValue(), value);
             assertEquals(String.valueOf(allEntries.get(name).getExpirationTime()), expiration);
         }

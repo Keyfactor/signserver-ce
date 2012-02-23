@@ -3185,6 +3185,32 @@ GenericPropertiesRequestS and returns GenericPropertiesResponseS.
                         </table>
                     </subsubsection>
                 </subsection>
+                
+                <subsection name="StatusPropertiesWorker">
+                    <p>
+Fully qualified class name: org.signserver.module.statusproperties.StatusPropertiesWorker
+                    </p>
+
+                    <subsubsection name="Overview">
+                        <p>
+The StatusPropertiesWorker can be used to query and setting status properties in the status repository.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Worker Properties">
+                        <p>(none)</p>
+                    </subsubsection>
+                    <subsubsection name="Request Properties">
+                        <p><b>GET</b> - Comma-separated list of status properties to query</p>
+                        <p><b>x.VALUE</b> - Where x is a status property: Sets the value of the property</p>
+                        <p><b>x.EXPIRATION</b> - Where x is a status property: Sets the expiration time 
+                            for x (x.VALUE must also be specified)</p>
+                        <p>If no property is specified all valid status properties are returned</p>
+                    </subsubsection>
+                    <subsubsection name="Response Properties">
+                        <p><b>x.VALUE</b> = See Request Properties</p>
+                        <p><b>x.EXPIRATION</b> = See Request Properties</p>
+                    </subsubsection>
+                </subsection>
             </section>
 
             <section name="Available CryptoTokens">

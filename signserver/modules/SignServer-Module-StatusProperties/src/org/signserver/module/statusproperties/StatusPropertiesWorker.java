@@ -189,7 +189,7 @@ public class StatusPropertiesWorker extends BaseSigner {
                 StatusEntry entry = getStatusRepository().getValidEntry(get.name());
                 if (entry != null) {
                     result.put(get.name() + "." + UPDATE, String.valueOf(entry.getUpdateTime()));
-                    result.put(get.name() + "." + VALUE, String.valueOf(entry.getValue()));
+                    result.put(get.name() + "." + VALUE, entry.getValue() == null ? "" : String.valueOf(entry.getValue()));
                     result.put(get.name() + "." + EXPIRATION, String.valueOf(entry.getExpirationTime()));
                 }
             }

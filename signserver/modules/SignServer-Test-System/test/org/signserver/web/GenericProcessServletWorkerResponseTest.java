@@ -3,6 +3,14 @@ package org.signserver.web;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Tests worker override URL for the process servlet, tests that the worker name is overriding the corresponding
+ * request parameters.
+ * 
+ * @author Marcus Lundblad
+ * @version $Id$
+ */
+
 public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 
 	private final static String UNEXISTING_WORKER_NAME = "_NotExistingWorker123_";

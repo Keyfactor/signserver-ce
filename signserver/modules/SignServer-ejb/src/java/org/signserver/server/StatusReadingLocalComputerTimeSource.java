@@ -23,10 +23,10 @@ import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusName;
 
 /**
- * ITimeSource taking the current time from the computer clock in case it has
- * not been manually disabled.
+ * ITimeSource taking the current time from the computer clock as long as the 
+ * status property TIMESOURCE0_INSYNC is true and has not expired.
  *
- * It reads a status property INSYNC from the status repository.
+ * It reads a status property TIMESOURCE0_INSYNC from the status repository.
  * It has no defined worker properties.
  *
  * $Id$

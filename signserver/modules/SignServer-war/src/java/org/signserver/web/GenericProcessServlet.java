@@ -83,7 +83,6 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String HTTP_AUTH_BASIC_WWW_AUTHENTICATE =
             "WWW-Authenticate";
     private static final String PDFPASSWORD_PROPERTY_NAME = "pdfPassword";
-    private static final String PROCESS_URI = "/signserver/process";
     private static final String WORKER_URI_START = "/signserver/worker";
 
     private final Random random = new Random();
@@ -129,10 +128,13 @@ public class GenericProcessServlet extends HttpServlet {
         }
 
         final String requestURI = req.getRequestURI();
-        if (PROCESS_URI.equals(requestURI)) {
+        if (requestURI.length() < WORKER_URI_START.length() ||
+        		(requestURI.length() >= WORKER_URI_START.length() &&
+        		 !WORKER_URI_START.equals(requestURI.substring(0,
+        				 								WORKER_URI_START.length())))) {
+        	// URI doesn't start in /signserver/worker
         	workerRequest = false;
-        } else if (requestURI.length() >= WORKER_URI_START.length() &&
-        		WORKER_URI_START.equals(requestURI.substring(0, WORKER_URI_START.length()))) {
+        } else {
         	String name = "";
         	// check if the URI has a / after the initial /worker part
         	// in that case, take the trailing part of the URI as the worker name

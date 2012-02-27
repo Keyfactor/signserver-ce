@@ -83,7 +83,8 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String HTTP_AUTH_BASIC_WWW_AUTHENTICATE =
             "WWW-Authenticate";
     private static final String PDFPASSWORD_PROPERTY_NAME = "pdfPassword";
-    private static final String WORKER_URI_START = "/signserver/worker/";
+    private static final String PROCESS_URI = "/signserver/process";
+    private static final String WORKER_URI_START = "/signserver/worker";
 
     private final Random random = new Random();
 
@@ -120,7 +121,7 @@ public class GenericProcessServlet extends HttpServlet {
         byte[] data = null;
         String fileName = null;
         String pdfPassword = null;
-        boolean workerRequest = false; // set to true when URL is overriding worker ID (/worker)
+        boolean workerRequest = true;
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received a request with length: "
@@ -128,10 +129,17 @@ public class GenericProcessServlet extends HttpServlet {
         }
 
         final String requestURI = req.getRequestURI();
-        if (requestURI.length() >= WORKER_URI_START.length() &&
+        if (PROCESS_URI.equals(requestURI)) {
+        	workerRequest = false;
+        } else if (requestURI.length() >= WORKER_URI_START.length() &&
         		WORKER_URI_START.equals(requestURI.substring(0, WORKER_URI_START.length()))) {
-        	final String name = requestURI.substring(WORKER_URI_START.length()); 
-        	workerRequest = true;
+        	String name = "";
+        	// check if the URI has a / after the initial /worker part
+        	// in that case, take the trailing part of the URI as the worker name
+        	if (requestURI.length() >= WORKER_URI_START.length() + 1 &&
+        		requestURI.charAt(WORKER_URI_START.length()) == '/') {
+        		name = requestURI.substring(WORKER_URI_START.length() + 1);
+        	}
         	workerId = getWorkerSession().getWorkerId(name);
         }
         

@@ -17,16 +17,20 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	private final static int UNEXISTING_WORKER_ID = 4711;
 	
 	private String currentWorkerName = null;
+	private boolean trailingSlash = true; // insert a trailing / after the base URI
 	
 	@Override
 	protected String getServletURL() {
-		return "http://localhost:8080/signserver/worker/" + currentWorkerName;
+		return "http://localhost:8080/signserver/worker" + (trailingSlash ? "/" : "") +
+				currentWorkerName;
 	}
 
 	@Override
 	protected void setUp() throws Exception {
 		addDummySigner1();
 		currentWorkerName = this.getSignerNameDummy1();
+		// test by default will use a URI on the form /signserver/worker/...
+		trailingSlash = true;
 	}
 
 	@Override
@@ -121,6 +125,91 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 		fields.put("data", "<root/>");
 		fields.put("workerId", String.valueOf(getSignerIdDummy1()));
 		fields.put("workerName", getSignerNameDummy1());
+		
+		assertStatusReturned(fields, 404);
+	}
+	
+	/**
+	 * Test with an incomplete worker URI on the form /signserver/worker
+	 * this shall fail with a status 404
+	 */
+	public void test08HttpStatus404_emptyWorkerName() {
+		currentWorkerName = "";
+		Map<String, String> fields = new HashMap<String, String>();
+		fields.put("data", "<root/>");
+		
+		assertStatusReturned(fields, 404);
+	}
+	
+	/**
+	 * Test with an incomplete worker URI on the form /signserver/worker
+	 * with a valid worker name supplied via a request parameter
+	 * this shall (still) fail with a status 404
+	 */
+	public void test09HttpStatus404_emptyWorkerNameWithWorkerNameRequestParam() {
+		currentWorkerName = "";
+		Map<String, String> fields = new HashMap<String, String>();
+		fields.put("data", "<root/>");
+		fields.put("workerName", getSignerNameDummy1());
+		
+		assertStatusReturned(fields, 404);
+	}
+	
+	/**
+	 * Test with an incomplete worker URI on the form /signserver/worker/
+	 * with a valid worker ID supplied via a request parameter
+	 * this shall (still) fail with a status 404
+	 */
+	public void test10HttpStatus404_emptyWorkerNameWithWorkerIdRequestParam() {
+		currentWorkerName = "";
+		Map<String, String> fields = new HashMap<String, String>();
+		fields.put("data", "<root/>");
+		fields.put("workerId", String.valueOf(getSignerIdDummy1()));
+		
+		assertStatusReturned(fields, 404);
+	}
+	
+	/**
+	 * Test with an incomplete worker URI on the form /signserver/worker (without
+	 * the trailing /
+	 * This shall fail with a 404
+	 */
+	public void test11HttpStatus404_emptyWorkerNameNoSlash() {
+		trailingSlash = false;
+		currentWorkerName = "";
+		Map<String, String> fields = new HashMap<String, String>();
+		fields.put("data", "<root/>");
+		
+		assertStatusReturned(fields, 404);
+	}
+	
+	/**
+	 * Test with an incomplete worker URI on the form /signserver/worker (without
+	 * the trailing /
+	 * with a valid worker name given as a request parameters
+	 * This shall fail with a 404
+	 */
+	public void test12HttpStatus404_emptyWorkerNameNoSlashWithWorkerNameRequestParam() {
+		trailingSlash = false;
+		currentWorkerName = "";
+		Map<String, String> fields = new HashMap<String, String>();
+		fields.put("data", "<root/>");
+		fields.put("workerName", getSignerNameDummy1());
+		
+		assertStatusReturned(fields, 404);
+	}
+	
+	/**
+	 * Test with an incomplete worker URI on the form /signserver/worker (without
+	 * the trailing /
+	 * This shall fail with a 404
+	 */
+	public void test13HttpStatus404_emptyWorkerNameNoSlashWithWorkerIdRequestParam() {
+		trailingSlash = false;
+		currentWorkerName = "";
+		Map<String, String> fields = new HashMap<String, String>();
+		fields.put("data", "<root/>");
+		fields.put("workerId", String.valueOf(getSignerIdDummy1()));
 		
 		assertStatusReturned(fields, 404);
 	}

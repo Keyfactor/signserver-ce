@@ -2011,6 +2011,66 @@ SignServer interprets the serialnumber and subject DN. Example:
 19:00:33,946 INFO  [AdminWS] ADMIN OPERATION; subjectDN=C=SE, O=Markus Organization, OU=Internal Testing 1, CN=External RA Admin 1; serialNumber=4a3442e98e3ce428; issuerDN=C=SE, O=Markus Organization, OU=Internal Testing 1, CN=MarkusAdminCA1; authorized=false; operation=getWorkers; arguments=
                     </pre>
                 </section>
+                
+                <section name="Apache HTTP Server as proxy">
+                    <p>
+This section will show you examples on how the Apache Web Server (version 2.2.20) can be used as a proxy in front of SignServer. This guide is only informative, you should also always consult the current Apache documentation for the modules used. The proxy could be used for multiple reasons including:
+                    </p>
+                    <ul>
+                        <li>Use standard ports (80, 443) instead of unprivileged ports used by the application server</li>
+                        <li>Making workers accessible through more nice looking URLs.<br/>For example "http://tsa.example.com" instead of "http://example.com:8080/signserver/tsa?workerName=TimeStampSigner1"</li>
+                        <li>Use any of the access control and authentication mechanism available in Apache</li>
+                        <li>Redirect HTTP traffic to HTTPS</li>
+                    </ul>
+                    <p>
+As the requests should go through the proxy you will probably want to configure the application server to only listen to localhost and/or use a firewall blocking the application server ports from external requests. To configure JBoss to only listen to localhost set the following properties in signserver_build.properties:
+                    </p>
+                    <source>
+httpsserver.bindaddress.pubhttp=127.0.0.1
+httpsserver.bindaddress.pubhttps=127.0.0.1
+httpsserver.bindaddress.privhttps=127.0.0.1
+                </source>
+                    <p>
+Install the Apache web server and enable required modules (the following commands are for Ubuntu but should be similar in other distributions as well):
+                    </p>
+                <source>
+$ sudo apt-get install apache2
+$ cd /etc/apache2/mods-enabled/
+$ sudo ln -s ../mods-available/proxy.load proxy.load
+$ sudo ln -s ../mods-available/proxy_http.load proxy_http.load
+$ sudo ln -s ../mods-available/rewrite.load rewrite.load
+                </source>
+    
+   
+                <subsection name="Example: Rewrite URLs for TSA (using mod_proxy and mod_rewrite)">
+   
+                    <p>
+A sample configuration how to fix up nice URLs for time-stamping so that you can point your TSA clients to http://tsa.example.com/ instead of http://tsa.example.com:8080/signserver/process?workerName=TimeStampSigner1.
+                    <br/>
+This configuration combines mod_proxy with mod_rewrite to be able to set the workerName or workerId, so you can have different TSAs available on different URLs.
+                    </p>
+                    <source>
+&lt;VirtualHost tsa.example.com:80>
+    ServerName tsa.example.com
+    ServerAlias tsa.example.com
+    CustomLog /var/log/apache2/access.log combined
+
+    RewriteEngine on
+    RewriteLogLevel 5
+    RewriteLog "/var/log/apache2/rewrite.log
+    RewriteRule ^/$ /?workerName=TimeStampSigner1 [PT]
+
+    ProxyRequests Off
+    &lt;Proxy *&gt;
+        Order deny,allow
+        Allow from all
+    &lt;/Proxy&gt;
+    ProxyPass / http://127.0.0.1:8080/signserver/process
+    ProxyPassReverse / http://127.0.0.1:8080/signserver/process
+&lt;/VirtualHost>
+                    </source>
+                </subsection>
+            </section>
         </chapter>
 
         <chapter name="Common configuration" shortname="commonconf">
@@ -4440,127 +4500,6 @@ See res/install/debian/README.building for instructions for creating Debian pack
             </section>
             
         </chapter>
-
-        <chapter name="How To" shortname="howto">
-            <section name="Setting up an Apache Web Server as a proxy in front of SignServer">
-                <p>
-This section will show you how to use an Apache Web Server Proxy in front of SignServer.
-                <br/>The resulting server will
-                </p>
-                <ul>
-                <li>Make the TSA available through the nice url http://tsa.company.com/</li>
-                </ul>
-                <p>
-This example was created on Ubuntu 64-bit Server 8.10 using the Apache Web Server 2.2 package,
-but should be easy to adapt to any system able to run Apache.
-                </p>
-                <p>
-Start by installing SignServer as normal. If you intend to have the CA on the same machine as
-the proxy you should modify $SIGNSERVER_HOME/signserver_build.properties to only listen to localhost
-                </p>
-<source>
-httpsserver.bindaddress.pubhttp=127.0.0.1
-httpsserver.bindaddress.pubhttps=127.0.0.1
-httpsserver.bindaddress.privhttps=127.0.0.1
-</source>
-                <p>
-Install the Apache web server and enable required modules:
-                </p>
-<source>
-$sudo su
-#apt-get install apache2
-#cd /etc/apache2/mods-enabled/
-#ln -s ../mods-available/proxy.load proxy.load
-#ln -s ../mods-available/proxy_http.load proxy_http.load
-#ln -s ../mods-available/rewrite.load rewrite.load
-</source>
-                <p>
-A sample configuration how to fix up nice URLs for OCSP so that you can point your TSA clients to http://tsa.company.com/ instead of http://tsa.company.com:8080/signserver/process?workerId=1.
-                <br/>
-This configuration combines mod_proxy with mod_rewrite to be able to set the workerName or workerId, so you can have different TSAs available on different URLs.
-                </p>
-<source>
-&lt;VirtualHost tsa.company.com:80>
-ServerName tsa.company.com
-ServerAlias tsa.company.com
-CustomLog /var/log/apache2/access.log combined
-
-RewriteEngine on
-RewriteLogLevel 5
-RewriteLog "/var/log/apache2/rewrite.log
-RewriteRule ^/$ /?workerName=TSA [PT]
-
-ProxyRequests Off
-&lt;Proxy *>
-  Order deny,allow
-  Allow from all
-&lt;/Proxy>
-ProxyPass / http://127.0.0.1:8080/signserver/process
-ProxyPassReverse / http://127.0.0.1:8080/signserver/process
-&lt;/VirtualHost>
-</source>
-                </section>
-
-
-                <section name="Setting up an Apache Web Server with mod_jk in front of SignServer">
-                    <p>
-Instead of using a mod_proxy you can use mod_jk which uses a JK connector between apache and tomcat.
-You can easily combine it with mod_rewrite to change URLs.
-                    </p>
-                    <p>
-This section will show you how to use an Apache with mod_jk in front of SignServer.
-mod_jk have many features and by using it you can virtually do anything you want with hosts, ports and URLs.
-                    </p><p>
-This example was created on Ubuntu 64-bit Server 8.10 using the Apache Web Server 2.2 package,
-but should be easy to adapt to any system able to run Apache.
-                    </p>
-<source>
-# sudo apt-get install apache2 libapache2-mod-jk
-# vim /etc/libapache2-mod-jk/workers.properties
------
-worker.list=jboss
-
-# Define a worker using ajp13
-worker.jboss.port=8009
-worker.jboss.host=127.0.0.1
-worker.jboss.type=ajp13
------
-</source>
-<source>
-# cd /etc/apache2/mods-enabled
-# ln -s ../mods-available/rewrite.load rewrite.load
-# vim /etc/apache2/sites-available/tsa.primekey.se
------
-&lt;VirtualHost tsa.company.com:80&gt;
-ServerAdmin webmaster@company.com
-ServerName tsa.company.com
-ServerAlias tsa.company.com
-
-JkLogFile /var/log/apache2/mod_jk.log
-JkLogLevel debug
-JkMount /* jboss
-JkMount / jboss
-&lt;/VirtualHost&gt;
------
-</source>
-Enable tsa.primekey.se in /etc/apache2/sites-enabled
-
-<source>
-# vim /etc/apache2/mods-available/jk.load
------
-LoadModule /usr/lib/apache2/modules/mod_jk.so
-JkWorkersFile /etc/libapache2-mod-jk/workers.properties
------
-</source>
-                    <p>
-Finally restart apache and you can run:
-                    </p>
-<source>
-$ bin/client.sh timestamp http://tsa.company.com/signserver/process?workerName=TSA
-</source>
-                </section>
-        </chapter>
-
     </body>
 </document>
 

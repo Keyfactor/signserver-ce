@@ -21,7 +21,6 @@
                 <item name="Manual"	 href="/manual.html"/>
                 <item name="Installation Guide"	 href="/manual/installguide.html"/>
                 <item name="Wiki" href="http://sourceforge.net/apps/mediawiki/signserver/"/>
-                <item name="How To"		  href="/manual/howto.html"/>
                 <item name="Changelog"    href="http://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel"/>
             </menu>
 

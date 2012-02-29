@@ -75,6 +75,7 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String METHOD_GET = "GET";    
     private static final String WORKERID_PROPERTY_NAME = "workerId";
     private static final String WORKERNAME_PROPERTY_NAME = "workerName";
+    private static final String WORKERNAME_PROPERTY_OVERRIDE = "workerNameOverride";
     private static final String DATA_PROPERTY_NAME = "data";
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     private static final String ENCODING_BASE64 = "base64";
@@ -83,7 +84,6 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String HTTP_AUTH_BASIC_WWW_AUTHENTICATE =
             "WWW-Authenticate";
     private static final String PDFPASSWORD_PROPERTY_NAME = "pdfPassword";
-    private static final String WORKER_URI_START = "/signserver/worker";
 
     private final Random random = new Random();
 
@@ -120,32 +120,21 @@ public class GenericProcessServlet extends HttpServlet {
         byte[] data = null;
         String fileName = null;
         String pdfPassword = null;
-        boolean workerRequest = true;
+        boolean workerRequest = false;
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received a request with length: "
                     + req.getContentLength());
         }
 
-        final String requestURI = req.getRequestURI();
-        if (requestURI.length() < WORKER_URI_START.length() ||
-        		(requestURI.length() >= WORKER_URI_START.length() &&
-        		 !WORKER_URI_START.equals(requestURI.substring(0,
-        				 								WORKER_URI_START.length())))) {
-        	// URI doesn't start in /signserver/worker
-        	workerRequest = false;
-        } else {
-        	String name = "";
-        	// check if the URI has a / after the initial /worker part
-        	// in that case, take the trailing part of the URI as the worker name
-        	if (requestURI.length() >= WORKER_URI_START.length() + 1 &&
-        		requestURI.charAt(WORKER_URI_START.length()) == '/') {
-        		name = requestURI.substring(WORKER_URI_START.length() + 1);
-        	}
-        	workerId = getWorkerSession().getWorkerId(name);
+        final String workerNameOverride =
+        		(String) req.getAttribute(WORKERNAME_PROPERTY_OVERRIDE);
+     
+        if (workerNameOverride != null) {
+        	workerId = getWorkerSession().getWorkerId(workerNameOverride);
+        	workerRequest = true;
         }
-        
-        
+
         if (ServletFileUpload.isMultipartContent(req)) {
             final FileItemFactory factory = new DiskFileItemFactory();
             final ServletFileUpload upload = new ServletFileUpload(factory);

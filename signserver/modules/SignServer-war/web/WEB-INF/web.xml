@@ -6,6 +6,10 @@
         <servlet-class>org.signserver.web.GenericProcessServlet</servlet-class>
     </servlet>
     <servlet>
+    	<servlet-name>WorkerServlet</servlet-name>
+    	<servlet-class>org.signserver.web.WorkerServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>StartServiceServlet</servlet-name>
         <servlet-class>org.signserver.web.StartServicesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
@@ -48,7 +52,7 @@
         <url-pattern>/process</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-    	<servlet-name>GenericProcessServlet</servlet-name>
+    	<servlet-name>WorkerServlet</servlet-name>
     	<url-pattern>/worker/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>

@@ -2021,6 +2021,7 @@ This section will show you examples on how the Apache Web Server (version 2.2.20
                         <li>Making workers accessible through more nice looking URLs.<br/>For example "http://tsa.example.com" instead of "http://example.com:8080/signserver/tsa?workerName=TimeStampSigner1"</li>
                         <li>Use any of the access control and authentication mechanism available in Apache</li>
                         <li>Redirect HTTP traffic to HTTPS</li>
+                        <li>Only accepting requests to specified locations</li>
                     </ul>
                     <p>
 As the requests should go through the proxy you will probably want to configure the application server to only listen to localhost and/or use a firewall blocking the application server ports from external requests. To configure JBoss to only listen to localhost set the following properties in signserver_build.properties:
@@ -2155,6 +2156,77 @@ Notice: Some application servers (i.e. JBoss 4) might have problems writing the 
 </VirtualHost>]]>
                     </source>
                 </subsection>
+                
+                <subsection name="Example: Granting access to specific workers only">
+                    <p>
+This example shows how it is possible to limit access to only specified resources. 
+                    </p>
+                    <p>
+If you are going to grant different users access to different workers always remember to first deny access from the root location. The reason is that there are other ways to access a worker than the "/worker/*" pattern. For instance /process, /tsa, /pdf etc as well as using the web services interface /signserverws and /SignServerWSService all can be used to invoke <b>any</b> worker.
+                    </p>
+                    <p>
+If you instead relay on SignServer to do the authentication/authorization it could still be good from a security point to only grant access to the locations you intend to use. In that case you would probably want to also give access to the  web services interfaces, /worker and /process etc.
+                    </p>
+                    <p>
+Also remember if you are proxying from multiple virtual hosts (i.e. if you have one with and one without client authentication as in the example above) that you might want to add the access restrictions to all of them.
+                    </p>
+                    <source><![CDATA[
+    ...
+    # First, deny access globally and then only give access to resources explicitly
+    <Location />
+    	Order Deny,Allow
+    	Deny from all
+    </Location>
+
+    # Allow index page
+    <LocationMatch "^/$">
+	Order Allow,Deny
+	Allow from all
+    </LocationMatch>
+
+    # Allow demo web pages
+    <Location /demo/>
+	Order Allow,Deny
+	Allow from all
+    </Location>
+
+    # Allow documentation
+    <Location /doc/>
+	Order Allow,Deny
+	Allow from all
+    </Location>
+
+    # Allow web page resources
+    <LocationMatch "\.(css|js|jpg|png)$">
+	Order Allow,Deny
+	Allow from all
+    </LocationMatch>
+    
+    # Allow the Admin interface
+    <Location /AdminWSService/>
+	Order Allow,Deny
+	Allow from all
+    </Location>
+
+    # Grant everybody access to the XMLSigner
+    <Location /worker/XMLSigner>
+	Order Allow,Deny
+	Allow from all
+    </Location>
+
+    # Grant valid users access to the CMSSigner
+    <Location /worker/CMSSigner>
+	Order Allow,Deny
+        Allow from all
+        AuthType Basic
+        AuthName "Restricted CMSSigner access"
+    	AuthUserFile /home/markus/.htpasswd
+    	Require valid-user
+    </Location>
+    ...]]>
+                    </source>
+                </subsection>
+                
             </section>
         </chapter>
 

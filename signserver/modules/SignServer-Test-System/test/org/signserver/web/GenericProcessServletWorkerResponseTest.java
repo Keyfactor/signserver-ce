@@ -30,10 +30,19 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	
 	private String currentWorkerName = null;
 	private boolean trailingSlash = true; // insert a trailing / after the base URI
+	private boolean extraSlashBeforeWorkerName = false;
+										  // set to true to generate an extra
+										  // slash before the worker name
+	private boolean extraSlashBeforeServletName = false;
+										  // set to true to generate an extra
+	 									  // slash before the servlet name
 	
 	@Override
 	protected String getServletURL() {
-		return "http://localhost:8080/signserver/worker" + (trailingSlash ? "/" : "") +
+		return "http://localhost:8080/signserver/" +
+				(extraSlashBeforeServletName ? "/" : "") +
+				"worker" + (trailingSlash ? "/" : "") +
+				(extraSlashBeforeWorkerName ? "/" : "" ) +
 				currentWorkerName;
 	}
 
@@ -43,6 +52,8 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 		currentWorkerName = this.getSignerNameDummy1();
 		// test by default will use a URI on the form /signserver/worker/...
 		trailingSlash = true;
+		extraSlashBeforeWorkerName = false;
+		extraSlashBeforeServletName = false;
 	}
 
 	@Override
@@ -224,5 +235,32 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 		fields.put("workerId", String.valueOf(getSignerIdDummy1()));
 		
 		assertStatusReturned(fields, 404);
+	}
+	
+	/**
+	 * Test an invalid URL of the form /signserver/worker//<worker name>
+	 * This shall fail with a 404
+	 */
+	public void test14HttpStatus404_extraSlashBeforeWorkerName() {
+		extraSlashBeforeWorkerName = true;
+		Map<String, String> fields = new HashMap<String, String>();
+		fields.put("data", "<root/>");
+		
+		assertStatusReturned(fields, 404);
+	}
+	
+	/**
+	 * Test a URL of the form /signserver//worker/<worker name>
+	 * with an invalid worker name, but with a valid worker name given by a
+	 * request parameter.
+	 * This should fail with a 404 (it should not "fall through" to the general
+	 * processing in this case).
+	 */
+	public void test15HttpStatus404_extraSlashBeforeServletName() {
+		extraSlashBeforeServletName = true;
+		currentWorkerName = UNEXISTING_WORKER_NAME;
+		Map<String, String> fields = new HashMap<String, String>();
+		fields.put("data", "<root/>");
+		fields.put("workerName", getSignerNameDummy1());
 	}
 }

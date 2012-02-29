@@ -2099,8 +2099,9 @@ Notice: Some application servers (i.e. JBoss 4) might have problems writing the 
     ServerName signserver.example.com
     ServerAlias signserver.example.com
 
+    ProxyRequests Off
     <Proxy balancer://mycluster-3>
-        BalancerMember ajp://localhost:8009/signserver/
+        BalancerMember ajp://localhost:8009/signserver
     </Proxy>
     ProxyPass / balancer://mycluster-3/
 
@@ -2128,8 +2129,9 @@ Notice: Some application servers (i.e. JBoss 4) might have problems writing the 
     ServerName auth.signserver.example.com
     ServerAlias auth.signserver.example.com
 
+    ProxyRequests Off
     <Proxy balancer://mycluster-4>
-        BalancerMember ajp://localhost:8009/signserver/
+        BalancerMember ajp://localhost:8009/signserver
     </Proxy>
     ProxyPass / balancer://mycluster-4/
 

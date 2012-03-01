@@ -3367,6 +3367,152 @@ The basic configuration of a group key service is very similar to that of a vali
                     </subsubsection>
                 </subsection>
             </section>
+            
+            <section name="Timed Services">
+                <p>
+A Timed Service (formerly called just service) is a task that is run on a timely basis, performing maintenance tasks like changing active key, or it could generate a report.
+                </p>
+                <p>
+A Timed Service framework supports a couple basic properties that is used to calculate when and how a timed service should run. These properties are:
+                </p>
+                <p>
+<b>ACTIVE</b> =  "TRUE" if the service should be run, otherwise it is disabled.
+                </p>
+                <p>
+<b>SINGLETON</b> =  "TRUE" if the service only should be run on one of the nodes in the cluster at the time. If it's not set or set to FALSE is the service run simultaneously on all nodes in the cluster. If the node running a singleton service fails will another node sense this and start up the service.
+                </p>
+                <p>
+<b>INTERVAL</b> = Property defining the interval in seconds the service should run.
+                </p>
+                <p>
+<b>INTERVALMS</b> = Property defining the interval in milliseconds the service
+should run. Notice that the platform and application server might put a lower
+bound on the value. The lower limit for GlassFish is by default 7000 milliseconds
+but can be changed by editing minimum-delivery-interval-in-millis in domain.xml.
+                </p>
+                <p>
+<b>CRON</b> = Property that should define a CRON expression of how often the service should run.  It should conform to Unix CRON standard. (One and only one of INTERVAL, INTERVALMS or CRON is required)
+                </p>
+
+                <subsection name="SignerStatusReportTimedService">
+                    <p>
+Fully qualified class name: org.signserver.module.signerstatusreport.SignerStatusReportTimedService
+                    </p>
+                    <subsubsection name="Overview">
+                        <p>
+The SignerStatusReportTimedService is a timed service that outputs status for a
+set of workers to a file. The information includes each workers crypto token status
+ACTIVE/OFFLINE and if available also the numbers of signatures that has been
+performed with the key currently associated with the worker. If the worker has
+a configured limit of number of signatures, this value is also included. See 
+also the <a href="#SignerStatusReportWorker">SignerStatusReportWorker</a> which 
+is an alternative way of offering this reports.
+                        </p>
+                        <p>
+<b>Format:</b>
+                        </p>
+                        <pre>
+workerName=WORKERNAME1, status=STATUS1, KEY3=VALUE3, KEY4=VALUE4, ...
+workerName=WORKERNAME2, status=STATUS2, KEY3=VALUE3, KEY4=VALUE4, ...
+workerName=WORKERNAME3, status=STATUS3, KEY3=VALUE3, KEY4=VALUE4, ...
+...
+                        </pre>
+                        <p>
+<b>Rules:</b>
+<ul>
+    <li>Each line contains a set of properties for one worker.</li>
+    <li>Lines are separated by a system dependent newline character (CR,
+LF or CRLF).</li>
+    <li>Properties are of form KEY=VALUE and are separated by a comma and a
+space (", ").</li>
+    <li>The properties "workerName" and "status" are the only ones that must be
+present.</li>
+    <li>The property "workerName" is always the first property.</li>
+</ul>
+                        </p>
+                        <p>
+<b>Properties:</b>
+<ul>
+    <li><b>workerName</b>: name of the worker. Example: "sod71" or "sod72"</li>
+    <li><b>status</b>: status of the worker's crypto token and key. Either
+"ACTIVE" or "OFFLINE".</li>
+    <li><b>validityNotBefore</b>: the first date the signer is allowed to sign.
+Format is java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").</li>
+    <li><b>validityNotAfter</b>: the last date the signer is allowed to sign.</li>
+    <li><b>signings</b>: the number of signatures that has been performed with the key
+used by this worker.</li>
+    <li><b>signLimit</b>: the maximum number of signatures this worker is allowed
+to perfom or -1 if there is no limit.</li>
+</ul>
+                        </p>
+                        <p>
+<b>Examples:</b>
+                        </p>
+                        <pre>
+workerName=Sod71, status=ACTIVE, validityNotBefore=2010-07-05 17:32:36 CEST, validityNotAfter=2010-09-08 17:32:36 EEST, signings=132, signLimit=100000,
+workerName=Sod72, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=100000, signLimit=100000,
+workerName=Sod73, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=0, signLimit=100000,
+workerName=Sod74, status=OFFLINE,
+                        </pre>
+                        <p>
+<b>Examples explained:</b>
+                        </p>
+                        <p>
+Sod71 has done 132 signings and is ACTIVE and validityNotAfter indicates
+that it can continue to sign until 8th September if not the sign limit
+is reached before
+                        </p>
+                        <p>
+Sod72 has performed all of its 100000 signings and can not sign until it
+gets a new key and certificate.
+                        </p>
+                        <p>
+Sod73 has not reached its limit and is still in validity time but is
+OFFLINE for some other reason.
+                        </p>
+                        <p>
+Sod74 is OFFLINE and has no certificate configured.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+<p><b>WORKERS</b> = Comma separated list of worker names (signers) that should
+be monitored.</p>
+<p><b>OUTPUTFILE</b> = File that the information will be written to. If the file
+exists the content will be overwritten. The application server needs to have write
+access to this file when the service is executed.
+
+                        </p>
+                    </subsubsection>
+                    
+                </subsection>
+                <subsection name="Installing a service">
+                    <p>To install a service you use the same commands as for installing a worker:</p>
+                    <source>
+$ bin/signserver setproperties configuration.properties
+                    </source>
+                    <p>Example:</p>
+                    <source>
+$ bin/signserver setproperties doc/sample-configs/qs_signerstatusreport_configuration.properties
+===========================================
+  Executing Command on host : localhost
+===========================================
+Configuring properties as defined in the file : doc/sample-configs/qs_signerstatusreport_configuration.properties
+Setting the property ACTIVE to TRUE for worker 2
+Setting the property INTERVAL to 10 for worker 2
+Setting the global property WORKER2.CLASSPATH to org.signserver.server.timedservices.SignerStatusReportTimedService with scope GLOB.
+Setting the property WORKERS to PDFSigner1 for worker 2
+Setting the property NAME to SignerStatusReporter for worker 2
+Setting the property OUTPUTFILE to /tmp/statusreport for worker 2
+
+$ bin/signserver reload 2
+===========================================
+Executing Command on host : localhost
+===========================================
+SignServer reloaded successfully
+Current configuration is now activated.
+                    </source>
+                </subsection>
+            </section>
 
             <section name="Other workers">
                 <subsection name="RenewalWorker">
@@ -3488,6 +3634,29 @@ The StatusPropertiesWorker can be used to query and setting status properties in
                     <subsubsection name="Response Properties">
                         <p><b>x.VALUE</b> = See Request Properties</p>
                         <p><b>x.EXPIRATION</b> = See Request Properties</p>
+                    </subsubsection>
+                </subsection>
+                
+                                
+                <subsection name="SignerStatusReportWorker">
+                    <p>
+Fully qualified class name: org.signserver.module.signerstatusreport.SignerStatusReportWorker
+                    </p>
+
+                    <subsubsection name="Overview">
+                        <p>
+The SignerStatusReportWorker is a worker that returns a status report for a configured 
+set of workers. The information includes each workers crypto token status
+ACTIVE/OFFLINE and if available also the numbers of signatures that has been
+performed with the key currently associated with the worker. If the worker has
+a configured limit of number of signatures, this value is also included. This 
+worker returns the report in the same format as defined for the 
+<a href="#SignerStatusReportTimedService">SignerStatusReportTimedService</a>.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Worker Properties">
+                        <p><b>WORKERS</b> = Comma separated list of worker names (signers) that should
+be monitored.</p>
                     </subsubsection>
                 </subsection>
             </section>
@@ -4454,147 +4623,6 @@ The time stamp signer have been tested with the OpenTSA client with both HTTP an
         </chapter>
 
         <chapter name="Miscellaneous" shortname="misc">
-
-            <section name="Timed Services">
-                <p>
-A Timed Service (formerly called just service) is a task that is run on a timely basis, performing maintenance tasks like changing active key, or it could generate a report.
-                </p>
-                <p>
-A Timed Service framework supports a couple basic properties that is used to calculate when and how a timed service should run. These properties are:
-                </p>
-                <p>
-<b>ACTIVE</b> =  "TRUE" if the service should be run, otherwise it is disabled.
-                </p>
-                <p>
-<b>SINGLETON</b> =  "TRUE" if the service only should be run on one of the nodes in the cluster at the time. If it's not set or set to FALSE is the service run simultaneously on all nodes in the cluster. If the node running a singleton service fails will another node sense this and start up the service.
-                </p>
-                <p>
-<b>INTERVAL</b> = Property defining the interval in seconds the service should run.
-                </p>
-                <p>
-<b>INTERVALMS</b> = Property defining the interval in milliseconds the service
-should run. Notice that the platform and application server might put a lower
-bound on the value. The lower limit for GlassFish is by default 7000 milliseconds
-but can be changed by editing minimum-delivery-interval-in-millis in domain.xml.
-                </p>
-                <p>
-<b>CRON</b> = Property that should define a CRON expression of how often the service should run.  It should conform to Unix CRON standard. (One and only one of INTERVAL, INTERVALMS or CRON is required)
-                </p>
-
-                <subsection name="SignerStatusReportTimedService">
-                    <subsubsection name="Overview">
-                        <p>
-The SignerStatusReportTimedService is a timed service that outputs status for a
-set of workers to a file. The information includes each workers crypto token status
-ACTIVE/OFFLINE and if available also the numbers of signatures that has been
-performed with the key currently associated with the worker. If the worker has
-a configured limit of number of signatures, this value is also included.
-                        </p>
-                        <p>
-<b>Format:</b>
-                        </p>
-                        <pre>
-workerName=WORKERNAME1, status=STATUS1, KEY3=VALUE3, KEY4=VALUE4, ...
-workerName=WORKERNAME2, status=STATUS2, KEY3=VALUE3, KEY4=VALUE4, ...
-workerName=WORKERNAME3, status=STATUS3, KEY3=VALUE3, KEY4=VALUE4, ...
-...
-                        </pre>
-                        <p>
-<b>Rules:</b>
-<ul>
-    <li>Each line contains a set of properties for one worker.</li>
-    <li>Lines are separated by a system dependent newline character (CR,
-LF or CRLF).</li>
-    <li>Properties are of form KEY=VALUE and are separated by a comma and a
-space (", ").</li>
-    <li>The properties "workerName" and "status" are the only ones that must be
-present.</li>
-    <li>The property "workerName" is always the first property.</li>
-</ul>
-                        </p>
-                        <p>
-<b>Properties:</b>
-<ul>
-    <li><b>workerName</b>: name of the worker. Example: "sod71" or "sod72"</li>
-    <li><b>status</b>: status of the worker's crypto token and key. Either
-"ACTIVE" or "OFFLINE".</li>
-    <li><b>validityNotBefore</b>: the first date the signer is allowed to sign.
-Format is java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").</li>
-    <li><b>validityNotAfter</b>: the last date the signer is allowed to sign.</li>
-    <li><b>signings</b>: the number of signatures that has been performed with the key
-used by this worker.</li>
-    <li><b>signLimit</b>: the maximum number of signatures this worker is allowed
-to perfom or -1 if there is no limit.</li>
-</ul>
-                        </p>
-                        <p>
-<b>Examples:</b>
-                        </p>
-                        <pre>
-workerName=Sod71, status=ACTIVE, validityNotBefore=2010-07-05 17:32:36 CEST, validityNotAfter=2010-09-08 17:32:36 EEST, signings=132, signLimit=100000,
-workerName=Sod72, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=100000, signLimit=100000,
-workerName=Sod73, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=0, signLimit=100000,
-workerName=Sod74, status=OFFLINE,
-                        </pre>
-                        <p>
-<b>Examples explained:</b>
-                        </p>
-                        <p>
-Sod71 has done 132 signings and is ACTIVE and validityNotAfter indicates
-that it can continue to sign until 8th September if not the sign limit
-is reached before
-                        </p>
-                        <p>
-Sod72 has performed all of its 100000 signings and can not sign until it
-gets a new key and certificate.
-                        </p>
-                        <p>
-Sod73 has not reached its limit and is still in validity time but is
-OFFLINE for some other reason.
-                        </p>
-                        <p>
-Sod74 is OFFLINE and has no certificate configured.
-                        </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
-<p><b>WORKERS</b> = Comma separated list of worker names (signers) that should
-be monitored.</p>
-<p><b>OUTPUTFILE</b> = File that the information will be written to. If the file
-exists the content will be overwritten. The application server needs to have write
-access to this file when the service is executed.
-
-                        </p>
-                    </subsubsection>
-                    
-                </subsection>
-                <subsection name="Installing a service">
-                    <p>To install a service you use the same commands as for installing a worker:</p>
-                    <source>
-$ bin/signserver setproperties configuration.properties
-                    </source>
-                    <p>Example:</p>
-                    <source>
-$ bin/signserver setproperties doc/sample-configs/qs_signerstatusreport_configuration.properties
-===========================================
-  Executing Command on host : localhost
-===========================================
-Configuring properties as defined in the file : doc/sample-configs/qs_signerstatusreport_configuration.properties
-Setting the property ACTIVE to TRUE for worker 2
-Setting the property INTERVAL to 10 for worker 2
-Setting the global property WORKER2.CLASSPATH to org.signserver.server.timedservices.SignerStatusReportTimedService with scope GLOB.
-Setting the property WORKERS to PDFSigner1 for worker 2
-Setting the property NAME to SignerStatusReporter for worker 2
-Setting the property OUTPUTFILE to /tmp/statusreport for worker 2
-
-$ bin/signserver reload 2
-===========================================
-Executing Command on host : localhost
-===========================================
-SignServer reloaded successfully
-Current configuration is now activated.
-                    </source>
-                </subsection>
-            </section>
 
             <section name="The Global Configuration Store">
                 <p>

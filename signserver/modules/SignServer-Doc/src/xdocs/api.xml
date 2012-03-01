@@ -171,6 +171,54 @@ try {
                         </subsubsection>
                         
                     </subsection>
+                    <subsection name="WorkerServlet">
+                    	<p>
+							HTTP requests can be sent to the SignServer servlet WorkerServlet located at /signserver/worker/* using
+                                either POST or GET.<br/>
+                            Requests are forwarded to the GenericProcessServlet, except that the worker name is taken from the URL.<br/>
+                            Worker name or ID given through request parameters are ignored.
+						</p>
+						<p>
+                            <table border="1">
+                                <tr>
+                                    <td>URL:</td><td><b>/signserver/worker/* (* denotes a worker name)</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Method:</td><td><b>GET</b> or <b>POST</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Request content-type:</td><td><b>None</b>, <b>"x-www-form-urlencoded"</b>, <b>"multipart/form-data"</b> or <b>other<sup>*</sup></b></td>
+                                </tr>
+                                <tr>
+                                    <td>Request parameters:</td>
+                                    <td>
+                                        <ul>
+                                            <li><b>data</b> - The bytes that should be signed or validated. Required.</li>
+                                            <li><b>encoding</b> - Encoding of the data field. Optional. By specifying "base64" SignServer Base64-decodes
+                                            the data property before passing it to the worker.</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Response code:</td><td><b>200</b> (OK) or other in case of failure (i.e. 500 internal server error)</td>
+                                </tr>
+                                <tr>
+                                    <td>Response content-type:</td><td>Depending on the worker</td>
+                                </tr>
+                            </table>
+                    	</p>
+                    	<subsubsection name="Samples">
+                    	<p>
+                            <ul>
+                                <li>
+                                    HTTP GET:<br/>
+                                    http://localhost:8080/signserver/worker/XMLSigner?data=%3Croot%3Ehej2%3C/root%3E<br/><br/>
+                                    Send signing request to the worker named XMLSigner.<br/><br/>
+                                </li>
+                            </ul>
+                        </p>
+                    	</subsubsection>
+                    </subsection>
                     <subsection name="SODProcessServlet">
                         <p>
                             Servlet recieving HTTP POST requests containing data group hashes

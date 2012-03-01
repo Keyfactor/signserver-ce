@@ -10,32 +10,34 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.timedservices;
+package org.signserver.module.signerstatusreport;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.web.WebTestCase;
 
 /**
  * Tests for SignerStatusReportTimedService.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
-public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
+public class SignerStatusReportWorkerTest extends WebTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG
-            = Logger.getLogger(SignerStatusReportTimedServiceTest.class);
+            = Logger.getLogger(SignerStatusReportWorkerTest.class);
 
     /**
      * Worker id for the service.
      */
-    private static final int WORKERID_SERVICE = 5701;
+    private static final int WORKERID_WORKER = 5702;
 
     /**
      * WORKERID used in this test case as defined in
@@ -58,22 +60,17 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
     private static final int WORKERID_SIGNER3 = 5676;
     private static final String WORKER_SIGNER3 = "TestXMLSigner";
 
-    private static final long serviceInterval = 10;
+    private SignerStatusReportParser parser = new SignerStatusReportParser();
 
-    private static File outputFile;
-	
+    @Override
+    protected String getServletURL() {
+        return "http://localhost:8080/signserver/process";
+    }
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        
-        outputFile = new File(getSignServerHome() + File.separator
-                + "~test-outputfile.dat");
-        if (outputFile.exists()) {
-            if (!outputFile.delete()) {
-                fail("Could not remove: " + outputFile.getAbsolutePath());
-            }
-        }
     }
 
     @Override
@@ -94,37 +91,39 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
 
         // Setup service
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-            "WORKER" + WORKERID_SERVICE + ".CLASSPATH",
-            "org.signserver.server.timedservices.SignerStatusReportTimedService");
-
-        workerSession.setWorkerProperty(WORKERID_SERVICE, "WORKERS",
+            "WORKER" + WORKERID_WORKER + ".CLASSPATH",
+            "org.signserver.module.signerstatusreport.SignerStatusReportWorker");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+            "WORKER" + WORKERID_WORKER + ".SIGNERTOKEN.CLASSPATH",
+            "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        
+        workerSession.setWorkerProperty(WORKERID_WORKER, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(WORKERID_WORKER, "WORKERS",
                 WORKER_SIGNER1+","+WORKER_SIGNER2+","+WORKER_SIGNER3);
-        workerSession.setWorkerProperty(WORKERID_SERVICE, "OUTPUTFILE",
-                outputFile.getAbsolutePath());
-        workerSession.setWorkerProperty(WORKERID_SERVICE, "INTERVAL",
-                String.valueOf(serviceInterval));
-        workerSession.setWorkerProperty(WORKERID_SERVICE, "ACTIVE", "FALSE");
 
-        workerSession.reloadConfiguration(WORKERID_SERVICE);
+        workerSession.reloadConfiguration(WORKERID_WORKER);
     }
 
     public void test01Report() throws Exception {
 
-        if (outputFile.exists()) {
-            outputFile.delete();
-            assertFalse("Removed outputfile", outputFile.exists());
-        }
-
-        // Enable service
-        workerSession.setWorkerProperty(WORKERID_SERVICE, "ACTIVE", "TRUE");
-        workerSession.reloadConfiguration(WORKERID_SERVICE);
-
-        waitForServiceRun(30);
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", String.valueOf(WORKERID_WORKER));
+        fields.put("data", "");
+        HttpURLConnection conn = sendGet(getServletURL(), fields);
+        
 
         Map<String, Map<String, String>> status;
 
         // Now all three workers should be present and ACTIVE
-        status = parseOutputFile(outputFile);
+        InputStream in = null;
+        try {
+            in = conn.getInputStream();
+            status = parser.parse(in);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
 
         assertNotNull("Worker 1 present", status.get(WORKER_SIGNER1));
         assertEquals("Worker 1 active", "ACTIVE", status.get(WORKER_SIGNER1).get("status"));
@@ -143,14 +142,17 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
 //        workerSession.reloadConfiguration(WORKERID_SIGNER1);
         workerSession.deactivateSigner(WORKERID_SIGNER1);
         
-        outputFile.delete();
-
-        waitForServiceRun(30);
-
-        // Now WORKER1 should be OFFLINE and the other as before
-        status = parseOutputFile(outputFile);
-
         
+        // Now WORKER1 should be OFFLINE and the other as before
+        conn = sendGet(getServletURL(), fields);
+        try {
+            in = conn.getInputStream();
+            status = parser.parse(in);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        } 
 
         assertNotNull("Worker 1 present", status.get(WORKER_SIGNER1));
         assertEquals("Worker 1 OFFLINE", "OFFLINE", status.get(WORKER_SIGNER1).get("status"));
@@ -170,78 +172,10 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test99TearDownDatabase() throws Exception {
-        removeWorker(WORKERID_SERVICE);
+        removeWorker(WORKERID_WORKER);
         removeWorker(WORKERID_SIGNER1);
         removeWorker(WORKERID_SIGNER2);
         removeWorker(WORKERID_SIGNER3);
-    }
-
-    /**
-     * Parses a output file.
-     *
-     * Sample file:
-     * <pre>
-     *   workerName=Sod1, status=OFFLINE, signings=10000, signLimit=10000,
-     *   workerName=Sod2, status=ACTIVE, signings=33524, signLimit=100000,
-     *   workerName=Sod3, status=OFFLINE, signings=10000, signLimit=10000,
-     *   workerName=Sod4, status=OFFLINE, signings=10000, signLimit=10000,
-     *   workerName=Sod5, status=OFFLINE, signings=10000, signLimit=10000,
-     *   workerName=Sod6, status=ACTIVE, signings=4676,
-     *   workerName=Sod7, status=OFFLINE,
-     * </pre>
-     *
-     * @param outputFile
-     * @return
-     */
-    private static Map<String, Map<String, String>> parseOutputFile(
-            final File outputFile) {
-
-        final Map<String, Map<String, String>> res
-                = new HashMap<String, Map<String, String>>();
-
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(
-                    new FileInputStream(outputFile)));
-
-            String line;
-            while ((line = in.readLine()) != null) {
-                Map<String, String> entry = new HashMap<String, String>();
-                
-                String[] parts = line.split(", ");
-                for (String part : parts) {
-                    String[] keyval = part.split("=");
-                    entry.put(keyval[0], keyval[1]);
-                }
-                res.put(entry.get("workerName"), entry);
-            }
-        } catch (FileNotFoundException ex) {
-            fail("FileNotFound: " + ex.getMessage());
-        } catch (IOException ex) {
-            fail("IOException: " + ex.getMessage());
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    LOG.error(ex.getMessage(), ex);
-                }
-            }
-        }
-        return res;
-    }
-
-    private static void waitForServiceRun(final int maxTries) {
-        try {
-            for (int i = 0; i < maxTries; i++) {
-                if (outputFile.exists()) {
-                    break;
-                }
-                Thread.sleep(1000);
-            }
-        } catch (InterruptedException ex) {
-            LOG.error("Interrupted", ex);
-        }
     }
 
 }

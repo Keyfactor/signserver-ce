@@ -4670,30 +4670,41 @@ fields one after each other separated by semi colons.
                     <p>
 Which Worker Logger configuration to use is configured by setting the
 <b>WORKERLOGGER</b> property to the full class name of the IWorkerLogger
-implementation in the worker's configuration. Examples:
+implementation in the worker's configuration.
                     </p>
-                    <source>
+                    <subsubsection name="AllFieldsWorkerLogger">
+                        <p>
+The default worker logger for most workers. Can be used during testing to find 
+which fields a worker logs and then changed to the PatternWorkerLogger with only 
+does fields that are of interest chosen.
+                        </p>
+                        <source>
 WORKERLOGGER=org.signserver.server.log.AllFieldsWorkerLogger
-                    </source>
-                    <source>
-WORKERLOGGER=org.signserver.module.tsa.CustomTimeStampLogger1
-                    </source>
-                    <source>
+                        </source>
+                    </subsubsection>
+                    <subsubsection name="PatternWorkerLogger">
+                        <source>
 WORKERLOGGER=org.signserver.server.log.PatternWorkerLogger
 LOGTIMEZONE=GMT
 LOGDATEFORMAT=yyyy-MM-dd:HH:mm:ss:z
 LOGPATTERN=\$\{(.+?)\}
 LOGORDER=AUDIT; LOG_ID: ${LOG_ID}; CLIENT_IP: ${CLIENT_IP}; REQUEST_FULLURL: ${REQUEST_FULLURL}; RequestTime: ${LOG_TIME}; ResponseTime: ${REPLY_TIME}; EXCEPTION: ${EXCEPTION};
-                    </source>
-                </subsection>
-                <subsection name="System Log">
-                    <p>
-The System Logger is instead for logging all other audit events that are not
-associated with a particular worker. The default System Logger is the
-AllFieldsSystemLogger that logs all the available fields one after each other
-separated by semi colons.
-                    </p>
-                </subsection>
+                        </source>
+                    </subsubsection>
+                    <subsubsection name="NullWorkerLogger">
+                        <p>
+Worker logger that does not log anything.    
+                        </p>
+                        <source>
+WORKERLOGGER=org.signserver.server.log.NullWorkerLogger                            
+                        </source>
+                    </subsubsection>
+                    <subsubsection name="CustomTimeStampLogger1">
+                        <source>
+WORKERLOGGER=org.signserver.module.tsa.CustomTimeStampLogger1
+                        </source>
+                    </subsubsection>
+                    </subsection>
                 <subsection name="Debug Log">
                     <p>
 The debug log is just the normal log that can be useful for finding out

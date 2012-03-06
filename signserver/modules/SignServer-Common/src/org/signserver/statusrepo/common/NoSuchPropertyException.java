@@ -13,6 +13,8 @@
 package org.signserver.statusrepo.common;
 
 /**
+ * Exception thrown to indicate that a property with the requested name does 
+ * not exist.
  *
  * @author Markus Kilås
  * @version $Id$
@@ -44,6 +46,9 @@ public class NoSuchPropertyException extends Exception {
         this.property = property;
     }
 
+    /**
+     * @return The non-existing requested property name
+     */
     public String getProperty() {
         return property;
     }

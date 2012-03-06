@@ -15,6 +15,7 @@ package org.signserver.statusrepo.common;
 import java.io.Serializable;
 
 /**
+ * Holds the updateTime, value and expiration Time for a status property.
  *
  * @author Markus Kilås
  * @version $Id: StatusRepositoryData.java 1624 2011-02-27 10:37:16Z netmackan $

@@ -1,7 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.module.signerstatusreport;
 
 import java.io.BufferedReader;
@@ -16,8 +24,11 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 /**
+ * Parses a signer status report according to the format specified in the 
+ * manual for the SignerStatusReportTimedService.
  *
- * @author markus
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class SignerStatusReportParser {
     
@@ -25,7 +36,7 @@ public class SignerStatusReportParser {
     private static final Logger LOG = Logger.getLogger(SignerStatusReportParser.class);
     
     /**
-     * Parses a output file.
+     * Parses the report from an InputStream.
      *
      * Sample file:
      * <pre>
@@ -38,8 +49,8 @@ public class SignerStatusReportParser {
      *   workerName=Sod7, status=OFFLINE,
      * </pre>
      *
-     * @param outputFile
-     * @return
+     * @param in stream to read the report from
+     * @return Map from worker names to map of keys to values
      */
     public Map<String, Map<String, String>> parse(final InputStream in) throws FileNotFoundException, IOException {
 
@@ -53,8 +64,12 @@ public class SignerStatusReportParser {
 
             String[] parts = line.split(", ");
             for (String part : parts) {
-                String[] keyval = part.split("=");
-                entry.put(keyval[0], keyval[1]);
+                String[] keyval = part.split("=", 2);
+                if (keyval.length == 2) {
+                    entry.put(keyval[0], keyval[1]);
+                } else {
+                    throw new IOException("Unparsable line: \"" + part + "\"");
+                }
             }
             res.put(entry.get("workerName"), entry);
         }

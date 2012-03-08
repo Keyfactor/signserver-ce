@@ -8,6 +8,9 @@
         </session-timeout>
     </session-config>
     
+    <!-- block HTTP methods other than GET and POST -->
+    <!-- this shouldn't really be needed, since this is serving static
+         content, but better safe than sorry... -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>restricted methods</web-resource-name>

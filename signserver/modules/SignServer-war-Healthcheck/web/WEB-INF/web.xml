@@ -75,6 +75,7 @@
         <env-entry-value>${datasource.jndi-name-prefix}${datasource.jndi-name}</env-entry-value>
     </env-entry>
     
+    <!-- block HTTP methods other than GET and POST -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>restricted methods</web-resource-name>

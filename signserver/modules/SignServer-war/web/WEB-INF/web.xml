@@ -68,6 +68,7 @@
         <url-pattern>/sod</url-pattern>
     </servlet-mapping>
     
+    <!-- block HTTP methods other than GET and POST -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>restricted methods</web-resource-name>

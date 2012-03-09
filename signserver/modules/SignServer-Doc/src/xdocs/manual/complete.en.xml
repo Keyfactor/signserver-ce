@@ -1550,7 +1550,8 @@ New to version 3.0 is the Main WebService interface. It replaces the RMI-SSL int
 The WebService interface have two calls, the main one is 'process' which takes a collection of process request to a processable worker and returns a collection of process responses, the second one is getStatus that performs a health check of the node and returns an OK message if the node is healthy.
                     </p>
                     <p>
-The WebService stack used is JAX-WS and the actual process data is a externalized Base64 byte-arrays. The reason why the are externalized is to simply the integration towards non-Java platforms. See the source of the actual request to see how the data is structured.
+                        <b>Notice:</b>
+All though the interface uses web services the actual process data is base64 encoded byte arrays in a special binary format. You will have to lookup the Java source code for the exact format of the request and response data. An alternative is to instead use the much simpler <a href="#Web%20Server%20Interface">Web Server Interface</a>. 
                     </p>
                     <p>
 The getStatus call can be used to implement high-availability towards the client. The Java client API described in the next section have built in support for different high availability policies.

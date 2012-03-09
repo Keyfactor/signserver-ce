@@ -1,3 +1,15 @@
+SignServer 3.2.2
+----------------
+
+<TODO: Add when all issues are closed>
+
+Notice:
+ - The status property "INSYNC" is now called "TIMESOURCE0_INSYNC" applications 
+   relaying on the name of this property should be updated.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
+
+
 SignServer 3.2.1
 ----------------
 

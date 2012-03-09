@@ -2099,7 +2099,10 @@ $ sudo apt-get install apache2
 $ cd /etc/apache2/mods-enabled/
 $ sudo ln -s ../mods-available/proxy.load proxy.load
 $ sudo ln -s ../mods-available/proxy_http.load proxy_http.load
+$ sudo ln -s ../mods-available/proxy_ajp.load proxy_ajp.load
+$ sudo ln -s ../mods-available/proxy_balancer.load proxy_balancer.load
 $ sudo ln -s ../mods-available/rewrite.load rewrite.load
+$ sudo ln -s ../mods-available/ssl.load ssl.load
                 </source>
     
    

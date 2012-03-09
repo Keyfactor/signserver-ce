@@ -2627,10 +2627,6 @@ can sign any document-type and produces the output in Cryptographic Message Synt
 
                 <subsection name="Time-stamp Signer">
                     <p>
-Important, From 3.1 must the Time-Stamp Authority module be uploaded to the SignServer before it can be used. This is done with the command:
- 'bin/signserver.sh module add dist-server/tsa.mar'
-                    </p>
-                    <p>
 The time-stamp signer have the class path: org.signserver.server.signers.TimeStampSigner
                     </p>
 
@@ -2737,12 +2733,6 @@ Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, R
                 </subsection>
 
                 <subsection name="MRTD Signer">
-                    <p>
-Important, From 3.1 must the MRTD Signer module be uploaded to the SignServer before it can be used. This is done with the command:
-                    </p>
-                    <pre>
- 'bin/signserver.sh module add dist-server/mrtdsigner.mar'
-                    </pre>
                     <p>
 The MRTD signer have the class path: org.signserver.server.signers.MRTDSigner
                     </p>

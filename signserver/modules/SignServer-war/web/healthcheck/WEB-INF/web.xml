@@ -64,7 +64,7 @@
             <param-value>NOTOK</param-value>
             <description>
                 Uncomment this parameter if you want a static error message instead of 
-                one generatedÂ´by the HealthChecker.
+                one generated´by the HealthChecker.
             </description>
         </init-param> -->
     </servlet>
@@ -76,5 +76,18 @@
     <env-entry-name>DataSource</env-entry-name>
     <env-entry-value>@datasource.jndi-name-prefix@@datasource.jndi-name@</env-entry-value>
     <env-entry-type>java.lang.String</env-entry-type>
-  </env-entry>  
+  </env-entry>
+  
+  <!-- block HTTP methods other than GET and POST -->
+  <security-constraint>
+    <web-resource-collection>
+        <web-resource-name>restricted methods</web-resource-name>
+        <url-pattern>/*</url-pattern>
+        <http-method>PUT</http-method>
+        <http-method>DELETE</http-method>
+        <http-method>OPTIONS</http-method>
+        <http-method>TRACE</http-method>
+    </web-resource-collection>
+    <auth-constraint />
+  </security-constraint>
 </web-app>

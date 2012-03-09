@@ -101,6 +101,23 @@ public abstract class WebTestCase extends ModulesTestCase {
             }
         }
     }
+    
+    protected void assertStatusReturned(Map<String, String> fields, String method,
+    		int expected) {
+    	try {
+    		HttpURLConnection con = WebTestCase.send(getServletURL(), fields, method);
+    		
+    		int response = con.getResponseCode();
+    		String message = con.getResponseMessage();
+    		LOG.info("Returned " + response + " " + message);
+    		assertEquals("status response: " + message, expected, response);
+    		
+    		con.disconnect();
+    	} catch (IOException ex) {
+    		LOG.error("IOException", ex);
+    		fail(ex.getMessage());
+    	}
+    }
 
     protected static HttpURLConnection openConnection(String baseURL, String queryString)
             throws MalformedURLException, IOException {
@@ -113,16 +130,30 @@ public abstract class WebTestCase extends ModulesTestCase {
         final URL url = new URL(buff.toString());
         return (HttpURLConnection) url.openConnection();
     }
-
-    protected static HttpURLConnection sendGet(String baseURL,
-            final Map<String, String> fields)
-            throws IOException {
-        final StringBuilder buff = new StringBuilder();
+    
+    protected static HttpURLConnection getConnectionWithMethod(String baseURL,
+    		final Map<String, String> fields, String method) throws IOException {
+    	final StringBuilder buff = new StringBuilder();
         for (Entry<String, String> entry : fields.entrySet()) {
             buff.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), "UTF-8")).append("&");
         }
         final String body = buff.toString();
-        return openConnection(baseURL, body);
+        HttpURLConnection con = openConnection(baseURL, body);
+        
+        con.setRequestMethod(method);
+        
+        return con;
+    }
+
+    protected static HttpURLConnection sendGet(String baseURL,
+            final Map<String, String> fields)
+            throws IOException {
+        return getConnectionWithMethod(baseURL, fields, "GET");
+    }
+    
+    protected static HttpURLConnection send(String baseURL,
+    		final Map<String, String> fields, String method) throws IOException {
+    	return getConnectionWithMethod(baseURL, fields, method);
     }
 
     protected static HttpURLConnection sendPostFormUrlencoded(final String baseURL,

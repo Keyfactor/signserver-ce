@@ -102,6 +102,10 @@ public abstract class WebTestCase extends ModulesTestCase {
         }
     }
     
+    /**
+     * Tests that the returned HTTP status code is expected, use the specified HTTP method
+     * @see HttpURLConnection#setRequestMethod
+     */
     protected void assertStatusReturned(Map<String, String> fields, String method,
     		int expected) {
     	try {

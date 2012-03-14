@@ -25,15 +25,18 @@ import java.util.Map;
 
 public class HTTPMethodsTest extends WebTestCase {
 
+	private boolean useProcess = true;
+	
 	@Override
 	protected String getServletURL() {
-		return "http://localhost:8080/signserver/process";
+		return "http://localhost:8080/signserver" + (useProcess ? "/process" : "");
 	}
 
 	@Override
 	protected void setUp() throws Exception {
 		// set up dummy signer
 		addDummySigner1();
+		useProcess = true;
 	}
 
 	@Override
@@ -75,6 +78,16 @@ public class HTTPMethodsTest extends WebTestCase {
 		assertStatusReturned(fields, "OPTIONS", 403);
 	}
 
-	// we will not test HTTP TRACE, it is actually supposed to return the query (like a ping)
+	/**
+	 * Testing HTTP TRACE
+	 * using the URL /signserver here, since there seems to be some bug related to
+	 * servlet injection in JBoss 5 that mak
+	 */
+	public void test04HttpTRACE() {
+		Map<String, String> fields = new HashMap<String, String>();
+		useProcess = false;
+		
+		assertStatusReturnedNotEqual(fields, "TRACE", 200);
+	}
 
 }

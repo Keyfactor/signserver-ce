@@ -123,6 +123,28 @@ public abstract class WebTestCase extends ModulesTestCase {
     	}
     }
 
+    /**
+     * Tests that the returned HTTP status code is not the one passed to the method,
+     * use the specified HTTP method.
+     * @see HttpURLConnection#setRequestMethod
+     */
+    protected void assertStatusReturnedNotEqual(Map<String, String> fields, String method,
+    		int notExpected) {
+    	try {
+    		HttpURLConnection con = WebTestCase.send(getServletURL(), fields, method);
+    		
+    		int response = con.getResponseCode();
+    		String message = con.getResponseMessage();
+    		LOG.info("Returned " + response + " " + message);
+    		assertFalse("status response: " + message, notExpected == response);
+    		
+    		con.disconnect();
+    	} catch (IOException ex) {
+    		LOG.error("IOException", ex);
+    		fail(ex.getMessage());
+    	}
+    }
+    
     protected static HttpURLConnection openConnection(String baseURL, String queryString)
             throws MalformedURLException, IOException {
         final StringBuilder buff = new StringBuilder();

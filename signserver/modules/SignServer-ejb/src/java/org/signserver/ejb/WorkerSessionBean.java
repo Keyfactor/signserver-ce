@@ -164,6 +164,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         // Store values for request context and logging
         requestContext.put(RequestContext.WORKER_ID, Integer.valueOf(workerId));
         requestContext.put(RequestContext.TRANSACTION_ID, transactionID);
+        // set LOG_PROCESS to false, if the request is sucessful it will be overritten with "true" further down
+        logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
         logMap.put(IWorkerLogger.LOG_TIME, String.valueOf(startTime));
         logMap.put(IWorkerLogger.LOG_ID, transactionID);
         logMap.put(IWorkerLogger.LOG_WORKER_ID, String.valueOf(workerId));

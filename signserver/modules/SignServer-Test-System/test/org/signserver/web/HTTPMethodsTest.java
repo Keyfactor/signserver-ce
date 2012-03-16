@@ -81,7 +81,7 @@ public class HTTPMethodsTest extends WebTestCase {
 	/**
 	 * Testing HTTP TRACE
 	 * using the URL /signserver here, since there seems to be some bug related to
-	 * servlet injection in JBoss 5 that mak
+	 * servlet injection in JBoss 5 that makes TRACE success on the servlet unless a GET was issued first.
 	 */
 	public void test04HttpTRACE() {
 		Map<String, String> fields = new HashMap<String, String>();

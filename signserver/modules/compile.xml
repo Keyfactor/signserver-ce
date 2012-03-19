@@ -93,7 +93,7 @@ includemodulesinbuild               = ${includemodulesinbuild}
         <property file="lib/nblibraries.properties"/>
         <mkdir dir="${apidoc}" />
         <javadoc failonerror="true" useexternalfile="true" packagenames="org.signserver.*" maxmemory="256m" destdir="${apidoc}"
-        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/pdfsigner/itext:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2011 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
+        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/pdfsigner/itext:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2012 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
 
                 <!-- Include all java files in the modules folder but excluding the tests -->
                 <fileset dir="modules" includes="**/*.java" excludes="*/test/**/*.java"/>

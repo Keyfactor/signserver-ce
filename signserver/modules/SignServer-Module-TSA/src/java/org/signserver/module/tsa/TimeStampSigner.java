@@ -59,6 +59,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.server.ITimeSource;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -418,6 +419,8 @@ public class TimeStampSigner extends BaseSigner {
             if (timeStampResponse.getStatus() == PKIStatus.GRANTED) {
                 requestContext.put(RequestContext.WORKER_FULFILLED_REQUEST,
                         true);
+            } else {
+            	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
             }
 
         } catch (InvalidAlgorithmParameterException e) {

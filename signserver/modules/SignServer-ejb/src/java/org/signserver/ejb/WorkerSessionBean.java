@@ -182,6 +182,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     new NoSuchWorkerException(String.valueOf(workerId));
 
             logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
+            logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
             try {
                 AUDITLOG.log(logMap);
             } catch (SystemLoggerException ex2) {
@@ -206,8 +207,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 final IllegalRequestException ex = new IllegalRequestException(
                         "Worker exists but isn't a processable: " + workerId);
                 // auditLog(startTime, workerId, false, requestContext, ex);
-                logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
-                workerLogger.log(logMap);
+                logException(ex, logMap, workerLogger);
                 throw ex;
             }
             final IProcessable processable = (IProcessable) worker;
@@ -231,8 +231,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         + ex.getMessage(), ex);
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
                         String.valueOf(false));
-                logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
-                workerLogger.log(logMap);
+                logException(ex, logMap, workerLogger);
                 throw exception;
             } catch (SignServerException ex) {
                 final SignServerException exception =
@@ -240,8 +239,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         + ex.getMessage(), ex);
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
                         String.valueOf(false));
-                logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
-                workerLogger.log(logMap);
+                logException(ex, logMap, workerLogger);
                 throw exception;
             }
 
@@ -267,8 +265,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         new CryptoTokenOfflineException("Error Signer : "
                         + workerId
                         + " is disabled and cannot perform any signature operations");
-                logMap.put(IWorkerLogger.LOG_EXCEPTION, exception.getMessage());
-                workerLogger.log(logMap);
+                logException(exception, logMap, workerLogger);
                 throw exception;
             }
 
@@ -284,8 +281,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             } catch (CryptoTokenOfflineException ex) {
                 final CryptoTokenOfflineException exception =
                         new CryptoTokenOfflineException(ex);
-                logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
-                workerLogger.log(logMap);
+                logException(exception, logMap, workerLogger);
                 throw exception;
             }
 
@@ -304,8 +300,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         "SignServerException calling signer with id " + workerId
                         + " : " + e.getMessage(), e);
                 LOG.error(exception.getMessage(), exception);
-                logMap.put(IWorkerLogger.LOG_EXCEPTION, exception.getMessage());
-                workerLogger.log(logMap);
+                logException(exception, logMap, workerLogger);
                 throw exception;
             } catch (IllegalRequestException ex) {
                 final IllegalRequestException exception =
@@ -314,8 +309,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 					LOG.info("Illegal request calling signer with id " + workerId
                         + " : " + ex.getMessage());
 				}
-                logMap.put(IWorkerLogger.LOG_EXCEPTION, exception.getMessage());
-                workerLogger.log(logMap);
+				logException(exception, logMap, workerLogger);
                 throw exception;
             }
 
@@ -341,13 +335,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     final SignServerException exception =
                             new SignServerException("Accounter failed: "
                             + ex.getMessage(), ex);
-                    logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
-                    workerLogger.log(logMap);
+                    logException(ex, logMap, workerLogger);
                     throw exception;
                 }
                 if (!purchased) {
                     final String error = "Purchase not granted";
                     logMap.put(IWorkerLogger.LOG_EXCEPTION, error);
+                    logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
                     workerLogger.log(logMap);
                     throw new NotGrantedException(error);
                 }
@@ -423,7 +417,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
 
             // Log
-            logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(true));
+            String logVal = logMap.get(IWorkerLogger.LOG_PROCESS_SUCCESS);
+            // log process status true if not already set by the worker...
+            if (logVal == null) {
+            	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(true));
+            }
             workerLogger.log(logMap);
 
             LOG.debug("<process");
@@ -437,6 +435,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
     }
 
+    private void logException(Exception ex, Map<String, String> logMap,
+    		IWorkerLogger workerLogger) throws WorkerLoggerException {
+    	logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
+    	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
+    	workerLogger.log(logMap);
+    }
+    
     /**
      * Verify the certificate validity times, the PrivateKeyUsagePeriod and
      * that the minremaining validity is ok.

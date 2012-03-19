@@ -1,3 +1,33 @@
+SignServer 3.2.2, 2012-03-19
+----------------------------
+
+** Bug
+
+    [DSS-439] - Sample code using web services should use HTTPS
+    [DSS-444] - Build failure on W7 X64
+
+** Improvement
+    
+    [DSS-275] - Restrict http methods other than get and post
+    [DSS-291] - Use URL to override workerName HTTP variables
+    [DSS-335] - Worker (not timed service) offering signer's status reports
+    [DSS-341] - Certificate serial number should be displayed in hex in AdminGUI
+    [DSS-347] - Display hostname i title bar of AdminGUI window
+    [DSS-399] - Support for HTTPS in timestamp client
+    [DSS-434] - Update how-to for Apache Proxy to use ajp
+    [DSS-447] - Document the meanings of the different PDF permissions
+    [DSS-451] - Log PROCESS_SUCCESS: false when requests fail
+    [DSS-458] - Add a worker logger that does not log anything
+
+** New Feature
+    [DSS-208] - Repository holding local non-persistent status information
+    [DSS-209] - TimeSource that checks the status from the local status service
+    [DSS-213] - Dispatching timestamp requests to different timestamp units
+
+** Task
+    [DSS-402] - Deprecate clusterclassloader
+
+
 SignServer 3.2.1, 2011-12-19
 ----------------------------
 

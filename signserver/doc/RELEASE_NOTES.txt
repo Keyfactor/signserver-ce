@@ -20,7 +20,6 @@ Major new features and improvements:
    units/signers
  - Support for accessing workers using the /worker/* URL pattern gives easier 
    filtering with a proxy
-   URL pattern
  - Signer's status report can now be offered by a worker and not just a timed 
    service
  - The log field PROCESS_SUCCESS can now have the value "false" if a request 

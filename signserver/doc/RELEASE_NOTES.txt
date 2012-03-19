@@ -6,9 +6,10 @@ SignServer 3.2.2
 Notice:
  - The status property "INSYNC" is now called "TIMESOURCE0_INSYNC" applications 
    relaying on the name of this property should be updated.
+ - The time stamp signer will now log PROCESS_SUCESS with the value false
+   in case the response has a status other than GRANTED.
 
 Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
-
 
 SignServer 3.2.1
 ----------------

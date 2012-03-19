@@ -13,9 +13,35 @@ Notice:
 SignServer 3.2.2
 ----------------
 
+Major new features and improvements:
+ - Support for denying timestamp requests unless the time source is considered
+   in sync
+ - Support for dispatching timestamp requests to different timestamp 
+   units/signers
+ - Support for accessing workers using the /worker/* URL pattern gives easier 
+   filtering with a proxy
+   URL pattern
+ - Signer's status report can now be offered by a worker and not just a timed 
+   service
+ - The log field PROCESS_SUCCESS can now have the value "false" if a request 
+   failed
+ - Hostname displayed in title bar of AdminGUI simplifies when managing multiple 
+   servers
+
+Bug fixes:
+ - Build failure on W7 X64
+ - Sample code using web services should use HTTPS
+
 Notice:
- - The time stamp signer will now log PROCESS_SUCESS with the value false
+ - Support for the cluster classloader has been deprecated and support for it 
+   will be dropped in a future release.
+ - The status property "INSYNC" is now called "TIMESOURCE0_INSYNC". Applications 
+   relaying on the name of this property should be updated.
+ - The time stamp signer will now log PROCESS_SUCCESS with the value false
    in case the response has a status other than GRANTED.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
+
 
 SignServer 3.2.1
 ----------------

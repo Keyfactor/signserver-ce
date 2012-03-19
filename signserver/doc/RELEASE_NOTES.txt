@@ -10,6 +10,12 @@ Notice:
    for how to add custom Admin or Client CLI commands.
  - The Admin CLI now ignores the "-host" argument if present.
 
+SignServer 3.2.2
+----------------
+
+Notice:
+ - The time stamp signer will now log PROCESS_SUCESS with the value false
+   in case the response has a status other than GRANTED.
 
 SignServer 3.2.1
 ----------------

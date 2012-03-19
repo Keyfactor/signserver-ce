@@ -2964,17 +2964,83 @@ True if PDF documents containing multiple indirect objects with the same name sh
 Reject signing of the document if any of the permissions in the comma separated list would be in the document.
                                         </p>
                                         <p>
-Available permissions:
-                                            <ul>
-                                                <li>ALLOW_PRINTING</li>
-                                                <li>ALLOW_MODIFY_CONTENTS</li>
-                                                <li>ALLOW_COPY</li>
-                                                <li>ALLOW_MODIFY_ANNOTATIONS</li>
-                                                <li>ALLOW_FILL_IN</li>
-                                                <li>ALLOW_SCREENREADERS</li>
-                                                <li>ALLOW_ASSEMBLY</li>
-                                                <li>ALLOW_DEGRADED_PRINTING</li>
-                                            </ul>
+Available permissions (from the PDF reference, version 1.6, page 99, TABLE 3.20):
+											<table cellspacing="1" cellpadding="4" class="ForrestTable">
+												<tr>
+													<td>ALLOW_PRINTING</td>
+													<td>
+Print the document to a representation
+from which a faithful digital copy of the
+PDF content could be generated. When
+this is not set (and ALLOW_DEGRADED_PRINTING is set), printing
+is limited to a low-level representation
+of the appearance, possibly of
+degraded quality.
+													</td>
+												</tr>
+												<tr>
+													<td>ALLOW_MODIFY_CONTENTS</td>
+													<td>
+Modify the contents of the document by
+operations other than those controlled
+by ALLOW_MODIFY_ANNOTATIONS, ALLOW_FILL_IN, and ALLOW_SCREENREADERS.
+													
+													</td>
+												</tr>
+												<tr>
+													<td>ALLOW_COPY</td>
+													<td>
+Copy or otherwise extract text and
+graphics from the document, including
+extracting text and graphics (in support
+of accessibility to users with disabilities
+or for other purposes).
+													</td>
+												</tr>
+												<tr>
+													<td>ALLOW_MODIFY_ANNOTATIONS</td>
+													<td>
+Add or modify text annotations, fill in
+interactive form fields, and, if ALLOW_MODIFY_CONTENTS is
+also set, create or modify interactive
+form fields (including signature fields).
+													</td>
+												</tr>
+												<tr>
+													<td>ALLOW_FILL_IN</td>
+													<td>
+Fill in existing interactive form fields
+(including signature fields), even if ALLOW_MODIFY_ANNOTATIONS
+is not set.
+													</td>
+												</tr>
+												<tr>
+													<td>ALLOW_SCREENREADERS</td>
+													<td>
+Extract text and graphics (in support of
+accessibility to users with disabilities or
+for other purposes).
+													</td>
+												</tr>
+												<tr>
+													<td>ALLOW_ASSEMBLY</td>
+													<td>
+Assemble the document (insert, rotate,
+or delete pages and create bookmarks
+or thumbnail images), even if ALLOW_MODIFY_CONTENTS is
+not set.
+
+													</td>
+												</tr>
+												<tr>
+													<td>ALLOW_DEGRADED_PRINTING</td>
+													<td>
+Print the document (possibly not at the
+high-est quality level, depending on
+whether ALLOW_PRINTING is also set).
+													</td>
+												</tr>
+											</table>
                                         </p>
                                         <p>
 Default: unset/empty (no permissions are rejected)

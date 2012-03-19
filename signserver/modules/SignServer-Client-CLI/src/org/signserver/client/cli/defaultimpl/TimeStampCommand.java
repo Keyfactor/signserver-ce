@@ -188,7 +188,8 @@ public class TimeStampCommand extends AbstractCommand {
         options.addOption(inreq);
         options.addOption(optionSleep);
         options.addOption(certReqOption);
-        
+        options.addOption(reqPolicyOption);
+       
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             options.addOption(option);
         }

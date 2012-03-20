@@ -30,6 +30,7 @@ Major new features and improvements:
 Bug fixes:
  - Build failure on W7 X64
  - Sample code using web services should use HTTPS
+ - URL for documentation only working with JBoss 4 
 
 Notice:
  - Support for the cluster classloader has been deprecated and support for it 

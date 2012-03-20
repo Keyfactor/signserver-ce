@@ -5,6 +5,7 @@ SignServer 3.2.2, 2012-03-20
 
     [DSS-439] - Sample code using web services should use HTTPS
     [DSS-444] - Build failure on W7 X64
+    [DSS-462] - URL for documentation only working with JBoss 4
 
 ** Improvement
     

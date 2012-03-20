@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-web>
-  <context-root>/doc</context-root>
+  <context-root>/signserver/doc</context-root>
 </jboss-web>

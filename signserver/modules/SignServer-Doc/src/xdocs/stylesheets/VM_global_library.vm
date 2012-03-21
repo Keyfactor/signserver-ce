@@ -202,6 +202,7 @@
     <head>
       <META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
         <title>$project.getChild("title").getText() - $root.getChild("properties").getChild("title").getText()</title>
+        <link rel="shortcut icon" href="$relativePath/images/pk-favIcon.png">
         <link type="text/css" href="$relativePath/page.css" rel="stylesheet">
   #set ($authors = $root.getChild("properties").getChildren("author"))
   #foreach ( $au in $authors )

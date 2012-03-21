@@ -52,7 +52,16 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         if (log.isTraceEnabled()) {
             log.trace(">activateSigner");
         }
-        getCryptoToken().activate(authenticationCode);
+        
+        ICryptoToken token = getCryptoToken();
+        
+        if (token == null) {
+        	if (log.isDebugEnabled()) {
+        		log.debug("Crypto token not found");
+        	}
+        	return;
+        }
+        token.activate(authenticationCode);
 
         // Check if certificate matches key
         Certificate certificate = getSigningCertificate();
@@ -78,6 +87,15 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         if (log.isTraceEnabled()) {
             log.trace(">deactivateSigner");
         }
+        
+        ICryptoToken token = getCryptoToken();
+        if (token == null) {
+        	if (log.isDebugEnabled()) {
+        		log.debug("Crypto token not found");
+        	}
+        	return false;
+        }
+
         boolean ret = getCryptoToken().deactivate();
         if (log.isTraceEnabled()) {
             log.trace("<deactivateSigner");

@@ -83,8 +83,14 @@ public class ActivateCryptoTokenCommand extends AbstractAdminCommand {
             this.getOutputStream().println(TRYING + workerid + "\n");
             this.getWorkerSession().activateSigner(workerid, authCode);
 
-            boolean active = ((SignerStatus) getWorkerSession().getStatus(workerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE;
+            boolean active = false;
             
+            if (getWorkerSession().getStatus(workerid) instanceof SignerStatus) {
+            	active = ((SignerStatus) getWorkerSession().getStatus(workerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE;
+            } else {
+            	this.getOutputStream().println("No token available");
+            }
+
             if (active) {
                 this.getOutputStream().println(SUCCESS);
             } else {

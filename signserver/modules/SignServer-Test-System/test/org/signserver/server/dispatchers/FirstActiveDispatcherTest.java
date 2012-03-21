@@ -14,6 +14,8 @@ package org.signserver.server.dispatchers;
 
 import java.io.File;
 import java.security.cert.X509Certificate;
+
+import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
@@ -35,7 +37,15 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     private static final int WORKERID_1 = 5681;
     private static final int WORKERID_2 = 5682;
     private static final int WORKERID_3 = 5683;
+    
+    /**
+     * Dummy authentication code used to test activation of a dispatcher worker
+     */
+    private static final String DUMMY_AUTH_CODE = "1234";
 
+    /** Logger for this class */
+    private static Logger LOG = Logger.getLogger(FirstActiveDispatcherTest.class);
+    
     @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
@@ -130,7 +140,35 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
         assertTrue("Response from signer 81",
             cert.getSubjectDN().getName().contains("testdocumentsigner81"));
     }
+    
+    /**
+     * Test that trying to activate the dispatcher worker doesn't throw an exception (DSS-380)
+     * This will actually not activate any crypto token
+     * 
+     * @throws Exception
+     */
+    public void test02Activate() throws Exception {
+    	try {
+    		workerSession.activateSigner(WORKERID_DISPATCHER, DUMMY_AUTH_CODE);
+    	} catch (Exception e) {
+    		LOG.error("Exception thrown", e);
+    		fail("Failed to activate the dispatcher");
+    	}
+    }
 
+    /**
+     * Test that trying to deactivate the dispatcher doesn't throw an exception (DSS-380)
+     * @throws Exception
+     */
+    public void test03Deactivate() throws Exception {
+    	try {
+    		workerSession.deactivateSigner(WORKERID_DISPATCHER);
+    	} catch (Exception e) {
+    		LOG.error("Exception thrown", e);
+    		fail("Failed to deactive the dispatcher");
+    	}
+    }
+    
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID_DISPATCHER);
         removeWorker(WORKERID_1);

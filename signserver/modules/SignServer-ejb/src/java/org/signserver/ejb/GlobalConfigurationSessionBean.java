@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import org.signserver.server.config.entities.GlobalConfigurationDataBean;
+import org.signserver.server.config.entities.GlobalConfigurationDataService;
+import org.signserver.server.config.entities.WorkerConfigDataService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;

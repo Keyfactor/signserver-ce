@@ -20,7 +20,7 @@ import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.BaseProcessable;
-import org.signserver.server.KeyUsageCounter;
+import org.signserver.server.entities.KeyUsageCounter;
 
 /**
  * Base class that all signers can extend to cover basic in common

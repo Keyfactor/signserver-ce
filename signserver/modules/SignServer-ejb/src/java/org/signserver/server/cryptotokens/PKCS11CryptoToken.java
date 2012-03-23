@@ -47,7 +47,7 @@ import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.WorkerConfig;
 import org.ejbca.util.CertTools;
 import org.signserver.common.KeyTestResult;
-import org.signserver.server.KeyUsageCounter;
+import org.signserver.server.entities.KeyUsageCounter;
 
 /**
  * Class used to connect to a PKCS11 HSM.

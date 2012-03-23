@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.server.entities;
 
 import java.io.Serializable;
 import java.security.MessageDigest;

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import org.signserver.server.config.entities.WorkerConfigDataService;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -77,7 +78,7 @@ import org.signserver.server.BaseProcessable;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.IProcessable;
 import org.signserver.server.IWorker;
-import org.signserver.server.KeyUsageCounter;
+import org.signserver.server.entities.KeyUsageCounter;
 import org.signserver.server.NotGrantedException;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerFactory;
@@ -85,8 +86,8 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
-import org.signserver.server.archive.olddbarchiver.ArchiveDataBean;
-import org.signserver.server.archive.olddbarchiver.ArchiveDataService;
+import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean;
+import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.SystemLoggerException;

@@ -167,7 +167,7 @@ database.password                   = ${database.password}
         <fail message="SignServer needs to be built first. Run 'ant build'." unless="signserver-ejb.jar.available"/>
     </target>
     
-    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -process-modules,  -configure-SignServer-ejb.jar">
+    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -preprocess-persistence, -process-modules">
         <!-- Build the ear file from the signserver.ear folder -->
         <ear destfile="${ear.dist.file}" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
             <fileset dir="${signserver.ear.dir}">
@@ -180,7 +180,7 @@ Configured ear file available at: ${ear.dist.file}
         </echo>
     </target>
     
-    <target name="-process-modules" depends="-init-configure">
+    <target name="-process-modules" depends="-init-configure, -preprocess-persistence">
         <macrodef name="postprocess-jar" description="Unzips jars and expandsproperties in the chosen files and zips the jar again">
             <attribute name="src"/>
             <attribute name="destfile"/>
@@ -192,7 +192,7 @@ Configured ear file available at: ${ear.dist.file}
                 <mkdir dir="@{tempdir}"/>
                 <delete dir="@{tempdir}.2"/>
                 <mkdir dir="@{tempdir}.2"/>
-
+                
                 <unzip src="@{src}" dest="@{tempdir}.2">
                     <patternset>
                         <include name="@{replace-includes}"/>
@@ -262,15 +262,8 @@ Libraries to include:
     <target name="-postprocess-file">
         <echo level="verbose">Post processing file "${_acfa2.src}" with includes "${_acfa2.includes}"</echo>
         <echo>module.type: ${_acfa.module.type}</echo>
-        <condition property="_acfa2.destdir" value="lib/">
-            <equals arg1="${_acfa.module.type}" arg2="lib"/>
-        </condition>
-        <condition property="_acfa2.destdir" value="">
-            <not>
-                <equals arg1="${_acfa.module.type}" arg2="lib"/>
-            </not>
-        </condition>
-        <postprocess-jar src="lib/${_acfa2.src}" destfile="${signserver.ear.dir}/${_acfa2.destdir}${_acfa2.src}" tempdir="${tmp}/${_acfa.calledname}-${_acfa2.src}.dir" replace-includes="${_acfa2.includes}"/>
+        <property name="_acfa2.dest" value=""/>
+        <postprocess-jar src="lib/${_acfa2.src}" destfile="${signserver.ear.dir}/${_acfa2.dest}${_acfa2.src}" tempdir="${tmp}/${_acfa.calledname}-${_acfa2.src}.dir" replace-includes="${_acfa2.includes}"/>
     </target>
         
     <target name="-init-configure">
@@ -288,11 +281,7 @@ Configuring EAR...
         </copy>
     </target>
     
-    <target name="-preprocess-persistence" depends="-init-configure">
-        <property name="persistence.xml" value="${tmp}/persistence.xml"/>
-        <property name="entity-mappings.xml" value="${tmp}/entity-mappings.xml"/>
-        
-        <!-- Persistence -->
+    <target name="-preprocess-persistence">
         <echo message="Database type:      ${database.name}"/>
         <echo message="DataSource mapping: ${datasource.jndi-name-prefix}${datasource.jndi-name}"/>
         <condition property="hibernate.dialect" value="org.hibernate.dialect.DB2Dialect">
@@ -326,32 +315,8 @@ Configuring EAR...
             <equals arg1="${database.name}" arg2="sybase"/>
         </condition>
         <fail unless="hibernate.dialect" message="Unsupported database type '${database.name}'."/>
-        <copy file="${res}/appserver/persistence.xml" tofile="${persistence.xml}" failonerror="true" overwrite="true">
-            <filterchain>
-                <expandproperties/>
-            </filterchain>
-        </copy>
-        
-        <!-- Entity mappings -->
-        <copy file="${res}/deploy/ejb/persistence-mappings/${database.name}/entity-mappings.xml" tofile="${entity-mappings.xml}"/>
     </target>
-    
-    <target name="-configure-SignServer-ejb.jar" depends="-init-configure, -preprocess-persistence">
-        <property name="SignServer-ejb.jar.dir" value="${tmp}/SignServer-ejb.jar"/>
-        <delete dir="${SignServer-ejb.jar.dir}"/>
-        <mkdir dir="${SignServer-ejb.jar.dir}"/>
-        <mkdir dir="${SignServer-ejb.jar.dir}/META-INF"/>
-    
-        <!-- Update SignServer-ejb.jar -->
-        <zip destfile="${signserver.ear.dir}/SignServer-ejb.jar" duplicate="fail">
-            <zipfileset src="lib/SignServer-ejb.jar">
-                <exclude name="META-INF/persistence.xml"/>
-                <exclude name="META-INF/entity-mappings.xml"/>
-            </zipfileset>
-            <zipfileset file="${persistence.xml}" prefix="META-INF"/>
-            <zipfileset file="${entity-mappings.xml}" prefix="META-INF"/>
-        </zip>
-    </target>    
+
     
     <!-- =================================================================== -->
     <!-- Deploy target                                                       -->

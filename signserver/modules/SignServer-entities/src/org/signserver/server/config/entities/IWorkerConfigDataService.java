@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.server.config.entities;
 
 import org.signserver.common.WorkerConfig;
 

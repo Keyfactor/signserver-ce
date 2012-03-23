@@ -10,24 +10,17 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.ejb;
+package org.signserver.server.config.entities;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.Map;
-
 import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
-import org.signserver.server.log.ISystemLogger;
-import org.signserver.server.IWorkerConfigDataService;
-import org.signserver.server.log.SystemLoggerException;
-import org.signserver.server.log.SystemLoggerFactory;
 
 /**
  * Entity Service class that acts as migration layer for
@@ -43,7 +36,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     private static final Logger LOG = Logger.getLogger(WorkerConfigDataService.class);
     
     /** Audit logger. */
-    private static final ISystemLogger AUDITLOG = SystemLoggerFactory.getInstance().getLogger(GlobalConfigurationSessionBean.class);
+//    private static final ISystemLogger AUDITLOG = SystemLoggerFactory.getInstance().getLogger(WorkerConfigDataService.class);
     
     private EntityManager em;
 
@@ -121,7 +114,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      */
     public void setWorkerConfig(int workerId, WorkerConfig signconf) {
         setWorkerConfig(workerId, signconf, null);
-        auditLog(workerId, "setWorkerConfig");
+//        auditLog(workerId, "setWorkerConfig");
     }
 
     /**
@@ -173,6 +166,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     /* (non-Javadoc)
      * @see org.signserver.ejb.IWorkerConfigDataService#getWorkerProperties(int)
      */
+    @Override
     public WorkerConfig getWorkerProperties(int workerId) {
 
         WorkerConfig workerConfig = getWorkerConfig(workerId);
@@ -184,19 +178,19 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         return workerConfig;
     }
 
-    private void auditLog(final int workerId, final String operation) {
-        try {
-            final Map<String, String> logMap = new HashMap<String, String>();
-
-            logMap.put(ISystemLogger.LOG_CLASS_NAME,
-                    WorkerConfigDataService.class.getSimpleName());
-            logMap.put(ISystemLogger.LOG_WORKER_ID, String.valueOf(workerId));
-            logMap.put(IWorkerConfigDataService.LOG_OPERATION,
-                    operation);
-            AUDITLOG.log(logMap);
-        } catch (SystemLoggerException ex) {
-            LOG.error("Audit log failure", ex);
-            throw new EJBException("Audit log failure", ex);
-        }
-    }
+//    private void auditLog(final int workerId, final String operation) {
+//        try {
+//            final Map<String, String> logMap = new HashMap<String, String>();
+//
+//            logMap.put(ISystemLogger.LOG_CLASS_NAME,
+//                    WorkerConfigDataService.class.getSimpleName());
+//            logMap.put(ISystemLogger.LOG_WORKER_ID, String.valueOf(workerId));
+//            logMap.put(IWorkerConfigDataService.LOG_OPERATION,
+//                    operation);
+//            AUDITLOG.log(logMap);
+//        } catch (SystemLoggerException ex) {
+//            LOG.error("Audit log failure", ex);
+//            throw new EJBException("Audit log failure", ex);
+//        }
+//    }
 }

@@ -10,10 +10,9 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.ejb;
+package org.signserver.server.config.entities;
 
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -25,7 +24,7 @@ import javax.persistence.Query;
  *
  * @version $Id$
  */
-class GlobalConfigurationDataService {
+public class GlobalConfigurationDataService {
 
     private EntityManager em;
 

@@ -20,6 +20,7 @@ import org.signserver.server.SignServerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
+import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 
 /**
  * Archiver only accepting responses and currently only supports Archivables of

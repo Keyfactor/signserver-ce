@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import org.signserver.server.config.entities.WorkerConfigDataService;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,7 +45,7 @@ import org.signserver.common.ServiceConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.server.IWorker;
-import org.signserver.server.IWorkerConfigDataService;
+import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerFactory;

@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.archive.olddbarchiver;
+package org.signserver.server.archive.olddbarchiver.entities;
 
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;

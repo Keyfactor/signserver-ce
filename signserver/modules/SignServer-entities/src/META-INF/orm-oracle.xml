@@ -5,8 +5,8 @@
   version="1.0">
 
     <!-- Table had to long name -->
-    <package>rg.signserver.server.config.entities.GlobalConfigurationDataBean</package>
-    <entity class="org.signserver.ejb.GlobalConfigurationDataBean"
+    <package>org.signserver.server.config.entities</package>
+    <entity class="org.signserver.server.config.entities.GlobalConfigurationDataBean"
         name="GlobalConfigurationDataBean">
         <table name="GLOBALCONFIG"/>
     </entity>

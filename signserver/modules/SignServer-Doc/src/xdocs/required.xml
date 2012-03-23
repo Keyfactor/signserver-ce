@@ -32,7 +32,7 @@
             <a href="http://www.jboss.org/">JBoss web site</a>
             </p>
             <p>
-            For JBoss application server the recommended version is 4.2.3.GA.
+            For JBoss application server the recommended version is 5.1.0.GA.
             </p>
         </subsubsection>
         <subsubsection name="GlassFish Server">

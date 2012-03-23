@@ -456,7 +456,7 @@ public class RenewalWorker extends BaseSigner {
         }
 
         final String truststorePass = config.getProperty("TRUSTSTOREPASSWORD");
-        if (truststorePass == null) {
+        if (truststorePass == null && !TRUSTSTORE_TYPE_PEM.equals(truststoreType)) {
             throw new IllegalArgumentException(
                     "Missing TRUSTSTOREPASSWORD property");
         }

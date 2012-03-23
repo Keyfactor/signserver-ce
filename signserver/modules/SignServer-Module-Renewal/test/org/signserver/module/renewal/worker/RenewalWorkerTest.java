@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.renewal.worker;
 
+import java.io.File;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -483,6 +484,23 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
         doRenewalFirstTime();
     }
+    
+    /**
+     * Tests renewal using a PEM file (no trustore password should be used)
+     * @throws Exception
+     */
+    public void test09truststoreTypePEM() throws Exception {
+    	final String truststoreType = "PKCS12";
+    	
+    	// Setup workers
+    	addRenewalWorkerWithPEM(6101, "RenewalWorker_6101");
+    	addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
+    	
+    	// Setup EJBCA end entitity
+    	mockSetupEjbcaSearchResult();
+    	
+    	doRenewalFirstTime();
+    }
 
     private void addWorkers() throws Exception {
         addRenewalWorker(6101, "RenewalWorker_6101");
@@ -498,6 +516,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         throws Exception {
         addRenewalWorker(signerId, signerName, "PKCS12");
     }
+
     protected void addRenewalWorker(final int signerId, final String signerName, 
             final String truststoreType) throws Exception {
 
@@ -535,6 +554,37 @@ public class RenewalWorkerTest extends AbstractTestCase {
         getWorkerSession().reloadConfiguration(signerId);
     }
 
+    private void addRenewalWorkerWithPEM(final int signerId, final String signerName)
+    	throws Exception {
+    	
+    	// Create keystore TODO: Don't create an empty one
+        final String keystorePath = newTempFile().getAbsolutePath();
+        final String keystorePassword = "foo123";
+        createEmptyKeystore("PKCS12", keystorePath, keystorePassword);
+    	
+    	final String truststorePath = System.getenv("SIGNSERVER_HOME") + File.separator +
+    			"res" + File.separator + "test" + File.separator + "renewal.pem";
+    	
+    	getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                "WORKER" + signerId + ".CLASSPATH",
+                "org.signserver.module.renewal.worker.RenewalWorker");
+            getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",
+                "org.signserver.server.cryptotokens.P12CryptoToken");
+
+        
+        getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
+        getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
+        getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH", keystorePath);
+        getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPASSWORD", keystorePassword);
+        getWorkerSession().setWorkerProperty(signerId, "TRUSTSTOREPATH", truststorePath);
+        getWorkerSession().setWorkerProperty(signerId, "TRUSTSTORETYPE", "PEM");
+        getWorkerSession().setWorkerProperty(signerId, "EJBCAWSURL",
+                EJBCAWSURL_PREFIX);
+
+        getWorkerSession().reloadConfiguration(signerId);
+    }
+    
     private void mockSetupEjbcaSearchResult() {
         // Setup EJBCA end entity
         final UserDataVOWS user1 = new UserDataVOWS();

@@ -3882,7 +3882,7 @@ After uploading the new certificate the value of NEXTCERTSIGNKEY can be moved to
 DEFAULTKEY. (optional)
                         </p>
                         <p>
-<b>PIN</b> =   Authentication code for activation. (Required)
+<b>PIN</b> =   Authentication code for activation. (Only required for auth-activation, otherwise the activatecryptotoken CLI command can be used)
                         </p>
                         <p>
 <b>SHAREDLIBRARY</b> =   Full path to the library containing the PKCS11 interface. (Required)

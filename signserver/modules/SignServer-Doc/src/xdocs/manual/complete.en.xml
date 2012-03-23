@@ -4076,6 +4076,7 @@ The module descriptor can contain:
                         <li>postprocess.files: Optionally. Comma separated list of property name prefixes for each file to postprocess (example: postprocess.file1)</li>
                         <li>postprocess.file1.src: Only if postprocess.files specified. Path of file to postprocess (relative to SIGNSERVER_HOME/lib/, example: SignServer-ejb-SignServerWS.jar)</li>
                         <li>postprocess.file1.includes: Only if postprocess.files. Ant includes pattern with files in the jar to postprocess (example: META-INF/ejb-jar.xml)</li>
+                        <li>postprocess.file1.dest: Only if postprocess.files specified. Location to put the resulting JAR in the final EAR. Default "" (the root) but should be set to "lib/" for library JARs.</li>
                     </ul>
                     Example (mods-available/40_module.pdfsigner.properties):
                 </p>

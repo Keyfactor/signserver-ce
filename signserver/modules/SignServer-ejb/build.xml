@@ -38,7 +38,7 @@
             <entry key="to.lib" value="${libsToLib},${modsToLib}"/>
             <entry key="to.root" value="lib/${distJar}"/>
             <entry key="postprocess.files" value="postprocess.file1"/>
-            <entry key="postprocess.file1.src" value="SignServer-core-entities.jar"/>
+            <entry key="postprocess.file1.src" value="SignServer-Entities.jar"/>
             <entry key="postprocess.file1.includes" value="META-INF/persistence.xml"/>
             <entry key="postprocess.file1.dest" value="lib/"/>
         </propertyfile>

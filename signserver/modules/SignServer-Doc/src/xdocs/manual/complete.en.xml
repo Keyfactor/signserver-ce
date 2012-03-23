@@ -332,10 +332,10 @@ unstable version checkout from the Subversion (SVN)
                 <subsection name="3. Set environment variables">
                     <subsubsection name="APPSRV_HOME">
                         <p>
-Set APPSRV_HOME to point to your application server installation.
+Set APPSRV_HOME to point to your application server installation (<code>/opt/jboss</code> could be a symbolic link).
                         </p>
                         <source>
-export APPSRV_HOME=/opt/jboss-4.2.3.GA
+export APPSRV_HOME=/opt/jboss
                         </source>
                     </subsubsection>
                     <subsubsection name="ANT_OPTS">

@@ -5,7 +5,7 @@
   version="1.0">
 
     <!-- Table had to long name -->
-    <package>org.signserver.ejb</package>
+    <package>rg.signserver.server.config.entities.GlobalConfigurationDataBean</package>
     <entity class="org.signserver.ejb.GlobalConfigurationDataBean"
         name="GlobalConfigurationDataBean">
         <table name="GLOBALCONFIG"/>

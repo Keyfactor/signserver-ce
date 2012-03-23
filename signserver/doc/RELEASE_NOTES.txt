@@ -1,6 +1,9 @@
 SignServer 3.3.0
 ----------------
 
+Major changes:
+ - Drop support for JBoss 4.2.x.
+
 TODO
 
 

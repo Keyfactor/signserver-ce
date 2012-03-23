@@ -85,6 +85,14 @@
                 <id>jar</id>
             </reference>
             <reference>
+                <foreign-project>SignServer-Module-Groupkeyservice</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
                 <foreign-project>SignServer-Module-MRTDSODSigner</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
@@ -142,6 +150,14 @@
             </reference>
             <reference>
                 <foreign-project>SignServer-Test-Utils</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-core-entities</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>

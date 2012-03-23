@@ -662,6 +662,13 @@ is divided into following sections:
         </antcall>
         <antcall target="-maybe-call-dep">
             <param name="call.built.properties" value="${built-jar.properties}"/>
+            <param location="${project.SignServer-Module-Groupkeyservice}" name="call.subproject"/>
+            <param location="${project.SignServer-Module-Groupkeyservice}/build.xml" name="call.script"/>
+            <param name="call.target" value="jar"/>
+            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-jar.properties}"/>
             <param location="${project.SignServer-Module-MRTDSODSigner}" name="call.subproject"/>
             <param location="${project.SignServer-Module-MRTDSODSigner}/build.xml" name="call.script"/>
             <param name="call.target" value="jar"/>
@@ -713,6 +720,13 @@ is divided into following sections:
             <param name="call.built.properties" value="${built-jar.properties}"/>
             <param location="${project.SignServer-Test-Utils}" name="call.subproject"/>
             <param location="${project.SignServer-Test-Utils}/build.xml" name="call.script"/>
+            <param name="call.target" value="jar"/>
+            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-jar.properties}"/>
+            <param location="${project.SignServer-core-entities}" name="call.subproject"/>
+            <param location="${project.SignServer-core-entities}/build.xml" name="call.script"/>
             <param name="call.target" value="jar"/>
             <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
         </antcall>
@@ -1248,6 +1262,13 @@ is divided into following sections:
         </antcall>
         <antcall target="-maybe-call-dep">
             <param name="call.built.properties" value="${built-clean.properties}"/>
+            <param location="${project.SignServer-Module-Groupkeyservice}" name="call.subproject"/>
+            <param location="${project.SignServer-Module-Groupkeyservice}/build.xml" name="call.script"/>
+            <param name="call.target" value="clean"/>
+            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-clean.properties}"/>
             <param location="${project.SignServer-Module-MRTDSODSigner}" name="call.subproject"/>
             <param location="${project.SignServer-Module-MRTDSODSigner}/build.xml" name="call.script"/>
             <param name="call.target" value="clean"/>
@@ -1299,6 +1320,13 @@ is divided into following sections:
             <param name="call.built.properties" value="${built-clean.properties}"/>
             <param location="${project.SignServer-Test-Utils}" name="call.subproject"/>
             <param location="${project.SignServer-Test-Utils}/build.xml" name="call.script"/>
+            <param name="call.target" value="clean"/>
+            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-clean.properties}"/>
+            <param location="${project.SignServer-core-entities}" name="call.subproject"/>
+            <param location="${project.SignServer-core-entities}/build.xml" name="call.script"/>
             <param name="call.target" value="clean"/>
             <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
         </antcall>

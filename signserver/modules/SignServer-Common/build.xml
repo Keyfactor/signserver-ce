@@ -41,6 +41,7 @@
             <entry key="postprocess.files" value="postprocess.file1"/>
             <entry key="postprocess.file1.src" value="${distJar}"/>
             <entry key="postprocess.file1.includes" value="org/signserver/common/signservercompile.properties"/>
+            <entry key="postprocess.file1.dest" value="lib/"/>
         </propertyfile>
     </target>
 

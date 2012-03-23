@@ -33,10 +33,6 @@
             <entry key="module.type" value="lib"/>
             <entry key="to.lib" value="${libsToLib},${modsToLib},${distJar}"/>
             <entry key="to.root" value=""/>
-            <entry key="postprocess.files" value="postprocess.file1"/>
-            <entry key="postprocess.file1.src" value="SignServer-Module-Groupkeyservice.jar"/>
-            <entry key="postprocess.file1.includes" value="META-INF/persistence.xml"/>
-            <entry key="postprocess.file1.dest" value="lib/"/>
         </propertyfile>
     </target>
     <!--

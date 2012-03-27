@@ -13,6 +13,11 @@
 package org.signserver.admin.cli.defaultimpl;
 
 import java.math.BigInteger;
+import java.security.Principal;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
+
+import org.ejbca.util.CertTools;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -34,23 +39,45 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
     @Override
     public String getUsages() {
         return "Usage: signserver addauthorizedclient <signerid> <certificatesn (hex)> <issuerd>\n"
-                    + "Example: signserver addauthorizedclient 1 EF34242D2324 \"CN=Test Root CA\"\n\n";
+        	 + "       signserver addauthorizedclient <signerid> <certificate-filename>\n"
+                    + "Example 1: signserver addauthorizedclient 1 EF34242D2324 \"CN=Test Root CA\"\n"
+                    + "Example 2: signserver addauthorizedclient 1 client.pem\n\n";
     }
 
     @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         
-        if (args.length != 3) {
+        if (args.length != 3 && args.length != 2) {
             throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
 
         try {
             int signerid = getWorkerId(args[0]);
+            String certsn = null;
+            String issuerdn = null;
+            BigInteger sn = null;
             checkThatWorkerIsProcessable(signerid);
 
-            String certsn = args[1];
-            String issuerdn = args[2];
-            BigInteger sn = new BigInteger(certsn, 16); // Test that it's a vaild number (hex)
+            if (args.length == 3) {
+            	certsn = args[1];
+            	issuerdn = args[2];
+            	sn = new BigInteger(certsn, 16);  // Test that it's a vaild number (hex)
+            } else {
+            	// read SN and DN from the supplied certificate...
+            	String filename = args[1];
+            	Collection<?> certs = CertTools.getCertsFromPEM(filename);
+            	
+            	if (certs.isEmpty()) {
+                    throw new IllegalCommandArgumentsException("Invalid PEM file, couldn't find any certificate");
+                }
+            	
+            	X509Certificate cert = (X509Certificate) certs.iterator().next();
+            	sn = cert.getSerialNumber();
+            	certsn = sn.toString(16);  // needed for the infomational output below
+            	Principal dn = cert.getIssuerDN();
+            	issuerdn = dn.getName();
+            }
+
             AuthorizedClient authClient = new AuthorizedClient(sn.toString(16), issuerdn);
 
             this.getOutputStream().println("Adding the client certificate with sn " + certsn + " and issuerDN : " + issuerdn + " for signer " + signerid + "\n");

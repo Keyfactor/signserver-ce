@@ -18,16 +18,10 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
-
 import javax.ejb.EJBException;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-
+import javax.persistence.*;
+import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
 import org.signserver.common.ArchiveData;
@@ -62,6 +56,9 @@ import org.signserver.common.ArchiveDataVO;
     @NamedQuery(name = "ArchiveDataBean.findByRequestIPAndTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3 AND a.time>=?4 AND a.time<=?5")
 })
 public class ArchiveDataBean implements Serializable {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(ArchiveData.class);
 
     @Id
     private String uniqueId;
@@ -241,7 +238,7 @@ public class ArchiveDataBean implements Serializable {
         // We must base64 encode string for UTF safety
         HashMap a = new Base64PutHashMap();
         a.putAll((HashMap) data.saveData());
-
+        
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         XMLEncoder encoder = new XMLEncoder(baos);
@@ -259,8 +256,18 @@ public class ArchiveDataBean implements Serializable {
      * Method used to get the ArchiveDataVO representation of the data row.
      */
     public ArchiveDataVO getArchiveDataVO() {
-        return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
+        if (getType() == ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED) {
+            try {
+                return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
+                    getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP(),
+                    Base64.decode(getArchiveData().getBytes("UTF8")));
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else {
+            return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
                 getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP(),
                 getArchiveDataObject());
+        }
     }
 }

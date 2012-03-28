@@ -27,10 +27,16 @@ public class ArchiveDataVO implements Serializable {
     private static final long serialVersionUID = 1L;
     
     /**
-     * Default type, currently the only one supported
+     * Response in XML (UpgradeableHashMap) encoding.
      */
-    public static final int TYPE_RESPONSE = 0;
+    public static final int TYPE_RESPONSE_XMLENCODED = 0;
+    
+    /**
+     * Response with the response data base64 encoded.
+     */
+    public static final int TYPE_RESPONSE_BASE64ENCODED = 1;
     private ArchiveData archiveData = null;
+    private byte[] archivedBytes;
     private int type = 0;
     private Date time = null;
     private String archiveId = null;
@@ -58,12 +64,36 @@ public class ArchiveDataVO implements Serializable {
         this.requestSerialnumber = requestSerialnumber;
         this.requestIP = requestIP;
     }
+    
+    public ArchiveDataVO(int type, int signerId, String archiveId, Date time, String requestIssuerDN, String requestSerialnumber, String requestIP, byte[] archivedBytes) {
+        super();
+        this.type = type;
+        this.signerId = signerId;
+        this.time = time;
+        this.archiveId = archiveId;
+        this.requestIssuerDN = requestIssuerDN;
+        this.requestSerialnumber = requestSerialnumber;
+        this.requestIP = requestIP;
+        this.archivedBytes = archivedBytes;
+    }
 
     /**
-     * @return Returns the archiveData.
+     * @return Returns the archiveData or null if not available.
+     * @see #getArchivedBytes()
      */
     public ArchiveData getArchiveData() {
         return archiveData;
+    }
+    
+    /**
+     * @return The archived bytes independent on how they were stored.
+     */
+    public byte[] getArchivedBytes() {
+        if (archiveData != null) {
+            return archiveData.getData();
+        } else {
+            return archivedBytes;
+        }
     }
 
     /**

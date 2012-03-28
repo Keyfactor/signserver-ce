@@ -66,7 +66,7 @@ public class FindFromArchiveIdCommand extends AbstractCommand {
             if (result != null) {
                 String filename = outputPath.getAbsolutePath() + "/" + result.getArchiveId();
                 FileOutputStream os = new FileOutputStream(filename);
-                os.write(result.getArchiveData().getData());
+                os.write(result.getArchivedBytes());
                 os.close();
                 out.println("Archive data with archiveid " + archiveid + " written to file : " + filename + "\n\n");
             } else {

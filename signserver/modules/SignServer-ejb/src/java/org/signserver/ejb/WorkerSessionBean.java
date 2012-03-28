@@ -1275,12 +1275,18 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDataFromArchiveId(int, java.lang.String)
      */
+    @Override
     public ArchiveDataVO findArchiveDataFromArchiveId(int signerId,
             String archiveId) {
         ArchiveDataVO retval = null;
 
         ArchiveDataBean adb = archiveDataService.findByArchiveId(
-                ArchiveDataVO.TYPE_RESPONSE, signerId, archiveId);
+                ArchiveDataVO.TYPE_RESPONSE_XMLENCODED, signerId, archiveId);
+        if (adb == null) {
+            adb = archiveDataService.findByArchiveId(
+                ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, signerId, archiveId);
+        }
+        
         if (adb != null) {
             retval = adb.getArchiveDataVO();
         }
@@ -1291,16 +1297,20 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDatasFromRequestIP(int, java.lang.String)
      */
+    @Override
     public List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerId,
             String requestIP) {
-        ArrayList<ArchiveDataVO> retval = new ArrayList<ArchiveDataVO>();
+        List<ArchiveDataVO> retval = new LinkedList<ArchiveDataVO>();
 
-        Collection<ArchiveDataBean> result = archiveDataService.findByRequestIP(
-                ArchiveDataVO.TYPE_RESPONSE, signerId, requestIP);
-        Iterator<ArchiveDataBean> iter = result.iterator();
-        while (iter.hasNext()) {
-            ArchiveDataBean next = iter.next();
-            retval.add(next.getArchiveDataVO());
+        Collection<ArchiveDataBean> archives = archiveDataService.findByRequestIP(
+                ArchiveDataVO.TYPE_RESPONSE_XMLENCODED, signerId, requestIP);
+        for (ArchiveDataBean archive : archives) {
+            retval.add(archive.getArchiveDataVO());
+        }
+        archives = archiveDataService.findByRequestIP(
+                ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, signerId, requestIP);
+        for (ArchiveDataBean archive : archives) {
+            retval.add(archive.getArchiveDataVO());
         }
 
         return retval;
@@ -1309,19 +1319,24 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDatasFromRequestCertificate(int, java.math.BigInteger, java.lang.String)
      */
+    @Override
     public List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(
             int signerId, BigInteger requestCertSerialnumber,
             String requestCertIssuerDN) {
         ArrayList<ArchiveDataVO> retval = new ArrayList<ArchiveDataVO>();
 
-        Collection<ArchiveDataBean> result = archiveDataService.
-                findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE, signerId, CertTools.
-                stringToBCDNString(requestCertIssuerDN), requestCertSerialnumber.
-                toString(16));
-        Iterator<ArchiveDataBean> iter = result.iterator();
-        while (iter.hasNext()) {
-            ArchiveDataBean next = iter.next();
-            retval.add(next.getArchiveDataVO());
+        String issuerDN = CertTools.stringToBCDNString(requestCertIssuerDN);
+        String serialNumber = requestCertSerialnumber.toString(16);
+        
+        Collection<ArchiveDataBean> archives = archiveDataService.
+                findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE_XMLENCODED, signerId, issuerDN, serialNumber);
+        for (ArchiveDataBean archive : archives) {
+            retval.add(archive.getArchiveDataVO());
+        }
+        archives = archiveDataService.
+                findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, signerId, issuerDN, serialNumber);
+        for (ArchiveDataBean archive : archives) {
+            retval.add(archive.getArchiveDataVO());
         }
 
         return retval;

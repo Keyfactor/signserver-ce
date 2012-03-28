@@ -70,7 +70,7 @@ public class FindFromRequestCertCommand extends AbstractAdminCommand {
                     ArchiveDataVO next = iter.next();
                     String filename = outputPath.getAbsolutePath() + "/" + next.getArchiveId();
                     FileOutputStream os = new FileOutputStream(filename);
-                    os.write(next.getArchiveData().getData());
+                    os.write(next.getArchivedBytes());
                     os.close();
                     this.getOutputStream().println("Archive data with archiveid " + next.getArchiveId() + " written to file : " + filename + "\n\n");
                 }

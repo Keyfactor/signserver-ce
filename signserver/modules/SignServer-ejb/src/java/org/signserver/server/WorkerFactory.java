@@ -587,7 +587,7 @@ public class WorkerFactory {
                 }
             }
         }
-        return getArchiversStore().get(workerId);
+        return getArchiversStore().get(workerId);  // TODO: just return archivers!
     }
 
     private Map<String, Integer> getNameToIdMap() {

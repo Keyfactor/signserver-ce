@@ -54,7 +54,7 @@ public class OldDatabaseArchiver implements Archiver {
             final X509Certificate certificate = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
             final String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
 
-            dataService.create(ArchiveDataVO.TYPE_RESPONSE,
+            dataService.create(ArchiveDataVO.TYPE_RESPONSE_XMLENCODED,
                             workerId,
                             ada.getArchiveId(),
                             certificate,

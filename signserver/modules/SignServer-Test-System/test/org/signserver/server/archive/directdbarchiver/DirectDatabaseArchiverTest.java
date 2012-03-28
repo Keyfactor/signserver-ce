@@ -10,33 +10,28 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.archive;
+package org.signserver.server.archive.directdbarchiver;
 
 import java.util.Arrays;
 import java.util.Random;
 import org.apache.log4j.Logger;
-import org.signserver.common.ArchiveData;
-import org.signserver.common.ArchiveDataVO;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerUtil;
+import org.signserver.common.*;
+import org.signserver.server.archive.ArchiveTest;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 
 /**
- * Tests for archiving.
+ * Tests the DirectDatabaseArchiver.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public class ArchiveTest extends ModulesTestCase {
-
+public class DirectDatabaseArchiverTest extends ModulesTestCase {
+    
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ArchiveTest.class);
 
     private static Random random = new Random();
-    
     
     @Override
     protected void setUp() throws Exception {
@@ -56,12 +51,16 @@ public class ArchiveTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
         addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
         getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
-                "ARCHIVE", "true");
+                "ARCHIVERS", "org.signserver.server.archive.directdbarchiver.DirectDatabaseArchiver");
+        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
+                "ARCHIVER0.CONNECTIONNAME", "SignServerDS");
+        getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), 
+                "ARCHIVER0.ISDISABLED");
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
     }
 
     /**
-     * Test signing with archiving enabled for a new unique document.
+     * Test signing with archiving enabled for a new document.
      * @throws Exception In case of error.
      */
     public void test01archiveNewDocument() throws Exception {
@@ -76,46 +75,17 @@ public class ArchiveTest extends ModulesTestCase {
      * Test signing with archiving disabled.
      * @throws Exception In case of error.
      */
-    public void test02archivingDisabled() throws Exception {
-        LOG.debug(">test02archivingDisabled");
+    public void test02isDisabled() throws Exception {
+        LOG.debug(">test02isDisabled");
         
         getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
-                "ARCHIVE", "false");
+                "ARCHIVER0.ISDISABLED", "true");
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
         
         testNoArchive("<document id=\"" + random.nextLong() + "\"/>");
         
         LOG.debug("<test02archivingDisabled");
     }
-    
-    /**
-     * Test signing without archiving properties.
-     * @throws Exception In case of error.
-     */
-    public void test03archivingNotSpecified() throws Exception {
-        LOG.debug(">test03archivingNotSpecified");
-        
-        getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "ARCHIVE");
-        getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-        
-        testNoArchive("<document id=\"" + random.nextLong() + "\"/>");
-        
-        LOG.debug("<test03archivingNotSpecified");
-    }
-    
-// This does not work because of bug DSS-408: Can not archive the same document twice    
-//    /**
-//     * Test signing with archiving enabled for the same document twice.
-//     * @throws Exception In case of error.
-//     */
-//    public void test04archiveSameDocumentTwice() throws Exception {
-//        LOG.debug(">test04archiveSameDocumentTwice");
-//        
-//        testArchive("<document/>");
-//        testArchive("<document/>");
-//        
-//        LOG.debug("<test04archiveSameDocumentTwice");
-//    }
     
     private void testArchive(final String document) throws Exception {
         // Process
@@ -163,5 +133,4 @@ public class ArchiveTest extends ModulesTestCase {
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
     }
-
 }

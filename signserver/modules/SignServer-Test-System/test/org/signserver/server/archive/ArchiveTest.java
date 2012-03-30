@@ -12,8 +12,17 @@
  *************************************************************************/
 package org.signserver.server.archive;
 
+import java.util.Arrays;
 import java.util.Random;
 import org.apache.log4j.Logger;
+import org.signserver.common.ArchiveData;
+import org.signserver.common.ArchiveDataVO;
+import org.signserver.common.GenericSignRequest;
+import org.signserver.common.GenericSignResponse;
+import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerUtil;
+import org.signserver.testutils.ModulesTestCase;
+import org.signserver.testutils.TestingSecurityManager;
 
 /**
  * Tests for archiving.
@@ -21,13 +30,28 @@ import org.apache.log4j.Logger;
  * @author Markus Kilås
  * @version $Id$
  */
-public class ArchiveTest extends ArchiveTestCase {
+public class ArchiveTest extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ArchiveTest.class);
 
     private static Random random = new Random();
-    	
+    
+    
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        SignServerUtil.installBCProvider();
+        TestingSecurityManager.install();
+        String signserverhome = System.getenv("SIGNSERVER_HOME");
+        assertNotNull(signserverhome);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        TestingSecurityManager.remove();
+    }	
 	
     public void test00SetupDatabase() throws Exception {
         addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
@@ -92,6 +116,45 @@ public class ArchiveTest extends ArchiveTestCase {
 //        
 //        LOG.debug("<test04archiveSameDocumentTwice");
 //    }
+    
+    private void testArchive(final String document) throws Exception {
+        // Process
+        final GenericSignRequest signRequest =
+                new GenericSignRequest(371, document.getBytes());
+        GenericSignResponse response = (GenericSignResponse) 
+                workerSession.process(getSignerIdDummy1(), signRequest, 
+                new RequestContext());
+        assertNotNull("no response", response);
+        
+        final String expectedArchiveId = response.getArchiveId();
+        final ArchiveData expectedArchiveData = response.getArchiveData();
+        
+        ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
+        assertEquals("same id in db", 
+                expectedArchiveId, archiveData.getArchiveId());
+        assertEquals("same signer id in db", 
+                getSignerIdDummy1(), archiveData.getSignerId());
+        
+        assertTrue("same archived data", 
+                Arrays.equals(expectedArchiveData.getData(), 
+                archiveData.getArchivedBytes()));
+    }
+    
+    private void testNoArchive(final String document) throws Exception {
+        // Process
+        final GenericSignRequest signRequest =
+                new GenericSignRequest(371, document.getBytes());
+        GenericSignResponse response = (GenericSignResponse) 
+                workerSession.process(getSignerIdDummy1(), signRequest, 
+                new RequestContext());
+        assertNotNull("no response", response);
+        
+        final String expectedArchiveId = response.getArchiveId();
+        
+        ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
+        
+        assertNull("no archivedata in db", archiveData);
+    }
     
     /**
      * Remove the workers created etc.

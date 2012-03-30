@@ -47,9 +47,7 @@ public class ArchiveDataService {
     public String create(int type, int signerId, String archiveid, X509Certificate clientCert,
             String requestIP, ArchiveData archiveData) {
         String uniqueId = type + ";" + signerId + ";" + archiveid;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating archive data, uniqueId=" + uniqueId);
-        }
+        LOG.debug("Creating archive data, uniqueId=" + uniqueId);
         ArchiveDataBean adb = new ArchiveDataBean();
         adb.setUniqueId(uniqueId);
         adb.setType(type);
@@ -62,29 +60,6 @@ public class ArchiveDataService {
         }
         adb.setRequestIP(requestIP);
         adb.setArchiveDataObject(archiveData);
-
-        em.persist(adb);
-        return uniqueId;
-    }
-    
-    public String create(int type, int signerId, String archiveid, X509Certificate clientCert,
-            String requestIP, String archiveData) {
-        String uniqueId = type + ";" + signerId + ";" + archiveid;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating archive data, uniqueId=" + uniqueId);
-        }
-        ArchiveDataBean adb = new ArchiveDataBean();
-        adb.setUniqueId(uniqueId);
-        adb.setType(type);
-        adb.setSignerid(signerId);
-        adb.setTime(new Date().getTime());
-        adb.setArchiveid(archiveid);
-        if (clientCert != null) {
-            adb.setRequestIssuerDN(CertTools.getIssuerDN(clientCert));
-            adb.setRequestCertSerialnumber(clientCert.getSerialNumber().toString(16));
-        }
-        adb.setRequestIP(requestIP);
-        adb.setArchiveData(archiveData);
 
         em.persist(adb);
         return uniqueId;

@@ -19,16 +19,15 @@ import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
@@ -278,16 +277,17 @@ public class TimeStampCommand extends AbstractCommand {
                 LOG.error("Missing URL");
                 out.println(usage(options));
                 return -1;
-            } /*else if (Security.addProvider(new BouncyCastleProvider()) < 0) {
-                LOG.error("Could not install BC provider");
-                // If already installed, remove so we can handle redeploy
-                Security.removeProvider("BC");
-                if (Security.addProvider(new BouncyCastleProvider()) < 0) {
-                    LOG.error("Cannot even install BC provider again!");
-                }
-                return -2;
-            }*/ else { 
+            } else { 
                 keyStoreOptions.validateOptions();
+                
+                if (Security.addProvider(new BouncyCastleProvider()) < 0) {
+                    LOG.error("Could not install BC provider");
+                    // If already installed, remove so we can handle redeploy
+                    Security.removeProvider("BC");
+                    if (Security.addProvider(new BouncyCastleProvider()) < 0) {
+                        LOG.error("Cannot even install BC provider again!");
+                    }
+                }
                 
                 run();
                 return CommandLineInterface.RETURN_SUCCESS;

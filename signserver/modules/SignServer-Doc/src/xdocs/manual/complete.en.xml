@@ -1094,7 +1094,7 @@ This commands can be used for processable workers that have archiving turned on.
 are used to find specific archived responses. It's up to the implementation of the 
 worker if it supports archiving or not and it is up to the chosen Archiver if it 
 archives the data in way that it can be queried using this commands. For Archivers 
-other than the default "OldDatabaseArchiver" or the DirectDatabaseArchiver querying might have to be done 
+other than the default "OldDatabaseArchiver" querying might have to be done 
 directly in the database or by some custom application.
                         </p>
                         <p>
@@ -2419,7 +2419,7 @@ This authorization functionality doesn't work for all use cases. Then it's possi
 The archiving feature can be used to save all generated responses.    
                 </p>
                 <p>
-For the OldDatabaseArchiver and the DirectDatabaseArchiver, in some extent, the Admin CLI can be used to query the archive. See 
+For the OldDatabaseArchiver, in some extent, the Admin CLI can be used to query the archive. See 
 the CLI section for more information.
                 </p>
                 <p>
@@ -4011,28 +4011,6 @@ The default archiver used if the the property ARCHIVE=true is set. Or if the ARC
                     <p>
 The fully qualified class name is: <b>org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver</b>
                     </p>
-                </subsection>
-                <subsection name="DirectDatabaseArchiver">
-                    <p>
-Alternative archiver which used JDBC to connect directly to the specified data source and archives the data in base64 encoding.    
-                    </p>
-                    <p>
-The fully qualified class name is: <b>org.signserver.server.archive.directdbarchiver.DirectDatabaseArchiver</b>
-                    </p>
-                    <subsubsection name="Worker properties">
-                        <p>
-<b>ARCHIVERx.ISDISABLED</b> - TRUE if the archiver should not be used (Default FALSE)<br/>
-<b>ARCHIVERx.CONNECTIONNAME</b> - The datasource JNDI name without the JNDI prefix<br/>
-where x is the (zero-based) index of the archiver in the ARCHIVERS property list.
-                        </p>
-                    </subsubsection>
-                    <subsubsection name="Sample usage">
-                        <pre>
-ARCHIVERS=org.signserver.server.archive.directdbarchiver.DirectDatabaseArchiver
-ARCHIVER0.CONNECTIONNAME=SignServerDS
-ARCHIVER0.ISDISABLED=FALSE
-                        </pre>
-                    </subsubsection>
                 </subsection>
                 
             </section>

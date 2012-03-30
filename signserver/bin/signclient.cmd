@@ -8,11 +8,6 @@ if "%SIGNSERVER_HOME%" == "" (
  ) else (
     set SIGNSRV_HOME=%SIGNSERVER_HOME%
 ) 
-  
-if "%APPSRV_HOME%" == "" (
-    echo You must set APPSRV_HOME before running the SignServer cli.
-    goto end
-)
 
 rem Application server jars
 set J2EE_CP=%APPSRV_HOME%\lib\jbossall-client.jar;%APPSRV_HOME%\lib\appserv-rt.jar

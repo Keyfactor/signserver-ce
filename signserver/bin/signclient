@@ -38,9 +38,6 @@ if [ ! -n "$APPSRV_HOME" ]; then
         APPSRV_HOME=$WEBLOGIC_HOME
     fi
 fi
-if [ ! -n "$APPSRV_HOME" ]; then
-    echo "To connect to a local SignServer please set APPSRV_HOME first."
-fi
 
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
   if [ -f $DIR/signclient ]; then

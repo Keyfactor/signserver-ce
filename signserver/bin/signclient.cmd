@@ -26,23 +26,9 @@ set OPTIONAL_CLASSPATH=%SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI.jar
 set CLASSPATH=%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\lib\SignServer-Client-CLI.jar;%J2EE_CP%;%OPTIONAL_CLASSPATH%
 rem echo %CLASSPATH%
 
-rem Fixup arguments, we have to do this since windows normally only 
-rem supports %1-%9 as command line arguments
-shift
-set a=%0
-set b=%1
-set c=%2
-set d=%3
-set e=%4
-set f=%5
-set g=%6
-set h=%7
-set i=%8
-set j=%9
-rem echo %a% %b% %c% %d% %e% %f% %g% %h% %i% %j%
 if "%JAVA_HOME%" == "" (
-  java "-cp %CLASSPATH%  org.signserver.client.cli.ClientCLI %a% %b% %c% %d% %e% %f% %g% %h% %i% %j%"
+  java -cp %CLASSPATH%  org.signserver.client.cli.ClientCLI %*
 ) else (
-  "%JAVA_HOME%\bin\java" -cp %CLASSPATH% org.signserver.client.cli.ClientCLI %a% %b% %c% %d% %e% %f% %g% %h% %i% %j% 
+  "%JAVA_HOME%\bin\java" -cp %CLASSPATH% org.signserver.client.cli.ClientCLI %*
 )
 :end

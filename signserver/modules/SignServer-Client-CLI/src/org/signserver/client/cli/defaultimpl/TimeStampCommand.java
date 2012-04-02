@@ -20,13 +20,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.*;
+import java.security.cert.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
@@ -85,6 +87,7 @@ public class TimeStampCommand extends AbstractCommand {
     private boolean base64;
 
     private boolean verify;
+    private boolean print;
 
     /** Number of milliseconds to sleep after a request. */
     private int sleep = 1000;
@@ -106,6 +109,8 @@ public class TimeStampCommand extends AbstractCommand {
                 "Give this option if verification of a stored reply should "
                 + "be done, work together with inrep and cafile. If given, no "
                 + "request to the TSA will happen.");
+        final Option printopt = new Option("print", false,
+                "Prints content of a response");
 
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Url of TSA, e.g. "
@@ -176,6 +181,7 @@ public class TimeStampCommand extends AbstractCommand {
         // Add options
         options.addOption(help);
         options.addOption(verifyopt);
+        options.addOption(printopt);
         options.addOption(url);
         options.addOption(outrep);
         options.addOption(inrep);
@@ -251,6 +257,9 @@ public class TimeStampCommand extends AbstractCommand {
             if (cmd.hasOption("verify")) {
                 verify = true;
             }
+            if (cmd.hasOption("print")) {
+                print = true;
+            }
             if (cmd.hasOption("inreq")) {
                 inreqstring = cmd.getOptionValue("inreq");
             }
@@ -305,7 +314,10 @@ public class TimeStampCommand extends AbstractCommand {
         // Take start time
         final long startTime = System.nanoTime();
         
-        if (verify) {
+        if (print) {
+            tsaPrint();
+        }
+        else if (verify) {
             tsaVerify();
         } else {
             tsaRequest();
@@ -316,6 +328,107 @@ public class TimeStampCommand extends AbstractCommand {
 
         LOG.info("Processing took "
                 + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
+    }
+    
+    private void tsaPrint() throws Exception {
+
+            final byte[] bytes = readFiletoBuffer(inrepstring);
+            
+            final TimeStampResponse response = new TimeStampResponse(bytes);
+            out.println("Time-stamp response {");
+            out.println("  Status: " + response.getStatus());
+            out.println("  Status message: " + response.getStatusString());
+            PKIFailureInfo failureInfo = response.getFailInfo();
+            if (failureInfo != null) {
+                out.print("  Failure info: ");
+                out.println(failureInfo.intValue());
+            }
+            final TimeStampToken token = response.getTimeStampToken();
+            if (token != null) {
+                out.println("  Time-stamp token:");
+                TimeStampTokenInfo info = token.getTimeStampInfo();
+                if (info != null) {
+                    out.println("      Info:");
+                    out.print("         " + "Accuracy: ");
+                    out.println(info.getAccuracy());
+                    
+                    out.print("         " + "Gen Time: ");
+                    out.println(info.getGenTime());
+                    
+                    out.print("         " + "Gen Time Accuracy: ");
+                    out.println(info.getGenTimeAccuracy());
+                    
+                    out.print("         " + "Message imprint digest: ");
+                    out.println(new String(Hex.encode(info.getMessageImprintDigest())));
+                    
+                    out.print("         " + "Message imprint algorithm: ");
+                    out.println(info.getMessageImprintAlgOID());
+                    
+                    out.print("         " + "Nonce: ");
+                    out.println(info.getNonce() != null ? info.getNonce().toString(16) : "(null)");
+                    
+                    out.print("         " + "Serial Number: ");
+                    out.println(info.getSerialNumber() != null ? info.getSerialNumber().toString(16) : "(null)");
+                    
+                    out.print("         " + "TSA: ");
+                    out.println(info.getTsa() != null ? info.getTsa() : "(null)");
+                    
+                    out.print("         " + "Policy: ");
+                    out.println(info.getPolicy());
+                }
+                out.print("      SignerId: ");
+                out.println(token.getSID());
+                
+                out.println("      Signer certificates: ");
+                CertStore  certs = token.getCertificatesAndCRLs("Collection", "BC");
+                Collection certCollection = certs.getCertificates(token.getSID());
+                for (Object o : certCollection) {
+                    if (o instanceof X509Certificate) {
+                        X509Certificate cert = (X509Certificate) o;
+                        out.println("         Certificate: ");
+                        out.println("            Serial Number: " + cert.getSerialNumber().toString(16));
+                        out.println("            Subject:       " + cert.getSubjectX500Principal());
+                        out.println("            Issuer:        " + cert.getIssuerX500Principal());
+                    } else {
+                        out.println("Not an X.509 certificate: " + o);
+                    }
+                }
+                
+                out.println("      Other certificates: ");
+                certCollection = certs.getCertificates(new InvertedCertSelector(token.getSID()));
+                for (Object o : certCollection) {
+                    if (o instanceof X509Certificate) {
+                        X509Certificate cert = (X509Certificate) o;
+                        out.println("         Certificate: ");
+                        out.println("            Serial Number: " + cert.getSerialNumber().toString(16));
+                        out.println("            Subject:       " + cert.getSubjectX500Principal());
+                        out.println("            Issuer:        " + cert.getIssuerX500Principal());
+                    } else {
+                        out.println("Not an X.509 certificate: " + o);
+                    }
+                }
+            }
+            out.println("}");
+        
+    }
+    
+    private static class InvertedCertSelector implements CertSelector {
+
+        private CertSelector delegate;
+        
+        public InvertedCertSelector(CertSelector delegate) {
+            this.delegate = delegate;
+        }
+        
+        public boolean match(Certificate cert) {
+            return !delegate.match(cert);
+        }
+
+        @Override
+        public Object clone() {
+            return new InvertedCertSelector((CertSelector) delegate.clone());
+        }
+        
     }
 
     private void tsaVerify() throws Exception {

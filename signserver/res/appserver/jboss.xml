@@ -40,7 +40,7 @@
 		     if the file does not exist, which is why this works. -->
         <!-- <available file="${appserver.home}/client/jboss-j2ee.jar" property="appserver.home.valid"/>-->
         <available file="${appserver.home}/client/jboss-javaee.jar" property="appserver.home.valid"/>
-        <fail message="'appserver.home' (${appserver.home}) does not seem to be a valid JBoss home directory, or JBoss version is too old (5.0.x or later is required)"
+        <fail message="'appserver.home' (${appserver.home}) does not seem to be a valid JBoss home directory, or JBoss version is unsupported (5.1.x is required)"
         	unless="appserver.home.valid"/>
 	</target>
 

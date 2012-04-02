@@ -16,7 +16,7 @@
 
 # Application server home folder
 # Default: $APPSRV_HOME or $JBOSS_HOME
-#appserver.home=${basedir}/../../jboss-4.2.3
+#appserver.home=${basedir}/../../jboss-5.1.0
 #appserver.home=/usr/local/SUNWappserver/
 #appserver.home=${env.APPSRV_HOME}
 

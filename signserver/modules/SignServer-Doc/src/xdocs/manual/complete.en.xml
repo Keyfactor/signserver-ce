@@ -3598,7 +3598,7 @@ GenericPropertiesRequestS and returns GenericPropertiesResponseS.
                     <subsubsection name="Worker Properties">
                         <p><b>EJBCAWSURL</b> = URL to the EJBCA. Example: https://ca-server:8443/ejbca</p>
                         <p><b>TRUSTSTOREPATH</b> = Path to the keystore containing the CA's SSL server certificate as a trusted entry.</p>
-                        <p><b>TRUSTSTORETYPE</b> = Type of keystore. JKS is supported.</p>
+                        <p><b>TRUSTSTORETYPE</b> = Type of keystore. JKS and PEM is supported.</p>
                         <p><b>TRUSTSTOREPASSWORD</b> = Password protecting the truststore keystore.</p>
                     </subsubsection>
                     <subsubsection name="Properties of renewee">

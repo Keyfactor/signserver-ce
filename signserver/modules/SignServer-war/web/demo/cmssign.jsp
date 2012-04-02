@@ -42,7 +42,7 @@
             <%@include file="../WEB-INF/jspf/demo_menu.jspf" %>
 
 
-            <h3 style="margin-top: 4em;">XML Signing Demo</h3>
+            <h3 style="margin-top: 4em;">CMS Signing Demo</h3>
             <form id="recievefile" action="../worker/CMSSigner"
                   method="post" enctype="multipart/form-data">
 

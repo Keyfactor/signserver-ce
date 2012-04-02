@@ -25,8 +25,10 @@ import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
+ * Implements methods useful for Commands.
  *
  * @author Markus Kilås
+ * @version $Id$
  */
 public abstract class AbstractAdminCommand extends AbstractCommand {
     
@@ -35,26 +37,45 @@ public abstract class AbstractAdminCommand extends AbstractCommand {
     
     private AdminCommandHelper delegate = new AdminCommandHelper();
 
+    /**
+     * @see AdminCommandHelper#getWorkerSession()
+     */
     protected IRemote getWorkerSession() throws RemoteException {
         return delegate.getWorkerSession();
     }
 
+    /**
+     * @see AdminCommandHelper#getWorkerId(java.lang.String) 
+     */
     protected int getWorkerId(String workerIdOrName) throws RemoteException, IllegalCommandArgumentsException {
         return delegate.getWorkerId(workerIdOrName);
     }
 
+    /**
+     * @see AdminCommandHelper#getStatusRepositorySession() 
+     */
     protected IStatusRepositorySession.IRemote getStatusRepositorySession() throws RemoteException {
         return delegate.getStatusRepositorySession();
     }
 
+    /**
+     * @see AdminCommandHelper#getGlobalConfigurationSession() 
+     */
     protected IGlobalConfigurationSession.IRemote getGlobalConfigurationSession() throws RemoteException {
         return delegate.getGlobalConfigurationSession();
     }
 
+    /**
+     * @see AdminCommandHelper#checkThatWorkerIsProcessable(int) 
+     */
     protected void checkThatWorkerIsProcessable(int signerid) throws RemoteException, IllegalCommandArgumentsException {
         delegate.checkThatWorkerIsProcessable(signerid);
     }
     
+    /**
+     * Prints the list of authorized clients to the output stream.
+     * @param config to read the authorization list from
+     */
     protected void printAuthorizedClients(WorkerConfig config) {
         Iterator<AuthorizedClient> iter = new ProcessableConfig(config).getAuthorizedClients().iterator();
         while (iter.hasNext()) {
@@ -63,6 +84,9 @@ public abstract class AbstractAdminCommand extends AbstractCommand {
         }
     }
 
+    /**
+     * @return The logger for the implementing class
+     */
     protected Logger getLogger() {
         return logger;
     }

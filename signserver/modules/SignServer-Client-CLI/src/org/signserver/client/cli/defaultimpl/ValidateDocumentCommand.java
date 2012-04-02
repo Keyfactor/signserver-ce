@@ -30,7 +30,7 @@ import org.signserver.common.SignServerException;
 /**
  * Command Line Interface (CLI) for validating documents.
  *
- * @author Markus Kilas
+ * @author Markus Kilås
  * @version $Id$
  */
 public class ValidateDocumentCommand extends AbstractCommand {
@@ -134,6 +134,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
         return "Request a document to be validated by SignServer";
     }
 
+    @Override
     public String getUsages() {
 
         StringBuilder footer = new StringBuilder();
@@ -152,8 +153,6 @@ public class ValidateDocumentCommand extends AbstractCommand {
         pw.close();
         return bout.toString();
     }
-    
-    
 
     /**
      * Reads all the options from the command line.

@@ -24,8 +24,10 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
+ * Helper class with methods useful for many Command implementations.
  *
  * @author Markus Kilås
+ * @version $Id$
  */
 public class AdminCommandHelper {
     
@@ -98,7 +100,7 @@ public class AdminCommandHelper {
         return signsession;
     }
     
-        /**
+    /**
      * Help Method that retrieves the id of a worker given either
      * it's id in string format or the name of a worker
      * @throws Exception 

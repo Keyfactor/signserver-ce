@@ -22,6 +22,8 @@ import org.signserver.cli.spi.IllegalCommandArgumentsException;
 
 /**
  * Used both for loading a server during performance testing and postprocessing resulting CSV statistics.
+ *
+ * @version $Id$
  */
 public class PDFPerformanceCommand extends AbstractCommand {
 
@@ -39,6 +41,7 @@ public class PDFPerformanceCommand extends AbstractCommand {
         return "Parameters: <test | postprocess>\n";
     }
 
+    @Override
     public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException {
         if (args.length==0) {
 			throw new IllegalCommandArgumentsException("Wrong number of arguments");

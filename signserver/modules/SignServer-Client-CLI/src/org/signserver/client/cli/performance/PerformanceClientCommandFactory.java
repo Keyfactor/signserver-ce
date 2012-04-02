@@ -16,8 +16,10 @@ import org.signserver.cli.spi.AbstractCommandFactory;
 import org.signserver.client.cli.spi.ClientCommandFactory;
 
 /**
+ * CommandFactory for the performance client.
  *
  * @author Markus Kilås
+ * @version $Id$
  */
 public class PerformanceClientCommandFactory extends AbstractCommandFactory implements ClientCommandFactory {
 

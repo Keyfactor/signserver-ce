@@ -40,13 +40,12 @@ import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 
 /**
- * Class makeing a simple timestamp request to a timestamp server and tries to
+ * Class making a simple timestamp request to a timestamp server and tries to
  * validate it.
  *
- * This client only works in unauthenticated mode.
  *
  * @author philip
- * $Id$
+ * @version $Id$
  */
 public class TimeStampCommand extends AbstractCommand {
 
@@ -205,6 +204,7 @@ public class TimeStampCommand extends AbstractCommand {
         return "Send time stamp requests to a TSA";
     }
 
+    @Override
     public String getUsages() {
         return usage(options);
     }
@@ -221,6 +221,7 @@ public class TimeStampCommand extends AbstractCommand {
         return footer.toString();
     }
 
+    @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
 
         final CommandLineParser parser = new GnuParser();

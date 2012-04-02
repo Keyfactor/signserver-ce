@@ -16,8 +16,10 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 /**
+ * Class implementing many of the Command interface methods for convenience.
  *
  * @author Markus Kilås
+ * @version $Id$
  */
 public abstract class AbstractCommand implements Command {
 
@@ -26,6 +28,9 @@ public abstract class AbstractCommand implements Command {
     
     private CommandContext context;
     
+    /**
+     * @see Command#init(org.signserver.cli.spi.CommandContext) 
+     */
     @Override
     public void init(CommandContext context) {
         this.context = context;
@@ -33,24 +38,39 @@ public abstract class AbstractCommand implements Command {
         this.err = context.getFactoryContext().getErrorStream();
     }
     
+    /**
+     * @see Command#getCommand() 
+     */
     @Override
     public String getCommand() {
         return context.getCommand();
     }
 
+    /**
+     * @see Command#getCommandGroup() 
+     */
     @Override
     public String getCommandGroup() {
         return context.getCommandGroup();
     }
     
+    /**
+     * @return The CLI configuration
+     */
     protected Properties getConfiguration() {
         return context.getFactoryContext().getConfiguration();
     }
     
+    /**
+     * @return The CLI output stream
+     */
     protected PrintStream getOutputStream() {
         return out;
     }
     
+    /**
+     * @return The CLI error stream
+     */
     protected PrintStream getErrorStream() {
         return err;
     }

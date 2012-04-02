@@ -13,8 +13,11 @@
 package org.signserver.cli.spi;
 
 /**
+ * Exception thrown in case the command failed because of the supplied 
+ * arguments.
  *
  * @author Markus Kilås
+ * @version $Id$
  */
 public class IllegalCommandArgumentsException extends Exception {
 

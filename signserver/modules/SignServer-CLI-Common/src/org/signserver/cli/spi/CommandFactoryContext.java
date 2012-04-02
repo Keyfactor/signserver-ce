@@ -16,8 +16,10 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 /**
+ * Context for command factories.
  *
  * @author Markus Kilås
+ * @version $Id$
  */
 public class CommandFactoryContext {
     private Properties configuration;

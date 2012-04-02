@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Security;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.TimeStampResponse;
@@ -101,6 +102,16 @@ public class TimeStampCommandTest extends ModulesTestCase {
                 } catch (IOException ignored) {} // NOPMD
             }
         }
+    }
+    
+    /**
+     * Tests the CLI without having the BC provider installed as the CLI 
+     * should install it itself.
+     * @throws Exception 
+     */
+    public void test03withoutBCalreadyInstalled() throws Exception {
+        Security.removeProvider("BC");
+        test02requestATimestamp();
     }
 
     public void test99TearDownDatabase() throws Exception {

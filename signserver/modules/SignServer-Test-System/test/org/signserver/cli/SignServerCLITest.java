@@ -154,10 +154,10 @@ public class SignServerCLITest extends ModulesTestCase {
         // test adding an authorized client via a PEM file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         	cli.execute("addauthorizedclient", "TIMESTAMPSIGNER1000",
-        			getSignServerHome() + "/res/test/DemoRootCA1.pem"));
+        			getSignServerHome() + "/res/test/dss10/dss10_signer1.pem"));
         assertPrinted("", cli.getOut(),
-        		"Adding the client certificate with sn 1a8f84d9dfe853d1 and " +
-        	    "issuerDN : CN=DemoRootCA1,OU=EJBCA,O=SignServer Sample,C=SE");
+        		"Adding the client certificate with sn 1d9fa8b71c75b564 and " +
+        	    "issuerDN : CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE");
         
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("listauthorizedclients", "TIMESTAMPSIGNER1000"));

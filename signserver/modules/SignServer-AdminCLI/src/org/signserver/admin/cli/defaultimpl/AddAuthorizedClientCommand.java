@@ -12,10 +12,15 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+
+import java.security.cert.Certificate;
 
 import org.ejbca.util.CertTools;
 import org.signserver.cli.spi.CommandFailureException;
@@ -57,7 +62,7 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
             String issuerdn = null;
             BigInteger sn = null;
             checkThatWorkerIsProcessable(signerid);
-
+            
             if (args.length == 3) {
             	certsn = args[1];
             	issuerdn = args[2];
@@ -65,13 +70,36 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
             } else {
             	// read SN and DN from the supplied certificate...
             	String filename = args[1];
-            	Collection<?> certs = CertTools.getCertsFromPEM(filename);
+            	Collection<?> certs = null;
+            	X509Certificate cert = null;
             	
-            	if (certs.isEmpty()) {
-                    throw new IllegalCommandArgumentsException("Invalid PEM file, couldn't find any certificate");
-                }
-            	
-            	X509Certificate cert = (X509Certificate) certs.iterator().next();
+            	try {
+            		certs = CertTools.getCertsFromPEM(filename);
+            	            	
+            		if (certs.isEmpty()) {
+            			throw new IllegalCommandArgumentsException("Invalid PEM file, couldn't find any certificate");
+            		}
+            		
+            		cert = (X509Certificate) certs.iterator().next();
+
+            	} catch (IOException ioex) {
+            		// try to treat the file as a binary certificate file
+        			FileInputStream fis = null;
+
+            		try {
+            			fis = new FileInputStream(filename);
+            			byte[] content = new byte[fis.available()];
+            			fis.read(content, 0, fis.available());
+            			cert = (X509Certificate) CertTools.getCertfromByteArray(content);
+            		} catch (IOException ex) {
+            			throw new IllegalCommandArgumentsException("Could not read certificate in DER format: " + ex.getMessage());
+            		} finally {
+            			if (fis != null) {
+            				fis.close();
+            			}
+            		}
+            	}
+            		
             	sn = cert.getSerialNumber();
             	certsn = sn.toString(16);  // needed for the infomational output below
             	Principal dn = cert.getIssuerDN();

@@ -158,6 +158,13 @@ public class SignServerCLITest extends ModulesTestCase {
         assertPrinted("", cli.getOut(),
         		"Adding the client certificate with sn 1d9fa8b71c75b564 and " +
         	    "issuerDN : CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE");
+        // test adding an authorized client via a DER file
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+            	cli.execute("addauthorizedclient", "TIMESTAMPSIGNER1000",
+            			getSignServerHome() + "/res/test/dss10/dss10_signer2.der"));
+        assertPrinted("", cli.getOut(),
+            		"Adding the client certificate with sn 53f6992d081248a and " +
+            	    "issuerDN : CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE");
         
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("listauthorizedclients", "TIMESTAMPSIGNER1000"));

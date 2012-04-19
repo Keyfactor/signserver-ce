@@ -63,6 +63,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
     public static final String OPTION_CERTPURPOSES = "certpurposes";
     public static final String OPTION_TRUSTSTORE = "truststore";
     public static final String OPTION_TRUSTSTOREPWD = "truststorepwd";
+    public static final String OPTION_SERVLET = "servlet";
     
     public static final int RETURN_ERROR = CommandLineInterface.RETURN_ERROR;
     public static final int RETURN_BADARGUMENT = CommandLineInterface.RETURN_INVALID_ARGUMENTS;
@@ -89,6 +90,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
     private String service = null;
     
     Options options = new Options();
+	private String servlet;
 
     public ValidateCertificateCommand() {
         Option help = new Option(OPTION_HELP, false, "Display this info");
@@ -130,7 +132,13 @@ public class ValidateCertificateCommand extends AbstractCommand {
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Password to unlock the truststore.");
         Option truststorepwd = OptionBuilder.create(OPTION_TRUSTSTOREPWD);
-
+        
+        OptionBuilder.withArgName("servlet-url");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("URL to the webservice servlet. Default: " +
+        		SignServerWSClientFactory.DEFAULT_WSDL_URL);
+        Option servlet = OptionBuilder.create(OPTION_SERVLET);
+        
         options.addOption(help);
         options.addOption(serviceOption);
         options.addOption(certOption);
@@ -142,6 +150,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
         options.addOption(silent);
         options.addOption(truststore);
         options.addOption(truststorepwd);
+        options.addOption(servlet);
     }
 
     @Override
@@ -285,6 +294,14 @@ public class ValidateCertificateCommand extends AbstractCommand {
                     printUsage();
                     return RETURN_BADARGUMENT;
                 }
+                
+                // set the default servlet URL value
+                servlet = SignServerWSClientFactory.DEFAULT_WSDL_URL;
+                
+                if (cmd.hasOption(OPTION_SERVLET) &&
+                		cmd.getOptionValue(OPTION_SERVLET) != null) {
+                	servlet = cmd.getOptionValue(OPTION_SERVLET);
+                }
 
 
             } catch (ParseException e) {
@@ -354,7 +371,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
                 hosts, useSSL,
                 new LogErrorCallback(),
                 port, SignServerWSClientFactory.DEFAULT_TIMEOUT,
-                SignServerWSClientFactory.DEFAULT_WSDL_URL,
+                servlet,
                 sslf);
 
         ValidateRequest vr = new ValidateRequest(org.signserver.validationservice.common.X509Certificate.getInstance(cert), usages);

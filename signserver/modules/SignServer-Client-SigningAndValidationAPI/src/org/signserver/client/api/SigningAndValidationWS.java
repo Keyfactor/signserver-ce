@@ -135,7 +135,6 @@ public class SigningAndValidationWS implements ISigningAndValidation {
                 + host + ":" + port
                 + servlet;
         final SignServerWSService service;
-        LOG.info("url: " + url);
         
         try {
             service = new SignServerWSService(new URL(url),

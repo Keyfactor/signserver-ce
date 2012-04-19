@@ -30,6 +30,7 @@ import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
+import org.signserver.protocol.ws.client.SignServerWSClientFactory;
 
 /**
  * Command Line Interface (CLI) for signing documents.
@@ -231,7 +232,7 @@ public class SignDocumentCommand extends AbstractCommand {
             // with the default one for the WS servlet
             if (Protocol.WEBSERVICES.equals(protocol) &&
             	!line.hasOption(SERVLET)) {
-            	servlet = SigningAndValidationWS.DEFAULT_SERVLET_URL;
+            	servlet = SignServerWSClientFactory.DEFAULT_WSDL_URL;
             }
         }
         if (line.hasOption(USERNAME)) {

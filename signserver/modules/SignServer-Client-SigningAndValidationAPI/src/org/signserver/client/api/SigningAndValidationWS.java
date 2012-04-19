@@ -37,6 +37,7 @@ import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
+import org.signserver.protocol.ws.client.SignServerWSClientFactory;
 import org.signserver.protocol.ws.client.WSClientUtil;
 import org.signserver.protocol.ws.gen.CryptoTokenOfflineException_Exception;
 import org.signserver.protocol.ws.gen.IllegalRequestException_Exception;
@@ -60,9 +61,6 @@ public class SigningAndValidationWS implements ISigningAndValidation {
     private static final Logger LOG = Logger.getLogger(SigningAndValidationWS.class);
     
     private SignServerWS signserver;
-    
-    /** Default servlet URL for WS */
-    public static final String DEFAULT_SERVLET_URL = "/signserver/signserverws/signserverws?wsdl";
 
     /**
      * Creates an instance of SigningAndValidationWS using an WebService host and port.
@@ -115,7 +113,7 @@ public class SigningAndValidationWS implements ISigningAndValidation {
      */
     public SigningAndValidationWS(final String host, final int port,
     		final boolean useHTTPS, final String username, final String password) {
-    	this(host, port, DEFAULT_SERVLET_URL, useHTTPS, username, password);
+    	this(host, port, SignServerWSClientFactory.DEFAULT_WSDL_URL, useHTTPS, username, password);
     }
     
     /**

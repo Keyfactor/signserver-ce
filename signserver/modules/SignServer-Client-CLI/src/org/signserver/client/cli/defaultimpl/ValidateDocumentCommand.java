@@ -26,6 +26,7 @@ import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
+import org.signserver.protocol.ws.client.SignServerWSClientFactory;
 
 /**
  * Command Line Interface (CLI) for validating documents.
@@ -70,10 +71,15 @@ public class ValidateDocumentCommand extends AbstractCommand {
     /** Option PROTOCOL. */
     public static final String PROTOCOL = "protocol";
 
+    /** Option USERNAME. */
     public static final String USERNAME = "username";
 
+    /** Option PASSWORD. */
     public static final String PASSWORD = "password";
 
+    /** Option SERVLET. */
+    public static final String SERVLET = "servlet";
+    
     /** The command line options. */
     private static final Options OPTIONS;
 
@@ -101,6 +107,8 @@ public class ValidateDocumentCommand extends AbstractCommand {
                 TEXTS.getString("PORT_DESCRIPTION"));
         OPTIONS.addOption(USERNAME, true, "Username for authentication.");
         OPTIONS.addOption(PASSWORD, true, "Password for authentication.");
+        OPTIONS.addOption(SERVLET, true, "URL to the webservice servlet. Default: " +
+        		SignServerWSClientFactory.DEFAULT_WSDL_URL);
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -127,6 +135,9 @@ public class ValidateDocumentCommand extends AbstractCommand {
     private String username;
     private String password;
 
+    /** Servlet URL */
+    private String servlet;
+    
     private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     @Override
@@ -186,6 +197,10 @@ public class ValidateDocumentCommand extends AbstractCommand {
         if (line.hasOption(PASSWORD)) {
             password = line.getOptionValue(PASSWORD, null);
         }
+        servlet = SignServerWSClientFactory.DEFAULT_WSDL_URL;
+        if (line.hasOption(SERVLET)) {
+        	servlet = line.getOptionValue(SERVLET);
+        }
         keyStoreOptions.parseCommandLine(line);
     }
 
@@ -235,6 +250,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
         validator = new WebServicesDocumentValidator(
             host,
             port,
+            servlet,
             keyStoreOptions.isUseHTTPS(),
             workerIdOrName,
             username,

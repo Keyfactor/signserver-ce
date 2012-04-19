@@ -60,6 +60,9 @@ public class SigningAndValidationWS implements ISigningAndValidation {
     private static final Logger LOG = Logger.getLogger(SigningAndValidationWS.class);
     
     private SignServerWS signserver;
+    
+    /** Default servlet URL for WS */
+    public static final String DEFAULT_SERVLET_URL = "/signserver/signserverws/signserverws?wsdl";
 
     /**
      * Creates an instance of SigningAndValidationWS using an WebService host and port.
@@ -101,8 +104,9 @@ public class SigningAndValidationWS implements ISigningAndValidation {
     }
 
     /**
-     * Creates an instance of SigningAndValidationWS using an WebService host and port.
-     *
+     * Creates an instance of SigningAndValidationWS using WebService host and port
+     * as well as username and password.
+     * 
      * @param host The remote host to connect to.
      * @param port The remote port to connect to.
      * @param useHTTPS True if SSL/TLS is to be used (HTTPS).
@@ -110,12 +114,31 @@ public class SigningAndValidationWS implements ISigningAndValidation {
      * @param password Password for authentication.
      */
     public SigningAndValidationWS(final String host, final int port,
-            final boolean useHTTPS,
+    		final boolean useHTTPS, final String username, final String password) {
+    	this(host, port, DEFAULT_SERVLET_URL, useHTTPS, username, password);
+    }
+    
+    /**
+     * Creates an instance of SigningAndValidationWS using a WebService host,port, and
+     * servlet URL.
+     * 
+     *
+     * @param host The remote host to connect to.
+     * @param port The remote port to connect to.
+     * @param servlet The servlet URL for the WS servlet to use
+     * @param useHTTPS True if SSL/TLS is to be used (HTTPS).
+     * @param username Username for authentication.
+     * @param password Password for authentication.
+     */
+    public SigningAndValidationWS(final String host, final int port,
+            final String servlet, final boolean useHTTPS,
             final String username, final String password) {
         final String url = (useHTTPS ? "https://" : "http://")
                 + host + ":" + port
-                + "/signserver/signserverws/signserverws?wsdl";
+                + servlet;
         final SignServerWSService service;
+        LOG.info("url: " + url);
+        
         try {
             service = new SignServerWSService(new URL(url),
                     new QName("gen.ws.protocol.signserver.org",
@@ -133,7 +156,7 @@ public class SigningAndValidationWS implements ISigningAndValidation {
         }
 
         SignServerUtil.installBCProvider();
-    }
+    }    
 
     public ProcessResponse process(int workerId, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         return process("" + workerId, request, context);

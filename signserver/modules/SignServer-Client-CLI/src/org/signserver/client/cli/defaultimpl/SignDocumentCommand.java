@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.client.api.SigningAndValidationWS;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -225,6 +226,13 @@ public class SignDocumentCommand extends AbstractCommand {
         if (line.hasOption(PROTOCOL)) {
             protocol = Protocol.valueOf(line.getOptionValue(
                     PROTOCOL, null));
+            
+            // if the protocol is WS and -servlet is not set, override the servlet URL
+            // with the default one for the WS servlet
+            if (Protocol.WEBSERVICES.equals(protocol) &&
+            	!line.hasOption(SERVLET)) {
+            	servlet = SigningAndValidationWS.DEFAULT_SERVLET_URL;
+            }
         }
         if (line.hasOption(USERNAME)) {
             username = line.getOptionValue(USERNAME, null);
@@ -286,6 +294,7 @@ public class SignDocumentCommand extends AbstractCommand {
             signer = new WebServicesDocumentSigner(
                 host,
                 port,
+                servlet,
                 workerIdOrName,
                 keyStoreOptions.isUseHTTPS(),
                 username, password,

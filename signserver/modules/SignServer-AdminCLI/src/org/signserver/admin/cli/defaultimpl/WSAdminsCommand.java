@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJBException;
@@ -36,17 +37,20 @@ public class WSAdminsCommand extends AbstractAdminCommand {
     public static final String LIST = "list";
     public static final String CERTSERIALNO = "certserialno";
     public static final String ISSUERDN = "issuerdn";
+    public static final String CERT = "cert";
     
     /** The command line options. */
     private static final Options OPTIONS;
     
     private static final String USAGE =
             "Usage: signserver wsadmins -add -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
+    		+ "Usage: signserver wsadmins -add -cert <PEM or DER file>\n"
             + "Usage: signserver wsadmins -remove -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
             + "Usage: signserver wsadmins -list\n"
             + "Example 1: signserver wsadmins -add -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
-            + "Example 2: signserver wsadmins -remove -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
-            + "Example 3: signserver wsadmins -list";
+            + "Example 2: signserver wsadmins -add -cert wsadmin.pem\n"
+            + "Example 3: signserver wsadmins -remove -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
+            + "Example 4: signserver wsadmins -list";
 
     static {
         OPTIONS = new Options();
@@ -58,11 +62,13 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                 "Subject certificate serial number");
         OPTIONS.addOption(ISSUERDN, true,
                 "Issuer distinguished name");
+        OPTIONS.addOption(CERT, true, "Certificate file");
     }
     
     private String operation;
     private String certSerialNo;
     private String issuerDN;
+    private String cert;
 
     @Override
     public String getDescription() {
@@ -82,6 +88,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
     private void parseCommandLine(final CommandLine line) {
         certSerialNo = line.getOptionValue(CERTSERIALNO, null);
         issuerDN = line.getOptionValue(ISSUERDN, null);
+        cert = line.getOptionValue(CERT, null);
         if (line.hasOption(ADD)) {
             operation = ADD;
         } else if (line.hasOption(REMOVE)) {
@@ -100,15 +107,23 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             System.err.println(USAGE);
             System.exit(1);
         } else if (!operation.equals(LIST)) {
-            if (certSerialNo == null) {
-                System.err.println("Missing option: -certserialno");
-                System.err.println(USAGE);
-                System.exit(1);
-            } else if (issuerDN == null) {
-                System.err.println("Missing option: -issuerdn");
-                System.err.println(USAGE);
-                System.exit(1);
-            }
+        	if (cert != null) {
+        		// don't allow -cert option in combination with -certserialno and -issuerdn
+        		if (certSerialNo != null || issuerDN != null) {
+        			System.err.println("Can't use the option -cert at the same time as -certserialno and -issuerdn");
+        			System.exit(1);
+        		}
+        	} else {
+        		if (certSerialNo == null) {
+        			System.err.println("Missing option: -certserialno");
+        			System.err.println(USAGE);
+        			System.exit(1);
+        		} else if (issuerDN == null) {
+        			System.err.println("Missing option: -issuerdn");
+        			System.err.println(USAGE);
+        			System.exit(1);
+        		}
+        	}
         }
     }
 
@@ -138,7 +153,16 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                 }
                 System.out.println(buff.toString());
             } else if (ADD.equals(operation)) {
-                entries.add(new Entry(certSerialNo, issuerDN));
+            	if (cert == null) {
+            		// serial number and issuer DN was entered manually
+            		entries.add(new Entry(certSerialNo, issuerDN));
+            	} else {
+            		// read serial number and issuer DN from cert file
+            		X509Certificate certificate = getCertFromFile(cert);
+            		String sn = certificate.getSerialNumber().toString(16);
+            		String dn = certificate.getIssuerDN().getName();
+            		entries.add(new Entry(sn, dn));
+            	}
                 getGlobalConfigurationSession().setProperty(
                         GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
                         serializeAdmins(entries));

@@ -12,9 +12,17 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.Iterator;
+
+import java.security.cert.CertificateException;
+
 import org.apache.log4j.Logger;
+import org.ejbca.util.CertTools;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.common.AuthorizedClient;
@@ -82,6 +90,51 @@ public abstract class AbstractAdminCommand extends AbstractCommand {
             AuthorizedClient client = (AuthorizedClient) iter.next();
             this.getOutputStream().println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");
         }
+    }
+    
+    /**
+     * Get a certificate from a file (PEM or binary cert)
+     * @param filename
+     * @return Certificate
+     * @throws IllegalCommandArgumentsException
+     */
+    protected X509Certificate getCertFromFile(final String filename)
+    		throws IllegalCommandArgumentsException {
+    	Collection<?> certs = null;
+    	X509Certificate cert = null;
+    	
+    	try {
+    		certs = CertTools.getCertsFromPEM(filename);
+    	            	
+    		if (certs.isEmpty()) {
+    			throw new IllegalCommandArgumentsException("Invalid PEM file, couldn't find any certificate");
+    		}
+    		
+    		cert = (X509Certificate) certs.iterator().next();
+    	} catch (CertificateException cex) {
+    		throw new IllegalCommandArgumentsException("Could not fetch certificate from PEM file: " + cex.getMessage());
+    	} catch (IOException ioex) {
+    		// try to treat the file as a binary certificate file
+			FileInputStream fis = null;
+
+    		try {
+    			fis = new FileInputStream(filename);
+    			byte[] content = new byte[fis.available()];
+    			fis.read(content, 0, fis.available());
+    			cert = (X509Certificate) CertTools.getCertfromByteArray(content);
+    		} catch (Exception ex) {
+    			throw new IllegalCommandArgumentsException("Could not read certificate in DER format: " + ex.getMessage());
+    		} finally {
+    			if (fis != null) {
+    				try {
+    					fis.close();
+    				} catch (IOException ioe) {
+    				}
+    			}
+    		}
+    	}
+    	
+    	return cert;
     }
 
     /**

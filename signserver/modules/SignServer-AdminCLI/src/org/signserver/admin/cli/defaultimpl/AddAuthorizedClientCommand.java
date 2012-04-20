@@ -70,36 +70,8 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
             } else {
             	// read SN and DN from the supplied certificate...
             	String filename = args[1];
-            	Collection<?> certs = null;
-            	X509Certificate cert = null;
+            	X509Certificate cert = getCertFromFile(filename);	
             	
-            	try {
-            		certs = CertTools.getCertsFromPEM(filename);
-            	            	
-            		if (certs.isEmpty()) {
-            			throw new IllegalCommandArgumentsException("Invalid PEM file, couldn't find any certificate");
-            		}
-            		
-            		cert = (X509Certificate) certs.iterator().next();
-
-            	} catch (IOException ioex) {
-            		// try to treat the file as a binary certificate file
-        			FileInputStream fis = null;
-
-            		try {
-            			fis = new FileInputStream(filename);
-            			byte[] content = new byte[fis.available()];
-            			fis.read(content, 0, fis.available());
-            			cert = (X509Certificate) CertTools.getCertfromByteArray(content);
-            		} catch (IOException ex) {
-            			throw new IllegalCommandArgumentsException("Could not read certificate in DER format: " + ex.getMessage());
-            		} finally {
-            			if (fis != null) {
-            				fis.close();
-            			}
-            		}
-            	}
-            		
             	sn = cert.getSerialNumber();
             	certsn = sn.toString(16);  // needed for the infomational output below
             	Principal dn = cert.getIssuerDN();

@@ -101,27 +101,20 @@ public class WSAdminsCommand extends AbstractAdminCommand {
     /**
      * Checks that all mandatory options are given.
      */
-    private void validateOptions() {
+    private void validateOptions() throws IllegalCommandArgumentsException {
         if (operation == null) {
-            System.err.println("Missing operation: -add, -remove or -list");
-            System.err.println(USAGE);
-            System.exit(1);
+            throw new IllegalCommandArgumentsException("Missing operation: -add, -remove or -list");
         } else if (!operation.equals(LIST)) {
         	if (cert != null) {
         		// don't allow -cert option in combination with -certserialno and -issuerdn
         		if (certSerialNo != null || issuerDN != null) {
-        			System.err.println("Can't use the option -cert at the same time as -certserialno and -issuerdn");
-        			System.exit(1);
+                            throw new IllegalCommandArgumentsException("Can't use the option -cert at the same time as -certserialno and -issuerdn");
         		}
         	} else {
         		if (certSerialNo == null) {
-        			System.err.println("Missing option: -certserialno");
-        			System.err.println(USAGE);
-        			System.exit(1);
+        			throw new IllegalCommandArgumentsException("Missing option: -certserialno");
         		} else if (issuerDN == null) {
-        			System.err.println("Missing option: -issuerdn");
-        			System.err.println(USAGE);
-        			System.exit(1);
+        			throw new IllegalCommandArgumentsException("Missing option: -issuerdn");
         		}
         	}
         }
@@ -151,7 +144,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                             entry.getCertSerialNo(), entry.getIssuerDN()));
                     buff.append("\n");
                 }
-                System.out.println(buff.toString());
+                getOutputStream().println(buff.toString());
             } else if (ADD.equals(operation)) {
             	if (cert == null) {
             		// serial number and issuer DN was entered manually
@@ -166,21 +159,21 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                 getGlobalConfigurationSession().setProperty(
                         GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
                         serializeAdmins(entries));
-                System.out.println("Administrator added");
+                getOutputStream().println("Administrator added");
             } else if (REMOVE.equals(operation)) {
                 if (entries.remove(new Entry(certSerialNo, issuerDN))) {
                     getGlobalConfigurationSession().setProperty(
                             GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
                             serializeAdmins(entries));
-                    System.out.println("Administrator removed");
+                    getOutputStream().println("Administrator removed");
                 } else {
-                    System.err.println("No such administrator");
+                    getErrorStream().println("No such administrator");
                 }
             }
             return 0;
         } catch (EJBException eJBException) {
             if (eJBException.getCausedByException() instanceof IllegalArgumentException) {
-                err.println(eJBException.getMessage());
+                getErrorStream().println(eJBException.getMessage());
                 return -2;
             } else {
                 throw new UnexpectedCommandFailureException(eJBException);

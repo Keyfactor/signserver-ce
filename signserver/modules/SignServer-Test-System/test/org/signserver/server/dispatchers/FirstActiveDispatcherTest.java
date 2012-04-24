@@ -19,7 +19,6 @@ import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
 
 /**
  * Tests for the FirstActiveDispatcher.

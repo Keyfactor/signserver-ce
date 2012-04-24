@@ -72,8 +72,7 @@ public class WSAdminsCommand extends BaseCommand {
             parseCommandLine(new GnuParser().parse(OPTIONS, args));
         } catch (ParseException ex) {
             throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
-        }
-        validateOptions();
+        }    
     }
 
     /**
@@ -96,20 +95,14 @@ public class WSAdminsCommand extends BaseCommand {
     /**
      * Checks that all mandatory options are given.
      */
-    private void validateOptions() {
+    private void validateOptions() throws IllegalAdminCommandException {
         if (operation == null) {
-            System.err.println("Missing operation: -add, -remove or -list");
-            System.err.println(USAGE);
-            System.exit(1);
+            throw new IllegalAdminCommandException("Missing operation: -add, -remove or -list" + "\n" + USAGE);
         } else if (!operation.equals(LIST)) {
             if (certSerialNo == null) {
-                System.err.println("Missing option: -certserialno");
-                System.err.println(USAGE);
-                System.exit(1);
+                throw new IllegalAdminCommandException("Missing option: -certserialno" + "\n" + USAGE);
             } else if (issuerDN == null) {
-                System.err.println("Missing option: -issuerdn");
-                System.err.println(USAGE);
-                System.exit(1);
+                throw new IllegalAdminCommandException("Missing option: -issuerdn" + "\n" + USAGE);
             }
         }
     }
@@ -124,6 +117,8 @@ public class WSAdminsCommand extends BaseCommand {
     public void execute(String hostname) throws IllegalAdminCommandException,
             ErrorAdminCommandException {
 
+        validateOptions();
+        
         try {
             final String admins = getCommonAdminInterface(hostname).getGlobalConfiguration().getProperty(
                     GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
@@ -138,28 +133,28 @@ public class WSAdminsCommand extends BaseCommand {
                             entry.getCertSerialNo(), entry.getIssuerDN()));
                     buff.append("\n");
                 }
-                System.out.println(buff.toString());
+                getOutputStream().println(buff.toString());
             } else if (ADD.equals(operation)) {
                 entries.add(new Entry(certSerialNo, issuerDN));
                 getCommonAdminInterface(hostname).setGlobalProperty(
                         GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
                         serializeAdmins(entries));
-                System.out.println("Administrator added");
+                getOutputStream().println("Administrator added");
             } else if (REMOVE.equals(operation)) {
                 if (entries.remove(new Entry(certSerialNo, issuerDN))) {
                     getCommonAdminInterface(hostname).setGlobalProperty(
                             GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
                             serializeAdmins(entries));
-                    System.out.println("Administrator removed");
+                    getOutputStream().println("Administrator removed");
                 } else {
-                    System.err.println("No such administrator");
+                    getErrorStream().println("No such administrator");
                 }
             }
         } catch (IllegalAdminCommandException e) {
             throw e;
         } catch (EJBException eJBException) {
             if (eJBException.getCausedByException() instanceof IllegalArgumentException) {
-                System.err.println(eJBException.getMessage());
+                getErrorStream().println(eJBException.getMessage());
             } else {
                 throw new ErrorAdminCommandException(eJBException);
             }

@@ -36,6 +36,7 @@ public abstract class BaseCommand implements IAdminCommand {
     
     /** Where print output of commands */
     private PrintStream outStream = System.out;
+    private PrintStream errStream = System.err;
     
     /** holder of argument array */
     protected String[] args = null;
@@ -149,6 +150,14 @@ public abstract class BaseCommand implements IAdminCommand {
         } else {
             this.outStream = outStream;
         }
+    }
+    
+    public PrintStream getErrorStream() {
+        return errStream;
+    }
+    
+    public void setErrorStream(PrintStream errStream) {
+        this.errStream = errStream;
     }
 
     /**

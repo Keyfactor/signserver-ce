@@ -37,7 +37,7 @@ public class SignServerCLITest extends ModulesTestCase {
     private static final String TESTID = "100";
     private static final String TESTTSID = "1000";
     private static final String TESTGSID = "1023";
-
+  
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -394,5 +394,26 @@ public class SignServerCLITest extends ModulesTestCase {
                     "3433"});
 
         TestingSecurityManager.remove();
+    }
+    
+    /**
+     * Test adding and removing WS admins using serial number and issuer DN directly
+     * @throws Exception
+     */
+    public void testWSAdmins() throws Exception {
+    	// Test adding wsadmin using explicit parameters
+    	TestUtils.assertSuccessfulExecution(new String[] {"wsadmins", "-add",
+    			"-certserialno", "EF34242D2324", "-issuerdn", "CN=Test Root CA"});
+    	TestUtils.assertSuccessfulExecution(new String[] {"wsadmins", "-list"});
+    	assertTrue(TestUtils.grepTempOut("EF34242D2324"));
+    	assertTrue(TestUtils.grepTempOut("CN=Test Root CA"));
+    	     
+        // Test removing previously added admin
+    	TestUtils.assertSuccessfulExecution(new String[] {"wsadmins", "-remove",
+    			"-certserialno", "EF34242D2324", "-issuerdn", "CN=Test Root CA"});
+    	TestUtils.assertSuccessfulExecution(new String[] {"wsadmins", "-list"});
+    	assertFalse(TestUtils.grepTempOut("EF34242D2324"));
+    	assertFalse(TestUtils.grepTempOut("CN=Test Root CA"));
+ 
     }
 }

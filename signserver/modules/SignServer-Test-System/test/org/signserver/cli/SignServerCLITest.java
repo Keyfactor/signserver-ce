@@ -304,6 +304,10 @@ public class SignServerCLITest extends ModulesTestCase {
         assertPrinted("", cli.getOut(), "SignServer reloaded successfully");
     }
 
+    /**
+     * Test adding and removing WS admins using serial number and issuer DN directly
+     * @throws Exception
+     */
     public void testWSAdmins() throws Exception {
     	// Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
@@ -323,7 +327,15 @@ public class SignServerCLITest extends ModulesTestCase {
         assertNotPrinted("", cli.getOut(), "EF34242D2324");
         assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
      
-        // Test adding wsadmin using a PEM file
+        
+    }
+    
+    /**
+     * Test adding WS admins using PEM and DER files
+     * @throws Exception
+     */
+    public void testWSAdminsFromFile() throws Exception {
+    	// Test adding wsadmin using a PEM file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsadmins", "-add",
         				"-cert", getSignServerHome() + "/res/test/dss10/dss10_signer1.pem"));
@@ -340,6 +352,5 @@ public class SignServerCLITest extends ModulesTestCase {
         		cli.execute("wsadmins", "-list"));
         assertPrinted("", cli.getOut(), "53f6992d081248a");
         assertPrinted("", cli.getOut(), "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE");
-        
     }
 }

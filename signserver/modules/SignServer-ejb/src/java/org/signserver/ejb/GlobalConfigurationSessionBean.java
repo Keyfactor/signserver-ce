@@ -143,12 +143,15 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
             while (iter.hasNext()) {
                 GlobalConfigurationDataBean data = iter.next();
                 String rawkey = data.getPropertyKey();
+                String propertyValue = data.getPropertyValue();
+                
                 if (rawkey.startsWith(GlobalConfiguration.SCOPE_NODE)) {
                     String key = rawkey.replaceFirst(WorkerConfig.getNodeId() + ".", "");
-                    properties.setProperty(key, data.getPropertyValue());
+                    properties.setProperty(key, propertyValue == null ? "" : propertyValue);
                 } else {
                     if (rawkey.startsWith(GlobalConfiguration.SCOPE_GLOBAL)) {
-                        properties.setProperty(rawkey, data.getPropertyValue());
+                    	properties.setProperty(rawkey,
+                    			propertyValue == null ? "" : propertyValue);
                     } else {
                         log.error("Illegal property in Global Configuration " + rawkey);
                     }

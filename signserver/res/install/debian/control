@@ -2,7 +2,7 @@ Source: signserver3.3
 Section: misc
 Priority: optional
 Maintainer: Markus Kilås <markus@primekey.se>
-Build-Depends: ant (>= 1.7.1), ant-optional, debhelper (>= 5),
+Build-Depends: ant (>= 1.8.0), ant-optional, debhelper (>= 5),
  default-jdk (>= 1.6),
  glassfish-appserv (>=1:2ur2-b04-6),
  glassfish-javaee (>=1:2ur2-b04-6),

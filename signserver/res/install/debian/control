@@ -63,6 +63,7 @@ Depends: libcertcvc-java (>= 1.2.11),
  libbctsp-java (>=1.45), 
  libbcmail-java (>= 1.45), 
  libjboss-j2ee-java,
+ libjboss-ejb3x-java (>=4.2.3.GA-1),
  ${misc:Depends}
 Description: SignServer automated signing server
  Common classes for different parts of signserver

@@ -44,9 +44,9 @@ import javax.persistence.Query;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
-import org.bouncycastle.asn1.x509.X509Extensions;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizationRequiredException;
@@ -111,6 +111,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /** Audit logger. */
     private static final ISystemLogger AUDITLOG = SystemLoggerFactory
             .getInstance().getLogger(WorkerSessionBean.class);
+    
+    /**
+     * OID for the PrivateKeyUsagePeriod extension.
+     * Specified here as different versions of BouncyCastle (i.e. 1.45 vs 1.46) 
+     * uses different types for it breaking runtime compatibility.
+     */
+    private static final DERObjectIdentifier PRIVATE_KEY_USAGE_PERIOD = new DERObjectIdentifier("2.5.29.16");
     
     /** The local home interface of Worker Config entity bean. */
     private WorkerConfigDataService workerConfigService;
@@ -506,8 +513,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     private static PrivateKeyUsagePeriod getPrivateKeyUsagePeriod(
             final X509Certificate cert) throws IOException {
         PrivateKeyUsagePeriod res = null;
-        final byte[] extvalue = cert.getExtensionValue(
-                X509Extensions.PrivateKeyUsagePeriod.getId());
+        final byte[] extvalue = cert.getExtensionValue(PRIVATE_KEY_USAGE_PERIOD.getId());
         
         if ((extvalue != null) && (extvalue.length > 0)) {
             if (LOG.isDebugEnabled()) {

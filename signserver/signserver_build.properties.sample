@@ -52,6 +52,9 @@
 # Default: false
 # Comment out or set to false if the web server should be configured. 
 # Note that you will need p12/tomcat.jks and p12/truststore.jks keystore for web server https configuration. 
+# Note that if this is set to true, configurations for ports and bind addresses set in this
+# file is not taken into account, neither are the default values from SignServer.
+# In this case, the default configuration from JBoss will be un-altered.
 j2ee.web-nohttps=true
 
 # When upgrading, the important options are:

@@ -93,6 +93,7 @@ public abstract class BaseValidationService implements IValidationService {
     /**
      * @see org.signserver.validationservice.server.IValidationService#getStatus()
      */
+    @Override
     public WorkerStatus getStatus() {
 
         HashMap<Integer, String> validatorStatuses = new HashMap<Integer, String>();

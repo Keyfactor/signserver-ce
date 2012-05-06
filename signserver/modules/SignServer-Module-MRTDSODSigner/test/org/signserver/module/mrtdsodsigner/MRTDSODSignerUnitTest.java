@@ -44,7 +44,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
-import org.signserver.server.cryptotokens.HardCodedCryptoToken;
+import org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 
@@ -727,7 +727,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA512");
             config.setProperty("SIGNATUREALGORITHM", "SHA512withRSAandMGF1");
-            config.setProperty("defaultKey", HardCodedCryptoToken.KEY_ALIAS_2); // Use a larger key
+            config.setProperty("defaultKey", HardCodedCryptoTokenAliases.KEY_ALIAS_2); // Use a larger key
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override

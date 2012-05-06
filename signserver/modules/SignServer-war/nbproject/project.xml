@@ -7,11 +7,11 @@
             <name>SignServer-war</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <web-module-libraries>
-                <library dirs="100">
-                    <file>${reference.SignServer-ejb.dist}</file>
-                </library>
                 <library dirs="200">
                     <file>${reference.SignServer-ejb-interfaces.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${reference.SignServer-Server.jar}</file>
                 </library>
                 <library dirs="200">
                     <file>${reference.SignServer-Common.jar}</file>
@@ -64,12 +64,12 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>SignServer-ejb</foreign-project>
+                <foreign-project>SignServer-Server</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
-                <target>dist</target>
+                <target>jar</target>
                 <clean-target>clean</clean-target>
-                <id>dist</id>
+                <id>jar</id>
             </reference>
             <reference>
                 <foreign-project>SignServer-ejb-interfaces</foreign-project>

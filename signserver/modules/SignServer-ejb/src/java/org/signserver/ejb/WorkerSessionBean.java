@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import java.io.PrintStream;
 import org.signserver.server.config.entities.WorkerConfigDataService;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -53,6 +54,9 @@ import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.CryptoTokenStatus;
+import org.signserver.common.DefaultWorkerStatus;
+import org.signserver.common.DispatcherStatus;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IArchivableProcessResponse;
 import org.signserver.common.ICertReqData;
@@ -66,8 +70,12 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RequestContext;
+import org.signserver.common.ServiceConfig;
+import org.signserver.common.ServiceStatus;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
+import org.signserver.common.SignerStatus;
+import org.signserver.common.ValidatorStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -78,6 +86,7 @@ import org.signserver.server.BaseProcessable;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.IProcessable;
 import org.signserver.server.IWorker;
+import org.signserver.server.KeyUsageCounterHash;
 import org.signserver.server.entities.KeyUsageCounter;
 import org.signserver.server.NotGrantedException;
 import org.signserver.server.SignServerContext;
@@ -88,6 +97,7 @@ import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
+import org.signserver.server.dispatchers.BaseDispatcher;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.SystemLoggerException;
@@ -95,6 +105,10 @@ import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.log.WorkerLoggerException;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
+import org.signserver.server.timedservices.BaseTimedService;
+import org.signserver.server.timedservices.ITimedService;
+import org.signserver.server.validators.IValidator;
+import org.signserver.validationservice.server.ValidationServiceWorker;
 
 /**
  * The main worker session bean.
@@ -196,11 +210,12 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
             throw ex;
         }
+        final WorkerConfig awc = worker.getConfig();
 
         // Get worker log instance
         final IWorkerLogger workerLogger = WorkerFactory.getInstance().
                 getWorkerLogger(workerId,
-                worker.getStatus().getActiveSignerConfig(), em);
+                awc, em);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker[" + workerId + "]: " + "WorkerLogger: "
@@ -225,7 +240,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 WorkerFactory.getInstance()
                         .getAuthenticator(workerId,
                             processable.getAuthenticationType(),
-                            worker.getStatus().getActiveSignerConfig(),
+                            awc,
                             em).isAuthorized(request, requestContext);
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
                         String.valueOf(true));
@@ -263,8 +278,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
 
             // Check activation
-            final WorkerConfig awc =
-                    processable.getStatus().getActiveSignerConfig();
             if (awc.getProperties().getProperty(SignServerConstants.DISABLED,
                     "FALSE").equalsIgnoreCase("TRUE")) {
                 final CryptoTokenOfflineException exception =
@@ -331,7 +344,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                                         RequestContext.CLIENT_CREDENTIAL);
 
                     purchased = WorkerFactory.getInstance().getAccounter(workerId,
-                                    worker.getStatus().getActiveSignerConfig(),
+                                    awc,
                                     em).purchase(credential, request, res,
                                             requestContext);
 
@@ -674,7 +687,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 result = -1;
             } else {
                 final String pk
-                        = KeyUsageCounter.createKeyHash(cert.getPublicKey());
+                        = KeyUsageCounterHash.create(cert.getPublicKey());
                 final KeyUsageCounter signings
                         = em.find(KeyUsageCounter.class, pk);
                 if (signings == null) {
@@ -738,7 +751,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     = Long.valueOf(awc.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
 
             final String keyHash
-                    = KeyUsageCounter.createKeyHash(cert.getPublicKey());
+                    = KeyUsageCounterHash.create(cert.getPublicKey());
 
             if(LOG.isDebugEnabled()) {
                 LOG.debug("Worker[" + workerId +"]: "
@@ -792,7 +805,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#getStatus(int)
      */
+    @Override
     public WorkerStatus getStatus(int workerId) throws InvalidWorkerIdException {
+        final WorkerStatus result;
         IWorker worker = WorkerFactory.getInstance().getWorker(workerId,
                 workerConfigService, globalConfigurationSession, new SignServerContext(
                 em));
@@ -800,9 +815,49 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             throw new InvalidWorkerIdException("Given SignerId " + workerId
                     + " doesn't exist");
         }
+        final WorkerConfig config = worker.getConfig();
+        
+        if (worker instanceof ITimedService) {
+            result = new ServiceStatus(workerId, new ServiceConfig(config));
+        } else if (worker instanceof BaseDispatcher) {
+            result = new DispatcherStatus(workerId, config);
+        } else if (worker instanceof IValidator) {
+            result = new ValidatorStatus(workerId, new ProcessableConfig(config));
+        } else if (worker instanceof ValidationServiceWorker) {
+            result = ((ValidationServiceWorker) worker).getStatus();
+        } else if (worker instanceof IProcessable) {
+            final IProcessable processable = (IProcessable) worker;
+            final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
+            int status = processable.getCryptoTokenStatus();
+            
+            Certificate cert = null;
+            try {
+                cert = getSignerCertificate(workerId);
+            } catch (CryptoTokenOfflineException ignored) {} // NOPMD
 
+            if (cert == null) {
+                result = new SignerStatus(workerId, status, new ProcessableConfig(config), null);
+            } else {
+                KeyUsageCounter counter = em.find(KeyUsageCounter.class,
+                        KeyUsageCounterHash.create(cert.getPublicKey()));
 
-        return worker.getStatus();
+                if (counter == null || keyUsageLimit != -1
+                        && status == CryptoTokenStatus.STATUS_ACTIVE
+                        && counter.getCounter() >= keyUsageLimit) {
+                    status = CryptoTokenStatus.STATUS_OFFLINE;
+                }
+
+                if (counter == null) {
+                    result = new SignerStatus(workerId, status, new ProcessableConfig(config), cert);
+                } else {
+                    result = new SignerStatus(workerId, status, new ProcessableConfig(config), cert, counter.getCounter());
+                }
+            }
+        } else {
+            result = new DefaultWorkerStatus(workerId, config);
+        }
+
+        return result;
     }
 
     /* (non-Javadoc)
@@ -836,8 +891,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     final Certificate cert = ((BaseProcessable)worker)
                             .getSigningCertificate();
                     if (cert != null) {
-                        final String keyHash = KeyUsageCounter
-                                .createKeyHash(cert.getPublicKey());
+                        final String keyHash = KeyUsageCounterHash
+                                .create(cert.getPublicKey());
 
                         KeyUsageCounter counter
                                 = em.find(KeyUsageCounter.class, keyHash);
@@ -938,7 +993,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         final IProcessable signer = (IProcessable) worker;
 
-        final WorkerConfig config = worker.getStatus().getActiveSignerConfig();
+        final WorkerConfig config = worker.getConfig();
 
         if (keyAlgorithm == null) {
             keyAlgorithm = config.getProperty("KEYALG");
@@ -991,6 +1046,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /**
      * @see IWorkerSession#testKey(int, java.lang.String, char[])
      */
+    @Override
     public Collection<KeyTestResult> testKey(final int signerId, String alias,
             char[] authCode)
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
@@ -1015,7 +1071,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 //                    "Testing key can not be performed on offline cryptotoken");
 //        }
 
-        final WorkerConfig config = worker.getStatus().getActiveSignerConfig();
+        final WorkerConfig config = worker.getConfig();
 
         if (alias == null) {
             alias = config.getProperty("DEFAULTKEY");

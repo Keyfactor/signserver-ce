@@ -112,7 +112,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
                 ut.begin();
                 IWorker worker = WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, new SignServerContext(em));
                 if (worker != null) {
-                    serviceConfig = new ServiceConfig(WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, new SignServerContext(em)).getStatus().getActiveSignerConfig());
+                    serviceConfig = new ServiceConfig(WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, new SignServerContext(em)).getConfig());
                     if (serviceConfig != null) {
                         timedService = (ITimedService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, new SignServerContext(em));
                         sessionCtx.getTimerService().createTimer(timedService.getNextInterval(), timerInfo);

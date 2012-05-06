@@ -28,12 +28,12 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>SignServer-ejb</foreign-project>
+                <foreign-project>SignServer-Server</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
-                <target>dist</target>
+                <target>jar</target>
                 <clean-target>clean</clean-target>
-                <id>dist</id>
+                <id>jar</id>
             </reference>
             <reference>
                 <foreign-project>SignServer-ejb-interfaces</foreign-project>

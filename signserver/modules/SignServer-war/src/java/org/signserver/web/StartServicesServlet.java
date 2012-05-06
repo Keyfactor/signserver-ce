@@ -15,7 +15,6 @@ package org.signserver.web;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 import javax.ejb.EJB;
 import javax.naming.NamingException;
@@ -90,6 +89,7 @@ public class StartServicesServlet extends HttpServlet {
      * Method used to remove all active timers
      * @see javax.servlet.GenericServlet#destroy()
      */
+    @Override
     public void destroy() {
         final String version = CompileTimeSettings.getInstance().getProperty(
                 CompileTimeSettings.SIGNSERVER_VERSION);
@@ -150,6 +150,7 @@ public class StartServicesServlet extends HttpServlet {
         
     } // init
 
+    @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         LOG.debug(">doPost()");
@@ -157,6 +158,7 @@ public class StartServicesServlet extends HttpServlet {
         LOG.debug("<doPost()");
     } //doPost
 
+    @Override
     public void doGet(HttpServletRequest req,  HttpServletResponse res) throws java.io.IOException, ServletException {
         LOG.debug(">doGet()");
         res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Servlet doesn't support requests is only loaded on startup.");

@@ -29,6 +29,7 @@ import org.signserver.groupkeyservice.common.IRemoveGroupKeyRequest;
 import org.signserver.groupkeyservice.common.PregenerateKeysRequest;
 import org.signserver.groupkeyservice.common.SwitchEncKeyRequest;
 import org.signserver.server.BaseProcessable;
+import org.signserver.server.IGroupKeyServiceWorker;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.IExtendedCryptoToken;
 
@@ -39,7 +40,7 @@ import org.signserver.server.cryptotokens.IExtendedCryptoToken;
  * @author Philip Vendil 16 nov 2007
  * @version $Id$
  */
-public class GroupKeyServiceWorker extends BaseProcessable {
+public class GroupKeyServiceWorker extends BaseProcessable implements IGroupKeyServiceWorker {
 
     private transient Logger log = Logger.getLogger(this.getClass());
     
@@ -122,6 +123,7 @@ public class GroupKeyServiceWorker extends BaseProcessable {
     /**
      * @see org.signserver.server.signers.BaseProcessable#getStatus()
      */
+    @Override
     public WorkerStatus getStatus() {
         return groupKeyService.getStatus();
     }

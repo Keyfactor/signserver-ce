@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import java.io.PrintStream;
 import org.signserver.server.config.entities.WorkerConfigDataService;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -84,6 +83,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.AccounterException;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.IClientCredential;
+import org.signserver.server.IGroupKeyServiceWorker;
 import org.signserver.server.IProcessable;
 import org.signserver.server.IWorker;
 import org.signserver.server.KeyUsageCounterHash;
@@ -105,7 +105,6 @@ import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.log.WorkerLoggerException;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
-import org.signserver.server.timedservices.BaseTimedService;
 import org.signserver.server.timedservices.ITimedService;
 import org.signserver.server.validators.IValidator;
 import org.signserver.validationservice.server.ValidationServiceWorker;
@@ -825,6 +824,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             result = new ValidatorStatus(workerId, new ProcessableConfig(config));
         } else if (worker instanceof ValidationServiceWorker) {
             result = ((ValidationServiceWorker) worker).getStatus();
+        } else if (worker instanceof IGroupKeyServiceWorker) {
+            result = ((IGroupKeyServiceWorker) worker).getStatus();
         } else if (worker instanceof IProcessable) {
             final IProcessable processable = (IProcessable) worker;
             final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));

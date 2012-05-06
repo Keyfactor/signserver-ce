@@ -20,6 +20,7 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.KeyUsageCounterHash;
 import org.signserver.server.entities.KeyUsageCounter;
 
 /**
@@ -149,7 +150,7 @@ public class SignerStatusReportBuilder implements ReportBuilder {
             final Certificate cert = workerSession
                     .getSignerCertificate(worker);
             if (cert != null) {
-                ret = KeyUsageCounter.createKeyHash(cert.getPublicKey());
+                ret = KeyUsageCounterHash.create(cert.getPublicKey());
             }
         } catch (CryptoTokenOfflineException ignored) {}
         return ret;

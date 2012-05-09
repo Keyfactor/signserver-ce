@@ -405,9 +405,8 @@ For GlassFish also configure a connection pool and JNDI resource:
                     <p>
 For JBoss if you are going to protect the HTTP communication with SSL, you need
 a JKS SSL server keystore. Rename the web server keystore to tomcat.jks at put
-it in a 'p12' subdirectory. Also place the web server root certificate in DER
-encoding in the same directory, call it rootcert.cer.
-                    </p>
+it in a 'p12' subdirectory.
+					</p>
                     <p>
 For GlassFish enable client authentication for http-listener-2 and manually
 update the keystores with the right certificates.

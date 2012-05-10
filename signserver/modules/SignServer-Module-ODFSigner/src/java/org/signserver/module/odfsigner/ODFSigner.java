@@ -48,6 +48,9 @@ import org.signserver.server.signers.BaseSigner;
  * Adds invisible signature to odt,ods,odp,odg.. files (created with Open Office
  * 3.1 and respecting ODF standard)
  * 
+ * Patches for the ODF Toolkit library are available at:
+ * https://issues.apache.org/jira/browse/ODFTOOLKIT-67
+ * 
  * @author Aziz Göktepe
  * @version $Id$
  */

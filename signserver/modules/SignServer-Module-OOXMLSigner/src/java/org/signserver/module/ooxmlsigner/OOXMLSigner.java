@@ -52,6 +52,9 @@ import org.signserver.server.signers.BaseSigner;
  * https://openxml4j.svn.sourceforge.net. Patched version is available at :
  * TODO: fill in temporary address in signserver svn.).
  * 
+ * Latest known version is revision 538 in the SVN repository at
+ * https://openxml4j.svn.sourceforge.net/svnroot/openxml4j
+ * 
  * Adds invisible singature to docx, xlsx, pptx files (created using MS Office
  * 2007, or other ECMA 376 comformant application)
  *

@@ -21,7 +21,7 @@ if not exist %SIGNSRV_HOME%\lib\SignServer-AdminCLI.jar  (
 )
 
 rem Optional JARs
-OPTIONAL_CLASSPATH=
+set OPTIONAL_CLASSPATH=
 
 rem Construct the classpath
 set MAIN_CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\lib\SignServer-AdminCLI.jar;%OPTIONAL_CLASSPATH%

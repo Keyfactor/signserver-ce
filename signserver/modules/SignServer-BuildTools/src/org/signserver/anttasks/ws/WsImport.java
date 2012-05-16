@@ -16,7 +16,6 @@ import java.io.File;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.ExecTask;
-import org.apache.tools.ant.types.Commandline;
 import org.apache.tools.ant.types.Commandline.Argument;
 
 /**
@@ -39,6 +38,8 @@ public class WsImport extends Task {
     private String package_;
     private Depends depends;
     private Produces produces;
+    private boolean xnocompile;
+    private String target;
 
     @Override
     public void execute() throws BuildException {
@@ -56,6 +57,12 @@ public class WsImport extends Task {
         buff.append("-wsdllocation").append(" ").append(getWsdlLocation()).append(" ");
         if (getPackage() != null) {
             buff.append("-p").append(" ").append(getPackage()).append(" ");
+        }
+        if (getXnocompile()) {
+            buff.append("-Xnocompile").append(" ");
+        }
+        if (getTarget() != null) {
+            buff.append("-target ").append(getTarget()).append(" ");
         }
         buff.append(getWsdl());
         
@@ -147,4 +154,21 @@ public class WsImport extends Task {
     public String getPackage() {
         return package_;
     }
+
+    public boolean getXnocompile() {
+        return xnocompile;
+    }
+
+    public void setXnocompile(boolean xnocompile) {
+        this.xnocompile = xnocompile;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+    
 }

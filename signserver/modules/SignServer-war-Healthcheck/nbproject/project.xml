@@ -10,6 +10,9 @@
                     <file>${reference.SignServer-BuildTools.jar}</file>
                 </library>
                 <library dirs="200">
+                    <file>${reference.SignServer-Lib-EJBCA-util.jar}</file>
+                </library>
+                <library dirs="200">
                     <file>${libs.javaee-web-api-6.0.classpath}</file>
                 </library>
                 <library dirs="200">
@@ -30,6 +33,14 @@
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
                 <foreign-project>SignServer-BuildTools</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-Lib-EJBCA-util</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>

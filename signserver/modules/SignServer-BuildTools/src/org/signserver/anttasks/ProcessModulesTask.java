@@ -128,7 +128,9 @@ public class ProcessModulesTask extends Task {
         
         getProject().setProperty(libSet, getAsString(libJars));
         getProject().setProperty(rootSet, getAsString(rootJars));
-        getProject().setProperty(configSet, getAsString(configJars));
+        if (configSet != null) {
+            getProject().setProperty(configSet, getAsString(configJars));
+        }
         getProject().setProperty(applicationXml, xmlBuff.toString());
         getProject().setProperty(enabledModules, enabledModulesBuff.toString());
     }

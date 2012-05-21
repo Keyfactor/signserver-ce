@@ -42,6 +42,7 @@ public class ProcessModulesTask extends Task {
     private File modsDir;
     private String rootSet;
     private String libSet;
+    private String configSet;
     private String applicationXml;
     private String enabledModules;
     private boolean allEnabled;
@@ -56,6 +57,7 @@ public class ProcessModulesTask extends Task {
         };
         Set<String> libJars = new HashSet<String>();
         Set<String> rootJars = new HashSet<String>();
+        Set<String> configJars = new HashSet<String>();
         StringBuilder xmlBuff = new StringBuilder();
         StringBuilder enabledModulesBuff = new StringBuilder();
         File[] propertyFiles = modsDir.listFiles(filter);
@@ -83,6 +85,13 @@ public class ProcessModulesTask extends Task {
                 List<String> toLibList = Arrays.asList(toLib.split(",")); 
                 libJars.addAll(toLibList);
                 log("To lib: " + toLibList.toString(), Project.MSG_VERBOSE);
+                
+                String toConfig = properties.getProperty("to.config");
+                if (toConfig != null) {
+                    List<String> toConfigList = Arrays.asList(toConfig.split(",")); 
+                    configJars.addAll(toConfigList);
+                    log("To config: " + toConfigList.toString(), Project.MSG_VERBOSE);
+                }
                 
                 String type = properties.getProperty("module.type", "lib");
                 if (type.equalsIgnoreCase("ejb")) {
@@ -119,6 +128,7 @@ public class ProcessModulesTask extends Task {
         
         getProject().setProperty(libSet, getAsString(libJars));
         getProject().setProperty(rootSet, getAsString(rootJars));
+        getProject().setProperty(configSet, getAsString(configJars));
         getProject().setProperty(applicationXml, xmlBuff.toString());
         getProject().setProperty(enabledModules, enabledModulesBuff.toString());
     }
@@ -155,6 +165,14 @@ public class ProcessModulesTask extends Task {
 
     public void setRootSet(String rootSet) {
         this.rootSet = rootSet;
+    }
+
+    public String getConfigSet() {
+        return configSet;
+    }
+
+    public void setConfigSet(String configSet) {
+        this.configSet = configSet;
     }
 
     public File getModsDir() {

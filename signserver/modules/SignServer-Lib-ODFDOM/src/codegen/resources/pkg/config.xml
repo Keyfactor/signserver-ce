@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+
+  Copyright 2008 Sun Microsystems, Inc. All rights reserved.
+  Copyright 2009 IBM. All rights reserved.
+
+  Use is subject to license terms.
+
+  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License. You may obtain a copy
+  of the License at http://www.apache.org/licenses/LICENSE-2.0. You can also
+  obtain a copy of the License at http://odftoolkit.org/docs/license.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<config>
+    <data-types>
+        <data name="NCName" value-type="String" conversion-type="String"/>
+        <data name="anyURI" value-type="String" conversion-type="org.odftoolkit.odfdom.dom.type.OdfAnyURI"/>
+        <data name="integer" value-type="Integer" conversion-type="Integer"/>
+        <data name="ID" value-type="String" conversion-type="org.odftoolkit.odfdom.dom.type.OdfId"/>
+        <data name="IDREF" value-type="String" conversion-type="org.odftoolkit.odfdom.dom.type.OdfId"/>
+        <data name="IDREFS" value-type="String" conversion-type="org.odftoolkit.odfdom.dom.type.OdfId"/>
+        <data name="double" value-type="Double" conversion-type="Double"/>
+        <data name="date" value-type="javax.xml.datatype.XMLGregorianCalendar" conversion-type="org.odftoolkit.odfdom.dom.type.OdfDate"/>
+        <data name="nonNegativeInteger" value-type="Integer" conversion-type="org.odftoolkit.odfdom.dom.type.OdfNonNegativeInteger"/>
+        <data name="positiveInteger" value-type="Integer" conversion-type="org.odftoolkit.odfdom.dom.type.OdfPositiveInteger"/>
+        <data name="time" value-type="javax.xml.datatype.XMLGregorianCalendar" conversion-type="org.odftoolkit.odfdom.dom.type.OdfDate"/>
+        <data name="duration" value-type="javax.xml.datatype.Duration" conversion-type="org.odftoolkit.odfdom.dom.type.OdfDuration"/>
+        <data name="base64Binary" value-type="String" conversion-type="String"/>
+        <data name="token" value-type="String" conversion-type="String"/>
+        <data name="string" value-type="String" conversion-type="String"/>
+        <data name="language" value-type="String" conversion-type="String"/>
+        <data name="dateOrDateTime" value-type="javax.xml.datatype.XMLGregorianCalendar" conversion-type="org.odftoolkit.odfdom.dom.type.OdfDate"/>
+        <data name="dateTime" value-type="javax.xml.datatype.XMLGregorianCalendar" conversion-type="org.odftoolkit.odfdom.dom.type.OdfDate"/>
+        <data name="boolean" value-type="Boolean" conversion-type="org.odftoolkit.odfdom.dom.type.OdfBoolean"/>
+        <data name="percent" value-type="Double" conversion-type="org.odftoolkit.odfdom.dom.type.OdfPercent"/>
+        <data name="nonNegativeLength" value-type="String" conversion-type="org.odftoolkit.odfdom.dom.type.OdfNonNegativeLength"/>
+    </data-types>
+</config>

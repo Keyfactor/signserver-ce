@@ -19,8 +19,8 @@ import java.security.cert.X509Certificate;
 
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
-import org.odftoolkit.odfdom.crypto.dsig.DocumentSignatureManager;
-import org.odftoolkit.odfdom.crypto.dsig.SignatureCreationMode;
+import org.odftoolkit.odfdom.pkg.signature.DocumentSignatureManager;
+import org.odftoolkit.odfdom.pkg.signature.SignatureCreationMode;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenOfflineException;

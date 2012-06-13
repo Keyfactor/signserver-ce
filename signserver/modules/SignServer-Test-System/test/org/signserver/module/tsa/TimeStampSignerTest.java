@@ -12,17 +12,25 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Random;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.TSPAlgorithms;
+import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampToken;
 import org.ejbca.util.Base64;
 import org.signserver.common.*;
 import org.signserver.statusrepo.IStatusRepositorySession;
@@ -53,9 +61,13 @@ public class TimeStampSignerTest extends ModulesTestCase {
     /** Worker ID for test worker. */
     private static final int WORKER3 = 8903;
 
-        /** Worker ID for test worker. */
+    /** Worker ID for test worker. */
     private static final int WORKER4 = 8904;
 
+    /** BASE64-encoded cert for WORKER1 */
+    private static String CERTSTRING = "MIIEkTCCAnmgAwIBAgIIeCvAS5OwAJswDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzEyMTU1NVoXDTIxMDUyNDEyMTU1NVowSjEUMBIGA1UEAwwLVFMgU2lnbmVyIDExEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnT38GG8i/bGnuFMwnOdg+caHMkdPBacRdBaIggwMPfE50SOZ2TLrDEHJotxYda7HS0+tX5dIcalmEYCls/ptHzO5TQpqdRTuTqxp5cMA379yhD0OqTVNAmHrvPj9IytktoAtB/xcjwkRTHagaCmg5SWNcLKyVUct7nbeRA5yDSJQsCAEGHNZbJ50vATg1DQEyKT87GKfSBsclA0WIIIHMt8/SRhpsUZxESayU6YA4KCxVtexF5x+COLB6CzzlRG9JA8WpX9yKgIMsMDAscsJLiLPjhET5hwAFm5ZRfQQG9LI06QNTGqukuTlDbYrQGAUR5ZXW00WNHfgS00CjUCu0QIDAQABo3gwdjAdBgNVHQ4EFgQUOF0FflO2G+IN6c92pCNlPoorGVwwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCB4AwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggIBADELkeIO9aiKjS/GaBUUhMr+k5UbVeK69WapU+7gTsWwa9D2vAOhAkfQ1OcUJoZaminv8pcNfo1Ey5qLtxBCmUy1fVomVWOPl6u1w8B6uYgE608hi2bfx28uIeksqpdqUX0Qf6ReUyl+FOh4xNrsyaF81TrIKt8ekq0iD+YAtT/jqgv4bUvs5fgIms4QOXgMUzNAP7cPU44KxcmR5I5Uy/Ag82hGIz64hZmeIDT0X59kbQvlZqFaiZvYOikoZSFvdM5kSVfItMgp7qmyLxuM/WaXqJWp6Mm+8ZZmcECugd4AEpE7xIiB7M/KEe+X4ItBNTKdAoaxWa+yeuYS7ol9rHt+Nogelj/06ZRQ0x03UqC7uKpgYAICjQEXIjcZofWSTh9KzKNfS1sQyIQ6yNTT2VMdYW9JC2OLKPV4AEJuBw30X8HOciJRRXOq9KRrIA2RSiaC5/3oAYscWuo31Fmj8CWQknXAIb39gPuZRwGOJbi1tUu2zmRsUNJfAe3hnvk+uxhnyp2vKB2KN5/VQgisx+8doEK/+Nbj/PPG/zASKimWG++5m0JNY4chIfR43gDDcF+4INof/8V84wbvUF+TpvP/mYM8wC9OkUyRvzqv9vjWOncCdbdjCuqPxDItwm9hhr+PbxsMaBes9rAiV9YT1FnpA++YpCufveFCQPDbCTgJ";
+
+    
     /**
      * Base64 encoded request with policy 1.2.3.5.
      * <pre>
@@ -203,7 +215,98 @@ public class TimeStampSignerTest extends ModulesTestCase {
         repository.update(StatusName.TIMESOURCE0_INSYNC.name(), "");
         assertTimeNotAvailable(WORKER4);
     }
+    
 
+    /**
+     * Utility method to return the hash length for the hash types we're testing against
+     * 
+     * @param hashType
+     * @return
+     */
+    private int getHashLength(String hashType) {
+    	if (TSPAlgorithms.SHA256.equals(hashType)) {
+    		return 32;
+    	} else if (TSPAlgorithms.SHA512.equals(hashType)) {
+    		return 64;
+    	} else if (TSPAlgorithms.RIPEMD160.equals(hashType)) {
+    		return 20;
+    	} else {
+    		LOG.error("Trying to use an unknow hash algorithm, bailing out...");
+    		return -1;
+    	}
+    }
+    
+    private void testWithHash(final String hashAlgo) throws Exception {
+    	int reqid = random.nextInt();
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+    	final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+    			hashAlgo, new byte[getHashLength(hashAlgo)], BigInteger.valueOf(100));
+    	
+        byte[] requestBytes = timeStampRequest.getEncoded();
+
+        GenericSignRequest signRequest =
+                new GenericSignRequest(reqid, requestBytes);
+
+
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                WORKER1, signRequest, new RequestContext());
+
+        TimeStampResponse timeStampResponse = null;
+        try {
+        	// check response
+        	timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
+        	timeStampResponse.validate(timeStampRequest);
+        	LOG.info("Response: " + timeStampResponse.getStatusString());
+        } catch (TSPException e) {
+        	fail("Failed to verify response");
+        } catch (IOException e) {
+        	fail("Failed to verify response");
+        }
+        
+        
+        final TimeStampToken token = timeStampResponse.getTimeStampToken();
+        
+        try {
+        	final CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        	final X509Certificate cert =
+        		(X509Certificate) factory.generateCertificate(new ByteArrayInputStream(Base64.decode(CERTSTRING.getBytes())));
+        	token.validate(cert, "BC");
+        } catch (TSPException e) {
+        	fail("Failed to validate response token");
+        }
+    }
+    
+    /**
+     * Tests requesting a timetamp with SHA256 as the hash algorithm
+     * verify the hash and signature algortithms of the respons token
+     * 
+     * @throws Exception
+     */
+    public void test06HashSHA256() throws Exception {
+    	testWithHash(TSPAlgorithms.SHA256);
+    }
+    
+    /**
+     * Test requesting a timestamp with SHA512 as the hash algorithm
+     * 
+     * @param worker
+     * @throws Exception
+     */
+    public void test07HashSHA512() throws Exception {
+    	testWithHash(TSPAlgorithms.SHA512);
+    }
+    
+    /**
+     * Test requesting a timestamp with RIPEMD160 as the hash algorithm
+     * 
+     * @param worker
+     * @throws Exception
+     */
+    public void test08HashRIPE160() throws Exception {
+    	testWithHash(TSPAlgorithms.RIPEMD160);
+    }
+        
     private void assertTimeNotAvailable(int worker) throws Exception {
         final int reqid = random.nextInt();
 

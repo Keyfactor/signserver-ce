@@ -231,12 +231,14 @@ public class TimeStampSignerTest extends ModulesTestCase {
     	} else if (TSPAlgorithms.RIPEMD160.equals(hashType)) {
     		return 20;
     	} else {
-    		LOG.error("Trying to use an unknow hash algorithm, bailing out...");
-    		return -1;
+    		LOG.info("Trying to use an unknow hash algorithm, using dummy length");
+    		// return the length of a SHA1 hash as a dummy value to allow passing
+    		// invalid hash algo names for testing
+    		return 20;
     	}
     }
     
-    private void testWithHash(final String hashAlgo) throws Exception {
+    private int testWithHash(final String hashAlgo) throws Exception {
     	int reqid = random.nextInt();
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
@@ -257,7 +259,14 @@ public class TimeStampSignerTest extends ModulesTestCase {
         	// check response
         	timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
         	timeStampResponse.validate(timeStampRequest);
+        	
         	LOG.info("Response: " + timeStampResponse.getStatusString());
+        	
+        	if (timeStampResponse.getStatus() != PKIStatus.GRANTED) {
+        		// return early and don't attempt to get a token
+        		return timeStampResponse.getStatus();
+        	}
+        	
         } catch (TSPException e) {
         	fail("Failed to verify response");
         } catch (IOException e) {
@@ -275,6 +284,8 @@ public class TimeStampSignerTest extends ModulesTestCase {
         } catch (TSPException e) {
         	fail("Failed to validate response token");
         }
+        
+        return timeStampResponse.getStatus();
     }
     
     /**
@@ -306,7 +317,45 @@ public class TimeStampSignerTest extends ModulesTestCase {
     public void test08HashRIPE160() throws Exception {
     	testWithHash(TSPAlgorithms.RIPEMD160);
     }
-        
+    
+    
+    /**
+     * Test requesting a timestamp with a hash algorithm not included in the accepted
+     * algorithms list
+     * 
+     * @param worker
+     * @throws Exception
+     */
+    public void test09HashWithNotAllowedAlgorithm() throws Exception {
+    	// set accepted algorithms to SHA1
+    	workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ACCEPTEDALGORITHMS, "SHA1");
+    	workerSession.reloadConfiguration(WORKER1);
+    	
+    	int status = testWithHash(TSPAlgorithms.SHA256);
+    	assertEquals("Should return status REJECTION", status, PKIStatus.REJECTION);
+    }
+    
+    /**
+     * Test request a timestamp using a made-up dummy hash algorithm name
+     * 
+     * @param worker
+     * @throws Exception
+     */
+    public void test10HashWithIllegalAlgorithm() throws Exception {
+    	// reset accepted algorithms
+    	workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ACCEPTEDALGORITHMS);
+    	workerSession.reloadConfiguration(WORKER1);
+    	
+    	try {
+    		testWithHash("DUMMYALGO");
+    	} catch (IllegalArgumentException e) {
+    		// specifying an invalid algorithm should yield an IllegalArgumentException
+    		return;
+    	}
+    	
+    	fail("Should not accept an invalid hash algorithm");
+    }
+
     private void assertTimeNotAvailable(int worker) throws Exception {
         final int reqid = random.nextInt();
 

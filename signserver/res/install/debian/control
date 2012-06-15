@@ -38,7 +38,8 @@ Build-Depends: ant (>= 1.8.0), ant-optional, debhelper (>= 5),
  libswingworker-java,
  libappframework-java,
  libbeansbinding-java,
- libxmltask-java
+ libxmltask-java,
+ libxml-security-java (>=1.4)
 Standards-Version: 3.7.2
 Homepage: http://www.signserver.org/
 
@@ -83,7 +84,8 @@ Description: SignServer automated signing server
 Package: libsignserver3.3-modules
 Architecture: all
 Depends: signserver3.3-server, libsignserver3.3-common, 
- libitext-java (>=2.1.7-1),
+ libitext-java (>=2.1.7-1), 
+ libxml-security-java (>=1.4)
  ${misc:Depends}
 Description: SignServer automated signing server
  Modules for SignServer

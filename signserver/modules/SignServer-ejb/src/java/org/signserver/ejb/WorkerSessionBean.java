@@ -768,7 +768,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     updateQuery.setParameter("limit", keyUsageLimit);
                 }
                 updateQuery.setParameter("keyhash", keyHash);
-
+                
                 if (updateQuery.executeUpdate() < 1) {
                     final String message
                             = "Key usage limit exceeded or not initialized for worker "

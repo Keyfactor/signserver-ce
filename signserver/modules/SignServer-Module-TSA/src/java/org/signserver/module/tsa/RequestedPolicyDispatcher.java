@@ -26,6 +26,7 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
@@ -33,7 +34,7 @@ import org.signserver.server.ITimeStampSignerLookup;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.dispatchers.BaseDispatcher;
 import org.signserver.server.log.IWorkerLogger;
-import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
+//import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
 
 /**
  * Dispatching requests to a Time Stamp Unit based on the requested profile.
@@ -145,7 +146,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
         try {
             // Add to context
             if (timeStampRequest.getReqPolicy() != null) {
-                nextContext.put(ITimeStampSignerLookup.TSA_REQUESTEDPOLICYOID, timeStampRequest.getReqPolicy());
+                nextContext.put(ITimeStampSignerLookup.TSA_REQUESTEDPOLICYOID, timeStampRequest.getReqPolicy().getId());
             }
             
             // Find to which worker the request should be dispatched
@@ -229,7 +230,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
         if (timeStampRequest.getReqPolicy() == null) {
             result = defaultWorker;
         } else {
-            result = workerMapping.get(timeStampRequest.getReqPolicy());
+            result = workerMapping.get(timeStampRequest.getReqPolicy().getId());
             if (result == null && useDefaultIfMismatch) {
                 result = defaultWorker;
             }

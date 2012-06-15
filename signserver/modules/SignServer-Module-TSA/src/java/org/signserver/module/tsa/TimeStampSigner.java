@@ -12,14 +12,20 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
+import java.security.cert.Certificate;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -33,16 +39,44 @@ import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1String;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.DERGeneralString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.cms.SignerIdentifier;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaCertStoreBuilder;
+import org.bouncycastle.cms.SignerInfoGenerator;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.crypto.Signer;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
-import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
+import org.bouncycastle.tsp.TimeStampResponseGenerator;
+//import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.bouncycastle.tsp.TimeStampTokenGenerator;
+import org.bouncycastle.util.Store;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.DigestCalculator;
+import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.ejbca.util.Base64;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -198,7 +232,7 @@ public class TimeStampSigner extends BaseSigner {
         "RIPEMD256"
     };
     
-    private static final String[] ACCEPTEDALGORITHMSOIDS = {
+    private static final ASN1ObjectIdentifier[] ACCEPTEDALGORITHMSOIDS = {
         TSPAlgorithms.GOST3411,
         TSPAlgorithms.MD5,
         TSPAlgorithms.SHA1,
@@ -211,13 +245,17 @@ public class TimeStampSigner extends BaseSigner {
         TSPAlgorithms.RIPEMD256
     };
 
-    private static final HashMap<String, String> ACCEPTEDALGORITHMSMAP =
-            new HashMap<String, String>();
+    private static final HashMap<String, ASN1ObjectIdentifier> ACCEPTEDALGORITHMSMAP =
+            new HashMap<String, ASN1ObjectIdentifier>();
+    private static final HashMap<ASN1ObjectIdentifier, String> ACCEPTEDALGORITHMSREVERSEMAP =
+    		new HashMap<ASN1ObjectIdentifier, String>();
 
     static {
         for (int i = 0; i < ACCEPTEDALGORITHMSNAMES.length; i++) {
             ACCEPTEDALGORITHMSMAP.put(ACCEPTEDALGORITHMSNAMES[i],
                     ACCEPTEDALGORITHMSOIDS[i]);
+            ACCEPTEDALGORITHMSREVERSEMAP.put(ACCEPTEDALGORITHMSOIDS[i],
+            		ACCEPTEDALGORITHMSNAMES[i]);
         }
     }
 
@@ -225,13 +263,13 @@ public class TimeStampSigner extends BaseSigner {
     //private static final String DEFAULT_DIGESTOID   = TSPAlgorithms.SHA1;
 
     private ITimeSource timeSource = null;
-    private Set<String> acceptedAlgorithms = null;
+    private Set<ASN1ObjectIdentifier> acceptedAlgorithms = null;
     private Set<String> acceptedPolicies = null;
     private Set<String> acceptedExtensions = null;
 
     //private String defaultDigestOID = null;
-    private String defaultTSAPolicyOID = null;
-
+    private ASN1ObjectIdentifier defaultTSAPolicyOID = null;
+    
     @Override
     public void init(final int signerId, final WorkerConfig config,
             final WorkerContext workerContext,
@@ -264,12 +302,18 @@ public class TimeStampSigner extends BaseSigner {
             defaultDigestOID = DEFAULT_DIGESTOID;
         }*/
 
-        defaultTSAPolicyOID =
-                config.getProperties().getProperty(DEFAULTTSAPOLICYOID);
-        if (defaultTSAPolicyOID == null) {
-            LOG.error("Error: No default TSA Policy OID have been configured");
+        final String policyId = config.getProperties().getProperty(DEFAULTTSAPOLICYOID);
+        
+        try {
+        	if (policyId != null) {
+        		defaultTSAPolicyOID = new ASN1ObjectIdentifier(policyId);
+        	} else {
+        		LOG.error("Error: No default TSA Policy OID have been configured");
+        	}
+        } catch (IllegalArgumentException iae) {
+        	LOG.error("Error: TSA Policy OID " + policyId + " is invalid");
         }
-
+       
         if (LOG.isDebugEnabled()) {
             LOG.debug("bctsp version: " + TimeStampResponseGenerator.class
                 .getPackage().getImplementationVersion() + ", "
@@ -325,7 +369,7 @@ public class TimeStampSigner extends BaseSigner {
                 serialNumber.toString(16));
 
 
-        GenericSignResponse signResponse;
+        GenericSignResponse signResponse = null;
         try {
             final TimeStampRequest timeStampRequest =
                     new TimeStampRequest((byte[]) sReq.getRequestData());
@@ -345,7 +389,7 @@ public class TimeStampSigner extends BaseSigner {
                     String.valueOf(timeStampRequest.getVersion()));
             logMap.put(ITimeStampLogger
                         .LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTALGOID,
-                    timeStampRequest.getMessageImprintAlgOID());
+                    timeStampRequest.getMessageImprintAlgOID().getId());
             logMap.put(ITimeStampLogger
                         .LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTDIGEST,
                     new String(Base64.encode(
@@ -470,6 +514,12 @@ public class TimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
                     exception.getMessage());
             throw exception;
+        } catch (OperatorCreationException e) {
+        	final IllegalRequestException exception =
+        			new IllegalRequestException(e.getMessage(), e);
+        	LOG.error("OperatorCreationException: ", e);
+        	logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
+        			exception.getMessage());
         }
 
         return signResponse;
@@ -505,7 +555,7 @@ public class TimeStampSigner extends BaseSigner {
     }
 
     @SuppressWarnings("unchecked")
-    private Set<String> getAcceptedAlgorithms() {
+    private Set<ASN1ObjectIdentifier> getAcceptedAlgorithms() {
         if (acceptedAlgorithms == null) {
             final String nonParsedAcceptedAlgorihms =
                     this.config.getProperties().getProperty(ACCEPTEDALGORITHMS);
@@ -517,8 +567,7 @@ public class TimeStampSigner extends BaseSigner {
                 if (subStrings.length > 0) {
                     acceptedAlgorithms = new HashSet();
                     for (int i = 0; i < subStrings.length; i++) {
-                        final String acceptAlg =
-                            (String) ACCEPTEDALGORITHMSMAP.get(subStrings[i]);
+                        final ASN1ObjectIdentifier acceptAlg = ACCEPTEDALGORITHMSMAP.get(subStrings[i]);
                         if (acceptAlg != null) {
                             acceptedAlgorithms.add(acceptAlg);
                         } else {
@@ -582,21 +631,22 @@ public class TimeStampSigner extends BaseSigner {
                 InvalidAlgorithmParameterException,
                 NoSuchAlgorithmException,
                 NoSuchProviderException,
-                CertStoreException {
+                CertStoreException,
+                OperatorCreationException {
 
         TimeStampTokenGenerator timeStampTokenGen = null;
         try {
-            final String digestOID = timeStampRequest.getMessageImprintAlgOID();
+            final ASN1ObjectIdentifier digestOID = timeStampRequest.getMessageImprintAlgOID();
             
             /*if (digestOID == null) {
                 digestOID = defaultDigestOID;
             }*/
 
-            String tSAPolicyOID = timeStampRequest.getReqPolicy();
+            ASN1ObjectIdentifier tSAPolicyOID = timeStampRequest.getReqPolicy();
             if (tSAPolicyOID == null) {
                 tSAPolicyOID = defaultTSAPolicyOID;
             }
-            logMap.put(ITimeStampLogger.LOG_TSA_POLICYID, tSAPolicyOID);
+            logMap.put(ITimeStampLogger.LOG_TSA_POLICYID, tSAPolicyOID.getId());
 
             final X509Certificate signingCert
                     = (X509Certificate) getSigningCertificate();
@@ -605,12 +655,51 @@ public class TimeStampSigner extends BaseSigner {
                         "No certificate for this signer");
             }
 
+            //JcaDigestCalculatorProviderBuilder calcProvBuilder = new JcaDigestCalculatorProviderBuilder();
+            //DigestCalculatorProvider calcProv = calcProvBuilder.build();
+            DigestCalculatorProvider calcProv = new BcDigestCalculatorProvider();
+            
+            //DigestCalculator calc = new SHA1DigestCalculator();        
+            DigestCalculator calc = calcProv.get(new AlgorithmIdentifier(TSPAlgorithms.SHA1));
+            
+            
+            Certificate cert = this.getSigningCertificate();
+            
+            /*
+            String issuer = cert.getIssuerDN().getName();
+            BigInteger sn = cert.getSerialNumber();
+            DERGeneralString asn1Issuer = new DERGeneralString(issuer);
+            ASN1Integer asn1SN = new ASN1Integer(sn);
+            
+            ASN1EncodableVector vec = new ASN1EncodableVector();
+            
+            vec.add(asn1Issuer);
+            vec.add(asn1SN);
+            
+            DERSequence seq = new DERSequence(vec);
+            
+            SignerIdentifier si =
+            		new SignerIdentifier(new IssuerAndSerialNumber(seq));
+            */
+            
+            PrivateKey privKey = this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
+            ContentSigner cs =
+            		new JcaContentSignerBuilder("SHA1WITHRSA").setProvider("BC").build(privKey);
+            JcaSignerInfoGeneratorBuilder sigb = new JcaSignerInfoGeneratorBuilder(calcProv);
+            X509CertificateHolder certHolder = new X509CertificateHolder(cert.getEncoded());
+            SignerInfoGenerator sig = sigb.build(cs, certHolder);
+            
+            timeStampTokenGen = new TimeStampTokenGenerator(calc, sig, tSAPolicyOID);
+            
+            
+            /*
             timeStampTokenGen = new TimeStampTokenGenerator(
                     this.getCryptoToken().getPrivateKey(
                         ICryptoToken.PURPOSE_SIGN),
                     signingCert,
-                    digestOID,
+                    this.ACCEPTEDALGORITHMSMAP.get(digestOID),
                     tSAPolicyOID);
+			*/
 
 
             if (config.getProperties().getProperty(ACCURACYMICROS) != null) {
@@ -635,14 +724,27 @@ public class TimeStampSigner extends BaseSigner {
             }
 
             if (config.getProperties().getProperty(TSA) != null) {
-                final X509Name x509Name = new X509Name(config.getProperties()
+                final X500Name x500Name = new X500Name(config.getProperties()
                             .getProperty(TSA));
-                timeStampTokenGen.setTSA(new GeneralName(x509Name));
+                timeStampTokenGen.setTSA(new GeneralName(x500Name));
             }
 
             final CertStore certStore = CertStore.getInstance("Collection",
                     new CollectionCertStoreParameters(
                         getSigningCertificateChain()), "BC");
+            
+            /*
+            JcaCertStoreBuilder storeBuilder = new JcaCertStoreBuilder();
+            for (Certificate c : certStore.getCertificates(null)) {
+            	timeStampTokenGen.add
+            }
+            storeBuilder.addCertificate(arg0)
+            
+            timeStampTokenGen.addCertificates(certStore);
+            timeStampTokenGen.addCRLs(certStore);
+			*/
+            
+            // TODO: fix this (see unfinished code above)
             timeStampTokenGen.setCertificatesAndCRLs(certStore);
 
         } catch (IllegalArgumentException e) {
@@ -651,7 +753,14 @@ public class TimeStampSigner extends BaseSigner {
         } catch (TSPException e) {
             LOG.error("TSPException: ", e);
             throw new IllegalRequestException(e.getMessage());
+        } catch (CertificateEncodingException e) {
+        	LOG.error("CertificateEncodingException: ", e);
+        	throw new IllegalRequestException(e.getMessage());
+        } catch (IOException e) {
+        	LOG.error("IOException: ", e);
+        	throw new IllegalRequestException(e.getMessage());
         }
+
         return timeStampTokenGen;
     }
 
@@ -707,5 +816,48 @@ public class TimeStampSigner extends BaseSigner {
             }
         }
         return serno;
+    }
+    
+    private static class SHA1DigestCalculator implements DigestCalculator {
+    	private ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+    	private MessageDigest digest;
+
+    	public SHA1DigestCalculator() {
+    		try {
+    			this.digest = MessageDigest.getInstance("SHA1");
+    		} catch (NoSuchAlgorithmException e) {
+    			
+    		}
+    	}
+
+    	public AlgorithmIdentifier getAlgorithmIdentifier() {
+    		return new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1);
+    	}
+
+    	public OutputStream getOutputStream() {
+    		return bOut;
+    	}
+
+    	public byte[] getDigest() {
+    		byte[] bytes = digest.digest(bOut.toByteArray());
+
+    		bOut.reset();
+
+    		return bytes;
+    	}
+    }
+    
+    private static class SHA1DigestCalculatorProvider implements DigestCalculatorProvider {
+
+		@Override
+		public DigestCalculator get(AlgorithmIdentifier alg)
+				throws OperatorCreationException {
+			System.out.println("alg: " + alg.getAlgorithm().toString());
+			if (!alg.getAlgorithm().equals(OIWObjectIdentifiers.idSHA1)) {
+				throw new OperatorCreationException("Must request calculator for SHA-1");
+			}
+			return new SHA1DigestCalculator();
+		}
+    	
     }
 }

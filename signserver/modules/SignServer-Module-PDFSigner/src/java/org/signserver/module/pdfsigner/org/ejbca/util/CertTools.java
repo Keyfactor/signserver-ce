@@ -39,7 +39,7 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.X509Extensions;
 
@@ -63,7 +63,7 @@ public class CertTools {
         if (certificate instanceof X509Certificate) {
 			X509Certificate x509cert = (X509Certificate) certificate;
 	        try {
-	            DERObject obj = getExtensionValue(x509cert, X509Extensions
+	            ASN1Object obj = getExtensionValue(x509cert, X509Extensions
 	                                              .CRLDistributionPoints.getId());
 	            if (obj == null) {
 	                return null;
@@ -91,7 +91,7 @@ public class CertTools {
         return null;
     }
 
-    private static String getUriFromGeneralNames(DERObject names) {
+    private static String getUriFromGeneralNames(ASN1Object names) {
          ASN1Sequence namesSequence = ASN1Sequence.getInstance((ASN1TaggedObject)names, false);
          if (namesSequence.size() == 0) {
              return null;
@@ -104,7 +104,7 @@ public class CertTools {
          return new String(ASN1OctetString.getInstance(taggedObject, false).getOctets());
      } //getStringFromGeneralNames
 
-    protected static DERObject getExtensionValue(X509Certificate cert, String oid)
+    protected static ASN1Object getExtensionValue(X509Certificate cert, String oid)
       throws IOException {
     	if (cert == null) {
     		return null;

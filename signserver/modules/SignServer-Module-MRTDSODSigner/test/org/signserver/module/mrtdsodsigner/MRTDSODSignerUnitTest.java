@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.ejbca.util.CertTools;
@@ -281,7 +281,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
 
         // ASN.1 Dump SODFile
         ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(sod.getEncoded()));
-        DERObject object = in.readObject();
+        ASN1Object object = in.readObject();
         LOG.info("Object: " + ASN1Dump.dumpAsString(object, true));
 
 //        // ANS.1 Dump LDSSecurityObject
@@ -303,7 +303,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
 
         // ASN.1 Dump
         ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(sod.getEncoded()));
-        DERObject object = in.readObject();
+        ASN1Object object = in.readObject();
         LOG.info("Object: " + ASN1Dump.dumpAsString(object, true));
 
 //        // ANS.1 Dump LDSSecurityObject

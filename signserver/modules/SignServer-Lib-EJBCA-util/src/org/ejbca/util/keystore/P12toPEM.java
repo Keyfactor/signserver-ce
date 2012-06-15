@@ -54,6 +54,7 @@ public class P12toPEM {
      *
      * @param args DOCUMENT ME!
      */
+    /*
     public static void main(String[] args) {
         // Bouncy Castle security provider
         CertTools.installBCProvider();
@@ -82,6 +83,7 @@ public class P12toPEM {
             e.printStackTrace();
         }
     }
+	*/
 
     /**
      * Basic construtor for the P12toPEM class, set variables for the class.
@@ -143,6 +145,7 @@ public class P12toPEM {
      * @throws CertificateException DOCUMENT ME!
      * @throws UnrecoverableKeyException DOCUMENT ME!
      */
+    /*
     public void createPEM()
         throws KeyStoreException, FileNotFoundException, IOException, NoSuchProviderException, 
             NoSuchAlgorithmException, CertificateEncodingException, CertificateException, 
@@ -267,6 +270,7 @@ public class P12toPEM {
             out.close();
         }
     }
+	*/
 
     // createPEM
 }

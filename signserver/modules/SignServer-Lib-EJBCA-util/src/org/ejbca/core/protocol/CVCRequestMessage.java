@@ -26,6 +26,8 @@ import java.security.cert.CertificateException;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cms.CMSSignedGenerator;
@@ -182,10 +184,12 @@ public class CVCRequestMessage implements IRequestMessage {
      *
      * @return issuerDN of receiving CA or null.
      */
+    /*
     public String getIssuerDN() {
     	CardVerifiableCertificate cc = getCardVerifiableCertificate();
         return CertTools.getIssuerDN(cc);
     }
+    */
 
     /**
      * Could get the sequence (of CVC cert). For CVC certificate this does not combine well with getIssuerDN to identify
@@ -222,19 +226,23 @@ public class CVCRequestMessage implements IRequestMessage {
      *
      * @return subject DN from certification request or null.
      */
+    /*
     public String getRequestDN() {
     	CardVerifiableCertificate cc = getCardVerifiableCertificate();
         return CertTools.getSubjectDN(cc);
     }
+    */
 
     /**
      * @see IRequestMessage#getRequestX509Name()
      */
-    public X509Name getRequestX509Name() {
+    /*
+    public X500Name getRequestX500Name() {
     	String dn = getRequestDN();
-    	X509Name name = new X509Name(dn);
+    	X500Name name = new X500Name(dn);
     	return name;
     }
+	*/
 
     public String getRequestAltNames() {
     	return null;
@@ -259,7 +267,7 @@ public class CVCRequestMessage implements IRequestMessage {
     /**
      * @see org.ejbca.core.protocol.IRequestMessage
      */
-	public X509Extensions getRequestExtensions() {
+	public Extensions getRequestExtensions() {
 		return null;
 	}
 	

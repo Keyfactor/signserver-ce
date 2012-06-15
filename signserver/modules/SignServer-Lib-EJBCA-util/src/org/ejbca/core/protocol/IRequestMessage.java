@@ -23,8 +23,8 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.util.Date;
 
-import org.bouncycastle.asn1.x509.X509Extensions;
-import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x500.X500Name;
 
 
 /**
@@ -53,7 +53,7 @@ public interface IRequestMessage extends Serializable {
      *
      * @return issuerDN of receiving CA or null.
      */
-    public String getIssuerDN();
+    //public String getIssuerDN();
 
     /**
      * Gets the number (of CA cert) from IssuerAndSerialNumber. Combined with getIssuerDN to identify
@@ -68,14 +68,14 @@ public interface IRequestMessage extends Serializable {
      *
      * @return requested DN or null.
      */
-    public String getRequestDN();
+    //public String getRequestDN();
 
     /**
-     * Gets the requested DN in the pure form of an X508Name (the desired DN for the user).
+     * Gets the requested DN in the pure form of an X500Name (the desired DN for the user).
      *
      * @return requested DN or null.
      */
-    public X509Name getRequestX509Name();
+    //public X500Name getRequestX500Name();
 
     /**
      * Gets the requested altNames if contained in the request (the desired altNames for the user).
@@ -106,9 +106,9 @@ public interface IRequestMessage extends Serializable {
 	 * Gets any requested extensions, if the request message type is able to contain request extensions
 	 * and if there are any. Requested extensions are (currently) in the form of X509Extensions.
 	 * 
-	 * @return X509Extensions or null
+	 * @return Extensions or null
 	 */
-	public X509Extensions getRequestExtensions();
+	public Extensions getRequestExtensions();
 
     /**
      * Gets the issuer DN (of CA cert) from IssuerAndSerialNumber when this is a CRL request.

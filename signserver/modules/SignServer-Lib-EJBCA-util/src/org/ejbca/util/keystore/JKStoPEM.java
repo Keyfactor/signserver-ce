@@ -62,6 +62,7 @@ public class JKStoPEM {
      *
      * @param args DOCUMENT ME!
      */
+    /*
     public static void main(String[] args) {
 
         // Bouncy Castle security provider
@@ -91,6 +92,7 @@ public class JKStoPEM {
             e.printStackTrace();
         }
     }
+	*/
 
     /**
      * Basic construtor for the JKStoPEM class, set variables for the class.
@@ -158,6 +160,7 @@ public class JKStoPEM {
      * @throws CertificateException DOCUMENT ME!
      * @throws UnrecoverableKeyException DOCUMENT ME!
      */
+    /*
     public void createPEM()
         throws KeyStoreException, FileNotFoundException, IOException,
             NoSuchAlgorithmException, CertificateEncodingException, CertificateException,
@@ -276,5 +279,6 @@ public class JKStoPEM {
             out.close();
         }
     } // createPEM
+    */
     
 } // JKStoPEM

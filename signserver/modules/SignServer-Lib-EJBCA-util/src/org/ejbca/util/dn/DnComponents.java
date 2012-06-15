@@ -26,6 +26,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.x509.X509Name;
 
@@ -49,7 +50,7 @@ public class DnComponents {
      * 
      * This map is used in CertTools so sort and order DN strings so they all look the same in the database.
      * */
-    private static HashMap oids = new HashMap();
+    private static HashMap<String, ASN1ObjectIdentifier> oids = new HashMap<String, ASN1ObjectIdentifier>();
     // Default values
     static {
         oids.put("c", X509Name.C);
@@ -188,8 +189,8 @@ public class DnComponents {
     	return reverseOrder == true;
     }
     
-    public static DERObjectIdentifier getOid(String o) {
-        return (DERObjectIdentifier) oids.get(o.toLowerCase());
+    public static ASN1ObjectIdentifier getOid(String o) {
+        return oids.get(o.toLowerCase());
     } // getOid
 
     public static ArrayList getDnProfileFields() {

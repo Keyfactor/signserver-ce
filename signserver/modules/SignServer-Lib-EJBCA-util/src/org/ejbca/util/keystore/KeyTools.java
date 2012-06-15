@@ -69,7 +69,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.interfaces.PKCS12BagAttributeCarrier;
 import org.bouncycastle.jce.provider.JCEECPublicKey;
-import org.bouncycastle.jce.provider.asymmetric.ec.EC5Util;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.EC5Util;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.bouncycastle.jce.spec.ECPublicKeySpec;
 import org.bouncycastle.math.ec.ECCurve;
@@ -312,7 +312,8 @@ public class KeyTools {
      *
      * @exception Exception if input parameters are not OK or certificate generation fails
      */
-    public static KeyStore createP12(String alias, PrivateKey privKey, Certificate cert, Certificate cacert) 
+	/*
+	public static KeyStore createP12(String alias, PrivateKey privKey, Certificate cert, Certificate cacert) 
     throws IOException, KeyStoreException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
         Certificate[] chain;
 
@@ -325,6 +326,7 @@ public class KeyTools {
 
         return createP12(alias, privKey, cert, chain);
     } // createP12
+	*/
 
     /**
      * Creates PKCS12-file that can be imported in IE or Firefox.
@@ -338,7 +340,8 @@ public class KeyTools {
      * @return KeyStore containing PKCS12-keystore
      * @exception Exception if input parameters are not OK or certificate generation fails
      */
-    public static KeyStore createP12(String alias, PrivateKey privKey, Certificate cert, Collection cacerts)
+	/*
+	public static KeyStore createP12(String alias, PrivateKey privKey, Certificate cert, Collection cacerts)
     throws IOException, KeyStoreException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
         Certificate[] chain;
         if (cacerts == null)
@@ -349,6 +352,7 @@ public class KeyTools {
         }
         return createP12(alias, privKey, cert, chain);
     } // createP12
+	*/
 
     /**
      * Creates PKCS12-file that can be imported in IE or Firefox. The alias for the private key is
@@ -361,6 +365,7 @@ public class KeyTools {
      * @return KeyStore containing PKCS12-keystore
      * @exception Exception if input parameters are not OK or certificate generation fails
      */
+    /*
     public static KeyStore createP12(String alias, PrivateKey privKey, Certificate cert, Certificate[] cachain) 
     throws IOException, KeyStoreException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
     	if (log.isTraceEnabled()) {
@@ -443,6 +448,7 @@ public class KeyTools {
         }
         return store;
     } // createP12
+	*/
 
     /**
      * Creates JKS-file that can be used with JDK. The alias for the private key is set to
@@ -459,7 +465,8 @@ public class KeyTools {
      *
      * @exception Exception if input parameters are not OK or certificate generation fails
      */
-    public static KeyStore createJKS(String alias, PrivateKey privKey, String password,
+	/*
+	public static KeyStore createJKS(String alias, PrivateKey privKey, String password,
         X509Certificate cert, Certificate[] cachain) throws Exception {
     	if (log.isTraceEnabled()) {
     		log.trace(">createJKS: alias=" + alias + ", privKey, cert=" + CertTools.getSubjectDN(cert) +
@@ -509,6 +516,7 @@ public class KeyTools {
         }
         return store;
     } // createJKS
+	*/
 
     /**
      * Retrieves the certificate chain from a keystore.

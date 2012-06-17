@@ -30,7 +30,15 @@ import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.tsp.*;
+import org.bouncycastle.tsp.TimeStampToken;
+import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampTokenInfo;
+import org.bouncycastle.tsp.TimeStampRequest;
+import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.bouncycastle.tsp.TSPAlgorithms;
+import org.bouncycastle.cms.SignerId;
+import org.bouncycastle.util.Selector;
+import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.signserver.cli.CommandLineInterface;
@@ -381,8 +389,10 @@ public class TimeStampCommand extends AbstractCommand {
                 out.println(token.getSID());
                 
                 out.println("      Signer certificates: ");
-                CertStore  certs = token.getCertificatesAndCRLs("Collection", "BC");
-                Collection certCollection = certs.getCertificates(token.getSID());
+                
+                Store  certs = token.getCertificates();             
+                
+                Collection certCollection = certs.getMatches(new AnyCertSelector());
                 for (Object o : certCollection) {
                     if (o instanceof X509Certificate) {
                         X509Certificate cert = (X509Certificate) o;
@@ -396,6 +406,22 @@ public class TimeStampCommand extends AbstractCommand {
                 }
                 
                 out.println("      Other certificates: ");
+                certs = token.getCRLs();
+                certCollection = certs.getMatches(new AnyCertSelector());
+                for (Object o : certCollection) {
+                    if (o instanceof X509Certificate) {
+                        X509Certificate cert = (X509Certificate) o;
+                        out.println("         Certificate: ");
+                        out.println("            Serial Number: " + cert.getSerialNumber().toString(16));
+                        out.println("            Subject:       " + cert.getSubjectX500Principal());
+                        out.println("            Issuer:        " + cert.getIssuerX500Principal());
+                    } else {
+                        out.println("Not an X.509 certificate: " + o);
+                    }
+                }
+                
+                /*
+                out.println("      Other certificates: ");
                 certCollection = certs.getCertificates(new InvertedCertSelector(token.getSID()));
                 for (Object o : certCollection) {
                     if (o instanceof X509Certificate) {
@@ -408,12 +434,28 @@ public class TimeStampCommand extends AbstractCommand {
                         out.println("Not an X.509 certificate: " + o);
                     }
                 }
+                */
             }
             out.println("}");
         
     }
     
-    private static class InvertedCertSelector implements CertSelector {
+    private static class AnyCertSelector implements Selector {
+    	public boolean match(Object object) {
+    		if (object instanceof X509Certificate) {
+    			return true;
+    		}
+    		return false;
+    	}
+    	
+    	@Override
+    	public Object clone() {
+    		return new AnyCertSelector();
+    	}
+    }
+    
+    /*
+    private static class InvertedCertSelector implements Selector {
 
         private CertSelector delegate;
         
@@ -431,6 +473,7 @@ public class TimeStampCommand extends AbstractCommand {
         }
         
     }
+    */
 
     private void tsaVerify() throws Exception {
         if (inrepstring == null) {
@@ -484,7 +527,8 @@ public class TimeStampCommand extends AbstractCommand {
             if (instring != null) {
                 final byte[] digestBytes = instring.getBytes("UTF-8");
                 final MessageDigest dig = MessageDigest.getInstance(
-                        TSPAlgorithms.SHA1,
+                		// TODO: not sure about this..
+                        "SHA1",
                         "BC");
                 dig.update(digestBytes);
                 digest = dig.digest();
@@ -492,7 +536,9 @@ public class TimeStampCommand extends AbstractCommand {
                 doRun = false;
             }
             if (infilestring != null) {
-                digest = digestFile(infilestring, TSPAlgorithms.SHA1);
+            	// TODO: correct to use getId() here?
+            	// TSPAlgorithms constants changed from Strings to ASN1Encoded objects
+                digest = digestFile(infilestring, "SHA1");
                 doRun = false;
             }
             final byte[] hexDigest = Hex.encode(digest);

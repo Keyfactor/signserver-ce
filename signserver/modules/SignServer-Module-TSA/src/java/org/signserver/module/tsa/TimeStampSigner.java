@@ -66,7 +66,6 @@ import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.tsp.TimeStampResponseGenerator;
-//import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.bouncycastle.tsp.TimeStampTokenGenerator;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.operator.ContentSigner;
@@ -655,32 +654,11 @@ public class TimeStampSigner extends BaseSigner {
                         "No certificate for this signer");
             }
 
-            //JcaDigestCalculatorProviderBuilder calcProvBuilder = new JcaDigestCalculatorProviderBuilder();
-            //DigestCalculatorProvider calcProv = calcProvBuilder.build();
-            DigestCalculatorProvider calcProv = new BcDigestCalculatorProvider();
-            
-            //DigestCalculator calc = new SHA1DigestCalculator();        
+            DigestCalculatorProvider calcProv = new BcDigestCalculatorProvider();    
             DigestCalculator calc = calcProv.get(new AlgorithmIdentifier(TSPAlgorithms.SHA1));
             
             
             Certificate cert = this.getSigningCertificate();
-            
-            /*
-            String issuer = cert.getIssuerDN().getName();
-            BigInteger sn = cert.getSerialNumber();
-            DERGeneralString asn1Issuer = new DERGeneralString(issuer);
-            ASN1Integer asn1SN = new ASN1Integer(sn);
-            
-            ASN1EncodableVector vec = new ASN1EncodableVector();
-            
-            vec.add(asn1Issuer);
-            vec.add(asn1SN);
-            
-            DERSequence seq = new DERSequence(vec);
-            
-            SignerIdentifier si =
-            		new SignerIdentifier(new IssuerAndSerialNumber(seq));
-            */
             
             PrivateKey privKey = this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
             ContentSigner cs =
@@ -690,17 +668,6 @@ public class TimeStampSigner extends BaseSigner {
             SignerInfoGenerator sig = sigb.build(cs, certHolder);
             
             timeStampTokenGen = new TimeStampTokenGenerator(calc, sig, tSAPolicyOID);
-            
-            
-            /*
-            timeStampTokenGen = new TimeStampTokenGenerator(
-                    this.getCryptoToken().getPrivateKey(
-                        ICryptoToken.PURPOSE_SIGN),
-                    signingCert,
-                    this.ACCEPTEDALGORITHMSMAP.get(digestOID),
-                    tSAPolicyOID);
-			*/
-
 
             if (config.getProperties().getProperty(ACCURACYMICROS) != null) {
                 timeStampTokenGen.setAccuracyMicros(Integer.parseInt(
@@ -732,19 +699,8 @@ public class TimeStampSigner extends BaseSigner {
             final CertStore certStore = CertStore.getInstance("Collection",
                     new CollectionCertStoreParameters(
                         getSigningCertificateChain()), "BC");
-            
-            /*
-            JcaCertStoreBuilder storeBuilder = new JcaCertStoreBuilder();
-            for (Certificate c : certStore.getCertificates(null)) {
-            	timeStampTokenGen.add
-            }
-            storeBuilder.addCertificate(arg0)
-            
-            timeStampTokenGen.addCertificates(certStore);
-            timeStampTokenGen.addCRLs(certStore);
-			*/
-            
-            // TODO: fix this (see unfinished code above)
+           
+            // TODO: will probably need to fix this when moving to BC 2.0...
             timeStampTokenGen.setCertificatesAndCRLs(certStore);
 
         } catch (IllegalArgumentException e) {

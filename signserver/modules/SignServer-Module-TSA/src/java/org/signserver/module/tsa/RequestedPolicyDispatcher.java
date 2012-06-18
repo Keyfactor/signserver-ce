@@ -34,7 +34,6 @@ import org.signserver.server.ITimeStampSignerLookup;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.dispatchers.BaseDispatcher;
 import org.signserver.server.log.IWorkerLogger;
-//import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
 
 /**
  * Dispatching requests to a Time Stamp Unit based on the requested profile.

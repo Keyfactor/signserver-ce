@@ -875,20 +875,9 @@ public class SODFile extends PassportFile
 			X509Certificate docSigningCertificate)
 	throws NoSuchAlgorithmException, CertificateEncodingException {
 		/* Get the issuer name (CN, O, OU, C) from the cert and put it in a SignerIdentifier struct. */
-		//X500Principal docSignerPrincipal = ((X509Certificate)docSigningCertificate).getIssuerX500Principal();
-                // As X509Certificate.getIssuerX500Principal().getName() always prints the name in reverses order
-                // we need to call the X509Name constructor with the first parameter reverse=true to have it back in
-                // the right order.
-           //     X500Name docSignerName = new X500Name(docSignerPrincipal.getName()); // RFC 2253 format
 		BigInteger serial = ((X509Certificate)docSigningCertificate).getSerialNumber();
-
 		IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(PrincipalUtil.getIssuerX509Principal(docSigningCertificate), serial);
-	
-	
 		SignerIdentifier sid = new SignerIdentifier(iasn);
-
-		//System.out.println("docSignerPrincipal: " + docSignerPrincipal.getName());
-		
 		AlgorithmIdentifier digestAlgorithmObject = new AlgorithmIdentifier(lookupOIDByMnemonic(digestAlgorithm)); 
 		final AlgorithmIdentifier digestEncryptionAlgorithmObject;
                 if (digestEncryptionAlgorithmParams == null) {

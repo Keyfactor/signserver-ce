@@ -227,7 +227,9 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * @return
      */
     private int getHashLength(ASN1ObjectIdentifier hashType) {
-    	if (TSPAlgorithms.SHA256.equals(hashType)) {
+    	if (TSPAlgorithms.SHA1.equals(hashType)) {
+    		return 20;
+    	} else if (TSPAlgorithms.SHA256.equals(hashType)) {
     		return 32;
     	} else if (TSPAlgorithms.SHA512.equals(hashType)) {
     		return 64;

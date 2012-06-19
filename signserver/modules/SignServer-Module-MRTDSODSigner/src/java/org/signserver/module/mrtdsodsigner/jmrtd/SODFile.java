@@ -562,15 +562,11 @@ public class SODFile extends PassportFile
 		 */
 	}
 
-	public X500Principal getIssuerX500Principal() {
+	public X500Principal getIssuerX500Principal() throws IOException {
 		IssuerAndSerialNumber issuerAndSerialNumber = getIssuerAndSerialNumber();
 		X500Name name = issuerAndSerialNumber.getName();
-		try {
-			return new X500Principal(name.getEncoded(ASN1Encoding.DER));
-		} catch (IOException ioe) {
-			// TODO: propagate IOException from this method?
-			return null;
-		}
+		
+		return new X500Principal(name.getEncoded(ASN1Encoding.DER));
 	}
 
 	public BigInteger getSerialNumber() {

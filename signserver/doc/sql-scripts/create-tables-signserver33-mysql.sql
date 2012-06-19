@@ -6,7 +6,6 @@
 --
 -- Table structure for table `GlobalConfigurationData`
 --
-DROP TABLE IF EXISTS `GlobalConfigurationData`;
 CREATE TABLE `GlobalConfigurationData` (
   `propertyKey` varchar(255) NOT NULL,
   `propertyValue` mediumtext,
@@ -17,7 +16,6 @@ CREATE TABLE `GlobalConfigurationData` (
 --
 -- Table structure for table `signerconfigdata`
 --
-DROP TABLE IF EXISTS `signerconfigdata`;
 CREATE TABLE `signerconfigdata` (
   `signerId` int(11) NOT NULL,
   `signerConfigData` mediumtext,
@@ -28,7 +26,6 @@ CREATE TABLE `signerconfigdata` (
 --
 -- Table structure for table `KeyUsageCounter`
 --
-DROP TABLE IF EXISTS `KeyUsageCounter`;
 CREATE TABLE `KeyUsageCounter` (
   `keyHash` varchar(255) NOT NULL,
   `counter` bigint(20) NOT NULL,
@@ -39,7 +36,6 @@ CREATE TABLE `KeyUsageCounter` (
 --
 -- Table structure for table `ArchiveData`
 --
-DROP TABLE IF EXISTS `ArchiveData`;
 CREATE TABLE `ArchiveData` (
   `uniqueId` varchar(255) NOT NULL,
   `time` bigint(20) NOT NULL,
@@ -57,7 +53,6 @@ CREATE TABLE `ArchiveData` (
 --
 -- Table structure for table `enckeydata`
 --
-DROP TABLE IF EXISTS `enckeydata`;
 CREATE TABLE `enckeydata` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `workerId` int(11) NOT NULL,
@@ -73,7 +68,6 @@ CREATE TABLE `enckeydata` (
 --
 -- Table structure for table `groupkeydata`
 --
-DROP TABLE IF EXISTS `groupkeydata`;
 CREATE TABLE `groupkeydata` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `documentID` varchar(255) DEFAULT NULL,
@@ -90,7 +84,6 @@ CREATE TABLE `groupkeydata` (
 --
 -- Table structure for table `SEQUENCE`
 --
-DROP TABLE IF EXISTS `SEQUENCE`;
 CREATE TABLE `SEQUENCE` (
   `SEQ_NAME` varchar(50) NOT NULL,
   `SEQ_COUNT` decimal(38,0) DEFAULT NULL,

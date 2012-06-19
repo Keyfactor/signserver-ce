@@ -1,3 +1,5 @@
+-- TODO: Remove this file
+
 --
 -- These definitions should work for SignServer 3.2.x, Oracle 10.x and the JDBC driver version 10.2.0.1.0.
 -- Version: $Id$

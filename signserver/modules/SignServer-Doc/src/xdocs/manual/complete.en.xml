@@ -370,7 +370,7 @@ export SIGNSERVER_NODEID=node1
 Create a database and user for SignServer. The application server will try to
 create tables during startup of SignServer but if the database user does not
 have table create permissions or if you run on GlassFish the tables must be
-created manually. See doc/howtos/create-tables-signserver32-*.sql.
+created manually. See doc/sql-scripts/create-tables-signserver33-*.sql.
                     </p>
                     <p>
 Copy the driver for your database to the application server lib folder.

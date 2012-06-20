@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Test script running different signer on sample documents
+# assumes signers have been setup using the provided properties file
+#
+# $Id$
+
 # test that SIGNSERVER_HOME is set
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
   SIGNSERVER_HOME=..

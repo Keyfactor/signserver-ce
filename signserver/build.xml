@@ -181,41 +181,9 @@ Configured ear file available at: ${ear.dist.file}
     </target>
     
     <target name="-process-modules" depends="-init-configure, -preprocess-persistence">
-        <macrodef name="postprocess-jar" description="Unzips jars and expandsproperties in the chosen files and zips the jar again">
-            <attribute name="src"/>
-            <attribute name="destfile"/>
-            <attribute name="tempdir"/>
-            <attribute name="replace-includes"/>
-            <sequential>
-                <echo level="verbose" message="Replace @{replace-includes} in @{src} to @{destfile} using temp dir @{tempdir}"/>
-                <delete dir="@{tempdir}"/>
-                <mkdir dir="@{tempdir}"/>
-                <delete dir="@{tempdir}.2"/>
-                <mkdir dir="@{tempdir}.2"/>
-                
-                <unzip src="@{src}" dest="@{tempdir}.2">
-                    <patternset>
-                        <include name="@{replace-includes}"/>
-                    </patternset>
-                </unzip>
-
-                <copy todir="@{tempdir}">
-                    <fileset dir="@{tempdir}.2"/>
-                    <filterchain>
-                        <expandproperties/>
-                    </filterchain>
-                </copy>
-
-                <zip destfile="@{destfile}" duplicate="fail">
-                    <zipfileset src="@{src}">
-                        <exclude name="@{replace-includes}"/>
-                    </zipfileset>
-                    <zipfileset dir="@{tempdir}">
-                        <include name="@{replace-includes}" />
-                    </zipfileset>
-                </zip>
-            </sequential>
-        </macrodef>
+        <echo/>
+<!--        <taskdef name="postprocess-jar" classname="org.signserver.anttasks.JarPostProcessTask" classpath="lib/SignServer-BuildTools.jar:lib/ext/commons-io-1.4.jar:lib/ext/commons-lang-2.4.jar"/>-->
+        
         <taskdef name="mods" classname="org.signserver.anttasks.ProcessModulesTask" classpath="lib/SignServer-BuildTools.jar"/>
         
         <condition property="allEnabled">
@@ -223,9 +191,9 @@ Configured ear file available at: ${ear.dist.file}
         </condition>
         
         <mods modsDir="mods-available" libSet="toLibs" rootSet="toRoot" applicationXml="appXml" enabledModules="enabledModules" allEnabled="${allEnabled}"/>
-        <echo>
+<!--        <echo>
 Enabled modules:
-    ${enabledModules}</echo>
+    ${enabledModules}</echo>-->
         <echo level="verbose">
 Additions to application.xml: 
 ${appXml}
@@ -250,21 +218,29 @@ Libraries to include:
         </copy>
         
         <!-- For each module call postprocess -->
-        <taskdef name="antcallforall" classname="org.signserver.anttasks.AntCallForAllTask" classpath="lib/SignServer-BuildTools.jar"/>
-        <antcallforall names="${enabledModules}" target="-postprocess-module" newPropertyPrefix="_acfa" unlessEmpty="postprocess.files" />
+<!--        <taskdef name="antcallforall" classname="org.signserver.anttasks.AntCallForAllTask" classpath="lib/SignServer-BuildTools.jar"/>-->
+
+        <echo/>
+        <echo>Post processing files...</echo>
+        
+        <taskdef name="postprocess" classname="org.signserver.anttasks.PostProcessModulesTask" classpath="lib/SignServer-BuildTools.jar:lib/ext/commons-io-1.4.jar:lib/ext/commons-lang-2.4.jar"/>
+        
+        <postprocess modules="${enabledModules}"/>
+        
+<!--        <antcallforall names="${enabledModules}" target="-postprocess-module" newPropertyPrefix="_acfa" unlessEmpty="postprocess.files" />-->
     </target>
     
-    <target name="-postprocess-module">
+<!--    <target name="-postprocess-module">
         <echo>Post processing module: ${_acfa.calledname}</echo>
         <antcallforall names="${_acfa.postprocess.files}" target="-postprocess-file" prePrefix="_acfa." newPropertyPrefix="_acfa2"/>
-    </target>
+    </target>-->
     
-    <target name="-postprocess-file">
+<!--    <target name="-postprocess-file">
         <echo level="verbose">Post processing file "${_acfa2.src}" with includes "${_acfa2.includes}"</echo>
         <echo>module.type: ${_acfa.module.type}</echo>
         <property name="_acfa2.dest" value=""/>
-        <postprocess-jar src="lib/${_acfa2.src}" destfile="${signserver.ear.dir}/${_acfa2.dest}${_acfa2.src}" tempdir="${tmp}/${_acfa.calledname}-${_acfa2.src}.dir" replace-includes="${_acfa2.includes}"/>
-    </target>
+        <postprocess-jar src="lib/${_acfa2.src}" destfile="${signserver.ear.dir}/${_acfa2.dest}${_acfa2.src}" tempdir="${tmp}/${_acfa.calledname}-${_acfa2.src}.dir" replaceincludes="${_acfa2.includes}"/>
+    </target>-->
         
     <target name="-init-configure">
         <echo>

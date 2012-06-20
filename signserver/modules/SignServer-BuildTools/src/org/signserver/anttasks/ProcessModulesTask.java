@@ -12,17 +12,8 @@
  *************************************************************************/
 package org.signserver.anttasks;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -63,7 +54,6 @@ public class ProcessModulesTask extends Task {
         File[] propertyFiles = modsDir.listFiles(filter);
         Arrays.sort(propertyFiles, new FileNameComparator());
         for (File file : propertyFiles) {
-            log("");
             log("Processing: " + file, Project.MSG_VERBOSE);
             Properties properties = loadProperties(file);
             String name = properties.getProperty("module.name");
@@ -149,7 +139,7 @@ public class ProcessModulesTask extends Task {
         for (String key : properties.stringPropertyNames()) {
             String newName = prefix + "." + key;
             getProject().setProperty(newName, properties.getProperty(key));
-            log("Setting property " + newName);
+            log("Setting property " + newName, Project.MSG_VERBOSE);
         }
     }
 

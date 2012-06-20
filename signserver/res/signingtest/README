@@ -1,0 +1,14 @@
+To run the signing test script first setup the signers configured in
+testsigners.properties by running the following in $SIGNSERVER_HOME
+
+$ ./bin/signserver setproperties res/signingtest/testsigners.properties
+$ ./bin/signserver reload 10000
+$ ./bin/signserver reload 10001
+
+Now it is possible to run the test script from the directory
+$SIGNSERVER_HOME/res/signingtest
+
+$ ./signingtest.sh
+
+This will process the sample files and produce a series of result files whos names starts
+with "test-out".

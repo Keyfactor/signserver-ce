@@ -18,6 +18,7 @@ $SIGNCLIENT signdocument -workername TestPDFSigner -infile test.pdf -outfile tes
 # test XML signer
 $SIGNCLIENT signdocument -workername TestXMLSigner -infile test.xml -outfile test-out.xml
 
-
+# test ODF signer
+$SIGNCLIENT signdocument -workername TestODFSigner -infile test.odf -outfile test-out.odf
   
 

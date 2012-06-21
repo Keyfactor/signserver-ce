@@ -24,3 +24,7 @@ $SIGNCLIENT signdocument -workername TestODFSigner -infile test.odf -outfile tes
 # test OOXML signer
 $SIGNCLIENT signdocument -workername TestOOXMLSigner -infile test.docx -outfile test-out.docx  
 
+# test the MRTDSODSigner
+$SIGNCLIENT signdatagroups -workername TestMRTDSODSigner -data "1=value1\&2=value2\&3=value3" > test-out.sod
+
+  

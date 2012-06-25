@@ -36,7 +36,8 @@ public class AllFieldsWorkerLogger implements IWorkerLogger {
     
     public void init(final Properties props) {
         this.logLevel = Level.toLevel(props.getProperty("LOGLEVEL_DEFAULT",
-        												DEFAULT_LOGLEVEL));
+        												DEFAULT_LOGLEVEL),
+        							  Level.INFO);
     }
 
     /**

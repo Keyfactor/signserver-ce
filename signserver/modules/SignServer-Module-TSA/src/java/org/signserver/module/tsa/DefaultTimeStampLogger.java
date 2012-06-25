@@ -78,7 +78,8 @@ public class DefaultTimeStampLogger implements IWorkerLogger {
         this.logDateFormat = properties.getProperty("LOGDATEFORMAT", DEFAULT_LOGDATEFORMAT);
         this.timeZone = properties.getProperty("LOGTIMEZONE", DEFAULT_LOGTIMEZONE);
         this.logLevel = Level.toLevel(properties.getProperty("LOGLEVEL_DEFAULT",
-        														DEFAULT_LOGLEVEL));
+        														DEFAULT_LOGLEVEL),
+        							  Level.INFO);
     }
 
     @Override

@@ -4760,6 +4760,7 @@ does fields that are of interest chosen.
                         </p>
                         <source>
 WORKERLOGGER=org.signserver.server.log.AllFieldsWorkerLogger
+LOGLEVEL_DEFAULT=INFO
                         </source>
                     </subsubsection>
                     <subsubsection name="PatternWorkerLogger">
@@ -4769,6 +4770,7 @@ LOGTIMEZONE=GMT
 LOGDATEFORMAT=yyyy-MM-dd:HH:mm:ss:z
 LOGPATTERN=\$\{(.+?)\}
 LOGORDER=AUDIT; LOG_ID: ${LOG_ID}; CLIENT_IP: ${CLIENT_IP}; REQUEST_FULLURL: ${REQUEST_FULLURL}; RequestTime: ${LOG_TIME}; ResponseTime: ${REPLY_TIME}; EXCEPTION: ${EXCEPTION};
+LOGLEVEL_DEFAULT=INFO
                         </source>
                     </subsubsection>
                     <subsubsection name="NullWorkerLogger">

@@ -31,6 +31,7 @@ public class PatternWorkerLogger implements IWorkerLogger {
             Logger.getLogger(IWorkerLogger.class);
     private String logDateFormat;
     private String timeZone;
+    private Level logLevel;
 
     private static final String DEFAULT_LOGPATTERN =
             "\\$\\{(.+?)\\}";
@@ -48,6 +49,8 @@ public class PatternWorkerLogger implements IWorkerLogger {
             "yyyy-MM-dd:HH:mm:ss:z";
 
     private static final String DEFAULT_LOGTIMEZONE = "GMT";
+    
+    private static final String DEFAULT_LOGLEVEL = "INFO";
 
     public PatternWorkerLogger() {
     }
@@ -58,12 +61,14 @@ public class PatternWorkerLogger implements IWorkerLogger {
         this.orderString = properties.getProperty("LOGORDER", DEFAULT_LOGORDER);
         this.logDateFormat = properties.getProperty("LOGDATEFORMAT", DEFAULT_LOGDATEFORMAT);
         this.timeZone = properties.getProperty("LOGTIMEZONE", DEFAULT_LOGTIMEZONE);
+        this.logLevel = Level.toLevel(properties.getProperty("LOGLEVEL_DEFAULT",
+        													 DEFAULT_LOGLEVEL));
     }
 
     public void log(Map<String, String> entries) throws WorkerLoggerException {
         final EjbcaPatternLogger pl = new EjbcaPatternLogger(this.pattern.matcher(
                 this.orderString), this.orderString, ACCOUNTLOG,
-                this.logDateFormat, this.timeZone, Level.INFO);
+                this.logDateFormat, this.timeZone, this.logLevel);
         pl.putAll(entries);
         pl.writeln();
         pl.flush();

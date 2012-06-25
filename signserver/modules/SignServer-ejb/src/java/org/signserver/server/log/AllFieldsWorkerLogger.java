@@ -14,6 +14,8 @@ package org.signserver.server.log;
 
 import java.util.Map;
 import java.util.Properties;
+
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -27,9 +29,14 @@ public class AllFieldsWorkerLogger implements IWorkerLogger {
     /** Logger for this class. */
     private static final Logger ACCOUNTLOG =
             Logger.getLogger(IWorkerLogger.class);
+    
+    private static final String DEFAULT_LOGLEVEL = "INFO";
 
+    private Level logLevel;
+    
     public void init(final Properties props) {
-        // No configuration for this logger
+        this.logLevel = Level.toLevel(props.getProperty("LOGLEVEL_DEFAULT",
+        												DEFAULT_LOGLEVEL));
     }
 
     /**
@@ -53,8 +60,8 @@ public class AllFieldsWorkerLogger implements IWorkerLogger {
         str.append(IWorkerLogger.LOG_REPLY_TIME);
         str.append(":");
         str.append(String.valueOf(System.currentTimeMillis()));
-
+        
         // Do log
-        ACCOUNTLOG.info(str.toString());
+        ACCOUNTLOG.log(this.logLevel, str.toString());
     }
 }

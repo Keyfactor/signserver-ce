@@ -24,7 +24,11 @@ $SIGNCLIENT signdocument -workername TestODFSigner -infile test.odf -outfile tes
 # test OOXML signer
 $SIGNCLIENT signdocument -workername TestOOXMLSigner -infile test.docx -outfile test-out.docx  
 
-# test the MRTDSODSigner
+# test MRTDSODSigner
 $SIGNCLIENT signdatagroups -workername TestMRTDSODSigner -data "1=value1\&2=value2\&3=value3" > test-out.sod
 
-  
+# test CMSSigner
+$SIGNCLIENT signdocument -workername TestCMSSigner -infile test.xml -outfile test-signed.p7s 
+
+# test TSA
+$SIGNCLIENT timestamp -instr "Foobar" -outrep test-tsa.resp -url http://localhost:8080/signserver/tsa\?workerName=TestTimeStampSigner

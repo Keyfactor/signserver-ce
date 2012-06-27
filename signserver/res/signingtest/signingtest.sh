@@ -14,35 +14,35 @@ SIGNCLIENT=$SIGNSERVER_HOME/bin/signclient
 
 # test PDF signer
 echo "Testing PDF signer..."
-$SIGNCLIENT signdocument -workername TestPDFSigner -infile test.pdf -outfile test-out.pdf 
+$SIGNCLIENT signdocument -workername TestPDFSigner -infile test.pdf -outfile output/test-out.pdf 
 echo "Testing PDF signer done"
 
 # test XML signer
 echo "Testing XML signer..."
-$SIGNCLIENT signdocument -workername TestXMLSigner -infile test.xml -outfile test-out.xml
+$SIGNCLIENT signdocument -workername TestXMLSigner -infile test.xml -outfile output/test-out.xml
 echo "Testing XML signer done"
 
 # test ODF signer
 echo "Testing ODF signer..."
-$SIGNCLIENT signdocument -workername TestODFSigner -infile test.odf -outfile test-out.odf
+$SIGNCLIENT signdocument -workername TestODFSigner -infile test.odf -outfile output/test-out.odf
 echo "Testing ODF signer done"
 
 # test OOXML signer
 echo "Testing OOXML signer..."
-$SIGNCLIENT signdocument -workername TestOOXMLSigner -infile test.docx -outfile test-out.docx  
+$SIGNCLIENT signdocument -workername TestOOXMLSigner -infile test.docx -outfile output/test-out.docx  
 echo "Testing OOXML signer done"
 
 # test MRTDSODSigner
 echo "Testing MRTDSODSigner..."
-$SIGNCLIENT signdatagroups -workername TestMRTDSODSigner -data "1=value1\&2=value2\&3=value3" > test-out.sod
+$SIGNCLIENT signdatagroups -workername TestMRTDSODSigner -data "1=value1\&2=value2\&3=value3" > output/test-out.sod
 echo "Testing MRTDSODSigner done"
 
 # test CMSSigner
 echo "Testing CMS Signer..."
-$SIGNCLIENT signdocument -workername TestCMSSigner -infile test.xml -outfile test-signed.p7s 
+$SIGNCLIENT signdocument -workername TestCMSSigner -infile test.xml -outfile output/test-signed.p7s 
 echo "Testing CMS Signer done"
 
 # test TSA
 echo "Testing TSA..."
-$SIGNCLIENT timestamp -instr "Foobar" -outrep test-tsa.resp -url http://localhost:8080/signserver/tsa\?workerName=TestTimeStampSigner
+$SIGNCLIENT timestamp -instr "Foobar" -outrep output/test-tsa.resp -url http://localhost:8080/signserver/tsa\?workerName=TestTimeStampSigner
 echo "Testing TSA done"

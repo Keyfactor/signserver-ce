@@ -14,22 +14,22 @@ SIGNCLIENT=$SIGNSERVER_HOME/bin/signclient
 
 # test PDF signer
 echo "Testing PDF signer..."
-$SIGNCLIENT signdocument -workername TestPDFSigner -infile test.pdf -outfile output/test-out.pdf 
+$SIGNCLIENT signdocument -workername TestPDFSigner -infile input/test.pdf -outfile output/test-out.pdf 
 echo "Testing PDF signer done"
 
 # test XML signer
 echo "Testing XML signer..."
-$SIGNCLIENT signdocument -workername TestXMLSigner -infile test.xml -outfile output/test-out.xml
+$SIGNCLIENT signdocument -workername TestXMLSigner -infile input/test.xml -outfile output/test-out.xml
 echo "Testing XML signer done"
 
 # test ODF signer
 echo "Testing ODF signer..."
-$SIGNCLIENT signdocument -workername TestODFSigner -infile test.odf -outfile output/test-out.odf
+$SIGNCLIENT signdocument -workername TestODFSigner -infile input/test.odf -outfile output/test-out.odf
 echo "Testing ODF signer done"
 
 # test OOXML signer
 echo "Testing OOXML signer..."
-$SIGNCLIENT signdocument -workername TestOOXMLSigner -infile test.docx -outfile output/test-out.docx  
+$SIGNCLIENT signdocument -workername TestOOXMLSigner -infile input/test.docx -outfile output/test-out.docx  
 echo "Testing OOXML signer done"
 
 # test MRTDSODSigner
@@ -39,7 +39,7 @@ echo "Testing MRTDSODSigner done"
 
 # test CMSSigner
 echo "Testing CMS Signer..."
-$SIGNCLIENT signdocument -workername TestCMSSigner -infile test.xml -outfile output/test-signed.p7s 
+$SIGNCLIENT signdocument -workername TestCMSSigner -infile input/test.xml -outfile output/test-signed.p7s 
 echo "Testing CMS Signer done"
 
 # test TSA

@@ -7,7 +7,7 @@
 
 # test that SIGNSERVER_HOME is set
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
-  SIGNSERVER_HOME=..
+  SIGNSERVER_HOME=../..
 fi
 
 SIGNCLIENT=$SIGNSERVER_HOME/bin/signclient

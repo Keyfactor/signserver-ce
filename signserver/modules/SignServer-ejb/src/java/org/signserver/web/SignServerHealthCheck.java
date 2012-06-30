@@ -16,11 +16,9 @@ package org.signserver.web;
 
 import java.util.Iterator;
 import javax.ejb.EJB;
-
 import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.signserver.common.GlobalConfiguration;
@@ -108,7 +106,7 @@ public class SignServerHealthCheck implements IHealthCheck {
 
     private String checkSigners() {
         String retval = "";
-        Iterator<Integer> iter = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE).iterator();
+        Iterator<Integer> iter = getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE).iterator();
         while (iter.hasNext()) {
             int processableId = ((Integer) iter.next()).intValue();
 

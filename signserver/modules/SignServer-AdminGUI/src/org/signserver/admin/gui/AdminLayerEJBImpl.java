@@ -818,7 +818,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     @Override
     public List<Integer> getWorkers(
             final int workerType) {
-        return global.getWorkers(workerType);
+        return worker.getWorkers(workerType);
     }
 
     /**

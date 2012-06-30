@@ -10,13 +10,23 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.ejb.worker.impl;
 
 import java.util.*;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.server.BaseProcessable;
+import org.signserver.server.ClientCertAuthorizer;
+import org.signserver.server.IAccounter;
+import org.signserver.server.IAuthorizer;
+import org.signserver.server.IProcessable;
+import org.signserver.server.IWorker;
+import org.signserver.server.NoAccounter;
+import org.signserver.server.NoAuthorizer;
+import org.signserver.server.SignServerContext;
+import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
 import org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver;
@@ -48,7 +58,7 @@ public class WorkerFactory {
     private WorkerFactory() {
     }
 
-    public static WorkerFactory getInstance() {
+    protected static WorkerFactory getInstance() {
         return instance;
     }
     
@@ -84,10 +94,11 @@ public class WorkerFactory {
     public IWorker getWorker(int workerId, 
             IWorkerConfigDataService workerConfigHome, 
             IGlobalConfigurationSession gCSession, 
+            IWorkerManagerSessionLocal workerManagerSession,
             WorkerContext workerContext) {
         Integer id = new Integer(workerId);
 
-        loadWorkers(workerConfigHome, gCSession, workerContext);
+        loadWorkers(workerConfigHome, gCSession, workerManagerSession, workerContext);
         synchronized (workerStore) {
             IWorker ret = (IWorker) workerStore.get(id);
             if (ret == null) {
@@ -138,9 +149,9 @@ public class WorkerFactory {
      * @param workerConfigHome The home interface of the signer config entity bean
      * @return the id of the signer or 0 if no worker with the name is found.
      */
-    public int getWorkerIdFromName(String workerName, IWorkerConfigDataService workerConfigHome, IGlobalConfigurationSession gCSession, WorkerContext workerContext) {
+    public int getWorkerIdFromName(String workerName, IWorkerConfigDataService workerConfigHome, IGlobalConfigurationSession gCSession, IWorkerManagerSessionLocal workerManagerSession, WorkerContext workerContext) {
         int retval = 0;
-        loadWorkers(workerConfigHome, gCSession, workerContext);
+        loadWorkers(workerConfigHome, gCSession, workerManagerSession, workerContext);
         synchronized (nameToIdMap) {
             synchronized (workerStore) {
                 if (nameToIdMap.get(workerName) == null) {
@@ -157,7 +168,7 @@ public class WorkerFactory {
     /**
      * Method to load all available signers
      */
-    private synchronized void loadWorkers(IWorkerConfigDataService workerConfigHome, IGlobalConfigurationSession gCSession, WorkerContext workerContext) {
+    private synchronized void loadWorkers(IWorkerConfigDataService workerConfigHome, IGlobalConfigurationSession gCSession, IWorkerManagerSessionLocal workerManagerSession, WorkerContext workerContext) {
         if (workerStore == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Loading workers into WorkerFactory.");
@@ -166,7 +177,7 @@ public class WorkerFactory {
             nameToIdMap = new HashMap<String, Integer>();
             workerClassLoaderMap = new HashMap<Integer, ClassLoader>();
 
-            Collection<Integer> workers = gCSession.getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+            Collection<Integer> workers = workerManagerSession.getWorkers(GlobalConfiguration.WORKERTYPE_ALL, gCSession);
             GlobalConfiguration gc = gCSession.getGlobalConfiguration();
             Iterator<Integer> iter = workers.iterator();
             while (iter.hasNext()) {

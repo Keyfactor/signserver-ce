@@ -674,7 +674,7 @@ public class AdminWS {
                 throws AdminNotAuthorizedException {
         requireAdminAuthorization("getWorkers", String.valueOf(workerType));
         
-        return global.getWorkers(workerType);
+        return worker.getWorkers(workerType);
     }
 
     /**

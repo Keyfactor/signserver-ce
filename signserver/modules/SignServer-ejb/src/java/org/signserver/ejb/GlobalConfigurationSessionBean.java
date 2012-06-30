@@ -12,41 +12,23 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import org.signserver.server.config.entities.GlobalConfigurationDataBean;
-import org.signserver.server.config.entities.GlobalConfigurationDataService;
-import org.signserver.server.config.entities.WorkerConfigDataService;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import javax.ejb.EJB;
 import javax.ejb.EJBException;
-
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
-
 import org.apache.log4j.Logger;
-import org.signserver.common.CompileTimeSettings;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ResyncException;
-import org.signserver.common.SignServerUtil;
-import org.signserver.common.WorkerConfig;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
 import org.signserver.server.GlobalConfigurationCache;
-import org.signserver.server.GlobalConfigurationFileParser;
-import org.signserver.server.IProcessable;
+import org.signserver.server.config.entities.GlobalConfigurationDataBean;
+import org.signserver.server.config.entities.GlobalConfigurationDataService;
 import org.signserver.server.log.ISystemLogger;
-import org.signserver.server.IWorker;
-import org.signserver.server.SignServerContext;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
-import org.signserver.server.WorkerFactory;
-import org.signserver.server.timedservices.ITimedService;
 
 /**
  * The implementation of the GlobalConfiguration Session Bean.
@@ -63,11 +45,17 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /** Audit logger. */
     private static final ISystemLogger AUDITLOG = SystemLoggerFactory
             .getInstance().getLogger(GlobalConfigurationSessionBean.class);
+
+    @EJB
+    private IWorkerManagerSessionLocal workerManagerSession;
     
     @PersistenceContext(unitName = "SignServerJPA")
     EntityManager em;
     private static final long serialVersionUID = 1L;
 
+    private GlobalConfigurationDataService globalConfigurationDataService;
+
+    
     static {
         SignServerUtil.installBCProvider();
     }
@@ -133,11 +121,10 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
      */
     @Override
     public GlobalConfiguration getGlobalConfiguration() {
-        GlobalConfiguration retval = null;
+        GlobalConfiguration retval;
 
         if (GlobalConfigurationCache.getCachedGlobalConfig() == null) {
-            GlobalConfigurationFileParser staticConfig = GlobalConfigurationFileParser.getInstance();
-            Properties properties = staticConfig.getStaticGlobalConfiguration();
+            Properties properties = new Properties();
 
             Iterator<GlobalConfigurationDataBean> iter = getGlobalConfigurationDataService().findAll().iterator();
             while (iter.hasNext()) {
@@ -166,73 +153,12 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 
         return retval;
     }
-
-    /**
-     * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#getWorkers(int)
-     */
-    @Override
-    public List<Integer> getWorkers(int workerType) {
-        ArrayList<Integer> retval = new ArrayList<Integer>();
-        GlobalConfiguration gc = getGlobalConfiguration();
-
-        Enumeration<String> en = gc.getKeyEnumeration();
-        while (en.hasMoreElements()) {
-            String key = en.nextElement();
-            if (log.isTraceEnabled()) {
-                log.trace("getWorkers, processing key : " + key);
-            }
-            if (key.startsWith("GLOB.WORKER")) {
-                retval = (ArrayList<Integer>) getWorkerHelper(retval, key, workerType, false);
-            }
-            if (key.startsWith("GLOB.SIGNER")) {
-                retval = (ArrayList<Integer>) getWorkerHelper(retval, key, workerType, true);
-            }
+    
+    private GlobalConfigurationDataService getGlobalConfigurationDataService() {
+        if (globalConfigurationDataService == null) {
+            globalConfigurationDataService = new GlobalConfigurationDataService(em);
         }
-        return retval;
-    }
-
-    private List<Integer> getWorkerHelper(List<Integer> retval, String key, int workerType, boolean signersOnly) {
-
-        String unScopedKey = key.substring("GLOB.".length());
-        if (log.isTraceEnabled()) {
-            log.trace("unScopedKey : " + unScopedKey);
-        }
-        String strippedKey = key.substring("GLOB.WORKER".length());
-        if (log.isTraceEnabled()) {
-            log.trace("strippedKey : " + strippedKey);
-        }
-        String[] splittedKey = strippedKey.split("\\.");
-        if (log.isTraceEnabled()) {
-            log.trace("splittedKey : " + splittedKey.length + ", " + splittedKey[0]);
-        }
-        if (splittedKey.length > 1) {
-            if (splittedKey[1].equals("CLASSPATH")) {
-                int id = Integer.parseInt(splittedKey[0]);
-                if (workerType == GlobalConfiguration.WORKERTYPE_ALL) {
-                    retval.add(new Integer(id));
-                } else {
-                    IWorker obj = WorkerFactory.getInstance().getWorker(id, new WorkerConfigDataService(em), this, new SignServerContext(em));
-                    if (workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE) {
-                        if (obj instanceof IProcessable) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Adding Signer " + id);
-                            }
-                            retval.add(new Integer(id));
-                        }
-                    } else {
-                        if (workerType == GlobalConfiguration.WORKERTYPE_SERVICES && !signersOnly) {
-                            if (obj instanceof ITimedService) {
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Adding Service " + id);
-                                }
-                                retval.add(new Integer(id));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return retval;
+        return globalConfigurationDataService;
     }
 
     /**
@@ -306,14 +232,14 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     public void reload() {
         auditLog("reload", null, null);
 
-        GlobalConfigurationFileParser.getInstance().reloadConfiguration();
+        workerManagerSession.flush();
         GlobalConfigurationCache.setCachedGlobalConfig(null);
         getGlobalConfiguration();
 
         // Set the state to insync.
         GlobalConfigurationCache.setCurrentState(GlobalConfiguration.STATE_INSYNC);
     }
-
+    
     /**
      * Helper method used to set properties in a table.
      * @param tempKey
@@ -330,14 +256,6 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
             GlobalConfigurationCache.getCachedGlobalConfig().setProperty(key, value);
         }
 
-    }
-    private GlobalConfigurationDataService globalConfigurationDataService = null;
-
-    private GlobalConfigurationDataService getGlobalConfigurationDataService() {
-        if (globalConfigurationDataService == null) {
-            globalConfigurationDataService = new GlobalConfigurationDataService(em);
-        }
-        return globalConfigurationDataService;
     }
 
     private static void auditLog(final String operation, final String property,

@@ -52,11 +52,6 @@ public class GlobalConfigurationSessionMock implements
     }
 
     @Override
-    public List<Integer> getWorkers(int workerType) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public void resync() throws ResyncException {
         throw new UnsupportedOperationException("Not supported yet.");
     }

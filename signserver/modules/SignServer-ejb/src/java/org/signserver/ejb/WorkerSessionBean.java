@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import org.signserver.server.config.entities.WorkerConfigDataService;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -22,25 +21,13 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -48,61 +35,23 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
 import org.ejbca.util.CertTools;
-import org.signserver.common.ArchiveDataVO;
-import org.signserver.common.AuthorizationRequiredException;
-import org.signserver.common.AuthorizedClient;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.CryptoTokenStatus;
-import org.signserver.common.DefaultWorkerStatus;
-import org.signserver.common.DispatcherStatus;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.IArchivableProcessResponse;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignResponse;
-import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
-import org.signserver.common.NoSuchWorkerException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.ProcessableConfig;
-import org.signserver.common.RequestContext;
-import org.signserver.common.ServiceConfig;
-import org.signserver.common.ServiceStatus;
-import org.signserver.common.SignServerConstants;
-import org.signserver.common.SignServerException;
-import org.signserver.common.SignerStatus;
-import org.signserver.common.ValidatorStatus;
-import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.AccounterException;
-import org.signserver.server.BaseProcessable;
-import org.signserver.server.IClientCredential;
-import org.signserver.server.IGroupKeyServiceWorker;
-import org.signserver.server.IProcessable;
-import org.signserver.server.IWorker;
-import org.signserver.server.KeyUsageCounterHash;
-import org.signserver.server.entities.KeyUsageCounter;
-import org.signserver.server.NotGrantedException;
-import org.signserver.server.SignServerContext;
-import org.signserver.server.WorkerFactory;
+import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
+import org.signserver.server.*;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
+import org.signserver.server.config.entities.WorkerConfigDataService;
 import org.signserver.server.dispatchers.BaseDispatcher;
-import org.signserver.server.log.ISystemLogger;
-import org.signserver.server.log.IWorkerLogger;
-import org.signserver.server.log.SystemLoggerException;
-import org.signserver.server.log.SystemLoggerFactory;
-import org.signserver.server.log.WorkerLoggerException;
+import org.signserver.server.entities.KeyUsageCounter;
+import org.signserver.server.log.*;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
 import org.signserver.server.timedservices.ITimedService;
@@ -143,6 +92,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
     @EJB
     private IServiceTimerSession.ILocal serviceTimerSession;
+    
+    @EJB
+    private IWorkerManagerSessionLocal workerManagerSession;
 
     @PersistenceContext(unitName = "SignServerJPA")
     EntityManager em;
@@ -192,9 +144,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 (String) requestContext.get(RequestContext.REMOTE_IP));
 
         // Get worker instance
-        final IWorker worker = WorkerFactory.getInstance().getWorker(workerId,
-                workerConfigService, globalConfigurationSession,
-                new SignServerContext(em));
+        final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
 
         if (worker == null) {
             final IllegalRequestException ex =
@@ -212,9 +162,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final WorkerConfig awc = worker.getConfig();
 
         // Get worker log instance
-        final IWorkerLogger workerLogger = WorkerFactory.getInstance().
-                getWorkerLogger(workerId,
-                awc, em);
+        final IWorkerLogger workerLogger = workerManagerSession.getWorkerLogger(workerId, awc);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker[" + workerId + "]: " + "WorkerLogger: "
@@ -236,11 +184,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             logMap.put(IWorkerLogger.LOG_WORKER_AUTHTYPE,
                     processable.getAuthenticationType());
             try {
-                WorkerFactory.getInstance()
-                        .getAuthenticator(workerId,
+                workerManagerSession.getAuthenticator(workerId,
                             processable.getAuthenticationType(),
-                            awc,
-                            em).isAuthorized(request, requestContext);
+                            awc).isAuthorized(request, requestContext);
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
                         String.valueOf(true));
             } catch (AuthorizationRequiredException ex) {
@@ -342,9 +288,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                             (IClientCredential) requestContext.get(
                                         RequestContext.CLIENT_CREDENTIAL);
 
-                    purchased = WorkerFactory.getInstance().getAccounter(workerId,
-                                    awc,
-                                    em).purchase(credential, request, res,
+                    purchased = workerManagerSession.getAccounter(workerId,
+                                    awc).purchase(credential, request, res,
                                             requestContext);
 
                     logMap.put(IWorkerLogger.LOG_PURCHASED, "true");
@@ -382,8 +327,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                             = Collections.singleton(archivableResponse);
 
                     // Archive all Archivables using all ArchiverS
-                    final List<Archiver> archivers = WorkerFactory
-                           .getInstance().getArchivers(workerId, awc, em);
+                    final List<Archiver> archivers = workerManagerSession.getArchivers(workerId, awc);
                     if (archivers != null) {
                         try {
                             for (Archiver archiver : archivers) {
@@ -405,7 +349,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         } catch (ArchiveException ex) {
                             LOG.error("Archiving failed", ex);
                             throw new SignServerException(
-                                    "Archiving failed. See server log.");
+                                    "Archiving failed. See server LOG.");
                         }
                     }
                 }
@@ -632,7 +576,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 CryptoTokenOfflineException newe =
                         new CryptoTokenOfflineException(
                         "Error Signer " + workerId
-                        + " have a problem with PrivateKeyUsagePeriod, check server log.");
+                        + " have a problem with PrivateKeyUsagePeriod, check server LOG.");
                 newe.initCause(e);
                 throw newe;
             } catch (ParseException e) {
@@ -640,7 +584,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 CryptoTokenOfflineException newe =
                         new CryptoTokenOfflineException(
                         "Error Signer " + workerId
-                        + " have a problem with PrivateKeyUsagePeriod, check server log.");
+                        + " have a problem with PrivateKeyUsagePeriod, check server LOG.");
                 newe.initCause(e);
                 throw newe;
             }
@@ -807,9 +751,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     @Override
     public WorkerStatus getStatus(int workerId) throws InvalidWorkerIdException {
         final WorkerStatus result;
-        IWorker worker = WorkerFactory.getInstance().getWorker(workerId,
-                workerConfigService, globalConfigurationSession, new SignServerContext(
-                em));
+        IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + workerId
                     + " doesn't exist");
@@ -865,9 +807,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      * @see org.signserver.ejb.interfaces.IWorkerSession#getWorkerId(java.lang.String)
      */
     public int getWorkerId(String signerName) {
-        return WorkerFactory.getInstance().getWorkerIdFromName(signerName.
-                toUpperCase(), workerConfigService, globalConfigurationSession, new SignServerContext(
-                em));
+        return workerManagerSession.getIdFromName(signerName, globalConfigurationSession);
     }
 
     /* (non-Javadoc)
@@ -877,16 +817,12 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (workerId == 0) {
             globalConfigurationSession.reload();
         } else {
-            WorkerFactory.getInstance().reloadWorker(workerId,
-                    workerConfigService, globalConfigurationSession, new SignServerContext(
-                    em));
+            workerManagerSession.reloadWorker(workerId, this, globalConfigurationSession);
 
             // Try to insert a key usage counter entry for this worker's public
             // key
             // Get worker instance
-            final IWorker worker = WorkerFactory.getInstance().getWorker(workerId,
-                workerConfigService, globalConfigurationSession,
-                new SignServerContext(em));
+            final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
             if (worker instanceof BaseProcessable) {
                 try {
                     final Certificate cert = ((BaseProcessable)worker)
@@ -916,7 +852,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
         }
 
-        if (workerId == 0 || globalConfigurationSession.getWorkers(
+        if (workerId == 0 || getWorkers(
                 GlobalConfiguration.WORKERTYPE_SERVICES).contains(new Integer(
                 workerId))) {
             serviceTimerSession.unload(workerId);
@@ -932,9 +868,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     public void activateSigner(int signerId, String authenticationCode)
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException, InvalidWorkerIdException {
-        IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
-                workerConfigService, globalConfigurationSession, new SignServerContext(
-                em));
+        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -954,9 +888,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      */
     public boolean deactivateSigner(int signerId)
             throws CryptoTokenOfflineException, InvalidWorkerIdException {
-        IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
-                workerConfigService, globalConfigurationSession, new SignServerContext(
-                em));
+        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -980,9 +912,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
                 IllegalArgumentException {
 
-        IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
-                workerConfigService, globalConfigurationSession,
-                new SignServerContext(em));
+        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -1053,9 +983,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
             KeyStoreException {
 
-        IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
-                workerConfigService, globalConfigurationSession,
-                new SignServerContext(em));
+        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -1168,9 +1096,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (LOG.isTraceEnabled()) {
             LOG.trace(">getCertificateRequest: signerId=" + signerId);
         }
-        IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
-                workerConfigService, globalConfigurationSession, new SignServerContext(
-                em));
+        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -1199,9 +1125,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      */
     public Certificate getSignerCertificate(final int signerId) throws CryptoTokenOfflineException {
         Certificate ret = null;
-        final IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
-                workerConfigService, globalConfigurationSession,
-                new SignServerContext(em));
+        final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker instanceof BaseProcessable) {
             ret = ((BaseProcessable) worker).getSigningCertificate();
         }
@@ -1215,9 +1139,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     public List<Certificate> getSignerCertificateChain(final int signerId)
             throws CryptoTokenOfflineException {
         List<Certificate> ret = null;
-        final IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
-                workerConfigService, globalConfigurationSession,
-                new SignServerContext(em));
+        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker instanceof BaseProcessable) {
             Collection<Certificate> certs = ((BaseProcessable) worker)
                     .getSigningCertificateChain();
@@ -1267,9 +1189,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      */
     public boolean destroyKey(int signerId, int purpose) throws
             InvalidWorkerIdException {
-        IWorker worker = WorkerFactory.getInstance().getWorker(signerId,
-                workerConfigService, globalConfigurationSession, new SignServerContext(
-                em));
+        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -1321,7 +1241,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      * @see org.signserver.ejb.interfaces.IWorkerSession#genFreeWorkerId()
      */
     public int genFreeWorkerId() {
-        Collection<Integer> ids = globalConfigurationSession.getWorkers(
+        Collection<Integer> ids = getWorkers(
                 GlobalConfiguration.WORKERTYPE_ALL);
         int max = 0;
         Iterator<Integer> iter = ids.iterator();
@@ -1428,4 +1348,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         return logMap;
     }
+    
+    /**
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getWorkers(int)
+     */
+    @Override
+    public List<Integer> getWorkers(int workerType) {
+        return workerManagerSession.getWorkers(workerType, globalConfigurationSession);
+    }
+    
 }

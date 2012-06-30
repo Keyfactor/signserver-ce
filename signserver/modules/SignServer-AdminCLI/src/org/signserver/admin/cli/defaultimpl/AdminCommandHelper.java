@@ -127,7 +127,7 @@ public class AdminCommandHelper {
      * @throws RemoteException 
      */
     public void checkThatWorkerIsProcessable(int signerid) throws RemoteException, IllegalCommandArgumentsException {
-        Collection<Integer> signerIds = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
+        Collection<Integer> signerIds = getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
         if (!signerIds.contains(new Integer(signerid))) {
             throw new IllegalCommandArgumentsException("Error: given workerId doesn't seem to point to any processable worker in the system.");
         }

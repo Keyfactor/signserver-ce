@@ -370,6 +370,15 @@ public interface IWorkerSession {
      */
     List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(int signerId,
             BigInteger serialNumber, String issuerDN);
+    
+    /**
+     * Help method that returns all worker, either signers or services defined
+     * in the global configuration.
+     * @param workerType can either be GlobalConfiguration.WORKERTYPE_ALL,
+     * _SIGNERS or _SERVICES
+     * @return A List if Integers of worker Ids, never null.
+     */
+    List<Integer> getWorkers(int workerType);
 
     @Remote
     interface IRemote extends IWorkerSession {

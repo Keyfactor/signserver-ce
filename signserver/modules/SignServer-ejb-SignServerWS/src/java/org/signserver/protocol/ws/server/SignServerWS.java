@@ -133,7 +133,7 @@ public class SignServerWS implements ISignServerWS {
             retval.add(resp);
         } else {
             // All Workers
-            List<Integer> signers = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
+            List<Integer> signers = getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
             for (Iterator<Integer> iterator = signers.iterator(); iterator.hasNext();) {
                 int next = iterator.next();
                 if (errormessage == null) {

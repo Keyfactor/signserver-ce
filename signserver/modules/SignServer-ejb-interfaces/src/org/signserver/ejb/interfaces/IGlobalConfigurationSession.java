@@ -56,15 +56,6 @@ public interface IGlobalConfigurationSession {
     GlobalConfiguration getGlobalConfiguration();
 
     /**
-     * Help method that returns all worker, either signers or services defined
-     * in the global configuration.
-     * @param workerType can either be GlobalConfiguration.WORKERTYPE_ALL,
-     * _SIGNERS or _SERVICES
-     * @return A List if Integers of worker Ids, never null.
-     */
-    List<Integer> getWorkers(int workerType);
-
-    /**
      * Method that is used after a database crash to restore all cached data to
      * database.
      * @throws ResyncException if resync was unsuccessfull

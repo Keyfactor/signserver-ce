@@ -247,6 +247,11 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     public List<byte[]> getSignerCertificateChainBytes(int signerId) throws CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    @Override
+    public List<Integer> getWorkers(int workerType) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     private static class Worker {
         private IProcessable processable;

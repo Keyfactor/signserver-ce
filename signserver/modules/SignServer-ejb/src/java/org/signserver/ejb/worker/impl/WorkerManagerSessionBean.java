@@ -1,7 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.ejb.worker.impl;
 
 import java.util.ArrayList;
@@ -25,8 +33,11 @@ import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.timedservices.ITimedService;
 
 /**
+ * Session bean managing the worker life-cycle.
  *
- * @author markus
+ * @see WorkerFactory
+ * @author Markus Kilås
+ * @version $Id$
  */
 @Stateless
 public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
@@ -39,45 +50,43 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     
     private WorkerConfigDataService workerConfigService;
     
+    private final WorkerFactory workerFactory = WorkerFactory.getInstance();
+    
     @PostConstruct
     public void create() {
         workerConfigService = new WorkerConfigDataService(em);
     }
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
-
     @Override
     public IWorker getWorker(final int workerId, final IGlobalConfigurationSession globalSession) {
-        return WorkerFactory.getInstance().getWorker(workerId,
+        return workerFactory.getWorker(workerId,
                 workerConfigService, globalSession, this, new SignServerContext(
                 em));
     }
 
     @Override
     public int getIdFromName(final String workerName, final IGlobalConfigurationSession globalSession) {
-        return WorkerFactory.getInstance().getWorkerIdFromName(workerName.
+        return workerFactory.getWorkerIdFromName(workerName.
                 toUpperCase(), workerConfigService, globalSession, this, new SignServerContext(
                 em));
     }
 
     @Override
     public void reloadWorker(int workerId, WorkerSessionBean aThis, ILocal globalConfigurationSession) {
-        WorkerFactory.getInstance().reloadWorker(workerId,
+        workerFactory.reloadWorker(workerId,
                     workerConfigService, globalConfigurationSession, new SignServerContext(
                     em));
     }
 
     @Override
     public IWorkerLogger getWorkerLogger(int workerId, WorkerConfig awc) throws IllegalRequestException {
-        return WorkerFactory.getInstance().getWorkerLogger(workerId, awc, em);
+        return workerFactory.getWorkerLogger(workerId, awc, em);
 
     }
 
     @Override
     public IAuthorizer getAuthenticator(int workerId, String authenticationType, WorkerConfig awc) throws IllegalRequestException {
-        return WorkerFactory.getInstance()
-                        .getAuthenticator(workerId,
+        return workerFactory.getAuthenticator(workerId,
                             authenticationType,
                             awc,
                             em);
@@ -85,19 +94,19 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
 
     @Override
     public IAccounter getAccounter(int workerId, WorkerConfig awc) throws IllegalRequestException {
-        return WorkerFactory.getInstance().getAccounter(workerId,
+        return workerFactory.getAccounter(workerId,
                                     awc,
                                     em);
     }
 
     @Override
     public List<Archiver> getArchivers(int workerId, WorkerConfig awc) throws IllegalRequestException {
-        return WorkerFactory.getInstance().getArchivers(workerId, awc, em);
+        return workerFactory.getArchivers(workerId, awc, em);
     }
 
     @Override
     public void flush() {
-        WorkerFactory.getInstance().flush();
+        workerFactory.flush();
     }
     
     /**

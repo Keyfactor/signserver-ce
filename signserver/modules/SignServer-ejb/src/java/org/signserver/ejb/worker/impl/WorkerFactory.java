@@ -230,7 +230,11 @@ public class WorkerFactory {
                 Class<?> implClass = cl.loadClass(classpath);
 
                 Object obj = implClass.newInstance();
-
+                if (obj instanceof IProcessable) {
+                    if (config.getProperties().getProperty(ProcessableConfig.NAME) != null) {
+                        getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), new Integer(id));
+                    }
+                }
                 ((IWorker) obj).init(id, config, workerContext, null);
                 getWorkerStore().put(new Integer(id), (IWorker) obj);
             }

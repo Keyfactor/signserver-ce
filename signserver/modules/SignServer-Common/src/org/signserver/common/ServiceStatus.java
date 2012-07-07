@@ -27,13 +27,18 @@ import java.util.Enumeration;
 public class ServiceStatus extends WorkerStatus {
 
     private static final long serialVersionUID = 1L;
-
+    private WorkerStatusInformation info;
+    
     /** 
      * Main constuctor
      */
     public ServiceStatus(int workerId, ServiceConfig config) {
         super(workerId, config.getWorkerConfig());
+    }
 
+    public ServiceStatus(int workerId, ServiceConfig serviceConfig, WorkerStatusInformation info) {
+        this(workerId, serviceConfig);
+        this.info = info;
     }
 
     /**
@@ -55,7 +60,23 @@ public class ServiceStatus extends WorkerStatus {
         out.println("Status of Service with Id " + workerId + " is :\n");
         out.println("  Service was last run at : " + getLastRunDate() + "\n");
 
+        if (info != null) {
+            String briefText = info.getBriefText();
+            if (briefText != null) {
+                out.println(briefText);
+                out.println();
+            }
+        }
+        
         if (complete) {
+            if (info != null) {
+                String completeText = info.getCompleteText();
+                if (completeText != null) {
+                    out.println(completeText);
+                    out.println();
+                }
+            }
+            
             out.println("Active Properties are :");
 
 
@@ -74,10 +95,17 @@ public class ServiceStatus extends WorkerStatus {
     }
 
     /**
-     * The default behavior is not to check anything.
+     * The default behavior is not to check anything unless the worker indicates 
+     * something in the offlineText.
      */
     @Override
     public String isOK() {
-        return null;
+        final String result;
+        if (info != null && info.getOfflineText() != null) {
+            result = info.getOfflineText();
+        } else {
+            result = null;
+        }
+        return result;
     }
 }

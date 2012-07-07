@@ -14,8 +14,6 @@ package org.signserver.common;
 
 import java.io.PrintStream;
 import java.util.Enumeration;
-import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
 
 /**
  * Class used when responding to the SignSession.getStatus() method, represents
@@ -27,6 +25,8 @@ public class DefaultWorkerStatus extends WorkerStatus {
 
     private static final long serialVersionUID = 1L;
 
+    private WorkerStatusInformation info;
+    
     /** 
      * Main constuctor
      */
@@ -35,11 +35,31 @@ public class DefaultWorkerStatus extends WorkerStatus {
 
     }
 
+    public DefaultWorkerStatus(int workerId, WorkerConfig config, WorkerStatusInformation info) {
+        this(workerId, config);
+        this.info = info;
+    }
+
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
         out.println("Status of Worker with Id " + workerId + " is :\n");
-
+        
+        if (info != null) {
+            String briefText = info.getBriefText();
+            if (briefText != null) {
+                out.println(briefText);
+                out.println();
+            }
+        }
+        
         if (complete) {
+            if (info != null) {
+                String completeText = info.getCompleteText();
+                if (completeText != null) {
+                    out.println(completeText);
+                    out.println();
+                }
+            }
             out.println("Active Properties are :");
 
 

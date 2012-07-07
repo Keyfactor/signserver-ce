@@ -13,8 +13,8 @@
 package org.signserver.server;
 
 import javax.persistence.EntityManager;
-
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerStatusInformation;
 
 /**
  * IWorker is an interface that all signers and services should implement.
@@ -38,4 +38,6 @@ public interface IWorker {
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager);
     
     WorkerConfig getConfig();
+    
+    WorkerStatusInformation getStatusInformation();
 }

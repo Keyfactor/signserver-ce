@@ -36,6 +36,8 @@ public class SignerStatus extends CryptoTokenStatus {
 
     private transient Certificate signerCertificate;
     private byte[] signerCertificateBytes;
+    
+    private WorkerStatusInformation info;
 
         private long keyUsageCounterValue;
 	
@@ -60,9 +62,17 @@ public class SignerStatus extends CryptoTokenStatus {
         this.keyUsageCounterValue = counter;
     }
 
-
-
-	 
+    public SignerStatus(int workerId, int tokenStatus, ProcessableConfig config, Certificate signerCertificate, WorkerStatusInformation info, long keyUsageCounterValue) {
+        this(workerId, tokenStatus, config, signerCertificate, info);
+        this.keyUsageCounterValue = keyUsageCounterValue;
+    }
+    
+    public SignerStatus(int workerId, int tokenStatus, ProcessableConfig config, Certificate signerCertificate, WorkerStatusInformation info) {
+        this(workerId, tokenStatus, config, signerCertificate);
+        this.info = info;
+    }
+    
+    
     /**
      * Method used to retrieve the currently used signercertficate.
      * Use this method when checking status and not from config, since the cert isn't always in db.
@@ -81,7 +91,12 @@ public class SignerStatus extends CryptoTokenStatus {
 	@Override
 	public void displayStatus(int workerId, PrintStream out, boolean complete) {
 		out.println("Status of Signer with Id " + workerId + " is :\n" +
-				"  SignToken Status : "+signTokenStatuses[getTokenStatus()]);
+				"  SignToken Status : "+signTokenStatuses[isOK() == null ? 1 : 2]);
+        final String error = isOK();
+        if (error != null) {
+            out.print("  ");
+            out.println(error);
+        }
 
                 out.print("  Signings: " + keyUsageCounterValue);
 
@@ -94,10 +109,27 @@ public class SignerStatus extends CryptoTokenStatus {
                     out.print(" of " + keyUsageLimit);
                 }
                 out.println();
+                
+                if (info != null) {
+                    String briefText = info.getBriefText();
+                    if (briefText != null) {
+                        out.println("  ");
+                        out.println(briefText);
+                    }
+                }
 
                 out.println("\n\n");
 
 		if(complete){
+            
+            if (info != null) {
+                String completeText = info.getCompleteText();
+                if (completeText != null) {
+                    out.println(completeText);
+                    out.println();
+                }
+            }
+            
 			out.println("Active Properties are :");
 
 
@@ -127,6 +159,19 @@ public class SignerStatus extends CryptoTokenStatus {
 			}
 		}		
 	}
-		
-	
+
+    @Override
+    public String isOK() {
+        String result = super.isOK();
+        if (result == null) {
+            if (info != null && info.getOfflineText() != null) {
+                result = info.getOfflineText();
+            } else {
+                result = null;
+            }
+            return result;
+        }
+        return result;
+    }
+
 }

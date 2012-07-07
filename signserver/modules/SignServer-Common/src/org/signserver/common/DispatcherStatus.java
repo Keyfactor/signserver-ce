@@ -23,22 +23,34 @@ import java.util.Iterator;
  * @version $Id$
  */
 public class DispatcherStatus extends WorkerStatus {
-
+    private static final long serialVersionUID = 1L;
+    
+    private WorkerStatusInformation info;
+    
     public DispatcherStatus(int workerId, WorkerConfig config) {
         super(workerId, config);
     }
 
+    public DispatcherStatus(int workerId, WorkerConfig config, WorkerStatusInformation info) {
+        this(workerId, config);
+        this.info = info;
+    }
+
     @Override
     public String isOK() {
+        final String result;
         if (getActiveSignerConfig()
-                .getProperty(SignServerConstants.DISABLED) == null
-                || !getActiveSignerConfig()
+                .getProperty(SignServerConstants.DISABLED) != null
+                && getActiveSignerConfig()
                 .getProperty(SignServerConstants.DISABLED)
                 .equalsIgnoreCase("TRUE")) {
-            return null;
+            result = "Worker disabled";
+        } else if (info != null && info.getOfflineText() != null) {
+            result = info.getOfflineText();
         } else {
-            return "Worker disabled";
+            result = null;
         }
+        return result;
     }
 
     @Override
@@ -46,7 +58,23 @@ public class DispatcherStatus extends WorkerStatus {
         out.println("Status of Dispatcher with Id " + workerId + " is :\n"
                 + "  SignToken Status : "
                 + signTokenStatuses[isOK() == null ? 1 : 2] + " \n\n");
+        
+        if (info != null) {
+            String briefText = info.getBriefText();
+            if (briefText != null) {
+                out.println(briefText);
+                out.println();
+            }
+        }
+        
         if (complete) {
+            if (info != null) {
+                String completeText = info.getCompleteText();
+                if (completeText != null) {
+                    out.println(completeText);
+                    out.println();
+                }
+            }
             out.println("Active Properties are :");
             if (getActiveSignerConfig().getProperties().size() == 0) {
                 out.println("  No properties exists in active configuration\n");

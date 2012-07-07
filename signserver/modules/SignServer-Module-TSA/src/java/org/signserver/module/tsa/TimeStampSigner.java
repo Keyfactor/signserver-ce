@@ -28,6 +28,7 @@ import java.security.cert.CertStoreException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,18 +78,7 @@ import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.ejbca.util.Base64;
-import org.signserver.common.ArchiveData;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ISignRequest;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.WorkerConfig;
+import org.signserver.common.*;
 import org.signserver.server.ITimeSource;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
@@ -260,6 +250,8 @@ public class TimeStampSigner extends BaseSigner {
 
     private static final String DEFAULT_ORDERING = "FALSE";
     //private static final String DEFAULT_DIGESTOID   = TSPAlgorithms.SHA1;
+    
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
     private ITimeSource timeSource = null;
     private Set<ASN1ObjectIdentifier> acceptedAlgorithms = null;
@@ -772,6 +764,20 @@ public class TimeStampSigner extends BaseSigner {
             }
         }
         return serno;
+    }
+
+    @Override
+    public WorkerStatusInformation getStatusInformation() {
+        final WorkerStatusInformation result = new WorkerStatusInformation();
+        Date time = getTimeSource().getGenTime();
+        if (time == null) {
+            result.setOfflineText("Time source is not available");
+        } else {
+            StringBuilder buff = new StringBuilder();
+            buff.append("Current time: ").append(sdf.format(time));
+            result.setBriefText(buff.toString());
+        }
+        return result;
     }
     
     private static class SHA1DigestCalculator implements DigestCalculator {

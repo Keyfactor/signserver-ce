@@ -14,10 +14,10 @@ package org.signserver.server;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerStatusInformation;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 
 /**
@@ -85,7 +85,14 @@ public abstract class BaseWorker implements IWorker {
         LOG.debug("Destroy called");
     }
     
+    @Override
     public WorkerConfig getConfig() {
         return config;
     }
+
+    @Override
+    public WorkerStatusInformation getStatusInformation() {
+        return null;
+    }
+    
 }

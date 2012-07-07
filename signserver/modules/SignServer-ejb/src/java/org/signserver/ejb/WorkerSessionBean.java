@@ -744,7 +744,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
         }
     }
-
+    
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#getStatus(int)
      */
@@ -757,13 +757,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     + " doesn't exist");
         }
         final WorkerConfig config = worker.getConfig();
+        final WorkerStatusInformation info = worker.getStatusInformation();
         
         if (worker instanceof ITimedService) {
-            result = new ServiceStatus(workerId, new ServiceConfig(config));
+            result = new ServiceStatus(workerId, new ServiceConfig(config), info);
         } else if (worker instanceof BaseDispatcher) {
-            result = new DispatcherStatus(workerId, config);
+            result = new DispatcherStatus(workerId, config, info);
         } else if (worker instanceof IValidator) {
-            result = new ValidatorStatus(workerId, new ProcessableConfig(config));
+            result = new ValidatorStatus(workerId, new ProcessableConfig(config), info);
         } else if (worker instanceof ValidationServiceWorker) {
             result = ((ValidationServiceWorker) worker).getStatus();
         } else if (worker instanceof IGroupKeyServiceWorker) {
@@ -791,13 +792,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 }
 
                 if (counter == null) {
-                    result = new SignerStatus(workerId, status, new ProcessableConfig(config), cert);
+                    result = new SignerStatus(workerId, status, new ProcessableConfig(config), cert, info);
                 } else {
-                    result = new SignerStatus(workerId, status, new ProcessableConfig(config), cert, counter.getCounter());
+                    result = new SignerStatus(workerId, status, new ProcessableConfig(config), cert, info, counter.getCounter());
                 }
             }
         } else {
-            result = new DefaultWorkerStatus(workerId, config);
+            result = new DefaultWorkerStatus(workerId, config, info);
         }
 
         return result;

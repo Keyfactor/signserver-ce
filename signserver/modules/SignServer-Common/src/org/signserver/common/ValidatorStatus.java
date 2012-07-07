@@ -26,6 +26,8 @@ import java.util.Iterator;
 public class ValidatorStatus extends WorkerStatus {
 
     private static final long serialVersionUID = 1L;
+    
+    private WorkerStatusInformation info;
 
     /** 
      * Main constructor
@@ -34,12 +36,32 @@ public class ValidatorStatus extends WorkerStatus {
         super(workerId, config.getWorkerConfig());
     }
 
+    public ValidatorStatus(int workerId, ProcessableConfig processableConfig, WorkerStatusInformation info) {
+        this(workerId, processableConfig);
+        this.info = info;
+    }
+
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
         out.println("Status of Validator with Id " + workerId + " is :\n"
                 + "  SignToken Status : " + " \n\n");
+        
+        if (info != null) {
+            String briefText = info.getBriefText();
+            if (briefText != null) {
+                out.println(briefText);
+                out.println();
+            }
+        }
 
         if (complete) {
+            if (info != null) {
+                String completeText = info.getCompleteText();
+                if (completeText != null) {
+                    out.println(completeText);
+                    out.println();
+                }
+            }
             out.println("Active Properties are :");
 
 
@@ -67,6 +89,12 @@ public class ValidatorStatus extends WorkerStatus {
 
     @Override
     public String isOK() {
-        return null;
+        final String result;
+        if (info != null && info.getOfflineText() != null) {
+            result = info.getOfflineText();
+        } else {
+            result = null;
+        }
+        return result;
     }
 }

@@ -45,6 +45,9 @@ public class ModulesTestCase extends TestCase {
 
     private static final int DUMMY1_SIGNER_ID = 5676;
     private static final String DUMMY1_SIGNER_NAME = "TestXMLSigner";
+    
+    private static final int CMSSIGNER1_ID = 5677;
+    private static final String CMSSIGNER1_NAME = "TestCMSSigner";
 
     //Value created by calling org.signserver.server.cryptotokens.CryptoTokenUtils.CreateKeyDataForSoftCryptoToken using the dss10_signer1.p12
     private static final String KEYDATA1 = "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";
@@ -148,6 +151,19 @@ public class ModulesTestCase extends TestCase {
 
     protected String getSignerNameDummy1() {
         return DUMMY1_SIGNER_NAME;
+    }
+    
+    protected void addCMSSigner1() throws CertificateException {
+        addSoftDummySigner("org.signserver.module.cmssigner.CMSSigner",
+                getSignerIdDummy1(), getSignerNameDummy1(), KEYDATA1, CERTCHAIN1);
+    }
+    
+    protected int getSignerIdCMSSigner1() {
+        return CMSSIGNER1_ID;
+    }
+    
+    protected String getSignerNameCMSSigner1() {
+        return CMSSIGNER1_NAME;
     }
 
     protected void addSigner(final String className) 

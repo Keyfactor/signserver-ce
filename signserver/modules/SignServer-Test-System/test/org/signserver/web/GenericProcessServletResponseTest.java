@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
@@ -39,6 +40,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     public void test00SetupDatabase() throws Exception {
         addDummySigner1();
+        addCMSSigner1();
     }
 
     /**
@@ -175,6 +177,23 @@ public class GenericProcessServletResponseTest extends WebTestCase {
             getWorkerSession().reloadConfiguration(getSignerIdDummy1());
         }
     }
+    
+    public void test06AttachmentFileName() throws Exception {
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerName", getSignerNameDummy1());
+        fields.put("data", "Something to sign...");
+        
+        final String expectedResponseFilename = "mydocument.dat.p7s";
+        final String expected = "attachment; filename=\"" + expectedResponseFilename + "\"";
+        
+        HttpURLConnection con = sendPostMultipartFormData(getServletURL(), fields, "mydocument.dat");
+        assertEquals(200, con.getResponseCode());
+        
+        final String actual = con.getHeaderField("Content-Disposition");
+        assertEquals("Returned filename", expected, actual);
+
+        con.disconnect();
+    }
 
     /**
      * Remove the workers created etc.
@@ -182,5 +201,6 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
+        removeWorker(getSignerIdCMSSigner1());
     }
 }

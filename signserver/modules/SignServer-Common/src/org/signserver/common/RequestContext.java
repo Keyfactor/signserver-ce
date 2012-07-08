@@ -95,6 +95,12 @@ public class RequestContext implements Serializable {
     public static final String FILENAME = "FILENAME";
     
     /**
+     * Filename to set when returning the signed file. Can be changed by the 
+     * workers to suggest an other filename.
+     */
+    public static String RESPONSE_FILENAME = "RESPONSE_FILENAME";
+    
+    /**
      * A dispatcher such as the TSADispatcherServlet can set this value to
      * Boolean.TRUE to indicate that authorization has been checked. The
      * workers can be configured to use an IAuthorizer that only

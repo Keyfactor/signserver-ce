@@ -232,6 +232,11 @@ public abstract class WebTestCase extends ModulesTestCase {
 
     protected static HttpURLConnection sendPostMultipartFormData(final String baseURL,
             final Map<String, String> fields) throws MalformedURLException, IOException {
+        return sendPostMultipartFormData(baseURL, fields, "data");
+    }
+    
+    protected static HttpURLConnection sendPostMultipartFormData(final String baseURL,
+            final Map<String, String> fields, String fileName) throws MalformedURLException, IOException {
 
         final String boundary =
                 "---------------------------1004178514282965110854332084";
@@ -252,7 +257,7 @@ public abstract class WebTestCase extends ModulesTestCase {
             out.print(field.getKey());
             out.print("\"");
             if (field.getKey().equals("data")) {
-                out.print("; filename=\"data\"");
+                out.print("; filename=\"" + fileName + "\"");
                 out.print(CRLF);
                 out.print("Content-Type: application/octet-stream");
             }

@@ -17,38 +17,16 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
-import java.security.cert.Certificate;
-import java.security.cert.CollectionCertStoreParameters;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessable;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.*;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
-import org.signserver.common.ArchiveData;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ISignRequest;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
-import org.signserver.common.WorkerConfig;
+import org.signserver.common.*;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
@@ -140,6 +118,13 @@ public class CMSSigner extends BaseSigner {
                         signedbytes, getSigningCertificate(), fp,
                         new ArchiveData(signedbytes));
             }
+            
+            // Suggest new file name
+            final Object fileNameOriginal = requestContext.get(RequestContext.FILENAME);
+            if (fileNameOriginal instanceof String) {
+                requestContext.put(RequestContext.RESPONSE_FILENAME, fileNameOriginal + ".p7s");
+            }
+            
             return signResponse;
         } catch (InvalidAlgorithmParameterException ex) {
             LOG.error("Error constructing cert store", ex);

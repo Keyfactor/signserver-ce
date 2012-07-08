@@ -17,12 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
+import java.util.*;
 import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -31,7 +26,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -39,19 +33,12 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
-import org.signserver.common.AuthorizationRequiredException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.NoSuchWorkerException;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
-import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.UsernamePasswordClientCredential;
+import org.signserver.server.log.IWorkerLogger;
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
@@ -249,7 +236,7 @@ public class GenericProcessServlet extends HttpServlet {
                 // Get an input stream and read the bytes from the stream
                 InputStream in = req.getInputStream();
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
-                int len = 0;
+                int len;
                 byte[] buf = new byte[1024];
                 while ((len = in.read(buf)) > 0) {
                     os.write(buf, 0, len);
@@ -348,6 +335,7 @@ public class GenericProcessServlet extends HttpServlet {
             fileName = stripPath(fileName);
         }
         context.put(RequestContext.FILENAME, fileName);
+        context.put(RequestContext.RESPONSE_FILENAME, fileName);
 
         // PDF Password
         if (pdfPassword != null) {
@@ -360,7 +348,7 @@ public class GenericProcessServlet extends HttpServlet {
 
         final int requestId = random.nextInt();
 
-        GenericServletResponse response = null;
+        GenericServletResponse response;
         try {
             response = (GenericServletResponse) getWorkerSession().process(workerId,
                     new GenericServletRequest(requestId, data, req), context);
@@ -375,8 +363,9 @@ public class GenericProcessServlet extends HttpServlet {
             byte[] processedBytes = (byte[]) response.getProcessedData();
 
             res.setContentType(response.getContentType());
-            if (fileName != null) {
-                res.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            Object responseFileName = context.get(RequestContext.RESPONSE_FILENAME);
+            if (responseFileName instanceof String) {
+                res.setHeader("Content-Disposition", "attachment; filename=\"" + responseFileName + "\"");
             }
             res.setContentLength(processedBytes.length);
             res.getOutputStream().write(processedBytes);

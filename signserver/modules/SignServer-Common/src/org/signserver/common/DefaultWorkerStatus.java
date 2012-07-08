@@ -84,4 +84,10 @@ public class DefaultWorkerStatus extends WorkerStatus {
     public String isOK() {
         return null;
     }
+
+    @Override
+    public String getType() {
+        return "Worker";
+    }
+    
 }

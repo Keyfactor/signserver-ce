@@ -55,4 +55,10 @@ public class GenericWSStatus extends CryptoTokenStatus {
             out.println("\n");
         }
     }
+
+    @Override
+    public String getType() {
+        return "Generic WS";
+    }
+    
 }

@@ -100,7 +100,7 @@ public class GroupKeyServiceStatus extends CryptoTokenStatus {
     }
 
     @Override
-    protected String getType() {
+    public String getType() {
         return "Group key service";
     }
     

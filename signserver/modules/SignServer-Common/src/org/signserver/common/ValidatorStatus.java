@@ -97,4 +97,10 @@ public class ValidatorStatus extends WorkerStatus {
         }
         return result;
     }
+
+    @Override
+    public String getType() {
+        return "Validator";
+    }
+    
 }

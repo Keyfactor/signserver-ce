@@ -173,7 +173,7 @@ public class SignerStatus extends CryptoTokenStatus {
     }
 
     @Override
-    protected String getType() {
+    public String getType() {
         return "Signer";
     }
 

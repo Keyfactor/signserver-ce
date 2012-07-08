@@ -17,8 +17,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Enumeration;
-import java.util.Iterator;
+import java.util.Collection;
 import org.ejbca.util.CertTools;
 
 /**
@@ -33,26 +32,26 @@ import org.ejbca.util.CertTools;
 public class SignerStatus extends CryptoTokenStatus {
 	
     private static final long serialVersionUID = 2L;
-
+    
     private transient Certificate signerCertificate;
     private byte[] signerCertificateBytes;
     
     private WorkerStatusInformation info;
 
-        private long keyUsageCounterValue;
+    private long keyUsageCounterValue;
 	
 	/** 
 	 * Main constructor
 	 */
 	public SignerStatus(int workerId, int tokenStatus, ProcessableConfig config, Certificate signerCertificate){
-            super(workerId, tokenStatus, config.getWorkerConfig());
-            this.signerCertificate = signerCertificate;
-            try {
-                this.signerCertificateBytes = signerCertificate == null ? null 
-                        : signerCertificate.getEncoded();
-            } catch (CertificateEncodingException ex) {
-                throw new RuntimeException(ex);
-            }
+        super(workerId, tokenStatus, config.getWorkerConfig());
+        this.signerCertificate = signerCertificate;
+        try {
+            this.signerCertificateBytes = signerCertificate == null ? null 
+                    : signerCertificate.getEncoded();
+        } catch (CertificateEncodingException ex) {
+            throw new RuntimeException(ex);
+        }
 	}
 
     public SignerStatus(final int workerId, final int status,
@@ -72,7 +71,6 @@ public class SignerStatus extends CryptoTokenStatus {
         this.info = info;
     }
     
-    
     /**
      * Method used to retrieve the currently used signercertficate.
      * Use this method when checking status and not from config, since the cert isn't always in db.
@@ -90,38 +88,34 @@ public class SignerStatus extends CryptoTokenStatus {
 
 	@Override
 	public void displayStatus(int workerId, PrintStream out, boolean complete) {
-		out.println("Status of Signer with Id " + workerId + " is :\n" +
-				"  SignToken Status : "+signTokenStatuses[isOK() == null ? 1 : 2]);
+		out.println(INDENT1 + "Crypto token: " + signTokenStatuses[getTokenStatus()]);
+        out.print(INDENT1 + "Signings: " + keyUsageCounterValue);
+        long keyUsageLimit = -1;
+        try {
+            keyUsageLimit = Long.valueOf(getActiveSignerConfig()
+                .getProperty(SignServerConstants.KEYUSAGELIMIT));
+        } catch(NumberFormatException ignored) {}
+        if (keyUsageLimit >= 0) {
+            out.print(" of " + keyUsageLimit);
+        }
+        out.println();
+        
         final String error = isOK();
         if (error != null) {
-            out.print("  ");
+            out.print(INDENT1);
             out.println(error);
         }
 
-                out.print("  Signings: " + keyUsageCounterValue);
+        if (info != null) {
+            String briefText = info.getBriefText();
+            if (briefText != null) {
+                out.println("  ");
+                out.println(briefText);
+            }
+            out.println();
+        }
 
-                long keyUsageLimit = -1;
-                try {
-                    keyUsageLimit = Long.valueOf(getActiveSignerConfig()
-                        .getProperty(SignServerConstants.KEYUSAGELIMIT));
-                } catch(NumberFormatException ignored) {}
-                if (keyUsageLimit >= 0) {
-                    out.print(" of " + keyUsageLimit);
-                }
-                out.println();
-                
-                if (info != null) {
-                    String briefText = info.getBriefText();
-                    if (briefText != null) {
-                        out.println("  ");
-                        out.println(briefText);
-                    }
-                }
-
-                out.println("\n\n");
-
-		if(complete){
-            
+		if (complete) { 
             if (info != null) {
                 String completeText = info.getCompleteText();
                 if (completeText != null) {
@@ -129,36 +123,40 @@ public class SignerStatus extends CryptoTokenStatus {
                     out.println();
                 }
             }
+            out.println();
+
+            displayAuthorizedClients(out, new ProcessableConfig(getActiveSignerConfig()));
             
-			out.println("Active Properties are :");
-
-
-			if(getActiveSignerConfig().getProperties().size() == 0){
-				out.println("  No properties exists in active configuration\n");
+            out.print(INDENT1);
+            out.println("Signer certificate:");
+			if (getSignerCertificate() == null) {
+                out.print(INDENT1 + INDENT2);
+				out.println("(Error: no signer certificate has been uploaded to this signer)");
+			} else {
+				printCert((X509Certificate) getSignerCertificate(), out);
 			}
-
-			Enumeration<?> propertyKeys = getActiveSignerConfig().getProperties().keys();
-			while(propertyKeys.hasMoreElements()){
-				String key = (String) propertyKeys.nextElement();
-				out.println("  " + key + "=" + getActiveSignerConfig().getProperties().getProperty(key) + "\n");
-			}        		
-
-			out.println("\n");
-
-			out.println("Active Authorized Clients are are (Cert DN, IssuerDN):");
-			Iterator<?> iter =  new ProcessableConfig(getActiveSignerConfig()).getAuthorizedClients().iterator();
-			while(iter.hasNext()){
-				AuthorizedClient client = (AuthorizedClient) iter.next();
-				out.println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");
-			}
-			if(getSignerCertificate() == null){
-				out.println("Error: No Signer Certificate have been uploaded to this signer.\n");	
-			}else{
-				out.println("The current configuration use the following signer certificate : \n");
-				printCert((X509Certificate) getSignerCertificate(),out );
-			}
-		}		
+            out.println();
+		}
+        
+        out.println();
 	}
+    
+    protected static void displayAuthorizedClients(PrintStream out, ProcessableConfig config) {
+        out.print(INDENT1);
+        out.println("Authorized clients (Certificate serial number, Issuer DN):");
+        Collection<AuthorizedClient> clients = config.getAuthorizedClients();
+
+        if (clients.size() > 0) {
+            for (AuthorizedClient client : clients) {
+                out.print(INDENT1 + INDENT2);
+                out.println(client.getCertSN() + ", " + client.getIssuerDN() + "\n");
+            }
+        } else {
+            out.print(INDENT1 + INDENT2);
+            out.println("(No clients configured)");
+        }
+        out.println();
+    }
 
     @Override
     public String isOK() {
@@ -172,6 +170,11 @@ public class SignerStatus extends CryptoTokenStatus {
             return result;
         }
         return result;
+    }
+
+    @Override
+    protected String getType() {
+        return "Signer";
     }
 
 }

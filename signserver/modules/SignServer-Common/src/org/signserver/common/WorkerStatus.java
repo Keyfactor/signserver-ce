@@ -18,6 +18,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Common base class used to report the status of a signer or service. Should
@@ -30,10 +31,17 @@ public abstract class WorkerStatus implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
+    public static final String INDENT1 = "          ";
+    public static final String INDENT2 = "   ";
+    
     protected static final String[] signTokenStatuses = {"", "Active", "Offline"};
     protected String hostname = null;
     protected WorkerConfig activeconfig = null;
     protected int workerId;
+    
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+    
+    private String type;
 
     public WorkerStatus() {
         try {
@@ -97,13 +105,12 @@ public abstract class WorkerStatus implements Serializable {
     public abstract void displayStatus(int workerId, PrintStream out, boolean complete);
 
     public static void printCert(X509Certificate cert, PrintStream out) {
-        DateFormat df = DateFormat.getDateInstance();
-
-        out.println("DN : " + cert.getSubjectDN().toString());
-        out.println("SerialNumber : " + cert.getSerialNumber().toString(16));
-        out.println("Issuer DN : " + cert.getIssuerDN().toString());
-        out.println("Valid from :" + df.format(cert.getNotBefore()));
-        out.println("Valid to : " + df.format(cert.getNotAfter()));
-        out.println("\n\n");
+        out.println(INDENT1 + INDENT2 + "Subject DN:     " + cert.getSubjectDN().toString());
+        out.println(INDENT1 + INDENT2 + "Serial number:  " + cert.getSerialNumber().toString(16));
+        out.println(INDENT1 + INDENT2 + "Issuer DN:      " + cert.getIssuerDN().toString());
+        out.println(INDENT1 + INDENT2 + "Valid from:     " + SDF.format(cert.getNotBefore()));
+        out.println(INDENT1 + INDENT2 + "Valid until:    " + SDF.format(cert.getNotAfter()));
     }
+    
+    public abstract String getType();
 }

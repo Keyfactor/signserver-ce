@@ -13,8 +13,6 @@
 package org.signserver.common;
 
 import java.io.PrintStream;
-import java.util.Enumeration;
-import java.util.Iterator;
 
 /**
  * Status for Dispatcher.
@@ -55,9 +53,6 @@ public class DispatcherStatus extends WorkerStatus {
 
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
-        out.println("Status of Dispatcher with Id " + workerId + " is :\n"
-                + "  SignToken Status : "
-                + signTokenStatuses[isOK() == null ? 1 : 2] + " \n\n");
         
         if (info != null) {
             String briefText = info.getBriefText();
@@ -66,6 +61,7 @@ public class DispatcherStatus extends WorkerStatus {
                 out.println();
             }
         }
+        out.println();
         
         if (complete) {
             if (info != null) {
@@ -75,26 +71,15 @@ public class DispatcherStatus extends WorkerStatus {
                     out.println();
                 }
             }
-            out.println("Active Properties are :");
-            if (getActiveSignerConfig().getProperties().size() == 0) {
-                out.println("  No properties exists in active configuration\n");
-            }
-            Enumeration<?> propertyKeys = getActiveSignerConfig()
-                    .getProperties().keys();
-            while (propertyKeys.hasMoreElements()) {
-                String key = (String) propertyKeys.nextElement();
-                out.println("  " + key + "=" + getActiveSignerConfig()
-                        .getProperties().getProperty(key) + "\n");
-            }
-            out.println("\n");
-            out.println("Active Authorized Clients are are (Cert DN, IssuerDN):");
-            Iterator<?> iter = new ProcessableConfig(getActiveSignerConfig())
-                    .getAuthorizedClients().iterator();
-            while (iter.hasNext()) {
-                AuthorizedClient client = (AuthorizedClient) iter.next();
-                out.println("  " + client.getCertSN() + ", "
-                        + client.getIssuerDN() + "\n");
-            }
+         
+            out.println();
+            SignerStatus.displayAuthorizedClients(out, new ProcessableConfig(getActiveSignerConfig()));
         }
     }
+
+    @Override
+    public String getType() {
+        return "Dispatcher";
+    }
+    
 }

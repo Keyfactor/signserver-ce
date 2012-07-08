@@ -15,7 +15,6 @@ package org.signserver.common;
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 
 /**
  * Class used when responding to the SignSession.getStatus() method, represents
@@ -57,8 +56,8 @@ public class ServiceStatus extends WorkerStatus {
 
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
-        out.println("Status of Service with Id " + workerId + " is :\n");
-        out.println("  Service was last run at : " + getLastRunDate() + "\n");
+        out.println(INDENT1 + "Service last run at: " + getLastRunDate());
+        out.println();
 
         if (info != null) {
             String briefText = info.getBriefText();
@@ -76,21 +75,6 @@ public class ServiceStatus extends WorkerStatus {
                     out.println();
                 }
             }
-            
-            out.println("Active Properties are :");
-
-
-            if (getActiveSignerConfig().getProperties().size() == 0) {
-                out.println("  No properties exists in active configuration\n");
-            }
-
-            Enumeration<?> propertyKeys = getActiveSignerConfig().getProperties().keys();
-            while (propertyKeys.hasMoreElements()) {
-                String key = (String) propertyKeys.nextElement();
-                out.println("  " + key + "=" + getActiveSignerConfig().getProperties().getProperty(key) + "\n");
-            }
-
-            out.println("\n");
         }
     }
 
@@ -108,4 +92,10 @@ public class ServiceStatus extends WorkerStatus {
         }
         return result;
     }
+
+    @Override
+    public String getType() {
+        return "Service";
+    }
+    
 }

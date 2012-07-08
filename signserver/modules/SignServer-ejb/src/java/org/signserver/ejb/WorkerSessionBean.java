@@ -995,11 +995,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     "Worker exists but isn't a signer.");
         }
         final IProcessable signer = (IProcessable) worker;
-        
-//        if (worker.getStatus().isOK() != null) {
-//            throw new CryptoTokenOfflineException(
-//                    "Testing key can not be performed on offline cryptotoken");
-//        }
 
         final WorkerConfig config = worker.getConfig();
 

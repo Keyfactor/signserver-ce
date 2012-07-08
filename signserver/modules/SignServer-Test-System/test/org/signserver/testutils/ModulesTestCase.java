@@ -155,7 +155,7 @@ public class ModulesTestCase extends TestCase {
     
     protected void addCMSSigner1() throws CertificateException {
         addSoftDummySigner("org.signserver.module.cmssigner.CMSSigner",
-                getSignerIdDummy1(), getSignerNameDummy1(), KEYDATA1, CERTCHAIN1);
+                getSignerIdCMSSigner1(), getSignerNameCMSSigner1(), KEYDATA1, CERTCHAIN1);
     }
     
     protected int getSignerIdCMSSigner1() {

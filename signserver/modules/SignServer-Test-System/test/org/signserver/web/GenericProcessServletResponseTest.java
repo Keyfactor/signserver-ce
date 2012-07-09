@@ -180,7 +180,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     
     public void test06AttachmentFileName() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
-        fields.put("workerName", getSignerNameDummy1());
+        fields.put("workerName", getSignerNameCMSSigner1());
         fields.put("data", "Something to sign...");
         
         final String expectedResponseFilename = "mydocument.dat.p7s";

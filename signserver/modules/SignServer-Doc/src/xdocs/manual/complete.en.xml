@@ -3583,18 +3583,45 @@ Current configuration is now activated.
 
             <section name="Other workers">
                 <subsection name="RenewalWorker">
-
-                    <p>
-Fully qualified class name: org.signserver.module.renewal.worker.RenewalWorker
-                    </p>
-
+                    
                     <subsubsection name="Overview">
-                        <p>
-The RenewalWorker can be used to generate new keys and then contact EJBCA using
-web services to get a new certificate. The worker accepts
-GenericPropertiesRequestS and returns GenericPropertiesResponseS.
-                        </p>
+                    <p>
+The RenewalWorker can be used for generation a new key-pair and renewing a worker's certificate from EJBCA using web services (WS). The RenewalWorker should be configured with its own CryptoToken and an SSL client authentication certificate with permissions set up in EJBCA to issue certificates. Some properties are configured for the RenewalWorker such as the EJBCA WS endpoint URL and truststore details, other properties should be set on the worker that should be renewed (the renewee) and some arguments are provided when the worker is invoked.
+                    </p>
+                    <p>
+Fully qualified class name: <b>org.signserver.module.renewal.worker.RenewalWorker</b>
+                    </p>
                     </subsubsection>
+                    
+                    <subsubsection name="Requesting the worker">
+                    <p>
+After setting up an RenewalWorker and installing its certificate signers (and other workers), can easily be renewed using the SignServer AdminGUI. See <a href="complete.en.html#Renew%20signer%20dialog">Renew Signer dialog</a>. As the RenewalWorker is a worker it can also be invoked using the normal client APIs. Using the demo web pages: <a href="http://localhost:8080/signserver/demo/genericsign.jsp">Generic Signing Demo</a>:
+                    </p>
+                    <p>
+Sign by Direct Input<br/>
+Worker name: MyRenewalWorker<br/>
+Data:<br/>
+                    </p>
+                <source>
+WORKER=MySigner
+AUTHCODE=foo123</source>    
+                    <p>
+ Using the Client CLI:
+                    </p><source>
+bin/client.sh signdocument -workername MyRenewalWorker -data "WORKER=MySigner
+AUTHCODE=foo123"</source>
+                    <p>
+
+(Notice that the command is on two lines)
+                    </p>
+                    </subsubsection>
+                    
+                    <subsubsection name="RenewalWorker operations">
+                    <p>
+The RenewalWorker starts by generating a new key-pair (unless an NEXTCERTSIGNKEY is already set for the renewee or the request property FORDEFAULTKEY=true is set in the request). The HSM/keystore password needs to be submitted as part of the request (AUTHCODE request property) to generate a new key-pair. After the key-pair has been generated and tested successfully the key alias is set as the NEXTCERTSIGNKEY property. A certificate signing request is created for the key and the worker sends the request to EJBCA to issue a certificate for the configured end entity. After receiving the certificate and certificate chain they are installed for the worker and the DEFAULTKEY property is updated with the value from NEXTCERTSIGNKEY and that property is removed.
+                    </p>
+                    </subsubsection>
+                    
                     <subsubsection name="Worker Properties">
                         <p><b>EJBCAWSURL</b> = URL to the EJBCA. Example: https://ca-server:8443/ejbca</p>
                         <p><b>TRUSTSTOREPATH</b> = Path to the keystore containing the CA's SSL server certificate as a trusted entry.</p>
@@ -3602,18 +3629,24 @@ GenericPropertiesRequestS and returns GenericPropertiesResponseS.
                         <p><b>TRUSTSTOREPASSWORD</b> = Password protecting the truststore keystore.</p>
                     </subsubsection>
                     <subsubsection name="Properties of renewee">
+                        <p><b>RENEWENDENTITY</b> = Name of the existing end entity in EJBCA</p>
+                        <p><b>REQUESTDN</b> = Subject DN to set in the certificate signing request (PKCS#10).</p>
+                        <p><b>SIGNATUREALGORITHM</b> = Signature algorithm to use when signing the certificate signing request (PKCS#10)</p>
                         <p><b>KEYALG</b> = Algorithm for the key generation. Examples: RSA, DSA or ECDSA</p>
                         <p><b>KEYSPEC</b> = Key length (for RSA or DSA) or curve name (for ECDSA). Examples: 2048, 4096, secp256r1</p>
                         <p><b>EXPLICITECC</b> = True if explicit domain parameters should be used instead of NamedCurves. Default: false</p>
-                        <p><b>DEFAULTKEY</b> = Key alias for the current key.</p>
-                        <p><b>NEXTCERTSIGNKEY</b> = Key alias for the next key.</p>
+                        <p><b>RENEWWORKER</b> = Name of the default RenewalWorker to use (Optional). Specify this to have the current RenewalWorker already selected in the AdminGUI when renewing signers.</p>
+                        <p><b>DEFAULTKEY</b> = Key alias for the current existing key. The worker will update this property.</p>
+                        <p><b>NEXTCERTSIGNKEY</b> = Key alias for the next existing key. If this property exists a new key-pair will not be generated. The worker will update/remove this property.</p>
+                        
                     </subsubsection>
                     <subsubsection name="Request Properties">
                         <p><b>WORKER</b> = Name of the worker that should be renewed.</p>
+                        <p><b>AUTHCODE</b> = HSM/keystore password for activation.</p>
                         <p><b>FORDEFAULTKEY</b> = If the current key should be used instead of the next key or a new key. (Optional, default: false)</p>
                     </subsubsection>
                     <subsubsection name="Response Properties">
-                        <p><b>RESULT</b> = "OK" if the renewal succeded otherwise "FAILURE".</p>
+                        <p><b>RESULT</b> = "OK" if the renewal succeeded otherwise "FAILURE".</p>
                         <p><b>MESSAGE</b> = Error message if any.</p>
                     </subsubsection>
                     <subsubsection name="Renewal modes">

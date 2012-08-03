@@ -306,6 +306,25 @@ public class PDFSigner extends BaseSigner {
         return signResponse;
     }
 
+    private int calculateEstimatedSignatureSize(PDFSignerParameters params,
+    		Certificate[] certChain, TSAClient tsc, byte[] ocsp) {
+    	int estimatedSize = 0;
+    	
+    	// provide estimated space for the hash
+    	estimatedSize += certChain.length * 2000;
+    	
+    	// add space for OCSP response
+    	if (ocsp != null) {
+    		estimatedSize += ocsp.length * 2;
+    	}
+    		
+    	if (tsc != null) {
+    		estimatedSize += 2000;
+    	}
+    	
+    	return estimatedSize;
+    }
+    
     private byte[] addSignatureToPDFDocument(PDFSignerParameters params,
             byte[] pdfbytes, byte[] password) throws IOException, DocumentException,
             CryptoTokenOfflineException, SignServerException, IllegalRequestException {
@@ -452,7 +471,29 @@ public class PDFSigner extends BaseSigner {
             tsc = new TSAClientBouncyCastle(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
         }
 
-        int contentEstimated = 15000;
+        
+        // embed ocsp response in cms package if requested
+        // for ocsp request to be formed there needs to be issuer certificate in
+        // chain
+        byte[] ocsp = null;
+        if (params.isEmbed_ocsp_response() && certChain.length >= 2) {
+            String url;
+            try {
+                url = PdfPKCS7.getOCSPURL((X509Certificate) certChain[0]);
+                if (url != null && url.length() > 0) {
+                    ocsp = new OcspClientBouncyCastle(
+                            (X509Certificate) certChain[0],
+                            (X509Certificate) certChain[1], url).getEncoded();
+                }
+            } catch (CertificateParsingException e) {
+                throw new SignServerException(
+                        "Error getting OCSP URL from certificate", e);
+            }
+
+        }
+        
+        // calculate signature size
+        int contentEstimated = calculateEstimatedSignatureSize(params, certChain, tsc, ocsp);
         HashMap exc = new HashMap();
         exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
         sap.preClose(exc);
@@ -483,25 +524,6 @@ public class PDFSigner extends BaseSigner {
         byte hash[] = messageDigest.digest();
         Calendar cal = Calendar.getInstance();
 
-        // embed ocsp response in cms package if requested
-        // for ocsp request to be formed there needs to be issuer certificate in
-        // chain
-        byte[] ocsp = null;
-        if (params.isEmbed_ocsp_response() && certChain.length >= 2) {
-            String url;
-            try {
-                url = PdfPKCS7.getOCSPURL((X509Certificate) certChain[0]);
-                if (url != null && url.length() > 0) {
-                    ocsp = new OcspClientBouncyCastle(
-                            (X509Certificate) certChain[0],
-                            (X509Certificate) certChain[1], url).getEncoded();
-                }
-            } catch (CertificateParsingException e) {
-                throw new SignServerException(
-                        "Error getting OCSP URL from certificate", e);
-            }
-
-        }
 
         byte sh[] = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp);
         try {
@@ -512,6 +534,11 @@ public class PDFSigner extends BaseSigner {
 
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
 
+        if (LOG.isDebugEnabled()) {
+        	LOG.debug("Estimated size: " + contentEstimated);
+        	LOG.debug("Encoded length: " + encodedSig.length);
+        }
+	
         if (contentEstimated + 2 < encodedSig.length) {
             throw new SignServerException("Not enough space");
         }

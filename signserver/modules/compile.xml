@@ -93,10 +93,10 @@ includemodulesinbuild               = ${includemodulesinbuild}
         <property file="lib/nblibraries.properties"/>
         <mkdir dir="${apidoc}" />
         <javadoc failonerror="true" useexternalfile="true" packagenames="org.signserver.*" maxmemory="256m" destdir="${apidoc}"
-        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/module/pdfsigner/itext:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2012 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
+        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2012 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
 
                 <!-- Include all java files in the modules folder but excluding the tests -->
-                <fileset dir="modules" includes="**/*.java" excludes="*/test/**/*.java"/>
+                <fileset dir="modules" includes="**/*.java" excludes="*/test/**/*.java,SignServer-Lib-ODFDOM/**/*"/>
                 
                 <!-- When possible: this should be moved out to a properties file instead -->
                 <classpath>
@@ -106,7 +106,6 @@ includemodulesinbuild               = ${includemodulesinbuild}
                     <fileset dir="lib/ext/ext/ejb" includes="*.jar" />
                     <fileset dir="lib/ext/quartz" includes="*.jar" />
                     <fileset dir="lib/ext/1.6" includes="*.jar" />
-                    <fileset dir="lib/ext/module/pdfsigner/itext" includes="*.jar"/>
                     <fileset dir="lib/ext/module/odfsigner" includes="*.jar"/>
                     <fileset dir="lib/ext/module/ooxmlsigner" includes="*.jar"/>
                     <fileset dir="lib/ext/hibernate" includes="*.jar"/>

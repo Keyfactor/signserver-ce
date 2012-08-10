@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +26,7 @@ import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
@@ -35,6 +37,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;
@@ -82,6 +86,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -306,23 +311,60 @@ public class PDFSigner extends BaseSigner {
         return signResponse;
     }
 
-    private int calculateEstimatedSignatureSize(PDFSignerParameters params,
+    /**
+     * 
+     * @param exact Setting this to true to calculate the actual signature size by
+     *              using a fake hash value (might cause an extra signature computation)
+     * @param sgn
+     * @param messageDigest
+     * @param cal
+     * @param params
+     * @param certChain
+     * @param tsc
+     * @param ocsp
+     * @return
+     */
+    private int calculateEstimatedSignatureSize(boolean exact, PdfPKCS7 sgn, MessageDigest messageDigest,
+    		Calendar cal, PDFSignerParameters params,
     		Certificate[] certChain, TSAClient tsc, byte[] ocsp) {
-    	int estimatedSize = 0;
     	
-    	// provide estimated space for the hash
-    	estimatedSize += certChain.length * 2000;
+    	if (exact) {
+    		int digestSize = messageDigest.getDigestLength();
+    		System.out.println("Cert chain length: " + certChain.length);
+    		System.out.println("MessageDigest digest size: " + digestSize);
     	
-    	// add space for OCSP response
-    	if (ocsp != null) {
-    		estimatedSize += ocsp.length * 2;
-    	}
+    		// fake a hash
+    		byte[] hash = new byte[digestSize];
+    		byte[] encoded  = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
+    	
+    		return encoded.length;
+    	} else {
+    		int estimatedSize = 0;
     		
-    	if (tsc != null) {
-    		estimatedSize += 2000;
-    	}
+    		for (Certificate cert : certChain) {
+    			try {
+    				estimatedSize += cert.getEncoded().length;
+    			} catch (CertificateEncodingException e) {
+    				
+    			}
+    		}
+    		
+    		// add some padding here (need to figure out if this depends on hash size
+    		// and so on...)
+    		estimatedSize += 1000;
+	
+    		// add space for OCSP response
+    		if (ocsp != null) {
+    			estimatedSize += ocsp.length * 2;
+    		}
+    		
+    		if (tsc != null) {
+    			// add estimated ts token size plus some safety padding
+    			estimatedSize += tsc.getTokenSizeEstimate() + 100;
+    		}
     	
-    	return estimatedSize;
+    		return estimatedSize;
+    	}
     }
     
     private byte[] addSignatureToPDFDocument(PDFSignerParameters params,
@@ -492,12 +534,6 @@ public class PDFSigner extends BaseSigner {
 
         }
         
-        // calculate signature size
-        int contentEstimated = calculateEstimatedSignatureSize(params, certChain, tsc, ocsp);
-        HashMap exc = new HashMap();
-        exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
-        sap.preClose(exc);
-
         PdfPKCS7 sgn;
         try {
             sgn = new PdfPKCS7(privKey, certChain, crlList, "SHA1", null, false);
@@ -509,21 +545,33 @@ public class PDFSigner extends BaseSigner {
             throw new SignServerException("Error constructing PKCS7 package", e);
         }
 
-        InputStream data = sap.getRangeStream();
         MessageDigest messageDigest;
         try {
             messageDigest = MessageDigest.getInstance("SHA1");
         } catch (NoSuchAlgorithmException e) {
             throw new SignServerException("Error creating SHA1 digest", e);
         }
+        
+        Calendar cal = Calendar.getInstance();
+        
+        // calculate signature size
+        int contentEstimated =
+        		calculateEstimatedSignatureSize(false, sgn, messageDigest, cal, params, certChain, tsc,
+        				ocsp);
+        HashMap exc = new HashMap();
+        exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
+        sap.preClose(exc);
+
+
+        InputStream data = sap.getRangeStream();
+
         byte buf[] = new byte[8192];
         int n;
         while ((n = data.read(buf)) > 0) {
             messageDigest.update(buf, 0, n);
         }
         byte hash[] = messageDigest.digest();
-        Calendar cal = Calendar.getInstance();
-
+        
 
         byte sh[] = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp);
         try {
@@ -534,11 +582,10 @@ public class PDFSigner extends BaseSigner {
 
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
 
-        if (LOG.isDebugEnabled()) {
-        	LOG.debug("Estimated size: " + contentEstimated);
-        	LOG.debug("Encoded length: " + encodedSig.length);
-        }
-	
+        System.out.println("Hash size: " + hash.length);
+        System.out.println("Estimated size: " + contentEstimated);
+        System.out.println("Encoded length: " + encodedSig.length);
+        
         if (contentEstimated + 2 < encodedSig.length) {
             throw new SignServerException("Not enough space");
         }

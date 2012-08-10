@@ -367,6 +367,38 @@ public class PDFSigner extends BaseSigner {
     	}
     }
     
+    
+    private byte[] calculateSignature(PdfPKCS7 sgn, int size, MessageDigest messageDigest,
+    		Calendar cal, PDFSignerParameters params, Certificate[] certChain, TSAClient tsc, byte[] ocsp,
+    		PdfSignatureAppearance sap) throws IOException, DocumentException, SignServerException {
+     
+        HashMap exc = new HashMap();
+        exc.put(PdfName.CONTENTS, new Integer(size * 2 + 2));
+        sap.preClose(exc);
+
+
+        InputStream data = sap.getRangeStream();
+
+        byte buf[] = new byte[8192];
+        int n;
+        while ((n = data.read(buf)) > 0) {
+            messageDigest.update(buf, 0, n);
+        }
+        byte hash[] = messageDigest.digest();
+        
+
+        byte sh[] = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp);
+        try {
+            sgn.update(sh, 0, sh.length);
+        } catch (SignatureException e) {
+            throw new SignServerException("Error calculating signature", e);
+        }
+
+        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
+        
+        return encodedSig;
+    }
+    
     private byte[] addSignatureToPDFDocument(PDFSignerParameters params,
             byte[] pdfbytes, byte[] password) throws IOException, DocumentException,
             CryptoTokenOfflineException, SignServerException, IllegalRequestException {
@@ -553,41 +585,22 @@ public class PDFSigner extends BaseSigner {
         }
         
         Calendar cal = Calendar.getInstance();
-        
+            
+
         // calculate signature size
         int contentEstimated =
         		calculateEstimatedSignatureSize(false, sgn, messageDigest, cal, params, certChain, tsc,
         				ocsp);
-        HashMap exc = new HashMap();
-        exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
-        sap.preClose(exc);
+        byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
 
-
-        InputStream data = sap.getRangeStream();
-
-        byte buf[] = new byte[8192];
-        int n;
-        while ((n = data.read(buf)) > 0) {
-            messageDigest.update(buf, 0, n);
-        }
-        byte hash[] = messageDigest.digest();
-        
-
-        byte sh[] = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp);
-        try {
-            sgn.update(sh, 0, sh.length);
-        } catch (SignatureException e) {
-            throw new SignServerException("Error calculating signature", e);
-        }
-
-        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
-
-        System.out.println("Hash size: " + hash.length);
         System.out.println("Estimated size: " + contentEstimated);
         System.out.println("Encoded length: " + encodedSig.length);
         
         if (contentEstimated + 2 < encodedSig.length) {
-            throw new SignServerException("Not enough space");
+        	int contentExact = calculateEstimatedSignatureSize(true, sgn, messageDigest, cal, params, certChain, tsc,
+    				ocsp);
+        	LOG.warn("Estimated signature size too small, usinging accurate calculation (resulting in an extra signature computation).");
+        	calculateSignature(sgn, contentExact, messageDigest, cal, params, certChain, tsc, ocsp, sap);
         }
 
         byte[] paddedSig = new byte[contentEstimated];

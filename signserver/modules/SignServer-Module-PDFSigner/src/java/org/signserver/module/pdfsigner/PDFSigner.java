@@ -281,7 +281,7 @@ public class PDFSigner extends BaseSigner {
                 logMap.put(IWorkerLogger.LOG_PDF_PASSWORD_SUPPLIED, Boolean.TRUE.toString());
             }
             
-            byte[] signedbytes = addSignatureToPDFDocument(params, pdfbytes, password);
+            byte[] signedbytes = addSignatureToPDFDocument(params, pdfbytes, password, false);
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         signedbytes, getSigningCertificate(), fp,
@@ -400,7 +400,7 @@ public class PDFSigner extends BaseSigner {
     }
     
     private byte[] addSignatureToPDFDocument(PDFSignerParameters params,
-            byte[] pdfbytes, byte[] password) throws IOException, DocumentException,
+            byte[] pdfbytes, byte[] password, boolean secondTry) throws IOException, DocumentException,
             CryptoTokenOfflineException, SignServerException, IllegalRequestException {
 
         // get signing cert certificate chain and private key
@@ -589,7 +589,7 @@ public class PDFSigner extends BaseSigner {
 
         // calculate signature size
         int contentEstimated =
-        		calculateEstimatedSignatureSize(false, sgn, messageDigest, cal, params, certChain, tsc,
+        		calculateEstimatedSignatureSize(secondTry, sgn, messageDigest, cal, params, certChain, tsc,
         				ocsp);
         byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
 
@@ -597,15 +597,21 @@ public class PDFSigner extends BaseSigner {
         System.out.println("Encoded length: " + encodedSig.length);
         
         if (contentEstimated + 2 < encodedSig.length) {
-        	int contentExact = calculateEstimatedSignatureSize(true, sgn, messageDigest, cal, params, certChain, tsc,
+        	if (!secondTry) {
+        		int contentExact = calculateEstimatedSignatureSize(true, sgn, messageDigest, cal, params, certChain, tsc,
     				ocsp);
-        	LOG.warn("Estimated signature size too small, usinging accurate calculation (resulting in an extra signature computation).");
+        		LOG.warn("Estimated signature size too small, usinging accurate calculation (resulting in an extra signature computation).");
         	
-        	if (LOG.isDebugEnabled()) {
-        		LOG.debug("Estimated size: " + contentEstimated + ", actual size: " + contentExact);
+        		if (LOG.isDebugEnabled()) {
+        			LOG.debug("Estimated size: " + contentEstimated + ", actual size: " + contentExact);
+        		}
+        	
+        		// try signing again
+        		return addSignatureToPDFDocument(params, pdfbytes, password, true);
+        	} else {
+        		// if we fail to get an accurate signature size on the second attempt, bail out (this shouldn't happen)
+        		throw new SignServerException("Failed to calculate signature size");
         	}
-        	
-        	calculateSignature(sgn, contentExact, messageDigest, cal, params, certChain, tsc, ocsp, sap);
         }
 
         byte[] paddedSig = new byte[contentEstimated];

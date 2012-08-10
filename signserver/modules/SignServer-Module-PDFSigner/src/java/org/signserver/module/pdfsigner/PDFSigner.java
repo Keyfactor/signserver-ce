@@ -330,9 +330,6 @@ public class PDFSigner extends BaseSigner {
     	
     	if (exact) {
     		int digestSize = messageDigest.getDigestLength();
-    		System.out.println("Cert chain length: " + certChain.length);
-    		System.out.println("MessageDigest digest size: " + digestSize);
-    	
     		// fake a hash
     		byte[] hash = new byte[digestSize];
     		byte[] encoded  = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
@@ -593,9 +590,11 @@ public class PDFSigner extends BaseSigner {
         				ocsp);
         byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
 
-        System.out.println("Estimated size: " + contentEstimated);
-        System.out.println("Encoded length: " + encodedSig.length);
-        
+        if (LOG.isDebugEnabled()) {
+        	LOG.debug("Estimated size: " + contentEstimated);
+        	LOG.debug("Encoded length: " + encodedSig.length);
+        }
+        	
         if (contentEstimated + 2 < encodedSig.length) {
         	if (!secondTry) {
         		int contentExact = calculateEstimatedSignatureSize(true, sgn, messageDigest, cal, params, certChain, tsc,

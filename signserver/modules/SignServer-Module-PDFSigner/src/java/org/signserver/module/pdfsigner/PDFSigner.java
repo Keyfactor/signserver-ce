@@ -600,6 +600,11 @@ public class PDFSigner extends BaseSigner {
         	int contentExact = calculateEstimatedSignatureSize(true, sgn, messageDigest, cal, params, certChain, tsc,
     				ocsp);
         	LOG.warn("Estimated signature size too small, usinging accurate calculation (resulting in an extra signature computation).");
+        	
+        	if (LOG.isDebugEnabled()) {
+        		LOG.debug("Estimated size: " + contentEstimated + ", actual size: " + contentExact);
+        	}
+        	
         	calculateSignature(sgn, contentExact, messageDigest, cal, params, certChain, tsc, ocsp, sap);
         }
 

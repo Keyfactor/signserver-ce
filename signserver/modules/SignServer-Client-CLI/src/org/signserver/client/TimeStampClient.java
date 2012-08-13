@@ -251,7 +251,7 @@ public class TimeStampClient {
 
             if (args.length < 1) {
                 usage(options);
-            } else if (urlstring == null) {
+            } else if (urlstring == null && !verify) {
                 LOG.error("Missing URL");
                 usage(options);
             } else if (Security.addProvider(new BouncyCastleProvider()) < 0) {
@@ -345,9 +345,9 @@ public class TimeStampClient {
                 } else {
                     LOG.debug("Token hash alg: " + info.getMessageImprintAlgOID());
                 }
-                final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
-                LOG.info("MessageDigest=" + new String(hexDigest));
             }
+            final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
+            LOG.info("MessageDigest=" + new String(hexDigest));
         }
     }
 

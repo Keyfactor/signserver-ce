@@ -287,7 +287,7 @@ public class TimeStampCommand extends AbstractCommand {
             if (args.length < 1) {
                 out.println(usage(options));
                 return CommandLineInterface.RETURN_INVALID_ARGUMENTS;
-            } else if (urlstring == null) {
+            } else if (urlstring == null && !verify) {
                 LOG.error("Missing URL");
                 out.println(usage(options));
                 return -1;
@@ -504,9 +504,9 @@ public class TimeStampCommand extends AbstractCommand {
                 } else {
                     LOG.debug("Token hash alg: " + info.getMessageImprintAlgOID());
                 }
-                final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
-                LOG.info("MessageDigest=" + new String(hexDigest));
             }
+            final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
+            LOG.info("MessageDigest=" + new String(hexDigest));
         }
     }
 

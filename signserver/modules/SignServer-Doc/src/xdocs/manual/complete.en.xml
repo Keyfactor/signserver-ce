@@ -4694,44 +4694,6 @@ A single test can also be run the same way from any of the other projects that
 has tests by executing the command from their project directory.
                     </p>
                 </subsection>
-
-                <subsection name="Testing the TimeStamp Authority">
-                    <subsubsection name="The TSA Test Client">
-                        <p>
-There exists a Time Stamp Authority test client that is built with the main distribution. For other workers it's recommended to test it with the WS CLI client described in the 'Main WebService' section.
-                        </p>
-                        <p>
-It only works without client authentication requirements and through HTTP.
-                        </p>
-                        <p>
-To run the client do
-                        </p>
-                        <pre>
-bin/client timestamp "http://&lt;hostname&gt;:8080/signserver/tsa?signerId=1"
-                        </pre>
-                        <p>
-It will continuously make one request per second. Run the test client without arguments to get a list of possible arguments, you can use it as a full time stamp client to get real document time stamps.
-                        </p>
-                        <pre>
-java -jar timeStampClient.jar
- -instr &lt;string&gt;      String to be time stamped, if neither instr or
-                      infile is given, the client works in test-mode generating it's own
-                      message.
- -base64              Give this option if the stored request/reply should
-                      be base64 encoded, default is not.
- -help                Print this message.
- -infile &lt;file&gt;       File containing message to time stamp.
-
-...snip...
-                        </pre>
-                    </subsubsection>
-
-                    <subsubsection name="Manual Tests">
-                        <p>
-The time stamp signer have been tested with the OpenTSA client with both HTTP and HTTPS.
-                        </p>
-                    </subsubsection>
-                </subsection>
             </section>
         </chapter>
 

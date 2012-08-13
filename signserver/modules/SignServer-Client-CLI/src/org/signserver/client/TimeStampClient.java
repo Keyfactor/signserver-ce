@@ -43,7 +43,7 @@ import org.signserver.client.cli.KeyStoreOptions;
  * This client only works in unauthenticated mode.
  *
  * @author philip
- * $Id$
+ * @version $Id$
  */
 public class TimeStampClient {
 
@@ -272,7 +272,7 @@ public class TimeStampClient {
     private void usage(final Options options) {
         // automatically generate the help statement
         final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("java -jar timeStampClient.jar <options> <url>",
+        formatter.printHelp("timestamp <options> <url>",
                 options);
         final StringBuilder footer = new StringBuilder();
         footer.append(NL)

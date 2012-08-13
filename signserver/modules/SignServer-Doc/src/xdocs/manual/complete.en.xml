@@ -4751,7 +4751,10 @@ implementation in the worker's configuration.
                         <p>
 The default worker logger for most workers. Can be used during testing to find 
 which fields a worker logs and then changed to the PatternWorkerLogger with only 
-does fields that are of interest chosen.
+does fields that are of interest chosen.<br/>
+LOGLEVEL_DEFAULT sets the level at which
+the logger will do log output. These are specified as standard Log4J levels
+(FATAL, ERROR, WARNING, INFO, DEBUG, and TRACE), if not set, it defaults to INFO.
                         </p>
                         <source>
 WORKERLOGGER=org.signserver.server.log.AllFieldsWorkerLogger
@@ -4759,6 +4762,9 @@ LOGLEVEL_DEFAULT=INFO
                         </source>
                     </subsubsection>
                     <subsubsection name="PatternWorkerLogger">
+                    	<p>
+The LOGLEVEL_DEFAULT property has the same behavior as for the AllFieldsWorkerLogger.
+                    	</p>
                         <source>
 WORKERLOGGER=org.signserver.server.log.PatternWorkerLogger
 LOGTIMEZONE=GMT

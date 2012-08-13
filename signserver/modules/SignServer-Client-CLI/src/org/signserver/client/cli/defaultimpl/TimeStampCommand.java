@@ -20,7 +20,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
-import java.security.cert.*;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,13 +32,7 @@ import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampTokenInfo;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampRequestGenerator;
-import org.bouncycastle.tsp.TSPAlgorithms;
-import org.bouncycastle.cms.SignerId;
+import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
@@ -220,7 +216,7 @@ public class TimeStampCommand extends AbstractCommand {
     private String usage(final Options options) {
         // automatically generate the help statement
         final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("signclient timestamp <options> <url>",
+        formatter.printHelp("timestamp <options> <url>",
                 options);
         final StringBuilder footer = new StringBuilder();
         footer.append(NL)

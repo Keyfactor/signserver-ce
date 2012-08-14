@@ -601,19 +601,6 @@ public class PDFSigner extends BaseSigner {
         int contentEstimated =
         		calculateEstimatedSignatureSize(false, sgn, messageDigest, cal, params, certChain, tsc,
         				ocsp);
-        HashMap exc = new HashMap();
-        exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
-        sap.preClose(exc);
-
-
-        InputStream data = sap.getRangeStream();
-
-        byte buf[] = new byte[8192];
-        int n;
-        while ((n = data.read(buf)) > 0) {
-            messageDigest.update(buf, 0, n);
-        }
-        byte hash[] = messageDigest.digest();
 
         byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
 

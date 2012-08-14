@@ -3590,6 +3590,9 @@ Current configuration is now activated.
 The RenewalWorker can be used for generation a new key-pair and renewing a worker's certificate from EJBCA using web services (WS). The RenewalWorker should be configured with its own CryptoToken and an SSL client authentication certificate with permissions set up in EJBCA to issue certificates. Some properties are configured for the RenewalWorker such as the EJBCA WS endpoint URL and truststore details, other properties should be set on the worker that should be renewed (the renewee) and some arguments are provided when the worker is invoked.
                     </p>
                     <p>
+Known limitation: It might not be possible to have multiple renewal workers using different crypto tokens because the keys and certificates used by the TLS connection for the web service is setup globally.
+                    </p>
+                    <p>
 Fully qualified class name: <b>org.signserver.module.renewal.worker.RenewalWorker</b>
                     </p>
                     </subsubsection>

@@ -333,17 +333,31 @@ public class PDFSigner extends BaseSigner {
     		// fake a hash
     		byte[] hash = new byte[digestSize];
     		byte[] encoded  = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
-    	
+
     		return encoded.length;
     	} else {
     		int estimatedSize = 0;
+
+    		if (LOG.isDebugEnabled()) {
+    			LOG.debug("Calculating estimated signature size");
+    		}
     		
     		for (Certificate cert : certChain) {
     			try {
-    				estimatedSize += cert.getEncoded().length;
+    				int certSize = cert.getEncoded().length;
+    				estimatedSize += certSize;
+    				
+    				if (LOG.isDebugEnabled()) {
+    					LOG.debug("Adding " + certSize + " bytes for certificate");
+    				}
+    				
     			} catch (CertificateEncodingException e) {
     				
     			}
+    		}
+    		
+    		if (LOG.isDebugEnabled()) {
+    			LOG.debug("Total size of certificate chain: " + estimatedSize);
     		}
     		
     		// add some padding here (need to figure out if this depends on hash size
@@ -582,19 +596,32 @@ public class PDFSigner extends BaseSigner {
         }
         
         Calendar cal = Calendar.getInstance();
-            
-
+        
         // calculate signature size
         int contentEstimated =
-        		calculateEstimatedSignatureSize(secondTry, sgn, messageDigest, cal, params, certChain, tsc,
+        		calculateEstimatedSignatureSize(false, sgn, messageDigest, cal, params, certChain, tsc,
         				ocsp);
+        HashMap exc = new HashMap();
+        exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
+        sap.preClose(exc);
+
+
+        InputStream data = sap.getRangeStream();
+
+        byte buf[] = new byte[8192];
+        int n;
+        while ((n = data.read(buf)) > 0) {
+            messageDigest.update(buf, 0, n);
+        }
+        byte hash[] = messageDigest.digest();
+
         byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
 
         if (LOG.isDebugEnabled()) {
         	LOG.debug("Estimated size: " + contentEstimated);
         	LOG.debug("Encoded length: " + encodedSig.length);
         }
-        	
+
         if (contentEstimated + 2 < encodedSig.length) {
         	if (!secondTry) {
         		int contentExact = calculateEstimatedSignatureSize(true, sgn, messageDigest, cal, params, certChain, tsc,

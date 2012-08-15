@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +26,7 @@ import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
@@ -35,6 +37,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;
@@ -82,6 +85,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -276,7 +280,7 @@ public class PDFSigner extends BaseSigner {
                 logMap.put(IWorkerLogger.LOG_PDF_PASSWORD_SUPPLIED, Boolean.TRUE.toString());
             }
             
-            byte[] signedbytes = addSignatureToPDFDocument(params, pdfbytes, password);
+            byte[] signedbytes = addSignatureToPDFDocument(params, pdfbytes, password, false);
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         signedbytes, getSigningCertificate(), fp,
@@ -306,8 +310,107 @@ public class PDFSigner extends BaseSigner {
         return signResponse;
     }
 
+    /**
+     * 
+     * @param exact Setting this to true to calculate the actual signature size by
+     *              using a fake hash value (might cause an extra signature computation)
+     * @param sgn
+     * @param messageDigest
+     * @param cal
+     * @param params
+     * @param certChain
+     * @param tsc
+     * @param ocsp
+     * @return
+     */
+    private int calculateEstimatedSignatureSize(boolean exact, PdfPKCS7 sgn, MessageDigest messageDigest,
+    		Calendar cal, PDFSignerParameters params,
+    		Certificate[] certChain, TSAClient tsc, byte[] ocsp) {
+    	
+    	if (exact) {
+    		int digestSize = messageDigest.getDigestLength();
+    		// fake a hash
+    		byte[] hash = new byte[digestSize];
+    		byte[] encoded  = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
+
+    		return encoded.length;
+    	} else {
+    		int estimatedSize = 0;
+
+    		if (LOG.isDebugEnabled()) {
+    			LOG.debug("Calculating estimated signature size");
+    		}
+    		
+    		for (Certificate cert : certChain) {
+    			try {
+    				int certSize = cert.getEncoded().length;
+    				estimatedSize += certSize;
+    				
+    				if (LOG.isDebugEnabled()) {
+    					LOG.debug("Adding " + certSize + " bytes for certificate");
+    				}
+    				
+    			} catch (CertificateEncodingException e) {
+    				
+    			}
+    		}
+    		
+    		if (LOG.isDebugEnabled()) {
+    			LOG.debug("Total size of certificate chain: " + estimatedSize);
+    		}
+    		
+    		// add some padding here (need to figure out if this depends on hash size
+    		// and so on...)
+    		estimatedSize += 1000;
+	
+    		// add space for OCSP response
+    		if (ocsp != null) {
+    			estimatedSize += ocsp.length * 2;
+    		}
+    		
+    		if (tsc != null) {
+    			// add estimated ts token size plus some safety padding
+    			estimatedSize += tsc.getTokenSizeEstimate() + 100;
+    		}
+    	
+    		return estimatedSize;
+    	}
+    }
+    
+    
+    private byte[] calculateSignature(PdfPKCS7 sgn, int size, MessageDigest messageDigest,
+    		Calendar cal, PDFSignerParameters params, Certificate[] certChain, TSAClient tsc, byte[] ocsp,
+    		PdfSignatureAppearance sap) throws IOException, DocumentException, SignServerException {
+     
+        HashMap exc = new HashMap();
+        exc.put(PdfName.CONTENTS, new Integer(size * 2 + 2));
+        sap.preClose(exc);
+
+
+        InputStream data = sap.getRangeStream();
+
+        byte buf[] = new byte[8192];
+        int n;
+        while ((n = data.read(buf)) > 0) {
+            messageDigest.update(buf, 0, n);
+        }
+        byte hash[] = messageDigest.digest();
+        
+
+        byte sh[] = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp);
+        try {
+            sgn.update(sh, 0, sh.length);
+        } catch (SignatureException e) {
+            throw new SignServerException("Error calculating signature", e);
+        }
+
+        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
+        
+        return encodedSig;
+    }
+    
     private byte[] addSignatureToPDFDocument(PDFSignerParameters params,
-            byte[] pdfbytes, byte[] password) throws IOException, DocumentException,
+            byte[] pdfbytes, byte[] password, boolean secondTry) throws IOException, DocumentException,
             CryptoTokenOfflineException, SignServerException, IllegalRequestException {
 
         // get signing cert certificate chain and private key
@@ -452,37 +555,7 @@ public class PDFSigner extends BaseSigner {
             tsc = new TSAClientBouncyCastle(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
         }
 
-        int contentEstimated = 15000;
-        HashMap exc = new HashMap();
-        exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
-        sap.preClose(exc);
-
-        PdfPKCS7 sgn;
-        try {
-            sgn = new PdfPKCS7(privKey, certChain, crlList, "SHA1", null, false);
-        } catch (InvalidKeyException e) {
-            throw new SignServerException("Error constructing PKCS7 package", e);
-        } catch (NoSuchProviderException e) {
-            throw new SignServerException("Error constructing PKCS7 package", e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new SignServerException("Error constructing PKCS7 package", e);
-        }
-
-        InputStream data = sap.getRangeStream();
-        MessageDigest messageDigest;
-        try {
-            messageDigest = MessageDigest.getInstance("SHA1");
-        } catch (NoSuchAlgorithmException e) {
-            throw new SignServerException("Error creating SHA1 digest", e);
-        }
-        byte buf[] = new byte[8192];
-        int n;
-        while ((n = data.read(buf)) > 0) {
-            messageDigest.update(buf, 0, n);
-        }
-        byte hash[] = messageDigest.digest();
-        Calendar cal = Calendar.getInstance();
-
+        
         // embed ocsp response in cms package if requested
         // for ocsp request to be formed there needs to be issuer certificate in
         // chain
@@ -502,18 +575,55 @@ public class PDFSigner extends BaseSigner {
             }
 
         }
-
-        byte sh[] = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp);
+        
+        PdfPKCS7 sgn;
         try {
-            sgn.update(sh, 0, sh.length);
-        } catch (SignatureException e) {
-            throw new SignServerException("Error calculating signature", e);
+            sgn = new PdfPKCS7(privKey, certChain, crlList, "SHA1", null, false);
+        } catch (InvalidKeyException e) {
+            throw new SignServerException("Error constructing PKCS7 package", e);
+        } catch (NoSuchProviderException e) {
+            throw new SignServerException("Error constructing PKCS7 package", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new SignServerException("Error constructing PKCS7 package", e);
         }
 
-        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
+        MessageDigest messageDigest;
+        try {
+            messageDigest = MessageDigest.getInstance("SHA1");
+        } catch (NoSuchAlgorithmException e) {
+            throw new SignServerException("Error creating SHA1 digest", e);
+        }
+        
+        Calendar cal = Calendar.getInstance();
+        
+        // calculate signature size
+        int contentEstimated =
+        		calculateEstimatedSignatureSize(false, sgn, messageDigest, cal, params, certChain, tsc,
+        				ocsp);
+
+        byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
+
+        if (LOG.isDebugEnabled()) {
+        	LOG.debug("Estimated size: " + contentEstimated);
+        	LOG.debug("Encoded length: " + encodedSig.length);
+        }
 
         if (contentEstimated + 2 < encodedSig.length) {
-            throw new SignServerException("Not enough space");
+        	if (!secondTry) {
+        		int contentExact = calculateEstimatedSignatureSize(true, sgn, messageDigest, cal, params, certChain, tsc,
+    				ocsp);
+        		LOG.warn("Estimated signature size too small, usinging accurate calculation (resulting in an extra signature computation).");
+        	
+        		if (LOG.isDebugEnabled()) {
+        			LOG.debug("Estimated size: " + contentEstimated + ", actual size: " + contentExact);
+        		}
+        	
+        		// try signing again
+        		return addSignatureToPDFDocument(params, pdfbytes, password, true);
+        	} else {
+        		// if we fail to get an accurate signature size on the second attempt, bail out (this shouldn't happen)
+        		throw new SignServerException("Failed to calculate signature size");
+        	}
         }
 
         byte[] paddedSig = new byte[contentEstimated];

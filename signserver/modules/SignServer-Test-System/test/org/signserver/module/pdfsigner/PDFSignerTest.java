@@ -12,11 +12,10 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfSignatureAppearance;
+
+import java.io.*;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
@@ -316,6 +315,16 @@ public class PDFSignerTest extends ModulesTestCase {
         signDocument(WORKERID, pdfOk);
     }
 
+    public void test12VeryLongCertChain() throws Exception {
+        final byte[] pdfOk = getTestFile(TESTPDF_OK);
+        byte[] certFile = getTestFile("dss10" + File.separator + "long_chain.pem");
+        
+    	workerSession.setWorkerProperty(WORKERID, "SIGNERCERTCHAIN", new String(certFile));
+    	workerSession.reloadConfiguration(WORKERID);
+    	
+    	signDocument(WORKERID, pdfOk);
+    }
+    
     public void test99TearDownDatabase() throws Exception {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
                     "5675"});

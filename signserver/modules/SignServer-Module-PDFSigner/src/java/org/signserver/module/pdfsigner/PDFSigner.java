@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,8 +36,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;

@@ -243,8 +243,9 @@ public class SignServerWS implements ISignServerWS {
 
             if (fileName != null) {
             	requestContext.put(RequestContext.FILENAME, fileName);
+            	logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
             }
-            	
+
             ProcessResponse resp = getWorkerSession().process(workerId, req, requestContext);
             ProcessResponseWS wsresp = new ProcessResponseWS();
             try {

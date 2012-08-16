@@ -14,34 +14,31 @@ package org.signserver.module.pdfsigner;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.exceptions.BadPasswordException;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.cert.Certificate;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+import com.lowagie.text.pdf.*;
+import java.io.*;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.MessageDigest;
+import java.security.PrivateKey;
+import java.security.cert.*;
+import java.util.*;
 import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
-import org.signserver.common.SignServerUtil;
-import org.signserver.common.WorkerConfig;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.CRLReason;
+import org.bouncycastle.cert.X509CRLHolder;
+import org.bouncycastle.cert.X509v2CRLBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertExt;
+import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 
@@ -87,6 +84,8 @@ public class PDFSignerUnitTest extends TestCase {
     private File sampleCertifiedFormFillingAllowed;
     private File sampleSigned;
 //    private File sampleLowprintingOwner123;
+    
+    private JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
 
     public PDFSignerUnitTest() {
         SignServerUtil.installBCProvider();
@@ -587,6 +586,525 @@ public class PDFSignerUnitTest extends TestCase {
             LOG.debug("ok: " + ok.getMessage());
         }
     }
+    
+    // Questions we need to answer to make a good estimate:
+    //
+    // 1. What are the parameters influencing the PKCS#7 size?
+    //    - static or depending on algorithms: PKCS#7 signature size, 
+    //    - Certificates list
+    //    - CRL list
+    //    - OCSP bytes
+    //    - timestamp response
+    //
+    // 2. How much does the size increase when the size of an certificate increases?
+    //    - It appears to be at maximum the same increase in size
+    //
+    // 3. How much does the size increase for each new certificate, not including the certificate size?
+    //    - 0. No increase for each certificate except the actual certificate size
+    //
+    // 4. How much does the size increase when the size of the timestamp responses increases?
+    //    - It appears to be at maximum the same increase in size
+    // 
+    // 5. How much does the size increase when the size of an CRL increases?
+    //    - It appears to be the same increase in size most of the times but in
+    //      in one case it got 1 byte larger.
+    //    
+    // 6. How much does the size increase for each new CRL, not including the CRL size?
+    //    - 0. No increase for each CRL except the actual CRL size
+    //
+    // 7. What is a typical size of an timestamp response?
+    //    - TODO
+    // 8. What value should we use in the initial estimate for the timestamp?
+    //    - TODO
+    // 
+    // 
+    
+    
+    /**
+     * Tests that our assumption that an increase of n bytes in a certificate 
+     * does not lead to more than an increase of n bytes in the PKCS#7 structure.
+     *
+     * This should never fail unless we upgrade BouncyCastle and the behavior 
+     * changes.
+     */
+    public void test14EstimatedP7Size_increaseCertSize() throws Exception {
+        final int somethingLargeEnough = 31000;
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
+        KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        PrivateKey signerPrivKey = signerKeyPair.getPrivate();
+        byte[] extensionBytes = new byte[0];
+        int referenceIssuerCertSize;
+        int referenceSize;
+        int actualP7Size;
+        
+        
+        // Create initial certificates
+        Certificate issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        referenceIssuerCertSize = issuerCert.getEncoded().length;
+        Certificate signerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(signerKeyPair.getPublic()).setSubject("CN=Signer").setIssuer("CN=Issuer1").build());
+        
+        // We will only variate the issuer certificate size
+        // so the other parameters are not important for this test
+        CRL[] crlList = new CRL[0];
+        MockedTSAClient tsc = new MockedTSAClient(1234);
+        byte[] ocsp = "OOOOOOOO".getBytes();
+        
+        // Test 1: First test is the reference test
+        Certificate[] certChain = new Certificate[] {signerCert, issuerCert};
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        referenceSize = actualP7Size;
+        LOG.debug("referenceSize: " + actualP7Size);
+        LOG.debug("referenceIssuerCertSize: " + referenceIssuerCertSize);
+        
+        // Test 2: Increase the size of the certificate with 1 byte and test
+        // that the final P7 does not increases with more than 1 byte
+        extensionBytes = new byte[1];
+        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        certChain = new Certificate[] {signerCert, issuerCert};
+        if (issuerCert.getEncoded().length != referenceIssuerCertSize + 1) {
+            throw new Exception("The test should have increased the certificate size by 1 byte");
+        }
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        assertEquals("new size 1 byte larger", referenceSize + 1, actualP7Size);
+        
+        // Test 2: Increase the size of the certificate with 37 bytes and test
+        // that the final P7 does not increases with more than 37 bytes
+        extensionBytes = new byte[37];
+        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        certChain = new Certificate[] {signerCert, issuerCert};
+        if (issuerCert.getEncoded().length != referenceIssuerCertSize + 37) {
+            throw new Exception("The test should have increased the certificate size by 37 bytes but was: " + issuerCert.getEncoded().length);
+        }
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        assertEquals("new size 37 bytes larger", referenceSize + 37, actualP7Size);
+        
+        
+        // Test 2: Increase the size of the certificate with at least 10000 bytes and test
+        // that the final P7 does not increases more than the certificate
+        // (it turned out that increasing the certificate with 10000 bytes actually made it even larger, 
+        //  however that is not important in this case)
+        extensionBytes = new byte[10000];
+        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        certChain = new Certificate[] {signerCert, issuerCert};
+        int certIncrease = issuerCert.getEncoded().length - referenceIssuerCertSize;
+        LOG.debug("increased certificate size with: " + certIncrease);
+        if (certIncrease < 10000) {
+            throw new Exception("The test should have increased the certificate with at least 10000 bytes but was: " + issuerCert.getEncoded().length);
+        }
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        assertEquals("new larger size", referenceSize + certIncrease, actualP7Size);
+        referenceSize = actualP7Size;
+        
+        // Test 3: Increase the size of the certificate with at least 30123 bytes and test
+        // that the final P7 does not increases more than the certificate
+        extensionBytes = new byte[30123];
+        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        certChain = new Certificate[] {signerCert, issuerCert};
+        certIncrease = issuerCert.getEncoded().length - referenceIssuerCertSize;
+        LOG.debug("increased certificate size with: " + certIncrease);
+        if (certIncrease < 30123) {
+            throw new Exception("The test should have increased the certificate with at least 30123 bytes but was: " + issuerCert.getEncoded().length);
+        }
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        // It turns out that the P7 might use less size than the increase in the certificate
+        assertTrue("new larger size", referenceSize + certIncrease >= actualP7Size);
+        //referenceSize = actualP7Size;        
+    }
+    
+    /**
+     * Tests that our assumption that an increase of n bytes in a time-stamp response 
+     * does not lead to more than an increase of n bytes in the PKCS#7 structure.
+     *
+     * This should never fail unless we upgrade BouncyCastle and the behavior 
+     * changes.
+     */
+    public void test14EstimatedP7Size_increaseTSRSize() throws Exception {
+        final int somethingLargeEnough = 31000;
+        KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        PrivateKey signerPrivKey = signerKeyPair.getPrivate();
+        int referenceTSRSize;
+        int referenceSize;
+        int actualP7Size;
+        
+        // We will only variate the Time-stamp response size
+        // so the other parameters are not important for this test
+        Certificate[] certChain = new Certificate[] {converter.getCertificate(new CertBuilder().build())};
+        CRL[] crlList = new CRL[0];
+        byte[] ocsp = "OOOOOOOO".getBytes();
+        
+        // Test 1: First test is the reference test
+        MockedTSAClient tsc = new MockedTSAClient(0);
+        
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        referenceSize = actualP7Size;
+        referenceTSRSize = tsc.getTimeStampToken().length;
+        LOG.debug("referenceSize: " + actualP7Size);
+        LOG.debug("referenceTSRSize: " + referenceTSRSize);
+        
+        // Test 2: Increase the size of the TSR with 1 byte and test
+        // that the final P7 does not increases with more than 1 byte
+        tsc = new MockedTSAClient(1);
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        assertEquals("new size 1 byte larger", referenceSize + 1, actualP7Size);
+        
+        // Test 2: Increase the size of the certificate with 37 bytes and test
+        // that the final P7 does not increases with more than 37 bytes
+        tsc = new MockedTSAClient(37);
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        assertEquals("new size 37 bytes larger", referenceSize + 37, actualP7Size);
+        
+        
+        // Test 2: Increase the size of the certificate with at least 10000 bytes and test
+        // that the final P7 does not increases more than the certificate
+        // (it turned out that increasing the TSR with 10000 bytes actually made it even larger, 
+        //  however that is not important in this case)
+        tsc = new MockedTSAClient(10000);
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        int tsrIncrease = tsc.getTokenSizeEstimate() - referenceTSRSize;
+        LOG.debug("increased certificate size with: " + tsrIncrease);
+        // It turns out that the P7 might use less size than the increase in the TSR size
+        assertTrue("new larger size", referenceSize + tsrIncrease >= actualP7Size);
+        referenceSize = actualP7Size;
+        
+        // Test 3: Increase the size of the certificate with at least 30123 bytes and test
+        // that the final P7 does not increases more than the certificate
+        tsc = new MockedTSAClient(30123);
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        tsrIncrease = tsc.getTokenSizeEstimate() - referenceTSRSize;
+        // It turns out that the P7 might use less size than the increase in the TSR size
+        assertTrue("new larger size", referenceSize + tsrIncrease >= actualP7Size);
+        //referenceSize = actualP7Size;        
+    }
+    
+    /**
+     * Tests that our assumption that an increase of n bytes in a certificate 
+     * does not lead to more than an increase of n+X bytes in the PKCS#7 structure 
+     * where X seems to be 1 extra byte that could be needed.
+     *
+     * This should never fail unless we upgrade BouncyCastle and the behavior 
+     * changes.
+     */
+    public void test14EstimatedP7Size_increaseCRLSize() throws Exception {
+        final int extraSpace = 1;
+        
+        final int somethingLargeEnough = 31000;
+        KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        PrivateKey signerPrivKey = signerKeyPair.getPrivate();
+        byte[] extensionBytes;
+        final int referenceCRLSize;
+        int referenceSize;
+        int actualP7Size;
+        
+        
+        // Create initial certificates
+        Certificate[] certChain = new Certificate[] {converter.getCertificate(new CertBuilder().build())};
+        
+        // We will only variate the issuer certificate size
+        // so the other parameters are not important for this test
+        MockedTSAClient tsc = new MockedTSAClient(1234);
+        byte[] ocsp = "OOOOOOOO".getBytes();
+        
+        // Test 1: First test is the reference test
+        CRL[] crlList = new CRL[]{createCRL(signerPrivKey, new byte[0])};
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        referenceSize = actualP7Size;
+        referenceCRLSize = ((X509CRL) crlList[0]).getEncoded().length;
+        LOG.debug("referenceSize: " + actualP7Size);
+        LOG.debug("referenceCRLSize: " + referenceCRLSize);
+        
+        // Test 2: Increase the size of the CRL with 1 byte and test
+        // that the final P7 does not increases with more than 1 byte
+        extensionBytes = new byte[1];
+        crlList = new CRL[]{createCRL(signerPrivKey, extensionBytes)};
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        assertEquals("new size 1 byte larger", referenceSize + 1, actualP7Size);
+        
+        // Test 2: Increase the size of the certificate with 37 bytes and test
+        // that the final P7 does not increases with more than 37 bytes
+        extensionBytes = new byte[37];
+        crlList = new CRL[]{createCRL(signerPrivKey, extensionBytes)};
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        assertTrue("new size 37 bytes larger", actualP7Size <= referenceSize + 37 + extraSpace);
+        
+        
+        // Test 2: Increase the size of the certificate with at least 10000 bytes and test
+        // that the final P7 does not increases more than the certificate
+        // (it turned out that increasing the certificate with 10000 bytes actually made it even larger, 
+        //  however that is not important in this case)
+        extensionBytes = new byte[10000];
+        crlList = new CRL[]{createCRL(signerPrivKey, extensionBytes)};
+        int certIncrease = ((X509CRL) crlList[0]).getEncoded().length - referenceCRLSize;
+        LOG.debug("increased CRL size with: " + certIncrease);
+        if (certIncrease < 10000) {
+            throw new Exception("The test should have increased the certificate with at least 10000 bytes but was: " + certIncrease);
+        }
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        assertEquals("new larger size", referenceSize + certIncrease, actualP7Size);
+        referenceSize = actualP7Size;
+        
+        // Test 3: Increase the size of the certificate with at least 30123 bytes and test
+        // that the final P7 does not increases more than the certificate
+        extensionBytes = new byte[30123];
+        crlList = new CRL[]{createCRL(signerPrivKey, extensionBytes)};
+        certIncrease = ((X509CRL) crlList[0]).getEncoded().length - referenceCRLSize;
+        LOG.debug("increased CRL size with: " + certIncrease);
+        if (certIncrease < 30123) {
+            throw new Exception("The test should have increased the certificate with at least 30123 bytes but was: " + certIncrease);
+        }
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        // It turns out that the P7 might use less size than the increase in the certificate
+        assertTrue("new larger size", referenceSize + certIncrease >= actualP7Size);
+        //referenceSize = actualP7Size;        
+    }
+    
+    private X509CRL createCRL(PrivateKey caCrlPrivKey, byte[] data) throws Exception {
+        X509v2CRLBuilder crlGen = new X509v2CRLBuilder(new X500Name("CN=CRL Issuer"), new Date());
+        crlGen.addCRLEntry(BigInteger.ONE, new Date(), CRLReason.privilegeWithdrawn);
+        crlGen.addExtension(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(data));
+        X509CRLHolder crl = crlGen.build(new JcaContentSignerBuilder("SHA1withRSA").build(caCrlPrivKey));
+        return new JcaX509CRLConverter().getCRL(crl);
+    }
+    
+    private int sumCertSizes(Certificate[] certs) throws CertificateEncodingException {
+        return sumCertSizes(certs, 0);
+    }
+    
+    private int sumCertSizes(Certificate[] certs, int offset) throws CertificateEncodingException {
+        int result = 0;
+        for (int i = offset; i < certs.length; i++) {
+            result += certs[i].getEncoded().length;
+        }
+        return result;
+    }
+    
+    private int sumCRLSizes(CRL[] crls) throws CRLException {
+        return sumCRLSizes(crls, 0);
+    }
+    
+    private int sumCRLSizes(CRL[] crls, int offset) throws CRLException {
+        int result = 0;
+        for (int i = offset; i < crls.length; i++) {
+            result += ((X509CRL) crls[i]).getEncoded().length;
+        }
+        return result;
+    }
+    
+    /**
+     * Tests that our assumption that adding an additional certificate does not
+     * increase the size with more than the size of the certificate.
+     *
+     * This should never fail unless we upgrade BouncyCastle and the behavior 
+     * changes.
+     */
+    public void test14EstimatedP7Size_increaseNumCerts() throws Exception {
+        final int somethingLargeEnough = 31000;
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
+        KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        PrivateKey signerPrivKey = signerKeyPair.getPrivate();
+        byte[] extensionBytes = new byte[0];
+        int referenceIssuerCertSize;
+        int referenceSize;
+        int actualP7Size;
+        
+        
+        // Create initial certificates
+        Certificate signerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(signerKeyPair.getPublic()).setSubject("CN=Signer").setIssuer("CN=Issuer1").build());
+        Certificate[] allCerts = new Certificate[50];
+        allCerts[0] = signerCert;
+        for (int i = 1; i < 50; i++) {
+            allCerts[i] = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer" + i).setIssuer("CN=Issuer" + i).addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        }
+        
+        // We will only variate the number of issuer certificates
+        // so the other parameters are not important for this test
+        CRL[] crlList = new CRL[0];
+        MockedTSAClient tsc = new MockedTSAClient(1234);
+        byte[] ocsp = "OOOOOOOO".getBytes();
+        
+        // Test 1: First test is the reference test
+        Certificate[] certChain = new Certificate[2];
+        System.arraycopy(allCerts, 0, certChain, 0, 2); // 2 certificates
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCertSizes(certChain));
+        referenceSize = actualP7Size;
+        referenceIssuerCertSize = sumCertSizes(certChain);
+        LOG.debug("referenceSize: " + actualP7Size);
+        LOG.debug("referenceIssuerCertSize: " + referenceIssuerCertSize);
+        
+        // Test 2: Increase the size of the certificate chain with 1 and test
+        // that the final P7 does not increases with more than the size of the certificate
+        certChain = new Certificate[3];
+        System.arraycopy(allCerts, 0, certChain, 0, 3); // 3 certificates
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        int diff = actualP7Size - referenceSize - sumCertSizes(certChain, 2);
+        LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCertSizes(certChain));
+        assertEquals("no extra added for each certificate", 0, diff);
+        
+        // Test 3: Increase the size of the certificate chain with 2 and test
+        // that the final P7 does not increases with more than the size of the certificates
+        certChain = new Certificate[4];
+        System.arraycopy(allCerts, 0, certChain, 0, 4); // 4 certificates
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        diff = actualP7Size - referenceSize - sumCertSizes(certChain, 2);
+        LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCertSizes(certChain));
+        assertEquals("no extra added for each certificate", 0, diff);
+        
+        // Test 4: Increase the size of the certificate chain with 49 and test
+        // that the final P7 does not increases with more than the size of the certificates
+        certChain = new Certificate[50];
+        System.arraycopy(allCerts, 0, certChain, 0, 50); // 50 certificates
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        diff = actualP7Size - referenceSize - sumCertSizes(certChain, 2);
+        LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCertSizes(certChain));
+        assertEquals("no extra added for each certificate", 0, diff);
+    }
+    
+    /**
+     * Tests that our assumption that adding an additional CRL does not
+     * increase the size with more than the size of the CRL.
+     *
+     * This should never fail unless we upgrade BouncyCastle and the behavior 
+     * changes.
+     */
+    public void test14EstimatedP7Size_increaseNumCRLs() throws Exception {
+        final int somethingLargeEnough = 31000;
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
+        KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        PrivateKey signerPrivKey = signerKeyPair.getPrivate();
+        byte[] extensionBytes = new byte[0];
+        int referenceCRLSize;
+        int referenceSize;
+        int actualP7Size;
+        CRL[] crlList;
+        
+        // Create initial certificates
+        Certificate[] certChain = new Certificate[] {converter.getCertificate(new CertBuilder().build())};
+        CRL[] allCRLs = new CRL[10];
+        
+        for (int i = 0; i < 10; i++) {
+            allCRLs[i] = createCRL(signerPrivKey, "CCCCCCCCCCCCC".getBytes());
+        }
+        
+        // We will only variate the number of CRLs
+        // so the other parameters are not important for this test
+        MockedTSAClient tsc = new MockedTSAClient(1234);
+        byte[] ocsp = "OOOOOOOO".getBytes();
+        
+        // Test 1: First test is the reference test
+        crlList = new CRL[1];
+        System.arraycopy(allCRLs, 0, crlList, 0, 1); // 1 CRL
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCRLSizes(crlList));
+        referenceSize = actualP7Size;
+        referenceCRLSize = sumCRLSizes(crlList);
+        LOG.debug("referenceSize: " + actualP7Size);
+        LOG.debug("referenceIssuerCertSize: " + referenceCRLSize);
+        
+        // Test 2: Increase the size of the certificate chain with 1 and test
+        // that the final P7 does not increases with more than the size of the certificate
+        crlList = new CRL[2];
+        System.arraycopy(allCRLs, 0, crlList, 0, 2); // 2 CRLs
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        int diff = actualP7Size - referenceSize - sumCRLSizes(crlList, 1);
+        LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCRLSizes(crlList));
+        assertEquals("no extra added for each certificate", 0, diff);
+        
+        // Test 3: Increase the size of the certificate chain with 2 and test
+        // that the final P7 does not increases with more than the size of the certificates
+        crlList = new CRL[3];
+        System.arraycopy(allCRLs, 0, crlList, 0, 3); // 3 CRLs
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        diff = actualP7Size - referenceSize - sumCRLSizes(crlList, 1);
+        LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCRLSizes(crlList));
+        assertEquals("no extra added for each certificate", 0, diff);
+        
+        // Test 4: Increase the size of the certificate chain with 49 and test
+        // that the final P7 does not increases with more than the size of the certificates
+        crlList = new CRL[10];
+        System.arraycopy(allCRLs, 0, crlList, 0, 10); // 10 CRLs
+        actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
+        diff = actualP7Size - referenceSize - sumCRLSizes(crlList, 1);
+        LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCRLSizes(crlList));
+        assertEquals("no extra added for each certificate", 0, diff);
+    }
+    
+    
+//    public void test14calculateEstimatedSignatureSize() throws Exception {
+//        
+//        
+//        KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
+//        KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+//        
+//        byte[] extensionBytes = new byte[0];
+//        
+//        Certificate issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+//        
+//        System.out.println("size of issuerCert: " + issuerCert.getEncoded().length);
+//        
+//        
+//        Certificate signerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(signerKeyPair.getPublic()).setSubject("CN=Signer").setIssuer("CN=Issuer1").build());
+//        
+//        
+//        
+//        CRL[] crlList = new CRL[0]; // TODO
+//        MockedTSAClient tsc = new MockedTSAClient(1234);
+//        byte[] ocsp = "OOOOOOOO".getBytes();
+//        Certificate[] certChain = new Certificate[] {signerCert, issuerCert}; // TODO
+//        
+//        doTestEstimateSize(signerKeyPair.getPrivate(), certChain, crlList, ocsp, tsc);
+//        
+//        
+//        // Increase size of certificate
+//        extensionBytes = new byte[1];
+//        
+//        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+//        certChain = new Certificate[] {signerCert, issuerCert};
+//        
+//        System.out.println();
+//        System.out.println("size of issuerCert: " + issuerCert.getEncoded().length);
+//        doTestEstimateSize(signerKeyPair.getPrivate(), certChain, crlList, ocsp, tsc);
+//        
+//        fail("ok");
+//    }
+    
+    /**
+     * Create a signature with the given input.
+     * @return The size of the produced PKCS#7 structure.
+     */
+    private int getActualP7Size(PrivateKey signerPrivKey, int estimate, Certificate[] certChain, CRL[] crlList, byte[] ocsp, MockedTSAClient tsc) throws Exception {
+        PDFSigner instance = new PDFSigner();
+        PdfReader reader = new PdfReader(readFile(sample), null);
+        ByteArrayOutputStream fout = new ByteArrayOutputStream();
+        PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', null, true);
+        PdfSignatureAppearance sap = stp.getSignatureAppearance();
+        sap.setCrypto(null, certChain, crlList, PdfSignatureAppearance.SELF_SIGNED);
+        PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, new PdfName("adbe.pkcs7.detached"));
+        dic.setReason("Reasons...");
+        dic.setLocation("Location...");
+        dic.setDate(new PdfDate(Calendar.getInstance()));
+        sap.setCryptoDictionary(dic);
+        byte[] encodedSig = instance.calculateSignature(new PdfPKCS7(signerPrivKey, certChain, crlList, "SHA1", null, false), estimate, MessageDigest.getInstance("SHA1"), Calendar.getInstance(), null, certChain, tsc, ocsp, sap);
+        
+        return encodedSig.length;
+    }
+    
+//    private void doTestEstimateSize(PrivateKey signerPrivKey, Certificate[] certChain, CRL[] crlList, byte[] ocsp, MockedTSAClient tsc) throws Exception {
+//        PDFSigner instance = new PDFSigner();
+//        
+//        
+//        int estimate = instance.calculateEstimatedSignatureSize(false, null, null, null, null, 
+//                                                      certChain, tsc, ocsp);
+//        
+//        int actual = getActualP7Size(signerPrivKey, certChain, crlList, ocsp, tsc);
+//        
+//        
+//        
+//        System.out.println("Estimate: " + estimate);
+//        System.out.println("encodedSig: " + actual);
+//        
+//    }
+    
+   
     
     private byte[] signPDF(File file) throws Exception {
         return signProtectedPDF(file, null);

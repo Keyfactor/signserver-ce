@@ -321,7 +321,7 @@ public class PDFSigner extends BaseSigner {
      * @param ocsp
      * @return
      */
-    private int calculateEstimatedSignatureSize(boolean exact, PdfPKCS7 sgn, MessageDigest messageDigest,
+    protected int calculateEstimatedSignatureSize(boolean exact, PdfPKCS7 sgn, MessageDigest messageDigest,
     		Calendar cal, PDFSignerParameters params,
     		Certificate[] certChain, TSAClient tsc, byte[] ocsp) {
     	
@@ -376,7 +376,7 @@ public class PDFSigner extends BaseSigner {
     }
     
     
-    private byte[] calculateSignature(PdfPKCS7 sgn, int size, MessageDigest messageDigest,
+    protected byte[] calculateSignature(PdfPKCS7 sgn, int size, MessageDigest messageDigest,
     		Calendar cal, PDFSignerParameters params, Certificate[] certChain, TSAClient tsc, byte[] ocsp,
     		PdfSignatureAppearance sap) throws IOException, DocumentException, SignServerException {
      

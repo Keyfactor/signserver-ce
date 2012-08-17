@@ -78,8 +78,12 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
         RequestContext context = new RequestContext();
         Map<String, String> metadata = new HashMap<String, String>();
         metadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
-        metadata.put(RequestContext.FILENAME, (String) requestContext.get(RequestContext.FILENAME));
-        context.put(RequestContext.REQUEST_METADATA, metadata);
+	String fileName = (String) requestContext.get(RequestContext.FILENAME);
+	// if a file name was specified, pass it along
+	if (fileName != null) {
+	    metadata.put(RequestContext.FILENAME, fileName);
+        }
+	context.put(RequestContext.REQUEST_METADATA, metadata);
         
         final ProcessResponse response = signServer.process(workerName,
                 new GenericSignRequest(requestId, data), context);

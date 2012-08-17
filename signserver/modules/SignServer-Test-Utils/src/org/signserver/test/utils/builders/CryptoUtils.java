@@ -1,6 +1,6 @@
 /*************************************************************************
  *                                                                       *
- *  EJBCA: The OpenSource Certificate Authority                          *
+ *  SignServer: The OpenSource Automated Signing Server                  *
  *                                                                       *
  *  This software is free software; you can redistribute it and/or       *
  *  modify it under the terms of the GNU Lesser General Public           *
@@ -23,7 +23,7 @@ import org.bouncycastle.util.encoders.Hex;
  * Utility methods for key generation.
  *
  *
- * @version $Id: CryptoUtils.java 15189 2012-08-03 10:05:26Z netmackan $
+ * @version $Id$
  */
 public class CryptoUtils {
     

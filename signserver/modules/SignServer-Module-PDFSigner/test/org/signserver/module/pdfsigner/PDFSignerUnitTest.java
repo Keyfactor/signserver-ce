@@ -36,6 +36,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
@@ -587,39 +588,6 @@ public class PDFSignerUnitTest extends TestCase {
         }
     }
     
-    // Questions we need to answer to make a good estimate:
-    //
-    // 1. What are the parameters influencing the PKCS#7 size?
-    //    - static or depending on algorithms: PKCS#7 signature size, 
-    //    - Certificates list
-    //    - CRL list
-    //    - OCSP bytes
-    //    - timestamp response
-    //
-    // 2. How much does the size increase when the size of an certificate increases?
-    //    - It appears to be at maximum the same increase in size
-    //
-    // 3. How much does the size increase for each new certificate, not including the certificate size?
-    //    - 0. No increase for each certificate except the actual certificate size
-    //
-    // 4. How much does the size increase when the size of the timestamp responses increases?
-    //    - It appears to be at maximum the same increase in size
-    // 
-    // 5. How much does the size increase when the size of an CRL increases?
-    //    - It appears to be the same increase in size most of the times but in
-    //      in one case it got 1 byte larger.
-    //    
-    // 6. How much does the size increase for each new CRL, not including the CRL size?
-    //    - 0. No increase for each CRL except the actual CRL size
-    //
-    // 7. What is a typical size of an timestamp response?
-    //    - TODO
-    // 8. What value should we use in the initial estimate for the timestamp?
-    //    - TODO
-    // 
-    // 
-    
-    
     /**
      * Tests that our assumption that an increase of n bytes in a certificate 
      * does not lead to more than an increase of n bytes in the PKCS#7 structure.
@@ -1028,44 +996,249 @@ public class PDFSignerUnitTest extends TestCase {
         assertEquals("no extra added for each certificate", 0, diff);
     }
     
+    /**
+     * Test that the estimated value is within correct bounds when using different input values.
+     * 
+     * Tests a few different combinations. 
+     * 
+     * TODO: Randomized stress testing would be good for this feature.
+     * 
+     * The most important thing is that we don't estimate a too low value. 
+     * 
+     * Second thing is to not make a too large estimate. What quality of the 
+     * estimate we require is defined by the maxDiff constant. We can't calculate 
+     * the size of the TS response (as it is performed after we construct the 
+     * signature structure) so in this test only values under 4096 (the 
+     * default estimate) are considered.
+     * 
+     */
+    public void test14calculateEstimatedSignatureSize() throws Exception {
+       
+        final int estimatedIntialTSResponseSize = 4096; // The value we assume for the TS response siz
+        final int maxDiff = estimatedIntialTSResponseSize + 10000; // How far from the actual value we allow the algorithm to be
+        
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
+        KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        byte[] extensionBytes;
+        
+        Certificate signerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(signerKeyPair.getPublic()).setSubject("CN=Signer").setIssuer("CN=Issuer1").build());
+        Certificate issuerCert;
+        Certificate[] certChain;
+        CRL[] crlList;
+        MockedTSAClient tsc;
+        byte[] ocsp;
+        
+        // Subject, 0 extra bytes TS, 0 bytes OCSP, 0 CRLs (0 extra bytes)
+        certChain = new Certificate[] {signerCert};
+        tsc = new MockedTSAClient(0);
+        ocsp = null;
+        crlList = new CRL[0];
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        
+        // Subject, Issuer(4123 extra bytes), 0 extra bytes TS, 0 bytes OCSP, 0 CRLs (0 extra bytes)
+        extensionBytes = new byte[4123];
+        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        certChain = new Certificate[] {signerCert, issuerCert};
+        crlList = new CRL[0];
+        tsc = new MockedTSAClient(0);
+        ocsp = null;
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        
+        // Subject, Issuer(17173 extra bytes), Issuer2 (123 extra bytes), 0 extra bytes TS, 0 bytes OCSP, 0 CRLs (0 extra bytes)
+        extensionBytes = new byte[17173];
+        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        X509Certificate issuerCert2 = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(new byte[123]))).build());
+        certChain = new Certificate[] {signerCert, issuerCert, issuerCert2};
+        crlList = new CRL[0];
+        tsc = new MockedTSAClient(0);
+        ocsp = null;
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        
+        // Subject, Issuer(4123 extra bytes), 3178 extra bytes TS, 0 bytes OCSP, 0 CRLs (0 extra bytes)
+        extensionBytes = new byte[4123];
+        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        certChain = new Certificate[] {signerCert, issuerCert};
+        crlList = new CRL[0];
+        tsc = new MockedTSAClient(3178);
+        ocsp = null;
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        
+        // Subject, Issuer(17173 extra bytes), Issuer2 (123 extra bytes), 3178 extra bytes TS, 0 bytes OCSP, 0 CRLs (0 extra bytes)
+        extensionBytes = new byte[17173];
+        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        issuerCert2 = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(new byte[123]))).build());
+        certChain = new Certificate[] {signerCert, issuerCert, issuerCert2};
+        crlList = new CRL[0];
+        tsc = new MockedTSAClient(3178);
+        ocsp = null; //"OOOOOOOO".getBytes();
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        
+        // Subject, Issuer(17173 extra bytes), Issuer2 (123 extra bytes), 3178 extra bytes TS, 1 bytes OCSP, 0 CRLs (0 extra bytes)
+        //extensionBytes =
+        //issuerCert =
+        //issuerCert2 =
+        //certChain =
+        crlList = new CRL[0];
+        tsc = new MockedTSAClient(3178);
+        ocsp = new byte[1];
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        
+        // Subject, Issuer(17173 extra bytes), Issuer2 (123 extra bytes), 3178 extra bytes TS, 1304 bytes OCSP, 0 CRLs (0 extra bytes)
+        //extensionBytes =
+        //issuerCert =
+        //issuerCert2 = 
+        //certChain = 
+        //crlList = new CRL[0];
+        tsc = new MockedTSAClient(3178);
+        ocsp = new byte[1304];
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        
+        // Subject, Issuer(17173 extra bytes), Issuer2 (123 extra bytes), 3178 extra bytes TS, 10102 bytes OCSP, 0 CRLs (0 extra bytes)
+        //extensionBytes = 
+        //issuerCert = 
+        //issuerCert2 = 
+        //certChain = 
+        //crlList =
+        tsc = new MockedTSAClient(3178);
+        ocsp = new byte[10102];
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        
+        // Subject, Issuer(0 extra bytes), 0 extra bytes TS, 0 bytes OCSP, 1 CRLs (0 extra bytes)
+        extensionBytes = new byte[0];
+        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        certChain = new Certificate[] {signerCert, issuerCert};
+        crlList = new CRL[] {createCRL(signerKeyPair.getPrivate(), new byte[0])};
+        tsc = new MockedTSAClient(0);
+        ocsp = null;
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        
+        // Subject, Issuer(17000 extra bytes), 0 extra bytes TS, 0 bytes OCSP, 1 CRLs (5432 extra bytes)
+        extensionBytes = new byte[17000];
+        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        certChain = new Certificate[] {signerCert, issuerCert};
+        crlList = new CRL[] {createCRL(signerKeyPair.getPrivate(), new byte[5432])};
+        tsc = new MockedTSAClient(0);
+        ocsp = null;
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        
+        // Subject, Issuer(17000 extra bytes), 0 extra bytes TS, 0 bytes OCSP, 2 CRLs (5432 extra bytes, 5076 extra bytes)
+        extensionBytes = new byte[17000];
+        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
+        certChain = new Certificate[] {signerCert, issuerCert};
+        crlList = new CRL[] {createCRL(signerKeyPair.getPrivate(), new byte[5432]), createCRL(signerKeyPair.getPrivate(), new byte[5076])};
+        tsc = new MockedTSAClient(0);
+        ocsp = null;
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+    }
     
-//    public void test14calculateEstimatedSignatureSize() throws Exception {
-//        
-//        
-//        KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
-//        KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
-//        
-//        byte[] extensionBytes = new byte[0];
-//        
-//        Certificate issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
-//        
-//        System.out.println("size of issuerCert: " + issuerCert.getEncoded().length);
-//        
-//        
-//        Certificate signerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(signerKeyPair.getPublic()).setSubject("CN=Signer").setIssuer("CN=Issuer1").build());
-//        
-//        
-//        
-//        CRL[] crlList = new CRL[0]; // TODO
-//        MockedTSAClient tsc = new MockedTSAClient(1234);
-//        byte[] ocsp = "OOOOOOOO".getBytes();
-//        Certificate[] certChain = new Certificate[] {signerCert, issuerCert}; // TODO
-//        
-//        doTestEstimateSize(signerKeyPair.getPrivate(), certChain, crlList, ocsp, tsc);
-//        
-//        
-//        // Increase size of certificate
-//        extensionBytes = new byte[1];
-//        
-//        issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
-//        certChain = new Certificate[] {signerCert, issuerCert};
-//        
-//        System.out.println();
-//        System.out.println("size of issuerCert: " + issuerCert.getEncoded().length);
-//        doTestEstimateSize(signerKeyPair.getPrivate(), certChain, crlList, ocsp, tsc);
-//        
-//        fail("ok");
-//    }
+    private void assertEstimateCloseEnough(PrivateKey signerPrivKey, Certificate[] certChain, MockedTSAClient tsc, byte[] ocsp, CRL[] crlList, int maxDiff) throws Exception {
+        final int largeEnoughSpace = 32000;
+        PDFSigner instance = new PDFSigner();
+        
+        int estimate = instance.calculateEstimatedSignatureSize(false, null, null, null, null,  // TODO: Parameters should probably be removed
+                                                      certChain, tsc, ocsp); // TODO: Should depend on CRLlist as well!
+        
+        int actual = getActualP7Size(signerPrivKey, largeEnoughSpace, certChain, crlList, ocsp, tsc);
+        LOG.debug("estimate: " + estimate + ", actual: " + actual);
+        
+        // Estimate should not be to small
+        assertTrue("estimate (" + estimate + ") must be at least " + actual, estimate >= actual);
+        
+        // Should not be larger than maxDiff
+        int diff = estimate - actual;
+        LOG.debug("diff: " + diff);
+        assertTrue("diff (" + diff + ") <= maxDiff (" + maxDiff + ")", diff <= maxDiff);
+    }
+    
+    /**
+     * As we might not be in control of an external TSA the size they return might
+     * be different from call to call that means that there is always a chance of
+     * us doing a wrong size estimate. 
+     * This tests tests that if we got it wrong the first time the second time
+     * we make an estimate which is larger than the actual size returned from the 
+     * first try.
+     */
+    public void test14calculateEstimatedSignatureSize_resign() throws Exception {
+        
+        byte[] pdfbytes = readFile(sample);
+        final KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        final Certificate[] certChain = new Certificate[] {converter.getCertificate(new CertBuilder().build())};
+        final Certificate signerCertificate = certChain[0];
+        
+        // any small value
+        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 10);
+        
+        // medium value 3072
+        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 3070);
+        
+        // the initial value just by the TSA client
+        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 4096);
+        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 4096 + 32);
+        
+        // slightly larger
+        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 4096 + 32 + 1);
+        
+        // a larger value
+        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 10123);
+        
+        // a large value
+        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 15000 * 2 + 456);
+    }
+    
+    /**
+     * Tests that we don't get an exception trying to sign a document with the 
+     * given parameters.
+     * The idea is that if the estimate is too small an retry is done so this 
+     * should always succeed.
+     */
+    private void assertCanSign(final byte[] pdfbytes, final KeyPair signerKeyPair, final Certificate[] certChain, final Certificate signerCertificate, final int tsSize) throws Exception {
+        
+        final MockedTSAClient tsc = new MockedTSAClient(tsSize);
+        final String provider = "BC";
+        
+        final MockedCryptoToken token = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), provider);
+        
+        PDFSigner instance = new PDFSigner() {
+            
+            @Override
+            protected TSAClient getTimeStampClient(String url, String username, String password) {
+                return tsc;
+            }
+
+            @Override
+            public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
+                return signerCertificate;
+            }
+
+            @Override
+            public Collection<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+                return Arrays.asList(certChain);
+            }
+
+            @Override
+            protected ICryptoToken getCryptoToken() {
+                return token;
+            }
+            
+        };
+        
+        final WorkerConfig config = new WorkerConfig();
+        config.setProperty("TSA_URL", "http://any-tsa.example.com");
+        final PDFSignerParameters params = new PDFSignerParameters(1234, config);
+        
+        try {
+            byte[] signedPdfbytes = instance.addSignatureToPDFDocument(params, pdfbytes, null, false);
+            assertNotNull(signedPdfbytes);
+        } catch (SignServerException ex) {
+            LOG.debug("failed to sign", ex);
+            fail(ex.getMessage());
+        }
+        
+        if (!tsc.isCalled()) {
+            throw new Exception("Test must be configured to use TSA otherwise we are not testing anything...");
+        }
+        LOG.debug("Private key used: " + token.getPrivateKeyCalls() + "\n");   
+    }
     
     /**
      * Create a signature with the given input.
@@ -1087,24 +1260,6 @@ public class PDFSignerUnitTest extends TestCase {
         
         return encodedSig.length;
     }
-    
-//    private void doTestEstimateSize(PrivateKey signerPrivKey, Certificate[] certChain, CRL[] crlList, byte[] ocsp, MockedTSAClient tsc) throws Exception {
-//        PDFSigner instance = new PDFSigner();
-//        
-//        
-//        int estimate = instance.calculateEstimatedSignatureSize(false, null, null, null, null, 
-//                                                      certChain, tsc, ocsp);
-//        
-//        int actual = getActualP7Size(signerPrivKey, certChain, crlList, ocsp, tsc);
-//        
-//        
-//        
-//        System.out.println("Estimate: " + estimate);
-//        System.out.println("encodedSig: " + actual);
-//        
-//    }
-    
-   
     
     private byte[] signPDF(File file) throws Exception {
         return signProtectedPDF(file, null);

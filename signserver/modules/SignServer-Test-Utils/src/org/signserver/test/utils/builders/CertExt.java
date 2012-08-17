@@ -1,6 +1,6 @@
 /*************************************************************************
  *                                                                       *
- *  EJBCA: The OpenSource Certificate Authority                          *
+ *  SignServer: The OpenSource Automated Signing Server                  *
  *                                                                       *
  *  This software is free software; you can redistribute it and/or       *
  *  modify it under the terms of the GNU Lesser General Public           *
@@ -19,7 +19,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
  * Holder for the data to use when creating an certificate extension.
  * 
  *
- * @version $Id: CertExt.java 15189 2012-08-03 10:05:26Z netmackan $
+ * @version $Id$
  */
 public class CertExt {
     private ASN1ObjectIdentifier oid;

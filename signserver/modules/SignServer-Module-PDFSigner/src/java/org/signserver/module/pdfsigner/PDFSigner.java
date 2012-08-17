@@ -309,6 +309,49 @@ public class PDFSigner extends BaseSigner {
     }
 
     /**
+     * Calculates an estimate of the PKCS#7 structure size given the provided  
+     * input parameters.
+     *
+     * Questions that we need to answer to construct an formula for calculating 
+     * a good enough estimate:
+     *
+     * 1. What are the parameters influencing the PKCS#7 size?
+     *    - static or depending on algorithms: PKCS#7 signature size, 
+     *    - Certificates list
+     *    - CRL list
+     *    - OCSP bytes
+     *    - timestamp response
+     *
+     * 2. How much does the size increase when the size of an certificate increases?
+     *    - It appears to be at maximum the same increase in size
+     *
+     * 3. How much does the size increase for each new certificate, not including the certificate size?
+     *    - 0. No increase for each certificate except the actual certificate size
+     *
+     * 4. How much does the size increase when the size of the timestamp responses increases?
+     *    - It appears to be at maximum the same increase in size
+     *    - However as the response is sent after the signing and possibly 
+     *      from an external server we can not be sure about what size it 
+     *      will have. We should use a large enough (but reasonable) value that 
+     *      it is not so likely that we will have to do a second try.
+     * 
+     * 5. How much does the size increase when the size of an CRL increases?
+     *    - It appears to be the same increase in size most of the times but in
+     *      in one case it got 1 byte larger.
+     *    
+     * 6. How much does the size increase for each new CRL, not including the CRL size?
+     *    - 0. No increase for each CRL except the actual CRL size
+     *
+     * 7. What is a typical size of an timestamp response?
+     *    - TODO
+     * 8. What value should we use in the initial estimate for the timestamp?
+     *    - TODO: Currently 4096 is used
+     * 
+     * 
+     * See also PDFSignerUnitTest for tests that the answers to the questions 
+     * above still holds.
+     * 
+     * 
      * 
      * @param exact Setting this to true to calculate the actual signature size by
      *              using a fake hash value (might cause an extra signature computation)
@@ -407,7 +450,7 @@ public class PDFSigner extends BaseSigner {
         return encodedSig;
     }
     
-    private byte[] addSignatureToPDFDocument(PDFSignerParameters params,
+    protected byte[] addSignatureToPDFDocument(PDFSignerParameters params,
             byte[] pdfbytes, byte[] password, boolean secondTry) throws IOException, DocumentException,
             CryptoTokenOfflineException, SignServerException, IllegalRequestException {
 
@@ -550,7 +593,7 @@ public class PDFSigner extends BaseSigner {
         // add timestamp to signature if requested
         TSAClient tsc = null;
         if (params.isUse_timestamp()) {
-            tsc = new TSAClientBouncyCastle(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
+            tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
         }
 
         
@@ -892,6 +935,10 @@ public class PDFSigner extends BaseSigner {
      */
     private boolean isUserPassword(PdfReader reader, byte[] password) {        
         return Arrays.equals(reader.computeUserPassword(), password);
+    }
+
+    protected TSAClient getTimeStampClient(String url, String username, String password) {
+        return new TSAClientBouncyCastle(url, username, password);
     }
 
 }

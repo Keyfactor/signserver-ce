@@ -639,7 +639,7 @@ public class PDFSigner extends BaseSigner {
         
         // calculate signature size
         int contentEstimated =
-        		calculateEstimatedSignatureSize(false, sgn, messageDigest, cal, params, certChain, tsc,
+        		calculateEstimatedSignatureSize(secondTry, sgn, messageDigest, cal, params, certChain, tsc,
         				ocsp);
 
         byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
@@ -651,16 +651,18 @@ public class PDFSigner extends BaseSigner {
 
         if (contentEstimated + 2 < encodedSig.length) {
         	if (!secondTry) {
-        		int contentExact = calculateEstimatedSignatureSize(true, sgn, messageDigest, cal, params, certChain, tsc,
-    				ocsp);
         		LOG.warn("Estimated signature size too small, usinging accurate calculation (resulting in an extra signature computation).");
-        	
+
+        		// try signing again
+        		byte[] endodedSig = addSignatureToPDFDocument(params, pdfbytes, password, true);
+        		
+        		int contentExact = endodedSig.length;
+        		
         		if (LOG.isDebugEnabled()) {
         			LOG.debug("Estimated size: " + contentEstimated + ", actual size: " + contentExact);
         		}
-        	
-        		// try signing again
-        		return addSignatureToPDFDocument(params, pdfbytes, password, true);
+        		
+        		return encodedSig;
         	} else {
         		// if we fail to get an accurate signature size on the second attempt, bail out (this shouldn't happen)
         		throw new SignServerException("Failed to calculate signature size");

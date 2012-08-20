@@ -24,9 +24,11 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.cert.CRL;
+import java.security.cert.CRLException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Collection;
@@ -366,7 +368,7 @@ public class PDFSigner extends BaseSigner {
      */
     protected int calculateEstimatedSignatureSize(boolean exact, PdfPKCS7 sgn, MessageDigest messageDigest,
     		Calendar cal, PDFSignerParameters params,
-    		Certificate[] certChain, TSAClient tsc, byte[] ocsp) {
+    		Certificate[] certChain, TSAClient tsc, byte[] ocsp, CRL[] crlList) {
     	
     	if (exact) {
     		int digestSize = messageDigest.getDigestLength();
@@ -400,9 +402,8 @@ public class PDFSigner extends BaseSigner {
     			LOG.debug("Total size of certificate chain: " + estimatedSize);
     		}
     		
-    		// add some padding here (need to figure out if this depends on hash size
-    		// and so on...)
-    		estimatedSize += 1000;
+    		// add estimate for PKCS#7 structure + hash
+    		estimatedSize += 2000;
 	
     		// add space for OCSP response
     		if (ocsp != null) {
@@ -410,10 +411,25 @@ public class PDFSigner extends BaseSigner {
     		}
     		
     		if (tsc != null) {
-    			// add estimated ts token size plus some safety padding
-    			estimatedSize += tsc.getTokenSizeEstimate() + 100;
+    			// add guess for timestamp response (which we can't really know)
+    			// TODO: we might be able to store the size of the last TSA response and re-use next time...
+    			estimatedSize += 4096;
     		}
     	
+    		// add estimate for CRL
+    		if (crlList != null) {
+    			for (CRL crl : crlList) {
+    				X509CRL x509Crl = (X509CRL) crl;
+    				
+    				try {
+    					estimatedSize += x509Crl.getEncoded().length;
+    				} catch (CRLException e) {
+    				}
+    			}
+    			estimatedSize += 100;
+    		}
+    		
+    		
     		return estimatedSize;
     	}
     }
@@ -640,7 +656,7 @@ public class PDFSigner extends BaseSigner {
         // calculate signature size
         int contentEstimated =
         		calculateEstimatedSignatureSize(secondTry, sgn, messageDigest, cal, params, certChain, tsc,
-        				ocsp);
+        				ocsp, crlList);
 
         byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
 

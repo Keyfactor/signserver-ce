@@ -25,9 +25,11 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.cert.CRL;
+import java.security.cert.CRLException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Collection;
@@ -324,7 +326,7 @@ public class PDFSigner extends BaseSigner {
      */
     private int calculateEstimatedSignatureSize(boolean exact, PdfPKCS7 sgn, MessageDigest messageDigest,
     		Calendar cal, PDFSignerParameters params,
-    		Certificate[] certChain, TSAClient tsc, byte[] ocsp) {
+    		Certificate[] certChain, TSAClient tsc, byte[] ocsp, CRL[] crlList) throws SignServerException {
     	
     	if (exact) {
     		int digestSize = messageDigest.getDigestLength();
@@ -350,7 +352,7 @@ public class PDFSigner extends BaseSigner {
     				}
     				
     			} catch (CertificateEncodingException e) {
-    				
+    				throw new SignServerException("Error estimating signature size contribution for certificate", e);
     			}
     		}
     		
@@ -358,20 +360,37 @@ public class PDFSigner extends BaseSigner {
     			LOG.debug("Total size of certificate chain: " + estimatedSize);
     		}
     		
-    		// add some padding here (need to figure out if this depends on hash size
-    		// and so on...)
-    		estimatedSize += 1000;
+    		// add estimate for PKCS#7 structure + hash
+    		estimatedSize += 2000;
 	
     		// add space for OCSP response
     		if (ocsp != null) {
-    			estimatedSize += ocsp.length * 2;
+    			estimatedSize += ocsp.length;
     		}
     		
     		if (tsc != null) {
-    			// add estimated ts token size plus some safety padding
-    			estimatedSize += tsc.getTokenSizeEstimate() + 100;
+    			// add guess for timestamp response (which we can't really know)
+    			// TODO: we might be able to store the size of the last TSA response and re-use next time...
+    			estimatedSize += 4096;
     		}
     	
+    		// add estimate for CRL
+    		if (crlList != null) {
+    			for (CRL crl : crlList) {
+    				if (crl instanceof X509CRL) {
+    					X509CRL x509Crl = (X509CRL) crl;
+    				
+    					try {
+    						estimatedSize += x509Crl.getEncoded().length;
+    					} catch (CRLException e) {
+    						throw new SignServerException("Error estimating signature size contribution for CRL", e);
+    					}
+    				}		
+    			}
+    			estimatedSize += 100;
+    		}
+    		
+    		
     		return estimatedSize;
     	}
     }
@@ -597,8 +616,8 @@ public class PDFSigner extends BaseSigner {
         
         // calculate signature size
         int contentEstimated =
-        		calculateEstimatedSignatureSize(false, sgn, messageDigest, cal, params, certChain, tsc,
-        				ocsp);
+        		calculateEstimatedSignatureSize(secondTry, sgn, messageDigest, cal, params, certChain, tsc,
+        				ocsp, crlList);
 
         byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
 
@@ -609,16 +628,18 @@ public class PDFSigner extends BaseSigner {
 
         if (contentEstimated + 2 < encodedSig.length) {
         	if (!secondTry) {
-        		int contentExact = calculateEstimatedSignatureSize(true, sgn, messageDigest, cal, params, certChain, tsc,
-    				ocsp);
         		LOG.warn("Estimated signature size too small, usinging accurate calculation (resulting in an extra signature computation).");
-        	
+
+        		// try signing again
+        		byte[] endodedSig = addSignatureToPDFDocument(params, pdfbytes, password, true);
+        		
+        		int contentExact = endodedSig.length;
+        		
         		if (LOG.isDebugEnabled()) {
         			LOG.debug("Estimated size: " + contentEstimated + ", actual size: " + contentExact);
         		}
-        	
-        		// try signing again
-        		return addSignatureToPDFDocument(params, pdfbytes, password, true);
+        		
+        		return encodedSig;
         	} else {
         		// if we fail to get an accurate signature size on the second attempt, bail out (this shouldn't happen)
         		throw new SignServerException("Failed to calculate signature size");

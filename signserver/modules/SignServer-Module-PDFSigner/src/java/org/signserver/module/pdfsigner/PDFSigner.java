@@ -368,7 +368,7 @@ public class PDFSigner extends BaseSigner {
      */
     protected int calculateEstimatedSignatureSize(boolean exact, PdfPKCS7 sgn, MessageDigest messageDigest,
     		Calendar cal, PDFSignerParameters params,
-    		Certificate[] certChain, TSAClient tsc, byte[] ocsp, CRL[] crlList) {
+    		Certificate[] certChain, TSAClient tsc, byte[] ocsp, CRL[] crlList) throws SignServerException {
     	
     	if (exact) {
     		int digestSize = messageDigest.getDigestLength();
@@ -394,7 +394,7 @@ public class PDFSigner extends BaseSigner {
     				}
     				
     			} catch (CertificateEncodingException e) {
-    				
+    				throw new SignServerException("Error estimating signature size contribution for certificate", e);
     			}
     		}
     		
@@ -407,7 +407,7 @@ public class PDFSigner extends BaseSigner {
 	
     		// add space for OCSP response
     		if (ocsp != null) {
-    			estimatedSize += ocsp.length * 2;
+    			estimatedSize += ocsp.length;
     		}
     		
     		if (tsc != null) {
@@ -419,12 +419,15 @@ public class PDFSigner extends BaseSigner {
     		// add estimate for CRL
     		if (crlList != null) {
     			for (CRL crl : crlList) {
-    				X509CRL x509Crl = (X509CRL) crl;
+    				if (crl instanceof X509CRL) {
+    					X509CRL x509Crl = (X509CRL) crl;
     				
-    				try {
-    					estimatedSize += x509Crl.getEncoded().length;
-    				} catch (CRLException e) {
-    				}
+    					try {
+    						estimatedSize += x509Crl.getEncoded().length;
+    					} catch (CRLException e) {
+    						throw new SignServerException("Error estimating signature size contribution for CRL", e);
+    					}
+    				}		
     			}
     			estimatedSize += 100;
     		}

@@ -1136,7 +1136,7 @@ public class PDFSignerUnitTest extends TestCase {
         PDFSigner instance = new PDFSigner();
         
         int estimate = instance.calculateEstimatedSignatureSize(false, null, null, null, null,  // TODO: Parameters should probably be removed
-                                                      certChain, tsc, ocsp); // TODO: Should depend on CRLlist as well!
+                                                      certChain, tsc, ocsp, crlList);
         
         int actual = getActualP7Size(signerPrivKey, largeEnoughSpace, certChain, crlList, ocsp, tsc);
         LOG.debug("estimate: " + estimate + ", actual: " + actual);

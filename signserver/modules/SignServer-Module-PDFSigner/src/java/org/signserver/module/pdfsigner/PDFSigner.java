@@ -434,10 +434,11 @@ public class PDFSigner extends BaseSigner {
     				
     					try {
     						int crlSize = x509Crl.getEncoded().length;
-    						estimatedSize += crlSize;
+    						// the CRL is included twice in the signature...
+    						estimatedSize += crlSize * 2;
     						
     						if (LOG.isDebugEnabled()) {
-    							LOG.debug("Adding " + crlSize + " bytes for CRL");
+    							LOG.debug("Adding " + crlSize * 2 + " bytes for CRL");
     						}
     						
     					} catch (CRLException e) {

@@ -340,6 +340,7 @@ public class PDFSigner extends BaseSigner {
      * 5. How much does the size increase when the size of an CRL increases?
      *    - It appears to be the same increase in size most of the times but in
      *      in one case it got 1 byte larger.
+     *    - It turns out that the CRLs are included twice (!)
      *    
      * 6. How much does the size increase for each new CRL, not including the CRL size?
      *    - 0. No increase for each CRL except the actual CRL size

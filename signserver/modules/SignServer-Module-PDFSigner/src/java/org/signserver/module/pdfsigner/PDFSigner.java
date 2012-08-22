@@ -408,12 +408,22 @@ public class PDFSigner extends BaseSigner {
     		// add space for OCSP response
     		if (ocsp != null) {
     			estimatedSize += ocsp.length;
+    			
+    			if (LOG.isDebugEnabled()) {
+    				LOG.debug("Adding " + ocsp.length + " bytes for OCSP response");
+    			}
     		}
     		
     		if (tsc != null) {
     			// add guess for timestamp response (which we can't really know)
     			// TODO: we might be able to store the size of the last TSA response and re-use next time...
-    			estimatedSize += 4096;
+    			final int tscSize = 4096;
+    			
+    			estimatedSize += tscSize;
+    			
+    			if (LOG.isDebugEnabled()) {
+    				LOG.debug("Adding " + tscSize + " bytes for TSA");
+    			}
     		}
     	
     		// add estimate for CRL
@@ -423,7 +433,13 @@ public class PDFSigner extends BaseSigner {
     					X509CRL x509Crl = (X509CRL) crl;
     				
     					try {
-    						estimatedSize += x509Crl.getEncoded().length;
+    						int crlSize = x509Crl.getEncoded().length;
+    						estimatedSize += crlSize;
+    						
+    						if (LOG.isDebugEnabled()) {
+    							LOG.debug("Adding " + crlSize + " bytes for CRL");
+    						}
+    						
     					} catch (CRLException e) {
     						throw new SignServerException("Error estimating signature size contribution for CRL", e);
     					}

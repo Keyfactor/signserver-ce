@@ -353,23 +353,18 @@ public class PDFSigner extends BaseSigner {
      * 
      * See also PDFSignerUnitTest for tests that the answers to the questions 
      * above still holds.
-     * 
-     * 
-     * 
-     * @param exact Setting this to true to calculate the actual signature size by
-     *              using a fake hash value (might cause an extra signature computation)
-     * @param sgn
-     * @param messageDigest
-     * @param cal
-     * @param params
      * @param certChain
      * @param tsc
      * @param ocsp
+     * @param exact Setting this to true to calculate the actual signature size by
+     *              using a fake hash value (might cause an extra signature computation)
+     * 
+     * 
+     * 
      * @return
      */
-    protected int calculateEstimatedSignatureSize(PdfPKCS7 sgn, MessageDigest messageDigest,
-    		Calendar cal, PDFSignerParameters params,
-    		Certificate[] certChain, TSAClient tsc, byte[] ocsp, CRL[] crlList) throws SignServerException {
+    protected int calculateEstimatedSignatureSize(Certificate[] certChain, TSAClient tsc,
+    		byte[] ocsp, CRL[] crlList) throws SignServerException {
 		int estimatedSize = 0;
 
 		if (LOG.isDebugEnabled()) {
@@ -668,8 +663,7 @@ public class PDFSigner extends BaseSigner {
         // calculate signature size
         if (contentEstimated == 0) {
         	contentEstimated =
-        		calculateEstimatedSignatureSize(sgn, messageDigest, cal, params, certChain, tsc,
-        				ocsp, crlList);
+        		calculateEstimatedSignatureSize(certChain, tsc, ocsp, crlList);
         }
         	
         byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);

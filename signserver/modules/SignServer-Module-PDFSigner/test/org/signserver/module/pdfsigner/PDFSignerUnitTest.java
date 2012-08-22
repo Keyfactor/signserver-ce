@@ -1132,8 +1132,7 @@ public class PDFSignerUnitTest extends TestCase {
         final int largeEnoughSpace = 32000;
         PDFSigner instance = new PDFSigner();
         
-        int estimate = instance.calculateEstimatedSignatureSize(false, null, null, null, null,  // TODO: Parameters should probably be removed
-                                                      certChain, tsc, ocsp, crlList);
+        int estimate = instance.calculateEstimatedSignatureSize(certChain, tsc, ocsp, crlList);
         
         int actual = getActualP7Size(signerPrivKey, largeEnoughSpace, certChain, crlList, ocsp, tsc);
         LOG.debug("estimate: " + estimate + ", actual: " + actual);
@@ -1224,7 +1223,7 @@ public class PDFSignerUnitTest extends TestCase {
         final PDFSignerParameters params = new PDFSignerParameters(1234, config);
         
         try {
-            byte[] signedPdfbytes = instance.addSignatureToPDFDocument(params, pdfbytes, null, false);
+            byte[] signedPdfbytes = instance.addSignatureToPDFDocument(params, pdfbytes, null, 0);
             assertNotNull(signedPdfbytes);
         } catch (SignServerException ex) {
             LOG.debug("failed to sign", ex);
@@ -1255,6 +1254,11 @@ public class PDFSignerUnitTest extends TestCase {
         sap.setCryptoDictionary(dic);
         byte[] encodedSig = instance.calculateSignature(new PdfPKCS7(signerPrivKey, certChain, crlList, "SHA1", null, false), estimate, MessageDigest.getInstance("SHA1"), Calendar.getInstance(), null, certChain, tsc, ocsp, sap);
         
+        File tmpFile = File.createTempFile("asn1dump", "dmp");
+        FileOutputStream fos = new FileOutputStream(tmpFile);
+        
+        fos.write(encodedSig);
+         
         return encodedSig.length;
     }
     

@@ -280,7 +280,7 @@ public class PDFSigner extends BaseSigner {
                 logMap.put(IWorkerLogger.LOG_PDF_PASSWORD_SUPPLIED, Boolean.TRUE.toString());
             }
             
-            byte[] signedbytes = addSignatureToPDFDocument(params, pdfbytes, password, false);
+            byte[] signedbytes = addSignatureToPDFDocument(params, pdfbytes, password, 0);
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         signedbytes, getSigningCertificate(), fp,
@@ -367,92 +367,81 @@ public class PDFSigner extends BaseSigner {
      * @param ocsp
      * @return
      */
-    protected int calculateEstimatedSignatureSize(boolean exact, PdfPKCS7 sgn, MessageDigest messageDigest,
+    protected int calculateEstimatedSignatureSize(PdfPKCS7 sgn, MessageDigest messageDigest,
     		Calendar cal, PDFSignerParameters params,
     		Certificate[] certChain, TSAClient tsc, byte[] ocsp, CRL[] crlList) throws SignServerException {
-    	
-    	if (exact) {
-    		int digestSize = messageDigest.getDigestLength();
-    		// fake a hash
-    		byte[] hash = new byte[digestSize];
-    		byte[] encoded  = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
+		int estimatedSize = 0;
 
-    		return encoded.length;
-    	} else {
-    		int estimatedSize = 0;
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Calculating estimated signature size");
+		}
+		
+		for (Certificate cert : certChain) {
+			try {
+				int certSize = cert.getEncoded().length;
+				estimatedSize += certSize;
+				
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Adding " + certSize + " bytes for certificate");
+				}
+				
+			} catch (CertificateEncodingException e) {
+				throw new SignServerException("Error estimating signature size contribution for certificate", e);
+			}
+		}
+		
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Total size of certificate chain: " + estimatedSize);
+		}
+		
+		// add estimate for PKCS#7 structure + hash
+		estimatedSize += 2000;
 
-    		if (LOG.isDebugEnabled()) {
-    			LOG.debug("Calculating estimated signature size");
-    		}
-    		
-    		for (Certificate cert : certChain) {
-    			try {
-    				int certSize = cert.getEncoded().length;
-    				estimatedSize += certSize;
-    				
-    				if (LOG.isDebugEnabled()) {
-    					LOG.debug("Adding " + certSize + " bytes for certificate");
-    				}
-    				
-    			} catch (CertificateEncodingException e) {
-    				throw new SignServerException("Error estimating signature size contribution for certificate", e);
-    			}
-    		}
-    		
-    		if (LOG.isDebugEnabled()) {
-    			LOG.debug("Total size of certificate chain: " + estimatedSize);
-    		}
-    		
-    		// add estimate for PKCS#7 structure + hash
-    		estimatedSize += 2000;
+		// add space for OCSP response
+		if (ocsp != null) {
+			estimatedSize += ocsp.length;
+			
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Adding " + ocsp.length + " bytes for OCSP response");
+			}
+		}
+		
+		if (tsc != null) {
+			// add guess for timestamp response (which we can't really know)
+			// TODO: we might be able to store the size of the last TSA response and re-use next time...
+			final int tscSize = 4096;
+			
+			estimatedSize += tscSize;
+			
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Adding " + tscSize + " bytes for TSA");
+			}
+		}
 	
-    		// add space for OCSP response
-    		if (ocsp != null) {
-    			estimatedSize += ocsp.length;
-    			
-    			if (LOG.isDebugEnabled()) {
-    				LOG.debug("Adding " + ocsp.length + " bytes for OCSP response");
-    			}
-    		}
-    		
-    		if (tsc != null) {
-    			// add guess for timestamp response (which we can't really know)
-    			// TODO: we might be able to store the size of the last TSA response and re-use next time...
-    			final int tscSize = 4096;
-    			
-    			estimatedSize += tscSize;
-    			
-    			if (LOG.isDebugEnabled()) {
-    				LOG.debug("Adding " + tscSize + " bytes for TSA");
-    			}
-    		}
-    	
-    		// add estimate for CRL
-    		if (crlList != null) {
-    			for (CRL crl : crlList) {
-    				if (crl instanceof X509CRL) {
-    					X509CRL x509Crl = (X509CRL) crl;
-    				
-    					try {
-    						int crlSize = x509Crl.getEncoded().length;
-    						// the CRL is included twice in the signature...
-    						estimatedSize += crlSize * 2;
-    						
-    						if (LOG.isDebugEnabled()) {
-    							LOG.debug("Adding " + crlSize * 2 + " bytes for CRL");
-    						}
-    						
-    					} catch (CRLException e) {
-    						throw new SignServerException("Error estimating signature size contribution for CRL", e);
-    					}
-    				}		
-    			}
-    			estimatedSize += 100;
-    		}
-    		
-    		
-    		return estimatedSize;
-    	}
+		// add estimate for CRL
+		if (crlList != null) {
+			for (CRL crl : crlList) {
+				if (crl instanceof X509CRL) {
+					X509CRL x509Crl = (X509CRL) crl;
+				
+					try {
+						int crlSize = x509Crl.getEncoded().length;
+						// the CRL is included twice in the signature...
+						estimatedSize += crlSize * 2;
+						
+						if (LOG.isDebugEnabled()) {
+							LOG.debug("Adding " + crlSize * 2 + " bytes for CRL");
+						}
+						
+					} catch (CRLException e) {
+						throw new SignServerException("Error estimating signature size contribution for CRL", e);
+					}
+				}		
+			}
+			estimatedSize += 100;
+		}
+
+		return estimatedSize;
     }
     
     
@@ -488,9 +477,11 @@ public class PDFSigner extends BaseSigner {
     }
     
     protected byte[] addSignatureToPDFDocument(PDFSignerParameters params,
-            byte[] pdfbytes, byte[] password, boolean secondTry) throws IOException, DocumentException,
+            byte[] pdfbytes, byte[] password, int contentEstimated) throws IOException, DocumentException,
             CryptoTokenOfflineException, SignServerException, IllegalRequestException {
-
+    	// when given a content length (i.e. non-zero), it means we are running a second try
+    	boolean secondTry = contentEstimated != 0;
+    	
         // get signing cert certificate chain and private key
         Collection<Certificate> certs = this.getSigningCertificateChain();
         if (certs == null) {
@@ -675,10 +666,12 @@ public class PDFSigner extends BaseSigner {
         Calendar cal = Calendar.getInstance();
         
         // calculate signature size
-        int contentEstimated =
-        		calculateEstimatedSignatureSize(secondTry, sgn, messageDigest, cal, params, certChain, tsc,
+        if (contentEstimated == 0) {
+        	contentEstimated =
+        		calculateEstimatedSignatureSize(sgn, messageDigest, cal, params, certChain, tsc,
         				ocsp, crlList);
-
+        }
+        	
         byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
 
         if (LOG.isDebugEnabled()) {
@@ -688,13 +681,12 @@ public class PDFSigner extends BaseSigner {
 
         if (contentEstimated + 2 < encodedSig.length) {
         	if (!secondTry) {
+        		int contentExact = encodedSig.length;
         		LOG.warn("Estimated signature size too small, usinging accurate calculation (resulting in an extra signature computation).");
 
         		// try signing again
-        		byte[] endodedSig = addSignatureToPDFDocument(params, pdfbytes, password, true);
-        		
-        		int contentExact = endodedSig.length;
-        		
+        		encodedSig = addSignatureToPDFDocument(params, pdfbytes, password, contentExact);
+
         		if (LOG.isDebugEnabled()) {
         			LOG.debug("Estimated size: " + contentEstimated + ", actual size: " + contentExact);
         		}

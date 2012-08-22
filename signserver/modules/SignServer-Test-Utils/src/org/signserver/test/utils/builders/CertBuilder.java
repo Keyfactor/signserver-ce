@@ -182,6 +182,7 @@ public class CertBuilder implements Cloneable {
                 builder.setNotBefore(getNotBefore());
                 builder.setSubjectDN(getSubject());
                 builder.setPublicKey(getSubjectPublicKey());
+                builder.setSignatureAlgorithm(getSignatureAlgorithm());
                 
                 for (CertExt ext : extensions) {
                     builder.addExtension(ext.getOid(), ext.isIsCritical(), ext.getValue());
@@ -193,7 +194,7 @@ public class CertBuilder implements Cloneable {
                     builder.setSubjectUniqueID(getSubjectUniqueId());
                 }
                 
-                return builder.generate(getIssuerPrivateKey(), getSignatureAlgorithm());
+                return builder.generate(getIssuerPrivateKey(), "BC");
             } else {
                 X509V1CertificateGenerator builder = new X509V1CertificateGenerator();
                 builder.setIssuerDN(getIssuer());

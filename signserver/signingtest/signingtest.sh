@@ -25,7 +25,7 @@ echo "Testing XML signer done"
 
 # test ODF signer
 echo "Testing ODF signer..."
-$SIGNCLIENT signdocument -workername TestODFSigner -infile $SCRIPTDIR/input/test.odf -outfile $SCRIPTDIR/output/test-out.odf
+$SIGNCLIENT signdocument -workername TestODFSigner -infile $SCRIPTDIR/input/test.odt -outfile $SCRIPTDIR/output/test-out.odt
 echo "Testing ODF signer done"
 
 # test OOXML signer

@@ -1256,12 +1256,7 @@ public class PDFSignerUnitTest extends TestCase {
         dic.setDate(new PdfDate(Calendar.getInstance()));
         sap.setCryptoDictionary(dic);
         byte[] encodedSig = instance.calculateSignature(new PdfPKCS7(signerPrivKey, certChain, crlList, "SHA1", null, false), estimate, MessageDigest.getInstance("SHA1"), Calendar.getInstance(), null, certChain, tsc, ocsp, sap);
-        
-        File tmpFile = File.createTempFile("asn1dump", "dmp");
-        FileOutputStream fos = new FileOutputStream(tmpFile);
-        
-        fos.write(encodedSig);
-         
+
         return encodedSig.length;
     }
     

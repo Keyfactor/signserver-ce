@@ -33,7 +33,7 @@ public class MockedTSAClient implements TSAClient {
 
     private int fixedActualSize;
     
-    private int tokenSizeEstimate = 4096; // Same value as used by default in TSAClientBouncyCastle
+    private int tokenSizeEstimate = 7168; // Same value as used by default in TSAClientBouncyCastle
     
     private boolean called;
 

@@ -28,7 +28,7 @@ public class ArchiveData extends UpgradeableDataHashMap {
 
     private static final long serialVersionUID = 1L;
 
-    private static final float LATEST_VERSION = 1;
+    private static final float LATEST_VERSION = 2;
     private static final String ARCHIVEDATA = "ARCHIVEDATA";
 
     /**

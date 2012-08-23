@@ -149,5 +149,12 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
 //        
 //        LOG.debug("<test50archiversBase64");
 //    }
-    
+ 
+    /**
+     * Remove the workers created etc.
+     * @throws Exception in case of error
+     */
+    public void test99TearDownDatabase() throws Exception {
+        removeWorker(getSignerIdDummy1());
+    }
 }

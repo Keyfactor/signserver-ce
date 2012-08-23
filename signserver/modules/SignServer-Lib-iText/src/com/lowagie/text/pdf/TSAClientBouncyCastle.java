@@ -83,7 +83,7 @@ public class TSAClientBouncyCastle implements TSAClient {
      * @param url String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
      */
     public TSAClientBouncyCastle(String url) {
-        this(url, null, null, 4096);
+        this(url, null, null, 7168);
     }
     
     /**
@@ -93,7 +93,7 @@ public class TSAClientBouncyCastle implements TSAClient {
      * @param password String - password
      */
     public TSAClientBouncyCastle(String url, String username, String password) {
-        this(url, username, password, 4096);
+        this(url, username, password, 7168);
     }
     
     /**

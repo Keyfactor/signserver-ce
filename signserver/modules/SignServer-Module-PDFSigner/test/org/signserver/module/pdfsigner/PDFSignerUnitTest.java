@@ -1008,13 +1008,13 @@ public class PDFSignerUnitTest extends TestCase {
      * Second thing is to not make a too large estimate. What quality of the 
      * estimate we require is defined by the maxDiff constant. We can't calculate 
      * the size of the TS response (as it is performed after we construct the 
-     * signature structure) so in this test only values under 4096 (the 
+     * signature structure) so in this test only values under 7168 (the 
      * default estimate) are considered.
      * 
      */
     public void test14calculateEstimatedSignatureSize() throws Exception {
        
-        final int estimatedIntialTSResponseSize = 4096; // The value we assume for the TS response siz
+        final int estimatedIntialTSResponseSize = 7168; // The value we assume for the TS response siz
         final int maxDiff = estimatedIntialTSResponseSize + 10000; // How far from the actual value we allow the algorithm to be
         
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
@@ -1171,11 +1171,11 @@ public class PDFSignerUnitTest extends TestCase {
         assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 3070);
         
         // the initial value just by the TSA client
-        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 4096);
-        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 4096 + 32);
+        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 7168);
+        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 7168 + 32);
         
         // slightly larger
-        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 4096 + 32 + 1);
+        assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 7168 + 32 + 1);
         
         // a larger value
         assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 10123);

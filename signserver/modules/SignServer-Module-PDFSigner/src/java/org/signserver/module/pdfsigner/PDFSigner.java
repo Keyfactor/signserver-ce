@@ -346,9 +346,12 @@ public class PDFSigner extends BaseSigner {
      *    - 0. No increase for each CRL except the actual CRL size
      *
      * 7. What is a typical size of an timestamp response?
-     *    - TODO
+     *    - That depends mostly on the included certificate chain
+     *
      * 8. What value should we use in the initial estimate for the timestamp?
-     *    - TODO: Currently 4096 is used
+     *    - Currently 4096 is used but with a chain of 4 "normal" certificates
+     *      that is a little bit too little.
+     *    - Lets use 7168 and there are room for about 6 "normal" certificates
      * 
      * 
      * See also PDFSignerUnitTest for tests that the answers to the questions 

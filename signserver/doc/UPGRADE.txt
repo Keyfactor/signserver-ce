@@ -1,0 +1,25 @@
+$Id$
+
+UPGRADE
+=======
+
+This document describes procedures needed to upgrade from one version of 
+SignServer to a new version.
+Upgrades within a major version, from 3.2.1 to 3.2.2 for example, are usually 
+plug-in upgrades and can be made simply by deploying the new software. See 
+RELEASE_NOTES.txt for more information about such upgrades.
+
+1. Unpack the new sources
+2. Make sure to copy over the configuration from the old installation or 
+   use the provided signserver_build.properties.sample. Take special care 
+   in reading the "notice" section of the RELEASE_NOTES.txt to see if any 
+   configuration properties changed.
+3. Copy over the p12 folder with keystores (if used).
+4. Build and deploy as described in the installation guide.
+
+
+From SignServer 3.2.x to SignServer 3.3.x
+-----------------------------------------
+Instructions will be added here when SignServer 3.3.0 has been released if 
+upgrading to it would require database changes or other manual steps.
+<ADD INSTRUCTIONS HERE>

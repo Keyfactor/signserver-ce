@@ -90,22 +90,22 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
      * Tests that archiving when specifying format BASE64 works.
      * @throws Exception In case of error.
      */
-//    public void test30archiveTrueBase64() throws Exception {
-//        LOG.debug(">test30archiveTrueBase64");
-//        
-//        getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "ARCHIVERS");
-//        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
-//                "ARCHIVE", "true");
-//        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
-//                "ARCHIVER0.RESPONSEFORMAT", "BASE64");
-//        getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-//        
-//        
-//        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>");
-//        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, archiveData.getType());
-//        
-//        LOG.debug("<test30archiveTrueBase64");
-//    }
+    public void test30archiveTrueBase64() throws Exception {
+        LOG.debug(">test30archiveTrueBase64");
+        
+        getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "ARCHIVERS");
+        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
+                "ARCHIVE", "true");
+        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
+                "ARCHIVER0.RESPONSEFORMAT", "BASE64");
+        getWorkerSession().reloadConfiguration(getSignerIdDummy1());
+        
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>");
+        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, archiveData.getType());
+        
+        LOG.debug("<test30archiveTrueBase64");
+    }
     
     /**
      * Tests that archiving with the default format (XML) works also when 
@@ -133,22 +133,22 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
      * archiver is specifying in ARCHIVERS property.
      * @throws Exception In case of error.
      */
-//    public void test50archiversBase64() throws Exception {
-//        LOG.debug(">test50archiversBase64");
-//        
-//        getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "ARCHIVE");
-//        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
-//                "ARCHIVERS", "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
-//        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
-//                "ARCHIVER0.RESPONSEFORMAT", "BASE64");
-//        getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-//        
-//        
-//        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>");
-//        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, archiveData.getType());
-//        
-//        LOG.debug("<test50archiversBase64");
-//    }
+    public void test50archiversBase64() throws Exception {
+        LOG.debug(">test50archiversBase64");
+        
+        getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "ARCHIVE");
+        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
+                "ARCHIVERS", "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
+                "ARCHIVER0.RESPONSEFORMAT", "BASE64");
+        getWorkerSession().reloadConfiguration(getSignerIdDummy1());
+        
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>");
+        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, archiveData.getType());
+        
+        LOG.debug("<test50archiversBase64");
+    }
  
     /**
      * Remove the workers created etc.

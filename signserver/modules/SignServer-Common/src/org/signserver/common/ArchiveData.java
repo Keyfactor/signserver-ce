@@ -12,12 +12,13 @@
  *************************************************************************/
 package org.signserver.common;
 
+import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.core.model.UpgradeableDataHashMap;
 
 /**
  * Class containing the actual archive data.
  * Is responsible for containing the archive data as
- * byre array.
+ * an byte array or base64 encoded as a String.
  * 
  * 
  * @author Philip Vendil
@@ -41,13 +42,22 @@ public class ArchiveData extends UpgradeableDataHashMap {
      * Constructor that should be used to create an archive data.
      * @param archiveData
      */
-    @SuppressWarnings("unchecked")
     public ArchiveData(byte[] archiveData) {
-        data.put(ARCHIVEDATA, archiveData);
+        final String b64 = new String(Base64.encode(archiveData));
+        data.put(ARCHIVEDATA, b64);
     }
-
+    
     public byte[] getData() {
-        return (byte[]) data.get(ARCHIVEDATA);
+        final byte[] result;
+        final Object object = data.get(ARCHIVEDATA);
+        if (object instanceof String) {
+            // The new way: Data is base64 encoded
+            result = Base64.decode((String) object);
+        } else {
+            // The old way: Data is an byte array
+            result = (byte[]) data.get(ARCHIVEDATA);    
+        }
+        return result;
     }
 
     public float getLatestVersion() {

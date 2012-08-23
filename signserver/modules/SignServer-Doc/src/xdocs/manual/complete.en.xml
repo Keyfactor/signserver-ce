@@ -899,6 +899,12 @@ ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /opt/ETcpsdk/lib/linux-x86_64/li
             </subsection>
 
             </section>
+              
+            <section name="Upgrade">
+                <p>
+See SIGNSERVER_HOME/doc/RELEASE_NOTES.txt and UPGRADE.txt for information about upgrading from an earlier version of SignServer. 
+                </p>
+            </section>
 
             <section name="Historic Installation Guides">
                 <subsection name="Clustered SignServer 3.0 CentOS 4.4 Installation Guide">

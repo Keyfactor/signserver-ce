@@ -13,6 +13,7 @@ Notice:
    for how to add custom Admin or Client CLI commands.
  - The Admin CLI now ignores the "-host" argument if present.
 
+
 SignServer 3.2.2
 ----------------
 
@@ -115,7 +116,7 @@ Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=
 
 SignServer 3.1.5
 ----------------
-This is just a minor maintenance release preparing for the upcoming 3.2 – in total 7 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
+This is just a minor maintenance release preparing for the upcoming 3.2 release - in total 7 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
 
 New features and improvements:
  - Support for HTTPS in the SigningAndValidation API

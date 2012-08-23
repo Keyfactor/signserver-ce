@@ -32,6 +32,12 @@ ANT-scripts for building and includes the sources from most modules. In addition
 each module has its own project under the folder modules/ that can be opened 
 with NetBeans IDE.
 
+The SignServer AdminGUI uses the Swing Application Framework and requires 
+NetBeans IDE =7.0 for changing those parts.
+
+For the 3.2 branch don't let a newer version than 7.0.x update the build scripts
+as we only require Ant 1.7.1.
+
 
 Writing Documentation
 ---------------------

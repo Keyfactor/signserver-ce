@@ -356,15 +356,12 @@ public class PDFSigner extends BaseSigner {
      * 
      * See also PDFSignerUnitTest for tests that the answers to the questions 
      * above still holds.
-     * @param certChain
-     * @param tsc
-     * @param ocsp
-     * @param exact Setting this to true to calculate the actual signature size by
-     *              using a fake hash value (might cause an extra signature computation)
+     * @param certChain The signing certificate chain
+     * @param tsc Timestamp client, this can be null if no timestamp response is used. The contribution is estimated by using a fixed value
+     * @param ocsp The OCSP response, can be null
+     * @param crlList The list of CRLs included in the signature, this can be null
      * 
-     * 
-     * 
-     * @return
+     * @return Returns the estimated signature size in bytes
      */
     protected int calculateEstimatedSignatureSize(Certificate[] certChain, TSAClient tsc,
     		byte[] ocsp, CRL[] crlList) throws SignServerException {

@@ -2435,7 +2435,7 @@ When a request has been process each Archiver is called one at the time to archi
 any results.
                 </p>
                 <p>
-<b>ARCHIVERS</b>: Used instead of the old ARCHIVE property to enable archinving 
+<b>ARCHIVERS</b>: Used instead of the old ARCHIVE property to enable archiving 
 by listing the class names of all the Archivers that should be used. Multiple 
 Archivers can be specified separated by a "," (comma character). Exempel: 
                 </p>
@@ -2451,6 +2451,9 @@ ARCHIVERS=org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver
 </source>
                 <p>
 Default: FALSE.
+                </p>
+                <p>
+See also the section about all <a href="complete.en.html#Archivers">available Archivers</a>.
                 </p>
             </section>
 
@@ -4050,11 +4053,18 @@ After the certificate chain has been uploaded to the server, the configuration m
             <section name="Archivers">
                 <subsection name="OldDatabaseArchiver">
                     <p>
-The default archiver used if the the property ARCHIVE=true is set. Or if the ARCHIVERS property contains its class name. This archiver has no additional properties.
+The default archiver used if the the property ARCHIVE=true is set. Or if the ARCHIVERS property contains its class name. This Archiver archives to the database table "ArchiveData" using the same datasource as SignServer uses for accessing the database for its configuration etc.
                     </p>
                     <p>
 The fully qualified class name is: <b>org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver</b>
                     </p>
+                    <subsubsection name="Available Properties">
+                        <p>
+<b>ARCHIVERx.RESPONSEFORMAT</b> - Format for storing the response in the archiveData table column.<br/>
+Can be "XML" for storage in an upgradeble XML encoded Base64PutHashMap (default) or "BASE64" for only storing the request data bytes in base64 encoding.<br/>
+Replace x in the property name with the (zero-based) index in the ARCHIVERS property list. This allows multiple archivers to be configured differently for the same worker.
+                        </p>
+                    </subsubsection>
                 </subsection>
                 
             </section>

@@ -87,6 +87,8 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
     }
     
     /**
+     * TODO: CHeck that this test really checks anything since the last refactoring!
+     * 
      * Tests that archiving when specifying format BASE64 works.
      * @throws Exception In case of error.
      */
@@ -102,7 +104,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>");
-        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, archiveData.getType());
+        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE, archiveData.getType());
         
         LOG.debug("<test30archiveTrueBase64");
     }
@@ -145,7 +147,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>");
-        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, archiveData.getType());
+        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE, archiveData.getType());
         
         LOG.debug("<test50archiversBase64");
     }

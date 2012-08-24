@@ -31,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
+import org.bouncycastle.cert.AttributeCertificateHolder;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.Selector;
@@ -384,92 +386,60 @@ public class TimeStampCommand extends AbstractCommand {
                 out.print("      SignerId: ");
                 out.println(token.getSID());
                 
-                out.println("      Signer certificates: ");
+                out.println("      Signer certificate: ");
                 
                 Store  certs = token.getCertificates();             
+                Selector signerSelector = new AttributeCertificateHolder(token.getSID().getIssuer(), token.getSID().getSerialNumber());
                 
-                Collection certCollection = certs.getMatches(new AnyCertSelector());
+                Collection certCollection = certs.getMatches(signerSelector);
                 for (Object o : certCollection) {
-                    if (o instanceof X509Certificate) {
-                        X509Certificate cert = (X509Certificate) o;
+                    if (o instanceof X509CertificateHolder) {
+                        X509CertificateHolder cert = (X509CertificateHolder) o;
                         out.println("         Certificate: ");
                         out.println("            Serial Number: " + cert.getSerialNumber().toString(16));
-                        out.println("            Subject:       " + cert.getSubjectX500Principal());
-                        out.println("            Issuer:        " + cert.getIssuerX500Principal());
+                        out.println("            Subject:       " + cert.getSubject());
+                        out.println("            Issuer:        " + cert.getIssuer());
                     } else {
                         out.println("Not an X.509 certificate: " + o);
                     }
                 }
                 
                 out.println("      Other certificates: ");
-                certs = token.getCRLs();
-                certCollection = certs.getMatches(new AnyCertSelector());
+                certCollection = certs.getMatches(new InvertedSelector(signerSelector));
                 for (Object o : certCollection) {
-                    if (o instanceof X509Certificate) {
-                        X509Certificate cert = (X509Certificate) o;
+                    if (o instanceof X509CertificateHolder) {
+                        X509CertificateHolder cert = (X509CertificateHolder) o;
                         out.println("         Certificate: ");
                         out.println("            Serial Number: " + cert.getSerialNumber().toString(16));
-                        out.println("            Subject:       " + cert.getSubjectX500Principal());
-                        out.println("            Issuer:        " + cert.getIssuerX500Principal());
+                        out.println("            Subject:       " + cert.getSubject());
+                        out.println("            Issuer:        " + cert.getIssuer());
                     } else {
                         out.println("Not an X.509 certificate: " + o);
                     }
                 }
-                
-                /*
-                out.println("      Other certificates: ");
-                certCollection = certs.getCertificates(new InvertedCertSelector(token.getSID()));
-                for (Object o : certCollection) {
-                    if (o instanceof X509Certificate) {
-                        X509Certificate cert = (X509Certificate) o;
-                        out.println("         Certificate: ");
-                        out.println("            Serial Number: " + cert.getSerialNumber().toString(16));
-                        out.println("            Subject:       " + cert.getSubjectX500Principal());
-                        out.println("            Issuer:        " + cert.getIssuerX500Principal());
-                    } else {
-                        out.println("Not an X.509 certificate: " + o);
-                    }
-                }
-                */
             }
             out.println("}");
         
     }
     
-    private static class AnyCertSelector implements Selector {
-    	public boolean match(Object object) {
-    		if (object instanceof X509Certificate) {
-    			return true;
-    		}
-    		return false;
-    	}
-    	
-    	@Override
-    	public Object clone() {
-    		return new AnyCertSelector();
-    	}
-    }
-    
-    /*
-    private static class InvertedCertSelector implements Selector {
+    private static class InvertedSelector implements Selector {
 
-        private CertSelector delegate;
+        private Selector delegate;
         
-        public InvertedCertSelector(CertSelector delegate) {
+        public InvertedSelector(Selector delegate) {
             this.delegate = delegate;
         }
         
-        public boolean match(Certificate cert) {
+        public boolean match(Object cert) {
             return !delegate.match(cert);
         }
 
         @Override
         public Object clone() {
-            return new InvertedCertSelector((CertSelector) delegate.clone());
+            return new InvertedSelector((Selector) delegate.clone());
         }
-        
+
     }
-    */
 
     private void tsaVerify() throws Exception {
         if (inrepstring == null) {

@@ -263,6 +263,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
         	timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
         	timeStampResponse.validate(timeStampRequest);
         	LOG.info("Response: " + timeStampResponse.getStatusString());
+
+        	// check the hash value from the response
+        	String algo = timeStampResponse.getTimeStampToken().getTimeStampInfo().getMessageImprintAlgOID();
+        	assertTrue("Timestamp response is using incorrect hash algorithm", hashAlgo.equals(algo));
         } catch (TSPException e) {
         	fail("Failed to verify response");
         } catch (IOException e) {

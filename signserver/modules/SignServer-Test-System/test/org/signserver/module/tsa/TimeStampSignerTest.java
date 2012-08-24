@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -271,6 +272,11 @@ public class TimeStampSignerTest extends ModulesTestCase {
         		// return early and don't attempt to get a token
         		return timeStampResponse.getStatus();
         	}
+        	
+        	// check the hash value from the response
+        	AlgorithmIdentifier algo = timeStampResponse.getTimeStampToken().getTimeStampInfo().getHashAlgorithm();
+        	assertTrue("Timestamp response is using incorrect hash algorithm", hashAlgo.equals(algo.getAlgorithm()));
+        	
         	
         } catch (TSPException e) {
         	fail("Failed to verify response");

@@ -11,7 +11,7 @@ if [ ! -n "${SIGNSERVER_HOME}" ]; then
 fi
 
 SIGNCLIENT=$SIGNSERVER_HOME/bin/client.sh
-SCRIPTDIR=$SIGNSERVER_HOME/signingtest
+SCRIPTDIR=$SIGNSERVER_HOME/src/signingtest
 
 # test PDF signer
 echo "Testing PDF signer..."

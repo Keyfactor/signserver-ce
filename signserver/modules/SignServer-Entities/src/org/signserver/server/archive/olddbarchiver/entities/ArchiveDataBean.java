@@ -40,6 +40,7 @@ import org.signserver.common.ArchiveDataVO;
  * requestCertSerialnumber  : String (Null)
  * requestIP                : String (Null)
  * archiveData              : String
+ * dataEncoding             : int
  * </pre>
  *
  * @version $Id$
@@ -59,6 +60,9 @@ public class ArchiveDataBean implements Serializable {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ArchiveData.class);
+    
+    public static final int DATA_ENCODING_XML = 0;
+    public static final int DATA_ENCODING_BASE64 = 1;
 
     @Id
     private String uniqueId;
@@ -76,6 +80,8 @@ public class ArchiveDataBean implements Serializable {
     private String requestCertSerialnumber;
     
     private String requestIP;
+    
+    private Integer dataEncoding;
     
     @Lob
     @Column(length = 10485760)
@@ -151,6 +157,14 @@ public class ArchiveDataBean implements Serializable {
         return archiveid;
     }
 
+    public Integer getDataEncoding() {
+        return dataEncoding;
+    }
+
+    public void setDataEncoding(int dataEncoding) {
+        this.dataEncoding = dataEncoding;
+    }
+
     /**
      * The unique ID of the archive, could be the response serial number.
      */
@@ -210,24 +224,30 @@ public class ArchiveDataBean implements Serializable {
      * @return certificate request history object
      */
     public ArchiveData getArchiveDataObject() {
-
-        java.beans.XMLDecoder decoder;
+        final ArchiveData result;
+        
         try {
-            decoder =
-                    new java.beans.XMLDecoder(
-                    new java.io.ByteArrayInputStream(getArchiveData().getBytes("UTF8")));
+            if (dataEncoding != null && dataEncoding == DATA_ENCODING_BASE64) {
+                result = new ArchiveData(Base64.decode(getArchiveData().getBytes("UTF8")));
+            } else {
+                java.beans.XMLDecoder decoder;
+
+                    decoder =
+                            new java.beans.XMLDecoder(
+                            new java.io.ByteArrayInputStream(getArchiveData().getBytes("UTF8")));
+                HashMap<?, ?> h = (HashMap<?, ?>) decoder.readObject();
+                decoder.close();
+
+                HashMap<?, ?> data = new Base64GetHashMap(h);
+
+                result = new ArchiveData();
+                result.loadData(data);
+            }
         } catch (UnsupportedEncodingException e) {
             throw new EJBException(e);
         }
-        HashMap<?, ?> h = (HashMap<?, ?>) decoder.readObject();
-        decoder.close();
 
-        HashMap<?, ?> data = new Base64GetHashMap(h);
-
-        ArchiveData archiveData = new ArchiveData();
-        archiveData.loadData(data);
-
-        return archiveData;
+        return result;
     }
 
     /**
@@ -256,7 +276,10 @@ public class ArchiveDataBean implements Serializable {
      * Method used to get the ArchiveDataVO representation of the data row.
      */
     public ArchiveDataVO getArchiveDataVO() {
-        if (getType() == ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getArchiveDataVO: dataEncoding: " + getDataEncoding());
+        }
+        if (getDataEncoding() != null && getDataEncoding() == DATA_ENCODING_BASE64) {
             try {
                 return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
                     getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP(),

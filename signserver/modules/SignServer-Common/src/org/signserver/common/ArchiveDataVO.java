@@ -27,14 +27,10 @@ public class ArchiveDataVO implements Serializable {
     private static final long serialVersionUID = 1L;
     
     /**
-     * Response in XML (UpgradeableHashMap) encoding.
+     * Archive type is response.
      */
-    public static final int TYPE_RESPONSE_XMLENCODED = 0;
+    public static final int TYPE_RESPONSE = 0;
     
-    /**
-     * Response with the response data base64 encoded.
-     */
-    public static final int TYPE_RESPONSE_BASE64ENCODED = 1;
     private ArchiveData archiveData = null;
     private byte[] archivedBytes;
     private int type = 0;

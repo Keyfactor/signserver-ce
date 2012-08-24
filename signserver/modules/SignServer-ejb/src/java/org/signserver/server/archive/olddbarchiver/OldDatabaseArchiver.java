@@ -13,6 +13,7 @@
 package org.signserver.server.archive.olddbarchiver;
 
 import java.security.cert.X509Certificate;
+import java.util.Map;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.ArchiveDataVO;
@@ -24,6 +25,7 @@ import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
+import org.signserver.server.log.IWorkerLogger;
 
 /**
  * Archiver only accepting responses and currently only supports Archivables of
@@ -91,21 +93,32 @@ public class OldDatabaseArchiver implements Archiver {
 
             final String uniqueId;
             if (base64Encoding) {
-                uniqueId = dataService.create(ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED,
+                uniqueId = dataService.create(ArchiveDataVO.TYPE_RESPONSE,
                              workerId,
                              ada.getArchiveId(),
                              certificate,
                              remoteIp,
                             new String(Base64.encode(ada.getContentEncoded())));
             } else {
-                uniqueId = dataService.create(ArchiveDataVO.TYPE_RESPONSE_XMLENCODED,
+                uniqueId = dataService.create(ArchiveDataVO.TYPE_RESPONSE,
                             workerId,
                             ada.getArchiveId(),
                             certificate,
                             remoteIp,
                              ada.getArchiveData());
             }
-            // TODO: Log uniqueId
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Archived with uniqueId: " + uniqueId);
+            }
+            Map<String, String> logMap = (Map<String, String>) requestContext.get(RequestContext.LOGMAP);
+            String ids = logMap.get(IWorkerLogger.LOG_ARCHIVE_IDS);
+            if (ids == null) {
+                ids = uniqueId;
+            } else {
+                ids = ids + ", " + uniqueId;
+            }
+            logMap.put(IWorkerLogger.LOG_ARCHIVE_IDS, ids);
+            
             archived = true;
         } else {
             archived = false;

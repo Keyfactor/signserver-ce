@@ -60,7 +60,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>");
-        assertEquals("default type of archive", ArchiveDataVO.TYPE_RESPONSE_XMLENCODED, archiveData.getType());
+        assertEquals("default type of archive", ArchiveDataVO.TYPE_RESPONSE, archiveData.getType());
         
         LOG.debug("<test10archiveTrueDefault");
     }
@@ -81,7 +81,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>");
-        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE_XMLENCODED, archiveData.getType());
+        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE, archiveData.getType());
         
         LOG.debug("<test20archiveTrueXML");
     }
@@ -123,7 +123,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>");
-        assertEquals("default type of archive", ArchiveDataVO.TYPE_RESPONSE_XMLENCODED, archiveData.getType());
+        assertEquals("default type of archive", ArchiveDataVO.TYPE_RESPONSE, archiveData.getType());
         
         LOG.debug("<test40archiversDefault");
     }

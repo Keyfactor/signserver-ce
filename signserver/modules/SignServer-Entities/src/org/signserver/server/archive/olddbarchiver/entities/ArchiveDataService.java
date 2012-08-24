@@ -62,6 +62,7 @@ public class ArchiveDataService {
         }
         adb.setRequestIP(requestIP);
         adb.setArchiveDataObject(archiveData);
+        adb.setDataEncoding(ArchiveDataBean.DATA_ENCODING_XML);
 
         em.persist(adb);
         return uniqueId;
@@ -85,6 +86,7 @@ public class ArchiveDataService {
         }
         adb.setRequestIP(requestIP);
         adb.setArchiveData(archiveData);
+        adb.setDataEncoding(ArchiveDataBean.DATA_ENCODING_BASE64);
  
         em.persist(adb);
         return uniqueId;

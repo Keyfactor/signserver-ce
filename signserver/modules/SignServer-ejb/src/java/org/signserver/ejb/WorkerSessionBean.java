@@ -1260,11 +1260,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         ArchiveDataVO retval = null;
 
         ArchiveDataBean adb = archiveDataService.findByArchiveId(
-                ArchiveDataVO.TYPE_RESPONSE_XMLENCODED, signerId, archiveId);
-        if (adb == null) {
-            adb = archiveDataService.findByArchiveId(
-                ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, signerId, archiveId);
-        }
+                ArchiveDataVO.TYPE_RESPONSE, signerId, archiveId);
         
         if (adb != null) {
             retval = adb.getArchiveDataVO();
@@ -1282,12 +1278,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         List<ArchiveDataVO> retval = new LinkedList<ArchiveDataVO>();
 
         Collection<ArchiveDataBean> archives = archiveDataService.findByRequestIP(
-                ArchiveDataVO.TYPE_RESPONSE_XMLENCODED, signerId, requestIP);
-        for (ArchiveDataBean archive : archives) {
-            retval.add(archive.getArchiveDataVO());
-        }
-        archives = archiveDataService.findByRequestIP(
-                ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, signerId, requestIP);
+                ArchiveDataVO.TYPE_RESPONSE, signerId, requestIP);
         for (ArchiveDataBean archive : archives) {
             retval.add(archive.getArchiveDataVO());
         }
@@ -1308,12 +1299,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         String serialNumber = requestCertSerialnumber.toString(16);
         
         Collection<ArchiveDataBean> archives = archiveDataService.
-                findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE_XMLENCODED, signerId, issuerDN, serialNumber);
-        for (ArchiveDataBean archive : archives) {
-            retval.add(archive.getArchiveDataVO());
-        }
-        archives = archiveDataService.
-                findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE_BASE64ENCODED, signerId, issuerDN, serialNumber);
+                findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE, signerId, issuerDN, serialNumber);
         for (ArchiveDataBean archive : archives) {
             retval.add(archive.getArchiveDataVO());
         }

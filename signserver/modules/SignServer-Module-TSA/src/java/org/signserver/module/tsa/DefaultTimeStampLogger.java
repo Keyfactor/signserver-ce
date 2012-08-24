@@ -55,6 +55,7 @@ public class DefaultTimeStampLogger implements IWorkerLogger {
                 + "SIGNER_CERT_ISSUERDN: ${SIGNER_CERT_ISSUERDN}; "
                 + "TIMESTAMPREQUEST_ENCODED: ${TSA_TIMESTAMPREQUEST_ENCODED}; "
                 + "TSA_TIMESTAMPRESPONSE_ENCODED: ${TSA_TIMESTAMPRESPONSE_ENCODED}; "
+                + "ARCHIVE_IDS: ${ARCHIVE_IDS}; "
                 + "PURCHASED: ${PURCHASED}; "
                 + "TSA_EXCEPTION: ${TSA_EXCEPTION}; "
                 + "EXCEPTION: ${EXCEPTION}";

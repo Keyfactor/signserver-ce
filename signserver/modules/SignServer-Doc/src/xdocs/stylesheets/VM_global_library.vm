@@ -215,7 +215,7 @@
       <div class="logobar">
           <table width="100%">
             <tr>
-                <td><a href="http://www.signserver.org/"><img src="$relativePath/images/SignServer_pki_by_primekey.png" alt="SignServer" width="212" height="71" style="border:none"/></a></td>
+                <td width="15%"><a href="http://www.signserver.org/"><img src="$relativePath/images/SignServer_pki_by_primekey.png" alt="SignServer" width="212" height="71" style="border:none"/></a></td>
                 <td style="text-align:right">
                     <div class="searchcaption">
                             Search signserver.org for:<br />
@@ -228,6 +228,7 @@
                             </form>
                     </div>
                 </td>
+        		<!-- <td align="center" id="services"><a href="http://www.primekey.se/" target="primekey">PrimeKey Support, Development and Maintenance services</a></td> -->
             </tr>
           </table>
       </div>
@@ -253,7 +254,7 @@ var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 6);
 piwikTracker.trackPageView();
 piwikTracker.enableLinkTracking();
 } catch( err ) {}
-</script><noscript><p><img src="http://stat.primekey.se/piwik/piwik.php?idsite=6" style="border:0" alt="" /></p></noscript>
+</script><noscript><p><img src="//stat.primekey.se/piwik/piwik.php?idsite=6" style="border:0" alt="" /></p></noscript>
 <!-- End Piwik Tracking Code -->      
     </body>
   </html>

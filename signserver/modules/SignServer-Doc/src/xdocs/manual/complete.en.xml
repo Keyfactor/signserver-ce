@@ -1102,8 +1102,9 @@ This commands can be used for processable workers that have archiving turned on.
 are used to find specific archived responses. It's up to the implementation of the 
 worker if it supports archiving or not and it is up to the chosen Archiver if it 
 archives the data in way that it can be queried using this commands. For Archivers 
-other than the default "OldDatabaseArchiver" querying might have to be done 
-directly in the database or by some custom application.
+other than the default "OldDatabaseArchiver" and Base64DatabaseArchiver querying 
+might have to be done directly in a database, filesystem or by some custom 
+application.
                         </p>
                         <p>
 <b>archive findfromarchiveid:</b>
@@ -2427,7 +2428,7 @@ This authorization functionality doesn't work for all use cases. Then it's possi
 The archiving feature can be used to save all generated responses.    
                 </p>
                 <p>
-For the OldDatabaseArchiver, in some extent, the Admin CLI can be used to query the archive. See 
+For the OldDatabaseArchiver and Base64DatabaseArchiver, in some extent, the Admin CLI can be used to query the archive. See 
 the CLI section for more information.
                 </p>
                 <p>
@@ -4056,15 +4057,23 @@ After the certificate chain has been uploaded to the server, the configuration m
 The default archiver used if the the property ARCHIVE=true is set. Or if the ARCHIVERS property contains its class name. This Archiver archives to the database table "ArchiveData" using the same datasource as SignServer uses for accessing the database for its configuration etc.
                     </p>
                     <p>
+The data is stored in an XML encoded Base64PutHashMap. In the "dataEncoding" column this format is indicated as 0 (or "null" for backwards compatibility).
+                    </p>
+                    <p>
 The fully qualified class name is: <b>org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver</b>
                     </p>
-                    <subsubsection name="Available Properties">
-                        <p>
-<b>ARCHIVERx.RESPONSEFORMAT</b> - Format for storing the response in the archiveData table column.<br/>
-Can be "XML" for storage in an upgradeble XML encoded Base64PutHashMap (default) or "BASE64" for only storing the request data bytes in base64 encoding.<br/>
-Replace x in the property name with the (zero-based) index in the ARCHIVERS property list. This allows multiple archivers to be configured differently for the same worker.
-                        </p>
-                    </subsubsection>
+                </subsection>
+                
+                <subsection name="Base64DatabaseArchiver">
+                    <p>
+This Archiver archives to the database table "ArchiveData" using the same datasource as SignServer uses for accessing the database for its configuration etc. It is similar to the OldDatabaseArchiver but does not use an XML structure for storing the data. Instead the data is simply base64 encoded.
+                    </p>
+                    <p>
+In the "dataEncoding" column this format is indicated as 1.    
+                    </p>
+                    <p>
+The fully qualified class name is: <b>org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver</b>
+                    </p>
                 </subsection>
                 
             </section>

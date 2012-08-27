@@ -12,6 +12,13 @@ Notice:
  - The property "custom.commandfactory" is no longer supported. See the manual 
    for how to add custom Admin or Client CLI commands.
  - The Admin CLI now ignores the "-host" argument if present.
+ - The default archiver called OldDatabaseArchiver has changed the format of
+   the data part of the XML serialized ArchiveData from an byte array to a 
+   base64 encoded String. The change is transparent for Java clients using
+   SignServer-Common.jar for parsing the ArchiveData but other clients might 
+   need to be updated.
+ - As an alternative to the OldDatabaseArchiver a new archiver called 
+   Base64DatabaseArchiver can also be used.
 
 
 SignServer 3.2.2

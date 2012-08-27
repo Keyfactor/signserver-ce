@@ -22,17 +22,37 @@ package org.signserver.server.archive;
 public abstract class AbstractArchivable implements Archivable {
 
     private String type;
+    
+    /** ID of the transaction. */
+    private String archiveId;
+    
     private String contentType;
-
+    
     /**
      * Constructor taking a type and contentType.
      * @param type The type of Archivable this is.
      * @param contentType The MIME type of the content or similar.
      * @see Archivable#TYPE_REQUEST
      * @see Archivable#TYPE_RESPONSE
+     * @deprecated Use the constructor that takes an archive ID
      */
+    @Deprecated
     public AbstractArchivable(final String type, final String contentType) {
         this.type = type;
+        this.contentType = contentType;
+    }
+    
+    /**
+     * Constructor taking a type and contentType.
+     * @param type The type of Archivable this is.
+     * @param contentType The MIME type of the content or similar.
+     * @see Archivable#TYPE_REQUEST
+     * @see Archivable#TYPE_RESPONSE
+     * @since SignServer 3.3
+     */
+    public AbstractArchivable(final String type, final String archiveId, final String contentType) {
+        this.type = type;
+        this.archiveId = archiveId;
         this.contentType = contentType;
     }
 
@@ -46,4 +66,9 @@ public abstract class AbstractArchivable implements Archivable {
         return contentType;
     }
 
+    @Override
+    public String getArchiveId() {
+        return archiveId;
+    }
+    
 }

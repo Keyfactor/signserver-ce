@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.archive.olddbarchiver;
+package org.signserver.server.archive.base64dbarchiver;
 
 import java.util.Random;
 import org.apache.log4j.Logger;
@@ -24,7 +24,7 @@ import org.signserver.server.archive.ArchiveTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
-public class OldDatabaseArchiverTest extends ArchiveTestCase {
+public class Base64DatabaseArchiverTest extends ArchiveTestCase {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ArchiveTest.class);
@@ -45,44 +45,23 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
     public void test00SetupDatabase() throws Exception {
         addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
     }
-
+        
     /**
-     * Tests that archiving with the default format (XML) works.
+     * Tests archiving with the base64 database archiver.
      * @throws Exception In case of error.
      */
-    public void test10archiveTrueDefault() throws Exception {
-        LOG.debug(">test10archiveTrueDefault");
+    public void test30archiveBase64() throws Exception {
+        LOG.debug(">test30archiveTrueBase64");
         
         getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "ARCHIVERS");
         getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
-                "ARCHIVE", "true");
+                "ARCHIVERS", "org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver");
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>");
         assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE, archiveData.getType());
         
-        LOG.debug("<test10archiveTrueDefault");
-    }
-    
-    /**
-     * Tests that archiving with the default format (XML) works also when 
-     * archiver is specifying in ARCHIVERS property.
-     * @throws Exception In case of error.
-     */
-    public void test40archiversDefault() throws Exception {
-        LOG.debug(">test40archiversDefault");
-        
-        getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "ARCHIVE");
-        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
-                "ARCHIVERS", "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
-        getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "ARCHIVER0.RESPONSEFORMAT");
-        getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-        
-        
-        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>");
-        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE, archiveData.getType());
-        
-        LOG.debug("<test40archiversDefault");
+        LOG.debug("<test30archiveTrueBase64");
     }
  
     /**

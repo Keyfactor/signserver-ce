@@ -26,7 +26,7 @@ public class DefaultArchivable extends AbstractArchivable {
 
     /** The data. */
     private byte[] bytes;
-
+    
     /**
      * Creates an instance of DefaultArchivable with the given type and 
      * data.
@@ -34,9 +34,25 @@ public class DefaultArchivable extends AbstractArchivable {
      * @param bytes The data to archive.
      * @see Archivable#TYPE_REQUEST
      * @see Archivable#TYPE_RESPONSE
+     * @deprecated Use a constructor that takes an archive ID.
      */
+    @Deprecated
     public DefaultArchivable(final String type, final byte[] bytes) {
         this(type, APPLICATION_OCTET_STREAM, bytes);
+    }
+    
+    /**
+     * Creates an instance of DefaultArchivable with the given type, data and  
+     * archive ID
+     * @param type The type of Archivable.
+     * @param bytes The data to archive.
+     * @param archiveId Some ID of the transaction
+     * @see Archivable#TYPE_REQUEST
+     * @see Archivable#TYPE_RESPONSE
+     * @since SignServer 3.3
+     */
+    public DefaultArchivable(final String type, final byte[] bytes, final String archiveId) {
+        this(type, APPLICATION_OCTET_STREAM, bytes, archiveId);
     }
 
     /**
@@ -47,10 +63,28 @@ public class DefaultArchivable extends AbstractArchivable {
      * @param bytes The data to archive.
      * @see Archivable#TYPE_REQUEST
      * @see Archivable#TYPE_RESPONSE
+     * @deprecated Use a constructor that takes an archive ID.
      */
+    @Deprecated
     public DefaultArchivable(final String type, final String contentType,
             final byte[] bytes) {
         super(type, contentType);
+        this.bytes = bytes;
+    }
+    
+    /** Creates an instance of DefaultArchivable with the given type, 
+     * content-type, data and archive ID.
+     * @param type The type of Archivable.
+     * @param archiveId Some ID of the transaction
+     * @param contentType The content-type of the data.
+     * @param bytes The data to archive.
+     * @see Archivable#TYPE_REQUEST
+     * @see Archivable#TYPE_RESPONSE
+     * @since SignServer 3.3
+     */
+    public DefaultArchivable(final String type, 
+            final String contentType, final byte[] bytes, final String archiveId) {
+        super(type, archiveId, contentType);
         this.bytes = bytes;
     }
 

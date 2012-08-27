@@ -30,7 +30,7 @@ public class ArchiveTestCase extends ModulesTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();
-        TestingSecurityManager.install();
+//        TestingSecurityManager.install();
         String signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
     }

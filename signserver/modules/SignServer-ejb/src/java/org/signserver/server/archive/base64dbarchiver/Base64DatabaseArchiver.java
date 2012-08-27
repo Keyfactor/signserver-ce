@@ -10,11 +10,12 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.archive.olddbarchiver;
+package org.signserver.server.archive.base64dbarchiver;
 
 import java.security.cert.X509Certificate;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
@@ -27,50 +28,48 @@ import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.IWorkerLogger;
 
 /**
- * Archiver only accepting responses and currently only supports Archivables of
- * class ArchiveDataArchivable. 
+ * Archiver archiving to the database table ArchiveData with the archived bytes
+ * in base64 encoding.
  * 
+ * Currently only Archivable.TYPE_RESPONSE are supported.
+ *
  * @author Markus Kilås
  * @version $Id$
  */
-public class OldDatabaseArchiver implements Archiver {
+public class Base64DatabaseArchiver implements Archiver {
     
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(OldDatabaseArchiver.class);
+    private static final Logger LOG = Logger.getLogger(Base64DatabaseArchiver.class);
+ 
 
     private ArchiveDataService dataService;
-    
-    private boolean base64Encoding;
 
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
         dataService = new ArchiveDataService(context.getEntityManager());
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Archiver" + listIndex + " will use base64 encoding: " + base64Encoding);
-        }
     }
 
     @Override
     public boolean archive(Archivable archivable, RequestContext requestContext)
             throws ArchiveException {
         final boolean archived;
-        if (Archivable.TYPE_RESPONSE.equals(archivable.getType())
-                && archivable instanceof ArchiveDataArchivable) {
+        if (Archivable.TYPE_RESPONSE.equals(archivable.getType())) {
             if (dataService == null) {
                 throw new ArchiveException("Could not archive as archiver was not successfully initialized");
             }
-            final ArchiveDataArchivable ada = (ArchiveDataArchivable) archivable;
             final Integer workerId = (Integer) requestContext.get(RequestContext.WORKER_ID);
             final X509Certificate certificate = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
             final String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
 
             final String uniqueId;
+            
             uniqueId = dataService.create(ArchiveDataVO.TYPE_RESPONSE,
-                        workerId,
-                        ada.getArchiveId(),
-                        certificate,
-                        remoteIp,
-                            ada.getArchiveData());
+                            workerId,
+                            archivable.getArchiveId(),
+                            certificate,
+                            remoteIp,
+                        new String(Base64.encode(archivable.getContentEncoded())));
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archived with uniqueId: " + uniqueId);
             }

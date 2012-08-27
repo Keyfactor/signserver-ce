@@ -46,6 +46,7 @@ CREATE TABLE `ArchiveData` (
   `requestCertSerialnumber` varchar(255) DEFAULT NULL,
   `requestIP` varchar(255) DEFAULT NULL,
   `archiveData` mediumtext,
+  `dataEncoding` int(11) DEFAULT NULL,
   PRIMARY KEY (`uniqueId`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 

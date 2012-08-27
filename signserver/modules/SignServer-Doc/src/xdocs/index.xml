@@ -12,9 +12,9 @@
 <tr>
 <td valign="top"><!--TWITTER WIDGET-->
 <div class="frame note" id="twitter" style="border:0;">
-<script charset="utf-8" src="https://widgets.twimg.com/j/2/widget.js">
+<script type="text/javascript" charset="utf-8" src="https://widgets.twimg.com/j/2/widget.js">
 </script>
-<script>
+<script type="text/javascript">
 new TWTR.Widget({
   version: 2,
   type: 'profile',

@@ -330,12 +330,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         } catch (TSPException e) {
         	fail("Failed to validate response token");
         }
-        
-        File out = File.createTempFile("response", ".tsr");
-	    FileOutputStream fos = new FileOutputStream(out);
-	    fos.write(timeStampResponse.getEncoded());
-	    fos.close();
-        
+       
         return timeStampResponse.getStatus();
     }
     

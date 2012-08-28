@@ -12,8 +12,12 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.NoSuchProviderException;
@@ -295,13 +299,16 @@ public class TimeStampSignerTest extends ModulesTestCase {
         	assertTrue("Timestamp response is using incorrect hash algorithm", hashAlgo.equals(algo.getAlgorithm()));       	
         	
         	Collection signerInfos = token.toCMSSignedData().getSignerInfos().getSigners();
-       	
+        	
         	// there should be one SignerInfo
-        	assertTrue("There should only be one signer in the timestamp response", signerInfos.size() == 1);
+        	assertEquals("There should only be one signer in the timestamp response", 1, signerInfos.size());
         	
         	for (Object o : signerInfos) {
         		SignerInformation si = (SignerInformation) o;
-        		assertTrue("Timestamp is signed with unexpected signature encryption algorithm", "1.2.840.113549.1.1.1".equals(si.getEncryptionAlgOID()));
+        		
+        		// test the response signature algorithm
+        		assertEquals("Timestamp used unexpected signature algorithm", TSPAlgorithms.SHA1.toString(), si.getDigestAlgOID());
+        		assertEquals("Timestamp is signed with unexpected signature encryption algorithm", "1.2.840.113549.1.1.1", si.getEncryptionAlgOID());
         	}
 
         	
@@ -323,6 +330,11 @@ public class TimeStampSignerTest extends ModulesTestCase {
         } catch (TSPException e) {
         	fail("Failed to validate response token");
         }
+        
+        File out = File.createTempFile("response", ".tsr");
+	    FileOutputStream fos = new FileOutputStream(out);
+	    fos.write(timeStampResponse.getEncoded());
+	    fos.close();
         
         return timeStampResponse.getStatus();
     }

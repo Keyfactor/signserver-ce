@@ -296,7 +296,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         	// check the hash value from the response
         	TimeStampToken token = timeStampResponse.getTimeStampToken();
         	AlgorithmIdentifier algo = token.getTimeStampInfo().getHashAlgorithm();
-        	assertTrue("Timestamp response is using incorrect hash algorithm", hashAlgo.equals(algo.getAlgorithm()));       	
+        	assertEquals("Timestamp response is using incorrect hash algorithm", hashAlgo, algo.getAlgorithm()); 	
         	
         	Collection signerInfos = token.toCMSSignedData().getSignerInfos().getSigners();
         	

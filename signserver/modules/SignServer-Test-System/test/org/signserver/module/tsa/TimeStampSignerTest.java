@@ -21,10 +21,12 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.Random;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -265,8 +267,25 @@ public class TimeStampSignerTest extends ModulesTestCase {
         	LOG.info("Response: " + timeStampResponse.getStatusString());
 
         	// check the hash value from the response
-        	String algo = timeStampResponse.getTimeStampToken().getTimeStampInfo().getMessageImprintAlgOID();
-        	assertTrue("Timestamp response is using incorrect hash algorithm", hashAlgo.equals(algo));
+        	TimeStampToken token = timeStampResponse.getTimeStampToken();
+        	String algo = token.getTimeStampInfo().getMessageImprintAlgOID();
+        	assertEquals("Timestamp response is using incorrect hash algorithm", hashAlgo, algo);
+        	
+        	Collection signerInfos = token.toCMSSignedData().getSignerInfos().getSigners();
+        	
+        	// there should be one SignerInfo
+        	assertEquals("There should only be one signer in the timestamp response", 1, signerInfos.size());
+        	
+        	for (Object o : signerInfos) {
+        		SignerInformation si = (SignerInformation) o;
+        		
+        		// test the response signature algorithm
+        		assertEquals("Timestamp used unexpected signature algorithm", TSPAlgorithms.SHA1, si.getDigestAlgOID());
+        		assertEquals("Timestamp is signed with unexpected signature encryption algorithm", "1.2.840.113549.1.1.1", si.getEncryptionAlgOID());
+        	}
+
+
+        	
         } catch (TSPException e) {
         	fail("Failed to verify response");
         } catch (IOException e) {

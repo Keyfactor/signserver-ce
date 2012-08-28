@@ -609,7 +609,7 @@ public class TimeStampSigner extends BaseSigner {
                     this.getCryptoToken().getPrivateKey(
                         ICryptoToken.PURPOSE_SIGN),
                     signingCert,
-                    digestOID,
+                    TSPAlgorithms.SHA1,
                     tSAPolicyOID);
 
 

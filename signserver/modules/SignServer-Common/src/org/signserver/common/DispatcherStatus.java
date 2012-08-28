@@ -13,6 +13,8 @@
 package org.signserver.common;
 
 import java.io.PrintStream;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * Status for Dispatcher.
@@ -21,65 +23,50 @@ import java.io.PrintStream;
  * @version $Id$
  */
 public class DispatcherStatus extends WorkerStatus {
-    private static final long serialVersionUID = 1L;
-    
-    private WorkerStatusInformation info;
-    
+
     public DispatcherStatus(int workerId, WorkerConfig config) {
         super(workerId, config);
     }
 
-    public DispatcherStatus(int workerId, WorkerConfig config, WorkerStatusInformation info) {
-        this(workerId, config);
-        this.info = info;
-    }
-
     @Override
     public String isOK() {
-        final String result;
         if (getActiveSignerConfig()
-                .getProperty(SignServerConstants.DISABLED) != null
-                && getActiveSignerConfig()
+                .getProperty(SignServerConstants.DISABLED) == null
+                || !getActiveSignerConfig()
                 .getProperty(SignServerConstants.DISABLED)
                 .equalsIgnoreCase("TRUE")) {
-            result = "Worker disabled";
-        } else if (info != null && info.getOfflineText() != null) {
-            result = info.getOfflineText();
+            return null;
         } else {
-            result = null;
+            return "Worker disabled";
         }
-        return result;
     }
 
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
-        
-        if (info != null) {
-            String briefText = info.getBriefText();
-            if (briefText != null) {
-                out.println(briefText);
-                out.println();
-            }
-        }
-        out.println();
-        
+        out.println("Status of Dispatcher with Id " + workerId + " is :\n"
+                + "  SignToken Status : "
+                + signTokenStatuses[isOK() == null ? 1 : 2] + " \n\n");
         if (complete) {
-            if (info != null) {
-                String completeText = info.getCompleteText();
-                if (completeText != null) {
-                    out.println(completeText);
-                    out.println();
-                }
+            out.println("Active Properties are :");
+            if (getActiveSignerConfig().getProperties().size() == 0) {
+                out.println("  No properties exists in active configuration\n");
             }
-         
-            out.println();
-            SignerStatus.displayAuthorizedClients(out, new ProcessableConfig(getActiveSignerConfig()));
+            Enumeration<?> propertyKeys = getActiveSignerConfig()
+                    .getProperties().keys();
+            while (propertyKeys.hasMoreElements()) {
+                String key = (String) propertyKeys.nextElement();
+                out.println("  " + key + "=" + getActiveSignerConfig()
+                        .getProperties().getProperty(key) + "\n");
+            }
+            out.println("\n");
+            out.println("Active Authorized Clients are are (Cert DN, IssuerDN):");
+            Iterator<?> iter = new ProcessableConfig(getActiveSignerConfig())
+                    .getAuthorizedClients().iterator();
+            while (iter.hasNext()) {
+                AuthorizedClient client = (AuthorizedClient) iter.next();
+                out.println("  " + client.getCertSN() + ", "
+                        + client.getIssuerDN() + "\n");
+            }
         }
     }
-
-    @Override
-    public String getType() {
-        return "Dispatcher";
-    }
-    
 }

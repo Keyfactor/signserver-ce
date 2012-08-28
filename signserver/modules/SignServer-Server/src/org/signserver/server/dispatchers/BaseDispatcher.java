@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server.dispatchers;
 
+import org.signserver.common.DispatcherStatus;
+import org.signserver.common.WorkerStatus;
 import org.signserver.server.BaseProcessable;
 
 /**
@@ -21,5 +23,12 @@ import org.signserver.server.BaseProcessable;
  * @version $Id$
  */
 public abstract class BaseDispatcher extends BaseProcessable {
-
+    /**
+     * @return WorkerStatus
+     * @see org.signserver.server.IProcessable#getStatus()
+     */
+    @Override
+    public WorkerStatus getStatus() {
+        return new DispatcherStatus(workerId, config);
+    }
 }

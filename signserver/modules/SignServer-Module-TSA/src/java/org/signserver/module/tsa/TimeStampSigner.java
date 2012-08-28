@@ -765,20 +765,6 @@ public class TimeStampSigner extends BaseSigner {
         }
         return serno;
     }
-
-    @Override
-    public WorkerStatusInformation getStatusInformation() {
-        final WorkerStatusInformation result = new WorkerStatusInformation();
-        Date time = getTimeSource().getGenTime();
-        if (time == null) {
-            result.setOfflineText("Time source is not available");
-        } else {
-            StringBuilder buff = new StringBuilder();
-            buff.append("Current time: ").append(sdf.format(time));
-            result.setBriefText(buff.toString());
-        }
-        return result;
-    }
     
     private static class SHA1DigestCalculator implements DigestCalculator {
     	private ByteArrayOutputStream bOut = new ByteArrayOutputStream();

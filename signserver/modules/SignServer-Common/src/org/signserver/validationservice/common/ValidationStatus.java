@@ -74,10 +74,4 @@ public class ValidationStatus extends CryptoTokenStatus {
             }
         }
     }
-
-    @Override
-    public String getType() {
-        return "Validation Service";
-    }
-    
 }

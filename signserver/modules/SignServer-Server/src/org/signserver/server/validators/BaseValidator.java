@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.server.validators;
 
+import org.signserver.common.ProcessableConfig;
+import org.signserver.common.ValidatorStatus;
+import org.signserver.common.WorkerStatus;
 import org.signserver.server.BaseProcessable;
 
 /**
@@ -22,5 +25,12 @@ import org.signserver.server.BaseProcessable;
  * @version $Id$
  */
 public abstract class BaseValidator extends BaseProcessable implements IValidator {
-
+    
+    /**
+     * @see org.signserver.server.IProcessable#getStatus()
+     */
+    @Override
+    public WorkerStatus getStatus() {
+        return new ValidatorStatus(workerId, new ProcessableConfig(config));
+    }
 }

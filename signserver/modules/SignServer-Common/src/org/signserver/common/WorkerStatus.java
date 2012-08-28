@@ -17,7 +17,6 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.cert.X509Certificate;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 /**
@@ -111,6 +110,4 @@ public abstract class WorkerStatus implements Serializable {
         out.println(INDENT1 + INDENT2 + "Valid from:     " + SDF.format(cert.getNotBefore()));
         out.println(INDENT1 + INDENT2 + "Valid until:    " + SDF.format(cert.getNotAfter()));
     }
-    
-    public abstract String getType();
 }

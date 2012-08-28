@@ -15,6 +15,7 @@ package org.signserver.common;
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 
 /**
  * Class used when responding to the SignSession.getStatus() method, represents
@@ -26,18 +27,13 @@ import java.util.Date;
 public class ServiceStatus extends WorkerStatus {
 
     private static final long serialVersionUID = 1L;
-    private WorkerStatusInformation info;
-    
+
     /** 
      * Main constuctor
      */
     public ServiceStatus(int workerId, ServiceConfig config) {
         super(workerId, config.getWorkerConfig());
-    }
 
-    public ServiceStatus(int workerId, ServiceConfig serviceConfig, WorkerStatusInformation info) {
-        this(workerId, serviceConfig);
-        this.info = info;
     }
 
     /**
@@ -56,46 +52,32 @@ public class ServiceStatus extends WorkerStatus {
 
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
-        out.println(INDENT1 + "Service last run at: " + getLastRunDate());
-        out.println();
+        out.println("Status of Service with Id " + workerId + " is :\n");
+        out.println("  Service was last run at : " + getLastRunDate() + "\n");
 
-        if (info != null) {
-            String briefText = info.getBriefText();
-            if (briefText != null) {
-                out.println(briefText);
-                out.println();
-            }
-        }
-        
         if (complete) {
-            if (info != null) {
-                String completeText = info.getCompleteText();
-                if (completeText != null) {
-                    out.println(completeText);
-                    out.println();
-                }
+            out.println("Active Properties are :");
+
+
+            if (getActiveSignerConfig().getProperties().size() == 0) {
+                out.println("  No properties exists in active configuration\n");
             }
+
+            Enumeration<?> propertyKeys = getActiveSignerConfig().getProperties().keys();
+            while (propertyKeys.hasMoreElements()) {
+                String key = (String) propertyKeys.nextElement();
+                out.println("  " + key + "=" + getActiveSignerConfig().getProperties().getProperty(key) + "\n");
+            }
+
+            out.println("\n");
         }
     }
 
     /**
-     * The default behavior is not to check anything unless the worker indicates 
-     * something in the offlineText.
+     * The default behavior is not to check anything.
      */
     @Override
     public String isOK() {
-        final String result;
-        if (info != null && info.getOfflineText() != null) {
-            result = info.getOfflineText();
-        } else {
-            result = null;
-        }
-        return result;
+        return null;
     }
-
-    @Override
-    public String getType() {
-        return "Service";
-    }
-    
 }

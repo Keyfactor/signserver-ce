@@ -14,6 +14,8 @@ package org.signserver.groupkeyservice.common;
 
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.Enumeration;
+
 import org.signserver.common.CryptoTokenStatus;
 import org.signserver.common.WorkerConfig;
 
@@ -48,22 +50,34 @@ public class GroupKeyServiceStatus extends CryptoTokenStatus {
 
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
-        
-        out.println(INDENT1 + "Crypto token: " + signTokenStatuses[getTokenStatus()]);
-        out.println();
+        out.println("Status of Group Key Service with Id " + workerId + " is :\n"
+                + "  SignToken Status : " + signTokenStatuses[getTokenStatus()] + " \n\n");
 
         if (complete) {
-            out.println(INDENT1 + "Total number of generated keys in database : " + numOfKeys);
-            out.println(INDENT1 + "Number of assigned keys in database : " + numOfAssignedKeys);
-            out.println(INDENT1 + "Number of unassigned keys in database : " + numOfUnassignedKeys);
-            out.println();
-            out.println();
+            out.println("Active Properties are :");
+
+
+            if (getActiveSignerConfig().getProperties().size() == 0) {
+                out.println("  No properties exists in active configuration\n");
+            }
+
+            Enumeration<?> propertyKeys = getActiveSignerConfig().getProperties().keys();
+            while (propertyKeys.hasMoreElements()) {
+                String key = (String) propertyKeys.nextElement();
+                out.println("  " + key + "=" + getActiveSignerConfig().getProperties().getProperty(key) + "\n");
+            }
+
+            out.println("\n");
+
+            out.println(" Total number of generated keys in database : " + numOfKeys);
+            out.println(" Number of assigned keys in database : " + numOfAssignedKeys);
+            out.println(" Number of unassigned keys in database : " + numOfUnassignedKeys);
             if (currentEncKeyRef != null) {
-                out.println(INDENT1 + "Currently used encryption key reference is : " + currentEncKeyRef);
-                out.println(INDENT1 + "Currently used encryption key count : " + currentEncKeyNumEncryptions);
-                out.println(INDENT1 + "Currently used encryption key start date : " + currentEncKeyStartDate.toString());
+                out.println("\n\n Currently used encryption key reference is : " + currentEncKeyRef);
+                out.println(" Currently used encryption key count : " + currentEncKeyNumEncryptions);
+                out.println(" Currently used encryption key start date : " + currentEncKeyStartDate.toString());
             } else {
-                out.println(INDENT1 + "No encryption key have been initialized.");
+                out.println("\n\n No encryption key have been initialized.");
             }
         }
 
@@ -98,10 +112,4 @@ public class GroupKeyServiceStatus extends CryptoTokenStatus {
     public Date getCurrentEncKeyStartDate() {
         return currentEncKeyStartDate;
     }
-
-    @Override
-    public String getType() {
-        return "Group key service";
-    }
-    
 }

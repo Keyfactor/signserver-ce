@@ -14,7 +14,6 @@ package org.signserver.common.genericws;
 
 import java.io.PrintStream;
 import java.util.Enumeration;
-
 import org.signserver.common.CryptoTokenStatus;
 import org.signserver.common.WorkerConfig;
 
@@ -55,10 +54,4 @@ public class GenericWSStatus extends CryptoTokenStatus {
             out.println("\n");
         }
     }
-
-    @Override
-    public String getType() {
-        return "Generic WS";
-    }
-    
 }

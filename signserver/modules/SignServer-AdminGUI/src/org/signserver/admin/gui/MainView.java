@@ -1551,14 +1551,12 @@ public class MainView extends FrameView {
                     // Status
                     String statusSummary;
                     String tokenStatus;
-                    String statusMessage = "";
                     WsWorkerStatus status = null;
                     boolean active = false;
                     try {
                         status = SignServerAdminGUIApplication.getAdminWS().getStatus(workerId);
                         statusSummary = status.getCompleteStatusText();
-                        statusMessage = status.getOk();
-                        tokenStatus = statusMessage == null ? "ACTIVE" : "OFFLINE";
+                        tokenStatus = status.getOk() == null ? "ACTIVE" : "OFFLINE";
                         active = status.getOk() == null;
                     } catch (InvalidWorkerIdException_Exception ex) {
                         statusSummary = "No such worker";
@@ -1572,7 +1570,7 @@ public class MainView extends FrameView {
                     XMLGregorianCalendar notAfter = null;
                     Certificate certificate = null;
                     Collection<? extends Certificate> certificateChain = null;
-                    Object[][] statusProperties = new Object[][]{{"ID", workerId}, {"Name", name}, {"Worker status", tokenStatus}, {"Status message", statusMessage}, {}, {}, {}, {}};
+                    Object[][] statusProperties = new Object[][]{{"ID", workerId}, {"Name", name}, {"Token status", tokenStatus}, {}, {}, {}, {}};
                     try {
                         notBefore = SignServerAdminGUIApplication.getAdminWS().getSigningValidityNotBefore(workerId);
                         notAfter = SignServerAdminGUIApplication.getAdminWS().getSigningValidityNotAfter(workerId);
@@ -1584,10 +1582,10 @@ public class MainView extends FrameView {
                             LOG.error("Error getting signer certificate chain", ex);
                             certificateChain = Collections.emptyList();
                         }
-                        statusProperties[4] = new Object[]{"Validity not before:", notBefore};
-                        statusProperties[5] = new Object[]{"Validity not after:", notAfter};
-                        statusProperties[6] = new Object[]{"Signer certificate", certificate};
-                        statusProperties[7] = new Object[]{"Certificate chain:", certificateChain};
+                        statusProperties[3] = new Object[]{"Validity not before:", notBefore};
+                        statusProperties[4] = new Object[]{"Validity not after:", notAfter};
+                        statusProperties[5] = new Object[]{"Signer certificate", certificate};
+                        statusProperties[6] = new Object[]{"Certificate chain:", certificateChain};
                     } catch (CryptoTokenOfflineException_Exception ex) {
                         LOG.debug("offline: " + workerId);
                     } catch (RuntimeException ex) {

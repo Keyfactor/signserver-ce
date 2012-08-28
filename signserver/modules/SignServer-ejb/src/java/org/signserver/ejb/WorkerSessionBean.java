@@ -49,14 +49,10 @@ import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.config.entities.WorkerConfigDataService;
-import org.signserver.server.dispatchers.BaseDispatcher;
 import org.signserver.server.entities.KeyUsageCounter;
 import org.signserver.server.log.*;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
-import org.signserver.server.timedservices.ITimedService;
-import org.signserver.server.validators.IValidator;
-import org.signserver.validationservice.server.ValidationServiceWorker;
 
 /**
  * The main worker session bean.
@@ -756,52 +752,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             throw new InvalidWorkerIdException("Given SignerId " + workerId
                     + " doesn't exist");
         }
-        final WorkerConfig config = worker.getConfig();
-        final WorkerStatusInformation info = worker.getStatusInformation();
-        
-        if (worker instanceof ITimedService) {
-            result = new ServiceStatus(workerId, new ServiceConfig(config), info);
-        } else if (worker instanceof BaseDispatcher) {
-            result = new DispatcherStatus(workerId, config, info);
-        } else if (worker instanceof IValidator) {
-            result = new ValidatorStatus(workerId, new ProcessableConfig(config), info);
-        } else if (worker instanceof ValidationServiceWorker) {
-            result = ((ValidationServiceWorker) worker).getStatus();
-        } else if (worker instanceof IGroupKeyServiceWorker) {
-            result = ((IGroupKeyServiceWorker) worker).getStatus();
-        } else if (worker instanceof IProcessable) {
-            final IProcessable processable = (IProcessable) worker;
-            final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
-            int status = processable.getCryptoTokenStatus();
-            
-            Certificate cert = null;
-            try {
-                cert = getSignerCertificate(workerId);
-            } catch (CryptoTokenOfflineException ignored) {} // NOPMD
-
-            if (cert == null) {
-                result = new SignerStatus(workerId, status, new ProcessableConfig(config), null);
-            } else {
-                KeyUsageCounter counter = em.find(KeyUsageCounter.class,
-                        KeyUsageCounterHash.create(cert.getPublicKey()));
-
-                if (counter == null || keyUsageLimit != -1
-                        && status == CryptoTokenStatus.STATUS_ACTIVE
-                        && counter.getCounter() >= keyUsageLimit) {
-                    status = CryptoTokenStatus.STATUS_OFFLINE;
-                }
-
-                if (counter == null) {
-                    result = new SignerStatus(workerId, status, new ProcessableConfig(config), cert, info);
-                } else {
-                    result = new SignerStatus(workerId, status, new ProcessableConfig(config), cert, info, counter.getCounter());
-                }
-            }
-        } else {
-            result = new DefaultWorkerStatus(workerId, config, info);
-        }
-
-        return result;
+        return worker.getStatus();
     }
 
     /* (non-Javadoc)

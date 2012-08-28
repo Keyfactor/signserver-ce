@@ -21,18 +21,34 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.Random;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.ess.ESSCertID;
+import org.bouncycastle.asn1.ess.SigningCertificate;
+import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.jcajce.provider.asymmetric.rsa.PSSSignatureSpi;
+import org.bouncycastle.jcajce.provider.asymmetric.rsa.PSSSignatureSpi.SHA1withRSA;
+import org.bouncycastle.operator.SignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TSPUtil;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
+import org.bouncycastle.util.Selector;
+import org.bouncycastle.util.Store;
 import org.ejbca.util.Base64;
 import org.signserver.common.*;
 import org.signserver.statusrepo.IStatusRepositorySession;
@@ -274,9 +290,20 @@ public class TimeStampSignerTest extends ModulesTestCase {
         	}
         	
         	// check the hash value from the response
-        	AlgorithmIdentifier algo = timeStampResponse.getTimeStampToken().getTimeStampInfo().getHashAlgorithm();
-        	assertTrue("Timestamp response is using incorrect hash algorithm", hashAlgo.equals(algo.getAlgorithm()));
+        	TimeStampToken token = timeStampResponse.getTimeStampToken();
+        	AlgorithmIdentifier algo = token.getTimeStampInfo().getHashAlgorithm();
+        	assertTrue("Timestamp response is using incorrect hash algorithm", hashAlgo.equals(algo.getAlgorithm()));       	
         	
+        	Collection signerInfos = token.toCMSSignedData().getSignerInfos().getSigners();
+       	
+        	// there should be one SignerInfo
+        	assertTrue("There should only be one signer in the timestamp response", signerInfos.size() == 1);
+        	
+        	for (Object o : signerInfos) {
+        		SignerInformation si = (SignerInformation) o;
+        		assertTrue("Timestamp is signed with unexpected signature encryption algorithm", "1.2.840.113549.1.1.1".equals(si.getEncryptionAlgOID()));
+        	}
+
         	
         } catch (TSPException e) {
         	fail("Failed to verify response");
@@ -292,6 +319,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         	final X509Certificate cert =
         		(X509Certificate) factory.generateCertificate(new ByteArrayInputStream(Base64.decode(CERTSTRING.getBytes())));
         	token.validate(cert, "BC");
+        	
         } catch (TSPException e) {
         	fail("Failed to validate response token");
         }

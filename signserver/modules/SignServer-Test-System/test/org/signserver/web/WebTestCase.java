@@ -181,6 +181,46 @@ public abstract class WebTestCase extends ModulesTestCase {
     		final Map<String, String> fields, String method) throws IOException {
     	return getConnectionWithMethod(baseURL, fields, method);
     }
+    
+    protected static byte[] sendAndReadyBody(String baseURL,
+    		final Map<String, String> fields) throws IOException {
+        return sendAndReadyBody(baseURL, fields, "GET");
+    }
+    
+    protected byte[] sendAndReadyBody(final Map<String, String> fields) throws IOException {
+        return sendAndReadyBody(getServletURL(), fields, "GET");
+    }
+    
+    protected static byte[] sendAndReadyBody(String baseURL,
+    		final Map<String, String> fields, String method) throws IOException {
+    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        HttpURLConnection conn = null;
+        InputStream in = null;
+        try {
+            conn = getConnectionWithMethod(baseURL, fields, method);
+            
+            LOG.info("Response (" + conn.getResponseCode() + "): " + conn.getResponseMessage());
+            if (conn.getResponseCode() >= 400) {
+                in = conn.getErrorStream();
+            } else {
+                in = conn.getInputStream();
+            }
+            
+            int b;
+            while ((b = in.read()) != -1) {
+                bout.write(b);
+            }
+            
+            return bout.toByteArray();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {} // NOPMD
+            }
+            conn.disconnect();
+        } 
+    }
 
     protected static HttpURLConnection sendPostFormUrlencoded(final String baseURL,
             final Map<String, String> fields) throws MalformedURLException, IOException {

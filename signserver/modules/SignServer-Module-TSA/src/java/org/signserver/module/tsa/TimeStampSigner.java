@@ -18,49 +18,23 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
-import java.security.cert.CollectionCertStoreParameters;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import java.security.cert.*;
+import java.util.*;
 import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.tsp.TSPAlgorithms;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
-import org.bouncycastle.tsp.TimeStampTokenGenerator;
+import org.bouncycastle.tsp.*;
 import org.ejbca.util.Base64;
-import org.signserver.common.ArchiveData;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ISignRequest;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.WorkerConfig;
+import org.signserver.common.*;
 import org.signserver.server.ITimeSource;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.signers.BaseSigner;
+import org.signserver.server.tsa.org.bouncycastle.tsp.TimeStampResponseGenerator;
 
 /**
  * A Signer signing Time-stamp request according to RFC 3161 using the
@@ -145,6 +119,15 @@ import org.signserver.server.signers.BaseSigner;
  *
  *
  * </table>
+ *
+ * Specifying a signer certificate (normally the SIGNERCERT property) is required 
+ * as information from that certificate will be used to indicate which signer
+ * signed the time-stamp token.
+ * 
+ * The SIGNERCERTCHAIN property contains all certificates included in the token 
+ * if the client requests the certificates. The RFC specified that the signer 
+ * certificate MUST be included in the list returned.
+ * 
  *
  * @author philip
  * @version $Id$
@@ -643,6 +626,11 @@ public class TimeStampSigner extends BaseSigner {
             final CertStore certStore = CertStore.getInstance("Collection",
                     new CollectionCertStoreParameters(
                         getSigningCertificateChain()), "BC");
+            
+            if (!containsCertificate(certStore, signingCert)) {
+                throw new CryptoTokenOfflineException("Signer certificate not included in certificate chain");
+            }
+            
             timeStampTokenGen.setCertificatesAndCRLs(certStore);
 
         } catch (IllegalArgumentException e) {
@@ -653,6 +641,23 @@ public class TimeStampSigner extends BaseSigner {
             throw new IllegalRequestException(e.getMessage());
         }
         return timeStampTokenGen;
+    }
+
+    /**
+     * @return True if the CertStore contained the Certificate
+     */
+    private boolean containsCertificate(final CertStore store, final Certificate subject) throws CertStoreException {
+        final Collection<? extends Certificate> matchedCerts = store.getCertificates(new CertSelector() {
+            @Override
+            public boolean match(Certificate cert) {
+                return subject.equals(cert);
+            }
+            @Override
+            public Object clone() {
+                return this;
+            }
+        });
+        return matchedCerts.size() > 0;
     }
 
     private TimeStampResponseGenerator getTimeStampResponseGenerator(

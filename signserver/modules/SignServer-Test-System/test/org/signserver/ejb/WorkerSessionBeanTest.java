@@ -20,14 +20,7 @@ import java.util.Properties;
 
 import javax.crypto.Cipher;
 
-import org.signserver.common.AuthorizedClient;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.MRTDSignRequest;
-import org.signserver.common.MRTDSignResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerUtil;
-import org.signserver.common.ProcessableConfig;
-import org.signserver.common.SignerStatus;
+import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
@@ -71,6 +64,8 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         workerSession.setWorkerProperty(3, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(3, "NAME", "testWorker");
         workerSession.reloadConfiguration(3);
+        
+        addDummySigner1();
     }
 
     /*
@@ -117,6 +112,33 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     public void test02GetStatus() throws Exception {
         assertTrue(((SignerStatus) workerSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_ACTIVE
                 || ((SignerStatus) workerSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_OFFLINE);
+    }
+    
+    public void test02GetStatus_ok() throws Exception {
+        final WorkerStatus actual = workerSession.getStatus(getSignerIdDummy1());
+        assertNull("getStatus: ", actual.isOK());
+        assertEquals(getSignerIdDummy1(), actual.getWorkerId());
+    }
+    
+    public void test02GetStatus_cryptoTokenOffline() throws Exception {
+        // First check that there isn't any other problem
+        final WorkerStatus before = workerSession.getStatus(getSignerIdDummy1());
+        if (before.isOK() != null) {
+            throw new Exception("Test case expected the worker status to be OK before it will run");
+        }
+        
+        // Now change so the crypto token is offline
+        final String keyDataBefore = before.getActiveSignerConfig().getProperty("KEYDATA");
+        workerSession.removeWorkerProperty(getSignerIdDummy1(), "KEYDATA");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        final WorkerStatus actual = workerSession.getStatus(getSignerIdDummy1());
+        
+        // Restore
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "KEYDATA", keyDataBefore);
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        assertNotNull("getStatus should not be null", actual.isOK());
     }
 
     /*
@@ -212,6 +234,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
 
     public void test99TearDownDatabase() throws Exception {
         removeWorker(3);
+        removeWorker(getSignerIdDummy1());
     }
 
     private boolean arrayEquals(byte[] signreq2, byte[] signres2) {

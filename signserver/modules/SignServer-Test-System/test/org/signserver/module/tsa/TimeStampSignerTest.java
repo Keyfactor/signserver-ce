@@ -12,47 +12,19 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.NoSuchProviderException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.Random;
+import java.security.cert.*;
+import java.util.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.ess.ESSCertID;
-import org.bouncycastle.asn1.ess.SigningCertificate;
-import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.SignerInformation;
-import org.bouncycastle.cms.SignerInformationVerifier;
-import org.bouncycastle.jcajce.provider.asymmetric.rsa.PSSSignatureSpi;
-import org.bouncycastle.jcajce.provider.asymmetric.rsa.PSSSignatureSpi.SHA1withRSA;
-import org.bouncycastle.operator.SignatureAlgorithmIdentifierFinder;
-import org.bouncycastle.tsp.TSPAlgorithms;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TSPUtil;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampRequestGenerator;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.util.Selector;
-import org.bouncycastle.util.Store;
+import org.bouncycastle.tsp.*;
 import org.ejbca.util.Base64;
 import org.signserver.common.*;
 import org.signserver.statusrepo.IStatusRepositorySession;
@@ -177,13 +149,13 @@ public class TimeStampSignerTest extends ModulesTestCase {
                 timeStampResponse.getTimeStampToken());
     }
 
-    /*
-     * Test method for 'org.signserver.server.MRTDSigner.getStatus()'.
+    /**
+     * Tests the status returned by the worker.
      */
     public void test02GetStatus() throws Exception {
-
         SignerStatus stat = (SignerStatus) workerSession.getStatus(8901);
-        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
+        assertEquals("token status", SignerStatus.STATUS_ACTIVE, stat.getTokenStatus());
+        assertNull("ALLOK: " + stat.isOK(), stat.isOK());
     }
 
     /**
@@ -451,6 +423,99 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
         assertNull("No timestamp token",
                 timeStampResponse.getTimeStampToken());
+    }
+
+    /**
+     * Check that we either include the signer certificate if it is missing or
+     * otherwise fails the request.
+     * 
+     * RFC#3161 2.4.1:
+     * "If the certReq field is present and set to true, the TSA's public key
+     *  certificate that is referenced by the ESSCertID identifier inside a
+     *  SigningCertificate attribute in the response MUST be provided by the
+     *  TSA in the certificates field from the SignedData structure in that
+     *  response.  That field may also contain other certificates."
+     * 
+     * @throws Exception 
+     */
+    public void test09SignerCertificateMustBeIncluded() throws Exception {
+        List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER2);
+        final X509Certificate subject = (X509Certificate) chain.get(0);
+        X509Certificate issuer = (X509Certificate) chain.get(1);
+        
+        // Now, don't include the signer certificate in the chain
+        // For some reason we need to upload the signer certificate again :S
+        workerSession.uploadSignerCertificate(WORKER2, subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(WORKER2, Arrays.asList(issuer.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.reloadConfiguration(WORKER2);
+        
+        if (!subject.equals(workerSession.getSignerCertificate(WORKER2))) {
+            LOG.info("Subject: " + subject);
+            LOG.info("Signer: " + workerSession.getSignerCertificate(WORKER2));
+            throw new Exception("Something is fishy. Test assumed the signer certificate to be present");
+        }
+        
+        // Send a request including certificates
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        timeStampRequestGenerator.setCertReq(true);
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest =
+                new GenericSignRequest(123124, requestBytes);
+        try {
+            final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                    WORKER2, signRequest, new RequestContext());
+
+            final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
+            timeStampResponse.validate(timeStampRequest);
+
+            // Restore
+            workerSession.uploadSignerCertificate(WORKER2, subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2, asListOfByteArrays(chain), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2);
+
+            if (PKIStatus.GRANTED == timeStampResponse.getStatus()) {
+                assertEquals("Token granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
+                assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
+
+                // Check that the signer certificate was included
+                CertStore certs = timeStampResponse.getTimeStampToken().getCertificatesAndCRLs("Collection", "BC");
+
+                assertTrue("Must include signer certificate", containsCertificate(certs, subject));
+
+                // Also check that we included it in the SignServer response object
+                assertEquals(subject, res.getSignerCertificate());
+            }
+        } catch (CryptoTokenOfflineException ex) {
+            assertTrue("message should talk about missing signer certificate", ex.getMessage().contains("igner certificate"));
+        }
+    }
+    
+    /**
+     * @return True if the CertStore contained the Certificate
+     */
+    private boolean containsCertificate(final CertStore store, final Certificate subject) throws CertStoreException {
+        final Collection<? extends Certificate> matchedCerts = store.getCertificates(new CertSelector() {
+            @Override
+            public boolean match(Certificate cert) {
+                return subject.equals(cert);
+            }
+            @Override
+            public Object clone() {
+                return this;
+            }
+        });
+        return matchedCerts.size() > 0;
+    }
+    
+    private Collection<byte[]> asListOfByteArrays(List<Certificate> chain) throws CertificateEncodingException {
+        ArrayList results = new ArrayList(chain.size());
+        for (Certificate c : chain) {
+            results.add(c.getEncoded());
+        }
+        return results;
     }
 
     public void test99TearDownDatabase() throws Exception {

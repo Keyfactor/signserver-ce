@@ -16,67 +16,30 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.security.*;
 import java.security.cert.Certificate;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.SecureRandom;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CollectionCertStoreParameters;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1String;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.DERGeneralString;
-import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.cmp.PKIStatus;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.cms.SignerIdentifier;
 import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaCertStoreBuilder;
 import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.crypto.Signer;
-import org.bouncycastle.tsp.TSPAlgorithms;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.tsp.TimeStampResponseGenerator;
-import org.bouncycastle.tsp.TimeStampTokenGenerator;
-import org.bouncycastle.util.Store;
 import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.tsp.*;
 import org.ejbca.util.Base64;
 import org.signserver.common.*;
 import org.signserver.server.ITimeSource;
@@ -168,6 +131,15 @@ import org.signserver.server.signers.BaseSigner;
  *
  *
  * </table>
+ * 
+ * Specifying a signer certificate (normally the SIGNERCERT property) is required 
+ * as information from that certificate will be used to indicate which signer
+ * signed the time-stamp token.
+ * 
+ * The SIGNERCERTCHAIN property contains all certificates included in the token 
+ * if the client requests the certificates. The RFC specified that the signer 
+ * certificate MUST be included in the list returned.
+ * 
  *
  * @author philip
  * @version $Id$
@@ -645,7 +617,7 @@ public class TimeStampSigner extends BaseSigner {
                 throw new CryptoTokenOfflineException(
                         "No certificate for this signer");
             }
-
+            
             DigestCalculatorProvider calcProv = new BcDigestCalculatorProvider();    
             DigestCalculator calc = calcProv.get(new AlgorithmIdentifier(TSPAlgorithms.SHA1));
             
@@ -687,10 +659,14 @@ public class TimeStampSigner extends BaseSigner {
                             .getProperty(TSA));
                 timeStampTokenGen.setTSA(new GeneralName(x500Name));
             }
-
+            
             final CertStore certStore = CertStore.getInstance("Collection",
                     new CollectionCertStoreParameters(
                         getSigningCertificateChain()), "BC");
+            
+            if (!containsCertificate(certStore, signingCert)) {
+                throw new CryptoTokenOfflineException("Signer certificate not included in certificate chain");
+            }
            
             // TODO: will probably need to fix this when moving to BC 2.0...
             timeStampTokenGen.setCertificatesAndCRLs(certStore);
@@ -710,6 +686,23 @@ public class TimeStampSigner extends BaseSigner {
         }
 
         return timeStampTokenGen;
+    }
+    
+    /**
+     * @return True if the CertStore contained the Certificate
+     */
+    private boolean containsCertificate(final CertStore store, final Certificate subject) throws CertStoreException {
+        final Collection<? extends Certificate> matchedCerts = store.getCertificates(new CertSelector() {
+            @Override
+            public boolean match(Certificate cert) {
+                return subject.equals(cert);
+            }
+            @Override
+            public Object clone() {
+                return this;
+            }
+        });
+        return matchedCerts.size() > 0;
     }
 
     private TimeStampResponseGenerator getTimeStampResponseGenerator(

@@ -271,6 +271,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 				}
 				logException(exception, logMap, workerLogger);
                 throw exception;
+            } catch (CryptoTokenOfflineException ex) {
+                final CryptoTokenOfflineException exception =
+                        new CryptoTokenOfflineException(ex);
+                logException(exception, logMap, workerLogger);
+                throw exception;
             }
 
             // Charge the client if the request was successfull

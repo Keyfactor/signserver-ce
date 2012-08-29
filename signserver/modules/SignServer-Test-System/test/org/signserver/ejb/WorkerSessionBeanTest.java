@@ -56,6 +56,8 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         workerSession.setWorkerProperty(3, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(3, "NAME", "testWorker");
         workerSession.reloadConfiguration(3);
+                
+        addDummySigner1();
     }
 
     /*
@@ -102,6 +104,33 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     public void test02GetStatus() throws Exception {
         assertTrue(((SignerStatus) workerSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_ACTIVE
                 || ((SignerStatus) workerSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_OFFLINE);
+    }
+     
+    public void test02GetStatus_ok() throws Exception {
+        final WorkerStatus actual = workerSession.getStatus(getSignerIdDummy1());
+        assertNull("getStatus: ", actual.isOK());
+        assertEquals(getSignerIdDummy1(), actual.getWorkerId());
+    }
+    
+    public void test02GetStatus_cryptoTokenOffline() throws Exception {
+        // First check that there isn't any other problem
+        final WorkerStatus before = workerSession.getStatus(getSignerIdDummy1());
+        if (before.isOK() != null) {
+            throw new Exception("Test case expected the worker status to be OK before it will run");
+        }
+        
+        // Now change so the crypto token is offline
+        final String keyDataBefore = before.getActiveSignerConfig().getProperty("KEYDATA");
+        workerSession.removeWorkerProperty(getSignerIdDummy1(), "KEYDATA");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        final WorkerStatus actual = workerSession.getStatus(getSignerIdDummy1());
+        
+        // Restore
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "KEYDATA", keyDataBefore);
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        assertNotNull("getStatus should not be null", actual.isOK());
     }
 
     /*

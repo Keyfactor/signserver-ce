@@ -154,8 +154,10 @@ public class SignServerHealthCheck implements IHealthCheck {
         }
         if (sb.length() > 0) {
             LOG.error("Health check reports error:\n" + sb.toString());
+        }
+        
+        return sb.toString();
     }
-<<<<<<< .mine
     
 	private void checkMaintenance(final StringBuilder sb) {
 		if (StringUtils.isEmpty(maintenanceFile)) {
@@ -213,8 +215,5 @@ public class SignServerHealthCheck implements IHealthCheck {
 			}
 		}
 	}
-=======
-        return sb.toString();
-    }
->>>>>>> .r2579
+
 }

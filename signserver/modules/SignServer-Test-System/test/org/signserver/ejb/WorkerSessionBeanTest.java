@@ -116,7 +116,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     
     public void test02GetStatus_ok() throws Exception {
         final WorkerStatus actual = workerSession.getStatus(getSignerIdDummy1());
-        assertEquals("getStatus: ", 1, actual.getFatalErrors());
+        assertEquals("getStatus: ", 0, actual.getFatalErrors().size());
         assertEquals(getSignerIdDummy1(), actual.getWorkerId());
     }
     

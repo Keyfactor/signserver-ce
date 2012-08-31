@@ -87,6 +87,11 @@ public abstract class BaseWorker implements IWorker {
         LOG.debug("Destroy called");
     }
     
+    @Override
+    public WorkerConfig getConfig() {
+        return config;
+    }
+    
     /**
      * Method that can be overridden by IWorker implementations to give an 
      * up to date list of errors that would prevent a call to the process 

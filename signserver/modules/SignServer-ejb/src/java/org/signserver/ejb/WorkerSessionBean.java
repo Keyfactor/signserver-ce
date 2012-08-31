@@ -192,7 +192,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         // Get worker log instance
         final IWorkerLogger workerLogger = WorkerFactory.getInstance().
                 getWorkerLogger(workerId,
-                worker.getStatus().getActiveSignerConfig(), em);
+                worker.getConfig(), em);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker[" + workerId + "]: " + "WorkerLogger: "
@@ -217,7 +217,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 WorkerFactory.getInstance()
                         .getAuthenticator(workerId,
                             processable.getAuthenticationType(),
-                            worker.getStatus().getActiveSignerConfig(),
+                            worker.getConfig(),
                             em).isAuthorized(request, requestContext);
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
                         String.valueOf(true));
@@ -256,7 +256,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
             // Check activation
             final WorkerConfig awc =
-                    processable.getStatus().getActiveSignerConfig();
+                    processable.getConfig();
             if (awc.getProperties().getProperty(SignServerConstants.DISABLED,
                     "FALSE").equalsIgnoreCase("TRUE")) {
                 final CryptoTokenOfflineException exception =
@@ -328,7 +328,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                                         RequestContext.CLIENT_CREDENTIAL);
 
                     purchased = WorkerFactory.getInstance().getAccounter(workerId,
-                                    worker.getStatus().getActiveSignerConfig(),
+                                    worker.getConfig(),
                                     em).purchase(credential, request, res,
                                             requestContext);
 
@@ -936,7 +936,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         final IProcessable signer = (IProcessable) worker;
 
-        final WorkerConfig config = worker.getStatus().getActiveSignerConfig();
+        final WorkerConfig config = worker.getConfig();
 
         if (keyAlgorithm == null) {
             keyAlgorithm = config.getProperty("KEYALG");
@@ -1007,13 +1007,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     "Worker exists but isn't a signer.");
         }
         final IProcessable signer = (IProcessable) worker;
-        
-//        if (worker.getStatus().isOK() != null) {
-//            throw new CryptoTokenOfflineException(
-//                    "Testing key can not be performed on offline cryptotoken");
-//        }
 
-        final WorkerConfig config = worker.getStatus().getActiveSignerConfig();
+        final WorkerConfig config = worker.getConfig();
 
         if (alias == null) {
             alias = config.getProperty("DEFAULTKEY");

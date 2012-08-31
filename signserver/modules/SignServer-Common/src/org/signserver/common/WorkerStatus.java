@@ -18,6 +18,10 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Common base class used to report the status of a signer or service. Should
@@ -40,7 +44,7 @@ public abstract class WorkerStatus implements Serializable {
     
     private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
     
-    private String type;
+    private List<String> fatalErrors = new LinkedList<String>();
 
     public WorkerStatus() {
         try {
@@ -59,10 +63,16 @@ public abstract class WorkerStatus implements Serializable {
     }
 
     /** 
-     * Main constuctor
+     * @deprecated Use the constructor taking a list of errors
      */
+    @Deprecated
     public WorkerStatus(int workerId, WorkerConfig config) {
+       this(workerId, Collections.<String>emptyList(), config); 
+    }
+    
+    public WorkerStatus(int workerId, List<String> fatalErrors, WorkerConfig config) {
         this.workerId = workerId;
+        this.fatalErrors.addAll(fatalErrors);
         try {
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
@@ -90,12 +100,21 @@ public abstract class WorkerStatus implements Serializable {
     }
 
     /**
-     * Abstract method all workers must implement, used be health checkers to check that
-     * everything is OK with this worker 
+     * Old method previously used by Health check.
+     * The result from this method if overridden by sub-classes is still being
+     * included in the list of fatal errors for backwards compatibility.
+     * 
+     * New implementations should provide a list of fatal errors that could then 
+     * be retrieved using the getFatalErrors() method.
      * 
      * @return null of everything is OK, otherwise an descriptive error message of the problem.
+     * @deprecated Workers should add all errors using the list in the constructor. Healtch check
+     * and status services should use the getFatalErrors() method.
      */
-    public abstract String isOK();
+    @Deprecated
+    public String isOK() {
+        return null;
+    }
 
     /**
      * Method all inheriting workers must implement. It responsible for writing the status for that specific
@@ -109,5 +128,43 @@ public abstract class WorkerStatus implements Serializable {
         out.println(INDENT1 + INDENT2 + "Issuer DN:      " + cert.getIssuerDN().toString());
         out.println(INDENT1 + INDENT2 + "Valid from:     " + SDF.format(cert.getNotBefore()));
         out.println(INDENT1 + INDENT2 + "Valid until:    " + SDF.format(cert.getNotAfter()));
+    }
+    
+    /**
+     * Checks if the worker is disabled. 
+     * A disabled worker can not perform any processing and might not be included 
+     * in the Health check.
+     * @return True if the worker is configured to be disabled
+     */
+    public boolean isDisabled() {
+        final boolean result = "TRUE".equalsIgnoreCase(getActiveSignerConfig().getProperties().getProperty(SignServerConstants.DISABLED));
+        return result;
+    }
+
+    /**
+     * Checks if the worker reports anything that would lead to it not to be 
+     * able to work. 
+     * If the returned list is non-empty means that the worker should be 
+     * considered offline.
+     * 
+     * This method is the preferred method to use from an Health check service
+     * and for displaying the status of a worker.
+     * 
+     * @return An unmodifiable list of errors preventing this worker from working
+     * or empty if it is "ALLOK".
+     */
+    @SuppressWarnings("deprecation")
+    public List<String> getFatalErrors() {
+        final List<String> results;
+        
+        // For backwards compatibility read the isOK
+        String legacyStatus = isOK();
+        if (legacyStatus == null) {
+            results = fatalErrors;
+        } else {
+            results = Arrays.asList(legacyStatus);
+        }
+        
+        return Collections.unmodifiableList(results);
     }
 }

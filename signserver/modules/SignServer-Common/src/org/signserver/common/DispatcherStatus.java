@@ -15,6 +15,7 @@ package org.signserver.common;
 import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Status for Dispatcher.
@@ -24,28 +25,16 @@ import java.util.Iterator;
  */
 public class DispatcherStatus extends WorkerStatus {
 
-    public DispatcherStatus(int workerId, WorkerConfig config) {
-        super(workerId, config);
-    }
-
-    @Override
-    public String isOK() {
-        if (getActiveSignerConfig()
-                .getProperty(SignServerConstants.DISABLED) == null
-                || !getActiveSignerConfig()
-                .getProperty(SignServerConstants.DISABLED)
-                .equalsIgnoreCase("TRUE")) {
-            return null;
-        } else {
-            return "Worker disabled";
-        }
+    public DispatcherStatus(int workerId, List<String> fatalErrors, WorkerConfig config) {
+        super(workerId, fatalErrors, config);
     }
 
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
-        out.println("Status of Dispatcher with Id " + workerId + " is :\n"
-                + "  SignToken Status : "
-                + signTokenStatuses[isOK() == null ? 1 : 2] + " \n\n");
+        final List<String> errors = getFatalErrors();
+		out.println("Status of Dispatcher with Id " + workerId + " is :\n"  
+                + "  Worker status : " + signTokenStatuses[errors.isEmpty() ? 1 : 2] + "\n");
+        
         if (complete) {
             out.println("Active Properties are :");
             if (getActiveSignerConfig().getProperties().size() == 0) {

@@ -126,7 +126,7 @@ public class AdminWS {
             result.setActiveConfig(status.getActiveSignerConfig()
                     .getProperties());
             result.setHostname(status.getHostname());
-            result.setOk(status.isOK());
+            result.setOk(status.getFatalErrors().isEmpty() ? null : "offline");
             result.setWorkerId(workerId);
 
             final ByteArrayOutputStream bout1 = new ByteArrayOutputStream();

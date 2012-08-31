@@ -31,6 +31,6 @@ public abstract class BaseValidator extends BaseProcessable implements IValidato
      */
     @Override
     public WorkerStatus getStatus() {
-        return new ValidatorStatus(workerId, new ProcessableConfig(config));
+        return new ValidatorStatus(workerId, getFatalErrors(), new ProcessableConfig(config));
     }
 }

@@ -78,7 +78,7 @@ public class SignerStatusReportBuilder implements ReportBuilder {
                     } catch (InvalidWorkerIdException ex) {
                         LOG.error("Invalid worker id: " + workerId, ex);
                     }
-                    if (status == null || status.isOK() != null) {
+                    if (status == null || !status.getFatalErrors().isEmpty()) {
                         statusString = STATUS_OFFLINE;
                     }
                     if (status instanceof CryptoTokenStatus &&

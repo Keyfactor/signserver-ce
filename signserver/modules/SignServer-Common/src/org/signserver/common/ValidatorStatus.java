@@ -15,6 +15,7 @@ package org.signserver.common;
 import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Class used when responding to the SignSession.getStatus() method, represents
@@ -30,8 +31,8 @@ public class ValidatorStatus extends WorkerStatus {
     /** 
      * Main constructor
      */
-    public ValidatorStatus(int workerId, ProcessableConfig config) {
-        super(workerId, config.getWorkerConfig());
+    public ValidatorStatus(int workerId, List<String> fatalErrors, ProcessableConfig config) {
+        super(workerId, fatalErrors, config.getWorkerConfig());
     }
 
     @Override
@@ -63,10 +64,5 @@ public class ValidatorStatus extends WorkerStatus {
             }
             // Validator specific status information can be added here
         }
-    }
-
-    @Override
-    public String isOK() {
-        return null;
     }
 }

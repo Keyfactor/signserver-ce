@@ -15,6 +15,7 @@ package org.signserver.protocol.validationservice.ws.server;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -181,7 +182,20 @@ public class ValidationWS implements IValidationWS {
         String retval = null;
         try {
             ValidationStatus status = (ValidationStatus) getWorkerSession().getStatus(workerId);
-            retval = status.isOK();
+            final List<String> fatalErrors = status.getFatalErrors();
+            final StringBuilder sb = new StringBuilder();
+            if (!fatalErrors.isEmpty()) {
+                for (String error : fatalErrors) {
+                    sb.append("Worker ")
+                        .append(status.getWorkerId())
+                        .append(": ")
+                        .append(error)
+                        .append("\n");
+                }
+            }
+            if (sb.length() > 0) {
+                retval = sb.toString();
+            }
 
         } catch (InvalidWorkerIdException e) {
             log.error("Error invalid worker id " + workerId + "when checking status for validation service");

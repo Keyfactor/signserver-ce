@@ -103,8 +103,9 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
         return active.trim().equalsIgnoreCase("TRUE");
     }
 
+    @Override
     public WorkerStatus getStatus() {
-        ServiceStatus retval = new ServiceStatus(workerId, new ServiceConfig(config));
+        ServiceStatus retval = new ServiceStatus(workerId, getFatalErrors(), new ServiceConfig(config));
 
         return retval;
     }

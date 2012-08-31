@@ -12,6 +12,11 @@
  *************************************************************************/
 package org.signserver.common;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Abstract Status class containing token status.
  * 
@@ -25,13 +30,26 @@ public abstract class CryptoTokenStatus extends WorkerStatus {
     public static final int STATUS_ACTIVE = 1;
     public static final int STATUS_OFFLINE = 2;
     private int tokenStatus = 0;
-
+    
     /** 
      * Main constructor
      */
     public CryptoTokenStatus(int workerId, int tokenStatus, WorkerConfig config) {
-        super(workerId, config);
+        this(workerId, tokenStatus, Collections.<String>emptyList(), config);
+    }
+    
+    public CryptoTokenStatus(int workerId, int tokenStatus, List<String> errors, WorkerConfig config) {
+        super(workerId, addCryptoTokenError(tokenStatus, workerId, errors), config);
         this.tokenStatus = tokenStatus;
+    }
+    
+    private static List<String> addCryptoTokenError(int tokenStatus, int workerId, List<String> errors) {
+        if (tokenStatus == SignerStatus.STATUS_OFFLINE) {
+            List<String> moreErrors = new LinkedList(errors);
+            moreErrors.add("Error Crypto Token is disconnected, worker Id : " + workerId);
+            return moreErrors;
+        }
+        return errors;
     }
 
     /**
@@ -41,17 +59,4 @@ public abstract class CryptoTokenStatus extends WorkerStatus {
         return tokenStatus;
     }
 
-    /**
-     * Method checking the crypto token that it is online.
-     */
-    @Override
-    public String isOK() {
-        String retval = null;
-        if (this.getActiveSignerConfig().getProperties().getProperty(SignServerConstants.DISABLED) == null || !getActiveSignerConfig().getProperties().getProperty(SignServerConstants.DISABLED).equalsIgnoreCase("TRUE")) {
-            if (getTokenStatus() == SignerStatus.STATUS_OFFLINE) {
-                retval = "Error Crypto Token is disconnected, worker Id : " + workerId;
-            }
-        }
-        return retval;
-    }
 }

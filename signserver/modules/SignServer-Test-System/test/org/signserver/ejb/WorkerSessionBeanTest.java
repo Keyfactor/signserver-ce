@@ -108,14 +108,14 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      
     public void test02GetStatus_ok() throws Exception {
         final WorkerStatus actual = workerSession.getStatus(getSignerIdDummy1());
-        assertNull("getStatus: ", actual.isOK());
+        assertEquals("getStatus: ", 1, actual.getFatalErrors());
         assertEquals(getSignerIdDummy1(), actual.getWorkerId());
     }
     
     public void test02GetStatus_cryptoTokenOffline() throws Exception {
         // First check that there isn't any other problem
         final WorkerStatus before = workerSession.getStatus(getSignerIdDummy1());
-        if (before.isOK() != null) {
+        if (!before.getFatalErrors().isEmpty()) {
             throw new Exception("Test case expected the worker status to be OK before it will run");
         }
         
@@ -130,7 +130,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         workerSession.setWorkerProperty(getSignerIdDummy1(), "KEYDATA", keyDataBefore);
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
-        assertNotNull("getStatus should not be null", actual.isOK());
+        assertFalse("getFatalErrors should not be empty", actual.getFatalErrors().isEmpty());
     }
 
     /*

@@ -16,6 +16,7 @@ import java.io.PrintStream;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 
 /**
  * Class used when responding to the SignSession.getStatus() method, represents
@@ -31,8 +32,8 @@ public class ServiceStatus extends WorkerStatus {
     /** 
      * Main constuctor
      */
-    public ServiceStatus(int workerId, ServiceConfig config) {
-        super(workerId, config.getWorkerConfig());
+    public ServiceStatus(int workerId, List<String> fatalErrors, ServiceConfig config) {
+        super(workerId, fatalErrors, config.getWorkerConfig());
 
     }
 
@@ -73,11 +74,4 @@ public class ServiceStatus extends WorkerStatus {
         }
     }
 
-    /**
-     * The default behavior is not to check anything.
-     */
-    @Override
-    public String isOK() {
-        return null;
-    }
 }

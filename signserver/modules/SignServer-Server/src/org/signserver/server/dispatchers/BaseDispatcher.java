@@ -29,6 +29,6 @@ public abstract class BaseDispatcher extends BaseProcessable {
      */
     @Override
     public WorkerStatus getStatus() {
-        return new DispatcherStatus(workerId, config);
+        return new DispatcherStatus(workerId, getFatalErrors(), config);
     }
 }

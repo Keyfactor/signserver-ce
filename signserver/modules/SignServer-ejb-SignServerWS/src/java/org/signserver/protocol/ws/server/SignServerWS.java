@@ -157,9 +157,19 @@ public class SignServerWS implements ISignServerWS {
     private String checkSigner(int workerId) throws InvalidWorkerIdException {
         String retval = null;
         WorkerStatus workerStatus = getWorkerSession().getStatus(workerId);
-        String currentMessage = workerStatus.isOK();
-        if (currentMessage != null) {
-            retval += currentMessage;
+        final List<String> fatalErrors = workerStatus.getFatalErrors();
+        final StringBuilder sb = new StringBuilder();
+        if (!fatalErrors.isEmpty()) {
+            for (String error : fatalErrors) {
+                sb.append("Worker ")
+                    .append(workerStatus.getWorkerId())
+                    .append(": ")
+                    .append(error)
+                    .append("\n");
+            }
+        }
+        if (sb.length() > 0) {
+            retval = sb.toString();
         }
         return retval;
     }

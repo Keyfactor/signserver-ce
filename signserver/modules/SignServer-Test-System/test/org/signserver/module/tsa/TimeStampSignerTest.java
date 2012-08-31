@@ -16,19 +16,27 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.cert.*;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.tsp.*;
 import org.ejbca.util.Base64;
 import org.signserver.common.*;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusName;
+import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertExt;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -155,7 +163,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     public void test02GetStatus() throws Exception {
         SignerStatus stat = (SignerStatus) workerSession.getStatus(8901);
         assertEquals("token status", SignerStatus.STATUS_ACTIVE, stat.getTokenStatus());
-        assertNull("ALLOK: " + stat.isOK(), stat.isOK());
+        assertEquals("ALLOK: " + stat.getFatalErrors(), 0, stat.getFatalErrors().size());
     }
 
     /**
@@ -429,14 +437,14 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * Check that we either include the signer certificate if it is missing or
      * otherwise fails the request.
      * 
+     * In addition Health check should also report an error for this.
+     * 
      * RFC#3161 2.4.1:
      * "If the certReq field is present and set to true, the TSA's public key
      *  certificate that is referenced by the ESSCertID identifier inside a
      *  SigningCertificate attribute in the response MUST be provided by the
      *  TSA in the certificates field from the SignedData structure in that
      *  response.  That field may also contain other certificates."
-     * 
-     * @throws Exception 
      */
     public void test09SignerCertificateMustBeIncluded() throws Exception {
         List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER2);
@@ -454,6 +462,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
             LOG.info("Signer: " + workerSession.getSignerCertificate(WORKER2));
             throw new Exception("Something is fishy. Test assumed the signer certificate to be present");
         }
+        // Test the status of the worker
+        WorkerStatus actualStatus = workerSession.getStatus(WORKER2);
+        assertEquals("should be error as signer certificate is not included in chain", 1, actualStatus.getFatalErrors().size());
+        assertTrue("error should talk about missing signer certificate: " + actualStatus.getFatalErrors(), actualStatus.getFatalErrors().get(0).contains("ertificate"));
         
         // Send a request including certificates
         TimeStampRequestGenerator timeStampRequestGenerator =
@@ -471,43 +483,124 @@ public class TimeStampSignerTest extends ModulesTestCase {
             final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
             timeStampResponse.validate(timeStampRequest);
 
+            if (PKIStatus.GRANTED == timeStampResponse.getStatus()) {
+                fail("Should have failed as the signer is miss-configured");
+            }
+        } catch (CryptoTokenOfflineException ex) {
+            assertTrue("message should talk about missing signer certificate", ex.getMessage().contains("igner certificate"));
+        } finally {
             // Restore
             workerSession.uploadSignerCertificate(WORKER2, subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
             workerSession.uploadSignerCertificateChain(WORKER2, asListOfByteArrays(chain), GlobalConfiguration.SCOPE_GLOBAL);
             workerSession.reloadConfiguration(WORKER2);
-
-            if (PKIStatus.GRANTED == timeStampResponse.getStatus()) {
-                assertEquals("Token granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
-                assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
-
-                // Check that the signer certificate was included
-                CertStore certs = timeStampResponse.getTimeStampToken().getCertificatesAndCRLs("Collection", "BC");
-
-                assertTrue("Must include signer certificate", containsCertificate(certs, subject));
-
-                // Also check that we included it in the SignServer response object
-                assertEquals(subject, res.getSignerCertificate());
-            }
-        } catch (CryptoTokenOfflineException ex) {
-            assertTrue("message should talk about missing signer certificate", ex.getMessage().contains("igner certificate"));
         }
     }
     
     /**
-     * @return True if the CertStore contained the Certificate
+     * Tests that status is not OK and that an failure is generated when trying
+     * to sign when the right signer certificate is not configured.
+     *
      */
-    private boolean containsCertificate(final CertStore store, final Certificate subject) throws CertStoreException {
-        final Collection<? extends Certificate> matchedCerts = store.getCertificates(new CertSelector() {
-            @Override
-            public boolean match(Certificate cert) {
-                return subject.equals(cert);
+    public void test10WrongSignerCertificate() throws Exception {
+        final List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER2);
+        final X509Certificate subject = (X509Certificate) workerSession.getSignerCertificate(WORKER2);
+        
+        // Any other certificate that will no match the key-pair
+        final X509Certificate other = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=Other").addExtension(new CertExt(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
+        
+        try {
+            // Use the other certificate which will not match the key + the right cert in chain        
+            workerSession.uploadSignerCertificate(WORKER2, other.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2, Arrays.asList(subject.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2);
+
+            // Test the status of the worker
+            WorkerStatus actualStatus = workerSession.getStatus(WORKER2);
+            assertEquals("should be error as the right signer certificate is not configured", 2, actualStatus.getFatalErrors().size());
+            assertTrue("error should talk about incorrect signer certificate: " + actualStatus.getFatalErrors(), actualStatus.getFatalErrors().get(0).contains("ertificate"));
+
+            // Send a request including certificates
+            TimeStampRequestGenerator timeStampRequestGenerator =
+                    new TimeStampRequestGenerator();
+            timeStampRequestGenerator.setCertReq(true);
+            TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                    TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+            byte[] requestBytes = timeStampRequest.getEncoded();
+            GenericSignRequest signRequest =
+                    new GenericSignRequest(123124, requestBytes);
+            try {
+                final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                        WORKER2, signRequest, new RequestContext());
+
+                final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
+                timeStampResponse.validate(timeStampRequest);
+
+                if (PKIStatus.GRANTED == timeStampResponse.getStatus()) {
+                    fail("Should have failed as the signer is miss-configured");
+                }
+            } catch (CryptoTokenOfflineException ex) {
+                assertTrue("message should talk about incorrect signer certificate", ex.getMessage().contains("igner certificate"));
             }
-            @Override
-            public Object clone() {
-                return this;
+        } finally {
+            // Restore
+            workerSession.uploadSignerCertificate(WORKER2, subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2, asListOfByteArrays(chain), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2);
+        }
+    }
+    
+    /**
+     * Tests that status is not OK and that an failure is generated when trying
+     * to sign when the right signer certificate is not configured in the 
+     * certificate chain property.
+     *
+     */
+    public void test10WrongSignerCertificate_InChain() throws Exception {
+        final List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER2);
+        final X509Certificate subject = (X509Certificate) workerSession.getSignerCertificate(WORKER2);
+        
+        // Any other certificate that will no match the key-pair
+        final X509Certificate other = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=Other").build());
+        
+        try {
+            // Use the right certificate but the other in the certificate chain
+            workerSession.uploadSignerCertificate(WORKER2, subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2, Arrays.asList(other.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2);
+
+            // Test the status of the worker
+            WorkerStatus actualStatus = workerSession.getStatus(WORKER2);
+            assertEquals("should be error as the right signer certificate is not configured", 1, actualStatus.getFatalErrors().size());
+            assertTrue("error should talk about incorrect signer certificate: " + actualStatus.getFatalErrors(), actualStatus.getFatalErrors().get(0).contains("ertificate"));
+
+            // Send a request including certificates
+            TimeStampRequestGenerator timeStampRequestGenerator =
+                    new TimeStampRequestGenerator();
+            timeStampRequestGenerator.setCertReq(true);
+            TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                    TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+            byte[] requestBytes = timeStampRequest.getEncoded();
+            GenericSignRequest signRequest =
+                    new GenericSignRequest(123124, requestBytes);
+            try {
+                final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                        WORKER2, signRequest, new RequestContext());
+
+                final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
+                timeStampResponse.validate(timeStampRequest);
+
+                if (PKIStatus.GRANTED == timeStampResponse.getStatus()) {
+                    fail("Should have failed as the signer is miss-configured");
+                }
+            } catch (CryptoTokenOfflineException ex) {
+                assertTrue("message should talk about incorrect signer certificate", ex.getMessage().contains("igner certificate"));
             }
-        });
-        return matchedCerts.size() > 0;
+        } finally {
+            // Restore
+            workerSession.uploadSignerCertificate(WORKER2, subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2, asListOfByteArrays(chain), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2);
+        }
     }
     
     private Collection<byte[]> asListOfByteArrays(List<Certificate> chain) throws CertificateEncodingException {
@@ -517,6 +610,8 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
         return results;
     }
+    
+    // TODO: In an other issue: add test case that health check and status shows offline if a signer certificate without the right EKU is used
 
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKER1);

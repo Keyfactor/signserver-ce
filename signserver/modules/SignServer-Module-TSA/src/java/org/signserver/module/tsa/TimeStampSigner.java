@@ -128,7 +128,14 @@ import org.signserver.server.signers.BaseSigner;
  *          General name of the Time Stamp Authority.
  *      </td>
  *  </tr>
- *
+ * <tr>
+ *      <td>REQUIREVALIDCHAIN</td>
+ *      <td>
+ *          Set to true to perform an extra check that the SIGNERCERTCHAIN only 
+ *          contains certificates in the chain of the signer certificate.
+ *          (OPTIONAL), default false.
+ *      </td>
+ * </tr>
  *
  * </table>
  * 
@@ -173,6 +180,7 @@ public class TimeStampSigner extends BaseSigner {
     public static final String ACCURACYSECONDS = "ACCURACYSECONDS";
     public static final String ORDERING = "ORDERING";
     public static final String TSA = "TSA";
+    public static final String REQUIREVALIDCHAIN = "REQUIREVALIDCHAIN";
 
     private static final String DEFAULT_WORKERLOGGER =
             DefaultTimeStampLogger.class.getName();
@@ -233,6 +241,8 @@ public class TimeStampSigner extends BaseSigner {
     //private String defaultDigestOID = null;
     private ASN1ObjectIdentifier defaultTSAPolicyOID = null;
     
+    private boolean validChain = true;
+    
     @Override
     public void init(final int signerId, final WorkerConfig config,
             final WorkerContext workerContext,
@@ -283,6 +293,12 @@ public class TimeStampSigner extends BaseSigner {
                 + TimeStampRequest.class.getPackage()
                     .getImplementationVersion());
         }
+        
+        // Validate certificates in signer certificate chain
+        final String requireValidChain = config.getProperty(REQUIREVALIDCHAIN, Boolean.FALSE.toString());
+        if (Boolean.parseBoolean(requireValidChain)) {
+            validChain = validateChain();
+        }
     }
 
     /**
@@ -320,6 +336,11 @@ public class TimeStampSigner extends BaseSigner {
                     new IllegalRequestException(
                 "Recieved request data wasn't a expected TimeStampRequest. ");
             throw exception;
+        }
+        
+        if (!validChain) {
+            LOG.error("Certificate chain not correctly configured");
+            throw new CryptoTokenOfflineException("Certificate chain not correctly configured");
         }
 
         final Date date = getTimeSource().getGenTime();
@@ -810,6 +831,68 @@ public class TimeStampSigner extends BaseSigner {
 		}
     	
     }
+    
+    /**
+     * @return True if each certificate in the certificate chain can be verified 
+     * by the next certificate (if any). This does not check that the last 
+     * certificate is a trusted certificate as the root certificate is normally 
+     * not included.
+     */
+    private boolean validateChain() {
+        boolean result = true;
+        try {
+            Collection<Certificate> signingCertificateChain = getSigningCertificateChain();
+            if (signingCertificateChain instanceof List) {
+                List<Certificate> chain = (List<Certificate>) signingCertificateChain;
+                for (int i = 0; i < chain.size(); i++) {
+                    Certificate subject = chain.get(i);
+                    
+                    // If we have the issuer we can validate the certificate
+                    if (chain.size() > i + 1) {
+                        Certificate issuer = chain.get(i + 1);
+                        try {
+                            subject.verify(issuer.getPublicKey(), "BC");
+                        } catch (CertificateException ex) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
+                            }
+                            result = false;
+                        } catch (NoSuchAlgorithmException ex) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
+                            }
+                            result = false;
+                        } catch (InvalidKeyException ex) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
+                            }
+                            result = false;
+                        } catch (NoSuchProviderException ex) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
+                            }
+                            result = false;
+                        } catch (SignatureException ex) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
+                            }
+                            result = false;
+                        }
+                    }
+                }
+            } else {
+                // This would be a bug
+                LOG.error("Certificate chain was not an list!");
+                result = false;
+            }
+        } catch (CryptoTokenOfflineException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to get signer certificate or chain: " + ex.getMessage());
+            }
+            result = false;
+        }
+        return result;
+    }
 
     @Override
     protected List<String> getFatalErrors() {
@@ -866,6 +949,14 @@ public class TimeStampSigner extends BaseSigner {
             result.add("No signer certificate available");
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Signer " + workerId + ": Could not get signer certificate: " + ex.getMessage());
+            }
+        }
+        
+        // Check signer certificate chain if required
+        if (!validChain) {
+            result.add("Not strictly valid chain and " + REQUIREVALIDCHAIN + " specified");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signer " + workerId + ": " + REQUIREVALIDCHAIN + " specified but the chain was not found valid");
             }
         }
         

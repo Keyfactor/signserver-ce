@@ -2614,6 +2614,9 @@ Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, R
                         <p>
 <b>TSA</b> = General name of the Time Stamp Authority. (OPTIONAL)
                         </p>
+                        <p>
+<b>REQUIREVALIDCHAIN</b> = Set to true to perform an extra check that the SIGNERCERTCHAIN only contains certificates in the chain of the signer certificate. (OPTIONAL), default false.
+                        </p>
                     </subsubsection>
                     
                     <subsubsection name="TimeStampSigner Certificates">
@@ -2624,6 +2627,7 @@ Specifying a signer certificate is required as information from that certificate
 The signer certificate chain contains all certificates included in the token  if the client requests the certificates.
 The signer certificate MUST be included in the configured certificate chain.
 Other certificates might also be included in the chain (typically intermediate CA certificates).
+However, if REQUIREVALIDCHAIN=true is specified only the signer certificate directly followed by its issuer and then the issuer's issuer and so on is allowed. All certificates will be verified if there is a certificate coming after it. No check is made that the last certificate is a root certificate as that certificate is usually not included.
                         </p>
                     </subsubsection>
                 </subsection>

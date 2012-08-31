@@ -610,6 +610,103 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
         return results;
     }
+
+    /**
+     * Tests that if REQUIREVALIDCHAIN=true is specified only the signer certificate
+     * and its issuer (and its issuer and so on...) is allowed in the chain.
+     * Also tests that the default is to not do this check.
+     */
+    public void test11RequireValidChain() throws Exception {
+    
+        // First make sure we don't have this property set
+        workerSession.removeWorkerProperty(WORKER1, "REQUIREVALIDCHAIN");
+        
+        // Setup an invalid chain
+        final List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER1);
+        final X509Certificate subject = (X509Certificate) workerSession.getSignerCertificate(WORKER1);
+        
+        // Any other certificate that will no match the key-pair
+        final X509Certificate other = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=Other cert").build());
+        
+        try {
+            // An not strictly valid chain as it contains an additional certificate at the end
+            // (In same use cases this might be okey but now we are testing the 
+            //  strict checking with the REQUIREVALIDCHAIN property set)
+            List<Certificate> ourChain = new LinkedList<Certificate>();
+            ourChain.addAll(chain);
+            ourChain.add(other);
+            workerSession.uploadSignerCertificate(WORKER1, subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER1, asListOfByteArrays(ourChain), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER1);
+            
+            // Test the status of the worker: should be ok as we aren't doing strict checking
+            WorkerStatus actualStatus = workerSession.getStatus(WORKER1);
+            assertEquals("should be okey as aren't doing strict checking", 0, actualStatus.getFatalErrors().size());
+            // Test signing: should also be ok
+            assertTokenGranted(WORKER1);
+            
+            // Now change to strict checking
+            workerSession.setWorkerProperty(WORKER1, "REQUIREVALIDCHAIN", "true");
+            workerSession.reloadConfiguration(WORKER1);
+            
+            // Test the status of the worker: should be offline as we don't have a valid chain
+            actualStatus = workerSession.getStatus(WORKER1);
+            assertEquals("should be offline as we don't have a valid chain", 1, actualStatus.getFatalErrors().size());
+            // Test signing: should give error
+            assertTokenNotGranted(WORKER1);
+            
+        } finally {
+            // Restore
+            workerSession.uploadSignerCertificate(WORKER1, subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER1, asListOfByteArrays(chain), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER1);
+        }
+        
+    }
+    
+    private void assertTokenGranted(int workerId) throws Exception {
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                    new TimeStampRequestGenerator();
+        timeStampRequestGenerator.setCertReq(true);
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest =
+                new GenericSignRequest(123124, requestBytes);
+        try {
+            final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                    workerId, signRequest, new RequestContext());
+
+            final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
+            timeStampResponse.validate(timeStampRequest);
+
+            assertEquals(PKIStatus.GRANTED, timeStampResponse.getStatus());
+        } catch (CryptoTokenOfflineException ex) {
+            fail(ex.getMessage());
+        }
+    }
+    
+    private void assertTokenNotGranted(int workerId) throws Exception {
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                    new TimeStampRequestGenerator();
+        timeStampRequestGenerator.setCertReq(true);
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest =
+                new GenericSignRequest(123124, requestBytes);
+        try {
+            final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                    workerId, signRequest, new RequestContext());
+
+            final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
+            timeStampResponse.validate(timeStampRequest);
+
+            assertFalse(PKIStatus.GRANTED == timeStampResponse.getStatus());
+        } catch (CryptoTokenOfflineException ignored) { //NOPMD
+            // OK
+        }
+    }
     
     // TODO: In an other issue: add test case that health check and status shows offline if a signer certificate without the right EKU is used
 

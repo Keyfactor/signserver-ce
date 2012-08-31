@@ -13,7 +13,6 @@
 package org.signserver.common;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,8 +31,9 @@ public abstract class CryptoTokenStatus extends WorkerStatus {
     private int tokenStatus = 0;
     
     /** 
-     * Main constructor
+     * @deprecated Use the constructor taking an list of errors
      */
+    @Deprecated
     public CryptoTokenStatus(int workerId, int tokenStatus, WorkerConfig config) {
         this(workerId, tokenStatus, Collections.<String>emptyList(), config);
     }

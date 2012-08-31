@@ -1,3 +1,18 @@
+SignServer 3.2.3
+----------------
+
+Major new features and improvements:
+ - 
+
+Bug fixes:
+ - 
+
+Notice:
+ - Same internal API changes has been done as part of DSS-528. If you have 
+   custom code some changes might be required.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
+
 SignServer 3.2.2
 ----------------
 

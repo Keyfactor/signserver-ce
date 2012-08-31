@@ -14,12 +14,21 @@ package org.signserver.web;
  *************************************************************************/
 
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
+import java.util.Properties;
+
 import java.util.List;
 import javax.ejb.EJB;
 import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.signserver.common.GlobalConfiguration;
@@ -56,6 +65,8 @@ public class SignServerHealthCheck implements IHealthCheck {
     
     private int minfreememory;
     private String checkDBString;
+    private String maintenanceFile;
+    private String maintenancePropertyName;
 
     private IGlobalConfigurationSession.IRemote getGlobalConfigurationSession() {
         if (globalConfigurationSession == null) {
@@ -83,11 +94,22 @@ public class SignServerHealthCheck implements IHealthCheck {
     public void init(ServletConfig config) {
         minfreememory = Integer.parseInt(config.getInitParameter("MinimumFreeMemory")) * 1024 * 1024;
         checkDBString = config.getInitParameter("checkDBString");
-
+        maintenanceFile = config.getInitParameter("MaintenanceFile");
+        maintenancePropertyName = config.getInitParameter("MaintenancePropertyName");
+        
+        initMaintenanceFile();
     }
 
     public String checkHealth(HttpServletRequest request) {
         LOG.debug("Starting HealthCheck health check requested by : " + request.getRemoteAddr());
+        
+        StringBuilder sb = new StringBuilder();
+        checkMaintenance(sb);
+		if( sb.length()>0 ) { 
+			// if Down for maintenance do not perform more checks
+			return sb.toString(); 
+		}
+        
         String errormessage = "";
 
         errormessage += HealthCheckUtils.checkDB(checkDBString);
@@ -139,4 +161,62 @@ public class SignServerHealthCheck implements IHealthCheck {
         }
         return sb.toString();
     }
+    
+    
+	private void checkMaintenance(final StringBuilder sb) {
+		if (StringUtils.isEmpty(maintenanceFile)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Maintenance file not specified, node will be monitored");
+            }
+			return;
+		} 
+		InputStream in = null;
+		try {
+			in = new FileInputStream(maintenanceFile);
+	        final Properties maintenanceProperties = new Properties();
+			maintenanceProperties.load(in);
+            final String maintenancePropertyValue = maintenanceProperties.getProperty(maintenancePropertyName);
+            if (maintenancePropertyValue == null) {
+               LOG.info("Could not find property " + maintenancePropertyName+ " in " + maintenanceFile+ ", will continue to monitor this node");
+            } else if (Boolean.TRUE.toString().equalsIgnoreCase(maintenancePropertyValue)) {
+                sb.append("MAINT: ").append(maintenancePropertyName);
+            }
+		} catch (IOException e) {
+	        if (LOG.isDebugEnabled()) {
+	            LOG.debug("Could not read Maintenance File. Expected to find file at: "+ maintenanceFile);
+	        }
+			return;
+		} finally {
+			if (in != null) {
+				try {
+					in.close();					
+				} catch (IOException e) {
+					LOG.error("Error closing file: ", e);
+				}
+			}
+		}
+	}
+	
+	private void initMaintenanceFile() {
+		if (StringUtils.isEmpty(maintenanceFile)) {
+			LOG.debug("Maintenance file not specified, node will be monitored");
+		} else {
+			Properties maintenanceProperties = new Properties();
+			InputStream in = null;
+			try {
+				in = new FileInputStream(maintenanceFile);
+				maintenanceProperties.load(in);
+			} catch (IOException e) {
+				LOG.debug("Could not read Maintenance File. Expected to find file at: "+ maintenanceFile);
+			} finally {
+				if (in != null) {
+					try {
+						in.close();					
+					} catch (IOException e) {
+						LOG.error("Error closing file: ", e);
+					}
+				}
+			}
+		}
+	}
 }

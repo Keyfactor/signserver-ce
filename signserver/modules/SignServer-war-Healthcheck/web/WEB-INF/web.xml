@@ -55,6 +55,21 @@
             <param-name>SendServerError</param-name>
             <param-value>true</param-value>
         </init-param>
+        <init-param>
+        	<description>
+        		Parameter specifying a file containing down-for-maintenance setting.
+        	</description>
+        	<param-name>MaintenanceFile</param-name>
+            <param-value>${healthcheck.maintenancefile}</param-value>
+        </init-param>
+        <init-param>
+        	<description>
+        		Parameter specifying the property name to be used in the down-for-maintenance file.
+        		The value of the property can be set to either true or false. The name is included in the maintenance message.
+        	</description>
+        	<param-name>MaintenancePropertyName</param-name>
+            <param-value>${healthcheck.maintenancepropertyname}</param-value>
+        </init-param>
         <!-- 
     <init-param>
         <description>

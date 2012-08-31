@@ -13,12 +13,8 @@
 package org.signserver.server.signers;
 
 import java.security.cert.Certificate;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.CryptoTokenStatus;
-import org.signserver.common.ProcessableConfig;
-import org.signserver.common.SignServerConstants;
-import org.signserver.common.SignerStatus;
-import org.signserver.common.WorkerStatus;
+import java.util.List;
+import org.signserver.common.*;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.KeyUsageCounter;
 
@@ -36,7 +32,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      */
     @Override
     public WorkerStatus getStatus() {
-        SignerStatus retval = null;
+        SignerStatus retval;
+        final List<String> fatalErrors = getFatalErrors();
 
         try {
             final Certificate cert = getSigningCertificate();
@@ -53,15 +50,15 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 }
 
                 if (counter != null) {
-                    retval = new SignerStatus(workerId, status, new ProcessableConfig(config), cert, counter.getCounter());
+                    retval = new SignerStatus(workerId, status, fatalErrors, new ProcessableConfig(config), cert, counter.getCounter());
                 } else {
-                    retval = new SignerStatus(workerId, status, new ProcessableConfig(config), cert);
+                    retval = new SignerStatus(workerId, status, fatalErrors, new ProcessableConfig(config), cert);
                 }
             } else {
-                retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), new ProcessableConfig(config), cert);
+                retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), fatalErrors, new ProcessableConfig(config), cert);
             }
         } catch (CryptoTokenOfflineException e) {
-            retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), new ProcessableConfig(config), null);
+            retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), fatalErrors, new ProcessableConfig(config), null);
         }
         return retval;
     }

@@ -347,6 +347,20 @@ j2ee.web-nohttps=true
 # Default : Select count(*) from signerconfigdata
 #healthcheck.checkdbstring=Select count(*) from signerconfigdata
 
+# Parameter to specify location of file containing information about maintenance
+# Use this file to specify weather to include node in healthcheck or report as down for maintenance, 
+# which will return an error message (either the property name specified below or a custom message specified in web.xml).
+# Default: empty (not used)
+#healthcheck.maintenancefile=maintenance.properties
+
+# Parameter to configure name of maintenance property, default = DOWN_FOR_MAINTENANCE
+# The healthcheck.maintenancefile should contain a single line like this:
+# DOWN_FOR_MAINTENANCE=true
+# Where the node will be down for maintenance of the property is true, and not down for maintenance if the property is false.
+# Default: DOWN_FOR_MAINTENANCE
+#healthcheck.maintenancepropertyname=DOWN_FOR_MAINTENANCE
+
+
 # ------------- Cluster Deployment Configuration -------------------------------
 # Configuration used to centrally deploy the application server in a
 # clustered environment. Currently are up to 6 nodes supported to

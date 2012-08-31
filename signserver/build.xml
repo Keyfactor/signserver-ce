@@ -203,6 +203,10 @@ OS version                          = ${os.version}
                         to="${healthcheck.minimumfreememory}"/>
                     <replacestring from="@healthcheck.checkdbstring@"
                         to="${healthcheck.checkdbstring}"/>
+                	<replacestring from="@healthcheck.maintenancefile@"
+                		to="${healthcheck.maintenancefile}"/>
+                	<replacestring from="@healthcheck.maintenancepropertyname@"
+                		to="${healthcheck.maintenancepropertyname}"/>
                 </tokenfilter>
             </filterchain>
         </copy>

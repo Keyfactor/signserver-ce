@@ -13,12 +13,11 @@
 package org.signserver.web;
 
 import java.util.Iterator;
+import java.util.List;
 import javax.ejb.EJB;
-
 import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.signserver.common.GlobalConfiguration;
@@ -105,23 +104,37 @@ public class SignServerHealthCheck implements IHealthCheck {
     }
 
     private String checkSigners() {
-        String retval = "";
+        final StringBuilder sb = new StringBuilder();
         Iterator<Integer> iter = getGlobalConfigurationSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE).iterator();
         while (iter.hasNext()) {
             int processableId = ((Integer) iter.next()).intValue();
 
             try {
                 WorkerStatus workerStatus = getWorkerSession().getStatus(processableId);
-                String currentMessage = workerStatus.isOK();
-                if (currentMessage != null) {
-                    retval += "\n " + currentMessage;
-                    LOG.error(currentMessage);
+                if (workerStatus.isDisabled()) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Not checking worker " + processableId + " as it is disabled");
+                }
+                } else {
+                    final List<String> fatalErrors = workerStatus.getFatalErrors();
+                    if (!fatalErrors.isEmpty()) {
+                        for (String error : fatalErrors) {
+                            sb.append("Worker ")
+                                .append(workerStatus.getWorkerId())
+                                .append(": ")
+                                .append(error)
+                                .append("\n");
+                        }
+                    }
                 }
 
             } catch (InvalidWorkerIdException e) {
                 LOG.error(e.getMessage(), e);
             }
         }
-        return retval;
+        if (sb.length() > 0) {
+            LOG.error("Health check reports error:\n" + sb.toString());
+    }
+        return sb.toString();
     }
 }

@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.ServiceStatus;
-import org.signserver.common.WorkerStatus;
+import org.signserver.common.WorkerStatus;  
 import org.signserver.server.BaseWorker;
 
 /**
@@ -103,8 +103,9 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
         return active.trim().equalsIgnoreCase("TRUE");
     }
 
+    @Override
     public WorkerStatus getStatus() {
-        ServiceStatus retval = new ServiceStatus(workerId, new ServiceConfig(config));
+        ServiceStatus retval = new ServiceStatus(workerId, getFatalErrors(), new ServiceConfig(config));
 
         return retval;
     }

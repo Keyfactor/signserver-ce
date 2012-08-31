@@ -55,7 +55,7 @@ public class HealthCheckTest extends WebTestCase {
         // Make sure one worker is offline
         getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "KEYDATA");
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-        if (getWorkerSession().getStatus(getSignerIdDummy1()).isOK() == null) {
+        if (getWorkerSession().getStatus(getSignerIdDummy1()).getFatalErrors().isEmpty()) {
             throw new Exception("Error in test case. We should have an offline worker to test with");
         }
         

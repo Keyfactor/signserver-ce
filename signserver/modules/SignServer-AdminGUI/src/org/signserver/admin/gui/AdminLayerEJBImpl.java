@@ -129,7 +129,7 @@ public class AdminLayerEJBImpl implements AdminWS {
                 }
                 result.setActiveConfig(activeConfig);
                 result.setHostname(status.getHostname());
-                result.setOk(status.isOK());
+                result.setOk(status.getFatalErrors().isEmpty() ? null : "offline");
                 result.setWorkerId(workerId);
                 final ByteArrayOutputStream bout1 = new ByteArrayOutputStream();
                 status.displayStatus(workerId, new PrintStream(bout1), false);

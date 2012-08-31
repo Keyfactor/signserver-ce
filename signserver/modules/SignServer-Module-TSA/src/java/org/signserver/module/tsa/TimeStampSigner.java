@@ -623,16 +623,9 @@ public class TimeStampSigner extends BaseSigner {
                 timeStampTokenGen.setTSA(new GeneralName(x509Name));
             }
 
-            final CertStore certStore = CertStore.getInstance("Collection",
-                    new CollectionCertStoreParameters(
-                        getSigningCertificateChain()), "BC");
+            // TODO: will probably need to fix this when moving to BC 2.0...
+            timeStampTokenGen.setCertificatesAndCRLs(getCertStoreWithChain(signingCert));
             
-            if (!containsCertificate(certStore, signingCert)) {
-                throw new CryptoTokenOfflineException("Signer certificate not included in certificate chain");
-            }
-            
-            timeStampTokenGen.setCertificatesAndCRLs(certStore);
-
         } catch (IllegalArgumentException e) {
             LOG.error("IllegalArgumentException: ", e);
             throw new IllegalRequestException(e.getMessage());
@@ -643,6 +636,23 @@ public class TimeStampSigner extends BaseSigner {
         return timeStampTokenGen;
     }
 
+    private CertStore getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException {
+        Collection<Certificate> signingCertificateChain = getSigningCertificateChain();
+        
+        if (signingCertificateChain == null) {
+            throw new CryptoTokenOfflineException("Certificate chain not available");
+        } else {
+            final CertStore certStore = CertStore.getInstance("Collection",
+                    new CollectionCertStoreParameters(
+                        signingCertificateChain), "BC");
+
+            if (!containsCertificate(certStore, signingCert)) {
+                throw new CryptoTokenOfflineException("Signer certificate not included in certificate chain");
+            }
+            return certStore;
+        }
+    }
+    
     /**
      * @return True if the CertStore contained the Certificate
      */
@@ -712,5 +722,66 @@ public class TimeStampSigner extends BaseSigner {
             }
         }
         return serno;
+    }
+    
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> result = new LinkedList<String>();
+        result.addAll(super.getFatalErrors());
+        
+        // TODO: This test should be moved so that it is available to all signers
+        // Check if certificate matches key
+        try {
+            Certificate certificate = getSigningCertificate();
+            if (certificate == null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Signer " + workerId + ": No certificate");
+                }
+                result.add("No signer certificate available");
+            } else {
+                if (Arrays.equals(certificate.getPublicKey().getEncoded(),
+                        getCryptoToken().getPublicKey(
+                        ICryptoToken.PURPOSE_SIGN).getEncoded())) {
+                    LOG.debug("Signer " + workerId + ": Certificate matches key");
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Signer " + workerId + ": Certificate does not match key");
+                    }
+                    result.add("Certificate does not match key");
+                }
+            }
+            
+            // TODO: This test might be moved so that it is available to all signers
+            // Check that certificiate chain contains the signer certificate
+            try {
+                getCertStoreWithChain(certificate);
+            } catch (NoSuchAlgorithmException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            } catch (NoSuchProviderException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            } catch (CertStoreException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            } catch (CryptoTokenOfflineException ex) {
+                result.add(ex.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Signer " + workerId + ": " + ex.getMessage());
+                }
+            } catch (InvalidAlgorithmParameterException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            }
+            
+            
+        } catch (CryptoTokenOfflineException ex) {
+            result.add("No signer certificate available");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signer " + workerId + ": Could not get signer certificate: " + ex.getMessage());
+            }
+        }
+        
+        return result;
     }
 }

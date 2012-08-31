@@ -2615,6 +2615,17 @@ Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, R
 <b>TSA</b> = General name of the Time Stamp Authority. (OPTIONAL)
                         </p>
                     </subsubsection>
+                    
+                    <subsubsection name="TimeStampSigner Certificates">
+                        <p>
+Specifying a signer certificate is required as information from that certificate will be used to indicate which signer signed the time-stamp token.
+                        </p>
+                        <p>
+The signer certificate chain contains all certificates included in the token  if the client requests the certificates.
+The signer certificate MUST be included in the configured certificate chain.
+Other certificates might also be included in the chain (typically intermediate CA certificates).
+                        </p>
+                    </subsubsection>
                 </subsection>
 
                 <subsection name="MRTD Signer">

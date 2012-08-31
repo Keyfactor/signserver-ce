@@ -18,7 +18,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -162,7 +161,8 @@ public abstract class WorkerStatus implements Serializable {
         if (legacyStatus == null) {
             results = fatalErrors;
         } else {
-            results = Arrays.asList(legacyStatus);
+            results = new LinkedList<String>(fatalErrors);
+            results.add(legacyStatus);
         }
         
         return Collections.unmodifiableList(results);

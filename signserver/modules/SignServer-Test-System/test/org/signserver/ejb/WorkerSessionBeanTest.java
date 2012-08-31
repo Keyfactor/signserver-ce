@@ -108,7 +108,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      
     public void test02GetStatus_ok() throws Exception {
         final WorkerStatus actual = workerSession.getStatus(getSignerIdDummy1());
-        assertEquals("getStatus: ", 1, actual.getFatalErrors());
+        assertEquals("getStatus: ", 0, actual.getFatalErrors().size());
         assertEquals(getSignerIdDummy1(), actual.getWorkerId());
     }
     
@@ -226,6 +226,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
 
     public void test99TearDownDatabase() throws Exception {
         removeWorker(3);
+        removeWorker(getSignerIdDummy1());
     }
 
     private boolean arrayEquals(byte[] signreq2, byte[] signres2) {

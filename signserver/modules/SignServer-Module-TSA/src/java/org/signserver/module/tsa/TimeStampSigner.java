@@ -870,7 +870,12 @@ public class TimeStampSigner extends BaseSigner {
                 LOG.debug("Signer " + workerId + ": " + REQUIREVALIDCHAIN + " specified but the chain was not found valid");
             }
         }
-        
+
+	// check timesource
+	if (timeSource.getGenTime() == null) {
+	    result.add("Time source not available");
+	}
+
         return result;
     }
     

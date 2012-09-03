@@ -652,6 +652,8 @@ public class TimeStampSignerTest extends ModulesTestCase {
                     String.valueOf(WORKER2)});
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
                     String.valueOf(WORKER3)});
+        TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
+                    String.valueOf(WORKER4)});
         workerSession.reloadConfiguration(WORKER1);
         workerSession.reloadConfiguration(WORKER2);
         workerSession.reloadConfiguration(WORKER3);

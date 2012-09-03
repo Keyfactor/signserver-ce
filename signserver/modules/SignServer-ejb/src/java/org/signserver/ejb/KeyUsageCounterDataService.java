@@ -67,7 +67,7 @@ public class KeyUsageCounterDataService implements IKeyUsageCounterDataService {
         }
         updateQuery.setParameter("keyhash", keyHash);
 
-        return updateQuery.executeUpdate() < 1;
+        return updateQuery.executeUpdate() > 0;
     }
 
     @Override

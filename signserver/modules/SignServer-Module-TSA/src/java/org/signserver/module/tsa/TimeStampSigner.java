@@ -960,6 +960,11 @@ public class TimeStampSigner extends BaseSigner {
             }
         }
         
+        // check time source
+        if (timeSource.getGenTime() == null) {
+        	result.add("Time source not available");
+        }
+
         return result;
     }
     

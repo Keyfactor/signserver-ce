@@ -14,6 +14,7 @@ package org.signserver.server.signers;
 
 import java.security.cert.Certificate;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.KeyUsageCounter;
@@ -27,6 +28,9 @@ import org.signserver.server.KeyUsageCounter;
  */
 public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(BaseSigner.class);
+    
     /**
      * @see org.signserver.server.IProcessable#getStatus()
      */
@@ -40,8 +44,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
 
             if (cert != null) {
-                KeyUsageCounter counter = em.find(KeyUsageCounter.class,
-                        KeyUsageCounter.createKeyHash(cert.getPublicKey()));
+                KeyUsageCounter counter = getSignServerContext().getKeyUsageCounterDataService().getCounter(KeyUsageCounter.createKeyHash(cert.getPublicKey()));
                 int status = getCryptoToken().getCryptoTokenStatus();
                 if (counter == null || keyUsageLimit != -1
                         && status == CryptoTokenStatus.STATUS_ACTIVE

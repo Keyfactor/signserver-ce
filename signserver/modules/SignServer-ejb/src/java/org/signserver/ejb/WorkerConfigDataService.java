@@ -15,17 +15,14 @@ package org.signserver.ejb;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.log.ISystemLogger;
-import org.signserver.server.IWorkerConfigDataService;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
 
@@ -57,6 +54,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      * @param workerId uniqe Id of the worker 
      *
      */
+    @Override
     public void create(int workerId, String configClassPath) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating worker config data, id=" + workerId);
@@ -78,6 +76,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      *
      */
     @SuppressWarnings("unchecked")
+    @Override
     public WorkerConfig getWorkerConfig(int workerId) {
         WorkerConfig workerConf = null;
         WorkerConfigDataBean wcdb = em.find(WorkerConfigDataBean.class, workerId);
@@ -119,6 +118,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     /**
      * Method that saves the Worker Config to database.
      */
+    @Override
     public void setWorkerConfig(int workerId, WorkerConfig signconf) {
         setWorkerConfig(workerId, signconf, null);
         auditLog(workerId, "setWorkerConfig");
@@ -129,6 +129,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      * 
      * @return true if the removal was successful
      */
+    @Override
     public boolean removeWorkerConfig(int workerId) {
         boolean retval = false;
         WorkerConfigDataBean wcdb = em.find(WorkerConfigDataBean.class, workerId);
@@ -173,6 +174,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     /* (non-Javadoc)
      * @see org.signserver.ejb.IWorkerConfigDataService#getWorkerProperties(int)
      */
+    @Override
     public WorkerConfig getWorkerProperties(int workerId) {
 
         WorkerConfig workerConfig = getWorkerConfig(workerId);

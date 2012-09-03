@@ -13,7 +13,6 @@
 package org.signserver.ejb;
 
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -25,7 +24,7 @@ import javax.persistence.Query;
  *
  * @version $Id$
  */
-class GlobalConfigurationDataService {
+class GlobalConfigurationDataService implements IGlobalConfigurationDataService {
 
     private EntityManager em;
 
@@ -33,6 +32,7 @@ class GlobalConfigurationDataService {
         this.em = em;
     }
 
+    @Override
     public void setGlobalProperty(String completekey, String value) {
         GlobalConfigurationDataBean data = em.find(GlobalConfigurationDataBean.class, completekey);
         if (data == null) {
@@ -45,6 +45,7 @@ class GlobalConfigurationDataService {
         }
     }
 
+    @Override
     public boolean removeGlobalProperty(String completekey) {
         boolean retval = false;
         GlobalConfigurationDataBean data = em.find(GlobalConfigurationDataBean.class, completekey);
@@ -56,6 +57,7 @@ class GlobalConfigurationDataService {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public List<GlobalConfigurationDataBean> findAll() {
         Query query = em.createQuery("SELECT e from GlobalConfigurationDataBean e");
 

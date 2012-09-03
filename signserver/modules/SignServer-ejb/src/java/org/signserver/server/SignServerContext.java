@@ -13,6 +13,7 @@
 package org.signserver.server;
 
 import javax.persistence.EntityManager;
+import org.signserver.ejb.IKeyUsageCounterDataService;
 
 /**
  * SignServer specific context, contains the Entity Manager
@@ -22,15 +23,13 @@ import javax.persistence.EntityManager;
  * @version $Id$
  */
 public class SignServerContext extends WorkerContext {
-
+    
     private EntityManager em;
+    private IKeyUsageCounterDataService keyUsageCounterDataService;
 
-    /**
-     * Default constructor.
-     * @param em the Entity Manager
-     */
-    public SignServerContext(EntityManager em) {
+    public SignServerContext(EntityManager em, IKeyUsageCounterDataService keyUsageCounterDataService) {
         this.em = em;
+        this.keyUsageCounterDataService = keyUsageCounterDataService;
     }
 
     /**
@@ -39,5 +38,9 @@ public class SignServerContext extends WorkerContext {
      */
     public EntityManager getEntityManager() {
         return em;
+    }
+
+    public IKeyUsageCounterDataService getKeyUsageCounterDataService() {
+        return keyUsageCounterDataService;
     }
 }

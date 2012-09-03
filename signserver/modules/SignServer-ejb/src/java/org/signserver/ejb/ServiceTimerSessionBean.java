@@ -13,38 +13,20 @@
 package org.signserver.ejb;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-
+import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.Timeout;
 import javax.ejb.Timer;
-import javax.ejb.TimerService;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
+import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
-
+import javax.transaction.*;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.server.IWorker;
-import org.signserver.server.IWorkerConfigDataService;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerFactory;
@@ -70,6 +52,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
     private IGlobalConfigurationSession.ILocal globalConfigurationSession;
     
     private IWorkerConfigDataService workerConfigService = null;
+    private SignServerContext workerContext;
     
     /**
      * Constant indicating the Id of the "service loader" service.
@@ -85,6 +68,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
     @PostConstruct
     public void create() {
         workerConfigService = new WorkerConfigDataService(em);
+        workerContext = new SignServerContext(em, new KeyUsageCounterDataService(em));
     }
     
     /**
@@ -109,11 +93,11 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
             UserTransaction ut = sessionCtx.getUserTransaction();
             try {
                 ut.begin();
-                IWorker worker = WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, new SignServerContext(em));
+                IWorker worker = WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, workerContext);
                 if (worker != null) {
-                    serviceConfig = new ServiceConfig(WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, new SignServerContext(em)).getStatus().getActiveSignerConfig());
+                    serviceConfig = new ServiceConfig(WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, workerContext).getStatus().getActiveSignerConfig());
                     if (serviceConfig != null) {
-                        timedService = (ITimedService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, new SignServerContext(em));
+                        timedService = (ITimedService) WorkerFactory.getInstance().getWorker(timerInfo.intValue(), workerConfigService, globalConfigurationSession, workerContext);
                         sessionCtx.getTimerService().createTimer(timedService.getNextInterval(), timerInfo);
                         isSingleton = timedService.isSingleton();
                         if (!isSingleton) {
@@ -215,7 +199,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
         while (iter.hasNext()) {
             Integer nextId = (Integer) iter.next();
             if (!existingTimers.contains(nextId)) {
-                ITimedService timedService = (ITimedService) WorkerFactory.getInstance().getWorker(nextId.intValue(), workerConfigService, globalConfigurationSession, new SignServerContext(em));
+                ITimedService timedService = (ITimedService) WorkerFactory.getInstance().getWorker(nextId.intValue(), workerConfigService, globalConfigurationSession, workerContext);
                 if (timedService != null && timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
                     sessionCtx.getTimerService().createTimer((timedService.getNextInterval()), nextId);
                 }

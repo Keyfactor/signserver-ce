@@ -13,23 +13,11 @@
 package org.signserver.server;
 
 import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessableConfig;
-import org.signserver.common.SignServerConstants;
-import org.signserver.common.SignServerException;
-import org.signserver.common.WorkerConfig;
+import org.signserver.common.*;
+import org.signserver.ejb.IWorkerConfigDataService;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
@@ -582,7 +570,7 @@ public class WorkerFactory {
     }
 
     public List<Archiver> getArchivers(final int workerId,
-            final WorkerConfig config, final EntityManager em)
+            final WorkerConfig config, final SignServerContext context)
             throws IllegalRequestException {
         List<Archiver> archivers = getArchiversStore().get(workerId);
         if (archivers == null) {
@@ -599,13 +587,12 @@ public class WorkerFactory {
 
             if (list != null) {
                 int index = 0;
-                SignServerContext context = new SignServerContext(em);
                 for (String className : list.split(",")) {
                     className = className.trim();
 
                     if (!className.isEmpty()) {
                         try {
-                            final Class<?> c = getClassLoader(em, workerId,
+                            final Class<?> c = getClassLoader(context.getEntityManager(), workerId,
                                     config).loadClass(className);
                             final Archiver archiver = (Archiver) c.newInstance();
                             archivers.add(archiver);

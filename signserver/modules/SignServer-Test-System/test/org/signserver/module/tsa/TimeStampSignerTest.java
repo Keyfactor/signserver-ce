@@ -714,6 +714,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         removeWorker(WORKER1);
         removeWorker(WORKER2);
         removeWorker(WORKER3);
+        removeWorker(WORKER4);
     }
 
 }

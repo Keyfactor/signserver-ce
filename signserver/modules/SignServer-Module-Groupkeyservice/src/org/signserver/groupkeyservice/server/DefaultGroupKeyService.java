@@ -17,22 +17,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.security.KeyPair;
 import java.util.Date;
-
 import javax.crypto.SecretKey;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.groupkeyservice.common.FetchKeyRequest;
-import org.signserver.groupkeyservice.common.FetchKeyResponse;
-import org.signserver.groupkeyservice.common.GroupKeyServiceConstants;
-import org.signserver.groupkeyservice.common.GroupKeyServiceStatus;
-import org.signserver.groupkeyservice.common.IRemoveGroupKeyRequest;
-import org.signserver.groupkeyservice.common.PregenerateKeysRequest;
-import org.signserver.groupkeyservice.common.PregenerateKeysResponse;
-import org.signserver.groupkeyservice.common.RemoveGroupKeyResponse;
-import org.signserver.groupkeyservice.common.SwitchEncKeyRequest;
-import org.signserver.groupkeyservice.common.SwitchEncKeyResponse;
+import org.signserver.groupkeyservice.common.*;
 import org.signserver.groupkeyservice.entities.EncKeyDataBean;
 import org.signserver.groupkeyservice.entities.GroupKeyDataBean;
 import org.signserver.groupkeyservice.entities.GroupKeyDataService;
@@ -165,14 +154,15 @@ public class DefaultGroupKeyService extends BaseGroupKeyService {
     /**
      * @see org.signserver.groupkeyservice.server.IGroupKeyService#getStatus()
      */
+    @Override
     public WorkerStatus getStatus() {
         long numOfKeys = getGroupKeyDataService().getNumOfKeys(new Date(0), new Date());
         long numAssignedKeys = getGroupKeyDataService().getNumOfAssignedKeys(new Date(0), new Date());
         long numUnassignedKeys = getGroupKeyDataService().getNumOfUnassignedKeys(new Date(0), new Date());
         EncKeyDataBean currentEncKey = getGroupKeyDataService().getCurrentEncKeyRef();
         if (currentEncKey == null) {
-            return new GroupKeyServiceStatus(workerId, ect.getCryptoTokenStatus(), config, numUnassignedKeys, numOfKeys, numAssignedKeys, null, 0, null);
+            return new GroupKeyServiceStatus(workerId, ect.getCryptoTokenStatus(), config, numUnassignedKeys, numOfKeys, numAssignedKeys, null, 0, null, getFatalErrors());
         }
-        return new GroupKeyServiceStatus(workerId, ect.getCryptoTokenStatus(), config, numUnassignedKeys, numOfKeys, numAssignedKeys, currentEncKey.getEncKeyRef(), currentEncKey.getNumberOfEncryptions(), currentEncKey.getUsageStarted());
+        return new GroupKeyServiceStatus(workerId, ect.getCryptoTokenStatus(), config, numUnassignedKeys, numOfKeys, numAssignedKeys, currentEncKey.getEncKeyRef(), currentEncKey.getNumberOfEncryptions(), currentEncKey.getUsageStarted(), getFatalErrors());
     }
 }

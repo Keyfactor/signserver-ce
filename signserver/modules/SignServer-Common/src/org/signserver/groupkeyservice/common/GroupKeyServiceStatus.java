@@ -13,9 +13,10 @@
 package org.signserver.groupkeyservice.common;
 
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
-
+import java.util.List;
 import org.signserver.common.CryptoTokenStatus;
 import org.signserver.common.WorkerConfig;
 
@@ -36,10 +37,20 @@ public class GroupKeyServiceStatus extends CryptoTokenStatus {
     private long currentEncKeyNumEncryptions;
     private Date currentEncKeyStartDate;
 
+    /** 
+     * @deprecated Use the constructor taking an list of errors
+     */
+    @Deprecated
     public GroupKeyServiceStatus(int workerId, int tokenStatus, WorkerConfig config, long numOfUnassignedKeys,
             long numOfKeys, long numOfAssignedKeys, String currentEncKeyRef,
             long currentEncKeyNumEncryptions, Date currentEncKeyStartDate) {
-        super(workerId, tokenStatus, config);
+        this(workerId, tokenStatus, config, numOfUnassignedKeys, numOfKeys, numOfAssignedKeys, currentEncKeyRef, currentEncKeyNumEncryptions, currentEncKeyStartDate, Collections.<String>emptyList());
+    }
+
+    public GroupKeyServiceStatus(int workerId, int tokenStatus, WorkerConfig config, long numOfUnassignedKeys,
+            long numOfKeys, long numOfAssignedKeys, String currentEncKeyRef,
+            long currentEncKeyNumEncryptions, Date currentEncKeyStartDate, List<String> errors) {
+        super(workerId, tokenStatus, errors, config);
         this.numOfUnassignedKeys = numOfUnassignedKeys;
         this.numOfKeys = numOfKeys;
         this.numOfAssignedKeys = numOfAssignedKeys;
@@ -47,11 +58,13 @@ public class GroupKeyServiceStatus extends CryptoTokenStatus {
         this.currentEncKeyNumEncryptions = currentEncKeyNumEncryptions;
         this.currentEncKeyStartDate = currentEncKeyStartDate;
     }
-
+    
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
+        final List<String> errors = getFatalErrors();
         out.println("Status of Group Key Service with Id " + workerId + " is :\n"
-                + "  SignToken Status : " + signTokenStatuses[getTokenStatus()] + " \n\n");
+                + "  Worker status : " + signTokenStatuses[getTokenStatus() == CryptoTokenStatus.STATUS_ACTIVE && (errors.isEmpty()) ? 1 : 2] + "\n"
+                + "  Token status  : " + signTokenStatuses[getTokenStatus()]);
 
         if (complete) {
             out.println("Active Properties are :");

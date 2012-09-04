@@ -13,6 +13,7 @@
 package org.signserver.ejb;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyStoreException;
@@ -27,7 +28,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -48,8 +48,13 @@ import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
+import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
+import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.config.entities.WorkerConfigDataService;
+import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
+import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
+import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.log.*;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
@@ -78,10 +83,12 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     private static final DERObjectIdentifier PRIVATE_KEY_USAGE_PERIOD = new DERObjectIdentifier("2.5.29.16");
     
     /** The local home interface of Worker Config entity bean. */
-    private WorkerConfigDataService workerConfigService;
+    private IWorkerConfigDataService workerConfigService;
     
     /** The local home interface of archive entity bean. */
     private ArchiveDataService archiveDataService;
+    
+    private IKeyUsageCounterDataService keyUsageCounterDataService;
 
     @EJB
     private IGlobalConfigurationSession.ILocal globalConfigurationSession;
@@ -98,8 +105,21 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
     @PostConstruct
     public void create() {
-        workerConfigService = new WorkerConfigDataService(em);
-        archiveDataService = new ArchiveDataService(em);
+        if (em == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No EntityManager injected. Running without database.");
+            }
+            // TODO: Config of file
+            workerConfigService = new FileBasedWorkerConfigDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/signerdata.dat"));
+            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/keyusagecounter.dat"));
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("EntityManager injected. Running with database.");
+            }
+            workerConfigService = new WorkerConfigDataService(em);
+            archiveDataService = new ArchiveDataService(em);
+            keyUsageCounterDataService = new KeyUsageCounterDataService(em);
+        }
     }
 
     /**
@@ -236,8 +256,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 checkSignerValidity(workerId, awc, logMap);
 
                 // Check key usage limit (preliminary check only)
-                checkSignerKeyUsageCounter(processable, workerId, awc, em,
-                        false);
+                    checkSignerKeyUsageCounter(processable, workerId, awc, em,
+                            false);
             } catch (CryptoTokenOfflineException ex) {
                 final CryptoTokenOfflineException exception =
                         new CryptoTokenOfflineException(ex);
@@ -633,7 +653,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 final String pk
                         = KeyUsageCounterHash.create(cert.getPublicKey());
                 final KeyUsageCounter signings
-                        = em.find(KeyUsageCounter.class, pk);
+                        = keyUsageCounterDataService.getCounter(pk);
                 if (signings == null) {
                     result = -1;
                 } else {
@@ -705,16 +725,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
 
             if (increment) {
-                final Query updateQuery;
-                if (keyUsageLimit < 0) {
-                    updateQuery = em.createQuery("UPDATE KeyUsageCounter w SET w.counter = w.counter + 1 WHERE w.keyHash = :keyhash");
-                } else {
-                    updateQuery = em.createQuery("UPDATE KeyUsageCounter w SET w.counter = w.counter + 1 WHERE w.keyHash = :keyhash AND w.counter < :limit");
-                    updateQuery.setParameter("limit", keyUsageLimit);
-                }
-                updateQuery.setParameter("keyhash", keyHash);
-                
-                if (updateQuery.executeUpdate() < 1) {
+                if (!keyUsageCounterDataService.incrementIfWithinLimit(keyHash, keyUsageLimit)) {
                     final String message
                             = "Key usage limit exceeded or not initialized for worker "
                             + workerId;
@@ -724,12 +735,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             } else {
                 // Just check the value without updating
                 if (keyUsageLimit > -1) {
-                    final Query selectQuery;
-                    selectQuery = em.createQuery("SELECT COUNT(w) FROM KeyUsageCounter w WHERE w.keyHash = :keyhash AND w.counter < :limit");
-                    selectQuery.setParameter("limit", keyUsageLimit);
-                    selectQuery.setParameter("keyhash", keyHash);
-
-                    if (selectQuery.getResultList().size() < 1) {
+                    if (!keyUsageCounterDataService.isWithinLimit(keyHash, keyUsageLimit)) {
                         final String message
                             = "Key usage limit exceeded or not initialized for worker "
                             + workerId;
@@ -789,15 +795,19 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                                 .create(cert.getPublicKey());
 
                         KeyUsageCounter counter
-                                = em.find(KeyUsageCounter.class, keyHash);
+                                = keyUsageCounterDataService.getCounter(keyHash);
 
                         if (counter == null) {
-                            counter = new KeyUsageCounter(keyHash);
-                            em.persist(counter);
-                        }
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Worker[" + workerId + "]: "
-                                    + "key usage counter: " + counter.getCounter());
+                            keyUsageCounterDataService.create(keyHash);
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Worker[" + workerId + "]: "
+                                        + "new key usage counter initialized");
+                            }
+                        } else {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Worker[" + workerId + "]: "
+                                        + "key usage counter: " + counter.getCounter());
+                            }
                         }
                     }
                 } catch (CryptoTokenOfflineException ex) {

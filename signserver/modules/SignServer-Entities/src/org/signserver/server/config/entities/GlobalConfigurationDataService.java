@@ -24,7 +24,7 @@ import javax.persistence.Query;
  *
  * @version $Id$
  */
-public class GlobalConfigurationDataService {
+public class GlobalConfigurationDataService implements IGlobalConfigurationDataService {
 
     private EntityManager em;
 
@@ -32,6 +32,7 @@ public class GlobalConfigurationDataService {
         this.em = em;
     }
 
+    @Override
     public void setGlobalProperty(String completekey, String value) {
         GlobalConfigurationDataBean data = em.find(GlobalConfigurationDataBean.class, completekey);
         if (data == null) {
@@ -44,6 +45,7 @@ public class GlobalConfigurationDataService {
         }
     }
 
+    @Override
     public boolean removeGlobalProperty(String completekey) {
         boolean retval = false;
         GlobalConfigurationDataBean data = em.find(GlobalConfigurationDataBean.class, completekey);
@@ -55,6 +57,7 @@ public class GlobalConfigurationDataService {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public List<GlobalConfigurationDataBean> findAll() {
         Query query = em.createQuery("SELECT e from GlobalConfigurationDataBean e");
 

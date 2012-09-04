@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb.worker.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -28,7 +29,12 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.*;
 import org.signserver.server.archive.Archiver;
+import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
+import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.config.entities.WorkerConfigDataService;
+import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
+import org.signserver.server.entities.IKeyUsageCounterDataService;
+import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.timedservices.ITimedService;
 
@@ -48,34 +54,48 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     @PersistenceContext(unitName = "SignServerJPA")
     EntityManager em;
     
-    private WorkerConfigDataService workerConfigService;
+    private IWorkerConfigDataService workerConfigService;
+    private IKeyUsageCounterDataService keyUsageCounterDataService;
     
     private final WorkerFactory workerFactory = WorkerFactory.getInstance();
     
+    private SignServerContext workerContext;
+    
     @PostConstruct
     public void create() {
-        workerConfigService = new WorkerConfigDataService(em);
+        if (em == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No EntityManager injected. Running without database.");
+            }
+            // TODO: Config of file
+            workerConfigService = new FileBasedWorkerConfigDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/signerdata.dat"));
+            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/keyusagecounter.dat"));
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("EntityManager injected. Running with database.");
+            }
+            workerConfigService = new WorkerConfigDataService(em);
+            keyUsageCounterDataService = new KeyUsageCounterDataService(em);
+        }
+        workerContext = new SignServerContext(em, keyUsageCounterDataService);
     }
 
     @Override
     public IWorker getWorker(final int workerId, final IGlobalConfigurationSession globalSession) {
         return workerFactory.getWorker(workerId,
-                workerConfigService, globalSession, this, new SignServerContext(
-                em));
+                workerConfigService, globalSession, this, workerContext);
     }
 
     @Override
     public int getIdFromName(final String workerName, final IGlobalConfigurationSession globalSession) {
         return workerFactory.getWorkerIdFromName(workerName.
-                toUpperCase(), workerConfigService, globalSession, this, new SignServerContext(
-                em));
+                toUpperCase(), workerConfigService, globalSession, this, workerContext);
     }
 
     @Override
     public void reloadWorker(int workerId, WorkerSessionBean aThis, ILocal globalConfigurationSession) {
         workerFactory.reloadWorker(workerId,
-                    workerConfigService, globalConfigurationSession, new SignServerContext(
-                    em));
+                    workerConfigService, globalConfigurationSession, workerContext);
     }
 
     @Override
@@ -101,7 +121,7 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
 
     @Override
     public List<Archiver> getArchivers(int workerId, WorkerConfig awc) throws IllegalRequestException {
-        return workerFactory.getArchivers(workerId, awc, em);
+        return workerFactory.getArchivers(workerId, awc, workerContext);
     }
 
     @Override

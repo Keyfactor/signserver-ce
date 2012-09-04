@@ -18,8 +18,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Timer;
 import javax.ejb.*;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.*;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
@@ -29,8 +27,6 @@ import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
-import org.signserver.server.config.entities.IWorkerConfigDataService;
-import org.signserver.server.config.entities.WorkerConfigDataService;
 import org.signserver.server.timedservices.ITimedService;
 
 /**
@@ -43,9 +39,6 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
     /** Logger for this class. */
     private static final Logger log = Logger.getLogger(ServiceTimerSessionBean.class);
     
-    @PersistenceContext(unitName = "SignServerJPA")
-    EntityManager em;
-    
     @Resource
     private SessionContext sessionCtx;
     
@@ -54,8 +47,6 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
     
     @EJB
     private IWorkerManagerSessionLocal workerManagerSession;
-    
-    private IWorkerConfigDataService workerConfigService = null;
     
     /**
      * Constant indicating the Id of the "service loader" service.
@@ -70,7 +61,6 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
      */
     @PostConstruct
     public void create() {
-        workerConfigService = new WorkerConfigDataService(em);
     }
     
     /**

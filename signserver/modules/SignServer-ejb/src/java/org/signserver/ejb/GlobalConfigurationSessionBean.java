@@ -12,7 +12,9 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import java.io.File;
 import java.util.*;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
@@ -24,8 +26,10 @@ import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
 import org.signserver.server.GlobalConfigurationCache;
+import org.signserver.server.config.entities.FileBasedGlobalConfigurationDataService;
 import org.signserver.server.config.entities.GlobalConfigurationDataBean;
 import org.signserver.server.config.entities.GlobalConfigurationDataService;
+import org.signserver.server.config.entities.IGlobalConfigurationDataService;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
@@ -40,7 +44,7 @@ import org.signserver.server.log.SystemLoggerFactory;
 public class GlobalConfigurationSessionBean implements IGlobalConfigurationSession.ILocal, IGlobalConfigurationSession.IRemote {
 
     /** Logger for this class. */
-    private static final Logger log = Logger.getLogger(GlobalConfigurationSessionBean.class);
+    private static final Logger LOG = Logger.getLogger(GlobalConfigurationSessionBean.class);
     
     /** Audit logger. */
     private static final ISystemLogger AUDITLOG = SystemLoggerFactory
@@ -53,13 +57,28 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     EntityManager em;
     private static final long serialVersionUID = 1L;
 
-    private GlobalConfigurationDataService globalConfigurationDataService;
-
-    
     static {
         SignServerUtil.installBCProvider();
     }
 
+    private IGlobalConfigurationDataService globalConfigurationDataService;
+
+    @PostConstruct
+    public void create() {
+        if (em == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No EntityManager injected. Running without database.");
+            }
+            // TODO: Config of file
+            globalConfigurationDataService = new FileBasedGlobalConfigurationDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/globalconfigdata.dat"));
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("EntityManager injected. Running with database.");
+            }
+            globalConfigurationDataService = new GlobalConfigurationDataService(em);
+        }
+    }
+    
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#setProperty(String, String, String)
      */
@@ -85,7 +104,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
             if (scope.equals(GlobalConfiguration.SCOPE_GLOBAL)) {
                 retval = GlobalConfiguration.SCOPE_GLOBAL + tempKey;
             } else {
-                log.error("Error : Invalid scope " + scope);
+                LOG.error("Error : Invalid scope " + scope);
             }
         }
 
@@ -108,7 +127,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
                 retval = getGlobalConfigurationDataService().removeGlobalProperty(propertyKeyHelper(scope, key));
                 GlobalConfigurationCache.setCachedGlobalConfig(null);
             } catch (Throwable e) {
-                log.error("Error connecting to database, configuration is un-syncronized", e);
+                LOG.error("Error connecting to database, configuration is un-syncronized", e);
                 GlobalConfigurationCache.setCurrentState(GlobalConfiguration.STATE_OUTOFSYNC);
                 GlobalConfigurationCache.getCachedGlobalConfig().remove(propertyKeyHelper(scope, key));
             }
@@ -121,7 +140,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
      */
     @Override
     public GlobalConfiguration getGlobalConfiguration() {
-        GlobalConfiguration retval;
+        GlobalConfiguration retval = null;
 
         if (GlobalConfigurationCache.getCachedGlobalConfig() == null) {
             Properties properties = new Properties();
@@ -140,7 +159,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
                     	properties.setProperty(rawkey,
                     			propertyValue == null ? "" : propertyValue);
                     } else {
-                        log.error("Illegal property in Global Configuration " + rawkey);
+                        LOG.error("Illegal property in Global Configuration " + rawkey);
                     }
                 }
             }
@@ -154,10 +173,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
         return retval;
     }
     
-    private GlobalConfigurationDataService getGlobalConfigurationDataService() {
-        if (globalConfigurationDataService == null) {
-            globalConfigurationDataService = new GlobalConfigurationDataService(em);
-        }
+    private IGlobalConfigurationDataService getGlobalConfigurationDataService() {
         return globalConfigurationDataService;
     }
 
@@ -171,12 +187,12 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 
         if (!GlobalConfigurationCache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
             String message = "Error it is only possible to resync a database that have the state " + GlobalConfiguration.STATE_OUTOFSYNC;
-            log.error(message);
+            LOG.error(message);
             throw new ResyncException(message);
         }
         if (GlobalConfigurationCache.getCachedGlobalConfig() == null) {
             String message = "Error resyncing database, cached global configuration doesn't exist.";
-            log.error(message);
+            LOG.error(message);
             throw new ResyncException(message);
         }
 
@@ -198,7 +214,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 
         } catch (PersistenceException e) {
             String message = e.getMessage();
-            log.error(message);
+            LOG.error(message);
             throw new ResyncException(message);
         }
 
@@ -251,7 +267,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
             GlobalConfigurationCache.setCachedGlobalConfig(null);
         } catch (Throwable e) {
             String message = "Error connecting to database, configuration is un-syncronized :";
-            log.error(message, e);
+            LOG.error(message, e);
             GlobalConfigurationCache.setCurrentState(GlobalConfiguration.STATE_OUTOFSYNC);
             GlobalConfigurationCache.getCachedGlobalConfig().setProperty(key, value);
         }
@@ -275,7 +291,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
             }
             AUDITLOG.log(logMap);
         } catch (SystemLoggerException ex) {
-            log.error("Audit log failure", ex);
+            LOG.error("Audit log failure", ex);
             throw new EJBException("Audit log failure", ex);
         }
     }

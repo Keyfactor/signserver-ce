@@ -65,6 +65,15 @@ public class GroupKeyServiceStatus extends CryptoTokenStatus {
         out.println("Status of Group Key Service with Id " + workerId + " is :\n"
                 + "  Worker status : " + signTokenStatuses[getTokenStatus() == CryptoTokenStatus.STATUS_ACTIVE && (errors.isEmpty()) ? 1 : 2] + "\n"
                 + "  Token status  : " + signTokenStatuses[getTokenStatus()]);
+        
+        if (errors != null && !errors.isEmpty()) {
+            out.println("  Errors: ");
+            
+            for (String error : errors) {
+                out.print("    ");
+                out.println(error);
+            }
+        }
 
         out.println("\n\n");
         

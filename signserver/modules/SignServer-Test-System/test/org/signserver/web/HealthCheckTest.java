@@ -58,8 +58,6 @@ public class HealthCheckTest extends WebTestCase {
     public void test00SetupDatabase() throws Exception {
         addDummySigner1();
 //        addCMSSigner1();
-        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-TSA/src/conf/junittest-part-config.properties"));
-        workerSession.reloadConfiguration(TSA_WORKER);
     }
 
     /**
@@ -91,12 +89,17 @@ public class HealthCheckTest extends WebTestCase {
      * Tests that a time stamp signer with a timesource not insync results in a healthcheck error
      */
     public void test03TimeSourceNotInsync() throws Exception {
+    	setProperties(new File(getSignServerHome(), "res/test/test_healthcheck_timestamp_configuration.properties"));
+        workerSession.reloadConfiguration(TSA_WORKER);
+    	
     	// Test without insync
         repository.update(StatusName.TIMESOURCE0_INSYNC.name(), "");
         
         assertStatusReturned(NO_FIELDS, 500);
         String body = new String(sendAndReadyBody(NO_FIELDS));
         assertFalse("Not ALLOK: " + body, body.contains("ALLOK"));
+    
+        removeWorker(TSA_WORKER);
     }
 
     /**
@@ -106,6 +109,5 @@ public class HealthCheckTest extends WebTestCase {
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
 //        removeWorker(getSignerIdCMSSigner1());
-        removeWorker(TSA_WORKER);
     }
 }

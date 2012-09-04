@@ -24,4 +24,12 @@ public interface IWorkerConfigDataService {
     String LOG_OPERATION = "WORKERCONF_OPERATION";
 
     WorkerConfig getWorkerProperties(int workerId);
+    
+    boolean removeWorkerConfig(int workerId);
+
+    void setWorkerConfig(int workerId, WorkerConfig config);
+
+    WorkerConfig getWorkerConfig(int workerId);
+
+    void create(int workerId, String name);
 }

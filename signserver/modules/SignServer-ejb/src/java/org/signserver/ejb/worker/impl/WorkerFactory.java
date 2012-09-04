@@ -399,7 +399,7 @@ public class WorkerFactory {
     }
 
     public synchronized List<Archiver> getArchivers(final int workerId,
-            final WorkerConfig config, final EntityManager em)
+            final WorkerConfig config, final SignServerContext context)
             throws IllegalRequestException {
         List<Archiver> archivers = getArchiversStore().get(workerId);
         if (archivers == null) {
@@ -416,7 +416,6 @@ public class WorkerFactory {
 
             if (list != null) {
                 int index = 0;
-                SignServerContext context = new SignServerContext(em);
                 for (String className : list.split(",")) {
                     className = className.trim();
 

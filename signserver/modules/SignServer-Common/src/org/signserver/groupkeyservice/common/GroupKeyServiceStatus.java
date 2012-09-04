@@ -66,6 +66,8 @@ public class GroupKeyServiceStatus extends CryptoTokenStatus {
                 + "  Worker status : " + signTokenStatuses[getTokenStatus() == CryptoTokenStatus.STATUS_ACTIVE && (errors.isEmpty()) ? 1 : 2] + "\n"
                 + "  Token status  : " + signTokenStatuses[getTokenStatus()]);
 
+        out.println("\n\n");
+        
         if (complete) {
             out.println("Active Properties are :");
 

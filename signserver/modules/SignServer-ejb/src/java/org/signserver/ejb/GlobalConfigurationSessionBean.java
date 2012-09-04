@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import java.io.File;
 import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJBException;
@@ -55,18 +56,30 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
         SignServerUtil.installBCProvider();
     }
     
-    private GlobalConfigurationDataService globalConfigurationDataService;
+    private IGlobalConfigurationDataService globalConfigurationDataService;
     private SignServerContext workerContext;
     
     @PostConstruct
     public void create() {
-        globalConfigurationDataService = new GlobalConfigurationDataService(em);
-        workerContext = new SignServerContext(em, new KeyUsageCounterDataService(em));
+        if (em == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No EntityManager injected. Running without database.");
+            }
+            // TODO: Config of file
+            globalConfigurationDataService = new FileBasedGlobalConfigurationDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/globalconfigdata.dat"));
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("EntityManager injected. Running with database.");
+            }
+            globalConfigurationDataService = new GlobalConfigurationDataService(em);
+            workerContext = new SignServerContext(em, new KeyUsageCounterDataService(em));
+        }
     }
 
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#setProperty(String, String, String)
      */
+    @Override
     public void setProperty(String scope, String key, String value) {
 
         auditLog("setProperty", scope + key, value);
@@ -98,6 +111,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#removeProperty(String, String)
      */
+    @Override
     public boolean removeProperty(String scope, String key) {
         boolean retval = false;
 
@@ -121,8 +135,9 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#getGlobalConfiguration()
      */
+    @Override
     public GlobalConfiguration getGlobalConfiguration() {
-        GlobalConfiguration retval = null;
+        GlobalConfiguration retval;
 
         if (GlobalConfigurationCache.getCachedGlobalConfig() == null) {
             GlobalConfigurationFileParser staticConfig = GlobalConfigurationFileParser.getInstance();
@@ -157,6 +172,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#getWorkers(int)
      */
+    @Override
     public List<Integer> getWorkers(int workerType) {
         ArrayList<Integer> retval = new ArrayList<Integer>();
         GlobalConfiguration gc = getGlobalConfiguration();
@@ -224,6 +240,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#resync()
      */
+    @Override
     public void resync() throws ResyncException {
 
         auditLog("resync", null, null); // TODO Should handle errors
@@ -287,6 +304,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#reload()
      */
+    @Override
     public void reload() {
         auditLog("reload", null, null);
 
@@ -316,7 +334,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 
     }
 
-    private GlobalConfigurationDataService getGlobalConfigurationDataService() {
+    private IGlobalConfigurationDataService getGlobalConfigurationDataService() {
         return globalConfigurationDataService;
     }
 

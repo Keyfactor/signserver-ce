@@ -15,10 +15,8 @@ package org.signserver.web;
 
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -105,11 +103,11 @@ public class SignServerHealthCheck implements IHealthCheck {
         
         StringBuilder sb = new StringBuilder();
         checkMaintenance(sb);
-		if( sb.length()>0 ) { 
-			// if Down for maintenance do not perform more checks
-			return sb.toString(); 
-		}
-        
+        if (sb.length() > 0) { 
+        	// if Down for maintenance do not perform more checks
+        	return sb.toString(); 
+        }
+
         String errormessage = "";
 
         errormessage += HealthCheckUtils.checkDB(checkDBString);

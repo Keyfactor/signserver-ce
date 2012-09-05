@@ -101,11 +101,11 @@ public class SignServerHealthCheck implements IHealthCheck {
 
         StringBuilder sb = new StringBuilder();
         checkMaintenance(sb);
-		if( sb.length()>0 ) { 
-			// if Down for maintenance do not perform more checks
-			return sb.toString(); 
-		}
-        
+        if (sb.length() > 0) { 
+        	// if Down for maintenance do not perform more checks
+        	return sb.toString(); 
+        }
+
         String errormessage = "";
 
         errormessage += HealthCheckUtils.checkDB(checkDBString);

@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.security.KeyPair;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import javax.crypto.SecretKey;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -144,22 +146,45 @@ public class DefaultGroupKeyService extends BaseGroupKeyService {
         return new SwitchEncKeyResponse(getGroupKeyDataService().switchEncKey());
     }
 
-    protected GroupKeyDataService getGroupKeyDataService() {
+    protected GroupKeyDataService getGroupKeyDataService() throws SignServerException {
         if (gkds == null) {
+            if (em == null) {
+                throw new SignServerException("Group key service is not available without database");
+            }
             gkds = new GroupKeyDataService(workerId, em, this.config.getProperties(), ect);
         }
         return gkds;
     }
 
+    @Override
+    protected List<String> getFatalErrors() {
+        List<String> results;
+        if (em == null) {
+            results = new LinkedList<String>(super.getFatalErrors());
+            results.add("Group key service is not available without database");
+        } else {
+            results = super.getFatalErrors();
+        }
+        return results;
+    }
+    
     /**
      * @see org.signserver.groupkeyservice.server.IGroupKeyService#getStatus()
      */
     @Override
     public WorkerStatus getStatus() {
-        long numOfKeys = getGroupKeyDataService().getNumOfKeys(new Date(0), new Date());
-        long numAssignedKeys = getGroupKeyDataService().getNumOfAssignedKeys(new Date(0), new Date());
-        long numUnassignedKeys = getGroupKeyDataService().getNumOfUnassignedKeys(new Date(0), new Date());
-        EncKeyDataBean currentEncKey = getGroupKeyDataService().getCurrentEncKeyRef();
+        long numOfKeys = -1;
+        long numAssignedKeys = -1;
+        long numUnassignedKeys = -1;
+        EncKeyDataBean currentEncKey = null;
+        
+        try {
+            numOfKeys = getGroupKeyDataService().getNumOfKeys(new Date(0), new Date());
+            numAssignedKeys = getGroupKeyDataService().getNumOfAssignedKeys(new Date(0), new Date());
+            numUnassignedKeys = getGroupKeyDataService().getNumOfUnassignedKeys(new Date(0), new Date());
+            currentEncKey = getGroupKeyDataService().getCurrentEncKeyRef();
+        } catch (SignServerException ignored) {} // NOPMD
+        
         if (currentEncKey == null) {
             return new GroupKeyServiceStatus(workerId, ect.getCryptoTokenStatus(), config, numUnassignedKeys, numOfKeys, numAssignedKeys, null, 0, null, getFatalErrors());
         }

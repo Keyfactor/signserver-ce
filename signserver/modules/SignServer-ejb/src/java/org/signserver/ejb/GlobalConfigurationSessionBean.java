@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import java.io.File;
 import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -33,6 +32,7 @@ import org.signserver.server.config.entities.IGlobalConfigurationDataService;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 
 /**
  * The implementation of the GlobalConfiguration Session Bean.
@@ -62,21 +62,24 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     }
 
     private IGlobalConfigurationDataService globalConfigurationDataService;
-
+    
     @PostConstruct
     public void create() {
         if (em == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No EntityManager injected. Running without database.");
             }
-            // TODO: Config of file
-            globalConfigurationDataService = new FileBasedGlobalConfigurationDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/globalconfigdata.dat"));
+            globalConfigurationDataService = new FileBasedGlobalConfigurationDataService(FileBasedDatabaseManager.getInstance());
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("EntityManager injected. Running with database.");
             }
             globalConfigurationDataService = new GlobalConfigurationDataService(em);
         }
+    }
+    
+    private IGlobalConfigurationDataService getGlobalConfigurationDataService() {
+        return globalConfigurationDataService;
     }
     
     /**
@@ -171,10 +174,6 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
                 CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION));
 
         return retval;
-    }
-    
-    private IGlobalConfigurationDataService getGlobalConfigurationDataService() {
-        return globalConfigurationDataService;
     }
 
     /**

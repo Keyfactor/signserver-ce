@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb.worker.impl;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -26,7 +25,6 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.WorkerSessionBean;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.*;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
@@ -36,6 +34,7 @@ import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.server.timedservices.ITimedService;
 
 /**
@@ -67,9 +66,8 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No EntityManager injected. Running without database.");
             }
-            // TODO: Config of file
-            workerConfigService = new FileBasedWorkerConfigDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/signerdata.dat"));
-            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/keyusagecounter.dat"));
+            workerConfigService = new FileBasedWorkerConfigDataService(FileBasedDatabaseManager.getInstance());
+            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager.getInstance());
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("EntityManager injected. Running with database.");

@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.KeyUsageCounterHash;
+import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
 
 /**
@@ -47,12 +48,12 @@ public class SignerStatusReportBuilder implements ReportBuilder {
     private List<String> workers;
     
     private final IWorkerSession workerSession;
-    private final EntityManager em;
+    private final IKeyUsageCounterDataService keyUsageCounterDataService;
     
-    public SignerStatusReportBuilder(List<String> workers, IWorkerSession workerSession, EntityManager em) {
+    public SignerStatusReportBuilder(List<String> workers, IWorkerSession workerSession, IKeyUsageCounterDataService keyUsageCounterDataService) {
         this.workers = workers;
         this.workerSession = workerSession;
-        this.em = em;
+        this.keyUsageCounterDataService = keyUsageCounterDataService;
     }
     
     @Override
@@ -89,8 +90,7 @@ public class SignerStatusReportBuilder implements ReportBuilder {
 
 
                     try {
-                    signings = em.find(
-                        KeyUsageCounter.class, pk);
+                        signings = keyUsageCounterDataService.getCounter(pk);
                     } catch (IllegalArgumentException ex) {
                         LOG.warn(ex, ex);
                     }

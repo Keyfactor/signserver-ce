@@ -12,15 +12,15 @@
  *************************************************************************/
 package org.signserver.server.config.entities;
 
+import java.beans.XMLDecoder;
 import java.io.*;
 import java.util.HashMap;
-import java.util.Map;
 import javax.ejb.EJBException;
 import org.apache.log4j.Logger;
 import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
-import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 
 /**
  * Entity Service class that acts as migration layer for
@@ -38,11 +38,14 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     /** Audit logger. */
 //    private static final ISystemLogger AUDITLOG = SystemLoggerFactory.getInstance().getLogger(WorkerConfigDataService.class);
     
-    private File file;
+    private final FileBasedDatabaseManager manager;
+    private final File folder;
+    private static final String PREFIX = "signerdata-";
+    private static final String SUFFIX = ".dat";
 
-    public FileBasedWorkerConfigDataService(File file) {
-//        this.em = em;
-        this.file = file;
+    public FileBasedWorkerConfigDataService(FileBasedDatabaseManager manager) {
+        this.manager = manager;
+        this.folder = manager.getDataFolder();
     }
 
     /**
@@ -56,11 +59,9 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating worker config data, id=" + workerId);
         }
-        WorkerConfigDataBean wcdb = new WorkerConfigDataBean();
-        wcdb.setSignerId(workerId);
 
         try {
-            setWorkerConfig(workerId, (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassPath).newInstance(), wcdb);
+            setWorkerConfig(workerId, (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassPath).newInstance());
         } catch (Exception e) {
             LOG.error(e);
         }
@@ -75,43 +76,39 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     @SuppressWarnings("unchecked")
     @Override
     public WorkerConfig getWorkerConfig(int workerId) {
-        WorkerConfig workerConf = null;
+        WorkerConfig result = null;
 
-        Map<Integer, WorkerConfigDataBean> dataStore = loadData();
-        WorkerConfigDataBean wcdb = dataStore.get(workerId);
-
-        if (wcdb != null) {
-            java.beans.XMLDecoder decoder;
-            try {
-                decoder =
-                        new java.beans.XMLDecoder(
-                        new java.io.ByteArrayInputStream(wcdb.getSignerConfigData().getBytes("UTF8")));
-            } catch (UnsupportedEncodingException e) {
-                throw new EJBException(e);
+        WorkerConfigDataBean wcdb;
+        
+        try {
+            synchronized (manager) {
+                wcdb = loadData(workerId);
             }
 
-            HashMap h = (HashMap) decoder.readObject();
-            decoder.close();
-            // Handle Base64 encoded string values
-            HashMap data = new Base64GetHashMap(h);
-
-            if (data.get(WorkerConfig.CLASS) == null) {
-                // Special case, need to upgrade from signserver 1.0
-                workerConf = new ProcessableConfig(new WorkerConfig()).getWorkerConfig();
-                workerConf.loadData(data);
-                workerConf.upgrade();
-            } else {
+            if (wcdb != null) {
+                XMLDecoder decoder;
                 try {
-                    workerConf = new WorkerConfig();
-                    workerConf.loadData(data);
-                    workerConf.upgrade();
+                    decoder = new XMLDecoder(new ByteArrayInputStream(wcdb.getSignerConfigData().getBytes("UTF8")));
+                } catch (UnsupportedEncodingException e) {
+                    throw new EJBException(e);
+                }
+                HashMap h = (HashMap) decoder.readObject();
+                decoder.close();
+                // Handle Base64 encoded string values
+                HashMap data = new Base64GetHashMap(h);
+                try {
+                    result = new WorkerConfig();
+                    result.loadData(data);
+                    result.upgrade();
                 } catch (Exception e) {
                     LOG.error(e);
                 }
             }
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not load from or write data to file based database", ex);
         }
 
-        return workerConf;
+        return result;
     }
 
     /**
@@ -119,8 +116,30 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
      */
     @Override
     public void setWorkerConfig(int workerId, WorkerConfig signconf) {
-        setWorkerConfig(workerId, signconf, null);
-//        auditLog(workerId, "setWorkerConfig");
+        //        auditLog(workerId, "setWorkerConfig");
+        synchronized (manager) {
+            // We must base64 encode string for UTF safety
+            HashMap a = new Base64PutHashMap();
+            a.putAll((HashMap) signconf.saveData());
+
+            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+
+            java.beans.XMLEncoder encoder = new java.beans.XMLEncoder(baos);
+            encoder.writeObject(a);
+            encoder.close();
+
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("WorkerConfig data: \n" + baos.toString("UTF8"));
+                }
+                WorkerConfigDataBean wcdb = new WorkerConfigDataBean();
+                wcdb.setSignerId(workerId);
+                wcdb.setSignerConfigData(baos.toString("UTF8"));
+                writeData(workerId, wcdb);
+            } catch (IOException ex) {
+                throw new RuntimeException("Could not load from or write data to file based database", ex);
+            }
+        }
     }
 
     /**
@@ -131,49 +150,17 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     @Override
     public boolean removeWorkerConfig(int workerId) {
         boolean retval = false;
-        Map<Integer, WorkerConfigDataBean> dataStore = loadData();
-        WorkerConfigDataBean wcdb = dataStore.remove(workerId);
-        if (wcdb != null) {
-            writeData(dataStore);
-            retval = true;
+        
+        try {
+            synchronized (manager) {
+                removeData(workerId);
+                retval = loadData(workerId) == null;
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not load from or write data to file based database", ex);
         }
 
         return retval;
-    }
-
-    /**
-     * Method that saves the Worker Config to database.
-     */
-    @SuppressWarnings("unchecked")
-    private void setWorkerConfig(int workerId, WorkerConfig signconf, WorkerConfigDataBean wcdb) {
-        
-        Map<Integer, WorkerConfigDataBean> dataStore = loadData();
-        
-        // We must base64 encode string for UTF safety
-        HashMap a = new Base64PutHashMap();
-        a.putAll((HashMap) signconf.saveData());
-
-
-        java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-
-        java.beans.XMLEncoder encoder = new java.beans.XMLEncoder(baos);
-        encoder.writeObject(a);
-        encoder.close();
-
-        try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("WorkerConfig data: \n" + baos.toString("UTF8"));
-            }
-            if (wcdb == null) {
-                wcdb = dataStore.get(workerId);
-            }
-            wcdb.setSignerConfigData(baos.toString("UTF8"));
-            dataStore.put(workerId, wcdb);
-            writeData(dataStore);
-            
-        } catch (UnsupportedEncodingException e) {
-            throw new EJBException(e);
-        }
     }
 
     /* (non-Javadoc)
@@ -181,11 +168,14 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
      */
     @Override
     public WorkerConfig getWorkerProperties(int workerId) {
-
-        WorkerConfig workerConfig = getWorkerConfig(workerId);
-        if (workerConfig == null) {
-            create(workerId, WorkerConfig.class.getName());
+        WorkerConfig workerConfig;
+        
+        synchronized (manager) {
             workerConfig = getWorkerConfig(workerId);
+            if (workerConfig == null) {
+                create(workerId, WorkerConfig.class.getName());
+                workerConfig = getWorkerConfig(workerId);
+            }
         }
 
         return workerConfig;
@@ -207,33 +197,53 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 //        }
 //    }
 
-    private Map<Integer, WorkerConfigDataBean> loadData() {
-        HashMap<Integer, WorkerConfigDataBean> result = new HashMap<Integer, WorkerConfigDataBean>();
-        ObjectInputStream in = null;
+    private WorkerConfigDataBean loadData(final int workerId) throws IOException {
+        assert Thread.holdsLock(manager);
+        WorkerConfigDataBean result;
+        final File file = new File(folder, PREFIX + workerId + SUFFIX);
+        
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        byte[] buff = new byte[4096];
+        
+        InputStream in = null;
         try {
-            in = new ObjectInputStream(new FileInputStream(file));
-            result = (HashMap<Integer, WorkerConfigDataBean>) in.readObject();
-        } catch (ClassNotFoundException ex) {
-            LOG.error("Could not load data from " + file.getAbsolutePath(), ex);
-        } catch (IOException ex) {
-            LOG.error("Could not load data from " + file.getAbsolutePath(), ex);
+            in = new BufferedInputStream(new FileInputStream(file));
+            int read;
+            while ((read = in.read(buff)) != -1) {
+                bout.write(buff, 0, read);
+            }
+            String data = bout.toString("UTF-8");
+            result = new WorkerConfigDataBean();
+            result.setSignerId(workerId);
+            result.setSignerConfigData(data);
+            
+            XMLDecoder decoder;
+            decoder = new XMLDecoder(new FileInputStream(file));
+            HashMap h = (HashMap) decoder.readObject();
+            decoder.close();
+        } catch (FileNotFoundException ex) {
+            result = null;
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException ignored) {} // NOPMD
-}
+            }
         }
         return result;
     }
 
-    private void writeData(Map<Integer, WorkerConfigDataBean> dataStore) {
-        ObjectOutputStream out = null;
+    private void writeData(int workerId, WorkerConfigDataBean dataStore) throws IOException {
+        assert Thread.holdsLock(manager);
+        final File file = new File(folder, PREFIX + workerId + SUFFIX);
+        
+        OutputStream out = null;
         try {
-            out = new ObjectOutputStream(new FileOutputStream(file));
-            out.writeObject(dataStore);
-        } catch (IOException ex) {
-            LOG.error("Could not write data to " + file.getAbsolutePath(), ex);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            out = new BufferedOutputStream(new FileOutputStream(file));
+            out.write(dataStore.getSignerConfigData().getBytes("UTF-8"));
         } finally {
             if (out != null) {
                 try {
@@ -241,5 +251,11 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 } catch (IOException ignored) {} // NOPMD
             }
         }
+    }
+    
+    private void removeData(int workerId) throws IOException {
+        assert Thread.holdsLock(manager);
+        final File file = new File(folder, PREFIX + workerId + SUFFIX);
+        file.delete();
     }
 }

@@ -21,14 +21,13 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.naming.NamingException;
-
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.ServiceExecutionFailedException;
+import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.timedservices.BaseTimedService;
 
@@ -89,7 +88,7 @@ public class SignerStatusReportTimedService extends BaseTimedService {
         } else {
             workers.addAll(Arrays.asList(workersValue.split(",")));
         }
-        this.reportBuilder = new SignerStatusReportBuilder(workers, getWorkerSession(), em);
+        this.reportBuilder = new SignerStatusReportBuilder(workers, getWorkerSession(), ((SignServerContext) workerContext).getKeyUsageCounterDataService());
         LOG.info("Worker[" + workerId +"]: " + "Workers: " + workers.size());
     }
 

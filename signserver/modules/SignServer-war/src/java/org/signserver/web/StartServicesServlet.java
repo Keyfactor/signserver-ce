@@ -129,6 +129,10 @@ public class StartServicesServlet extends HttpServlet {
         } catch (SystemLoggerException ex) {
             LOG.error("Audit log error", ex);
         }
+        
+        LOG.debug(">init FileBasedDataseController");
+//        FileBasedDatabaseController.initInstance(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/"));
+        // TODO: Check for access to files etc
 
         LOG.debug(">init calling ServiceSession.load");
         

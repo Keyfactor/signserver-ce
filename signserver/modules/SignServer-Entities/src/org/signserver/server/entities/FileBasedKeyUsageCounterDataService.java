@@ -13,9 +13,8 @@
 package org.signserver.server.entities;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.log4j.Logger;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 
 /**
  * Entity Service class that acts as migration layer for
@@ -30,10 +29,14 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(FileBasedKeyUsageCounterDataService.class);
     
-    private File file;
+    private final FileBasedDatabaseManager manager;
+    private File folder;
+    private static final String PREFIX = "kuc-";
+    private static final String SUFFIX = ".dat";
 
-    public FileBasedKeyUsageCounterDataService(File file) {
-        this.file = file;
+    public FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager manager) {
+        this.manager = manager;
+        this.folder = manager.getDataFolder();
     }
 
     /**
@@ -43,90 +46,114 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
      *
      */
     @Override
-    public void create(final String keyHash) { // TODO: Synchronization
+    public void create(final String keyHash) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating keyusagecounter " + keyHash);
         }
-        Map<String, Long> data = loadData();
-        if (data == null) { // TODO: How to handle this case safely
-            data = new HashMap<String, Long>();
-        }
-        data.put(keyHash, 0L);
-        writeData(data);
-    }
-    
-    @Override
-    public KeyUsageCounter getCounter(final String keyHash) { // TODO: Synchronization
-        final KeyUsageCounter result;
-        
-        Map<String, Long> data = loadData();
-        final Long value = data.get(keyHash);
-        if (value == null) {
-            result = null;
-        } else {
-            result = new KeyUsageCounter(keyHash) { // TODO:  This method would be better if only returned the value instead of a KeyUsageCounter object
-
-                @Override
-                public long getCounter() {
-                    return value;
+        try {
+            synchronized (manager) {
+                Long data = loadData(keyHash);
+                if (data == null) {
+                    writeData(keyHash, 0L);
                 }
-                
-            };
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not load from or write data to file based database", ex);
         }
-        return result;
-    }
-
-    @Override
-    public boolean incrementIfWithinLimit(String keyHash, long limit) { // TODO: Synchronization
-        final boolean result;
-        final Map<String, Long> data = loadData();
-        final Long value = data.get(keyHash);
-        if (value == null) {
-            result = false;
-        } else if (limit >= 0 && value >= limit) {
-            result = false;
-        } else {
-            data.put(keyHash, value + 1);
-            writeData(data);
-            result = true;
-        }
-        return result;
-    }
-
-    @Override
-    public boolean isWithinLimit(String keyHash, long keyUsageLimit) { // TODO: Synchronization
-        final Map<String, Long> data = loadData();
-        final Long value = data.get(keyHash);
-        return value != null && value < keyUsageLimit;
     }
     
-    private Map<String, Long> loadData() {
-        HashMap<String, Long> result = new HashMap<String, Long>();
-        ObjectInputStream in = null;
+    @Override
+    public KeyUsageCounter getCounter(final String keyHash) {
+        final KeyUsageCounter result;
         try {
-            in = new ObjectInputStream(new FileInputStream(file));
-            result = (HashMap<String, Long>) in.readObject();
-        } catch (ClassNotFoundException ex) {
-            LOG.error("Could not load data from " + file.getAbsolutePath(), ex);
+            final Long value;
+            synchronized (manager) {
+                value  = loadData(keyHash);
+            }
+            if (value == null) {
+                result = null;
+            } else {
+                result = new KeyUsageCounter(keyHash) { // TODO:  This method would be better if only returned the value instead of a KeyUsageCounter object
+
+                    @Override
+                    public long getCounter() {
+                        return value;
+                    }
+
+                };
+            }
         } catch (IOException ex) {
-            LOG.error("Could not load data from " + file.getAbsolutePath(), ex);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {} // NOPMD
-}
+            throw new RuntimeException("Could not load from or write data to file based database", ex);
         }
         return result;
     }
 
-    private void writeData(Map<String, Long> dataStore) {
-        ObjectOutputStream out = null;
+    @Override
+    public boolean incrementIfWithinLimit(String keyHash, long limit) {
+        final boolean result;
         try {
-            out = new ObjectOutputStream(new FileOutputStream(file));
-            out.writeObject(dataStore);
+            synchronized (manager) {
+                final Long value = loadData(keyHash);
+                if (value == null) {
+                    result = false;
+                } else if (limit >= 0 && value >= limit) {
+                    result = false;
+                } else {
+                    writeData(keyHash, value + 1);
+                    result = true;
+                }
+            }
+            return result;
         } catch (IOException ex) {
-            LOG.error("Could not write data to " + file.getAbsolutePath(), ex);
+            throw new RuntimeException("Could not load from or write data to file based database", ex);
+        }
+    }
+
+    @Override
+    public boolean isWithinLimit(String keyHash, long keyUsageLimit) {
+        try {
+            final Long value;
+            synchronized (manager) {
+                value  = loadData(keyHash);
+            }
+            return value != null && value < keyUsageLimit;
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not load from or write data to file based database", ex);
+        }
+    }
+    
+    private Long loadData(String keyHash) throws IOException {
+        assert Thread.holdsLock(manager);
+        Long result = null;
+        final File file = new File(folder, PREFIX + keyHash + SUFFIX);
+        if (file.length() > 0) {
+            BufferedReader in = null;
+            try {
+                in = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+                final String line = in.readLine();
+                result = Long.valueOf(line);
+            } catch (FileNotFoundException ignored) { // NOPMD
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException ignored) {} // NOPMD
+                }
+            }
+        }
+        return result;
+    }
+
+    private void writeData(String keyHash, Long value) {
+        assert Thread.holdsLock(manager);
+        final File file = new File(folder, PREFIX + keyHash + SUFFIX);
+        
+        BufferedWriter out = null;
+        try {
+            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+            out.write(String.valueOf(value));
+        } catch (IOException ex) {
+            LOG.error("Could not write data to " + folder.getAbsolutePath(), ex);
         } finally {
             if (out != null) {
                 try {

@@ -13,7 +13,6 @@
 package org.signserver.ejb;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyStoreException;
@@ -56,6 +55,7 @@ import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
 import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.log.*;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
 
@@ -109,9 +109,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No EntityManager injected. Running without database.");
             }
-            // TODO: Config of file
-            workerConfigService = new FileBasedWorkerConfigDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/signerdata.dat"));
-            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/keyusagecounter.dat"));
+            workerConfigService = new FileBasedWorkerConfigDataService(FileBasedDatabaseManager.getInstance());
+            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager.getInstance());
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("EntityManager injected. Running with database.");

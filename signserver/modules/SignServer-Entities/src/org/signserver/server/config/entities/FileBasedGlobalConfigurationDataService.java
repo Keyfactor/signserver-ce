@@ -12,12 +12,14 @@
  *************************************************************************/
 package org.signserver.server.config.entities;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Map.Entry;
+import java.util.*;
 import org.apache.log4j.Logger;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 
 /**
  * Entity Service class that acts as migration layer for
@@ -32,35 +34,49 @@ public class FileBasedGlobalConfigurationDataService implements IGlobalConfigura
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(FileBasedGlobalConfigurationDataService.class);
 
+    private final FileBasedDatabaseManager manager;
     private File file;
 
-    public FileBasedGlobalConfigurationDataService(File file) {
-        this.file = file;
+    public FileBasedGlobalConfigurationDataService(FileBasedDatabaseManager manager) {
+        this.manager = manager;
+        this.file = new File(manager.getDataFolder(), "globalconfigdata.dat");
     }
 
     @Override
     public void setGlobalProperty(String completekey, String value) {
-        Map<String, GlobalConfigurationDataBean> dataStore = loadData();
-        GlobalConfigurationDataBean data = dataStore.get(completekey);
-        if (data == null) {
-            data = new GlobalConfigurationDataBean();
-            data.setPropertyKey(completekey);
-            data.setPropertyValue(value);
-            dataStore.put(completekey, data);
-        } else {
-            data.setPropertyValue(value);
+        try {
+            synchronized (manager) {
+                Map<String, GlobalConfigurationDataBean> dataStore = loadData();
+                GlobalConfigurationDataBean data = dataStore.get(completekey);
+                if (data == null) {
+                    data = new GlobalConfigurationDataBean();
+                    data.setPropertyKey(completekey);
+                    data.setPropertyValue(value);
+                    dataStore.put(completekey, data);
+                } else {
+                    data.setPropertyValue(value);
+                }
+                writeData(dataStore);
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not load from or write data to file based database", ex);
         }
-        writeData(dataStore);
     }
 
     @Override
     public boolean removeGlobalProperty(String completekey) {
         boolean retval = false;
-        Map<String, GlobalConfigurationDataBean> dataStore = loadData();
-        GlobalConfigurationDataBean data = dataStore.remove(completekey);
-        if (data != null) {
-            writeData(dataStore);
-            retval = true;
+        try {
+            synchronized (manager) {
+                Map<String, GlobalConfigurationDataBean> dataStore = loadData();
+                GlobalConfigurationDataBean data = dataStore.remove(completekey);
+                if (data != null) {
+                    writeData(dataStore);
+                    retval = true;
+                }
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not load from or write data to file based database", ex);
         }
         return retval;
     }
@@ -68,36 +84,57 @@ public class FileBasedGlobalConfigurationDataService implements IGlobalConfigura
     @SuppressWarnings("unchecked")
     @Override
     public List<GlobalConfigurationDataBean> findAll() {
-        Map<String, GlobalConfigurationDataBean> dataStore = loadData();
-
-        return new LinkedList<GlobalConfigurationDataBean>(dataStore.values());
+        try {
+            Map<String, GlobalConfigurationDataBean> dataStore;
+            synchronized (manager) {
+                dataStore = loadData();
+            }
+            return new LinkedList<GlobalConfigurationDataBean>(dataStore.values());
+        } catch (IOException ex) {
+            LOG.error("Could not load data from file based database: " + ex.getMessage());
+            return Collections.emptyList();
+        }
     }
     
-    private Map<String, GlobalConfigurationDataBean> loadData() {
-        HashMap<String, GlobalConfigurationDataBean> result = new HashMap<String, GlobalConfigurationDataBean>();
-        ObjectInputStream in = null;
-        try {
-            in = new ObjectInputStream(new FileInputStream(file));
-            result = (HashMap<String, GlobalConfigurationDataBean>) in.readObject();
-        } catch (ClassNotFoundException ex) {
-            LOG.error("Could not load data from " + file.getAbsolutePath(), ex);
-        } catch (IOException ex) {
-            LOG.error("Could not load data from " + file.getAbsolutePath(), ex);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {} // NOPMD
-}
+    private Map<String, GlobalConfigurationDataBean> loadData() throws IOException {
+        assert Thread.holdsLock(manager);
+        
+        final HashMap<String, GlobalConfigurationDataBean> result = new HashMap<String, GlobalConfigurationDataBean>();
+        if (file.length() != 0) {
+            final Properties properties = new Properties();
+            FileInputStream in = null;
+            try {
+                in = new FileInputStream(file);
+                properties.loadFromXML(in);
+                for (String key : properties.stringPropertyNames()) {
+                    final GlobalConfigurationDataBean bean = new GlobalConfigurationDataBean();
+                    bean.setPropertyKey(key);
+                    bean.setPropertyValue(properties.getProperty(key));
+                    result.put(key, bean);
+                }
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException ignored) {} // NOPMD
+                }
+            }
         }
         return result;
     }
 
-    private void writeData(Map<String, GlobalConfigurationDataBean> dataStore) {
-        ObjectOutputStream out = null;
+    private void writeData(Map<String, GlobalConfigurationDataBean> dataStore) throws IOException {
+        assert Thread.holdsLock(manager);
+        
+        final Properties properties = new Properties();
+        for (Entry<String, GlobalConfigurationDataBean> entry : dataStore.entrySet()) {
+            properties.setProperty(entry.getValue().getPropertyKey(), entry.getValue().getPropertyValue());
+        }
+        
+        FileOutputStream out = null;
         try {
-            out = new ObjectOutputStream(new FileOutputStream(file));
-            out.writeObject(dataStore);
+            out = new FileOutputStream(file);
+            properties.storeToXML(out, "DO NOT EDIT THIS FILE MANUALLY (while SignServer is running)");
         } catch (IOException ex) {
             LOG.error("Could not write data to " + file.getAbsolutePath(), ex);
         } finally {

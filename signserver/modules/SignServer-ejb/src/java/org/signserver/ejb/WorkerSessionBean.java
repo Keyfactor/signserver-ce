@@ -13,7 +13,6 @@
 package org.signserver.ejb;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyStoreException;
@@ -22,25 +21,12 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -48,51 +34,20 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.ejbca.util.CertTools;
-import org.signserver.common.ArchiveDataVO;
-import org.signserver.common.AuthorizationRequiredException;
-import org.signserver.common.AuthorizedClient;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.IArchivableProcessResponse;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignResponse;
-import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
-import org.signserver.common.NoSuchWorkerException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.ProcessableConfig;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerConstants;
-import org.signserver.common.SignServerException;
-import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.AccounterException;
-import org.signserver.server.BaseProcessable;
-import org.signserver.server.IClientCredential;
-import org.signserver.server.IProcessable;
-import org.signserver.server.IWorker;
-import org.signserver.server.KeyUsageCounter;
-import org.signserver.server.NotGrantedException;
-import org.signserver.server.SignServerContext;
-import org.signserver.server.WorkerFactory;
+import org.signserver.server.*;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
 import org.signserver.server.archive.olddbarchiver.ArchiveDataBean;
 import org.signserver.server.archive.olddbarchiver.ArchiveDataService;
-import org.signserver.server.log.ISystemLogger;
-import org.signserver.server.log.IWorkerLogger;
-import org.signserver.server.log.SystemLoggerException;
-import org.signserver.server.log.SystemLoggerFactory;
-import org.signserver.server.log.WorkerLoggerException;
+import org.signserver.server.log.*;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
 
@@ -137,9 +92,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No EntityManager injected. Running without database.");
             }
-            // TODO: Config of file
-            workerConfigService = new FileBasedWorkerConfigDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/signerdata.dat"));
-            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/keyusagecounter.dat"));
+            workerConfigService = new FileBasedWorkerConfigDataService(FileBasedDatabaseManager.getInstance());
+            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager.getInstance());
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("EntityManager injected. Running with database.");

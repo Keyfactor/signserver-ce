@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.*;
 import javax.annotation.PostConstruct;
@@ -31,6 +30,7 @@ import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerFactory;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.server.timedservices.ITimedService;
 
 /**
@@ -68,8 +68,21 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
      */
     @PostConstruct
     public void create() {
-        workerConfigService = new WorkerConfigDataService(em);
-        workerContext = new SignServerContext(em, new KeyUsageCounterDataService(em));
+        final IKeyUsageCounterDataService keyUsageCounterDataService;
+        if (em == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No EntityManager injected. Running without database.");
+            }
+            workerConfigService = new FileBasedWorkerConfigDataService(FileBasedDatabaseManager.getInstance());
+            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager.getInstance());
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("EntityManager injected. Running with database.");
+            }
+            workerConfigService = new WorkerConfigDataService(em);
+            keyUsageCounterDataService = new KeyUsageCounterDataService(em);
+        }
+        workerContext = new SignServerContext(em, keyUsageCounterDataService);
     }
     
     /**

@@ -30,6 +30,7 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.signers.BaseSigner;
 
@@ -75,7 +76,7 @@ public class SignerStatusReportWorker extends BaseSigner {
         } else {
             workers.addAll(Arrays.asList(workersValue.split(",")));
         }
-        reportBuilder = new SignerStatusReportBuilder(workers, getWorkerSession(), em);
+        reportBuilder = new SignerStatusReportBuilder(workers, getWorkerSession(), ((SignServerContext) workerContext).getKeyUsageCounterDataService());
         LOG.info("Worker[" + workerId +"]: " + "Workers: " + workers.size());
     }
     

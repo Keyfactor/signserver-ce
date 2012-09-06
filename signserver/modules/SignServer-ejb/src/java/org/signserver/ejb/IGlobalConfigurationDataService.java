@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import org.signserver.ejb.GlobalConfigurationDataBean;
 import java.util.List;
 
 /**

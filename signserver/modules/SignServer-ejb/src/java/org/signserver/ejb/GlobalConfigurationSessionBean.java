@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import java.io.File;
 import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJBException;
@@ -30,6 +29,7 @@ import org.signserver.server.*;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.server.timedservices.ITimedService;
 
 /**
@@ -57,6 +57,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     }
     
     private IGlobalConfigurationDataService globalConfigurationDataService;
+    private IWorkerConfigDataService workerConfigDataService;
     private SignServerContext workerContext;
     
     @PostConstruct
@@ -65,17 +66,23 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No EntityManager injected. Running without database.");
             }
-            // TODO: Config of file
-            globalConfigurationDataService = new FileBasedGlobalConfigurationDataService(new File("/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/globalconfigdata.dat"));
+            globalConfigurationDataService = new FileBasedGlobalConfigurationDataService(FileBasedDatabaseManager.getInstance());
+            workerConfigDataService = new FileBasedWorkerConfigDataService(FileBasedDatabaseManager.getInstance());
+            workerContext = new SignServerContext(em, new FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager.getInstance()));
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("EntityManager injected. Running with database.");
             }
             globalConfigurationDataService = new GlobalConfigurationDataService(em);
+            workerConfigDataService = new WorkerConfigDataService(em);
             workerContext = new SignServerContext(em, new KeyUsageCounterDataService(em));
         }
     }
 
+    private IGlobalConfigurationDataService getGlobalConfigurationDataService() {
+        return globalConfigurationDataService;
+    }
+    
     /**
      * @see org.signserver.ejb.interfaces.IGlobalConfigurationSession#setProperty(String, String, String)
      */
@@ -213,7 +220,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
                 if (workerType == GlobalConfiguration.WORKERTYPE_ALL) {
                     retval.add(new Integer(id));
                 } else {
-                    IWorker obj = WorkerFactory.getInstance().getWorker(id, new WorkerConfigDataService(em), this, workerContext);
+                    IWorker obj = WorkerFactory.getInstance().getWorker(id, workerConfigDataService, this, workerContext);
                     if (workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE) {
                         if (obj instanceof IProcessable) {
                             if (LOG.isDebugEnabled()) {
@@ -332,10 +339,6 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
             GlobalConfigurationCache.getCachedGlobalConfig().setProperty(key, value);
         }
 
-    }
-
-    private IGlobalConfigurationDataService getGlobalConfigurationDataService() {
-        return globalConfigurationDataService;
     }
 
     private static void auditLog(final String operation, final String property,

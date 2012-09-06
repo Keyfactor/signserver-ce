@@ -70,6 +70,8 @@ public class CompileTimeSettings {
     public static final String SIGNSERVER_VERSION
             = "signserver.version";
 
+    public static final String FILEBASED_DB_FOLDER = "signserver.filedb.folder";
+    
     /** Default values for the compile-time properties. */
     private static final Properties DEFAULT_PROPERTIES = new Properties();
 
@@ -87,6 +89,7 @@ public class CompileTimeSettings {
                 Boolean.toString(true));
         DEFAULT_PROPERTIES.put(SIGNSERVER_REQUIRESIGNATURE,
                 Boolean.toString(false));
+        DEFAULT_PROPERTIES.put(FILEBASED_DB_FOLDER, "/home/markus/VersionControlled/signserver/trunk-nodb/signserver/data/"); // TODO: DSS-532!
     }
 
     

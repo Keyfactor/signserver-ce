@@ -24,7 +24,7 @@ import javax.persistence.Query;
  *
  * @version $Id$
  */
-class GlobalConfigurationDataService implements IGlobalConfigurationDataService {
+public class GlobalConfigurationDataService implements IGlobalConfigurationDataService {
 
     private EntityManager em;
 

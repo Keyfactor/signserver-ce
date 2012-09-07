@@ -13,6 +13,8 @@
 package org.signserver.server.archive.olddbarchiver;
 
 import java.security.cert.X509Certificate;
+import javax.persistence.EntityManager;
+import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
@@ -35,11 +37,19 @@ import org.signserver.server.archive.Archiver;
  */
 public class OldDatabaseArchiver implements Archiver {
 
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(OldDatabaseArchiver.class);
+
     private ArchiveDataService dataService;
 
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) {
-        dataService = new ArchiveDataService(context.getEntityManager());
+        final EntityManager em = context.getEntityManager();
+        if (em == null) {
+            LOG.error("OldDatabaseArchiver requires a database connection");
+        } else {
+            dataService = new ArchiveDataService(em);
+        }
     }
 
     @Override
@@ -48,6 +58,9 @@ public class OldDatabaseArchiver implements Archiver {
         final boolean archived;
         if (Archivable.TYPE_RESPONSE.equals(archivable.getType())
                 && archivable instanceof ArchiveDataArchivable) {
+            if (dataService == null) {
+                throw new ArchiveException("Could not archive as archiver was not successfully initialized");
+            }
             final ArchiveDataArchivable ada = (ArchiveDataArchivable) archivable;
             final Integer workerId = (Integer) requestContext.get(RequestContext.WORKER_ID);
             final X509Certificate certificate = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);

@@ -1245,10 +1245,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             String archiveId) {
         ArchiveDataVO retval = null;
 
-        ArchiveDataBean adb = archiveDataService.findByArchiveId(
-                ArchiveDataVO.TYPE_RESPONSE, signerId, archiveId);
-        if (adb != null) {
-            retval = adb.getArchiveDataVO();
+        if (archiveDataService == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Archiving to database is not supported when running without database");
+            }
+        } else {
+            ArchiveDataBean adb = archiveDataService.findByArchiveId(
+                    ArchiveDataVO.TYPE_RESPONSE, signerId, archiveId);
+
+            if (adb != null) {
+                retval = adb.getArchiveDataVO();
+            }
         }
 
         return retval;
@@ -1262,12 +1269,18 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             String requestIP) {
         ArrayList<ArchiveDataVO> retval = new ArrayList<ArchiveDataVO>();
 
-        Collection<ArchiveDataBean> result = archiveDataService.findByRequestIP(
-                ArchiveDataVO.TYPE_RESPONSE, signerId, requestIP);
-        Iterator<ArchiveDataBean> iter = result.iterator();
-        while (iter.hasNext()) {
-            ArchiveDataBean next = iter.next();
-            retval.add(next.getArchiveDataVO());
+        if (archiveDataService == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Archiving to database is not supported when running without database");
+            }
+        } else {
+            Collection<ArchiveDataBean> result = archiveDataService.findByRequestIP(
+                    ArchiveDataVO.TYPE_RESPONSE, signerId, requestIP);
+            Iterator<ArchiveDataBean> iter = result.iterator();
+            while (iter.hasNext()) {
+                ArchiveDataBean next = iter.next();
+                retval.add(next.getArchiveDataVO());
+            }
         }
 
         return retval;
@@ -1281,15 +1294,21 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             int signerId, BigInteger requestCertSerialnumber,
             String requestCertIssuerDN) {
         ArrayList<ArchiveDataVO> retval = new ArrayList<ArchiveDataVO>();
-
-        Collection<ArchiveDataBean> result = archiveDataService.
-                findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE, signerId, CertTools.
-                stringToBCDNString(requestCertIssuerDN), requestCertSerialnumber.
-                toString(16));
-        Iterator<ArchiveDataBean> iter = result.iterator();
-        while (iter.hasNext()) {
-            ArchiveDataBean next = iter.next();
-            retval.add(next.getArchiveDataVO());
+        
+        if (archiveDataService == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Archiving to database is not supported when running without database");
+            }
+        } else {
+            Collection<ArchiveDataBean> result = archiveDataService.
+                    findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE, signerId, CertTools.
+                    stringToBCDNString(requestCertIssuerDN), requestCertSerialnumber.
+                    toString(16));
+            Iterator<ArchiveDataBean> iter = result.iterator();
+            while (iter.hasNext()) {
+                ArchiveDataBean next = iter.next();
+                retval.add(next.getArchiveDataVO());
+            }
         }
 
         return retval;

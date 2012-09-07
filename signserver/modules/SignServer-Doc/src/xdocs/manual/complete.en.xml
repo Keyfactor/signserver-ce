@@ -2476,6 +2476,9 @@ There are two properties that can be set to disable this check:
 
 			<section name="Limiting the number of signatures">
                 <p>
+By default SignServer keeps track of the number of signings performed with each key by holding counters in the database that are updated for each signing. The following worker properties controls the key usage counter:    
+                </p>
+                <p>
 <b>KEYUSAGELIMIT</b> = Sets how many signatures that are allowed to be created
 with the same key by this worker (default is -1 = no limit). After the limit has
 been reached the worker is considered offline.
@@ -2483,7 +2486,13 @@ been reached the worker is considered offline.
 Note that the counter is per key and not per worker so if multiple workers share
 the same key they will all increment the counter. This also means that the worker
 is active again after it has gotten a new certificate/key.
-                </p>			
+                </p>
+                <p>
+<b>DISABLEKEYUSAGECOUNTER</b> = By default all key usages are counted but by specifying this as "TRUE" key usages performed by this worker will not be counted. Disabling the key usage counter can be a gain in performance as it will be less database transactions. However, if you have requirements on the number of allowed signings for one worker make sure to not use the same key with another worker for which the counter is disabled as those uses will then be missed.
+                </p>
+                <p>
+The key usage counter can not be disabled for a worker if KEYUSAGELIMIT is also specified.
+                </p>
 			</section>                    
 		</chapter>
 		

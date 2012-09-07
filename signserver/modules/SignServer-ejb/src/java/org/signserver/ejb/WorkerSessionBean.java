@@ -1237,11 +1237,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             String archiveId) {
         ArchiveDataVO retval = null;
 
-        ArchiveDataBean adb = archiveDataService.findByArchiveId(
-                ArchiveDataVO.TYPE_RESPONSE, signerId, archiveId);
-        
-        if (adb != null) {
-            retval = adb.getArchiveDataVO();
+        if (archiveDataService == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Archiving to database is not supported when running without database");
+            }
+        } else {
+            ArchiveDataBean adb = archiveDataService.findByArchiveId(
+                    ArchiveDataVO.TYPE_RESPONSE, signerId, archiveId);
+
+            if (adb != null) {
+                retval = adb.getArchiveDataVO();
+            }
         }
 
         return retval;
@@ -1255,10 +1261,16 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             String requestIP) {
         List<ArchiveDataVO> retval = new LinkedList<ArchiveDataVO>();
 
-        Collection<ArchiveDataBean> archives = archiveDataService.findByRequestIP(
-                ArchiveDataVO.TYPE_RESPONSE, signerId, requestIP);
-        for (ArchiveDataBean archive : archives) {
-            retval.add(archive.getArchiveDataVO());
+        if (archiveDataService == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Archiving to database is not supported when running without database");
+            }
+        } else {
+            Collection<ArchiveDataBean> archives = archiveDataService.findByRequestIP(
+                    ArchiveDataVO.TYPE_RESPONSE, signerId, requestIP);
+            for (ArchiveDataBean archive : archives) {
+                retval.add(archive.getArchiveDataVO());
+            }
         }
 
         return retval;
@@ -1273,13 +1285,19 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             String requestCertIssuerDN) {
         ArrayList<ArchiveDataVO> retval = new ArrayList<ArchiveDataVO>();
 
-        String issuerDN = CertTools.stringToBCDNString(requestCertIssuerDN);
-        String serialNumber = requestCertSerialnumber.toString(16);
-        
-        Collection<ArchiveDataBean> archives = archiveDataService.
-                findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE, signerId, issuerDN, serialNumber);
-        for (ArchiveDataBean archive : archives) {
-            retval.add(archive.getArchiveDataVO());
+        if (archiveDataService == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Archiving to database is not supported when running without database");
+            }
+        } else {
+            String issuerDN = CertTools.stringToBCDNString(requestCertIssuerDN);
+            String serialNumber = requestCertSerialnumber.toString(16);
+
+            Collection<ArchiveDataBean> archives = archiveDataService.
+                    findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE, signerId, issuerDN, serialNumber);
+            for (ArchiveDataBean archive : archives) {
+                retval.add(archive.getArchiveDataVO());
+            }
         }
 
         return retval;

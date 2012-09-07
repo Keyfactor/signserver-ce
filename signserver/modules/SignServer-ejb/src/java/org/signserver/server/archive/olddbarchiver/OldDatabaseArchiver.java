@@ -14,6 +14,7 @@ package org.signserver.server.archive.olddbarchiver;
 
 import java.security.cert.X509Certificate;
 import java.util.Map;
+import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.RequestContext;
@@ -42,7 +43,11 @@ public class OldDatabaseArchiver implements Archiver {
 
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
-        dataService = new ArchiveDataService(context.getEntityManager());
+        final EntityManager em = context.getEntityManager();
+        if (em == null) {
+            throw new ArchiverInitException("OldDatabaseArchiver requires a database connection");
+        }
+        dataService = new ArchiveDataService(em);
     }
 
     @Override

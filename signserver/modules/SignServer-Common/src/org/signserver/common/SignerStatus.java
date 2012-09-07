@@ -39,7 +39,8 @@ public class SignerStatus extends CryptoTokenStatus {
     private transient Certificate signerCertificate;
     private byte[] signerCertificateBytes;
 
-        private long keyUsageCounterValue;
+    private long keyUsageCounterValue;
+    private boolean keyUsageCounterDisabled;
 	
 	/** 
 	 * @deprecated Use a constructor that takes an list of errors instead.
@@ -111,7 +112,10 @@ public class SignerStatus extends CryptoTokenStatus {
                 if (keyUsageLimit >= 0) {
                     out.print(" of " + keyUsageLimit);
                 }
-                out.println();
+        if (isKeyUsageCounterDisabled()) {
+            out.print(" (counter disabled)");
+        }
+        out.println();
 
         if (errors != null && !errors.isEmpty()) {
             out.println("  Errors: ");
@@ -158,5 +162,12 @@ public class SignerStatus extends CryptoTokenStatus {
 		}		
 	}
 		
+    public boolean isKeyUsageCounterDisabled() {
+        return keyUsageCounterDisabled;
+    }
 	
+    public void setKeyUsageCounterDisabled(boolean keyUsageCounterDisabled) {
+        this.keyUsageCounterDisabled = keyUsageCounterDisabled;
+    }
+		
 }

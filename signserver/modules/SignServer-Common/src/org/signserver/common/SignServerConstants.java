@@ -88,4 +88,5 @@ public class SignServerConstants {
      * A negative value means no limit (default).
      */
     public static final String KEYUSAGELIMIT = "KEYUSAGELIMIT";
+    public static String DISABLEKEYUSAGECOUNTER = "DISABLEKEYUSAGECOUNTER";
 }

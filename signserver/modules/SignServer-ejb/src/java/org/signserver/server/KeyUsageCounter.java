@@ -42,12 +42,11 @@ public class KeyUsageCounter implements Serializable {
     private long counter;
 
     public KeyUsageCounter() {
-        counter = 0;
     }
 
-    public KeyUsageCounter(String keyHash) {
-        this();
+    public KeyUsageCounter(final String keyHash, final long value) {
         this.keyHash = keyHash;
+        this.counter = value;
     }
 
     public long getCounter() {

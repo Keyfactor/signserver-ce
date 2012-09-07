@@ -239,14 +239,25 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
 
             // Check signer certificate
+            final boolean counterDisabled = awc.getProperties().getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
+            final long keyUsageLimit = Long.valueOf(awc.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
+            final boolean keyUsageLimitSpecified = keyUsageLimit != -1;
+            if (counterDisabled && keyUsageLimitSpecified) {
+                LOG.error("Worker]" + workerId + "]: Configuration error: " +  SignServerConstants.DISABLEKEYUSAGECOUNTER + "=TRUE but " + SignServerConstants.KEYUSAGELIMIT + " is also configured. Key usage counter will still be used.");
+            }
             try {
                 // Check if the signer has a signer certificate and if that
                 // certificate have ok validity and private key usage periods.
                 checkSignerValidity(workerId, awc, logMap);
 
                 // Check key usage limit (preliminary check only)
-                checkSignerKeyUsageCounter(processable, workerId, awc, em,
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Key usage counter disabled: " + counterDisabled);
+                }
+                if (!counterDisabled || keyUsageLimitSpecified) {
+                    checkSignerKeyUsageCounter(processable, workerId, awc, em,
                         false);
+                }
             } catch (CryptoTokenOfflineException ex) {
                 final CryptoTokenOfflineException exception =
                         new CryptoTokenOfflineException(ex);
@@ -371,7 +382,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             StatisticsManager.endEvent(workerId, awc, em, event);
 
             // Check key usage limit
+            if (!counterDisabled || keyUsageLimitSpecified) {
             checkSignerKeyUsageCounter(processable, workerId, awc, em, true);
+            }
 
             // Output successfully
             if (res instanceof ISignResponse) {

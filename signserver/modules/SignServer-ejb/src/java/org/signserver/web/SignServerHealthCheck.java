@@ -175,15 +175,15 @@ public class SignServerHealthCheck implements IHealthCheck {
 			maintenanceProperties.load(in);
             final String maintenancePropertyValue = maintenanceProperties.getProperty(maintenancePropertyName);
             if (maintenancePropertyValue == null) {
-               LOG.info("Could not find property " + maintenancePropertyName+ " in " + maintenanceFile+ ", will continue to monitor this node");
+               LOG.info("Could not find property " + maintenancePropertyName + " in " + maintenanceFile +
+            		   ", will continue to monitor this node");
             } else if (Boolean.TRUE.toString().equalsIgnoreCase(maintenancePropertyValue)) {
                 sb.append("MAINT: ").append(maintenancePropertyName);
             }
 		} catch (IOException e) {
 	        if (LOG.isDebugEnabled()) {
-	            LOG.debug("Could not read Maintenance File. Expected to find file at: "+ maintenanceFile);
+	            LOG.debug("Could not read Maintenance File. Expected to find file at: " + maintenanceFile);
 	        }
-			return;
 		} finally {
 			if (in != null) {
 				try {
@@ -205,7 +205,7 @@ public class SignServerHealthCheck implements IHealthCheck {
 				in = new FileInputStream(maintenanceFile);
 				maintenanceProperties.load(in);
 			} catch (IOException e) {
-				LOG.debug("Could not read Maintenance File. Expected to find file at: "+ maintenanceFile);
+				LOG.debug("Could not read Maintenance File. Expected to find file at: " + maintenanceFile);
 			} finally {
 				if (in != null) {
 					try {

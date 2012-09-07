@@ -14,6 +14,7 @@ package org.signserver.ejb;
 
 import java.io.*;
 import org.apache.log4j.Logger;
+import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.server.KeyUsageCounter;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 
@@ -47,7 +48,7 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
      *
      */
     @Override
-    public void create(final String keyHash) {
+    public void create(final String keyHash) throws FileBasedDatabaseException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating keyusagecounter " + keyHash);
         }
@@ -59,12 +60,12 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
                 }
             }
         } catch (IOException ex) {
-            throw new RuntimeException("Could not load from or write data to file based database", ex);
+            throw new FileBasedDatabaseException("Could not load from or write data to file based database", ex);
         }
     }
     
     @Override
-    public KeyUsageCounter getCounter(final String keyHash) {
+    public KeyUsageCounter getCounter(final String keyHash) throws FileBasedDatabaseException {
         final KeyUsageCounter result;
         try {
             final Long value;
@@ -77,13 +78,13 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
                 result = new KeyUsageCounter(keyHash, value);
             }
         } catch (IOException ex) {
-            throw new RuntimeException("Could not load from or write data to file based database", ex);
+            throw new FileBasedDatabaseException("Could not load from or write data to file based database", ex);
         }
         return result;
     }
 
     @Override
-    public boolean incrementIfWithinLimit(String keyHash, long limit) {
+    public boolean incrementIfWithinLimit(String keyHash, long limit) throws FileBasedDatabaseException {
         final boolean result;
         try {
             synchronized (manager) {
@@ -99,7 +100,7 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
             }
             return result;
         } catch (IOException ex) {
-            throw new RuntimeException("Could not load from or write data to file based database", ex);
+            throw new FileBasedDatabaseException("Could not load from or write data to file based database", ex);
         }
     }
 
@@ -112,7 +113,7 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
             }
             return value != null && value < keyUsageLimit;
         } catch (IOException ex) {
-            throw new RuntimeException("Could not load from or write data to file based database", ex);
+            throw new FileBasedDatabaseException("Could not load from or write data to file based database", ex);
         }
     }
     

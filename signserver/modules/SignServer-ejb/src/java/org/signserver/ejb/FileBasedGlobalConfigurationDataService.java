@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.*;
 import org.apache.log4j.Logger;
+import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 
 /**
@@ -43,7 +44,7 @@ public class FileBasedGlobalConfigurationDataService implements IGlobalConfigura
     }
 
     @Override
-    public void setGlobalProperty(String completekey, String value) {
+    public void setGlobalProperty(String completekey, String value) throws FileBasedDatabaseException {
         try {
             synchronized (manager) {
                 Map<String, GlobalConfigurationDataBean> dataStore = loadData();
@@ -59,7 +60,7 @@ public class FileBasedGlobalConfigurationDataService implements IGlobalConfigura
                 writeData(dataStore);
             }
         } catch (IOException ex) {
-            throw new RuntimeException("Could not load from or write data to file based database", ex);
+            throw new FileBasedDatabaseException("Could not load from or write data to file based database", ex);
         }
     }
 
@@ -76,7 +77,7 @@ public class FileBasedGlobalConfigurationDataService implements IGlobalConfigura
                 }
             }
         } catch (IOException ex) {
-            throw new RuntimeException("Could not load from or write data to file based database", ex);
+            throw new FileBasedDatabaseException("Could not load from or write data to file based database", ex);
         }
         return retval;
     }

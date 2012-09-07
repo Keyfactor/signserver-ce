@@ -14,6 +14,7 @@ package org.signserver.web;
  *************************************************************************/
 
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -200,12 +201,14 @@ public class SignServerHealthCheck implements IHealthCheck {
 			LOG.debug("Maintenance file not specified, node will be monitored");
 		} else {
 			Properties maintenanceProperties = new Properties();
+			File maintFile = new File(maintenanceFile);
 			InputStream in = null;
 			try {
-				in = new FileInputStream(maintenanceFile);
+				in = new FileInputStream(maintFile);
 				maintenanceProperties.load(in);
 			} catch (IOException e) {
-				LOG.debug("Could not read Maintenance File. Expected to find file at: " + maintenanceFile);
+				LOG.debug("Could not read Maintenance File. Expected to find file at: " +
+						maintFile.getAbsolutePath());
 			} finally {
 				if (in != null) {
 					try {

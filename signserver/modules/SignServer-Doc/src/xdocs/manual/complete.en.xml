@@ -1525,6 +1525,38 @@ More information about the MySQL Cluster can be found at
 <a href="http://www.mysql.com/products/database/cluster/">http://www.mysql.com/products/database/cluster/</a>.
                     </p>
                </subsection>
+               <subsection name="Healthcheck">
+               	<p>
+Setting up the healtch check servlet.
+The following parameters can be set in signserver_build.properties to customise the health check servlet:
+				</p>
+				<p>
+<source>healthcheck.authorizedips</source> - A semicolon-delimited list of IP addresses authorized to access
+the healthcheck servlet (defaults to <source>127.0.0.1</source>).
+				</p>
+				<p>
+<source>healthcheck.minimumfreememory</source> - Number of megabytes of memory that must be free before removing     
+the node out of the cluster (defaults to 1).
+				</p>
+				<p>
+<source>healthcheck.checkdbstring</source> - The string that should be used to do 
+a minimal check that the database is working. May differ between databases.
+(defaults to <source>Select count(*) from signerconfigdata</source>).
+				</p>
+				<p>
+<source>healthcheck.maintenancefile</source> - The path to a file containing the maintenance state, this file is a
+standard Java property file and should have a property (by default named <source>DOWN_FOR_MAINTENANCE</source>").
+If this property has the value <source>true</source>, none of the standard health checks will be performed, and instead
+the result will be a string of the form <source>MAINT: DOWN_FOR_MAINTENANCE</source>.
+If this property is not set (or an invalid file is given), the maintenance functionallity is disabled.
+				</p>
+				<p>
+<source>healthcheck.maintenancepropertyname</source> - The property name to be used in the maintenance file. This will also
+affect the error message returned when in maintenance mode (the part of the string after <source>MAINT: </source>
+(defaults to <source>DOWN_FOR_MAINTENANCE</source>).
+				</p>
+				
+               </subsection>
             </section>
 
             

@@ -47,6 +47,9 @@ import org.signserver.healthcheck.HealthCheckUtils;
  * Database connection can be established.
  * All SignerTokens are active if not set as offline.
  * 
+ * If a maintenance file has been configured during build, it can be used to enable maintenance mode.
+ * When enabled, none of the about system checks are performed, instead a down-for-maintenance message is returned.
+ * 
  * @author Philip Vendil
  * @version $Id$
  */

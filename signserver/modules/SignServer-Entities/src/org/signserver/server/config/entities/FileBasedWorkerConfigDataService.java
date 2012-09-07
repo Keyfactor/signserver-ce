@@ -19,6 +19,7 @@ import javax.ejb.EJBException;
 import org.apache.log4j.Logger;
 import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
+import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 
@@ -75,7 +76,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
      */
     @SuppressWarnings("unchecked")
     @Override
-    public WorkerConfig getWorkerConfig(int workerId) {
+    public WorkerConfig getWorkerConfig(int workerId)  throws FileBasedDatabaseException {
         WorkerConfig result = null;
 
         WorkerConfigDataBean wcdb;
@@ -105,7 +106,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 }
             }
         } catch (IOException ex) {
-            throw new RuntimeException("Could not load from or write data to file based database", ex);
+            throw new FileBasedDatabaseException("Could not load from or write data to file based database", ex);
         }
 
         return result;
@@ -115,7 +116,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
      * Method that saves the Worker Config to database.
      */
     @Override
-    public void setWorkerConfig(int workerId, WorkerConfig signconf) {
+    public void setWorkerConfig(int workerId, WorkerConfig signconf) throws FileBasedDatabaseException {
         //        auditLog(workerId, "setWorkerConfig");
         synchronized (manager) {
             // We must base64 encode string for UTF safety
@@ -137,7 +138,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 wcdb.setSignerConfigData(baos.toString("UTF8"));
                 writeData(workerId, wcdb);
             } catch (IOException ex) {
-                throw new RuntimeException("Could not load from or write data to file based database", ex);
+                throw new FileBasedDatabaseException("Could not load from or write data to file based database", ex);
             }
         }
     }
@@ -148,7 +149,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
      * @return true if the removal was successful
      */
     @Override
-    public boolean removeWorkerConfig(int workerId) {
+    public boolean removeWorkerConfig(int workerId) throws FileBasedDatabaseException {
         boolean retval = false;
         
         try {
@@ -157,7 +158,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 retval = loadData(workerId) == null;
             }
         } catch (IOException ex) {
-            throw new RuntimeException("Could not load from or write data to file based database", ex);
+            throw new FileBasedDatabaseException("Could not load from or write data to file based database", ex);
         }
 
         return retval;
@@ -176,6 +177,10 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 create(workerId, WorkerConfig.class.getName());
                 workerConfig = getWorkerConfig(workerId);
             }
+        }
+        
+        if (workerConfig == null) {
+            throw new FileBasedDatabaseException("Could not load from or write data to file based database");
         }
 
         return workerConfig;

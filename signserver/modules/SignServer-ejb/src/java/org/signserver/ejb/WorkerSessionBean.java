@@ -1304,13 +1304,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     private WorkerConfig getWorkerConfig(int workerId) {
-        WorkerConfig workerConfig =
-                workerConfigService.getWorkerConfig(workerId);
-        if (workerConfig == null) {
-            workerConfigService.create(workerId, WorkerConfig.class.getName());
-            workerConfig = workerConfigService.getWorkerConfig(workerId);
-        }
-        return workerConfig;
+        return workerConfigService.getWorkerProperties(workerId);
     }
 
     private String generateTransactionID() {

@@ -39,15 +39,10 @@ public class OldDatabaseArchiver implements Archiver {
     private static final Logger LOG = Logger.getLogger(OldDatabaseArchiver.class);
 
     private ArchiveDataService dataService;
-    
-    private boolean base64Encoding;
 
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
         dataService = new ArchiveDataService(context.getEntityManager());
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Archiver" + listIndex + " will use base64 encoding: " + base64Encoding);
-        }
     }
 
     @Override

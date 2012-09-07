@@ -13,6 +13,7 @@
 package org.signserver.server.signers;
 
 import java.security.cert.Certificate;
+import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
@@ -38,7 +39,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     @Override
     public WorkerStatus getStatus() {
         SignerStatus retval;
-        final List<String> fatalErrors = getFatalErrors();
+        final List<String> fatalErrors = new LinkedList<String>(getFatalErrors());
 
         try {
             final Certificate cert = getSigningCertificate();
@@ -50,7 +51,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 if (counter == null || keyUsageLimit != -1
                         && status == CryptoTokenStatus.STATUS_ACTIVE
                         && counter.getCounter() >= keyUsageLimit) {
-                    status = CryptoTokenStatus.STATUS_OFFLINE;
+                    fatalErrors.add("Key usage limit exceeded or not initialized");
                 }
 
                 if (counter != null) {
@@ -64,6 +65,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         } catch (CryptoTokenOfflineException e) {
             retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), fatalErrors, new ProcessableConfig(config), null);
         }
+        retval.setKeyUsageCounterDisabled(config.getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE"));
         return retval;
     }
 }

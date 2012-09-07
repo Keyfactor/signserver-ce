@@ -249,14 +249,25 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
 
             // Check signer certificate
+            final boolean counterDisabled = awc.getProperties().getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
+            final long keyUsageLimit = Long.valueOf(awc.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
+            final boolean keyUsageLimitSpecified = keyUsageLimit != -1;
+            if (counterDisabled && keyUsageLimitSpecified) {
+                LOG.error("Worker]" + workerId + "]: Configuration error: " +  SignServerConstants.DISABLEKEYUSAGECOUNTER + "=TRUE but " + SignServerConstants.KEYUSAGELIMIT + " is also configured. Key usage counter will still be used.");
+            }
             try {
                 // Check if the signer has a signer certificate and if that
                 // certificate have ok validity and private key usage periods.
                 checkSignerValidity(workerId, awc, logMap);
 
                 // Check key usage limit (preliminary check only)
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Key usage counter disabled: " + counterDisabled);
+                }
+                if (!counterDisabled || keyUsageLimitSpecified) {
                     checkSignerKeyUsageCounter(processable, workerId, awc, em,
                             false);
+                }
             } catch (CryptoTokenOfflineException ex) {
                 final CryptoTokenOfflineException exception =
                         new CryptoTokenOfflineException(ex);
@@ -379,7 +390,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             StatisticsManager.endEvent(workerId, awc, em, event);
 
             // Check key usage limit
-            checkSignerKeyUsageCounter(processable, workerId, awc, em, true);
+            if (!counterDisabled || keyUsageLimitSpecified) {
+                checkSignerKeyUsageCounter(processable, workerId, awc, em, true);
+            }
 
             // Output successfully
             if (res instanceof ISignResponse) {
@@ -696,7 +709,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             final int workerId, final WorkerConfig awc, EntityManager em,
             final boolean increment)
         throws CryptoTokenOfflineException {
-
+        
         // If the signer have a certificate, check that the usage of the key
         // has not reached the limit
         Certificate cert = null;
@@ -725,12 +738,12 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
             if (increment) {
                 if (!keyUsageCounterDataService.incrementIfWithinLimit(keyHash, keyUsageLimit)) {
-                    final String message
-                            = "Key usage limit exceeded or not initialized for worker "
-                            + workerId;
-                    LOG.debug(message);
-                    throw new CryptoTokenOfflineException(message);
-                }
+                        final String message
+                                = "Key usage limit exceeded or not initialized for worker "
+                                + workerId;
+                        LOG.debug(message);
+                        throw new CryptoTokenOfflineException(message);
+                    }
             } else {
                 // Just check the value without updating
                 if (keyUsageLimit > -1) {

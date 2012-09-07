@@ -46,7 +46,7 @@ public class KeyUsageCounterDataService implements IKeyUsageCounterDataService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating keyusagecounter " + keyHash);
         }
-        KeyUsageCounter counter = new KeyUsageCounter(keyHash);
+        KeyUsageCounter counter = new KeyUsageCounter(keyHash, 0L);
         em.persist(counter);
     }
     

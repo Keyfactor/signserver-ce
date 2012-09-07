@@ -73,14 +73,7 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
             if (value == null) {
                 result = null;
             } else {
-                result = new KeyUsageCounter(keyHash) { // TODO:  This method would be better if only returned the value instead of a KeyUsageCounter object
-
-                    @Override
-                    public long getCounter() {
-                        return value;
-                    }
-
-                };
+                result = new KeyUsageCounter(keyHash, value);
             }
         } catch (IOException ex) {
             throw new RuntimeException("Could not load from or write data to file based database", ex);

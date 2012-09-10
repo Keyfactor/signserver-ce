@@ -172,9 +172,12 @@ public class SignServerHealthCheck implements IHealthCheck {
             }
 			return;
 		} 
+		
+		File maintFile = new File(maintenanceFile);
 		InputStream in = null;
+
 		try {
-			in = new FileInputStream(maintenanceFile);
+			in = new FileInputStream(maintFile);
 	        final Properties maintenanceProperties = new Properties();
 			maintenanceProperties.load(in);
             final String maintenancePropertyValue = maintenanceProperties.getProperty(maintenancePropertyName);
@@ -186,7 +189,8 @@ public class SignServerHealthCheck implements IHealthCheck {
             }
 		} catch (IOException e) {
 	        if (LOG.isDebugEnabled()) {
-	            LOG.debug("Could not read Maintenance File. Expected to find file at: " + maintenanceFile);
+	            LOG.debug("Could not read Maintenance File. Expected to find file at: " +
+	            		maintFile.getAbsolutePath());
 	        }
 		} finally {
 			if (in != null) {

@@ -43,6 +43,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     private final File folder;
     private static final String PREFIX = "signerdata-";
     private static final String SUFFIX = ".dat";
+    private static final int SCHEMA_VERSION = 1;
 
     public FileBasedWorkerConfigDataService(FileBasedDatabaseManager manager) {
         this.manager = manager;
@@ -204,6 +205,8 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 
     private WorkerConfigDataBean loadData(final int workerId) throws IOException {
         assert Thread.holdsLock(manager);
+        checkSchemaVersion();
+        
         WorkerConfigDataBean result;
         final File file = new File(folder, PREFIX + workerId + SUFFIX);
         
@@ -240,6 +243,8 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 
     private void writeData(int workerId, WorkerConfigDataBean dataStore) throws IOException {
         assert Thread.holdsLock(manager);
+        checkSchemaVersion();
+        
         final File file = new File(folder, PREFIX + workerId + SUFFIX);
         
         OutputStream out = null;
@@ -262,5 +267,11 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         assert Thread.holdsLock(manager);
         final File file = new File(folder, PREFIX + workerId + SUFFIX);
         file.delete();
+    }
+    
+    private void checkSchemaVersion() {
+        if (manager.getSchemaVersion() != SCHEMA_VERSION) {
+            throw new FileBasedDatabaseException("Unsupported schema version: " + manager.getSchemaVersion());
+        }
     }
 }

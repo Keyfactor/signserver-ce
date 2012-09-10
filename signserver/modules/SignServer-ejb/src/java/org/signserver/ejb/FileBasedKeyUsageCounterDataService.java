@@ -36,6 +36,8 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
     private static final String PREFIX = "kuc-";
     private static final String SUFFIX = ".dat";
 
+    private static final int SCHEMA_VERSION = 1;
+
     public FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager manager) {
         this.manager = manager;
         this.folder = manager.getDataFolder();
@@ -119,6 +121,8 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
     
     private Long loadData(String keyHash) throws IOException {
         assert Thread.holdsLock(manager);
+        checkSchemaVersion();
+
         Long result = null;
         final File file = new File(folder, PREFIX + keyHash + SUFFIX);
         if (file.length() > 0) {
@@ -141,6 +145,8 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
 
     private void writeData(String keyHash, Long value) {
         assert Thread.holdsLock(manager);
+        checkSchemaVersion();
+
         final File file = new File(folder, PREFIX + keyHash + SUFFIX);
         
         BufferedWriter out = null;
@@ -158,5 +164,10 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
         }
     }
         
+    private void checkSchemaVersion() {
+        if (manager.getSchemaVersion() != SCHEMA_VERSION) {
+            throw new FileBasedDatabaseException("Unsupported schema version: " + manager.getSchemaVersion());
+        }
+    }
 
 }

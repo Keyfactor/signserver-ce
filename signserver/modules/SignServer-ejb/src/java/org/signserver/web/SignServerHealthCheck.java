@@ -188,6 +188,7 @@ public class SignServerHealthCheck implements IHealthCheck {
                 sb.append("MAINT: ").append(maintenancePropertyName);
             }
 		} catch (IOException e) {
+			sb.append("MAINT: maintenance property file could not be read");
 	        if (LOG.isDebugEnabled()) {
 	            LOG.debug("Could not read Maintenance File. Expected to find file at: " +
 	            		maintFile.getAbsolutePath());

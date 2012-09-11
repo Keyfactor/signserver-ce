@@ -4759,6 +4759,7 @@ properties should be set in signserver_build.properties:
                         <li>includemodulesinbuild=true</li>
                         <li>useclusterclassloader=true</li>
                         <li>clusterclassloader.useclassversions=true</li>
+                        <li>healthcheck.maintenancefile=/path/to/signserver/maintenance.properties (where /path/to/signserver is the path where SignServer is located)</li>
                     </ul>
                     </p>
                     <p>

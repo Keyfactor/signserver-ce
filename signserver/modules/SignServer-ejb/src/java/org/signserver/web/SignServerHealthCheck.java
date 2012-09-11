@@ -189,10 +189,7 @@ public class SignServerHealthCheck implements IHealthCheck {
             }
 		} catch (IOException e) {
 			sb.append("MAINT: maintenance property file could not be read");
-	        if (LOG.isDebugEnabled()) {
-	            LOG.debug("Could not read Maintenance File. Expected to find file at: " +
-	            		maintFile.getAbsolutePath());
-	        }
+	        LOG.error("Could not read Maintenance File. Expected to find file at: " + maintFile.getAbsolutePath());
 		} finally {
 			if (in != null) {
 				try {
@@ -215,7 +212,7 @@ public class SignServerHealthCheck implements IHealthCheck {
 				in = new FileInputStream(maintFile);
 				maintenanceProperties.load(in);
 			} catch (IOException e) {
-				LOG.debug("Could not read Maintenance File. Expected to find file at: " +
+				LOG.error("Could not read Maintenance File. Expected to find file at: " +
 						maintFile.getAbsolutePath());
 			} finally {
 				if (in != null) {

@@ -13,8 +13,10 @@
 package org.signserver.web;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Properties;
 
 import org.signserver.common.ServiceLocator;
 import org.signserver.statusrepo.IStatusRepositorySession;
@@ -35,7 +37,7 @@ public class HealthCheckTest extends WebTestCase {
     
     /** The status repository session. */
     private static IStatusRepositorySession.IRemote repository;
-    
+  
     @Override
     protected String getServletURL() {
         return "http://localhost:8080/signserver/healthcheck/signserverhealth";
@@ -83,6 +85,9 @@ public class HealthCheckTest extends WebTestCase {
         assertStatusReturned(NO_FIELDS, 500);
         String body = new String(sendAndReadyBody(NO_FIELDS));
         assertFalse("Not ALLOK: " + body, body.contains("ALLOK"));
+        
+        // remove offline worker so it won't interfer with the next tests
+        removeWorker(getSignerIdDummy1());
     }
     
     /**
@@ -101,13 +106,53 @@ public class HealthCheckTest extends WebTestCase {
     
         removeWorker(TSA_WORKER);
     }
+    
+    private FileOutputStream openMaintenanceProperties() throws Exception {
+    	File maintenanceFile = new File(getSignServerHome() + File.separator +
+    			getConfig().getProperty("healthcheck.maintenancefile"));
+
+    	return new FileOutputStream(maintenanceFile);
+    }
+    
+    /**
+     * Test the down-for-maintenance functionality
+     */
+    public void test04DownForMaintenance() throws Exception {
+    	FileOutputStream fos = openMaintenanceProperties();
+    	Properties properties = new Properties();
+
+    	// set down for maintenance on
+    	String maintProp = getConfig().getProperty("healthcheck.propertyname");
+    	if (maintProp == null) {
+    		maintProp = "DOWN_FOR_MAINTENANCE";
+    	}
+    	properties.setProperty(maintProp, "true");
+    	properties.store(fos, null);
+    	
+    	assertStatusReturned(NO_FIELDS, 500);
+    	String body = new String(sendAndReadyBody(NO_FIELDS));
+    	String maintString = "MAINT: " + maintProp;
+    	assertTrue("Mainenance mode should be on: " + body, body.contains(maintString));
+    	
+    	// set down for maintenance off
+    	properties.remove(maintProp);
+    	properties.store(fos, null);
+    	fos.close();
+    	fos = openMaintenanceProperties();
+    	properties.setProperty(maintProp, "false");
+    	properties.store(fos, null);
+
+    	assertStatusReturned(NO_FIELDS, 200);
+        body = new String(sendAndReadyBody(NO_FIELDS));
+        assertTrue("Contains ALLOK: " + body, body.contains("ALLOK")); 
+    }
 
     /**
      * Remove the workers created etc.
      * @throws Exception in case of error
      */
     public void test99TearDownDatabase() throws Exception {
-        removeWorker(getSignerIdDummy1());
+        
 //        removeWorker(getSignerIdCMSSigner1());
     }
 }

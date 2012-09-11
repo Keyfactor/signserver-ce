@@ -86,7 +86,7 @@ public class HealthCheckTest extends WebTestCase {
         String body = new String(sendAndReadyBody(NO_FIELDS));
         assertFalse("Not ALLOK: " + body, body.contains("ALLOK"));
         
-        // remove offline worker so it won't interfer with the next tests
+        // remove offline worker so it won't interfere with the next tests
         removeWorker(getSignerIdDummy1());
     }
     
@@ -134,7 +134,8 @@ public class HealthCheckTest extends WebTestCase {
     	String maintString = "MAINT: " + maintProp;
     	assertTrue("Mainenance mode should be on: " + body, body.contains(maintString));
     	
-    	// set down for maintenance off
+    	// set down for maintenance off, needs to "flush" the property file to
+    	// ensure it gets emptied...
     	properties.remove(maintProp);
     	properties.store(fos, null);
     	fos.close();

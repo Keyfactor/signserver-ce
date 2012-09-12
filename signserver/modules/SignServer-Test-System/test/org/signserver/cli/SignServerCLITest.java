@@ -14,8 +14,6 @@ package org.signserver.cli;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.bouncycastle.tsp.TimeStampResponse;
@@ -39,7 +37,6 @@ public class SignServerCLITest extends ModulesTestCase {
     
     private static final String TESTID = "100";
     private static final String TESTTSID = "1000";
-    private static final String TESTGSID = "1023";
 
     private CLITestHelper cli = getAdminCLI();
     
@@ -206,22 +203,6 @@ public class SignServerCLITest extends ModulesTestCase {
         assertTrue(tsr != null);
         String archiveId = tsr.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16);
         assertNotNull(archiveId);
-
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, cli.execute("archive",
-                    "findfromarchiveid",
-                    TESTTSID,
-                    archiveId,
-                    getSignServerHome() + "/tmp"));
-        File datafile = new File(getSignServerHome() + "/tmp/" + archiveId);
-        assertTrue(datafile.exists());
-        datafile.delete();
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, cli.execute("archive",
-                    "findfromrequestip",
-                    TESTTSID,
-                    "127.0.0.1",
-                    getSignServerHome() + "/tmp"));
-        datafile = new File(getSignServerHome() + "/tmp/" + archiveId);
-        assertTrue(datafile.exists());
     }
 
     public void testRemoveTimeStamp() throws Exception {
@@ -239,68 +220,6 @@ public class SignServerCLITest extends ModulesTestCase {
 
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("reload", TESTTSID));
-        assertPrinted("", cli.getOut(), "SignServer reloaded successfully");
-    }
-
-    public void testSetupGroupKeyService() throws Exception {
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("reload", "all"));
-
-        assertTrue(new File(getSignServerHome() + "/res/test/test_add_groupkeyservice_configuration.properties").exists());
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("setproperties", getSignServerHome() + "/res/test/test_add_groupkeyservice_configuration.properties"));
-        assertPrinted("", cli.getOut(), "Setting the property NAME to Test1 for worker 1023");
-
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("reload", TESTGSID));
-
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("getstatus", "complete", TESTGSID));
-
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("groupkeyservice", "switchenckey", "" + TESTGSID));
-        assertPrinted("", cli.getOut(), "key switched successfully");
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("groupkeyservice", "switchenckey", "Test1"));
-        assertPrinted("", cli.getOut(), "key switched successfully");
-
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("groupkeyservice", "pregeneratekeys", "" + TESTGSID, "1"));
-        assertPrinted("", cli.getOut(), "1 Pregenerated successfully");
-
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("groupkeyservice", "pregeneratekeys", "" + TESTGSID, "101"));
-        assertPrinted("", cli.getOut(), "101 Pregenerated successfully");
-
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("groupkeyservice", "pregeneratekeys", "" + TESTGSID, "1000"));
-        assertPrinted("", cli.getOut(), "1000 Pregenerated successfully");
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String startDate = dateFormat.format(new Date(0));
-        String endDate = dateFormat.format(new Date(System.currentTimeMillis() + 120000));
-
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("groupkeyservice", "removegroupkeys", "" + TESTGSID, "created", startDate, endDate));
-        assertPrinted("", cli.getOut(), "1102 Group keys removed");
-
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("groupkeyservice", "removegroupkeys", "" + TESTGSID, "FIRSTUSED", startDate, endDate));
-        assertPrinted("", cli.getOut(), "0 Group keys removed");
-
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("groupkeyservice", "removegroupkeys", "" + TESTGSID, "LASTFETCHED", startDate, endDate));
-        assertPrinted("", cli.getOut(), "0 Group keys removed");
-    }
-
-    public void testRemoveGroupKeyService() throws Exception {
-        // Remove and restore
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("removeworker", "Test1"));
-        assertPrinted("", cli.getOut(), "Property 'NAME' removed");
-
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("reload", TESTGSID));
         assertPrinted("", cli.getOut(), "SignServer reloaded successfully");
     }
 

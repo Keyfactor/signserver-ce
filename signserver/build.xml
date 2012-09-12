@@ -132,6 +132,7 @@ database.url                        = ${database.url}
 database.driver                     = ${database.driver}
 database.username                   = ${database.username}
 database.password                   = ${database.password}
+healthcheck.maintenancefile         = ${healthcheck.maintenancefile}
         </echo>
     </target>
     

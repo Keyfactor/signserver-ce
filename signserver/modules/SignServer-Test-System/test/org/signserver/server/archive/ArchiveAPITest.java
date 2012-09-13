@@ -117,10 +117,6 @@ public class ArchiveAPITest extends ModulesTestCase {
         // Test right class
         assertEquals("class for 0", Test1Archiver.class.getName(), 
                 archive0.getProperty(CLASSNAME));
-        
-        // Test entity manager available
-        assertTrue("em 0", Boolean.parseBoolean(
-                archive0.getProperty(ENTITYMANAGER_AVAILABLE)));
 
         LOG.debug("<test01OneArchiverCalled");
     }
@@ -188,14 +184,6 @@ public class ArchiveAPITest extends ModulesTestCase {
         assertTrue("a1 != a2", 
                 !archive1.getProperty(INSTANCE).equals(archive2.getProperty(INSTANCE)));
         
-        // Test entity manager available
-        assertTrue("em 0", Boolean.parseBoolean(
-                archive0.getProperty(ENTITYMANAGER_AVAILABLE)));
-        assertTrue("em 1", Boolean.parseBoolean(
-                archive1.getProperty(ENTITYMANAGER_AVAILABLE)));
-        assertTrue("em 2", Boolean.parseBoolean(
-                archive2.getProperty(ENTITYMANAGER_AVAILABLE)));
-        
         LOG.debug("<test02ThreeArchiversCalled");
     }
     
@@ -257,12 +245,6 @@ public class ArchiveAPITest extends ModulesTestCase {
         // Test that each archiver has its own instance
         assertTrue("a1 != a2", 
                 !archive1.getProperty(INSTANCE).equals(archive2.getProperty(INSTANCE)));
-        
-        // Test entity manager available
-        assertTrue("em 1", Boolean.parseBoolean(
-                archive1.getProperty(ENTITYMANAGER_AVAILABLE)));
-        assertTrue("em 2", Boolean.parseBoolean(
-                archive2.getProperty(ENTITYMANAGER_AVAILABLE)));
         
         LOG.debug("<test03archiverNotArchiving");
     }

@@ -4785,6 +4785,12 @@ where ClassName is replaced with the test class to run.
 A single test can also be run the same way from any of the other projects that 
 has tests by executing the command from their project directory.
                     </p>
+                    <p>
+If SignServer is configured to run without database some tests needs to be excluded by running like this:    
+                    </p>
+                    <source>
+bin/ant test:run -Dexcludes="**/ArchivingCLITest*,**/GroupKeyServiceCLITest*,**/Base64DatabaseArchiverTest*,**/OldDatabaseArchiverTest*,,**/GroupKeyServiceTest*,**/ArchiveTest*"
+                    </source>
                 </subsection>
             </section>
         </chapter>

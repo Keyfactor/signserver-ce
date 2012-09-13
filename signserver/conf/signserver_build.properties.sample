@@ -55,7 +55,7 @@
 # Note that if this is set to true, configurations for ports and bind addresses set in this
 # file is not taken into account, neither are the default values from SignServer.
 # In this case, the default configuration from JBoss will be un-altered.
-#j2ee.web-nohttps=true
+j2ee.web-nohttps=true
 
 # When upgrading, the important options are:
 # - httpsserver.password
@@ -65,7 +65,7 @@
 
 # The path to the web servers SSL keystore.
 # Default: p12/tomcat.jks
-#httpsserver.keystore=p12/keystore.jks
+#httpsserver.keystore=p12/tomcat.jks
 
 # The public port JBoss will listen to http on
 # Default 8080

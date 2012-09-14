@@ -223,6 +223,36 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
                 WorkerSessionBean.nextAliasInSequence("MyKeys1_0037"));
 
     }
+    
+    /**
+     * Tests that a request to a disabled worker fails.
+     */
+    public void test10processForDisabledWorker() throws Exception {
+        // Restore
+        workerSession.removeWorkerProperty(getSignerIdDummy1(), "DISABLED");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        // First test that there isn't anything wrong with the worker before
+        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
+        workerSession.process(getSignerIdDummy1(), request, new RequestContext());
+        
+        try {
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "DISABLED", "TRUE");
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+            
+            // Test signing
+            request = new GenericSignRequest(124, "<test/>".getBytes("UTF-8"));
+            workerSession.process(getSignerIdDummy1(), request, new RequestContext());
+            fail("Request should have failed as worker is disabled");
+        } catch (CryptoTokenOfflineException ex) { // OK
+            assertTrue("message should say that worker is disabled: " + ex.getMessage(), ex.getMessage().contains("disabled") || ex.getMessage().contains("Disabled"));
+            System.out.println("ex.msg: " + ex.getMessage());
+        } finally {
+            // Restore
+            workerSession.removeWorkerProperty(getSignerIdDummy1(), "DISABLED");
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+        }
+    }
 
     public void test99TearDownDatabase() throws Exception {
         removeWorker(3);

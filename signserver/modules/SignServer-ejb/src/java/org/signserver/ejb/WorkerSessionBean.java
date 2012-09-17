@@ -99,7 +99,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     @EJB
     private IWorkerManagerSessionLocal workerManagerSession;
 
-    @PersistenceContext(unitName = "SignServerJPA")
     EntityManager em;
     
 

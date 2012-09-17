@@ -106,12 +106,17 @@ j2ee.web-nohttps=true
 
 # The database name selected for deployment
 # Default: hsqldb
+# (use the nodb option to use a local file-based database instead of regular database, this needs further configuring of the database location).
 #database.name=mysql
 #database.name=postgres
 #database.name=mssql2000
 #database.name=oracle
 #database.name=sapdb
 #database.name=sybase
+#database.name=nodb
+
+# The location of the file-based database when using the nodb database option
+#database.nodb.location=
 
 # Database connection URL.
 # This is the URL used to connect to the database, used to configure a new datasource in JBoss.

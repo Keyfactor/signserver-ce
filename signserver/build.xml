@@ -168,7 +168,7 @@ healthcheck.maintenancefile         = ${healthcheck.maintenancefile}
         <fail message="SignServer needs to be built first. Run 'ant build'." unless="signserver-ejb.jar.available"/>
     </target>
     
-    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -preprocess-persistence, -process-modules">
+    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -process-modules">
         <!-- Build the ear file from the signserver.ear folder -->
         <ear destfile="${ear.dist.file}" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
             <fileset dir="${signserver.ear.dir}">
@@ -181,7 +181,7 @@ Configured ear file available at: ${ear.dist.file}
         </echo>
     </target>
     
-    <target name="-process-modules" depends="-init-configure, -preprocess-persistence">
+    <target name="-process-modules" depends="-init-configure">
         <echo/>
 <!--        <taskdef name="postprocess-jar" classname="org.signserver.anttasks.JarPostProcessTask" classpath="lib/SignServer-BuildTools.jar:lib/ext/commons-io-1.4.jar:lib/ext/commons-lang-2.4.jar"/>-->
         
@@ -258,6 +258,7 @@ Configuring EAR...
         </copy>
     </target>
     
+	<!--
     <target name="-preprocess-persistence">
         <echo message="Database type:      ${database.name}"/>
         <echo message="DataSource mapping: ${datasource.jndi-name-prefix}${datasource.jndi-name}"/>
@@ -293,7 +294,7 @@ Configuring EAR...
         </condition>
         <fail unless="hibernate.dialect" message="Unsupported database type '${database.name}'."/>
     </target>
-
+	-->
     
     <!-- =================================================================== -->
     <!-- Deploy target                                                       -->

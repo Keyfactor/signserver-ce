@@ -53,8 +53,9 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     @EJB
     private IWorkerManagerSessionLocal workerManagerSession;
     
-    @PersistenceContext(unitName = "SignServerJPA")
+
     EntityManager em;
+
     private static final long serialVersionUID = 1L;
 
     static {

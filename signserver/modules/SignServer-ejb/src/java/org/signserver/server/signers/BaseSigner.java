@@ -40,6 +40,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         SignerStatus retval;
         final List<String> fatalErrors = new LinkedList<String>(getFatalErrors());
 
+        final boolean keyUsageCounterDisabled = config.getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
+        
         try {
             final Certificate cert = getSigningCertificate();
             final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
@@ -47,9 +49,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             if (cert != null) {
                 KeyUsageCounter counter = getSignServerContext().getKeyUsageCounterDataService().getCounter(KeyUsageCounter.createKeyHash(cert.getPublicKey()));
                 int status = getCryptoToken().getCryptoTokenStatus();
-                if (counter == null || keyUsageLimit != -1
-                        && status == CryptoTokenStatus.STATUS_ACTIVE
-                        && counter.getCounter() >= keyUsageLimit) {
+                if ((counter == null && !keyUsageCounterDisabled) 
+                        || (keyUsageLimit != -1 && status == CryptoTokenStatus.STATUS_ACTIVE && (counter == null || counter.getCounter() >= keyUsageLimit))) {
                     fatalErrors.add("Key usage limit exceeded or not initialized");
                 }
 
@@ -64,7 +65,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         } catch (CryptoTokenOfflineException e) {
             retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), fatalErrors, new ProcessableConfig(config), null);
         }
-        retval.setKeyUsageCounterDisabled(config.getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE"));
+        retval.setKeyUsageCounterDisabled(keyUsageCounterDisabled);
         return retval;
     }
 }

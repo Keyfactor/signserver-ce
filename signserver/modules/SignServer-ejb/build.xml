@@ -20,7 +20,11 @@
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
     
     <target name="dist-module" depends="init,-init-macrodef-convertclasspath,dist">
-        <copy todir="../../lib/">
+        <condition property="noDB">
+        	<equals arg1="${database.name}" arg2="nodb"/>
+        </condition>
+    	
+    	<copy todir="../../lib/">
             <fileset dir="dist">
                 <include name="*.jar"/>
             </fileset>
@@ -32,15 +36,19 @@
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
         <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
         <propertyfile file="../../mods-available/10_${modulename}.properties">
-            <entry key="module.name" value="${modulename}"/>
+            <entry key="ejbjarheader" value="bla"/>
+        	<entry key="module.name" value="${modulename}"/>
             <entry key="module.type" value="ejb"/>
             <entry key="module.ejb" value="${distJar}"/>
             <entry key="to.lib" value="${libsToLib},${modsToLib}"/>
             <entry key="to.root" value="lib/${distJar}"/>
-            <entry key="postprocess.files" value="postprocess.file1"/>
+            <entry key="postprocess.files" value="postprocess.file1, postprocess.file2"/>
             <entry key="postprocess.file1.src" value="SignServer-Entities.jar"/>
             <entry key="postprocess.file1.includes" value="META-INF/persistence.xml"/>
             <entry key="postprocess.file1.dest" value="lib/"/>
+        	<entry key="postprocess.file2.src" value="SignServer-ejb.jar"/>
+        	<entry key="postprocess.file2.includes" value="META-INF/ejb-jar.xml"/>
+        	<entry key="postprocess.file2.dest" value="/"/>
         </propertyfile>
     </target>
     

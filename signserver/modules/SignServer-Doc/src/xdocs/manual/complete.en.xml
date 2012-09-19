@@ -4798,6 +4798,81 @@ If SignServer is configured to run without database some tests needs to be exclu
 bin/ant test:run -Dexcludes="**/ArchivingCLITest*,**/GroupKeyServiceCLITest*,**/Base64DatabaseArchiverTest*,**/OldDatabaseArchiverTest*,,**/GroupKeyServiceTest*,**/ArchiveTest*"
                     </source>
                 </subsection>
+                
+                <subsection name="Random testing">
+                    <p>
+SignServer-Test-Random is a tool for random testing of SignServer. Each test suite
+has different requirements configured workers in the different worker groups and 
+how many threads that can be used etc. See the source code for further details.
+                    </p>
+                    <subsubsection name="Building and running">
+                        <p>
+Build from modules/SignServer-Test-Random/ using:
+                        </p>
+                        <source>ant jar</source>
+                        <p>
+It can then be run from SIGNSERVER_HOME using:
+                        </p>
+                        <source>bin/randomtest</source>
+                    </subsubsection>
+                    
+                    <subsubsection name="Usage">
+                        <source>
+usage: randomtest &lt;options&gt;
+Random testing tool
+ -randomseed &lt;arg&gt;     Optional. Seed to initialize the pseudo random
+                       generator with.
+ -testsuite &lt;arg&gt;      Test suite to run. Any of [signWhileUpdatingConfig,
+                       signAndCountSignings, signWhileRenewing].
+ -threadgroup1 &lt;arg&gt;   Number of threads in group 1.
+ -threadgroup2 &lt;arg&gt;   Number of threads in group 2.
+ -timelimit &lt;arg&gt;      Optional. Only run for the specified time (in
+                       milliseconds).
+ -workergroup1 &lt;arg&gt;   First group of workers. Comma separated list of
+                       workerId/workerType.
+ -workergroup2 &lt;arg&gt;   Second group of workers. Comma separated list of
+                       workerId/workerType
+ -workergroup3 &lt;arg&gt;   Third group of workers. Comma separated list of
+                       workerId/workerType
+
+Sample usages:
+a) randomtest -testsuite signWhileUpdatingConfig -workergroup1
+5678/xml,5679/tsa,5680/xml -threadgroup1 4 -workergroup2
+5677/xml,5678/xml,5679/tsa -threadgroup2 3 -timelimit 30000
+
+b) randomtest -testsuite signAndCountSignings -workergroup1
+5678/xml,5679/tsa,5680/xml -threadgroup1 10 -timelimit 30000
+
+c) randomtest -testsuite signWhileRenewing -workergroup1 300/xml
+-workergroup2 301/xml,302/xml -threadgroup1 5 -workergroup3 309/renew
+-timelimit 20000
+
+Available worker types:
+- workerType can be any of [xml, tsa, renew]
+
+Test suite: signAndCountSignings
+- Signs documents with the workers from group 1 with the number of threads
+defined for group 1
+- Pauses signings and counts performed signings a compares to the key
+usage counter value
+- Notice that it is assumed that all workers use the same key-pair
+
+Test suite: signWhileUpdatingConfig
+- Signs documents with the workers from group 1 with the number of threads
+defined for group 1
+- Increases a counter in the configuration of group 2
+- Notice that the size of thread group 2 must be equal to the number of
+workers in group 2
+
+Test suite: signWhileRenewing
+- Signs documents with the workers from group 1 with the number of threads
+defined for group 1
+- Renews signers from group 2 using the one renewal worker in group 3
+- Notice that group 3 should only include one renewal worker
+                        </source>
+                    </subsubsection>
+                    
+                </subsection>
             </section>
         </chapter>
 

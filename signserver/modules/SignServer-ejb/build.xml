@@ -36,7 +36,6 @@
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
         <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
         <propertyfile file="../../mods-available/10_${modulename}.properties">
-            <entry key="ejbjarheader" value="bla"/>
         	<entry key="module.name" value="${modulename}"/>
             <entry key="module.type" value="ejb"/>
             <entry key="module.ejb" value="${distJar}"/>

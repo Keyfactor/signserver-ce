@@ -181,7 +181,7 @@ Configured ear file available at: ${ear.dist.file}
         </echo>
     </target>
     
-    <target name="-process-modules" depends="-init-configure, set-ejbjarheader, set-ejbjarheader-nodb">
+    <target name="-process-modules" depends="-init-configure, -preprocess-persistence, set-ejbjarheader, set-ejbjarheader-nodb">
         <echo/>
 <!--        <taskdef name="postprocess-jar" classname="org.signserver.anttasks.JarPostProcessTask" classpath="lib/SignServer-BuildTools.jar:lib/ext/commons-io-1.4.jar:lib/ext/commons-lang-2.4.jar"/>-->
         
@@ -263,63 +263,34 @@ Configuring EAR...
     </target>
 	
     <target name="set-ejbjarheader-nodb" if="noDB">
+    	<!-- generate starting and closing comment marks short-circuiting the
+    		enterprise-beans tag in the generated ejb-jar.xml file -->
     	<property name="ejbjarheader">
-<![CDATA[
-    		-->
-    		<ejb-jar/>
-    		<!--
-    		-->
-    	]]>
+			<![CDATA[
+    			<!--
+    		]]>
+    	</property>
+    	<property name="ejbjarfooter">
+    		<![CDATA[
+    			-->
+    		]]>
     	</property>
     </target>
         	
-	<target name="set-ejbjarheader" unless="noDB">
-		<property name="ejbjarheader">
-<![CDATA[
-			-->
-			<ejb-jar
-			     xmlns="http://java.sun.com/xml/ns/javaee"
-			     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
-			     version="3.0">
+    <target name="set-ejbjarheader" unless="noDB">
+        <!-- generate comment tags leaving the enterprise-beans tag in place -->
+    	<property name="ejbjarheader">
+    		<![CDATA[
+    			<!-- -->
+    		]]>
+    	</property>
+    	<property name="ejbjarfooter">
+    		<![CDATA[
+    			<!-- -->
+    		]]>
+    	</property>
+    </target>
 
-				<enterprise-beans>
-					<session>
-					    <ejb-name>WorkerSessionBean</ejb-name>  
-					    <persistence-context-ref>  
-					        <persistence-context-ref-name>persistence/em</persistence-context-ref-name>  
-					        <persistence-unit-name>SignServerJPA</persistence-unit-name>  
-					        <persistence-context-type>Transaction</persistence-context-type>  
-					        <injection-target>   
-					            <injection-target-class>org.signserver.ejb.WorkerSessionBean</injection-target-class>   
-					            <injection-target-name>em</injection-target-name>  
-					        </injection-target>  
-					    </persistence-context-ref>
-				
-					</session>
-					<session>
-					    <ejb-name>GlobalConfigurationSessionBean</ejb-name>  
-					    <persistence-context-ref>  
-					        <persistence-context-ref-name>persistence/em</persistence-context-ref-name>  
-					        <persistence-unit-name>SignServerJPA</persistence-unit-name>  
-					        <persistence-context-type>Transaction</persistence-context-type>  
-					        <injection-target>   
-					            <injection-target-class>org.signserver.ejb.GlobalConfigurationSessionBean</injection-target-class>   
-					            <injection-target-name>em</injection-target-name>  
-					        </injection-target>  
-					    </persistence-context-ref>
-					</session>
-				</enterprise-beans>
-
-			     
-			</ejb-jar>
-			
-			<!--
-			]]>
-		</property>
-	</target>
-    
-	<!--
     <target name="-preprocess-persistence">
         <echo message="Database type:      ${database.name}"/>
         <echo message="DataSource mapping: ${datasource.jndi-name-prefix}${datasource.jndi-name}"/>
@@ -355,7 +326,6 @@ Configuring EAR...
         </condition>
         <fail unless="hibernate.dialect" message="Unsupported database type '${database.name}'."/>
     </target>
-    -->
     
     <!-- =================================================================== -->
     <!-- Deploy target                                                       -->

@@ -243,8 +243,16 @@ public class RenewalWorker extends BaseSigner {
         logMap.put(RenewalWorkerProperties.LOG_RENEWEE, workerName);
 
         try {
-            final int reneweeId = getWorkerSession().getWorkerId(workerName);
-
+            int reneweeId;
+            try {
+                reneweeId = Integer.parseInt(workerName);
+            } catch (NumberFormatException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Not a workerId, maybe workerName: " + workerName);
+                }
+                reneweeId = getWorkerSession().getWorkerId(workerName);
+            }
+            
             // Get the worker config
             final WorkerConfig workerConfig
                     = getWorkerSession().getCurrentWorkerConfig(reneweeId);

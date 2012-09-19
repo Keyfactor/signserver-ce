@@ -50,7 +50,6 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     /** Logger for this class. */
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(WorkerManagerSessionBean.class);
     
-    @PersistenceContext(unitName = "SignServerJPA")
     EntityManager em;
     
     private IWorkerConfigDataService workerConfigService;

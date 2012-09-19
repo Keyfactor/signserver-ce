@@ -275,6 +275,16 @@ Configuring EAR...
     			-->
     		]]>
     	</property>
+    	<property name="persistenceheader">
+    		<![CDATA[
+    			<!--
+    		]]>
+    	</property>
+    	<property name="persistencefooter">
+    		<![CDATA[
+    			-->
+    		]]>
+		</property>
     </target>
         	
     <target name="set-ejbjarheader" unless="noDB">
@@ -288,6 +298,16 @@ Configuring EAR...
     		<![CDATA[
     			<!-- -->
     		]]>
+    	</property>
+    	<property name="persistenceheader">
+    		<![CDATA[
+    	    	<!-- -->
+    	   	]]>
+    	</property>
+    	<property name="persistencefooter">
+    		<![CDATA[
+    	    	<!-- -->
+    	    ]]>
     	</property>
     </target>
 

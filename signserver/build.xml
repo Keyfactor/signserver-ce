@@ -132,6 +132,7 @@ database.url                        = ${database.url}
 database.driver                     = ${database.driver}
 database.username                   = ${database.username}
 database.password                   = ${database.password}
+database.nodb.location              = ${database.nodb.location}
 healthcheck.maintenancefile         = ${healthcheck.maintenancefile}
         </echo>
     </target>
@@ -253,7 +254,8 @@ Configuring EAR...
     	</condition>
 
         <property name="signserver.ear.dir" location="${tmp}/signserver.ear"/>
-        <delete dir="${signserver.ear.dir}"/>
+        <property name="database.name" value="${database.name}"/>
+    	<delete dir="${signserver.ear.dir}"/>
         <mkdir dir="${signserver.ear.dir}"/>
         
         <mkdir dir="${signserver.ear.dir}/META-INF"/>

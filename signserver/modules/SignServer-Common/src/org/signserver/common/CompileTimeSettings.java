@@ -59,6 +59,7 @@ public class CompileTimeSettings {
             = "signserver.version";
     
     public static final String FILEBASED_DB_FOLDER = "database.nodb.location";
+    public static final String DATABASE_NAME = "database.name";
     
     /** Default values for the compile-time properties. */
     private static final Properties DEFAULT_PROPERTIES = new Properties();

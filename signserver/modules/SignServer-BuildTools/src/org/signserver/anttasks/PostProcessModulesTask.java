@@ -14,6 +14,8 @@ package org.signserver.anttasks;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -67,7 +69,6 @@ public class PostProcessModulesTask extends Task {
                             String includes = getProject().getProperty(module  + "." + postProcessFile +".includes");
                             log("    "+postProcessFile+".includes: " + includes, Project.MSG_DEBUG);
                             String destfile = getProject().getProperty("signserver.ear.dir") + "/" + dest + src;
-//                            String tempdir = getProject().getProperty("tmp") + "/" + module + "-" + src + ".dir";
                             
                             // Postprocess the files
                             replaceInJar(includes, "lib/" + src, destfile, getProject().getProperties(), this);
@@ -109,7 +110,7 @@ public class PostProcessModulesTask extends Task {
      * @param self The Task (used for logging)
      * @throws IOException in case of error
      */
-    public static void replaceInJar(String replaceincludes, String src, String destfile, Map properties, Task self) throws IOException {
+    protected void replaceInJar(String replaceincludes, String src, String destfile, Map properties, Task self) throws IOException {
         try {
             self.log("Replace " + replaceincludes + " in " + src + " to " + destfile, Project.MSG_VERBOSE);
             
@@ -117,14 +118,6 @@ public class PostProcessModulesTask extends Task {
             if (!srcFile.exists()) {
                 throw new FileNotFoundException(srcFile.getAbsolutePath());
             }
-//            
-//            File tempDirFile = new File(tempdir);
-//            if (tempDirFile.exists()) {
-//                FileUtils.deleteDirectory(tempDirFile);
-//            }
-//            if (!tempDirFile.mkdir()) {
-//                throw new BuildException("Temp dir could not be created: " + tempDirFile.getAbsolutePath());
-//            }
             
             // Expand properties of all files in replaceIncludes
             HashSet<String> replaceFiles = new HashSet<String>();
@@ -166,7 +159,8 @@ public class PostProcessModulesTask extends Task {
                         
                         // Do properties substitution
                         StrSubstitutor sub = new StrSubstitutor(properties);
-                        String newDocument = sub.replace(oldDocument);
+                        StringBuffer newerDocument = commentReplacement(oldDocument, properties);
+                        String newDocument = sub.replace(newerDocument);
                         self.log("After replace ********\n" + newDocument.toString() + "\n", Project.MSG_DEBUG);
                         
                         // Write the new document
@@ -221,6 +215,33 @@ public class PostProcessModulesTask extends Task {
                     reader.close();
                 } catch (IOException ignored) {} // NOPMD
             }
+        }
+        return result;
+    }
+    
+    /**
+     * Replaces &lt;!--COMMENT-REPLACEMENT(variable.name)--&gt; with the value
+     * of the property variable.name.
+     */
+    protected StringBuffer commentReplacement(final StringBuffer oldDocument, final Map properties) throws IOException {
+        final StringBuffer result = new StringBuffer();
+        final Pattern pattern = Pattern.compile(".*<!--COMMENT-REPLACEMENT\\(([a-zA-Z\\._]+)\\)-->.*");
+        final BufferedReader reader = new BufferedReader(new StringReader(oldDocument.toString()));
+        String line;
+        
+        while ((line = reader.readLine()) != null) {
+            final Matcher m = pattern.matcher(line);
+            if (m.matches()) {
+                final String propertyName = m.group(1);
+                final Object value = properties.get(propertyName);
+                if (value instanceof String) {
+                    log("Comment replacement for " + propertyName, Project.MSG_VERBOSE);
+                    line = line.replace("<!--COMMENT-REPLACEMENT(" + propertyName + ")-->", (String) value);
+                } else {
+                    log("No comment replacement value for " + propertyName, Project.MSG_VERBOSE);
+                }
+            }
+            result.append(line).append("\n");
         }
         return result;
     }

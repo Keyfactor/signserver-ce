@@ -66,7 +66,7 @@ public class Main {
                 .append("Test suite: signAndCountSignings").append(NL)
                 .append(" - Signs documents with the workers from group 1 with the number of threads defined for group 1").append(NL)
                 .append(" - Pauses signings and counts performed signings a compares to the key usage counter value").append(NL)
-                .append(" - Notice that it is assumed that all workers use the same key-pair")
+                .append(" - Notice that it is assumed that all workers use the same key-pair").append(NL)
                 .append("Test suite: signWhileUpdatingConfig").append(NL)
                 .append(" - Signs documents with the workers from group 1 with the number of threads defined for group 1").append(NL)
                 .append(" - Increases a counter in the configuration of group 2").append(NL)

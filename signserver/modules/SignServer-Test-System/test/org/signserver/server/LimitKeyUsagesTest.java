@@ -151,7 +151,7 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
         
         // Counter should not have increased
         final long actual = workerSession.getKeyUsageCounterValue(WORKERID_1);
-        assertEquals("counter should have increased", oldValue, actual);
+        assertEquals("counter should not have increased", oldValue, actual);
     }
     
     /**

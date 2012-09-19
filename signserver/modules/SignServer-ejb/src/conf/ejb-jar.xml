@@ -37,8 +37,9 @@
 		</session>
 	</enterprise-beans>		     
 
-	<!-- DO NOT REMOVE THE FOLLOWING LINE, IT IS USE FOR POSTPROCESSING DURING BUILD -->
+	
 	${ejbjarfooter}
+	<!-- DO NOT REMOVE THE LINE ABOVE, IT IS USE FOR POSTPROCESSING DURING BUILD -->
 
 </ejb-jar>
 

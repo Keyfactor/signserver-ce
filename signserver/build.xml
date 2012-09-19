@@ -324,6 +324,9 @@ Configuring EAR...
         <condition property="hibernate.dialect" value="org.hibernate.dialect.SybaseDialect">
             <equals arg1="${database.name}" arg2="sybase"/>
         </condition>
+    	<condition property="hibernate.dialect" value="dummy">
+    		<equals arg1="${database.name}" arg2="nodb"/>
+    	</condition>
         <fail unless="hibernate.dialect" message="Unsupported database type '${database.name}'."/>
     </target>
     

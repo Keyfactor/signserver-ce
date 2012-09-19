@@ -51,7 +51,6 @@
 	</target>
 
 
-	<!--
     <target name="j2ee:compile-ds" depends="j2ee:compile-nocluster-ds, j2ee:compile-cluster-ds"/>	
 
     <target name="j2ee:compile-nocluster-ds" unless="database.use.mysqlcluster">
@@ -76,7 +75,6 @@
         </copy>
     	<move file="${tmp}/signserver-mysql-cluster-ds.xml" tofile="${tmp}/signserver-ds.xml"/>
 	</target>
-	-->
 
 	<target name="j2ee:deploytruststore">
 		<!-- copy the truststore file to the server -->
@@ -162,8 +160,7 @@
 	</target>
 
 	
-<!--<target name="j2ee:deploy" description="Deploy the application"  depends="j2ee:compile-ds" >-->
-	<target name="j2ee:deploy" description="Deploy the application">
+	<target name="j2ee:deploy" description="Deploy the application"  depends="j2ee:compile-ds" >
     	<antcall target="j2ee:deploy:locally" inheritall="true"/>
     	<antcall target="j2ee:deploy:cluster" inheritall="true"/>
 	</target>
@@ -182,13 +179,11 @@
     	<echo>
 Deploying ${ear.dist.file} to ${jboss.deploy.dir}
         </echo>
-		<!--
         <copy todir="${jboss.deploy.dir}" overwrite="true" failonerror="true">
             <fileset dir="${tmp}">
             	<include name="signserver-ds.xml"/>
             </fileset>	
         </copy>
-        -->
     	<copy file="${ear.dist.file}" todir="${jboss.deploy.dir}" failonerror="true"/>
 	</target>
 	
@@ -226,11 +221,9 @@ Deploying ${ear.dist.file} to ${jboss.deploy.dir}
        <echo>Deploying Sign Server Application to host: ${tmp.hostname}</echo>		
 	   <scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
 	   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${jboss.deploy}" passphrase="${tmp.passphrase}">
-            <!--
 	   		<fileset dir="${tmp}">
             	<include name="signserver-ds.xml"/>
             </fileset>
-            -->	
     		<fileset dir="${server.dist.dir}" includes="*.ear"/>   
 	   </scp>
 	</target>

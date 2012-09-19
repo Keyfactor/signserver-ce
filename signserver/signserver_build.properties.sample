@@ -302,12 +302,12 @@ j2ee.web-nohttps=true
 # that contains all CA certificates that is trusted
 # for signing of resource data.
 #
-# Only used if clusterclassloader.requiresignedresources is set to true.
+# Only used if clusterclassloader.requiresignature is set to true.
 #clusterclassloader.pathtotruststore=
 
 # Password locking the truststore specified above.
 #
-# Only used if clusterclassloader.requiresignedresources is set to true.
+# Only used if clusterclassloader.requiresignature is set to true.
 #clusterclassloader.truststorepwd=
 
 

@@ -5016,10 +5016,24 @@ To increase throughput it is recommended to disable the key usage counter as eve
                 
                 <subsection name="Configuration">
                     <p>
-TODO: DSS-531 add instruction for how to configure here
+Set database.type to "nodb".
                     </p>
+					<source>
+database.type=nodb
+					</source>
+					<p>
+Set the location for the local file-based database.
+					</p>
+					<source>
+database.nodb.location=/path/to/filedb
+					</source>
+					<p>
+Where the path is some location where SignServer can write files. The default of this property is not set.
+					</p>
+					<p>
+This directory must be empty when first starting up.
+					</p>
                 </subsection>
-                
             </section>
 
             <section name="Installation Packages">

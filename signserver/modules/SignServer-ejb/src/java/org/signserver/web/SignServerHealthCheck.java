@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Properties;
 
 import java.util.List;
@@ -37,6 +38,7 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 
 /**
  * SignServer Health Checker. 
@@ -102,35 +104,46 @@ public class SignServerHealthCheck implements IHealthCheck {
         initMaintenanceFile();
     }
 
+    @Override
     public String checkHealth(HttpServletRequest request) {
-        LOG.debug("Starting HealthCheck health check requested by : " + request.getRemoteAddr());
+        final LinkedList<String> errors = new LinkedList<String>();
         
-        StringBuilder sb = new StringBuilder();
-        checkMaintenance(sb);
-        if (sb.length() > 0) { 
-        	// if Down for maintenance do not perform more checks
-        	return sb.toString(); 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Starting HealthCheck health check requested by : " + request.getRemoteAddr());
         }
-
-        String errormessage = "";
-
-        errormessage += HealthCheckUtils.checkDB(checkDBString);
-        if (errormessage.equals("")) {
-            errormessage += HealthCheckUtils.checkMemory(minfreememory);
-            errormessage += checkSigners();
-
+        
+        errors.addAll(checkMaintenance());
+        
+        // Perform further checks unless Down for maintenance
+        if (errors.size() == 0) { 
+            if (FileBasedDatabaseManager.getInstance().isUsed()) {
+                errors.addAll(FileBasedDatabaseManager.getInstance().getFatalErrors());
+            } else {
+                errors.addAll(HealthCheckUtils.checkDB(checkDBString));
+            }
+            
+            if (errors.size() == 0) {
+                errors.addAll(HealthCheckUtils.checkMemory(minfreememory));
+                errors.addAll(checkSigners());
+            }
         }
-
-        if (errormessage.equals("")) {
-            // everything seems ok.
-            errormessage = null;
+        
+        // Render as text
+        final StringBuilder buff = new StringBuilder();
+        final String result;
+        if (errors.size() == 0) {
+            result = null;
+        } else {
+            for (final String error : errors) {
+                buff.append(error).append("\n");
+            }
+            result = buff.toString();
         }
-
-        return errormessage;
+        return result;
     }
 
-    private String checkSigners() {
-        final StringBuilder sb = new StringBuilder();
+    private List<String> checkSigners() {
+        final LinkedList<String> result = new LinkedList<String>();
         Iterator<Integer> iter = getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE).iterator();
         while (iter.hasNext()) {
             int processableId = ((Integer) iter.next()).intValue();
@@ -145,11 +158,7 @@ public class SignServerHealthCheck implements IHealthCheck {
                     final List<String> fatalErrors = workerStatus.getFatalErrors();
                     if (!fatalErrors.isEmpty()) {
                         for (String error : fatalErrors) {
-                            sb.append("Worker ")
-                                .append(workerStatus.getWorkerId())
-                                .append(": ")
-                                .append(error)
-                                .append("\n");
+                            result.add("Worker " + workerStatus.getWorkerId() + ": " + error);
                         }
                     }
                 }
@@ -158,47 +167,44 @@ public class SignServerHealthCheck implements IHealthCheck {
                 LOG.error(e.getMessage(), e);
             }
         }
-        if (sb.length() > 0) {
-            LOG.error("Health check reports error:\n" + sb.toString());
-        }
-        return sb.toString();
+        return result;
     }
     
-    
-	private void checkMaintenance(final StringBuilder sb) {
+	private List<String> checkMaintenance() {
+        final LinkedList<String> result = new LinkedList<String>();
 		if (StringUtils.isEmpty(maintenanceFile)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Maintenance file not specified, node will be monitored");
             }
-			return;
-		} 
-		
-		File maintFile = new File(maintenanceFile);
-		InputStream in = null;
+		} else {
+            File maintFile = new File(maintenanceFile);
+            InputStream in = null;
 
-		try {
-			in = new FileInputStream(maintFile);
-	        final Properties maintenanceProperties = new Properties();
-			maintenanceProperties.load(in);
-            final String maintenancePropertyValue = maintenanceProperties.getProperty(maintenancePropertyName);
-            if (maintenancePropertyValue == null) {
-               LOG.info("Could not find property " + maintenancePropertyName + " in " + maintenanceFile +
-            		   ", will continue to monitor this node");
-            } else if (Boolean.TRUE.toString().equalsIgnoreCase(maintenancePropertyValue)) {
-                sb.append("MAINT: ").append(maintenancePropertyName);
+            try {
+                in = new FileInputStream(maintFile);
+                final Properties maintenanceProperties = new Properties();
+                maintenanceProperties.load(in);
+                final String maintenancePropertyValue = maintenanceProperties.getProperty(maintenancePropertyName);
+                if (maintenancePropertyValue == null) {
+                LOG.info("Could not find property " + maintenancePropertyName + " in " + maintenanceFile +
+                        ", will continue to monitor this node");
+                } else if (Boolean.TRUE.toString().equalsIgnoreCase(maintenancePropertyValue)) {
+                    result.add("MAINT: " + maintenancePropertyName);
+                }
+            } catch (IOException e) {
+                result.add("MAINT: maintenance property file could not be read");
+                LOG.error("Could not read Maintenance File. Expected to find file at: " + maintFile.getAbsolutePath());
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();					
+                    } catch (IOException e) {
+                        LOG.error("Error closing file: ", e);
+                    }
+                }
             }
-		} catch (IOException e) {
-			sb.append("MAINT: maintenance property file could not be read");
-	        LOG.error("Could not read Maintenance File. Expected to find file at: " + maintFile.getAbsolutePath());
-		} finally {
-			if (in != null) {
-				try {
-					in.close();					
-				} catch (IOException e) {
-					LOG.error("Error closing file: ", e);
-				}
-			}
-		}
+        }
+        return result;
 	}
 	
 	private void initMaintenanceFile() {

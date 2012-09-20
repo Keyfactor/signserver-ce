@@ -13,6 +13,8 @@
 package org.signserver.server.nodb;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.signserver.common.CompileTimeSettings;
@@ -33,6 +35,9 @@ public class FileBasedDatabaseManager {
     private static final Logger LOG = Logger.getLogger(FileBasedDatabaseManager.class);
     
     private static FileBasedDatabaseManager instance = new FileBasedDatabaseManager(new File(CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.FILEBASED_DB_FOLDER)));
+    
+    /** Name used for this database as database.name in signserver_build.properties. */
+    private static final String DATABASE_NAME = "nodb";
     
     private static final int CURRENT_SCHEMA_VERSION = 1;
     private static final String SCHEMA_VERSION = "schema.version";
@@ -101,5 +106,30 @@ public class FileBasedDatabaseManager {
             initialize();
         }
         return Integer.parseInt(getMetadata().getProperty(SCHEMA_VERSION, "0"));
+    }
+
+    /**
+     * @return True if SignServer is configured to run without database
+     */
+    public boolean isUsed() {
+        return DATABASE_NAME.equalsIgnoreCase(CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.DATABASE_NAME));
+    }
+
+    /**
+     * @return List of errors preventing the file based database from functioning
+     */
+    public List<String> getFatalErrors() {
+        final LinkedList<String> result = new LinkedList<String>();
+        if (!initialized) {
+            result.add("File based database not initialized. See servlet log for error during startup.");
+        }
+        if (!dataFolder.isDirectory()) {
+            result.add("Location configured as database.nodb.location is not a folder");
+        }
+        final File[] files = dataFolder.listFiles();
+        if (files == null || files.length < 1) {
+            result.add("File based database folder is empty");
+        }
+        return result;
     }
 }

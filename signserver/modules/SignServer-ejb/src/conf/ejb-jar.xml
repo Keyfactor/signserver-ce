@@ -6,8 +6,7 @@
 	version="3.0">
 
 	<!-- DO NOT REMOVE THE FOLLOWING LINE, IT IS USED FOR POSTPROCESSING DURING BUILD -->
-    ${ejbjarheader}
-
+    <!--COMMENT-REPLACEMENT(ejbjarheader)-->
 
 	<enterprise-beans>
 		<session>
@@ -53,7 +52,7 @@
 	</enterprise-beans>		     
 
 	
-	${ejbjarfooter}
+	<!--COMMENT-REPLACEMENT(ejbjarfooter)-->
 	<!-- DO NOT REMOVE THE LINE ABOVE, IT IS USE FOR POSTPROCESSING DURING BUILD -->
 
 </ejb-jar>

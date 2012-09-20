@@ -175,15 +175,23 @@
        	<antcall target="j2ee:deploy:node6" inheritall="true"/>		
 	</target>
 	
-	<target name="j2ee:deploy:locally" description="Deploy the application" unless="deploy.hostname.node1" depends="j2ee:configure, j2ee:copyPrimeCardJars"  >
+	<target name="j2ee:copyDS" description="Deploy signserver-ds.xml" unless="noDB">
+		<echo>
+Copying ${tmp}/signserver-ds.xml to ${jboss.deploy.dir}
+		</echo>
+		<copy todir="${jboss.deploy.dir}" overwrite="true" failonerror="true">
+			<fileset dir="${tmp}">
+		    	<include name="signserver-ds.xml"/>
+		    </fileset>	
+		</copy>
+	</target>
+	
+	<target name="j2ee:deploy:locally" description="Deploy the application" unless="deploy.hostname.node1" 
+		depends="j2ee:configure, j2ee:copyPrimeCardJars, j2ee:copyDS">
     	<echo>
 Deploying ${ear.dist.file} to ${jboss.deploy.dir}
         </echo>
-        <copy todir="${jboss.deploy.dir}" overwrite="true" failonerror="true">
-            <fileset dir="${tmp}">
-            	<include name="signserver-ds.xml"/>
-            </fileset>	
-        </copy>
+
     	<copy file="${ear.dist.file}" todir="${jboss.deploy.dir}" failonerror="true"/>
 	</target>
 	

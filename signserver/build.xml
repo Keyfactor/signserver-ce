@@ -219,6 +219,7 @@ OS version                          = ${os.version}
             <entry key="buildmode" value="${build.mode}"/>
             <entry key="datasource.jndi-name-prefix" value="${datasource.jndi-name-prefix}"/>
             <entry key="datasource.jndi-name" value="${datasource.jndi-name}"/>
+            <entry key="database.name" value="${database.name}"/>
             <entry key="healthcheck.authorizedips" value="${healthcheck.authorizedips}"/>
             <entry key="healthcheck.minimumfreememory" value="${healthcheck.minimumfreememory}"/>
             <entry key="healthcheck.checkdbstring" value="${healthcheck.checkdbstring}"/>

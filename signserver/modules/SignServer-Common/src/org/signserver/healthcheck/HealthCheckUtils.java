@@ -14,6 +14,8 @@ package org.signserver.healthcheck;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.log4j.Logger;
 import org.ejbca.core.ejb.JNDINames;
 import org.ejbca.util.JDBCUtil;
@@ -28,17 +30,16 @@ public class HealthCheckUtils {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(HealthCheckUtils.class);
 
-    public static String checkMemory(int minfreememory) {
-        String retval = "";
+    public static List<String> checkMemory(int minfreememory) {
+        final LinkedList<String> result = new LinkedList<String>();
         if (minfreememory >= Runtime.getRuntime().freeMemory()) {
-            retval = "\nError Virtual Memory is about to run out, currently free memory :" + Runtime.getRuntime().freeMemory();
+            result.add("Error Virtual Memory is about to run out, currently free memory :" + Runtime.getRuntime().freeMemory());
         }
-
-        return retval;
+        return result;
     }
 
-    public static String checkDB(String checkDBString) {
-        String retval = "";
+    public static List<String> checkDB(String checkDBString) {
+        final LinkedList<String> result = new LinkedList<String>();
         Connection con = null;
         try {
             con = JDBCUtil.getDBConnection(JNDINames.DATASOURCE);
@@ -46,11 +47,11 @@ public class HealthCheckUtils {
             statement.execute(checkDBString);
             statement.close();
         } catch (Exception e) {
-            retval = "\nError creating connection to SignServer Database.";
+            result.add("Error creating connection to SignServer Database.");
             LOG.error("Error creating connection to SignServer Database.", e);
         } finally {
             JDBCUtil.close(con);
         }
-        return retval;
+        return result;
     }
 }

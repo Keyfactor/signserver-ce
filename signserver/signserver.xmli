@@ -33,6 +33,7 @@ database.url                        = ${database.url}
 database.driver                     = ${database.driver}
 database.username                   = ${database.username}
 database.password                   = ${database.password}
+database.nodb.location              = ${database.nodb.location}
 healthcheck.maintenancefile         = ${healthcheck.maintenancefile}
 signserverws.enabled                = ${signserverws.enabled}
 genericws.enabled                   = ${genericws.enabled}

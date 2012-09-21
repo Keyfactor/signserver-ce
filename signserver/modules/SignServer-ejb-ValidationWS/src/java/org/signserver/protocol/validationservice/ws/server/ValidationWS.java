@@ -15,6 +15,7 @@ package org.signserver.protocol.validationservice.ws.server;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -44,6 +45,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.validationservice.ws.IValidationWS;
 import org.signserver.protocol.validationservice.ws.ValidationResponse;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -153,55 +155,47 @@ public class ValidationWS implements IValidationWS {
         if (workerId == 0) {
             throw new IllegalRequestException("Illegal service name : " + serviceName + " no validation service with such name exists");
         }
+        final String result;
+        final LinkedList<String> errors = new LinkedList<String>();
 
-        String errormessage = "";
-
-        errormessage += HealthCheckUtils.checkDB(getCheckDBString());
-        if (errormessage.equals("")) {
-            errormessage += HealthCheckUtils.checkMemory(getMinimumFreeMemory());
-
+        if (FileBasedDatabaseManager.getInstance().isUsed()) {
+            errors.addAll(FileBasedDatabaseManager.getInstance().getFatalErrors());
+        } else {
+            errors.addAll(HealthCheckUtils.checkDB(getCheckDBString()));
         }
 
-        if (errormessage.equals("")) {
-            // everything seems OK.
-            errormessage = null;
+        if (errors.isEmpty()) {
+            errors.addAll(HealthCheckUtils.checkMemory(getMinimumFreeMemory()));
+
+            if (errors.isEmpty()) {
+                errors.addAll(checkValidationService(workerId));
+            }
         }
 
-        if (errormessage == null) {
-            errormessage = checkValidationService(workerId);
+        // Render result
+        if (errors.isEmpty()) {
+            result = "ALLOK";
+        } else {
+            final StringBuilder buff = new StringBuilder();
+            for (final String error : errors) {
+                buff.append(error).append("\n");
         }
-
-        if (errormessage == null) {
-            errormessage = "ALLOK";
+            result = buff.toString();
         }
-
-        return errormessage;
+        return result;
     }
 
-    private String checkValidationService(int workerId) {
-        String retval = null;
+    private List<String> checkValidationService(int workerId) {
+        final LinkedList<String> result = new LinkedList<String>();
         try {
             ValidationStatus status = (ValidationStatus) getWorkerSession().getStatus(workerId);
-            final List<String> fatalErrors = status.getFatalErrors();
-            final StringBuilder sb = new StringBuilder();
-            if (!fatalErrors.isEmpty()) {
-                for (String error : fatalErrors) {
-                    sb.append("Worker ")
-                        .append(status.getWorkerId())
-                        .append(": ")
-                        .append(error)
-                        .append("\n");
-                }
+            for (String error : status.getFatalErrors()) {
+                result.add("Worker " + status.getWorkerId() + ": " + error + "\n");
             }
-            if (sb.length() > 0) {
-                retval = sb.toString();
-            }
-
         } catch (InvalidWorkerIdException e) {
             log.error("Error invalid worker id " + workerId + "when checking status for validation service");
         }
-
-        return retval;
+        return result;
     }
 
     private int getMinimumFreeMemory() {

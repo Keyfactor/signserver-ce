@@ -139,6 +139,11 @@ public class SignServerHealthCheck implements IHealthCheck {
             }
             result = buff.toString();
         }
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("HealthCheck result : " + result);
+        }
+        
         return result;
     }
 

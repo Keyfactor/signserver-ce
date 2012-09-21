@@ -135,9 +135,6 @@ public class CustomAuthTest extends ModulesTestCase {
     public void test99TearDownDatabase() throws Exception {
         TestUtils.assertSuccessfulExecution(new String[]{"removeworker",
                     "9"});
-
-        TestUtils.assertSuccessfulExecution(new String[]{"module", "remove", "TSA", "" + moduleVersion});
-
         workerSession.reloadConfiguration(9);
     }
 }

@@ -183,51 +183,15 @@ OS version                          = ${os.version}
     <target name="set-ejbjarheader-nodb" if="noDB">
     	<!-- generate starting and closing comment marks short-circuiting the
         	enterprise-beans tag in the generated ejb-jar.xml file -->
-        <property name="ejbjarheader">
-    		<![CDATA[
-        		<!--
-        	]]>
-        </property>
-        <property name="ejbjarfooter">
-        	<![CDATA[
-        		-->
-        	]]>
-        </property>
-        <property name="persistenceheader">
-        	<![CDATA[
-        		<!--
-        	]]>
-        </property>
-        <property name="persistencefooter">
-        	<![CDATA[
-        		-->
-        	]]>
-    	</property>
+    	<!-- Ant 1.7.x doesn't seem to support supplying the property value via the tag's text data
+    		so we'll read them from file here... -->
+    	<property file="src/deploy/ejb/nodb-comments.properties"/>
 	</target>
 
     <target name="set-ejbjarheader" unless="noDB">
     	<!-- generate starting and closing comment marks short-circuiting the
         	enterprise-beans tag in the generated ejb-jar.xml file -->
-        <property name="ejbjarheader">
-    		<![CDATA[
-        		<!-- Using DB -->
-        	]]>
-        </property>
-        <property name="ejbjarfooter">
-        	<![CDATA[
-        		<!-- Using DB -->
-        	]]>
-        </property>
-        <property name="persistenceheader">
-        	<![CDATA[
-        		<!-- Using DB -->
-        	]]>
-        </property>
-        <property name="persistencefooter">
-        	<![CDATA[
-        		<!-- Using DB -->
-        	]]>
-    	</property>
+    	<property file="src/deploy/ejb/db-comments.properties"/>
 	</target>
 
 	

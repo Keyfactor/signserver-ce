@@ -15,13 +15,7 @@ package org.signserver.protocol.ws.server;
 import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import java.util.Map;
+import java.util.*;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -30,36 +24,18 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
-
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
-import org.signserver.common.CompileTimeSettings;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ISignResponse;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.ProcessableConfig;
-import org.signserver.common.RequestAndResponseManager;
-import org.signserver.common.RequestContext;
-import org.signserver.common.ServiceLocator;
-import org.signserver.common.SignServerException;
-import org.signserver.common.SignerStatus;
-import org.signserver.common.WorkerStatus;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
-import org.signserver.protocol.ws.Certificate;
-import org.signserver.protocol.ws.ISignServerWS;
-import org.signserver.protocol.ws.ProcessRequestWS;
-import org.signserver.protocol.ws.ProcessResponseWS;
-import org.signserver.protocol.ws.WorkerStatusWS;
+import org.signserver.protocol.ws.*;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
 
 /**
  * Implementor of the ISignServerWS interface.
@@ -95,17 +71,15 @@ public class SignServerWS implements ISignServerWS {
         LOG.debug("WS getStatus called");
         ArrayList<WorkerStatusWS> retval = new ArrayList<WorkerStatusWS>();
 
-        String errormessage = "";
+        final LinkedList<String> errors = new LinkedList<String>();
 
-        errormessage += HealthCheckUtils.checkDB(getCheckDBString());
-        if (errormessage.equals("")) {
-            errormessage += HealthCheckUtils.checkMemory(getMinimumFreeMemory());
-
+        if (FileBasedDatabaseManager.getInstance().isUsed()) {
+            errors.addAll(FileBasedDatabaseManager.getInstance().getFatalErrors());
+        } else {
+            errors.addAll(HealthCheckUtils.checkDB(getCheckDBString()));
         }
-
-        if (errormessage.equals("")) {
-            // everything seems ok.
-            errormessage = null;
+        if (errors.isEmpty()) {            
+            errors.addAll(HealthCheckUtils.checkMemory(getMinimumFreeMemory()));
         }
 
         int workerId = 0;
@@ -119,16 +93,20 @@ public class SignServerWS implements ISignServerWS {
 
         if (workerId != 0) {
             // Specified WorkerId
-            if (errormessage == null) {
-                errormessage = checkSigner(workerId);
+            if (errors.isEmpty()) {
+                errors.addAll(checkSigner(workerId));
             }
             WorkerStatusWS resp = new WorkerStatusWS();
             resp.setWorkerName(workerIdOrName);
-            if (errormessage == null) {
+            if (errors.isEmpty()) {
                 resp.setOverallStatus(WorkerStatusWS.OVERALLSTATUS_ALLOK);
             } else {
+                final StringBuilder buff = new StringBuilder();
+                for (final String error : errors) {
+                    buff.append(error).append("\n");
+                }
                 resp.setOverallStatus(WorkerStatusWS.OVERALLSTATUS_ERROR);
-                resp.setErrormessage(errormessage);
+                resp.setErrormessage(buff.toString());
             }
             retval.add(resp);
         } else {
@@ -136,17 +114,21 @@ public class SignServerWS implements ISignServerWS {
             List<Integer> signers = getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
             for (Iterator<Integer> iterator = signers.iterator(); iterator.hasNext();) {
                 int next = iterator.next();
-                if (errormessage == null) {
-                    errormessage = checkSigner(next);
+                if (errors.isEmpty()) {
+                    errors.addAll(checkSigner(next));
                 }
 
                 WorkerStatusWS resp = new WorkerStatusWS();
                 resp.setWorkerName("" + next);
-                if (errormessage == null) {
+                if (errors.isEmpty()) {
                     resp.setOverallStatus(WorkerStatusWS.OVERALLSTATUS_ALLOK);
                 } else {
+                    final StringBuilder buff = new StringBuilder();
+                    for (final String error : errors) {
+                        buff.append(error).append("\n");
+                    }
                     resp.setOverallStatus(WorkerStatusWS.OVERALLSTATUS_ERROR);
-                    resp.setErrormessage(errormessage);
+                    resp.setErrormessage(buff.toString());
                 }
                 retval.add(resp);
             }
@@ -154,24 +136,13 @@ public class SignServerWS implements ISignServerWS {
         return retval;
     }
 
-    private String checkSigner(int workerId) throws InvalidWorkerIdException {
-        String retval = null;
-        WorkerStatus workerStatus = getWorkerSession().getStatus(workerId);
-        final List<String> fatalErrors = workerStatus.getFatalErrors();
-        final StringBuilder sb = new StringBuilder();
-        if (!fatalErrors.isEmpty()) {
-            for (String error : fatalErrors) {
-                sb.append("Worker ")
-                    .append(workerStatus.getWorkerId())
-                    .append(": ")
-                    .append(error)
-                    .append("\n");
-            }
+    private List<String> checkSigner(int workerId) throws InvalidWorkerIdException {
+        final LinkedList<String> result = new LinkedList<String>();
+        final WorkerStatus status = getWorkerSession().getStatus(workerId);
+        for (String error : status.getFatalErrors()) {
+            result.add("Worker " + status.getWorkerId() + ": " + error + "\n");
         }
-        if (sb.length() > 0) {
-            retval = sb.toString();
-        }
-        return retval;
+        return result;
     }
 
     /**

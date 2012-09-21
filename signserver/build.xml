@@ -200,11 +200,10 @@ OS version                          = ${os.version}
       application texts.
     -->
     <target name="preprocess" depends="preprocess-extjava, preprocess-extweb, set-ejbjarheader-nodb, set-ejbjarheader">
-        <property name="persistenceheadercomment"><![CDATA[<!--COMMENT-REPLACEMENT(persistenceheader)-->]]></property>
-    	<property name="persistencefootercomment"><![CDATA[<!--COMMENT-REPLACEMENT(persistencefooter)-->]]></property>
-    	<property name="ejbjarheadercomment"><![CDATA[<!--COMMENT-REPLACEMENT(ejbjarheader)-->]]></property>
-    	<property name="ejbjarfootercomment"><![CDATA[<!--COMMENT-REPLACEMENT(ejbjarfooter)-->]]></property>
-    	    	
+		<!-- like with the replacement strings, have to define the replacement placeholders in a separate property file
+			to work with ant 1.7.x -->
+    	<property file="src/deploy/ejb/comment-replacements.properties"/>
+
     	<echo>
     		Appserver type: ${appserver.type}
     		Persistenceheader: "${persistenceheadercomment}"

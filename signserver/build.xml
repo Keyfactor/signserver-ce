@@ -48,6 +48,10 @@
     <condition property="j2ee.web-nohttps.condition">
         <istrue value="${j2ee.web-nohttps}"/>
     </condition>
+	
+	<condition property="noDB">
+		<equals arg1="${database.name}" arg2="nodb"/>
+	</condition>
 
     <!-- Import for the right appserver -->
     <import file="bin/${appserver.type}.xml" />  
@@ -176,12 +180,74 @@ OS version                          = ${os.version}
          </subant>
     </target>
 
+    <target name="set-ejbjarheader-nodb" if="noDB">
+    	<!-- generate starting and closing comment marks short-circuiting the
+        	enterprise-beans tag in the generated ejb-jar.xml file -->
+        <property name="ejbjarheader">
+    		<![CDATA[
+        		<!--
+        	]]>
+        </property>
+        <property name="ejbjarfooter">
+        	<![CDATA[
+        		-->
+        	]]>
+        </property>
+        <property name="persistenceheader">
+        	<![CDATA[
+        		<!--
+        	]]>
+        </property>
+        <property name="persistencefooter">
+        	<![CDATA[
+        		-->
+        	]]>
+    	</property>
+	</target>
+
+    <target name="set-ejbjarheader" unless="noDB">
+    	<!-- generate starting and closing comment marks short-circuiting the
+        	enterprise-beans tag in the generated ejb-jar.xml file -->
+        <property name="ejbjarheader">
+    		<![CDATA[
+        		<!-- Using DB -->
+        	]]>
+        </property>
+        <property name="ejbjarfooter">
+        	<![CDATA[
+        		<!-- Using DB -->
+        	]]>
+        </property>
+        <property name="persistenceheader">
+        	<![CDATA[
+        		<!-- Using DB -->
+        	]]>
+        </property>
+        <property name="persistencefooter">
+        	<![CDATA[
+        		<!-- Using DB -->
+        	]]>
+    	</property>
+	</target>
+
+	
     <!--
       Preprocesses SignServer by replacing tags with correct version and
       application texts.
     -->
-    <target name="preprocess" depends="preprocess-extjava, preprocess-extweb" >
-        <!-- Copy xml-files and replace some values -->
+    <target name="preprocess" depends="preprocess-extjava, preprocess-extweb, set-ejbjarheader-nodb, set-ejbjarheader">
+        <property name="persistenceheadercomment"><![CDATA[<!--COMMENT-REPLACEMENT(persistenceheader)-->]]></property>
+    	<property name="persistencefootercomment"><![CDATA[<!--COMMENT-REPLACEMENT(persistencefooter)-->]]></property>
+    	<property name="ejbjarheadercomment"><![CDATA[<!--COMMENT-REPLACEMENT(ejbjarheader)-->]]></property>
+    	<property name="ejbjarfootercomment"><![CDATA[<!--COMMENT-REPLACEMENT(ejbjarfooter)-->]]></property>
+    	    	
+    	<echo>
+    		Appserver type: ${appserver.type}
+    		Persistenceheader: "${persistenceheadercomment}"
+    	</echo>
+    	
+
+    	<!-- Copy xml-files and replace some values -->
         <copy todir="${preprocessed}">
             <fileset dir="src">
                 <include name="**/*.xml"/>
@@ -190,7 +256,10 @@ OS version                          = ${os.version}
                 <include name="*web/**/*.xml"/>
                 <include name="*web/**/*.xml"/>
             </fileset>
-
+        	<fileset dir=".">
+        		<include name="modules/SignServer-ejb/src/conf/ejb-jar.xml"/>
+        	</fileset>
+        	
             <filterchain>
                 <tokenfilter>
                     <replacestring from="@datasource.jndi-name-prefix@"
@@ -207,6 +276,15 @@ OS version                          = ${os.version}
                 		to="${healthcheck.maintenancefile}"/>
                 	<replacestring from="@healthcheck.maintenancepropertyname@"
                 		to="${healthcheck.maintenancepropertyname}"/>
+                	<replacestring from="${persistenceheadercomment}"
+                		to="${persistenceheader}"/>
+                	<replacestring from="${persistencefootercomment}"
+                		to="${persistencefooter}"/>
+                	<replacestring from="${ejbjarheadercomment}"
+                		to="${ejbjarheader}"/>
+                	<replacestring from="${ejbjarfootercomment}"
+            			to="${ejbjarfooter}"/>
+                	                	
                 </tokenfilter>
             </filterchain>
         </copy>
@@ -220,6 +298,7 @@ OS version                          = ${os.version}
             <entry key="datasource.jndi-name-prefix" value="${datasource.jndi-name-prefix}"/>
             <entry key="datasource.jndi-name" value="${datasource.jndi-name}"/>
             <entry key="database.name" value="${database.name}"/>
+        	<entry key="database.nodb.location" value="${database.nodb.location}"/>
             <entry key="healthcheck.authorizedips" value="${healthcheck.authorizedips}"/>
             <entry key="healthcheck.minimumfreememory" value="${healthcheck.minimumfreememory}"/>
             <entry key="healthcheck.checkdbstring" value="${healthcheck.checkdbstring}"/>
@@ -273,6 +352,9 @@ OS version                          = ${os.version}
         <condition property="hibernate.dialect" value="org.hibernate.dialect.SybaseDialect">
             <equals arg1="${database.name}" arg2="sybase"/>
         </condition>
+    	<condition property="hibernate.dialect" value="dummy">
+    		<equals arg1="${database.name}" arg2="nodb"/>
+    	</condition>
         <fail unless="hibernate.dialect" message="Unsupported database type '${database.name}'."/>
         <mkdir dir="${build}/META-INF"/>
         <copy file="${preprocessed}/appserver/${appserver.type}/persistence.xml" tofile="${build}/META-INF/persistence.xml" failonerror="true" overwrite="true">
@@ -280,6 +362,8 @@ OS version                          = ${os.version}
                 <expandproperties/>
             </filterchain>
         </copy>
+    	<copy file="${preprocessed}/modules/SignServer-ejb/src/conf/ejb-jar.xml" tofile="${build}/META-INF/ejb-jar.xml" failonerror="true"
+    		overwrite="true"/>
     </target>
 
     <target name="preprocess-extjava"  if="custom.src.java">

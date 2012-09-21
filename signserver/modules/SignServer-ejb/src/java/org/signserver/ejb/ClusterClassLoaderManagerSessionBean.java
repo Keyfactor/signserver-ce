@@ -38,7 +38,6 @@ import org.signserver.server.clusterclassloader.IClusterClassLoaderDataService;
  */
 @Stateless
 public class ClusterClassLoaderManagerSessionBean implements IClusterClassLoaderManagerSession.ILocal, IClusterClassLoaderManagerSession.IRemote {
-    @PersistenceContext(unitName="SignServerJPA")
     EntityManager em;
     
 	private static final long serialVersionUID = 1L;

@@ -47,8 +47,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /** Audit logger. */
     private static final ISystemLogger AUDITLOG = SystemLoggerFactory
             .getInstance().getLogger(GlobalConfigurationSessionBean.class);
-    
-    @PersistenceContext(unitName = "SignServerJPA")
+
     EntityManager em;
     private static final long serialVersionUID = 1L;
     

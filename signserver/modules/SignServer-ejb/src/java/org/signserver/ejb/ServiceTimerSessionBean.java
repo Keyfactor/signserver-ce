@@ -42,8 +42,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 
     /** Logger for this class. */
     private static final Logger log = Logger.getLogger(ServiceTimerSessionBean.class);
-    
-    @PersistenceContext(unitName = "SignServerJPA")
+
     EntityManager em;
     
     @Resource

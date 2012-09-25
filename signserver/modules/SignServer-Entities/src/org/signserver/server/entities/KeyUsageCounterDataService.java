@@ -35,12 +35,6 @@ public class KeyUsageCounterDataService implements IKeyUsageCounterDataService {
         this.em = em;
     }
 
-    /**
-     * Entity Bean holding info about a workers (service or signer) configuration
-     * 
-     * @param workerId uniqe Id of the worker 
-     *
-     */
     @Override
     public void create(final String keyHash) {
         if (LOG.isDebugEnabled()) {

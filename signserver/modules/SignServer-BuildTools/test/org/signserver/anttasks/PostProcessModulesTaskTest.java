@@ -1,15 +1,25 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.anttasks;
 
 import java.util.Properties;
 import junit.framework.TestCase;
 
 /**
+ * Tests for the PostProcessModulesTask class.
  *
- * @author markus
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class PostProcessModulesTaskTest extends TestCase {
     
@@ -40,7 +50,5 @@ public class PostProcessModulesTaskTest extends TestCase {
         final String expected = "Line 1\nLine 2\n     VALUE     \n";
         assertEquals(expected, actual.toString());
     }
-
-
     
 }

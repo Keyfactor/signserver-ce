@@ -21,11 +21,23 @@ import java.util.List;
  */
 public interface IGlobalConfigurationDataService {
 
-    @SuppressWarnings(value = "unchecked")
+    /**
+     * @return All global configuration beans
+     */
     List<GlobalConfigurationDataBean> findAll();
 
+    /**
+     * Tries to remove the given global configuration property.
+     * @param completekey property to remove
+     * @return True if the property existed and was removed
+     */
     boolean removeGlobalProperty(String completekey);
 
+    /**
+     * Sets the given global configuration property.
+     * @param completekey property to set
+     * @param value the value to set
+     */
     void setGlobalProperty(String completekey, String value);
     
 }

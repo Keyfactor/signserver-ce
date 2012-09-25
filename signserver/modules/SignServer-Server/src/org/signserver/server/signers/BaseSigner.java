@@ -29,10 +29,7 @@ import org.signserver.server.entities.KeyUsageCounter;
  * @version $Id$
  */
 public abstract class BaseSigner extends BaseProcessable implements ISigner {
-    
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(BaseSigner.class);
-    
+
     /**
      * @see org.signserver.server.IProcessable#getStatus()
      */

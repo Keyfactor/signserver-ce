@@ -318,7 +318,7 @@ Make sure all required softwares are installed:
 * When using Oracle JDK you must install the 'Unlimited Strength Jurisdiction Policy Files' for JDK for the parts of SignServer that  makes use of strong crypto to work. The policy files can be found at the same place as the JDK download at Oracle. Further information on this can be found in the Oracle documentation on the JCE. <br/>
 ** The ODFSigner has issues with OpenJDK. Please see <a href="https://jira.primekey.se/browse/DSS-168">DSS-168</a> for a workaround.<br/>
 *** JBoss 5.1.0.GA is available in two different versions (standard and JDK6) which differs in web services stacks. The one called JBoss 5.1.0.GA-JDK6 should be used.
-**** See <a href="#SignServer%20without%20Database">SignServer without Database</a>.
+**** See <a href="complete.en.html#SignServer%20without%20Database">SignServer without Database</a>.
                     </p>
                 </subsection>
 
@@ -370,7 +370,7 @@ export SIGNSERVER_NODEID=node1
                 <subsection name="4. Setup database">
                     <p>
 Skip this section and instead follow the instructions in 
-<a href="#SignServer%20without%20Database">SignServer without Database</a> if
+<a href="complete.en.html#SignServer%20without%20Database">SignServer without Database</a> if
 you decide to run SignServer without a database management system.
                     </p>
                     <p>
@@ -5011,7 +5011,7 @@ Since SignServer 3.2.3 it is sometimes possible to operate SignServer without a 
 Notice that all features of SignServer is not supported without having a database and that the performance and scalability characteristics might be different. Currently archiving to database and the group key service are not supported.
                 </p>
                 <p>
-To increase throughput it is recommended to disable the key usage counter as every request would otherwise have to lock and update that file. See the property DISABLEKEYUSAGECOUNTER in the section <a href="#Limiting%20the%20number%20of%20signatures">Limiting the number of signatures</a>.
+To increase throughput it is recommended to disable the key usage counter as every request would otherwise have to lock and update that file. See the property DISABLEKEYUSAGECOUNTER in the section <a href="complete.en.html#Limiting%20the%20number%20of%20signatures">Limiting the number of signatures</a>.
                 </p>
                 
                 <subsection name="Configuration">

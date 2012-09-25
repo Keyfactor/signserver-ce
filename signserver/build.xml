@@ -182,7 +182,7 @@ Configured ear file available at: ${ear.dist.file}
         </echo>
     </target>
     
-    <target name="-process-modules" depends="-init-configure, -preprocess-persistence, set-ejbjarheader-nodb">
+    <target name="-process-modules" depends="-init-configure, -preprocess-persistence, -set-ejbjarheader-nodb">
         <echo/>
 <!--        <taskdef name="postprocess-jar" classname="org.signserver.anttasks.JarPostProcessTask" classpath="lib/SignServer-BuildTools.jar:lib/ext/commons-io-1.4.jar:lib/ext/commons-lang-2.4.jar"/>-->
         
@@ -264,7 +264,7 @@ Configuring EAR...
         </copy>
     </target>
 	
-    <target name="set-ejbjarheader-nodb" if="noDB">
+    <target name="-set-ejbjarheader-nodb" if="noDB">
     	<!-- generate starting and closing comment marks short-circuiting the
     		enterprise-beans tag in the generated ejb-jar.xml file -->
     	<property name="ejbjarheader">

@@ -233,12 +233,14 @@ public class PostProcessModulesTask extends Task {
             final Matcher m = pattern.matcher(line);
             if (m.matches()) {
                 final String propertyName = m.group(1);
-                final Object value = properties.get(propertyName);
-                if (value instanceof String) {
-                    log("Comment replacement for " + propertyName, Project.MSG_VERBOSE);
-                    line = line.replace("<!--COMMENT-REPLACEMENT(" + propertyName + ")-->", (String) value);
-                } else {
-                    log("No comment replacement value for " + propertyName, Project.MSG_VERBOSE);
+                if (propertyName != null) {
+                    final Object value = properties.get(propertyName);
+                    if (value instanceof String) {
+                        log("Comment replacement for " + propertyName, Project.MSG_VERBOSE);
+                        line = line.replace("<!--COMMENT-REPLACEMENT(" + propertyName + ")-->", (String) value);
+                    } else {
+                        log("No comment replacement value for " + propertyName, Project.MSG_VERBOSE);
+                    }
                 }
             }
             result.append(line).append("\n");

@@ -115,8 +115,9 @@ j2ee.web-nohttps=true
 #database.name=sybase
 #database.name=nodb
 
-# The location of the file-based database when using the nodb database option
-#database.nodb.location=
+# The location of the file-based database when using the nodb database option (the example below would work for JBoss)
+# the directory needs to be present, writable by the application server and empty at first startup.
+#database.nodb.location=server/default/data/nodb
 
 # Database connection URL.
 # This is the URL used to connect to the database, used to configure a new datasource in JBoss.

@@ -37,6 +37,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     private static final Logger LOG = Logger.getLogger(FileBasedWorkerConfigDataService.class);
     
     /** Audit logger. */
+// TODO: DSS-550
 //    private static final ISystemLogger AUDITLOG = SystemLoggerFactory.getInstance().getLogger(WorkerConfigDataService.class);
     
     private final FileBasedDatabaseManager manager;
@@ -180,6 +181,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         return workerConfig;
     }
 
+// TODO: DSS-550
 //    private void auditLog(final int workerId, final String operation) {
 //        try {
 //            final Map<String, String> logMap = new HashMap<String, String>();

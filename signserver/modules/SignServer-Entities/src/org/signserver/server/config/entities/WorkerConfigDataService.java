@@ -71,7 +71,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      *
      */
     @SuppressWarnings("unchecked")
-    public WorkerConfig getWorkerConfig(int workerId) {
+    private WorkerConfig getWorkerConfig(int workerId) {
         WorkerConfig workerConf = null;
         WorkerConfigDataBean wcdb = em.find(WorkerConfigDataBean.class, workerId);
 

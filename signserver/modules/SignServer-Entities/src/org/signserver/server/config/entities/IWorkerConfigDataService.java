@@ -15,7 +15,7 @@ package org.signserver.server.config.entities;
 import org.signserver.common.WorkerConfig;
 
 /**
- * TODO: Document me!
+ * DataService managing the persistence of the worker configuration data.
  * 
  * @version $Id$
  */
@@ -23,13 +23,31 @@ public interface IWorkerConfigDataService {
 
     String LOG_OPERATION = "WORKERCONF_OPERATION";
 
+    /**
+     * Get the worker configuration for the given worker.
+     * @param workerId Id of worker
+     * @return The worker configuration
+     */
     WorkerConfig getWorkerProperties(int workerId);
     
+    /**
+     * Remove the worker's configuration.
+     * @param workerId Id of worker
+     * @return True if the configuration was removed
+     */
     boolean removeWorkerConfig(int workerId);
 
+    /**
+     * Sets the worker configuration.
+     * @param workerId Id of worker
+     * @param config  The configuration to set
+     */
     void setWorkerConfig(int workerId, WorkerConfig config);
 
-    WorkerConfig getWorkerConfig(int workerId);
-
-    void create(int workerId, String name);
+    /**
+     * Create a new empty worker configuration.
+     * @param workerId Id of worker
+     * @param implClassName The name of the worker
+     */
+    void create(int workerId, String implClassName);
 }

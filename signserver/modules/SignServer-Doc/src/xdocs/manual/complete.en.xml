@@ -408,7 +408,7 @@ For GlassFish also configure a connection pool and JNDI resource:
                     </ol>
                 </subsection>
 
-                <subsection name="4. Configure web server keystores">
+                <subsection name="5. Configure web server keystores">
                     <p>
 For JBoss if you are going to protect the HTTP communication with SSL, you need
 a JKS SSL server keystore. Rename the web server keystore to tomcat.jks and put
@@ -421,7 +421,7 @@ update the keystores with the right certificates.
                     </p>
                 </subsection>
 
-                <subsection name="5. Configure application server">
+                <subsection name="6. Configure application server">
                     <subsubsection name="Fix web service problem in JBoss">
                         <p>
 Edit jboss-beans.xml to force the endpoint URL to be generated based on the WSDL
@@ -444,7 +444,7 @@ when it's time for upgrades! This is a bug tracked by JBoss as JBAS-7882.
                 </subsection>
 
 
-                <subsection name="6. Configure build">
+                <subsection name="7. Configure build">
                     <p>
 Copy conf/signserver_build.properties.sample to conf/signserver_build.properties and open
 it for editing in your favorite text editor.
@@ -539,7 +539,7 @@ module.log4j.include=true
 
                 </subsection>
 
-                <subsection name="7. Build and deploy SignServer">
+                <subsection name="8. Build and deploy SignServer">
                     <p>
 Run "ant deploy" to build SignServer and deploy it to the selected application
 server. If the configuration changed since the last build run the clean target
@@ -553,7 +553,7 @@ Start the application server and verify that SignServer was deployed and
 database tables were created. 
                     </p>
 				</subsection>
-				<subsection name="8. Accessing SignServer">
+				<subsection name="9. Accessing SignServer">
 					<p>
 After startup a few different user interfaces are available.	
 					</p>

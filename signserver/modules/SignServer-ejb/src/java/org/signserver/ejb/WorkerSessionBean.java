@@ -249,7 +249,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
             // Check signer certificate
             final boolean counterDisabled = awc.getProperties().getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
-            final long keyUsageLimit = Long.valueOf(awc.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
+            final long keyUsageLimit;
+            try {
+                keyUsageLimit = Long.valueOf(awc.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
+            } catch (NumberFormatException ex) {
+                final SignServerException exception = new SignServerException("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT, ex);
+                logException(exception, logMap, workerLogger);
+                throw exception;
+            }
             final boolean keyUsageLimitSpecified = keyUsageLimit != -1;
             if (counterDisabled && keyUsageLimitSpecified) {
                 LOG.error("Worker]" + workerId + "]: Configuration error: " +  SignServerConstants.DISABLEKEYUSAGECOUNTER + "=TRUE but " + SignServerConstants.KEYUSAGELIMIT + " is also configured. Key usage counter will still be used.");

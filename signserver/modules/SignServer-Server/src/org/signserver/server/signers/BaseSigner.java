@@ -65,6 +65,9 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             }
         } catch (CryptoTokenOfflineException e) {
             retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), fatalErrors, new ProcessableConfig(config), null);
+        } catch (NumberFormatException ex) {
+            fatalErrors.add("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT + ": " + ex.getMessage());
+            retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), fatalErrors, new ProcessableConfig(config), null);
         }
         retval.setKeyUsageCounterDisabled(keyUsageCounterDisabled);
         return retval;

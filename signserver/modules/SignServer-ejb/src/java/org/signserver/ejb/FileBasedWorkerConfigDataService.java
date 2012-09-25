@@ -15,12 +15,16 @@ package org.signserver.ejb;
 import java.beans.XMLDecoder;
 import java.io.*;
 import java.util.HashMap;
+import java.util.Map;
 import javax.ejb.EJBException;
 import org.apache.log4j.Logger;
 import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
 import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.log.ISystemLogger;
+import org.signserver.server.log.SystemLoggerException;
+import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 
 /**
@@ -37,7 +41,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     private static final Logger LOG = Logger.getLogger(FileBasedWorkerConfigDataService.class);
     
     /** Audit logger. */
-//    private static final ISystemLogger AUDITLOG = SystemLoggerFactory.getInstance().getLogger(WorkerConfigDataService.class);
+    private static final ISystemLogger AUDITLOG = SystemLoggerFactory.getInstance().getLogger(WorkerConfigDataService.class);
     
     private final FileBasedDatabaseManager manager;
     private final File folder;
@@ -118,7 +122,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
      */
     @Override
     public void setWorkerConfig(int workerId, WorkerConfig signconf) throws FileBasedDatabaseException {
-        //        auditLog(workerId, "setWorkerConfig");
+        auditLog(workerId, "setWorkerConfig");
         synchronized (manager) {
             // We must base64 encode string for UTF safety
             HashMap a = new Base64PutHashMap();
@@ -187,21 +191,21 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         return workerConfig;
     }
 
-//    private void auditLog(final int workerId, final String operation) {
-//        try {
-//            final Map<String, String> logMap = new HashMap<String, String>();
-//
-//            logMap.put(ISystemLogger.LOG_CLASS_NAME,
-//                    WorkerConfigDataService.class.getSimpleName());
-//            logMap.put(ISystemLogger.LOG_WORKER_ID, String.valueOf(workerId));
-//            logMap.put(IWorkerConfigDataService.LOG_OPERATION,
-//                    operation);
-//            AUDITLOG.log(logMap);
-//        } catch (SystemLoggerException ex) {
-//            LOG.error("Audit log failure", ex);
-//            throw new EJBException("Audit log failure", ex);
-//        }
-//    }
+    private void auditLog(final int workerId, final String operation) {
+        try {
+            final Map<String, String> logMap = new HashMap<String, String>();
+
+            logMap.put(ISystemLogger.LOG_CLASS_NAME,
+                    WorkerConfigDataService.class.getSimpleName());
+            logMap.put(ISystemLogger.LOG_WORKER_ID, String.valueOf(workerId));
+            logMap.put(IWorkerConfigDataService.LOG_OPERATION,
+                    operation);
+            AUDITLOG.log(logMap);
+        } catch (SystemLoggerException ex) {
+            LOG.error("Audit log failure", ex);
+            throw new EJBException("Audit log failure", ex);
+        }
+    }
 
     private WorkerConfigDataBean loadData(final int workerId) throws IOException {
         assert Thread.holdsLock(manager);

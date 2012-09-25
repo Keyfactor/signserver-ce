@@ -54,20 +54,14 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         this.folder = manager.getDataFolder();
     }
 
-    /**
-     * Entity Bean holding info about a workers (service or signer) configuration
-     * 
-     * @param workerId uniqe Id of the worker 
-     *
-     */
     @Override
-    public void create(int workerId, String configClassPath) {
+    public void create(int workerId, String implClassName) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating worker config data, id=" + workerId);
         }
 
         try {
-            setWorkerConfig(workerId, (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassPath).newInstance());
+            setWorkerConfig(workerId, (WorkerConfig) this.getClass().getClassLoader().loadClass(implClassName).newInstance());
         } catch (Exception e) {
             LOG.error(e);
         }
@@ -80,8 +74,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
      *
      */
     @SuppressWarnings("unchecked")
-    @Override
-    public WorkerConfig getWorkerConfig(int workerId)  throws FileBasedDatabaseException {
+    private WorkerConfig getWorkerConfig(int workerId)  throws FileBasedDatabaseException {
         WorkerConfig result = null;
 
         WorkerConfigDataBean wcdb;

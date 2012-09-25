@@ -22,7 +22,6 @@ import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.GlobalConfigurationSessionBean;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
@@ -77,8 +76,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      *
      */
     @SuppressWarnings("unchecked")
-    @Override
-    public WorkerConfig getWorkerConfig(int workerId) {
+    private WorkerConfig getWorkerConfig(int workerId) {
         WorkerConfig workerConf = null;
         WorkerConfigDataBean wcdb = em.find(WorkerConfigDataBean.class, workerId);
 

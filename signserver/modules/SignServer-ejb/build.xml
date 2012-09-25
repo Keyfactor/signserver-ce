@@ -20,10 +20,6 @@
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
     
     <target name="dist-module" depends="init,-init-macrodef-convertclasspath,dist">
-        <condition property="noDB">
-        	<equals arg1="${database.name}" arg2="nodb"/>
-        </condition>
-    	
     	<copy todir="../../lib/">
             <fileset dir="dist">
                 <include name="*.jar"/>

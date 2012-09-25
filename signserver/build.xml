@@ -180,7 +180,7 @@ OS version                          = ${os.version}
          </subant>
     </target>
 
-    <target name="set-ejbjarheader-nodb" if="noDB">
+    <target name="-set-ejbjarheader-nodb" if="noDB">
     	<!-- generate starting and closing comment marks short-circuiting the
         	enterprise-beans tag in the generated ejb-jar.xml file -->
     	<!-- Ant 1.7.x doesn't seem to support supplying the property value via the tag's text data
@@ -188,7 +188,7 @@ OS version                          = ${os.version}
     	<property file="src/deploy/ejb/nodb-comments.properties"/>
 	</target>
 
-    <target name="set-ejbjarheader" unless="noDB">
+    <target name="-set-ejbjarheader" unless="noDB">
     	<!-- generate starting and closing comment marks short-circuiting the
         	enterprise-beans tag in the generated ejb-jar.xml file -->
     	<property file="src/deploy/ejb/db-comments.properties"/>
@@ -199,16 +199,10 @@ OS version                          = ${os.version}
       Preprocesses SignServer by replacing tags with correct version and
       application texts.
     -->
-    <target name="preprocess" depends="preprocess-extjava, preprocess-extweb, set-ejbjarheader-nodb, set-ejbjarheader">
+    <target name="preprocess" depends="preprocess-extjava, preprocess-extweb, -set-ejbjarheader-nodb, -set-ejbjarheader">
 		<!-- like with the replacement strings, have to define the replacement placeholders in a separate property file
 			to work with ant 1.7.x -->
-    	<property file="src/deploy/ejb/comment-replacements.properties"/>
-
-    	<echo>
-    		Appserver type: ${appserver.type}
-    		Persistenceheader: "${persistenceheadercomment}"
-    	</echo>
-    	
+    	<property file="src/deploy/ejb/comment-replacements.properties"/>  	
 
     	<!-- Copy xml-files and replace some values -->
         <copy todir="${preprocessed}">

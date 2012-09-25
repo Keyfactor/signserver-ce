@@ -143,7 +143,7 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
         return result;
     }
 
-    private void writeData(String keyHash, Long value) {
+    private void writeData(String keyHash, Long value) throws IOException {
         assert Thread.holdsLock(manager);
         checkSchemaVersion();
 
@@ -153,8 +153,6 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
         try {
             out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
             out.write(String.valueOf(value));
-        } catch (IOException ex) {
-            LOG.error("Could not write data to " + folder.getAbsolutePath(), ex);
         } finally {
             if (out != null) {
                 try {

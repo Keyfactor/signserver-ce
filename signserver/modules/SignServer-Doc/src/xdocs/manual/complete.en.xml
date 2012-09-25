@@ -1533,8 +1533,8 @@ More information about the MySQL Cluster can be found at
                </subsection>
                <subsection name="Healthcheck">
                	<p>
-Setting up the healtch check servlet.
-The following parameters can be set in signserver_build.properties to customise the health check servlet:
+Setting up the Health check servlet.
+The following parameters can be set in signserver_build.properties to customize the health check servlet:
 				</p>
 				<p>
 <source>healthcheck.authorizedips</source> - A semicolon-delimited list of IP addresses authorized to access

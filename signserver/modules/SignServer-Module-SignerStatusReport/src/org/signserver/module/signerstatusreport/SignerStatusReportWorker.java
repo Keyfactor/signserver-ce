@@ -13,6 +13,7 @@
 package org.signserver.module.signerstatusreport;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -106,5 +107,12 @@ public class SignerStatusReportWorker extends BaseSigner {
             }
         }
         return workerSession;
+    }
+    
+    @Override
+    protected List<String> getSignerCertificateFatalErrors() {
+        // This worker does not require any signer certificate so don't
+        // report any error about it.
+        return Collections.emptyList();
     }
 }

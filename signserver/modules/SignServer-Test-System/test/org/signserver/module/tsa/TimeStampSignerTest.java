@@ -28,6 +28,7 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.tsp.*;
@@ -664,6 +665,66 @@ public class TimeStampSignerTest extends ModulesTestCase {
         
     }
     
+    /**
+     * Tests that status is not OK and that an failure is generated when trying
+     * to sign when the right signer certificate is not configured.
+     *
+     */
+    public void test12WrongEkuInSignerCertificate() throws Exception {
+        
+        final List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER2);
+        final X509Certificate subject = (X509Certificate) workerSession.getSignerCertificate(WORKER2);
+        
+        // Certifiate without id_kp_timeStamping
+        final X509Certificate certNoEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=Without EKU").setSubjectPublicKey(subject.getPublicKey()).build());
+        
+        // Certificate with non-critical id_kp_timeStamping
+        boolean critical = false;
+        final X509Certificate certEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With non-critical EKU").setSubjectPublicKey(subject.getPublicKey()).addExtension(new CertExt(X509Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
+        
+        // OK: Certificate with critical id_kp_timeStamping
+        critical = true;
+        final X509Certificate certCritEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With critical EKU").setSubjectPublicKey(subject.getPublicKey()).addExtension(new CertExt(X509Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
+        
+        try {
+            // Fail: No id_kp_timeStamping
+            workerSession.uploadSignerCertificate(WORKER2, certNoEku.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2, Arrays.asList(certNoEku.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2);
+            WorkerStatus actualStatus = workerSession.getStatus(WORKER2);
+            List<String> errors = actualStatus.getFatalErrors();
+            String errorsString = errors.toString();
+            // should be error as the signer certificate is missing id_kp_timeStamping and EKU is not critical
+            LOG.info("errorsString: " + errorsString);
+            assertEquals(2, errors.size());
+            assertTrue("error should talk about missing extended key usage timeStamping: " + errorsString, errorsString.contains("timeStamping")); // Will need adjustment if language changes
+            assertTrue("error should talk about missing critical extension: " + errorsString, errorsString.contains("critical")); // Will need adjustment if language changes
+            
+            // Ok: Certificate with critical id_kp_timeStamping
+            workerSession.uploadSignerCertificate(WORKER2, certCritEku.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2, Arrays.asList(certCritEku.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2);
+            actualStatus = workerSession.getStatus(WORKER2);
+            assertEquals(0, actualStatus.getFatalErrors().size());
+            
+            // Fail: No non-critical id_kp_timeStamping
+            workerSession.uploadSignerCertificate(WORKER2, certEku.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2, Arrays.asList(certEku.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2);
+            actualStatus = workerSession.getStatus(WORKER2);
+            errorsString = errors.toString();
+            // should be error as the signer certificate is missing id_kp_timeStamping
+            assertEquals(1, actualStatus.getFatalErrors().size());
+            // error should talk about missing critical EKU
+            assertTrue("errorString: " + errorsString, errorsString.contains("critical"));  // Will need adjustment if language changes
+        } finally {
+            // Restore
+            workerSession.uploadSignerCertificate(WORKER2, subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2, asListOfByteArrays(chain), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2);
+        }
+    }
+    
     private void assertTokenGranted(int workerId) throws Exception {
         TimeStampRequestGenerator timeStampRequestGenerator =
                     new TimeStampRequestGenerator();
@@ -707,8 +768,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
             // OK
         }
     }
-    
-    // TODO: In an other issue: add test case that health check and status shows offline if a signer certificate without the right EKU is used
 
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKER1);

@@ -30,6 +30,7 @@ import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
@@ -957,6 +958,34 @@ public class TimeStampSigner extends BaseSigner {
             result.add("Not strictly valid chain and " + REQUIREVALIDCHAIN + " specified");
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Signer " + workerId + ": " + REQUIREVALIDCHAIN + " specified but the chain was not found valid");
+            }
+        }
+        
+        // Check if certificat has the required EKU
+        try {
+            Certificate certificate = getSigningCertificate();
+            if (certificate instanceof X509Certificate) {
+                final X509Certificate cert = (X509Certificate) certificate;
+                if (cert.getExtendedKeyUsage() == null 
+                        || !cert.getExtendedKeyUsage().contains(KeyPurposeId.id_kp_timeStamping.getId())) {
+                    result.add("Missing extended key usage timeStamping");
+                }
+                if (cert.getCriticalExtensionOIDs() == null 
+                        || !cert.getCriticalExtensionOIDs().contains(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage.getId())) {
+                    result.add("The extended key usage extension must be present and marked as critical");
+                }
+            } else {
+                result.add("Unsupported certificate type");
+            }
+        } catch (CryptoTokenOfflineException ex) {
+            result.add("No signer certificate available");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signer " + workerId + ": Could not get signer certificate: " + ex.getMessage());
+            }
+        } catch (CertificateParsingException ex) {
+            result.add("Unable to parse certificate");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signer " + workerId + ": Unable to parse certificate: " + ex.getMessage());
             }
         }
         

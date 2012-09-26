@@ -106,7 +106,9 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 if (Arrays.equals(certificate.getPublicKey().getEncoded(),
                         getCryptoToken().getPublicKey(
                         ICryptoToken.PURPOSE_SIGN).getEncoded())) {
-                    LOG.debug("Signer " + workerId + ": Certificate matches key");
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Signer " + workerId + ": Certificate matches key");
+                    }
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Signer " + workerId + ": Certificate does not match key");

@@ -19,21 +19,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SODSignRequest;
-import org.signserver.common.SODSignResponse;
-import org.signserver.common.SignServerConstants;
-import org.signserver.common.SignServerUtil;
-import org.signserver.common.SignerStatus;
+import java.util.*;
+import org.signserver.common.*;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.testutils.ModulesTestCase;
@@ -225,6 +212,11 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             thrown = true;
         }
         assertTrue(thrown);
+        
+        // Test that there is an error as the signer is not valid yet
+        WorkerStatus status = workerSession.getStatus(WORKER1);
+        String errors = status.getFatalErrors().toString();
+        assertTrue(errors, errors.contains("xpired"));
     }
 
     public void test04bMinRemainingCertVValidityWithSoftKeystore()
@@ -249,6 +241,11 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             thrown = true;
         }
         assertTrue(thrown);
+        
+        // Test that there is an error as the signer is not valid yet
+        WorkerStatus status = workerSession.getStatus(WORKER1B);
+        String errors = status.getFatalErrors().toString();
+        assertTrue(errors, errors.contains("xpired"));
     }
 
     /**

@@ -208,6 +208,11 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             thrown = true;
         }
         assertTrue(thrown);
+        
+        // Test that there is an error as the signer is not valid yet
+        WorkerStatus status = workerSession.getStatus(WORKER1);
+        String errors = status.getFatalErrors().toString();
+        assertTrue(errors, errors.contains("xpired"));
     }
 
     public void test04bMinRemainingCertVValidityWithSoftKeystore()
@@ -232,6 +237,11 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             thrown = true;
         }
         assertTrue(thrown);
+        
+        // Test that there is an error as the signer is not valid yet
+        WorkerStatus status = workerSession.getStatus(WORKER1B);
+        String errors = status.getFatalErrors().toString();
+        assertTrue(errors, errors.contains("xpired"));
     }
 
     /**

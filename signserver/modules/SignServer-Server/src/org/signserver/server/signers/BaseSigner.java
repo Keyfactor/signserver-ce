@@ -13,6 +13,7 @@
 package org.signserver.server.signers;
 
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.KeyUsageCounterHash;
+import org.signserver.server.ValidityTimeUtils;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.entities.KeyUsageCounter;
 
@@ -84,7 +86,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
     /**
      * Checks that the signer certificate is available and that it matches the 
-     * key-pair in the crypto token.
+     * key-pair in the crypto token and that the time is within the signer's 
+     * validity.
      * The errors returned from this method is included in the list of errors
      * returned from getFatalErrors().
      * Signer implementation can override this method and just return an empty 
@@ -95,8 +98,9 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     protected List<String> getSignerCertificateFatalErrors() {
         final LinkedList<String> result = new LinkedList<String>(super.getFatalErrors());
         // Check if certificate matches key
+        Certificate certificate = null;
         try {
-            Certificate certificate = getSigningCertificate();
+            certificate = getSigningCertificate();
             if (certificate == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Signer " + workerId + ": No certificate");
@@ -122,6 +126,19 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 LOG.debug("Signer " + workerId + ": Could not get signer certificate: " + ex.getMessage());
             }
         }
+        
+        // Check signer validity
+        if (certificate instanceof X509Certificate) {
+            try {
+                ValidityTimeUtils.checkSignerValidity(workerId, getConfig(), (X509Certificate) certificate);
+            } catch (CryptoTokenOfflineException ex) {
+                result.add(ex.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Signer " + workerId + ": Signer certificate validity time check failed: " + ex.getMessage());
+                }
+            }
+        }
+        
         return result;
     }    
 }

@@ -13,12 +13,14 @@
 package org.signserver.server.signers;
 
 import java.security.cert.Certificate;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.KeyUsageCounterHash;
+import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.entities.KeyUsageCounter;
 
 /**
@@ -29,6 +31,9 @@ import org.signserver.server.entities.KeyUsageCounter;
  * @version $Id$
  */
 public abstract class BaseSigner extends BaseProcessable implements ISigner {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(BaseSigner.class);
 
     /**
      * @see org.signserver.server.IProcessable#getStatus()
@@ -69,4 +74,52 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         retval.setKeyUsageCounterDisabled(keyUsageCounterDisabled);
         return retval;
     }
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
+        errors.addAll(getSignerCertificateFatalErrors());
+        return errors;
+    }
+
+    /**
+     * Checks that the signer certificate is available and that it matches the 
+     * key-pair in the crypto token.
+     * The errors returned from this method is included in the list of errors
+     * returned from getFatalErrors().
+     * Signer implementation can override this method and just return an empty 
+     * list if they don't require a signer certificate to be present.
+     *
+     * @return List of errors or an empty list in case of no errors
+     */
+    protected List<String> getSignerCertificateFatalErrors() {
+        final LinkedList<String> result = new LinkedList<String>(super.getFatalErrors());
+        // Check if certificate matches key
+        try {
+            Certificate certificate = getSigningCertificate();
+            if (certificate == null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Signer " + workerId + ": No certificate");
+                }
+                result.add("No signer certificate available");
+            } else {
+                if (Arrays.equals(certificate.getPublicKey().getEncoded(),
+                        getCryptoToken().getPublicKey(
+                        ICryptoToken.PURPOSE_SIGN).getEncoded())) {
+                    LOG.debug("Signer " + workerId + ": Certificate matches key");
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Signer " + workerId + ": Certificate does not match key");
+                    }
+                    result.add("Certificate does not match key");
+                }
+            }
+        } catch (CryptoTokenOfflineException ex) {
+            result.add("No signer certificate available");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signer " + workerId + ": Could not get signer certificate: " + ex.getMessage());
+            }
+        }
+        return result;
+    }    
 }

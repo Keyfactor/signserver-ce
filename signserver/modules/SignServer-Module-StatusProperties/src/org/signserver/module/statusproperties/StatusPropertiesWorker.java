@@ -15,10 +15,7 @@ package org.signserver.module.statusproperties;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import javax.ejb.EJB;
 import javax.naming.NamingException;
 import org.apache.log4j.Logger;
@@ -199,5 +196,11 @@ public class StatusPropertiesWorker extends BaseSigner {
             throw new RuntimeException(ex);
         }
     }
-    
+
+    @Override
+    protected List<String> getSignerCertificateFatalErrors() {
+        // This worker does not require any signer certificate so don't
+        // report any error about it.
+        return Collections.emptyList();
+    }
 }

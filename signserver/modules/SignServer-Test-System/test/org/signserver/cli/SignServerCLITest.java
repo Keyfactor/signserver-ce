@@ -12,12 +12,18 @@
  *************************************************************************/
 package org.signserver.cli;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.signserver.client.cli.defaultimpl.TimeStampCommand;
+import org.signserver.module.pdfsigner.PDFSigner;
 import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertNotPrinted;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
@@ -39,6 +45,7 @@ public class SignServerCLITest extends ModulesTestCase {
     private static final String TESTTSID = "1000";
 
     private CLITestHelper cli = getAdminCLI();
+    private CLITestHelper clientCLI = getClientCLI();
     
     @Override
     protected void setUp() throws Exception {
@@ -271,5 +278,65 @@ public class SignServerCLITest extends ModulesTestCase {
         		cli.execute("wsadmins", "-list"));
         assertPrinted("", cli.getOut(), "53f6992d081248a");
         assertPrinted("", cli.getOut(), "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE");
+    }
+    
+    /**
+     * Test running the signdocument command using webservices with a PDF signer set up to archive
+     * based on the request filename property
+     * @throws Exception
+     */
+    public void testWSWithFileName() throws Exception {
+    	// we use the PDFSigner's archive to disk functionallity to verify that the filename property
+    	// is handled properly when signing through the WS interface (this way we don't have to implement
+    	// some custom logger)
+    	
+    	File logFile = File.createTempFile("pdf-signer", ".log");
+    	File outFile = File.createTempFile("dummy-output", ".pdf");
+    	
+    	// make sure temp files are deleted when the test exits
+    	logFile.deleteOnExit();
+    	outFile.deleteOnExit();
+    	
+    	addPDFSigner1();
+    	cli.execute("setproperty", Integer.toString(getSignerIdPDFSigner1()), "WORKERLOGGER", "org.signserver.server.log.FileWorkerLogger");
+    	cli.execute("setproperty", Integer.toString(getSignerIdPDFSigner1()), "LOG_FILE_PATH", logFile.getAbsolutePath());
+    	cli.execute("reload", Integer.toString(getSignerIdPDFSigner1()));
+    	
+    	// execute test signing a PDF file with the client CLI in WS mode
+    	clientCLI.execute("signdocument", "-protocol", "WEBSERVICES", "-workername", getSignerNamePDFSigner1(), "-infile",
+    			getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "pdf" + File.separator + "sample.pdf",
+    			"-outfile", outFile.getAbsolutePath());
+    	
+    	// delete temporary output file
+    	outFile.delete();
+    	
+    	// check the log file to see that the FILENAME property was logged
+    	BufferedReader reader = new BufferedReader(new FileReader(logFile));
+    	final String line = reader.readLine();
+    	
+    	reader.close();
+    	
+    	final String[] fields = line.split(";");
+    	boolean found = false;
+    	
+    	for (final String field : fields) {
+    		final String[] parts = field.split(":");
+    		
+    		if (parts.length != 2) {
+    			continue;
+    		}
+    		
+    		final String key = parts[0].trim();
+    		if ("FILENAME".equals(key)) {
+    			final String value = parts[1].trim();
+    			// check if log value matches file name of original PDF file
+    			
+    			found = "sample.pdf".equals(value);
+    		}
+    	}
+    	
+    	removeWorker(getSignerIdPDFSigner1());
+    	
+    	assertTrue("FILENAME property is not logged", found);
     }
 }

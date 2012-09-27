@@ -919,9 +919,9 @@ public class TimeStampSigner extends BaseSigner {
                 result.add("Unable to get certificate chain");
                 LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
             } catch (CryptoTokenOfflineException ex) {
-                result.add("No signer certificate available");
+                result.add(ex.getMessage());
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Signer " + workerId + ": Could not get signer certificate: " + ex.getMessage());
+                    LOG.debug("Signer " + workerId + ": Could not get signer certificate in chain: " + ex.getMessage());
                 }
             }
 

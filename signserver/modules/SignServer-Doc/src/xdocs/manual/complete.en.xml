@@ -5028,7 +5028,7 @@ To increase throughput it is recommended to disable the key usage counter as eve
                 
                 <subsection name="Configuration">
                     <p>
-Set database.type to "nodb".
+In signserver_build.properties, set database.type to "nodb".
                     </p>
 					<source>
 database.type=nodb
@@ -5040,12 +5040,28 @@ Set the location for the local file-based database.
 database.nodb.location=/path/to/filedb
 					</source>
 					<p>
-Where the path is some location where SignServer can write files. The default of this property is not set.
+Where the path is some location where SignServer can write files. The default value is empty. If an relative path is used it is most likely relative to the application server's working directory.
 					</p>
 					<p>
-This directory must be empty when first starting up.
+This directory should either point to an existing SignServer file database or be completely empty. If the directory is empty, SignServer will create the initial database structure at startup.
 					</p>
                 </subsection>
+                
+                <subsection name="Structure of data">
+                    <p>
+The file based database uses a number of files in the specified directory. Read/write synchronization is handled internally in the application and it is thus  not support to do manual changes to the files while the application server is running. It is normally also not supported to have multiple application servers running with SignServer using the same database directory.
+                    </p>
+                </subsection>
+                
+                <subsection name="Migrating to/from database">
+                    <p>
+The recommended way of migrating either to or from an other database management system without setting up all worker configuration from scratch is do use admin command "dumpproperties" to dump the current configuration to a file and then on the new system use the "setproperties" followed by the reload command for every worker id.
+                    </p>
+                    <p>
+Notice: The dumpproperties command will not include the list of authorized clients so those will have to be setup again in the new system. Check with the admin command "listauthorizedclients" if you have any of those.
+                    </p>
+                </subsection>
+                
             </section>
 
             <section name="Installation Packages">

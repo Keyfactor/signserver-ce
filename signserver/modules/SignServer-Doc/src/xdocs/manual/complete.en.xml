@@ -1532,36 +1532,88 @@ More information about the MySQL Cluster can be found at
                     </p>
                </subsection>
                <subsection name="Healthcheck">
-               	<p>
-Setting up the Health check servlet.
-The following parameters can be set in signserver_build.properties to customize the health check servlet:
-				</p>
-				<p>
+                   <subsubsection name="Setting up the Health check servlet">
+                    <p>
+In SignServer there exists a health check service that can be used for health monitoring. It is also useful for cluster, as it can be checked by load balancers to determine if a node should be active in the cluster (healthy) or taken out of the cluster (unhealthy).
+                    </p>
+                    <p>
+The servlet is located at the URL: http://localhost:8080/signserver/healthcheck/signserverhealth and configured in signserver_build.properties.
+                    </p>
+                    <p>
+The following configuration parameters may be set to configure authorization and what the service checks: 
+                    </p>
+                    <p>
 <source>healthcheck.authorizedips</source> - A semicolon-delimited list of IP addresses authorized to access
 the healthcheck servlet (defaults to <source>127.0.0.1</source>).
-				</p>
-				<p>
+                    </p>
+                    <p>
 <source>healthcheck.minimumfreememory</source> - Number of megabytes of memory that must be free before removing     
 the node out of the cluster (defaults to 1).
-				</p>
-				<p>
+                    </p>
+                    <p>
 <source>healthcheck.checkdbstring</source> - The string that should be used to do 
 a minimal check that the database is working. May differ between databases.
-(defaults to <source>Select count(*) from signerconfigdata</source>).
-				</p>
-				<p>
+(defaults to <source>Select count(*) from signerconfigdata</source>, the property is not used when running without database).
+                    </p>
+                    <p>
 <source>healthcheck.maintenancefile</source> - The path to a file containing the maintenance state, this file is a
 standard Java property file and should have a property (by default named <source>DOWN_FOR_MAINTENANCE</source>").
 If this property has the value <source>true</source>, none of the standard health checks will be performed, and instead
 the result will be a string of the form <source>MAINT: DOWN_FOR_MAINTENANCE</source>.
 If this property is not set (or an invalid file is given), the maintenance functionallity is disabled.
-				</p>
-				<p>
+                    </p>
+                    <p>
 <source>healthcheck.maintenancepropertyname</source> - The property name to be used in the maintenance file. This will also
 affect the error message returned when in maintenance mode (the part of the string after <source>MAINT: </source>
 (defaults to <source>DOWN_FOR_MAINTENANCE</source>).
-				</p>
-				
+                    </p>
+                </subsubsection>
+                
+                <subsubsection name="Available tests and responses">
+                    <ul>
+                        <li>
+                            <p>
+<b>No errors</b><br/>
+If all tests passed the HTTP result code is "200 OK" and page contains only the text "ALLOK".
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+<b>Down for maintenance</b><br/>
+If the down for maintenance file indicates that the server is down for maintenance an HTTP response code in 5xx range is returned with an error page containing "MAINT: " followed of the name of the maintenance property as configured. No further checks are performed.
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+<b>Database test</b><br/>
+A test is performed that SignServer is able to query the database. When running without database a check is made that the configured directory is initialized correctly and is not empty. If anything failed one or more error messages are included in an error page returned with the HTTP response code in the 5xx range.
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+<b>Memory test</b><br/>
+Checks the available free memory. If anything failed an error message is included in an error page returned with the HTTP response code in the 5xx range.
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+<b>Workers test</b><br/>
+Each (non-disabled) worker is checked for a number of things. If anything failed one or more error messages are included in an error page returned with the HTTP response code in the 5xx range.
+                            </p>
+                            <ul>
+                                <li><b>Token offline:</b> Workers having a crypto token can be reported as offline</li>
+                                <li><b>Worker status and errors: </b> Each worker implementation can put different requirements on when it is status is considered to be offline.</li>
+                                <li><b>Signer certificate:</b> Signers requiring a certificate are checked that they have a certificate matching the configured key-pair and that the certificate is valid according the certificate validity time and the configured minimum remaining validity time.</li>
+                                <li><b>TimeStampSigner certificate missing EKU:</b> If a TimeStampSigner certificate does not include the required EKU its status is set to offline.</li>
+                                <li><b>TimeStampSigner certificate not included in certificate chain</b> If a TimeStampSigner certificate chain property does not include the signer certificate its status is set to offline.</li>
+                            </ul>
+                        </li>
+                        <li>
+<b>Disabled workers</b><br/>
+Workers that are disabled by having the worker property DISABLED=true are not considered in the Health check report.
+                        </li>
+                    </ul>
+                </subsubsection>
                </subsection>
             </section>
 

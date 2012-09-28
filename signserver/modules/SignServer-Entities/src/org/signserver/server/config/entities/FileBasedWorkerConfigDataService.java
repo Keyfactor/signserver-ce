@@ -243,16 +243,24 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         final File file = new File(folder, PREFIX + workerId + SUFFIX);
         
         OutputStream out = null;
+        FileOutputStream fout = null;
         try {
             if (!file.exists()) {
                 file.createNewFile();
             }
-            out = new BufferedOutputStream(new FileOutputStream(file));
+            fout = new FileOutputStream(file);
+            out = new BufferedOutputStream(fout);
             out.write(dataStore.getSignerConfigData().getBytes("UTF-8"));
+            out.flush();
+            fout.getFD().sync();
         } finally {
             if (out != null) {
                 try {
                     out.close();
+                } catch (IOException ignored) {} // NOPMD
+            } else if (fout != null) {
+                try {
+                    fout.close();
                 } catch (IOException ignored) {} // NOPMD
             }
         }

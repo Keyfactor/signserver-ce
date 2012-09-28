@@ -149,11 +149,19 @@ public class FileBasedKeyUsageCounterDataService implements IKeyUsageCounterData
         final File file = new File(folder, PREFIX + keyHash + SUFFIX);
         
         BufferedWriter out = null;
+        FileOutputStream fout = null;
         try {
-            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+            fout = new FileOutputStream(file);
+            out = new BufferedWriter(new OutputStreamWriter(fout));
             out.write(String.valueOf(value));
+            out.flush();
+            fout.getFD().sync();
         } finally {
             if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ignored) {} // NOPMD
+            } else if (fout != null) {
                 try {
                     out.close();
                 } catch (IOException ignored) {} // NOPMD

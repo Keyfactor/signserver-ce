@@ -34,7 +34,7 @@ public class FileBasedDatabaseManager {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(FileBasedDatabaseManager.class);
     
-    private static FileBasedDatabaseManager instance = new FileBasedDatabaseManager(new File(CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.FILEBASED_DB_FOLDER)));
+    private static final FileBasedDatabaseManager instance = new FileBasedDatabaseManager(new File(CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.FILEBASED_DB_FOLDER)));
     
     /** Name used for this database as database.name in signserver_build.properties. */
     private static final String DATABASE_NAME = "nodb";

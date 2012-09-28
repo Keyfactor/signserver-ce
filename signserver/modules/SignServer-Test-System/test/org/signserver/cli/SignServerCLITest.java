@@ -297,10 +297,9 @@ public class SignServerCLITest extends ModulesTestCase {
     	// redirect the output PDF to a temporary file to avoid clubbering stdout when running the test
     	DocumentSignerCLI.main(new String[] {"-protocol", "WEBSERVICES", "-workername", getSignerNamePDFSigner1(), "-infile",
     			getSignServerHome() + File.separator + "src" + File.separator + "test" + File.separator + "pdf" + File.separator + "sample.pdf",
-    			"-outfile", outFile.getAbsolutePath()});
-    	
-    	// delete temporary output file
-    	outFile.delete();
+    			"-outfile", outFile.getAbsolutePath(), "-truststore",
+    			getSignServerHome() + File.separator + "p12" + File.separator + "truststore.jks",
+    			"-truststorepwd", "changeit"});
     	
     	// check the log file to see that the FILENAME property was logged
     	BufferedReader reader = new BufferedReader(new FileReader(logFile));

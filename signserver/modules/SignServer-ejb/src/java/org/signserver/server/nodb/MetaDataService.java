@@ -89,6 +89,8 @@ public class MetaDataService {
         try {
             out = new FileOutputStream(file);
             properties.storeToXML(out, null, "UTF-8");
+            out.flush();
+            out.getFD().sync();
         } finally {
             if (out != null) {
                 try {

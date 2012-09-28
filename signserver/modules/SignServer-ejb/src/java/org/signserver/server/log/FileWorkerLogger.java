@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 /**
  * An IWorkerLogger that appends log lines to a separate file.
  * 
- * @author marcus
+ * @author Marcus Lundblad
  * @version $Id$
  */
 
@@ -35,29 +35,26 @@ public class FileWorkerLogger implements IWorkerLogger {
     private static final Logger LOG =
             Logger.getLogger(FileWorkerLogger.class);
 
-    private FileOutputStream logFileStream;
+    private String logFilePath;
     
     public void init(final Properties props) {
-    	final String logFilePath = props.getProperty(FILE_PATH_PROPERTY_NAME);
-    	
+    	logFilePath = props.getProperty(FILE_PATH_PROPERTY_NAME);
+
     	if (logFilePath == null) {
     		LOG.error("Log file path not specified");
     	}
-    	
-    	try {
-			logFileStream = new FileOutputStream(logFilePath);
-		} catch (FileNotFoundException e) {
-			LOG.error("Could not initialize log file");
-		}
     }
 
 	@Override
 	public void log(Map<String, String> fields) throws WorkerLoggerException {
-		if (logFileStream == null) {
-			LOG.error("Log file was not initialized");
-			throw new WorkerLoggerException("Log file was not initialized");
-		}
+		FileOutputStream fos = null;
 		
+		try {
+			fos = new FileOutputStream(logFilePath);
+		} catch (IOException e) {
+			throw new WorkerLoggerException("Could not open log file", e);
+		}
+
         final StringBuilder str = new StringBuilder();
 
         for (Map.Entry<String, String> entry : fields.entrySet()) {
@@ -73,14 +70,16 @@ public class FileWorkerLogger implements IWorkerLogger {
         str.append(String.valueOf(System.currentTimeMillis()));
         
         try {
-			logFileStream.write(str.toString().getBytes());
+			fos.write(str.toString().getBytes());
 		} catch (IOException e) {
 			LOG.error("Could not write to log file");
 			throw new WorkerLoggerException("Could not write to log file");
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException dummy) {} //NOPMD
+			}
 		}
-		
 	}
-    
-    
-	
 }

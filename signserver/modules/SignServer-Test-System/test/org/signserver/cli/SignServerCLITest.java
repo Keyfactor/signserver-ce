@@ -303,10 +303,7 @@ public class SignServerCLITest extends ModulesTestCase {
     	clientCLI.execute("signdocument", "-protocol", "WEBSERVICES", "-workername", getSignerNamePDFSigner1(), "-infile",
     			getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "pdf" + File.separator + "sample.pdf",
     			"-outfile", outFile.getAbsolutePath());
-    	
-    	// delete temporary output file
-    	outFile.delete();
-    	
+   	
     	// check the log file to see that the FILENAME property was logged
     	BufferedReader reader = new BufferedReader(new FileReader(logFile));
     	final String line = reader.readLine();

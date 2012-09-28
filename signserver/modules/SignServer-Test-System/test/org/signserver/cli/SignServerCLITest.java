@@ -283,14 +283,11 @@ public class SignServerCLITest extends ModulesTestCase {
      * @throws Exception
      */
     public void testWSWithFileName() throws Exception {
-    	// we use the PDFSigner's archive to disk functionallity to verify that the filename property
-    	// is handled properly when signing through the WS interface (this way we don't have to implement
-    	// some custom logger)
-    	
+    	// set up a test PDF signer using the file logger to log to a temporary file
     	File logFile = File.createTempFile("pdf-signer", ".log");
     	File outFile = File.createTempFile("dummy-output", ".pdf");
     	
-    	// make sure temp files are deleted when the test exits
+    	// make sure temp files are deleted when the VM exits
     	logFile.deleteOnExit();
     	outFile.deleteOnExit();
     	

@@ -12,14 +12,16 @@
  *************************************************************************/
 package org.signserver.server;
 
-import org.signserver.server.IClientCredential;
+import java.io.Serializable;
 
 /**
  * Representation of a X509 client certificate for authentication use.
  *
  * @version $Id$
  */
-public class CertificateClientCredential implements IClientCredential {
+public class CertificateClientCredential implements IClientCredential, Serializable {
+    
+    private static final long serialVersionUID = 1L;
 
     private String serialNumber;
     private String issuerDN;

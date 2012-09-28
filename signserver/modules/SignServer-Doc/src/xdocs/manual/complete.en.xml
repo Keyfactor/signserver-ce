@@ -4966,7 +4966,19 @@ WORKERLOGGER=org.signserver.server.log.NullWorkerLogger
 WORKERLOGGER=org.signserver.module.tsa.CustomTimeStampLogger1
                         </source>
                     </subsubsection>
-                    </subsection>
+                    <subsubsection name="FileWorkerLogger">
+                    	<p>
+Worker logger that writes the log values to a worker-specific log file (the logger logs all fields, similar to
+AllFieldsWorkerLogger.<br/>
+This logger is mainly intended for use by unit tests, and is not thread safe.
+						</p>
+						<source>
+WORKERLOGGER=org.signserver.server.log.FileWorkerLogger
+LOG_FILE_PATH=/path/to/logfile
+						</source>
+					</subsubsection>
+                </subsection>
+ 
                 <subsection name="Debug Log">
                     <p>
 The debug log is just the normal log that can be useful for finding out

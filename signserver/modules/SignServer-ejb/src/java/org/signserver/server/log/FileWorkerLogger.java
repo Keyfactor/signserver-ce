@@ -12,14 +12,12 @@
  *************************************************************************/
 package org.signserver.server.log;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -30,15 +28,13 @@ import org.apache.log4j.Logger;
  */
 
 public class FileWorkerLogger implements IWorkerLogger {
-	
-    private static final String DEFAULT_LOGLEVEL = "INFO";
+
     private static final String FILE_PATH_PROPERTY_NAME = "LOG_FILE_PATH";
     
     /** Logger for this class. */
     private static final Logger LOG =
             Logger.getLogger(FileWorkerLogger.class);
-    
-    private Level logLevel;
+
     private FileOutputStream logFileStream;
     
     public void init(final Properties props) {
@@ -48,9 +44,7 @@ public class FileWorkerLogger implements IWorkerLogger {
     		LOG.error("Log file path not specified");
     	}
     	
-        this.logLevel = Level.toLevel(props.getProperty("LOGLEVEL_DEFAULT",
-        		DEFAULT_LOGLEVEL), Level.INFO);
-        try {
+    	try {
 			logFileStream = new FileOutputStream(logFilePath);
 		} catch (FileNotFoundException e) {
 			LOG.error("Could not initialize log file");

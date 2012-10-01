@@ -309,7 +309,7 @@ public class SODFile extends PassportFile
 		return EF_SOD_TAG;
 	}
 
-	public byte[] getEncoded() {
+	public byte[] getEncoded() throws IOException {
 		if (isSourceConsistent) {
 			return sourceObject;
 		}
@@ -317,13 +317,8 @@ public class SODFile extends PassportFile
 		/* TODO: where is that DERTaggedObject specified? */
 		ASN1Encodable[] fileContents = { SIGNED_DATA_OID, new DERTaggedObject(0, signedData) };
 		ASN1Sequence fileContentsObject = new DERSequence(fileContents);
-		try {
-			BERTLVObject sodFile = new BERTLVObject(EF_SOD_TAG, fileContentsObject.getEncoded(), false);
-			return sodFile.getEncoded();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			throw new IllegalStateException(ioe.getMessage());
-		}
+		BERTLVObject sodFile = new BERTLVObject(EF_SOD_TAG, fileContentsObject.getEncoded(), false);
+		return sodFile.getEncoded();
 	}
 
 	/**
@@ -594,11 +589,24 @@ public class SODFile extends PassportFile
 		if (obj == this) { return true; }
 		if (!obj.getClass().equals(this.getClass())) { return false; }
 		SODFile other = (SODFile)obj;
-		return Arrays.equals(getEncoded(), other.getEncoded());
+		try {
+			return Arrays.equals(getEncoded(), other.getEncoded());
+		} catch (IOException e) {
+			// shouldn't really happen...
+			return false;
+		}
 	}
 
 	public int hashCode() {
-		return 11 * Arrays.hashCode(getEncoded()) + 111;
+		int hash = 0;
+		
+		try {
+			hash += Arrays.hashCode(getEncoded());
+		} catch (IOException e) {
+			// NOPMD
+		}
+		
+		return 11 * hash + 111;
 	}
 
 	/* ONLY PRIVATE METHODS BELOW */

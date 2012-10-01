@@ -22,6 +22,8 @@
 
 package org.signserver.module.mrtdsodsigner.jmrtd;
 
+import java.io.IOException;
+
 
 /**
  * Super class for passport files (EF_COM, EF_SOD, and data groups).
@@ -76,11 +78,12 @@ public abstract class PassportFile
     * includes the ICAO tag and length.
     * 
     * @return a byte array containing the file
+    * @throws IOException
     */
    /*@ ensures
     *@    isSourceConsistent ==> \result.equals(sourceObject.getEncoded());
     */
-   public abstract byte[] getEncoded();
+   public abstract byte[] getEncoded() throws IOException;
 
    /**
     * Finds a file identifier for an ICAO tag.

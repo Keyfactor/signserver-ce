@@ -252,6 +252,9 @@ public class MRTDSODSigner extends BaseSigner {
         } catch (GeneralSecurityException e) {
             log.error("Error verifying the SOD we signed ourselves. ", e);
             throw new SignServerException("SOD verification failure", e);
+        } catch (IOException e) {
+        	log.error("Error encoding SOD", e);
+        	throw new SignServerException("SOD encoding failure", e);
         }
 
         if (log.isTraceEnabled()) {

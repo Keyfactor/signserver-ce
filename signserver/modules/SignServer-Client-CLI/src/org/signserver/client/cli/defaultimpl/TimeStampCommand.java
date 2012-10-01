@@ -493,8 +493,7 @@ public class TimeStampCommand extends AbstractCommand {
             if (instring != null) {
                 final byte[] digestBytes = instring.getBytes("UTF-8");
                 final MessageDigest dig = MessageDigest.getInstance(
-                		// TODO: not sure about this..
-                        "SHA1",
+                        TSPAlgorithms.SHA1.getId(),
                         "BC");
                 dig.update(digestBytes);
                 digest = dig.digest();
@@ -502,9 +501,8 @@ public class TimeStampCommand extends AbstractCommand {
                 doRun = false;
             }
             if (infilestring != null) {
-            	// TODO: correct to use getId() here?
             	// TSPAlgorithms constants changed from Strings to ASN1Encoded objects
-                digest = digestFile(infilestring, "SHA1");
+                digest = digestFile(infilestring, TSPAlgorithms.SHA1.getId());
                 doRun = false;
             }
             final byte[] hexDigest = Hex.encode(digest);

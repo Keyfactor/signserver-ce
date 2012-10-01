@@ -818,21 +818,7 @@ public class TimeStampSigner extends BaseSigner {
     		return bytes;
     	}
     }
-    
-    private static class SHA1DigestCalculatorProvider implements DigestCalculatorProvider {
 
-		@Override
-		public DigestCalculator get(AlgorithmIdentifier alg)
-				throws OperatorCreationException {
-			System.out.println("alg: " + alg.getAlgorithm().toString());
-			if (!alg.getAlgorithm().equals(OIWObjectIdentifiers.idSHA1)) {
-				throw new OperatorCreationException("Must request calculator for SHA-1");
-			}
-			return new SHA1DigestCalculator();
-		}
-    	
-    }
-    
     /**
      * @return True if each certificate in the certificate chain can be verified 
      * by the next certificate (if any). This does not check that the last 

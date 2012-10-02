@@ -71,7 +71,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     private static String CERTSTRING = "MIIEkTCCAnmgAwIBAgIIeCvAS5OwAJswDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzEyMTU1NVoXDTIxMDUyNDEyMTU1NVowSjEUMBIGA1UEAwwLVFMgU2lnbmVyIDExEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnT38GG8i/bGnuFMwnOdg+caHMkdPBacRdBaIggwMPfE50SOZ2TLrDEHJotxYda7HS0+tX5dIcalmEYCls/ptHzO5TQpqdRTuTqxp5cMA379yhD0OqTVNAmHrvPj9IytktoAtB/xcjwkRTHagaCmg5SWNcLKyVUct7nbeRA5yDSJQsCAEGHNZbJ50vATg1DQEyKT87GKfSBsclA0WIIIHMt8/SRhpsUZxESayU6YA4KCxVtexF5x+COLB6CzzlRG9JA8WpX9yKgIMsMDAscsJLiLPjhET5hwAFm5ZRfQQG9LI06QNTGqukuTlDbYrQGAUR5ZXW00WNHfgS00CjUCu0QIDAQABo3gwdjAdBgNVHQ4EFgQUOF0FflO2G+IN6c92pCNlPoorGVwwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCB4AwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggIBADELkeIO9aiKjS/GaBUUhMr+k5UbVeK69WapU+7gTsWwa9D2vAOhAkfQ1OcUJoZaminv8pcNfo1Ey5qLtxBCmUy1fVomVWOPl6u1w8B6uYgE608hi2bfx28uIeksqpdqUX0Qf6ReUyl+FOh4xNrsyaF81TrIKt8ekq0iD+YAtT/jqgv4bUvs5fgIms4QOXgMUzNAP7cPU44KxcmR5I5Uy/Ag82hGIz64hZmeIDT0X59kbQvlZqFaiZvYOikoZSFvdM5kSVfItMgp7qmyLxuM/WaXqJWp6Mm+8ZZmcECugd4AEpE7xIiB7M/KEe+X4ItBNTKdAoaxWa+yeuYS7ol9rHt+Nogelj/06ZRQ0x03UqC7uKpgYAICjQEXIjcZofWSTh9KzKNfS1sQyIQ6yNTT2VMdYW9JC2OLKPV4AEJuBw30X8HOciJRRXOq9KRrIA2RSiaC5/3oAYscWuo31Fmj8CWQknXAIb39gPuZRwGOJbi1tUu2zmRsUNJfAe3hnvk+uxhnyp2vKB2KN5/VQgisx+8doEK/+Nbj/PPG/zASKimWG++5m0JNY4chIfR43gDDcF+4INof/8V84wbvUF+TpvP/mYM8wC9OkUyRvzqv9vjWOncCdbdjCuqPxDItwm9hhr+PbxsMaBes9rAiV9YT1FnpA++YpCufveFCQPDbCTgJ";
 
     /** Dummy OID used for testing an invalid hashing algorithm */
-    private static String DUMMY_OID = "42.42.42.42";
+    private static String DUMMY_OID = "1.42.42.42.42";
     
     /**
      * Base64 encoded request with policy 1.2.3.5.
@@ -266,9 +266,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         	// check response
         	timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
         	timeStampResponse.validate(timeStampRequest);
-        	
-        	LOG.info("Response: " + timeStampResponse.getStatusString());
-        	
+      	
         	if (timeStampResponse.getStatus() != PKIStatus.GRANTED) {
         		// return early and don't attempt to get a token
         		return timeStampResponse.getStatus();
@@ -373,14 +371,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
     	workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ACCEPTEDALGORITHMS);
     	workerSession.reloadConfiguration(WORKER1);
     	
-    	try {
-    		testWithHash(new ASN1ObjectIdentifier(DUMMY_OID));
-    	} catch (IllegalArgumentException e) {
-    		// specifying an invalid algorithm should yield an IllegalArgumentException
-    		return;
-    	}
-    	
-    	fail("Should not accept an invalid hash algorithm");
+    	ASN1ObjectIdentifier oid = new ASN1ObjectIdentifier(DUMMY_OID);
+    	int status = testWithHash(oid);
+
+    	assertEquals("Should not accept an invalid hash algorithm", PKIStatus.REJECTION, status);
     }
 
     /**

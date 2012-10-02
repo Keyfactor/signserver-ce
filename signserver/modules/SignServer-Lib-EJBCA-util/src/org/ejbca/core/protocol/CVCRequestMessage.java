@@ -184,12 +184,10 @@ public class CVCRequestMessage implements IRequestMessage {
      *
      * @return issuerDN of receiving CA or null.
      */
-    /*
     public String getIssuerDN() {
     	CardVerifiableCertificate cc = getCardVerifiableCertificate();
         return CertTools.getIssuerDN(cc);
     }
-    */
 
     /**
      * Could get the sequence (of CVC cert). For CVC certificate this does not combine well with getIssuerDN to identify
@@ -226,23 +224,19 @@ public class CVCRequestMessage implements IRequestMessage {
      *
      * @return subject DN from certification request or null.
      */
-    /*
     public String getRequestDN() {
     	CardVerifiableCertificate cc = getCardVerifiableCertificate();
         return CertTools.getSubjectDN(cc);
     }
-    */
 
     /**
      * @see IRequestMessage#getRequestX509Name()
      */
-    /*
     public X500Name getRequestX500Name() {
     	String dn = getRequestDN();
     	X500Name name = new X500Name(dn);
     	return name;
     }
-	*/
 
     public String getRequestAltNames() {
     	return null;

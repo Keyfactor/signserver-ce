@@ -53,7 +53,7 @@ public interface IRequestMessage extends Serializable {
      *
      * @return issuerDN of receiving CA or null.
      */
-    //public String getIssuerDN();
+    public String getIssuerDN();
 
     /**
      * Gets the number (of CA cert) from IssuerAndSerialNumber. Combined with getIssuerDN to identify
@@ -68,14 +68,14 @@ public interface IRequestMessage extends Serializable {
      *
      * @return requested DN or null.
      */
-    //public String getRequestDN();
+    public String getRequestDN();
 
     /**
      * Gets the requested DN in the pure form of an X500Name (the desired DN for the user).
      *
      * @return requested DN or null.
      */
-    //public X500Name getRequestX500Name();
+    public X500Name getRequestX500Name();
 
     /**
      * Gets the requested altNames if contained in the request (the desired altNames for the user).

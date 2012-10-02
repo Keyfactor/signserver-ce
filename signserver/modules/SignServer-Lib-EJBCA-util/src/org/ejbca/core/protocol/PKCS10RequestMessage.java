@@ -532,7 +532,6 @@ public class PKCS10RequestMessage implements IRequestMessage {
             AlgorithmIdentifier sigAlg = cr.getSignatureAlgorithm();
             
             if (pubKey == null) {
-            	// TODO: is this correct?
             	ContentVerifierProvider verifierProvider =
             			verifierProviderBuilder.build(pkcs10.getPublicKey());
             	ContentVerifier verifier = verifierProvider.get(sigAlg);

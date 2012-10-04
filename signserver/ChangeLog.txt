@@ -1,3 +1,48 @@
+SignServer 3.2.3, 2012-09-28
+----------------------------
+
+** Bug
+    * [DSS-466] - Client CLI only supports 10 arguments on Windows
+    * [DSS-467] - IndexOutOfBoundsException displaying CLI help text on Windows
+    * [DSS-468] - Client CLI writes warning on standard output when APPSRV_HOME is not set
+    * [DSS-484] - Inserts null value when removing last wsadmin on Oracle
+    * [DSS-507] - PDF Signature can not be larger than 15000 bytes
+    * [DSS-508] - Sample configuration for renewal worker not functional
+    * [DSS-510] - Documentation and CLI references timeStampClient.jar
+    * [DSS-514] - Documentation should mention setting up JCE policy files when Oracle JDK is used
+    * [DSS-520] - Regression: Timestamp client does not output message digest
+    * [DSS-534] - TimeStampSigner signature algorithm should be independent of requested hash algorithm
+    * [DSS-537] - Handle CryptoTokenOfflineException thrown from the workers in special cases
+    * [DSS-552] - RenewalWorker can not be called using AdminWS with client certificate authentication on JBoss
+
+** Improvement
+    * [DSS-482] - Don't use System.out.println for printing messages in the admin CLI wsadmins command
+    * [DSS-497] - Test cases for TSA with other hash algorithms than SHA1
+    * [DSS-523] - Add upgrade instructions to the documentation
+    * [DSS-536] - Check that the timestamp signer certificate is included in the certificate chain
+    * [DSS-538] - Add test case checking that disabled workers does not accept requests
+    * [DSS-540] - Make it configurable to disable the key usage counter
+    * [DSS-541] - Add link to Health check on front page
+    * [DSS-546] - Report signer status offline when the TimeStampSigner certificate is missing the EKU
+    * [DSS-548] - Signer certificate check in Health check for all Signers
+
+** New Feature
+    * [DSS-530] - Support for SignServer without database
+    * [DSS-502] - Script for test signing of each different document
+    * [DSS-504] - Support for choosing log level for the worker loggers
+    * [DSS-509] - Support for supplying filename as request metadata
+    * [DSS-527] - Down-for-maintenance support in Health check
+    * [DSS-528] - Test signing and certificate chain verification in Health check
+    * [DSS-529] - Health check response of TimeStampSigner should consider status of timesource
+    * [DSS-531] - Make it configurable to use a database or not
+    * [DSS-532] - Create file based data services to use instead of database
+    * [DSS-533] - Tool for random stress testing of signings with the no database option
+
+** Task
+    * [DSS-478] - Update documentation for setting up the truststore
+    * [DSS-483] - Renew test certificates that has expired
+    * [DSS-526] - Update doc site looks to be similar to ejbca
+
 SignServer 3.2.2, 2012-03-20
 ----------------------------
 

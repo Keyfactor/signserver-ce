@@ -25,10 +25,20 @@ SignServer 3.2.3
 ----------------
 
 Major new features and improvements:
- - 
+ - Support for SignServer without database
+ - Configurable to disable the key usage counter
+ - Signer certificate check in Health check for all Signers
+ - Check that the timestamp signer certificate is included in the certificate chain
+ - Health check response of TimeStampSigner now considers status of time source
+ - Down-for-maintenance support in Health check
+ - Support for supplying filename as request metadata
 
 Bug fixes:
- - 
+ - Client CLI only supported 10 arguments on Windows
+ - Null value was inserted when removing last wsadmin on Oracle
+ - PDF Signature could not be larger than 15000 bytes
+ - Sample configuration for renewal worker not functional
+ - Various documentation updates
 
 Notice:
  - Same internal API changes has been done as part of DSS-528. If you have 

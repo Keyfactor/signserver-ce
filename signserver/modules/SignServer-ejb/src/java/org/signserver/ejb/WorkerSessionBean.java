@@ -639,7 +639,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (workerId == 0) {
             globalConfigurationSession.reload();
         } else {
-            workerManagerSession.reloadWorker(workerId, this, globalConfigurationSession);
+            workerManagerSession.reloadWorker(workerId, globalConfigurationSession);
 
             // Try to insert a key usage counter entry for this worker's public
             // key

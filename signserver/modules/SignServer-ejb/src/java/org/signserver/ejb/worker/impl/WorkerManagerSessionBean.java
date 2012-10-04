@@ -18,11 +18,9 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.WorkerSessionBean;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal;
 import org.signserver.server.*;
@@ -90,7 +88,7 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     }
 
     @Override
-    public void reloadWorker(int workerId, WorkerSessionBean aThis, ILocal globalConfigurationSession) {
+    public void reloadWorker(int workerId, ILocal globalConfigurationSession) {
         workerFactory.reloadWorker(workerId,
                     workerConfigService, globalConfigurationSession, workerContext);
     }

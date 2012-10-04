@@ -36,10 +36,6 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(FileBasedWorkerConfigDataService.class);
     
-    /** Audit logger. */
-// TODO: DSS-550
-//    private static final ISystemLogger AUDITLOG = SystemLoggerFactory.getInstance().getLogger(WorkerConfigDataService.class);
-    
     private final FileBasedDatabaseManager manager;
     private final File folder;
     private static final String PREFIX = "signerdata-";
@@ -112,7 +108,6 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
      */
     @Override
     public void setWorkerConfig(int workerId, WorkerConfig signconf) throws FileBasedDatabaseException {
-        //        auditLog(workerId, "setWorkerConfig");
         synchronized (manager) {
             // We must base64 encode string for UTF safety
             HashMap a = new Base64PutHashMap();
@@ -180,23 +175,6 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 
         return workerConfig;
     }
-
-// TODO: DSS-550
-//    private void auditLog(final int workerId, final String operation) {
-//        try {
-//            final Map<String, String> logMap = new HashMap<String, String>();
-//
-//            logMap.put(ISystemLogger.LOG_CLASS_NAME,
-//                    WorkerConfigDataService.class.getSimpleName());
-//            logMap.put(ISystemLogger.LOG_WORKER_ID, String.valueOf(workerId));
-//            logMap.put(IWorkerConfigDataService.LOG_OPERATION,
-//                    operation);
-//            AUDITLOG.log(logMap);
-//        } catch (SystemLoggerException ex) {
-//            LOG.error("Audit log failure", ex);
-//            throw new EJBException("Audit log failure", ex);
-//        }
-//    }
 
     private WorkerConfigDataBean loadData(final int workerId) throws IOException {
         assert Thread.holdsLock(manager);

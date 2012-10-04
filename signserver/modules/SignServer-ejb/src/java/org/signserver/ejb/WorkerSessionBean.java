@@ -21,6 +21,7 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -843,7 +844,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     public void setWorkerProperty(int workerId, String key, String value) {
         WorkerConfig config = getWorkerConfig(workerId);
         config.setProperty(key.toUpperCase(), value);
-        workerConfigService.setWorkerConfig(workerId, config);
+        setWorkerConfig(workerId, config);
     }
 
     /* (non-Javadoc)
@@ -855,10 +856,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         result = config.removeProperty(key.toUpperCase());
         if (config.getProperties().size() == 0) {
+            auditLog(workerId, "removeWorkerConfig");
             workerConfigService.removeWorkerConfig(workerId);
             LOG.debug("WorkerConfig is empty and therefore removed.");
         } else {
-            workerConfigService.setWorkerConfig(workerId, config);
+            setWorkerConfig(workerId, config);
         }
         return result;
     }
@@ -877,7 +879,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     public void addAuthorizedClient(int signerId, AuthorizedClient authClient) {
         WorkerConfig config = getWorkerConfig(signerId);
         (new ProcessableConfig(config)).addAuthorizedClient(authClient);
-        workerConfigService.setWorkerConfig(signerId, config);
+        setWorkerConfig(signerId, config);
     }
 
     /* (non-Javadoc)
@@ -891,7 +893,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         result = (new ProcessableConfig(config)).removeAuthorizedClient(
                 authClient);
-        workerConfigService.setWorkerConfig(signerId, config);
+        setWorkerConfig(signerId, config);
         return result;
     }
 
@@ -1034,7 +1036,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         final Certificate cert  = CertTools.getCertfromByteArray(signerCert);
         ( new ProcessableConfig(config)).setSignerCertificate((X509Certificate)cert,scope);
-        workerConfigService.setWorkerConfig(signerId, config);
+        setWorkerConfig(signerId, config);
     }
 
     /* (non-Javadoc)
@@ -1055,7 +1057,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     	// Collections.reverse(certs); // TODO: Why?
 
         (new ProcessableConfig( config)).setSignerCertificateChain(certs, scope);
-        workerConfigService.setWorkerConfig(signerId, config);
+        setWorkerConfig(signerId, config);
     }
 
     /* (non-Javadoc)
@@ -1174,6 +1176,25 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     @Override
     public List<Integer> getWorkers(int workerType) {
         return workerManagerSession.getWorkers(workerType, globalConfigurationSession);
+    }
+    
+    private void auditLog(final int workerId, final String operation) {
+        try {
+            final Map<String, String> logMap = new HashMap<String, String>();
+
+            logMap.put(ISystemLogger.LOG_CLASS_NAME, WorkerConfigDataService.class.getSimpleName());
+            logMap.put(ISystemLogger.LOG_WORKER_ID, String.valueOf(workerId));
+            logMap.put(IWorkerConfigDataService.LOG_OPERATION, operation);
+            AUDITLOG.log(logMap);
+        } catch (SystemLoggerException ex) {
+            LOG.error("Audit log failure", ex);
+            throw new EJBException("Audit log failure", ex);
+        }
+    }
+    
+    private void setWorkerConfig(final int workerId, final WorkerConfig config) {
+        auditLog(workerId, "setWorkerConfig");
+        workerConfigService.setWorkerConfig(workerId, config);
     }
     
 }

@@ -35,9 +35,6 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(WorkerConfigDataService.class);
     
-    /** Audit logger. */
-//    private static final ISystemLogger AUDITLOG = SystemLoggerFactory.getInstance().getLogger(WorkerConfigDataService.class);
-    
     private EntityManager em;
 
     public WorkerConfigDataService(EntityManager em) {
@@ -114,7 +111,6 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      */
     public void setWorkerConfig(int workerId, WorkerConfig signconf) {
         setWorkerConfig(workerId, signconf, null);
-//        auditLog(workerId, "setWorkerConfig");
     }
 
     /**
@@ -178,19 +174,4 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         return workerConfig;
     }
 
-//    private void auditLog(final int workerId, final String operation) {
-//        try {
-//            final Map<String, String> logMap = new HashMap<String, String>();
-//
-//            logMap.put(ISystemLogger.LOG_CLASS_NAME,
-//                    WorkerConfigDataService.class.getSimpleName());
-//            logMap.put(ISystemLogger.LOG_WORKER_ID, String.valueOf(workerId));
-//            logMap.put(IWorkerConfigDataService.LOG_OPERATION,
-//                    operation);
-//            AUDITLOG.log(logMap);
-//        } catch (SystemLoggerException ex) {
-//            LOG.error("Audit log failure", ex);
-//            throw new EJBException("Audit log failure", ex);
-//        }
-//    }
 }

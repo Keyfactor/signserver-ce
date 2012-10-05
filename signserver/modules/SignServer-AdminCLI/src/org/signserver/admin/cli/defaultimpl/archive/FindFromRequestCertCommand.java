@@ -32,7 +32,7 @@ public class FindFromRequestCertCommand extends AbstractAdminCommand {
 
     @Override
     public String getDescription() {
-        return "Returns all archive datas requested from given IP";
+        return "Returns all archive datas requested from given certificate details";
     }
 
     @Override

@@ -4172,16 +4172,97 @@ After the certificate chain has been uploaded to the server, the configuration m
             </section>
             
             <section name="Archivers">
+                <p>
+See also the section about the <a href="complete.en.html#Archiving%20Responses">ARCHIVERS</a> worker property that can be set to one or more of the available Archiver implementations described below.
+                </p>
                 <subsection name="OldDatabaseArchiver">
                     <p>
 The default archiver used if the the property ARCHIVE=true is set. Or if the ARCHIVERS property contains its class name. This Archiver archives to the database table "ArchiveData" using the same datasource as SignServer uses for accessing the database for its configuration etc.
                     </p>
                     <p>
-The data is stored in an XML encoded Base64PutHashMap. In the "dataEncoding" column this format is indicated as 0 (or "null" for backwards compatibility).
+The data is stored in an XML encoded Base64PutHashMap. In the "dataEncoding" column this format is indicated as DATA_ENCODING_XML.
                     </p>
                     <p>
 The fully qualified class name is: <b>org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver</b>
                     </p>
+                    
+                    <subsubsection name="ArchiveData table">
+                        <p>
+The exact database table structure is described in the SQL scripts available under doc/sql-scripts/.                            
+                        </p>
+                        <table border="1">
+                            <tr>
+                                <td>uniqueId</td>
+                                <td>Primary key of the archive row.</td>
+                            </tr>
+                            <tr>
+                                <td>archiveData</td>
+                                <td>The actual data encoded in an Base64PutHashMap.</td>
+                            </tr>
+                            <tr>
+                                <td>archiveId</td>
+                                <td>
+Some identifier for the produced item.<br/>
+For the TimeStampSigner this would be the Time stamp token serial number (in hex encoding). Other signers might use a hash of the final document.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>requestCertSerialnumber</td>
+                                <td>
+Serial number (in hex encoding) of the client certificate (if any) used by the client.<br/>
+Notice: This only indicates that the client certificate where used when establishing the connection to the web server and not wither the worker required a client certificate or not or if it did any additional checks if the authenticated client was authorized.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>requestIP</td>
+                                <td>
+IP address of the host connecting to SignServer.<br/>
+Currently X-FORWARDED-FOR headers are not considered.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>requestIssuerDN</td>
+                                <td>
+Issuer DN (in string representation) of the issuer of the client certificate (if any) used by the client.<br/>
+See also note about requestCertSerialnumber.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>signerId</td>
+                                <td>
+ID of the worker handling the request.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>time</td>
+                                <td>
+Timestamp (number of milliseconds since January 1 1970 00:00:00) on the SignServer host when the item where archived.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>type</td>
+                                <td>
+The type of archivable item. Currently this could be:
+                                    <ul>
+                                        <li>0 - TYPE_RESPONSE</li>
+                                    </ul>
+In the future this could also be the request or other related items.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>dataEncoding</td>
+                                <td>
+Type of encoding used for the archiveData. Currently this could be:
+                                    <ul>
+                                        <li>NULL - DATA_ENCODING_XML</li>
+                                        <li>0 - DATA_ENCODING_XML</li>
+                                        <li>1 - DATA_ENCODING_BASE64</li>
+                                    </ul>
+Where DATA_ENCODING_XML uses the Base64PutHashMap and DATA_ENCODING_BASE64 uses a plain Base64 encoding of the binary data.
+                                </td>
+                            </tr>
+                        </table>
+                    </subsubsection>
                 </subsection>
                 
                 <subsection name="Base64DatabaseArchiver">
@@ -4189,7 +4270,7 @@ The fully qualified class name is: <b>org.signserver.server.archive.olddbarchive
 This Archiver archives to the database table "ArchiveData" using the same datasource as SignServer uses for accessing the database for its configuration etc. It is similar to the OldDatabaseArchiver but does not use an XML structure for storing the data. Instead the data is simply base64 encoded.
                     </p>
                     <p>
-In the "dataEncoding" column this format is indicated as 1.    
+In the "dataEncoding" column this format is indicated as DATA_ENCODING_BASE64.    
                     </p>
                     <p>
 The fully qualified class name is: <b>org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver</b>

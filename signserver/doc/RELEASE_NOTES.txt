@@ -2,12 +2,16 @@ SignServer 3.3.0
 ----------------
 
 Major changes:
- - Drop support for JBoss 4.2.x.
+ - Dropped support for JBoss 4.2.x.
+ - Dropped support for cluster class loader
+ - Dropped support for WSRA
 
 TODO
 
 
 Notice:
+ - A database change where introduced. See UPGRADE.txt for details.
+ - A dependency where upgraded. See UPGRADE.txt for details.
  - Apache Ant 1.8.0 or later is now required to build SignServer.
  - The property "custom.commandfactory" is no longer supported. See the manual 
    for how to add custom Admin or Client CLI commands.

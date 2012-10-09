@@ -265,7 +265,7 @@ public class SignServerCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsadmins", "-list"));
         assertPrinted("", cli.getOut(), "1d9fa8b71c75b564");
-        assertPrinted("", cli.getOut(), "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE");
+        assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
      
         // Test adding wsadmin using a DER file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
@@ -274,7 +274,7 @@ public class SignServerCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsadmins", "-list"));
         assertPrinted("", cli.getOut(), "53f6992d081248a");
-        assertPrinted("", cli.getOut(), "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE");
+        assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
     }
     
     /**

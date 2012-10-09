@@ -2782,7 +2782,7 @@ public class CertTools {
      * java.util.StringTokenizer. Taken from BouncyCastle, but does NOT
      * use or consider escaped characters. Used for reversing DNs without unescaping.
      */
-    private static class BasicX509NameTokenizer
+    public static class BasicX509NameTokenizer
     {
         private String          oid;
         private int             index;

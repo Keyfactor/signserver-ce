@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import org.bouncycastle.asn1.x509.CRLReason;
-import org.bouncycastle.ocsp.OCSPReq;
+import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.ejbca.util.CertTools;
 import org.signserver.common.SignServerException;
 

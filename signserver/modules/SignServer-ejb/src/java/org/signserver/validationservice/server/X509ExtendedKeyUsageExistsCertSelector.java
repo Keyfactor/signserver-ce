@@ -16,6 +16,7 @@ import java.security.cert.CertSelector;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
+import org.bouncycastle.util.Selector;
 
 /**
  * CertSelector used to match specific extended key usage existence in the 
@@ -24,7 +25,7 @@ import java.security.cert.X509Certificate;
  * @author rayback2
  * @version $Id$
  */
-public class X509ExtendedKeyUsageExistsCertSelector implements CertSelector {
+public class X509ExtendedKeyUsageExistsCertSelector implements CertSelector, Selector {
 
     private String oIDToCheck; // extended key usage OID to check for existence
 
@@ -32,6 +33,7 @@ public class X509ExtendedKeyUsageExistsCertSelector implements CertSelector {
         this.oIDToCheck = oIDToCheck;
     }
 
+    @Override
     public boolean match(Certificate cert) {
 
         //match certificate containing specified extended key usage
@@ -58,5 +60,14 @@ public class X509ExtendedKeyUsageExistsCertSelector implements CertSelector {
     @Override
     public X509ExtendedKeyUsageExistsCertSelector clone() {
         return new X509ExtendedKeyUsageExistsCertSelector(oIDToCheck);
+    }
+
+    @Override
+    public boolean match(final Object o) {
+        boolean result = false;
+        if (o instanceof Certificate) {
+            result = match ((Certificate) o);
+        }
+        return result;
     }
 }

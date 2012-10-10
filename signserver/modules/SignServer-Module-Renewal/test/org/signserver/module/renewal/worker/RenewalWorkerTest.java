@@ -130,6 +130,9 @@ public class RenewalWorkerTest extends AbstractTestCase {
         assertTrue("should have requested certificate",
                 mockEjbcaWs.isPkcs10RequestCalled());
 
+        // Check that the right DN is included
+        assertEquals("Requested DN", "CN=" + SIGNER_6102_ENDENTITY, mockEjbcaWs.getLastPKCS10().getRequestDN());
+        
         // Should have certificate and chain
         final X509Certificate cert = (X509Certificate) getWorkerSession()
                 .getSignerCertificate(SIGNERID_6102);

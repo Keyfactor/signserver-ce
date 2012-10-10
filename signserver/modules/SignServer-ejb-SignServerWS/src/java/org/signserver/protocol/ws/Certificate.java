@@ -17,11 +17,8 @@ import java.security.NoSuchProviderException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-
 import javax.xml.bind.annotation.XmlTransient;
-
 import org.ejbca.util.Base64;
-import org.signserver.validationservice.common.ICertificate;
 
 /**
  * Class representing a certificate sent through WebService in
@@ -48,15 +45,6 @@ public class Certificate {
      */
     public Certificate(java.security.cert.Certificate cert) throws CertificateEncodingException {
         setCertificate(cert);
-    }
-
-    /**
-     * Constructor from  generated object
-     * @param cert an ICertificate
-     * @throws CertificateEncodingException 
-     */
-    public Certificate(ICertificate cert) throws CertificateEncodingException {
-        setCertificateBase64(new String(Base64.encode(cert.getEncoded())));
     }
 
     /**

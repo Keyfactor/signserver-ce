@@ -25,24 +25,12 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.ejbca.util.CertTools;
+import org.signserver.common.*;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
-import org.signserver.common.ArchiveData;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.ISignRequest;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SODSignRequest;
-import org.signserver.common.SODSignResponse;
-import org.signserver.common.SignServerException;
-import org.signserver.common.SignerStatus;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -246,9 +234,9 @@ public class MRTDSODSigner extends BaseSigner {
             }
             // Return response
             final byte[] signedbytes = sod.getEncoded();
-            String fp = CertTools.getFingerprintAsString(signedbytes);
+            final String archiveId = createArchiveId(signedbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
             ret = new SODSignResponse(sReq.getRequestID(), signedbytes, cert,
-                    fp, new ArchiveData(signedbytes));
+                    archiveId, new ArchiveData(signedbytes));
         } catch (GeneralSecurityException e) {
             log.error("Error verifying the SOD we signed ourselves. ", e);
             throw new SignServerException("SOD verification failure", e);

@@ -12,39 +12,29 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
-import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SignatureException;
+import java.io.IOException;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
 import java.util.Collection;
 import java.util.Properties;
-
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.ECKeyUtil;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.core.model.ca.catoken.CATokenAuthenticationFailedException;
 import org.ejbca.core.model.ca.catoken.CATokenOfflineException;
 import org.ejbca.core.model.ca.catoken.ICAToken;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
-import org.signserver.common.Base64SignerCertReqData;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.PKCS10CertReqInfo;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.SignerStatus;
-import org.signserver.common.KeyTestResult;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.common.*;
 
 /**
  * A base class to wrap around CATokens from EJBCA. Makes it easy to use CA Tokens from EJBCA 
@@ -185,6 +175,7 @@ public abstract class CryptoTokenBase implements ICryptoToken {
         return null;
     }
 
+    // TODO: The genCertificateRequest method is mostly a duplicate of the one in CryptoTokenBase, PKCS11CryptoTooken, KeyStoreCryptoToken and SoftCryptoToken.
     @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             final boolean explicitEccParameters, final boolean defaultKey)
@@ -197,8 +188,10 @@ public abstract class CryptoTokenBase implements ICryptoToken {
                     ? PURPOSE_SIGN : PURPOSE_NEXTKEY;
             if (log.isDebugEnabled()) {
                 log.debug("Purpose: " + purpose);
-                log.debug("explicitEccParameters: "
-                        + explicitEccParameters);
+                log.debug("signatureAlgorithm: "
+                        + reqInfo.getSignatureAlgorithm());
+                log.debug("subjectDN: " + reqInfo.getSubjectDN());
+                log.debug("explicitEccParameters: " + explicitEccParameters);
             }
 
             try {
@@ -211,16 +204,18 @@ public abstract class CryptoTokenBase implements ICryptoToken {
                             "BC");
                 }
                 // Generate request
-                pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(), CertTools.stringToBcX509Name(reqInfo.getSubjectDN()), publicKey, reqInfo.getAttributes(), getPrivateKey(purpose), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+                final JcaPKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(new X500Name(CertTools.stringToBCDNString(reqInfo.getSubjectDN())), publicKey);
+                final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(getPrivateKey(purpose));
+                pkcs10 = builder.build(contentSigner);
                 retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
-            } catch (InvalidKeyException e) {
-                log.error(e);
+            } catch (IOException e) {
+                log.error("Certificate request error: " + e.getMessage(), e);
+            } catch (OperatorCreationException e) {
+                log.error("Certificate request error: signer could not be initialized", e);
             } catch (NoSuchAlgorithmException e) {
-                log.error(e);
+                log.error("Certificate request error: " + e.getMessage(), e);
             } catch (NoSuchProviderException e) {
-                log.error(e);
-            } catch (SignatureException e) {
-                log.error(e);
+                log.error("Certificate request error: " + e.getMessage(), e);
             }
 
         }

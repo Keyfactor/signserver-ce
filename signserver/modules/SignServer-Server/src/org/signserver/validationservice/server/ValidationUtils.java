@@ -19,16 +19,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.NoSuchProviderException;
-import java.security.cert.CRLException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509CRL;
-import java.security.cert.X509CRLEntry;
-
+import java.security.cert.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.DEREnumerated;
 import org.bouncycastle.asn1.x509.CRLReason;
-import org.bouncycastle.asn1.x509.X509Extensions;
+import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.x509.extension.X509ExtensionUtil;
 import org.signserver.common.SignServerException;
 
@@ -197,7 +192,7 @@ public class ValidationUtils {
     public static int getReasonCodeFromCRLEntry(X509CRLEntry crlEntry)
             throws IOException {
         // retrieve reason
-        byte[] reasonBytes = crlEntry.getExtensionValue(X509Extensions.ReasonCode.getId());
+        byte[] reasonBytes = crlEntry.getExtensionValue(X509Extension.reasonCode.getId());
         if (reasonBytes == null) {
             // if null then unspecified (RFC 3280)
             return CRLReason.unspecified;

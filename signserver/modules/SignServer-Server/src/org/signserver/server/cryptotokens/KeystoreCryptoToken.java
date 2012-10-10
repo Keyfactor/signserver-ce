@@ -12,59 +12,29 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigInteger;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import javax.security.auth.x500.X500Principal;
-
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
-import org.bouncycastle.x509.X509V3CertificateGenerator;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
-import org.signserver.common.Base64SignerCertReqData;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.PKCS10CertReqInfo;
-import org.signserver.common.SignerStatus;
-import org.signserver.common.KeyTestResult;
-import org.signserver.server.cryptotokens.ICryptoToken;
-import org.signserver.server.cryptotokens.IKeyGenerator;
+import org.signserver.common.*;
 
 /**
  * Class that uses a PKCS12 or JKS file on the file system for signing.
@@ -374,6 +344,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
         return result;
     }
 
+    // TODO: The genCertificateRequest method is mostly a duplicate of the one in CryptoTokenBase, PKCS11CryptoTooken, KeyStoreCryptoToken and SoftCryptoToken.
     /**
      * @see ICryptoToken#genCertificateRequest(org.signserver.common.ISignerCertReqInfo, boolean, boolean)
      */
@@ -385,7 +356,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
         Base64SignerCertReqData retval = null;
         if (info instanceof PKCS10CertReqInfo) {
             PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
-            PKCS10CertificationRequest pkcs10;
+            org.bouncycastle.pkcs.PKCS10CertificationRequest pkcs10;
             final int purpose = defaultKey
                     ? PURPOSE_SIGN : PURPOSE_NEXTKEY;
             if (LOG.isDebugEnabled()) {
@@ -395,29 +366,28 @@ public class KeystoreCryptoToken implements ICryptoToken,
                 LOG.debug("subjectDN: " + reqInfo.getSubjectDN());
                 LOG.debug("explicitEccParameters: " + explicitEccParameters);
             }
+
             try {
                 PublicKey publicKey = getPublicKey(purpose);
 
                 // Handle ECDSA key with explicit parameters
                 if (explicitEccParameters
                         && publicKey.getAlgorithm().contains("EC")) {
-                     publicKey = ECKeyUtil.publicToExplicitParameters(publicKey,
-                             "BC");
+                    publicKey = ECKeyUtil.publicToExplicitParameters(publicKey,
+                            "BC");
                 }
-
                 // Generate request
-                pkcs10 = new PKCS10CertificationRequest(
-                        reqInfo.getSignatureAlgorithm(),
-                        CertTools.stringToBcX509Name(reqInfo.getSubjectDN()),
-                        publicKey, reqInfo.getAttributes(), getPrivateKey(purpose), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+                final JcaPKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(new X500Name(CertTools.stringToBCDNString(reqInfo.getSubjectDN())), publicKey);
+                final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(getPrivateKey(purpose));
+                pkcs10 = builder.build(contentSigner);
                 retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
-            } catch (InvalidKeyException e) {
+            } catch (IOException e) {
                 LOG.error("Certificate request error: " + e.getMessage(), e);
+            } catch (OperatorCreationException e) {
+                LOG.error("Certificate request error: signer could not be initialized", e);
             } catch (NoSuchAlgorithmException e) {
                 LOG.error("Certificate request error: " + e.getMessage(), e);
             } catch (NoSuchProviderException e) {
-                LOG.error("Certificate request error: " + e.getMessage(), e);
-            } catch (SignatureException e) {
                 LOG.error("Certificate request error: " + e.getMessage(), e);
             }
 
@@ -584,22 +554,19 @@ public class KeystoreCryptoToken implements ICryptoToken,
         final long currentTime = new Date().getTime();
         final Date firstDate = new Date(currentTime-24*60*60*1000);
         final Date lastDate = new Date(currentTime + validity * 1000);
-        X509V3CertificateGenerator cg = new X509V3CertificateGenerator();
+        
         // Add all mandatory attributes
-        cg.setSerialNumber(BigInteger.valueOf(firstDate.getTime()));
-        LOG.debug("keystore signing algorithm "+sigAlg);
-        cg.setSignatureAlgorithm(sigAlg);
-        cg.setSubjectDN(new X500Principal(myname));
+        LOG.debug("keystore signing algorithm " + sigAlg);
+        
         final PublicKey publicKey = keyPair.getPublic();
-        if ( publicKey==null ) {
+        if (publicKey == null) {
             throw new Exception("Public key is null");
         }
-        cg.setPublicKey(publicKey);
-        cg.setNotBefore(firstDate);
-        cg.setNotAfter(lastDate);
-        cg.setIssuerDN(new X500Principal(myname));
-        return cg.generate(keyPair.getPrivate(),
-                getProvider(PROVIDERUSAGE_SIGN));
+        
+        X509v3CertificateBuilder cg = new JcaX509v3CertificateBuilder(new X500Principal(myname), BigInteger.valueOf(firstDate.getTime()), firstDate, lastDate, new X500Principal(myname), publicKey);
+        ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(getProvider(PROVIDERUSAGE_SIGN)).build(keyPair.getPrivate());
+        
+        return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
     private static KeyStore getKeystore(final String type, final String path,

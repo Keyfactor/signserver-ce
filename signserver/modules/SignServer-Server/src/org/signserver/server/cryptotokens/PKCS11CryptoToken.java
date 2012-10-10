@@ -12,41 +12,27 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.Security;
-import java.security.Signature;
-import java.security.UnrecoverableKeyException;
+import java.io.IOException;
+import java.security.*;
 import java.security.cert.Certificate;
-import java.security.SignatureException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Properties;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PublicKey;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
-
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.ECKeyUtil;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.ejbca.core.model.ca.catoken.PKCS11CAToken;
+import org.ejbca.util.Base64;
+import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyStoreContainer;
 import org.ejbca.util.keystore.KeyStoreContainerFactory;
-import org.ejbca.util.Base64;
-import org.signserver.common.Base64SignerCertReqData;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.PKCS10CertReqInfo;
-import org.signserver.common.WorkerConfig;
-import org.ejbca.util.CertTools;
-import org.signserver.common.KeyTestResult;
+import org.signserver.common.*;
 import org.signserver.server.KeyUsageCounterHash;
 
 /**
@@ -280,6 +266,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
         return result;
     }
 
+    // TODO: The genCertificateRequest method is mostly a duplicate of the one in CryptoTokenBase, PKCS11CryptoTooken, KeyStoreCryptoToken and SoftCryptoToken.
     @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             final boolean explicitEccParameters, boolean defaultKey)
@@ -328,24 +315,22 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
                             + KeyUsageCounterHash.create(cert.getPublicKey()));
                 }
 
-                pkcs10 = new PKCS10CertificationRequest(
-                        reqInfo.getSignatureAlgorithm(),
-                        CertTools.stringToBcX509Name(reqInfo.getSubjectDN()),
-                        publicKey, reqInfo.getAttributes(),
-                        privateKey,
-                        getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+                // Generate request
+                final JcaPKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(new X500Name(CertTools.stringToBCDNString(reqInfo.getSubjectDN())), publicKey);
+                final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privateKey);
+                pkcs10 = builder.build(contentSigner);
                 retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
+            } catch (IOException e) {
+                LOG.error("Certificate request error: " + e.getMessage(), e);
+            } catch (OperatorCreationException e) {
+                LOG.error("Certificate request error: signer could not be initialized", e);
             } catch (UnrecoverableKeyException e) {
                 LOG.error("Certificate request error: " + e.getMessage(), e);
             } catch (KeyStoreException e) {
                 LOG.error("Certificate request error: " + e.getMessage(), e);
-            } catch (InvalidKeyException e) {
-                LOG.error("Certificate request error: " + e.getMessage(), e);
             } catch (NoSuchAlgorithmException e) {
                 LOG.error("Certificate request error: " + e.getMessage(), e);
             } catch (NoSuchProviderException e) {
-                LOG.error("Certificate request error: " + e.getMessage(), e);
-            } catch (SignatureException e) {
                 LOG.error("Certificate request error: " + e.getMessage(), e);
             }
 

@@ -26,7 +26,6 @@ import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
 /**
@@ -119,7 +118,7 @@ public class AnySignerTest extends ModulesTestCase {
         
         // Generate CSR
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA",
-                "CN=test01GenerateKey", null);
+                "CN=test01GenerateKey,C=SE", null);
         Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
                 .getCertificateRequest(WORKERID, certReqInfo, false, false);
         byte[] reqBytes = data.getBase64CertReq();
@@ -129,6 +128,10 @@ public class AnySignerTest extends ModulesTestCase {
         final PublicKey actualPubKey = req.getPublicKey();
 
         assertEquals("key in request", pubKey, actualPubKey);
+        
+        // Test that the DN is in the correct order
+        String actualDN = req.getCertificationRequestInfo().getSubject().toString();
+        assertTrue("dn: " + actualDN, actualDN.startsWith("CN=test01GenerateKey") && actualDN.endsWith("C=SE"));
     }
 
     /**

@@ -12,22 +12,8 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SignatureException;
+import java.io.*;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -37,26 +23,20 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Collection;
 import java.util.Properties;
 import javax.ejb.EJB;
-
 import javax.naming.NamingException;
-
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.ECKeyUtil;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
-import org.signserver.common.Base64SignerCertReqData;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.PKCS10CertReqInfo;
-import org.signserver.common.SignerStatus;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.common.KeyTestResult;
-import org.signserver.common.ServiceLocator;
-import org.signserver.server.cryptotokens.ICryptoToken;
 
 /**
  * Cryptographic token that uses soft keys stored in the worker properties in the database.
@@ -253,20 +233,21 @@ public class SoftCryptoToken implements ICryptoToken {
                             "BC");
                 }
                 // Generate request
-                pkcs10 = new PKCS10CertificationRequest(reqInfo.getSignatureAlgorithm(), CertTools.stringToBcX509Name(reqInfo.getSubjectDN()), publicKey, reqInfo.getAttributes(), newKeys.getPrivate(), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+                // Generate request
+                final JcaPKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(new X500Name(CertTools.stringToBCDNString(reqInfo.getSubjectDN())), publicKey);
+                final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(newKeys.getPrivate());
+                pkcs10 = builder.build(contentSigner);
                 retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
             }
+        } catch (IOException e) {
+            LOG.error("Certificate request error: " + e.getMessage(), e);
+        } catch (OperatorCreationException e) {
+            LOG.error("Certificate request error: signer could not be initialized", e);
         } catch (NoSuchAlgorithmException e1) {
             LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
         } catch (NoSuchProviderException e1) {
             LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
         } catch (InvalidAlgorithmParameterException e1) {
-            LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
-        } catch (InvalidKeyException e1) {
-            LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
-        } catch (SignatureException e1) {
-            LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
-        } catch (IOException e1) {
             LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);
         } catch (NamingException e1) {
             LOG.error("Error generating new certificate request : " + e1.getMessage(), e1);

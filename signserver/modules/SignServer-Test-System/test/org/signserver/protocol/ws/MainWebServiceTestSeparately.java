@@ -29,6 +29,7 @@ import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
+import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -51,12 +52,10 @@ import org.signserver.protocol.ws.gen.SignServerWSService;
 import org.signserver.protocol.ws.gen.WorkerStatusWS;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.ValidationServiceConstants;
-import org.signserver.validationservice.server.ICertificateManager;
 import org.signserver.validationservice.server.ValidationTestUtils;
 
 /**
@@ -220,7 +219,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         }
 
 
-        ValidateRequest req = new ValidateRequest(ICertificateManager.genICertificate(validCert1), ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
+        ValidateRequest req = new ValidateRequest(validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
 
         req1 = new ProcessRequestWS(req);
 
@@ -235,10 +234,10 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         assertTrue(val != null);
         assertTrue(val.getStatus().equals(Validation.Status.VALID));
         assertTrue(val.getStatusMessage() != null);
-        List<ICertificate> cAChain = val.getCAChain();
+        List<java.security.cert.Certificate> cAChain = val.getCAChain();
         assertTrue(cAChain != null);
-        assertTrue(cAChain.get(0).getSubject().equals("CN=ValidSubCA1"));
-        assertTrue(cAChain.get(1).getSubject().equals("CN=ValidRootCA1"));
+        assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=ValidSubCA1"));
+        assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
     }
 
     public void test03CallFirstNodeWithStatusOKClient() throws Exception {

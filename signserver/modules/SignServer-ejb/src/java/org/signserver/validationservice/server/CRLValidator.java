@@ -15,19 +15,7 @@ package org.signserver.validationservice.server;
 import java.net.ConnectException;
 import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.cert.CertPath;
-import java.security.cert.CertPathValidator;
-import java.security.cert.CertPathValidatorException;
-import java.security.cert.CertStore;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.CertificateNotYetValidException;
-import java.security.cert.CertificateParsingException;
-import java.security.cert.CollectionCertStoreParameters;
-import java.security.cert.PKIXCertPathValidatorResult;
-import java.security.cert.PKIXParameters;
-import java.security.cert.TrustAnchor;
+import java.security.cert.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,9 +32,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.common.X509Certificate;
 
 /**
  * CRL validator used for validating certificates using CRL only for revocation 
@@ -89,18 +75,19 @@ public class CRLValidator extends BaseValidator {
      * @throws CryptoTokenOfflineException
      * @throws SignServerException
      */
-    public Validation validate(ICertificate cert, Properties props) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Validation validate(Certificate cert, Properties props) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         LOG.debug("CRL Validator's validate called with explicit properties");
 
         this.props = props;
         return validate(cert);
     }
 
-    public Validation validate(ICertificate cert)
+    @Override
+    public Validation validate(Certificate cert)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
 
-        LOG.debug("CRL Validator's validate called with certificate " + cert.getSubject());
+        LOG.debug("CRL Validator's validate called with certificate " + CertTools.getSubjectDN(cert));
 
         //check certificate validity 
         X509Certificate xcert = (X509Certificate) cert;
@@ -112,7 +99,7 @@ public class CRLValidator extends BaseValidator {
             return new Validation(cert, null, Validation.Status.NOTYETVALID, "Certificate is not yet valid. " + e1.toString());
         }
 
-        List<ICertificate> certChain = getCertificateChain(cert);
+        List<Certificate> certChain = getCertificateChain(cert);
         // if no chain found for this certificate and if it is not trust anchor (as configured in properties) return null
         // if it is trust anchor return valid
         if (certChain == null) {
@@ -125,13 +112,13 @@ public class CRLValidator extends BaseValidator {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("***********************");
-            LOG.debug("printing certchain for " + cert.getSubject());
-            for (ICertificate tempcert : certChain) {
-                LOG.debug(tempcert.getSubject());
+            LOG.debug("printing certchain for " + CertTools.getSubjectDN(cert));
+            for (Certificate tempcert : certChain) {
+                LOG.debug(CertTools.getSubjectDN(tempcert));
             }
             LOG.debug("***********************");
         }
-        ICertificate rootCert = null; // represents root Certificate of the certificate in question
+        Certificate rootCert = null; // represents root Certificate of the certificate in question
         List<X509Certificate> certChainWithoutRootCert = new ArrayList<X509Certificate>(); // chain without root for CertPath construction 
         List<URL> cDPURLs = new ArrayList<URL>(); // list of CDPs obtained from certificates 
         List<URL> CRLPaths = getIssuerCRLPaths(cert); 	// retrieved CRL paths from issuer properties
@@ -140,10 +127,10 @@ public class CRLValidator extends BaseValidator {
         URL certURL = null;
         X509Certificate x509CurrentCert = null;
         boolean atLeastOneCDPNotFound = false;
-        Iterator<ICertificate> cACerts = certChain.iterator();
+        Iterator<Certificate> cACerts = certChain.iterator();
 
         //initialize first iteration with requested certificate and subsequent iterations with certificates from chain
-        for (ICertificate currentCert = cert;; currentCert = cACerts.next()) {
+        for (Certificate currentCert = cert;; currentCert = cACerts.next()) {
             x509CurrentCert = (X509Certificate) currentCert;
 
             // check validity of CA certificate
@@ -180,14 +167,14 @@ public class CRLValidator extends BaseValidator {
 
                 if (certURL == null) {
                     if ((rootCert == null || !Arrays.equals(rootCert.getEncoded(), currentCert.getEncoded()))) {
-                        LOG.debug("CDP not found for non root certificate " + x509CurrentCert.getSubject());
+                        LOG.debug("CDP not found for non root certificate " + CertTools.getSubjectDN(x509CurrentCert));
                         // non root certificate
                         if (CRLPaths == null) {
                             // the CDP could not be found for this non root certificate 
                             // and the CRLPath property is not present for the issuer of this certificate
                             // validation can not proceed
                             String msg = "no CRL Distribution point specified for non root certificate : "
-                                    + x509CurrentCert.getSubject() + ", and no CRLPath configured for Issuer";
+                                    + CertTools.getSubjectDN(x509CurrentCert) + ", and no CRLPath configured for Issuer";
 
                             LOG.error(msg);
                             throw new SignServerException(msg);
@@ -245,7 +232,7 @@ public class CRLValidator extends BaseValidator {
                 Iterator<?> tempIter = certStore.getCertificates(null).iterator();
                 while (tempIter.hasNext()) {
                     X509Certificate tempcert = (X509Certificate) tempIter.next();
-                    LOG.debug(tempcert.getSubject() + " issuer is " + tempcert.getIssuer());
+                    LOG.debug(CertTools.getSubjectDN(tempcert) + " issuer is " + CertTools.getIssuerDN(tempcert));
                 }
                 LOG.debug("***********************");
             }
@@ -257,7 +244,7 @@ public class CRLValidator extends BaseValidator {
                 LOG.debug("***********************");
                 LOG.debug("printing certs in certpath");
                 for (Certificate tempcert : certPath.getCertificates()) {
-                    LOG.debug(((X509Certificate) tempcert).getSubject() + " issuer is " + ((X509Certificate) tempcert).getIssuer());
+                    LOG.debug(CertTools.getSubjectDN(((X509Certificate) tempcert)) + " issuer is " + CertTools.getIssuerDN(((X509Certificate) tempcert)));
                 }
                 LOG.debug("***********************");
             }

@@ -36,16 +36,15 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.security.cert.X509Certificate;
 
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.ValidationServiceConstants;
-import org.signserver.validationservice.common.X509Certificate;
 
 /**
  * OCSP validator used for validating certificates using OCSP only for revocation checking.
@@ -66,11 +65,11 @@ public class OCSPValidator extends BaseValidator {
         // throw exception if not online
     }
 
-    public Validation validate(ICertificate cert)
+    public Validation validate(Certificate cert)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
 
-        LOG.debug("Validator's validate called with certificate " + cert.getSubject());
+        LOG.debug("Validator's validate called with certificate " + CertTools.getSubjectDN(cert));
 
         //check certificate validity 
         X509Certificate xcert = (X509Certificate) cert;
@@ -82,7 +81,7 @@ public class OCSPValidator extends BaseValidator {
             return new Validation(cert, null, Validation.Status.NOTYETVALID, "Certificate is not yet valid. " + e1.toString());
         }
 
-        List<ICertificate> certChain = getCertificateChain(cert);
+        List<Certificate> certChain = getCertificateChain(cert);
         // if no chain found for this certificate and if it is not trust anchor (as configured in properties) return null
         // if it is trust anchor return valid
         if (certChain == null) {
@@ -94,9 +93,9 @@ public class OCSPValidator extends BaseValidator {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug("***********************");
-            LOG.debug("printing certchain for " + cert.getSubject());
-            for (ICertificate tempcert : certChain) {
-                LOG.debug(tempcert.getSubject());
+            LOG.debug("printing certchain for " + CertTools.getSubjectDN(cert));
+            for (Certificate tempcert : certChain) {
+                LOG.debug(CertTools.getSubjectDN(tempcert));
             }
             LOG.debug("***********************");
         }
@@ -108,7 +107,7 @@ public class OCSPValidator extends BaseValidator {
         CertificateFactory certFactory = null;
         CertPathValidator validator = null;
         PKIXParameters params = null;
-        ICertificate rootCert = null;
+        Certificate rootCert = null;
         List<X509Certificate> certChainWithoutRootCert = new ArrayList<X509Certificate>();
         try {
 
@@ -125,13 +124,13 @@ public class OCSPValidator extends BaseValidator {
                 Iterator<?> tempIter = certStore.getCertificates(null).iterator();
                 while (tempIter.hasNext()) {
                     X509Certificate tempcert = (X509Certificate) tempIter.next();
-                    LOG.debug(tempcert.getSubject() + " issuer is " + tempcert.getIssuer());
+                    LOG.debug(CertTools.getSubjectDN(tempcert) + " issuer is " + CertTools.getIssuerDN(tempcert));
                 }
                 LOG.debug("***********************");
             }
 
             // CertPath Construction
-            for (ICertificate currentCACert : certChain) {
+            for (Certificate currentCACert : certChain) {
                 X509Certificate x509currentCACert = (X509Certificate) currentCACert;
                 if (rootCert == null
                         && x509currentCACert.getSubjectX500Principal().equals(x509currentCACert.getIssuerX500Principal())) {
@@ -151,7 +150,7 @@ public class OCSPValidator extends BaseValidator {
                 LOG.debug("***********************");
                 LOG.debug("printing certs in certpath");
                 for (Certificate tempcert : certPath.getCertificates()) {
-                    LOG.debug(((X509Certificate) tempcert).getSubject() + " issuer is " + ((X509Certificate) tempcert).getIssuer());
+                    LOG.debug(CertTools.getSubjectDN(((X509Certificate) tempcert)) + " issuer is " + CertTools.getSubjectDN(((X509Certificate) tempcert)));
                 }
                 LOG.debug("***********************");
             }
@@ -206,8 +205,8 @@ public class OCSPValidator extends BaseValidator {
      * @throws CertificateException
      * @throws IOException
      */
-    protected void addCertPathCheckers(ICertificate cert,
-            PKIXParameters params, ICertificate rootCert)
+    protected void addCertPathCheckers(Certificate cert,
+            PKIXParameters params, Certificate rootCert)
             throws SignServerException, CertificateException, IOException {
         params.addCertPathChecker(new OCSPPathChecker((X509Certificate) rootCert, this.props, getIssuerAuthorizedOCSPResponderCertificates(cert)));
     }
@@ -218,7 +217,7 @@ public class OCSPValidator extends BaseValidator {
      * @throws IOException 
      * @throws CertificateException 
      */
-    protected List<X509Certificate> getIssuerAuthorizedOCSPResponderCertificates(ICertificate cert) throws SignServerException, CertificateException, IOException {
+    protected List<X509Certificate> getIssuerAuthorizedOCSPResponderCertificates(Certificate cert) throws SignServerException, CertificateException, IOException {
         ArrayList<X509Certificate> x509Certs = new ArrayList<X509Certificate>();
         Properties issuerProps = getIssuerProperties(cert);
         if (issuerProps == null) {
@@ -232,7 +231,7 @@ public class OCSPValidator extends BaseValidator {
                 Collection<?> certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(issuerProps.getProperty(key).getBytes()));
                 Iterator<?> certiter = certs.iterator();
                 while (certiter.hasNext()) {
-                    x509Certs.add(X509Certificate.getInstance((java.security.cert.X509Certificate) certiter.next()));
+                    x509Certs.add((java.security.cert.X509Certificate) certiter.next());
                 }
             }
         }

@@ -13,17 +13,14 @@
 package org.signserver.validationservice.server.validcache;
 
 import java.security.KeyPair;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
-
 import junit.framework.TestCase;
-
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.SignServerUtil;
 import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.common.X509Certificate;
-import org.signserver.validationservice.server.ICertificateManager;
 
 /**
  * TODO: Document me!
@@ -46,9 +43,9 @@ public class ValidationCacheTest extends TestCase {
 
 
         KeyPair keys = KeyTools.genKeys("512", "RSA");
-        cert1 = (X509Certificate) ICertificateManager.genICertificate(CertTools.genSelfCert("CN=cert1", 367, null, keys.getPrivate(), keys.getPublic(), "SHA1WithRSA", false));
-        cert2 = (X509Certificate) ICertificateManager.genICertificate(CertTools.genSelfCert("CN=cert2", 367, null, keys.getPrivate(), keys.getPublic(), "SHA1WithRSA", false));
-        cert3 = (X509Certificate) ICertificateManager.genICertificate(CertTools.genSelfCert("CN=cert3", 367, null, keys.getPrivate(), keys.getPublic(), "SHA1WithRSA", false));
+        cert1 = (X509Certificate) CertTools.genSelfCert("CN=cert1", 367, null, keys.getPrivate(), keys.getPublic(), "SHA1WithRSA", false);
+        cert2 = (X509Certificate) CertTools.genSelfCert("CN=cert2", 367, null, keys.getPrivate(), keys.getPublic(), "SHA1WithRSA", false);
+        cert3 = (X509Certificate) CertTools.genSelfCert("CN=cert3", 367, null, keys.getPrivate(), keys.getPublic(), "SHA1WithRSA", false);
     }
 
     /**

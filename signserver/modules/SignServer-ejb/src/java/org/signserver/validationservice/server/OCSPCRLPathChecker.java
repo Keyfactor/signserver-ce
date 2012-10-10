@@ -16,23 +16,15 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.security.NoSuchProviderException;
-import java.security.cert.CertPathValidatorException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.CertificateParsingException;
-import java.security.cert.X509CRL;
-import java.security.cert.X509CRLEntry;
+import java.security.cert.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-
 import org.bouncycastle.asn1.x509.CRLReason;
 import org.bouncycastle.ocsp.OCSPReq;
 import org.ejbca.util.CertTools;
 import org.signserver.common.SignServerException;
-import org.signserver.validationservice.common.X509Certificate;
 
 /**
  * Stateful OCSP fail over to CRL PKIX certificate path checker. It does not
@@ -89,11 +81,11 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
 
         if (cACert == null) {
             throw new CertPathValidatorException("Issuer of certificate : "
-                    + x509Cert.getSubject()
+                    + CertTools.getSubjectDN(x509Cert)
                     + " not passed to OCSPCRLPathChecker");
         }
         log.debug("check method called with certificate "
-                + x509Cert.getSubject());
+                + CertTools.getSubjectDN(x509Cert));
 
         // check if OCSP access address exists
         try {
@@ -218,7 +210,7 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
         } catch (Exception e) {
             msg = "Exception on verifying CRL fetched from url: "
                     + crlURL.toString() + " using CA certificate : "
-                    + cACert.getSubject();
+                    + CertTools.getSubjectDN(cACert);
             log.error(msg, e);
             throw new SignServerException(msg, e);
         }
@@ -229,7 +221,7 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
         // specify how to interpret the absence of the field
         if (certCRL.getThisUpdate() != null
                 && (new Date()).compareTo(certCRL.getThisUpdate()) <= 0) {
-            msg = "CRL for certificate : " + x509Cert.getSubject()
+            msg = "CRL for certificate : " + CertTools.getSubjectDN(x509Cert)
                     + " reported thisUpdate as : "
                     + certCRL.getThisUpdate().toString()
                     + " which is later than current date.";
@@ -239,7 +231,7 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
 
         if (certCRL.getNextUpdate() != null
                 && (new Date()).compareTo(certCRL.getNextUpdate()) >= 0) {
-            msg = "CRL for certificate : " + x509Cert.getSubject()
+            msg = "CRL for certificate : " + CertTools.getSubjectDN(x509Cert)
                     + " reported nextUpdate as : "
                     + certCRL.getNextUpdate().toString()
                     + " which is earlier than current date.";
@@ -250,7 +242,7 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
         // check if certificate is revoked
         X509CRLEntry crlEntry = certCRL.getRevokedCertificate(x509Cert);
         if (crlEntry != null) {
-            msg = "The certificate " + x509Cert.getSubject()
+            msg = "The certificate " + CertTools.getSubjectDN(x509Cert)
                     + " has been revoked on " + crlEntry.getRevocationDate();
 
             // TODO : crlEntry extension is OPTIONAL ?? if it is then throw

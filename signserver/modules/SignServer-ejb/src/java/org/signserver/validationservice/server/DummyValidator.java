@@ -13,21 +13,20 @@
 package org.signserver.validationservice.server;
 
 import java.net.ConnectException;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
+import org.ejbca.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.common.X509Certificate;
 
 /**
  * Dummy validator used for testing and demonstration purposes.
@@ -87,7 +86,7 @@ public class DummyValidator extends BaseValidator {
      * @see org.signserver.validationservice.server.IValidator#validate(org.signserver.validationservice.common.ICertificate)
      */
     @Override
-    public Validation validate(final ICertificate cert)
+    public Validation validate(final Certificate cert)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         LOG.trace(">validate");
@@ -95,7 +94,7 @@ public class DummyValidator extends BaseValidator {
         Validation result = null;
         
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Validate certificate: " + cert.getSubject());
+            LOG.debug("Validate certificate: " + CertTools.getSubjectDN(cert));
         }
 
         // Simulate work
@@ -109,93 +108,93 @@ public class DummyValidator extends BaseValidator {
             final X509Certificate xcert = (X509Certificate) cert;
 
             // First check this validator's own revocation list
-            final Validation.Status status = revokedMap.get(xcert.getSubject());
+            final Validation.Status status = revokedMap.get(CertTools.getSubjectDN(xcert));
             if (status != null) {
                 result = new Validation(cert, getCertificateChain(cert), status,
                         "Not valid: " + status.toString());
             }
             // Then some special cases
-            else if(xcert.getIssuer().equals("CN=cert1")) {
+            else if(CertTools.getIssuerDN(xcert).equals("CN=cert1")) {
                 result = new Validation(cert,
                         getCertificateChain(cert),
                         Validation.Status.REVOKED,
                         "This certificate is revoced",
                         new Date(), 3);
-            } else if(xcert.getSubject().equals("CN=revocedRootCA1")){
+            } else if(CertTools.getSubjectDN(xcert).equals("CN=revocedRootCA1")){
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.REVOKED,
                         "This certificate is revoced", new Date(), 3);
-            } else if (xcert.getSubject().equals("CN=revocedRootCA1")) {
+            } else if (CertTools.getSubjectDN(xcert).equals("CN=revocedRootCA1")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.REVOKED,
                         "This certificate is revoced", new Date(), 3);
-            } else if (xcert.getIssuer().equals("CN=revocedRootCA1")) {
+            } else if (CertTools.getIssuerDN(xcert).equals("CN=revocedRootCA1")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.CAREVOKED,
                         "This certificate is valid", new Date(), 3);
-            } else if (cert.getSubject().equals("CN=revokedCert1")) {
+            } else if (CertTools.getSubjectDN(cert).equals("CN=revokedCert1")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.REVOKED,
                         "This certificate is revoced", new Date(), 3);
-            } else if (cert.getSubject().equals("CN=ValidRootCA1")) {
+            } else if (CertTools.getSubjectDN(cert).equals("CN=ValidRootCA1")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
-            } else if (cert.getSubject().equals("CN=ValidSubCA1")) {
+            } else if (CertTools.getSubjectDN(cert).equals("CN=ValidSubCA1")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
-            } else if (cert.getIssuer().equals("CN=ValidSubCA1")) {
+            } else if (CertTools.getIssuerDN(cert).equals("CN=ValidSubCA1")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
-            } else if (cert.getSubject().equals("CN=ValidSubCA2")
+            } else if (CertTools.getSubjectDN(cert).equals("CN=ValidSubCA2")
                     && validatorId == 2) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
-            } else if (cert.getSubject().equals("CN=ValidSubSubCA2")
+            } else if (CertTools.getSubjectDN(cert).equals("CN=ValidSubSubCA2")
                     && validatorId == 2) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
-            } else if (cert.getSubject().equals("CN=ValidSubSubSubCA2")
+            } else if (CertTools.getSubjectDN(cert).equals("CN=ValidSubSubSubCA2")
                     && validatorId == 2) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
-            } else if (cert.getSubject().equals("CN=ValidSubSubSubSubCA2")
+            } else if (CertTools.getSubjectDN(cert).equals("CN=ValidSubSubSubSubCA2")
                     && validatorId == 2) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
-            } else if (cert.getIssuer().equals("CN=ValidSubSubSubSubCA2")
+            } else if (CertTools.getIssuerDN(cert).equals("CN=ValidSubSubSubSubCA2")
                     && validatorId == 2) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
-            } else if (cert.getSubject().equals(
+            } else if (CertTools.getSubjectDN(cert).equals(
                     "CN=xmlsigner2,O=SignServer Test,C=SE")
-                    || cert.getSubject().equals(
+                    || CertTools.getSubjectDN(cert).equals(
                     "CN=AdminTrunk2CA1,O=EJBCA Trunk3,C=SE")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
-            } else if (cert.getSubject().equals(
+            } else if (CertTools.getSubjectDN(cert).equals(
                     "CN=FirstCA,O=EJBCA Testing,C=SE")
-                    || cert.getSubject().equals(
+                    || CertTools.getSubjectDN(cert).equals(
                     "CN=endentity1,O=EJBCA Testing,C=SE")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
-            } else if (cert.getSubject().equals("CN=pdfsigner,C=SE")) {
+            } else if (CertTools.getSubjectDN(cert).equals("CN=pdfsigner,C=SE")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
             }
             // All other certificates issued by DemoRootCA1 is OK
-            else if (cert.getIssuer().equals(
+            else if (CertTools.getIssuerDN(cert).equals(
                     "CN=DemoRootCA1,OU=EJBCA,O=SignServer Sample,C=SE")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
             }
             // All other certificates issued by DemoRootCA2 is OK
-            else if (cert.getIssuer().equals(
+            else if (CertTools.getIssuerDN(cert).equals(
                     "CN=DemoRootCA2,OU=EJBCA,O=SignServer Sample,C=SE")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
             }
             // All other certificates issued by DSSRootCA10 is OK
-            else if (cert.getIssuer().equals(
+            else if (CertTools.getIssuerDN(cert).equals(
                     "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");

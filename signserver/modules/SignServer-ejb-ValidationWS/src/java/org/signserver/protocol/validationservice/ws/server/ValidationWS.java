@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.protocol.validationservice.ws.server;
 
+import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -37,11 +38,9 @@ import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.validationservice.ws.IValidationWS;
 import org.signserver.protocol.validationservice.ws.ValidationResponse;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.ValidationStatus;
-import org.signserver.validationservice.server.ICertificateManager;
 import org.signserver.validationservice.server.ValidationServiceWorker;
 
 /**
@@ -72,7 +71,7 @@ public class ValidationWS implements IValidationWS {
      */
     @WebMethod
     public ValidationResponse isValid(@WebParam(name = "serviceName") String serviceName, @WebParam(name = "base64Cert") String base64Cert, @WebParam(name = "certPurposes") String certPurposes) throws IllegalRequestException, SignServerException {
-        ICertificate reqCert;
+        Certificate reqCert;
         int workerId = getWorkerId(serviceName);
 
         if (workerId == 0) {
@@ -83,7 +82,7 @@ public class ValidationWS implements IValidationWS {
             throw new IllegalRequestException("Error base64Cert parameter cannot be empty, it must contain a Base64 encoded DER encoded certificate.");
         } else {
             try {
-                reqCert = ICertificateManager.genICertificate(CertTools.getCertfromByteArray(Base64.decode(base64Cert.getBytes())));
+                reqCert = CertTools.getCertfromByteArray(Base64.decode(base64Cert.getBytes()));
             } catch (CertificateException e) {
                 throw new IllegalRequestException("Error base64Cert parameter data have bad encoding, check that it contains supported certificate data");
             }

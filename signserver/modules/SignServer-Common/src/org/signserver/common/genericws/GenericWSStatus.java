@@ -13,6 +13,7 @@
 package org.signserver.common.genericws;
 
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.Enumeration;
 import org.signserver.common.CryptoTokenStatus;
 import org.signserver.common.WorkerConfig;
@@ -31,7 +32,7 @@ public class GenericWSStatus extends CryptoTokenStatus {
     private static final long serialVersionUID = 1L;
 
     public GenericWSStatus(int workerId, int tokenStatus, WorkerConfig config) {
-        super(workerId, tokenStatus, config);
+        super(workerId, tokenStatus, Collections.<String>emptyList(), config);
     }
 
     @Override

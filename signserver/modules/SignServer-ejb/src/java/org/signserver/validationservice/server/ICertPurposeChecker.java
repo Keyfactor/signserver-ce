@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.validationservice.server;
 
+import java.security.cert.Certificate;
 import org.signserver.common.WorkerConfig;
-import org.signserver.validationservice.common.ICertificate;
 
 /**
  * Interface used to check if a given certificate fulfills a specified 
@@ -34,5 +34,5 @@ public interface ICertPurposeChecker {
      * @param certPurposes one of ValidationServiceConstants.CERTPURPOSE_ constants or other custom defined.
      * @return a subset of fullfilled certificate purposes or NULL if no purposes were valid.
      */
-    String[] checkCertPurposes(ICertificate cert, String[] certPurposes);
+    String[] checkCertPurposes(Certificate cert, String[] certPurposes);
 }

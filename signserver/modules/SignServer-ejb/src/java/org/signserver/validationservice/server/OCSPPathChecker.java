@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.security.cert.X509Certificate;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
@@ -53,7 +54,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.common.X509Certificate;
+//import org.signserver.validationservice.common.X509Certificate;
 
 /**
  * Stateful OCSP PKIX certificate path checker.
@@ -103,7 +104,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
         }
         X509Certificate x509Cert = (X509Certificate) cert;
 
-        log.debug("check method called with certificate " + x509Cert.getSubject());
+        log.debug("check method called with certificate " + CertTools.getSubjectDN(x509Cert));
 
         try {
 
@@ -111,11 +112,11 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
             //throw exception (for now, later maybe change to look for predefined ocsp url for each issuer ?)
             String oCSPURLString = CertTools.getAuthorityInformationAccessOcspUrl(x509Cert);
             if (oCSPURLString == null || oCSPURLString.length() == 0) {
-                throw new SignServerException("OCSP service locator url missing for certificate " + x509Cert.getSubject());
+                throw new SignServerException("OCSP service locator url missing for certificate " + CertTools.getSubjectDN(x509Cert));
             }
 
             if (cACert == null) {
-                throw new SignServerException("Issuer of certificate : " + x509Cert.getSubject() + " not passed to OCSPPathChecker");
+                throw new SignServerException("Issuer of certificate : " + CertTools.getSubjectDN(x509Cert) + " not passed to OCSPPathChecker");
             }
             //generate ocsp request for current certificate and send to ocsp responder
             OCSPReq req = generateOCSPRequest(cACert, x509Cert);
@@ -298,7 +299,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
             }
         }
 
-        log.debug("OCSP response signed by :  " + ocspRespSignerCertificate.getSubject());
+        log.debug("OCSP response signed by :  " + CertTools.getSubjectDN(ocspRespSignerCertificate));
         // validating ocsp signers certificate
         // Check if responders certificate has id-pkix-ocsp-nocheck extension, in which case we do not validate (perform revocation check on ) ocsp certs for lifetime of certificate
         // using CRL RFC 2560 sect 4.2.2.2.1
@@ -308,9 +309,9 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
             try {
                 ocspRespSignerCertificate.checkValidity();
             } catch (CertificateExpiredException e) {
-                throw new SignServerException("Certificate signing the ocsp response has expired. OCSP Responder Certificate Subject DN : " + ocspRespSignerCertificate.getSubject());
+                throw new SignServerException("Certificate signing the ocsp response has expired. OCSP Responder Certificate Subject DN : " + CertTools.getSubjectDN(ocspRespSignerCertificate));
             } catch (CertificateNotYetValidException e) {
-                throw new SignServerException("Certificate signing the ocsp response is not yet valid. OCSP Responder Certificate Subject DN : " + ocspRespSignerCertificate.getSubject());
+                throw new SignServerException("Certificate signing the ocsp response is not yet valid. OCSP Responder Certificate Subject DN : " + CertTools.getSubjectDN(ocspRespSignerCertificate));
             }
         } else {
             // check if CDP exists in ocsp signers certificate
@@ -377,7 +378,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
         while (certsIter.hasNext()) {
             try {
                 // direct cast to org.signserver.validationservice.common.X509Certificate fails
-                tempCert = X509Certificate.getInstance((java.security.cert.X509Certificate) certsIter.next());
+                tempCert = (java.security.cert.X509Certificate) certsIter.next();
             } catch (Exception e) {
                 //eat up exception 
                 continue;
@@ -408,7 +409,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
         }
         for (X509Certificate ocspCert : this.authorizedOCSPResponderCerts) {
             if (basicOCSPResponse.verify(ocspCert.getPublicKey(), "BC")) {
-                log.debug("Found Authorized OCSP Responder's certificate, signing ocsp response. found cert : " + ocspCert.getSubject());
+                log.debug("Found Authorized OCSP Responder's certificate, signing ocsp response. found cert : " + CertTools.getSubjectDN(ocspCert));
                 return ocspCert;
             }
         }

@@ -19,12 +19,12 @@ import javax.naming.NamingException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
+import org.ejbca.util.CertTools;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.server.cryptotokens.P12CryptoToken;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
 import org.w3c.dom.Document;
 
@@ -304,10 +304,10 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         assertTrue("valid document", res.isValid());
 
         // Check certificate and path
-        ICertificate signercert = res.getCertificateValidation().getCertificate();
-        assertEquals("Signer certificate", "CN=endentity8", signercert.getSubject());
-        List<ICertificate> caChain = res.getCertificateValidation().getCAChain();
-        assertEquals("ca certificate 0", "CN=EightCA,O=EJBCA Testing,C=SE", caChain.get(0).getSubject());
+        Certificate signercert = res.getCertificateValidation().getCertificate();
+        assertEquals("Signer certificate", "CN=endentity8", CertTools.getSubjectDN(signercert));
+        List<Certificate> caChain = res.getCertificateValidation().getCAChain();
+        assertEquals("ca certificate 0", "CN=EightCA,O=EJBCA Testing,C=SE", CertTools.getSubjectDN(caChain.get(0)));
         assertEquals("caChain length", 1, caChain.size());
         LOG.info("Status message: " + res.getCertificateValidation().getStatusMessage());
         assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
@@ -368,7 +368,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         LOG.info("Revoked cert status: "
                 + res.getCertificateValidation().getStatusMessage());
 
-        final ICertificate cert = res.getSignerCertificate();
+        final Certificate cert = res.getSignerCertificate();
         assertNotNull(cert);
     }
 

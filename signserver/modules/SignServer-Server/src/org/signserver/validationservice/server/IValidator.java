@@ -13,16 +13,14 @@
 package org.signserver.validationservice.server;
 
 import java.net.ConnectException;
+import java.security.cert.Certificate;
 import java.util.List;
 import java.util.Properties;
-
 import javax.persistence.EntityManager;
-
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
 
 /**
@@ -68,7 +66,7 @@ public interface IValidator {
      * @throws CryptoTokenOfflineException if the crypto token isn't online. 
      * @throws SignServerException for general failure exception during validation.
      */
-    Validation validate(ICertificate cert) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+    Validation validate(Certificate cert) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 
     /**
      * Optional method used to test the connection to a specific underlying validator implementation.
@@ -84,5 +82,5 @@ public interface IValidator {
      * @param certificate to verify
      * @return a certificate chain with the root CA last or null if validator doesn't support given issuer.
      */
-    List<ICertificate> getCertificateChain(ICertificate cert);
+    List<Certificate> getCertificateChain(Certificate cert);
 }

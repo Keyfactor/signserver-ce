@@ -18,27 +18,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
+import java.security.cert.X509Certificate;
+import java.util.*;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidationServiceConstants;
-import org.signserver.validationservice.common.X509Certificate;
-import org.signserver.validationservice.server.ICertificateManager;
-import org.signserver.validationservice.server.IValidator;
-import org.signserver.validationservice.server.ValidationHelper;
 
 /**
  * Base class implementing the base functionality for a validator
@@ -58,22 +45,22 @@ public abstract class BaseValidator implements IValidator {
     protected Properties props;
     protected EntityManager em;
     protected ICryptoToken ct;
-    private HashMap<String, List<ICertificate>> certChainMap;
+    private HashMap<String, List<Certificate>> certChainMap;
     private HashMap<Integer, Properties> issuerProperties;
 
     /*
      * certificate chains for all issuers
      */
-    protected HashMap<String, List<ICertificate>> getCertChainMap() {
+    protected HashMap<String, List<Certificate>> getCertChainMap() {
 
         if (certChainMap == null) {
-            certChainMap = new HashMap<String, List<ICertificate>>();
+            certChainMap = new HashMap<String, List<Certificate>>();
             for (Integer issuerId : getIssuerProperties().keySet()) {
                 Properties issuerProps = getIssuerProperties().get(issuerId);
 
-                List<ICertificate> certChain = getCertChainFromProps(issuerId, issuerProps);
+                List<Certificate> certChain = getCertChainFromProps(issuerId, issuerProps);
                 if (certChain != null) {
-                    certChainMap.put(certChain.get(0).getSubject(), certChain);
+                    certChainMap.put(CertTools.getSubjectDN(certChain.get(0)), certChain);
                 }
             }
         }
@@ -95,8 +82,6 @@ public abstract class BaseValidator implements IValidator {
     }
 
     /**
-     * @see org.signserver.validationservice.server.IValidator#getCertificateChain(org.signserver.validationservice.common.ICertificate)
-     * 
      * Retrieves certificate chain for certificate given
      * Certificate chain will be retrieved from configured certchain properties for issuers 
      * 
@@ -106,8 +91,9 @@ public abstract class BaseValidator implements IValidator {
      * null if passed in certificate's issuer is not in any of the configured chains
      * 
      */
-    public List<ICertificate> getCertificateChain(ICertificate cert) {
-        LOG.trace(">getCertificateChain: " + cert.getSubject());
+    @Override
+    public List<Certificate> getCertificateChain(Certificate cert) {
+        LOG.trace(">getCertificateChain: " + CertTools.getSubjectDN(cert));
 
         if (getCertChainMap() == null) {
             return null;
@@ -115,11 +101,11 @@ public abstract class BaseValidator implements IValidator {
 
         X509Certificate x509Cert = (X509Certificate) cert;
 
-        List<ICertificate> retVal = null;
+        List<Certificate> retVal = null;
         //first look if the certificate is directly issued by CA that is in the beginning of the one of configured chains
         //"in the beginning" here means that the issuer of the certificate is at position 0 after sortCerts method is called
         //it is easy to check since the CA Certificate at position 0 is the key to HashMap holding certificate chains
-        retVal = getCertChainMap().get(x509Cert.getIssuer());
+        retVal = getCertChainMap().get(CertTools.getIssuerDN(x509Cert));
         if (retVal == null) {
             //look if cert is issued by some CA that is in the middle of the one of configured chains
             //"in the middle" here means that issuer of this certificate is not at position 0 after sortCerts method is called
@@ -128,7 +114,7 @@ public abstract class BaseValidator implements IValidator {
             byte[] aki = null;
             boolean issuerFound = false;
             for (String certDN : getCertChainMap().keySet()) {
-                for (ICertificate cACert : getCertChainMap().get(certDN)) {
+                for (Certificate cACert : getCertChainMap().get(certDN)) {
                     issuerCACert = (X509Certificate) cACert;
 
                     //check if subject of CA and the issuer of our certificate match
@@ -175,8 +161,8 @@ public abstract class BaseValidator implements IValidator {
      * @param issuerProps issuer properties
      * @return List of CA certificates with the root certificate last or null if no chain is configured.
      */
-    private List<ICertificate> getCertChainFromProps(int issuerId, Properties issuerProps) {
-        List<ICertificate> retval = null;
+    private List<Certificate> getCertChainFromProps(int issuerId, Properties issuerProps) {
+        List<Certificate> retval = null;
         if (issuerProps.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN) == null) {
             LOG.error("Error required issuer setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer "
                     + issuerId + ", validator id " + validatorId + ", worker id" + workerId);
@@ -184,9 +170,9 @@ public abstract class BaseValidator implements IValidator {
             try {
                 Collection<?> certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(issuerProps.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN).getBytes()));
                 Iterator<?> certiter = certs.iterator();
-                ArrayList<ICertificate> icerts = new ArrayList<ICertificate>();
+                ArrayList<Certificate> icerts = new ArrayList<Certificate>();
                 while (certiter.hasNext()) {
-                    icerts.add(ICertificateManager.genICertificate((Certificate) certiter.next()));
+                    icerts.add((Certificate) certiter.next());
                 }
                 int initialSize = icerts.size();
                 retval = sortCerts(issuerId, icerts);
@@ -211,15 +197,15 @@ public abstract class BaseValidator implements IValidator {
      * @param icerts ICertificates
      * @return
      */
-    ArrayList<ICertificate> sortCerts(final int issuerid,
-            final ArrayList<ICertificate> icerts) {
+    ArrayList<Certificate> sortCerts(final int issuerid,
+            final ArrayList<Certificate> icerts) {
         LOG.trace(">sortCerts");
-        final ArrayList<ICertificate> retval = new ArrayList<ICertificate>();
+        final ArrayList<Certificate> retval = new ArrayList<Certificate>();
 
         // Start with finding root
-        ICertificate currentCert = null;
-        for (ICertificate icert : icerts) {
-            if (icert.getIssuer().equals(icert.getSubject())) {
+        Certificate currentCert = null;
+        for (Certificate icert : icerts) {
+            if (CertTools.getIssuerDN(icert).equals(CertTools.getSubjectDN(icert))) {
                 retval.add(0, icert);
                 currentCert = icert;
                 break;
@@ -234,8 +220,8 @@ public abstract class BaseValidator implements IValidator {
 
         int tries = 10;
         while (!icerts.isEmpty() && tries > 0) {
-            for (ICertificate icert : icerts) {
-                if (currentCert.getSubject().equals(icert.getIssuer())) {
+            for (Certificate icert : icerts) {
+                if (CertTools.getSubjectDN(currentCert).equals(CertTools.getIssuerDN(icert))) {
                     retval.add(0, icert);
                     currentCert = icert;
                     break;
@@ -270,21 +256,21 @@ public abstract class BaseValidator implements IValidator {
      * get properties of the issuer that is configured to accept this certificate (through certchain)
      * have to match using rootCert and down the chain, until the chain for cert is exhausted 
      */
-    protected Properties getIssuerProperties(ICertificate cert) {
+    protected Properties getIssuerProperties(Certificate cert) {
 
-        List<ICertificate> certChain = getCertificateChain(cert);
+        List<Certificate> certChain = getCertificateChain(cert);
         if (certChain == null) {
             return null;
         }
 
-        List<ICertificate> tempCertChain = null;
+        List<Certificate> tempCertChain;
 
         //first search for exact match
         for (Integer issuerId : getIssuerProperties().keySet()) {
             tempCertChain = getCertChainFromProps(issuerId, getIssuerProperties().get(issuerId));
             if (tempCertChain != null) {
                 if (tempCertChain.equals(certChain)) {
-                    LOG.debug("issuer id of certificate " + cert.getSubject() + " is " + issuerId + " Exact match");
+                    LOG.debug("issuer id of certificate " + CertTools.getSubjectDN(cert) + " is " + issuerId + " Exact match");
                     return getIssuerProperties().get(issuerId);
                 }
             }
@@ -295,7 +281,7 @@ public abstract class BaseValidator implements IValidator {
             tempCertChain = getCertChainFromProps(issuerId, getIssuerProperties().get(issuerId));
             if (tempCertChain != null) {
                 if (tempCertChain.containsAll(certChain)) {
-                    LOG.debug("issuer id of certificate " + cert.getSubject() + " is " + issuerId + " ContainsAll match");
+                    LOG.debug("issuer id of certificate " + CertTools.getSubjectDN(cert) + " is " + issuerId + " ContainsAll match");
                     return getIssuerProperties().get(issuerId);
                 }
             }
@@ -316,7 +302,7 @@ public abstract class BaseValidator implements IValidator {
      * null if passed in certificate is not found in any configured chains or if cACert is root certificate and includeSelfInReturn parameter is false
      *  
      */
-    protected List<ICertificate> getCertificateChainForCACertificate(ICertificate cACert, boolean includeSelfInReturn) {
+    protected List<Certificate> getCertificateChainForCACertificate(Certificate cACert, boolean includeSelfInReturn) {
 
         int indx = -1;
         int fromindex;
@@ -368,7 +354,7 @@ public abstract class BaseValidator implements IValidator {
      * and return as List of URLs
      * @throws SignServerException 
      */
-    protected List<URL> getIssuerCRLPaths(ICertificate cert) throws SignServerException {
+    protected List<URL> getIssuerCRLPaths(Certificate cert) throws SignServerException {
         ArrayList<URL> retval = null;
         Properties issuerProps = getIssuerProperties(cert);
         if (issuerProps == null || !issuerProps.containsKey(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS)) {

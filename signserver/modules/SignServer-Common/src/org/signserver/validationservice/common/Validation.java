@@ -16,15 +16,14 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.Serializable;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
-import org.signserver.validationservice.server.ICertificateManager;
 
 /**
  * Base validation VO containing the status of a specific certificate.
@@ -44,9 +43,9 @@ public class Validation implements Serializable {
         VALID, REVOKED, NOTYETVALID, EXPIRED, DONTVERIFY, CAREVOKED, CANOTYETVALID, CAEXPIRED, BADCERTPURPOSE, ISSUERNOTSUPPORTED
     };
     
-    private transient ICertificate certificate;
+    private transient Certificate certificate;
     private byte[] certificateData;
-    private transient List<ICertificate> cAChain;
+    private transient List<Certificate> cAChain;
     private List<byte[]> cAChainData;
     private Status status;
     private String statusMessage;
@@ -74,7 +73,7 @@ public class Validation implements Serializable {
      * @param statusMessage
      *            human readable status message of the validation.
      */
-    public Validation(ICertificate certificate, List<ICertificate> cAChain,
+    public Validation(Certificate certificate, List<Certificate> cAChain,
             Status status, String statusMessage) {
         this(certificate, cAChain, status, statusMessage, null, -1);
 
@@ -98,7 +97,7 @@ public class Validation implements Serializable {
      * @param revokationReason
      *            one of the reasons specified in RFC3280, 0 if not revoked.
      */
-    public Validation(ICertificate certificate, List<ICertificate> cAChain,
+    public Validation(Certificate certificate, List<Certificate> cAChain,
             Status status, String statusMessage, Date revokedDate,
             int revokationReason) {
         super();
@@ -114,7 +113,7 @@ public class Validation implements Serializable {
 
             if (cAChain != null) {
                 this.cAChainData = new ArrayList<byte[]>();
-                for (ICertificate cert : cAChain) {
+                for (Certificate cert : cAChain) {
                     cAChainData.add(0, cert.getEncoded());
                 }
             }
@@ -126,10 +125,10 @@ public class Validation implements Serializable {
     /**
      * @return the certificate that have been validated.
      */
-    public ICertificate getCertificate() {
+    public Certificate getCertificate() {
         if (certificate == null) {
             try {
-                certificate = ICertificateManager.genICertificate(CertTools.getCertfromByteArray(certificateData));
+                certificate = CertTools.getCertfromByteArray(certificateData);
             } catch (CertificateException e) {
                 log.error(e);
             }
@@ -171,12 +170,12 @@ public class Validation implements Serializable {
     /**
      * @return the CA certificate chain with the root CA last.
      */
-    public List<ICertificate> getCAChain() {
+    public List<Certificate> getCAChain() {
         if (cAChain == null && cAChainData != null) {
-            cAChain = new ArrayList<ICertificate>();
+            cAChain = new ArrayList<Certificate>();
             for (byte[] certData : cAChainData) {
                 try {
-                    ICertificate cACert = ICertificateManager.genICertificate(CertTools.getCertfromByteArray(certData));
+                    Certificate cACert = CertTools.getCertfromByteArray(certData);
                     cAChain.add(0, cACert);
                 } catch (CertificateException e) {
                     log.error(e);

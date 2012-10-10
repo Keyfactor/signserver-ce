@@ -16,12 +16,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.security.cert.Certificate;
 import java.util.Collections;
 import junit.framework.TestCase;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.signserver.validationservice.common.Validation.Status;
-import org.signserver.validationservice.server.ICertificateManager;
 
 /**
  * Additional tests for serialization/externalization and parsing of the
@@ -53,8 +53,7 @@ public class ValidationTest extends TestCase {
      */
     public void testSerializeAndParse() throws Exception {
 
-        ICertificate cert = ICertificateManager.genICertificate(
-                CertTools.getCertfromByteArray(Base64.decode(CERT_XMLSIGNER.getBytes())));
+        Certificate cert = CertTools.getCertfromByteArray(Base64.decode(CERT_XMLSIGNER.getBytes()));
         assertNotNull(cert);
 
         final Validation validation1 = new Validation(cert,

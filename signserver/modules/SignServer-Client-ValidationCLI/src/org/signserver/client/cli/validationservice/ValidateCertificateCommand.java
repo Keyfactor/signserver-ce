@@ -374,7 +374,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
                 servlet,
                 sslf);
 
-        ValidateRequest vr = new ValidateRequest(org.signserver.validationservice.common.X509Certificate.getInstance(cert), usages);
+        ValidateRequest vr = new ValidateRequest(cert, usages);
 
         ArrayList<ProcessRequestWS> requests = new ArrayList<ProcessRequestWS>();
         requests.add(new ProcessRequestWS(vr));

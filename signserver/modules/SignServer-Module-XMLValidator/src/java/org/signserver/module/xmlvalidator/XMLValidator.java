@@ -17,11 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.xml.crypto.MarshalException;
@@ -31,7 +27,6 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -39,18 +34,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericValidationRequest;
-import org.signserver.common.GenericValidationResponse;
-import org.signserver.common.IValidationRequest;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.ServiceLocator;
-import org.signserver.common.SignServerException;
-import org.signserver.common.WorkerConfig;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.validators.BaseValidator;
@@ -207,12 +191,8 @@ public class XMLValidator extends BaseValidator {
             ValidateRequest vr;
             ProcessResponse response;
             try {
-                vr = new ValidateRequest(org.signserver.validationservice.common.X509Certificate.getInstance(choosenCert), ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
+                vr = new ValidateRequest(choosenCert, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
             } catch (CertificateEncodingException e) {
-                throw new SignServerException("Error validating certificate", e);
-            } catch (CertificateParsingException e) {
-                throw new SignServerException("Error validating certificate", e);
-            } catch (IOException e) {
                 throw new SignServerException("Error validating certificate", e);
             }
 

@@ -12,12 +12,12 @@
  *************************************************************************/
 package org.signserver.validationservice.server;
 
+import java.security.cert.Certificate;
 import java.util.List;
-
+import org.ejbca.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
@@ -40,7 +40,7 @@ public class DefaultValidationService extends BaseValidationService {
             SignServerException {
 
         // Get Certificate Chain
-        List<ICertificate> cAChain = getCertificateChain(validationRequest.getCertificate());
+        List<Certificate> cAChain = getCertificateChain(validationRequest.getCertificate());
 
         if (cAChain == null) {
             Validation valRes = new Validation(validationRequest.getCertificate(), null,
@@ -83,7 +83,7 @@ public class DefaultValidationService extends BaseValidationService {
                             "Error no validators in validation service "
                             + workerId
                             + " supports the issuer of given CA "
-                            + validationRequest.getCertificate().getIssuer());
+                            + CertTools.getIssuerDN(validationRequest.getCertificate()));
                 }
                 // code below was used to walk through the certificate chain and
                 // call validate on validator for each cert found in chain
@@ -130,8 +130,8 @@ public class DefaultValidationService extends BaseValidationService {
      *            to verify
      * @return a certificate chain with the root CA last.
      */
-    private List<ICertificate> getCertificateChain(ICertificate certificate) {
-        List<ICertificate> retval = null;
+    private List<Certificate> getCertificateChain(Certificate certificate) {
+        List<Certificate> retval = null;
         for (IValidator validator : validators.values()) {
             retval = validator.getCertificateChain(certificate);
             if (retval != null) {

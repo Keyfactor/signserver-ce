@@ -12,39 +12,12 @@
  *************************************************************************/
 package org.signserver.validationservice.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SignatureException;
-import java.security.cert.CertPath;
-import java.security.cert.CertPathValidator;
-import java.security.cert.CertPathValidatorException;
-import java.security.cert.CertStore;
+import java.security.*;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.CertificateNotYetValidException;
-import java.security.cert.CollectionCertStoreParameters;
-import java.security.cert.PKIXParameters;
-import java.security.cert.TrustAnchor;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.x509.X509CertificateStructure;
+import java.security.cert.*;
+import java.util.*;
 import org.signserver.common.SignServerException;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.common.X509Certificate;
 
 /**
  * 
@@ -56,30 +29,6 @@ import org.signserver.validationservice.common.X509Certificate;
 public class ICertificateManager {
 
     /**
-     * Takes a general certificate and transforms it to a ICertificate
-     * 
-     * @param cert the certificate to transform
-     * @return a ICertificate
-     * @throws CertificateException if the ICertificateManager doesn't support this kind of certificate.
-     */
-    public static ICertificate genICertificate(Certificate cert) throws CertificateException {
-        if (cert instanceof java.security.cert.X509Certificate) {
-            try {
-                ByteArrayInputStream in = new ByteArrayInputStream(cert.getEncoded());
-                ASN1InputStream dIn = new ASN1InputStream(in, in.available());
-                ASN1Sequence seq = (ASN1Sequence) dIn.readObject();
-
-                return new X509Certificate(X509CertificateStructure.getInstance(seq));
-            } catch (IOException e) {
-                throw new CertificateException("Error transforming X509Certificate into a ICertificate.");
-            }
-
-        } else {
-            throw new CertificateException("Error certificate of type " + cert.getClass().getName() + " isn't supported by the ICertificateManager");
-        }
-    }
-
-    /**
      * Method in charge of verifying and checking the validity (not revocation status)
      * of a ICertificate against a set of CA certificates. 
      * @param cert the end user cert
@@ -87,7 +36,7 @@ public class ICertificateManager {
      * @return a Validation object
      * @throws SignServerException
      */
-    public static Validation verifyCertAndChain(ICertificate cert, List<ICertificate> cAChain) throws SignServerException {
+    public static Validation verifyCertAndChain(Certificate cert, List<Certificate> cAChain) throws SignServerException {
         if (cert instanceof X509Certificate) {
             return verifyX509CertAndChain((X509Certificate) cert, cAChain);
         } else {
@@ -96,7 +45,7 @@ public class ICertificateManager {
     }
 
     private static Validation verifyX509CertAndChain(X509Certificate icert,
-            List<ICertificate> chain) throws SignServerException {
+            List<Certificate> chain) throws SignServerException {
         try {
 
 
@@ -116,7 +65,7 @@ public class ICertificateManager {
                 return new Validation(icert, chain, Validation.Status.NOTYETVALID, "Error certificate is not yet valid.");
             }
 
-            for (ICertificate cacert : chain) {
+            for (Certificate cacert : chain) {
                 try {
                     ((X509Certificate) cacert).checkValidity();
                 } catch (CertificateExpiredException e5) {

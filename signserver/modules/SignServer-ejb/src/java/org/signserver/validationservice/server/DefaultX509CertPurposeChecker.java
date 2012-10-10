@@ -12,11 +12,10 @@
  *************************************************************************/
 package org.signserver.validationservice.server;
 
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-
 import org.signserver.common.WorkerConfig;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 
 /**
@@ -40,7 +39,7 @@ public class DefaultX509CertPurposeChecker implements ICertPurposeChecker {
      * </p>
      * @see org.signserver.validationservice.server.ICertPurposeChecker#checkCertPurposes(org.signserver.validationservice.common.ICertificate, String[])
      */
-    public String[] checkCertPurposes(ICertificate cert, String[] certPurposes) {
+    public String[] checkCertPurposes(Certificate cert, String[] certPurposes) {
         String[] retval = null;
 
         for (String certPurpose : certPurposes) {

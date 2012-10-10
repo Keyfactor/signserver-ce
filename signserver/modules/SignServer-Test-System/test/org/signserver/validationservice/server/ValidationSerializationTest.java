@@ -17,15 +17,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.security.KeyPair;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
-
 import junit.framework.TestCase;
-
+import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.SignServerUtil;
-import org.signserver.validationservice.common.ICertificate;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.Validation.Status;
 
@@ -55,10 +54,10 @@ public class ValidationSerializationTest extends TestCase {
 
         validCert1 = ValidationTestUtils.genCert("CN=ValidCert1", "CN=ValidSubCA1", keys.getPrivate(), keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
-        ArrayList<ICertificate> caChain = new ArrayList<ICertificate>();
-        caChain.add(ICertificateManager.genICertificate(validSubCA1));
-        caChain.add(ICertificateManager.genICertificate(validRootCA1));
-        Validation val = new Validation(ICertificateManager.genICertificate(validCert1), caChain, Validation.Status.BADCERTPURPOSE, null);
+        ArrayList<Certificate> caChain = new ArrayList<Certificate>();
+        caChain.add(validSubCA1);
+        caChain.add(validRootCA1);
+        Validation val = new Validation(validCert1, caChain, Validation.Status.BADCERTPURPOSE, null);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(baos);
@@ -75,11 +74,11 @@ public class ValidationSerializationTest extends TestCase {
         assertTrue(val2.getStatusMessage() == null);
         assertTrue(val2.getRevokationReason() == -1);
         assertTrue(val2.getRevokedDate() == null);
-        assertTrue(val2.getCertificate().getSubject().equals("CN=ValidCert1"));
-        assertTrue(val2.getCAChain().get(0).getSubject().equals("CN=ValidSubCA1"));
-        assertTrue(val2.getCAChain().get(1).getSubject().equals("CN=ValidRootCA1"));
+        assertTrue(CertTools.getSubjectDN(val2.getCertificate()).equals("CN=ValidCert1"));
+        assertTrue(CertTools.getSubjectDN(val2.getCAChain().get(0)).equals("CN=ValidSubCA1"));
+        assertTrue(CertTools.getSubjectDN(val2.getCAChain().get(1)).equals("CN=ValidRootCA1"));
 
-        val = new Validation(ICertificateManager.genICertificate(validCert1), caChain, Validation.Status.VALID, "test", new Date(1000), 10);
+        val = new Validation(validCert1, caChain, Validation.Status.VALID, "test", new Date(1000), 10);
 
         baos = new ByteArrayOutputStream();
         out = new DataOutputStream(baos);
@@ -96,9 +95,9 @@ public class ValidationSerializationTest extends TestCase {
         assertTrue(val2.getStatusMessage().equals("test"));
         assertTrue(val2.getRevokationReason() == 10);
         assertTrue(val2.getRevokedDate().getTime() == 1000);
-        assertTrue(val2.getCertificate().getSubject().equals("CN=ValidCert1"));
-        assertTrue(val2.getCAChain().get(0).getSubject().equals("CN=ValidSubCA1"));
-        assertTrue(val2.getCAChain().get(1).getSubject().equals("CN=ValidRootCA1"));
+        assertTrue(CertTools.getSubjectDN(val2.getCertificate()).equals("CN=ValidCert1"));
+        assertTrue(CertTools.getSubjectDN(val2.getCAChain().get(0)).equals("CN=ValidSubCA1"));
+        assertTrue(CertTools.getSubjectDN(val2.getCAChain().get(1)).equals("CN=ValidRootCA1"));
 
     }
 }

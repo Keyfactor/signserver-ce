@@ -13,17 +13,25 @@
 package org.signserver.module.cmssigner;
 
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
-import java.security.cert.*;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
+import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.ECPublicKey;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.*;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.signserver.common.*;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
@@ -43,7 +51,7 @@ public class CMSSigner extends BaseSigner {
 
     /** Content-type for the produced data. */
     private static final String CONTENT_TYPE = "application/pkcs7-signature";
-
+    
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
@@ -95,13 +103,14 @@ public class CMSSigner extends BaseSigner {
         try {
             final CMSSignedDataGenerator generator
                     = new CMSSignedDataGenerator();
-            generator.addSigner(privKey, (X509Certificate) cert,
-                    CMSSignedDataGenerator.DIGEST_SHA1);
-            generator.addCertificatesAndCRLs(CertStore.getInstance("Collection",
-                    new CollectionCertStoreParameters(certs), "BC"));
-            final CMSProcessable content = new CMSProcessableByteArray(data);
-            final CMSSignedData signedData = generator.generate(content, true,
-                    getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+            final ContentSigner contentSigner = new JcaContentSignerBuilder(getDefaultSignatureAlgorithm(cert.getPublicKey())).setProvider(getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privKey);
+            generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
+                     new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
+                     .build(contentSigner, (X509Certificate) cert));
+                      
+            generator.addCertificates(new JcaCertStore(certs));
+            final CMSTypedData content = new CMSProcessableByteArray(data);
+            final CMSSignedData signedData = generator.generate(content, true);
 
             final byte[] signedbytes = signedData.getEncoded();
 
@@ -123,24 +132,30 @@ public class CMSSigner extends BaseSigner {
             }
             
             return signResponse;
-        } catch (InvalidAlgorithmParameterException ex) {
+        } catch (OperatorCreationException ex) {
+            LOG.error("Error initializing signer", ex);
+            throw new SignServerException("Error initializing signer", ex);
+        } catch (CertificateEncodingException ex) {
             LOG.error("Error constructing cert store", ex);
             throw new SignServerException("Error constructing cert store", ex);
-        } catch (CertStoreException ex) {
-            LOG.error("Error constructing cert store", ex);
-            throw new SignServerException("Error constructing cert store", ex);
-        } catch (NoSuchAlgorithmException ex) {
-            LOG.error("Error constructing CMS", ex);
-            throw new SignServerException("Error constructing CMS", ex);
         } catch (CMSException ex) {
-            LOG.error("Error constructing CMS", ex);
-            throw new SignServerException("Error constructing CMS", ex);
-        } catch (NoSuchProviderException ex) {
             LOG.error("Error constructing CMS", ex);
             throw new SignServerException("Error constructing CMS", ex);
         } catch (IOException ex) {
             LOG.error("Error constructing CMS", ex);
             throw new SignServerException("Error constructing CMS", ex);
         }
+    }
+
+    private String getDefaultSignatureAlgorithm(final PublicKey publicKey) {
+        final String result;
+        if (publicKey instanceof ECPublicKey) {
+            result = "SHA1withECDSA";
+        }  else if (publicKey instanceof DSAPublicKey) {
+            result = "SHA1withDSA";
+        } else {
+            result = "SHA1withRSA";
+        }
+        return result;
     }
 }

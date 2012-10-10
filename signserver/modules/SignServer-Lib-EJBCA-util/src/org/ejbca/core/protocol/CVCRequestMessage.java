@@ -28,8 +28,6 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.asn1.x509.X509Extensions;
-import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cms.CMSSignedGenerator;
 import org.ejbca.cvc.CVCAuthenticatedRequest;
 import org.ejbca.cvc.CVCObject;

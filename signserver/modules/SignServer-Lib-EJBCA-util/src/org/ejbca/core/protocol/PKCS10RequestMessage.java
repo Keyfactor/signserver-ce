@@ -378,17 +378,8 @@ public class PKCS10RequestMessage implements IRequestMessage {
         	return null;
         }
         
-        /*
         // Get subject name from request
-        CertificationRequestInfo info = pkcs10.getCertificationRequestInfo();
-        if (info != null) {
-            ret = info.getSubject();
-        }
-        return ret;
-        */       
-        
-        return CertificationRequest.getInstance(pkcs10).getCertificationRequestInfo().getSubject();
-        
+        return pkcs10.getSubject();
     }
     
     public String getRequestAltNames() {

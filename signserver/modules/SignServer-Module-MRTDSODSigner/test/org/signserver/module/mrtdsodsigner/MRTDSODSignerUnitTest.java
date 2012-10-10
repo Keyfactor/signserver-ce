@@ -21,10 +21,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import junit.framework.TestCase;
 
@@ -514,7 +511,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
 
         SODSignResponse res = (SODSignResponse) workerSession.process(workerId,
                 new SODSignRequest(requestId, dataGroups),
-                new RequestContext());
+                getRequestContext());
         assertNotNull(res);
         assertEquals(requestId, res.getRequestID());
         Certificate signercert = res.getSignerCertificate();
@@ -823,5 +820,11 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerSession.reloadConfiguration(workerId);
         }
         
+    }
+
+    private RequestContext getRequestContext() {
+        final RequestContext result = new RequestContext();
+        result.put(RequestContext.TRANSACTION_ID, UUID.randomUUID().toString());
+        return result;
     }
 }

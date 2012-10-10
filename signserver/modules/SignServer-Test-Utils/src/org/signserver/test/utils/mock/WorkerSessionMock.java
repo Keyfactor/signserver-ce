@@ -15,11 +15,7 @@ package org.signserver.test.utils.mock;
 import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
@@ -72,6 +68,9 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         if (logMap == null) {
             logMap = new HashMap<String, String>();
             requestContext.put(RequestContext.LOGMAP, logMap);
+        }
+        if (requestContext.get(RequestContext.TRANSACTION_ID) == null) {
+           requestContext.put(RequestContext.TRANSACTION_ID, UUID.randomUUID().toString());
         }
         return worker.getProcessable().processData(request, requestContext);
     }

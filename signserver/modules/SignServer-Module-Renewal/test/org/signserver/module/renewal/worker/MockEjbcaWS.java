@@ -21,6 +21,7 @@ import javax.jws.WebService;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.core.protocol.IRequestMessage;
+import org.ejbca.core.protocol.PKCS10RequestMessage;
 import org.ejbca.util.RequestMessageUtils;
 import org.signserver.module.renewal
         .ejbcaws.gen.AlreadyRevokedException_Exception;
@@ -92,6 +93,8 @@ public class MockEjbcaWS {
 
     private MockCA ca
             = MockCA.createMockCA("CN=MockupRootCA,O=SignServer Testing,C=SE");
+    
+    private PKCS10RequestMessage pkcs10req;
 
     // From CertificateHelper:
     /**
@@ -288,7 +291,7 @@ public class MockEjbcaWS {
                         + username, ex);
             }
             //String caName = userdata.getCaName();
-            IRequestMessage pkcs10req
+            pkcs10req
                     = RequestMessageUtils.genPKCS10RequestMessage(
                         req.getBytes());
             PublicKey pubKey = pkcs10req.getRequestPublicKey();
@@ -514,6 +517,10 @@ public class MockEjbcaWS {
             throw new AuthorizationDeniedException_Exception(
                     "Administrator not authorized to resource", fault);
         }
+    }
+
+    public PKCS10RequestMessage getLastPKCS10() {
+        return pkcs10req;
     }
 
 }

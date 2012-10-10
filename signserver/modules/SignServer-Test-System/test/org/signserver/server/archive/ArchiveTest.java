@@ -79,19 +79,21 @@ public class ArchiveTest extends ArchiveTestCase {
         LOG.debug("<test03archivingNotSpecified");
     }
     
-// This does not work because of bug DSS-408: Can not archive the same document twice    
-//    /**
-//     * Test signing with archiving enabled for the same document twice.
-//     * @throws Exception In case of error.
-//     */
-//    public void test04archiveSameDocumentTwice() throws Exception {
-//        LOG.debug(">test04archiveSameDocumentTwice");
-//        
-//        testArchive("<document/>");
-//        testArchive("<document/>");
-//        
-//        LOG.debug("<test04archiveSameDocumentTwice");
-//    }
+    /**
+     * Test signing with archiving enabled for the same document twice.
+     * @throws Exception In case of error.
+     */
+    public void test04archiveSameDocumentTwice() throws Exception {
+        LOG.debug(">test04archiveSameDocumentTwice");
+        
+        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "ARCHIVE", "TRUE");
+        getWorkerSession().reloadConfiguration(getSignerIdDummy1());
+        
+        testArchive("<document/>");
+        testArchive("<document/>");
+        
+        LOG.debug("<test04archiveSameDocumentTwice");
+    }
     
     /**
      * Remove the workers created etc.

@@ -25,19 +25,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.XMLStructure;
-import javax.xml.crypto.dsig.CanonicalizationMethod;
-import javax.xml.crypto.dsig.DigestMethod;
-import javax.xml.crypto.dsig.Reference;
-import javax.xml.crypto.dsig.SignatureMethod;
-import javax.xml.crypto.dsig.SignedInfo;
-import javax.xml.crypto.dsig.Transform;
-import javax.xml.crypto.dsig.XMLSignature;
-import javax.xml.crypto.dsig.XMLSignatureException;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.*;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
@@ -50,23 +41,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.apache.log4j.Logger;
-import org.bouncycastle.util.encoders.Hex;
-import org.ejbca.util.CertTools;
-import org.signserver.common.ArchiveData;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ISignRequest;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
-import org.signserver.common.WorkerConfig;
+import org.signserver.common.*;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
@@ -107,9 +83,7 @@ public class XMLSigner extends BaseSigner {
         }
 
         byte[] data = (byte[]) sReq.getRequestData();
-        byte[] fpbytes = CertTools.generateSHA1Fingerprint(data);
-        String fp = new String(Hex.encode(fpbytes));
-
+        String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
 
         String providerName = System.getProperty("jsr105Provider", "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
@@ -208,9 +182,9 @@ public class XMLSigner extends BaseSigner {
         final byte[] signedbytes = bout.toByteArray();
 
         if (signRequest instanceof GenericServletRequest) {
-            signResponse = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes), "text/xml");
+            signResponse = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, new ArchiveData(signedbytes), "text/xml");
         } else {
-            signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));
+            signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, new ArchiveData(signedbytes));
         }
         return signResponse;
     }

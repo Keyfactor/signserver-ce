@@ -17,29 +17,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.ejb.EJBException;
-
 import org.apache.log4j.Logger;
-import org.bouncycastle.util.encoders.Hex;
-import org.ejbca.util.CertTools;
-import org.signserver.common.ArchiveData;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ISignRequest;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.MRTDSignRequest;
-import org.signserver.common.MRTDSignResponse;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
+import org.signserver.common.*;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -66,7 +50,7 @@ public class MRTDSigner extends BaseSigner {
      *
      */
     public ProcessResponse processData(ProcessRequest signRequest,
-            RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException {
+            RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
         if (log.isTraceEnabled()) {
             log.trace(">processData");
@@ -103,14 +87,14 @@ public class MRTDSigner extends BaseSigner {
             GenericSignRequest req = (GenericSignRequest) signRequest;
 
             byte[] bytes = req.getRequestData();
-            String fp = new String(Hex.encode(CertTools.generateSHA1Fingerprint(bytes)));
+            final String archiveId = createArchiveId(bytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
             byte[] signedbytes = encrypt(bytes);
 
             if (signRequest instanceof GenericServletRequest) {
-                ret = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes), "application/octet-stream");
+                ret = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, new ArchiveData(signedbytes), "application/octet-stream");
             } else {
-                ret = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), fp, new ArchiveData(signedbytes));
+                ret = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, new ArchiveData(signedbytes));
             }
         } else {
             throw new IllegalRequestException("Sign request with id: " + sReq.getRequestID() + " is of the wrong type: "

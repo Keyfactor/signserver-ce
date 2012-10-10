@@ -12,27 +12,18 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.io.UnsupportedEncodingException;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
-
 import javax.ejb.EJBException;
-
 import org.apache.log4j.Logger;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenInitializationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.CryptoTokenStatus;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.KeyTestResult;
-import org.signserver.common.ProcessableConfig;
-import org.signserver.common.WorkerConfig;
-import org.signserver.server.BaseWorker;
-import org.signserver.server.IProcessable;
+import org.bouncycastle.util.encoders.Hex;
+import org.signserver.common.*;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.IKeyGenerator;
 
@@ -252,7 +243,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     /**
      * @see IProcessable#testKey(java.lang.String, char[])
      */
-    public Collection<KeyTestResult> testKey(String alias, char[] authCode)
+    @Override
+    public Collection<org.signserver.common.KeyTestResult> testKey(String alias, char[] authCode)
             throws CryptoTokenOfflineException, KeyStoreException {
 
         ICryptoToken token = getCryptoToken();
@@ -260,5 +252,24 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             throw new CryptoTokenOfflineException("Crypto token offline");
         }
         return token.testKey(alias, authCode);
+    }
+    
+    /**
+     * Computes an archive id based on the data and the request id.
+     * @param data The document to archive
+     * @param transactionId The transaction id
+     * @return An ArchiveId (hex encoded hash of document+requestid)
+     * @throws SignServerException in case of error
+     */
+    protected String createArchiveId(final byte[] data, final String transactionId) throws SignServerException {
+        try {
+            final MessageDigest md = MessageDigest.getInstance("SHA1");
+            md.update(data);
+            return new String(Hex.encode(md.digest(transactionId.getBytes("UTF-8"))), "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            throw new SignServerException("Unable to compute archive id", ex);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new SignServerException("Unable to compute archive id", ex);
+        }
     }
 }

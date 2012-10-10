@@ -16,24 +16,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-
-import org.bouncycastle.util.encoders.Hex;
-import org.ejbca.util.CertTools;
+import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.pkg.signature.DocumentSignatureManager;
 import org.odftoolkit.odfdom.pkg.signature.SignatureCreationMode;
-import org.odftoolkit.odfdom.doc.OdfDocument;
-import org.signserver.common.ArchiveData;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ISignRequest;
-import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
+import org.signserver.common.*;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -76,9 +62,7 @@ public class ODFSigner extends BaseSigner {
         }
 
         byte[] data = (byte[]) sReq.getRequestData();
-
-        byte[] fpbytes = CertTools.generateSHA1Fingerprint(data);
-        String fp = new String(Hex.encode(fpbytes));
+        final String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
         OdfDocument odfDoc;
         try {
@@ -127,11 +111,11 @@ public class ODFSigner extends BaseSigner {
 
         if (signRequest instanceof GenericServletRequest) {
             signResponse = new GenericServletResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(), fp, new ArchiveData(
+                    signedbytes, getSigningCertificate(), archiveId, new ArchiveData(
                     signedbytes), "application/octet-stream");
         } else {
             signResponse = new GenericSignResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(), fp, new ArchiveData(
+                    signedbytes, getSigningCertificate(), archiveId, new ArchiveData(
                     signedbytes));
         }
 

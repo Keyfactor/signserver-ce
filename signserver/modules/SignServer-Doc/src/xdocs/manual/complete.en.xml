@@ -4203,7 +4203,7 @@ The exact database table structure is described in the SQL scripts available und
                                 <td>archiveId</td>
                                 <td>
 Some identifier for the produced item.<br/>
-For the TimeStampSigner this would be the Time stamp token serial number (in hex encoding). Other signers might use a hash of the final document.
+For the TimeStampSigner this would be the Time stamp token serial number (in hex encoding). Other signers might use a hash of the request document and the transaction ID.
                                 </td>
                             </tr>
                             <tr>

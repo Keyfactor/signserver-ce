@@ -361,7 +361,7 @@ public class RenewalWorker extends BaseSigner {
                 }
 
                 // Renew worker
-                renewWorker(reneweeId, sigAlg, keyAlg, endEntity,
+                renewWorker(reneweeId, sigAlg, subjectDN, endEntity,
                         Boolean.valueOf(explicitEccParameters),
                         defaultKey, nextCertSignKey,
                         logMap);

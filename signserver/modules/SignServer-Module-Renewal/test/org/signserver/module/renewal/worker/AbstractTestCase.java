@@ -125,7 +125,7 @@ public abstract class AbstractTestCase extends TestCase {
             getWorkerSession().setWorkerProperty(signerId, "RENEWENDENTITY",
                 endEntity);
             workerSession.setWorkerProperty(signerId, "REQUESTDN",
-                "CN=" + endEntity);
+                "CN=" + endEntity + ",C=SE");
         }
         workerSession.setWorkerProperty(signerId, "SIGNATUREALGORITHM",
                 "SHA256withRSA");

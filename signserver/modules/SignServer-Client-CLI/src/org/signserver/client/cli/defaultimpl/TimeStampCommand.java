@@ -30,9 +30,12 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.cert.AttributeCertificateHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.Selector;
@@ -462,7 +465,8 @@ public class TimeStampCommand extends AbstractCommand {
             final TimeStampResponse timeStampResponse =
                     new TimeStampResponse(replyBytes);
             final TimeStampToken token = timeStampResponse.getTimeStampToken();
-            token.validate(list[0], "BC");
+            final SignerInformationVerifier infoVerifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(list[0]);
+            token.validate(infoVerifier);
             LOG.info("Token was validated successfully.");
 
             final TimeStampTokenInfo info = token.getTimeStampInfo();
@@ -516,7 +520,7 @@ public class TimeStampCommand extends AbstractCommand {
                 LOG.debug("Generating a new request");
                 timeStampRequestGenerator.setCertReq(certReq);
                 if (reqPolicy != null) {
-                    timeStampRequestGenerator.setReqPolicy(reqPolicy);
+                    timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier(reqPolicy));
                 }
                 timeStampRequest = timeStampRequestGenerator.generate(
                         TSPAlgorithms.SHA1, digest, BigInteger.valueOf(nonce));

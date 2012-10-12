@@ -65,7 +65,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.InflaterInputStream;
 import java.util.Stack;
-import java.security.Key;
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
 
@@ -77,9 +76,11 @@ import com.lowagie.text.exceptions.InvalidPdfException;
 import com.lowagie.text.exceptions.UnsupportedPdfException;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
+import java.security.PrivateKey;
 
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.RecipientInformation;
+import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 
 /** Reads a PDF document.
  * @author Paulo Soares (psoares@consiste.pt)
@@ -118,7 +119,7 @@ public class PdfReader implements PdfViewerPreferences {
     protected char pdfVersion;
     protected PdfEncryption decrypt;
     protected byte password[] = null; //added by ujihara for decryption
-    protected Key certificateKey = null; //added by Aiken Sam for certificate decryption
+    protected PrivateKey certificateKey = null; //added by Aiken Sam for certificate decryption
     protected Certificate certificate = null; //added by Aiken Sam for certificate decryption
     protected String certificateKeyProvider = null; //added by Aiken Sam for certificate decryption
     private boolean ownerPasswordUsed;
@@ -191,7 +192,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @param certificateKeyProvider the security provider for certificateKey
      * @throws IOException on error
      */
-    public PdfReader(String filename, Certificate certificate, Key certificateKey, String certificateKeyProvider) throws IOException {
+    public PdfReader(String filename, Certificate certificate, PrivateKey certificateKey, String certificateKeyProvider) throws IOException {
         this.certificate = certificate;
         this.certificateKey = certificateKey;
         this.certificateKeyProvider = certificateKeyProvider;
@@ -719,7 +720,7 @@ public class PdfReader implements PdfViewerPreferences {
                         RecipientInformation recipientInfo = (RecipientInformation)recipientCertificatesIt.next();
 
                         if (recipientInfo.getRID().match(certificate) && !foundRecipient) {
-                         envelopedData = recipientInfo.getContent(certificateKey, certificateKeyProvider);
+                         envelopedData = recipientInfo.getContent(new JceKeyTransEnvelopedRecipient(certificateKey).setProvider(certificateKeyProvider));
                          foundRecipient = true;
                         }
                     }

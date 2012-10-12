@@ -59,20 +59,25 @@ import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.Security;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.Vector;
+import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.x509.X509Extension;
-import org.bouncycastle.asn1.x509.X509Extensions;
-import org.bouncycastle.ocsp.BasicOCSPResp;
-import org.bouncycastle.ocsp.CertificateID;
-import org.bouncycastle.ocsp.CertificateStatus;
-import org.bouncycastle.ocsp.OCSPException;
-import org.bouncycastle.ocsp.OCSPReq;
-import org.bouncycastle.ocsp.OCSPReqGenerator;
-import org.bouncycastle.ocsp.OCSPResp;
-import org.bouncycastle.ocsp.SingleResp;
+import org.bouncycastle.asn1.ocsp.OCSPResponse;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.cert.ocsp.CertificateID;
+import org.bouncycastle.cert.ocsp.CertificateStatus;
+import org.bouncycastle.cert.ocsp.OCSPException;
+import org.bouncycastle.cert.ocsp.OCSPReq;
+import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
+import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.SingleResp;
+import org.bouncycastle.cert.ocsp.jcajce.JcaCertificateID;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
 /**
  * OcspClient implementation using BouncyCastle.
@@ -107,28 +112,22 @@ public class OcspClientBouncyCastle implements OcspClient {
      * @throws OCSPException
      * @throws IOException
      */
-    private static OCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber) throws OCSPException, IOException {
+    private static OCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber) throws OCSPException, IOException, CertificateEncodingException, OperatorCreationException {
         //Add provider BC
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         
         // Generate the id for the certificate we are looking for
-        CertificateID id = new CertificateID(CertificateID.HASH_SHA1, issuerCert, serialNumber);
+        CertificateID id = new JcaCertificateID(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build().get(CertificateID.HASH_SHA1), issuerCert, serialNumber);
         
         // basic request generation with nonce
-        OCSPReqGenerator gen = new OCSPReqGenerator();
+        OCSPReqBuilder gen = new OCSPReqBuilder();
         
         gen.addRequest(id);
         
         // create details for nonce extension
-        Vector oids = new Vector();
-        Vector values = new Vector();
+        gen.setRequestExtensions(new Extensions(new Extension[] { new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, new DEROctetString(new DEROctetString(PdfEncryption.createDocumentId()).getEncoded())) }));
         
-        oids.add(OCSPObjectIdentifiers.id_pkix_ocsp_nonce);
-        values.add(new X509Extension(false, new DEROctetString(new DEROctetString(PdfEncryption.createDocumentId()).getEncoded())));
-        
-        gen.setRequestExtensions(new X509Extensions(oids, values));
-        
-        return gen.generate();
+        return gen.build();
     }
     
     /**
@@ -154,7 +153,7 @@ public class OcspClientBouncyCastle implements OcspClient {
             }
             //Get Response
             InputStream in = (InputStream) con.getContent();
-            OCSPResp ocspResponse = new OCSPResp(in);
+            OCSPResp ocspResponse = new OCSPResp(OCSPResponse.getInstance(new ASN1InputStream(in).readObject()));
 
             if (ocspResponse.getStatus() != 0)
                 throw new IOException("Invalid status: " + ocspResponse.getStatus());

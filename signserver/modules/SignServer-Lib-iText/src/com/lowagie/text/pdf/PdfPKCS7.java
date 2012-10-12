@@ -108,10 +108,14 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.tsp.MessageImprint;
-import org.bouncycastle.asn1.x509.X509Extensions;
-import org.bouncycastle.ocsp.BasicOCSPResp;
-import org.bouncycastle.ocsp.CertificateID;
-import org.bouncycastle.ocsp.SingleResp;
+import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.cert.ocsp.CertificateID;
+import org.bouncycastle.cert.ocsp.SingleResp;
+import org.bouncycastle.cert.ocsp.jcajce.JcaCertificateID;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
 
 /**
@@ -645,7 +649,7 @@ public class PdfPKCS7 {
     public boolean verifyTimestampImprint() throws NoSuchAlgorithmException {
         if (timeStampToken == null)
             return false;
-        MessageImprint imprint = timeStampToken.getTimeStampInfo().toTSTInfo().getMessageImprint();
+        MessageImprint imprint = timeStampToken.getTimeStampInfo().toASN1Structure().getMessageImprint();
         byte[] md = MessageDigest.getInstance("SHA-1").digest(digest);
         byte[] imphashed = imprint.getHashedMessage();
         boolean res = Arrays.equals(md, imphashed);
@@ -899,7 +903,7 @@ public class PdfPKCS7 {
                     if (!keystore.isCertificateEntry(alias))
                         continue;
                     X509Certificate certStoreX509 = (X509Certificate)keystore.getCertificate(alias);
-                    if (ocsp.verify(certStoreX509.getPublicKey(), provider))
+                    if (ocsp.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider(provider).build(certStoreX509.getPublicKey())))
                         return true;
                 }
                 catch (Exception ex) {
@@ -929,7 +933,7 @@ public class PdfPKCS7 {
                     if (!keystore.isCertificateEntry(alias))
                         continue;
                     X509Certificate certStoreX509 = (X509Certificate)keystore.getCertificate(alias);
-                    ts.validate(certStoreX509, provider);
+                    ts.validate(new JcaSignerInfoVerifierBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build()).build(certStoreX509));
                     return true;
                 }
                 catch (Exception ex) {
@@ -950,7 +954,7 @@ public class PdfPKCS7 {
      */
     public static String getOCSPURL(X509Certificate certificate) throws CertificateParsingException {
         try {
-            ASN1Object obj = getExtensionValue(certificate, X509Extensions.AuthorityInfoAccess.getId());
+            ASN1Object obj = getExtensionValue(certificate, X509Extension.authorityInfoAccess.getId());
             if (obj == null) {
                 return null;
             }
@@ -992,7 +996,7 @@ public class PdfPKCS7 {
             CertificateID cid = sr.getCertID();
             X509Certificate sigcer = getSigningCertificate();
             X509Certificate isscer = cs[1];
-            CertificateID tis = new CertificateID(CertificateID.HASH_SHA1, isscer, sigcer.getSerialNumber());
+            CertificateID tis = new JcaCertificateID(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build().get(CertificateID.HASH_SHA1), isscer, sigcer.getSerialNumber());
             return tis.equals(cid);
         }
         catch (Exception ex) {

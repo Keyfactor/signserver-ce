@@ -15,6 +15,11 @@
     <property name="modulename" value="signserverejb"/>
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
+    
+    <!-- Fix issue with tests in NetBeans IDE 7.2. Running without this gives error on "ant test". -->
+    <target name="-post-init">
+        <property name="run.jvmargs.ide" value=""/>
+    </target>
         
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>

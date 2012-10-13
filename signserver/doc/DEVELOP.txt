@@ -36,9 +36,8 @@ NetBeans IDE =7.0 for changing some of the GUI parts.
 For the 3.2 branch don't let a newer version than 7.0.x update the build scripts
 as we only require Ant 1.7.1.
 
-For trunk newer versions can be used as we require Ant 1.8.1 or later. However, 
-it has been reported issues with NetBeans IDE 7.2 making the tests not compile.
-See https://jira.primekey.se/browse/DSS-511 .
+For trunk newer versions can be used as we require Ant 1.8.1 or later and 
+we target NetBeans IDE 7.2.
 
 
 Writing Documentation

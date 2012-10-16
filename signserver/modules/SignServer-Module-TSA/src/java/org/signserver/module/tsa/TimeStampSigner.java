@@ -320,7 +320,8 @@ public class TimeStampSigner extends BaseSigner {
     public ProcessResponse processData(final ProcessRequest signRequest,
             final RequestContext requestContext) throws
                 IllegalRequestException,
-                CryptoTokenOfflineException {
+                CryptoTokenOfflineException,
+                SignServerException {
 
         // Log values
         final Map<String, String> logMap =
@@ -507,11 +508,12 @@ public class TimeStampSigner extends BaseSigner {
                     exception.getMessage());
             throw exception;
         } catch (OperatorCreationException e) {
-        	final IllegalRequestException exception =
-        			new IllegalRequestException(e.getMessage(), e);
+        	final SignServerException exception =
+        			new SignServerException(e.getMessage(), e);
         	LOG.error("OperatorCreationException: ", e);
         	logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
         			exception.getMessage());
+        	throw exception;
         }
 
         return signResponse;

@@ -217,6 +217,11 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
             String archiveId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    @Override
+    public List<ArchiveDataVO> findAllArchiveDataFromArchiveId(int signerId, String archiveId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     public List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerId,
             String requestIP) {

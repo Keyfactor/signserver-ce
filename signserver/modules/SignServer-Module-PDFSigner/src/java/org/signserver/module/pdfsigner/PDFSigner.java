@@ -30,6 +30,8 @@ import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.archive.Archivable;
+import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.signers.BaseSigner;
@@ -131,6 +133,7 @@ public class PDFSigner extends BaseSigner {
 
     private static final String ARCHIVETODISK_PATTERN_REGEX =
             "\\$\\{(.+?)\\}";
+    private static final String CONTENT_TYPE = "application/pdf";
 
     private Pattern archivetodiskPattern;
 
@@ -222,14 +225,16 @@ public class PDFSigner extends BaseSigner {
             }
             
             byte[] signedbytes = addSignatureToPDFDocument(params, pdfbytes, password, 0);
+            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
+            
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         signedbytes, getSigningCertificate(), archiveId,
-                        new ArchiveData(signedbytes), "application/pdf");
+                        archivables, CONTENT_TYPE);
             } else {
                 signResponse = new GenericSignResponse(sReq.getRequestID(),
                         signedbytes, getSigningCertificate(), archiveId,
-                        new ArchiveData(signedbytes));
+                        archivables);
             }
 
             // Archive to disk

@@ -16,6 +16,7 @@ import java.security.cert.X509Certificate;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.signserver.common.ArchiveData;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
@@ -28,8 +29,7 @@ import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.IWorkerLogger;
 
 /**
- * Archiver only accepting responses and currently only supports Archivables of
- * class ArchiveDataArchivable. 
+ * Archiver only accepting responses and archiving to the database. 
  * 
  * @author Markus Kilås
  * @version $Id$
@@ -54,12 +54,17 @@ public class OldDatabaseArchiver implements Archiver {
     public boolean archive(Archivable archivable, RequestContext requestContext)
             throws ArchiveException {
         final boolean archived;
-        if (Archivable.TYPE_RESPONSE.equals(archivable.getType())
-                && archivable instanceof ArchiveDataArchivable) {
+        if (Archivable.TYPE_RESPONSE.equals(archivable.getType())) {
+            final ArchiveData archiveData;
+            if (archivable instanceof ArchiveDataArchivable) {
+                archiveData = ((ArchiveDataArchivable) archivable).getArchiveData();
+            } else {
+                archiveData = new ArchiveData(archivable.getContentEncoded());
+            }
+            
             if (dataService == null) {
                 throw new ArchiveException("Could not archive as archiver was not successfully initialized");
             }
-            final ArchiveDataArchivable ada = (ArchiveDataArchivable) archivable;
             final Integer workerId = (Integer) requestContext.get(RequestContext.WORKER_ID);
             final X509Certificate certificate = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
             final String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
@@ -67,10 +72,10 @@ public class OldDatabaseArchiver implements Archiver {
             final String uniqueId;
             uniqueId = dataService.create(ArchiveDataVO.TYPE_RESPONSE,
                         workerId,
-                        ada.getArchiveId(),
+                        archivable.getArchiveId(),
                         certificate,
                         remoteIp,
-                            ada.getArchiveData());
+                            archiveData);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archived with uniqueId: " + uniqueId);
             }

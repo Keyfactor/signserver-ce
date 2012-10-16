@@ -16,10 +16,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Collection;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.pkg.signature.DocumentSignatureManager;
 import org.odftoolkit.odfdom.pkg.signature.SignatureCreationMode;
 import org.signserver.common.*;
+import org.signserver.server.archive.Archivable;
+import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -41,6 +45,7 @@ import org.signserver.server.signers.BaseSigner;
  * @version $Id$
  */
 public class ODFSigner extends BaseSigner {
+    private static final String CONTENT_TYPE = "application/octet-stream";
 
     @Override
     public ProcessResponse processData(ProcessRequest signRequest,
@@ -108,15 +113,14 @@ public class ODFSigner extends BaseSigner {
 
         // return result
         byte[] signedbytes = bout.toByteArray();
+        final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
 
         if (signRequest instanceof GenericServletRequest) {
             signResponse = new GenericServletResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(), archiveId, new ArchiveData(
-                    signedbytes), "application/octet-stream");
+                    signedbytes, getSigningCertificate(), archiveId, archivables, CONTENT_TYPE);
         } else {
             signResponse = new GenericSignResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(), archiveId, new ArchiveData(
-                    signedbytes));
+                    signedbytes, getSigningCertificate(), archiveId, archivables);
         }
 
         return signResponse;

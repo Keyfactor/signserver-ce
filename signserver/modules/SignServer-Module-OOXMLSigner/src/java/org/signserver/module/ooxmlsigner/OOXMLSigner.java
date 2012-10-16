@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Collection;
 import javax.persistence.EntityManager;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
@@ -27,6 +29,8 @@ import org.openxml4j.opc.signature.PackageDigitalSignatureManager;
 import org.openxml4j.opc.signature.RelationshipTransformProvider;
 import org.signserver.common.*;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.archive.Archivable;
+import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -52,6 +56,8 @@ import org.signserver.server.signers.BaseSigner;
  * @version $Id$
  */
 public class OOXMLSigner extends BaseSigner {
+
+    private static final String CONTENT_TYPE = "application/octet-stream";
 
     @Override
     public void init(int workerId, WorkerConfig config,
@@ -124,15 +130,14 @@ public class OOXMLSigner extends BaseSigner {
         }
 
         byte[] signedbytes = boutFinal.toByteArray();
+        final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
 
         if (signRequest instanceof GenericServletRequest) {
             signResponse = new GenericServletResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(), archiveId, new ArchiveData(
-                    signedbytes), "application/octet-stream");
+                    signedbytes, getSigningCertificate(), archiveId, archivables, CONTENT_TYPE);
         } else {
             signResponse = new GenericSignResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(), archiveId, new ArchiveData(
-                    signedbytes));
+                    signedbytes, getSigningCertificate(), archiveId, archivables);
         }
         return signResponse;
 

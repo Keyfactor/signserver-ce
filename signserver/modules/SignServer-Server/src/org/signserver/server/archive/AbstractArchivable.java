@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server.archive;
 
+import java.io.Serializable;
+
 /**
  * Abstract Archivable. Provides default implementation for some boiler plate 
  * parts of an Archivable.
@@ -19,7 +21,9 @@ package org.signserver.server.archive;
  * @author Markus Kilås
  * @version $Id$
  */
-public abstract class AbstractArchivable implements Archivable {
+public abstract class AbstractArchivable implements Archivable, Serializable {
+    
+    private static final long serialVersionUID = 0L;
 
     private String type;
     

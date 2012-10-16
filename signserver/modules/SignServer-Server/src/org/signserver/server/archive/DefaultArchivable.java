@@ -19,6 +19,8 @@ package org.signserver.server.archive;
  * @version $Id$
  */
 public class DefaultArchivable extends AbstractArchivable {
+    
+    private static final long serialVersionUID = 0L;
 
     /** The default content-type. */
     private static final String APPLICATION_OCTET_STREAM 

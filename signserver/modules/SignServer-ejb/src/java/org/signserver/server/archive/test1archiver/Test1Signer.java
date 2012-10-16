@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server.archive.test1archiver;
 
+import java.util.Collection;
+import java.util.Collections;
 import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -22,6 +24,8 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
+import org.signserver.server.archive.Archivable;
+import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -54,10 +58,11 @@ public class Test1Signer extends BaseSigner {
         
         final byte[] signedbytes = "SIGNED".getBytes();
         
+        String archiveId = String.valueOf(request.getRequestID()) + "-" + System.currentTimeMillis();
         result = new GenericSignResponse(request.getRequestID(),
                 signedbytes, getSigningCertificate(), 
-                String.valueOf(request.getRequestID()) + "-" + System.currentTimeMillis(),
-                new ArchiveData(signedbytes));
+                archiveId,
+                Collections.singletonList(new ArchiveDataArchivable(archiveId, new ArchiveData(signedbytes), Archivable.TYPE_REQUEST)));
         
         LOG.debug("<processData");
         return result;

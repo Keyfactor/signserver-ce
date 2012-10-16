@@ -16,6 +16,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -24,6 +26,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.ejb.EJBException;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
+import org.signserver.server.archive.Archivable;
+import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -36,6 +40,7 @@ import org.signserver.server.signers.BaseSigner;
 public class MRTDSigner extends BaseSigner {
 
     private static final Logger log = Logger.getLogger(MRTDSigner.class);
+    private static final String CONTENT_TYPE = "application/octet-stream";
 
     public MRTDSigner() {
     }
@@ -90,11 +95,12 @@ public class MRTDSigner extends BaseSigner {
             final String archiveId = createArchiveId(bytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
             byte[] signedbytes = encrypt(bytes);
+            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
 
             if (signRequest instanceof GenericServletRequest) {
-                ret = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, new ArchiveData(signedbytes), "application/octet-stream");
+                ret = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, archivables, CONTENT_TYPE);
             } else {
-                ret = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, new ArchiveData(signedbytes));
+                ret = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, archivables);
             }
         } else {
             throw new IllegalRequestException("Sign request with id: " + sReq.getRequestID() + " is of the wrong type: "

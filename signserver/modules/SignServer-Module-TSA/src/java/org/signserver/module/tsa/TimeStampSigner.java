@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.*;
-import java.security.cert.Certificate;
 import java.security.cert.*;
+import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.ejb.EJBException;
@@ -45,6 +45,8 @@ import org.ejbca.util.Base64;
 import org.signserver.common.*;
 import org.signserver.server.ITimeSource;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.archive.Archivable;
+import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.signers.BaseSigner;
@@ -168,6 +170,9 @@ public class TimeStampSigner extends BaseSigner {
 
     private static final BigInteger HIGHEST =
             new BigInteger("7FFFFFFFFFFFFFFF", 16);
+    
+    /** MIME type for the response data. **/
+    private static final String RESPONSE_CONTENT_TYPE = "application/timestamp-reply";
 
     //Private Property constants
     public static final String TIMESOURCE = "TIMESOURCE";
@@ -420,21 +425,23 @@ public class TimeStampSigner extends BaseSigner {
                 archiveId = token.getTimeStampInfo().getSerialNumber()
                                         .toString(16);
             }
+            
+            final byte[] signedbytes = timeStampResponse.getEncoded();
+            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, RESPONSE_CONTENT_TYPE, signedbytes, archiveId));
 
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
-                        timeStampResponse.getEncoded(),
+                        signedbytes,
                                     getSigningCertificate(),
                                     archiveId,
-                                    new ArchiveData(
-                                        timeStampResponse.getEncoded()),
-                                        "application/timestamp-reply");
+                                    archivables, 
+                                    RESPONSE_CONTENT_TYPE);
             } else {
                 signResponse = new GenericSignResponse(sReq.getRequestID(),
-                        timeStampResponse.getEncoded(),
+                        signedbytes,
                         getSigningCertificate(),
                         archiveId,
-                        new ArchiveData(timeStampResponse.getEncoded()));
+                        archivables);
             }
 
             // Put in log values

@@ -18,8 +18,9 @@ import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
-
+import java.util.Collection;
 import org.ejbca.util.CertTools;
+import org.signserver.server.archive.Archivable;
 
 /**
  * A generic work response class implementing the minimal required functionality.
@@ -31,14 +32,15 @@ import org.ejbca.util.CertTools;
  */
 public class GenericSignResponse extends ProcessResponse implements ISignResponse {
 
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
     protected int tag = RequestAndResponseManager.RESPONSETYPE_GENERICSIGNRESPONSE;
     private int requestID;
     private byte[] processedData;
     private transient Certificate signerCertificate;
     private byte[] signerCertificateBytes;
-    private ArchiveData archiveData;
     private String archiveId;
+    
+    private Collection<? extends Archivable> archivables;
 
     /**
      * Default constructor used during serialization.
@@ -53,15 +55,15 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
      */
     public GenericSignResponse(int requestID, byte[] processedData,
             Certificate signerCertificate,
-            String archiveId, ArchiveData archiveData) {
+            String archiveId, Collection<? extends Archivable> archivables) {
         try {
             this.requestID = requestID;
             this.processedData = processedData;
             this.signerCertificate = signerCertificate;
             this.signerCertificateBytes = signerCertificate == null ? null
                     : signerCertificate.getEncoded();
-            this.archiveData = archiveData;
             this.archiveId = archiveId;
+            this.archivables = archivables;
         } catch (CertificateEncodingException ex) {
             throw new RuntimeException(ex);
         }
@@ -85,11 +87,6 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
             }
         }
         return signerCertificate;
-    }
-
-    @Override
-    public ArchiveData getArchiveData() {
-        return archiveData;
     }
 
     @Override
@@ -147,5 +144,9 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
         }
         out.writeInt(processedData.length);
         out.write(processedData);
+    }
+
+    public Collection<? extends Archivable> getArchivables() {
+        return archivables;
     }
 }

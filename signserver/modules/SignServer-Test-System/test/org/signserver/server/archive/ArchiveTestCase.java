@@ -51,7 +51,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         assertNotNull("no response", response);
         
         final String expectedArchiveId = response.getArchiveId();
-        final ArchiveData expectedArchiveData = response.getArchiveData();
+        final Archivable expectedArchiveData = response.getArchivables().iterator().next();
         
         ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
         assertEquals("same id in db", 
@@ -60,7 +60,7 @@ public class ArchiveTestCase extends ModulesTestCase {
                 getSignerIdDummy1(), archiveData.getSignerId());
         
         assertTrue("same archived data", 
-                Arrays.equals(expectedArchiveData.getData(), 
+                Arrays.equals(expectedArchiveData.getContentEncoded(), 
                 archiveData.getArchivedBytes()));
         return archiveData;
     }

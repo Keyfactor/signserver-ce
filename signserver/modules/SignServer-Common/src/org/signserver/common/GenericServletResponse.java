@@ -16,6 +16,8 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.security.cert.Certificate;
+import java.util.Collection;
+import org.signserver.server.archive.Archivable;
 
 /**
  * Generic sign response used by workers responding to GenericServletRequest from the GenericProcessServlet.
@@ -42,9 +44,9 @@ public class GenericServletResponse extends GenericSignResponse {
      */
     public GenericServletResponse(int requestID, byte[] processedData,
             Certificate signerCertificate,
-            String archiveId, ArchiveData archiveData,
+            String archiveId, Collection<? extends Archivable> archivables,
             String contentType) {
-        super(requestID, processedData, signerCertificate, archiveId, archiveData);
+        super(requestID, processedData, signerCertificate, archiveId, archivables);
         this.contentType = contentType;
     }
 

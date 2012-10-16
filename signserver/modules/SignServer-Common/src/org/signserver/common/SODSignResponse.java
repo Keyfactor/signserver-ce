@@ -13,6 +13,8 @@
 package org.signserver.common;
 
 import java.security.cert.Certificate;
+import java.util.Collection;
+import org.signserver.server.archive.Archivable;
 
 
 /** Response used for a signed SO(d) from the MRTD SOD Signer. Used for ePassports.
@@ -39,8 +41,8 @@ public class SODSignResponse extends GenericSignResponse {
      */
     public SODSignResponse(int requestID, byte[] processedData,
             Certificate signerCertificate,
-            String archiveId, ArchiveData archiveData) {
-        super(requestID, processedData, signerCertificate, archiveId, archiveData);
+            String archiveId, Collection<? extends Archivable> archivables) {
+        super(requestID, processedData, signerCertificate, archiveId, archivables);
         this.tag = RequestAndResponseManager.RESPONSETYPE_SODSIGNRESPONSE;
     }
 }

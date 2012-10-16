@@ -26,8 +26,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
-import org.signserver.common.KeyTestResult;
 import org.signserver.common.*;
+import org.signserver.common.KeyTestResult;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -36,7 +36,6 @@ import org.signserver.server.*;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
-import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
@@ -338,16 +337,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             if (res instanceof IArchivableProcessResponse) {
                 final IArchivableProcessResponse arres =
                         (IArchivableProcessResponse) res;
-                if (arres.getArchiveData() != null) {
-                    // The IArchivableProcessResponse only supports a single
-                    // item to archive. In the future we might get multiple
-                    // Archivables from a worker.
-                    final Archivable archivableResponse
-                            = new ArchiveDataArchivable(arres.getArchiveId(), 
-                                arres.getArchiveData(), Archivable.TYPE_RESPONSE);
-                    final Collection<Archivable> archivables
-                            = Collections.singleton(archivableResponse);
-
+                final Collection<? extends Archivable> archivables = arres.getArchivables();
+                if (archivables != null) {
                     // Archive all Archivables using all ArchiverS
                     final List<Archiver> archivers = workerManagerSession.getArchivers(workerId, awc);
                     if (archivers != null) {

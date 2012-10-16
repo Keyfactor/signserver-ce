@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.common;
 
+import java.util.Collection;
+import org.signserver.server.archive.Archivable;
+
 /**
  * Interface that should be implemented by all process responses that could be archived.
  * 
@@ -27,10 +30,9 @@ public interface IArchivableProcessResponse {
      * return null of not implemented.
      */
     String getArchiveId();
-
+    
     /**
-     * Method that should return a archive data object used for achiving.
-     * return null if not implemented.
+     * @return A collection of all Archivables in the response.
      */
-    ArchiveData getArchiveData();
+    Collection<? extends Archivable> getArchivables();
 }

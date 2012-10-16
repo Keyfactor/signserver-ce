@@ -22,6 +22,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,8 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
+import org.signserver.server.archive.Archivable;
+import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -235,8 +238,9 @@ public class MRTDSODSigner extends BaseSigner {
             // Return response
             final byte[] signedbytes = sod.getEncoded();
             final String archiveId = createArchiveId(signedbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
+            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, signedbytes, archiveId));
             ret = new SODSignResponse(sReq.getRequestID(), signedbytes, cert,
-                    archiveId, new ArchiveData(signedbytes));
+                    archiveId, archivables);
         } catch (GeneralSecurityException e) {
             log.error("Error verifying the SOD we signed ourselves. ", e);
             throw new SignServerException("SOD verification failure", e);

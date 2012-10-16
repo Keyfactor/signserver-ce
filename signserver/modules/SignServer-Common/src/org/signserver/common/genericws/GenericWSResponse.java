@@ -13,9 +13,9 @@
 package org.signserver.common.genericws;
 
 import java.security.cert.Certificate;
-
-import org.signserver.common.ArchiveData;
+import java.util.Collection;
 import org.signserver.common.GenericSignResponse;
+import org.signserver.server.archive.Archivable;
 
 /**
  * Response object used for generic WS services. Contains no
@@ -41,7 +41,7 @@ public class GenericWSResponse extends GenericSignResponse {
      */
     public GenericWSResponse(int requestID,
             Certificate signerCertificate,
-            String archiveId, ArchiveData archiveData) {
-        super(requestID, null, signerCertificate, archiveId, archiveData);
+            String archiveId, Collection<? extends Archivable> archivables) {
+        super(requestID, null, signerCertificate, archiveId, archivables);
     }
 }

@@ -24,6 +24,8 @@ import org.signserver.server.archive.AbstractArchivable;
  */
 public class ArchiveDataArchivable extends AbstractArchivable {
 
+    private static final long serialVersionUID = 0L;
+    
     /** Content type for this Archivable. */
     public static final String ARCHIVEDATA = "ARCHIVEDATA";
 

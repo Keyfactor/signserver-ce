@@ -171,6 +171,9 @@ public class TimeStampSigner extends BaseSigner {
     private static final BigInteger HIGHEST =
             new BigInteger("7FFFFFFFFFFFFFFF", 16);
     
+    /** MIME type for the request data. **/
+    private static final String REQUEST_CONTENT_TYPE = "application/timestamp-query";
+    
     /** MIME type for the response data. **/
     private static final String RESPONSE_CONTENT_TYPE = "application/timestamp-reply";
 
@@ -362,16 +365,17 @@ public class TimeStampSigner extends BaseSigner {
 
         GenericSignResponse signResponse = null;
         try {
+            final byte[] requestbytes = (byte[]) sReq.getRequestData();
             final TimeStampRequest timeStampRequest =
-                    new TimeStampRequest((byte[]) sReq.getRequestData());
-
+                    new TimeStampRequest(requestbytes);
+            
             // Log values for timestamp request
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CERTREQ,
                     String.valueOf(timeStampRequest.getCertReq()));
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CRITEXTOIDS,
                     String.valueOf(timeStampRequest.getCriticalExtensionOIDs()));
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED,
-                    new String(Base64.encode(timeStampRequest.getEncoded())));
+                    new String(Base64.encode(requestbytes)));
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NONCRITEXTOIDS,
                     String.valueOf(timeStampRequest.getNonCriticalExtensionOIDs()));
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NOUNCE,
@@ -400,6 +404,7 @@ public class TimeStampSigner extends BaseSigner {
                         ICryptoToken.PROVIDERUSAGE_SIGN));
 
             final TimeStampToken token = timeStampResponse.getTimeStampToken();
+            final byte[] signedbytes = timeStampResponse.getEncoded();
 
             // Log values for timestamp response
             if (LOG.isDebugEnabled()) {
@@ -415,7 +420,7 @@ public class TimeStampSigner extends BaseSigner {
                             timeStampResponse.getFailInfo().intValue()));
             }
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED,
-                    new String(Base64.encode(timeStampResponse.getEncoded())));
+                    new String(Base64.encode(signedbytes)));
             logMap.put(ITimeStampLogger.LOG_TSA_PKISTATUS_STRING,
                     timeStampResponse.getStatusString());
             
@@ -427,8 +432,10 @@ public class TimeStampSigner extends BaseSigner {
                                         .toString(16);
             }
             
-            final byte[] signedbytes = timeStampResponse.getEncoded();
-            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, RESPONSE_CONTENT_TYPE, signedbytes, archiveId));
+            final Collection<? extends Archivable> archivables = Arrays.asList(
+                    new DefaultArchivable(Archivable.TYPE_REQUEST, REQUEST_CONTENT_TYPE, requestbytes, archiveId),
+                    new DefaultArchivable(Archivable.TYPE_RESPONSE, RESPONSE_CONTENT_TYPE, signedbytes, archiveId)
+                );
 
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),

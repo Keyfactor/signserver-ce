@@ -31,6 +31,9 @@ public class ArchiveDataVO implements Serializable {
      */
     public static final int TYPE_RESPONSE = 0;
     
+    /** Archive type is request. */
+    public static final int TYPE_REQUEST = 1;
+    
     private ArchiveData archiveData = null;
     private byte[] archivedBytes;
     private int type = 0;

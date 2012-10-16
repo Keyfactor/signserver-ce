@@ -19,25 +19,23 @@ import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
 import javax.ejb.Local;
 import javax.ejb.Remote;
-
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.KeyTestResult;
+import org.signserver.common.ProcessRequest;
+import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
-import org.signserver.common.KeyTestResult;
 
 /**
  * Interface for the worker session bean.
@@ -342,7 +340,8 @@ public interface IWorkerSession {
     int genFreeWorkerId();
 
     /**
-     * Method that finds an archive given it's archive Id.
+     * Method that finds an archive given it's archive Id. Only the Archivable
+     * of type RESPONSE is returned.
      *
      * @param signerId id of the signer
      * @param archiveId the Id of the archive data (could be request
@@ -350,6 +349,15 @@ public interface IWorkerSession {
      * @return the ArchiveDataVO or null if it wasn't found.
      */
     ArchiveDataVO findArchiveDataFromArchiveId(int signerId, String archiveId);
+    
+    /**
+     * Find all archivables related to an ArchiveId. Both REQUEST, RESPONSE and 
+     * possibly other Archivable types are returned.
+     * @param signerId id of the signer
+     * @param archiveId the Id of te archive data
+     * @return List of all ArchiveDataVO related to one archiveId
+     */
+    List<ArchiveDataVO> findAllArchiveDataFromArchiveId(int signerId, String archiveId);
 
     /**
      * Method that finds an archive given it's requesters IP.

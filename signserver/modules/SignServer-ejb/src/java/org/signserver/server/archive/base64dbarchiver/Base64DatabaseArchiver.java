@@ -24,6 +24,7 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
+import org.signserver.server.archive.olddbarchiver.ArchiveOfTypes;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.IWorkerLogger;
 
@@ -40,20 +41,46 @@ public class Base64DatabaseArchiver implements Archiver {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(Base64DatabaseArchiver.class);
+    
+    private static final String PROPERTY_ARCHIVE_OF_TYPE = "ARCHIVE_OF_TYPE";
  
-
     private ArchiveDataService dataService;
+    
+    private ArchiveOfTypes archiveOfTypes;
 
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
         dataService = new ArchiveDataService(context.getEntityManager());
+        
+        // Configuration of what to archive
+        final String propertyArchiveOfType = "ARCHIVER" + listIndex + "." + PROPERTY_ARCHIVE_OF_TYPE;
+        try {
+            archiveOfTypes = ArchiveOfTypes.valueOf(config.getProperty(propertyArchiveOfType, ArchiveOfTypes.RESPONSE.name()));
+        } catch (IllegalArgumentException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Illegal value for worker property " + propertyArchiveOfType + ": " + ex.getMessage());
+            }
+            throw new ArchiverInitException("Illegal value for worker property " + propertyArchiveOfType);
+        }
     }
 
     @Override
     public boolean archive(Archivable archivable, RequestContext requestContext)
             throws ArchiveException {
         final boolean archived;
+        
+        // Get the type of this request
+        int archiveType = -1;
         if (Archivable.TYPE_RESPONSE.equals(archivable.getType())) {
+            archiveType = ArchiveDataVO.TYPE_RESPONSE;
+        } else if (Archivable.TYPE_REQUEST.equals(archivable.getType())) {
+            archiveType = ArchiveDataVO.TYPE_REQUEST;
+        }
+        
+        // Only archive if the type of this request is the type configured for this Archiver
+        if ((archiveOfTypes == ArchiveOfTypes.REQUEST && archiveType == ArchiveDataVO.TYPE_REQUEST)
+                || (archiveOfTypes == ArchiveOfTypes.RESPONSE && archiveType == ArchiveDataVO.TYPE_RESPONSE)
+                || (archiveOfTypes == ArchiveOfTypes.REQUEST_AND_RESPONSE && (archiveType == ArchiveDataVO.TYPE_RESPONSE || archiveType == ArchiveDataVO.TYPE_REQUEST))) {
             if (dataService == null) {
                 throw new ArchiveException("Could not archive as archiver was not successfully initialized");
             }
@@ -63,7 +90,7 @@ public class Base64DatabaseArchiver implements Archiver {
 
             final String uniqueId;
             
-            uniqueId = dataService.create(ArchiveDataVO.TYPE_RESPONSE,
+            uniqueId = dataService.create(archiveType,
                             workerId,
                             archivable.getArchiveId(),
                             certificate,

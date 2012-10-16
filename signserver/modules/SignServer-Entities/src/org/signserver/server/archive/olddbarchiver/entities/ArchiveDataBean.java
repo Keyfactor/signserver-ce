@@ -50,6 +50,7 @@ import org.signserver.common.ArchiveDataVO;
 @Table(name = "ArchiveData")
 @NamedQueries({
     @NamedQuery(name = "ArchiveDataBean.findByArchiveId", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.archiveid=?3"),
+    @NamedQuery(name = "ArchiveDataBean.findAllByArchiveId", query = "SELECT a from ArchiveDataBean a WHERE a.signerid=?1 AND a.archiveid=?2"),
     @NamedQuery(name = "ArchiveDataBean.findByTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.time>=?3 AND a.time<=?4"),
     @NamedQuery(name = "ArchiveDataBean.findByRequestCertificate", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4"),
     @NamedQuery(name = "ArchiveDataBean.findByRequestCertificateAndTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1  AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4 AND a.time>=?5 AND a.time<=?6"),

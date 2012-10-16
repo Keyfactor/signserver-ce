@@ -14,10 +14,11 @@ package org.signserver.server.archive.olddbarchiver.entities;
 
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-
+import java.util.List;
 import javax.persistence.EntityManager;
-
+import javax.persistence.NoResultException;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;
@@ -101,6 +102,17 @@ public class ArchiveDataService {
         } catch (javax.persistence.NoResultException e) {
         }
         return null;
+    }
+    
+    /**
+     * Method finding all ArchiveDataBeans given the archiveId.
+     */
+    public List findAllByArchiveId(final int signerid, final String archiveid) {
+        try {
+            return em.createNamedQuery("ArchiveDataBean.findAllByArchiveId").setParameter(1, signerid).setParameter(2, archiveid).getResultList();
+        } catch (NoResultException e) {
+            return Collections.emptyList();
+        }
     }
 
     @SuppressWarnings("unchecked")

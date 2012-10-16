@@ -1092,6 +1092,25 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         return retval;
     }
+    
+    @Override
+    public List<ArchiveDataVO> findAllArchiveDataFromArchiveId(final int signerId, final String archiveId) {
+        final LinkedList<ArchiveDataVO> result = new LinkedList<ArchiveDataVO>();
+        if (archiveDataService == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Archiving to database is not supported when running without database");
+            }
+        } else {
+             final List list = archiveDataService.findAllByArchiveId(signerId, archiveId);
+             for (Object o : list) {
+                 if (o instanceof ArchiveDataBean) {
+                     final ArchiveDataBean adb = (ArchiveDataBean) o;
+                     result.add(adb.getArchiveDataVO());
+                 }
+             }
+        }
+        return result;
+    }
 
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDatasFromRequestIP(int, java.lang.String)

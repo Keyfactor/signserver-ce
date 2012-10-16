@@ -12,7 +12,17 @@
  *************************************************************************/
 package org.signserver.server.archive;
 
+import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.tsp.TSPAlgorithms;
+import org.bouncycastle.tsp.TimeStampRequest;
+import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
@@ -25,6 +35,7 @@ import org.signserver.testutils.TestingSecurityManager;
  */
 public class ArchiveTestCase extends ModulesTestCase {
     
+    private Random random = new Random();
     
     @Override
     protected void setUp() throws Exception {
@@ -80,5 +91,205 @@ public class ArchiveTestCase extends ModulesTestCase {
         
         assertNull("no archivedata in db", archiveData);
     }
+    
+    protected void archiveOnlyResponse(final int signerId) throws Exception {
+        final int reqid = random.nextInt();
 
+        final TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3"));
+        final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        final byte[] requestBytes = timeStampRequest.getEncoded();
+        final String requestHex = new String(Hex.encode(requestBytes));
+
+        final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
+
+        final GenericSignResponse signResponse = (GenericSignResponse) workerSession.process(
+                signerId, signRequest, new RequestContext());
+        assertNotNull("no response", signResponse);
+        final byte[] responseBytes = signResponse.getProcessedData();
+        final String responseHex = new String(Hex.encode(responseBytes));
+        
+        final Collection<? extends Archivable> archivables = signResponse.getArchivables();
+        
+        assertEquals("two response", 2, archivables.size());
+        
+        final Iterator<? extends Archivable> iterator = archivables.iterator();
+        final Archivable first = iterator.next();
+        final Archivable second = iterator.next();
+        final Archivable request;
+        final Archivable response;
+        
+        if (first.getType().equals(Archivable.TYPE_REQUEST)) {
+            request = first;
+            response = second;
+        } else {
+            request = second;
+            response = first;
+        }
+        
+        final String archiveId = response.getArchiveId();
+        
+        assertEquals("same archiveId for all", archiveId, response.getArchiveId());
+        
+        assertEquals("same response", responseHex, new String(Hex.encode(response.getContentEncoded())));
+        assertEquals("same request", requestHex, new String(Hex.encode(request.getContentEncoded())));
+        
+        // Test that the old method works as before
+        ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
+        assertEquals("same id in db", archiveId, archiveData.getArchiveId());
+        assertEquals("same signer id in db", signerId, archiveData.getSignerId());
+        assertEquals("same archived data", responseHex, new String(Hex.encode(archiveData.getArchivedBytes())));
+        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE, archiveData.getType());
+        assertEquals("same response", responseHex, new String(Hex.encode(archiveData.getArchivedBytes())));
+        
+        // Test the new method for getting all archivables
+        final List<ArchiveDataVO> allArchiveData = getWorkerSession().findAllArchiveDataFromArchiveId(signerId, archiveId);
+        
+        assertEquals("one response", 1, allArchiveData.size());
+        
+        final ArchiveDataVO responseArchiveData = allArchiveData.get(0);
+        
+        assertEquals("same archiveId for all", archiveId, responseArchiveData.getArchiveId());
+        
+        assertEquals("same response", responseHex, new String(Hex.encode(responseArchiveData.getArchivedBytes())));
+    }
+    
+    protected void archiveOnlyRequest(final int signerId) throws Exception {
+        final int reqid = random.nextInt();
+
+        final TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3"));
+        final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        final byte[] requestBytes = timeStampRequest.getEncoded();
+        final String requestHex = new String(Hex.encode(requestBytes));
+
+        final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
+
+        final GenericSignResponse signResponse = (GenericSignResponse) workerSession.process(
+                signerId, signRequest, new RequestContext());
+        assertNotNull("no response", signResponse);
+        final byte[] responseBytes = signResponse.getProcessedData();
+        final String responseHex = new String(Hex.encode(responseBytes));
+        
+        final Collection<? extends Archivable> archivables = signResponse.getArchivables();
+        
+        assertEquals("two response", 2, archivables.size());
+        
+        final Iterator<? extends Archivable> iterator = archivables.iterator();
+        final Archivable first = iterator.next();
+        final Archivable second = iterator.next();
+        final Archivable request;
+        final Archivable response;
+        
+        if (first.getType().equals(Archivable.TYPE_REQUEST)) {
+            request = first;
+            response = second;
+        } else {
+            request = second;
+            response = first;
+        }
+        
+        final String archiveId = request.getArchiveId();
+        
+        assertEquals("same archiveId for all", archiveId, response.getArchiveId());
+        
+        assertEquals("same response", responseHex, new String(Hex.encode(response.getContentEncoded())));
+        assertEquals("same request", requestHex, new String(Hex.encode(request.getContentEncoded())));
+        
+        // Test that the old method works as before
+        ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
+        assertNull("no archived response", archiveData);
+        
+        // Test the new method for getting all archivables
+        final List<ArchiveDataVO> allArchiveData = getWorkerSession().findAllArchiveDataFromArchiveId(signerId, archiveId);
+        
+        assertEquals("one request", 1, allArchiveData.size());
+        
+        final ArchiveDataVO responseArchiveData = allArchiveData.get(0);
+        
+        assertEquals("same archiveId for all", archiveId, responseArchiveData.getArchiveId());
+        
+        assertEquals("same request", requestHex, new String(Hex.encode(responseArchiveData.getArchivedBytes())));
+    }
+    
+    protected void archiveRequestAndResponse(final int signerId) throws Exception {
+        final int reqid = random.nextInt();
+
+        final TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3"));
+        final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        final byte[] requestBytes = timeStampRequest.getEncoded();
+        final String requestHex = new String(Hex.encode(requestBytes));
+
+        final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
+
+        final GenericSignResponse signResponse = (GenericSignResponse) workerSession.process(
+                signerId, signRequest, new RequestContext());
+        assertNotNull("no response", signResponse);
+        final byte[] responseBytes = signResponse.getProcessedData();
+        final String responseHex = new String(Hex.encode(responseBytes));
+        
+        final Collection<? extends Archivable> archivables = signResponse.getArchivables();
+        
+        assertEquals("two responses", 2, archivables.size());
+        
+        final Iterator<? extends Archivable> iterator = archivables.iterator();
+        final Archivable first = iterator.next();
+        final Archivable second = iterator.next();
+        final Archivable request;
+        final Archivable response;
+        
+        if (first.getType().equals(Archivable.TYPE_REQUEST)) {
+            request = first;
+            response = second;
+        } else {
+            request = second;
+            response = first;
+        }
+        
+        final String archiveId = request.getArchiveId();
+        
+        assertEquals("same archiveId for all", archiveId, response.getArchiveId());
+        
+        assertEquals("same response", responseHex, new String(Hex.encode(response.getContentEncoded())));
+        assertEquals("same request", requestHex, new String(Hex.encode(request.getContentEncoded())));
+        
+        // Test that the old method works as before
+        ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
+        assertEquals("same id in db", archiveId, archiveData.getArchiveId());
+        assertEquals("same signer id in db", signerId, archiveData.getSignerId());
+        assertEquals("same archived data", responseHex, new String(Hex.encode(archiveData.getArchivedBytes())));
+        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE, archiveData.getType());
+        assertEquals("same response", responseHex, new String(Hex.encode(archiveData.getArchivedBytes())));
+        
+        // Test the new method for getting all archivables
+        final List<ArchiveDataVO> allArchiveData = getWorkerSession().findAllArchiveDataFromArchiveId(signerId, archiveId);
+        
+        assertEquals("two responses", 2, allArchiveData.size());
+        
+        final ArchiveDataVO firstArchiveData = allArchiveData.get(0);
+        final ArchiveDataVO secondArchiveData = allArchiveData.get(1);
+        final ArchiveDataVO requestArchiveData;
+        final ArchiveDataVO responseArchiveData;
+        
+        if (firstArchiveData.getType() == ArchiveDataVO.TYPE_REQUEST) {
+            requestArchiveData = firstArchiveData;
+            responseArchiveData = secondArchiveData;
+        } else {
+            requestArchiveData = secondArchiveData;
+            responseArchiveData = firstArchiveData;
+        }
+        
+        assertEquals("same archiveId for all", archiveId, responseArchiveData.getArchiveId());
+        
+        assertEquals("same response", responseHex, new String(Hex.encode(responseArchiveData.getArchivedBytes())));
+        assertEquals("same request", requestHex, new String(Hex.encode(requestArchiveData.getArchivedBytes())));
+    }
+    
 }

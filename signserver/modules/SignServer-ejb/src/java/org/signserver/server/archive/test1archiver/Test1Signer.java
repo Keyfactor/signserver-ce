@@ -62,7 +62,7 @@ public class Test1Signer extends BaseSigner {
         result = new GenericSignResponse(request.getRequestID(),
                 signedbytes, getSigningCertificate(), 
                 archiveId,
-                Collections.singletonList(new ArchiveDataArchivable(archiveId, new ArchiveData(signedbytes), Archivable.TYPE_REQUEST)));
+                Collections.singletonList(new ArchiveDataArchivable(archiveId, new ArchiveData(signedbytes), Archivable.TYPE_RESPONSE)));
         
         LOG.debug("<processData");
         return result;

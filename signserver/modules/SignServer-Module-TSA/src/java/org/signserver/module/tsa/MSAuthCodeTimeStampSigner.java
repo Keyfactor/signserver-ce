@@ -21,20 +21,28 @@ import java.security.cert.Certificate;
 import java.security.cert.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
 
 import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.DERUTCTime;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.asn1.cms.Time;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.Attribute;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -44,7 +52,9 @@ import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSSignedGenerator;
+import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
 import org.bouncycastle.cms.SignerInfoGenerator;
+import org.bouncycastle.cms.SignerInfoGeneratorBuilder;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.DigestCalculator;
@@ -52,6 +62,7 @@ import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.*;
 import org.ejbca.util.Base64;
 import org.signserver.common.*;
@@ -424,17 +435,36 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             for (final Certificate cert : certs) {
                     certL.add((X509Certificate) cert);
             }
+            
+            final Date date = getTimeSource().getGenTime();
+            ASN1EncodableVector signedAttributes = new ASN1EncodableVector();
+            signedAttributes.add(new Attribute(CMSAttributes.signingTime, new DERSet(new Time(date))));
+
+            AttributeTable signedAttributesTable = new AttributeTable(signedAttributes);
+            signedAttributesTable.toASN1EncodableVector();
+            DefaultSignedAttributeTableGenerator signedAttributeGenerator = new DefaultSignedAttributeTableGenerator(signedAttributesTable);
+
+            
+            SignerInfoGeneratorBuilder signerInfoBuilder =
+                    new SignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build());
+            signerInfoBuilder.setSignedAttributeGenerator(signedAttributeGenerator);
+
+            JcaContentSignerBuilder contentSigner = new JcaContentSignerBuilder("SHA1withRSA");
+            contentSigner.setProvider("BC");
 
             CertStore cs = CertStore.getInstance("Collection",new CollectionCertStoreParameters(certList), "BC");
-            cmssdg.addSigner(pk, x509cert, CMSSignedGenerator.DIGEST_SHA1); 
+            cmssdg.addSignerInfoGenerator(signerInfoBuilder.build(contentSigner.build(pk),
+                    new X509CertificateHolder(x509cert.getEncoded())));
+
+            //cmssdg.addSigner(pk, x509cert, CMSSignedGenerator.DIGEST_SHA1); 
             cmssdg.addCertificatesAndCRLs(cs);
-            CMSProcessable cmspba = new CMSProcessableByteArray(content); 
+            
+            CMSProcessable cmspba = new CMSProcessableByteArray(content);
             CMSSignedData cmssd = cmssdg.generate(dataOID, cmspba, true, "BC");
 
             byte[] der = ASN1Primitive.fromByteArray(cmssd.getEncoded()).getEncoded(); 
 
-            final Date date = getTimeSource().getGenTime();
- 
+  
             // Log values
             logMap.put(ITimeStampLogger.LOG_TSA_TIME, date == null ? null
                 : String.valueOf(date.getTime()));
@@ -467,7 +497,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             }
         
         	return signResponse;
-        
+
+  
         } catch (InvalidAlgorithmParameterException e) {
             final IllegalRequestException exception =
                     new IllegalRequestException(
@@ -515,6 +546,20 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         	logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
         			exception.getMessage());
         	throw exception;
+        } catch (OperatorCreationException e) {
+            final SignServerException exception =
+                new SignServerException(e.getMessage(), e);
+            LOG.error("OperatorCreationException: ", e);
+            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
+        	exception.getMessage());
+            throw exception;
+        } catch (CertificateEncodingException e) {
+            final SignServerException exception =
+                new SignServerException(e.getMessage(), e);
+            LOG.error("CertificateEncodingException: ", e);
+            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
+        	exception.getMessage());
+            throw exception;
         }
     }
 

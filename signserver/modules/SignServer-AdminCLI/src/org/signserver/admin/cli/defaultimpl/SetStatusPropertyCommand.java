@@ -33,8 +33,8 @@ public class SetStatusPropertyCommand extends AbstractAdminCommand {
     public String getUsages() {
         return "Usage: signserver setstatusproperty <propertykey> "
                     + "<propertyvalue> <expiration (optional)>\n"
-                    + "Example 1: signserver setstatusproperty INSYNC true\n"
-                    + "Example 2: signserver setstatusproperty INSYNC true "
+                    + "Example 1: signserver setstatusproperty TIMESOURCE0_INSYNC true\n"
+                    + "Example 2: signserver setstatusproperty TIMESOURCE0_INSYNC true "
                     + "1263297710\n\n";
     }
 

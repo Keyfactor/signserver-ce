@@ -267,7 +267,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     <tr>
                         <td>Archiver</td>
                         <td>
-Implementation handling archiving of a worker's response by storing it in a database or similar.
+Implementation handling archiving of a worker's response and/or request by storing it in a database or similar.
                         </td>
                     </tr>
                 </table>
@@ -1118,21 +1118,24 @@ Command used to extract archived data from database identified by the archive Id
                         </p>
                         <p>
 The Id depends on the worker, in case of the TSA is the TimeStampInfo serial number used.
-The data is stored with the same file name as the archive id in the specified path.
+The data is stored with the same file title as the archive id and with the file extension 
+depending on the type of item, for instance ".request" or ".response".
                         </p>
                         <p>
 <b>archive findfromrequestip:</b>
 Used to extract all archived data requested from a specified IP address.
                         </p>
                         <p>
-All data is stored as separate files with the archive id as file name in the specified path.
+All data is stored as separate files with the archive id as file title and the file
+extension depending on the type of item.
                         </p>
                         <p>
 <b>archive findfromrequestcert:</b>
 Used to extract all archived data requested from a client by specified it's certificates serial number and  issuer DN.
                         </p>
                         <p>
-All data is stored as separate files with the archive id as file name in the specified path.
+All data is stored as separate files with the archive id as file title and the file
+extension depending on the type of item.
                         </p>
 
                         <p><b>Group Key Service Related</b></p>
@@ -4186,6 +4189,13 @@ The data is stored in an XML encoded Base64PutHashMap. In the "dataEncoding" col
 The fully qualified class name is: <b>org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver</b>
                     </p>
                     
+                    <subsubsection name="Worker Properties">
+                        <p>
+<b>ARCHIVERx.ARCHIVE_OF_TYPE</b> = Where "x" is the index of the Archiver in the ARCHIVERS property. Determines what this Archiver should archive. Alternatives are: "REQUEST", "RESPONSE" or "REQUEST_AND_RESPONSE". Default is "RESPONSE".<br/>
+Example: ARCHIVER0.ARCHIVE_OF_TYPE=REQUEST_AND_RESPONSE
+                        </p>
+                    </subsubsection>
+                    
                     <subsubsection name="ArchiveData table">
                         <p>
 The exact database table structure is described in the SQL scripts available under doc/sql-scripts/.                            
@@ -4245,8 +4255,8 @@ Timestamp (number of milliseconds since January 1 1970 00:00:00) on the SignServ
 The type of archivable item. Currently this could be:
                                     <ul>
                                         <li>0 - TYPE_RESPONSE</li>
+                                        <li>1 - TYPE_REQUEST</li>
                                     </ul>
-In the future this could also be the request or other related items.
                                 </td>
                             </tr>
                             <tr>
@@ -4275,6 +4285,13 @@ In the "dataEncoding" column this format is indicated as DATA_ENCODING_BASE64.
                     <p>
 The fully qualified class name is: <b>org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver</b>
                     </p>
+                    
+                    <subsubsection name="Worker Properties">
+                        <p>
+<b>ARCHIVERx.ARCHIVE_OF_TYPE</b> = Same as for OldDatabaseArchiver above.
+                        </p>
+                    </subsubsection>
+                    
                 </subsection>
                 
             </section>

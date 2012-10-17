@@ -30,6 +30,8 @@ import org.signserver.common.ArchiveDataVO;
  */
 public class FindFromRequestCertCommand extends AbstractAdminCommand {
 
+    private ArchiveCLIUtils utils = new ArchiveCLIUtils();
+    
     @Override
     public String getDescription() {
         return "Returns all archive datas requested from given certificate details";
@@ -64,18 +66,14 @@ public class FindFromRequestCertCommand extends AbstractAdminCommand {
 
             List<ArchiveDataVO> result = getWorkerSession().findArchiveDatasFromRequestCertificate(signerid, sn, issuerdn);
 
-            if (!result.isEmpty()) {
-                Iterator<ArchiveDataVO> iter = result.iterator();
-                while (iter.hasNext()) {
-                    ArchiveDataVO next = iter.next();
-                    String filename = outputPath.getAbsolutePath() + "/" + next.getArchiveId();
-                    FileOutputStream os = new FileOutputStream(filename);
-                    os.write(next.getArchivedBytes());
-                    os.close();
-                    this.getOutputStream().println("Archive data with archiveid " + next.getArchiveId() + " written to file : " + filename + "\n\n");
-                }
-            } else {
+            if (result.isEmpty()) {
                 this.getOutputStream().println("Couldn't find any archive data from client with certificate " + certsn + " issued by " + issuerdn + " from signer " + signerid + "\n\n");
+            } else {
+                for(ArchiveDataVO archiveData : result) {
+                    final File file = new File(outputPath, archiveData.getArchiveId() + "." + utils.getTypeName(archiveData.getType()));
+                    utils.writeToFile(file, archiveData);
+                    this.getOutputStream().println("Archive data with archiveid " + archiveData.getArchiveId() + " written to file : " + file);
+                }
             }
 
             this.getOutputStream().println("\n\n");

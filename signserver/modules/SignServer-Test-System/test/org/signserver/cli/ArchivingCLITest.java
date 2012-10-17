@@ -79,7 +79,7 @@ public class ArchivingCLITest extends ModulesTestCase {
                     TESTTSID,
                     archiveId,
                     getSignServerHome() + "/tmp"));
-        File datafile = new File(getSignServerHome() + "/tmp/" + archiveId);
+        File datafile = new File(getSignServerHome() + "/tmp/" + archiveId + ".response");
         assertTrue(datafile.exists());
         datafile.delete();
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, cli.execute("archive",
@@ -87,7 +87,7 @@ public class ArchivingCLITest extends ModulesTestCase {
                     TESTTSID,
                     "127.0.0.1",
                     getSignServerHome() + "/tmp"));
-        datafile = new File(getSignServerHome() + "/tmp/" + archiveId);
+        datafile = new File(getSignServerHome() + "/tmp/" + archiveId + ".response");
         assertTrue(datafile.exists());
     }
     

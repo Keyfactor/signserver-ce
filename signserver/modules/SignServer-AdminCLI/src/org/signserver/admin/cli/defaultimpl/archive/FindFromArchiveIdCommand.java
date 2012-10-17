@@ -13,7 +13,7 @@
 package org.signserver.admin.cli.defaultimpl.archive;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.util.List;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
@@ -29,7 +29,8 @@ import org.signserver.common.ArchiveDataVO;
 public class FindFromArchiveIdCommand extends AbstractCommand {
 
     private AdminCommandHelper helper = new AdminCommandHelper();
-
+    private ArchiveCLIUtils utils = new ArchiveCLIUtils();
+    
     @Override
     public String getDescription() {
         return "Find archivables matching an archive id";
@@ -58,21 +59,20 @@ public class FindFromArchiveIdCommand extends AbstractCommand {
             if (!outputPath.isDirectory()) {
                 throw new IllegalCommandArgumentsException("Error output path " + args[2] + " isn't a directory\n\n");
             }
-
-            out.println("Trying to find archive data with archiveid " + archiveid + "\n");
-
-            ArchiveDataVO result = helper.getWorkerSession().findArchiveDataFromArchiveId(signerid, archiveid);
-
-            if (result != null) {
-                String filename = outputPath.getAbsolutePath() + "/" + result.getArchiveId();
-                FileOutputStream os = new FileOutputStream(filename);
-                os.write(result.getArchivedBytes());
-                os.close();
-                out.println("Archive data with archiveid " + archiveid + " written to file : " + filename + "\n\n");
+            
+            out.println("Trying to find all archived items with archiveid " + archiveid);
+            out.println();
+            final List<ArchiveDataVO> archivables = helper.getWorkerSession().findArchiveDataFromArchiveId(signerid, archiveid);
+            if (archivables == null || archivables.isEmpty()) {
+                out.println("Couldn't find any archive data with archiveid " + archiveid + " from signer " + signerid);
             } else {
-                out.println("Couldn't find any archive data with archiveid " + archiveid + " from signer " + signerid + "\n\n");
+                for (ArchiveDataVO arc : archivables) {
+                    final File file = new File(outputPath, arc.getArchiveId() + "." + utils.getTypeName(arc.getType()));
+                    utils.writeToFile(file, arc);
+                    out.println("Archive data with archiveid " + arc.getArchiveId() + " written to file : " + file.getAbsolutePath());
+                }
             }
-
+            
             out.println("\n\n");
             return 0;
 
@@ -82,5 +82,5 @@ public class FindFromArchiveIdCommand extends AbstractCommand {
             throw new UnexpectedCommandFailureException(e);
         }
     }
-
+    
 }

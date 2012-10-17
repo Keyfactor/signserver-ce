@@ -53,8 +53,10 @@ import org.signserver.common.ArchiveDataVO;
     @NamedQuery(name = "ArchiveDataBean.findAllByArchiveId", query = "SELECT a from ArchiveDataBean a WHERE a.signerid=?1 AND a.archiveid=?2"),
     @NamedQuery(name = "ArchiveDataBean.findByTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.time>=?3 AND a.time<=?4"),
     @NamedQuery(name = "ArchiveDataBean.findByRequestCertificate", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4"),
+    @NamedQuery(name = "ArchiveDataBean.findAllByRequestCertificate", query = "SELECT a from ArchiveDataBean a WHERE a.signerid=?1 AND a.requestIssuerDN=?2 AND a.requestCertSerialnumber=?3"),
     @NamedQuery(name = "ArchiveDataBean.findByRequestCertificateAndTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1  AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4 AND a.time>=?5 AND a.time<=?6"),
     @NamedQuery(name = "ArchiveDataBean.findByRequestIP", query = "SELECT  a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3"),
+    @NamedQuery(name = "ArchiveDataBean.findAllByRequestIP", query = "SELECT  a from ArchiveDataBean a WHERE a.signerid=?1 AND a.requestIP=?2"),
     @NamedQuery(name = "ArchiveDataBean.findByRequestIPAndTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3 AND a.time>=?4 AND a.time<=?5")
 })
 public class ArchiveDataBean implements Serializable {

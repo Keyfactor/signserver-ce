@@ -340,41 +340,32 @@ public interface IWorkerSession {
     int genFreeWorkerId();
 
     /**
-     * Method that finds an archive given it's archive Id. Only the Archivable
-     * of type RESPONSE is returned.
-     *
-     * @param signerId id of the signer
-     * @param archiveId the Id of the archive data (could be request
-     * serialnumber).
-     * @return the ArchiveDataVO or null if it wasn't found.
-     */
-    ArchiveDataVO findArchiveDataFromArchiveId(int signerId, String archiveId);
-    
-    /**
-     * Find all archivables related to an ArchiveId. Both REQUEST, RESPONSE and 
+     * Find all archivables related to an ArchiveId from the given signer. Both REQUEST, RESPONSE and 
      * possibly other Archivable types are returned.
      * @param signerId id of the signer
      * @param archiveId the Id of te archive data
      * @return List of all ArchiveDataVO related to one archiveId
      */
-    List<ArchiveDataVO> findAllArchiveDataFromArchiveId(int signerId, String archiveId);
-
+    List<ArchiveDataVO> findArchiveDataFromArchiveId(int signerId, String archiveId);
+    
     /**
-     * Method that finds an archive given it's requesters IP.
-     *
+     * Find all archivables related to an requestIP from the given signer. Both REQUEST, RESPONSE and 
+     * possibly other Archivable types are returned.
      * @param signerId id of the signer
-     * @param requestIP the IP address of the client creating the request
+     * @param requestIP the IP of the client
+     * @return List of all ArchiveDataVO
      */
     List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerId,
             String requestIP);
-
-    /**
-     * Method that finds an archive given it's requesters client certificate.
-     *
+    
+    /** 
+     * Find all archivables related to an request certificate from the given signer. Both REQUEST, RESPONSE and 
+     * possibly other Archivable types are returned.
      * @param signerId id of the signer
      * @param serialNumber the serialnumber of the certificate
      * making the request
      * @param issuerDN the issuer of the client certificate
+     * @return List of all ArchiveDataVO
      */
     List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(int signerId,
             BigInteger serialNumber, String issuerDN);

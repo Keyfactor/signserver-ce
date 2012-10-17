@@ -1073,28 +1073,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDataFromArchiveId(int, java.lang.String)
      */
     @Override
-    public ArchiveDataVO findArchiveDataFromArchiveId(int signerId,
+    public List<ArchiveDataVO> findArchiveDataFromArchiveId(int signerId,
             String archiveId) {
-        ArchiveDataVO retval = null;
-
-        if (archiveDataService == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Archiving to database is not supported when running without database");
-            }
-        } else {
-            ArchiveDataBean adb = archiveDataService.findByArchiveId(
-                    ArchiveDataVO.TYPE_RESPONSE, signerId, archiveId);
-
-            if (adb != null) {
-                retval = adb.getArchiveDataVO();
-            }
-        }
-
-        return retval;
-    }
-    
-    @Override
-    public List<ArchiveDataVO> findAllArchiveDataFromArchiveId(final int signerId, final String archiveId) {
         final LinkedList<ArchiveDataVO> result = new LinkedList<ArchiveDataVO>();
         if (archiveDataService == null) {
             if (LOG.isDebugEnabled()) {
@@ -1125,8 +1105,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 LOG.debug("Archiving to database is not supported when running without database");
             }
         } else {
-            Collection<ArchiveDataBean> archives = archiveDataService.findByRequestIP(
-                    ArchiveDataVO.TYPE_RESPONSE, signerId, requestIP);
+            Collection<ArchiveDataBean> archives = archiveDataService.findAllByRequestIP(signerId, requestIP);
             for (ArchiveDataBean archive : archives) {
                 retval.add(archive.getArchiveDataVO());
             }
@@ -1134,7 +1113,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         return retval;
     }
-
+    
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDatasFromRequestCertificate(int, java.math.BigInteger, java.lang.String)
      */
@@ -1153,7 +1132,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             String serialNumber = requestCertSerialnumber.toString(16);
 
             Collection<ArchiveDataBean> archives = archiveDataService.
-                    findByRequestCertificate(ArchiveDataVO.TYPE_RESPONSE, signerId, issuerDN, serialNumber);
+                    findAllByRequestCertificate(signerId, issuerDN, serialNumber);
             for (ArchiveDataBean archive : archives) {
                 retval.add(archive.getArchiveDataVO());
             }
@@ -1161,7 +1140,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         return retval;
     }
-
+    
     private WorkerConfig getWorkerConfig(int workerId) {
         return workerConfigService.getWorkerProperties(workerId);
     }

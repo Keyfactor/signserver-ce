@@ -13,8 +13,6 @@
 package org.signserver.admin.cli.defaultimpl.archive;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Iterator;
 import java.util.List;
 import org.signserver.admin.cli.defaultimpl.AbstractAdminCommand;
 import org.signserver.cli.spi.CommandFailureException;
@@ -29,6 +27,8 @@ import org.signserver.common.ArchiveDataVO;
  */
 public class FindFromRequestIPCommand extends AbstractAdminCommand {
 
+    private ArchiveCLIUtils utils = new ArchiveCLIUtils();
+    
     @Override
     public String getDescription() {
         return "Returns all archive datas requested from given IP";
@@ -60,20 +60,16 @@ public class FindFromRequestIPCommand extends AbstractAdminCommand {
 
             this.getOutputStream().println("Trying to find archive datas requested from IP " + requestIP + "\n");
 
-            List<ArchiveDataVO> result = getWorkerSession().findArchiveDatasFromRequestIP(signerid, requestIP);
+            final List<ArchiveDataVO> result = getWorkerSession().findArchiveDatasFromRequestIP(signerid, requestIP);
 
-            if (!result.isEmpty()) {
-                Iterator<ArchiveDataVO> iter = result.iterator();
-                while (iter.hasNext()) {
-                    ArchiveDataVO next = iter.next();
-                    String filename = outputPath.getAbsolutePath() + "/" + next.getArchiveId();
-                    FileOutputStream os = new FileOutputStream(filename);
-                    os.write(next.getArchivedBytes());
-                    os.close();
-                    this.getOutputStream().println("Archive data with archiveid " + next.getArchiveId() + " written to file : " + filename + "\n\n");
-                }
-            } else {
+            if (result.isEmpty()) {
                 this.getOutputStream().println("Couldn't find any archive data from client with IP " + requestIP + " from signer " + signerid + "\n\n");
+            } else {
+                for (ArchiveDataVO archiveData : result) {
+                    final File file = new File(outputPath, archiveData.getArchiveId() + "." + utils.getTypeName(archiveData.getType()));
+                    utils.writeToFile(file, archiveData);
+                    this.getOutputStream().println("Archive data with archiveid " + archiveData.getArchiveId() + " written to file : " + file);
+                }
             }
 
             this.getOutputStream().println("\n\n");

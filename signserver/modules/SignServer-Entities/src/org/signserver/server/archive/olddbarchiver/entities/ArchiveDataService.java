@@ -14,6 +14,7 @@ package org.signserver.server.archive.olddbarchiver.entities;
 
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -132,6 +133,13 @@ public class ArchiveDataService {
         }
         return new ArrayList<ArchiveDataBean>();
     }
+    
+    public Collection<ArchiveDataBean> findAllByRequestCertificate(final int signerid, final String requestIssuerDN, final String requestCertSerialnumber) {
+        try {
+            return em.createNamedQuery("ArchiveDataBean.findAllByRequestCertificate").setParameter(1, signerid).setParameter(2, requestIssuerDN).setParameter(3, requestCertSerialnumber).getResultList();
+        } catch (javax.persistence.NoResultException ignored) {} // NOPMD
+        return Collections.emptyList();
+    }
 
     @SuppressWarnings("unchecked")
     public java.util.Collection<ArchiveDataBean> findByRequestCertificateAndTime(int type, int signerid, java.lang.String requestIssuerDN, java.lang.String requestCertSerialnumber, long starttime, long endtime) {
@@ -149,6 +157,13 @@ public class ArchiveDataService {
         } catch (javax.persistence.NoResultException e) {
         }
         return new ArrayList<ArchiveDataBean>();
+    }
+    
+    public Collection<ArchiveDataBean> findAllByRequestIP(final int signerId, final String requestIP) {
+        try {
+            return em.createNamedQuery("ArchiveDataBean.findAllByRequestIP").setParameter(1, signerId).setParameter(2, requestIP).getResultList();
+        } catch (NoResultException ignored) {} // NOPMD
+        return Collections.emptyList();
     }
 
     @SuppressWarnings("unchecked")

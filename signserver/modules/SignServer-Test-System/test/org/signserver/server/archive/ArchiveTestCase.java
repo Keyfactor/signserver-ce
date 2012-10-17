@@ -89,9 +89,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         final String expectedArchiveId = response.getArchiveId();
         
         List<ArchiveDataVO> archiveDatas = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
-        ArchiveDataVO archiveData = archiveDatas.get(0);
-        
-        assertNull("no archivedata in db", archiveData);
+        assertEquals("no archivedata in db", 0, archiveDatas.size());
     }
     
     protected void archiveOnlyResponse(final int signerId) throws Exception {

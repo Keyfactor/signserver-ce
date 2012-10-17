@@ -64,7 +64,8 @@ public class ArchiveTestCase extends ModulesTestCase {
         final String expectedArchiveId = response.getArchiveId();
         final Archivable expectedArchiveData = response.getArchivables().iterator().next();
         
-        ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
+        List<ArchiveDataVO> archiveDatas = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
+        ArchiveDataVO archiveData = archiveDatas.get(0);
         assertEquals("same id in db", 
                 expectedArchiveId, archiveData.getArchiveId());
         assertEquals("same signer id in db", 
@@ -87,7 +88,8 @@ public class ArchiveTestCase extends ModulesTestCase {
         
         final String expectedArchiveId = response.getArchiveId();
         
-        ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
+        List<ArchiveDataVO> archiveDatas = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
+        ArchiveDataVO archiveData = archiveDatas.get(0);
         
         assertNull("no archivedata in db", archiveData);
     }
@@ -136,16 +138,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         assertEquals("same response", responseHex, new String(Hex.encode(response.getContentEncoded())));
         assertEquals("same request", requestHex, new String(Hex.encode(request.getContentEncoded())));
         
-        // Test that the old method works as before
-        ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
-        assertEquals("same id in db", archiveId, archiveData.getArchiveId());
-        assertEquals("same signer id in db", signerId, archiveData.getSignerId());
-        assertEquals("same archived data", responseHex, new String(Hex.encode(archiveData.getArchivedBytes())));
-        assertEquals("type of archive", ArchiveDataVO.TYPE_RESPONSE, archiveData.getType());
-        assertEquals("same response", responseHex, new String(Hex.encode(archiveData.getArchivedBytes())));
-        
-        // Test the new method for getting all archivables
-        final List<ArchiveDataVO> allArchiveData = getWorkerSession().findAllArchiveDataFromArchiveId(signerId, archiveId);
+        final List<ArchiveDataVO> allArchiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
         
         assertEquals("one response", 1, allArchiveData.size());
         
@@ -200,12 +193,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         assertEquals("same response", responseHex, new String(Hex.encode(response.getContentEncoded())));
         assertEquals("same request", requestHex, new String(Hex.encode(request.getContentEncoded())));
         
-        // Test that the old method works as before
-        ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
-        assertNull("no archived response", archiveData);
-        
-        // Test the new method for getting all archivables
-        final List<ArchiveDataVO> allArchiveData = getWorkerSession().findAllArchiveDataFromArchiveId(signerId, archiveId);
+        final List<ArchiveDataVO> allArchiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
         
         assertEquals("one request", 1, allArchiveData.size());
         
@@ -261,7 +249,8 @@ public class ArchiveTestCase extends ModulesTestCase {
         assertEquals("same request", requestHex, new String(Hex.encode(request.getContentEncoded())));
         
         // Test that the old method works as before
-        ArchiveDataVO archiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
+        List<ArchiveDataVO> archiveDatas = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
+        ArchiveDataVO archiveData = archiveDatas.get(0);
         assertEquals("same id in db", archiveId, archiveData.getArchiveId());
         assertEquals("same signer id in db", signerId, archiveData.getSignerId());
         assertEquals("same archived data", responseHex, new String(Hex.encode(archiveData.getArchivedBytes())));
@@ -269,7 +258,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         assertEquals("same response", responseHex, new String(Hex.encode(archiveData.getArchivedBytes())));
         
         // Test the new method for getting all archivables
-        final List<ArchiveDataVO> allArchiveData = getWorkerSession().findAllArchiveDataFromArchiveId(signerId, archiveId);
+        final List<ArchiveDataVO> allArchiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
         
         assertEquals("two responses", 2, allArchiveData.size());
         

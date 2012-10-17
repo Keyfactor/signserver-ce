@@ -55,6 +55,9 @@ public class ArchivingCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("setproperties", getSignServerHome() + "/res/test/test_add_timestamp_archive_configuration.properties"));
         assertPrinted("", cli.getOut(), "Setting the property NAME to timestampSigner1000 for worker 1000");
+        
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                cli.execute("removeproperty", TESTTSID, "ARCHIVER0.ARCHIVE_OF_TYPE"));
 
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("reload", "1000"));
@@ -89,6 +92,62 @@ public class ArchivingCLITest extends ModulesTestCase {
                     getSignServerHome() + "/tmp"));
         datafile = new File(getSignServerHome() + "/tmp/" + archiveId + ".response");
         assertTrue(datafile.exists());
+    }
+    
+    /**
+     * Tests archiving commands for timestamping with both request and response
+     * archived.
+     */
+    public void testArchiveRequestAndResponse() throws Exception {
+        LOG.debug(">testSetupTimeStamp");
+
+        assertTrue(new File(getSignServerHome() + "/res/test/test_add_timestamp_archive_configuration.properties").exists());
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                cli.execute("setproperties", getSignServerHome() + "/res/test/test_add_timestamp_archive_configuration.properties"));
+        assertPrinted("", cli.getOut(), "Setting the property NAME to timestampSigner1000 for worker 1000");
+
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                cli.execute("setproperty", TESTTSID, "ARCHIVER0.ARCHIVE_OF_TYPE", "REQUEST_AND_RESPONSE"));
+        
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                cli.execute("reload", "1000"));
+        
+        // Test the timestamp client
+        TimeStampCommand cmd = new TimeStampCommand();
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
+                cmd.execute("http://localhost:8080/signserver/process?workerId=" + TESTTSID,
+                    "-instr",
+                    "TEST",
+                    "-outrep",
+                    getSignServerHome() + "/tmp/timestamptest.data"));
+
+        FileInputStream fis = new FileInputStream(getSignServerHome() + "/tmp/timestamptest.data");
+        TimeStampResponse tsr = new TimeStampResponse(fis);
+        assertTrue(tsr != null);
+        String archiveId = tsr.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16);
+        assertNotNull(archiveId);
+
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, cli.execute("archive",
+                    "findfromarchiveid",
+                    TESTTSID,
+                    archiveId,
+                    getSignServerHome() + "/tmp"));
+        File datafileResponse = new File(getSignServerHome() + "/tmp/" + archiveId + ".response");
+        File datafileRequest = new File(getSignServerHome() + "/tmp/" + archiveId + ".request");
+        assertTrue(datafileResponse.exists());
+        datafileResponse.delete();
+        assertTrue(datafileRequest.exists());
+        datafileRequest.delete();
+        
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, cli.execute("archive",
+                    "findfromrequestip",
+                    TESTTSID,
+                    "127.0.0.1",
+                    getSignServerHome() + "/tmp"));
+        datafileResponse = new File(getSignServerHome() + "/tmp/" + archiveId + ".response");
+        datafileRequest = new File(getSignServerHome() + "/tmp/" + archiveId + ".request");
+        assertTrue(datafileResponse.exists());
+        assertTrue(datafileRequest.exists());
     }
     
     public void testRemoveTimeStamp() throws Exception {

@@ -91,6 +91,13 @@ public class ModulesTestCase extends TestCase {
             fail("Could not lookup IGlobalConfigurationSession: "
                     + ex.getMessage());
         }
+        try {
+            statusSession = ServiceLocator.getInstance().lookupRemote(
+                IStatusRepositorySession.IRemote.class);
+        } catch (NamingException ex) {
+            fail("Could not lookup IStatusRepositorySession: "
+                    + ex.getMessage());
+        }
         final Properties defaultConfig = new Properties();
         InputStream in = null;
         try {
@@ -291,6 +298,11 @@ public class ModulesTestCase extends TestCase {
                 signerId, signerName, keyData, certChain);
     }
     
+    protected void addP12DummySigner(final int signerId, final String signerName, final File keystore, final String password) {
+        addP12DummySigner("org.signserver.module.xmlsigner.XMLSigner",
+                signerId, signerName, keystore, password);
+    }
+    
     protected void addSoftTimeStampSigner(final int signerId, final String signerName, final String keyData, final String certChain) throws CertificateException {
         addSoftDummySigner("org.signserver.module.tsa.TimeStampSigner",
                 signerId, signerName, keyData, certChain);
@@ -314,6 +326,29 @@ public class ModulesTestCase extends TestCase {
             chain.add(Base64.decode(base64cert.getBytes()));
         }
         workerSession.uploadSignerCertificateChain(signerId, chain, GlobalConfiguration.SCOPE_GLOBAL);
+
+        workerSession.reloadConfiguration(signerId);
+        try {
+            assertNotNull("Check signer available",
+                    workerSession.getStatus(signerId));
+        } catch (InvalidWorkerIdException ex) {
+            fail("Worker was not added succefully: " + ex.getMessage());
+        }
+    }
+    
+    protected void addP12DummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password) {
+        // Worker using SoftCryptoToken and RSA
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+            "WORKER" + signerId + ".CLASSPATH", className);
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+            "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",
+            "org.signserver.server.cryptotokens.P12CryptoToken");
+        workerSession.setWorkerProperty(signerId, "NAME", signerName);
+        workerSession.setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(signerId, "KEYSTOREPATH", keystore.getAbsolutePath());
+        if (password != null) {
+            workerSession.setWorkerProperty(signerId, "KEYSTOREPASSWORD", password);
+        }
 
         workerSession.reloadConfiguration(signerId);
         try {

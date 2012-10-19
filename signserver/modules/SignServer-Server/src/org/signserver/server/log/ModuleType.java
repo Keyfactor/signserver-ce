@@ -12,32 +12,16 @@
  *************************************************************************/
 package org.signserver.server.log;
 
-import java.util.Map;
-import java.util.Properties;
-
 /**
- * Logger for system events. System events are all events that are not directly
- * associated with the processing performed by a worker.
- *
- * @see IWorkerLogger
+ * Different types of modules used by the SystemLogger.
  * @author Markus Kilås
  * @version $Id$
  */
-public interface ISystemLogger {
-
-    // Log constants
-    String LOG_STARTUP_TIME = "STARTUP_TIME";
-    String LOG_REPLY_TIME = "REPLY_TIME";
-    String LOG_CLASS_NAME = "CLASS_NAME";
-    String LOG_WORKER_ID = "WORKER_ID";
-    String LOG_EVENT = "EVENT";
-    String LOG_VERSION = "VERSION";
-
-    /**
-     * Method called after creation of instance.
-     * @param props the signers properties
-     */
-    void init(Properties props);
-
-    void log(EventType eventType, ModuleType module, String customId, Map<String, String> additionalDetails) throws SystemLoggerException;
+public enum ModuleType {
+    SERVICE,
+    GLOBAL_CONFIG,
+    WORKER_CONFIG,
+    KEY_MANAGEMENT,   
+    WORKER, 
+    STATUS_REPOSITORY, 
 }

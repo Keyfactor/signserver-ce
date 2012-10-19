@@ -41,10 +41,14 @@ public class AllFieldsSystemLogger implements ISystemLogger {
      * @param fields The fields to include.
      * @throws SystemLoggerException
      */
-    public void log(final Map<String, String> fields)
-            throws SystemLoggerException {
+    @Override
+    public void log(EventType eventType, ModuleType module, String customId, Map<String, String> additionalDetails) throws SystemLoggerException {
         final StringBuilder str = new StringBuilder();
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
+        str.append("EVENT: ").append(eventType.name()).append("; ")
+                .append("MODULE: ").append(module.name()).append("; ")
+                .append("CUSTOM_ID: ").append(customId).append("; ");
+        
+        for (Map.Entry<String, String> entry : additionalDetails.entrySet()) {
             str.append(entry.getKey());
             str.append(": ");
             str.append(entry.getValue());
@@ -52,6 +56,7 @@ public class AllFieldsSystemLogger implements ISystemLogger {
         }
         
         // Last thing: add time for logging
+        // TODO: Should probobly be replaced with the time instead
         str.append(IWorkerLogger.LOG_REPLY_TIME);
         str.append(":");
         str.append(String.valueOf(System.currentTimeMillis()));

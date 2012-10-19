@@ -18,7 +18,6 @@ import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
@@ -29,7 +28,9 @@ import org.signserver.server.config.entities.FileBasedGlobalConfigurationDataSer
 import org.signserver.server.config.entities.GlobalConfigurationDataBean;
 import org.signserver.server.config.entities.GlobalConfigurationDataService;
 import org.signserver.server.config.entities.IGlobalConfigurationDataService;
+import org.signserver.server.log.EventType;
 import org.signserver.server.log.ISystemLogger;
+import org.signserver.server.log.ModuleType;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
@@ -89,7 +90,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     @Override
     public void setProperty(String scope, String key, String value) {
 
-        auditLog("setProperty", scope + key, value);
+        auditLog(EventType.SET_GLOBAL_PROPERTY, scope + key, value);
 
         if (GlobalConfigurationCache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
             GlobalConfigurationCache.getCachedGlobalConfig().setProperty(propertyKeyHelper(scope, key), value);
@@ -122,7 +123,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     public boolean removeProperty(String scope, String key) {
         boolean retval = false;
 
-        auditLog("removeProperty", scope + key, null);
+        auditLog(EventType.REMOVE_GLOBAL_PROPERTY, scope + key, null);
 
         if (GlobalConfigurationCache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
             GlobalConfigurationCache.getCachedGlobalConfig().remove(propertyKeyHelper(scope, key));
@@ -183,7 +184,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     @Override
     public void resync() throws ResyncException {
 
-        auditLog("resync", null, null); // TODO Should handle errors
+        auditLog(EventType.GLOBAL_CONFIG_RESYNC, null, null); // TODO Should handle errors
 
         if (!GlobalConfigurationCache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
             String message = "Error it is only possible to resync a database that have the state " + GlobalConfiguration.STATE_OUTOFSYNC;
@@ -246,7 +247,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
      */
     @Override
     public void reload() {
-        auditLog("reload", null, null);
+        auditLog(EventType.GLOBAL_CONFIG_RELOAD, null, null);
 
         workerManagerSession.flush();
         GlobalConfigurationCache.setCachedGlobalConfig(null);
@@ -274,22 +275,20 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 
     }
 
-    private static void auditLog(final String operation, final String property,
+    private static void auditLog(final EventType eventType, final String property,
             final String value) {
         try {
             final Map<String, String> logMap = new HashMap<String, String>();
 
-            logMap.put(ISystemLogger.LOG_CLASS_NAME,
-                    GlobalConfigurationSessionBean.class.getSimpleName());
-            logMap.put(IGlobalConfigurationSession.LOG_OPERATION,
-                    operation);
-            logMap.put(IGlobalConfigurationSession.LOG_PROPERTY,
+            if (property != null) {
+                logMap.put(IGlobalConfigurationSession.LOG_PROPERTY,
                     property);
+            }
             if (value != null) {
                 logMap.put(IGlobalConfigurationSession.LOG_VALUE,
                         value);
             }
-            AUDITLOG.log(logMap);
+            AUDITLOG.log(eventType, ModuleType.GLOBAL_CONFIG, "", logMap);
         } catch (SystemLoggerException ex) {
             LOG.error("Audit log failure", ex);
             throw new EJBException("Audit log failure", ex);

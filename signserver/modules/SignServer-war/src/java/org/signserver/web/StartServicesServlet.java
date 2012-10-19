@@ -33,8 +33,10 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
+import org.signserver.server.log.EventType;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.server.log.ISystemLogger;
+import org.signserver.server.log.ModuleType;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
@@ -102,9 +104,8 @@ public class StartServicesServlet extends HttpServlet {
 
         try {
             final Map<String, String> fields = new HashMap<String, String>();
-            fields.put(ISystemLogger.LOG_EVENT, "SHUTDOWN");
             fields.put(ISystemLogger.LOG_VERSION, version);
-            AUDITLOG.log(fields);
+            AUDITLOG.log(EventType.SIGNSERVER_SHUTDOWN, ModuleType.SERVICE, "", fields);
         } catch (SystemLoggerException ex) {
             LOG.error("Audit log error", ex);
         }
@@ -128,9 +129,8 @@ public class StartServicesServlet extends HttpServlet {
 
         try {
             final Map<String, String> fields = new HashMap<String, String>();
-            fields.put(ISystemLogger.LOG_EVENT, "STARTUP");
             fields.put(ISystemLogger.LOG_VERSION, version);
-            AUDITLOG.log(fields);
+            AUDITLOG.log(EventType.SIGNSERVER_STARTUP, ModuleType.SERVICE, "", fields);
         } catch (SystemLoggerException ex) {
             LOG.error("Audit log error", ex);
         }

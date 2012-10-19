@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 
@@ -40,8 +39,8 @@ public class ProcessableConfig {
     private static final Logger LOG = Logger.getLogger(ProcessableConfig.class);
     
     private static final String AUTHORIZED_CLIENTS = "AUTHORIZED_CLIENTS";
-    private static final String SIGNERCERT = "SIGNERCERT";
-    private static final String SIGNERCERTCHAIN = "SIGNERCERTCHAIN";
+    public static final String SIGNERCERT = "SIGNERCERT";
+    public static final String SIGNERCERTCHAIN = "SIGNERCERTCHAIN";
     public static final String NAME = "NAME";
     private WorkerConfig workerConfig;
 

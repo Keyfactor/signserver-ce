@@ -908,17 +908,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         } else {
             setWorkerConfig(workerId, config);
         }
-        HashMap<String, String> auditMap = new HashMap<String, String>();
-        auditMap.put("KEY", key);
-        auditMap.put("SCOPE", "GLOBAL");
-        auditLog(EventType.REMOVE_WORKER_PROPERTY, ModuleType.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         if ("DEFAULTKEY".equalsIgnoreCase(key)) {
-            auditMap = new HashMap<String, String>();
+            HashMap<String, String> auditMap = new HashMap<String, String>();
             auditMap.put("KEYALIAS", "");
             auditMap.put("SCOPE", "GLOBAL");
             auditLog(EventType.KEYSELECTED, ModuleType.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase(".DEFAULTKEY")) {
-            auditMap = new HashMap<String, String>();
+            HashMap<String, String> auditMap = new HashMap<String, String>();
             auditMap.put("KEYALIAS", "");
             auditMap.put("SCOPE", "NODE");
             auditMap.put("NODE", key.substring(0, key.lastIndexOf(".")));

@@ -5131,7 +5131,7 @@ LOG_FILE_PATH=/path/to/logfile
                 
                 <subsection name="System Log">
                     <p>
-The purpose of the system log is to log events concerning the SignServer application but not necessarily related to any signing transaction (that is covered by the Worker Log). The audit log covers key and certificate management events, configuration changes and status properties updates (for instance for the status of the time source). For details see the table of events below.
+The purpose of the system log is to log events concerning the SignServer application but not necessarily related to any signing transaction (that is covered by the Worker Log). The audit log covers key and certificate management events, status properties updates (for instance for the status of the time source) and to some extent also configuration changes. For details see the table of events below.
                     </p>
                     
                     <subsubsection name="Available log events">
@@ -5244,17 +5244,6 @@ Logged when a worker's configuration was updated by adding and/or removing and/o
                                     <p>
 Example:<br/>
 <pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; REPLY_TIME:1350657202773</pre>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><b>REMOVE_WORKER_PROPERTY</b></td>
-                                <td>
-                                    <p>
-TODO
-                                    </p>
-                                    <p>
-<pre class="code">EVENT: REMOVE_WORKER_PROPERTY; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; SCOPE: GLOBAL; KEY: TESTPROPERTY11; REPLY_TIME:1350657203329</pre>
                                     </p>
                                 </td>
                             </tr>

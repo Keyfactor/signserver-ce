@@ -36,8 +36,6 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
-import org.signserver.statusrepo.IStatusRepositorySession;
-import org.signserver.statusrepo.impl.StatusRepositorySessionBean;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.CLITestHelper;
@@ -224,20 +222,13 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         // Test removeProperty
         workerSession.removeWorkerProperty(TESTID, "TESTPROPERTY11");
-        lines = readEntries(auditLogFile, linesBefore + 1, 2);
-        LOG.info(lines);
+        lines = readEntries(auditLogFile, linesBefore + 1, 1);
+        line = lines.get(0);
+        LOG.info(line);
         
-        line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
-        assertNotNull("Contains event", line);
+        assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
-        
-        line = getTheLineContaining(lines, "EVENT: REMOVE_WORKER_PROPERTY");
-        assertNotNull("Contains event", line);
-        assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
-        assertTrue("Contains key", line.contains("KEY: TESTPROPERTY11"));
-        assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
     }
     
     public void testLogCertInstalled() throws Exception {
@@ -263,15 +254,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         // Test removeProperty
         workerSession.removeWorkerProperty(TESTID, "SIGNERCERT");
-        lines = readEntries(auditLogFile, linesBefore + 2, 3);
+        lines = readEntries(auditLogFile, linesBefore + 2, 2);
         LOG.info(lines);
-        
-        line = getTheLineContaining(lines, "EVENT: REMOVE_WORKER_PROPERTY");
-        assertNotNull("Contains event", line);
-        assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
-        assertTrue("Contains key", line.contains("KEY: SIGNERCERT"));
-        assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         line = getTheLineContaining(lines, "EVENT: CERTINSTALLED");
         assertNotNull("Contains event", line);
@@ -381,15 +365,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         if (!workerSession.removeWorkerProperty(TESTID, "SIGNERCERTCHAIN")) {
             throw new Exception("Property could not be removed");
         }
-        lines = readEntries(auditLogFile, linesBefore + 2, 3);
+        lines = readEntries(auditLogFile, linesBefore + 2, 2);
         LOG.info(lines);
-        
-        line = getTheLineContaining(lines, "EVENT: REMOVE_WORKER_PROPERTY");
-        assertNotNull("Contains event", line);
-        assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
-        assertTrue("Contains key", line.contains("KEY: SIGNERCERTCHAIN"));
-        assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
         assertNotNull("Contains event", line);

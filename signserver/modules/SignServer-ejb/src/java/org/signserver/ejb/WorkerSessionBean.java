@@ -904,6 +904,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (config.getProperties().size() == 0) {
             workerConfigService.removeWorkerConfig(workerId);
             LOG.debug("WorkerConfig is empty and therefore removed.");
+            auditLog(EventType.SET_WORKER_CONFIG, ModuleType.WORKER_CONFIG, String.valueOf(workerId));
         } else {
             setWorkerConfig(workerId, config);
         }

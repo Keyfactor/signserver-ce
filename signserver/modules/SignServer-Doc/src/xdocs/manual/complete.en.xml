@@ -5128,6 +5128,340 @@ LOG_FILE_PATH=/path/to/logfile
 						</source>
 					</subsubsection>
                 </subsection>
+                
+                <subsection name="System Log">
+                    <p>
+The purpose of the system log is to log events concerning the SignServer application but not necessarily related to any signing transaction (that is covered by the Worker Log). The audit log covers key and certificate management events, configuration changes and status properties updates (for instance for the status of the time source). For details see the table of events below.
+                    </p>
+                    
+                    <subsubsection name="Available log events">
+                        <table border="1">
+                            <tr>
+                                <th colspan="2"><i>Services</i></th>
+                            </tr>
+                            <tr>
+                                <td><b>SIGNSERVER_STARTUP</b></td>
+                                <td>
+                                    <p>
+Logged at startup of the SignServer application.
+                                    </p>
+                                    <p>
+<b>VERSION:</b> The version of SignServer.
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: SIGNSERVER_STARTUP; MODULE: SERVICE; CUSTOM_ID: ; VERSION: SignServer 3.3.0alpha12; REPLY_TIME:1350562045545</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>SIGNSERVER_SHUTDOWN</b></td>
+                                <td>
+                                    <p>
+Logged at shutdown of the SignServer application.
+                                    </p>
+                                    <p>
+<b>VERSION:</b> The version of SignServer.
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: SIGNSERVER_SHUTDOWN; MODULE: SERVICE; CUSTOM_ID: ; VERSION: SignServer 3.3.0alpha12; REPLY_TIME:1350562045545</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <th colspan="2"><i>Global configuration</i></th>
+                            </tr>
+                            <tr>
+                                <td><b>SET_GLOBAL_PROPERTY</b></td>
+                                <td>
+                                    <p>
+Logged when a global configuration property was updated.
+                                    </p>
+                                    <p>
+<b>GLOBALCONFIG_PROPERTY:</b> The property that was updated.<br/>
+<b>GLOBALCONFIG_VALUE:</b> The new value of the property.
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: SET_GLOBAL_PROPERTY; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; GLOBALCONFIG_VALUE: TESTVALUE47; GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47; REPLY_TIME:1350657202153</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>REMOVE_GLOBAL_PROPERTY</b></td>
+                                <td>
+                                    <p>
+Logged when a global configuration property was removed.
+                                    </p>
+                                    <p>
+<b>GLOBALCONFIG_PROPERTY:</b> The property that was removed.
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: REMOVE_GLOBAL_PROPERTY; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47; REPLY_TIME:1350657202444</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>GLOBAL_CONFIG_RELOAD</b></td>
+                                <td>
+                                    <p>
+Logged when the global configuration was reloaded from the database.
+                                    </p>
+                                    <p>
+Example:
+<pre class="code">EVENT: GLOBAL_CONFIG_RELOAD; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; REPLY_TIME:1350657202593</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>GLOBAL_CONFIG_RESYNC</b></td>
+                                <td>
+                                    <p>
+Logged when the resync command was executed.
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: GLOBAL_CONFIG_RESYNC; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; REPLY_TIME:1350894343902</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <th colspan="2"><i>Worker configuration</i></th>
+                            </tr>
+                            <tr>
+                                <td><b>SET_WORKER_CONFIG</b></td>
+                                <td>
+                                    <p>
+Logged when a worker's configuration was updated by adding and/or removing and/or changing any values.
+                                    </p>
+                                    <p>
+<b>CUSTOM_ID:</b> The ID of the worker.
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; REPLY_TIME:1350657202773</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>REMOVE_WORKER_PROPERTY</b></td>
+                                <td>
+                                    <p>
+TODO
+                                    </p>
+                                    <p>
+<pre class="code">EVENT: REMOVE_WORKER_PROPERTY; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; SCOPE: GLOBAL; KEY: TESTPROPERTY11; REPLY_TIME:1350657203329</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>CERTINSTALLED</b></td>
+                                <td>
+                                    <p>
+Logged when a certificate was uploaded to the worker configuration.
+                                    </p>
+                                    <p>
+<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>CERTIFICATE:</b> The certificate in PEM format.<br/>
+<b>SCOPE: </b> If the setting was at GLOBAL or NODE scope.<br/>
+<b>NODE: </b> The ID of the node if the setting was at NODE scope, otherwise not available.
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: CERTINSTALLED; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; CERTIFICATE: Subject: CN=Anyone
+Issuer: CN=Anyone
+-----BEGIN CERTIFICATE-----
+MIIBnTCCAQagAwIBAgIIWWNYSOeuN+swDQYJKoZIhvcNAQEFBQAwETEPMA0GA1UE
+AwwGQW55b25lMB4XDTEyMTAxOTE0MzMyM1oXDTEzMTAxOTE0MzMyM1owETEPMA0G
+A1UEAwwGQW55b25lMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCDE9GElbJd
+e74WmIpPSsIF9r5vv0oH6WWo7n31goR1zMIHJPC9V1mpwQZ6C0uCHCV2ZvqQIIAE
+ZQM7mgbPfxjCF74RqKzScZlOSaHnvdf7zCWpYraVrIDt9Wg3HMxye0/L3cCImmkY
+FkFtabtoa5UuPZObdIt154Yg+GpGB8aPBwIDAQABMA0GCSqGSIb3DQEBBQUAA4GB
+AHm3oAUHwM0KwMcEUwWouE0f4+UK6ZvYvxLAgiCVZQnPImcqX1oBl+iFV59FlsXj
+rqoQYJROxIeV0ByGeyBYXqvgTw1YtdqoR+wKmiymjn/lynmTh1fQMcFoUouGfubX
+EK4rfPBXEl33gKbsO5aeMHd5iF2jtx7RfYMsOuHKoDSe
+-----END CERTIFICATE-----
+; SCOPE: GLOBAL; REPLY_TIME:1350657204367</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>CERTCHAININSTALLED</b></td>
+                                <td>
+                                    <p>
+Logged when a certificate chain was uploaded to the worker configuration.
+                                    </p>
+                                    <p>
+<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>CERTIFICATECHAIN:</b> The certificates in PEM format.<br/>
+<b>SCOPE: </b> If the setting was at GLOBAL or NODE scope.<br/>
+<b>NODE: </b> The ID of the node if the setting was at NODE scope, otherwise not available.
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: CERTCHAININSTALLED; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; CERTIFICATECHAIN: Subject: CN=Signer,C=SE
+Issuer: CN=Issuer,C=SE
+-----BEGIN CERTIFICATE-----
+MIIBdjCCASCgAwIBAgIIE+fXOs/SAwMwDQYJKoZIhvcNAQEFBQAwHjEPMA0GA1UE
+AwwGSXNzdWVyMQswCQYDVQQGEwJTRTAeFw0xMjEwMjIwNzQ1MDZaFw0xMzEwMjIw
+NzQ1MDZaMB4xDzANBgNVBAMMBlNpZ25lcjELMAkGA1UEBhMCU0UwgZ8wDQYJKoZI
+hvcNAQEBBQADgY0AMIGJAoGBAKpX5psdaL5CHAKSxoOvB12Ie8iUb/mX6ikF8jfu
+zrbwVgf6bX0RCUnD+v+t9vY7byz+nN32KnmGluNGdBFdM1Ug9Oc+64ZNBbgZi9mi
+cHnKMDLLSECBY2Nux62PZejp5SwtzpjFymt3TMCtRr4UHGu3zkuqLLCHFlGRdvdo
+MPQ9AgMBAAEwDQYJKoZIhvcNAQEFBQADQQADlInGm9AujZfL+1kM7ehaKyKKencF
+fp6YGElOpGEplxxIwgmVc0iYKv4rCkfUAysYL6l3AC+VLK1asxkpEJc1
+-----END CERTIFICATE-----
+Subject: CN=Issuer,C=SE
+Issuer: CN=Issuer,C=SE
+-----BEGIN CERTIFICATE-----
+MIIBMTCB3KADAgECAggbfKZHs8ttKDANBgkqhkiG9w0BAQUFADAeMQ8wDQYDVQQD
+DAZJc3N1ZXIxCzAJBgNVBAYTAlNFMB4XDTEyMTAyMjA3NDUwNloXDTEzMTAyMjA3
+NDUwNlowHjEPMA0GA1UEAwwGSXNzdWVyMQswCQYDVQQGEwJTRTBcMA0GCSqGSIb3
+DQEBAQUAA0sAMEgCQQCpgzxJ6r6D1cP8v1AB88pJsCwi0SJdeRSGYydYYBOafJk0
+fpqxJCwaiFS3tt9OkWUAXzcixv5+sItkEuEOpmp7AgMBAAEwDQYJKoZIhvcNAQEF
+BQADQQCC5NG3eWx/mXXKZmePOvZEIwyqWHOwzsBB174gkzlyhOdiOr3YwVihyebI
+VAfkEktRrO04Hi5eLR+AxW7EVz6l
+-----END CERTIFICATE-----
+; SCOPE: GLOBAL; REPLY_TIME:1350891906417
+</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>KEYSELECTED</b></td>
+                                <td>
+                                    <p>
+Logged when the key-pair to use was selected by changing the value of the DEFAULTKEY worker property.
+                                    </p>
+                                    <p>
+<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>KEYALIAS:</b> The new key alias.<br/>
+<b>SCOPE: </b> If the setting was at GLOBAL or NODE scope.<br/>
+<b>NODE: </b> The ID of the node if the setting was at NODE scope, otherwise not available.
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: KEYSELECTED; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; KEYALIAS: ts_key00002; SCOPE: GLOBAL; REPLY_TIME:1350891907048</pre>
+                                    </p>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th colspan="2"><i>Key management</i></th>
+                            </tr>
+                            <tr>
+                                <td><b>KEYGEN</b></td>
+                                <td>
+                                    <p>
+Logged when a new key-pair was generated using the built-in key generation command.
+                                    </p>
+                                    <p>
+<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>KEYALIAS:</b> The new key alias.<br/>
+<b>KEYSPEC:</b> The key specification (ie. RSA/DSA bit length or EC curve).<br/>
+<b>KEYALG:</b> The key algorithm.
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: KEYGEN; MODULE: KEY_MANAGEMENT; CUSTOM_ID: 5676; KEYALIAS: ts_key00004; KEYSPEC: 2048; KEYALG: RSA; REPLY_TIME:135089190791</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>KEYTEST</b></td>
+                                <td>
+                                    <p>
+Logged when the key test command was executed and a test signing with either the specified key or all keys in the slot if that was specified.
+                                    </p>
+                                    <p>
+<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>KEYALIAS:</b> Alias of the the key to test or "all" to test all available keys in the slot.<br/>
+<b>TESTRESULTS:</b> The test report with an entry for each tested key.
+                                    </p>
+                                    <p>
+Example:<br/>            
+<pre class="code">EVENT: KEYTEST; MODULE: KEY_MANAGEMENT; CUSTOM_ID: 47; KEYALIAS: all; TESTRESULTS: KeyTestResult{alias=tsu47_key00005, success=true, status=, publicKeyHash=979359e5261112b11fac341962bec1e7e6052d9e}
+KeyTestResult{alias=key5, success=true, status=, publicKeyHash=46b264e4892ef2e4fd9616e4927534ca3597fd9c}
+KeyTestResult{alias=key3, success=true, status=, publicKeyHash=ae64792f1f50e23eb54bf79d46d819bc07db2d79}
+KeyTestResult{alias=key2, success=true, status=, publicKeyHash=b1317f363e6124a8e15bba8c1adb9f20b2f4ef59}
+KeyTestResult{alias=TS Signer 1, success=true, status=, publicKeyHash=8f6dfccdcea931d4deee9466f43c0eb0e7f4d8b1}
+; REPLY_TIME:1350564289165</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>GENCSR</b></td>
+                                <td>
+                                    <p>
+Logged when a certificate signing request (CSR) was generated.
+                                    </p>
+                                    <p>
+<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>CSR:</b> Base64 encoded CSR (typically in PKCS#10 format).
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: GENCSR; MODULE: KEY_MANAGEMENT; CUSTOM_ID: 5676; CSR: MIIBYDCBygIBADAjMRQwEgYDVQQDDAtUUyBTaWduZXIgMTELMAkGA1UEBhMCU0Uw
+gZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJt8F51wD+QcX+WLyIxjWu3at3q+
+IiJrL5jIenmggUhjOLHGHOStoNOiYEQAaiiTZ623m9y7O3zhqFdAdWZg+JrfsHQJ
+pjKV9RgvJznl6yk/K54BWOBgqjvbloAUGtn8y8Hf+5DYJUJNFqrzvRLcmCQ9JU0H
+mgSmEIqgOIwBL3oBAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAer5hr/cUYx4jy0XO
+N4U8sP/2gSFppytx9dn5BamVBLjDkcML8B3c9u9omDPebd+LEsCU+HCmYN9xHkSS
+Ei8lcAqyVv+SDLEmvE8gnrPFR/J7uADCRayLVQumW6/YpVO/sFEGuM6rgnn8ZJmW
+X2lhvJ4V1UhlkEAeyIQ861U3IgE=; REPLY_TIME:1350891907981</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <th colspan="2"><i>Status Repository</i></th>
+                            </tr>
+                            <tr>
+                                <td><b>SET_STATUS_PROPERTY</b></td>
+                                <td>
+                                    <p>
+Logged when a status property was updated.
+                                    </p>
+                                    <p>
+<b>STATUSREPO_PROPERTY:</b> The updated property.<br/>
+<b>STATUSREPO_VALUE:</b> The new property value.<br/>
+<b>STATUSREPO_EXPIRATION:</b> Expiration time for the status property (timestamp), if any.
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: SET_STATUS_PROPERTY; MODULE: STATUS_REPOSITORY; CUSTOM_ID: ; STATUSREPO_EXPIRATION: 1350891909366; STATUSREPO_PROPERTY: TEST_PROPERTY1; STATUSREPO_VALUE: TESTVALUE47; REPLY_TIME:1350891908372</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <th colspan="2"><i>Worker processing</i></th>
+                            </tr>
+                            <tr>
+                                <td><b>PROCESS</b></td>
+                                <td>
+                                    <p>
+Logged for events regarding worker processing but when a worker logger can not be used because the requested worker does not exist etc.
+                                    </p>
+                                    <p>
+<b>CUSTOM_ID:</b> The ID of the worker or empty in case of non existing worker.<br/>
+<b>Worker logger fields:</b> All fields available to the worker logger.<br/>
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: PROCESS; MODULE: WORKER; CUSTOM_ID: ; LOG_ID: db517726-ff0d-40dd-8f2b-2297925cb4d3; CLIENT_IP: 127.0.0.1; PROCESS_SUCCESS: false; REQUEST_LENGTH: 0; XFORWARDEDFOR: null; FILENAME: noname.dat; 
+REQUEST_FULLURL: http://localhost:8080/signserver/process?null; LOG_TIME: 1350628977410; WORKER_ID: 0; EXCEPTION: No such worker: 0; REPLY_TIME:1350628977411
+</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </subsubsection>
+                </subsection>
  
                 <subsection name="Debug Log">
                     <p>
@@ -5150,7 +5484,7 @@ put the audit logs in a separate file.
     &lt;!-- Rollover at midnight each day --&gt;
     &lt;param name="DatePattern" value="'.'yyyy-MM-dd" /&gt;
     &lt;layout class="org.apache.log4j.PatternLayout"&gt;
-        &lt;param name="ConversionPattern" value="%d %-5p [%c] %m%n" /&gt;
+        &lt;param name="ConversionPattern" value="%d{ISO8601} %-5p [%c{1}] %m%n" /&gt;
     &lt;/layout&gt;
 &lt;/appender&gt;
 

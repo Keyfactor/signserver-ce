@@ -413,12 +413,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             ASN1OctetString octets = ASN1OctetString.getInstance(tag.getObject());
             byte[] content = octets.getOctets();
 
-            if (LOG.isDebugEnabled()) {
-                    LOG.debug("Number of octets in tag: " + content.length);
-            }
-
-            //response.setContentType("application/octet-stream");
-
             // get signing cert certificate chain and private key
             Collection<Certificate> certList = this.getSigningCertificateChain();
             if (certList == null) {
@@ -464,7 +458,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             cmssdg.addSignerInfoGenerator(signerInfoBuilder.build(contentSigner.build(pk),
                     new X509CertificateHolder(x509cert.getEncoded())));
 
-            //cmssdg.addSigner(pk, x509cert, CMSSignedGenerator.DIGEST_SHA1); 
             cmssdg.addCertificatesAndCRLs(cs);
             
             CMSProcessable cmspba = new CMSProcessableByteArray(content);

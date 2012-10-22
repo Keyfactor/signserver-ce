@@ -575,7 +575,7 @@ public class RenewalWorker extends BaseSigner {
             final String truststorePass) throws CryptoTokenOfflineException,
             NoSuchAlgorithmException, KeyStoreException,
             UnrecoverableKeyException, IOException, CertificateException,
-            NoSuchProviderException, KeyManagementException {
+            NoSuchProviderException, KeyManagementException, SignServerException {
 
         EjbcaWS result = null;
 

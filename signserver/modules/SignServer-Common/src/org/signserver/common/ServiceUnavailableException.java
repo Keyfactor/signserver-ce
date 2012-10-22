@@ -10,30 +10,30 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.dispatchers;
-
-import org.apache.log4j.Logger;
-import org.signserver.common.DispatcherStatus;
-import org.signserver.common.WorkerStatus;
-import org.signserver.server.BaseProcessable;
-import org.signserver.server.signers.BaseSigner;
+package org.signserver.common;
 
 /**
- * Base class that all dispatchers can extend to cover basic in common
- * functionality.
+ * Exception thrown to indicate that a service is unavailable and the request
+ * could not be fullfilled. This exception (or sub classes of it) 
+ * is typically thrown when something failed 
+ * on the server side.
+ * 
+ * If it is clear that the failure was caused by data supplied by the client, 
+ * instead a IllegalRequestException may be thrown.
  *
+ * @author Marcus Lundblad
+ * @see IllegalRequestException
  * @version $Id$
  */
-public abstract class BaseDispatcher extends BaseProcessable {
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(BaseSigner.class);
-    
-    /**
-     * @return WorkerStatus
-     * @see org.signserver.server.IProcessable#getStatus()
-     */
-    @Override
-    public WorkerStatus getStatus() {
-        return new DispatcherStatus(workerId, getFatalErrors(), config);
+public class ServiceUnavailableException extends SignServerException {
+
+    private static final long serialVersionUID = 1L;
+
+    public ServiceUnavailableException(String message) {
+        super(message);
+    }
+
+    public ServiceUnavailableException(String message, Throwable e) {
+        super(message, e);
     }
 }

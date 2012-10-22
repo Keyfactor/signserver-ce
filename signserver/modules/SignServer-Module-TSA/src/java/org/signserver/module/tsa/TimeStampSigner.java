@@ -633,7 +633,8 @@ public class TimeStampSigner extends BaseSigner {
                 NoSuchAlgorithmException,
                 NoSuchProviderException,
                 CertStoreException,
-                OperatorCreationException {
+                OperatorCreationException,
+                SignServerException {
 
         TimeStampTokenGenerator timeStampTokenGen = null;
         try {

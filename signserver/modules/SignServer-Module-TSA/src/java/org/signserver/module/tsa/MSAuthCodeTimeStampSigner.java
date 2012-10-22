@@ -23,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 
-import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -287,19 +286,23 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         }
 
         // Check that the timestamp server is properly configured
-        timeSource = getTimeSource();
-        if (timeSource == null) {
-            final String error = "Error: Timestamp signer :" + signerId +
+        try {
+            timeSource = getTimeSource();
+            if (timeSource == null) {
+                final String error = "Error: Timestamp signer :" + signerId +
                     " has a malconfigured timesource.";
-            LOG.error(error);
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("TimeStampSigner[" + signerId + "]: "
-                        + "Using TimeSource: "
-                        + timeSource.getClass().getName());
+                LOG.error(error);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("TimeStampSigner[" + signerId + "]: "
+                            + "Using TimeSource: "
+                            + timeSource.getClass().getName());
+                }
             }
+        } catch (SignServerException e) {
+            LOG.error("Could not create time source: " + e.getMessage());
         }
-
+            
         final String policyId = config.getProperties().getProperty(DEFAULTTSAPOLICYOID);
         
         try {
@@ -437,6 +440,11 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             }
             
             final Date date = getTimeSource().getGenTime();
+            
+            if (date == null) {
+                throw new ServiceUnavailableException("Time source is not available");
+            }
+            
             ASN1EncodableVector signedAttributes = new ASN1EncodableVector();
             signedAttributes.add(new Attribute(CMSAttributes.signingTime, new DERSet(new Time(date))));
 
@@ -566,7 +574,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     /**
      * @return a time source interface expected to provide accurate time
      */
-    private ITimeSource getTimeSource() {
+    private ITimeSource getTimeSource() throws SignServerException {
         if (timeSource == null) {
             try {
                 String classpath =
@@ -581,11 +589,11 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 timeSource.init(config.getProperties());
 
             } catch (ClassNotFoundException e) {
-                throw new EJBException(e);
+                throw new SignServerException("Class not found", e);
             } catch (IllegalAccessException iae) {
-                throw new EJBException(iae);
+                throw new SignServerException("Illegal access", iae);
             } catch (InstantiationException ie) {
-                throw new EJBException(ie);
+                throw new SignServerException("Instantiation error", ie);
             }
         }
 
@@ -670,7 +678,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 NoSuchAlgorithmException,
                 NoSuchProviderException,
                 CertStoreException,
-                OperatorCreationException {
+                OperatorCreationException,
+                SignServerException {
 
         TimeStampTokenGenerator timeStampTokenGen = null;
         try {

@@ -79,12 +79,14 @@ public class GroupKeyServiceWorker extends BaseProcessable implements IGroupKeyS
             log.error("Error instatiating Group Key Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.", e);
         } catch (InstantiationException e) {
             log.error("Error instatiating Group Key Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.", e);
+        } catch (SignServerException e) {
+        	log.error("Error getting crypto token.", e);
         }
 
         return retval;
     }
 
-    private IExtendedCryptoToken getExtendedCryptoToken() {
+    private IExtendedCryptoToken getExtendedCryptoToken() throws SignServerException {
         if (!(getCryptoToken() instanceof IExtendedCryptoToken)) {
             log.error("Error the crypto token associated with the Group Key Service " + workerId + " isn't an extended crypto token.");
         }

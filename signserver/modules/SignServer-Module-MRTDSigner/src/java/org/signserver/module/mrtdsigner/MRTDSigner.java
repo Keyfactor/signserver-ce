@@ -112,7 +112,7 @@ public class MRTDSigner extends BaseSigner {
         return ret;
     }
 
-    private byte[] encrypt(byte[] data) throws CryptoTokenOfflineException {
+    private byte[] encrypt(byte[] data) throws CryptoTokenOfflineException, SignServerException {
         Cipher c;
         try {
             // Using a PKCS#11 HSM plain RSA Cipher does not work, but we have to use RSA/ECB/PKCS1Padding

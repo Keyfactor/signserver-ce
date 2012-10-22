@@ -47,33 +47,38 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             log.trace(">activateSigner");
         }
         
-        ICryptoToken token = getCryptoToken();
+        try {
+            ICryptoToken token = getCryptoToken();
         
-        if (token == null) {
+            if (token == null) {
         	if (log.isDebugEnabled()) {
         		log.debug("Crypto token not found");
         	}
         	return;
-        }
-        token.activate(authenticationCode);
-
-        // Check if certificate matches key
-        Certificate certificate = getSigningCertificate();
-        if (certificate == null) {
-            log.info("Activate: Signer " + workerId + ": No certificate");
-        } else {
-            if (Arrays.equals(certificate.getPublicKey().getEncoded(),
+            }
+            token.activate(authenticationCode);
+            
+            // Check if certificate matches key
+            Certificate certificate = getSigningCertificate();
+            if (certificate == null) {
+                log.info("Activate: Signer " + workerId + ": No certificate");
+            } else {
+                if (Arrays.equals(certificate.getPublicKey().getEncoded(),
                     getCryptoToken().getPublicKey(
                     ICryptoToken.PURPOSE_SIGN).getEncoded())) {
-                log.info("Activate: Signer " + workerId
+                    log.info("Activate: Signer " + workerId
                         + ": Certificate matches key");
-            } else {
-                log.info("Activate: Signer " + workerId
+                } else {
+                    log.info("Activate: Signer " + workerId
                         + ": Certificate does not match key");
+                }
             }
-        }
-        if (log.isTraceEnabled()) {
-            log.trace("<activateSigner");
+            if (log.isTraceEnabled()) {
+                log.trace("<activateSigner");
+            }
+        } catch (SignServerException e) {
+            log.error("Failed to get crypto token: " + e.getMessage());
+            throw new CryptoTokenOfflineException(e);
         }
     }
 
@@ -82,19 +87,24 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             log.trace(">deactivateSigner");
         }
         
-        ICryptoToken token = getCryptoToken();
-        if (token == null) {
+        try {
+            ICryptoToken token = getCryptoToken();
+            if (token == null) {
         	if (log.isDebugEnabled()) {
         		log.debug("Crypto token not found");
         	}
         	return false;
-        }
+            }
 
-        boolean ret = getCryptoToken().deactivate();
-        if (log.isTraceEnabled()) {
-            log.trace("<deactivateSigner");
+            boolean ret = getCryptoToken().deactivate();
+            if (log.isTraceEnabled()) {
+                log.trace("<deactivateSigner");
+            }
+            return ret;
+        } catch (SignServerException e) {
+            log.error("Failed to get crypto token: " + e.getMessage());
+            throw new CryptoTokenOfflineException(e);
         }
-        return ret;
     }
 
     /**
@@ -108,7 +118,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return config.getProperties().getProperty(WorkerConfig.PROPERTY_AUTHTYPE, IProcessable.AUTHTYPE_CLIENTCERT);
     }
 
-    protected ICryptoToken getCryptoToken() {
+    protected ICryptoToken getCryptoToken() throws SignServerException {
         if (log.isTraceEnabled()) {
             log.trace(">getCryptoToken");
         }
@@ -126,13 +136,13 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     cryptoToken.init(workerId, config.getProperties());
                 }
             } catch (CryptoTokenInitializationFailureException e) {
-                throw new EJBException(e);
+                throw new SignServerException("Failed to initialize crypto token", e);
             } catch (ClassNotFoundException e) {
-                throw new EJBException(e);
+                throw new SignServerException("Class not found", e);
             } catch (IllegalAccessException iae) {
-                throw new EJBException(iae);
+                throw new SignServerException("Illegal access", iae);
             } catch (InstantiationException ie) {
-                throw new EJBException(ie);
+                throw new SignServerException("Instantiation error", ie);
             }
         }
         if (log.isTraceEnabled()) {
@@ -143,14 +153,20 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
     
     public int getCryptoTokenStatus() {
-        final int result;
-        ICryptoToken token = getCryptoToken();
-        if (token == null) {
-            result = CryptoTokenStatus.STATUS_OFFLINE;
-        } else {
-            result = token.getCryptoTokenStatus();
+        try {
+            final int result;
+            ICryptoToken token = getCryptoToken();
+            
+            if (token == null) {
+                result = CryptoTokenStatus.STATUS_OFFLINE;
+            } else {
+                result = token.getCryptoTokenStatus();
+            }
+            
+            return result;
+        } catch (SignServerException e) {
+            return CryptoTokenStatus.STATUS_OFFLINE;
         }
-        return result;
     }
 
     /**
@@ -159,8 +175,13 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      */
     public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
         if (cert == null) {
-            if (getCryptoToken() != null) {
-                cert = (X509Certificate) getCryptoToken().getCertificate(ICryptoToken.PURPOSE_SIGN);
+            try {
+                if (getCryptoToken() != null) {
+                    cert = (X509Certificate) getCryptoToken().getCertificate(ICryptoToken.PURPOSE_SIGN);
+                }
+            } catch (SignServerException e) {
+                log.error("Failed to get crypto token: " + e.getMessage());
+                throw new CryptoTokenOfflineException(e);
             }
             if (cert == null) {
                 cert = (new ProcessableConfig(config)).getSignerCertificate();
@@ -175,16 +196,21 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      */
     public Collection<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
         if (certChain == null) {
-            ICryptoToken cToken = getCryptoToken();
-            if (cToken != null) {
-                certChain = cToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
-                if (certChain == null) {
-                    log.debug("Signtoken did not contain a certificate chain, looking in config.");
-                    certChain = (new ProcessableConfig(config)).getSignerCertificateChain();
+            try {
+                ICryptoToken cToken = getCryptoToken();
+                if (cToken != null) {
+                    certChain = cToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
                     if (certChain == null) {
-                        log.error("Neither Signtoken or ProcessableConfig contains a certificate chain!");
+                        log.debug("Signtoken did not contain a certificate chain, looking in config.");
+                        certChain = (new ProcessableConfig(config)).getSignerCertificateChain();
+                        if (certChain == null) {
+                            log.error("Neither Signtoken or ProcessableConfig contains a certificate chain!");
+                        }
                     }
                 }
+            } catch (SignServerException e) {
+                log.error("Failed to get crypto token: " + e.getMessage());
+                throw new CryptoTokenOfflineException(e);
             }
         }
         return certChain;
@@ -201,24 +227,36 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         if (log.isTraceEnabled()) {
             log.trace(">genCertificateRequest");
         }
-        ICryptoToken token = getCryptoToken();
-        if (log.isDebugEnabled()) {
-            log.debug("Found a crypto token of type: " + token.getClass().getName());
-            log.debug("Token status is: " + token.getCryptoTokenStatus());
+        
+        try {
+            ICryptoToken token = getCryptoToken();
+            if (log.isDebugEnabled()) {
+                log.debug("Found a crypto token of type: " + token.getClass().getName());
+                log.debug("Token status is: " + token.getCryptoTokenStatus());
+            }
+            ICertReqData data = token.genCertificateRequest(info,
+                    explicitEccParameters, defaultKey);
+            if (log.isTraceEnabled()) {
+                log.trace("<genCertificateRequest");
+            }
+            
+            return data;
+        } catch (SignServerException e) {
+            log.error("Failed to get crypto token: " + e.getMessage());
+            throw new CryptoTokenOfflineException(e);
         }
-        ICertReqData data = token.genCertificateRequest(info,
-                explicitEccParameters, defaultKey);
-        if (log.isTraceEnabled()) {
-            log.trace("<genCertificateRequest");
-        }
-        return data;
     }
 
     /**
      * Method sending the removal request to the signtoken
      */
     public boolean destroyKey(int purpose) {
-        return getCryptoToken().destroyKey(purpose);
+        try {
+            return getCryptoToken().destroyKey(purpose);
+        } catch (SignServerException e) {
+            log.error("Failed to get crypto token: " + e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -228,15 +266,20 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     public void generateKey(final String keyAlgorithm, final String keySpec,
             final String alias, final char[] authCode)
             throws CryptoTokenOfflineException, IllegalArgumentException {
-        ICryptoToken token = getCryptoToken();
-        if (token == null) {
-            throw new CryptoTokenOfflineException("Crypto token offline");
-        } else if (token instanceof IKeyGenerator) {
-            ((IKeyGenerator) token).generateKey(keyAlgorithm, keySpec, alias,
-                    authCode);
-        } else {
-            throw new IllegalArgumentException(
-                    "Key generation not supported by crypto token");
+        try {
+            ICryptoToken token = getCryptoToken();
+            if (token == null) {
+                throw new CryptoTokenOfflineException("Crypto token offline");
+            } else if (token instanceof IKeyGenerator) {
+                ((IKeyGenerator) token).generateKey(keyAlgorithm, keySpec, alias,
+                        authCode);
+            } else {
+                throw new IllegalArgumentException(
+                        "Key generation not supported by crypto token");
+            }
+        } catch (SignServerException e) {
+            log.error("Failed to get crypto token: " + e.getMessage());
+            throw new CryptoTokenOfflineException(e);
         }
     }
 
@@ -246,12 +289,18 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     @Override
     public Collection<org.signserver.common.KeyTestResult> testKey(String alias, char[] authCode)
             throws CryptoTokenOfflineException, KeyStoreException {
-
-        ICryptoToken token = getCryptoToken();
-        if (token == null) {
-            throw new CryptoTokenOfflineException("Crypto token offline");
+        try {
+            ICryptoToken token = getCryptoToken();
+            
+            if (token == null) {
+                throw new CryptoTokenOfflineException("Crypto token offline");
+            }
+        
+            return token.testKey(alias, authCode);
+        } catch (SignServerException e) {
+            log.error("Failed to get crypto token: " + e.getMessage());
+            throw new CryptoTokenOfflineException(e);
         }
-        return token.testKey(alias, authCode);
     }
     
     /**

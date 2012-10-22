@@ -51,7 +51,11 @@ public class ValidationServiceWorker extends BaseProcessable {
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager) {
         super.init(workerId, config, workerContext, workerEntityManager);
 
-        validationService = createValidationService(config);
+        try {
+            validationService = createValidationService(config);
+        } catch (SignServerException e) {
+            LOG.error("Could not get crypto token: " + e.getMessage());
+        }
     }
 
     /**
@@ -59,7 +63,7 @@ public class ValidationServiceWorker extends BaseProcessable {
      * @param config configuration containing the validation service to create
      * @return a non initialized group key service.
      */
-    private IValidationService createValidationService(WorkerConfig config) {
+    private IValidationService createValidationService(WorkerConfig config) throws SignServerException {
         String classPath = config.getProperties().getProperty(ValidationServiceConstants.VALIDATIONSERVICE_TYPE, ValidationServiceConstants.DEFAULT_TYPE);
         IValidationService retval = null;
         try {

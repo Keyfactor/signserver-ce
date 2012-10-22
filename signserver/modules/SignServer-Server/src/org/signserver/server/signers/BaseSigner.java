@@ -42,7 +42,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      */
     @Override
     public WorkerStatus getStatus() {
-        SignerStatus retval;
+        SignerStatus retval = null;
         final List<String> fatalErrors = new LinkedList<String>(getFatalErrors());
 
         final boolean keyUsageCounterDisabled = config.getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
@@ -68,10 +68,23 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), fatalErrors, new ProcessableConfig(config), cert);
             }
         } catch (CryptoTokenOfflineException e) {
-            retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), fatalErrors, new ProcessableConfig(config), null);
+            try {
+                retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(),
+                        fatalErrors, new ProcessableConfig(config), null);
+            } catch (SignServerException e2) {
+                fatalErrors.add("Failed to get crypto token: " + e.getMessage());
+            }
         } catch (NumberFormatException ex) {
-            fatalErrors.add("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT + ": " + ex.getMessage());
-            retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), fatalErrors, new ProcessableConfig(config), null);
+            try {
+                fatalErrors.add("Incorrect value in worker property " +
+                        SignServerConstants.KEYUSAGELIMIT + ": " + ex.getMessage());
+                retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(),
+                        fatalErrors, new ProcessableConfig(config), null);
+            } catch (SignServerException e) {
+                fatalErrors.add("Failed to get crypto token: " + e.getMessage());
+            }
+        } catch (SignServerException e) {
+            fatalErrors.add("Failed to get crypto token: " + e.getMessage());
         }
         retval.setKeyUsageCounterDisabled(keyUsageCounterDisabled);
         return retval;
@@ -124,6 +137,11 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             result.add("No signer certificate available");
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Signer " + workerId + ": Could not get signer certificate: " + ex.getMessage());
+            }
+        } catch (SignServerException e) {
+            result.add("Could not get crypto token");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signer " + workerId + ": Could not get crypto token: " + e.getMessage());
             }
         }
         

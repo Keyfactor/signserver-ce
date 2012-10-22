@@ -4,27 +4,24 @@
  */
 package org.signserver.module.tsa;
 
-import java.math.BigInteger;
-import java.util.List;
-import javax.persistence.EntityManager;
+import java.util.Date;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.server.WorkerContext;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 
@@ -96,6 +93,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         config.setProperty("SIGNERCERTCHAIN", SIGN_CERT_CHAIN);
         config.setProperty("KEYDATA", KEY_DATA);
         config.setProperty("DEFAULTTSAPOLICYOID", "1.2.3");
+        config.setProperty("TIMESOURCE", "org.signserver.server.ZeroTimeSource");
         
         
         workerMock.setupWorker(SIGNER_ID, CRYPTOTOKEN_CLASSNAME, config,
@@ -140,5 +138,16 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         
         ASN1ObjectIdentifier mdOID = ASN1ObjectIdentifier.getInstance(asn1seq6.getObjectAt(0));
         assertEquals("Invalid OID for content type", MESSAGE_DIGEST_OID, mdOID.getId());
+        
+        // get signing time from response
+        ASN1Set set = ASN1Set.getInstance(asn1seq5.getObjectAt(1));
+        ASN1Encodable t = set.getObjectAt(0);
+        Time t2 = Time.getInstance(t);
+        Date d = t2.getDate();
+        
+        // the expected time (the "starting point" of time accoring to java.util.Date, consistent with the behavior of ZeroTimeSource
+        Date d0 = new Date(0);
+        
+        assertEquals("Unexpected signing time in response", d0, d);
     }
 }

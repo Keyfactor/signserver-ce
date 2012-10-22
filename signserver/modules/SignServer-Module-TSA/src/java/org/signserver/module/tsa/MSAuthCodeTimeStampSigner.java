@@ -669,100 +669,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         return retval;
     }
 
-    private TimeStampTokenGenerator getTimeStampTokenGenerator(
-            final TimeStampRequest timeStampRequest,
-            final Map<String, String> logMap) throws
-                IllegalRequestException,
-                CryptoTokenOfflineException,
-                InvalidAlgorithmParameterException,
-                NoSuchAlgorithmException,
-                NoSuchProviderException,
-                CertStoreException,
-                OperatorCreationException,
-                SignServerException {
-
-        TimeStampTokenGenerator timeStampTokenGen = null;
-        try {
-            final ASN1ObjectIdentifier digestOID = timeStampRequest.getMessageImprintAlgOID();
-            
-            /*if (digestOID == null) {
-                digestOID = defaultDigestOID;
-            }*/
-
-            ASN1ObjectIdentifier tSAPolicyOID = timeStampRequest.getReqPolicy();
-            if (tSAPolicyOID == null) {
-                tSAPolicyOID = defaultTSAPolicyOID;
-            }
-            logMap.put(ITimeStampLogger.LOG_TSA_POLICYID, tSAPolicyOID.getId());
-
-            final X509Certificate signingCert
-                    = (X509Certificate) getSigningCertificate();
-            if (signingCert == null) {
-                throw new CryptoTokenOfflineException(
-                        "No certificate for this signer");
-            }
-            
-            DigestCalculatorProvider calcProv = new BcDigestCalculatorProvider();    
-            DigestCalculator calc = calcProv.get(new AlgorithmIdentifier(TSPAlgorithms.SHA1));
-            
-            
-            Certificate cert = this.getSigningCertificate();
-            
-            PrivateKey privKey = this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
-            ContentSigner cs =
-            		new JcaContentSignerBuilder("SHA1WITHRSA").setProvider("BC").build(privKey);
-            JcaSignerInfoGeneratorBuilder sigb = new JcaSignerInfoGeneratorBuilder(calcProv);
-            X509CertificateHolder certHolder = new X509CertificateHolder(cert.getEncoded());
-            SignerInfoGenerator sig = sigb.build(cs, certHolder);
-            
-            timeStampTokenGen = new TimeStampTokenGenerator(calc, sig, tSAPolicyOID);
-
-            if (config.getProperties().getProperty(ACCURACYMICROS) != null) {
-                timeStampTokenGen.setAccuracyMicros(Integer.parseInt(
-                        config.getProperties().getProperty(ACCURACYMICROS)));
-            }
-
-            if (config.getProperties().getProperty(ACCURACYMILLIS) != null) {
-                timeStampTokenGen.setAccuracyMillis(Integer.parseInt(
-                        config.getProperties().getProperty(ACCURACYMILLIS)));
-            }
-
-            if (config.getProperties().getProperty(ACCURACYSECONDS) != null) {
-                timeStampTokenGen.setAccuracySeconds(Integer.parseInt(
-                        config.getProperties().getProperty(ACCURACYSECONDS)));
-            }
-
-            if (config.getProperties().getProperty(ORDERING) != null) {
-                timeStampTokenGen.setOrdering(
-                        config.getProperties().getProperty(ORDERING,
-                            DEFAULT_ORDERING).equalsIgnoreCase("TRUE"));
-            }
-
-            if (config.getProperties().getProperty(TSA) != null) {
-                final X500Name x500Name = new X500Name(config.getProperties()
-                            .getProperty(TSA));
-                timeStampTokenGen.setTSA(new GeneralName(x500Name));
-            }
-           
-            // TODO: will probably need to fix this when moving to BC 2.0...
-            timeStampTokenGen.setCertificatesAndCRLs(getCertStoreWithChain(signingCert));
-
-        } catch (IllegalArgumentException e) {
-            LOG.error("IllegalArgumentException: ", e);
-            throw new IllegalRequestException(e.getMessage());
-        } catch (TSPException e) {
-            LOG.error("TSPException: ", e);
-            throw new IllegalRequestException(e.getMessage());
-        } catch (CertificateEncodingException e) {
-        	LOG.error("CertificateEncodingException: ", e);
-        	throw new IllegalRequestException(e.getMessage());
-        } catch (IOException e) {
-        	LOG.error("IOException: ", e);
-        	throw new IllegalRequestException(e.getMessage());
-        }
-
-        return timeStampTokenGen;
-    }
     
     private CertStore getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException {
         Collection<Certificate> signingCertificateChain = getSigningCertificateChain();
@@ -798,31 +704,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         return matchedCerts.size() > 0;
     }
 
-    private TimeStampResponseGenerator getTimeStampResponseGenerator(
-            TimeStampTokenGenerator timeStampTokenGen) {
-        
-        return new TimeStampResponseGenerator(timeStampTokenGen,
-                this.getAcceptedAlgorithms(),
-                this.getAcceptedPolicies(),
-                this.getAcceptedExtensions());
-    }
-
-    /**
-     * Help method that generates a serial number using SecureRandom
-     */
-    private BigInteger getSerialNumber() {
-        BigInteger serialNumber = null;
-        try {
-            serialNumber = getSerno();
-        } catch (Exception e) {
-            LOG.error("Error initiating Serial Number generator, SEVERE ERROR.",
-                    e);
-        }
-        return serialNumber;
-    }
-
-    /**
-     * Generates a number of serial number bytes. The number returned should
+    /** Generates a number of serial number bytes. The number returned should
      * be a positive number.
      *
      * @return a BigInteger with a new random serial number.
@@ -850,35 +732,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             }
         }
         return serno;
-    }
-    
-    private static class SHA1DigestCalculator implements DigestCalculator {
-    	private ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-    	private MessageDigest digest;
-
-    	public SHA1DigestCalculator() {
-    		try {
-    			this.digest = MessageDigest.getInstance("SHA1");
-    		} catch (NoSuchAlgorithmException e) {
-    			
-    		}
-    	}
-
-    	public AlgorithmIdentifier getAlgorithmIdentifier() {
-    		return new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1);
-    	}
-
-    	public OutputStream getOutputStream() {
-    		return bOut;
-    	}
-
-    	public byte[] getDigest() {
-    		byte[] bytes = digest.digest(bOut.toByteArray());
-
-    		bOut.reset();
-
-    		return bytes;
-    	}
     }
 
     /**

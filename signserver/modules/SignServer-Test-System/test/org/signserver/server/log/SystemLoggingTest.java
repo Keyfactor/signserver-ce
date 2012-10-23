@@ -57,11 +57,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     
     private static final String ENTRY_START_MARKER = "EVENT: ";
     
-    private static final int TESTID = 100;
-    private static final String TESTTSID = "1000";
-
-    private CLITestHelper cli = getAdminCLI();
-    private CLITestHelper clientCLI = getClientCLI();
+    private final int signerId = getSignerIdDummy1();
     
     private File auditLogFile;
     
@@ -84,6 +80,10 @@ public class SystemLoggingTest extends ModulesTestCase {
         // For some reason we need to reload the global configuration after the
         // tests otherwise it is left in some bad state
         globalSession.reload();
+    }
+    
+    public void test00SetupDatabase() throws Exception {
+        addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
     }
     
     public void testReadEntries() throws Exception {
@@ -220,24 +220,24 @@ public class SystemLoggingTest extends ModulesTestCase {
         final int linesBefore = readEntriesCount(auditLogFile);
         
         // Test setProperty
-        workerSession.setWorkerProperty(TESTID, "TESTPROPERTY11", "TESTVALUE11");
+        workerSession.setWorkerProperty(signerId, "TESTPROPERTY11", "TESTVALUE11");
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);
         LOG.info(line);
         assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         // Test removeProperty
-        workerSession.removeWorkerProperty(TESTID, "TESTPROPERTY11");
+        workerSession.removeWorkerProperty(signerId, "TESTPROPERTY11");
         lines = readEntries(auditLogFile, linesBefore + 1, 1);
         line = lines.get(0);
         LOG.info(line);
         
         assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
     }
     
     public void testLogCertInstalled() throws Exception {
@@ -245,106 +245,106 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         // Test with uploadSignerCertificate method (global scope)
         final X509Certificate cert = new JcaX509CertificateConverter().getCertificate(new CertBuilder().build());
-        workerSession.uploadSignerCertificate(TESTID, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificate(signerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
         String line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTINSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert)))));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         // Test removeProperty
-        workerSession.removeWorkerProperty(TESTID, "SIGNERCERT");
+        workerSession.removeWorkerProperty(signerId, "SIGNERCERT");
         lines = readEntries(auditLogFile, linesBefore + 2, 2);
         LOG.info(lines);
         
         line = getTheLineContaining(lines, "EVENT: CERTINSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains empty certificate", line.contains("CERTIFICATE: ;"));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         
         // Test with uploadSignerCertificate method (node scope)
         linesBefore = readEntriesCount(auditLogFile);
-        workerSession.uploadSignerCertificate(TESTID, cert.getEncoded(), GlobalConfiguration.SCOPE_NODE);
+        workerSession.uploadSignerCertificate(signerId, cert.getEncoded(), GlobalConfiguration.SCOPE_NODE);
         
         lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTINSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert)))));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: " + WorkerConfig.getNodeId()));
         
         // Remove the property
-        workerSession.removeWorkerProperty(TESTID, WorkerConfig.getNodeId() + ".SIGNERCERT");
+        workerSession.removeWorkerProperty(signerId, WorkerConfig.getNodeId() + ".SIGNERCERT");
         
         
         // Test when setting the property manually (global scope)
         linesBefore = readEntriesCount(auditLogFile);
-        workerSession.setWorkerProperty(TESTID, "SIGNERCERT", new String(CertTools.getPEMFromCerts(Arrays.asList(cert))));
+        workerSession.setWorkerProperty(signerId, "SIGNERCERT", new String(CertTools.getPEMFromCerts(Arrays.asList(cert))));
         
         lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTINSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert)))));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         // Remove the property
-        workerSession.removeWorkerProperty(TESTID, "SIGNERCERT");
+        workerSession.removeWorkerProperty(signerId, "SIGNERCERT");
         
         
         // Test when setting the property manually (node scope)
         linesBefore = readEntriesCount(auditLogFile);
-        workerSession.setWorkerProperty(TESTID, "NODE47.SIGNERCERT", new String(CertTools.getPEMFromCerts(Arrays.asList(cert))));
+        workerSession.setWorkerProperty(signerId, "NODE47.SIGNERCERT", new String(CertTools.getPEMFromCerts(Arrays.asList(cert))));
         
         lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTINSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert)))));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: NODE47"));
         
         // Remove the property
-        workerSession.removeWorkerProperty(TESTID, "NODE47.SIGNERCERT");
+        workerSession.removeWorkerProperty(signerId, "NODE47.SIGNERCERT");
     }
     
     public void testLogCertChainInstalled() throws Exception {
@@ -354,24 +354,24 @@ public class SystemLoggingTest extends ModulesTestCase {
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         final X509Certificate issuerCert = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSelfSignKeyPair(issuerKeyPair).setSubject("CN=Issuer, C=SE").build());
         final X509Certificate cert = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubject("CN=Signer,C=SE").setIssuer("CN=Issuer, C=SE").build());
-        workerSession.uploadSignerCertificateChain(TESTID, Arrays.asList(cert.getEncoded(), issuerCert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(signerId, Arrays.asList(cert.getEncoded(), issuerCert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
         String line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert)))));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         // Test removeProperty
-        if (!workerSession.removeWorkerProperty(TESTID, "SIGNERCERTCHAIN")) {
+        if (!workerSession.removeWorkerProperty(signerId, "SIGNERCERTCHAIN")) {
             throw new Exception("Property could not be removed");
         }
         lines = readEntries(auditLogFile, linesBefore + 2, 2);
@@ -380,107 +380,107 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains empty certificate chain", line.contains("CERTIFICATECHAIN: ;"));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         
         // Test with uploadSignerCertificateChain method (node scope)
         linesBefore = readEntriesCount(auditLogFile);
-        workerSession.uploadSignerCertificateChain(TESTID, Arrays.asList(cert.getEncoded(), issuerCert.getEncoded()), GlobalConfiguration.SCOPE_NODE);
+        workerSession.uploadSignerCertificateChain(signerId, Arrays.asList(cert.getEncoded(), issuerCert.getEncoded()), GlobalConfiguration.SCOPE_NODE);
         
         lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert)))));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: " + WorkerConfig.getNodeId()));
         
         // Remove the property
-        workerSession.removeWorkerProperty(TESTID, "SIGNERCERTCHAIN");
+        workerSession.removeWorkerProperty(signerId, "SIGNERCERTCHAIN");
         
         
         // Test when setting the property manually (global scope)
         linesBefore = readEntriesCount(auditLogFile);
-        workerSession.setWorkerProperty(TESTID, "SIGNERCERTCHAIN", new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))));
+        workerSession.setWorkerProperty(signerId, "SIGNERCERTCHAIN", new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))));
         
         lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert)))));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         // Remove the property
-        if (!workerSession.removeWorkerProperty(TESTID, "SIGNERCERTCHAIN")) {
+        if (!workerSession.removeWorkerProperty(signerId, "SIGNERCERTCHAIN")) {
             throw new Exception("Could not remove property");
         }
         
         
         // Test when setting the property manually (node scope)
         linesBefore = readEntriesCount(auditLogFile);
-        workerSession.setWorkerProperty(TESTID, "NODE47.SIGNERCERTCHAIN", new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))));
+        workerSession.setWorkerProperty(signerId, "NODE47.SIGNERCERTCHAIN", new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))));
         
         lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert)))));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: NODE47"));
         
         // Remove the property
-        workerSession.removeWorkerProperty(TESTID, "NODE47.SIGNERCERTCHAIN");
+        workerSession.removeWorkerProperty(signerId, "NODE47.SIGNERCERTCHAIN");
     }
     
     public void testLogKeySelected() throws Exception {
         // Test when setting the property manually (global scope)
         int linesBefore = readEntriesCount(auditLogFile);
-        workerSession.setWorkerProperty(TESTID, "DEFAULTKEY", "ts_key00002");
+        workerSession.setWorkerProperty(signerId, "DEFAULTKEY", "ts_key00002");
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
         String line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: KEYSELECTED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains alias", line.contains("ALIAS: ts_key00002"));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         // Remove the property
-        if (!workerSession.removeWorkerProperty(TESTID, "DEFAULTKEY")) {
+        if (!workerSession.removeWorkerProperty(signerId, "DEFAULTKEY")) {
             throw new Exception("Could not remove property");
         }
         
@@ -489,26 +489,26 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: KEYSELECTED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         assertTrue("Contains alias", line.contains("KEYALIAS: ;"));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         
         // Test when setting the property manually (node scope)
         linesBefore = readEntriesCount(auditLogFile);
-        workerSession.setWorkerProperty(TESTID, "NODE47.DEFAULTKEY", "ts_key00003");
+        workerSession.setWorkerProperty(signerId, "NODE47.DEFAULTKEY", "ts_key00003");
         
         lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: 100"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: KEYSELECTED");
         assertNotNull("Contains event", line);
@@ -518,10 +518,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains node", line.contains("NODE: NODE47"));
         
         // Remove the property
-        workerSession.removeWorkerProperty(TESTID, "NODE47.DEFAULTKEY");
+        workerSession.removeWorkerProperty(signerId, "NODE47.DEFAULTKEY");
     }
     
     public void testLogKeyGenAndTestAndCSR() throws Exception {
+        final String signerName = "TestKeyGenAndCSR1";
+        final int signerId = 5980;
         try {
             // Copy sample P12 to a temporary P12
             File sampleP12 = new File(getSignServerHome(), "res/test/dss10/dss10_signer3.p12");
@@ -549,48 +551,48 @@ public class SystemLoggingTest extends ModulesTestCase {
             }
             
             // Add signer using the P12
-            addP12DummySigner(getSignerIdDummy1(), getSignerNameDummy1(), p12, "foo123");
+            addP12DummySigner(signerId, signerName, p12, "foo123");
             
             // Test keygen
             int linesBefore = readEntriesCount(auditLogFile);
-            workerSession.generateSignerKey(getSignerIdDummy1(), "RSA", "512", "ts_key00004", "foo123".toCharArray());
+            workerSession.generateSignerKey(signerId, "RSA", "512", "ts_key00004", "foo123".toCharArray());
 
             List<String> lines = readEntries(auditLogFile, linesBefore, 1);
             LOG.info(lines);
             String line = lines.get(0);
             assertTrue("Contains event", line.contains("EVENT: KEYGEN"));
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + getSignerIdDummy1()));
+            assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
             assertTrue("Contains alias", line.contains("KEYALIAS: ts_key00004"));
             assertTrue("Contains spec", line.contains("KEYSPEC: 512"));
             assertTrue("Contains alg", line.contains("KEYALG: RSA"));
 
             // Test keytest
-            workerSession.activateSigner(getSignerIdDummy1(), "foo123");
-            workerSession.testKey(getSignerIdDummy1(), "ts_key00004", "foo123".toCharArray());
+            workerSession.activateSigner(signerId, "foo123");
+            workerSession.testKey(signerId, "ts_key00004", "foo123".toCharArray());
             
             lines = readEntries(auditLogFile, linesBefore + 1, 1);
             LOG.info(lines);
             line = lines.get(0);
             assertTrue("Contains event", line.contains("EVENT: KEYTEST"));
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + getSignerIdDummy1()));
+            assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
             assertTrue("Contains alias", line.contains("KEYALIAS: ts_key00004"));
             assertTrue("Contains test results", line.contains("KeyTestResult{alias=ts_key00004, success=true"));
             
             // Test gencsr
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=TS Signer 1,C=SE", null);
-            ICertReqData req = workerSession.getCertificateRequest(getSignerIdDummy1(), certReqInfo, false);
+            ICertReqData req = workerSession.getCertificateRequest(signerId, certReqInfo, false);
             Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
             lines = readEntries(auditLogFile, linesBefore + 2, 1);
             LOG.info(lines);
             line = lines.get(0);
             assertTrue("Contains event", line.contains("EVENT: GENCSR"));
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + getSignerIdDummy1()));
+            assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
             assertTrue("Contains csr", line.contains("CSR: " + new String(reqData.getBase64CertReq())));
         } finally {
-            removeWorker(getSignerIdDummy1());
+            removeWorker(signerId);
         }
     }
     
@@ -629,6 +631,10 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains log id", line.contains("LOG_ID: "));
         assertTrue("Contains success false", line.contains("PROCESS_SUCCESS: false"));
         assertTrue("Contains exception", line.contains("EXCEPTION: No such worker: 1234567"));
+    }
+    
+    public void test99TearDownDatabase() throws Exception {
+        removeWorker(signerId);
     }
 
     private int readEntriesCount(final File file) throws Exception {

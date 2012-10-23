@@ -78,6 +78,13 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         CertTools.installBCProviderIfNotAvailable();
     }
+
+    @Override
+    protected void tearDown() throws Exception {
+        // For some reason we need to reload the global configuration after the
+        // tests otherwise it is left in some bad state
+        globalSession.reload();
+    }
     
     public void testReadEntries() throws Exception {
         final File testFile = File.createTempFile("testreadentries", "tmp");
@@ -187,6 +194,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains event", line.contains("EVENT: REMOVE_GLOBAL_PROPERTY"));
         assertTrue("Contains module", line.contains("MODULE: GLOBAL_CONFIG"));
         assertTrue("Contains property", line.contains("GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47"));
+        
+        globalSession.reload();
     }
     
     public void testLogGlobalConfigReload() throws Exception {

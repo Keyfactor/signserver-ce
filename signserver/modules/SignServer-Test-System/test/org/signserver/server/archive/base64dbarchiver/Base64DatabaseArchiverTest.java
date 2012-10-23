@@ -148,5 +148,6 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
      */
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
+        removeWorker(getSignerIdTimeStampSigner1());
     }
 }

@@ -19,7 +19,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
-import org.signserver.testutils.ModulesTestCase;
 import org.signserver.web.WebTestCase;
 
 /**
@@ -59,6 +58,8 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
      */
     private static final int WORKERID_SIGNER3 = 5676;
     private static final String WORKER_SIGNER3 = "TestXMLSigner";
+    
+    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
 
     private SignerStatusReportParser parser = new SignerStatusReportParser();
 
@@ -173,9 +174,9 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
      */
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID_WORKER);
-        removeWorker(WORKERID_SIGNER1);
-        removeWorker(WORKERID_SIGNER2);
-        removeWorker(WORKERID_SIGNER3);
+        for (int workerId : WORKERS) {
+            removeWorker(workerId);
+        }
     }
 
 }

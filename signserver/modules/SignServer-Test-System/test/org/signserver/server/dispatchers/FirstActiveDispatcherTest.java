@@ -14,7 +14,6 @@ package org.signserver.server.dispatchers;
 
 import java.io.File;
 import java.security.cert.X509Certificate;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -36,6 +35,8 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     private static final int WORKERID_1 = 5681;
     private static final int WORKERID_2 = 5682;
     private static final int WORKERID_3 = 5683;
+    
+    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
     
     /**
      * Dummy authentication code used to test activation of a dispatcher worker
@@ -170,9 +171,9 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID_DISPATCHER);
-        removeWorker(WORKERID_1);
-        removeWorker(WORKERID_2);
-        removeWorker(WORKERID_3);
+        for (int workerId : WORKERS) {
+            removeWorker(workerId);
+        }
     }
 
 }

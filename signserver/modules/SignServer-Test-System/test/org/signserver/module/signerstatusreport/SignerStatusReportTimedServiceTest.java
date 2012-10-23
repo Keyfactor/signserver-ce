@@ -56,6 +56,8 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
      */
     private static final int WORKERID_SIGNER3 = 5676;
     private static final String WORKER_SIGNER3 = "TestXMLSigner";
+    
+    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
 
     private static final long serviceInterval = 10;
 
@@ -178,9 +180,9 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
      */
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID_SERVICE);
-        removeWorker(WORKERID_SIGNER1);
-        removeWorker(WORKERID_SIGNER2);
-        removeWorker(WORKERID_SIGNER3);
+        for (int workerId : WORKERS) {
+            removeWorker(workerId);
+        }
     }
 
     

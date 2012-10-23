@@ -41,6 +41,8 @@ public class DocumentSignerTest extends ModulesTestCase {
     /** WORKERID used in this test case as defined in 
      * junittest-part-config.properties for PDFSigner. */
     private static final int WORKERID2 = 5675;
+    
+    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
 
     private static String signserverhome;
     
@@ -171,8 +173,10 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        removeWorker(WORKERID);
         removeWorker(WORKERID2);
+        for (int workerId : WORKERS) {
+            removeWorker(workerId);
+        }
     }
 
     private byte[] execute(String... args) throws IOException, IllegalCommandArgumentsException, CommandFailureException {

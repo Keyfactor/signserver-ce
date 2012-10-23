@@ -40,6 +40,8 @@ public class XMLSignerTest extends ModulesTestCase {
 
     /** WORKERID used in this test case as defined in junittest-part-config.properties */
     private static final int WORKERID2 = 5679;
+    
+    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
@@ -141,8 +143,9 @@ public class XMLSignerTest extends ModulesTestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        removeWorker(WORKERID);
-        removeWorker(WORKERID2);
+        for (int workerId : WORKERS) {
+            removeWorker(workerId);
+        }
     }
 
     private void checkXmlWellFormed(final InputStream input) {

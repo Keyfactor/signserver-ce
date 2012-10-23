@@ -41,6 +41,8 @@ public class AnySignerTest extends ModulesTestCase {
     /** WORKERID used in this test case as defined in 
      * junittest-part-config.properties for XMLSigner. */
     private static final int WORKERID = 5803;
+    
+    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
 
     private static String signserverhome;
 
@@ -242,7 +244,9 @@ public class AnySignerTest extends ModulesTestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        removeWorker(WORKERID);
+        for (int workerId : WORKERS) {
+            removeWorker(workerId);
+        }
     }
 
     public static String createKeyHash(byte[] key) {

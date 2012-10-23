@@ -86,7 +86,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
     }
     
-    public void testReadEntries() throws Exception {
+    public void test01ReadEntries() throws Exception {
         final File testFile = File.createTempFile("testreadentries", "tmp");
         testFile.deleteOnExit();
         final String line0 = "2012-10-19 10:51:43,240 INFO  [ISystemLogger] EVENT: GLOBAL_CONFIG_RELOAD; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; REPLY_TIME:1350636703240\n";
@@ -156,7 +156,7 @@ public class SystemLoggingTest extends ModulesTestCase {
      * <pre>2012-10-19 08:37:32,213 INFO  [ISystemLogger] EVENT: SIGNSERVER_STARTUP; MODULE: SERVICE; CUSTOM_ID: ; VERSION: SignServer 3.3.0alpha12; REPLY_TIME:1350628652213</pre>
      * @throws Exception 
      */
-    public void testLogStartup() throws Exception {
+    public void test01LogStartup() throws Exception {
         // Read first line of file
         LOG.info("Note: This test assumes the signserver_audit.log was cleared before the appserver started");
         List<String> lines = readEntries(auditLogFile, 0, 1);
@@ -168,11 +168,11 @@ public class SystemLoggingTest extends ModulesTestCase {
     }
     
     // Not easily tested
-    // public void testLogShutdown() throws Exception {
+    // public void test01LogShutdown() throws Exception {
     //    fail("No implemented yet");
     // }
     
-    public void testLogSetAndRemoveGlobalProperty() throws Exception {
+    public void test01LogSetAndRemoveGlobalProperty() throws Exception {
         final int linesBefore = readEntriesCount(auditLogFile);
         
         // Test setProperty
@@ -198,7 +198,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         globalSession.reload();
     }
     
-    public void testLogGlobalConfigReload() throws Exception {
+    public void test01LogGlobalConfigReload() throws Exception {
         final int linesBefore = readEntriesCount(auditLogFile);
         
         // Test reload
@@ -212,11 +212,11 @@ public class SystemLoggingTest extends ModulesTestCase {
     }
     
     // Not easily tested
-    // public void testLogGlobalConfigResync() throws Exception {
+    // public void test01LogGlobalConfigResync() throws Exception {
     //    fail("No implemented yet");
     // }
     
-    public void testLogSetAndRemoveWorkerProperty() throws Exception {
+    public void test01LogSetAndRemoveWorkerProperty() throws Exception {
         final int linesBefore = readEntriesCount(auditLogFile);
         
         // Test setProperty
@@ -240,7 +240,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
     }
     
-    public void testLogCertInstalled() throws Exception {
+    public void test01LogCertInstalled() throws Exception {
         int linesBefore = readEntriesCount(auditLogFile);
         
         // Test with uploadSignerCertificate method (global scope)
@@ -347,7 +347,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         workerSession.removeWorkerProperty(signerId, "NODE47.SIGNERCERT");
     }
     
-    public void testLogCertChainInstalled() throws Exception {
+    public void test01LogCertChainInstalled() throws Exception {
         int linesBefore = readEntriesCount(auditLogFile);
         
         // Test with uploadSignerCertificateChain method (global scope)
@@ -460,7 +460,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         workerSession.removeWorkerProperty(signerId, "NODE47.SIGNERCERTCHAIN");
     }
     
-    public void testLogKeySelected() throws Exception {
+    public void test01LogKeySelected() throws Exception {
         // Test when setting the property manually (global scope)
         int linesBefore = readEntriesCount(auditLogFile);
         workerSession.setWorkerProperty(signerId, "DEFAULTKEY", "ts_key00002");
@@ -521,7 +521,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         workerSession.removeWorkerProperty(signerId, "NODE47.DEFAULTKEY");
     }
     
-    public void testLogKeyGenAndTestAndCSR() throws Exception {
+    public void test01LogKeyGenAndTestAndCSR() throws Exception {
         final String signerName = "TestKeyGenAndCSR1";
         final int signerId = 5980;
         try {
@@ -596,7 +596,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         }
     }
     
-    public void testLogSetStatusProperty() throws Exception {
+    public void test01LogSetStatusProperty() throws Exception {
         int linesBefore = readEntriesCount(auditLogFile);
         final long expiration = System.currentTimeMillis() + 1000;
         statusSession.update("TEST_PROPERTY1", "TESTVALUE47", expiration);
@@ -611,7 +611,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains expiration", line.contains("STATUSREPO_EXPIRATION: " + expiration));
     }
     
-    public void testLogProcessWorkerNotFound() throws Exception {
+    public void test01LogProcessWorkerNotFound() throws Exception {
         int linesBefore = readEntriesCount(auditLogFile);
         
         final int nonExistingWorkerId = 1234567;

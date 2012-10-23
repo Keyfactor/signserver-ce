@@ -52,7 +52,7 @@ public class ModulesTestCase extends TestCase {
     private static final int PDFSIGNER1_ID = 5678;
     private static final String PDFSIGNER1_NAME = "TestPDFSigner";
     
-    private static final int TIMESTAMPSIGNER1_SIGNER_ID = 5679;
+    private static final int TIMESTAMPSIGNER1_SIGNER_ID = 5879;
     private static final String TIMESTAMPSIGNER1_SIGNER_NAME = "TestTimeStampSigner";
 
     //Value created by calling org.signserver.server.cryptotokens.CryptoTokenUtils.CreateKeyDataForSoftCryptoToken using the dss10_signer1.p12

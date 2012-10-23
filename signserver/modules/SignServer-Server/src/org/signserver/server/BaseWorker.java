@@ -100,7 +100,6 @@ public abstract class BaseWorker implements IWorker {
      * in status listings and by the health check (unless the worker is disabled).
      * @return A list of (short) messages describing each error or an empty list
      * in case there are no errors
-     * @throws SignServerException
      * @since SignServer 3.2.3
      */
     protected List<String> getFatalErrors() {

@@ -52,7 +52,9 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
 	private static final String CONTENT_TYPE_OID = "1.2.840.113549.1.9.3";
 	private static final String SIGNING_TIME_OID = "1.2.840.113549.1.9.5";
 	private static final String MESSAGE_DIGEST_OID = "1.2.840.113549.1.9.4";
-
+	private static final String SHA1_OID = "1.3.14.3.2.26";
+	private static final String SHA256_OID = "2.16.840.1.101.3.4.2.1";
+	
 	
     public MSAuthCodeTimeStampSignerTest(String testName) {
         super(testName);
@@ -69,13 +71,8 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
     }
 
 
-    /**
-     * Test of processData method, of class MSAuthCodeTimeStampSigner.
-     */
-    public void testProcessData() throws Exception {
-        System.out.println("processData");
-        
-        SignServerUtil.installBCProvider();
+    private void testProcessDataWithAlgo(final String signingAlgo, final String expectedDigestOID) throws Exception {
+       SignServerUtil.installBCProvider();
         
         final String CRYPTOTOKEN_CLASSNAME =
                 "org.signserver.server.cryptotokens.HardCodedCryptoToken";
@@ -93,6 +90,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         config.setProperty("SIGNERCERTCHAIN", SIGN_CERT_CHAIN);
         config.setProperty("KEYDATA", KEY_DATA);
         config.setProperty("TIMESOURCE", "org.signserver.server.ZeroTimeSource");
+        config.setProperty("SIGNATUREALGORITHM", signingAlgo);
         
         
         workerMock.setupWorker(SIGNER_ID, CRYPTOTOKEN_CLASSNAME, config,
@@ -144,9 +142,28 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         Time t2 = Time.getInstance(t);
         Date d = t2.getDate();
         
-        // the expected time (the "starting point" of time accoring to java.util.Date, consistent with the behavior of ZeroTimeSource
+        // the expected time (the "starting point" of time according to java.util.Date, consistent with the behavior of ZeroTimeSource
         Date d0 = new Date(0);
         
-        assertEquals("Unexpected signing time in response", d0, d);
+        assertEquals("Unexpected signing time in response", d0, d);	
+    
+    
+        // check expected signing algo
+        ASN1Set set1 = ASN1Set.getInstance(asn1seq1.getObjectAt(1));
+        ASN1Sequence asn1seq7 = ASN1Sequence.getInstance(set1.getObjectAt(0));
+        ASN1ObjectIdentifier algOid = ASN1ObjectIdentifier.getInstance(asn1seq7.getObjectAt(0));
+        
+        assertEquals("Unexpected digest OID in response", expectedDigestOID, algOid.getId());
+    }
+    
+    /**
+     * Test of processData method, of class MSAuthCodeTimeStampSigner.
+     */
+    public void testProcessDataSHA1withRSA() throws Exception {
+    	testProcessDataWithAlgo("SHA1withRSA", SHA1_OID);
+    }
+    
+    public void testProcessDataSHA256withRSA() throws Exception {
+    	testProcessDataWithAlgo("SHA256withRSA", SHA256_OID);
     }
 }

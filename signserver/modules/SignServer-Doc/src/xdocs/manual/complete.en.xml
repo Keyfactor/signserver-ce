@@ -2780,6 +2780,9 @@ This TimeSource returns the time from the local computer but only if the status 
                                 </td>
                             </tr>
                         </table>
+                        <p>
+<b>SIGNINGALGORITHM</b> = property specifying the algorithm used to sign the timestamp (default: SHA1withRSA)
+						</p>
 					</subsubsection>
 				
 				</subsection>

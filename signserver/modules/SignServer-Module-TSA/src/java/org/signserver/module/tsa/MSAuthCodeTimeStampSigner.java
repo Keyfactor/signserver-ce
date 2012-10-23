@@ -120,6 +120,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
     //Private Property constants
     public static final String TIMESOURCE = "TIMESOURCE";
+    public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
     public static final String ACCEPTEDALGORITHMS = "ACCEPTEDALGORITHMS";
     public static final String ACCEPTEDPOLICIES = "ACCEPTEDPOLICIES";
     public static final String ACCEPTEDEXTENSIONS = "ACCEPTEDEXTENSIONS";
@@ -141,11 +142,14 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     private static final String DEFAULT_TIMESOURCE =
             "org.signserver.server.LocalComputerTimeSource";
     
+    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA";
+    
     /** MIME type for the response data. **/
     private static final String RESPONSE_CONTENT_TYPE = "application/octet-stream";
 
     private ITimeSource timeSource = null;
-   
+    private String signatureAlgo;
+    
     private boolean validChain = true;
     
     @Override
@@ -173,6 +177,12 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                             + "Using TimeSource: "
                             + timeSource.getClass().getName());
                 }
+            }
+            
+            signatureAlgo = config.getProperty(SIGNATUREALGORITHM);
+            
+            if (signatureAlgo == null) {
+            	signatureAlgo = DEFAULT_SIGNATUREALGORITHM;
             }
         } catch (SignServerException e) {
             LOG.error("Could not create time source: " + e.getMessage());
@@ -316,7 +326,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                     new SignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build());
             signerInfoBuilder.setSignedAttributeGenerator(signedAttributeGenerator);
 
-            JcaContentSignerBuilder contentSigner = new JcaContentSignerBuilder("SHA1withRSA");
+            JcaContentSignerBuilder contentSigner = new JcaContentSignerBuilder(signatureAlgo);
             contentSigner.setProvider(provider);
 
             CertStore cs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList), "BC");

@@ -86,80 +86,6 @@ import org.signserver.server.signers.BaseSigner;
  *          that should be used. (default LocalComputerTimeSource)
  *      </td>
  *  </tr>
- *  <tr>
- *      <td>ACCEPTEDALGORITHMS</td>
- *      <td>
- *          A ';' separated string containing accepted algorithms, can be null
- *          if it shouldn't be used. (OPTIONAL)
- *      </td>
- *  </tr>
- *  <tr>
- *      <td>ACCEPTEDPOLICIES</td>
- *      <td>
- *          A ';' separated string containing accepted policies, can be null if
- *          it shouldn't be used. (OPTIONAL)
- *      </td>
- * </tr>
- *  <tr>
- *      <td>ACCEPTEDEXTENSIONS</td>
- *      <td>
- *          A ';' separated string containing accepted extensions, can be null
- *          if it shouldn't be used. (OPTIONAL)
- *      </td>
- * </tr>
- *  <tr>
- *      <td>DIGESTOID</td>
- *      <td>
- *          The Digenst OID to be used in the timestamp
- *      </td>
- * </tr>
- *  <tr>
- *      <td>DEFAULTTSAPOLICYOID</td>
- *      <td>
- *          The default policy ID of the time stamp authority
- *      </td>
- * </tr>
- *  <tr>
- *      <td>ACCURACYMICROS</td>
- *      <td>
- *          Accuraty in micro seconds, Only decimal number format, only one of
- *          the accuracy properties should be set (OPTIONAL)
- *      </td>
- * </tr>
- *  <tr>
- *      <td>ACCURACYMILLIS</td>
- *      <td>
- *          Accuraty in milli seconds, Only decimal number format, only one of
- *          the accuracy properties should be set (OPTIONAL)
- *      </td>
- * </tr>
- *  <tr>
- *      <td>ACCURACYSECONDS</td>
- *      <td>
- *          Accuraty in seconds. Only decimal number format, only one of the
- *          accuracy properties should be set (OPTIONAL)
- *      </td>
- * </tr>
- *  <tr>
- *      <td>ORDERING</td>
- *      <td>
- *          The ordering (OPTIONAL), default false.
- *      </td>
- * </tr>
- *  <tr>
- *      <td>TSA</td>
- *      <td>
- *          General name of the Time Stamp Authority.
- *      </td>
- *  </tr>
- * <tr>
- *      <td>REQUIREVALIDCHAIN</td>
- *      <td>
- *          Set to true to perform an extra check that the SIGNERCERTCHAIN only 
- *          contains certificates in the chain of the signer certificate.
- *          (OPTIONAL), default false.
- *      </td>
- * </tr>
  *
  * </table>
  * 
@@ -218,59 +144,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     /** MIME type for the response data. **/
     private static final String RESPONSE_CONTENT_TYPE = "application/octet-stream";
 
-    
-    private static final String[] ACCEPTEDALGORITHMSNAMES = {
-        "GOST3411",
-        "MD5",
-        "SHA1",
-        "SHA224",
-        "SHA256",
-        "SHA384",
-        "SHA512",
-        "RIPEMD128",
-        "RIPEMD160",
-        "RIPEMD256"
-    };
-    
-    private static final ASN1ObjectIdentifier[] ACCEPTEDALGORITHMSOIDS = {
-        TSPAlgorithms.GOST3411,
-        TSPAlgorithms.MD5,
-        TSPAlgorithms.SHA1,
-        TSPAlgorithms.SHA224,
-        TSPAlgorithms.SHA256,
-        TSPAlgorithms.SHA384,
-        TSPAlgorithms.SHA512,
-        TSPAlgorithms.RIPEMD128,
-        TSPAlgorithms.RIPEMD160,
-        TSPAlgorithms.RIPEMD256
-    };
-
-    private static final HashMap<String, ASN1ObjectIdentifier> ACCEPTEDALGORITHMSMAP =
-            new HashMap<String, ASN1ObjectIdentifier>();
-    private static final HashMap<ASN1ObjectIdentifier, String> ACCEPTEDALGORITHMSREVERSEMAP =
-    		new HashMap<ASN1ObjectIdentifier, String>();
-
-    static {
-        for (int i = 0; i < ACCEPTEDALGORITHMSNAMES.length; i++) {
-            ACCEPTEDALGORITHMSMAP.put(ACCEPTEDALGORITHMSNAMES[i],
-                    ACCEPTEDALGORITHMSOIDS[i]);
-            ACCEPTEDALGORITHMSREVERSEMAP.put(ACCEPTEDALGORITHMSOIDS[i],
-            		ACCEPTEDALGORITHMSNAMES[i]);
-        }
-    }
-
-    private static final String DEFAULT_ORDERING = "FALSE";
-    
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-
     private ITimeSource timeSource = null;
-    private Set<ASN1ObjectIdentifier> acceptedAlgorithms = null;
-    private Set<String> acceptedPolicies = null;
-    private Set<String> acceptedExtensions = null;
-
-    //private String defaultDigestOID = null;
-    private ASN1ObjectIdentifier defaultTSAPolicyOID = null;
-    
+   
     private boolean validChain = true;
     
     @Override
@@ -302,19 +177,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         } catch (SignServerException e) {
             LOG.error("Could not create time source: " + e.getMessage());
         }
-            
-        final String policyId = config.getProperties().getProperty(DEFAULTTSAPOLICYOID);
-        
-        try {
-        	if (policyId != null) {
-        		defaultTSAPolicyOID = new ASN1ObjectIdentifier(policyId);
-        	} else {
-        		LOG.error("Error: No default TSA Policy OID have been configured");
-        	}
-        } catch (IllegalArgumentException iae) {
-        	LOG.error("Error: TSA Policy OID " + policyId + " is invalid");
-        }
-       
+   
         if (LOG.isDebugEnabled()) {
             LOG.debug("bctsp version: " + TimeStampResponseGenerator.class
                 .getPackage().getImplementationVersion() + ", "

@@ -92,7 +92,6 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         config.setProperty("SIGNINGCERTIFICATE", SIGN_CERT);
         config.setProperty("SIGNERCERTCHAIN", SIGN_CERT_CHAIN);
         config.setProperty("KEYDATA", KEY_DATA);
-        config.setProperty("DEFAULTTSAPOLICYOID", "1.2.3");
         config.setProperty("TIMESOURCE", "org.signserver.server.ZeroTimeSource");
         
         

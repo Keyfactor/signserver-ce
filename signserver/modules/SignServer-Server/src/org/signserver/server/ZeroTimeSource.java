@@ -5,9 +5,9 @@ import java.util.Properties;
 
 /**
  * Simple class implementing the ITimeSource interface
- * always returns time 0
+ * always returns time 0.
  * This is mainly intended to use for testing to get a
- * predictable non-null time value
+ * predictable non-null time value.
  * 
  * @author Marcus Lundblad
  * @version $Id$

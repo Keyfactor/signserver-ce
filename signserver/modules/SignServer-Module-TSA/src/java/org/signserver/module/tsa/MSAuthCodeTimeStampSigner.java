@@ -310,21 +310,23 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             DefaultSignedAttributeTableGenerator signedAttributeGenerator = new DefaultSignedAttributeTableGenerator(signedAttributesTable);
 
             
+            final String provider = cryptoToken.getProvider(ICryptoToken.PROVIDERUSAGE_SIGN);
+            
             SignerInfoGeneratorBuilder signerInfoBuilder =
                     new SignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build());
             signerInfoBuilder.setSignedAttributeGenerator(signedAttributeGenerator);
 
             JcaContentSignerBuilder contentSigner = new JcaContentSignerBuilder("SHA1withRSA");
-            contentSigner.setProvider("BC");
+            contentSigner.setProvider(provider);
 
-            CertStore cs = CertStore.getInstance("Collection",new CollectionCertStoreParameters(certList), "BC");
+            CertStore cs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList), "BC");
             cmssdg.addSignerInfoGenerator(signerInfoBuilder.build(contentSigner.build(pk),
                     new X509CertificateHolder(x509cert.getEncoded())));
 
             cmssdg.addCertificatesAndCRLs(cs);
             
             CMSProcessable cmspba = new CMSProcessableByteArray(content);
-            CMSSignedData cmssd = cmssdg.generate(dataOID, cmspba, true, "BC");
+            CMSSignedData cmssd = cmssdg.generate(dataOID, cmspba, true, provider);
 
             byte[] der = ASN1Primitive.fromByteArray(cmssd.getEncoded()).getEncoded(); 
 

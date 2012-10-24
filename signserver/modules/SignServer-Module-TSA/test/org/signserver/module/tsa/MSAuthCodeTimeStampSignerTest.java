@@ -171,9 +171,5 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
     
     public void testProcessDataSHA256withRSA() throws Exception {
     	testProcessDataWithAlgo("SHA256withRSA", SHA256_OID);
-    }
-    
-    public void testProcessDataMD5withDSA() throws Exception {
-    	testProcessDataWithAlgo("SHA1withDSA", SHA1_OID);
-    }
+    }    
 }

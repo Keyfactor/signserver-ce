@@ -1,0 +1,23 @@
+Instructions for testing the MS Authenticode Time Stamp signer
+===============================================================
+
+Install the signer using the doc/sample-configs/qs_ms_authcode_timestamp_configuration.properties.
+
+Install the Microsoft SDK on a Windows machine (I used XP in VirtualBox).
+This can be downloaded from: http://www.microsoft.com/downloads/dlx/en-us/listdetailsview.aspx?FamilyID=6b6c21d2-2006-4afa-9702-529fa782d63b
+The download is labelled "for Windows 7", but it works on XP as well.
+I also had to install the .Net runtime: http://www.microsoft.com/downloads/dlx/en-us/default.aspx?FamilyID=9CFB2D51-5FF4-4491-B0E5-B386F32C0992
+
+After installing the SDK you can open a command prompt go to the Bin directory within the SDK:
+cd C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin
+
+Now run the signtool (I used one of the .exe files in this directory as an example, the IP address in the example below is the bridged one used by
+VirtualBox to access the host, modify as needed):
+signtool.exe timestamp /t http://10.0.2.2:8080/signserver/tsa?workerName=MSAuthCodeTimeStampSigner AccEvent.exe
+
+After this you can manually inspect the certificate stored in the .exe file (AccEvent.exe) by navigating to the folder in the file explorer
+and right-click on the file select "Properties".
+Now select the "Digital Signatures" tab. Select the certificate and click on "Details".
+You can now select the Timestamp signature under "Countersignatures" and click "Details" to view the signature.
+
+

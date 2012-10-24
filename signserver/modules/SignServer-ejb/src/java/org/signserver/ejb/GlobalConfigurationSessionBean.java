@@ -64,6 +64,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     }
 
     private IGlobalConfigurationDataService globalConfigurationDataService;
+    private final GlobalConfigurationCache cache = GlobalConfigurationCache.getInstance();
     
     @PostConstruct
     public void create() {
@@ -92,8 +93,8 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 
         auditLog(EventType.SET_GLOBAL_PROPERTY, scope + key, value);
 
-        if (GlobalConfigurationCache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
-            GlobalConfigurationCache.getCachedGlobalConfig().setProperty(propertyKeyHelper(scope, key), value);
+        if (cache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
+            cache.getCachedGlobalConfig().setProperty(propertyKeyHelper(scope, key), value);
         } else {
             setPropertyHelper(propertyKeyHelper(scope, key), value);
         }
@@ -125,16 +126,16 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 
         auditLog(EventType.REMOVE_GLOBAL_PROPERTY, scope + key, null);
 
-        if (GlobalConfigurationCache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
-            GlobalConfigurationCache.getCachedGlobalConfig().remove(propertyKeyHelper(scope, key));
+        if (cache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
+            cache.getCachedGlobalConfig().remove(propertyKeyHelper(scope, key));
         } else {
             try {
                 retval = getGlobalConfigurationDataService().removeGlobalProperty(propertyKeyHelper(scope, key));
-                GlobalConfigurationCache.setCachedGlobalConfig(null);
+                cache.setCachedGlobalConfig(null);
             } catch (Throwable e) {
                 LOG.error("Error connecting to database, configuration is un-syncronized", e);
-                GlobalConfigurationCache.setCurrentState(GlobalConfiguration.STATE_OUTOFSYNC);
-                GlobalConfigurationCache.getCachedGlobalConfig().remove(propertyKeyHelper(scope, key));
+                cache.setCurrentState(GlobalConfiguration.STATE_OUTOFSYNC);
+                cache.getCachedGlobalConfig().remove(propertyKeyHelper(scope, key));
             }
         }
         return retval;
@@ -145,9 +146,9 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
      */
     @Override
     public GlobalConfiguration getGlobalConfiguration() {
-        GlobalConfiguration retval = null;
+        GlobalConfiguration retval;
 
-        if (GlobalConfigurationCache.getCachedGlobalConfig() == null) {
+        if (cache.getCachedGlobalConfig() == null) {
             Properties properties = new Properties();
 
             Iterator<GlobalConfigurationDataBean> iter = getGlobalConfigurationDataService().findAll().iterator();
@@ -169,10 +170,10 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
                 }
             }
 
-            GlobalConfigurationCache.setCachedGlobalConfig(properties);
+            cache.setCachedGlobalConfig(properties);
         }
-        retval = new GlobalConfiguration(GlobalConfigurationCache.getCachedGlobalConfig(), 
-                GlobalConfigurationCache.getCurrentState(), 
+        retval = new GlobalConfiguration(cache.getCachedGlobalConfig(), 
+                cache.getCurrentState(), 
                 CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION));
 
         return retval;
@@ -186,12 +187,12 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 
         auditLog(EventType.GLOBAL_CONFIG_RESYNC, null, null); // TODO Should handle errors
 
-        if (!GlobalConfigurationCache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
+        if (!cache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
             String message = "Error it is only possible to resync a database that have the state " + GlobalConfiguration.STATE_OUTOFSYNC;
             LOG.error(message);
             throw new ResyncException(message);
         }
-        if (GlobalConfigurationCache.getCachedGlobalConfig() == null) {
+        if (cache.getCachedGlobalConfig() == null) {
             String message = "Error resyncing database, cached global configuration doesn't exist.";
             LOG.error(message);
             throw new ResyncException(message);
@@ -220,7 +221,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
         }
 
         // add all properties
-        Iterator<?> keySet = GlobalConfigurationCache.getCachedGlobalConfig().keySet().iterator();
+        Iterator<?> keySet = cache.getCachedGlobalConfig().keySet().iterator();
         while (keySet.hasNext()) {
             String fullKey = (String) keySet.next();
 
@@ -228,18 +229,18 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
                 String scope = GlobalConfiguration.SCOPE_GLOBAL;
                 String key = fullKey.substring(GlobalConfiguration.SCOPE_GLOBAL.length());
 
-                setProperty(scope, key, GlobalConfigurationCache.getCachedGlobalConfig().getProperty(fullKey));
+                setProperty(scope, key, cache.getCachedGlobalConfig().getProperty(fullKey));
             } else {
                 if (fullKey.startsWith(GlobalConfiguration.SCOPE_NODE)) {
                     String scope = GlobalConfiguration.SCOPE_NODE;
                     String key = fullKey.substring(thisNodeConfig.length());
-                    setProperty(scope, key, GlobalConfigurationCache.getCachedGlobalConfig().getProperty(fullKey));
+                    setProperty(scope, key, cache.getCachedGlobalConfig().getProperty(fullKey));
                 }
             }
         }
 
         // Set the state to insync.
-        GlobalConfigurationCache.setCurrentState(GlobalConfiguration.STATE_INSYNC);
+        cache.setCurrentState(GlobalConfiguration.STATE_INSYNC);
     }
 
     /**
@@ -250,11 +251,11 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
         auditLog(EventType.GLOBAL_CONFIG_RELOAD, null, null);
 
         workerManagerSession.flush();
-        GlobalConfigurationCache.setCachedGlobalConfig(null);
+        cache.setCachedGlobalConfig(null);
         getGlobalConfiguration();
 
         // Set the state to insync.
-        GlobalConfigurationCache.setCurrentState(GlobalConfiguration.STATE_INSYNC);
+        cache.setCurrentState(GlobalConfiguration.STATE_INSYNC);
     }
     
     /**
@@ -265,12 +266,12 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     private void setPropertyHelper(String key, String value) {
         try {
             getGlobalConfigurationDataService().setGlobalProperty(key, value);
-            GlobalConfigurationCache.setCachedGlobalConfig(null);
+            cache.setCachedGlobalConfig(null);
         } catch (Throwable e) {
             String message = "Error connecting to database, configuration is un-syncronized :";
             LOG.error(message, e);
-            GlobalConfigurationCache.setCurrentState(GlobalConfiguration.STATE_OUTOFSYNC);
-            GlobalConfigurationCache.getCachedGlobalConfig().setProperty(key, value);
+            cache.setCurrentState(GlobalConfiguration.STATE_OUTOFSYNC);
+            cache.getCachedGlobalConfig().setProperty(key, value);
         }
 
     }

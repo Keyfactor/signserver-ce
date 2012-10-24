@@ -13,7 +13,6 @@
 package org.signserver.server;
 
 import java.util.Properties;
-
 import org.signserver.common.GlobalConfiguration;
 
 /**
@@ -28,25 +27,33 @@ import org.signserver.common.GlobalConfiguration;
  */
 public class GlobalConfigurationCache {
 
+    private static final GlobalConfigurationCache INSTANCE = new GlobalConfigurationCache();
+    
     /**
      * Cached configuration used for non-synced state.
      */
-    private static Properties cachedGlobalConfig = null;
-    private static String currentState = GlobalConfiguration.STATE_INSYNC;
+    private Properties cachedGlobalConfig;
+    private String currentState = GlobalConfiguration.STATE_INSYNC;
 
-    public synchronized static Properties getCachedGlobalConfig() {
+    private GlobalConfigurationCache() {}
+    
+    public static GlobalConfigurationCache getInstance() {
+        return INSTANCE;
+    }
+
+    public synchronized Properties getCachedGlobalConfig() {
         return cachedGlobalConfig;
     }
 
-    public synchronized static void setCachedGlobalConfig(Properties cachedGlobalConfig) {
-        GlobalConfigurationCache.cachedGlobalConfig = cachedGlobalConfig;
+    public synchronized void setCachedGlobalConfig(final Properties cachedGlobalConfig) {
+        this.cachedGlobalConfig = cachedGlobalConfig;
     }
 
-    public synchronized static String getCurrentState() {
+    public synchronized String getCurrentState() {
         return currentState;
     }
 
-    public synchronized static void setCurrentState(String currentState) {
-        GlobalConfigurationCache.currentState = currentState;
+    public synchronized void setCurrentState(final String currentState) {
+        this.currentState = currentState;
     }
 }

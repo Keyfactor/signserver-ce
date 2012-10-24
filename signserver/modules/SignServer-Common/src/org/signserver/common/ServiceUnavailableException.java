@@ -14,7 +14,7 @@ package org.signserver.common;
 
 /**
  * Exception thrown to indicate that a service is unavailable and the request
- * could not be fullfilled. This exception (or sub classes of it) 
+ * could not be fulfilled. This exception (or sub classes of it) 
  * is typically thrown when something failed 
  * on the server side.
  * 

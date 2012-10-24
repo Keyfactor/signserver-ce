@@ -26,8 +26,14 @@ import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 
 /**
+ * 
+ * Unit test testing the functionallity of the MSAuthCodeTimeStampSigner by
+ * using a prerecorded request from the "signtool" CLI tool from Microsoft's SDK.
+ * The tests checks that the response contains the right content type, timestamp is correctly set 
+ * and uses the signature algorithm as set.
  *
  * @author Marcus Lundblad
+ * @version $Id$
  */
 public class MSAuthCodeTimeStampSignerTest extends TestCase {
     
@@ -165,5 +171,9 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
     
     public void testProcessDataSHA256withRSA() throws Exception {
     	testProcessDataWithAlgo("SHA256withRSA", SHA256_OID);
+    }
+    
+    public void testProcessDataMD5withDSA() throws Exception {
+    	testProcessDataWithAlgo("SHA1withDSA", SHA1_OID);
     }
 }

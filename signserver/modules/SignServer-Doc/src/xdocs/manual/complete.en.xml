@@ -2743,7 +2743,7 @@ However, if REQUIREVALIDCHAIN=true is specified only the signer certificate dire
 				<subsection name="MS Authenticode Time Stamp Signer">
 					<p>
 
-The class name is: org.signserver.server.signers.MSAuthCodeTimeStampSigner
+The class name is: org.signserver.server.signers.tsa.MSAuthCodeTimeStampSigner
 					</p>
 					<subsubsection name="Overview">
 						<p>
@@ -2752,34 +2752,8 @@ This time stamp signer is compatible with the Microsoft Authenticode time-stampi
 					</subsubsection>
 					<subsubsection name="Available Properties">
 					    <p>
-<b>TIMESOURCE</b> = property containing the fully qualified name of the class implementing  the ITimeSource that should be used (OPTIONAL). Below are the built-in TimeSourceS available:
+<b>TIMESOURCE</b> = property containing the fully qualified name of the class implementing  the ITimeSource that should be used (OPTIONAL). This property has the same values as for TimeStampSigner above.
                         </p>
-                        <table>
-<!-- LocalComputerTimeSource -->
-                            <tr>
-                                <td>
-<b>org.signserver.server.LocalComputerTimeSource</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-This is the default TimeSource and uses the time from the local computer and
-always returns the time.
-                                </td>
-                            </tr>
-
-<!-- StatusReadingLocalComputerTimeSource -->
-                            <tr>
-                                <td>
-<b>org.signserver.server.StatusReadingLocalComputerTimeSource</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-This TimeSource returns the time from the local computer but only if the status property <i>TIMESOURCE0_INSYNC</i> is not expired and returned as <i>true</i> from the Status Repository.
-                                </td>
-                            </tr>
-                        </table>
                         <p>
 <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the timestamp (default: SHA1withRSA)
 						</p>

@@ -2752,7 +2752,8 @@ This time stamp signer is compatible with the Microsoft Authenticode time-stampi
 					</subsubsection>
 					<subsubsection name="Available Properties">
 					    <p>
-<b>TIMESOURCE</b> = property containing the fully qualified name of the class implementing  the ITimeSource that should be used (OPTIONAL). This property has the same values as for TimeStampSigner above.
+<b>TIMESOURCE</b> = property containing the fully qualified name of the class implementing  the ITimeSource that should be used (OPTIONAL).
+This property has the same values as for TimeStampSigner <a href="complete.en.html#Available%20Properties">above</a>.
                         </p>
                         <p>
 <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the timestamp (default: SHA1withRSA)

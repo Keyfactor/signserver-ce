@@ -79,16 +79,18 @@ public class SoftCryptoToken implements ICryptoToken {
     /**
      * @see org.signserver.server.cryptotokens.ICryptoToken#init(int, java.util.Properties)
      */
+    @Override
     public void init(int workerId, Properties props) {
         this.workerId = workerId;
         keySpec = props.getProperty(PROPERTY_KEYSPEC, "2048");
         keyAlg = props.getProperty(PROPERTY_KEYALG, "RSA");
+        final String keyDataValue = props.getProperty(PROPERTY_KEYDATA);
 
-        if (props.getProperty(PROPERTY_KEYDATA) != null) {
+        if (keyDataValue != null) {
             try {
                 KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 
-                byte[] keyData = Base64.decode(props.getProperty(PROPERTY_KEYDATA).getBytes());
+                byte[] keyData = Base64.decode(keyDataValue.getBytes());
                 ByteArrayInputStream bais = new ByteArrayInputStream(keyData);
                 DataInputStream dis = new DataInputStream(bais);
 
@@ -108,11 +110,11 @@ public class SoftCryptoToken implements ICryptoToken {
 
                 keys = new KeyPair(pubKey, privKey);
             } catch (NoSuchAlgorithmException e) {
-                LOG.error("Error loading soft keys : ", e);
+                LOG.error("Error loading soft keys : KEYDATA=\"" + keyDataValue + "\"", e);
             } catch (IOException e) {
-                LOG.error("Error loading soft keys : ", e);
+                LOG.error("Error loading soft keys : KEYDATA=\"" + keyDataValue + "\"", e);
             } catch (InvalidKeySpecException e) {
-                LOG.error("Error loading soft keys : ", e);
+                LOG.error("Error loading soft keys : KEYDATA=\"" + keyDataValue + "\"", e);
             }
         } else {
             active = false;
@@ -141,7 +143,7 @@ public class SoftCryptoToken implements ICryptoToken {
     public void activate(String authenticationcode)
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException {
-        active = true;
+        active = keys != null;
     }
 
     /**

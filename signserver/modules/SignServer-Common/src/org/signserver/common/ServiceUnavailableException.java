@@ -19,7 +19,7 @@ package org.signserver.common;
  * on the server side.
  * 
  * If it is clear that the failure was caused by data supplied by the client, 
- * instead a IllegalRequestException may be thrown.
+ * instead a IllegalRequestException may be thrown. 
  *
  * @author Marcus Lundblad
  * @see IllegalRequestException

@@ -317,6 +317,7 @@ public class TimeStampSigner extends BaseSigner {
         		maxSerialNumberLength = Integer.parseInt(maxSerialNumberLengthProp);
         	} catch (NumberFormatException e) {
         		LOG.error("Invalid value specified for maximum serial number length");
+        		maxSerialNumberLength = -1;
         	}
         	
         	if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
@@ -982,7 +983,14 @@ public class TimeStampSigner extends BaseSigner {
         }
 
         // check maximum serial number length
-        if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
+        if (maxSerialNumberLength < 0) {
+        	// show invalid value error if the user gave a negative value or if the value isn't parsable to a number 
+        	// (maxSerialNumberLength will be set to -1)
+        	result.add("Maximum serial number length specified is invalid");
+        	if (LOG.isDebugEnabled()) {
+        		LOG.debug("Signer " + workerId + ": maximum serial number length specified is invalid");
+        	}
+        } else if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
         	result.add("Maximum serial number length specified is too large");
         	if (LOG.isDebugEnabled()) {
         		LOG.debug("Signer " + workerId + ": maximum serial number length specified is too large");
@@ -993,7 +1001,7 @@ public class TimeStampSigner extends BaseSigner {
         		LOG.debug("Signer " + workerId + ": maximum serial number length specified is too small");
         	}
         }
-        
+
         return result;
     }
     

@@ -19,7 +19,7 @@ import java.io.IOException;
 import org.signserver.common.ArchiveDataVO;
 
 /**
- * Utility method used by the different Achiving commands.
+ * Utility methods used by the different Achiving commands.
  *
  * @author Markus Kilås
  * @version $Id$

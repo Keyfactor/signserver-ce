@@ -164,7 +164,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     //    fail("No implemented yet");
     // }
     
-    /*public void test01LogSetAndRemoveGlobalProperty() throws Exception {
+    public void test01LogSetAndRemoveGlobalProperty() throws Exception {
         final int linesBefore = readEntriesCount(auditLogFile);
         
         // Test setProperty
@@ -186,22 +186,23 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains event", line.contains("EVENT: REMOVE_GLOBAL_PROPERTY"));
         assertTrue("Contains module", line.contains("MODULE: GLOBAL_CONFIG"));
         assertTrue("Contains property", line.contains("GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47"));
-        
-        globalSession.reload();
     }
     
-    public void test01LogGlobalConfigReload() throws Exception {
-        final int linesBefore = readEntriesCount(auditLogFile);
-        
-        // Test reload
-        globalSession.reload();
-        
-        List<String> lines = readEntries(auditLogFile, linesBefore, 1);
-        String line = lines.get(0);
-        LOG.info(line);
-        assertTrue("Contains event", line.contains("EVENT: GLOBAL_CONFIG_RELOAD"));
-        assertTrue("Contains module", line.contains("MODULE: GLOBAL_CONFIG"));
-    }*/
+    // Not easily tested
+    // Running the below will cause other tests to fail as old workers
+    // seems to be forgotten when the global session is reloaded
+//    public void test01LogGlobalConfigReload() throws Exception {
+//        final int linesBefore = readEntriesCount(auditLogFile);
+//        
+//        // Test reload
+//        globalSession.reload();
+//        
+//        List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+//        String line = lines.get(0);
+//        LOG.info(line);
+//        assertTrue("Contains event", line.contains("EVENT: GLOBAL_CONFIG_RELOAD"));
+//        assertTrue("Contains module", line.contains("MODULE: GLOBAL_CONFIG"));
+//    }
     
     // Not easily tested
     // public void test01LogGlobalConfigResync() throws Exception {

@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Properties;
-
 import org.apache.log4j.Logger;
 import org.ejbca.core.model.UpgradeableDataHashMap;
 
@@ -145,6 +144,9 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     public static String getNodeId() {
         if (nodeId == null) {
             nodeId = System.getenv(NODEID_ENVVAR);
+            if (nodeId != null) {
+                nodeId = nodeId.toUpperCase();
+            }
 
             if (nodeId == null) {
                 File confFile = new File(getSignServerConfigFile());

@@ -165,12 +165,6 @@ public class TimeStampSigner extends BaseSigner {
     /** Random generator. */
     private transient SecureRandom random;
 
-    private static final BigInteger LOWEST =
-            new BigInteger("0080000000000000", 16);
-
-    private static final BigInteger HIGHEST =
-            new BigInteger("7FFFFFFFFFFFFFFF", 16);
-    
     /** MIME type for the request data. **/
     private static final String REQUEST_CONTENT_TYPE = "application/timestamp-query";
     

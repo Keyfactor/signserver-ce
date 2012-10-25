@@ -2725,6 +2725,9 @@ Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, R
                         <p>
 <b>REQUIREVALIDCHAIN</b> = Set to true to perform an extra check that the SIGNERCERTCHAIN only contains certificates in the chain of the signer certificate. (OPTIONAL), default false.
                         </p>
+                        <p>
+<b>MAXSERIALNUMBERLENGTH</b> = The maximum size (in bytes) used when generating serial numbers, must be between 8 and 20 (64 - 160 bits) (Default: 8)
+						</p>
                     </subsubsection>
                     
                     <subsubsection name="TimeStampSigner Certificates">

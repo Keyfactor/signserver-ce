@@ -97,11 +97,10 @@ public class ArchiveDataService {
     /**
      * Method finding a AchiveData given its unique Id.
      */
-    public ArchiveDataBean findByArchiveId(int type, int signerid, java.lang.String archiveid) {
+    public ArchiveDataBean findByArchiveId(int type, int signerid, String archiveid) {
         try {
             return (ArchiveDataBean) em.createNamedQuery("ArchiveDataBean.findByArchiveId").setParameter(1, type).setParameter(2, signerid).setParameter(3, archiveid).getSingleResult();
-        } catch (javax.persistence.NoResultException e) {
-        }
+        } catch (NoResultException ignored) {} // NOPMD
         return null;
     }
     
@@ -117,45 +116,41 @@ public class ArchiveDataService {
     }
 
     @SuppressWarnings("unchecked")
-    public java.util.Collection<ArchiveDataBean> findByTime(int type, int signerid, long starttime, long endtime) {
+    public Collection<ArchiveDataBean> findByTime(int type, int signerid, long starttime, long endtime) {
         try {
             return em.createNamedQuery("ArchiveDataBean.findByTime").setParameter(1, type).setParameter(2, signerid).setParameter(3, starttime).setParameter(4, endtime).getResultList();
-        } catch (javax.persistence.NoResultException e) {
-        }
+        } catch (NoResultException ignored) {} // NOPMD
         return new ArrayList<ArchiveDataBean>();
     }
 
     @SuppressWarnings("unchecked")
-    public java.util.Collection<ArchiveDataBean> findByRequestCertificate(int type, int signerid, java.lang.String requestIssuerDN, java.lang.String requestCertSerialnumber) {
+    public Collection<ArchiveDataBean> findByRequestCertificate(int type, int signerid, String requestIssuerDN, String requestCertSerialnumber) {
         try {
             return em.createNamedQuery("ArchiveDataBean.findByRequestCertificate").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIssuerDN).setParameter(4, requestCertSerialnumber).getResultList();
-        } catch (javax.persistence.NoResultException e) {
-        }
+        } catch (NoResultException ignored) {} // NOPMD
         return new ArrayList<ArchiveDataBean>();
     }
     
     public Collection<ArchiveDataBean> findAllByRequestCertificate(final int signerid, final String requestIssuerDN, final String requestCertSerialnumber) {
         try {
             return em.createNamedQuery("ArchiveDataBean.findAllByRequestCertificate").setParameter(1, signerid).setParameter(2, requestIssuerDN).setParameter(3, requestCertSerialnumber).getResultList();
-        } catch (javax.persistence.NoResultException ignored) {} // NOPMD
+        } catch (NoResultException ignored) {} // NOPMD
         return Collections.emptyList();
     }
 
     @SuppressWarnings("unchecked")
-    public java.util.Collection<ArchiveDataBean> findByRequestCertificateAndTime(int type, int signerid, java.lang.String requestIssuerDN, java.lang.String requestCertSerialnumber, long starttime, long endtime) {
+    public Collection<ArchiveDataBean> findByRequestCertificateAndTime(int type, int signerid, String requestIssuerDN, String requestCertSerialnumber, long starttime, long endtime) {
         try {
             return em.createNamedQuery("ArchiveDataBean.findByRequestCertificateAndTime").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIssuerDN).setParameter(4, requestCertSerialnumber).setParameter(5, starttime).setParameter(6, endtime).getResultList();
-        } catch (javax.persistence.NoResultException e) {
-        }
+        } catch (NoResultException ignored) {} // NOPMD
         return new ArrayList<ArchiveDataBean>();
     }
 
     @SuppressWarnings("unchecked")
-    public java.util.Collection<ArchiveDataBean> findByRequestIP(int type, int signerid, java.lang.String requestIP) {
+    public Collection<ArchiveDataBean> findByRequestIP(int type, int signerid, String requestIP) {
         try {
             return em.createNamedQuery("ArchiveDataBean.findByRequestIP").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIP).getResultList();
-        } catch (javax.persistence.NoResultException e) {
-        }
+        } catch (NoResultException ignored) {} // NOPMD
         return new ArrayList<ArchiveDataBean>();
     }
     
@@ -167,11 +162,10 @@ public class ArchiveDataService {
     }
 
     @SuppressWarnings("unchecked")
-    public java.util.Collection<ArchiveDataBean> findByRequestIPAndTime(int type, int signerid, java.lang.String requestIP, long starttime, long endtime) {
+    public Collection<ArchiveDataBean> findByRequestIPAndTime(int type, int signerid, String requestIP, long starttime, long endtime) {
         try {
             return em.createNamedQuery("ArchiveDataBean.findByRequestCertificateAndTime").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIP).setParameter(4, starttime).setParameter(5, endtime).getResultList();
-        } catch (javax.persistence.NoResultException e) {
-        }
+        } catch (NoResultException ignored) {} // NOPMD
         return new ArrayList<ArchiveDataBean>();
     }
 }

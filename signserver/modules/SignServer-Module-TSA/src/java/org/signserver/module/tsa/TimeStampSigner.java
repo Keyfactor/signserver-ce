@@ -177,7 +177,7 @@ public class TimeStampSigner extends BaseSigner {
     /** MIME type for the response data. **/
     private static final String RESPONSE_CONTENT_TYPE = "application/timestamp-reply";
 
-    //Private Property constants
+    // Property constants
     public static final String TIMESOURCE = "TIMESOURCE";
     public static final String ACCEPTEDALGORITHMS = "ACCEPTEDALGORITHMS";
     public static final String ACCEPTEDPOLICIES = "ACCEPTEDPOLICIES";
@@ -190,12 +190,14 @@ public class TimeStampSigner extends BaseSigner {
     public static final String ORDERING = "ORDERING";
     public static final String TSA = "TSA";
     public static final String REQUIREVALIDCHAIN = "REQUIREVALIDCHAIN";
+    public static final String MAXSERIALNUMBERLENGTH = "MAXSERIALNUMBERLENGTH";
 
     private static final String DEFAULT_WORKERLOGGER =
             DefaultTimeStampLogger.class.getName();
 
     private static final String DEFAULT_TIMESOURCE =
             "org.signserver.server.LocalComputerTimeSource";
+    private static final int DEFAULT_MAXSERIALNUMBERLENGTH = 8;
     
     private static final String[] ACCEPTEDALGORITHMSNAMES = {
         "GOST3411",
@@ -251,6 +253,10 @@ public class TimeStampSigner extends BaseSigner {
     private ASN1ObjectIdentifier defaultTSAPolicyOID = null;
     
     private boolean validChain = true;
+
+	private int maxSerialNumberLength;
+	private static final int MAX_ALLOWED_MAXSERIALNUMBERLENGTH = 20;
+	private static final int MIN_ALLOWED_MAXSERIALNUMBERLENGTH = 8;
     
     @Override
     public void init(final int signerId, final WorkerConfig config,
@@ -307,6 +313,23 @@ public class TimeStampSigner extends BaseSigner {
         final String requireValidChain = config.getProperty(REQUIREVALIDCHAIN, Boolean.FALSE.toString());
         if (Boolean.parseBoolean(requireValidChain)) {
             validChain = validateChain();
+        }
+        
+        maxSerialNumberLength = DEFAULT_MAXSERIALNUMBERLENGTH;
+        final String maxSerialNumberLengthProp = config.getProperty(MAXSERIALNUMBERLENGTH);
+        
+        if (maxSerialNumberLengthProp != null) {
+        	try {
+        		maxSerialNumberLength = Integer.parseInt(maxSerialNumberLengthProp);
+        	} catch (NumberFormatException e) {
+        		LOG.error("Invalid value specified for maximum serial number length");
+        	}
+        	
+        	if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
+        		LOG.error("Maximum serial number length specified is too large");
+        	} else if (maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
+        		LOG.error("Maximum serial number length specified is too small");
+        	}
         }
     }
 
@@ -768,7 +791,7 @@ public class TimeStampSigner extends BaseSigner {
     private BigInteger getSerialNumber() {
         BigInteger serialNumber = null;
         try {
-            serialNumber = getSerno();
+            serialNumber = getSerno(maxSerialNumberLength);
         } catch (Exception e) {
             LOG.error("Error initiating Serial Number generator, SEVERE ERROR.",
                     e);
@@ -780,9 +803,10 @@ public class TimeStampSigner extends BaseSigner {
      * Generates a number of serial number bytes. The number returned should
      * be a positive number.
      *
+     * @param maxLength the maximum number of octects of the generated serial number
      * @return a BigInteger with a new random serial number.
      */
-    public BigInteger getSerno() {
+    public BigInteger getSerno(int maxLength) {
         if (random == null) {
             try {
                 random = SecureRandom.getInstance(algorithm);
@@ -790,20 +814,11 @@ public class TimeStampSigner extends BaseSigner {
                 LOG.error(e);
             }
         }
-
-        final byte[] sernobytes = new byte[8];
-        boolean ok = false;
-        BigInteger serno = null;
-        while (!ok) {
-            random.nextBytes(sernobytes);
-            serno = new BigInteger(sernobytes).abs();
-
-            // Must be within the range 0080000000000000 - 7FFFFFFFFFFFFFFF
-            if ((serno.compareTo(LOWEST) >= 0)
-                    && (serno.compareTo(HIGHEST) <= 0)) {
-                ok = true;
-            }
-        }
+        
+        final byte[] sernobytes = new byte[maxLength];
+        random.nextBytes(sernobytes);
+        BigInteger serno = new BigInteger(sernobytes).abs();
+       
         return serno;
     }
     
@@ -972,6 +987,19 @@ public class TimeStampSigner extends BaseSigner {
         	}
         }
 
+        // check maximum serial number length
+        if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
+        	result.add("Maximum serial number length specified is too large");
+        	if (LOG.isDebugEnabled()) {
+        		LOG.debug("Signer " + workerId + ": maximum serial number length specified is too large");
+        	}
+        } else if (maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
+        	result.add("Maximum serial number length specified is too small");
+        	if (LOG.isDebugEnabled()) {
+        		LOG.debug("Signer " + workerId + ": maximum serial number length specified is too small");
+        	}
+        }
+        
         return result;
     }
     

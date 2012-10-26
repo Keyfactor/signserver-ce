@@ -18,6 +18,7 @@ import org.signserver.common.WorkerConfig;
 import junit.framework.TestCase;
 
 /**
+ * Unit test for the configurable serial number length feature in TimeStampSigner
  * 
  * @author Marcus Lundblad
  * @version $Id$

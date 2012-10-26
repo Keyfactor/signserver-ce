@@ -25,6 +25,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import net.sourceforge.scuba.util.Hex;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.ejbca.util.CertTools;
@@ -251,7 +252,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
-        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert)))));
+        String certLine = new String(CertTools.getPEMFromCerts(Arrays.asList(cert))).replace("\r\n", "\n");
+        assertTrue("Contains certificate", line.contains(certLine));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         // Test removeProperty
@@ -287,7 +289,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
-        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert)))));
+        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: " + WorkerConfig.getNodeId()));
         
@@ -297,7 +299,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         // Test when setting the property manually (global scope)
         linesBefore = readEntriesCount(auditLogFile);
-        workerSession.setWorkerProperty(signerId, "SIGNERCERT", new String(CertTools.getPEMFromCerts(Arrays.asList(cert))));
+        workerSession.setWorkerProperty(signerId, "SIGNERCERT", new String(CertTools.getPEMFromCerts(Arrays.asList(cert))).replace("\r\n", "\n"));
         
         lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
@@ -310,7 +312,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
-        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert)))));
+        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         // Remove the property
@@ -319,7 +321,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         // Test when setting the property manually (node scope)
         linesBefore = readEntriesCount(auditLogFile);
-        workerSession.setWorkerProperty(signerId, "NODE47.SIGNERCERT", new String(CertTools.getPEMFromCerts(Arrays.asList(cert))));
+        workerSession.setWorkerProperty(signerId, "NODE47.SIGNERCERT", new String(CertTools.getPEMFromCerts(Arrays.asList(cert))).replace("\r\n", "\n"));
         
         lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
@@ -332,7 +334,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
-        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert)))));
+        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: NODE47"));
         
@@ -360,7 +362,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
-        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert)))));
+        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         // Test removeProperty
@@ -398,7 +400,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
-        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert)))));
+        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: " + WorkerConfig.getNodeId()));
         
@@ -408,7 +410,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         // Test when setting the property manually (global scope)
         linesBefore = readEntriesCount(auditLogFile);
-        workerSession.setWorkerProperty(signerId, "SIGNERCERTCHAIN", new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))));
+        workerSession.setWorkerProperty(signerId, "SIGNERCERTCHAIN", new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))).replace("\r\n", "\n"));
         
         lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
@@ -421,7 +423,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
-        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert)))));
+        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         // Remove the property
@@ -432,7 +434,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         // Test when setting the property manually (node scope)
         linesBefore = readEntriesCount(auditLogFile);
-        workerSession.setWorkerProperty(signerId, "NODE47.SIGNERCERTCHAIN", new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))));
+        workerSession.setWorkerProperty(signerId, "NODE47.SIGNERCERTCHAIN", new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))).replace("\r\n", "\n"));
         
         lines = readEntries(auditLogFile, linesBefore, 2);
         LOG.info(lines);
@@ -445,7 +447,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
-        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert)))));
+        assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: NODE47"));
         

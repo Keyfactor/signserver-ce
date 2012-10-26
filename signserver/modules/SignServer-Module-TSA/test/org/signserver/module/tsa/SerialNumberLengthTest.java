@@ -79,6 +79,7 @@ public class SerialNumberLengthTest extends TestCase {
 	
 	/**
 	 * Test setting an explicit value
+	 * 
 	 * @throws Exception
 	 */
 	public void testExplicitSerialNumberLength() throws Exception {
@@ -87,6 +88,8 @@ public class SerialNumberLengthTest extends TestCase {
 	
 	/**
 	 * Test setting a too small value
+	 * 
+	 * @throws Exception
 	 */
 	public void testTooSmallSerialNumberLength() throws Exception {
 		final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 2, "6");
@@ -98,6 +101,8 @@ public class SerialNumberLengthTest extends TestCase {
 	
 	/**
 	 * Test setting a too large value
+	 * 
+	 * @throws Exception
 	 */
 	public void testTooLargeSerialNumberLength() throws Exception {
 		final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 3, "30");
@@ -109,6 +114,8 @@ public class SerialNumberLengthTest extends TestCase {
 	
 	/**
 	 * Test setting a invalid (non-integer) value
+	 * 
+	 * @throws Exception
 	 */
 	public void testInvalidSerialNumberLength() throws Exception {
 		final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 4, "foobar");

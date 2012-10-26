@@ -21,7 +21,6 @@ import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -265,17 +264,21 @@ public class TimeStampSigner extends BaseSigner {
         }
 
         // Check that the timestamp server is properly configured
-        timeSource = getTimeSource();
-        if (timeSource == null) {
-            final String error = "Error: Timestamp signer :" + signerId +
-                    " has a malconfigured timesource.";
-            LOG.error(error);
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("TimeStampSigner[" + signerId + "]: "
-                        + "Using TimeSource: "
-                        + timeSource.getClass().getName());
-            }
+        try {
+        	timeSource = getTimeSource();
+        	if (timeSource == null) {
+        		final String error = "Error: Timestamp signer :" + signerId +
+        				" has a malconfigured timesource.";
+        		LOG.error(error);
+        	} else {
+        		if (LOG.isDebugEnabled()) {
+        			LOG.debug("TimeStampSigner[" + signerId + "]: "
+        					+ "Using TimeSource: "
+        					+ timeSource.getClass().getName());
+        		}
+        	}
+        } catch (SignServerException e) {
+        	LOG.error("Could not create time source: " + e.getMessage());
         }
 
         /* defaultDigestOID =
@@ -547,7 +550,7 @@ public class TimeStampSigner extends BaseSigner {
     /**
      * @return a time source interface expected to provide accurate time
      */
-    private ITimeSource getTimeSource() {
+    private ITimeSource getTimeSource() throws SignServerException {
         if (timeSource == null) {
             try {
                 String classpath =
@@ -562,11 +565,11 @@ public class TimeStampSigner extends BaseSigner {
                 timeSource.init(config.getProperties());
 
             } catch (ClassNotFoundException e) {
-                throw new EJBException(e);
+                throw new SignServerException("Class not found", e);
             } catch (IllegalAccessException iae) {
-                throw new EJBException(iae);
+                throw new SignServerException("Illegal access", iae);
             } catch (InstantiationException ie) {
-                throw new EJBException(ie);
+                throw new SignServerException("Instantiation error", ie);
             }
         }
 
@@ -781,9 +784,11 @@ public class TimeStampSigner extends BaseSigner {
     }
 
     /**
-     * Help method that generates a serial number using SecureRandom
+     * Help method that generates a serial number using SecureRandom.
+     * Uses the configured length of the signer. This is public to allow using directly from
+     * unit test.
      */
-    private BigInteger getSerialNumber() {
+    public BigInteger getSerialNumber() {
         BigInteger serialNumber = null;
         try {
             serialNumber = getSerno(maxSerialNumberLength);
@@ -982,27 +987,45 @@ public class TimeStampSigner extends BaseSigner {
         	}
         }
 
-        // check maximum serial number length
-        if (maxSerialNumberLength < 0) {
-        	// show invalid value error if the user gave a negative value or if the value isn't parsable to a number 
-        	// (maxSerialNumberLength will be set to -1)
-        	result.add("Maximum serial number length specified is invalid");
-        	if (LOG.isDebugEnabled()) {
-        		LOG.debug("Signer " + workerId + ": maximum serial number length specified is invalid");
-        	}
-        } else if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
-        	result.add("Maximum serial number length specified is too large");
-        	if (LOG.isDebugEnabled()) {
-        		LOG.debug("Signer " + workerId + ": maximum serial number length specified is too large");
-        	}
-        } else if (maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
-        	result.add("Maximum serial number length specified is too small");
-        	if (LOG.isDebugEnabled()) {
-        		LOG.debug("Signer " + workerId + ": maximum serial number length specified is too small");
-        	}
+        final String serialNumberError = getSerialNumberError();
+        
+        if (serialNumberError != null) {
+        	result.add(serialNumberError);
         }
 
         return result;
     }
     
+    /**
+     * Get serial number error
+     * We run this stand-alone from the unit test
+     * 
+     */
+    public String getSerialNumberError() {
+    	final String error;
+    	
+    	// check maximum serial number length
+        if (maxSerialNumberLength < 0) {
+        	// show invalid value error if the user gave a negative value or if the value isn't parsable to a number 
+        	// (maxSerialNumberLength will be set to -1)
+        	error = "Maximum serial number length specified is invalid";
+        	if (LOG.isDebugEnabled()) {
+        		LOG.debug("Signer " + workerId + ": " + error);
+        	}
+        } else if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
+        	error = "Maximum serial number length specified is too large";
+        	if (LOG.isDebugEnabled()) {
+        		LOG.debug("Signer " + workerId + ": " + error);
+        	}
+        } else if (maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
+        	error = "Maximum serial number length specified is too small";
+        	if (LOG.isDebugEnabled()) {
+        		LOG.debug("Signer " + workerId + ": " + error);
+        	}
+        } else {
+        	error = null;
+        }
+        
+        return error;
+    }
 }

@@ -66,6 +66,8 @@ public class SerialNumberLengthTest extends TestCase {
         
         // check length
         assertTrue("Serial number too long", serno.bitLength() <= expectedMax * 8);
+        // also, we should avoid generating negative serial numbers to avoid
+        // ambiguities regarding hexadecimal encoding
         assertTrue("Serial number should not be negative", serno.signum() > -1);
 	}
 	

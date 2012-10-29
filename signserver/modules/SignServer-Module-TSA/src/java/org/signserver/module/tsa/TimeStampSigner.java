@@ -788,8 +788,14 @@ public class TimeStampSigner extends BaseSigner {
      * Uses the configured length of the signer. This is public to allow using directly from
      * unit test.
      */
-    public BigInteger getSerialNumber() {
+    public BigInteger getSerialNumber() throws SignServerException {
         BigInteger serialNumber = null;
+        
+        if (maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH
+        	|| maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
+        	throw new SignServerException("Maximum serial number length is not in allowed range");
+        }
+        
         try {
             serialNumber = getSerno(maxSerialNumberLength);
         } catch (Exception e) {

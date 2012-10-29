@@ -13,6 +13,8 @@
 package org.signserver.module.tsa;
 
 import java.math.BigInteger;
+
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 
 import junit.framework.TestCase;
@@ -62,13 +64,42 @@ public class SerialNumberLengthTest extends TestCase {
      */
 	private void testSerialNumberLength(int signerId, final String maxSerialNumberLength, int expectedMax) {
 		final TimeStampSigner signer = createTestSigner(signerId, maxSerialNumberLength);
-        final BigInteger serno = signer.getSerialNumber();
-        
-        // check length
-        assertTrue("Serial number too long", serno.bitLength() <= expectedMax * 8);
-        // also, we should avoid generating negative serial numbers to avoid
-        // ambiguities regarding hexadecimal encoding
-        assertTrue("Serial number should not be negative", serno.signum() > -1);
+		
+		try {
+			int numTooLong = 0;
+			int numOfMaxLength = 0;
+			int numNegative = 0;
+
+			for (int i = 0 ; i < 9 ; i++) {
+				final BigInteger serno = signer.getSerialNumber();
+				
+				// we will strip off the sign, so we'll get one bit short of the max...
+				if (serno.bitLength() > expectedMax * 8 - 1) {
+					numTooLong++;
+				}
+				
+				if (serno.bitLength() == expectedMax * 8 - 1) {
+					numOfMaxLength++;
+				}
+				
+				if (serno.signum() == -1) {
+					numNegative++;
+				}
+			}
+				
+			// check that no serial number was too long
+			assertTrue("Serial number too long", numTooLong == 0);
+			
+			// check that at least one serial number was of max allowed range
+			// (note: this test is expected to fail occasionally since this is random...)
+			assertTrue("No serial number was of max length", numOfMaxLength > 0);
+			
+			// also, we should avoid generating negative serial numbers to avoid
+			// ambiguities regarding hexadecimal encoding
+			assertTrue("Serial number should not be negative", numNegative == 0);
+		} catch (SignServerException ignored) {
+			// NOPMD
+		}
 	}
 	
 	/**

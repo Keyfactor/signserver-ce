@@ -23,7 +23,7 @@ import junit.framework.TestCase;
  * Unit test for the configurable serial number length feature in TimeStampSigner
  * 
  * @author Marcus Lundblad
- * @version $Id$
+ * @version $Id$ 
  *
  */
 public class SerialNumberLengthTest extends TestCase {

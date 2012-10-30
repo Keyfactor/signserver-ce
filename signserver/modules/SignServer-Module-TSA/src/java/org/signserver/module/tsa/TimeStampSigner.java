@@ -248,6 +248,8 @@ public class TimeStampSigner extends BaseSigner {
     private boolean validChain = true;
 
     private int maxSerialNumberLength;
+    private String serialNumberError;
+    
     // we restrict the allowed serial number size limit to between 64 and 160 bits
     // note: the generated serial number will always be positive
     private static final int MAX_ALLOWED_MAXSERIALNUMBERLENGTH = 20;
@@ -322,11 +324,15 @@ public class TimeStampSigner extends BaseSigner {
         	maxSerialNumberLength = Integer.parseInt(maxSerialNumberLengthProp);
             } catch (NumberFormatException e) {
         	maxSerialNumberLength = -1;
+                serialNumberError = "Maximum serial number length specified is invalid: \"" + maxSerialNumberLengthProp + "\"";
             }
 
-            if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH ||
-        	maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
-                LOG.error("Invalid value specified for maximum serial number length");
+            if (serialNumberError == null) {
+                if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
+                    serialNumberError = "Maximum serial number length specified is too large: " + maxSerialNumberLength;
+                } else if (maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
+                    serialNumberError = "Maximum serial number length specified is too small: " + maxSerialNumberLength;
+                }
             }
         }
     }
@@ -1008,19 +1014,6 @@ public class TimeStampSigner extends BaseSigner {
      * 
      */
     protected String getSerialNumberError() {
-    	final String error;
-    	
-    	// check maximum serial number length
-        if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH ||
-                maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
-            error = "Maximum serial number length specified is invalid";
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Signer " + workerId + ": " + error);
-            }
-        } else {
-            error = null;
-        }
-
-        return error;
+        return serialNumberError;
     }
 }

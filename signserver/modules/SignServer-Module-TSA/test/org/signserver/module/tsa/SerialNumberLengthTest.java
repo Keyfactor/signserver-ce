@@ -129,7 +129,7 @@ public class SerialNumberLengthTest extends TestCase {
         final String error = signer.getSerialNumberError();
 		
         assertEquals("Should return error for invalid serial number",
-                "Maximum serial number length specified is invalid", error);
+                "Maximum serial number length specified is too small: 6" , error);
     }
 	
     /**
@@ -142,7 +142,7 @@ public class SerialNumberLengthTest extends TestCase {
         final String error = signer.getSerialNumberError();
         
         assertEquals("Should return error for invalid serial number",
-                "Maximum serial number length specified is invalid", error);
+                "Maximum serial number length specified is too large: 30", error);
     } 
 	
     /**
@@ -155,6 +155,6 @@ public class SerialNumberLengthTest extends TestCase {
         final String error = signer.getSerialNumberError();
         
         assertEquals("Should return error for invalid serial number",
-                "Maximum serial number length specified is invalid", error);
+                "Maximum serial number length specified is invalid: \"foobar\"", error);
     }
 }

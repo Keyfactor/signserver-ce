@@ -25,7 +25,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import net.sourceforge.scuba.util.Hex;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.ejbca.util.CertTools;
@@ -74,13 +73,6 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         CertTools.installBCProviderIfNotAvailable();
     }
-
-//    @Override
-//    protected void tearDown() throws Exception {
-//        // For some reason we need to reload the global configuration after the
-//        // tests otherwise it is left in some bad state
-//        globalSession.reload();
-//    }
     
     public void test00SetupDatabase() throws Exception {
         addSoftDummySigner(signerId, "TestSigner6000");

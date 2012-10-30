@@ -318,18 +318,16 @@ public class TimeStampSigner extends BaseSigner {
         final String maxSerialNumberLengthProp = config.getProperty(MAXSERIALNUMBERLENGTH);
         
         if (maxSerialNumberLengthProp != null) {
-        	try {
-        		maxSerialNumberLength = Integer.parseInt(maxSerialNumberLengthProp);
-        	} catch (NumberFormatException e) {
-        		LOG.error("Invalid value specified for maximum serial number length");
-        		maxSerialNumberLength = -1;
-        	}
-        	
-        	if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
-        		LOG.error("Maximum serial number length specified is too large");
-        	} else if (maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
-        		LOG.error("Maximum serial number length specified is too small");
-        	}
+            try {
+        	maxSerialNumberLength = Integer.parseInt(maxSerialNumberLengthProp);
+            } catch (NumberFormatException e) {
+        	maxSerialNumberLength = -1;
+            }
+
+            if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH ||
+        	maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
+                LOG.error("Invalid value specified for maximum serial number length");
+            }
         }
     }
 
@@ -1013,27 +1011,16 @@ public class TimeStampSigner extends BaseSigner {
     	final String error;
     	
     	// check maximum serial number length
-        if (maxSerialNumberLength < 0) {
-            // show invalid value error if the user gave a negative value or if the value isn't parsable to a number 
-            // (maxSerialNumberLength will be set to -1)
+        if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH ||
+                maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
             error = "Maximum serial number length specified is invalid";
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Signer " + workerId + ": " + error);
-            }
-        } else if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
-            error = "Maximum serial number length specified is too large";
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Signer " + workerId + ": " + error);
-            }
-        } else if (maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
-            error = "Maximum serial number length specified is too small";
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Signer " + workerId + ": " + error);
             }
         } else {
             error = null;
         }
-        
+
         return error;
     }
 }

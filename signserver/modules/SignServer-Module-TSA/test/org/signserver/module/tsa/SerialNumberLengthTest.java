@@ -62,99 +62,99 @@ public class SerialNumberLengthTest extends TestCase {
      * @param maxSerialNumberLength Set the max length, set to null to use the signer's default
      * @param expectedMax The expected max length
      */
-	private void testSerialNumberLength(int signerId, final String maxSerialNumberLength, int expectedMax) {
-		final TimeStampSigner signer = createTestSigner(signerId, maxSerialNumberLength);
-		
-		try {
-			int numTooLong = 0;
-			int numOfMaxLength = 0;
-			int numNegative = 0;
-
-			for (int i = 0 ; i < 9 ; i++) {
-				final BigInteger serno = signer.getSerialNumber();
+    private void testSerialNumberLength(int signerId, final String maxSerialNumberLength, int expectedMax) {
+        final TimeStampSigner signer = createTestSigner(signerId, maxSerialNumberLength);
+        
+        try {
+            int numTooLong = 0;
+            int numOfMaxLength = 0;
+            int numNegative = 0;
+                
+            for (int i = 0 ; i < 9 ; i++) {
+                final BigInteger serno = signer.getSerialNumber();
+                    
+                // we will strip off the sign, so we'll get one bit short of the max...
+                if (serno.bitLength() > expectedMax * 8 - 1) {
+                    numTooLong++;
+                }
 				
-				// we will strip off the sign, so we'll get one bit short of the max...
-				if (serno.bitLength() > expectedMax * 8 - 1) {
-					numTooLong++;
-				}
-				
-				if (serno.bitLength() == expectedMax * 8 - 1) {
-					numOfMaxLength++;
-				}
-				
-				if (serno.signum() == -1) {
-					numNegative++;
-				}
-			}
-				
-			// check that no serial number was too long
-			assertTrue("Serial number too long", numTooLong == 0);
-			
-			// check that at least one serial number was of max allowed range
-			// (note: this test is expected to fail occasionally since this is random...)
-			assertTrue("No serial number was of max length", numOfMaxLength > 0);
-			
-			// also, we should avoid generating negative serial numbers to avoid
-			// ambiguities regarding hexadecimal encoding
-			assertTrue("Serial number should not be negative", numNegative == 0);
-		} catch (SignServerException ignored) {
-			// NOPMD
-		}
-	}
+                if (serno.bitLength() == expectedMax * 8 - 1) {
+                    numOfMaxLength++;
+                }
+                
+                if (serno.signum() == -1) {
+                    numNegative++;
+                }
+            }
+            
+            // check that no serial number was too long
+            assertTrue("Serial number too long", numTooLong == 0);
+            
+            // check that at least one serial number was of max allowed range
+            // (note: this test is expected to fail occasionally since this is random...)
+            assertTrue("No serial number was of max length", numOfMaxLength > 0);
+                
+            // also, we should avoid generating negative serial numbers to avoid
+            // ambiguities regarding hexadecimal encoding
+            assertTrue("Serial number should not be negative", numNegative == 0);
+        } catch (SignServerException ignored) {
+            // NOPMD
+        }
+    }
 	
-	/**
-	 * Test that the default serial number length is within the bounds of a 64 bit integer
-	 * @throws Exception
-	 */
-	public void testDefaultSerialNumberLength() throws Exception {
-		testSerialNumberLength(SIGNER_ID_BASE, null, 8);
-	}
+    /**
+     * Test that the default serial number length is within the bounds of a 64 bit integer
+     * @throws Exception
+     */
+    public void testDefaultSerialNumberLength() throws Exception {
+        testSerialNumberLength(SIGNER_ID_BASE, null, 8);
+    }
 	
-	/**
-	 * Test setting an explicit value
-	 * 
-	 * @throws Exception
-	 */
-	public void testExplicitSerialNumberLength() throws Exception {
-		testSerialNumberLength(SIGNER_ID_BASE + 1, "16", 16);
-	}
+    /**
+     * Test setting an explicit value
+     * 
+     * @throws Exception
+     */
+    public void testExplicitSerialNumberLength() throws Exception {
+        testSerialNumberLength(SIGNER_ID_BASE + 1, "16", 16);
+    }
 	
-	/**
-	 * Test setting a too small value
-	 * 
-	 * @throws Exception
-	 */
-	public void testTooSmallSerialNumberLength() throws Exception {
-		final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 2, "6");
-		final String error = signer.getSerialNumberError();
+    /**
+     * Test setting a too small value
+     * 
+     * @throws Exception
+     */
+    public void testTooSmallSerialNumberLength() throws Exception {
+        final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 2, "6");
+        final String error = signer.getSerialNumberError();
 		
-		assertEquals("Should return error for too small serial number",
-				"Maximum serial number length specified is too small", error);
-	}
+        assertEquals("Should return error for invalid serial number",
+                "Maximum serial number length specified is invalid", error);
+    }
 	
-	/**
-	 * Test setting a too large value
-	 * 
-	 * @throws Exception
-	 */
-	public void testTooLargeSerialNumberLength() throws Exception {
-		final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 3, "30");
-		final String error = signer.getSerialNumberError();
-		
-		assertEquals("Should return error for too large serial number",
-				"Maximum serial number length specified is too large", error);
-	}
+    /**
+     * Test setting a too large value
+     * 
+     * @throws Exception
+     */
+    public void testTooLargeSerialNumberLength() throws Exception {
+        final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 3, "30");
+        final String error = signer.getSerialNumberError();
+        
+        assertEquals("Should return error for invalid serial number",
+                "Maximum serial number length specified is invalid", error);
+    } 
 	
-	/**
-	 * Test setting a invalid (non-integer) value
-	 * 
-	 * @throws Exception
-	 */
-	public void testInvalidSerialNumberLength() throws Exception {
-		final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 4, "foobar");
-		final String error = signer.getSerialNumberError();
-		
-		assertEquals("Should return error for invalid serial number",
-				"Maximum serial number length specified is invalid", error);
-	}
+    /**
+     * Test setting a invalid (non-integer) value
+     * 
+     * @throws Exception
+     */
+    public void testInvalidSerialNumberLength() throws Exception {
+        final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 4, "foobar");
+        final String error = signer.getSerialNumberError();
+        
+        assertEquals("Should return error for invalid serial number",
+                "Maximum serial number length specified is invalid", error);
+    }
 }

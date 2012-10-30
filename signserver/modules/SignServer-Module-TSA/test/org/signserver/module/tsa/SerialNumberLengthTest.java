@@ -88,7 +88,7 @@ public class SerialNumberLengthTest extends TestCase {
             }
             
             // check that no serial number was too long
-            assertTrue("Serial number too long", numTooLong == 0);
+            assertEquals("Serial number too long", 0, numTooLong);
             
             // check that at least one serial number was of max allowed range
             // (note: this test is expected to fail occasionally since this is random...)
@@ -96,7 +96,7 @@ public class SerialNumberLengthTest extends TestCase {
                 
             // also, we should avoid generating negative serial numbers to avoid
             // ambiguities regarding hexadecimal encoding
-            assertTrue("Serial number should not be negative", numNegative == 0);
+            assertEquals("Serial number should not be negative", 0, numNegative);
         } catch (SignServerException ignored) {
             // NOPMD
         }

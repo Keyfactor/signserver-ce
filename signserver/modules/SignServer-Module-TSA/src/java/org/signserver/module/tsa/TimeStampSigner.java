@@ -996,9 +996,9 @@ public class TimeStampSigner extends BaseSigner {
         }
 
         final String serialNumberError = getSerialNumberError();
-        
+
         if (serialNumberError != null) {
-        	result.add(serialNumberError);
+            result.add(serialNumberError);
         }
 
         return result;
@@ -1014,24 +1014,24 @@ public class TimeStampSigner extends BaseSigner {
     	
     	// check maximum serial number length
         if (maxSerialNumberLength < 0) {
-        	// show invalid value error if the user gave a negative value or if the value isn't parsable to a number 
-        	// (maxSerialNumberLength will be set to -1)
-        	error = "Maximum serial number length specified is invalid";
-        	if (LOG.isDebugEnabled()) {
-        		LOG.debug("Signer " + workerId + ": " + error);
-        	}
+            // show invalid value error if the user gave a negative value or if the value isn't parsable to a number 
+            // (maxSerialNumberLength will be set to -1)
+            error = "Maximum serial number length specified is invalid";
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signer " + workerId + ": " + error);
+            }
         } else if (maxSerialNumberLength > MAX_ALLOWED_MAXSERIALNUMBERLENGTH) {
-        	error = "Maximum serial number length specified is too large";
-        	if (LOG.isDebugEnabled()) {
-        		LOG.debug("Signer " + workerId + ": " + error);
-        	}
+            error = "Maximum serial number length specified is too large";
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signer " + workerId + ": " + error);
+            }
         } else if (maxSerialNumberLength < MIN_ALLOWED_MAXSERIALNUMBERLENGTH) {
-        	error = "Maximum serial number length specified is too small";
-        	if (LOG.isDebugEnabled()) {
-        		LOG.debug("Signer " + workerId + ": " + error);
-        	}
+            error = "Maximum serial number length specified is too small";
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signer " + workerId + ": " + error);
+            }
         } else {
-        	error = null;
+            error = null;
         }
         
         return error;

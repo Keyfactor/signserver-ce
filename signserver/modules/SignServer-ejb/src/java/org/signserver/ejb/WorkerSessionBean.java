@@ -568,7 +568,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             final String keyHash
                     = KeyUsageCounterHash.create(cert.getPublicKey());
 
-            if(LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("Worker[" + workerId +"]: "
                         + "Key usage limit: " + keyUsageLimit);
                 LOG.debug("Worker[" + workerId +"]: "
@@ -850,26 +850,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         WorkerConfig config = getWorkerConfig(workerId);
         config.setProperty(key.toUpperCase(), value);
         setWorkerConfig(workerId, config);
-        if ("DEFAULTKEY".equalsIgnoreCase(key)) {
-            final HashMap<String, String> auditMap = new HashMap<String, String>();
-            auditMap.put("KEYALIAS", value);
-            auditMap.put("SCOPE", "GLOBAL");
-            auditLog(EventType.KEYSELECTED, ModuleType.WORKER_CONFIG, String.valueOf(workerId), auditMap);
-        } else if(key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase(".DEFAULTKEY")) {
-            final HashMap<String, String> auditMap = new HashMap<String, String>();
-            auditMap.put("KEYALIAS", value);
-            auditMap.put("SCOPE", "NODE");
-            auditMap.put("NODE", key.substring(0, key.lastIndexOf(".")));
-            auditLog(EventType.KEYSELECTED, ModuleType.WORKER_CONFIG, String.valueOf(workerId), auditMap);
-        } else if (ProcessableConfig.SIGNERCERT.equalsIgnoreCase(key)) {
-            auditLogCertInstalled(workerId, value, "GLOBAL", null);
-        } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + ProcessableConfig.SIGNERCERT)) {
-            auditLogCertInstalled(workerId, value, "NODE", key.substring(0, key.lastIndexOf(".")));
-        } else if (ProcessableConfig.SIGNERCERTCHAIN.equalsIgnoreCase(key)) {
-            auditLogCertChainInstalled(workerId, value, "GLOBAL", null);
-        } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + ProcessableConfig.SIGNERCERTCHAIN)) {
-            auditLogCertChainInstalled(workerId, value, "NODE", key.substring(0, key.lastIndexOf(".")));
-        }
+        auditLogWorkerPropertyChange(workerId, key, value);
     }
     
     private void auditLogCertInstalled(final int workerId, final String value, final String scope, final String node) {
@@ -908,27 +889,31 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         } else {
             setWorkerConfig(workerId, config);
         }
+        auditLogWorkerPropertyChange(workerId, key, "");
+        return result;
+    }
+    
+    private void auditLogWorkerPropertyChange(final int workerId, final String key, final String value) {
         if ("DEFAULTKEY".equalsIgnoreCase(key)) {
-            HashMap<String, String> auditMap = new HashMap<String, String>();
-            auditMap.put("KEYALIAS", "");
+            final HashMap<String, String> auditMap = new HashMap<String, String>();
+            auditMap.put("KEYALIAS", value);
             auditMap.put("SCOPE", "GLOBAL");
             auditLog(EventType.KEYSELECTED, ModuleType.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase(".DEFAULTKEY")) {
-            HashMap<String, String> auditMap = new HashMap<String, String>();
-            auditMap.put("KEYALIAS", "");
+            final HashMap<String, String> auditMap = new HashMap<String, String>();
+            auditMap.put("KEYALIAS", value);
             auditMap.put("SCOPE", "NODE");
             auditMap.put("NODE", key.substring(0, key.lastIndexOf(".")));
             auditLog(EventType.KEYSELECTED, ModuleType.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (ProcessableConfig.SIGNERCERT.equalsIgnoreCase(key)) {
-            auditLogCertInstalled(workerId, "", "GLOBAL", null);
+            auditLogCertInstalled(workerId, value, "GLOBAL", null);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + ProcessableConfig.SIGNERCERT)) {
-            auditLogCertInstalled(workerId, "", "NODE", key.substring(0, key.lastIndexOf(".")));
+            auditLogCertInstalled(workerId, value, "NODE", key.substring(0, key.lastIndexOf(".")));
         } else if (ProcessableConfig.SIGNERCERTCHAIN.equalsIgnoreCase(key)) {
-            auditLogCertChainInstalled(workerId, "", "GLOBAL", null);
+            auditLogCertChainInstalled(workerId, value, "GLOBAL", null);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + ProcessableConfig.SIGNERCERTCHAIN)) {
-            auditLogCertChainInstalled(workerId, "", "NODE", key.substring(0, key.lastIndexOf(".")));
+            auditLogCertChainInstalled(workerId, value, "NODE", key.substring(0, key.lastIndexOf(".")));
         }
-        return result;
     }
 
     /* (non-Javadoc)
@@ -1049,7 +1034,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     .getSigningCertificateChain();
             if (certs instanceof List) {
                 ret = (List) certs;
-            } else if( certs != null) {
+            } else if (certs != null) {
                 ret = new LinkedList<Certificate>(certs);
             }
         }

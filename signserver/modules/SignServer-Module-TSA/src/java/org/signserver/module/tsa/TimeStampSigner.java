@@ -1007,7 +1007,7 @@ public class TimeStampSigner extends BaseSigner {
      * We run this stand-alone from the unit test
      * 
      */
-    public String getSerialNumberError() {
+    protected String getSerialNumberError() {
     	final String error;
     	
     	// check maximum serial number length

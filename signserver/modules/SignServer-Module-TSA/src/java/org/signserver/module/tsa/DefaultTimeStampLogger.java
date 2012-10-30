@@ -50,6 +50,7 @@ public class DefaultTimeStampLogger implements IWorkerLogger {
                 + "TimeStamp: ${TSA_TIME}; "
                 + "PKIStatus: ${TSA_PKISTATUS}; "
                 + "PKIFailureInfo: ${TSA_PKIFAILUREINFO}; "
+                + "SerialNumber: ${TSA_SERIALNUMBER}; "
                 + "TSA_POLICYID: ${TSA_POLICYID}; "
                 + "SIGNER_CERT_SERIALNUMBER: ${SIGNER_CERT_SERIALNUMBER}; "
                 + "SIGNER_CERT_ISSUERDN: ${SIGNER_CERT_ISSUERDN}; "

@@ -247,9 +247,11 @@ public class TimeStampSigner extends BaseSigner {
     
     private boolean validChain = true;
 
-	private int maxSerialNumberLength;
-	private static final int MAX_ALLOWED_MAXSERIALNUMBERLENGTH = 20;
-	private static final int MIN_ALLOWED_MAXSERIALNUMBERLENGTH = 8;
+    private int maxSerialNumberLength;
+    // we restrict the allowed serial number size limit to between 64 and 160 bits
+    // note: the generated serial number will always be positive
+    private static final int MAX_ALLOWED_MAXSERIALNUMBERLENGTH = 20;
+    private static final int MIN_ALLOWED_MAXSERIALNUMBERLENGTH = 8;
     
     @Override
     public void init(final int signerId, final WorkerConfig config,

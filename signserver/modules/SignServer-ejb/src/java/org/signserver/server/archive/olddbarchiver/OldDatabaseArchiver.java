@@ -40,11 +40,14 @@ public class OldDatabaseArchiver implements Archiver {
     private static final Logger LOG = Logger.getLogger(OldDatabaseArchiver.class);
 
     private static final String PROPERTY_ARCHIVE_OF_TYPE = "ARCHIVE_OF_TYPE";
+    private static final String PROPERTY_USE_X_FORWARDED_FOR = "USE_X_FORWARDED_FOR";
     
     private ArchiveDataService dataService;
     
     private ArchiveOfTypes archiveOfTypes;
 
+    private boolean useXForwardedFor = false;
+    
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
         final EntityManager em = context.getEntityManager();
@@ -63,6 +66,10 @@ public class OldDatabaseArchiver implements Archiver {
             }
             throw new ArchiverInitException("Illegal value for worker property " + propertyArchiveOfType);
         }
+        
+        // configuration for using the X-FORWARDED-FOR header to determine source IP
+        final String propertyXForwardedFor = "ARCHIVER" + listIndex + "." + PROPERTY_USE_X_FORWARDED_FOR;
+        useXForwardedFor = Boolean.valueOf(config.getProperty(propertyXForwardedFor));
     }
 
     @Override
@@ -94,7 +101,27 @@ public class OldDatabaseArchiver implements Archiver {
             }
             final Integer workerId = (Integer) requestContext.get(RequestContext.WORKER_ID);
             final X509Certificate certificate = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
-            final String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
+            String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
+            
+            if (useXForwardedFor) {
+                final String xForwardedFor = (String) requestContext.get(RequestContext.X_FORWARDED_FOR);
+                
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using X-Forwarded-For: " + xForwardedFor);
+                }
+                
+                if (xForwardedFor != null) {
+                    // the X-FORWARDED-FOR contains a comma-separated list of IP addresses, take the the last one
+                    final String[] ips = xForwardedFor.split(",");
+                    final String ip = ips[ips.length - 1];
+                    
+                    remoteIp = ip.trim();
+                    
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Got IP address from X-Forwarded-For: " + remoteIp);
+                    }
+                }
+            }
 
             final String uniqueId;
             uniqueId = dataService.create(archiveType,

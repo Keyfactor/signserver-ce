@@ -322,14 +322,19 @@ public class GenericProcessServlet extends HttpServlet {
         final Map<String, String> logMap = new HashMap<String, String>();
         context.put(RequestContext.LOGMAP, logMap);
 
+        final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
+        
         // Add HTTP specific log entries
         logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, req.getRequestURL().append("?").append(req.getQueryString()).toString());
         logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH,
                 String.valueOf(data.length));
         logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
-        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR,
-                req.getHeader("X-Forwarded-For"));
+        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, xForwardedFor);
 
+        if (xForwardedFor != null) {
+            context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
+        }
+        
         // Store filename for use by archiver etc
         if (fileName != null) {
             fileName = stripPath(fileName);

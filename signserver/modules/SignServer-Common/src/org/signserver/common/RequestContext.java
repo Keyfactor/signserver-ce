@@ -54,6 +54,12 @@ public class RequestContext implements Serializable {
      */
     public static final String REMOTE_IP = "REMOTE_IP";
     
+    
+    /**
+     * Used to fetch the forwarded IP address header if it exists, otherwise 'null' is returned.
+     */
+    public static final String X_FORWARDED_FOR = "X-Forwarded-For";
+    
     /**
      * All requests called from a CLI interface should set this setting to Boolean true.
      */

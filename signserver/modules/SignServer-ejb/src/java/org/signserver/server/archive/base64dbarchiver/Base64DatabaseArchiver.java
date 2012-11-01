@@ -24,6 +24,7 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
+import org.signserver.server.archive.ArchiverUtils;
 import org.signserver.server.archive.olddbarchiver.ArchiveOfTypes;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.IWorkerLogger;
@@ -43,10 +44,13 @@ public class Base64DatabaseArchiver implements Archiver {
     private static final Logger LOG = Logger.getLogger(Base64DatabaseArchiver.class);
     
     private static final String PROPERTY_ARCHIVE_OF_TYPE = "ARCHIVE_OF_TYPE";
+    private static final String PROPERTY_USE_X_FORWARDED_FOR = "USE_X_FORWARDED_FOR";
  
     private ArchiveDataService dataService;
     
     private ArchiveOfTypes archiveOfTypes;
+    
+    private boolean useXForwardedFor = false;
 
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
@@ -62,6 +66,10 @@ public class Base64DatabaseArchiver implements Archiver {
             }
             throw new ArchiverInitException("Illegal value for worker property " + propertyArchiveOfType);
         }
+        
+        // configuration for using the X-FORWARDED-FOR header to determine source IP
+        final String propertyXForwardedFor = "ARCHIVER" + listIndex + "." + PROPERTY_USE_X_FORWARDED_FOR;
+        useXForwardedFor = Boolean.valueOf(config.getProperty(propertyXForwardedFor));
     }
 
     @Override
@@ -86,9 +94,17 @@ public class Base64DatabaseArchiver implements Archiver {
             }
             final Integer workerId = (Integer) requestContext.get(RequestContext.WORKER_ID);
             final X509Certificate certificate = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
-            final String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
+            String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
 
             final String uniqueId;
+            
+            if (useXForwardedFor) {
+                final String forwardedIp = ArchiverUtils.getXForwardedForIP(requestContext);
+                
+                if (forwardedIp != null) {
+                    remoteIp = forwardedIp;
+                }
+            }
             
             uniqueId = dataService.create(archiveType,
                             workerId,

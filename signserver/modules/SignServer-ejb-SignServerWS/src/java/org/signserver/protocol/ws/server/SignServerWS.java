@@ -190,14 +190,15 @@ public class SignServerWS implements ISignServerWS {
         final Map<String, String> logMap = new HashMap<String, String>();
         requestContext.put(RequestContext.LOGMAP, logMap);
 
+        final String xForwardedFor = servletRequest.getHeader(RequestContext.X_FORWARDED_FOR);
+        
         // Add HTTP specific log entries
         logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, 
                 servletRequest.getRequestURL().append("?")
                 .append(servletRequest.getQueryString()).toString());
         logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, 
                 servletRequest.getHeader("Content-Length"));
-        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR,
-                servletRequest.getHeader("X-Forwarded-For"));
+        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, xForwardedFor);
 
         int workerId = getWorkerId(workerIdOrName);
 
@@ -225,6 +226,10 @@ public class SignServerWS implements ISignServerWS {
             if (fileName != null) {
             	requestContext.put(RequestContext.FILENAME, fileName);
             	logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
+            }
+            
+            if (xForwardedFor != null) {
+                requestContext.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
             }
 
             ProcessResponse resp = getWorkerSession().process(workerId, req, requestContext);

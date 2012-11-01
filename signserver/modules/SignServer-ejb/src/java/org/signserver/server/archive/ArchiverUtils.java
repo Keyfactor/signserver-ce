@@ -47,6 +47,11 @@ public class ArchiverUtils {
             final String[] ips = xForwardedFor.split(",");
             final String ip = ips[ips.length - 1].trim();
             
+            if (ip.length() == 0) {
+                // the header was empty
+                return null;
+            }
+            
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Got IP address from X-Forwarded-For: " + ip);
             }

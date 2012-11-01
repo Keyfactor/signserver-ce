@@ -226,7 +226,16 @@ public class SODProcessServlet extends HttpServlet {
                     dataGroups, ldsVersion, unicodeVersion);
             SODSignResponse response = null;
             try {
-                response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, new RequestContext((X509Certificate) clientCertificate, remoteAddr));
+                final RequestContext context = new RequestContext((X509Certificate) clientCertificate, remoteAddr);
+                final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
+                
+                if (xForwardedFor != null) {
+                    System.out.println("xForwardedFor: " + xForwardedFor);
+                    
+                    context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
+                }
+                
+                response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, context);
 
                 if (response.getRequestID() != requestId) {
                     LOG.error("Response ID " + response.getRequestID()

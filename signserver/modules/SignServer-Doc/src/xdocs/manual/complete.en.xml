@@ -4220,6 +4220,13 @@ The fully qualified class name is: <b>org.signserver.server.archive.olddbarchive
 <b>ARCHIVERx.ARCHIVE_OF_TYPE</b> = Where "x" is the index of the Archiver in the ARCHIVERS property. Determines what this Archiver should archive. Alternatives are: "REQUEST", "RESPONSE" or "REQUEST_AND_RESPONSE". Default is "RESPONSE".<br/>
 Example: ARCHIVER0.ARCHIVE_OF_TYPE=REQUEST_AND_RESPONSE
                         </p>
+                        <p>
+<b>ARCHIVERx.USE_X_FORWARDED_FOR</b> = Where "x" is the index of the Archiver in the ARCHIVERS property.
+If this property is set to "true", the last IP address in the comma-separated list given in the X-Forwarded-For header is used as the remote IP stored
+in the archive in case this header is set. If the header is not included, the IP address the request comes from is used (the same behavior as when
+this property isn't set, or set to "false"). This is useful when running a proxy in front of SignServer, to record the orginal IP address of the client,
+instead of the proxy's IP address. Defaults to "false".
+                        </p>
                     </subsubsection>
                     
                     <subsubsection name="ArchiveData table">

@@ -105,7 +105,7 @@ public class OldDatabaseArchiver implements Archiver {
             String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
             
             if (useXForwardedFor) {
-                final String forwardedIp = ArchiverUtils.getXForwardedFor(requestContext);
+                final String forwardedIp = ArchiverUtils.getXForwardedForIP(requestContext);
                 
                 if (forwardedIp != null) {
                     remoteIp = forwardedIp;

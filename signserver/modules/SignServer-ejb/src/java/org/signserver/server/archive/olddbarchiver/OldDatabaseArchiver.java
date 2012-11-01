@@ -25,6 +25,7 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
+import org.signserver.server.archive.ArchiverUtils;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.IWorkerLogger;
 
@@ -104,22 +105,10 @@ public class OldDatabaseArchiver implements Archiver {
             String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
             
             if (useXForwardedFor) {
-                final String xForwardedFor = (String) requestContext.get(RequestContext.X_FORWARDED_FOR);
+                final String forwardedIp = ArchiverUtils.getXForwardedFor(requestContext);
                 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Using X-Forwarded-For: " + xForwardedFor);
-                }
-                
-                if (xForwardedFor != null) {
-                    // the X-FORWARDED-FOR contains a comma-separated list of IP addresses, take the the last one
-                    final String[] ips = xForwardedFor.split(",");
-                    final String ip = ips[ips.length - 1];
-                    
-                    remoteIp = ip.trim();
-                    
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Got IP address from X-Forwarded-For: " + remoteIp);
-                    }
+                if (forwardedIp != null) {
+                    remoteIp = forwardedIp;
                 }
             }
 

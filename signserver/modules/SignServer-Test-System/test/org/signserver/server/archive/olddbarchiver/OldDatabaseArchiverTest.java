@@ -239,6 +239,32 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         LOG.debug("<test60archiveWithXForwardedForFalse");
     }
     
+    /**
+     * Test setting the USE_X_FORDED_FOR property, but not including the header, to ensure the standard request IP is used as a fallback
+     *
+     * @throws Exception
+     */
+    public void test60archiveWithXForwardedWithoutHeader() throws Exception {
+        LOG.debug(">test60archiveWithXForwardedForWithoutHeader");
+        
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_X_FORWARDED_FOR", "true");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "1.2.3.4", null);
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should use the request IP address", "1.2.3.4", ip);
+        
+        LOG.debug("<test60archiveWithXForwardedForWithoutHeader");
+
+    }
+    
     protected Collection<? extends Archivable> archiveTimeStamp(int signerId) throws Exception {
         // Process
         int reqid = random.nextInt();

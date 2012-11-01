@@ -162,6 +162,54 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         
         LOG.debug("<test50archiveRequestAndResponse");
     }
+
+    /**
+     * Test that the archiver is using the X-Forwarded-For header when the property is set
+     * @throws Exception
+     */
+    public void test60archiveWithXForwardingFor() throws Exception {
+        LOG.debug(">test60archiveWithXForwardingFor");
+        
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_X_FORWARDED_FOR", "true");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "1.2.3.4", "42.42.42.42");
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should use X-Forwarded-For IP address", "42.42.42.42", ip);
+        
+        LOG.debug("<test60archiveWithXForwardingFor");
+    }
+    
+    /**
+     * Test that the archiver is not using the X-Forwarded-For header when property is not set
+     * @throws Exception
+     */
+    public void test60archiveWithXForwardingForNotUsed() throws Exception {
+        LOG.debug(">test60archiveWithXForwardingFor");
+        
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+        getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.USE_X_FORWARDED_FOR");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "1.2.3.4", "42.42.42.42");
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should not use X-Forwarded-For IP address", "1.2.3.4", ip);
+        
+        LOG.debug("<test60archiveWithXForwardingFor");
+    }
     
     protected Collection<? extends Archivable> archiveTimeStamp(int signerId) throws Exception {
         // Process

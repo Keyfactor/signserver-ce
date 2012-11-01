@@ -52,13 +52,23 @@ public class ArchiveTestCase extends ModulesTestCase {
         TestingSecurityManager.remove();
     }	
     
-    protected ArchiveDataVO testArchive(final String document) throws Exception {
+    protected ArchiveDataVO testArchive(final String document, final String remoteIP, final String xForwardedFor) throws Exception {
         // Process
         final GenericSignRequest signRequest =
                 new GenericSignRequest(371, document.getBytes());
+        final RequestContext context =  new RequestContext();
+        
+        if (remoteIP != null) {
+            context.put(RequestContext.REMOTE_IP, remoteIP);
+        }
+        
+        if (xForwardedFor != null) {
+            context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
+        }
+        
         GenericSignResponse response = (GenericSignResponse) 
                 workerSession.process(getSignerIdDummy1(), signRequest, 
-                new RequestContext());
+                context);
         assertNotNull("no response", response);
         
         final String expectedArchiveId = response.getArchiveId();
@@ -75,6 +85,10 @@ public class ArchiveTestCase extends ModulesTestCase {
                 Arrays.equals(expectedArchiveData.getContentEncoded(), 
                 archiveData.getArchivedBytes()));
         return archiveData;
+    }
+    
+    protected ArchiveDataVO testArchive(final String document) throws Exception {
+        return testArchive(document, null, null);
     }
     
     protected void testNoArchive(final String document) throws Exception {

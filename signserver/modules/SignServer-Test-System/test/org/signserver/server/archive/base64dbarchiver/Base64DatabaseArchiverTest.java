@@ -143,6 +143,108 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
     }
  
     /**
+     * Test that the archiver is using the X-Forwarded-For header when the property is set.
+     * 
+     * @throws Exception
+     */
+    public void test60archiveWithXForwardedFor() throws Exception {
+        LOG.debug(">test60archiveWithXForwardedFor");
+        
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_X_FORWARDED_FOR", "true");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "1.2.3.4", "42.42.42.42");
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should use X-Forwarded-For IP address", "42.42.42.42", ip);
+        
+        LOG.debug("<test60archiveWithXForwardedFor");
+    }
+    
+    /**
+     * Test that the archiver is not using the X-Forwarded-For header when property is not set.
+     * 
+     * @throws Exception
+     */
+    public void test60archiveWithXForwardedForNotUsed() throws Exception {
+        LOG.debug(">test60archiveWithXForwardedForNotUsed");
+        
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+        getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.USE_X_FORWARDED_FOR");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "1.2.3.4", "42.42.42.42");
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should not use X-Forwarded-For IP address", "1.2.3.4", ip);
+        
+        LOG.debug("<test60archiveWithXForwardedForNotUsed");
+    }
+    
+    /**
+     * Test that the archiver is not using the X-Forwaded-For header when the property is set
+     * and has the value "false". 
+     *
+     * @throws Exception
+     */
+    public void test60archiveWithXForwadedForFalse() throws Exception {
+        LOG.debug(">test60archiveWithXForwardedForFalse");
+        
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_X_FORWARDED_FOR", "false");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "1.2.3.4", "42.42.42.42");
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should not use X-Forwarded-For IP address", "1.2.3.4", ip);
+        
+        LOG.debug("<test60archiveWithXForwardedForFalse");
+    }
+    
+    /**
+     * Test setting the USE_X_FORDED_FOR property, but not including the header, to ensure the standard request IP is used as a fallback
+     *
+     * @throws Exception
+     */
+    public void test60archiveWithXForwardedWithoutHeader() throws Exception {
+        LOG.debug(">test60archiveWithXForwardedForWithoutHeader");
+        
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_X_FORWARDED_FOR", "true");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "1.2.3.4", null);
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should use the request IP address", "1.2.3.4", ip);
+        
+        LOG.debug("<test60archiveWithXForwardedForWithoutHeader");
+
+    }
+    
+    /**
      * Remove the workers created etc.
      * @throws Exception in case of error
      */

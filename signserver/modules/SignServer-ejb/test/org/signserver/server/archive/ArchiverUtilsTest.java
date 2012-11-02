@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.validationservice.server;
+package org.signserver.server.archive;
 
 import org.signserver.common.RequestContext;
 import org.signserver.server.archive.ArchiverUtils;

@@ -198,7 +198,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
      *
      * @throws Exception
      */
-    public void test60archiveWithXForwadedForFalse() throws Exception {
+    public void test60archiveWithXForwardedForFalse() throws Exception {
         LOG.debug(">test60archiveWithXForwardedForFalse");
         
         final int signerId = getSignerIdDummy1();

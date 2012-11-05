@@ -41,7 +41,7 @@ public class OldDatabaseArchiver implements Archiver {
     private static final Logger LOG = Logger.getLogger(OldDatabaseArchiver.class);
 
     private static final String PROPERTY_ARCHIVE_OF_TYPE = "ARCHIVE_OF_TYPE";
-    private static final String PROPERTY_USE_X_FORWARDED_FOR = "USE_X_FORWARDED_FOR";
+    private static final String PROPERTY_USE_FORWARDED_ADDRESS = "USE_FORWARDED_ADDRESS";
     
     private ArchiveDataService dataService;
     
@@ -69,7 +69,7 @@ public class OldDatabaseArchiver implements Archiver {
         }
         
         // configuration for using the X-FORWARDED-FOR header to determine source IP
-        final String propertyXForwardedFor = "ARCHIVER" + listIndex + "." + PROPERTY_USE_X_FORWARDED_FOR;
+        final String propertyXForwardedFor = "ARCHIVER" + listIndex + "." + PROPERTY_USE_FORWARDED_ADDRESS;
         useXForwardedFor = Boolean.valueOf(config.getProperty(propertyXForwardedFor));
     }
 

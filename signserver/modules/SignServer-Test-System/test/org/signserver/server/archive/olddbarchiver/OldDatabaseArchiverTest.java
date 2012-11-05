@@ -175,7 +175,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         
         getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
                 "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
-        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_X_FORWARDED_FOR", "true");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS", "true");
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
@@ -200,7 +200,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         
         getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
                 "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
-        getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.USE_X_FORWARDED_FOR");
+        getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS");
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
@@ -226,7 +226,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         
         getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
                 "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
-        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_X_FORWARDED_FOR", "false");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS", "false");
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
@@ -251,7 +251,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         
         getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
                 "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
-        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_X_FORWARDED_FOR", "true");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS", "true");
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",

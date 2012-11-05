@@ -19,12 +19,12 @@ import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.util.XForwardedForUtils;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
-import org.signserver.server.archive.ArchiverUtils;
 import org.signserver.server.archive.olddbarchiver.ArchiveOfTypes;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.IWorkerLogger;
@@ -99,7 +99,7 @@ public class Base64DatabaseArchiver implements Archiver {
             final String uniqueId;
             
             if (useXForwardedFor) {
-                final String forwardedIp = ArchiverUtils.getXForwardedForIP(requestContext);
+                final String forwardedIp = XForwardedForUtils.getXForwardedForIP(requestContext);
                 
                 if (forwardedIp != null) {
                     remoteIp = forwardedIp;

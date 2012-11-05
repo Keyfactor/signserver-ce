@@ -20,12 +20,12 @@ import org.signserver.common.ArchiveData;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.util.XForwardedForUtils;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
-import org.signserver.server.archive.ArchiverUtils;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.IWorkerLogger;
 
@@ -105,7 +105,7 @@ public class OldDatabaseArchiver implements Archiver {
             String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
             
             if (useXForwardedFor) {
-                final String forwardedIp = ArchiverUtils.getXForwardedForIP(requestContext);
+                final String forwardedIp = XForwardedForUtils.getXForwardedForIP(requestContext);
                 
                 if (forwardedIp != null) {
                     remoteIp = forwardedIp;

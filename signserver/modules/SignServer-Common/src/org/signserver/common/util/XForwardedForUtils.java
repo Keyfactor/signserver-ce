@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.archive;
+package org.signserver.common.util;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.RequestContext;
@@ -22,9 +22,9 @@ import org.signserver.common.RequestContext;
  * @version $Id$
  *
  */
-public class ArchiverUtils {
+public class XForwardedForUtils {
 
-    private static Logger LOG = Logger.getLogger(ArchiverUtils.class);
+    private static Logger LOG = Logger.getLogger(XForwardedForUtils.class);
     
     /**
      * Utility method to extract the forwarded IP address from

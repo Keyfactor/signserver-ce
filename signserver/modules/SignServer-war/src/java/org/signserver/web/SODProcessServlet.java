@@ -230,8 +230,6 @@ public class SODProcessServlet extends HttpServlet {
                 final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
                 
                 if (xForwardedFor != null) {
-                    System.out.println("xForwardedFor: " + xForwardedFor);
-                    
                     context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
                 }
                 

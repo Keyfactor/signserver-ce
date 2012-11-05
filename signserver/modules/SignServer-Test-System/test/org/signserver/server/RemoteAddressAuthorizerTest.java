@@ -158,6 +158,29 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
         }
     }
 
+    /**
+     * Tests that access is allowed when using the
+     * "ALL" keyword in ALLOW_FROM
+     * 
+     * @throws Exception
+     */
+    public void test06RequestAllowAll() throws Exception {
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM", "ALL");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        final GenericSignRequest request =
+                new GenericSignRequest(1, "<root/>".getBytes());
+        
+        try {
+            workerSession.process(getSignerIdDummy1(), request, new RequestContext());
+        } catch (AuthorizationRequiredException ex) {
+            fail(ex.getMessage());
+        } catch (Exception ex) {
+            LOG.error("Wrong type of exception", ex);
+            fail("Exception: " + ex.getMessage());
+        }
+    }
+
     private int process(URL workerUrl) {
         int responseCode = -1;
 

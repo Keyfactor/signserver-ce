@@ -49,8 +49,10 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             RemoteAddressAuthorizer.class);
 
     private static final String PROPERTY_ALLOW_FROM = "ALLOW_FROM";
+    private static final String KEYWORD_ALL = "ALL";
 
     private Set<String> allowFrom;
+    private boolean allowFromAll = false;
 
     private int workerId;
 
@@ -68,9 +70,15 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
         this.workerId = workerId;
         
         allowFrom = new HashSet<String>();
-        if (config.getProperty(PROPERTY_ALLOW_FROM) != null) {
-            final String[] allowFromStrings = config.getProperty(
-                    PROPERTY_ALLOW_FROM).split(",");
+        final String allowFromProperty = config.getProperty(PROPERTY_ALLOW_FROM);
+        
+        if (KEYWORD_ALL.equals(allowFromProperty)) {
+            allowFromAll = true;
+            return;
+        }
+
+        if (allowFromProperty != null) {
+            final String[] allowFromStrings = allowFromProperty.split(",");
             for (String allowFromString : allowFromStrings) {
                 allowFromString = allowFromString.trim();
                 if (allowFromString.length() > 0) {
@@ -100,7 +108,7 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             remoteAddress = "null";
         }
         
-        if (!allowFrom.contains(remoteAddress)) {
+        if (!allowFromAll && !allowFrom.contains(remoteAddress)) {
             LOG.error("Worker " + workerId + ": "
                     + "Not authorized remote address: " + remoteAddress);
             throw new AuthorizationRequiredException("Authentication denied");

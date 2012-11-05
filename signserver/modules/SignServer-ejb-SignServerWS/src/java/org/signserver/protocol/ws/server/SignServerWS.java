@@ -187,6 +187,8 @@ public class SignServerWS implements ISignServerWS {
         }
         requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
         
+        
+        
         final Map<String, String> logMap = new HashMap<String, String>();
         requestContext.put(RequestContext.LOGMAP, logMap);
 
@@ -200,6 +202,11 @@ public class SignServerWS implements ISignServerWS {
                 servletRequest.getHeader("Content-Length"));
         logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, xForwardedFor);
 
+        
+        if (xForwardedFor != null) {
+            requestContext.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
+        }
+        
         int workerId = getWorkerId(workerIdOrName);
 
         ArrayList<Certificate> signerCertificateChain = getSignerCertificateChain(workerId);
@@ -226,10 +233,6 @@ public class SignServerWS implements ISignServerWS {
             if (fileName != null) {
             	requestContext.put(RequestContext.FILENAME, fileName);
             	logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
-            }
-            
-            if (xForwardedFor != null) {
-                requestContext.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
             }
 
             ProcessResponse resp = getWorkerSession().process(workerId, req, requestContext);

@@ -263,6 +263,47 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
                 responseCode == 403);
     }
 
+    /**
+     * Test that access is granted when setting the allow list explicitly to ALL
+     * 
+     * @throws Exception
+     */
+    public void test11RequestWithXForwardedAllowAll() throws Exception {
+        // allow localhost (simulate a proxy...)
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM", "127.0.0.1");
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FORWARDED_FROM", "ALL");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+               
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                    + "/signserver/process?workerId="
+                    + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42.42");
+
+        assertEquals("HTTP response code: " + responseCode, 200, responseCode);
+    }
+    
+    /**
+     * Test that access is denied when the local IP address is not in ALLOW_FROM but a proxied addres in listed in
+     * ALLOWED_FORWARDED_FROM
+     * 
+     * @throws Exception
+     */
+    public void test12RequestWithXForwardedLocalDenied() throws Exception {
+        // allow localhost (simulate a proxy...)
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM", "1.2.3.4");
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FORWARDED_FROM", "42.42.42.42");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+               
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                    + "/signserver/process?workerId="
+                    + getSignerIdDummy1() + "&data=%3Croot/%3E"), "42.42.42.42");
+
+        assertTrue("HTTP response code: " + responseCode, responseCode == 401 ||
+                responseCode == 403);
+    }
+
+
     
     private int process(URL workerUrl, final String forwardIPs) {
         int responseCode = -1;

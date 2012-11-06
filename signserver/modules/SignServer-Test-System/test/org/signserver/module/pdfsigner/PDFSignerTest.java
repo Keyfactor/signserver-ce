@@ -38,8 +38,6 @@ public class PDFSignerTest extends ModulesTestCase {
 
     private static final int WORKERID = 5675;
 
-    private static Random random = new Random(WORKERID);
-
     private static final String CERTIFICATION_LEVEL = "CERTIFICATION_LEVEL";
 
     private static final String TESTPDF_OK = "ok.pdf";
@@ -67,7 +65,7 @@ public class PDFSignerTest extends ModulesTestCase {
 
     public void test01BasicPdfSign() throws Exception {
 
-        final GenericSignResponse res = signDocument(WORKERID, Base64.decode(
+        final GenericSignResponse res = signGenericDocument(WORKERID, Base64.decode(
                 (testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
 
         final PdfReader reader = new PdfReader(res.getProcessedData());
@@ -94,7 +92,7 @@ public class PDFSignerTest extends ModulesTestCase {
         workerSession.removeWorkerProperty(WORKERID, CERTIFICATION_LEVEL);
         workerSession.reloadConfiguration(WORKERID);
 
-        final GenericSignResponse res = signDocument(WORKERID,
+        final GenericSignResponse res = signGenericDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
 
         final PdfReader reader = new PdfReader(res.getProcessedData());
@@ -114,7 +112,7 @@ public class PDFSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "NOT_CERTIFIED");
         workerSession.reloadConfiguration(WORKERID);
 
-        final GenericSignResponse res = signDocument(WORKERID,
+        final GenericSignResponse res = signGenericDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
 
         final PdfReader reader = new PdfReader(res.getProcessedData());
@@ -134,7 +132,7 @@ public class PDFSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "NO_CHANGES_ALLOWED");
         workerSession.reloadConfiguration(WORKERID);
 
-        final GenericSignResponse res = signDocument(WORKERID,
+        final GenericSignResponse res = signGenericDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
 
         final PdfReader reader = new PdfReader(res.getProcessedData());
@@ -154,7 +152,7 @@ public class PDFSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "FORM_FILLING_AND_ANNOTATIONS");
         workerSession.reloadConfiguration(WORKERID);
 
-        final GenericSignResponse res = signDocument(WORKERID,
+        final GenericSignResponse res = signGenericDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
 
         final PdfReader reader = new PdfReader(res.getProcessedData());
@@ -174,7 +172,7 @@ public class PDFSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "FORM_FILLING");
         workerSession.reloadConfiguration(WORKERID);
 
-        final GenericSignResponse res = signDocument(WORKERID,
+        final GenericSignResponse res = signGenericDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
 
         final PdfReader reader = new PdfReader(res.getProcessedData());
@@ -247,7 +245,7 @@ public class PDFSignerTest extends ModulesTestCase {
                 "${REQUESTID}.pdf");
         workerSession.reloadConfiguration(WORKERID);
 
-        final GenericSignResponse res = signDocument(WORKERID,
+        final GenericSignResponse res = signGenericDocument(WORKERID,
                 Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
 
         final Calendar cal = Calendar.getInstance();
@@ -277,7 +275,7 @@ public class PDFSignerTest extends ModulesTestCase {
         signNoCheck(WORKERID, pdfOk);
 
         // Test that we can sign a strange PDF when the check is disabled
-        signDocument(WORKERID, pdf2Catalogs);
+        signGenericDocument(WORKERID, pdf2Catalogs);
 
         // Enable the check
         workerSession.setWorkerProperty(WORKERID,
@@ -286,14 +284,14 @@ public class PDFSignerTest extends ModulesTestCase {
 
         // Test that we can't sign the strange PDF when the check is on
         try {
-            signDocument(WORKERID, pdf2Catalogs);
+            signGenericDocument(WORKERID, pdf2Catalogs);
             fail("Accepted the faulty PDF!");
         } catch (SignServerException ok) {
             // OK
         }
 
         // Test that we can still sign a normal PDF when the check is enables
-        signDocument(WORKERID, pdfOk);
+        signGenericDocument(WORKERID, pdfOk);
     }
 
     public void test12VeryLongCertChain() throws Exception {
@@ -303,7 +301,7 @@ public class PDFSignerTest extends ModulesTestCase {
     	workerSession.setWorkerProperty(WORKERID, "SIGNERCERTCHAIN", new String(certFile));
     	workerSession.reloadConfiguration(WORKERID);
     	
-    	signDocument(WORKERID, pdfOk);
+    	signGenericDocument(WORKERID, pdfOk);
     }
     
     public void test99TearDownDatabase() throws Exception {
@@ -317,24 +315,6 @@ public class PDFSignerTest extends ModulesTestCase {
         final GenericSignRequest request = new GenericSignRequest(requestId,
                 data);
         final GenericSignResponse response = (GenericSignResponse) workerSession.process(workerId, request, new RequestContext());
-        return response;
-    }
-
-    private GenericSignResponse signDocument(final int workerId,
-            final byte[] data) throws IllegalRequestException,
-            CryptoTokenOfflineException, SignServerException {
-
-        final int requestId = random.nextInt();
-
-        final GenericSignRequest request = new GenericSignRequest(requestId,
-                data);
-
-        final GenericSignResponse response = (GenericSignResponse) workerSession.process(workerId, request, new RequestContext());
-        assertEquals("requestId", requestId, response.getRequestID());
-
-        Certificate signercert = response.getSignerCertificate();
-        assertNotNull(signercert);
-
         return response;
     }
 

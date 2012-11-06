@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.*;
 import javax.naming.NamingException;
@@ -24,9 +25,15 @@ import org.apache.log4j.Logger;
 import org.ejbca.util.Base64;
 import org.signserver.admin.cli.AdminCLI;
 import org.signserver.client.cli.ClientCLI;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericSignRequest;
+import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -76,6 +83,7 @@ public class ModulesTestCase extends TestCase {
     private CLITestHelper adminCLI;
     private CLITestHelper clientCLI;
     private TestUtils testUtils = new TestUtils();
+    private static Random random = new Random(1234);
 
     public ModulesTestCase() {
         try {
@@ -427,5 +435,18 @@ public class ModulesTestCase extends TestCase {
     
     protected TestUtils getTestUtils() {
         return testUtils;
+    }
+
+    /**
+     * Make a GenericSignRequest.
+     */
+    protected GenericSignResponse signGenericDocument(final int workerId, final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        final int requestId = random.nextInt();
+        final GenericSignRequest request = new GenericSignRequest(requestId, data);
+        final GenericSignResponse response = (GenericSignResponse) workerSession.process(workerId, request, new RequestContext());
+        assertEquals("requestId", requestId, response.getRequestID());
+        Certificate signercert = response.getSignerCertificate();
+        assertNotNull(signercert);
+        return response;
     }
 }

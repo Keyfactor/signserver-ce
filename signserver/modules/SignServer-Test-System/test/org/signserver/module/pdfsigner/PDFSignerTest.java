@@ -14,7 +14,6 @@ package org.signserver.module.pdfsigner;
 
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
-
 import java.io.*;
 import java.net.URL;
 import java.security.cert.Certificate;
@@ -26,7 +25,6 @@ import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
 /**
@@ -311,8 +309,7 @@ public class PDFSignerTest extends ModulesTestCase {
     private GenericSignResponse signNoCheck(final int workerId,
             final byte[] data) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
-        final int requestId = random.nextInt();
-        final GenericSignRequest request = new GenericSignRequest(requestId,
+        final GenericSignRequest request = new GenericSignRequest(1234,
                 data);
         final GenericSignResponse response = (GenericSignResponse) workerSession.process(workerId, request, new RequestContext());
         return response;

@@ -222,6 +222,48 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
         assertEquals("HTTP response code: " + responseCode, 200, responseCode);
     }
     
+    /**
+     * Test that access is granted when coming having an IP set in the X-Forwarded-For header which is
+     * listed in the allow list using a list with additional addresses
+     * 
+     * @throws Exception
+     */
+    public void test09RequestWithXForwardedForInAllowedList() throws Exception {
+        // allow localhost (simulate a proxy...)
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM", "127.0.0.1");
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FORWARDED_FROM", "42.42.42.42, 1.2.3.4, 4.3.2.1");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+               
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                    + "/signserver/process?workerId="
+                    + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4");
+
+        assertEquals("HTTP response code: " + responseCode, 200, responseCode);
+    }
+
+    /**
+     * Test that access is denied when having an IP set in the X-Forwarded-For header which is
+     * listed in the allow list using a list, but not being the last address in the forwarded list (multiple proxies)
+     * 
+     * @throws Exception
+     */
+    public void test10RequestWithXForwardedNotLast() throws Exception {
+        // allow localhost (simulate a proxy...)
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM", "127.0.0.1");
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FORWARDED_FROM", "1.2.3.4");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+               
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                    + "/signserver/process?workerId="
+                    + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42.42");
+
+        assertTrue("HTTP response code: " + responseCode, responseCode == 401 ||
+                responseCode == 403);
+    }
+
+    
     private int process(URL workerUrl, final String forwardIPs) {
         int responseCode = -1;
 

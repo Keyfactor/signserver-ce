@@ -5517,6 +5517,9 @@ put the audit logs in a separate file.
     &lt;appender-ref ref="SIGNSERVER_AUDIT"/&gt;
 &lt;/category&gt;
                     </source>
+                    <p>
+For GlassFish a similar setup is already configured in SIGNSERVER_HOME/modules/SignServer-Module-Log4j/src/log4j.properties. 
+                    </p>
                 </subsection>
 
             </section>

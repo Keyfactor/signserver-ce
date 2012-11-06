@@ -420,6 +420,10 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
         <!-- SignServer-Test-System -->
         <ant target="compile-test" inheritall="false"
             antfile="${testsystem.dir}/build.xml"/>
+        
+        <!-- SignServer-Test-P11 -->
+        <ant target="compile-test" inheritall="false"
+            antfile="modules/SignServer-Test-P11/build.xml"/>
     </target>
 	
     <target name="test:signserver:run" depends="test:signserver:pre-run, build"
@@ -430,6 +434,14 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
             <fileset dir="." includes="${tests.modules.includes}"/>
         </subant>
         <antcall target="test:report"/>
+    </target>
+    
+    <target name="test:p11:run" description="Run the HSM JUnit testcases">
+
+        <!-- Run all tests defined in modules-project.properties. -->
+        <subant target="test">
+            <fileset file="modules/SignServer-Test-P11/build.xml"/>
+        </subant>
     </target>
 
     <target name="test:report"

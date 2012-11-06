@@ -181,7 +181,28 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
         }
     }
 
-    private int process(URL workerUrl) {
+    /**
+     * Test that access is denied when setting the ALLOW_X_FORWARDED_FOR property and not including
+     * the address in the X-Forwarded-For header
+     * 
+     * @throws Exception
+     */
+    public void test07RequestWithXForwardedFor() throws Exception {
+        // allow localhost (simulate a proxy...)
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM", "127.0.0.1");
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FORWARDED_FROM", "1.2.3.4");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+               
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                    + "/signserver/process?workerId="
+                    + getSignerIdDummy1() + "&data=%3Croot/%3E"), "42.42.42.42");
+
+        assertTrue("HTTP response code: " + responseCode, responseCode == 401
+                    || responseCode == 403);
+    }
+    
+    private int process(URL workerUrl, final String forwardIPs) {
         int responseCode = -1;
 
         HttpURLConnection conn = null;
@@ -191,11 +212,18 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
             conn.setRequestMethod("GET");
             conn.setDoOutput(false);
             conn.setReadTimeout(2000);
+            if (forwardIPs != null) {
+                conn.addRequestProperty(RequestContext.X_FORWARDED_FOR, forwardIPs);
+            }
             responseCode = conn.getResponseCode();
         } catch (IOException ex) {
             LOG.error(ex);
         }
         return responseCode;
+    }
+    
+    private int process(URL workerUrl) {
+        return process(workerUrl, null);
     }
 
     public void test99TearDownDatabase() throws Exception {

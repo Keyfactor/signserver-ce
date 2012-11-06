@@ -382,13 +382,16 @@ public class ModulesTestCase extends TestCase {
 
     protected void removeWorker(final int workerId) throws Exception {
         removeGlobalProperties(workerId);
-        final WorkerConfig wc = workerSession.getCurrentWorkerConfig(workerId);
+        WorkerConfig wc = workerSession.getCurrentWorkerConfig(workerId);
+        LOG.info("Got current config: " + wc.getProperties());
         final Iterator<Object> iter = wc.getProperties().keySet().iterator();
         while (iter.hasNext()) {
             final String key = (String) iter.next();
             workerSession.removeWorkerProperty(workerId, key);
         }
-        workerSession.reloadConfiguration(workerId);
+        workerSession.reloadConfiguration(workerId);  
+        wc = workerSession.getCurrentWorkerConfig(workerId);
+        LOG.info("Got current config after: " + wc.getProperties());
     }
 
     protected File getSignServerHome() throws Exception {

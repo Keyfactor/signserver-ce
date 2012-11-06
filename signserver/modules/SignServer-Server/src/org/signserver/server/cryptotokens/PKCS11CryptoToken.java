@@ -298,6 +298,9 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
                 final PrivateKey privateKey = (PrivateKey) keyStore.getKey(
                         alias, authenticationCode);
                 final Certificate cert = keyStore.getCertificate(alias);
+                if (cert == null) {
+                    throw new CryptoTokenOfflineException("Certificate request error: No key with the configured alias");
+                }
 
                 PublicKey publicKey = cert.getPublicKey();
 

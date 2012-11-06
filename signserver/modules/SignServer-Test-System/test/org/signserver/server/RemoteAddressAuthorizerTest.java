@@ -202,6 +202,26 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
                     || responseCode == 403);
     }
     
+    /**
+     * Test that access is granted when coming having an IP set in the X-Forwarded-For header which is
+     * listed in the allow list
+     * 
+     * @throws Exception
+     */
+    public void test08RequestWithXForwardedForInAllowed() throws Exception {
+        // allow localhost (simulate a proxy...)
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM", "127.0.0.1");
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FORWARDED_FROM", "1.2.3.4");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+               
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                    + "/signserver/process?workerId="
+                    + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4");
+
+        assertEquals("HTTP response code: " + responseCode, 200, responseCode);
+    }
+    
     private int process(URL workerUrl, final String forwardIPs) {
         int responseCode = -1;
 

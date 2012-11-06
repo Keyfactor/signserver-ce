@@ -303,6 +303,27 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
                 responseCode == 403);
     }
 
+    
+    /**
+     * Test that access is granted when not setting ALLOW_FORWARDED_FROM (should default to ALL)
+     * 
+     * @throws Exception
+     */
+    public void test13RequestWithXForwardedDefault() throws Exception {
+        // allow localhost (simulate a proxy...)
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM", "127.0.0.1");
+        workerSession.removeWorkerProperty(getSignerIdDummy1(), "ALLOW_FORWARDED_FROM");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+               
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                    + "/signserver/process?workerId="
+                    + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42.42");
+
+        assertEquals("HTTP response code: " + responseCode, 200, responseCode);
+    }
+    
+    
 
     
     private int process(URL workerUrl, final String forwardIPs) {

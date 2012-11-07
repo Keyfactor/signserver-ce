@@ -323,8 +323,30 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
         assertEquals("HTTP response code: " + responseCode, 200, responseCode);
     }
     
+    /**
+     * Test that local access is still allowed when setting an explicit list list in ALLOW_FORWARDED_FROM
+     * 
+     * @throws Exception
+     */
+    public void test14RequestLocalWithAllowForwardFrom() throws Exception {
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM", "ALL");
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FORWARDED_FROM", "1.2.3.4");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        final GenericSignRequest request =
+                new GenericSignRequest(1, "<root/>".getBytes());
+        
+        try {
+            workerSession.process(getSignerIdDummy1(), request, new RequestContext());
+        } catch (AuthorizationRequiredException ex) {
+            fail(ex.getMessage());
+        } catch (Exception ex) {
+            LOG.error("Wrong type of exception", ex);
+            fail("Exception: " + ex.getMessage());
+        }
+    }
     
-
+    
     
     private int process(URL workerUrl, final String forwardIPs) {
         int responseCode = -1;

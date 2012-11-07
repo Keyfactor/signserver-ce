@@ -137,7 +137,7 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
         // also check the X-Forwarded-For IPs
         final String xForwardedFor = XForwardedForUtils.getXForwardedForIP(requestContext);
 
-        if (!allowXForwardedForFromAll && !allowXForwardedForFrom.contains(xForwardedFor)) {
+        if (!allowXForwardedForFromAll && xForwardedFor != null && !allowXForwardedForFrom.contains(xForwardedFor)) {
             LOG.error("Worker " + workerId + ": "
                     + "Not authorized forwarded address:" + xForwardedFor);
             throw new AuthorizationRequiredException("Authentication denied");

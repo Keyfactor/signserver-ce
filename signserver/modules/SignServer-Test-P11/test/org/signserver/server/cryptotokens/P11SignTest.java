@@ -22,6 +22,7 @@ import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.bouncycastle.asn1.cmp.PKIStatus;
@@ -30,6 +31,7 @@ import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.tsp.TSPAlgorithms;
@@ -44,21 +46,23 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SODSignRequest;
+import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerUtil;
-import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
- * Tests for the PKCS11CryptoToken.
+ * Test signing with all signers using a PKCS11CryptoToken.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public class PKCS11CryptoTokenTest extends ModulesTestCase {
+public class P11SignTest extends ModulesTestCase {
     
     private static final int WORKER_PDF = 20000;
     private static final int WORKER_TSA = 20001;
+    private static final int WORKER_SOD = 20002;
     
     private final String sharedLibrary;
     private final String slot;
@@ -67,7 +71,7 @@ public class PKCS11CryptoTokenTest extends ModulesTestCase {
     
     private final File pdfSampleFile;
 
-    public PKCS11CryptoTokenTest() {
+    public P11SignTest() {
         File home = new File(System.getenv("SIGNSERVER_HOME"));
         assertTrue("Environment variable SIGNSERVER_HOME", home.exists());
         pdfSampleFile = new File(home, "res/test/pdf/sample.pdf");
@@ -145,7 +149,7 @@ public class PKCS11CryptoTokenTest extends ModulesTestCase {
             // Issue certificate
             PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
             KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-            X509CertificateHolder cert = new X509v3CertificateBuilder(csr.getSubject(), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=TestP11 Issuer"), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
             
             // Install certificate and chain
             workerSession.uploadSignerCertificate(WORKER_PDF, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
@@ -202,7 +206,7 @@ public class PKCS11CryptoTokenTest extends ModulesTestCase {
             // Issue certificate
             PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
             KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-            X509CertificateHolder cert = new X509v3CertificateBuilder(csr.getSubject(), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=TestP11 Issuer"), csr.getSubjectPublicKeyInfo()).addExtension(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping)).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping)).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
             
             // Install certificate and chain
             workerSession.uploadSignerCertificate(WORKER_TSA, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
@@ -230,4 +234,63 @@ public class PKCS11CryptoTokenTest extends ModulesTestCase {
             removeWorker(WORKER_TSA);
         }
     }
+    
+    private void setMRTDSODSignerProperties(final int workerId) throws IOException {
+        // Setup worker
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.mrtdsodsigner.MRTDSODSigner");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
+        workerSession.setWorkerProperty(workerId, "NAME", "SODSignerP11");
+        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SLOT", slot);
+        workerSession.setWorkerProperty(workerId, "PIN", pin);
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+    }
+    
+    /**
+     * Tests setting up a MRTD SOD Signer, giving it a certificate and requests an SOd.
+     */
+    public void testMRTDSODSigner() throws Exception {
+        final int workerId = WORKER_SOD;
+        try {
+            setMRTDSODSignerProperties(workerId);
+            workerSession.reloadConfiguration(workerId);
+            
+            // Generate CSR
+            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
+            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
+            
+            // Issue certificate
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+            X509CertificateHolder issuerCert = new JcaX509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=TestP11 Issuer"), issuerKeyPair.getPublic()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+            
+            // Install certificate and chain
+            workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded(), issuerCert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(workerId);
+            
+            // Test active
+            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            assertEquals("errors: " + errors, 0, errors.size());
+            
+            // Test signing
+            HashMap<Integer, byte[]> dgs = new HashMap<Integer, byte[]>();
+            dgs.put(1, "Yy==".getBytes());
+            dgs.put(2, "Yy==".getBytes());
+            dgs.put(3, "Yy==".getBytes());
+            final SODSignRequest signRequest = new SODSignRequest(233, dgs);
+            final SODSignResponse res = (SODSignResponse) workerSession.process(workerId, signRequest, new RequestContext());
+            Certificate signercert = res.getSignerCertificate();
+            assertNotNull(signercert);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    // TODO: CMSSigner
+    // TODO: ODFSigner
+    // TODO: OOXMLSigner
+    // TODO: XMLSigner
 }

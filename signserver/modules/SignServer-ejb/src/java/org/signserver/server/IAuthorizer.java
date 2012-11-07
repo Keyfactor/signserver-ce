@@ -38,6 +38,9 @@ public interface IAuthorizer {
 
     /** Log entry for authorized remote address. */
     String LOG_REMOTEADDRESS = "AUTHORIZED_ADDRESS";
+    
+    /** Log entry for authorized forwarded address. */
+    String LOG_FORWARDED_ADDRESS = "AUTHORIZED_FORWARDED_ADDRESS";
 
 	/**
 	 * Method called by the worker upon first call to the authenticator after instantiation.

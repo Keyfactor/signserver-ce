@@ -143,10 +143,10 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             throw new AuthorizationRequiredException("Authentication denied");
         }
 
-        logRemoteAddress(remoteAddress, requestContext);
+        logRemoteAddress(remoteAddress, xForwardedFor, requestContext);
     }
 
-    private void logRemoteAddress(final String remoteAddress,
+    private void logRemoteAddress(final String remoteAddress, final String forwardedAddress,
             final RequestContext requestContext) {
         Map<String, String> logMap = (Map)
                 requestContext.get(RequestContext.LOGMAP);
@@ -155,5 +155,8 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             requestContext.put(RequestContext.LOGMAP, logMap);
         }
         logMap.put(IAuthorizer.LOG_REMOTEADDRESS, remoteAddress);
+        if (forwardedAddress != null) {
+            logMap.put(IAuthorizer.LOG_FORWARDED_ADDRESS, forwardedAddress);
+        }
     }
 }

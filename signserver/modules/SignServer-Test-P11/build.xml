@@ -18,6 +18,11 @@
     <target name="-pre-compile-test" depends="-modules-check-appserver-home"/>
     <target name="-pre-compile-test-single" depends="-modules-check-appserver-home"/>
     
+    <target name="-post-test-run">
+        <property name="test.dir" value="build/test/"/>
+        <mkdir dir="${test.dir}/reports/html" />
+    </target>
+    
     <!--
 
     There exist several targets which are by default empty and which can be 

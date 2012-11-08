@@ -2509,6 +2509,10 @@ is granted access using this property. The default when not specifying this prop
                         <p>
 Using the value ALL has the same meaning as for the ALLOW_FROM property, i.e. proxying from any address (the default behavior).
                         </p>
+                        <p>
+<b>Logging:</b> This authorizer will add the remote IP address to the log field AUTHORIZED_ADDRESS and the proxied address
+(if it's available in the request) in the log field AUTHORIZED_FORWARDED_ADDRESS.
+                        </p>
                     </subsubsection>
                     <subsubsection name="DispatchedAuthorizer">
                         <p>

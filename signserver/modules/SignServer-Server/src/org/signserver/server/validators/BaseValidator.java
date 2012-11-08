@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server.validators;
 
+import java.util.LinkedList;
+import java.util.List;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.ValidatorStatus;
 import org.signserver.common.WorkerStatus;
@@ -30,7 +32,9 @@ public abstract class BaseValidator extends BaseProcessable implements IValidato
      * @see org.signserver.server.IProcessable#getStatus()
      */
     @Override
-    public WorkerStatus getStatus() {
-        return new ValidatorStatus(workerId, getFatalErrors(), new ProcessableConfig(config));
+    public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
+        final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
+        fatalErrors.addAll(getFatalErrors());
+        return new ValidatorStatus(workerId, fatalErrors, new ProcessableConfig(config));
     }
 }

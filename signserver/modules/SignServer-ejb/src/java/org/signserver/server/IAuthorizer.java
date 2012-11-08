@@ -12,10 +12,10 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.util.List;
 import javax.persistence.EntityManager;
-
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -62,4 +62,15 @@ public interface IAuthorizer {
 	 * @throws IllegalRequestException if the requester isn't authorized or couldn't be authenticated for some other reason.
 	 */
 	void isAuthorized(ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, SignServerException;
+    
+    /**
+     * Checks if the Authorizer reports anything that would lead to it not to be 
+     * able to work. 
+     * If the returned list is non-empty means that the worker should be 
+     * considered offline.
+     * 
+     * @return A list of errors preventing this Authorizer from working
+     * or empty if it is "ALLOK".
+     */
+    List<String> getFatalErrors();
 }

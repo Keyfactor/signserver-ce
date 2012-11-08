@@ -13,13 +13,13 @@
 package org.signserver.server;
 
 import java.security.cert.X509Certificate;
-
+import java.util.Collections;
+import java.util.List;
 import javax.persistence.EntityManager;
-
 import org.ejbca.util.CertTools;
 import org.signserver.common.GenericSignRequest;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -42,6 +42,11 @@ public class DummyAuthorizer implements IAuthorizer {
             throw new SignServerException("Error initializing DummyAuthorizer, TESTAUTHPROP must be set");
         }
 
+    }
+    
+    @Override
+    public List<String> getFatalErrors() {
+        return Collections.emptyList();
     }
 
     /**

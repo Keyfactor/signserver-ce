@@ -41,9 +41,10 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      * @see org.signserver.server.IProcessable#getStatus()
      */
     @Override
-    public WorkerStatus getStatus() {
+    public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
         SignerStatus retval = null;
-        final List<String> fatalErrors = new LinkedList<String>(getFatalErrors());
+        final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
+        fatalErrors.addAll(getFatalErrors());
 
         final boolean keyUsageCounterDisabled = config.getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
         

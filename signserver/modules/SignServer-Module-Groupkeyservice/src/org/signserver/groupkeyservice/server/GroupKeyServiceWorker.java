@@ -12,8 +12,9 @@
  *************************************************************************/
 package org.signserver.groupkeyservice.server;
 
+import java.util.Collections;
+import java.util.List;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -55,6 +56,11 @@ public class GroupKeyServiceWorker extends BaseProcessable implements IGroupKeyS
         super.init(workerId, config, workerContext, workerEntityManager);
 
         groupKeyService = createGroupService(config);
+    }
+    
+    @Override
+    public List<String> getFatalErrors() {
+        return Collections.emptyList();
     }
 
     /**
@@ -128,5 +134,10 @@ public class GroupKeyServiceWorker extends BaseProcessable implements IGroupKeyS
     @Override
     public WorkerStatus getStatus() {
         return groupKeyService.getStatus();
+    }
+    
+    @Override
+    public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
+        return getStatus();
     }
 }

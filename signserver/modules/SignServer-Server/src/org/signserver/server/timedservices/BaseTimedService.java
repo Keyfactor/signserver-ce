@@ -14,7 +14,8 @@ package org.signserver.server.timedservices;
 
 import java.text.ParseException;
 import java.util.Date;
-
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
 import org.signserver.common.ServiceConfig;
@@ -104,8 +105,10 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     }
 
     @Override
-    public WorkerStatus getStatus() {
-        ServiceStatus retval = new ServiceStatus(workerId, getFatalErrors(), new ServiceConfig(config));
+    public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
+        final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
+        fatalErrors.addAll(getFatalErrors());
+        ServiceStatus retval = new ServiceStatus(workerId, fatalErrors, new ServiceConfig(config));
 
         return retval;
     }

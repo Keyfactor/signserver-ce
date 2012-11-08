@@ -12,17 +12,17 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizationRequiredException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -158,5 +158,10 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
         if (forwardedAddress != null) {
             logMap.put(IAuthorizer.LOG_FORWARDED_ADDRESS, forwardedAddress);
         }
+    }
+
+    @Override
+    public List<String> getFatalErrors() {
+        return Collections.emptyList();
     }
 }

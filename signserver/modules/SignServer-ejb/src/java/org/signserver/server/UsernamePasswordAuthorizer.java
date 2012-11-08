@@ -17,15 +17,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.AuthorizationRequiredException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -59,6 +58,11 @@ public class UsernamePasswordAuthorizer implements IAuthorizer {
             final EntityManager em)
             throws SignServerException {
         loadAccounts(config);
+    }
+    
+    @Override
+    public List<String> getFatalErrors() {
+        return Collections.emptyList();
     }
 
     @Override

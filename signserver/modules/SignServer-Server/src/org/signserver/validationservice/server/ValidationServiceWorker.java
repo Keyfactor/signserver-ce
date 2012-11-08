@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.validationservice.server;
 
+import java.util.List;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -27,7 +27,6 @@ import org.signserver.server.BaseProcessable;
 import org.signserver.server.WorkerContext;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidationServiceConstants;
-import org.signserver.validationservice.server.IValidationService;
 
 /**
  * Class acting as middle-ware transforming an ISigner to
@@ -105,7 +104,8 @@ public class ValidationServiceWorker extends BaseProcessable {
     /**
      * @see org.signserver.server.BaseProcessable#getStatus()
      */
-    public WorkerStatus getStatus() {
+    @Override
+    public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
         return validationService.getStatus();
     }
 }

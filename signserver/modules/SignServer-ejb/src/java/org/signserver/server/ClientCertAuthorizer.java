@@ -15,15 +15,15 @@ package org.signserver.server;
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
-
+import java.util.List;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
@@ -51,6 +51,11 @@ public class ClientCertAuthorizer implements IAuthorizer {
             final EntityManager em)  throws SignServerException {
         this.config = new ProcessableConfig(config);
         this.workerId = workerId;
+    }
+    
+    @Override
+    public List<String> getFatalErrors() {
+        return Collections.emptyList();
     }
 
     /**

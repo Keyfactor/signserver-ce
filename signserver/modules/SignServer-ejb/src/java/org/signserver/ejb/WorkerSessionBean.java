@@ -608,13 +608,26 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      */
     @Override
     public WorkerStatus getStatus(int workerId) throws InvalidWorkerIdException {
-        final WorkerStatus result;
         IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + workerId
                     + " doesn't exist");
         }
-        return worker.getStatus();
+        final List<String> errorsAtEjbLevel = new LinkedList<String>();
+        if (worker instanceof IProcessable) {
+            final IProcessable processable = (IProcessable) worker;
+            try {
+                final IAuthorizer authenticator = workerManagerSession.getAuthenticator(
+                        workerId, processable.getAuthenticationType(), worker.getConfig());
+                errorsAtEjbLevel.addAll(authenticator.getFatalErrors());
+            } catch (IllegalRequestException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unable to get authenticator for worker: " + workerId, ex);
+                }
+                errorsAtEjbLevel.add(ex.getLocalizedMessage());
+            }
+        }
+        return worker.getStatus(errorsAtEjbLevel);
     }
 
     /* (non-Javadoc)

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.util.List;
 import javax.persistence.EntityManager;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
@@ -42,7 +43,11 @@ public interface IWorker {
     /**
      * Should return the actual status of the worker, status could be if
      * the signer is activated or not, or equivalent for a service.
+     * @param additionalFatalErrors Additional errors discovered for this worker
+     * for instance by the WorkerSessionBean and that would not be discovered 
+     * by the worker it self. Example are errors in the configuration of an 
+     * IAuthorizer.
      * @return a WorkerStatus object.
      */
-    public WorkerStatus getStatus();
+    public WorkerStatus getStatus(final List<String> additionalFatalErrors);
 }

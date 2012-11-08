@@ -2502,7 +2502,7 @@ When ALLOW_FROM is set to the value ALL, access is granted for all IP addresses 
                         <p>
 <b>ALLOW_FORWARDED_FROM</b> = Comma-separated list of IP addresses to allow forwarded requests from.
 These addresses are the ones appearing in the X-Forwarded-For header as set by proxies
-(f.ex. when using an Apache web server as a front-end proxy). Only the last IP address in the the comma-separated list
+(i.e. when using an Apache web server as a front-end proxy). Only the last IP address in the the comma-separated list
 in the header is considered, i.e. when using multiple proxies, only the last proxied address in the chain
 is granted access using this property. The default when not specifying this property is to allow proxying from any address.
                         </p>

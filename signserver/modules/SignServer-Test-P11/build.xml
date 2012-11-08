@@ -19,8 +19,7 @@
     <target name="-pre-compile-test-single" depends="-modules-check-appserver-home"/>
     
     <target name="-post-test-run">
-        <property name="test.dir" value="build/test/"/>
-        <mkdir dir="${test.dir}/reports/html" />
+        <mkdir dir="../../bin/junit/reports" />
     </target>
     
     <!--

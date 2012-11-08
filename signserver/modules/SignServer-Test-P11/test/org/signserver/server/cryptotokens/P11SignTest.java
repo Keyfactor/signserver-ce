@@ -75,12 +75,14 @@ public class P11SignTest extends ModulesTestCase {
     
     private final File pdfSampleFile;
     private final File odfSampleFile;
+    private final File ooxmlSampleFile;
 
     public P11SignTest() {
         File home = new File(System.getenv("SIGNSERVER_HOME"));
         assertTrue("Environment variable SIGNSERVER_HOME", home.exists());
         pdfSampleFile = new File(home, "res/test/pdf/sample.pdf");
         odfSampleFile = new File(home, "res/signingtest/input/test.odt");
+        ooxmlSampleFile = new File(home, "res/signingtest/input/test.docx");
         sharedLibrary = getConfig().getProperty("test.p11.sharedlibrary");
         slot = getConfig().getProperty("test.p11.slot");
         pin = getConfig().getProperty("test.p11.pin");
@@ -99,22 +101,22 @@ public class P11SignTest extends ModulesTestCase {
         super.tearDown();
     }
     
-    private void setPDFSignerProperties() throws Exception {
+    private void setPDFSignerProperties(final int workerId) throws Exception {
         // Setup worker
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKER_PDF + ".CLASSPATH", "org.signserver.module.pdfsigner.PDFSigner");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKER_PDF + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
-        workerSession.setWorkerProperty(WORKER_PDF, "NAME", "PDFSignerP11");
-        workerSession.setWorkerProperty(WORKER_PDF, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(WORKER_PDF, "SHAREDLIBRARY", sharedLibrary);
-        workerSession.setWorkerProperty(WORKER_PDF, "SLOT", slot);
-        workerSession.setWorkerProperty(WORKER_PDF, "PIN", pin);
-        workerSession.setWorkerProperty(WORKER_PDF, "DEFAULTKEY", existingKey1);
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.pdfsigner.PDFSigner");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
+        workerSession.setWorkerProperty(workerId, "NAME", "PDFSignerP11");
+        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SLOT", slot);
+        workerSession.setWorkerProperty(workerId, "PIN", pin);
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
     }
     
     /** Tests that the getCertificateRequest method generates a request. */
     public void testGenerateCSR() throws Exception {
         try {
-            setPDFSignerProperties();
+            setPDFSignerProperties(WORKER_PDF);
             workerSession.reloadConfiguration(WORKER_PDF);
             
             // Tests generating a CSR
@@ -125,7 +127,7 @@ public class P11SignTest extends ModulesTestCase {
             assertTrue(csr.getBase64CertReq().length > 0);
             
             // Test for an non-existing key label
-            setPDFSignerProperties();
+            setPDFSignerProperties(WORKER_PDF);
             workerSession.setWorkerProperty(WORKER_PDF, "DEFAULTKEY", "NON-EXISTING-KEY-LABEL");
             workerSession.reloadConfiguration(WORKER_PDF);
             try {
@@ -145,7 +147,7 @@ public class P11SignTest extends ModulesTestCase {
      */
     public void testPDFSigner() throws Exception {
         try {
-            setPDFSignerProperties();
+            setPDFSignerProperties(WORKER_PDF);
             workerSession.reloadConfiguration(WORKER_PDF);
             
             // Generate CSR
@@ -434,5 +436,50 @@ public class P11SignTest extends ModulesTestCase {
         }
     }
     
-    // TODO: OOXMLSigner
+    private void setOOXMLSignerProperties(final int workerId) throws IOException {
+        // Setup worker
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.ooxmlsigner.OOXMLSigner");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
+        workerSession.setWorkerProperty(workerId, "NAME", "OOXMLSignerP11");
+        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SLOT", slot);
+        workerSession.setWorkerProperty(workerId, "PIN", pin);
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+    }
+    
+    /**
+     * Tests setting up a OOXML Signer, giving it a certificate and sign a document.
+     */
+    public void testOOXMLSigner() throws Exception {
+        final int workerId = WORKER_OOXML;
+        try {
+            setOOXMLSignerProperties(workerId);
+            workerSession.reloadConfiguration(workerId);
+            
+            // Generate CSR
+            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
+            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
+            
+            // Issue certificate
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+            
+            // Install certificate and chain
+            workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(workerId);
+            
+            // Test active
+            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            assertEquals("errors: " + errors, 0, errors.size());
+            
+            // Test signing
+            signGenericDocument(workerId, readFile(ooxmlSampleFile));
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
 }

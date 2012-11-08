@@ -4997,6 +4997,24 @@ If SignServer is configured to run without database some tests needs to be exclu
                     <source>
 bin/ant test:run -Dexcludes="**/ArchivingCLITest*,**/GroupKeyServiceCLITest*,**/Base64DatabaseArchiverTest*,**/OldDatabaseArchiverTest*,,**/GroupKeyServiceTest*,**/ArchiveTest*"
                     </source>
+                    
+                    <subsubsection name="System tests with HSM">
+                        <p>
+To run system tests with an HSM create an properties file in SIGNSERVER_HOME called test-config.properties containing the PKCS#11 configuration including the key alias for an existing RSA key-pair:                            
+                        </p>
+                        <source>
+test.p11.sharedlibrary=/opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so
+test.p11.slot=1
+test.p11.pin=foo123
+test.p11.existingkey1=mykey001
+                        </source>
+                        <p>
+The tests can be run with:
+                        </p>
+                        <source>
+ant test:p11:run test:report
+                        </source>
+                    </subsubsection>
                 </subsection>
                 
                 <subsection name="Random testing">

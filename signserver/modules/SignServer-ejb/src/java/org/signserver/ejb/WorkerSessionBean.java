@@ -412,7 +412,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
     }
 
-    private void logException(Exception ex, Map<String, String> logMap,
+    private void logException(Exception ex, LogMap logMap,
     		IWorkerLogger workerLogger) throws WorkerLoggerException {
     	logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
     	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
@@ -428,7 +428,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      * @throws CryptoTokenOfflineException
      */
     private void checkSignerValidity(final int workerId,
-            final WorkerConfig awc, final Map<String, String> logMap)
+            final WorkerConfig awc, final LogMap logMap)
             throws CryptoTokenOfflineException {
 
         // If the signer have a certificate, check that it is usable

@@ -30,6 +30,7 @@ import org.signserver.server.config.entities.GlobalConfigurationDataService;
 import org.signserver.server.config.entities.IGlobalConfigurationDataService;
 import org.signserver.server.log.EventType;
 import org.signserver.server.log.ISystemLogger;
+import org.signserver.server.log.LogMap;
 import org.signserver.server.log.ModuleType;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
@@ -279,7 +280,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     private static void auditLog(final EventType eventType, final String property,
             final String value) {
         try {
-            final Map<String, String> logMap = new HashMap<String, String>();
+            final LogMap logMap = new LogMap();
 
             if (property != null) {
                 logMap.put(IGlobalConfigurationSession.LOG_PROPERTY,

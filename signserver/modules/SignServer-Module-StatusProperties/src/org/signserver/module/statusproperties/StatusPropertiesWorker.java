@@ -32,6 +32,7 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
+import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
@@ -106,11 +107,8 @@ public class StatusPropertiesWorker extends BaseSigner {
                 "Recieved request was not of expected type.");
         }
         
-        // Log values
-        final Map<String, String> logMap = (Map<String, String>) requestContext.get(RequestContext.LOGMAP);
-
         // Process the request
-        responseData = process(requestData, logMap);
+        responseData = process(requestData);
 
         if (request instanceof GenericSignRequest) {
             final GenericSignRequest signRequest = (GenericServletRequest) request;
@@ -138,7 +136,7 @@ public class StatusPropertiesWorker extends BaseSigner {
         return ret;
     }
 
-    private Properties process(Properties requestData, Map<String, String> logMap) throws IllegalRequestException {
+    private Properties process(Properties requestData) throws IllegalRequestException {
         try {
             Properties result = new Properties();
             

@@ -511,6 +511,7 @@ public class AdminWS {
      * @throws KeyStoreException
      */
     @WebMethod(operationName = "testKey")
+    @SuppressWarnings("deprecation") // We support the old KeyTestResult class as well
     public Collection<KeyTestResult> testKey(
             @WebParam(name = "signerId") final int signerId,
             @WebParam(name = "alias") final String alias,
@@ -522,8 +523,8 @@ public class AdminWS {
 
         // Workaround for KeyTestResult first placed in wrong package
         final Collection<KeyTestResult> results;
-	Collection<?> res = worker.testKey(signerId, alias, authCode.toCharArray());
-	if (res.size() < 1) {
+        Collection<?> res = worker.testKey(signerId, alias, authCode.toCharArray());
+        if (res.size() < 1) {
             results = new LinkedList<KeyTestResult>();
         } else {
             if (res.iterator().next() instanceof org.signserver.server.KeyTestResult) {
@@ -537,7 +538,12 @@ public class AdminWS {
                     results.add(res2);
                 }
             } else {
-                results = (Collection<KeyTestResult>) res;
+                results = new LinkedList<KeyTestResult>();
+                for (Object o : res) {
+                    if (o instanceof KeyTestResult) {
+                        results.add((KeyTestResult) o);
+                    }
+                }
             }
         }
 

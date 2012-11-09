@@ -48,6 +48,7 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -354,8 +355,7 @@ public class TimeStampSigner extends BaseSigner {
                 SignServerException {
 
         // Log values
-        final Map<String, String> logMap =
-                (Map<String, String>) requestContext.get(RequestContext.LOGMAP);
+        final LogMap logMap = LogMap.getInstance(requestContext);
 
         final ISignRequest sReq = (ISignRequest) signRequest;
 
@@ -653,7 +653,7 @@ public class TimeStampSigner extends BaseSigner {
 
     private TimeStampTokenGenerator getTimeStampTokenGenerator(
             final TimeStampRequest timeStampRequest,
-            final Map<String, String> logMap) throws
+            final LogMap logMap) throws
                 IllegalRequestException,
                 CryptoTokenOfflineException,
                 InvalidAlgorithmParameterException,

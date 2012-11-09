@@ -19,6 +19,7 @@ import javax.ejb.Stateless;
 import org.apache.log4j.Logger;
 import org.signserver.server.log.EventType;
 import org.signserver.server.log.ISystemLogger;
+import org.signserver.server.log.LogMap;
 import org.signserver.server.log.ModuleType;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
@@ -128,7 +129,7 @@ public class StatusRepositorySessionBean implements
     
     private static void auditLog(String property, String value, Long expiration) {
         try {
-            final Map<String, String> logMap = new HashMap<String, String>();
+            final LogMap logMap = new LogMap();
 
             logMap.put(IStatusRepositorySession.LOG_PROPERTY, property);
             if (value != null) {

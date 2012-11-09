@@ -34,6 +34,7 @@ import org.signserver.server.ITimeStampSignerLookup;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.dispatchers.BaseDispatcher;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
 
 /**
  * Dispatching requests to a Time Stamp Unit based on the requested profile.
@@ -112,7 +113,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
         final GenericSignResponse result;
         
         // Log values
-        final Map<String, String> logMap = (Map<String, String>) context.get(RequestContext.LOGMAP);
+        final LogMap logMap = LogMap.getInstance(context);
         
         // Check context
         final RequestContext nextContext = context;

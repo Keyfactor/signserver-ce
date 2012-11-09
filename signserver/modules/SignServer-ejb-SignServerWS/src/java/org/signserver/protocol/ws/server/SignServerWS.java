@@ -35,6 +35,7 @@ import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 
 /**
@@ -188,9 +189,7 @@ public class SignServerWS implements ISignServerWS {
         requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
         
         
-        
-        final Map<String, String> logMap = new HashMap<String, String>();
-        requestContext.put(RequestContext.LOGMAP, logMap);
+        final LogMap logMap = LogMap.getInstance(requestContext);
 
         final String xForwardedFor = servletRequest.getHeader(RequestContext.X_FORWARDED_FOR);
         

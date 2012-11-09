@@ -13,10 +13,8 @@
 package org.signserver.server;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -27,6 +25,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.XForwardedForUtils;
+import org.signserver.server.log.LogMap;
 
 /**
  * Authorizer only accepting requests from certain IP addresses.
@@ -148,10 +147,13 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
 
     private void logRemoteAddress(final String remoteAddress, final String forwardedAddress,
             final RequestContext requestContext) {
-        Map<String, String> logMap = (Map)
-                requestContext.get(RequestContext.LOGMAP);
-        if (logMap == null) {
-            logMap = new HashMap<String, String>();
+        
+        final LogMap logMap;
+        final Object o = requestContext.get(RequestContext.LOGMAP);
+        if (o instanceof LogMap) {
+            logMap = (LogMap) o;
+        } else {
+            logMap = new LogMap();
             requestContext.put(RequestContext.LOGMAP, logMap);
         }
         logMap.put(IAuthorizer.LOG_REMOTEADDRESS, remoteAddress);

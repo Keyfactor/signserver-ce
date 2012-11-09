@@ -329,7 +329,8 @@ public class KeystoreCryptoToken implements ICryptoToken,
         }
     }
 
-    public Collection<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
+    @Override
+    public List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
         final KeyEntry entry = getKeyEntry(purpose);
         List<Certificate> result = entry.getCertificateChain();
         // Do not return the dummy certificate

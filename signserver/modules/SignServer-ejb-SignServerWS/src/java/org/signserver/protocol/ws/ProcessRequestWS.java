@@ -13,14 +13,11 @@
 package org.signserver.protocol.ws;
 
 import java.io.IOException;
-
-import java.util.HashMap;
-import java.util.Map;
 import javax.xml.bind.annotation.XmlTransient;
-
 import org.ejbca.util.Base64;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestAndResponseManager;
+import org.signserver.common.RequestMetadata;
 
 /**
  * WebService representation of a signature request, corresponding
@@ -33,7 +30,7 @@ public class ProcessRequestWS {
 
     private String requestDataBase64;
 
-    private Map<String, String> requestMetadata = new HashMap<String, String>();
+    private RequestMetadata requestMetadata = new RequestMetadata();
 
     public ProcessRequestWS() {
     }
@@ -85,11 +82,11 @@ public class ProcessRequestWS {
         return Base64.decode(requestDataBase64.getBytes());
     }
 
-    public Map<String, String> getRequestMetadata() {
+    public RequestMetadata getRequestMetadata() {
         return requestMetadata;
 }
 
-    public void setRequestMetadata(Map<String, String> requestMetadata) {
+    public void setRequestMetadata(RequestMetadata requestMetadata) {
         this.requestMetadata = requestMetadata;
     }
     

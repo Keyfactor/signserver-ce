@@ -35,6 +35,7 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.RequestContext;
+import org.signserver.common.RequestMetadata;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.protocol.ws.client.SignServerWSClientFactory;
@@ -173,16 +174,16 @@ public class SigningAndValidationWS implements ISigningAndValidation {
             List<ProcessRequestWS> list = new LinkedList<ProcessRequestWS>();
 
             ProcessRequestWS.RequestMetadata metadata = new ProcessRequestWS.RequestMetadata();
-            Map<String, String> requestMetadata = (Map<String, String>) context.get(RequestContext.REQUEST_METADATA);
-            if (requestMetadata != null) {
-                List<Entry> entries = metadata.getEntry();
-                for (Map.Entry<String, String> entry : requestMetadata.entrySet()) {
-                    Entry e = new Entry();
-                    e.setKey(entry.getKey());
-                    e.setValue(entry.getValue());
-                    entries.add(e);
-                }
+            final RequestMetadata requestMetadata = RequestMetadata.getInstance(context);
+            
+            List<Entry> entries = metadata.getEntry();
+            for (Map.Entry<String, String> entry : requestMetadata.entrySet()) {
+                Entry e = new Entry();
+                e.setKey(entry.getKey());
+                e.setValue(entry.getValue());
+                entries.add(e);
             }
+            
             
             for (ProcessRequest req : requests) {
                 ProcessRequestWS reqWS = new ProcessRequestWS();

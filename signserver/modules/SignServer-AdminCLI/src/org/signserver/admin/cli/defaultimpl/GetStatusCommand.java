@@ -76,7 +76,7 @@ public class GetStatusCommand extends AbstractCommand {
                     displayGlobalConfiguration();
                 }
 
-                List workers = helper.getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
+                List<Integer> workers = helper.getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
 
                 Collections.sort(workers);
 

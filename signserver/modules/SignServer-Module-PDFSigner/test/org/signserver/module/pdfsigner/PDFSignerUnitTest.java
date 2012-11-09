@@ -1210,7 +1210,7 @@ public class PDFSignerUnitTest extends TestCase {
             }
 
             @Override
-            public Collection<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+            public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
                 return Arrays.asList(certChain);
             }
 
@@ -1273,9 +1273,7 @@ public class PDFSignerUnitTest extends TestCase {
         }
         
         RequestContext context = new RequestContext();
-        Map<String, String> metadata = new HashMap<String, String>();
-        metadata.put(RequestContext.METADATA_PDFPASSWORD, password);
-        context.put(RequestContext.REQUEST_METADATA, metadata);
+        RequestMetadata.getInstance(context).put(RequestContext.METADATA_PDFPASSWORD, password);
         
         final GenericSignResponse response = 
                 (GenericSignResponse) workerSession.process(WORKER1, 

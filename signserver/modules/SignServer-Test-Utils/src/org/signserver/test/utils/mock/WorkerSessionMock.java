@@ -35,6 +35,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.IProcessable;
+import org.signserver.server.log.LogMap;
 
 /**
  *
@@ -55,6 +56,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         this.globalConfig = globalConfig;
     }
 
+    @Override
     public ProcessResponse process(int workerId, ProcessRequest request,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
@@ -63,12 +65,8 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
             throw new CryptoTokenOfflineException("No such worker: "
                     + workerId);
         }
-        Map<String, String> logMap = (Map)
-                requestContext.get(RequestContext.LOGMAP);
-        if (logMap == null) {
-            logMap = new HashMap<String, String>();
-            requestContext.put(RequestContext.LOGMAP, logMap);
-        }
+        // Put in an empty log map if none exists yet
+        LogMap.getInstance(requestContext);
         if (requestContext.get(RequestContext.TRANSACTION_ID) == null) {
            requestContext.put(RequestContext.TRANSACTION_ID, UUID.randomUUID().toString());
         }

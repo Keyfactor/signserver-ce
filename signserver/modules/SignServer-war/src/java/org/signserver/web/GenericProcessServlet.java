@@ -39,6 +39,7 @@ import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
@@ -130,42 +131,45 @@ public class GenericProcessServlet extends HttpServlet {
             upload.setSizeMax(MAX_UPLOAD_SIZE);
 
             try {
-                final List<FileItem> items = upload.parseRequest(req);
+                final List items = upload.parseRequest(req);
                 final Iterator iter = items.iterator();
                 FileItem fileItem = null;
                 while (iter.hasNext()) {
-                    final FileItem item = (FileItem) iter.next();
+                    final Object o = iter.next();
+                    if (o instanceof FileItem) {
+                        final FileItem item = (FileItem) o;
 
-                    if (item.isFormField()) {
-                    	if (!workerRequest) {
-	                        if (WORKERNAME_PROPERTY_NAME.equals(item.getFieldName())) {
-	                            if (LOG.isDebugEnabled()) {
-	                                LOG.debug("Found a signerName in the request: "
-	                                        + item.getString());
-	                            }
-	                            workerId = getWorkerSession().getWorkerId(item.getString());
-	                        } else if (WORKERID_PROPERTY_NAME.equals(item.getFieldName())) {
-	                            if (LOG.isDebugEnabled()) {
-	                                LOG.debug("Found a signerId in the request: "
-	                                        + item.getString());
-	                            }
-	                            try {
-	                                workerId = Integer.parseInt(item.getString());
-	                            } catch (NumberFormatException ignored) {
-	                            }
-	                        }
-                        }
-                    	
-                    	if (PDFPASSWORD_PROPERTY_NAME.equals(item.getFieldName())) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Found a pdfPassword in the request.");
+                        if (item.isFormField()) {
+                            if (!workerRequest) {
+                                if (WORKERNAME_PROPERTY_NAME.equals(item.getFieldName())) {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Found a signerName in the request: "
+                                                + item.getString());
+                                    }
+                                    workerId = getWorkerSession().getWorkerId(item.getString());
+                                } else if (WORKERID_PROPERTY_NAME.equals(item.getFieldName())) {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Found a signerId in the request: "
+                                                + item.getString());
+                                    }
+                                    try {
+                                        workerId = Integer.parseInt(item.getString());
+                                    } catch (NumberFormatException ignored) {
+                                    }
+                                }
                             }
-                            pdfPassword = item.getString("ISO-8859-1");
-                        }
-                    } else {
-                        // We only care for one upload at a time right now
-                        if (fileItem == null) {
-                            fileItem = item;
+
+                            if (PDFPASSWORD_PROPERTY_NAME.equals(item.getFieldName())) {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Found a pdfPassword in the request.");
+                                }
+                                pdfPassword = item.getString("ISO-8859-1");
+                            }
+                        } else {
+                            // We only care for one upload at a time right now
+                            if (fileItem == null) {
+                                fileItem = item;
+                            }
                         }
                     }
                 }
@@ -286,10 +290,10 @@ public class GenericProcessServlet extends HttpServlet {
             clientCertificate = certificates[0];
         }
 
+        // Create request context and meta data
         final RequestContext context = new RequestContext(clientCertificate,
                 remoteAddr);
-        final Map<String, String> metadata = new HashMap<String, String>();
-        context.put(RequestContext.REQUEST_METADATA, metadata);
+        RequestMetadata metadata = RequestMetadata.getInstance(context);
 
         IClientCredential credential;
 
@@ -318,9 +322,8 @@ public class GenericProcessServlet extends HttpServlet {
         }
         context.put(RequestContext.CLIENT_CREDENTIAL, credential);
 
-
-        final Map<String, String> logMap = new HashMap<String, String>();
-        context.put(RequestContext.LOGMAP, logMap);
+        // Create log map
+        LogMap logMap = LogMap.getInstance(context);
 
         final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
         

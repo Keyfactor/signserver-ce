@@ -121,7 +121,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final long startTime = System.currentTimeMillis();
 
         // Map of log entries
-        final Map<String, String> logMap = getLogMap(requestContext);
+        final LogMap logMap = LogMap.getInstance(requestContext);
                 
         // Get transaction ID or create new if not created yet
         final String transactionID;
@@ -1043,13 +1043,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         List<Certificate> ret = null;
         IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker instanceof BaseProcessable) {
-            Collection<Certificate> certs = ((BaseProcessable) worker)
-                    .getSigningCertificateChain();
-            if (certs instanceof List) {
-                ret = (List) certs;
-            } else if (certs != null) {
-                ret = new LinkedList<Certificate>(certs);
-            }
+            ret = ((BaseProcessable) worker).getSigningCertificateChain();
         }
         return ret;
     }
@@ -1241,16 +1235,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
     private String generateTransactionID() {
         return UUID.randomUUID().toString();
-    }
-
-    private Map<String, String> getLogMap(final RequestContext requestContext) {
-        Map<String, String> logMap = (Map)
-                requestContext.get(RequestContext.LOGMAP);
-        if (logMap == null) {
-            logMap = new HashMap<String, String>();
-            requestContext.put(RequestContext.LOGMAP, logMap);
-        }
-        return logMap;
     }
     
     /**

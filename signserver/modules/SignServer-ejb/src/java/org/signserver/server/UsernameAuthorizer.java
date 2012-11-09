@@ -13,11 +13,9 @@
 package org.signserver.server;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -27,6 +25,7 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.log.LogMap;
 
 /**
  * Authorizer requiring only a username (and no password as that is assumed to
@@ -151,13 +150,7 @@ public class UsernameAuthorizer implements IAuthorizer {
 
     private static void logUsername(final String username,
             final RequestContext requestContext) {
-        Map<String, String> logMap = (Map)
-                requestContext.get(RequestContext.LOGMAP);
-        if (logMap == null) {
-            logMap = new HashMap<String, String>();
-            requestContext.put(RequestContext.LOGMAP, logMap);
-        }
-        logMap.put(IAuthorizer.LOG_USERNAME, username);
+        LogMap.getInstance(requestContext).put(IAuthorizer.LOG_USERNAME, username);
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import javax.ejb.EJB;
 import javax.naming.NamingException;
@@ -194,7 +195,8 @@ public class SoftCryptoToken implements ICryptoToken {
         return null;
     }
 
-    public Collection<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
+    @Override
+    public List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
         return null;
     }
 

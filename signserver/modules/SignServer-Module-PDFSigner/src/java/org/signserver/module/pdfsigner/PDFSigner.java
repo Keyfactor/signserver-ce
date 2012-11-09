@@ -18,8 +18,8 @@ import com.lowagie.text.pdf.*;
 import java.io.*;
 import java.net.URL;
 import java.security.*;
-import java.security.cert.Certificate;
 import java.security.cert.*;
+import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -28,12 +28,14 @@ import javax.persistence.EntityManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
+import org.signserver.common.RequestMetadata;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.statistics.Event;
 import org.signserver.validationservice.server.ValidationUtils;
@@ -190,8 +192,7 @@ public class PDFSigner extends BaseSigner {
         }
 
         // Log values
-        final Map<String, String> logMap =
-                (Map<String, String>) requestContext.get(RequestContext.LOGMAP);
+        final LogMap logMap = LogMap.getInstance(requestContext);
 
         // retrieve and preprocess configuration parameter values
         PDFSignerParameters params = new PDFSignerParameters(workerId, config);
@@ -390,7 +391,7 @@ public class PDFSigner extends BaseSigner {
     		Calendar cal, PDFSignerParameters params, Certificate[] certChain, TSAClient tsc, byte[] ocsp,
     		PdfSignatureAppearance sap) throws IOException, DocumentException, SignServerException {
      
-        HashMap exc = new HashMap();
+        final HashMap<PdfName, Integer> exc = new HashMap<PdfName, Integer>();
         exc.put(PdfName.CONTENTS, new Integer(size * 2 + 2));
         sap.preClose(exc);
 
@@ -883,17 +884,11 @@ public class PDFSigner extends BaseSigner {
 
     private static byte[] getPassword(final RequestContext context) throws UnsupportedEncodingException {
         final byte[] result;    
-        Object o = context.get(RequestContext.REQUEST_METADATA);
-        if (o instanceof Map) {
-            Map<String, String> metadata = (Map<String, String>) o;
-            String password = metadata.get(RequestContext.METADATA_PDFPASSWORD);
-            if (password == null) {
-                result = null;
-            } else {
-                result = password.getBytes("ISO-8859-1");
-}
-        } else {
+        final String password = RequestMetadata.getInstance(context).get(RequestContext.METADATA_PDFPASSWORD);
+        if (password == null) {
             result = null;
+        } else {
+            result = password.getBytes("ISO-8859-1");
         }
         return result;
     }

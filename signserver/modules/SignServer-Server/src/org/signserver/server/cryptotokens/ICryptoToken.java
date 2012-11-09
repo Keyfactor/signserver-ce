@@ -18,6 +18,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 import org.signserver.common.ICertReqData;
@@ -126,7 +127,7 @@ public interface ICryptoToken {
      * All other crypto tokens should return 'null' and let the signer fetch the certificate from database.
      * 
      */
-    Collection<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException;
+    List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException;
 
     /**
      * Method used to tell the crypto token to create a certificate request using its crypto token.

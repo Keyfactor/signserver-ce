@@ -19,6 +19,7 @@ import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -171,7 +172,8 @@ public abstract class CryptoTokenBase implements ICryptoToken {
         return null;
     }
 
-    public Collection<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
+    @Override
+    public List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
         return null;
     }
 

@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 
@@ -213,8 +214,8 @@ public class ProcessableConfig {
      * 
      */
     @SuppressWarnings("unchecked")
-    public Collection<Certificate> getSignerCertificateChain() {
-        Collection<Certificate> result = null;
+    public List<Certificate> getSignerCertificateChain() {
+        List<Certificate> result = null;
         String stringcert = (String) get(SIGNERCERTCHAIN);
         if (stringcert == null || stringcert.equals("")) {
             stringcert = (String) get(WorkerConfig.getNodeId() + "." + SIGNERCERTCHAIN);

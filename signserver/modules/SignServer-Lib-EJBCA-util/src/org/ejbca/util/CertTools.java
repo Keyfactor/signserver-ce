@@ -1085,7 +1085,7 @@ public class CertTools {
      * @exception IOException if the stream cannot be read.
      * @exception CertificateException if the stream does not contain a correct certificate.
      */
-    public static Collection<Certificate> getCertsFromPEM(InputStream certstream)
+    public static List<Certificate> getCertsFromPEM(InputStream certstream)
     throws IOException, CertificateException {
         log.trace(">getCertfromPEM");
         ArrayList<Certificate> ret = new ArrayList();

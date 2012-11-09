@@ -78,14 +78,13 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
 
         // RequestContext is used by this API to transfer the metadata
         RequestContext context = new RequestContext();
-        Map<String, String> metadata = new HashMap<String, String>();
+        RequestMetadata metadata = RequestMetadata.getInstance(context);
         metadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
         String fileName = (String) requestContext.get(RequestContext.FILENAME);
         // if a file name was specified, pass it in as meta data
         if (fileName != null) {
         	metadata.put(RequestContext.FILENAME, fileName);
         }
-        context.put(RequestContext.REQUEST_METADATA, metadata);
         
         final ProcessResponse response = signServer.process(workerName,
                 new GenericSignRequest(requestId, data), context);

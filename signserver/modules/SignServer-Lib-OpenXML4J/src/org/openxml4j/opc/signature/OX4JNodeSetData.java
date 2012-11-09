@@ -80,6 +80,7 @@ public class OX4JNodeSetData implements NodeSetData {
 		return nodeSet.iterator();
 	}
 
+    @SuppressWarnings("unchecked") // XXX: Uses unchecked calls
 	private void toNodeSet(final Node rootNode, final Set result) {
 		// handle EKSHA1 under DKT
 		if (rootNode == null)

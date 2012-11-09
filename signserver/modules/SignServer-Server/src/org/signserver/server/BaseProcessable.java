@@ -20,7 +20,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
-import javax.ejb.EJBException;
+import java.util.List;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.*;
@@ -35,7 +35,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     protected ICryptoToken cryptoToken;
     
     private X509Certificate cert;
-    private Collection<Certificate> certChain;
+    private List<Certificate> certChain;
 
     protected BaseProcessable() {
     }
@@ -194,7 +194,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * Method that returns the certificate chain used when signing
      * @throws CryptoTokenOfflineException 
      */
-    public Collection<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+    public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
         if (certChain == null) {
             try {
                 ICryptoToken cToken = getCryptoToken();

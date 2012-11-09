@@ -13,7 +13,6 @@
 package org.signserver.server.archive.olddbarchiver;
 
 import java.security.cert.X509Certificate;
-import java.util.Map;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveData;
@@ -28,6 +27,7 @@ import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
 
 /**
  * Archiver only accepting responses and archiving to the database. 
@@ -122,7 +122,7 @@ public class OldDatabaseArchiver implements Archiver {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archived with uniqueId: " + uniqueId);
             }
-            Map<String, String> logMap = (Map<String, String>) requestContext.get(RequestContext.LOGMAP);
+            LogMap logMap = LogMap.getInstance(requestContext);
             String ids = logMap.get(IWorkerLogger.LOG_ARCHIVE_IDS);
             if (ids == null) {
                 ids = uniqueId;

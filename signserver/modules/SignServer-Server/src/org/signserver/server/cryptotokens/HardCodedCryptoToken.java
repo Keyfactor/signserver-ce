@@ -28,17 +28,16 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
-
 import org.bouncycastle.util.encoders.Base64;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.SignerStatus;
+import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.common.SignerStatus;
 import static org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases.KEY_ALIAS_1;
 import static org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases.KEY_ALIAS_2;
 import static org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases.KEY_ALIAS_3;
@@ -373,8 +372,10 @@ public class HardCodedCryptoToken implements ICryptoToken {
 
     /**
      * Not supported
+     * XXX: Looks supported to me.
      */
-    public Collection<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
+    @Override
+    public List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
         ArrayList<Certificate> certs = new ArrayList<Certificate>();
         certs.add(cert);
         return certs;

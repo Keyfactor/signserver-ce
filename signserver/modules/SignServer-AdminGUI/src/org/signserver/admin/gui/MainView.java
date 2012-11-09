@@ -12,11 +12,6 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import javax.swing.event.ListSelectionEvent;
-import org.jdesktop.application.Action;
-import org.jdesktop.application.SingleFrameApplication;
-import org.jdesktop.application.FrameView;
-import org.jdesktop.application.Task;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -44,21 +39,23 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
+import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
+import org.jdesktop.application.FrameView;
 import org.jdesktop.application.ResourceMap;
+import org.jdesktop.application.SingleFrameApplication;
+import org.jdesktop.application.Task;
 import org.jdesktop.application.TaskMonitor;
-import org.signserver.admin.gui.adminws.gen
-        .AdminNotAuthorizedException_Exception;
+import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
-import org.signserver.admin.gui.adminws.gen
-        .CryptoTokenAuthenticationFailureException_Exception;
-import org.signserver.admin.gui.adminws.gen
-        .CryptoTokenOfflineException_Exception;
+import org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureException_Exception;
+import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
 import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
@@ -1360,8 +1357,12 @@ public class MainView extends FrameView {
             if (o instanceof X509Certificate) {
                 certificates = Collections.singletonList((X509Certificate) o);
             } else if (o instanceof Collection) {
-                certificates = new ArrayList<X509Certificate>(
-                        (Collection) o);
+                certificates = new LinkedList<X509Certificate>();
+                for (Object c : (Collection) o) {
+                    if (c instanceof X509Certificate) {
+                        certificates.add((X509Certificate) c);
+                    }
+                }
             }
             if (certificates != null) {
                 final ViewCertificateFrame frame =
@@ -1497,7 +1498,7 @@ public class MainView extends FrameView {
         return new RefreshWorkersTask(getApplication());
     }
 
-    private class RefreshWorkersTask extends org.jdesktop.application.Task<Object, Void> {
+    private class RefreshWorkersTask extends org.jdesktop.application.Task<List<Worker>, Void> {
         RefreshWorkersTask(org.jdesktop.application.Application app) {
             // Runs on the EDT.  Copy GUI state that
             // doInBackground() depends on from parameters
@@ -1506,7 +1507,7 @@ public class MainView extends FrameView {
 
             selectedWorkerBeforeRefresh = (Worker) workerComboBox.getSelectedItem();
         }
-        @Override protected Object doInBackground() {
+        @Override protected List<Worker> doInBackground() {
             // Your Task's code here.  This method runs
             // on a background thread, so don't reference
             // the Swing GUI from here.
@@ -1604,13 +1605,13 @@ public class MainView extends FrameView {
 
             return newSigners;  // return your result
         }
-        @Override protected void succeeded(final Object result) {
+        @Override protected void succeeded(final List<Worker> result) {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
             
             SignServerAdminGUIApplication.getApplication().getMainFrame().setTitle(SignServerAdminGUIApplication.getServerHost() + " - " + texts.getString("Application.title"));
             
-            final List<Worker> newWorkers = (List) result;
+            final List<Worker> newWorkers = result;
 
             // Save selection
             ArrayList<Integer> indices = new ArrayList<Integer>();

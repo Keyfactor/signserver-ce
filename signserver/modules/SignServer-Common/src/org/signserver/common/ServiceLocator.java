@@ -63,6 +63,7 @@ public final class ServiceLocator {
      * @return an instance of the remote interface
      * @throws RemoteException in case of failure to lookup
      */
+    @SuppressWarnings("unchecked") // Don't think we can make this without unchecked cast
     public <T> T lookupRemote(final Class<T> remoteInterface)
             throws NamingException {
         T beanInterface;
@@ -83,12 +84,13 @@ public final class ServiceLocator {
         return beanInterface;
     }
 
-        /**
+    /**
      * @param <T> Type of class
      * @param localInterface Local interface to lookup
      * @return an instance of the remote interface
      * @throws NamingException in case of failure to lookup
      */
+    @SuppressWarnings("unchecked") // Don't think we can make this without unchecked cast
     public <T> T lookupLocal(final Class<T> localInterface)
             throws NamingException {
         T beanInterface;

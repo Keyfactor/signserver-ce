@@ -1056,12 +1056,12 @@ public class CertTools {
      * @exception IOException if the filen cannot be read.
      * @exception CertificateException if the filen does not contain a correct certificate.
      */
-    public static Collection getCertsFromPEM(String certFile) throws IOException, CertificateException {
+    public static Collection<Certificate> getCertsFromPEM(String certFile) throws IOException, CertificateException {
     	if (log.isTraceEnabled()) {
     		log.trace(">getCertfromPEM: certFile=" + certFile);
     	}
         InputStream inStrm = null;
-        Collection certs;
+        Collection<Certificate> certs;
 		try {
 			inStrm = new FileInputStream(certFile);
 			certs = getCertsFromPEM(inStrm);
@@ -1085,10 +1085,10 @@ public class CertTools {
      * @exception IOException if the stream cannot be read.
      * @exception CertificateException if the stream does not contain a correct certificate.
      */
-    public static Collection getCertsFromPEM(InputStream certstream)
+    public static Collection<Certificate> getCertsFromPEM(InputStream certstream)
     throws IOException, CertificateException {
         log.trace(">getCertfromPEM");
-        ArrayList ret = new ArrayList();
+        ArrayList<Certificate> ret = new ArrayList();
         String beginKeyTrust = "-----BEGIN TRUSTED CERTIFICATE-----";
         String endKeyTrust = "-----END TRUSTED CERTIFICATE-----";
         BufferedReader bufRdr = null;

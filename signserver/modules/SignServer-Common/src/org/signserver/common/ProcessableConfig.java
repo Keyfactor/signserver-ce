@@ -68,10 +68,16 @@ public class ProcessableConfig {
     }
 
     private Serializable get(String key) {
-        if (workerConfig.getProperty(key) == null) {
-            return workerConfig.getData().get(key);
+        final String value = workerConfig.getProperty(key);
+        if (value == null) {
+            final Object o = workerConfig.getData().get(key);
+            if (o instanceof Serializable) {
+                return (Serializable) o;
+            } else {
+                return null;
+            }
         }
-        return workerConfig.getProperty(key);
+        return value;
     }
 
     /**

@@ -118,8 +118,7 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     /**
      * Special method to ge access to the complete data field
      */
-    @SuppressWarnings("unchecked")
-    HashMap<String, Serializable> getData() {
+    HashMap<Object, Object> getData() {
         return data;
     }
 

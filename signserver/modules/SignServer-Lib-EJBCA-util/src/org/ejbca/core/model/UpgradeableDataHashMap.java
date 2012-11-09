@@ -97,7 +97,7 @@ public abstract class UpgradeableDataHashMap implements IUpgradeableData, java.i
      */
     public abstract void upgrade();
 
-    protected HashMap data;
+    protected HashMap<Object, Object> data;
     private boolean isUpgraded = false;
 	public static final String VERSION = "version";
 }

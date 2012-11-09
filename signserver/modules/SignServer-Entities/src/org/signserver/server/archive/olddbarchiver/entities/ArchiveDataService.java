@@ -131,6 +131,7 @@ public class ArchiveDataService {
         return new ArrayList<ArchiveDataBean>();
     }
     
+    @SuppressWarnings("unchecked")
     public Collection<ArchiveDataBean> findAllByRequestCertificate(final int signerid, final String requestIssuerDN, final String requestCertSerialnumber) {
         try {
             return em.createNamedQuery("ArchiveDataBean.findAllByRequestCertificate").setParameter(1, signerid).setParameter(2, requestIssuerDN).setParameter(3, requestCertSerialnumber).getResultList();
@@ -154,6 +155,7 @@ public class ArchiveDataService {
         return new ArrayList<ArchiveDataBean>();
     }
     
+    @SuppressWarnings("unchecked")
     public Collection<ArchiveDataBean> findAllByRequestIP(final int signerId, final String requestIP) {
         try {
             return em.createNamedQuery("ArchiveDataBean.findAllByRequestIP").setParameter(1, signerId).setParameter(2, requestIP).getResultList();

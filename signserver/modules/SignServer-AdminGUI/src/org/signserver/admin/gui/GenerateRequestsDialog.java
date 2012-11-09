@@ -60,7 +60,7 @@ public class GenerateRequestsDialog extends JDialog {
     public static final int CANCEL = 0;
     public static final int OK = 1;
 
-    private static final Vector<String> COLUMN_NAMES = new Vector(Arrays.asList(
+    private static final Vector<String> COLUMN_NAMES = new Vector<String>(Arrays.asList(
             new String[] {
         "Signer",
         "Key",

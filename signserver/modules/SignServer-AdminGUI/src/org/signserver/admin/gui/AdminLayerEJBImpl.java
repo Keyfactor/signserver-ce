@@ -647,6 +647,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @throws KeyStoreException_Exception
      */
     @Override
+    @SuppressWarnings("deprecation") // org.signserver.server.KeyTestResult is used for backwards compatibility
     public List<KeyTestResult> testKey(
             final int signerId,
             final String alias,

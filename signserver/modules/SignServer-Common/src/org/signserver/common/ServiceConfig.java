@@ -72,7 +72,14 @@ public class ServiceConfig {
     }
 
     private Serializable get(String key) {
-        return workerConfig.getData().get(key);
+        final Serializable result;
+        final Object o = workerConfig.getData().get(key);
+        if (o instanceof Serializable) {
+            result = (Serializable) o;
+        } else {
+            result = null;
+        }
+        return result;
     }
 
     public Date getLastRunTimestamp() {

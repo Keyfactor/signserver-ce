@@ -15,6 +15,7 @@ package org.signserver.server.config.entities;
 import java.beans.XMLDecoder;
 import java.io.*;
 import java.util.HashMap;
+import java.util.Map;
 import javax.ejb.EJBException;
 import org.apache.log4j.Logger;
 import org.ejbca.util.Base64GetHashMap;
@@ -110,8 +111,16 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     public void setWorkerConfig(int workerId, WorkerConfig signconf) throws FileBasedDatabaseException {
         synchronized (manager) {
             // We must base64 encode string for UTF safety
-            HashMap a = new Base64PutHashMap();
-            a.putAll((HashMap) signconf.saveData());
+            @SuppressWarnings("unchecked")
+            HashMap<Object, Object> a = new Base64PutHashMap();
+            final Object o = signconf.saveData();
+            if (o instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> data = (Map) o;
+                a.putAll(data);
+            } else {
+                throw new IllegalArgumentException("WorkerConfig should return a Map");
+            }
 
             java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
 

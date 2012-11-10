@@ -747,7 +747,7 @@ public class TimeStampSigner extends BaseSigner {
         return timeStampTokenGen;
     }
     
-    private Store getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException, CertificateEncodingException {
+    private Store getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException, CertificateEncodingException, IOException {
         Collection<Certificate> signingCertificateChain = getSigningCertificateChain();
         
         if (signingCertificateChain == null) {
@@ -765,11 +765,12 @@ public class TimeStampSigner extends BaseSigner {
     /**
      * @return True if the CertStore contained the Certificate
      */
-    private boolean containsCertificate(final Store store, final Certificate subject) throws CertStoreException {
+    private boolean containsCertificate(final Store store, final Certificate subject) throws CertStoreException, IOException, CertificateEncodingException {
+        final X509CertificateHolder cert = new X509CertificateHolder(subject.getEncoded());
         final Collection<?> matchedCerts = store.getMatches(new Selector() {
             
             public boolean match(Object obj) {
-                return subject.equals(obj);
+                return cert.equals(obj);
             }
             
             @Override
@@ -943,6 +944,9 @@ public class TimeStampSigner extends BaseSigner {
                 result.add("Unable to get certificate chain");
                 LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
             } catch (CertStoreException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            } catch (IOException ex) {
                 result.add("Unable to get certificate chain");
                 LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
             } catch (CertificateEncodingException ex) {

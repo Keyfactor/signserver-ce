@@ -83,7 +83,7 @@ public class OdfNamespace implements Comparable, NamespaceContext {
             return OdfName.get(this, name);
         }
     }
-    private static SortedSet mNamespaces = new TreeSet();
+    private static SortedSet<OdfNamespace> mNamespaces = new TreeSet<OdfNamespace>();
 
     public static OdfNamespace get(String uri) {
         OdfNamespace newns = new OdfNamespace(uri);

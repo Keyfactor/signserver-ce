@@ -33,11 +33,12 @@ import org.bouncycastle.asn1.cms.Time;
 import org.bouncycastle.asn1.x509.Attribute;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
 import org.bouncycastle.cms.SignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -308,14 +309,14 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             JcaContentSignerBuilder contentSigner = new JcaContentSignerBuilder(signatureAlgo);
             contentSigner.setProvider(provider);
 
-            CertStore cs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList), "BC");
             cmssdg.addSignerInfoGenerator(signerInfoBuilder.build(contentSigner.build(pk),
                     new X509CertificateHolder(x509cert.getEncoded())));
 
-            cmssdg.addCertificatesAndCRLs(cs);
+            JcaCertStore cs = new JcaCertStore(certList);
+            cmssdg.addCertificates(cs);
             
-            CMSProcessable cmspba = new CMSProcessableByteArray(content);
-            CMSSignedData cmssd = cmssdg.generate(dataOID, cmspba, true, provider);
+            CMSTypedData cmspba = new CMSProcessableByteArray(content);
+            CMSSignedData cmssd = cmssdg.generate(cmspba, true);
 
             byte[] der = ASN1Primitive.fromByteArray(cmssd.getEncoded()).getEncoded(); 
 
@@ -353,39 +354,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         
         	return signResponse;
 
-  
-        } catch (InvalidAlgorithmParameterException e) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException(
-                    "InvalidAlgorithmParameterException: " + e.getMessage(), e);
-            LOG.error("InvalidAlgorithmParameterException: ", e);
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                    exception.getMessage());
-            throw exception;
-        } catch (NoSuchAlgorithmException e) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException(
-                        "NoSuchAlgorithmException: " + e.getMessage(), e);
-            LOG.error("NoSuchAlgorithmException: ", e);
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                    exception.getMessage());
-            throw exception;
-        } catch (NoSuchProviderException e) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException(
-                    "NoSuchProviderException: " + e.getMessage(), e);
-            LOG.error("NoSuchProviderException: ", e);
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                    exception.getMessage());
-            throw exception;
-        } catch (CertStoreException e) {
-            final IllegalRequestException exception =
-                    new IllegalRequestException("CertStoreException: "
-                    + e.getMessage(), e);
-            LOG.error("CertStoreException: ", e);
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                    exception.getMessage());
-            throw exception;
         } catch (IOException e) {
             final IllegalRequestException exception =
                     new IllegalRequestException(

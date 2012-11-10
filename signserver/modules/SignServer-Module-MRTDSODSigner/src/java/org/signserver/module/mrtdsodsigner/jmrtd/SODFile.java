@@ -37,7 +37,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.PSSParameterSpec;
@@ -46,12 +45,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-
 import javax.security.auth.x500.X500Principal;
-
 import net.sourceforge.scuba.tlv.BERTLVInputStream;
 import net.sourceforge.scuba.tlv.BERTLVObject;
-
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -74,17 +70,14 @@ import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerIdentifier;
 import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.icao.DataGroupHash;
-import org.signserver.module.mrtdsodsigner.bc.asn1.icao.LDSSecurityObject;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.X509CertificateStructure;
-import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
-import org.bouncycastle.jce.PrincipalUtil;
+import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.bouncycastle.jce.provider.X509CertificateObject;
-import org.bouncycastle.mail.smime.SMIMEUtil;
+import org.signserver.module.mrtdsodsigner.bc.asn1.icao.LDSSecurityObject;
 import org.signserver.module.mrtdsodsigner.bc.asn1.icao.LDSVersionInfo;
 
 /**
@@ -426,6 +419,8 @@ public class SODFile extends PassportFile
 	 * <i>eContent</i>. This certificate itself is
 	 * signed using the country signing certificate.
 	 *
+     * XXX: This method does some strange certificate parsing/re-encoding and looping
+     * 
 	 * @return the document signing certificate
 	 */
 	public X509Certificate getDocSigningCertificate()
@@ -440,10 +435,8 @@ public class SODFile extends PassportFile
 		for (int i = 0; i < certs.size(); i++) {
 			// TODO: X509CertificateObject takes an X509CertificateStructure in its constructor
 			// but that one is deprecated...
-			X509CertificateStructure e =
-				new X509CertificateStructure((DERSequence)certs.getObjectAt(i));
-			certObject = new X509CertificateObject(e);
-			certSpec = certObject.getEncoded();
+            org.bouncycastle.asn1.x509.Certificate e = org.bouncycastle.asn1.x509.Certificate.getInstance((DERSequence)certs.getObjectAt(i));
+			certSpec = e.getEncoded();
 		}
 
 		/*
@@ -811,7 +804,7 @@ public class SODFile extends PassportFile
         ASN1Set crls = null;
         ASN1Set signerInfos = createSingletonSet(createSignerInfo(
                 digestAlgorithm, digestEncryptionAlgorithm, digestEncryptionAlgorithmParams, content,
-                encryptedDigest, docSigningCertificate).toASN1Object());
+                encryptedDigest, docSigningCertificate).toASN1Primitive());
         return new SignedData(digestAlgorithmsSet, contentInfo, certificates,
                 crls, signerInfos);
     }
@@ -880,7 +873,7 @@ public class SODFile extends PassportFile
 	throws NoSuchAlgorithmException, CertificateEncodingException {
 		/* Get the issuer name (CN, O, OU, C) from the cert and put it in a SignerIdentifier struct. */
 		BigInteger serial = ((X509Certificate)docSigningCertificate).getSerialNumber();
-		IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(PrincipalUtil.getIssuerX509Principal(docSigningCertificate), serial);
+		IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(JcaX500NameUtil.getIssuer(docSigningCertificate), serial);
 		SignerIdentifier sid = new SignerIdentifier(iasn);
 		AlgorithmIdentifier digestAlgorithmObject = new AlgorithmIdentifier(lookupOIDByMnemonic(digestAlgorithm)); 
 		final AlgorithmIdentifier digestEncryptionAlgorithmObject;

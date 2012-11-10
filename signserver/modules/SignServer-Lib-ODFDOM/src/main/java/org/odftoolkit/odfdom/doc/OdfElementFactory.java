@@ -92,6 +92,7 @@ public class OdfElementFactory {
     	mAttributeTypes.put(odfName, className);
     }
 
+    @SuppressWarnings("unchecked")  // XXX: If possible this should be fixed. Suppressing for now to not hide warnings from other files.
     public static OdfElement newOdfElement(OdfFileDom ownerDocument, OdfName name) throws DOMException {
         OdfElement e = null;
 
@@ -114,6 +115,7 @@ public class OdfElementFactory {
         return (OdfElement) new OdfAlienElement(ownerDocument, name);
     }
     
+    @SuppressWarnings("unchecked")
     public static OdfAttribute newOdfAttribute(OdfFileDom ownerDocument, OdfName name) throws DOMException {
         OdfAttribute attr = null;
 

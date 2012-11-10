@@ -28,7 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
@@ -257,7 +258,7 @@ public class MRTDSODSigner extends BaseSigner {
 
     private X509Certificate findIssuerCert(Collection<Certificate> chain, X509Certificate sodCert) {
         X509Certificate result = null;
-        final X509Name issuer = new X509Name(sodCert.getIssuerX500Principal().getName());
+        final X500Name issuer = JcaX500NameUtil.getIssuer(sodCert);
         if (log.isDebugEnabled()) {
             final StringBuilder buff = new StringBuilder();
             buff.append("Looking for ");
@@ -267,7 +268,7 @@ public class MRTDSODSigner extends BaseSigner {
         for (Certificate cert : chain) {
             if (cert instanceof X509Certificate) {
                 final X509Certificate x509 = (X509Certificate) cert;
-                final X509Name subject = new X509Name(x509.getSubjectX500Principal().getName());
+                final X500Name subject = JcaX500NameUtil.getSubject(x509);
                 if (issuer.equals(subject)) {
                     result = (X509Certificate) cert;
                     if (log.isDebugEnabled()) {

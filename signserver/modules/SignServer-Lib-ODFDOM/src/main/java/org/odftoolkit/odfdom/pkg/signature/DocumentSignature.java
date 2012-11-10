@@ -330,6 +330,7 @@ public class DocumentSignature {
     private void fillSignedFileEntriesAndTimeData(XMLSignature pSignature) throws Exception {
         //NOTE: each reference inside SignedInfo assumed to be either reference to a file entry inside package or reference to local xml object (such as date and time property).
         List<String> referencedNonFileEntryXmlObjectIds = new Vector<String>();
+        @SuppressWarnings("unchecked")  // XXX: If possible this should be fixed. Suppressing for now to not hide warnings from other files.
         List<Reference> signedInfoReferences = pSignature.getSignedInfo().getReferences();
         for (Reference tempRef : signedInfoReferences) {
             if (!tempRef.getURI().startsWith(Constants.XML_ELEMENT_FRAGMENT_IDENTIFIER)) {

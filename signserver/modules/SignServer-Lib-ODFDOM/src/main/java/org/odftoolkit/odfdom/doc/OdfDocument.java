@@ -868,6 +868,7 @@ public abstract class OdfDocument {
 	 * @return the child element of office:body, e.g. office:text for text docs
 	 * @throws Exception if the file DOM could not be created.
 	 */
+    @SuppressWarnings("unchecked") // XXX: If possible this should be fixed. Suppressing for now to not hide warnings from other files.
 	<T extends OdfElement> T getContentRoot(Class<T> clazz) throws Exception {
 		OdfElement contentRoot = getContentDom().getRootElement();
 		OdfOfficeBody contentBody = OdfElement.findFirstChildNode(OdfOfficeBody.class, contentRoot);

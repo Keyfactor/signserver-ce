@@ -21,6 +21,7 @@ import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -31,6 +32,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.ContentSigner;
@@ -40,6 +42,8 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.tsp.*;
+import org.bouncycastle.util.Selector;
+import org.bouncycastle.util.Store;
 import org.ejbca.util.Base64;
 import org.signserver.common.*;
 import org.signserver.server.ITimeSource;
@@ -426,9 +430,7 @@ public class TimeStampSigner extends BaseSigner {
             final TimeStampResponse timeStampResponse =
                     timeStampResponseGen.generate(timeStampRequest,
                     serialNumber,
-                    date,
-                    getCryptoToken().getProvider(
-                        ICryptoToken.PROVIDERUSAGE_SIGN));
+                    date);
 
             final TimeStampToken token = timeStampResponse.getTimeStampToken();
             final byte[] signedbytes = timeStampResponse.getEncoded();
@@ -726,8 +728,7 @@ public class TimeStampSigner extends BaseSigner {
                 timeStampTokenGen.setTSA(new GeneralName(x500Name));
             }
            
-            // TODO: will probably need to fix this when moving to BC 2.0...
-            timeStampTokenGen.setCertificatesAndCRLs(getCertStoreWithChain(signingCert));
+            timeStampTokenGen.addCertificates(getCertStoreWithChain(signingCert));
 
         } catch (IllegalArgumentException e) {
             LOG.error("IllegalArgumentException: ", e);
@@ -746,15 +747,13 @@ public class TimeStampSigner extends BaseSigner {
         return timeStampTokenGen;
     }
     
-    private CertStore getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException {
+    private Store getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException, CertificateEncodingException {
         Collection<Certificate> signingCertificateChain = getSigningCertificateChain();
         
         if (signingCertificateChain == null) {
             throw new CryptoTokenOfflineException("Certificate chain not available");
         } else {
-            final CertStore certStore = CertStore.getInstance("Collection",
-                    new CollectionCertStoreParameters(
-                        signingCertificateChain), "BC");
+            JcaCertStore certStore = new JcaCertStore(signingCertificateChain);
 
             if (!containsCertificate(certStore, signingCert)) {
                 throw new CryptoTokenOfflineException("Signer certificate not included in certificate chain");
@@ -766,12 +765,13 @@ public class TimeStampSigner extends BaseSigner {
     /**
      * @return True if the CertStore contained the Certificate
      */
-    private boolean containsCertificate(final CertStore store, final Certificate subject) throws CertStoreException {
-        final Collection<? extends Certificate> matchedCerts = store.getCertificates(new CertSelector() {
-            @Override
-            public boolean match(Certificate cert) {
-                return subject.equals(cert);
+    private boolean containsCertificate(final Store store, final Certificate subject) throws CertStoreException {
+        final Collection<?> matchedCerts = store.getMatches(new Selector() {
+            
+            public boolean match(Object obj) {
+                return subject.equals(obj);
             }
+            
             @Override
             public Object clone() {
                 return this;
@@ -943,6 +943,9 @@ public class TimeStampSigner extends BaseSigner {
                 result.add("Unable to get certificate chain");
                 LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
             } catch (CertStoreException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            } catch (CertificateEncodingException ex) {
                 result.add("Unable to get certificate chain");
                 LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
             } catch (InvalidAlgorithmParameterException ex) {

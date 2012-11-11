@@ -36,7 +36,6 @@ import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.PSSParameterSpec;
@@ -75,8 +74,9 @@ import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
-import org.bouncycastle.jce.provider.X509CertificateObject;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.signserver.module.mrtdsodsigner.bc.asn1.icao.LDSSecurityObject;
 import org.signserver.module.mrtdsodsigner.bc.asn1.icao.LDSVersionInfo;
 
@@ -418,42 +418,18 @@ public class SODFile extends PassportFile
 	 * <i>eSignature</i> is a valid signature for
 	 * <i>eContent</i>. This certificate itself is
 	 * signed using the country signing certificate.
-	 *
-     * XXX: This method does some strange certificate parsing/re-encoding and looping
      * 
 	 * @return the document signing certificate
 	 */
 	public X509Certificate getDocSigningCertificate()
 	throws IOException, CertificateException {
-		byte[] certSpec = null;
 		ASN1Set certs = signedData.getCertificates();
 		if (certs == null || certs.size() <= 0) { return null; }
 		if (certs.size() != 1) {
 			LOGGER.warning("Found " + certs.size() + " certificates");
 		}
-		X509CertificateObject certObject = null;
-		for (int i = 0; i < certs.size(); i++) {
-			// TODO: X509CertificateObject takes an X509CertificateStructure in its constructor
-			// but that one is deprecated...
-            org.bouncycastle.asn1.x509.Certificate e = org.bouncycastle.asn1.x509.Certificate.getInstance((DERSequence)certs.getObjectAt(i));
-			certSpec = e.getEncoded();
-		}
-
-		/*
-		 * NOTE: we could have just returned that X509CertificateObject here,
-		 * but by reconstructing it using the client's default provider we hide
-		 * the fact that we're using BC.
-		 */
-		try {
-                    CertificateFactory factory = CertificateFactory.getInstance("X.509");
-                    X509Certificate cert = (X509Certificate)factory.generateCertificate(new ByteArrayInputStream(certSpec));
-                    return cert;
-		} catch (Exception e) {
-                    /*
-                     * NOTE: Reconstructing using preferred provider didn't work?!?!
-                     */
-                    return certObject;
-                }
+        final X509CertificateHolder cert = new X509CertificateHolder(certs.getObjectAt(0).toASN1Primitive().getEncoded());
+        return new JcaX509CertificateConverter().setProvider("BC").getCertificate(cert);
 	}
 
 	/**

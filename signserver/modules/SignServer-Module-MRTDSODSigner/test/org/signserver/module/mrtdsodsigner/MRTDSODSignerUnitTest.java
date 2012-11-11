@@ -22,13 +22,12 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.*;
-
 import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.util.ASN1Dump;
+import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
@@ -449,7 +448,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         // The real asn.1 order in the cert is CN=DemoCSCA1, C=SE
         assertEquals("C=SE,CN=DemoCSCA1", sod.getIssuerX500Principal().getName());
         assertEquals("C=SE,CN=DemoCSCA1", sod.getDocSigningCertificate().getIssuerX500Principal().getName());
-        assertEquals("C=SE, CN=DemoCSCA1", sod.getDocSigningCertificate().getIssuerDN().getName());
+        assertEquals("CN=DemoCSCA1,C=SE", JcaX500NameUtil.getIssuer(sod.getDocSigningCertificate()).toString());
 
         // Make sure it matches in all ways
         assertEquals("DN should match", sod.getIssuerX500Principal().getName(),
@@ -483,7 +482,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         // The real asn.1 order in the cert is C=SE,O=Reversed Org,CN=ReversedCA2
         assertEquals("CN=ReversedCA2,O=Reversed Org,C=SE", sod.getIssuerX500Principal().getName());
         assertEquals("CN=ReversedCA2,O=Reversed Org,C=SE", sod.getDocSigningCertificate().getIssuerX500Principal().getName());
-        assertEquals("CN=ReversedCA2, O=Reversed Org, C=SE", sod.getDocSigningCertificate().getIssuerDN().getName());
+        assertEquals("C=SE,O=Reversed Org,CN=ReversedCA2", JcaX500NameUtil.getIssuer(sod.getDocSigningCertificate()).toString());
         
         // Make sure it matches in all ways
         assertEquals("DN should match", sod.getIssuerX500Principal().getName(),

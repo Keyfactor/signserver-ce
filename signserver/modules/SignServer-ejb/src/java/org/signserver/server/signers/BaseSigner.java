@@ -46,13 +46,20 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
         final boolean keyUsageCounterDisabled = config.getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
         
+        final ICryptoToken token = getCryptoToken();
+        
         try {
             final Certificate cert = getSigningCertificate();
             final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
+            final int status;
+            if (token == null) {
+                status = SignerStatus.STATUS_OFFLINE;
+            } else {
+                status = token.getCryptoTokenStatus();
+            }
 
             if (cert != null) {
                 KeyUsageCounter counter = getSignServerContext().getKeyUsageCounterDataService().getCounter(KeyUsageCounter.createKeyHash(cert.getPublicKey()));
-                int status = getCryptoToken().getCryptoTokenStatus();
                 if ((counter == null && !keyUsageCounterDisabled) 
                         || (keyUsageLimit != -1 && status == CryptoTokenStatus.STATUS_ACTIVE && (counter == null || counter.getCounter() >= keyUsageLimit))) {
                     fatalErrors.add("Key usage limit exceeded or not initialized");
@@ -64,7 +71,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                     retval = new SignerStatus(workerId, status, fatalErrors, new ProcessableConfig(config), cert);
                 }
             } else {
-                retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), fatalErrors, new ProcessableConfig(config), cert);
+                retval = new SignerStatus(workerId, status, fatalErrors, new ProcessableConfig(config), cert);
             }
         } catch (CryptoTokenOfflineException e) {
             retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(), fatalErrors, new ProcessableConfig(config), null);
@@ -85,7 +92,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
     /**
      * Checks that the signer certificate is available and that it matches the 
-     * key-pair in the crypto token.
+     * key-pair in the crypto token and that the time is within the signer's 
+     * validity.
      * The errors returned from this method is included in the list of errors
      * returned from getFatalErrors().
      * Signer implementation can override this method and just return an empty 
@@ -99,7 +107,13 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         Certificate certificate = null;
         try {
             certificate = getSigningCertificate();
-            if (certificate == null) {
+            final ICryptoToken token = getCryptoToken();
+            if (token == null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Signer " + workerId + ": No crypto token");
+                }
+                result.add("No crypto token available");
+            } else if (certificate == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Signer " + workerId + ": No certificate");
                 }

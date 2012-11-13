@@ -29,10 +29,13 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
+import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -60,6 +63,8 @@ public class SignerStatusReportWorker extends BaseSigner {
     
     /** Property WORKERS. **/
     private static final String PROPERTY_WORKERS = SignerStatusReportTimedService.PROPERTY_WORKERS;
+    
+    private static final ICryptoToken CRYPTO_TOKEN = new NullCryptoToken(SignerStatus.STATUS_ACTIVE);
     
     private SignerStatusReportBuilder reportBuilder;
 
@@ -114,5 +119,19 @@ public class SignerStatusReportWorker extends BaseSigner {
         // This worker does not require any signer certificate so don't
         // report any error about it.
         return Collections.emptyList();
+    }
+    
+    @Override
+    protected ICryptoToken getCryptoToken() throws SignServerException {
+        ICryptoToken result = super.getCryptoToken();
+
+        // Not configuring a crypto token for this worker is not a problem as
+        // this worker does not use a crypto token. Instead a dummy instance
+        // is returned.
+        if (result == null) {
+            result = CRYPTO_TOKEN;
+        }
+
+        return result;
     }
 }

@@ -172,6 +172,61 @@ public class DocumentSignerTest extends ModulesTestCase {
         }
     }
 
+    /**
+     * Test signing over webservices with the -servlet argument set as SignServerWSService/SignServerWS
+     * @throws Exception
+     */
+    public void test05signPDFOverWebservicesServletArg() throws Exception {
+        try {
+            final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
+            		"-data", "<root/>", "-protocol", "WEBSERVICES",
+            		"-servlet", "/signserver/SignServerWSService/SignServerWS",
+            		"-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
+            assertTrue("contains signature tag: "
+                    + res, res.contains("<root><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Test signing over webservices with the -servlet argument set as signserverws/signserverws
+     * @throws Exception
+     */
+    public void test06signPDFOverWebservicesServletArg2() throws Exception {
+        try {
+            final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
+                        "-data", "<root/>", "-protocol", "WEBSERVICES",
+                        "-servlet", "/signserver/signserverws/signserverws",
+                        "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
+            assertTrue("contains signature tag: "
+                    + res, res.contains("<root><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Test signing over webservices with the -servlet argument set as an invalid WS servlet URL
+     * @throws Exception
+     */
+    public void test07signPDFOverWebservicesServletArgInvalid() throws Exception {
+        try {
+            final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
+                        "-data", "<root/>", "-protocol", "WEBSERVICES",
+                        "-servlet", "/signserver/nonexistant/wsurl",
+                        "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
+            fail("Should not accept invalid WS -servlet argument");
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } catch (Exception ex) {
+            // this is expected for the invalid URL
+        }
+    }
+    
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID2);
         for (int workerId : WORKERS) {

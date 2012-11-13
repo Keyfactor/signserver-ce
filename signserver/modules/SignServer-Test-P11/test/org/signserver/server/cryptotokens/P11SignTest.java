@@ -21,8 +21,10 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.bouncycastle.asn1.cmp.PKIStatus;
@@ -32,12 +34,17 @@ import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -67,6 +74,16 @@ public class P11SignTest extends ModulesTestCase {
     private static final int WORKER_XML = 20004;
     private static final int WORKER_ODF = 20005;
     private static final int WORKER_OOXML = 20006;
+    private static final int WORKER_MSA = 20007;
+    
+    private static final String MSAUTHCODE_REQUEST_DATA =
+    		"MIIBIwYKKwYBBAGCNwMCATCCARMGCSqGSIb3DQEHAaCCAQQEggEAVVSpOKf9zJYc" +
+    		"tyvqgeHfO9JkobPYihUZcW9TbYzAUiJGEsElNCnLUaO0+MZG0TS7hlzqKKvrdXc7" +
+    		"O/8C7c8YyjYF5YrLiaYS8cw3VbaQ2M1NWsLGzxF1pxsR9sMDJvfrryPaWj4eTi3Y" +
+    		"UqRNS+GTa4quX4xbmB0KqMpCtrvuk4S9cgaJGwxmSE7N3omzvERTUxp7nVSHtms5" +
+    		"lVMb082JFlABT1/o2mL5O6qFG119JeuS1+ZiL1AEy//gRs556OE1TB9UEQU2bFUm" +
+    		"zBD4VHvkOOB/7X944v9lmK5y9sFv+vnf/34catL1A+ZNLwtd1Qq2VirqJxRK/T61" +
+    		"QoSWj4rGpw==";
     
     private final String sharedLibrary;
     private final String slot;
@@ -481,5 +498,78 @@ public class P11SignTest extends ModulesTestCase {
             removeWorker(workerId);
         }
     }
+
+    private void setMSAuthTimeStampSignerProperties(final int workerId) throws IOException {
+        // Setup worker
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.tsa.MSAuthCodeTimeStampSigner");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
+        workerSession.setWorkerProperty(workerId, "NAME", "MSAuthTSSignerP11");
+        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SLOT", slot);
+        workerSession.setWorkerProperty(workerId, "PIN", pin);
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+        workerSession.setWorkerProperty(workerId, "DEFAULTTSAPOLICYOID", "1.2.3");
+    }
     
+    /**
+     * Tests setting up a MSAuthCodeTimeStamp Signer, giving it a certificate and request a time-stamp token.
+     */
+    public void testMSAuthTSSigner() throws Exception {
+        final int workerId = WORKER_MSA;
+        try {
+            setMSAuthTimeStampSignerProperties(workerId);
+            workerSession.reloadConfiguration(workerId);
+            
+            // Generate CSR
+            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
+            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
+            
+            // Issue certificate
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping)).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+            
+            // Install certificate and chain
+            workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(workerId);
+            
+            // Test active
+            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            assertEquals("errors: " + errors, 0, errors.size());
+            
+            // Test signing
+            GenericSignRequest signRequest = new GenericSignRequest(678, MSAUTHCODE_REQUEST_DATA.getBytes());
+            final GenericSignResponse res = (GenericSignResponse) workerSession.process(workerId, signRequest, new RequestContext());
+            Certificate signercert = res.getSignerCertificate();
+            assertNotNull(signercert);
+            
+            byte[] buf = res.getProcessedData();
+            CMSSignedData s = new CMSSignedData(Base64.decode(buf));
+
+            int verified = 0;
+            Store certStore = s.getCertificates();
+            SignerInformationStore signers = s.getSignerInfos();
+            Collection c = signers.getSigners();
+            Iterator it = c.iterator();
+
+            while (it.hasNext()) {
+                SignerInformation signer = (SignerInformation)it.next();
+                Collection certCollection = certStore.getMatches(signer.getSID());
+                    
+                Iterator certIt = certCollection.iterator();
+                X509CertificateHolder signerCert = (X509CertificateHolder) certIt.next();
+
+                if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(signerCert))) {
+                    verified++;
+                }
+            }
+            
+            assertEquals("signer verified", 1, verified);
+            
+        } finally {
+            removeWorker(workerId);
+        }
+    }
 }

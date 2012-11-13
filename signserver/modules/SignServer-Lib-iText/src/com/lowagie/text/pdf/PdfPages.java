@@ -140,7 +140,7 @@ public class PdfPages {
                 PdfDictionary top = new PdfDictionary(PdfName.PAGES);
                 top.put(PdfName.COUNT, new PdfNumber(thisLeaf));
                 PdfArray kids = new PdfArray();
-                ArrayList internal = kids.getArrayList();
+                ArrayList internal = kids.arrayList;
                 internal.addAll(tPages.subList(p * stdCount, p * stdCount + count));
                 top.put(PdfName.KIDS, kids);
                 if (tParents.size() > 1) {

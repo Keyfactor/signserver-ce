@@ -2084,7 +2084,7 @@ public class PdfReader implements PdfViewerPreferences {
             if (filter.isName())
                 filters.add(filter);
             else if (filter.isArray())
-                filters = ((PdfArray)filter).getArrayList();
+                filters = ((PdfArray)filter).arrayList;
         }
         ArrayList dp = new ArrayList();
         PdfObject dpo = getPdfObjectRelease(stream.get(PdfName.DECODEPARMS));
@@ -2094,7 +2094,7 @@ public class PdfReader implements PdfViewerPreferences {
             if (dpo.isDictionary())
                 dp.add(dpo);
             else if (dpo.isArray())
-                dp = ((PdfArray)dpo).getArrayList();
+                dp = ((PdfArray)dpo).arrayList;
         }
         String name;
         for (int j = 0; j < filters.size(); ++j) {
@@ -2166,7 +2166,7 @@ public class PdfReader implements PdfViewerPreferences {
                     if (filter.isName())
                         filters.add(filter);
                     else if (filter.isArray())
-                        filters = ((PdfArray)filter).getArrayList();
+                        filters = ((PdfArray)filter).arrayList;
                 }
                 boolean skip = false;
                 for (int k = 0; k < filters.size(); ++k) {
@@ -2836,7 +2836,7 @@ public class PdfReader implements PdfViewerPreferences {
                         dic.getKeys().toArray(keys);
                         break;
                     case PdfObject.ARRAY:
-                         ar = ((PdfArray)obj).getArrayList();
+                         ar = ((PdfArray)obj).arrayList;
                          break;
                     case PdfObject.INDIRECT:
                         PRIndirectReference ref = (PRIndirectReference)obj;

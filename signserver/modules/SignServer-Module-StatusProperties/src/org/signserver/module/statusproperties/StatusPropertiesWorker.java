@@ -32,6 +32,9 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
+import org.signserver.common.SignerStatus;
+import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
@@ -68,6 +71,8 @@ public class StatusPropertiesWorker extends BaseSigner {
     private static final String UPDATE = "UPDATE";
     private static final String VALUE = "VALUE";
     private static final String EXPIRATION = "EXPIRATION";
+    
+    private static final ICryptoToken CRYPTO_TOKEN = new NullCryptoToken(SignerStatus.STATUS_ACTIVE);
     
     /** StatusRepositorySession. */
     @EJB
@@ -202,5 +207,19 @@ public class StatusPropertiesWorker extends BaseSigner {
         // This worker does not require any signer certificate so don't
         // report any error about it.
         return Collections.emptyList();
+    }
+    
+    @Override
+    protected ICryptoToken getCryptoToken() {
+        ICryptoToken result = super.getCryptoToken();
+
+        // Not configuring a crypto token for this worker is not a problem as
+        // this worker does not use a crypto token. Instead a dummy instance
+        // is returned.
+        if (result == null) {
+            result = CRYPTO_TOKEN;
+        }
+
+        return result;
     }
 }

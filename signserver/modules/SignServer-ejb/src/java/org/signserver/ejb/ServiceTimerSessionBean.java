@@ -16,8 +16,8 @@ import java.io.Serializable;
 import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.ejb.Timer;
 import javax.ejb.*;
+import javax.ejb.Timer;
 import javax.transaction.*;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
@@ -169,6 +169,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
      *
      * @param serviceId 0 indicates all services otherwise is just the specified service loaded.
      */
+    @Override
     public void load(int serviceId) {
         // Get all services
         TimerService timerService = sessionCtx.getTimerService();
@@ -180,7 +181,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
             existingTimers.add(timer.getInfo());
         }
 
-        Collection<Integer> serviceIds = null;
+        final Collection<Integer> serviceIds;
         if (serviceId == 0) {
             serviceIds = workerManagerSession.getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES, globalConfigurationSession);
         } else {
@@ -209,27 +210,39 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
      *
      * @param serviceId indicates all services otherwise is just the specified service unloaded.
      */
+    @Override
     public void unload(int serviceId) {
+        log.debug("Unloading");
         // Get all services
-        Collection<?> currentTimers = sessionCtx.getTimerService().getTimers();
-        Iterator<?> iter = currentTimers.iterator();
-        while (iter.hasNext()) {
-            Timer timer = (Timer) iter.next();
-            if (serviceId == 0) {
-                timer.cancel();
-            } else {
-                if (timer.getInfo() instanceof Integer) {
-                    if (((Integer) timer.getInfo()).intValue() == serviceId) {
-                        timer.cancel();
+        for (Timer timer : sessionCtx.getTimerService().getTimers()) {
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug("Cancelling timer: " + timer);
+                }
+                if (serviceId == 0) {
+                    timer.cancel();
+                } else {
+                    if (timer.getInfo() instanceof Integer) {
+                        if (((Integer) timer.getInfo()).intValue() == serviceId) {
+                            timer.cancel();
+                        }
                     }
                 }
+            } catch (Exception e) {
+                /*
+                 * EJB 2.1 only?: We need to catch this because Weblogic 10
+                 * throws an exception if we have not scheduled this timer, so
+                 * we don't have anything to cancel. Only weblogic though...
+                 */
+                log.info("Caught exception canceling timer: " + e.getMessage());
             }
         }
     }
-
+    
     /**
      * Adds a timer to the bean
      */
+    @Override
     public void addTimer(long interval, Integer id) {
         sessionCtx.getTimerService().createTimer(interval, id);
     }
@@ -238,6 +251,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
      * cancels a timer with the given Id
      *
      */
+    @Override
     public void cancelTimer(Integer id) {
         Collection<?> timers = sessionCtx.getTimerService().getTimers();
         Iterator<?> iter = timers.iterator();

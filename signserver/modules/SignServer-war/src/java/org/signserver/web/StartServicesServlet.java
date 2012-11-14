@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.ejb.EJB;
 import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
@@ -25,21 +24,20 @@ import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.common.ServiceLocator;
-import org.signserver.statusrepo.common.StatusEntry;
-import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.server.log.EventType;
-import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.ModuleType;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
+import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
+import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
 
 /**
@@ -110,9 +108,13 @@ public class StartServicesServlet extends HttpServlet {
             LOG.error("Audit log error", ex);
         }
 
+        // Try to unload the timers
         LOG.debug(">destroy calling ServiceSession.unload");
-
-        getTimedServiceSession().unload(0);
+        try {
+            getTimedServiceSession().unload(0);
+        } catch (Exception ex) {
+            LOG.info("Exception caught trying to cancel timers. This happens with some application servers: " + ex.getMessage());
+        }
 
         super.destroy();
     }
@@ -134,6 +136,10 @@ public class StartServicesServlet extends HttpServlet {
         } catch (SystemLoggerException ex) {
             LOG.error("Audit log error", ex);
         }
+        
+        // Cancel old timers as we can not rely on them being cancelled at shutdown
+        LOG.debug(">init calling ServiceSession.unload");
+        getTimedServiceSession().unload(0);
         
         LOG.debug(">init FileBasedDataseManager");
         final FileBasedDatabaseManager nodb = FileBasedDatabaseManager.getInstance();

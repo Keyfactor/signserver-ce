@@ -2497,22 +2497,62 @@ users from using the CertValidator (indirectly through the XMLValidator) an
 Autorizer could be configured for the XMLValidator.
                         </p>
                         <p>
-When ALLOW_FROM is set to the value ALL, access is granted for all IP addresses and EJB calls.
+<b>Logging:</b> This authorizer will add the remote IP address to the log field AUTHORIZED_ADDRESS.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="List-based Address Authorizer">
+                        <p>
+<b>AUTHTYPE</b> = org.signserver.server.ListBasedAddressAuthorizer
                         </p>
                         <p>
-<b>ALLOW_FORWARDED_FROM</b> = Comma-separated list of IP addresses to allow forwarded requests from.
-These addresses are the ones appearing in the X-Forwarded-For header as set by proxies
-(i.e. when using an Apache web server as a front-end proxy). Only the last IP address in the the comma-separated list
-in the header is considered, i.e. when using multiple proxies, only the last proxied address in the chain
-is granted access using this property. The default when not specifying this property is to allow proxying from any address.
+An authorizer that supports white- and blacklisting direct and forwarded addresses (coming via a proxy).
                         </p>
                         <p>
-Using the value ALL has the same meaning as for the ALLOW_FROM property, i.e. proxying from any address (the default behavior).
+<b>WHITELISTED_DIRECT_ADDRESSES</b> = A comma-separated list of IP addresses allowed direct access.
+                        </p>
+                        <p>
+<b>BLACKLISTED_DIRECT_ADDRESSES</b> = A comma-separated list of IP addresses denied direct access.
+                        </p>
+                        <p>
+<b>WHITELISTED_FORWARDED_ADDRESSES</b> = A comma-separated list of IP addresses allowed access as a forwarded address.
+                        </p>
+                        <p>
+<b>BLACKLISTED_FORWARDED_ADDRESSES</b> = A comma-separated list of IP addresses denied access as a forwarded address.
+                        </p>
+                        <p>
+It is not possible to specify both a whitelist and a black list at the same time for each of direct and forwarded addresses.
+One of each list (direct and forwarded) must be specified.
+When specifying a whitelist for forwarded addresses, requests without an X-Forwarded-For header will always be denied.
+Only the last address in the X-Forwarded-For header is considered (in the case of using multiple proxies).
+                        </p>
+                        <p>
+Examples:
+                        </p>
+                        <p>
+1. To accept requests from all direct addresses except for 10.0.0.5 and for all forwarded addresses except 13.170.18.12 and 13.170.18.13 use:<br/>
+BLACKLISTED_DIRECT_ADDRESSES=10.0.0.5<br/>
+BLACKLISTED_FORWARDED_ADDRESSES=13.170.18.12, 13.170.18.13
+                        </p>
+                        <p>
+2. To only accept direct requests from 10.0.0.1 and 10.0.0.2 and from the forwarded address 216.34.181.97 use:<br/>
+WHITELISTED_DIRECT_ADDRESSES=10.0.0.1, 10.0.0.2<br/>
+WHITELISTED_FORWARDED_ADDRESS=216.34.181.97
+                        </p>
+                        <p>
+3. To only allow direct access from the proxy servers 10.0.0.1 and 10.0.0.2 but allow them to forward from all address except the to banned addresses 13.170.18.12 and 13.170.18.13 use:<br/>
+WHITELISTED_DIRECT_ADDRESSES=10.0.0.1, 10.0.0.2<br/>
+BLACKLISTED_FORWARDED_ADDRESSES=13.170.18.12, 13.170.18.13
+                        </p>
+                        <p>
+4. To accept direct requests from all addresses except 10.0.0.5 but only forwarded from 216.34.181.97 use:<br/>
+BLACKLISTED_DIRECT_ADDRESSES=10.0.0.5<br/>
+WHITELISTED_FORWARDED_ADDRESS=216.34.181.97
                         </p>
                         <p>
 <b>Logging:</b> This authorizer will add the remote IP address to the log field AUTHORIZED_ADDRESS and the proxied address
 (if it's available in the request) in the log field AUTHORIZED_FORWARDED_ADDRESS.
                         </p>
+  
                     </subsubsection>
                     <subsubsection name="DispatchedAuthorizer">
                         <p>

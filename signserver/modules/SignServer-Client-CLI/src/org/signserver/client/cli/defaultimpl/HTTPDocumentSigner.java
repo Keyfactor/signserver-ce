@@ -45,7 +45,8 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
 
     private static final String BOUNDARY = "------------------signserver";
 
-    private String workerName;
+    private final String workerName;
+    private final int workerId;
 
     private URL processServlet;
 
@@ -61,6 +62,19 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final String pdfPassword) {
         this.processServlet = processServlet;
         this.workerName = workerName;
+        this.workerId = 0;
+        this.username = username;
+        this.password = password;
+        this.pdfPassword = pdfPassword;
+    }
+    
+    public HTTPDocumentSigner(final URL processServlet,
+            final int workerId, 
+            final String username, final String password,
+            final String pdfPassword) {
+        this.processServlet = processServlet;
+        this.workerName = null;
+        this.workerId = workerId;
         this.username = username;
         this.password = password;
         this.pdfPassword = pdfPassword;
@@ -83,7 +97,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         // Take start time
         final long startTime = System.nanoTime();
 
-        final Response response = sendRequest(processServlet, workerName, data,
+        final Response response = sendRequest(processServlet, data,
                 requestContext);
 
         // Take stop time
@@ -107,7 +121,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     }
 
     private Response sendRequest(final URL processServlet,
-            final String workerName, final byte[] data,
+            final byte[] data,
             final Map<String, Object> requestContext) {
         
         OutputStream out = null;
@@ -126,10 +140,18 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final StringBuilder sb = new StringBuilder();
             sb.append("--" + BOUNDARY);
             sb.append(CRLF);
-            sb.append("Content-Disposition: form-data; name=\"workerName\"");
-            sb.append(CRLF);
-            sb.append(CRLF);
-            sb.append(workerName);
+            
+            if (workerName == null) {
+                sb.append("Content-Disposition: form-data; name=\"workerId\"");
+                sb.append(CRLF);
+                sb.append(CRLF);
+                sb.append(workerId);
+            } else {
+                sb.append("Content-Disposition: form-data; name=\"workerName\"");
+                sb.append(CRLF);
+                sb.append(CRLF);
+                sb.append(workerName);
+            }
             sb.append(CRLF);
             
             if (pdfPassword != null) {

@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
-import org.signserver.client.api.SigningAndValidationWS;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -198,10 +197,6 @@ public class SignDocumentCommand extends AbstractCommand {
      * @param line The command line to read from
      */
     private void parseCommandLine(final CommandLine line) {
-        if (line.hasOption(WORKERID)) {
-                workerId = Integer.parseInt(line.getOptionValue(
-                    WORKERID, null));
-        }
         if (line.hasOption(WORKERNAME)) {
             workerName = line.getOptionValue(WORKERNAME, null);
         }
@@ -270,13 +265,6 @@ public class SignDocumentCommand extends AbstractCommand {
      */
     private DocumentSigner createSigner() throws MalformedURLException {
         final DocumentSigner signer;
-        
-        final String workerIdOrName;
-        if (workerId == 0) {
-            workerIdOrName = workerName;
-        } else {
-            workerIdOrName = String.valueOf(workerId);
-        }
 
         keyStoreOptions.setupHTTPS();
 
@@ -292,6 +280,14 @@ public class SignDocumentCommand extends AbstractCommand {
 
         if (Protocol.WEBSERVICES.equals(protocol)) {
             LOG.debug("Using WebServices as procotol");
+            
+            final String workerIdOrName;
+            if (workerId == 0) {
+                workerIdOrName = workerName;
+            } else {
+                workerIdOrName = String.valueOf(workerId);
+            }
+            
             signer = new WebServicesDocumentSigner(
                 host,
                 port,
@@ -302,9 +298,12 @@ public class SignDocumentCommand extends AbstractCommand {
                 pdfPassword);
         } else {
             LOG.debug("Using HTTP as procotol");
-            signer = new HTTPDocumentSigner(
-                new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host,
-                port, servlet), workerIdOrName, username, password, pdfPassword);
+            final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
+            if (workerId == 0) {
+                signer = new HTTPDocumentSigner(url, workerName, username, password, pdfPassword);
+            } else {
+                signer = new HTTPDocumentSigner(url, workerId, username, password, pdfPassword);
+            }
         }
         return signer;
     }

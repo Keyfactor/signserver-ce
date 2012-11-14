@@ -107,9 +107,13 @@ public class StartServicesServlet extends HttpServlet {
             LOG.error("Audit log error", ex);
         }
 
+        // Try to unload the timers
         LOG.debug(">destroy calling ServiceSession.unload");
-
-        getTimedServiceSession().unload(0);
+        try {
+            getTimedServiceSession().unload(0);
+        } catch (Exception ex) {
+            LOG.info("Exception caught trying to cancel timers. This happens with some application servers: " + ex.getMessage());
+        }
 
         super.destroy();
     }
@@ -133,6 +137,10 @@ public class StartServicesServlet extends HttpServlet {
             LOG.error("Audit log error", ex);
         }
 
+        // Cancel old timers as we can not rely on them being cancelled at shutdown
+        LOG.debug(">init calling ServiceSession.unload");
+        getTimedServiceSession().unload(0);
+        
         LOG.debug(">init FileBasedDataseManager");
         final FileBasedDatabaseManager nodb = FileBasedDatabaseManager.getInstance();
         if (nodb.isUsed()) {

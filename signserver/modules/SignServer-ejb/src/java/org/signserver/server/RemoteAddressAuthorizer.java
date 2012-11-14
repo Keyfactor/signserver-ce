@@ -49,13 +49,8 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             RemoteAddressAuthorizer.class);
 
     private static final String PROPERTY_ALLOW_FROM = "ALLOW_FROM";
-    private static final String PROPERTY_ALLOW_FORWARDED_FROM = "ALLOW_FORWARDED_FROM";
-    private static final String KEYWORD_ALL = "ALL";
 
     private Set<String> allowFrom;
-    private Set<String> allowXForwardedForFrom;
-    private boolean allowFromAll = false;
-    private boolean allowXForwardedForFromAll = true; // default: allow any IP address coming through a proxy
 
     private int workerId;
 
@@ -73,35 +68,15 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
         this.workerId = workerId;
         
         allowFrom = new HashSet<String>();
-        allowXForwardedForFrom = new HashSet<String>();
         
         final String allowFromProperty = config.getProperty(PROPERTY_ALLOW_FROM);
         
-        if (KEYWORD_ALL.equals(allowFromProperty)) {
-            allowFromAll = true;
-        } else if (allowFromProperty != null) {
+        if (allowFromProperty != null) {
             final String[] allowFromStrings = allowFromProperty.split(",");
             for (String allowFromString : allowFromStrings) {
                 allowFromString = allowFromString.trim();
                 if (allowFromString.length() > 0) {
                     allowFrom.add(allowFromString);
-                }
-            }
-        }
-
-        final String allowXForwardedForFromProperty = config.getProperty(PROPERTY_ALLOW_FORWARDED_FROM);
-        
-        if (allowXForwardedForFromProperty != null) {
-            if (!KEYWORD_ALL.equals(allowXForwardedForFromProperty)) {
-                allowXForwardedForFromAll = false;
-            
-                final String[] allowXForwardedForFromStrings = allowXForwardedForFromProperty.split(",");
-                for (String allowFromString : allowXForwardedForFromStrings) {
-                    allowFromString = allowFromString.trim();
-                
-                    if (allowFromString.length() > 0) {
-                        allowXForwardedForFrom.add(allowFromString);
-                    }
                 }
             }
         }
@@ -127,26 +102,16 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             remoteAddress = "null";
         }
         
-        if (!allowFromAll && !allowFrom.contains(remoteAddress)) {
+        if (!allowFrom.contains(remoteAddress)) {
             LOG.error("Worker " + workerId + ": "
                     + "Not authorized remote address: " + remoteAddress);
             throw new AuthorizationRequiredException("Authentication denied");
         }
-
-        // also check the X-Forwarded-For IPs
-        final String xForwardedFor = XForwardedForUtils.getXForwardedForIP(requestContext);
-
-        if (!allowXForwardedForFromAll && xForwardedFor != null && !allowXForwardedForFrom.contains(xForwardedFor)) {
-            LOG.error("Worker " + workerId + ": "
-                    + "Not authorized forwarded address:" + xForwardedFor);
-            throw new AuthorizationRequiredException("Authentication denied");
-        }
-
-        logRemoteAddress(remoteAddress, xForwardedFor, requestContext);
+        
+        logRemoteAddress(remoteAddress, requestContext);
     }
 
-    private void logRemoteAddress(final String remoteAddress, final String forwardedAddress,
-            final RequestContext requestContext) {
+    private void logRemoteAddress(final String remoteAddress, final RequestContext requestContext) {
         
         final LogMap logMap;
         final Object o = requestContext.get(RequestContext.LOGMAP);
@@ -157,9 +122,6 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             requestContext.put(RequestContext.LOGMAP, logMap);
         }
         logMap.put(IAuthorizer.LOG_REMOTEADDRESS, remoteAddress);
-        if (forwardedAddress != null) {
-            logMap.put(IAuthorizer.LOG_FORWARDED_ADDRESS, forwardedAddress);
-        }
     }
 
     @Override

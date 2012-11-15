@@ -122,6 +122,29 @@ public class ModulesTestCase extends TestCase {
         }
         return statusSession;
     }
+    
+    protected void addP12DummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password) {
+        // Worker using SoftCryptoToken and RSA
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+            "WORKER" + signerId + ".CLASSPATH", className);
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+            "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",
+            "org.signserver.server.cryptotokens.P12CryptoToken");
+        workerSession.setWorkerProperty(signerId, "NAME", signerName);
+        workerSession.setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(signerId, "KEYSTOREPATH", keystore.getAbsolutePath());
+        if (password != null) {
+            workerSession.setWorkerProperty(signerId, "KEYSTOREPASSWORD", password);
+        }
+
+        workerSession.reloadConfiguration(signerId);
+        try {
+            assertNotNull("Check signer available",
+                    workerSession.getStatus(signerId));
+        } catch (InvalidWorkerIdException ex) {
+            fail("Worker was not added succefully: " + ex.getMessage());
+        }
+    }
 
     protected void addDummySigner1() throws CertificateException {
         addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());

@@ -137,7 +137,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         logRemoteAddress(remoteAddress, forwardedAddress, requestContext);
     }
     
-    public void setFatalErrors() {
+    private void setFatalErrors() {
         fatalErrors = new LinkedList<String>();
         
         // check that one (and only one) each of the direct and forwarded properties at a time is specified

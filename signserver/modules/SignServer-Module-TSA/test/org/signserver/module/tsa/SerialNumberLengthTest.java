@@ -70,7 +70,7 @@ public class SerialNumberLengthTest extends TestCase {
             int numOfMaxLength = 0;
             int numNegative = 0;
                 
-            for (int i = 0 ; i < 9 ; i++) {
+            for (int i = 0; i < 20; i++) {
                 final BigInteger serno = signer.getSerialNumber();
                     
                 // we will strip off the sign, so we'll get one bit short of the max...

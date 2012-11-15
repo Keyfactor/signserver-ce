@@ -30,6 +30,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.XForwardedForUtils;
+import org.signserver.server.log.LogMap;
 
 /**
  * Authorizer with the ability to accept or deny remote and
@@ -168,15 +169,8 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
     
     private void logRemoteAddress(final String remoteAddress, final String forwardedAddress,
             final RequestContext requestContext) {
-        Map<String, String> logMap = (Map)
-                requestContext.get(RequestContext.LOGMAP);
-        if (logMap == null) {
-            logMap = new HashMap<String, String>();
-            requestContext.put(RequestContext.LOGMAP, logMap);
-        }
+        final LogMap logMap = LogMap.getInstance(requestContext);
         logMap.put(IAuthorizer.LOG_REMOTEADDRESS, remoteAddress);
-        if (forwardedAddress != null) {
-            logMap.put(IAuthorizer.LOG_FORWARDED_ADDRESS, forwardedAddress);
-        }
+        logMap.put(IAuthorizer.LOG_FORWARDED_ADDRESS, forwardedAddress);
     }
 }

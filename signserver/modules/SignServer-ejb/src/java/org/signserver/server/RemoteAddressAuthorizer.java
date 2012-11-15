@@ -108,20 +108,7 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             throw new AuthorizationRequiredException("Authentication denied");
         }
         
-        logRemoteAddress(remoteAddress, requestContext);
-    }
-
-    private void logRemoteAddress(final String remoteAddress, final RequestContext requestContext) {
-        
-        final LogMap logMap;
-        final Object o = requestContext.get(RequestContext.LOGMAP);
-        if (o instanceof LogMap) {
-            logMap = (LogMap) o;
-        } else {
-            logMap = new LogMap();
-            requestContext.put(RequestContext.LOGMAP, logMap);
-        }
-        logMap.put(IAuthorizer.LOG_REMOTEADDRESS, remoteAddress);
+        LogMap.getInstance(requestContext).put(IAuthorizer.LOG_REMOTEADDRESS, remoteAddress);
     }
 
     @Override

@@ -115,7 +115,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     }
     
     /**
-     * Test that access is denied when setting a forwarded whitelist
+     * Test that access is denied when setting a forwarded blacklist
      * and no forwarded header is present, even though the direct address
      * is whitelisted.
      * 
@@ -173,7 +173,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     }
     
     /**
-     * Test that access is denied when the forwading whitelist contains an adress
+     * Test that access is denied when the forwarding whitelist contains an address
      * and that address is not the last address in the X-Forwarded-For header
      * (we should only consider that last proxy in case there is a proxy chain).
      * 
@@ -186,7 +186,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
-                + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42");
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42.42");
         assertTrue("HTTP response code: " + responseCode, 
                 responseCode == 401 || responseCode == 403); 
     }

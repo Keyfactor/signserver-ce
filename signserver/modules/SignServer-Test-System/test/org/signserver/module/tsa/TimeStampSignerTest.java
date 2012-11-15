@@ -759,6 +759,23 @@ public class TimeStampSignerTest extends ModulesTestCase {
             // Test signing
             TimeStampResponse response = assertSuccessfulTimestamp(WORKER20);
             
+            // Test that it is using the right algorithm
+            TimeStampToken token = response.getTimeStampToken();
+            SignerInformation si = (SignerInformation) token.toCMSSignedData().getSignerInfos().getSigners().iterator().next();
+            assertEquals("sha1withecdsa", "1.2.840.10045.4.1", si.getEncryptionAlgOID());
+            
+            // Test with SHA256WithECDSA
+            workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", "SHA256WithECDSA");
+            workerSession.reloadConfiguration(workerId);
+            
+            // Test signing
+            response = assertSuccessfulTimestamp(WORKER20);
+            
+            // Test that it is using the right algorithm
+            token = response.getTimeStampToken();
+            si = (SignerInformation) token.toCMSSignedData().getSignerInfos().getSigners().iterator().next();
+            assertEquals("sha256withecdsa", "1.2.840.10045.4.3.2", si.getEncryptionAlgOID());
+            
         } finally {
             removeWorker(workerId);
         }

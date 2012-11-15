@@ -180,7 +180,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         try {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
             		"-data", "<root/>", "-protocol", "WEBSERVICES",
-            		"-servlet", "/signserver/SignServerWSService/SignServerWS",
+            		"-servlet", "/signserver/SignServerWSService/SignServerWS?wsdl",
             		"-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
             assertTrue("contains signature tag: "
                     + res, res.contains("<root><Signature"));
@@ -198,7 +198,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         try {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
                         "-data", "<root/>", "-protocol", "WEBSERVICES",
-                        "-servlet", "/signserver/signserverws/signserverws",
+                        "-servlet", "/signserver/signserverws/signserverws?wsdl",
                         "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
             assertTrue("contains signature tag: "
                     + res, res.contains("<root><Signature"));

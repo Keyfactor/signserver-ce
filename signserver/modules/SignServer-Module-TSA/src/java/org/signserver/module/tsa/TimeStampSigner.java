@@ -21,7 +21,6 @@ import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -177,6 +176,7 @@ public class TimeStampSigner extends BaseSigner {
 
     // Property constants
     public static final String TIMESOURCE = "TIMESOURCE";
+    public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
     public static final String ACCEPTEDALGORITHMS = "ACCEPTEDALGORITHMS";
     public static final String ACCEPTEDPOLICIES = "ACCEPTEDPOLICIES";
     public static final String ACCEPTEDEXTENSIONS = "ACCEPTEDEXTENSIONS";
@@ -237,12 +237,14 @@ public class TimeStampSigner extends BaseSigner {
         }
     }
 
+    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA";
     private static final String DEFAULT_ORDERING = "FALSE";
     //private static final String DEFAULT_DIGESTOID   = TSPAlgorithms.SHA1;
     
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
     private ITimeSource timeSource = null;
+    private String signatureAlgorithm;
     private Set<ASN1ObjectIdentifier> acceptedAlgorithms = null;
     private Set<String> acceptedPolicies = null;
     private Set<String> acceptedExtensions = null;
@@ -289,6 +291,9 @@ public class TimeStampSigner extends BaseSigner {
         } catch (SignServerException e) {
         	LOG.error("Could not create time source: " + e.getMessage());
         }
+        
+        // Get the signature algorithm
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM, DEFAULT_SIGNATUREALGORITHM);
 
         /* defaultDigestOID =
             config.getProperties().getProperty(DEFAULTDIGESTOID);
@@ -694,7 +699,7 @@ public class TimeStampSigner extends BaseSigner {
             
             PrivateKey privKey = this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
             ContentSigner cs =
-            		new JcaContentSignerBuilder("SHA1WITHRSA").setProvider(this.getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privKey);
+            		new JcaContentSignerBuilder(signatureAlgorithm).setProvider(this.getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privKey);
             JcaSignerInfoGeneratorBuilder sigb = new JcaSignerInfoGeneratorBuilder(calcProv);
             X509CertificateHolder certHolder = new X509CertificateHolder(cert.getEncoded());
             SignerInfoGenerator sig = sigb.build(cs, certHolder);

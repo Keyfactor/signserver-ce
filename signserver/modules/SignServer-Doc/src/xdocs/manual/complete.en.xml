@@ -2752,6 +2752,10 @@ This TimeSource returns the time from the local computer but only if the status 
                         </table>
                         
                         <p>
+<b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the timestamp (default: SHA1withRSA)
+						</p>
+                        
+                        <p>
 <b>ACCEPTEDALGORITHMS</b> = A ';' separated string containing accepted algorithms, can be null if it shouldn't be used. (OPTIONAL, Strongly recommended)
 Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, RIPEMD128, RIPEMD160, RIPEMD256
                         </p>

@@ -52,12 +52,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 "org.signserver.server.ListBasedAddressAuthorizer");
 
         // Remove old properties
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_DIRECT_ADDRESSES");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_FORWARDED_ADDRESSES");
-
-        workerSession.reloadConfiguration(getSignerIdDummy1());
+        setPropertiesAndReload(null, null, null, null);
     }
 
 
@@ -67,9 +62,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test01WhitelistedDirectAddressAllowed() throws Exception {
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES", "127.0.0.1");
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_FORWARDED_ADDRESSES", "1.2.3.4");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
+        setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4");
         
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
@@ -84,8 +77,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test02WhitelistedDirectAddressNotAllowed() throws Exception {
-       workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES", "1.2.3.4");
-       workerSession.reloadConfiguration(getSignerIdDummy1());
+       setPropertiesAndReload("1.2.3.4", null, null, "1.2.3.4");
        
        int responseCode = process(
                new URL("http://localhost:" + getPublicHTTPPort()
@@ -103,10 +95,8 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test03WhitelistedDirectAddressAllowedSeveral() throws Exception {
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES",
-                "127.0.0.1, 1.2.3.4");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+        setPropertiesAndReload("127.0.0.1, 1.2.3.4", null, null, "1.2.3.4");
+      
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
@@ -115,17 +105,14 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     }
     
     /**
-     * Test that access is denied when setting a forwarded blacklist
+     * Test that access is denied when setting a forwarded whitelist
      * and no forwarded header is present, even though the direct address
      * is whitelisted.
      * 
      * @throws Exception
      */
     public void test04WhitelistedDirectAddressAndWhitelistedForwarded() throws Exception {
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES",
-                "42.42.42.42");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_FORWARDED_ADDRESSES");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
+        setPropertiesAndReload("127.0.0.1", null, "42.42.42.42", null);
         
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
@@ -142,11 +129,8 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test05WhitelistedDirectWithForwarding() throws Exception {
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES", "127.0.0.1");
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES", "1.2.3.4");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_FORWARDED_ADDRESSES");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
+       
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
@@ -161,9 +145,8 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test06WhitelistedDirectWithForwadingNotInWhitelist() throws Exception {
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES", "42.42.42.42");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+        setPropertiesAndReload("127.0.0.1", null, "42.42.42.42", null);
+
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
@@ -180,9 +163,8 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test07WhitelistedDirectWithForwardingNotLastAddress() throws Exception {
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES", "1.2.3.4");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
+
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
@@ -198,10 +180,8 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test08WhitelistedDirectWithBlacklistedForwarded() throws Exception {
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_FORWARDED_ADDRESSES", "1.2.3.4");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+        setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4");
+      
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
@@ -216,10 +196,8 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test09BlacklistedDirect() throws Exception {
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_DIRECT_ADDRESSES", "127.0.0.1");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+        setPropertiesAndReload(null, "127.0.0.1", null, "1.2.3.4");
+
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
@@ -236,12 +214,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test10WhitelistedDirectWithMultipleWhitelistedForwarded() throws Exception {
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES", "127.0.0.1");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_DIRECT_ADDRESSES");
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES", 
-                "1.2.3.4, 42.42.42.42");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_FORWARDED_ADDRESSES");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
+        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 127.0.0.1", null);
         
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
@@ -257,12 +230,8 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test11NoPropertiesSet() throws Exception {
-       workerSession.removeWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES");
-       workerSession.removeWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_DIRECT_ADDRESSES");
-       workerSession.removeWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES");
-       workerSession.removeWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_FORWARDED_ADDRESSES");
-       workerSession.reloadConfiguration(getSignerIdDummy1());
-     
+       setPropertiesAndReload(null, null, null, null);
+    
        int responseCode = process(
                new URL("http://localhost:" + getPublicHTTPPort()
                + "/signserver/process?workerId="
@@ -277,11 +246,8 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test12BothDirectAddressPropertiesSet() throws Exception {
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES", "127.0.0.1");
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_DIRECT_ADDRESSES", "127.0.0.1");
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES", "127.0.0.1");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+        setPropertiesAndReload("127.0.0.1", "127.0.0.1", "127.0.0.1", null);
+       
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
@@ -296,10 +262,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test13BothForwardedAddressPropertiesSet() throws Exception {
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES", "127.0.0.1");
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_FORWARDED_ADDRESSES", "127.0.0.1");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
+        setPropertiesAndReload(null, "127.0.0.1", "127.0.0.1", "127.0.0.1");
         
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
@@ -314,12 +277,8 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test14MissingDirectAddresses() throws Exception {
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_DIRECT_ADDRESSES");
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_FORWARDED_ADDRESSES", "127.0.0.1");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+        setPropertiesAndReload(null, null, null, "127.0.0.1");
+       
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
@@ -333,17 +292,33 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test15MissingForwardedAddresses() throws Exception {
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "WHITELISTED_FORWARDED_ADDRESSES");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_FORWARDED_ADDRESSES");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "WHITELISTED_DIRECT_ADDRESSES");
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "BLACKLISTED_DIRECT_ADDRESSES", "127.0.0.1");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+        setPropertiesAndReload(null, "127.0.0.1", null, null);
+       
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 500, responseCode);
+    }
+    
+    /**
+     * Utility method to set the access list properties (null removes a property)
+     */
+    private void setPropertiesAndReload(final String whitelistedDirect, final String blacklistedDirect,
+            final String whitelistedForwarded, final String blacklistedForwarded) {
+        setOrRemoveProperty("WHITELISTED_DIRECT_ADDRESSES", whitelistedDirect);
+        setOrRemoveProperty("BLACKLISTED_DIRECT_ADDRESSES", blacklistedDirect);
+        setOrRemoveProperty("WHITELISTED_FORWARDED_ADDRESSES", whitelistedForwarded);
+        setOrRemoveProperty("BLACKLISTED_FORWARDED_ADDRESSES", blacklistedForwarded);
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+    }
+        
+    private void setOrRemoveProperty(final String property, final String value) {
+        if (value == null) {
+            workerSession.removeWorkerProperty(getSignerIdDummy1(), property);
+        } else {
+            workerSession.setWorkerProperty(getSignerIdDummy1(), property, value);
+        }
     }
     
     private int process(URL workerUrl, final String forwardIPs) {

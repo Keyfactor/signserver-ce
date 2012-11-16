@@ -248,6 +248,10 @@ j2ee.web-nohttps=true
 # Default: build=true
 #module.wsra.enabled=true
 
+# Module StatusProperties
+# Default: build=true, include=false
+#module.statusproperties.enabled=true
+#module.statusproperties.include=false
 
 # -------------- Client Configurations -----------------------------------------
 #

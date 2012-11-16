@@ -227,6 +227,9 @@ j2ee.web-nohttps=true
 # Default: true
 #module.mrtdsigner.enabled=true
 
+# Module StatusProperties
+# Default: false
+#module.statusproperties.enabled=false
 
 # -------------- Client Configurations -----------------------------------------
 #

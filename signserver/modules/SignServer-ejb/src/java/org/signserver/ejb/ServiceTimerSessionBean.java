@@ -214,27 +214,30 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
     public void unload(int serviceId) {
         log.debug("Unloading");
         // Get all services
-        for (Timer timer : sessionCtx.getTimerService().getTimers()) {
-            try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Cancelling timer: " + timer);
-                }
-                if (serviceId == 0) {
-                    timer.cancel();
-                } else {
-                    if (timer.getInfo() instanceof Integer) {
-                        if (((Integer) timer.getInfo()).intValue() == serviceId) {
-                            timer.cancel();
+        for (Object o : sessionCtx.getTimerService().getTimers()) {
+            if (o instanceof Timer) {
+                final Timer timer = (Timer) o;
+                try {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Cancelling timer: " + timer);
+                    }
+                    if (serviceId == 0) {
+                        timer.cancel();
+                    } else {
+                        if (timer.getInfo() instanceof Integer) {
+                            if (((Integer) timer.getInfo()).intValue() == serviceId) {
+                                timer.cancel();
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    /*
+                     * EJB 2.1 only?: We need to catch this because Weblogic 10
+                     * throws an exception if we have not scheduled this timer, so
+                     * we don't have anything to cancel. Only weblogic though...
+                     */
+                    log.info("Caught exception canceling timer: " + e.getMessage());
                 }
-            } catch (Exception e) {
-                /*
-                 * EJB 2.1 only?: We need to catch this because Weblogic 10
-                 * throws an exception if we have not scheduled this timer, so
-                 * we don't have anything to cancel. Only weblogic though...
-                 */
-                log.info("Caught exception canceling timer: " + e.getMessage());
             }
         }
     }

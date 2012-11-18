@@ -2,7 +2,7 @@ This package was debianized by Markus Kilås <markus@primekey.se> on Fri, 13 Aug
 
 Upstream Author: PrimeKey Solutions AB <info@primekey.se>
 
-Copyright: 2007-2011 PrimeKey Solutions AB
+Copyright: 2007-2012 PrimeKey Solutions AB
 
 License:
     GNU Lesser Public License
@@ -421,4 +421,4 @@ License:
     PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
     END OF TERMS AND CONDITIONS
 
-The Debian packaging is copyright 2010, 2011 Markus Kilås <markus@primekey.se> and available on the same terms as the package itself (see above).
+The Debian packaging is copyright 2010-2012 Markus Kilås <markus@primekey.se> and available on the same terms as the package itself (see above).

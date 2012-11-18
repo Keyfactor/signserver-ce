@@ -728,10 +728,18 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
     </target>
     
     <!-- Creates symlinks to all needed jars in the lib folder as specified by the mappingsFile. -->
-    <target name="unix-create-jar-symlinks" depends="-build-buildtools">
-        <taskdef name="symlinklibs" classname="org.signserver.anttasks.UnixSymlinkLibsTask" classpath="lib/SignServer-BuildTools.jar"/>
+    <target name="-pre-symlink">
+        <!-- Set libdir and mappingsFile as needed by the symlinklibs task -->
         <property name="libdir" location="lib"/>
         <property name="mappingsFile" location="res/install/debian/oneiric-jars.properties"/>
+        
+        <!-- The task needs commons-lang to function so lets symlink it manually here first. -->
+        <property file="${mappingsFile}"/>
+        <mkdir dir="lib/ext"/>
+        <symlink link="lib/ext/commons-lang-2.4.jar" resource="${ext/commons-lang-2.4.jar}"/>
+    </target>
+    <target name="unix-create-jar-symlinks" depends="-pre-symlink,-build-buildtools">
+        <taskdef name="symlinklibs" classname="org.signserver.anttasks.UnixSymlinkLibsTask" classpath="lib/SignServer-BuildTools.jar"/>
         <symlinklibs action="create" dir="${libdir}" mappingsFile="${mappingsFile}"/>
     </target>
 

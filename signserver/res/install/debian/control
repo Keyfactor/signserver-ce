@@ -7,19 +7,17 @@ Build-Depends: ant (>= 1.8.0), ant-optional, debhelper (>= 5),
  glassfish-appserv (>=1:2ur2-b04-6),
  glassfish-javaee (>=1:2ur2-b04-6),
  junit (>=3.8.2-4),
- libbcprov-java (>=1.45),
- libbctsp-java (>=1.45),
+ libbcprov1.47-java (>=1.47),
+ libbcpkix1.47-java (>=1.47),
  libcertcvc-java (>= 1.2.11),
  libcommons-cli-java,
  libcommons-fileupload-java,
  libcommons-configuration-java,
  libcommons-lang-java,
- libejbca-util-signserver-java,
  libgnujaf-java,
  libgnumail-java,
  libhibernate-annotations-java,
  libhibernate3-java,
- libitext-java (>=2.1.7-1),
  libjaxp1.3-java (>=1.3.04-5ubuntu2),
  libjboss-ejb3x-java (>=4.2.3.GA-1),
  libjcommon-java,
@@ -38,7 +36,10 @@ Build-Depends: ant (>= 1.8.0), ant-optional, debhelper (>= 5),
  libappframework-java,
  libbeansbinding-java,
  libxmltask-java,
- libxml-security-java (>=1.4)
+ libxml-security-java (>=1.4),
+ libjline-java,
+ libdom4j-java,
+ libjaxen-java
 Standards-Version: 3.7.2
 Homepage: http://www.signserver.org/
 
@@ -52,17 +53,17 @@ Description: SignServer automated signing server
 Package: libsignserver3.3-common
 Architecture: all
 Depends: libcertcvc-java (>= 1.2.11), 
- libejbca-util-signserver-java, 
  libcertcvc-java,
  libcommons-lang-java, 
  libcommons-configuration-java, 
  libcommons-cli-java,
  libcommons-io-java,
  liblog4j1.2-java,  
- libbcprov-java (>= 1.45), 
- libbctsp-java (>=1.45), 
+ libbcprov1.47-java (>= 1.47), 
+ libbcpkix1.47-java (>=1.47), 
  libjboss-j2ee-java,
  libjboss-ejb3x-java (>=4.2.3.GA-1),
+ libjline-java,
  ${misc:Depends}
 Description: SignServer automated signing server
  Common classes for different parts of signserver
@@ -81,9 +82,11 @@ Description: SignServer automated signing server
 
 Package: libsignserver3.3-modules
 Architecture: all
-Depends: signserver3.3-server, libsignserver3.3-common, 
- libitext-java (>=2.1.7-1), 
- libxml-security-java (>=1.4)
+Depends: signserver3.3-server, libsignserver3.3-common,  
+ libxml-security-java (>=1.4),
+ libdom4j-java,
+ libjaxen-java,
+ libxerces2-java,
  ${misc:Depends}
 Description: SignServer automated signing server
  Modules for SignServer

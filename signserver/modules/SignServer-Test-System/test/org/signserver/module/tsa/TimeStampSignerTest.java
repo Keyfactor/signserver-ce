@@ -792,6 +792,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
             }
             addJKSDummySigner(TimeStampSigner.class.getName(), workerId, "TestTimeStampJKSDSA", keystore, "foo123");
             workerSession.setWorkerProperty(workerId, "DEFAULTTSAPOLICYOID", "1.2.3");
+            workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", "SHA1WithDSA");
             workerSession.reloadConfiguration(workerId);
             
             // Test signing

@@ -94,9 +94,6 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + WORKERID_WORKER + ".CLASSPATH",
             "org.signserver.module.signerstatusreport.SignerStatusReportWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-            "WORKER" + WORKERID_WORKER + ".SIGNERTOKEN.CLASSPATH",
-            "org.signserver.server.cryptotokens.HardCodedCryptoToken");
         
         workerSession.setWorkerProperty(WORKERID_WORKER, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(WORKERID_WORKER, "WORKERS",

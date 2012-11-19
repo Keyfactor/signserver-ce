@@ -14,15 +14,15 @@ package org.signserver.module.statusproperties;
 
 import java.io.ByteArrayInputStream;
 import java.util.Enumeration;
-import org.signserver.statusrepo.common.StatusEntry;
-import org.signserver.web.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import org.apache.log4j.Logger;
+import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
+import org.signserver.web.*;
 
 /**
  * Tests that the right HTTP status codes are returned in different situations.
@@ -49,7 +49,6 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
     public void test00SetupDatabase() throws Exception {
         Properties properties = new Properties();
         properties.setProperty("GLOB.WORKER" + WORKERID + ".CLASSPATH", "org.signserver.module.statusproperties.StatusPropertiesWorker");
-        properties.setProperty("GLOB.WORKER" + WORKERID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
         properties.setProperty("WORKER" + WORKERID + ".NAME", WORKERNAME);
         properties.setProperty("WORKER" + WORKERID + ".AUTHTYPE", "NOAUTH");
         setProperties(properties);

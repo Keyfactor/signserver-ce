@@ -781,6 +781,31 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
     }
     
+    /** Tests issuance of time-stamp token when an DSA key is specified. */
+    public void test21BasicTimeStampDSA() throws Exception {
+        final int workerId = WORKER20;
+        try {
+            // Setup signer
+            final File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
+            if (!keystore.exists()) {
+                throw new FileNotFoundException(keystore.getAbsolutePath());
+            }
+            addJKSDummySigner(TimeStampSigner.class.getName(), workerId, "TestTimeStampJKSDSA", keystore, "foo123");
+            workerSession.setWorkerProperty(workerId, "DEFAULTTSAPOLICYOID", "1.2.3");
+            workerSession.reloadConfiguration(workerId);
+            
+            // Test signing
+            TimeStampResponse response = assertSuccessfulTimestamp(WORKER20);
+            
+            // Test that it is using the right algorithm
+            TimeStampToken token = response.getTimeStampToken();
+            SignerInformation si = (SignerInformation) token.toCMSSignedData().getSignerInfos().getSigners().iterator().next();
+            assertEquals("sha1withdsa", "1.2.840.10040.4.3", si.getEncryptionAlgOID());
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
     private void assertTokenGranted(int workerId) throws Exception {
         TimeStampRequestGenerator timeStampRequestGenerator =
                     new TimeStampRequestGenerator();

@@ -345,12 +345,20 @@ public class ModulesTestCase extends TestCase {
     }
     
     protected void addP12DummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password) {
+        addDummySigner(className, "org.signserver.server.cryptotokens.P12CryptoToken", signerId, signerName, keystore, password);
+    }
+    
+    protected void addJKSDummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password) {
+        addDummySigner(className, "org.signserver.server.cryptotokens.JKSCryptoToken", signerId, signerName, keystore, password);
+    }
+    
+    protected void addDummySigner(final String className, final String cryptoTokenClassName, final int signerId, final String signerName, final File keystore, final String password) {
         // Worker using SoftCryptoToken and RSA
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".CLASSPATH", className);
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",
-            "org.signserver.server.cryptotokens.P12CryptoToken");
+            cryptoTokenClassName);
         workerSession.setWorkerProperty(signerId, "NAME", signerName);
         workerSession.setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(signerId, "KEYSTOREPATH", keystore.getAbsolutePath());

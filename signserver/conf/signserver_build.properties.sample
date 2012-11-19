@@ -231,6 +231,11 @@ j2ee.web-nohttps=true
 # Default: false
 #module.statusproperties.enabled=false
 
+# Module SignerStatusReport
+# Default: false
+#module.signerstatusreport.enabled=false
+
+
 # -------------- Client Configurations -----------------------------------------
 #
 # Set to true to enable build of the TimeStampClient

@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
@@ -101,9 +100,6 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + WORKERID_WORKER + ".CLASSPATH",
             "org.signserver.module.signerstatusreport.SignerStatusReportWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-            "WORKER" + WORKERID_WORKER + ".SIGNERTOKEN.CLASSPATH",
-            "org.signserver.server.cryptotokens.HardCodedCryptoToken");
 
         workerSession.setWorkerProperty(WORKERID_WORKER, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(WORKERID_WORKER, "WORKERS",

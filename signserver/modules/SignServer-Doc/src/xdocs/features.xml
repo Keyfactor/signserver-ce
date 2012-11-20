@@ -29,6 +29,7 @@
                         <li>Configurable time sources.</li>
                     </ul>
                 </li>
+                <li>Built in Authenticode timestamp signer module</li>
                 <li>Electronic ePassport document signing (MRTD) compliant with ICAO requirements:
                     <ul>
                         <li>LDS version 1.8 support.</li>
@@ -74,6 +75,7 @@ limit is exceeded or key usage period expires.</li>
                 <li>Command line administration for scripts etc.</li>
                 <li>Administration GUI desktop application for management with support for remote management with strong authentication.</li>
                 <li>Transaction logging suitable for statistics and billing.</li>
+                <li>Audit logging for events related to keys, certificates and time-sources</li>
                 <li>Easy upgrade paths when new versions are released.</li>
             </ul>
         </subsection>
@@ -85,7 +87,12 @@ limit is exceeded or key usage period expires.</li>
                 <li>Supports multiple databases: HypersonicSQL, MySQL, Oracle, etc.</li>
                 <li>Support for running without database.</li>
                 <li>Possible to integrate into large java applications for optimal integration into business process.</li>
-                <li>Health check monitoring service to support efficient clustering and monitoring.</li>
+                <li>Health check monitoring service to support efficient clustering and monitoring.<br/>
+                    <ul>
+                        <li>Status of workers</li>
+                        <li>Down for maintenance support</li>
+                    </ul>
+                </li>
             </ul>
         </subsection>
   </section>

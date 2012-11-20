@@ -12,18 +12,14 @@
  *************************************************************************/
 package org.signserver.server;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
 import javax.persistence.EntityManager;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.signserver.common.AuthorizationRequiredException;
+import org.signserver.common.AccessDeniedException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
@@ -113,7 +109,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
     @Override
     public void isAuthorized(ProcessRequest request,
             RequestContext requestContext) throws IllegalRequestException,
-            SignServerException {
+            AccessDeniedException, SignServerException {
         final String remoteAddress = (String) requestContext.get(RequestContext.REMOTE_IP);
         final String forwardedAddress = XForwardedForUtils.getXForwardedForIP(requestContext);
         
@@ -122,7 +118,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
                 (!isDirectWhitelisting && addressesDirect.contains(remoteAddress))) {
             LOG.error("Worker " + workerId + ": "
                     + "Not authorized remote address: " + remoteAddress);
-            throw new AuthorizationRequiredException("Access denied");
+            throw new AccessDeniedException("Remote address not authorized");
         }
         
         // check the forwarded address
@@ -131,7 +127,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
             LOG.error("Worker " + workerId + ": "
                     + "Not authorized forwarded address: " + forwardedAddress);
 
-            throw new AuthorizationRequiredException("Access denied");
+            throw new AccessDeniedException("Forwarded address not authorized");
         }
         
         logRemoteAddress(remoteAddress, forwardedAddress, requestContext);

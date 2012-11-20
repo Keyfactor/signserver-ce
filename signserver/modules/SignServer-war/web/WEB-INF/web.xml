@@ -93,6 +93,10 @@
         <location>/errorpages/error400.jsp</location>
     </error-page>
     <error-page>
+        <error-code>403</error-code>
+        <location>/errorpages/error403.jsp</location>
+    </error-page>
+    <error-page>
         <error-code>500</error-code>
         <location>/errorpages/error500.jsp</location>
     </error-page>

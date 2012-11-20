@@ -16,7 +16,6 @@ package org.signserver.server;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import org.apache.log4j.Logger;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
@@ -84,8 +83,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                + "/signserver/process?workerId="
                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
        
-       assertTrue("HTTP response code: " + responseCode,
-               responseCode == 401 || responseCode == 403);
+       assertEquals("HTTP response code", 403, responseCode);
     }
     
     /**
@@ -118,8 +116,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
-        assertTrue("HTTP response code: " + responseCode, 
-                responseCode == 401 || responseCode == 403);        
+        assertEquals("HTTP response code", 403, responseCode);        
     }
     
     /**
@@ -151,8 +148,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4");
-        assertTrue("HTTP response code: " + responseCode, 
-                responseCode == 401 || responseCode == 403);
+        assertEquals("HTTP response code", 403, responseCode);
     }
     
     /**
@@ -169,8 +165,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42.42");
-        assertTrue("HTTP response code: " + responseCode, 
-                responseCode == 401 || responseCode == 403); 
+        assertEquals("HTTP response code", 403, responseCode); 
     }
     
     /**
@@ -186,8 +181,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4");
-        assertTrue("HTTP response code: " + responseCode, 
-                responseCode == 401 || responseCode == 403); 
+        assertEquals("HTTP response code", 403, responseCode); 
     }
     
     /**
@@ -202,8 +196,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
-        assertTrue("HTTP response code: " + responseCode, 
-                responseCode == 401 || responseCode == 403);
+        assertEquals("HTTP response code", 403, responseCode);
     }
     
     /**
@@ -324,7 +317,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     private int process(URL workerUrl, final String forwardIPs) {
         int responseCode = -1;
 
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) workerUrl.openConnection();
             conn.setAllowUserInteraction(false);

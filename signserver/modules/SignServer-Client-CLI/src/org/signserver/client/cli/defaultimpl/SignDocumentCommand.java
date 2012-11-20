@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.common.AccessDeniedException;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -354,6 +355,10 @@ public class SignDocumentCommand extends AbstractCommand {
                 final AuthorizationRequiredException authEx =
                         (AuthorizationRequiredException) ex.getCause();
                 LOG.error("Authorization required: " + authEx.getMessage());
+            } else if (ex.getCause() instanceof AccessDeniedException) {
+                final AccessDeniedException authEx =
+                        (AccessDeniedException) ex.getCause();
+                LOG.error("Access denied: " + authEx.getMessage());
             }
             LOG.error(ex);
         } catch (IOException ex) {

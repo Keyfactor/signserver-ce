@@ -189,6 +189,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         String.valueOf(true));
             } catch (AuthorizationRequiredException ex) {
                 throw ex;
+            } catch (AccessDeniedException ex) {
+                throw ex;
             } catch (IllegalRequestException ex) {
                 final IllegalRequestException exception =
                         new IllegalRequestException("Authorization failed: "

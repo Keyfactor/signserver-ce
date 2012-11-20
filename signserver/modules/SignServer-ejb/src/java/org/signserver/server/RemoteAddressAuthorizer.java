@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.signserver.common.AccessDeniedException;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
@@ -91,9 +92,10 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
      * @throws SignServerException
      * @throws IllegalRequestException
      */
+    @Override
     public void isAuthorized(final ProcessRequest request,
             final RequestContext requestContext)
-            throws SignServerException, IllegalRequestException {
+            throws AccessDeniedException, SignServerException, IllegalRequestException {
 
         String remoteAddress
                 = (String) requestContext.get(RequestContext.REMOTE_IP);
@@ -105,7 +107,7 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
         if (!allowFrom.contains(remoteAddress)) {
             LOG.error("Worker " + workerId + ": "
                     + "Not authorized remote address: " + remoteAddress);
-            throw new AuthorizationRequiredException("Authentication denied");
+            throw new AccessDeniedException("Remote address not authorized");
         }
         
         LogMap.getInstance(requestContext).put(IAuthorizer.LOG_REMOTEADDRESS, remoteAddress);

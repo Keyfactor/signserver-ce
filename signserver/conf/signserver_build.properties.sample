@@ -123,7 +123,7 @@ j2ee.web-nohttps=true
 # This is the URL used to connect to the database, used to configure a new datasource in JBoss.
 # Default: jdbc:hsqldb:${jboss.server.data.dir}${/}hypersonic${/}SignServerLocalDB
 # Mysql standard:
-#database.url=jdbc:mysql://127.0.0.1:3306/signserver
+#database.url=jdbc:mysql://127.0.0.1:3306/signserver?characterEncoding=UTF-8
 # Mysql Clusters should use something like:
 #database.url=jdbc:mysql://host1,host2/signserver
 #database.url=jdbc:mysql://192.168.1.15,192.168.1.18/signserver

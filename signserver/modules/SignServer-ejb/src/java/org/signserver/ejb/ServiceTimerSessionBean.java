@@ -40,7 +40,7 @@ import org.signserver.server.timedservices.ITimedService;
 public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, IServiceTimerSession.IRemote {
 
     /** Logger for this class. */
-    private static final Logger log = Logger.getLogger(ServiceTimerSessionBean.class);
+    private static final Logger LOG = Logger.getLogger(ServiceTimerSessionBean.class);
 
     EntityManager em;
     
@@ -68,14 +68,14 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
     public void create() {
         final IKeyUsageCounterDataService keyUsageCounterDataService;
         if (em == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("No EntityManager injected. Running without database.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No EntityManager injected. Running without database.");
             }
             workerConfigService = new FileBasedWorkerConfigDataService(FileBasedDatabaseManager.getInstance());
             keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager.getInstance());
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("EntityManager injected. Running with database.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("EntityManager injected. Running with database.");
             }
             workerConfigService = new WorkerConfigDataService(em);
             keyUsageCounterDataService = new KeyUsageCounterDataService(em);
@@ -94,7 +94,9 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
         Integer timerInfo = (Integer) timer.getInfo();
 
         if (timerInfo.equals(SERVICELOADER_ID)) {
-            log.debug("Running the internal Service loader.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Running the internal Service loader.");
+            }
             sessionCtx.getTimerService().createTimer(SERVICELOADER_PERIOD, SERVICELOADER_ID);
             load(0);
         } else {
@@ -130,24 +132,24 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
                     }
                 }
             } catch (NotSupportedException e) {
-                log.error(e);
+                LOG.error(e);
             } catch (SystemException e) {
-                log.error(e);
+                LOG.error(e);
             } catch (SecurityException e) {
-                log.error(e);
+                LOG.error(e);
             } catch (IllegalStateException e) {
-                log.error(e);
+                LOG.error(e);
             } finally {
                 try {
                     ut.commit();
                 } catch (RollbackException e) {
-                    log.error(e);
+                    LOG.error(e);
                 } catch (HeuristicMixedException e) {
-                    log.error(e);
+                    LOG.error(e);
                 } catch (HeuristicRollbackException e) {
-                    log.error(e);
+                    LOG.error(e);
                 } catch (SystemException e) {
-                    log.error(e);
+                    LOG.error(e);
                 }
             }
 
@@ -157,10 +159,10 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
                         if (timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
                             timedService.work();
                             serviceConfig.setLastRunTimestamp(new Date());
-                            log.info("Service " + timerInfo.intValue() + " executed successfully.");
+                            LOG.info("Service " + timerInfo.intValue() + " executed successfully.");
                         }
                     } catch (ServiceExecutionFailedException e) {
-                        log.error("Service" + timerInfo.intValue() + " execution failed. ", e);
+                        LOG.error("Service" + timerInfo.intValue() + " execution failed. ", e);
                     } catch (RuntimeException e) {
                         /*
                          * DSS-377:
@@ -171,14 +173,14 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
                          * previously in this method. We still want to log this as an ERROR
                          * since it is some kind of catastrophic failure..
                          */
-                        log.error("Service worker execution failed.", e);
+                        LOG.error("Service worker execution failed.", e);
                     }
                 } else {
-                    log.error("Service with id " + timerInfo.intValue() + " not found.");
+                    LOG.error("Service with id " + timerInfo.intValue() + " not found.");
                 }
             } else {
                 if (isSingleton) {
-                    log.info("Service " + timerInfo.intValue() + " have been executed on another node in the cluster, waiting.");
+                    LOG.info("Service " + timerInfo.intValue() + " have been executed on another node in the cluster, waiting.");
                 }
             }
         }
@@ -232,14 +234,16 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
      */
     @Override
     public void unload(int serviceId) {
-        log.debug("Unloading");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Unloading");
+        }
         // Get all services
         for (Object t : sessionCtx.getTimerService().getTimers()) {
             if (t instanceof Timer) {
                 final Timer timer = (Timer) t;
                 try {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Cancelling timer: " + timer);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Cancelling timer: " + timer);
                     }
                     if (serviceId == 0) {
                         timer.cancel();
@@ -256,7 +260,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
                      * throws an exception if we have not scheduled this timer, so
                      * we don't have anything to cancel. Only weblogic though...
                      */
-                    log.info("Caught exception canceling timer: " + e.getMessage());
+                    LOG.info("Caught exception canceling timer: " + e.getMessage());
                 }
             }
         }

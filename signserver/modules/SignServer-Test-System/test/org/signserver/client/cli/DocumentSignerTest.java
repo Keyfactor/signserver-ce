@@ -171,6 +171,26 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
+    
+    /**
+     * Test for the "-pdfpassword" argument.
+     * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf -protocol CLIENTWS
+     * @throws Exception
+     */
+    public void test04signPDFwithPasswordOverClientWS() throws Exception {
+        try {
+            
+            byte[] res = execute("signdocument", "-workername", 
+                    "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
+                    "-pdfpassword", "open123", "-protocol", "CLIENTWS",
+                    "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit");
+            assertNotNull("No result", res);
+            assertNotSame("Empty result", 0, res.length);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
 
     /**
      * Test signing over webservices with the -servlet argument set as SignServerWSService/SignServerWS
@@ -181,6 +201,24 @@ public class DocumentSignerTest extends ModulesTestCase {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
             		"-data", "<root/>", "-protocol", "WEBSERVICES",
             		"-servlet", "/signserver/SignServerWSService/SignServerWS?wsdl",
+            		"-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
+            assertTrue("contains signature tag: "
+                    + res, res.contains("<root><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Test signing over webservices with the -servlet argument set as ClientWSService/ClientWS
+     * @throws Exception
+     */
+    public void test05signPDFOverClientWSServletArg() throws Exception {
+        try {
+            final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
+            		"-data", "<root/>", "-protocol", "CLIENTWS",
+            		"-servlet", "/signserver/ClientWSService/ClientWS?wsdl",
             		"-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
             assertTrue("contains signature tag: "
                     + res, res.contains("<root><Signature"));
@@ -216,6 +254,25 @@ public class DocumentSignerTest extends ModulesTestCase {
         try {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
                         "-data", "<root/>", "-protocol", "WEBSERVICES",
+                        "-servlet", "/signserver/nonexistant/wsurl",
+                        "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
+            fail("Should not accept invalid WS -servlet argument");
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } catch (Exception ex) {
+            // this is expected for the invalid URL
+        }
+    }
+    
+    /**
+     * Test signing over webservices with the -servlet argument set as an invalid WS servlet URL
+     * @throws Exception
+     */
+    public void test07signPDFOverClientWSServletArgInvalid() throws Exception {
+        try {
+            final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
+                        "-data", "<root/>", "-protocol", "CLIENTWS",
                         "-servlet", "/signserver/nonexistant/wsurl",
                         "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
             fail("Should not accept invalid WS -servlet argument");

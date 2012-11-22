@@ -47,6 +47,8 @@ public class SignDocumentCommand extends AbstractCommand {
     private static final ResourceBundle TEXTS = ResourceBundle.getBundle(
             "org/signserver/client/cli/defaultimpl/ResourceBundle");
 
+    private static final String DEFAULT_CLIENTWS_WSDL_URL = "/signserver/ClientWSService/ClientWS?wsdl";
+    
     /** System-specific new line characters. **/
     private static final String NL = System.getProperty("line.separator");
 
@@ -95,8 +97,11 @@ public class SignDocumentCommand extends AbstractCommand {
      * Protocols that can be used for accessing SignServer.
      */
     public static enum Protocol {
-        /** The Web Services interface. */
+        /** The SignServerWS interface. */
         WEBSERVICES,
+        
+        /** The ClientWS interface. */
+        CLIENTWS,
 
         /** The HTTP interface. */
         HTTP
@@ -157,7 +162,7 @@ public class SignDocumentCommand extends AbstractCommand {
     private File outFile;
 
     /** Protocol to use for contacting SignServer. */
-    private Protocol protocol;
+    private Protocol protocol = Protocol.HTTP;
 
     private String username;
     private String password;
@@ -230,6 +235,10 @@ public class SignDocumentCommand extends AbstractCommand {
             	!line.hasOption(SERVLET)) {
             	servlet = SignServerWSClientFactory.DEFAULT_WSDL_URL;
             }
+            if ((Protocol.CLIENTWS.equals(protocol)) &&
+            	!line.hasOption(SERVLET)) {
+            	servlet = DEFAULT_CLIENTWS_WSDL_URL;
+            }
         }
         if (line.hasOption(USERNAME)) {
             username = line.getOptionValue(USERNAME, null);
@@ -279,31 +288,56 @@ public class SignDocumentCommand extends AbstractCommand {
             }
         }
 
-        if (Protocol.WEBSERVICES.equals(protocol)) {
-            LOG.debug("Using WebServices as procotol");
+        switch (protocol) {
+            case WEBSERVICES: {
+                LOG.debug("Using SignServerWS as procotol");
             
-            final String workerIdOrName;
-            if (workerId == 0) {
-                workerIdOrName = workerName;
-            } else {
-                workerIdOrName = String.valueOf(workerId);
+                final String workerIdOrName;
+                if (workerId == 0) {
+                    workerIdOrName = workerName;
+                } else {
+                    workerIdOrName = String.valueOf(workerId);
+                }
+
+                signer = new WebServicesDocumentSigner(
+                    host,
+                    port,
+                    servlet,
+                    workerIdOrName,
+                    keyStoreOptions.isUseHTTPS(),
+                    username, password,
+                    pdfPassword);
+                break;
             }
+            case CLIENTWS: {
+                LOG.debug("Using ClientWS as procotol");
             
-            signer = new WebServicesDocumentSigner(
-                host,
-                port,
-                servlet,
-                workerIdOrName,
-                keyStoreOptions.isUseHTTPS(),
-                username, password,
-                pdfPassword);
-        } else {
-            LOG.debug("Using HTTP as procotol");
-            final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
-            if (workerId == 0) {
-                signer = new HTTPDocumentSigner(url, workerName, username, password, pdfPassword);
-            } else {
-                signer = new HTTPDocumentSigner(url, workerId, username, password, pdfPassword);
+                final String workerIdOrName;
+                if (workerId == 0) {
+                    workerIdOrName = workerName;
+                } else {
+                    workerIdOrName = String.valueOf(workerId);
+                }
+
+                signer = new ClientWSDocumentSigner(
+                    host,
+                    port,
+                    servlet,
+                    workerIdOrName,
+                    keyStoreOptions.isUseHTTPS(),
+                    username, password,
+                    pdfPassword);
+                break;
+            }
+            case HTTP:
+            default: {
+                LOG.debug("Using HTTP as procotol");
+                final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
+                if (workerId == 0) {
+                    signer = new HTTPDocumentSigner(url, workerName, username, password, pdfPassword);
+                } else {
+                    signer = new HTTPDocumentSigner(url, workerId, username, password, pdfPassword);
+                }
             }
         }
         return signer;
@@ -336,7 +370,7 @@ public class SignDocumentCommand extends AbstractCommand {
                 }
                 createSigner().sign(bytes, out, requestContext);
             } finally {
-                if (out != null) {
+                if (out != null && out != System.out) {
                     out.close();
                 }
             }
@@ -345,11 +379,11 @@ public class SignDocumentCommand extends AbstractCommand {
             LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
                     ex.getLocalizedMessage()));
         } catch (IllegalRequestException ex) {
-            LOG.error(ex);
+            LOG.error(ex.getLocalizedMessage());
         } catch (CryptoTokenOfflineException ex) {
-            LOG.error(ex);
+            LOG.error(ex.getLocalizedMessage());
         } catch (SignServerException ex) {
-            LOG.error(ex);
+            LOG.error(ex.getLocalizedMessage());
         } catch (SOAPFaultException ex) {
             if (ex.getCause() instanceof AuthorizationRequiredException) {
                 final AuthorizationRequiredException authEx =

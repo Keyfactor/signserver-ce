@@ -33,6 +33,7 @@ import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
 
 /**
  * Client web services implementation containing operations for requesting 
@@ -76,7 +77,7 @@ public class ClientWS {
             @WebParam(name = "data") byte[] data) throws RequestFailedException, InternalServerException {
         final DataResponse result;
         try {
-            final RequestContext requestContext = handleRequestContext(requestMetadata, new HashMap<String, String>());
+            final RequestContext requestContext = handleRequestContext(requestMetadata);
             final int workerId = getWorkerId(workerIdOrName);
             if (workerId < 1) {
                 throw new RequestFailedException("No worker with the given name could be found");
@@ -128,7 +129,7 @@ public class ClientWS {
             @WebParam(name = "sodData") final SODRequest data) throws RequestFailedException, InternalServerException {
         final SODResponse result;
         try {
-            final RequestContext requestContext = handleRequestContext(requestMetadata, new HashMap<String, String>());
+            final RequestContext requestContext = handleRequestContext(requestMetadata);
             final int workerId = getWorkerId(workerIdOrName);
             final int requestId = random.nextInt();
         
@@ -194,7 +195,7 @@ public class ClientWS {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Worker Not Found: " + ex.getWorkerIdOrName());
             }
-            throw new RequestFailedException("Worker Not Found: " + ex.getWorkerIdOrName());
+            throw new RequestFailedException("Worker Not Found");
         } catch (CryptoTokenOfflineException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Service unvailable", ex);
@@ -242,7 +243,7 @@ public class ClientWS {
         return retval;
     }
 
-    private RequestContext handleRequestContext(final List<Metadata> requestMetadata, final Map<String, String> logMap) {
+    private RequestContext handleRequestContext(final List<Metadata> requestMetadata) {
         final HttpServletRequest servletRequest =
                 (HttpServletRequest) wsContext.getMessageContext().get(MessageContext.SERVLET_REQUEST);
         String requestIP = getRequestIP();
@@ -276,7 +277,7 @@ public class ClientWS {
         }
         requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
         
-        requestContext.put(RequestContext.LOGMAP, logMap);
+        final LogMap logMap = LogMap.getInstance(requestContext);
 
         // Add HTTP specific log entries
         logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, 
@@ -290,11 +291,10 @@ public class ClientWS {
         if (requestMetadata == null) {
             requestContext.remove(RequestContext.REQUEST_METADATA);
         } else {
-            Map<String, String> metadata = new HashMap<String, String>();
+            final RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
             for (Metadata rmd : requestMetadata) {
                 metadata.put(rmd.getName(), rmd.getValue());
             }
-            requestContext.put(RequestContext.REQUEST_METADATA, metadata);
             
             // Special handling of FILENAME
             String fileName = metadata.get(RequestContext.FILENAME);

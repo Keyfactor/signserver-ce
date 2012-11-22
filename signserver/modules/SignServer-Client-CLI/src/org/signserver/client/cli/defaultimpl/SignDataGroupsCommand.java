@@ -84,13 +84,18 @@ public class SignDataGroupsCommand extends AbstractCommand {
 
     /** The command line options. */
     private static final Options OPTIONS;
+    
+    private static final String DEFAULT_CLIENTWS_WSDL_URL = "/signserver/ClientWSService/ClientWS?wsdl";
 
     /**
      * Protocols that can be used for accessing SignServer.
      */
     public static enum Protocol {
         /** The HTTP interface. */
-        HTTP
+        HTTP,
+        
+        /** The ClientWS interface. */
+        CLIENTWS
     }
 
     static {
@@ -109,6 +114,8 @@ public class SignDataGroupsCommand extends AbstractCommand {
                 TEXTS.getString("PORT_DESCRIPTION"));
         OPTIONS.addOption(SERVLET, true,
                 TEXTS.getString("SERVLET_SOD_DESCRIPTION"));
+        OPTIONS.addOption(PROTOCOL, true,
+                TEXTS.getString("PROTOCOL_SOD_DESCRIPTION"));
         OPTIONS.addOption(USERNAME, true, TEXTS.getString("USERNAME_DESCRIPTION"));
         OPTIONS.addOption(PASSWORD, true, TEXTS.getString("PASSWORD_DESCRIPTION"));
         OPTIONS.addOption(REPEAT, true, TEXTS.getString("REPEAT_DESCRIPTION"));
@@ -135,13 +142,15 @@ public class SignDataGroupsCommand extends AbstractCommand {
     /** TCP port number of the SignServer host. */
     private Integer port;
 
-    private String servlet = "/signserver/sod";
+    private String servlet;
+    
+    private static final String DEFAULT_SERVLET = "/signserver/sod";
 
     /** File to read the data from. */
     private File inFile;  //NOPMD //TODO Add support for reading from file
 
     /** Protocol to use for contacting SignServer. */
-    private Protocol protocol; //NOPMD //TODO Add support for choosing protocol
+    private Protocol protocol = Protocol.HTTP;
 
     private String username;
 
@@ -210,6 +219,11 @@ public class SignDataGroupsCommand extends AbstractCommand {
         if (line.hasOption(PROTOCOL)) {
             protocol = Protocol.valueOf(line.getOptionValue(
                     PROTOCOL, null));
+            
+            if ((Protocol.CLIENTWS.equals(protocol)) &&
+            	!line.hasOption(SERVLET)) {
+            	servlet = DEFAULT_CLIENTWS_WSDL_URL;
+            }
         }
         if (line.hasOption(USERNAME)) {
             username = line.getOptionValue(USERNAME, null);
@@ -248,13 +262,6 @@ public class SignDataGroupsCommand extends AbstractCommand {
      */
     private SODSigner createSigner() throws MalformedURLException {
         final SODSigner signer;
-        
-        final String workerIdOrName;
-        if (workerId == 0) {
-            workerIdOrName = workerName;
-        } else {
-            workerIdOrName = String.valueOf(workerId);
-        }
 
         keyStoreOptions.setupHTTPS();
 
@@ -268,10 +275,38 @@ public class SignDataGroupsCommand extends AbstractCommand {
             }
         }
 
-        LOG.debug("Using HTTP as procotol");
-        signer = new HTTPSODSigner(
-            new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port,
-            servlet), workerIdOrName, username, password);
+        switch (protocol) {
+            case CLIENTWS: {
+                LOG.debug("Using ClientWS as procotol");
+            
+                final String workerIdOrName;
+                if (workerId == 0) {
+                    workerIdOrName = workerName;
+                } else {
+                    workerIdOrName = String.valueOf(workerId);
+                }
+
+                signer = new ClientWSSODSigner(
+                    host,
+                    port,
+                    servlet,
+                    workerIdOrName,
+                    keyStoreOptions.isUseHTTPS(),
+                    username, password);
+                break;
+            }
+            case HTTP:
+            default: {
+                LOG.debug("Using HTTP as procotol");
+                final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet == null ? DEFAULT_SERVLET : servlet);
+                
+                if (workerId == 0) {
+                    signer = new HTTPSODSigner(url, workerName, username, password);
+                } else {
+                    signer = new HTTPSODSigner(url, workerId, username, password);
+                }
+            }
+        }
 
         return signer;
     }

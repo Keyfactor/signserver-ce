@@ -12,7 +12,9 @@
  *************************************************************************/
 package org.signserver.client.cli;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.Map;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.signserver.admin.cli.AdminCLI;
@@ -20,6 +22,7 @@ import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -100,6 +103,27 @@ public class SODSignerTest extends TestCase {
         String res = clientCLI.getOut().toString();
         assertNotNull("non null result", res);
         assertTrue("non empty result: " + res.length(), res.length() > 50);
+    }
+    
+    /**
+     * Tests signing using ClientWS.
+     * <pre>
+     * signdatagroups -workername MRTDSODSigner -data "1=value1&2=value2&3=value3" -protocol CLIENTWS
+     * </pre>
+     * @throws Exception
+     */
+    public void test02signDataFromParameterOverClientWS() throws Exception {
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
+                clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=value1&2=value2&3=value3", "-protocol", "CLIENTWS"));
+        String res = clientCLI.getOut().toString();
+        assertNotNull("non null result", res);
+        assertTrue("non empty result: " + res.length(), res.length() > 50);
+        byte[] resBytes = clientCLI.getOut().toByteArray();
+        SODFile sod = new SODFile(new ByteArrayInputStream(resBytes));
+        Map<Integer, byte[]> dataGroupHashes = sod.getDataGroupHashes();
+        assertEquals("DG1", "value1", new String(dataGroupHashes.get(1)));
+        assertEquals("DG2", "value2", new String(dataGroupHashes.get(2)));
+        assertEquals("DG3", "value3", new String(dataGroupHashes.get(3)));
     }
 
     public void test99TearDownDatabase() throws Exception {

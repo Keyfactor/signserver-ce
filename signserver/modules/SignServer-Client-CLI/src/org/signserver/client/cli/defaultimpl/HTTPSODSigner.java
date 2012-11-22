@@ -45,7 +45,8 @@ public class HTTPSODSigner extends AbstractSODSigner {
 
     private static final String BASICAUTH_BASIC = "Basic";
 
-    private String workerName;
+    private final String workerName;
+    private final int workerId;
 
     private URL processServlet;
 
@@ -57,6 +58,17 @@ public class HTTPSODSigner extends AbstractSODSigner {
             final String password) {
         this.processServlet = processServlet;
         this.workerName = workerName;
+        this.workerId = 0;
+        this.username = username;
+        this.password = password;
+    }
+    
+    public HTTPSODSigner(final URL processServlet,
+            final int workerId, final String username,
+            final String password) {
+        this.processServlet = processServlet;
+        this.workerName = null;
+        this.workerId = workerId;
         this.username = username;
         this.password = password;
     }
@@ -116,8 +128,12 @@ public class HTTPSODSigner extends AbstractSODSigner {
             }
             
             final StringBuilder sb = new StringBuilder();
-            sb.append("workerName=").append(workerName).append("&")
-                .append("encoding=").append(encoding).append("&");
+            if (workerId == 0) {
+                sb.append("workerName=").append(workerName).append("&");
+            } else {
+                sb.append("workerId=").append(workerId).append("&");
+            }
+            sb.append("encoding=").append(encoding).append("&");
             for (Map.Entry<Integer, byte[]> entry : data.entrySet()) {
                 sb.append("dataGroup").append(entry.getKey()).append("=")
                     .append(URLEncoder.encode(new String(entry.getValue()), "UTF-8"))

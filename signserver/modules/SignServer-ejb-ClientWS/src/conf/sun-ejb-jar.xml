@@ -18,7 +18,7 @@
         <port-component-name>ClientWS</port-component-name>
         <endpoint-address-uri>/signserver/ClientWSService/ClientWS</endpoint-address-uri>
         <service-qname>
-          <namespaceURI>clientws.signserver.org</namespaceURI>
+          <namespaceURI>http://clientws.signserver.org/</namespaceURI>
           <localpart>ClientWSService</localpart>
         </service-qname>
         <debugging-enabled>true</debugging-enabled>

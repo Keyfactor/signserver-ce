@@ -2824,7 +2824,11 @@ This property has the same values as for TimeStampSigner <a href="complete.en.ht
 <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the timestamp (default: SHA1withRSA)
 						</p>
 					</subsubsection>
-				
+					<subsubsection name="Howto">
+						<p>
+There is a howto about testing Authenticode signing available in <code>doc/howtos/test_ms_authcode.txt</code>
+						</p>
+					</subsubsection>
 				</subsection>
 
                 <subsection name="MRTD Signer">

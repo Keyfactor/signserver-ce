@@ -2790,6 +2790,9 @@ Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, R
 <b>MAXSERIALNUMBERLENGTH</b> = The maximum size (in bytes) used when generating serial numbers, must be between 8 and 20 (64 - 160 bits) (Default: 8)
 The generated serial number will always be positive (so the sign bit is always a zero).
 						</p>
+                        <p>
+<b>WORKERLOGGER</b> = As for other workers this property can be used to specify which worker logger to use. By default the <a href="complete.en.html#DefaultTimeStampLogger">DefaultTimeStampLogger</a> is used.
+                        </p>
                     </subsubsection>
                     
                     <subsubsection name="TimeStampSigner Certificates">
@@ -5217,6 +5220,14 @@ LOGDATEFORMAT=yyyy-MM-dd:HH:mm:ss:z
 LOGPATTERN=\$\{(.+?)\}
 LOGORDER=AUDIT; LOG_ID: ${LOG_ID}; CLIENT_IP: ${CLIENT_IP}; REQUEST_FULLURL: ${REQUEST_FULLURL}; RequestTime: ${LOG_TIME}; ResponseTime: ${REPLY_TIME}; EXCEPTION: ${EXCEPTION};
 LOGLEVEL_DEFAULT=INFO
+                        </source>
+                    </subsubsection>
+                    <subsubsection name="DefaultTimeStampLogger">
+                        <p>
+Pattern logger with a default log order suitable for logging time-stamp requests. This logger is the default logger used by the <a href="complete.en.html#Time-stamp%20Signer">TimeStampSigner</a>.
+                        </p>
+                        <source>
+WORKERLOGGER=org.signserver.module.tsa.DefaultTimeStampLogger
                         </source>
                     </subsubsection>
                     <subsubsection name="NullWorkerLogger">

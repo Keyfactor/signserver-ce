@@ -180,7 +180,7 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <include name="bin/setstatusinsync.sh"/>
             <include name="bin/signclient"/>
             <include name="bin/signserver"/>
-            <exclude name="bin/signserver.sh"/>
+            <include name="bin/signserver.sh"/>
             <include name="bin/signserver-gui"/>
         </patternset>
         
@@ -233,6 +233,17 @@ includemodulesinbuild               = ${includemodulesinbuild}
         <!-- All files for mixed release except scripts -->
         <patternset id="mixed.normalfiles">
             <include name="**/**" />
+            
+            <!-- Executable files -->
+            <exclude name="bin/admingui.sh"/>
+            <exclude name="bin/ant"/>
+            <exclude name="bin/client.sh"/>
+            <exclude name="bin/setstatusinsync.sh"/>
+            <exclude name="bin/signclient"/>
+            <exclude name="bin/signserver"/>
+            <exclude name="bin/signserver.sh"/>
+            <exclude name="bin/signserver-gui"/>
+            
             <exclude name="doc/lgpl-**" />
             <exclude name="**/CVS/**" />
             <exclude name="signserver_build.properties" />

@@ -3109,6 +3109,9 @@ If we want to embed the OCSP response for the signer certificate inside the sign
 Note: issuer certificate (of signing certificate) should be in certificate chain.
                                         </p>
                                         <p>
+Note: OCSP responses must contain a nextUpdate field in order for off-line validation to work with Adobe Reader. For EJBCA OCSP Responder see configuration of ocsp.untilNextUpdate in ocsp.properties.
+                                        </p>
+                                        <p>
 Default: "False".
                                         </p>
                                     </td>

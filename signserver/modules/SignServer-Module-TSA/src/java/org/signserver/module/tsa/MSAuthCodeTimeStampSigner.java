@@ -126,6 +126,9 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     
     private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA";
     
+    /** MIME type for the request data. **/
+    private static final String REQUEST_CONTENT_TYPE = "application/octect-stream";
+    
     /** MIME type for the response data. **/
     private static final String RESPONSE_CONTENT_TYPE = "application/octet-stream";
 
@@ -229,8 +232,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                     throw new CryptoTokenOfflineException("Certificate chain not correctly configured");
             }
 
-            byte[] buf = (byte[]) sReq.getRequestData();
-            ASN1Primitive asn1obj = ASN1Primitive.fromByteArray(Base64.decode(buf));
+            byte[] requestbytes = (byte[]) sReq.getRequestData();
+            ASN1Primitive asn1obj = ASN1Primitive.fromByteArray(Base64.decode(requestbytes));
             ASN1Sequence asn1seq = ASN1Sequence.getInstance(asn1obj);
 
             if (asn1seq.size() != 2) {
@@ -325,7 +328,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_TIME, date == null ? null
                 : String.valueOf(date.getTime()));
             
-            final String archiveId = createArchiveId(buf, (String) requestContext.get(RequestContext.TRANSACTION_ID));
+            final String archiveId = createArchiveId(requestbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
             GenericSignResponse signResponse = null;
             byte[] signedbytes = Base64.encode(der);
@@ -334,7 +337,9 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                     new String(signedbytes));
         	
             
-            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, RESPONSE_CONTENT_TYPE, signedbytes, archiveId));
+            final Collection<? extends Archivable> archivables = Arrays.asList(
+                    new DefaultArchivable(Archivable.TYPE_REQUEST, REQUEST_CONTENT_TYPE, requestbytes, archiveId),
+                    new DefaultArchivable(Archivable.TYPE_RESPONSE, RESPONSE_CONTENT_TYPE, signedbytes, archiveId));
 
             
             if (signRequest instanceof GenericServletRequest) {

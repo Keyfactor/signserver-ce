@@ -4292,6 +4292,9 @@ The fully qualified class name is: <b>org.signserver.server.archive.olddbarchive
 Example: ARCHIVER0.ARCHIVE_OF_TYPE=REQUEST_AND_RESPONSE
                         </p>
                         <p>
+Currently archiving of requests is only supported by TimeStampSigner and MSAuthCodeTimeStampSigner.
+                        </p>
+                        <p>
 <b>ARCHIVERx.USE_FORWARDED_ADDRESS</b> = Where "x" is the index of the Archiver in the ARCHIVERS property.
 If this property is set to "true", the last IP address in the comma-separated list given in the X-Forwarded-For header is used as the remote IP stored
 in the archive in case this header is set. If the header is not included, the IP address the request comes from is used (the same behavior as when

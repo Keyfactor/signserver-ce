@@ -1,3 +1,66 @@
+SignServer 3.3.0, 2012-12-xx
+----------------------------
+
+** Bug
+    * [DSS-361] - Renewal worker requires truststore password even when truststore is not used
+    * [DSS-380] - NPE trying to activate a worker of type Dispatcher
+    * [DSS-408] - Can not archive the same document twice
+    * [DSS-442] - Version of server printed by CLI is actually the client version
+    * [DSS-461] - Regression: Option reqpolicy missing in timestamp client
+    * [DSS-471] - Regression: Exception installing BC provider in timestamp client
+    * [DSS-511] - System tests can not be compiled after opening the project with NetBeans IDE 7.2
+    * [DSS-550] - Regression: Fix auditlogging in WorkerConfigDataService
+    * [DSS-556] - Regression: signserver.sh does not support arguments with comma
+    * [DSS-566] - StatusPropertiesWorker requires a cryptotoken to be configured
+    * [DSS-576] - AddressAuthorizers should return HTTP 403 (forbidden) and not 401
+
+** Improvement
+    * [DSS-239] - Remove the need to use bundled JAX-WS jars
+    * [DSS-272] - Improve documentation for archiving to database
+    * [DSS-309] - Debian packaging
+    * [DSS-314] - Binary distribution
+    * [DSS-340] - Create project and vendor branch for EJBCA-util
+    * [DSS-346] - Option to take serial number and issuer from certificate when setting up client authorization rules
+    * [DSS-356] - Clarify documentation for httpsserver.bindaddress
+    * [DSS-362] - Remove the need to set ANT_HOME
+    * [DSS-396] - Split SignServer-war into multiple web modules
+    * [DSS-409] - Make OldDatabaseArchiver faster and use less space
+    * [DSS-422] - Include XML Schema directly in WSDL file
+    * [DSS-446] - Clean up, improve and make AdminCLI and ClientCLI pluggable
+    * [DSS-456] - Demo page for the CMS Signer
+    * [DSS-459] - Create separate jar for JPA entities
+    * [DSS-469] - Make web services URL configurable in Client CLI
+    * [DSS-476] - Option to take serial number and issuer from certificate when setting up admin authorization rules
+    * [DSS-486] - Upgrade to Bouncy Castle 1.47
+    * [DSS-490] - Create project and vendor branch for itext
+    * [DSS-491] - Create project and vendor branch for openxml4j
+    * [DSS-492] - Create project and vendor branch for odftoolkit
+    * [DSS-501] - Clean up WorkerFactory
+    * [DSS-554] - Replace usage of deprecated Bouncy Castle methods
+    * [DSS-562] - Add audit logging for events related to keys, certificates and time-sources
+    * [DSS-565] - Include time-stamp token serial number in output from DefaultTimeStampLogger
+    * [DSS-567] - Add automatic tests using HSM
+
+** New Feature
+    * [DSS-287] - Plugins should be able to suggest file extension for the returned signed file
+    * [DSS-387] - New client web services API
+    * [DSS-485] - Debian packaging for Ubuntu 12.04
+    * [DSS-516] - Implement MS Authenticode time-stamp signer
+    * [DSS-560] - Support for archiving of time-stamp requests
+    * [DSS-561] - Configurable time-stamp token serial number length
+    * [DSS-563] - Include IP address from X-FORWARDED-FOR header in archive
+    * [DSS-564] - AddressAuthorizer supporting X-FORWARDED-FOR and white/black-listing
+    * [DSS-570] - Support for choosing signature algorithm for TimeStampSigner
+
+** Task
+    * [DSS-403] - Drop support for clusterclassloader
+    * [DSS-437] - Drop support for WSRA
+    * [DSS-463] - Drop support for JBoss 4
+    * [DSS-473] - Add sub CA certificates to test with
+    * [DSS-559] - Upgrade projects to NetBeans IDE 7.2
+    * [DSS-571] - Test sign all document types and compare with older version
+
+
 SignServer 3.2.3, 2012-09-28
 ----------------------------
 
@@ -42,6 +105,7 @@ SignServer 3.2.3, 2012-09-28
     * [DSS-478] - Update documentation for setting up the truststore
     * [DSS-483] - Renew test certificates that has expired
     * [DSS-526] - Update doc site looks to be similar to ejbca
+
 
 SignServer 3.2.2, 2012-03-20
 ----------------------------

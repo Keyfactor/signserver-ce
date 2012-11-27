@@ -437,7 +437,7 @@ For JBoss 5.1.0.GA the file is available under: server/default/deployers/jbossws
                     <subsubsection name="Fix JBoss 5 bug with Oracle JDK">
                         <p>
 If you are using Oracle's JDK and JBoss 5.1.x you need to copy
-SIGNSERVER_HOME/lib/1.6/bc*.jar to JBOSS_HOME/server/default/lib/. Remember this
+SIGNSERVER_HOME/lib/ext/1.6/bc*.jar to JBOSS_HOME/server/default/lib/. Remember this
 when it's time for upgrades! This is a bug tracked by JBoss as JBAS-7882.
                         </p>
                     </subsubsection>

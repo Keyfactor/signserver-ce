@@ -19,6 +19,7 @@
 <li>Ezizmuhammed Muhamedkuliyev, rayback2(at)gmail.com, OOXML, ODF Signer/validator, PDF signer, CRL/OCSP validators.</li>
 <li>Christophe Sahut, christophe.sahut(at)sgs.com, Install howto for SignServer 3.1 on RHEL systems. See doc/howtos.</li>
 <li>Bruno Bonfils, French install howto for SignServer 3.2. See <a href="http://wiki.opencsi.com/public/bin/view/SignServer/Installation">wiki.opencsi.com</a>.</li>
+<li>Antoine Louiset, antoine.louiset(at)yousign.fr, installation package for SignServer 3.2 on Debian. See doc/howtos.</li>
 </ul>
 </section>
 </body>

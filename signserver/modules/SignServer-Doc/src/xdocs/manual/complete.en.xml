@@ -5680,6 +5680,13 @@ See res/install/debian/README.building for instructions for creating Debian pack
                 </p>
             </section>
 
+            <section name="Contributed Howtos">
+                <p>
+There is an installation package for SignServer 3.2.4 and Debian 6.0 contributed by Antoine Louiset located in
+doc/howtos/signserver32-debian6-by-antoine-louiset.zip
+                </p>
+            </section>
+
             <section name="References">
                 <ul>
                     <li>Java  (<a href="http://java.sun.com">http://java.sun.com</a>)</li>

@@ -42,14 +42,15 @@ lookup the validation of a given certificate.
                 <subsection name="Changes between version 3.2 and 3.3">
                     <ul>
 <!-- New major features -->
-<!-- New support -->
-<!-- New workers -->
-<!-- Improvements -->
-<!-- Other -->
-                        <li>
-Clusterclassloader has been removed.
-                        </li>
-
+                        <li>New client web services API</li>
+                        <li>MS Authenticode time-stamp signer</li>
+                        <li>Support for archiving of time-stamp requests</li>
+                        <li>Dropped support for JBoss 4.2.x.</li>
+                        <li>Dropped support for cluster class loader</li>
+                        <li>Dropped support for WSRA</li>
+                        <li>Upgrade of cryptographic library</li>
+                        <li>Many more minor changes and bug fixes. See 
+                            ChangeLog.txt and RELASE_NOTES.txt for details.</li>
                     </ul>
                 </subsection>
                 <subsection name="Changes between version 3.1 and 3.2">

@@ -96,7 +96,7 @@ includemodulesinbuild               = ${includemodulesinbuild}
         	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2012 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
 
                 <!-- Include all java files in the modules folder but excluding the tests -->
-                <fileset dir="modules" includes="**/*.java" excludes="*/test/**/*.java,SignServer-Lib-ODFDOM/**/*"/>
+                <fileset dir="modules" includes="**/*.java" excludes="*/test/**/*.java,SignServer-Lib-*/**/*"/>
                 
                 <!-- When possible: this should be moved out to a properties file instead -->
                 <classpath>

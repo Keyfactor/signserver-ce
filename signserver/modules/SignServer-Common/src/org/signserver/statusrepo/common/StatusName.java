@@ -39,6 +39,16 @@ public enum StatusName {
      * Read by the StatusReadingLocalComputerTimeSource and set by external 
      * script or some future timed service.
      */
-    TIMESOURCE0_INSYNC
+    TIMESOURCE0_INSYNC,
     
+    /**
+     * Status property indicating if a leapsecond is about to occur.
+     * Possible values are: <source>NONE</source>, <source>POSITIVE</source>, or <source>NEGATIVE</source>
+     * indicating a leap second is not about to occure, a positive or negative leapsecond is
+     * imminent, respectively.
+     * Read by the StatusReadingLocalComputerTimeSource and set by the time monitor application
+     * or a script.
+     */
+    LEAPSECOND
+
 }

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import javax.ejb.EJB;
@@ -43,6 +44,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     private IStatusRepositorySession.IRemote statusSession;
 
     private StatusName insyncPropertyName = StatusName.TIMESOURCE0_INSYNC;
+    private StatusName leapsecondPropertyName = StatusName.LEAPSECOND;
 
     // property constants
     private static final String HANDLE_LEAPSECOND_CHANGE = "HANDLE_LEAPSECOND_CHANGE";
@@ -78,9 +80,16 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                 date = new Date();
                 
                 // check if a leapsecond is near
-                if (handleLeapsecondChange) {
+                if (handleLeapsecondChange && isPotentialLeapsecond(date)) {
+                    final StatusEntry leapsecond = statusSession.getValidEntry(leapsecondPropertyName.name());
+                    
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Check for leapsecond");
+                    }
+                    
+                    if (leapsecond == null) {
+                        // leapsecond property is expired
+                        return null;
                     }
                 }
                 
@@ -91,6 +100,45 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
         } catch (NoSuchPropertyException ex) {
             throw new RuntimeException(ex);
         }
+    }
+    
+    /**
+     * Returns true if passed in date is near a potential leapsecond
+     * @param date
+     * @return true if possible leapsecond
+     */
+    protected static boolean isPotentialLeapsecond(final Date date) {
+        final Calendar cal = Calendar.getInstance();
+        
+        cal.setTime(date);
+        
+        final int month = cal.get(Calendar.MONTH);
+        final int day = cal.get(Calendar.DAY_OF_MONTH);
+        final int hour = cal.get(Calendar.HOUR_OF_DAY);
+        final int min = cal.get(Calendar.MINUTE);
+        final int sec = cal.get(Calendar.SECOND);
+        
+        // check for the last two seconds of a potential
+        // leapsecond month-shift
+        if ((month == Calendar.JUNE && day == 30) ||
+            (month == Calendar.DECEMBER && day == 31)) {
+            
+            
+            if (hour == 23 && min == 59 && sec >= 58) {
+                return true;
+            }
+        }
+        
+        // check for the first two seconds following
+        // a potential leapsecond month-shift
+        if ((month == Calendar.JANUARY || month == Calendar.JULY) &&
+            day == 1) {
+            if (hour == 0 && min == 0 && sec <= 1) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
 }

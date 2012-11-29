@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import org.apache.log4j.Logger;
 import org.signserver.client.clientws.ClientWS;
 import org.signserver.client.clientws.ClientWSService;
@@ -67,6 +68,12 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
         this.signServer = service.getClientWSPort();
         this.workerName = workerName;
         this.pdfPassword = pdfPassword;
+        
+        // Authentication
+        if (username != null && password != null) {
+            ((BindingProvider) signServer).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
+            ((BindingProvider) signServer).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+        }
     }
 
     protected void doSign(final byte[] data, final String encoding,

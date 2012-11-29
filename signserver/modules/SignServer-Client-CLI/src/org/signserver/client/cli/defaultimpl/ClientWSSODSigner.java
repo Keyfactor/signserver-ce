@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import org.apache.log4j.Logger;
 import org.signserver.client.clientws.ClientWS;
 import org.signserver.client.clientws.ClientWSService;
@@ -67,6 +68,12 @@ public class ClientWSSODSigner extends AbstractSODSigner {
         
         this.signServer = service.getClientWSPort();
         this.workerName = workerName;
+        
+        // Authentication
+        if (username != null && password != null) {
+            ((BindingProvider) signServer).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
+            ((BindingProvider) signServer).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+        }
     }
 
     protected void doSign(final Map<Integer,byte[]> dataGroups, final String encoding,

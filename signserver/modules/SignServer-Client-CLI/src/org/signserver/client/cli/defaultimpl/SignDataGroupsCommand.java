@@ -318,9 +318,13 @@ public class SignDataGroupsCommand extends AbstractCommand {
         try {
             final int NUM_WORKERS = 1;
             Worker workers[] = new Worker[NUM_WORKERS];
+            PrintStream outputStream = getOutputStream();
+            if (outputStream == null) {
+                outputStream = System.out;
+            }
             for(int i = 0; i < NUM_WORKERS; i++) {
                 workers[i] = new Worker("Worker " + i, createSigner(),
-                        dataGroups, encoding, repeat, getOutputStream());
+                        dataGroups, encoding, repeat, outputStream);
             }
 
             // Start workers

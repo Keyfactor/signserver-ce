@@ -12,7 +12,17 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import org.apache.log4j.Logger;
+import org.signserver.cli.spi.Command;
+import org.signserver.cli.spi.CommandFailureException;
+import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
+import org.signserver.client.cli.defaultimpl.SignDataGroupsCommand;
+import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
@@ -41,6 +51,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
 
     public void test00SetupDatabase() throws Exception {
         addDummySigner1();
+        addSoftSODSigner(getSignerIdSODSigner1(), getSignerNameSODSigner1());
 
         // Set auth type
         workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE",
@@ -58,8 +69,11 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         // with "salt123") = SHA1(foo123salt123)
         workerSession.setWorkerProperty(getSignerIdDummy1(), "USER.USER3",
                 "26c110963ad873c9b7db331e4c3130c266416d47:SHA1:salt123");
+        workerSession.setWorkerProperty(getSignerIdSODSigner1(), "USER.USER3",
+                "26c110963ad873c9b7db331e4c3130c266416d47:SHA1:salt123");
         
         workerSession.reloadConfiguration(getSignerIdDummy1());
+        workerSession.reloadConfiguration(getSignerIdSODSigner1());
     }
 
     /**
@@ -180,10 +194,54 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
             fail("Exception: " + ex.getMessage());
         }
     }
+    
+    public void test04HashedAndSaltedPasswordOverClientWS() throws Exception {
+        try {
+            byte[] res = execute(new SignDocumentCommand(), "signdocument", "-workerid", 
+                    String.valueOf(getSignerIdDummy1()), "-data", "<root/>",
+                    "-username", "user3", "-password", "foo123", "-protocol", "CLIENTWS",
+                    "-truststore", new File(getSignServerHome(), "p12/truststore.jks").getAbsolutePath(), "-truststorepwd", "changeit");
+            assertNotNull("No result", res);
+            assertNotSame("Empty result", 0, res.length);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    public void test04HashedAndSaltedPasswordSODOverClientWS() throws Exception {
+        try {
+            byte[] res = execute(new SignDataGroupsCommand(), "signdatagroups", "-workerid", 
+                    String.valueOf(getSignerIdSODSigner1()), "-data", "1=value1&2=value2&3=value3",
+                    "-username", "user3", "-password", "foo123", "-protocol", "CLIENTWS",
+                    "-truststore", new File(getSignServerHome(), "p12/truststore.jks").getAbsolutePath(), "-truststorepwd", "changeit");
+            assertNotNull("No result", res);
+            assertNotSame("Empty result", 0, res.length);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
 
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
         workerSession.reloadConfiguration(getSignerIdDummy1());
+        removeWorker(getSignerIdSODSigner1());
+        workerSession.reloadConfiguration(getSignerIdSODSigner1());
     }
    
+    private byte[] execute(Command command, String... args) throws IOException, IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        byte[] output;
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+        try {
+            command.execute(args);
+        } finally {
+            output = out.toByteArray();
+            System.setOut(System.out);
+            System.out.write(output);
+        }
+        return output;
+    }
+    
 }

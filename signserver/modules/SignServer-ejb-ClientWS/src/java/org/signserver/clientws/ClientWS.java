@@ -124,6 +124,12 @@ public class ClientWS {
                 LOG.debug("Service unvailable", ex);
             }
             throw new InternalServerException("Service unavailable: " + ex.getMessage());
+        } catch (AuthorizationRequiredException ex) {
+            LOG.info("Request failed: " + ex.getMessage());
+            throw new RequestFailedException(ex.getMessage());
+        } catch (AccessDeniedException ex) {
+            LOG.info("Request failed: " + ex.getMessage());
+            throw new RequestFailedException(ex.getMessage());
         } catch (SignServerException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Internal server error", ex);
@@ -223,6 +229,12 @@ public class ClientWS {
             }
             throw new InternalServerException("Service unavailable: " + ex.getMessage());
         } catch (IllegalRequestException ex) {
+            LOG.info("Request failed: " + ex.getMessage());
+            throw new RequestFailedException(ex.getMessage());
+        } catch (AuthorizationRequiredException ex) {
+            LOG.info("Request failed: " + ex.getMessage());
+            throw new RequestFailedException(ex.getMessage());
+        } catch (AccessDeniedException ex) {
             LOG.info("Request failed: " + ex.getMessage());
             throw new RequestFailedException(ex.getMessage());
         } catch (SignServerException ex) {

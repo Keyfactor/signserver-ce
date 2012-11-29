@@ -517,6 +517,7 @@ signserverws.enabled=true
 genericws.enabled=true
 validationws.enabled=true
 adminws.enabled=true
+clientws.enabled=true
                         </source>
                     </subsubsection>
 
@@ -1641,51 +1642,186 @@ Workers that are disabled by having the worker property DISABLED=true are not co
                     </p>
 		</section>
 
-		<section name="Web Services">
-                    <p>
-New to version 3.0 is the Main WebService interface. It replaces the RMI-SSL interface in version 1.0 and 2.0 for two reasons, the RMI-SSL were based on a commercial library and it only worked for Java clients.
+        <section name="Client Web Service">
+            <p>
+The SignServer ClientWS interface can be used request signings from SignServer.
+            </p>
+            <p>
+The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/ClientWSService/ClientWS?wsdl and locally in the sources under modules/SignServer-Client-ClientWS/xml-resources/web-service-references/ClientWS/wsdl/localhost_8080/signserver/ClientWSService/ClientWS.wsdl.
+            </p>
+            <subsection name="Operations">
+                <table>
+                    <!-- processData -->
+                    <tr>
+                        <td>
+                            <p>
+                                <b>
+processData
+                                </b>
+                            </p>
+                        </td>
+                        <td>
+                            <p>
+Generic operation for request signing of any binary (or character) data.
+                            </p>
+                            <p>
+Parameters:
+                                <ul>
+                                    <li>
+<b>worker</b> (string)<br/>
+Name of worker in SignServer which should handle the request.
+                                    </li>
+                                    <li>
+<b>metadata</b> (sequence of key-value pairs)<br/>
+Optional additional request data. For instance the PDFSigner accepts the PDF password as a request data.
+                                    </li>
+                                    <li>
+<b>data</b> (base64Binary)<br/>
+The document/data to process.
+                                    </li>
+                                </ul>
+                            </p>
+                            <p>
+Output:
+                                <ul>
+                                    <li>
+<b>archiveId</b> (string)
+                                        <br/>
+Identifier for the request if archiving was used.
+                                    </li>
+                                    <li>
+<b>data</b> (base64Binary)<br/>
+The SOD binary.
+                                    </li>
+                                    <li>
+<b>metadata</b> (sequence of key-value pairs)<br/>
+Any optional additional response data.
+                                    </li>
+                                    <li>
+<b>requestId</b> (integer)<br/>
+Identifier for the request/response.
+                                    </li>
+                                    <li>
+<b>signerCertificate</b> (base64Binary)<br/>
+The signer certificate in binary format if available.
+                                    </li>
+                                </ul>
+                            </p>
+                            <p>
+Faults:
+                                <ul>
+                                    <li>RequestFailedException</li>
+                                    <li>InternalServerException</li>
+                                </ul>
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- processSOD -->
+                    <tr>
+                        <td>
+                            <p>
+                                <b>
+processSOD
+                                </b>
+                            </p>
+                        </td>
+                        <td>
+                            <p>
+Operation for requesting an SOD to be created and signed.<br/>
+The ePassport production system calls this operation to get an SOD for the supplied data groups.
+                            </p>
+                            <p>
+Parameters:
+                                <ul>
+                                    <li>
+<b>worker</b> (string)<br/>
+Name of worker in SignServer which should be used for constructing the SOD.
+                                    </li>
+                                    <li>
+<b>metadata</b> (sequence of key-value pairs)<br/>
+Optional additional request data. Not used.
+                                    </li>
+                                    <li>
+<b>sodData</b> (a sodRequest structure)<br/>
+The sodRequest should contain a sequence of datagroups (id 1-16 and their values),
+optionally also the version of the LDS to use and the version of Unicode.
+                                    </li>
+                                </ul>
+                            </p>
+                            <p>
+Output:
+                                <ul>
+                                    <li>
+<b>archiveId</b> (string)
+                                        <br/>
+Identifier for the request if archiving was used.
+                                    </li>
+                                    <li>
+<b>data</b> (base64Binary)<br/>
+The SOD binary.
+                                    </li>
+                                    <li>
+<b>metadata</b> (sequence of key-value pairs)<br/>
+Any optional additional response data.
+                                    </li>
+                                    <li>
+<b>requestId</b> (integer)<br/>
+Identifier for the request/response.
+                                    </li>
+                                    <li>
+<b>signerCertificate</b> (base64Binary)<br/>
+The signer (DS) certificate in binary format if available.
+                                    </li>
+                                </ul>
+                            </p>
+                            <p>
+Faults:
+                                <ul>
+                                    <li>RequestFailedException</li>
+                                    <li>InternalServerException</li>
+                                </ul>
+                            </p>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </subsection>
+        </section>
+        
+        <section name="The old Web Services interface" shortname="signserverws">
+                <p>
+The SignServerWS is the old web services interface now replaced by SignServer ClientWS. It was 
+new to version 3.0 and at the time replaced the RMI-SSL interface from version 1.0 and 2.0 for two reasons, the RMI-SSL were based on a commercial library and it only worked for Java clients.
                     </p>
                     <p>
-The WebService interface have two calls, the main one is 'process' which takes a collection of process request to a processable worker and returns a collection of process responses, the second one is getStatus that performs a health check of the node and returns an OK message if the node is healthy.
+The SignServerWS WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/signserverws/signserverws?wsdl
+                    </p>
+                    <p>
+The interface has two calls, the main one is 'process' which takes a collection of process request to a processable worker and returns a collection of process responses, the second one is getStatus that performs a health check of the node and returns an OK message if the node is healthy.
                     </p>
                     <p>
                         <b>Notice:</b>
-All though the interface uses web services the actual process data is base64 encoded byte arrays in a special binary format. You will have to lookup the Java source code for the exact format of the request and response data. An alternative is to instead use the much simpler <a href="#Web%20Server%20Interface">Web Server Interface</a>. 
+All though the SignServerWS interface uses web services the actual process data is base64 encoded byte arrays in a special binary format. You will have to lookup the Java source code for the exact format of the request and response data. An alternative is to instead use the much simpler <a href="#Web%20Server%20Interface">Web Server Interface</a> or the newer <a href="#Client%20Web%20Service">ClientWS interface</a>. 
                     </p>
                     <p>
 The getStatus call can be used to implement high-availability towards the client. The Java client API described in the next section have built in support for different high availability policies.
                     </p>
                     <p>
-The WebService WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/signserverws/signserverws?wsdl
-                    </p>
-                    <p>
 It's possible to turn off the WebService interface by disabling it in the build configuration.
                     </p>
                     <p>
-Web services is only supported using HTTPS. The reason is that JBoss 4 does not rewrite the protocol part of the WSDL URL so we had to hard code it for it to work with HTTPS. For details about this see <a href="https://jira.primekey.se/browse/DSS-327">DSS-327</a>. 
+This interface is only supported using HTTPS. The reason is that JBoss 4 does not rewrite the protocol part of the WSDL URL so we had to hard code it for it to work with HTTPS. For details about this see <a href="https://jira.primekey.se/browse/DSS-327">DSS-327</a>. 
                     </p>
                     <p>
 Since SignServer >=3.2.1 it is possible to supply extra request data called RequestMetadata containing key/value pairs that can be used by the signers. For instance the PDFSigner uses this feature to let the client supply a PDF password. 
                     </p>
-		</section>
+        </section>
 
 		<section name="Java Client API">
                     <p>
-Built along with the WebService is a Java API that can be used by clients. It's available in the file lib/SignServer-Client-SignServerWS.jar. The client API have support for different high availability policies to avoid the need for load balance hardware.
+Built along with the WebService is a Java API that can be used by clients. It's available in the file lib/SignServer-Client-SignServerWS.jar (the old SignServerWS interface) and lib/SignServer-Client-ClientWS.jar (the ClientWS interface). 
                     </p>
-                    <p>
-The client classes is in the package org.signserver.protocol.ws.client and the main code are SignServerWSClientFactory creating a client using the specified load balance policy, it returns a
-ISignServerWSClient that is used to perform the actual process requests.
-                    </p>
-                    
-                    <subsection name="Load Balance Policies">
-                        <p>
-With version 3.0 is one load balance policy defined and it's called 'CallFirstNodeWithStatusOK' it calls the getStatus method on all the server nodes in the cluster simultaneously and the first node to respond OK it sends its process request to. This to ensure that only one node in the cluster actually performs the signing.
-                        </p>
-                        <p>
-Other future load balance policies could be round robin or that all nodes are called with the requests simultaneously and the first response is used.
-                        </p>
-                    </subsection>
 		</section>
 
 		<section name="SigningAndValidation API">
@@ -1949,8 +2085,8 @@ Request a document to be signed by SignServer
  -pdfpassword      Password for changing the PDF (if required).
  -port             Server port. Default: 8080 (for HTTP), 8442 for HTTPS
                    and 8443 for HTTPS with client authentication.
- -protocol         Method of interacting with SignServer. HTTP or
-                   WEBSERVICES. Default: HTTP.
+ -protocol         Method of interacting with SignServer. HTTP,
+                   CLIENTWS or WEBSERVICES. Default: HTTP.
  -servlet          Servlet to call. Default /signserver/process
  -truststore       Keystore with trusted certificates to use with HTTPS.
  -truststorepwd    Password for the keystore with trusted certificates.
@@ -2108,25 +2244,31 @@ Sign the specified data groups and produce an SOd (MRTD).
                         <source>
 $ bin/client.sh signdatagroups
 usage: signdatagroups &lt;options&gt;
- -data             Data to send to the worker.
- -encoding         Encoding of the data option. None or base64. Default:
-                   none.
- -host             Server name or IP address. Default: localhost
- -keyalias         Alias of the key in the keystore to use for
-                   authentication.
- -keystore         Keystore with private key and certificate for client
-                   certificate authentication.
- -keystorepwd      Password for reading the keystore.
- -password         Password for authentication.
- -port             Server port. Default: 8080 (for HTTP), 8442 for HTTPS
-                   and 8443 for HTTPS with client authentication.
- -repeat           Run the operation this number of times. Default: 1
- -servlet          Servlet to call. Default /signserver/sod
- -truststore       Keystore with trusted certificates to use with HTTPS.
- -truststorepwd    Password for the keystore with trusted certificates.
- -username         Username for authentication.
- -workerid         ID of worker which should perform the operation.
- -workername       Name of worker which should perform the operation.
+Request MRTD data groups to be signed
+ -data &lt;arg&gt;            Data to send to the worker.
+ -encoding &lt;arg&gt;        Encoding of the data option. None or base64.
+                        Default: none.
+ -host &lt;arg&gt;            Server name or IP address. Default: localhost
+ -keyalias &lt;arg&gt;        Alias of the key in the keystore to use for
+                        authentication.
+ -keystore &lt;arg&gt;        Keystore with private key and certificate for
+                        client certificate authentication.
+ -keystorepwd &lt;arg&gt;     Password for reading the keystore.
+ -password &lt;arg&gt;        Password for authentication.
+ -port &lt;arg&gt;            Server port. Default: 8080 (for HTTP), 8442 for
+                        HTTPS and 8443 for HTTPS with client
+                        authentication.
+ -protocol &lt;arg&gt;        Method of interacting with SignServer. HTTP or
+                        CLIENTWS. Default: HTTP.
+ -repeat &lt;arg&gt;          Run the operation this number of times. Default: 1
+ -servlet &lt;arg&gt;         Servlet to call. Default /signserver/sod
+ -truststore &lt;arg&gt;      Keystore with trusted certificates to use with
+                        HTTPS.
+ -truststorepwd &lt;arg&gt;   Password for the keystore with trusted
+                        certificates.
+ -username &lt;arg&gt;        Username for authentication.
+ -workerid &lt;arg&gt;        ID of worker which should perform the operation.
+ -workername &lt;arg&gt;      Name of worker which should perform the operation.
 
 Sample usages:
 a) signdatagroups -workername MRTDSODSigner -data "1=value1&amp;2=value2&amp;3=value3"
@@ -2327,7 +2469,7 @@ Notice: Some application servers (i.e. JBoss 4) might have problems writing the 
 This example shows how it is possible to limit access to only specified resources. 
                     </p>
                     <p>
-If you are going to grant different users access to different workers always remember to first deny access from the root location. The reason is that there are other ways to access a worker than the "/worker/*" pattern. For instance /process, /tsa, /pdf etc as well as using the web services interface /signserverws and /SignServerWSService all can be used to invoke <b>any</b> worker.
+If you are going to grant different users access to different workers always remember to first deny access from the root location. The reason is that there are other ways to access a worker than the "/worker/*" pattern. For instance /process, /tsa, /pdf and /sod etc as well as using the web services interfaces /signserverws, /SignServerWSService, /validationws, /ValidationWSService and /ClientWSService all can be used to invoke <b>any</b> worker.
                     </p>
                     <p>
 If you instead relay on SignServer to do the authentication/authorization it could still be good from a security point to only grant access to the locations you intend to use. In that case you would probably want to also give access to the  web services interfaces, /worker and /process etc.
@@ -2904,7 +3046,7 @@ PDF signing requests can be served using either web services or the web server i
 For the web server interface the GenericProcessServlet can be used. The PDFSigner supports the extra request field "pdfPassword" letting the client supply a PDF password to be used for opening the PDF for signing (not required unless the PDF is already password protected).
                         </p>
                         <p>
-For the web services interface the request should contain an encoded GenericProcessesRequest and the response will be an GenericProcessResponse. It is possible to supply a PDF password by including it in the requestMetaData with the key "pdfPassword".
+For the old web services interface the request should contain an encoded GenericProcessesRequest and the response will be an GenericProcessResponse. It is possible to supply a PDF password by including it in the requestMetaData with the key "pdfPassword".
                         </p>
                     </subsubsection>
 

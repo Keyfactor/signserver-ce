@@ -44,6 +44,11 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
 
     private StatusName insyncPropertyName = StatusName.TIMESOURCE0_INSYNC;
 
+    // property constants
+    private static final String HANDLE_LEAPSECOND_CHANGE = "HANDLE_LEAPSECOND_CHANGE";
+    
+    private boolean handleLeapsecondChange;
+    
     /**
      * @param props Properties for this TimeSource (not used)
      * @see org.signserver.server.ITimeSource#init(java.util.Properties)
@@ -53,6 +58,8 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
         try {
             statusSession = ServiceLocator.getInstance().lookupRemote(
                         IStatusRepositorySession.IRemote.class);
+            handleLeapsecondChange =
+                    Boolean.parseBoolean(props.getProperty(HANDLE_LEAPSECOND_CHANGE, Boolean.FALSE.toString()));
         } catch (Exception ex) {
             LOG.error("Looking up status repository session", ex);
         }
@@ -69,6 +76,14 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
             final StatusEntry entry = statusSession.getValidEntry(insyncPropertyName.name());
             if (entry != null && Boolean.valueOf(entry.getValue())) {
                 date = new Date();
+                
+                // check if a leapsecond is near
+                if (handleLeapsecondChange) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Check for leapsecond");
+                    }
+                }
+                
             } else {
                 date = null;
             }

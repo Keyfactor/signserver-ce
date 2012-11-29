@@ -28,25 +28,42 @@ public class DataGroup {
     public DataGroup() {
     }
     
+    /**
+     * Creates an new instance of DataGroup.
+     * @param id Id of datagroup
+     * @param value Value of datagroup
+     */
     public DataGroup(int id, byte[] value) {
         this.id = id;
         this.value = value;
     }
 
+    /**
+     * @return Id of datagroup
+     */
     @XmlAttribute(name="id", required=true)
     public int getId() {
         return id;
     }
 
+    /**
+     * @return Value of datagroup
+     */
     @XmlValue
     public byte[] getValue() {
         return value;
     }
 
+    /**
+     * @param id Id of datagroup
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * @param value Value of datagroup
+     */
     public void setValue(byte[] value) {
         this.value = value;
     }

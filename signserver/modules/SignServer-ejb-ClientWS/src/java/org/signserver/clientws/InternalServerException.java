@@ -13,7 +13,11 @@
 package org.signserver.clientws;
 
 /**
- *
+ * Representation of a failure at the server side.
+ * 
+ * In case the request could not be processed by some error at the server side 
+ * such as miss-configuration or service unavailability.
+ * 
  * @author Markus Kilås
  * @version $Id$
  */

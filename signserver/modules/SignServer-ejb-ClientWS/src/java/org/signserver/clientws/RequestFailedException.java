@@ -13,7 +13,12 @@
 package org.signserver.clientws;
 
 /**
- *
+ * Representation of a failure likely caused by the client not providing a 
+ * correct request or a request for an non-existing worker.
+ * 
+ * In case the request could not be processed typically because some error in 
+ * the request data.
+ * 
  * @author Markus Kilås
  * @version $Id$
  */

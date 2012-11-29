@@ -15,15 +15,25 @@ package org.signserver.clientws;
 import java.util.List;
 
 /**
+ * The response data returned by the processSOD operation.
  *
  * @author Markus Kilås
  * @version $Id$
+ * @see ClientWS#processSOD(java.lang.String, java.util.List, org.signserver.clientws.SODRequest) 
  */
 public class SODResponse extends DataResponse {
 
     public SODResponse() {
     }
     
+    /**
+     * Constructs a new instance of SODResponse.
+     * @param requestId Id of the worker that processed the request.
+     * @param data The result (for instance signed document).
+     * @param archiveId The ID assigned to the archivable item(s).
+     * @param signerCertificate Certificate of the signer signing the data (if any).
+     * @param metadata Response metadata.
+     */
     public SODResponse(int requestId, byte[] data, String archiveId, byte[] signerCertificate, List<Metadata> metadata) {
         super(requestId, data, archiveId, signerCertificate, metadata);
     }

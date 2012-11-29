@@ -70,6 +70,17 @@ public class ClientWS {
     
     private final Random random = new Random();
     
+    /**
+     * Generic operation for request signing of a byte array.
+     *
+     * @param workerIdOrName Name or ID of worker to send the request to
+     * @param requestMetadata Additional request meta data
+     * @param data The byte[] array with data in some format understood by the 
+     * worker
+     * @return The response data
+     * @throws RequestFailedException In case the request could not be processed typically because some error in the request data.
+     * @throws InternalServerException In case the request could not be processed by some error at the server side.
+     */
     @WebMethod(operationName="processData")
     public DataResponse processData(
             @WebParam(name = "worker") final String workerIdOrName, 
@@ -122,6 +133,16 @@ public class ClientWS {
         return result;
     }
 
+    /**
+     * Operation for requesting signing and production of an MRTD SOd based on 
+     * the supplied data groups / data group hashes.
+     * @param workerIdOrName Name or ID of worker to send the request to
+     * @param requestMetadata Additional request meta data
+     * @param data A SODRequest containing the datagroups/datagroups hashes
+     * @return The response data
+     * @throws RequestFailedException In case the request could not be processed typically because some error in the request data.
+     * @throws InternalServerException In case the request could not be processed by some error at the server side.
+     */
     @WebMethod(operationName = "processSOD")
     public SODResponse processSOD(
             @WebParam(name = "worker") final String workerIdOrName, 

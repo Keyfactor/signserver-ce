@@ -15,6 +15,8 @@ package org.signserver.server;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+import java.util.TimeZone;
+
 import javax.ejb.EJB;
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
@@ -41,7 +43,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
 
     /** Status repository session. */
     @EJB
-    private IStatusRepositorySession.IRemote statusSession;
+    private IStatusRepositorySession statusSession;
 
     private StatusName insyncPropertyName = StatusName.TIMESOURCE0_INSYNC;
     private StatusName leapsecondPropertyName = StatusName.LEAPSECOND;
@@ -51,8 +53,16 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     
     private boolean handleLeapsecondChange;
     
+    // number of milliseconds to sleep when waiting for a leapsecond to pass
+    private static final int LEAPSECOND_WAIT_PERIOD = 4000;
+    
+    // leapsecond property values
+    protected static final String LEAPSECOND_NONE = "NONE";
+    protected static final String LEAPSECOND_POSITIVE = "POSITIVE";
+    protected static final String LEAPSECOND_NEGATIVE = "NEGATIVE";
+    
     /**
-     * @param props Properties for this TimeSource (not used)
+     * @param props Properties for this TimeSource
      * @see org.signserver.server.ITimeSource#init(java.util.Properties)
      */
     @Override
@@ -76,8 +86,9 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
         try {
             final Date date;
             final StatusEntry entry = statusSession.getValidEntry(insyncPropertyName.name());
+            
             if (entry != null && Boolean.valueOf(entry.getValue())) {
-                date = new Date();
+                date = getCurrentDate();
                 
                 // check if a leapsecond is near
                 if (handleLeapsecondChange && isPotentialLeapsecond(date)) {
@@ -89,7 +100,26 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                     
                     if (leapsecond == null) {
                         // leapsecond property is expired
+                        LOG.error("Leapsecond status has expired");
+                        
                         return null;
+                    }
+                    
+                    final String leapsecondValue = leapsecond.getValue();
+                    if (LEAPSECOND_POSITIVE.equals(leapsecondValue) ||
+                        LEAPSECOND_NEGATIVE.equals(leapsecondValue)) {
+                        // sleep for the amount of time nessesary to skip over the leap second
+                        try {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Waiting for leapsecond to pass");
+                            }
+
+                            Thread.sleep(LEAPSECOND_WAIT_PERIOD);
+                        } catch (InterruptedException ex) {
+                            
+                        }
+                        
+                        return getCurrentDate();
                     }
                 }
                 
@@ -100,6 +130,37 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
         } catch (NoSuchPropertyException ex) {
             throw new RuntimeException(ex);
         }
+    }
+    
+    /**
+     * Get current timestamp date.
+     * This is overridable for the unit test to allow
+     * simulating leapsecond events.
+     * 
+     * @return Current date
+     */
+    protected Date getCurrentDate() {
+        return new Date();
+    }
+    
+    /**
+     * Set the status session.
+     * This is visible for the unit test
+     * 
+     * @param statusSession
+     */
+    protected void setStatusSession(final IStatusRepositorySession statusSession) {
+        this.statusSession = statusSession;
+    }
+    
+    /**
+     * Sets the handle leapsecond change property.
+     * This is available for the unit test.
+     * 
+     * @param handleLeapSecondChange
+     */
+    protected void setHandleLeapsecondChange(boolean handleLeapsecondChange) {
+        this.handleLeapsecondChange = handleLeapsecondChange;
     }
     
     /**

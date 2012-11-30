@@ -2,6 +2,13 @@ package org.signserver.server;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
+
+import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
+import org.signserver.statusrepo.common.StatusEntry;
+import org.signserver.statusrepo.common.StatusName;
+
 import junit.framework.TestCase;
 
 /**
@@ -70,5 +77,101 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      */
     public void test04NotPotentialLeapSecondOther() throws Exception {
         assertNotPotentialLeapsecond(2013, 4, 7, 12, 47, 11);
+    }
+    
+    
+    /** Test that requesting time when a leapsecond is near,
+     * the time is returned right after.
+     */
+    public void test05RequestTimeBeforeLeapsecond() throws Exception {
+        final StatusReadingLocalComputerTimeSource timeSource =
+                new StatusReadingLocalComputerTimeSource() {
+            @Override
+            protected Date getCurrentDate() {
+                // return fake date triggering a leap second
+                Calendar cal = Calendar.getInstance();
+                cal.set(2012, 11, 31, 23, 59, 59);
+                
+                return cal.getTime();
+            }
+        };
+        
+        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setStatusSession(new PositiveLeapsecondStatusRepositorySession());
+        
+        long startTime = new Date().getTime();
+        final Date date = timeSource.getGenTime();
+        long finishTime = new Date().getTime();
+        
+        // the call should take at least 4 s
+        long elapsed = finishTime - startTime;
+        assertTrue("Timesource did not wait long enough: " + elapsed, elapsed > 4000);
+    }
+    
+    
+    /**
+     * Base class for status repository mockups
+     */
+    private abstract class LeapsecondStatusRepositorySession implements IStatusRepositorySession {
+        @Override
+        public void update(String key, String value)
+                throws NoSuchPropertyException {
+            throw new UnsupportedOperationException("Not implemented");
+            
+        }
+
+        @Override
+        public void update(String key, String value, long expiration)
+                throws NoSuchPropertyException {
+            throw new UnsupportedOperationException("Not implemented");
+            
+        }
+
+        @Override
+        public Map<String, StatusEntry> getAllEntries() {
+            throw new UnsupportedOperationException("Not implemented");
+        }
+
+    }
+    
+    /**
+     * Mock status session returning a positive leapsecond value
+     * when queried for the leapsecond status property.
+     */
+    private class PositiveLeapsecondStatusRepositorySession extends LeapsecondStatusRepositorySession {
+
+        @Override
+        public StatusEntry getValidEntry(String key)
+                throws NoSuchPropertyException {
+            long time = new Date().getTime();
+            if (StatusName.LEAPSECOND.name().equals(key)) {
+                // return a status entry valid for an hour, we won't actually expire it, but for good measure...
+                return new StatusEntry(time, StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE, time + 3600 * 1000);
+            } else if (StatusName.TIMESOURCE0_INSYNC.name().equals(key)) {
+                return new StatusEntry(time, Boolean.TRUE.toString(), time + 3600 * 1000);
+            }
+            return null;
+        }
+    }
+    
+    /**
+     * Mock status session returning a negative leapsecond value
+     * when queried for the leapsecond status property.
+     */
+    private class NegativeLeapsecondStatusRepositorySession extends LeapsecondStatusRepositorySession {
+
+        @Override
+        public StatusEntry getValidEntry(String key)
+                throws NoSuchPropertyException {
+            long time = new Date().getTime();
+
+            if (StatusName.LEAPSECOND.name().equals(key)) {
+                // return a status entry valid for an hour, we won't actually expire it, but for good measure...
+                return new StatusEntry(time, StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE, time + 3600 * 1000);
+            } else if (StatusName.TIMESOURCE0_INSYNC.name().equals(key)) {
+                return new StatusEntry(time, Boolean.TRUE.toString(), time + 3600 * 1000);
+            }
+            return null;
+        }
     }
 }

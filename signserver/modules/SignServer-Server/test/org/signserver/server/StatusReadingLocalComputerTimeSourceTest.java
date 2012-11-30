@@ -98,7 +98,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         };
         
         timeSource.setHandleLeapsecondChange(true);
-        timeSource.setStatusSession(new PositiveLeapsecondStatusRepositorySession());
+        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         
         long startTime = new Date().getTime();
         final Date date = timeSource.getGenTime();
@@ -127,7 +127,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         };
         
         timeSource.setHandleLeapsecondChange(true);
-        timeSource.setStatusSession(new NegativeLeapsecondStatusRepositorySession());
+        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
         
         long startTime = new Date().getTime();
         final Date date = timeSource.getGenTime();
@@ -155,7 +155,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         };
         
         timeSource.setHandleLeapsecondChange(true);
-        timeSource.setStatusSession(new NegativeLeapsecondStatusRepositorySession());
+        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
         
         long startTime = new Date().getTime();
         final Date date = timeSource.getGenTime();
@@ -169,8 +169,27 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     /**
      * Base class for status repository mockups
      */
-    private abstract class LeapsecondStatusRepositorySession implements IStatusRepositorySession {
+    private class LeapsecondStatusRepositorySession implements IStatusRepositorySession {
+        private final String leapsecondType;
+        
+        LeapsecondStatusRepositorySession(final String leapsecondType) {
+        	this.leapsecondType = leapsecondType;
+        }
+        
         @Override
+        public StatusEntry getValidEntry(String key)
+                throws NoSuchPropertyException {
+            long time = new Date().getTime();
+            if (StatusName.LEAPSECOND.name().equals(key)) {
+                // return a status entry valid for an hour, we won't actually expire it, but for good measure...
+                return new StatusEntry(time, leapsecondType, time + 3600 * 1000);
+            } else if (StatusName.TIMESOURCE0_INSYNC.name().equals(key)) {
+                return new StatusEntry(time, Boolean.TRUE.toString(), time + 3600 * 1000);
+            }
+            return null;
+        }
+    	
+    	@Override
         public void update(String key, String value)
                 throws NoSuchPropertyException {
             throw new UnsupportedOperationException("Not implemented");
@@ -190,45 +209,5 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         }
 
     }
-    
-    /**
-     * Mock status session returning a positive leapsecond value
-     * when queried for the leapsecond status property.
-     */
-    private class PositiveLeapsecondStatusRepositorySession extends LeapsecondStatusRepositorySession {
 
-        @Override
-        public StatusEntry getValidEntry(String key)
-                throws NoSuchPropertyException {
-            long time = new Date().getTime();
-            if (StatusName.LEAPSECOND.name().equals(key)) {
-                // return a status entry valid for an hour, we won't actually expire it, but for good measure...
-                return new StatusEntry(time, StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE, time + 3600 * 1000);
-            } else if (StatusName.TIMESOURCE0_INSYNC.name().equals(key)) {
-                return new StatusEntry(time, Boolean.TRUE.toString(), time + 3600 * 1000);
-            }
-            return null;
-        }
-    }
-    
-    /**
-     * Mock status session returning a negative leapsecond value
-     * when queried for the leapsecond status property.
-     */
-    private class NegativeLeapsecondStatusRepositorySession extends LeapsecondStatusRepositorySession {
-
-        @Override
-        public StatusEntry getValidEntry(String key)
-                throws NoSuchPropertyException {
-            long time = new Date().getTime();
-
-            if (StatusName.LEAPSECOND.name().equals(key)) {
-                // return a status entry valid for an hour, we won't actually expire it, but for good measure...
-                return new StatusEntry(time, StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE, time + 3600 * 1000);
-            } else if (StatusName.TIMESOURCE0_INSYNC.name().equals(key)) {
-                return new StatusEntry(time, Boolean.TRUE.toString(), time + 3600 * 1000);
-            }
-            return null;
-        }
-    }
 }

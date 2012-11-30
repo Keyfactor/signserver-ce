@@ -247,16 +247,47 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     }
     
     /** Test that requesting time when a leapsecond is near,
-     * but with the time stamp near midnight, but in non-GMT
+     * but with the time stamp near midnight, but in the local timezone
      * Test that the time source is not pausing in this case
      */
-    public void test11RequestTimeNonGMT() throws Exception {
+    public void test11RequestTimeLocalTimezone() throws Exception {
         final StatusReadingLocalComputerTimeSource timeSource =
                 new StatusReadingLocalComputerTimeSource() {
             @Override
             protected Date getCurrentDate() {
                 // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("CET"));
+                Calendar cal = Calendar.getInstance();
+                cal.set(2012, 11, 31, 23, 59, 59);
+                
+                return cal.getTime();
+            }
+        };
+        
+        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
+        
+        long startTime = new Date().getTime();
+        final Date date = timeSource.getGenTime();
+        long finishTime = new Date().getTime();
+        
+        // the call should take at least 4 s
+        long elapsed = finishTime - startTime;
+        assertTrue("Timesource should not pause at non-GMT midnight: " + elapsed, elapsed < 100);
+    }
+    
+    /** Test that requesting time when a leapsecond is near,
+     * but with the time stamp near midnight, but in a non-GMT
+     * Test that the time source is not pausing in this case
+     */
+    public void test12RequestTimeOtherTimezone() throws Exception {
+        final StatusReadingLocalComputerTimeSource timeSource =
+                new StatusReadingLocalComputerTimeSource() {
+            @Override
+            protected Date getCurrentDate() {
+                // return fake date triggering a leap second
+            	// set an arbitrary timezone, differing from GMT and the local timezone of Primekey's Hudson
+            	// server to cover potential fringe cases
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+5:00"));
                 cal.set(2012, 11, 31, 23, 59, 59);
                 
                 return cal.getTime();

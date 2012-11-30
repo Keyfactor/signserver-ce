@@ -222,6 +222,30 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertTrue("Timesource seemed to sleep despite no leapsecond: " + elapsed, elapsed < 100);
     }
     
+    /** Test that the time source returns null when the status property is not available.
+     */
+    public void test10RequestTimeLeapsecondNotHandled() throws Exception {
+        final StatusReadingLocalComputerTimeSource timeSource =
+                new StatusReadingLocalComputerTimeSource() {
+            @Override
+            protected Date getCurrentDate() {
+                // return fake date triggering a leap second
+                Calendar cal = Calendar.getInstance();
+                cal.set(2012, 11, 31, 23, 59, 59);
+                
+                return cal.getTime();
+            }
+        };
+        
+        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(null));
+        
+        final Date date = timeSource.getGenTime();
+        
+        assertEquals("Timesource value", null, date);
+    }
+    
+    
     /**
      * Base class for status repository mockups
      */
@@ -237,8 +261,12 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
                 throws NoSuchPropertyException {
             long time = new Date().getTime();
             if (StatusName.LEAPSECOND.name().equals(key)) {
-                // return a status entry valid for an hour, we won't actually expire it, but for good measure...
-                return new StatusEntry(time, leapsecondType, time + 3600 * 1000);
+            	if (leapsecondType == null) {
+            		return null;
+            	} else {
+            		// return a status entry valid for an hour, we won't actually expire it, but for good measure...
+            		return new StatusEntry(time, leapsecondType, time + 3600 * 1000);
+            	}
             } else if (StatusName.TIMESOURCE0_INSYNC.name().equals(key)) {
                 return new StatusEntry(time, Boolean.TRUE.toString(), time + 3600 * 1000);
             }

@@ -82,6 +82,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     
     /** Test that requesting time when a leapsecond is near,
      * the time is returned right after.
+     * Test that the time source is causing a pause.
      */
     public void test05RequestTimeBeforeLeapsecond() throws Exception {
         final StatusReadingLocalComputerTimeSource timeSource =
@@ -105,9 +106,65 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         
         // the call should take at least 4 s
         long elapsed = finishTime - startTime;
-        assertTrue("Timesource did not wait long enough: " + elapsed, elapsed > 4000);
+        assertTrue("Timesource did not wait long enough: " + elapsed, elapsed >= 4000);
     }
     
+    /** Test that requesting time when a negative leapsecond is near,
+     * the time is returned right after.
+     * Test that the time source is causing a pause.
+     */
+    public void test06RequestTimeBeforeNegativeLeapsecond() throws Exception {
+        final StatusReadingLocalComputerTimeSource timeSource =
+                new StatusReadingLocalComputerTimeSource() {
+            @Override
+            protected Date getCurrentDate() {
+                // return fake date triggering a leap second
+                Calendar cal = Calendar.getInstance();
+                cal.set(2012, 11, 31, 23, 59, 59);
+                
+                return cal.getTime();
+            }
+        };
+        
+        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setStatusSession(new NegativeLeapsecondStatusRepositorySession());
+        
+        long startTime = new Date().getTime();
+        final Date date = timeSource.getGenTime();
+        long finishTime = new Date().getTime();
+        
+        // the call should take at least 4 s
+        long elapsed = finishTime - startTime;
+        assertTrue("Timesource did not wait long enough: " + elapsed, elapsed >= 4000);
+    }
+    
+    /** Test that requesting time when a leapsecond is not imminent
+     * does not cause an extra sleep
+     */
+    public void test07RequestTimeNoLeapsecond() throws Exception {
+        final StatusReadingLocalComputerTimeSource timeSource =
+                new StatusReadingLocalComputerTimeSource() {
+            @Override
+            protected Date getCurrentDate() {
+                // return fake date triggering a leap second
+                Calendar cal = Calendar.getInstance();
+                cal.set(2013, 1, 31, 23, 59, 59);
+                
+                return cal.getTime();
+            }
+        };
+        
+        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setStatusSession(new NegativeLeapsecondStatusRepositorySession());
+        
+        long startTime = new Date().getTime();
+        final Date date = timeSource.getGenTime();
+        long finishTime = new Date().getTime();
+        
+        // the call should not make a sleep...
+        long elapsed = finishTime - startTime;
+        assertTrue("Timesource seemed to sleep despite no leapsecond: " + elapsed, elapsed < 100);
+    }
     
     /**
      * Base class for status repository mockups

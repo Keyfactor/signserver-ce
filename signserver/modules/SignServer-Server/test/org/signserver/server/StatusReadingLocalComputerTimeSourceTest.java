@@ -194,6 +194,34 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertTrue("Timesource seemed to sleep despite no leapsecond: " + elapsed, elapsed < 100);
     }
     
+    /** Test that requesting time when leapsecond is coming up, but time source is configured
+     *  not to handle leapseconds, does not cause an extra sleep
+     */
+    public void test09RequestTimeLeapsecondNotHandled() throws Exception {
+        final StatusReadingLocalComputerTimeSource timeSource =
+                new StatusReadingLocalComputerTimeSource() {
+            @Override
+            protected Date getCurrentDate() {
+                // return fake date triggering a leap second
+                Calendar cal = Calendar.getInstance();
+                cal.set(2012, 11, 31, 23, 59, 59);
+                
+                return cal.getTime();
+            }
+        };
+        
+        timeSource.setHandleLeapsecondChange(false);
+        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
+        
+        long startTime = new Date().getTime();
+        final Date date = timeSource.getGenTime();
+        long finishTime = new Date().getTime();
+        
+        // the call should not make a sleep...
+        long elapsed = finishTime - startTime;
+        assertTrue("Timesource seemed to sleep despite no leapsecond: " + elapsed, elapsed < 100);
+    }
+    
     /**
      * Base class for status repository mockups
      */

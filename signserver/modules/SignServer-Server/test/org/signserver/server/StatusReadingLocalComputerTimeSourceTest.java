@@ -3,6 +3,7 @@ package org.signserver.server;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
@@ -24,7 +25,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     
     private void assertPotentialLeapsecond(int year, int month, int day, int hour, int min, int sec) {
         Date date;
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         
         cal.set(year, month - 1, day, hour, min, sec);
         date = cal.getTime();
@@ -34,7 +35,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     
     private void assertNotPotentialLeapsecond(int year, int month, int day, int hour, int min, int sec) {
         Date date;
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         
         cal.set(year, month - 1, day, hour, min, sec);
         date = cal.getTime();
@@ -90,7 +91,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             @Override
             protected Date getCurrentDate() {
                 // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance();
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
                 cal.set(2012, 11, 31, 23, 59, 59);
                 
                 return cal.getTime();
@@ -119,7 +120,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             @Override
             protected Date getCurrentDate() {
                 // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance();
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
                 cal.set(2012, 11, 31, 23, 59, 59);
                 
                 return cal.getTime();
@@ -147,7 +148,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             @Override
             protected Date getCurrentDate() {
                 // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance();
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
                 cal.set(2013, 1, 31, 23, 59, 59);
                 
                 return cal.getTime();
@@ -175,7 +176,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             @Override
             protected Date getCurrentDate() {
                 // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance();
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
                 cal.set(2012, 11, 31, 23, 59, 59);
                 
                 return cal.getTime();
@@ -203,7 +204,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             @Override
             protected Date getCurrentDate() {
                 // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance();
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
                 cal.set(2012, 11, 31, 23, 59, 59);
                 
                 return cal.getTime();
@@ -230,7 +231,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             @Override
             protected Date getCurrentDate() {
                 // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance();
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
                 cal.set(2012, 11, 31, 23, 59, 59);
                 
                 return cal.getTime();
@@ -245,6 +246,34 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertEquals("Timesource value", null, date);
     }
     
+    /** Test that requesting time when a leapsecond is near,
+     * but with the time stamp near midnight, but in non-GMT
+     * Test that the time source is not pausing in this case
+     */
+    public void test11RequestTimeNonGMT() throws Exception {
+        final StatusReadingLocalComputerTimeSource timeSource =
+                new StatusReadingLocalComputerTimeSource() {
+            @Override
+            protected Date getCurrentDate() {
+                // return fake date triggering a leap second
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("CET"));
+                cal.set(2012, 11, 31, 23, 59, 59);
+                
+                return cal.getTime();
+            }
+        };
+        
+        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
+        
+        long startTime = new Date().getTime();
+        final Date date = timeSource.getGenTime();
+        long finishTime = new Date().getTime();
+        
+        // the call should take at least 4 s
+        long elapsed = finishTime - startTime;
+        assertTrue("Timesource should not pause at non-GMT midnight: " + elapsed, elapsed < 100);
+    }
     
     /**
      * Base class for status repository mockups

@@ -169,7 +169,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
      * @return true if possible leapsecond
      */
     protected static boolean isPotentialLeapsecond(final Date date) {
-        final Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         
         cal.setTime(date);
         

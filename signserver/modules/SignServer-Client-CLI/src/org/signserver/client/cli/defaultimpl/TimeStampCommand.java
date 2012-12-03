@@ -386,8 +386,9 @@ public class TimeStampCommand extends AbstractCommand {
                     out.print("         " + "Policy: ");
                     out.println(info.getPolicy());
                 }
-                out.print("      SignerId: ");
-                out.println(token.getSID());
+                out.println("      Signer ID: ");
+                out.println("         Serial Number: " + token.getSID().getSerialNumber().toString(16));
+                out.println("         Issuer:        " + token.getSID().getIssuer());
                 
                 out.println("      Signer certificate: ");
                 

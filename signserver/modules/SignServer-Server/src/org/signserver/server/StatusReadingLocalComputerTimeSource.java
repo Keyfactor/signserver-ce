@@ -116,7 +116,9 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
 
                             Thread.sleep(LEAPSECOND_WAIT_PERIOD);
                         } catch (InterruptedException ex) {
-                            
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Interruped while sleeping");
+                            }
                         }
                         
                         return getCurrentDate();

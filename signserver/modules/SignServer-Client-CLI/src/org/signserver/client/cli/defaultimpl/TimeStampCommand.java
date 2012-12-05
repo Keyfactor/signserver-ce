@@ -25,6 +25,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -561,7 +562,11 @@ public class TimeStampCommand extends AbstractCommand {
             url = new URL(urlstring);
 
             // Take start time
+            final long startMillis = System.currentTimeMillis();
             final long startTime = System.nanoTime();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending request at: " + startMillis);
+            }
 
             urlConn = url.openConnection();
 
@@ -579,9 +584,6 @@ public class TimeStampCommand extends AbstractCommand {
 
             // Get response data.
             input = new DataInputStream(urlConn.getInputStream());
-            while (input.available() == 0) {
-                Thread.sleep(100);
-            }
 
             byte[] ba = null;
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -626,9 +628,16 @@ public class TimeStampCommand extends AbstractCommand {
             LOG.info("TimeStampRequest validated");
 
             if (LOG.isDebugEnabled()) {
+                final Date genTime;
+                if (timeStampResponse.getTimeStampToken() != null && timeStampResponse.getTimeStampToken().getTimeStampInfo() != null) {
+                    genTime = timeStampResponse.getTimeStampToken().getTimeStampInfo().getGenTime();
+                } else {
+                    genTime = null;
+                }
                 LOG.debug("(Status: " + timeStampResponse.getStatus()
                         + ", " + timeStampResponse.getFailInfo() + "): "
-                        + timeStampResponse.getStatusString());
+                        + timeStampResponse.getStatusString() + (genTime != null ? (", genTime: " + genTime.getTime()) : "") + "\n");
+                
             }
 
             if (doRun) {

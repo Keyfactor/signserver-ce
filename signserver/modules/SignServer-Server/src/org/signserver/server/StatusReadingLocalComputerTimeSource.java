@@ -98,15 +98,14 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     @Override
     public Date getGenTime() {
         try {
-            final Date date;
+            Date date;
             final StatusEntry entry = statusSession.getValidEntry(insyncPropertyName.name());
             
             if (entry != null && Boolean.valueOf(entry.getValue())) {
                 date = getCurrentDate();
                 
                 // check if a leapsecond is near
-                if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.PAUSE
-                		&& isPotentialLeapsecond(date)) {
+                if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.PAUSE) {
                     final StatusEntry leapsecond = statusSession.getValidEntry(leapsecondPropertyName.name());
                     
                     if (LOG.isDebugEnabled()) {
@@ -123,21 +122,26 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                     final String leapsecondValue = leapsecond.getValue();
                     if (LEAPSECOND_POSITIVE.equals(leapsecondValue) ||
                         LEAPSECOND_NEGATIVE.equals(leapsecondValue)) {
-                        // sleep for the amount of time nessesary to skip over the leap second
-                        try {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Waiting for leapsecond to pass");
-                            }
-
-                            Thread.sleep(LEAPSECOND_WAIT_PERIOD);
-                        } catch (InterruptedException ex) {
-                        	// if the thread gets interrupted while pausing,
-                        	// return time source not available
-                            LOG.error("Interrupted while pausing");
-                            return null;
-                        }
                         
-                        return getCurrentDate();
+                    	for (int i = 0; i < 10 && isPotentialLeapsecond(date); i++) {
+                    		// sleep for the amount of time nessesary to skip over the leap second
+                    		try {
+                    			if (LOG.isDebugEnabled()) {
+                    				LOG.debug("Waiting for leapsecond to pass");
+                    			}
+
+                    			pause();
+                    		} catch (InterruptedException ex) {
+                    			// if the thread gets interrupted while pausing,
+                    			// return time source not available
+                    			LOG.error("Interrupted while pausing");
+                    			return null;
+                    		}
+                        
+                    		date = getCurrentDate();
+                    	}
+                    	
+                    	return date;
                     }
                 }
                 
@@ -159,6 +163,10 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
      */
     protected Date getCurrentDate() {
         return new Date();
+    }
+    
+    protected void pause() throws InterruptedException {
+    	Thread.sleep(LEAPSECOND_WAIT_PERIOD);
     }
     
     /**

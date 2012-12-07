@@ -87,157 +87,97 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * Test that the time source is causing a pause.
      */
     public void test05RequestTimeBeforeLeapsecond() throws Exception {
-        final StatusReadingLocalComputerTimeSource timeSource =
-                new StatusReadingLocalComputerTimeSource() {
-            @Override
-            protected Date getCurrentDate() {
-                // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-                cal.set(2012, 11, 31, 23, 59, 59);
-                
-                return cal.getTime();
-            }
-        };
+
+        
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.set(2012, 11, 31, 23, 59, 59);
+        final MockTimeSource timeSource =
+        		new MockTimeSource(cal.getTime());
         
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         
-        long startTime = new Date().getTime();
         final Date date = timeSource.getGenTime();
-        long finishTime = new Date().getTime();
-        
-        // the call should take at least 4 s
-        long elapsed = finishTime - startTime;
-        assertTrue("Timesource did not wait long enough: " + elapsed, elapsed >= 4000);
+        assertTrue("Timesource did not pause", timeSource.pauseCalled);
     }
     
     /** Test that requesting time when a negative leapsecond is near,
      * the time is returned right after.
      * Test that the time source is causing a pause.
      */
-    public void test06RequestTimeBeforeNegativeLeapsecond() throws Exception {
-        final StatusReadingLocalComputerTimeSource timeSource =
-                new StatusReadingLocalComputerTimeSource() {
-            @Override
-            protected Date getCurrentDate() {
-                // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-                cal.set(2012, 11, 31, 23, 59, 59);
-                
-                return cal.getTime();
-            }
-        };
+    public void test06RequestTimeBeforeNegativeLeapsecond() throws Exception {  
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.set(2012, 11, 31, 23, 59, 59);
+        final MockTimeSource timeSource =
+        		new MockTimeSource(cal.getTime());
+  
         
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
         
-        long startTime = new Date().getTime();
         final Date date = timeSource.getGenTime();
-        long finishTime = new Date().getTime();
-        
-        // the call should take at least 4 s
-        long elapsed = finishTime - startTime;
-        assertTrue("Timesource did not wait long enough: " + elapsed, elapsed >= 4000);
+        assertTrue("Timesource did not pause", timeSource.pauseCalled);
     }
     
     /** Test that requesting time when a leapsecond is not imminent
      * does not cause an extra sleep
      */
     public void test07RequestTimeNoLeapsecond() throws Exception {
-        final StatusReadingLocalComputerTimeSource timeSource =
-                new StatusReadingLocalComputerTimeSource() {
-            @Override
-            protected Date getCurrentDate() {
-                // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-                cal.set(2013, 1, 31, 23, 59, 59);
-                
-                return cal.getTime();
-            }
-        };
-        
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.set(2013, 0, 31, 23, 59, 59);
+        final MockTimeSource timeSource =
+        		new MockTimeSource(cal.getTime());
+  
+    	
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
         
-        long startTime = new Date().getTime();
         final Date date = timeSource.getGenTime();
-        long finishTime = new Date().getTime();
-        
-        // the call should not make a sleep...
-        long elapsed = finishTime - startTime;
-        assertTrue("Timesource seemed to sleep despite no leapsecond: " + elapsed, elapsed < 100);
+        assertFalse("Timesource paused", timeSource.pauseCalled);
     }
     
     /** Test that requesting time when leapsecond set to "NONE"
      * does not cause an extra sleep
      */
     public void test08RequestTimeNoLeapsecond() throws Exception {
-        final StatusReadingLocalComputerTimeSource timeSource =
-                new StatusReadingLocalComputerTimeSource() {
-            @Override
-            protected Date getCurrentDate() {
-                // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-                cal.set(2012, 11, 31, 23, 59, 59);
-                
-                return cal.getTime();
-            }
-        };
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.set(2012, 11, 31, 23, 59, 59);
+        final MockTimeSource timeSource =
+        		new MockTimeSource(cal.getTime());
+  
         
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NONE));
         
-        long startTime = new Date().getTime();
         final Date date = timeSource.getGenTime();
-        long finishTime = new Date().getTime();
-        
-        // the call should not make a sleep...
-        long elapsed = finishTime - startTime;
-        assertTrue("Timesource seemed to sleep despite no leapsecond: " + elapsed, elapsed < 100);
+        assertFalse("Timesource paused", timeSource.pauseCalled);
     }
     
     /** Test that requesting time when leapsecond is coming up, but time source is configured
      *  not to handle leapseconds, does not cause an extra sleep
      */
     public void test09RequestTimeLeapsecondNotHandled() throws Exception {
-        final StatusReadingLocalComputerTimeSource timeSource =
-                new StatusReadingLocalComputerTimeSource() {
-            @Override
-            protected Date getCurrentDate() {
-                // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-                cal.set(2012, 11, 31, 23, 59, 59);
-                
-                return cal.getTime();
-            }
-        };
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.set(2012, 11, 31, 23, 59, 59);
+        final MockTimeSource timeSource =
+        		new MockTimeSource(cal.getTime());
+  
         
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.NONE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
-        
-        long startTime = new Date().getTime();
+
         final Date date = timeSource.getGenTime();
-        long finishTime = new Date().getTime();
-        
-        // the call should not make a sleep...
-        long elapsed = finishTime - startTime;
-        assertTrue("Timesource seemed to sleep despite no leapsecond: " + elapsed, elapsed < 100);
+        assertFalse("Timesource paused", timeSource.pauseCalled);
     }
     
     /** Test that the time source returns null when the status property is not available.
      */
     public void test10RequestTimeLeapsecondNotHandled() throws Exception {
-        final StatusReadingLocalComputerTimeSource timeSource =
-                new StatusReadingLocalComputerTimeSource() {
-            @Override
-            protected Date getCurrentDate() {
-                // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-                cal.set(2012, 11, 31, 23, 59, 59);
-                
-                return cal.getTime();
-            }
-        };
+    	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.set(2012, 11, 31, 23, 59, 59);
+        final MockTimeSource timeSource =
+        		new MockTimeSource(cal.getTime());
+  
         
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(null));
@@ -252,28 +192,17 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * Test that the time source is not pausing in this case
      */
     public void test11RequestTimeLocalTimezone() throws Exception {
-        final StatusReadingLocalComputerTimeSource timeSource =
-                new StatusReadingLocalComputerTimeSource() {
-            @Override
-            protected Date getCurrentDate() {
-                // return fake date triggering a leap second
-                Calendar cal = Calendar.getInstance();
-                cal.set(2012, 11, 31, 23, 59, 59);
-                
-                return cal.getTime();
-            }
-        };
+    	Calendar cal = Calendar.getInstance();
+        cal.set(2012, 11, 31, 23, 59, 59);
+        final MockTimeSource timeSource =
+        		new MockTimeSource(cal.getTime());
+  
         
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         
-        long startTime = new Date().getTime();
         final Date date = timeSource.getGenTime();
-        long finishTime = new Date().getTime();
-        
-        // the call should take at least 4 s
-        long elapsed = finishTime - startTime;
-        assertTrue("Timesource should not pause at non-GMT midnight: " + elapsed, elapsed < 100);
+        assertFalse("Timesource paused", timeSource.pauseCalled);
     }
     
     /** Test that requesting time when a leapsecond is near,
@@ -281,30 +210,16 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * Test that the time source is not pausing in this case
      */
     public void test12RequestTimeOtherTimezone() throws Exception {
-        final StatusReadingLocalComputerTimeSource timeSource =
-                new StatusReadingLocalComputerTimeSource() {
-            @Override
-            protected Date getCurrentDate() {
-                // return fake date triggering a leap second
-            	// set an arbitrary timezone, differing from GMT and the local timezone of Primekey's Hudson
-            	// server to cover potential fringe cases
-                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+5:00"));
-                cal.set(2012, 11, 31, 23, 59, 59);
-                
-                return cal.getTime();
-            }
-        };
+    	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+5:00"));
+        cal.set(2012, 11, 31, 23, 59, 59);
+        final MockTimeSource timeSource =
+        		new MockTimeSource(cal.getTime());
         
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         
-        long startTime = new Date().getTime();
         final Date date = timeSource.getGenTime();
-        long finishTime = new Date().getTime();
-        
-        // the call should take at least 4 s
-        long elapsed = finishTime - startTime;
-        assertTrue("Timesource should not pause at non-GMT midnight: " + elapsed, elapsed < 100);
+        assertFalse("Timesource paused", timeSource.pauseCalled);
     }
     
     /**
@@ -355,4 +270,27 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
 
     }
 
+    /**
+     * Mockup time source with a configurable time and keeps track of
+     * calls to the pause method.
+     *
+     */
+    private class MockTimeSource extends StatusReadingLocalComputerTimeSource {
+    	protected boolean pauseCalled;
+    	private Date time;
+    	
+    	public MockTimeSource(final Date time) {
+    		this.time = time;
+    	}
+    	
+    	@Override
+    	public Date getCurrentDate() {
+    		return time;
+    	}
+    	
+    	@Override
+    	public void pause() {
+    		pauseCalled = true;
+    	}
+    }
 }

@@ -205,26 +205,15 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
         final int min = cal.get(Calendar.MINUTE);
         final int sec = cal.get(Calendar.SECOND);
         
-        // check for the last two seconds of a potential
-        // leapsecond month-shift
-        if ((month == Calendar.JUNE && day == 30) ||
-            (month == Calendar.DECEMBER && day == 31)) {
-            
-            
-            if (hour == 23 && min == 59 && sec >= 58) {
-                return true;
-            }
-        }
+        final int lastDayOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
         
         // check for the first two seconds following
         // a potential leapsecond month-shift
-        if ((month == Calendar.JANUARY || month == Calendar.JULY) &&
-            day == 1) {
-            if (hour == 0 && min == 0 && sec <= 1) {
-                return true;
-            }
+        if ((day == 1 && hour == 0 && min == 0 && sec <= 1) ||
+        	(day == lastDayOfMonth && hour == 23 && min == 59 && sec >= 58)) {
+        	return true;
         }
-        
+
         return false;
     }
 

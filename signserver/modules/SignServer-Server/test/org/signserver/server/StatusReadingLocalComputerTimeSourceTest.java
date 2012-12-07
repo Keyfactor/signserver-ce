@@ -124,7 +124,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      */
     public void test07RequestTimeNoLeapsecond() throws Exception {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        cal.set(2013, 0, 31, 23, 59, 59);
+        cal.set(2013, 0, 16, 23, 59, 59);
         final MockTimeSource timeSource =
         		new MockTimeSource(cal.getTime());
   
@@ -220,6 +220,34 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         
         final Date date = timeSource.getGenTime();
         assertFalse("Timesource paused", timeSource.pauseCalled);
+    }
+    
+    /**
+     * Tests that a time in last second of february of a non-leapyear is correctly
+     * detected as a potential leap second.
+     * 
+     * @throws Exception
+     */
+    public void test13PotentialLeapSecondFebruaryNonLeapYear() throws Exception {
+    	assertPotentialLeapsecond(2013, 2, 28, 23, 59, 59);
+    }
+    
+    /**
+     * Tests that 29 february is detected as a potential leapsecond occurance on a leap year.
+     * 
+     * @throws Exception
+     */
+    public void test14PotentialLeapSecondFebruaryLeapYear() throws Exception {
+    	assertPotentialLeapsecond(2012, 2, 29, 23, 59, 59);
+    }
+    
+    /**
+     * Tests that 28 february is not detected as a potential leapsecond occurance on a leap year.
+     * 
+     * @throws Exception
+     */
+    public void test15NotPotentialLeapSecond28Feb() throws Exception {
+    	assertNotPotentialLeapsecond(2012, 2, 28, 23, 59, 59);
     }
     
     /**

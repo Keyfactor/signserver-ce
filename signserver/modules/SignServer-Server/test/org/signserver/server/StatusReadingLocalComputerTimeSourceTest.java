@@ -24,21 +24,23 @@ import junit.framework.TestCase;
 public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
 
     
-    private void assertPotentialLeapsecond(int year, int month, int day, int hour, int min, int sec) {
+    private void assertPotentialLeapsecond(int year, int month, int day, int hour, int min, int sec, int milli) {
         Date date;
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         
         cal.set(year, month - 1, day, hour, min, sec);
+        cal.add(Calendar.MILLISECOND, milli);
         date = cal.getTime();
         
         assertTrue("Should detect possible leapsecond: " + date.toString(), StatusReadingLocalComputerTimeSource.isPotentialLeapsecond(date));
     }
     
-    private void assertNotPotentialLeapsecond(int year, int month, int day, int hour, int min, int sec) {
+    private void assertNotPotentialLeapsecond(int year, int month, int day, int hour, int min, int sec, int milli) {
         Date date;
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         
         cal.set(year, month - 1, day, hour, min, sec);
+        cal.add(Calendar.MILLISECOND, milli);
         date = cal.getTime();
         
         assertFalse("Should not detect possible leapsecond: " + date.toString(), StatusReadingLocalComputerTimeSource.isPotentialLeapsecond(date));
@@ -50,7 +52,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * @throws Exception
      */
     public void test01PotentialLeapSecondDecember() throws Exception {
-        assertPotentialLeapsecond(2012, 12, 31, 23, 59, 59);
+        assertPotentialLeapsecond(2012, 12, 31, 23, 59, 59, 0);
     }
     
     /**
@@ -59,7 +61,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * @throws Exception
      */
     public void test02PotentialLeapSecondJune() throws Exception {
-        assertPotentialLeapsecond(2013, 6, 30, 23, 59, 59);
+        assertPotentialLeapsecond(2013, 6, 30, 23, 59, 59, 0);
     }
     
     /**
@@ -69,7 +71,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * @throws Exception
      */
     public void test03PotentialLeapSecondJanuary() throws Exception {
-        assertPotentialLeapsecond(2013, 1, 1, 0, 0, 0);
+        assertPotentialLeapsecond(2013, 1, 1, 0, 0, 0, 0);
     }
     
     /**
@@ -78,7 +80,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * @throws Exception
      */
     public void test04NotPotentialLeapSecondOther() throws Exception {
-        assertNotPotentialLeapsecond(2013, 4, 7, 12, 47, 11);
+        assertNotPotentialLeapsecond(2013, 4, 7, 12, 47, 11, 0);
     }
     
     
@@ -229,7 +231,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * @throws Exception
      */
     public void test13PotentialLeapSecondFebruaryNonLeapYear() throws Exception {
-    	assertPotentialLeapsecond(2013, 2, 28, 23, 59, 59);
+    	assertPotentialLeapsecond(2013, 2, 28, 23, 59, 59, 0);
     }
     
     /**
@@ -238,7 +240,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * @throws Exception
      */
     public void test14PotentialLeapSecondFebruaryLeapYear() throws Exception {
-    	assertPotentialLeapsecond(2012, 2, 29, 23, 59, 59);
+    	assertPotentialLeapsecond(2012, 2, 29, 23, 59, 59, 0);
     }
     
     /**
@@ -247,7 +249,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * @throws Exception
      */
     public void test15NotPotentialLeapSecond28Feb() throws Exception {
-    	assertNotPotentialLeapsecond(2012, 2, 28, 23, 59, 59);
+    	assertNotPotentialLeapsecond(2012, 2, 28, 23, 59, 59, 0);
     }
     
     /**

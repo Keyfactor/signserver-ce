@@ -49,9 +49,17 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     private StatusName leapsecondPropertyName = StatusName.LEAPSECOND;
 
     // property constants
-    private static final String HANDLE_LEAPSECOND_CHANGE = "HANDLE_LEAPSECOND_CHANGE";
+    private static final String LEAPSECOND_HANDLING = "LEAPSECOND_HANDLING";
     
-    private boolean handleLeapsecondChange;
+    /** defines leap second handling strategies */
+    protected enum LeapSecondHandlingStrategy {
+    	NONE,
+    	PAUSE
+    }
+    
+    private static final String LEAPSECOND_HANDLING_DEFAULT = "NONE";
+   
+    private LeapSecondHandlingStrategy leapSecondHandlingStrategy;
     
     // number of milliseconds to sleep when waiting for a leapsecond to pass
     private static final int LEAPSECOND_WAIT_PERIOD = 4000;
@@ -60,6 +68,8 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     protected static final String LEAPSECOND_NONE = "NONE";
     protected static final String LEAPSECOND_POSITIVE = "POSITIVE";
     protected static final String LEAPSECOND_NEGATIVE = "NEGATIVE";
+    
+ 
     
     /**
      * @param props Properties for this TimeSource
@@ -70,8 +80,12 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
         try {
             statusSession = ServiceLocator.getInstance().lookupRemote(
                         IStatusRepositorySession.IRemote.class);
-            handleLeapsecondChange =
-                    Boolean.parseBoolean(props.getProperty(HANDLE_LEAPSECOND_CHANGE, Boolean.FALSE.toString()));
+            leapSecondHandlingStrategy =
+            		LeapSecondHandlingStrategy.valueOf(props.getProperty(LEAPSECOND_HANDLING, LEAPSECOND_HANDLING_DEFAULT));
+        
+            if (LOG.isDebugEnabled()) {
+            	LOG.debug("Leap second handling strategy: " + leapSecondHandlingStrategy.name());
+            }
         } catch (Exception ex) {
             LOG.error("Looking up status repository session", ex);
         }
@@ -91,7 +105,8 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                 date = getCurrentDate();
                 
                 // check if a leapsecond is near
-                if (handleLeapsecondChange && isPotentialLeapsecond(date)) {
+                if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.PAUSE
+                		&& isPotentialLeapsecond(date)) {
                     final StatusEntry leapsecond = statusSession.getValidEntry(leapsecondPropertyName.name());
                     
                     if (LOG.isDebugEnabled()) {
@@ -116,9 +131,10 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
 
                             Thread.sleep(LEAPSECOND_WAIT_PERIOD);
                         } catch (InterruptedException ex) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Interruped while sleeping");
-                            }
+                        	// if the thread gets interrupted while pausing,
+                        	// return time source not available
+                            LOG.error("Interrupted while pausing");
+                            return null;
                         }
                         
                         return getCurrentDate();
@@ -156,13 +172,13 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     }
     
     /**
-     * Sets the handle leapsecond change property.
+     * Sets the handle leapsecond-handling strategy.
      * This is available for the unit test.
      * 
-     * @param handleLeapSecondChange
+     * @param leapSecondHandlingStrategy
      */
-    protected void setHandleLeapsecondChange(boolean handleLeapsecondChange) {
-        this.handleLeapsecondChange = handleLeapsecondChange;
+    protected void setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy leapSecondHandlingStrategy) {
+        this.leapSecondHandlingStrategy = leapSecondHandlingStrategy;
     }
     
     /**

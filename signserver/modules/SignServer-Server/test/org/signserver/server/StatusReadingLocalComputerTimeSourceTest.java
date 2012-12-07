@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.signserver.server.StatusReadingLocalComputerTimeSource.LeapSecondHandlingStrategy;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
@@ -98,7 +99,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             }
         };
         
-        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         
         long startTime = new Date().getTime();
@@ -127,7 +128,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             }
         };
         
-        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
         
         long startTime = new Date().getTime();
@@ -155,7 +156,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             }
         };
         
-        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
         
         long startTime = new Date().getTime();
@@ -183,7 +184,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             }
         };
         
-        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NONE));
         
         long startTime = new Date().getTime();
@@ -211,7 +212,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             }
         };
         
-        timeSource.setHandleLeapsecondChange(false);
+        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.NONE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         
         long startTime = new Date().getTime();
@@ -238,7 +239,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             }
         };
         
-        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(null));
         
         final Date date = timeSource.getGenTime();
@@ -263,7 +264,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             }
         };
         
-        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         
         long startTime = new Date().getTime();
@@ -294,7 +295,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
             }
         };
         
-        timeSource.setHandleLeapsecondChange(true);
+        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         
         long startTime = new Date().getTime();

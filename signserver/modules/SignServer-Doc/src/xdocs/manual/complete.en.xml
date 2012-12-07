@@ -5829,9 +5829,16 @@ See res/install/debian/README.building for instructions for creating Debian pack
 
             <section name="Contributed Howtos">
                 <p>
-There is an installation package for SignServer 3.2.4 and Debian 6.0 contributed by Antoine Louiset located in
-doc/howtos/signserver32-debian6-by-antoine-louiset.zip
+Contributed howtos and installation guides can be found under doc/howtos.
                 </p>
+                <ul>
+                    <li>
+Installation guide for SignServer 3.1 and RHEL5.3 / CentOS 5.3 by Christophe Sahut called signserver31-rhel5.txt.                        
+                    </li>
+                    <li>
+Installation package for SignServer 3.2.4 and Debian 6.0 contributed by Antoine Louiset called signserver32-debian6-by-antoine-louiset.zip.
+                    </li>
+                </ul>
             </section>
 
             <section name="References">

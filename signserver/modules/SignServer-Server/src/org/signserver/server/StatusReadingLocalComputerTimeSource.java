@@ -191,6 +191,22 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     
     /**
      * Returns true if passed in date is near a potential leapsecond
+     * 
+     * The following log time line describes timestamps from the beginning of
+     * a leap second interval flagged by this method, to the end with the start and end of
+     * positive and negative leap seconds marked within the overall interval.
+     * 
+     * 2012-06-30 23:59:57,999 UTC
+	 * 2012-06-30 23:59:58,000 UTC <- interval start, negative start
+	 * ...
+	 * 2012-06-30 23:59:58,999 UTC <- negative end
+	 * 2012-06-30 23:59:59,000 UTC <- positive start
+	 * ...
+	 * 2012-06-30 23:59:59,999 UTC <- positive end
+	 * ...
+	 * 2012-07-01 00:00:01,999 UTC <- interval end
+	 * 2012-07:01 00:00:02,000 UTC 
+     * 
      * @param date
      * @return true if possible leapsecond
      */
@@ -198,8 +214,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
         final Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         
         cal.setTime(date);
-        
-        final int month = cal.get(Calendar.MONTH);
+
         final int day = cal.get(Calendar.DAY_OF_MONTH);
         final int hour = cal.get(Calendar.HOUR_OF_DAY);
         final int min = cal.get(Calendar.MINUTE);

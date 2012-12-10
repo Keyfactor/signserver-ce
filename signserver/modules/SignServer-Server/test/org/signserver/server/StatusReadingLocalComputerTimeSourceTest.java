@@ -257,6 +257,16 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     }
     
     /**
+     * Tests that 23:59:58 is detected as a potential leap second event (23:59:59 will not occur
+     * if there is a negative leap second).
+     * 
+     * @throws Exception
+     */
+    public void test16PotentialLeapSecondNegative() throws Exception {
+        assertPotentialLeapsecond(2012, 12, 31, 23, 59, 58, 0);
+    }
+    
+    /**
      * Base class for status repository mockups
      */
     private class LeapsecondStatusRepositorySession implements IStatusRepositorySession {

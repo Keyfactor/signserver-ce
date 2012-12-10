@@ -277,12 +277,20 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     }
     
     /**
-     * Tests the border case time of 00:00:02,001
+     * Tests the border case time of 00:00:02,000
      * 
      * @throws Exception
      */
     public void test18NotPotentialLeapSecondJustAfter() throws Exception {
-        assertNotPotentialLeapsecond(2013, 1, 1, 0, 0, 2, 1);
+        assertNotPotentialLeapsecond(2013, 1, 1, 0, 0, 2, 0);
+    }
+    
+    /** Tests the borde case time of 00:00:01,999
+     * 
+     * @throws Exception
+     */
+    public void test19PotentialLeapSecondLastMilliSecond() throws Exception {
+        assertPotentialLeapsecond(2013, 1, 1, 0, 0, 1, 999);
     }
     
     /**

@@ -29,7 +29,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         
         cal.set(year, month - 1, day, hour, min, sec);
-        cal.add(Calendar.MILLISECOND, milli);
+        cal.set(Calendar.MILLISECOND, milli);
         date = cal.getTime();
         
         assertTrue("Should detect possible leapsecond: " + date.toString(), StatusReadingLocalComputerTimeSource.isPotentialLeapsecond(date));
@@ -40,7 +40,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         
         cal.set(year, month - 1, day, hour, min, sec);
-        cal.add(Calendar.MILLISECOND, milli);
+        cal.set(Calendar.MILLISECOND, milli);
         date = cal.getTime();
         
         assertFalse("Should not detect possible leapsecond: " + date.toString(), StatusReadingLocalComputerTimeSource.isPotentialLeapsecond(date));
@@ -264,6 +264,25 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      */
     public void test16PotentialLeapSecondNegative() throws Exception {
         assertPotentialLeapsecond(2012, 12, 31, 23, 59, 58, 0);
+    }
+    
+    /**
+     * Tests the border case time of 23:59:57,999.
+     * Should not be flagged as a leap second event-
+     * 
+     * @throws Exception
+     */
+    public void test17NotPotentialLeapSecondJustBefore() throws Exception {
+        assertNotPotentialLeapsecond(2012, 12, 31, 23, 59, 57, 999);
+    }
+    
+    /**
+     * Tests the border case time of 00:00:02,001
+     * 
+     * @throws Exception
+     */
+    public void test18NotPotentialLeapSecondJustAfter() throws Exception {
+        assertNotPotentialLeapsecond(2013, 1, 1, 0, 0, 2, 1);
     }
     
     /**

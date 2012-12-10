@@ -109,7 +109,11 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      */
     public void test06RequestTimeBeforeNegativeLeapsecond() throws Exception {  
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        cal.set(2012, 11, 31, 23, 59, 59);
+        // set just before the leap second start
+        // (in the negative case this is 23:59:59)
+        // to simulate the real case
+        cal.set(2012, 11, 31, 23, 59, 58);
+        cal.add(Calendar.MILLISECOND, 500);
         final MockTimeSource timeSource =
         		new MockTimeSource(cal.getTime());
   

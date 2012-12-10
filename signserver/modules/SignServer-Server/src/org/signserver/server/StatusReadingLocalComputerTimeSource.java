@@ -77,15 +77,17 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
      */
     @Override
     public void init(final Properties props) {
+        final String leapHandling = props.getProperty(LEAPSECOND_HANDLING, LEAPSECOND_HANDLING_DEFAULT);
         try {
             statusSession = ServiceLocator.getInstance().lookupRemote(
                         IStatusRepositorySession.IRemote.class);
-            leapSecondHandlingStrategy =
-            		LeapSecondHandlingStrategy.valueOf(props.getProperty(LEAPSECOND_HANDLING, LEAPSECOND_HANDLING_DEFAULT));
-        
+            leapSecondHandlingStrategy = LeapSecondHandlingStrategy.valueOf(leapHandling);
+
             if (LOG.isDebugEnabled()) {
             	LOG.debug("Leap second handling strategy: " + leapSecondHandlingStrategy.name());
             }
+        } catch (IllegalArgumentException ex) {
+            LOG.error("Illegal value for leap second handling strategy: " + leapHandling);
         } catch (Exception ex) {
             LOG.error("Looking up status repository session", ex);
         }

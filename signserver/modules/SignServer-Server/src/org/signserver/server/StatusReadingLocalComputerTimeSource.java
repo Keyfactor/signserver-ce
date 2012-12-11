@@ -62,7 +62,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     private LeapSecondHandlingStrategy leapSecondHandlingStrategy;
     
     // number of milliseconds to sleep when waiting for a leapsecond to pass
-    private static final int LEAPSECOND_WAIT_PERIOD = 4000;
+    private static final int LEAPSECOND_WAIT_PERIOD = 500;
     
     // leapsecond property values
     protected static final String LEAPSECOND_NONE = "NONE";
@@ -125,7 +125,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                     if (LEAPSECOND_POSITIVE.equals(leapsecondValue) ||
                         LEAPSECOND_NEGATIVE.equals(leapsecondValue)) {
                         
-                    	for (int i = 0; i < 10 && isPotentialLeapsecond(date); i++) {
+                    	for (int i = 0; i < 6 && isPotentialLeapsecond(date); i++) {
                     		// sleep for the amount of time nessesary to skip over the leap second
                     		try {
                     			if (LOG.isDebugEnabled()) {

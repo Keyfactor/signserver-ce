@@ -124,15 +124,21 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                     final String leapsecondValue = leapsecond.getValue();
                     if (LEAPSECOND_POSITIVE.equals(leapsecondValue) ||
                         LEAPSECOND_NEGATIVE.equals(leapsecondValue)) {
+                        boolean potentialLeap = isPotentialLeapsecond(date);
                         
-                    	for (int i = 0; i < 6 && isPotentialLeapsecond(date); i++) {
+                    	for (int i = 0; i < 6 && potentialLeap; i++) {
                     		// sleep for the amount of time nessesary to skip over the leap second
                     		try {
                     			if (LOG.isDebugEnabled()) {
-                    				LOG.debug("Waiting for leapsecond to pass");
+                    			    LOG.debug("Waiting for leapsecond to pass");
                     			}
 
                     			pause();
+                    	
+                    			if (LOG.isDebugEnabled()) {
+                    			    LOG.debug("Pause finished");
+                    			}
+                    			
                     		} catch (InterruptedException ex) {
                     			// if the thread gets interrupted while pausing,
                     			// return time source not available
@@ -141,6 +147,12 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                     		}
                         
                     		date = getCurrentDate();
+                    		potentialLeap = isPotentialLeapsecond(date);
+                    	}
+                    	
+                    	if (potentialLeap) {
+                    	    LOG.error("Still potentially leap second after maximum pause");
+                    	    return null;
                     	}
                     	
                     	return date;

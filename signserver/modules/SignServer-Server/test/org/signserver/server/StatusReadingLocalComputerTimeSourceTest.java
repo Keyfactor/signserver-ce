@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.apache.log4j.Logger;
 import org.signserver.server.StatusReadingLocalComputerTimeSource.LeapSecondHandlingStrategy;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
@@ -23,6 +24,8 @@ import junit.framework.TestCase;
 
 public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
 
+    /** Logger for this class */
+    private static Logger LOG = Logger.getLogger(StatusReadingLocalComputerTimeSource.class);
     
     private void assertPotentialLeapsecond(int year, int month, int day, int hour, int min, int sec, int milli) {
         Date date;
@@ -113,7 +116,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         // (in the negative case this is 23:59:59)
         // to simulate the real case
         cal.set(2012, 11, 31, 23, 59, 58);
-        cal.add(Calendar.MILLISECOND, 900);
+        cal.add(Calendar.MILLISECOND, 990);
         final MockTimeSource timeSource =
         		new MockTimeSource(cal.getTime());
   
@@ -207,7 +210,9 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         
+        LOG.debug("test11");
         final Date date = timeSource.getGenTime();
+        LOG.debug("test11 finish");
         assertFalse("Timesource paused", timeSource.pauseCalled);
     }
     
@@ -293,6 +298,31 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertPotentialLeapsecond(2013, 1, 1, 0, 0, 0, 010);
     }
     
+    /** Test that requesting time when a negative leapsecond is near,
+     * the time is returned right after.
+     * Test that the time source is causing a pause.
+     */
+    public void test20RequestTimeBeforePositiveLeapsecond() throws Exception {  
+        LOG.info(">test20RequestTimeBeforePositiveLeapsecond");
+        
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        // set just before the leap second start
+        // (in the negative case this is 23:59:59)
+        // to simulate the real case
+        cal.set(2012, 11, 31, 23, 59, 58);
+        cal.add(Calendar.MILLISECOND, 990);
+        final MockTimeSource timeSource =
+                        new MockTimeSource(cal.getTime());
+  
+        
+        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
+        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
+        
+        final Date date = timeSource.getGenTime();
+        assertTrue("Timesource did not pause", timeSource.pauseCalled);
+        LOG.info("<test20RequestTimeBeforePositiveLeapsecond");
+    }
+    
     /**
      * Base class for status repository mockups
      */
@@ -361,7 +391,9 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     	
     	@Override
     	public void pause() {
-    		pauseCalled = true;
+    	    time = new Date(time.getTime() + 500);
+    	    pauseCalled = true;
+    		
     	}
     }
 }

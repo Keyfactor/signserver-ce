@@ -113,7 +113,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         // (in the negative case this is 23:59:59)
         // to simulate the real case
         cal.set(2012, 11, 31, 23, 59, 58);
-        cal.add(Calendar.MILLISECOND, 500);
+        cal.add(Calendar.MILLISECOND, 900);
         final MockTimeSource timeSource =
         		new MockTimeSource(cal.getTime());
   
@@ -257,13 +257,13 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     }
     
     /**
-     * Tests that 23:59:58 is detected as a potential leap second event (23:59:59 will not occur
+     * Tests that 23:59:58,990 is detected as a potential leap second event (23:59:59 will not occur
      * if there is a negative leap second).
      * 
      * @throws Exception
      */
     public void test16PotentialLeapSecondNegative() throws Exception {
-        assertPotentialLeapsecond(2012, 12, 31, 23, 59, 58, 0);
+        assertPotentialLeapsecond(2012, 12, 31, 23, 59, 58, 990);
     }
     
     /**
@@ -285,12 +285,12 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertNotPotentialLeapsecond(2013, 1, 1, 0, 0, 2, 0);
     }
     
-    /** Tests the borde case time of 00:00:01,999
+    /** Tests the border case time of 00:00:00,010
      * 
      * @throws Exception
      */
     public void test19PotentialLeapSecondLastMilliSecond() throws Exception {
-        assertPotentialLeapsecond(2013, 1, 1, 0, 0, 1, 999);
+        assertPotentialLeapsecond(2013, 1, 1, 0, 0, 0, 010);
     }
     
     /**

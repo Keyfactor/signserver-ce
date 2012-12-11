@@ -2891,7 +2891,7 @@ always returns the time.
                                 <td>
 This TimeSource returns the time from the local computer but only if the status property <i>TIMESOURCE0_INSYNC</i> is not expired and returned as <i>true</i> from the Status Repository.
 If the worker property <b>LEAPSECOND_HANDLING</b> is set to the value <i>PAUSE</i> the TimeSource will query the status property <i>LEAPSECOND</i> from the Status Repository.
-If this propery is not expired, and has the value <i>POSITIVE</i> or <i>NEGATIVE</i> and current time is in the interval surrounding a possible leap second (23:59:58,000 - 00:00:01,999) (at month shifts, in UTC time),
+If this propery is not expired, and has the value <i>POSITIVE</i> or <i>NEGATIVE</i> and current time is in the interval surrounding a possible leap second (23:59:58,989 - 00:00:00,010) (at month shifts, in UTC time),
 the TimeSource will make a pause to ensure the time value is not fetch on the leap second.
 The value <i>NONE</i> is interpreted as there is no leap second and the time value will be returned immediatly as usual.
 If the value has expired (and the worker property is set), no valid time will returned.

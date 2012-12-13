@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.ejbca.core.model.UpgradeableDataHashMap;
@@ -165,6 +167,122 @@ public class WorkerConfig extends UpgradeableDataHashMap {
 
         return nodeId;
     }
+    
+    public Map<String, String> diff(final WorkerConfig newConfig) {
+        Map<Object, Object> newMap = (Map<Object, Object>) newConfig.saveData();
+        Map<Object, Object> diff = diffMaps(data, newMap);
+        Map<String, String> result = new HashMap<String, String>();
+
+        for (final Object key : diff.keySet()) {
+            result.put((String) key, (String) diff.get(key));
+        }
+        
+        return result;
+    }
+    
+    public static Map<String, String> propertyDiff(final WorkerConfig oldConfig,
+            final WorkerConfig newConfig) {
+        final Map<String, String> result = new HashMap<String, String>();
+        final Properties oldProps = oldConfig.getProperties();
+        final Properties newProps = newConfig.getProperties();
+        
+        for (final Object o : newProps.keySet()) {
+            final String prop = (String) o;
+            final String val = (String) newProps.get(prop);
+            
+            if (oldProps.containsKey(prop)) {
+                if (!val.equals(oldProps.get(prop))) {
+                    result.put("changed:" + prop, val);
+                }
+            } else {
+                result.put("added:" + prop, val);
+            }
+        }
+        
+        for (final Object o : oldProps.keySet()) {
+            final String prop = (String) o;
+            final String val = (String) oldProps.get(prop);
+
+            if (!newProps.containsKey(prop)) {
+                result.put("removed:" + prop, val);
+            }
+        }
+        
+        return result;
+    }
+
+    
+    /** Create a Map with the differences between the two input objects.
+     * Puts the result in a new Map with keys:
+     * <pre>
+     * changed:key, changedvalue
+     * remove:key, removedvalue
+     * added:key, addedvalue
+     * </pre>
+     * 
+     * @param oldmap
+     * @param newmap
+     * @return Map<String, String> with difference
+     */
+     public static Map<Object, Object> diffMaps(Map<Object, Object> oldmap, Map<Object, Object> newmap) {
+        Map<Object, Object> result = new LinkedHashMap<Object, Object>();
+        for (Object key : oldmap.keySet()) {
+            if (newmap.containsKey(key)) {
+                // Check if the value is the same
+                Object value = oldmap.get(key);
+                if (value == null) {
+                    if (newmap.get(key) != null) {
+                        result.put("addedvalue:"+key, newmap.get(key));                                         
+                    }
+                } else if (!value.equals(newmap.get(key))) {
+                    Object val = newmap.get(key);
+                    if (val == null) {
+                        val = ""; 
+                    }
+                    result.put("changed:"+key, getVal(val));
+               }
+            } else {
+                // Value removed
+                Object val = oldmap.get(key);
+                if (val == null) {
+                        val = ""; 
+                }
+                result.put("removed:"+key, getVal(val));
+            }
+        }
+        // look for added properties
+        for (Object key : newmap.keySet()) {
+            if (!oldmap.containsKey(key)) {
+                Object val = newmap.get(key);
+                if (val == null) {
+                        val = ""; 
+                }
+                result.put("added:"+key, getVal(val));                  
+            }
+        }
+        return result;
+    }
+     
+     /** helper method to get nice output from types that do 
+      * not work nicely with Object.toString()
+      */
+     private static String getVal(Object o) {
+         StringBuilder b = new StringBuilder();
+         if (o instanceof String[]) {
+             b.append('[');
+         String[] arr = (String[]) o;
+         for (String s: arr) {
+             if (b.length() > 1) {
+                 b.append(", ");
+             }
+             b.append(s); 
+         }
+         b.append(']');
+     } else {
+         b.append(o);
+     }
+         return b.toString();
+     }
 
     private static String getSignServerConfigFile() {
         String configFile = CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_CONFIGFILE);

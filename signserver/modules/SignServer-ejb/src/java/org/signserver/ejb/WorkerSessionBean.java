@@ -1260,8 +1260,12 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
     }
     
+    
     private void setWorkerConfig(final int workerId, final WorkerConfig config) {
-        auditLog(EventType.SET_WORKER_CONFIG, ModuleType.WORKER_CONFIG, String.valueOf(workerId));
+        final WorkerConfig oldConfig = workerConfigService.getWorkerProperties(workerId);       
+        final Map<String, String> configChanges = WorkerConfig.propertyDiff(oldConfig, config);
+        
+        auditLog(EventType.SET_WORKER_CONFIG, ModuleType.WORKER_CONFIG, String.valueOf(workerId), configChanges);
         workerConfigService.setWorkerConfig(workerId, config);
     }
 

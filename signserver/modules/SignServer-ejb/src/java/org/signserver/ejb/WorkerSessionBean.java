@@ -864,7 +864,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     public void setWorkerProperty(int workerId, String key, String value) {
         WorkerConfig config = getWorkerConfig(workerId);
         config.setProperty(key.toUpperCase(), value);
-        setWorkerConfig(workerId, config);
+        setWorkerConfig(workerId, config, null, null);
         auditLogWorkerPropertyChange(workerId, key, value);
     }
     
@@ -902,7 +902,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             LOG.debug("WorkerConfig is empty and therefore removed.");
             auditLog(EventType.SET_WORKER_CONFIG, ModuleType.WORKER_CONFIG, String.valueOf(workerId));
         } else {
-            setWorkerConfig(workerId, config);
+            setWorkerConfig(workerId, config, null, null);
         }
         auditLogWorkerPropertyChange(workerId, key, "");
         return result;
@@ -945,7 +945,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     public void addAuthorizedClient(int signerId, AuthorizedClient authClient) {
         WorkerConfig config = getWorkerConfig(signerId);
         (new ProcessableConfig(config)).addAuthorizedClient(authClient);
-        setWorkerConfig(signerId, config);
+        setWorkerConfig(signerId, config, "added:authorized_client",
+        		"SN: " + authClient.getCertSN() + ", issuer DN: " + authClient.getIssuerDN());
     }
 
     /* (non-Javadoc)
@@ -959,7 +960,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         result = (new ProcessableConfig(config)).removeAuthorizedClient(
                 authClient);
-        setWorkerConfig(signerId, config);
+        setWorkerConfig(signerId, config, "removed:authorized_client",
+        		"SN: " + authClient.getCertSN() + ", issuer DN: " + authClient.getIssuerDN());
         return result;
     }
 
@@ -1112,7 +1114,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         final Certificate cert  = CertTools.getCertfromByteArray(signerCert);
         ( new ProcessableConfig(config)).setSignerCertificate((X509Certificate)cert,scope);
-        setWorkerConfig(signerId, config);
+        // TODO: add logging entry (if not already done in elsewhere in DSS-562)
+        setWorkerConfig(signerId, config, null, null);
         final boolean scopeGlobal = GlobalConfiguration.SCOPE_GLOBAL.equalsIgnoreCase(scope);
         auditLogCertInstalled(signerId, new String (CertTools.getPEMFromCerts(Arrays.asList(cert))), scopeGlobal ? "GLOBAL" : "NODE", scopeGlobal ? null : WorkerConfig.getNodeId());
     }
@@ -1136,7 +1139,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     	// Collections.reverse(certs); // TODO: Why?
 
         (new ProcessableConfig( config)).setSignerCertificateChain(certs, scope);
-        setWorkerConfig(signerId, config);
+        // TODO: add logging entry for the cert chain (or is this already done elsewhere in DSS-562?)
+        setWorkerConfig(signerId, config, null, null);
         final boolean scopeGlobal = GlobalConfiguration.SCOPE_GLOBAL.equalsIgnoreCase(scope);
         auditLogCertChainInstalled(signerId, new String (CertTools.getPEMFromCerts(certs)), scopeGlobal ? "GLOBAL" : "NODE", scopeGlobal ? null : WorkerConfig.getNodeId());
     }
@@ -1260,10 +1264,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
     }
     
-    
-    private void setWorkerConfig(final int workerId, final WorkerConfig config) {
+    private void setWorkerConfig(final int workerId, final WorkerConfig config,
+    		final String additionalLogKey, final String additionalLogValue) {
         final WorkerConfig oldConfig = workerConfigService.getWorkerProperties(workerId);       
-        final Map<String, String> configChanges = WorkerConfig.propertyDiff(oldConfig, config);
+        Map<String, String> configChanges = WorkerConfig.propertyDiff(oldConfig, config);
+        
+        if (additionalLogKey != null) {
+        	configChanges.put(additionalLogKey, additionalLogValue);
+        }
         
         auditLog(EventType.SET_WORKER_CONFIG, ModuleType.WORKER_CONFIG, String.valueOf(workerId), configChanges);
         workerConfigService.setWorkerConfig(workerId, config);

@@ -103,4 +103,43 @@ public class WorkerConfigTest extends TestCase {
 				"foo".equals(diff.get("added:bar")) && "foobar".equals(diff.get("changed:foo")));
 				
 	}
+	
+	/**
+	 * Tests changing one property and removing another
+	 * @throws Exception
+	 */
+	public void test05ChangeAndRemoveProperty() throws Exception {
+		final WorkerConfig oldConf = new WorkerConfig();
+		final WorkerConfig newConf = new WorkerConfig();
+		
+		oldConf.setProperty("foo", "bar");
+		oldConf.setProperty("bar", "foo");
+		newConf.setProperty("foo", "foobar");
+		
+		final Map<String, String> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+		
+		assertEquals("Number of diff entries", 2, diff.size());
+		assertTrue("Contains entries",
+				"foo".equals(diff.get("removed:bar")) && "foobar".equals(diff.get("changed:foo")));
+	}
+	
+	/**
+	 * Tests adding a property and removing another.
+	 * @throws Exception
+	 */
+	public void test06RemoveAndAddProperty() throws Exception {
+		final WorkerConfig oldConf = new WorkerConfig();
+		final WorkerConfig newConf = new WorkerConfig();
+		
+		oldConf.setProperty("foo", "bar");
+		oldConf.setProperty("bar", "foo");
+		newConf.setProperty("bar", "foo");
+		newConf.setProperty("foobar", "foobar");
+		
+		final Map<String, String> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+		
+		assertEquals("Number of diff entries", 2, diff.size());
+		assertTrue("Contains entries",
+				"foobar".equals(diff.get("added:foobar")) && "bar".equals(diff.get("removed:foo")));
+	}
 }

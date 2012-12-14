@@ -16,14 +16,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import java.util.TimeZone;
-
 import javax.ejb.EJB;
+import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
-import org.signserver.server.ITimeSource;
-import org.signserver.statusrepo.common.StatusEntry;
-import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
+import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
 
 /**
@@ -31,7 +30,10 @@ import org.signserver.statusrepo.common.StatusName;
  * status property TIMESOURCE0_INSYNC is true and has not expired.
  *
  * It reads a status property TIMESOURCE0_INSYNC from the status repository.
- * It has no defined worker properties.
+ * Worker properties:
+ * <b>LEAPSECOND_HANDLING</b>: How leap seconds should be handled. Could be 
+ * NONE, PAUSE or STOP.
+ * 
  *
  * $Id$
  */
@@ -53,8 +55,22 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     
     /** defines leap second handling strategies */
     protected enum LeapSecondHandlingStrategy {
+        /** Don't do anything special for leap seconds. **/
     	NONE,
-    	PAUSE
+        
+        /** 
+         * Pause during the potential leap second interval if there is a 
+         * positive or negative leap second.
+         * Fail if no information is available
+         */
+    	PAUSE,
+        
+        /**
+         * Stop the issuance (return null) during the potential leap second 
+         * interval if there is a positive or negative leap second.
+         * Fail if no information is available.
+         */
+        STOP
     }
     
     private static final String LEAPSECOND_HANDLING_DEFAULT = "NONE";
@@ -69,7 +85,6 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     protected static final String LEAPSECOND_POSITIVE = "POSITIVE";
     protected static final String LEAPSECOND_NEGATIVE = "NEGATIVE";
     
- 
     
     /**
      * @param props Properties for this TimeSource
@@ -88,7 +103,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
             }
         } catch (IllegalArgumentException ex) {
             LOG.error("Illegal value for leap second handling strategy: " + leapHandling);
-        } catch (Exception ex) {
+        } catch (NamingException ex) {
             LOG.error("Looking up status repository session", ex);
         }
     }
@@ -106,8 +121,11 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
             if (entry != null && Boolean.valueOf(entry.getValue())) {
                 date = getCurrentDate();
                 
-                // check if a leapsecond is near
-                if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.PAUSE) {
+                // If we are handling leap seconds
+                if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.PAUSE
+                        || leapSecondHandlingStrategy == LeapSecondHandlingStrategy.STOP) {
+                    
+                    // check if a leapsecond is near
                     final StatusEntry leapsecond = statusSession.getValidEntry(leapsecondPropertyName.name());
                     
                     if (LOG.isDebugEnabled()) {
@@ -117,7 +135,6 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                     if (leapsecond == null) {
                         // leapsecond property is expired
                         LOG.error("Leapsecond status has expired");
-                        
                         return null;
                     }
                     
@@ -125,6 +142,15 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                     if (LEAPSECOND_POSITIVE.equals(leapsecondValue) ||
                         LEAPSECOND_NEGATIVE.equals(leapsecondValue)) {
                         boolean potentialLeap = isPotentialLeapsecond(date);
+                        
+                        // Handle leap second strategy STOP
+                        if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.STOP 
+                                && potentialLeap) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Stopping issuance");
+                            }
+                            return null;
+                        }
                         
                     	for (int i = 0; i < 6 && potentialLeap; i++) {
                     		// sleep for the amount of time nessesary to skip over the leap second

@@ -180,6 +180,19 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         return result;
     }
     
+    /**
+     * Compute the difference of properties between two WorkerConfig instances.
+     * Puts the result in a new Map with keys:
+     * <pre>
+     * changed:key, changedvalue
+     * removed:key, removedvalue
+     * added:key, addedvalue
+     * </pre>
+     * 
+     * @param oldConfig
+     * @param newConfig
+     * @return Map<String, String> with differences
+     */
     public static Map<String, String> propertyDiff(final WorkerConfig oldConfig,
             final WorkerConfig newConfig) {
         final Map<String, String> result = new HashMap<String, String>();

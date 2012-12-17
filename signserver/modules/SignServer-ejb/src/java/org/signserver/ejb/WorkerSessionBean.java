@@ -1114,7 +1114,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         final Certificate cert  = CertTools.getCertfromByteArray(signerCert);
         ( new ProcessableConfig(config)).setSignerCertificate((X509Certificate)cert,scope);
-        // TODO: add logging entry (if not already done in elsewhere in DSS-562)
         setWorkerConfig(signerId, config, null, null);
         final boolean scopeGlobal = GlobalConfiguration.SCOPE_GLOBAL.equalsIgnoreCase(scope);
         auditLogCertInstalled(signerId, new String (CertTools.getPEMFromCerts(Arrays.asList(cert))), scopeGlobal ? "GLOBAL" : "NODE", scopeGlobal ? null : WorkerConfig.getNodeId());
@@ -1139,7 +1138,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     	// Collections.reverse(certs); // TODO: Why?
 
         (new ProcessableConfig( config)).setSignerCertificateChain(certs, scope);
-        // TODO: add logging entry for the cert chain (or is this already done elsewhere in DSS-562?)
         setWorkerConfig(signerId, config, null, null);
         final boolean scopeGlobal = GlobalConfiguration.SCOPE_GLOBAL.equalsIgnoreCase(scope);
         auditLogCertChainInstalled(signerId, new String (CertTools.getPEMFromCerts(certs)), scopeGlobal ? "GLOBAL" : "NODE", scopeGlobal ? null : WorkerConfig.getNodeId());

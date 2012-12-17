@@ -217,6 +217,17 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
+        // Test setting a new value
+        workerSession.setWorkerProperty(signerId, "TESTPROPERTY11", "TESTVALUE4711");
+        
+        lines = readEntries(auditLogFile, linesBefore, 1);
+        line = lines.get(0);
+        LOG.info(line);
+        assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
+        assertTrue("Contains value", line.contains("changed:TESTPROPERTY11: TESTVALUE4711"));
+        assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        
         // Test removeProperty
         workerSession.removeWorkerProperty(signerId, "TESTPROPERTY11");
         lines = readEntries(auditLogFile, linesBefore + 1, 1);

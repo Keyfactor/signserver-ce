@@ -212,6 +212,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         String line = lines.get(0);
         LOG.info(line);
         assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
+        assertTrue("Contains value", line.contains("added:TESTPROPERTY11: TESTVALUE11"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
         
@@ -222,6 +223,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         LOG.info(line);
         
         assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
+        assertTrue("Contains value", line.contains("removed:TESTPROPERTY11: TESTVALUE11"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
     }

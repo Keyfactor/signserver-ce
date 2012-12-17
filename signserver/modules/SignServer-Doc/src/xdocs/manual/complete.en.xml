@@ -5544,9 +5544,27 @@ Logged when a worker's configuration was updated by adding and/or removing and/o
 <b>CUSTOM_ID:</b> The ID of the worker.
                                     </p>
                                     <p>
-Example:<br/>
-<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; REPLY_TIME:1350657202773</pre>
+Changes in worker properties are logged with prefixes <b>added/changed/removed</b> followed by a colon and the property name a colon and the property value.<br/>
+Several property changes can occur in one log line (see examples below).<br/>
+Authorized clients are shown as a property with the name <b>authorized_client</b>.
                                     </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; added:FOO: bar; REPLY_TIME:1350657202773</pre>
+                                    </p>
+                                    <p>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; changed:FOO: newvalue; REPLY_TIME:1350657202873</pre>
+                                    </p>
+                                    <p>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; removed:FOO: newvalue; REPLY_TIME:1350657202873</pre>
+                                    </p>
+                                    <p>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; added:FOO: bar; changed:BAR: newvalue; REPLY_TIME:1350657202873</pre>                                    
+                                    </p>
+                                    <p>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; added:authorized_client: SN: 1234567890, issuer DN: CN=Test; REPLY_TIME:1350657202873</pre>
+                                    </p>
+                                    
                                 </td>
                             </tr>
                             <tr>

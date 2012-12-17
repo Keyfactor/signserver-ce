@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.ejbca.util.CertTools;
+import org.signserver.common.AuthorizedClient;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GlobalConfiguration;
@@ -227,6 +228,36 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
     }
+    
+    
+    public void test01LogAddAuthorizedClient() throws Exception {
+        final int linesBefore = readEntriesCount(auditLogFile);
+        
+        workerSession.addAuthorizedClient(signerId, new AuthorizedClient("1234567890", "CN=Test"));
+        
+        List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+        String line = lines.get(0);
+        LOG.info(line);
+        assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
+        assertTrue("Contains value", line.contains("added:authorized_client: SN: 1234567890, issuer DN: CN=Test"));
+        assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+    }
+    
+    public void test01LogRemoveAuthorizedClient() throws Exception {
+        final int linesBefore = readEntriesCount(auditLogFile);
+        
+        workerSession.removeAuthorizedClient(signerId, new AuthorizedClient("1234567890", "CN=Test"));
+        
+        List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+        String line = lines.get(0);
+        LOG.info(line);
+        assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
+        assertTrue("Contains value", line.contains("removed:authorized_client: SN: 1234567890, issuer DN: CN=Test"));
+        assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
+        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+    }
+
     
     public void test01LogCertInstalled() throws Exception {
         int linesBefore = readEntriesCount(auditLogFile);

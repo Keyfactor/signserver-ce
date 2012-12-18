@@ -39,6 +39,23 @@ Notice:
    Base64DatabaseArchiver can also be used.
 
 
+SignServer 3.2.4
+----------------
+
+New features and improvements:
+ - Installation script contributed by Antoine Louiset
+ - Add test cases for TimeStampSigner with other key algorithms than RSA
+ - Improved feature list at signserver.org
+
+Bug fixes:
+ - Using worker id does not work in Client CLI
+ - JBoss 5 throws NPE on shutdown of SignServer
+ - Renewal worker does not use the requested DN in certificate request
+ - StatusPropertiesWorker requires a cryptotoken to be configured
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
+
 SignServer 3.2.3
 ----------------
 

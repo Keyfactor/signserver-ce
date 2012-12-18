@@ -220,7 +220,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         // Test setting a new value
         workerSession.setWorkerProperty(signerId, "TESTPROPERTY11", "TESTVALUE4711");
         
-        lines = readEntries(auditLogFile, linesBefore, 1);
+        lines = readEntries(auditLogFile, linesBefore + 1, 1);
         line = lines.get(0);
         LOG.info(line);
         assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
@@ -230,12 +230,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         // Test removeProperty
         workerSession.removeWorkerProperty(signerId, "TESTPROPERTY11");
-        lines = readEntries(auditLogFile, linesBefore + 1, 1);
+        lines = readEntries(auditLogFile, linesBefore + 2, 1);
         line = lines.get(0);
         LOG.info(line);
         
         assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
-        assertTrue("Contains value", line.contains("removed:TESTPROPERTY11: TESTVALUE11"));
+        assertTrue("Contains value", line.contains("removed:TESTPROPERTY11: TESTVALUE4711"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
     }

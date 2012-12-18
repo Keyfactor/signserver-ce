@@ -17,9 +17,3 @@ RELEASE_NOTES.txt for more information about such upgrades.
 3. Copy over the p12 folder with keystores (if used).
 4. Build and deploy as described in the installation guide.
 
-
-From SignServer 3.2.x to SignServer 3.3.x
------------------------------------------
-Instructions will be added here when SignServer 3.3.0 has been released if 
-upgrading to it would require database changes or other manual steps.
-<ADD INSTRUCTIONS HERE>

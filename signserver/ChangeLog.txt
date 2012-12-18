@@ -1,3 +1,21 @@
+SignServer 3.2.4, 2012-12-19
+----------------------------
+
+** Bug
+    * [DSS-524] - Using worker id does not work in Client CLI
+    * [DSS-555] - JBoss 5 throws NPE on shutdown of SignServer
+    * [DSS-558] - Renewal worker does not use the requested DN in certificate request
+    * [DSS-566] - StatusPropertiesWorker requires a cryptotoken to be configured
+
+** Improvement
+    * [DSS-535] - Add test cases for TimeStampSigner with other key algorithms than RSA
+    * [DSS-553] - Improve feature list at signserver.org
+
+
+** New Feature
+    * [DSS-517] - Installation script contributed by Antoine Louiset
+
+
 SignServer 3.2.3, 2012-09-28
 ----------------------------
 

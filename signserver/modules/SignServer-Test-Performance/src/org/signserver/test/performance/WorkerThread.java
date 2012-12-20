@@ -79,4 +79,51 @@ public class WorkerThread extends Thread {
     public void addResponseTime(long time) {
         respTimes.add(time);
     }
+    
+    public double getAverageResponseTime() {
+        long sum = 0;
+        
+        for (long time : respTimes) {
+            sum += time;
+        }
+        
+        return (double) sum / respTimes.size();
+    }
+    
+    public long getMaxResponseTime() {
+        long max = 0;
+        
+        for (long time : respTimes) {
+            if (time > max) {
+                max = time;
+            }
+        }
+        
+        return max;
+    }
+    
+    public long getMinResponseTime() {
+        long min = Long.MAX_VALUE;
+        
+        for (long time : respTimes) {
+            if (time < min) {
+                min = time;
+            }
+        }
+        
+        return min;
+    }
+    
+    public double getStdDevResponseTime() {
+        double avg = getAverageResponseTime();
+        double sqrSum = 0;
+        
+        for (long time : respTimes) {
+            double diffSqr = (time - avg) * (time - avg);
+            
+            sqrSum += diffSqr;
+        }
+        
+        return Math.sqrt(sqrSum / respTimes.size());
+    }
 }

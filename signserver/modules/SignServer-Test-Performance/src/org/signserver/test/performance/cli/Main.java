@@ -246,7 +246,11 @@ public class Main {
                     LOG.debug("Waiting for thread " + w.getName() + " to finish.");
                 }
                 w.join();
-                LOG.info(w + ": Operations performed: " + w.getOperationsPerformed());
+                LOG.info(w + ": Operations performed: " + w.getOperationsPerformed() + NL +
+                        ": Average response time: " + w.getAverageResponseTime() + NL +
+                        ": Maximum response time: " + w.getMaxResponseTime() + NL +
+                        ": Minimum response time: " + w.getMinResponseTime() + NL +
+                        ": Standard deviation: " + w.getStdDevResponseTime());
             }
         } catch (InterruptedException ex) {
             LOG.error("Interrupted: " + ex.getMessage());

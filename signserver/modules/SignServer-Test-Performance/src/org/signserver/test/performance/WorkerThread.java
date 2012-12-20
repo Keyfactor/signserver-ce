@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.test.performance;
 
+import java.util.Collection;
+
 import org.signserver.test.performance.FailureCallback;
 
 /**
@@ -26,6 +28,8 @@ public class WorkerThread extends Thread {
     private volatile boolean stop;
     
     protected long operationsPerformed;
+    protected Collection<Long> respTimes;
+
     
     public WorkerThread(final String name, final FailureCallback failureCallback) {
         super(name);
@@ -66,5 +70,13 @@ public class WorkerThread extends Thread {
      */
     public long getOperationsPerformed() {
         return operationsPerformed;
+    }
+    
+    /**
+     * Add response time to statistics list.
+     * @param time
+     */
+    public void addResponseTime(long time) {
+        respTimes.add(time);
     }
 }

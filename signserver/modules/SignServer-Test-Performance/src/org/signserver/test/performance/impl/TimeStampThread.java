@@ -21,7 +21,6 @@ public class TimeStampThread extends WorkerThread {
     private Random random;
     private long startTime;
     private long warmupTime;
-    private Collection<Long> respTimes;
     
     public TimeStampThread(final String name, final FailureCallback failureCallback, final String url, int maxWaitTime, int seed,
             IWorkerSession.IRemote workerSession, long warmupTime) {
@@ -53,7 +52,7 @@ public class TimeStampThread extends WorkerThread {
                 long timeAfter = (new Date()).getTime();
                 
                 if (timeBefore > startTime + warmupTime) {
-                    respTimes.add(timeAfter - timeBefore);
+                    addResponseTime(timeAfter - timeBefore);
                     increaseOperationsPerformed();
                 }
                 

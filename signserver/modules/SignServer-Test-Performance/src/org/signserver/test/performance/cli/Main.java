@@ -163,7 +163,7 @@ public class Main {
                 }
             };
             
-            Runtime.getRuntime().addShutdownHook(new Thread() {
+            Thread shutdownHook = new Thread() {
                 @Override
                 public void run() {
                     if (LOG.isDebugEnabled()) {
@@ -171,8 +171,9 @@ public class Main {
                     }
                     shutdown(threads);
                 }
-                
-            });
+            };
+            
+            Runtime.getRuntime().addShutdownHook(shutdownHook);
 
             try {
                 switch (ts) {
@@ -220,6 +221,9 @@ public class Main {
                         LOG.error("Interupted when waiting for thread: " + ex.getMessage());
                     }
                 }
+                
+                // deactivate shutdown hook
+                Runtime.getRuntime().removeShutdownHook(shutdownHook);
             
             } catch (Exception ex) {
                 LOG.error("Failed: " + ex.getMessage(), ex);

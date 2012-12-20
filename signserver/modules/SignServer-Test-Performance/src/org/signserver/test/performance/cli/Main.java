@@ -26,8 +26,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
 import org.signserver.test.performance.FailureCallback;
 import org.signserver.test.performance.WorkerThread;
+import org.signserver.test.performance.impl.TimeStampThread;
+import org.signserver.test.performance.AdminCommandHelper;
 
 /**
  * Performance test tool
@@ -41,6 +44,10 @@ public class Main {
 
     private static final String TEST_SUITE = "testsuite";
     private static final String TIME_LIMIT = "timelimit";
+    private static final String THREADS = "threads";
+    private static final String TSA_URL = "tsaurl";
+    private static final String MAX_WAIT_TIME = "maxwaittime";
+    private static final String WARMUP_TIME = "warmuptime";
     private static final Options OPTIONS;
     
     private static final String NL = System.getProperty("line.separator");
@@ -56,13 +63,19 @@ public class Main {
         OPTIONS = new Options();
         OPTIONS.addOption(TEST_SUITE, true, "Test suite to run. Any of " + Arrays.asList(TestSuites.values()) + ".");
         OPTIONS.addOption(TIME_LIMIT, true, "Optional. Only run for the specified time (in milliseconds).");
+        OPTIONS.addOption(THREADS, true, "Number of threads requesting time stamps.");
+        OPTIONS.addOption(TSA_URL, true, "URL to timestamp worker to use.");
+        OPTIONS.addOption(MAX_WAIT_TIME, true, "Maximum number of milliseconds for a thread to wait until issuing the next time stamp.");
+        OPTIONS.addOption(WARMUP_TIME, true,
+                "Don't count number of signings and response times until after this time (in milliseconds). Default=0 (no warmup time).");
     }
 
     private static void printUsage() {
         StringBuilder footer = new StringBuilder();
         footer.append(NL)
                 .append("Sample usages:").append(NL)
-                .append("a) ").append(COMMAND).append(" -testsuite TimeStamp1").append(NL);
+                .append("a) ").append(COMMAND)
+                .append(" -testsuite TimeStamp1 -threads 10 -maxwaittime 1 -tsaurl http://localhost:8080/signserver/process?workerId=1").append(NL);
                 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
@@ -98,25 +111,43 @@ public class Main {
             } else {
                 limitedTime = -1;
             }
+            
+            final int numThreads;
+            if (commandLine.hasOption(THREADS)) {
+                numThreads = Integer.parseInt(commandLine.getOptionValue(THREADS));
+            } else {
+                throw new ParseException("Missing option: -" + THREADS);
+            }
   
+            final int maxWaitTime;
+            if (commandLine.hasOption(MAX_WAIT_TIME)) {
+                maxWaitTime = Integer.parseInt(commandLine.getOptionValue(MAX_WAIT_TIME));
+            } else {
+                throw new ParseException("Missing option: -" + MAX_WAIT_TIME);
+            }
+            
+            final String url;
+            if (commandLine.hasOption(TSA_URL)) {
+                url = commandLine.getOptionValue(TSA_URL);
+            } else {
+                throw new ParseException("Missing option: -" + TSA_URL);
+            }
+            
+            final long warmupTime;
+            if (commandLine.hasOption(WARMUP_TIME)) {
+                warmupTime = Long.parseLong(commandLine.getOptionValue(WARMUP_TIME));
+            } else {
+                warmupTime = 0;
+            }
+            
             final LinkedList<WorkerThread> threads = new LinkedList<WorkerThread>();
+            final AdminCommandHelper helper = new AdminCommandHelper();
+            final IRemote workerSession = helper.getWorkerSession();
             final FailureCallback callback = new FailureCallback() {
 
                 @Override
                 public void failed(WorkerThread thread, String message) {
-                    // Stop
-                    for (WorkerThread w : threads) {
-                        w.stopIt();
-                    }
-                    
-                    // Wait until all stoped
-                    try {
-                        for (WorkerThread w : threads) {
-                            w.join(1000);
-                        }
-                    } catch (InterruptedException ex) {
-                        LOG.error("Interrupted: " + ex.getMessage());
-                    }
+                    shutdown(threads);
                     
                     // Print message
                     LOG.error(thread + ": " + message);
@@ -131,11 +162,22 @@ public class Main {
                     callback.failed((WorkerThread) t, "Uncaught exception: " + e.getMessage());
                 }
             };
+            
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Shutdown hook called");
+                    }
+                    shutdown(threads);
+                }
+                
+            });
 
             try {
                 switch (ts) {
                 case TimeStamp1:
-                    runTimeStamp1(threads);
+                    timeStamp1(threads, numThreads, callback, url, maxWaitTime, workerSession, warmupTime);
                     break;
                 default:
                     throw new Exception("Unsupported test suite");
@@ -150,28 +192,33 @@ public class Main {
                     w.start();
                 }
 
+                System.out.println("time limit: " + limitedTime);
+                
                 // If time limited
                 if (limitedTime > 0) {
                     try {
-                        Thread.sleep(limitedTime);
+                        Thread.sleep(limitedTime);   
                     } catch (InterruptedException ex) {
                         LOG.error("Interrupted: " + ex.getMessage());
                     }
-                    // Stop all threads
-                    for (WorkerThread w : threads) {
-                        w.stopIt();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("About to shutdown");
                     }
-                }
-            
-
-                // Wait until all stopped
-                try {
-                    for (WorkerThread w : threads) {
-                        w.join();
-                        LOG.info(w + ": Operations performed: " + w.getOperationsPerformed());
+                    shutdown(threads);
+                } else {
+                    try {
+                        for (WorkerThread w : threads) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Waiting for thread " + w.getName());
+                            }
+                            w.join();
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Thread " + w.getName() + " stopped");
+                            }
+                        }
+                    } catch (InterruptedException ex) {
+                        LOG.error("Interupted when waiting for thread: " + ex.getMessage());
                     }
-                } catch (InterruptedException ex) {
-                    LOG.error("Interrupted: " + ex.getMessage());
                 }
             
             } catch (Exception ex) {
@@ -187,7 +234,31 @@ public class Main {
         }
     }
     
-    private static void runTimeStamp1(final List<WorkerThread> threads) throws Exception {
+    private static void shutdown(final List<WorkerThread> threads) {
+        for (WorkerThread w : threads) {
+            w.stopIt();
+        }
         
+        // Wait until all stopped
+        try {
+            for (WorkerThread w : threads) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Waiting for thread " + w.getName() + " to finish.");
+                }
+                w.join();
+                LOG.info(w + ": Operations performed: " + w.getOperationsPerformed());
+            }
+        } catch (InterruptedException ex) {
+            LOG.error("Interrupted: " + ex.getMessage());
+        }
+    }
+    
+    private static void timeStamp1(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
+            final String url, int maxWaitTime, final IRemote workerSession, long warmupTime) throws Exception {
+        for (int i = 0; i < numThreads; i++) {
+            // TODO: fix random seed
+            threads.add(new TimeStampThread("TimeStamp1-" + i, failureCallback, url, maxWaitTime, 1, workerSession,
+                    warmupTime));
+        }
     }
 }

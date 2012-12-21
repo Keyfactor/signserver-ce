@@ -36,12 +36,10 @@ public class TimeStamp implements Task {
     
     private String tsaUrl;
     private Random random;
-    private IRemote workerSession;
 
-    public TimeStamp(final String url, final IWorkerSession.IRemote workerSession, final Random random) {
+    public TimeStamp(final String url, final Random random) {
         this.tsaUrl = url;
         this.random = random;
-        this.workerSession = workerSession;
     }
     
     @Override
@@ -59,7 +57,6 @@ public class TimeStamp implements Task {
     }
 
     private void tsaRequest() throws TSPException, IOException {
-        final Random rand = new Random();
         final TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         final int nonce = random.nextInt();

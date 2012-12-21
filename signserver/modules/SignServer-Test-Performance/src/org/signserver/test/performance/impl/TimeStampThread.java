@@ -19,12 +19,12 @@ public class TimeStampThread extends WorkerThread {
     private long startTime;
     private long warmupTime;
     
-    public TimeStampThread(final String name, final FailureCallback failureCallback, final String url, int maxWaitTime, int seed,
-            IWorkerSession.IRemote workerSession, long warmupTime) {
+    public TimeStampThread(final String name, final FailureCallback failureCallback, final String url, int maxWaitTime,
+    		int seed, long warmupTime) {
         super(name, failureCallback);
         this.maxWaitTime = maxWaitTime;
         this.random = new Random(seed);
-        this.tsa = new TimeStamp(url, workerSession, random);
+        this.tsa = new TimeStamp(url, random);
         this.warmupTime = warmupTime;
     }
 

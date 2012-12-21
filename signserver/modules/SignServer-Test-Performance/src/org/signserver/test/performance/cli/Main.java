@@ -141,8 +141,6 @@ public class Main {
             }
             
             final LinkedList<WorkerThread> threads = new LinkedList<WorkerThread>();
-            final AdminCommandHelper helper = new AdminCommandHelper();
-            final IRemote workerSession = helper.getWorkerSession();
             final FailureCallback callback = new FailureCallback() {
 
                 @Override
@@ -178,7 +176,7 @@ public class Main {
             try {
                 switch (ts) {
                 case TimeStamp1:
-                    timeStamp1(threads, numThreads, callback, url, maxWaitTime, workerSession, warmupTime);
+                    timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime);
                     break;
                 default:
                     throw new Exception("Unsupported test suite");
@@ -262,10 +260,10 @@ public class Main {
     }
     
     private static void timeStamp1(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
-            final String url, int maxWaitTime, final IRemote workerSession, long warmupTime) throws Exception {
+            final String url, int maxWaitTime, long warmupTime) throws Exception {
         for (int i = 0; i < numThreads; i++) {
             // TODO: fix random seed
-            threads.add(new TimeStampThread("TimeStamp1-" + i, failureCallback, url, maxWaitTime, 1, workerSession,
+            threads.add(new TimeStampThread("TimeStamp1-" + i, failureCallback, url, maxWaitTime, 1,
                     warmupTime));
         }
     }

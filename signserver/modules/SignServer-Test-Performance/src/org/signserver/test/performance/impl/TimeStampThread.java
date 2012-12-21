@@ -1,7 +1,5 @@
 package org.signserver.test.performance.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Random;
 
@@ -14,8 +12,7 @@ import org.signserver.test.performance.FailedException;
 public class TimeStampThread extends WorkerThread {
     /** Logger for this class */
     Logger LOG = Logger.getLogger(TimeStampThread.class);
-    
-    private String url;
+
     private int maxWaitTime;
     private TimeStamp tsa;
     private Random random;
@@ -25,12 +22,10 @@ public class TimeStampThread extends WorkerThread {
     public TimeStampThread(final String name, final FailureCallback failureCallback, final String url, int maxWaitTime, int seed,
             IWorkerSession.IRemote workerSession, long warmupTime) {
         super(name, failureCallback);
-        this.url = url;
         this.maxWaitTime = maxWaitTime;
         this.random = new Random(seed);
         this.tsa = new TimeStamp(url, workerSession, random);
         this.warmupTime = warmupTime;
-        this.respTimes = new ArrayList<Long>();
     }
 
     @Override

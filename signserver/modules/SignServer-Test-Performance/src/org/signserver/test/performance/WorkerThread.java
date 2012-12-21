@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.test.performance;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.signserver.test.performance.FailureCallback;
@@ -34,6 +35,7 @@ public class WorkerThread extends Thread {
     public WorkerThread(final String name, final FailureCallback failureCallback) {
         super(name);
         this.failureCallback = failureCallback;
+        this.respTimes = new ArrayList<Long>();
     }
 
     /**

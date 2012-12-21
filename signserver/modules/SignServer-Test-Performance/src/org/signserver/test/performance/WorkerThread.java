@@ -130,6 +130,8 @@ public class WorkerThread extends Thread {
     
     /**
      * Get standard deviation of response time.
+     * Uses the formula from {@link http://en.wikipedia.org/wiki/Standard_deviation}
+     * 
      * @return Standard deviation
      */
     public double getStdDevResponseTime() {

@@ -26,11 +26,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
 import org.signserver.test.performance.FailureCallback;
 import org.signserver.test.performance.WorkerThread;
 import org.signserver.test.performance.impl.TimeStampThread;
-import org.signserver.test.performance.AdminCommandHelper;
 
 /**
  * Performance test tool

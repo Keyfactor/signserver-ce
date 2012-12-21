@@ -142,4 +142,8 @@ public class WorkerConfigTest extends TestCase {
         assertTrue("Contains entries",
                 "foobar".equals(diff.get("added:foobar")) && "bar".equals(diff.get("removed:foo")));
     }
+	
+	public void test07AddAuthorizedClient() throws Exception {
+		final WorkerConfig oldConf = new WorkerConfig();
+	}
 }

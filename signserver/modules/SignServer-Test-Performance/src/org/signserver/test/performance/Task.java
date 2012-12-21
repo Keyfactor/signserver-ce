@@ -19,5 +19,10 @@ package org.signserver.test.performance;
  * @version $Id$
  */
 public interface Task {
-    void run() throws Exception;
+    /**
+     * Runs task
+     * @return Estimated response time for worker in millisecond.
+     * @throws Exception
+     */
+	long run() throws Exception;
 }

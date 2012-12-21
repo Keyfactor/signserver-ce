@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.test.performance.FailureCallback;
 import org.signserver.test.performance.WorkerThread;
 import org.signserver.test.performance.FailedException;
@@ -34,20 +33,18 @@ public class TimeStampThread extends WorkerThread {
         
         try {
             while (!isStop()) {
-                // current time
-                long timeBefore = (new Date()).getTime();
+            	long currentTime = (new Date().getTime());
+                long estimatedTime;
                 
                 try {
-                    tsa.run();
+                    estimatedTime = tsa.run();
                 } catch (FailedException ex) {
                     fireFailure("THREAD" + getName() + " failed after " + getOperationsPerformed() + " signings: " + ex.getMessage());
                     break;
                 }
-                
-                long timeAfter = (new Date()).getTime();
-                
-                if (timeBefore > startTime + warmupTime) {
-                    addResponseTime(timeAfter - timeBefore);
+              
+                if (currentTime > startTime + warmupTime) {
+                    addResponseTime(estimatedTime);
                     increaseOperationsPerformed();
                 }
                 

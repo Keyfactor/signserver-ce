@@ -43,9 +43,9 @@ public class TimeStamp implements Task {
     }
     
     @Override
-    public void run() throws FailedException {
+    public long run() throws FailedException {
         try {
-            tsaRequest();
+            return tsaRequest();
         } catch (TSPException ex) {
             LOG.error("Verification error", ex);
             throw new FailedException("Response could not be verified: " + ex.getMessage());
@@ -56,7 +56,7 @@ public class TimeStamp implements Task {
 
     }
 
-    private void tsaRequest() throws TSPException, IOException {
+    private long tsaRequest() throws TSPException, IOException {
     	final TimeStampRequestGenerator timeStampRequestGenerator =
     			new TimeStampRequestGenerator();
     	final int nonce = random.nextInt();
@@ -109,9 +109,9 @@ public class TimeStamp implements Task {
 
     	// Take stop time
     	final long estimatedTime = System.nanoTime() - startTime;
-
-    	LOG.info("Got reply after "
-    			+ TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
+    	final long timeInMillis = TimeUnit.NANOSECONDS.toMillis(estimatedTime);
+    	
+    	LOG.info("Got reply after " + timeInMillis + " ms");
 
     	final byte[] replyBytes = baos.toByteArray();
 
@@ -121,5 +121,7 @@ public class TimeStamp implements Task {
     	timeStampResponse.validate(timeStampRequest);
 
     	LOG.info("TimeStampRequest validated");
+    	
+    	return timeInMillis;
     }
 }
